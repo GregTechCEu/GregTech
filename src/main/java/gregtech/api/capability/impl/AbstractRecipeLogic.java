@@ -87,9 +87,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     protected abstract boolean drawEnergy(int recipeEUt);
 
-    protected long getMaxVoltage() {
-        return this.overclockPolicy.getAsLong();
-    }
+    abstract long getMaxVoltage();
 
     protected IItemHandlerModifiable getInputInventory() {
         return metaTileEntity.getImportItems();
@@ -293,7 +291,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                 getOutputTank(),
                 getMaxVoltage(), getParallelLimit());
 
-        if (setupAndConsumeRecipeInputs(recipe, getInputInventory())) {
+        if (recipe != null && setupAndConsumeRecipeInputs(recipe, getInputInventory())) {
             setupRecipe(recipe);
             return true;
         }
