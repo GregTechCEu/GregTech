@@ -9,7 +9,8 @@ import java.util.WeakHashMap;
 
 public class KeySharedStack {
 
-    private static final WeakHashMap<ItemStackKey,WeakReference<ItemStackKey>> registeredItemStackKeys = new WeakHashMap<>();
+    private static final WeakHashMap<ItemStackKey, WeakReference<ItemStackKey>> registeredItemStackKeys = new WeakHashMap<>();
+    public static ItemStackKey EMPTY = new ItemStackKey(ItemStack.EMPTY);
 
     private KeySharedStack() {
 
@@ -17,7 +18,7 @@ public class KeySharedStack {
 
     public static synchronized ItemStackKey getRegisteredStack(final @Nonnull ItemStack itemStack) {
         if (itemStack.isEmpty()) {
-            throw new IllegalArgumentException("stack cannot be empty");
+            return EMPTY;
         }
 
         int oldStackSize = itemStack.getCount();

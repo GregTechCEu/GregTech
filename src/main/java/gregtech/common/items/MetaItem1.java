@@ -19,6 +19,10 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.RandomPotionEffect;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.*;
+import gregtech.common.items.behaviors.monitorplugin.AdvancedMonitorPluginBehavior;
+import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
+import gregtech.common.items.behaviors.monitorplugin.OnlinePicPluginBehavior;
+import gregtech.common.items.behaviors.monitorplugin.TextPluginBehavior;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
@@ -290,6 +294,9 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_SHUTTER = addItem(309, "cover.shutter");
         COVER_INFINITE_WATER = addItem(310, "cover.infinite_water");
         COVER_ENDER_FLUID_LINK = addItem(311, "cover.ender_fluid_link");
+        COVER_DIGITAL_INTERFACE = addItem(312, "cover.digital");
+        COVER_DIGITAL_INTERFACE_WIRELESS = addItem(313, "cover.digital.wireless");
+
         COVER_FACADE = addItem(330, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 
         // Solar Panels: ID 331-346
@@ -355,11 +362,10 @@ public class MetaItem1 extends StandardMetaItem {
         ELITE_CIRCUIT_BOARD = addItem(406, "circuit_board.elite");
         WETWARE_CIRCUIT_BOARD = addItem(407, "circuit_board.wetware");
 
-        // Dyes: ID 421-437
-        DYE_INDIGO = addItem(421, "dye.indigo").addOreDict("dyeBlue");
+        // Dyes: ID 421-436
         for (int i = 0; i < EnumDyeColor.values().length; i++) {
             EnumDyeColor dyeColor = EnumDyeColor.values()[i];
-            DYE_ONLY_ITEMS[i] = addItem(422 + i, "dye." + dyeColor.getName()).addOreDict(getOredictColorName(dyeColor));
+            DYE_ONLY_ITEMS[i] = addItem(421 + i, "dye." + dyeColor.getName()).addOreDict(getOredictColorName(dyeColor));
         }
 
         // Plant/Rubber Related: ID 438-445
@@ -387,12 +393,9 @@ public class MetaItem1 extends StandardMetaItem {
         CAMERA = addItem(469, "camera");
 
         // Misc Crafting Items: ID 491-515
+        //Free ID: 493, 494, 495, 496
         ENERGIUM_DUST = addItem(491, "energium_dust");
         ENGRAVED_LAPOTRON_CHIP = addItem(492, "engraved.lapotron_chip");
-        INGOT_MIXED_METAL = addItem(493, "ingot.mixed_metal");
-        ADVANCED_ALLOY_PLATE = addItem(494, "plate.advanced_alloy");
-        INGOT_IRIDIUM_ALLOY = addItem(495, "ingot.iridium_alloy");
-        PLATE_IRIDIUM_ALLOY = addItem(496, "plate.iridium_alloy");
         NEUTRON_REFLECTOR = addItem(497, "neutron_reflector");
         GELLED_TOLUENE = addItem(498, "gelled_toluene");
         CARBON_FIBERS = addItem(499, "carbon.fibers");
@@ -572,6 +575,16 @@ public class MetaItem1 extends StandardMetaItem {
         IMPELLER_MV = addItem(776, "impeller.mv").setRarity(EnumRarity.UNCOMMON);
         IMPELLER_HV = addItem(777, "impeller.hv").setRarity(EnumRarity.RARE);
         GRAVITATION_ENGINE = addItem(778, "gravitation_engine").setRarity(EnumRarity.EPIC);
+
+        // Plugins: 780-799
+        PLUGIN_ADVANCED_MONITOR = addItem(780, "plugin.advanced_monitor").addComponents(new AdvancedMonitorPluginBehavior());
+        PLUGIN_FAKE_GUI = addItem(781, "plugin.fake_gui").addComponents(new FakeGuiPluginBehavior());
+        PLUGIN_ONLINE_PIC = addItem(782, "plugin.online_pic").addComponents(new OnlinePicPluginBehavior());
+        PLUGIN_TEXT = addItem(783, "plugin.text").addComponents(new TextPluginBehavior());
+
+        COLOURED_LEDS = addItem(800, "coloured.leds");
+        DISPLAY = addItem(801, "display");
+
     }
 
 }

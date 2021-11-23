@@ -14,6 +14,8 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
 import gregtech.common.items.behaviors.CrowbarBehaviour;
@@ -72,6 +74,8 @@ import static gregtech.api.GTValues.V;
 public class GTUtility {
 
     private static final XSTR random = new XSTR();
+
+    private static TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
 
     public static Runnable combine(Runnable... runnables) {
         return () -> {
@@ -247,6 +251,43 @@ public class GTUtility {
                 return true; //if we inserted all items, return
         }
         return merged;
+    }
+
+    /**
+     * Attempts to merge given ItemStack with ItemStacks in list supplied
+     * growing up to their max stack size
+     *
+     * @param stackToAdd item stack to merge.
+     * @return a list of stacks, with optimized stack sizes
+     */
+
+    public static List<ItemStack> addStackToItemStackList(ItemStack stackToAdd, List<ItemStack> itemStackList) {
+        if (!itemStackList.isEmpty()) {
+            for (ItemStack stackInList : itemStackList) {
+                if (ItemStackHashStrategy.comparingAllButCount().equals(stackInList, stackToAdd)) {
+                    if (stackInList.getCount() < stackInList.getMaxStackSize()) {
+                        int insertable = stackInList.getMaxStackSize() - stackInList.getCount();
+                        if (insertable >= stackToAdd.getCount()) {
+                            stackInList.grow(stackToAdd.getCount());
+                            stackToAdd = ItemStack.EMPTY;
+                        } else {
+                            stackInList.grow(insertable);
+                            stackToAdd = stackToAdd.copy();
+                            stackToAdd.setCount(stackToAdd.getCount() - insertable);
+                        }
+                        if (stackToAdd.isEmpty()) {
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!stackToAdd.isEmpty()) {
+                itemStackList.add(stackToAdd);
+            }
+        } else {
+            itemStackList.add(stackToAdd.copy());
+        }
+        return itemStackList;
     }
 
     public static boolean harvestBlock(World world, BlockPos pos, EntityPlayer player) {
@@ -900,10 +941,10 @@ public class GTUtility {
     }
 
     public static AxisAlignedBB rotateAroundYAxis(AxisAlignedBB aabb, EnumFacing from, EnumFacing to) {
-        if(from == EnumFacing.UP || from == EnumFacing.DOWN || to == EnumFacing.UP || to == EnumFacing.DOWN)
+        if (from == EnumFacing.UP || from == EnumFacing.DOWN || to == EnumFacing.UP || to == EnumFacing.DOWN)
             throw new IllegalArgumentException("Either the second or third parameters were EnumFacing.DOWN or EnumFacing.UP.");
         AxisAlignedBB rotatedAABB = new AxisAlignedBB(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ);
-        while(from != to) {
+        while (from != to) {
             from = from.rotateY();
             rotatedAABB = new AxisAlignedBB(1 - rotatedAABB.maxZ, rotatedAABB.minY, rotatedAABB.minX, 1 - rotatedAABB.minZ, rotatedAABB.maxY, rotatedAABB.maxX);
         }
@@ -928,7 +969,7 @@ public class GTUtility {
 
     /**
      * Alternative function for tank sizes, takes a tier input and returns the corresponding size
-     *
+     * <p>
      * This function scales the same as the default function except it stops scaling past HV
      */
     public static final Function<Integer, Integer> hvCappedTankSizeFunction = tier -> {
@@ -942,7 +983,7 @@ public class GTUtility {
 
     /**
      * Alternative function for tank sizes, takes a tier input and returns the corresponding size
-     *
+     * <p>
      * This function is meant for use with machine that need very large tanks, it stops scaling past HV
      */
     public static final Function<Integer, Integer> largeTankSizeFunction = tier -> {
@@ -953,4 +994,35 @@ public class GTUtility {
         // HV+
         return 64000;
     };
+
+    public static String romanNumeralString(int num) {
+
+        if (romanNumeralConversions.isEmpty()) { // Initialize on first run-through.
+            romanNumeralConversions.put(1000, "M");
+            romanNumeralConversions.put(900, "CM");
+            romanNumeralConversions.put(500, "D");
+            romanNumeralConversions.put(400, "CD");
+            romanNumeralConversions.put(100, "C");
+            romanNumeralConversions.put(90, "XC");
+            romanNumeralConversions.put(50, "L");
+            romanNumeralConversions.put(40, "XL");
+            romanNumeralConversions.put(10, "X");
+            romanNumeralConversions.put(9, "IX");
+            romanNumeralConversions.put(5, "V");
+            romanNumeralConversions.put(4, "IV");
+            romanNumeralConversions.put(1, "I");
+        }
+
+        int conversion = romanNumeralConversions.floorKey(num);
+        if (num == conversion) {
+            return romanNumeralConversions.get(num);
+        }
+        return romanNumeralConversions.get(conversion) + romanNumeralString(num - conversion);
+    }
+
+    public static boolean isOre(Block block) {
+        OrePrefix orePrefix = OreDictUnifier.getPrefix(new ItemStack(block));
+        return orePrefix != null && orePrefix.name().startsWith("ore");
+    }
+
 }

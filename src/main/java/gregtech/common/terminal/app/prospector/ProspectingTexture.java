@@ -1,9 +1,9 @@
 package gregtech.common.terminal.app.prospector;
 
-import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.net.SProspectingPacket;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.RenderUtil;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.AbstractTexture;

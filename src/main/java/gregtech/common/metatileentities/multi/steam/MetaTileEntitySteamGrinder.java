@@ -31,7 +31,7 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
 
     public MetaTileEntitySteamGrinder(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.MACERATOR_RECIPES, CONVERSION_RATE);
-        this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE, 8);
+        this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE);
     }
 
     @Override
@@ -62,6 +62,11 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
         return ConfigHolder.U.steelSteamMultiblocks ? SOLID_STEEL_CASING : BRONZE_PLATED_BRICKS;
     }
 
+    @Override
+    public int getParallelLimit() {
+        return 8;
+    }
+
     @Nonnull
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
@@ -72,4 +77,5 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
     public boolean hasMaintenanceMechanics() {
         return false;
     }
+
 }

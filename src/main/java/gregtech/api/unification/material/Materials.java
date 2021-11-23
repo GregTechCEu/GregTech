@@ -1,6 +1,5 @@
 package gregtech.api.unification.material;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.materials.*;
 
@@ -34,6 +33,8 @@ import static gregtech.api.unification.material.info.MaterialFlags.*;
 public class Materials {
 
     private static final AtomicBoolean INIT = new AtomicBoolean(false);
+
+    public static Material[] CHEMICAL_DYES;
 
     public static void register() {
         if (INIT.getAndSet(true)) {
@@ -96,6 +97,17 @@ public class Materials {
          * - FREE RANGE 24000-31999
          * - Reserved for CraftTweaker: 32000-32767
          */
+
+        CHEMICAL_DYES = new Material[]{
+                Materials.DyeWhite, Materials.DyeOrange,
+                Materials.DyeMagenta, Materials.DyeLightBlue,
+                Materials.DyeYellow, Materials.DyeLime,
+                Materials.DyePink, Materials.DyeGray,
+                Materials.DyeLightGray, Materials.DyeCyan,
+                Materials.DyePurple, Materials.DyeBlue,
+                Materials.DyeBrown, Materials.DyeGreen,
+                Materials.DyeRed, Materials.DyeBlack
+        };
     }
 
     public static final List<MaterialFlag> STD_SOLID = new ArrayList<>();
@@ -314,7 +326,6 @@ public class Materials {
     public static Material NiobiumTitanium;
     public static Material Obsidian;
     public static Material Phosphate;
-    public static Material PigIron;
     public static Material SterlingSilver;
     public static Material RoseGold;
     public static Material BlackBronze;
@@ -325,7 +336,7 @@ public class Materials {
     public static Material Pyrolusite;
     public static Material Pyrope;
     public static Material RockSalt;
-    public static Material RuthenianIridium;
+    public static Material Ruridit;
     public static Material Rubber;
     public static Material Ruby;
     public static Material Salt;
@@ -618,6 +629,22 @@ public class Materials {
     public static Material RubySlurry;
     public static Material SapphireSlurry;
     public static Material GreenSapphireSlurry;
+    public static Material DyeBlack;
+    public static Material DyeRed;
+    public static Material DyeGreen;
+    public static Material DyeBrown;
+    public static Material DyeBlue;
+    public static Material DyePurple;
+    public static Material DyeCyan;
+    public static Material DyeLightGray;
+    public static Material DyeGray;
+    public static Material DyePink;
+    public static Material DyeLime;
+    public static Material DyeYellow;
+    public static Material DyeLightBlue;
+    public static Material DyeMagenta;
+    public static Material DyeOrange;
+    public static Material DyeWhite;
 
     /**
      * Second Degree Compounds

@@ -2,6 +2,7 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
@@ -38,7 +39,7 @@ public class HigherDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_GEAR)
                 .components(SterlingSilver, 1, BismuthBronze, 1, Steel, 2, BlackSteel, 4)
                 .toolStats(7.0f, 4.5f, 896, 21)
-                .blastTemp(1300)
+                .blastTemp(1300, GasTier.LOW, 480, 1000)
                 .build();
 
         BlueSteel = new Material.Builder(2511, "blue_steel")
@@ -47,7 +48,7 @@ public class HigherDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_FRAME, GENERATE_GEAR)
                 .components(RoseGold, 1, Brass, 1, Steel, 2, BlackSteel, 4)
                 .toolStats(7.5f, 5.0f, 1024, 21)
-                .blastTemp(1400)
+                .blastTemp(1400, GasTier.LOW, 480, 1000)
                 .build();
 
         Basalt = new Material.Builder(2512, "basalt")
@@ -84,7 +85,7 @@ public class HigherDegreeMaterials {
                 .components(TungstenSteel, 5, Chrome, 1, Molybdenum, 2, Vanadium, 1)
                 .toolStats(10.0f, 5.5f, 4000, 21)
                 .cableProperties(GTValues.V[6], 4, 2)
-                .blastTemp(4200)
+                .blastTemp(4200, GasTier.MID, 1920, 1300)
                 .build();
 
         /**
@@ -111,7 +112,7 @@ public class HigherDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_SPRING)
                 .components(HSSG, 6, Cobalt, 1, Manganese, 1, Silicon, 1)
                 .toolStats(10.0f, 8.0f, 5120, 21)
-                .blastTemp(5000)
+                .blastTemp(5000, GasTier.HIGH, 1920, 1400)
                 .build();
 
         HSSS = new Material.Builder(2520, "hsss")
@@ -120,7 +121,7 @@ public class HigherDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_FRAME, GENERATE_SPRING, GENERATE_ROTOR)
                 .components(HSSG, 6, Iridium, 2, Osmium, 1)
                 .toolStats(15.0f, 7.0f, 3000, 21)
-                .blastTemp(5000)
+                .blastTemp(5000, GasTier.HIGH, 1920, 1500)
                 .build();
 
         FluxedElectrum = new Material.Builder(2521, "fluxed_electrum")
@@ -131,7 +132,7 @@ public class HigherDegreeMaterials {
                 .toolStats(11.0f, 6.0f, 2100, 21)
                 .cableProperties(GTValues.V[8], 3, 2)
                 .itemPipeProperties(128, 16)
-                .blastTemp(9000)
+                .blastTemp(9000, GasTier.HIGHER, 122880, 1000)
                 .build();
     }
 }

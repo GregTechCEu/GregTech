@@ -430,6 +430,7 @@ public class SeparationRecipes {
         // Extractor
         EXTRACTOR_RECIPES.recipeBuilder()
                 .input(dust, Monazite)
+                .output(dustSmall, RareEarth)
                 .fluidOutputs(Helium.getFluid(200))
                 .duration(64).EUt(64).buildAndRegister();
 

@@ -4,6 +4,8 @@ import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterial;
+import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
@@ -31,6 +33,8 @@ public class VanillaOverrideRecipes {
             metalRecipes();
         if (ConfigHolder.vanillaRecipes.hardMiscRecipes)
             miscRecipes();
+        if (ConfigHolder.vanillaRecipes.hardDyeRecipes)
+            dyeRecipes();
         toolArmorRecipes();
     }
 
@@ -162,7 +166,6 @@ public class VanillaOverrideRecipes {
     /**
      * + Adds Glass Handcrafting
      * - Removes Sand -> Glass Furnace Smelting
-     * - Removes Regular Glass Pane Crafting
      * - Removes Glass Bottle Crafting
      */
     private static void glassRecipes() {
@@ -702,6 +705,18 @@ public class VanillaOverrideRecipes {
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:polished_andesite"));
 
         ModHandler.removeFurnaceSmelting(new ItemStack(Items.CLAY_BALL, 1, GTValues.W));
+    }
+
+    /**
+     * - Removes Concrete, Stained Clay, and Stained glass crafting recipes
+     */
+    private static void dyeRecipes() {
+        for (MarkerMaterial colorMaterial : MarkerMaterials.Color.VALUES) {
+            ModHandler.removeRecipeByName(new ResourceLocation(String.format("minecraft:%s_concrete_powder", colorMaterial)));
+            ModHandler.removeRecipeByName(new ResourceLocation(String.format("minecraft:%s_stained_hardened_clay", colorMaterial)));
+            ModHandler.removeRecipeByName(new ResourceLocation(String.format("minecraft:%s_stained_glass", colorMaterial)));
+            ModHandler.removeRecipeByName(new ResourceLocation(String.format("minecraft:%s_wool", colorMaterial)));
+        }
     }
 
     /**

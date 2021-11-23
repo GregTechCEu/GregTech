@@ -6,7 +6,6 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Translation;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -16,6 +15,7 @@ import gregtech.api.render.scene.WorldSceneRenderer;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.RenderUtil;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiItemStackGroup;
@@ -147,7 +147,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             this.buttonPreviousPattern.enabled = false;
             this.buttonNextPattern.enabled = patterns.length > 1;
 
-            this.zoom = infoPage.getDefaultZoom() * 15;
+            this.zoom = 8 / infoPage.getDefaultZoom();
             this.rotationYaw = 20.0f;
             this.rotationPitch = 135.0f;
             this.currentRendererPage = 0;
@@ -156,8 +156,9 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             zoom = (float) MathHelper.clamp(zoom + (Mouse.getEventDWheel() < 0 ? 0.5 : -0.5), 3, 999);
             setNextLayer(getLayerIndex());
         }
-        if (center != null) {
-            getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
+        if (getCurrentRenderer() != null) {
+            TrackedDummyWorld world = (TrackedDummyWorld) getCurrentRenderer().world;
+            resetCenter(world);
         }
         updateParts();
     }
@@ -187,6 +188,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         WorldSceneRenderer renderer = getCurrentRenderer();
         if (renderer != null) {
             TrackedDummyWorld world = ((TrackedDummyWorld)renderer.world);
+            resetCenter(world);
             renderer.renderedBlocksMap.clear();
             int minY = (int) world.getMinPos().getY();
             Collection<BlockPos> renderBlocks;
@@ -197,6 +199,13 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             }
             renderer.addRenderedBlocks(renderBlocks, null);
         }
+    }
+
+    private void resetCenter(TrackedDummyWorld world) {
+        Vector3f size = world.getSize();
+        Vector3f minPos = world.getMinPos();
+        center = new Vector3f(minPos.x + size.x / 2, minPos.y + size.y / 2, minPos.z + size.z / 2);
+        getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
     }
 
     private void switchRenderPage(int amount) {
@@ -234,7 +243,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         WorldSceneRenderer renderer = getCurrentRenderer();
         int sceneHeight = recipeHeight - PARTS_HEIGHT;
 
-        renderer.render(recipeLayout.getPosX(), recipeLayout.getPosY(), recipeWidth, sceneHeight, Mouse.getX(), Mouse.getY());
+        renderer.render(recipeLayout.getPosX(), recipeLayout.getPosY(), recipeWidth, sceneHeight, mouseX + recipeLayout.getPosX(), mouseY + recipeLayout.getPosY());
         drawMultiblockName(recipeWidth);
 
         //reset colors (so any elements render after this point are not dark)
@@ -346,20 +355,13 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                     tooltip.set(k, TextFormatting.GRAY + tooltip.get(k));
                 }
             }
-            Map<ItemStack, List<ITextComponent>> blockTooltipMap = infoPage.getBlockTooltipMap();
-            if (blockTooltipMap.containsKey(tooltipBlockStack)) {
-                List<ITextComponent> tooltips = blockTooltipMap.get(tooltipBlockStack);
-                for (int i = 0; i < tooltips.size(); i++) {
-                    //Start at i+1 due to ItemStack name
-                    tooltip.add(i + 1, tooltips.get(i).getFormattedText());
-                }
-            }
+            addBlockTooltips(tooltipBlockStack, tooltip);
             return tooltip;
         }
         return Collections.emptyList();
     }
 
-    public void addBlockTooltips(int slotIndex, boolean input, ItemStack itemStack, List<String> tooltip) {
+    public void addBlockTooltips(ItemStack itemStack, List<String> tooltip) {
         Map<ItemStack, List<ITextComponent>> blockTooltipMap = infoPage.getBlockTooltipMap();
         if (blockTooltipMap.containsKey(itemStack)) {
             List<ITextComponent> tooltips = blockTooltipMap.get(itemStack);
@@ -467,16 +469,17 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     @SideOnly(Side.CLIENT)
     private void renderBlockOverLay(RayTraceResult rayTraceResult) {
         BlockPos pos = rayTraceResult.getBlockPos();
-        GlStateManager.disableDepth();
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+        GlStateManager.translate((pos.getX() + 0.5), (pos.getY() + 0.5), (pos.getZ() + 0.5));
+        GlStateManager.scale(1.01, 1.01, 1.01);
 
         Tessellator tessellator = Tessellator.getInstance();
         GlStateManager.disableTexture2D();
         CCRenderState renderState = CCRenderState.instance();
         renderState.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR, tessellator.getBuffer());
         ColourMultiplier multiplier = new ColourMultiplier(0);
-        renderState.setPipeline(new Translation(pos), multiplier);
+        renderState.setPipeline(new Translation(-0.5, -0.5, -0.5), multiplier);
         BlockRenderer.BlockFace blockFace = new BlockRenderer.BlockFace();
         renderState.setModel(blockFace);
         for (EnumFacing renderSide : EnumFacing.VALUES) {
@@ -485,11 +488,12 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             renderState.render();
         }
         renderState.draw();
+        GlStateManager.scale(1 / 1.01, 1 / 1.01, 1 / 1.01);
+        GlStateManager.translate(-(pos.getX() + 0.5), -(pos.getY() + 0.5), -(pos.getZ() + 0.5));
         GlStateManager.enableTexture2D();
 
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.color(1, 1, 1, 1);
-        GlStateManager.enableDepth();
     }
 
 }

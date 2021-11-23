@@ -9,7 +9,7 @@ public class JEIVisitor extends MethodVisitor implements Opcodes {
     public static final String TARGET_CLASS_NAME = "mezz/jei/startup/ForgeModIdHelper";
     public static final ObfMapping TARGET_METHOD = new ObfMapping(TARGET_CLASS_NAME, "addModNameToIngredientTooltip", targetSignature());
 
-    private static final String FLUID_TOOLTIP_OWNER = "gregtech/integration/jei/utils/JEIHooks";
+    private static final String FLUID_TOOLTIP_OWNER = "gregtech/core/hooks/JEIHooks";
     private static final String FLUID_TOOLTIP_SIGNATURE = tooltipSignature();
     private static final String FLUID_TOOLTIP_METHOD_NAME = "addFluidTooltip";
 
