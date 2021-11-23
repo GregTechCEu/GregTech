@@ -44,6 +44,40 @@
       "content": [
         "import mods.gregtech.TerminalRegistry;\n\nTerminalRegistry.registerDevice(\u003core:ingotIron\u003e.firstItem, \"ingot_iron\");\n\nTerminalRegistry.createAppRegistryBuilder(\"ore_prospector\")\n    .isDefaultApp(true)\n    .battery(1, 500)\n    .battery(3, 3, 1000)\n    .device(\"camera\", \"wireless\")\n    .device(4, \"ingot_iron\")\n    .upgrade(\u003cminecraft:apple\u003e * 9)\n    .upgrade(2, \u003cminecraft:apple\u003e * 9, \u003cminecraft:grass\u003e * 12)\n    .build();"
       ]
+    },
+    {
+      "type": "textbox",
+      "fontSize": 9,
+      "content": [
+        "§4§lResult:\n§rCustom Device"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/140280593-37922838-4a20-4e1b-9be9-73935c4c8c13.png",
+      "width": 190,
+      "height": 120
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "Register Battery, Device, and Upgrade"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/140280587-84dc8f67-6dde-472f-9ed8-6a4c5e71abc4.png",
+      "width": 190,
+      "height": 120
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/140280590-d4700a88-5780-4e0f-95f8-130e82f4634a.png",
+      "width": 190,
+      "height": 120
     }
   ],
   "fixed": [
