@@ -272,10 +272,6 @@ public class NetworkHandler {
             }
         });
 
-        registerServerExecutor(PacketClientCapeChange.class, (packet, handler) -> {
-            CapesRegistry.handleCapeChange(packet.uuid, packet.cape); 
-        });
-      
         registerServerExecutor(CPacketPluginSynced.class, (packet, handler) -> {
             if (packet.plugin != null) {
                 packet.plugin.readPluginAction(handler.player, packet.id, packet.buf);

@@ -67,7 +67,7 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
 
         selectedX = x;
         selectedY = y;
-        CapesRegistry.wornCapes.put(uuid, cape);
+        CapesRegistry.giveCape(uuid, cape);
     }
 
     public List<ResourceLocation> getCapes() {
