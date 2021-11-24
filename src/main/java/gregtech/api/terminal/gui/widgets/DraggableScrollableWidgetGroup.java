@@ -25,6 +25,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
     protected IGuiTexture yBarF;
     protected boolean focus;
     protected Widget draggedWidget;
+    protected boolean useScissor;
 
     private int lastMouseX;
     private int lastMouseY;
@@ -37,6 +38,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         super(new Position(x, y), new Size(width, height));
         maxHeight = height;
         maxWidth = width;
+        useScissor = true;
     }
 
     public DraggableScrollableWidgetGroup setXScrollBarHeight(int xBar) {
@@ -69,6 +71,10 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         this.yBarB = background;
         this.yBarF = bar;
         return this;
+    }
+
+    public void setUseScissor(boolean useScissor) {
+        this.useScissor = useScissor;
     }
 
     public int getScrollYOffset() {
@@ -227,11 +233,18 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         if (background != null) {
             background.draw(x, y, width, height);
         }
-        RenderUtil.useScissor(x, y, width - yBarWidth, height - xBarHeight, ()->{
+        if (useScissor) {
+            RenderUtil.useScissor(x, y, width - yBarWidth, height - xBarHeight, ()->{
+                if(!hookDrawInBackground(mouseX, mouseY, partialTicks, context)) {
+                    super.drawInBackground(mouseX, mouseY, partialTicks, context);
+                }
+            });
+        } else {
             if(!hookDrawInBackground(mouseX, mouseY, partialTicks, context)) {
                 super.drawInBackground(mouseX, mouseY, partialTicks, context);
             }
-        });
+        }
+
         if (xBarHeight > 0) {
             if (xBarB != null) {
                 xBarB.draw(x, y - xBarHeight, width, xBarHeight);

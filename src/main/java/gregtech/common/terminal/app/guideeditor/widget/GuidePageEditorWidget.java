@@ -319,9 +319,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
     @Override
     protected boolean hookDrawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         int x = getPosition().x;
-        int y = getPosition().y;
         int width = getSize().width;
-        int height = getSize().height;
         if(title.isVisible()) {
             title.drawInBackground(mouseX, mouseY, partialTicks, context);
         }
@@ -337,14 +335,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                 widget.drawInBackground(mouseX, mouseY, partialTicks, context);
                 if (widget.isMouseOverElement(mouseX, mouseY)) {
                     if (widget != selected) {
-                        Position pos = widget.getPosition();
-                        Size s = widget.getSize();
-                        if (stream.contains(widget)) {
-                            drawSolidRect(x, pos.y, width - yBarWidth, s.height, 0x6f000000);
-
-                        } else {
-                            drawSolidRect(pos.x, pos.y, s.width, s.height, 0x6f000000);
-                        }
+                        drawSelectedBorder(x, width, widget);
                     }
                     flag = true;
                 }
@@ -353,13 +344,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
         if (!flag) {
             for (Widget widget : stream) {
                 if (widget.isVisible() && widget != selected && widget.isMouseOverElement(mouseX, mouseY)) {
-                    Position pos = widget.getPosition();
-                    Size s = widget.getSize();
-                    if (stream.contains(widget)) {
-                        drawSolidRect(x, pos.y, width - yBarWidth, s.height, 0x6f000000);
-                    } else {
-                        drawSolidRect(pos.x, pos.y, s.width, s.height, 0x6f000000);
-                    }
+                    drawSelectedBorder(x, width, widget);
                 }
             }
         }
@@ -379,6 +364,17 @@ public class GuidePageEditorWidget extends GuidePageWidget {
         }
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
         return true;
+    }
+
+    private void drawSelectedBorder(int x, int width, Widget widget) {
+        Position pos = widget.getPosition();
+        Size s = widget.getSize();
+        if (stream.contains(widget)) {
+            drawSolidRect(x, pos.y, width - yBarWidth, s.height, 0x6f000000);
+
+        } else {
+            drawSolidRect(pos.x, pos.y, s.width, s.height, 0x6f000000);
+        }
     }
 
     @Override
