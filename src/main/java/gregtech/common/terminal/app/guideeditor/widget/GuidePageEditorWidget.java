@@ -20,8 +20,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 
-import java.awt.*;
-
 import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class GuidePageEditorWidget extends GuidePageWidget {
@@ -166,10 +164,21 @@ public class GuidePageEditorWidget extends GuidePageWidget {
             fixed.add(guideWidget);
             this.addWidget(guideWidget);
         } else {
-            int y = getStreamBottom();
-            guideWidget = widget.updateOrCreateStreamWidget(margin, y + 5, pageWidth - 2 * margin, widgetConfig);
-            stream.add(guideWidget);
+            int index = stream.indexOf(selected);
+            if (index >= 0) {
+                guideWidget = widget.updateOrCreateStreamWidget(margin,
+                        selected.getSize().height + selected.getSelfPosition().y + scrollYOffset + 5,
+                        pageWidth - 2 * margin, widgetConfig);
+                for (int i = index + 1; i < stream.size(); i++) {
+                    stream.get(i).addSelfPosition(0, guideWidget.getSize().height + 5);
+                }
+                stream.add(index + 1, guideWidget);
+            } else {
+                guideWidget = widget.updateOrCreateStreamWidget(margin, getStreamBottom() + 5, pageWidth - 2 * margin, widgetConfig);
+                stream.add(guideWidget);
+            }
             this.addWidget(guideWidget);
+            computeMax();
         }
         return widgetConfig;
     }

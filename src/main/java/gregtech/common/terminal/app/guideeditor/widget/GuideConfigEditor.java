@@ -141,7 +141,12 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
     public void loadConfigurator(IGuideWidget widget) {
         widgetConfigurator.clearAllWidgets();
         if (widget != null) {
-            widget.loadConfigurator(widgetConfigurator, widget.getConfig(), widget.isFixed(), widget::updateValue);
+            widget.loadConfigurator(widgetConfigurator, widget.getConfig(), widget.isFixed(), type->{
+                widget.updateValue(type);
+                if (pageEditor != null) {
+                    pageEditor.computeMax();
+                }
+            });
             widgetConfigurator.addWidget(new WidgetGroup(new Position(5, widgetConfigurator.getWidgetBottomHeight() + 5), Size.ZERO));
         }
     }

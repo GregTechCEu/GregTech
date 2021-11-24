@@ -117,7 +117,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         }
     }
 
-    protected void computeMax() {
+    public void computeMax() {
         int mh = 0;
         int mw = 0;
         for (Widget widget : widgets) {
