@@ -1,6 +1,7 @@
 package gregtech.common.events;
 
 import gregtech.api.GTValues;
+import gregtech.api.util.CapesRegistry;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,5 +27,6 @@ public class PlayerEventHandler {
                 playerData.setTag(EntityPlayer.PERSISTED_NBT_TAG, data);
             }
         }
+        CapesRegistry.loadWornCapeOnLogin(event.player.getPersistentID());
     }
 }

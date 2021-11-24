@@ -60,7 +60,8 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
     private void setCape(ClickData data, int x, int y, ResourceLocation cape) {
         if (selectedX == x && selectedY == y) {
             selectedX = -1; // Sets a "not in use" flag.
-            CapesRegistry.wornCapes.put(uuid, null);
+            CapesRegistry.giveCape(uuid, null);
+
             return;
         }
 

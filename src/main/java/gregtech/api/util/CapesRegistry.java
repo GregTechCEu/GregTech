@@ -1,6 +1,9 @@
 package gregtech.api.util;
 
 import gregtech.api.GTValues;
+import gregtech.api.net.NetworkHandler;
+import gregtech.api.net.PacketClientCapeChange;
+import gregtech.api.net.PacketClipboardUIWidgetUpdate;
 import gregtech.api.render.Textures;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
@@ -36,6 +39,10 @@ public class CapesRegistry extends WorldSavedData {
     @SuppressWarnings("unused")
     public CapesRegistry(String name) {
         super(name);
+    }
+
+    public static void handleCapeChange(UUID uuid, ResourceLocation cape) {
+        wornCapes.put(uuid, cape);
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound comp) {
@@ -190,6 +197,17 @@ public class CapesRegistry extends WorldSavedData {
 
     public static void clearMaps() {
         unlockedCapes.clear();
+    }
+
+    public static void giveCape(UUID uuid, ResourceLocation cape) {
+        wornCapes.put(uuid, cape);
+        NetworkHandler.channel.sendToServer(new PacketClientCapeChange(uuid, cape).toFMLPacket());
+    }
+
+    // For loading capes when the player logs in, so that it's synced to the clients.
+    public static void loadWornCapeOnLogin(UUID uuid) {
+        if(wornCapes.get(uuid) != null)
+            NetworkHandler.channel.sendToServer(new PacketClientCapeChange(uuid, wornCapes.get(uuid)).toFMLPacket());
     }
 
 }

@@ -9,6 +9,7 @@ import gregtech.api.gui.UIFactory;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTLog;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
@@ -206,7 +207,7 @@ public class NetworkHandler {
                     buf.writeVarInt(packet.clipboard.getWorld().provider.getDimension());
                     buf.writeBlockPos(packet.clipboard.getPos());
                     buf.writeVarInt(packet.id);
-                    if(packet.payloadWriter != null) {
+                    if (packet.payloadWriter != null) {
                         packet.payloadWriter.accept(buf);
                     }
                 },
@@ -214,11 +215,19 @@ public class NetworkHandler {
                     int dim = buf.readVarInt();
                     BlockPos pos = buf.readBlockPos();
                     TileEntity te = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dim).getTileEntity(pos);
-                    if(te instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) te).getMetaTileEntity() instanceof MetaTileEntityClipboard) {
+                    if (te instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) te).getMetaTileEntity() instanceof MetaTileEntityClipboard) {
                         return new PacketClipboardUIWidgetUpdate((MetaTileEntityClipboard) ((MetaTileEntityHolder) te).getMetaTileEntity(), buf);
                     }
                     return new PacketClipboardUIWidgetUpdate(null, buf);
                 }
+        ));
+
+        registerPacket(7, PacketClientCapeChange.class, new PacketCodec<>(
+                (packet, buf) -> {
+                    buf.writeUniqueId(packet.uuid);
+                    buf.writeResourceLocation(packet.cape);
+                },
+                (buf) -> new PacketClientCapeChange(buf.readUniqueId(), buf.readResourceLocation())
         ));
 
 
@@ -236,6 +245,10 @@ public class NetworkHandler {
             if (packet.clipboard != null) {
                 packet.clipboard.readUIAction(handler.player, packet.id, packet.buf);
             }
+        });
+
+        registerServerExecutor(PacketClientCapeChange.class, (packet, handler) -> {
+            CapesRegistry.handleCapeChange(packet.uuid, packet.cape);
         });
 
         if (FMLCommonHandler.instance().getSide().isClient()) {
@@ -266,6 +279,10 @@ public class NetworkHandler {
             IBlockState blockState = world.getBlockState(packet.blockPos);
             ParticleManager particleManager = Minecraft.getMinecraft().effectRenderer;
             ((ICustomParticleBlock) blockState.getBlock()).handleCustomParticle(world, packet.blockPos, particleManager, packet.entityPos, packet.particlesAmount);
+        });
+
+        registerClientExecutor(PacketClientCapeChange.class, (packet, handler) -> {
+            CapesRegistry.handleCapeChange(packet.uuid, packet.cape);
         });
 
         registerClientExecutor(PacketClipboard.class, (packet, handler) -> ClipboardUtil.copyToClipboard(packet.text));
