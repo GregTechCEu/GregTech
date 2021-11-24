@@ -23,6 +23,7 @@ import java.util.Random;
 public class ParticleHandlerUtil {
 
     public static void addBlockRunningEffects(World worldObj, Entity entity, TextureAtlasSprite atlasSprite, int spriteColor) {
+        if (atlasSprite == null) return;
         Random rand = new Random();
         double posX = entity.posX + (rand.nextFloat() - 0.5) * entity.width;
         double posY = entity.getEntityBoundingBox().minY + 0.1;
@@ -39,6 +40,7 @@ public class ParticleHandlerUtil {
     }
 
     public static void addBlockLandingEffects(World worldObj, Vector3 entityPos, TextureAtlasSprite atlasSprite, int spriteColor, ParticleManager manager, int numParticles) {
+        if (atlasSprite == null) return;
         Vector3 start = entityPos.copy();
         Vector3 end = start.copy().add(Vector3.down.copy().multiply(4));
         RayTraceResult traceResult = worldObj.rayTraceBlocks(start.vec3(), end.vec3(), true, false, true);
@@ -90,6 +92,7 @@ public class ParticleHandlerUtil {
     //Straight copied from CustomParticleHandler with color parameter added
 
     public static void addBlockHitEffects(World world, Cuboid6 bounds, EnumFacing side, TextureAtlasSprite icon, int spriteColor, ParticleManager particleManager) {
+        if (icon == null) return;
         float border = 0.1F;
         Vector3 diff = bounds.max.copy().subtract(bounds.min).add(-2 * border);
         diff.x *= world.rand.nextDouble();
@@ -128,6 +131,7 @@ public class ParticleHandlerUtil {
     }
 
     public static void addBlockDestroyEffects(World world, Cuboid6 bounds, TextureAtlasSprite icon, int spriteColor, ParticleManager particleManager) {
+        if (icon == null) return;
         Vector3 diff = bounds.max.copy().subtract(bounds.min);
         Vector3 center = bounds.min.copy().add(bounds.max).multiply(0.5);
         Vector3 density = diff.copy().multiply(4).ceil();

@@ -223,7 +223,7 @@ public class Recipe {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Recipe recipe = (Recipe) o;
-        return  this.EUt == recipe.EUt &&
+        return this.EUt == recipe.EUt &&
                 this.duration == recipe.duration &&
                 hasSameInputs(recipe) &&
                 hasSameOutputs(recipe) &&
@@ -275,9 +275,9 @@ public class Recipe {
 
     private int hashOutputs() {
         int hash = 0;
-            for (ItemStack is : this.outputs) {
-                hash += hashStrategy.hashCode(is);
-            }
+        for (ItemStack is : this.outputs) {
+            hash += hashStrategy.hashCode(is);
+        }
         return hash;
     }
 
@@ -381,15 +381,19 @@ public class Recipe {
     public List<ItemStack> getResultItemOutputs(int maxOutputSlots, Random random, int tier) {
         ArrayList<ItemStack> outputs = new ArrayList<>(GTUtility.copyStackList(getOutputs()));
         List<ChanceEntry> chancedOutputsList = getChancedOutputs();
+        List<ItemStack> resultChanced = new ArrayList<>();
         int maxChancedSlots = maxOutputSlots - outputs.size();
-        if (chancedOutputsList.size() > maxChancedSlots) {
-            chancedOutputsList = chancedOutputsList.subList(0, Math.max(0, maxChancedSlots));
-        }
         for (ChanceEntry chancedOutput : chancedOutputsList) {
             int outputChance = RecipeMap.getChanceFunction().chanceFor(chancedOutput.getChance(), chancedOutput.getBoostPerTier(), tier);
             if (random.nextInt(Recipe.getMaxChancedValue()) <= outputChance) {
-                outputs.add(chancedOutput.getItemStack().copy());
+                ItemStack stackToAdd = chancedOutput.getItemStack();
+                GTUtility.addStackToItemStackList(stackToAdd, resultChanced);
             }
+        }
+        if (resultChanced.size() > maxChancedSlots) {
+            outputs.addAll(resultChanced.subList(0, Math.max(0, maxChancedSlots)));
+        } else {
+            outputs.addAll(resultChanced);
         }
         return outputs;
     }

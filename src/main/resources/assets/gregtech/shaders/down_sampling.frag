@@ -1,25 +1,23 @@
-#version 140
+#version 120
 
-in vec2 textureCoords;
-
-out vec4 out_colour;
+varying vec2 textureCoords;
 
 uniform sampler2D originalTexture;
 uniform vec2 u_resolution;
 uniform vec2 u_resolution2;
 
 vec4 four_k(vec3 textel, vec2 uv) {
-    return (texture(originalTexture, uv + textel.xx) //1 1
-    + texture(originalTexture, uv + textel.xy) // 1 -1
-    + texture(originalTexture, uv + textel.yx) // -1 1
-    + texture(originalTexture, uv + textel.yy)) * 0.25; // -1 -1
+    return (texture2D(originalTexture, uv + textel.xx) //1 1
+    + texture2D(originalTexture, uv + textel.xy) // 1 -1
+    + texture2D(originalTexture, uv + textel.yx) // -1 1
+    + texture2D(originalTexture, uv + textel.yy)) * 0.25; // -1 -1
 }
 
 void main(void) {
     vec3 textel1 = vec3(1., -1., 0.) / u_resolution2.xyx;
     vec3 textel2 = vec3(1., -1., 0.) / u_resolution.xyx;
 
-    out_colour = (four_k(textel1, textureCoords + textel2.yy)
+    vec4 out_colour = (four_k(textel1, textureCoords + textel2.yy)
     + four_k(textel1, textureCoords + textel2.zy)
     + four_k(textel1, textureCoords + textel2.yz)
     + four_k(textel1, textureCoords)) * 0.25 * 0.125;
@@ -44,5 +42,5 @@ void main(void) {
     + four_k(textel1, textureCoords + textel1.yx)
     + four_k(textel1, textureCoords + textel1.yy)) * 0.25 * 0.5;
 
-    out_colour = vec4(out_colour.rgb, 1.);
+    gl_FragColor = vec4(out_colour.rgb, 1.);
 }

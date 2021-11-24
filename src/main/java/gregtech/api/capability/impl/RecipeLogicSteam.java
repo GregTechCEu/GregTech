@@ -176,6 +176,11 @@ public class RecipeLogicSteam extends AbstractRecipeLogic {
     }
 
     @Override
+    protected long getEnergyInputPerSecond() {
+        return 0;
+    }
+
+    @Override
     protected long getEnergyStored() {
         return (long) Math.ceil(steamFluidTank.getFluidAmount() * conversionRate);
     }

@@ -1,23 +1,20 @@
 package gregtech.api.render.scene;
 
 import codechicken.lib.vec.Vector3;
-import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.util.Position;
 import gregtech.api.util.PositionedRect;
+import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -27,13 +24,14 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
-import javax.annotation.Nullable;
 import javax.vecmath.Vector3f;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -99,6 +97,9 @@ public abstract class WorldSceneRenderer {
     public void render(float x, float y, float width, float height, int mouseX, int mouseY) {
         // setupCamera
         PositionedRect positionedRect = getPositionedRect((int)x, (int)y, (int)width, (int)height);
+        PositionedRect mouse = getPositionedRect(mouseX, mouseY, 0, 0);
+        mouseX = mouse.position.x;
+        mouseY = mouse.position.y;
         setupCamera(positionedRect);
         // render TrackedDummyWorld
         drawWorld();
@@ -426,20 +427,4 @@ public abstract class WorldSceneRenderer {
         return winPos;
     }
 
-    public static class BlockPosFace extends BlockPos {
-        public final EnumFacing facing;
-
-        public BlockPosFace(BlockPos pos, EnumFacing facing) {
-            super(pos);
-            this.facing = facing;
-        }
-
-        @Override
-        public boolean equals(@Nullable Object bp) {
-            if (bp instanceof BlockPosFace) {
-                return super.equals(bp) && ((BlockPosFace) bp).facing == facing;
-            }
-            return false;
-        }
-    }
 }

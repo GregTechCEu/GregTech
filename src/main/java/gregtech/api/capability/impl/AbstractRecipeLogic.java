@@ -6,9 +6,11 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.logic.IParallelableRecipeLogic;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
@@ -28,7 +30,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.LongSupplier;
 
-public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable {
+public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic {
 
     private static final String ALLOW_OVERCLOCKING = "AllowOverclocking";
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
@@ -37,6 +39,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
 
     protected Recipe previousRecipe;
     protected boolean allowOverclocking = true;
+    protected int parallelRecipesPerformed;
     private long overclockVoltage = 0;
     private LongSupplier overclockPolicy = this::getMaxVoltage;
 
@@ -66,6 +69,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.recipeMap = recipeMap;
         this.hasPerfectOC = hasPerfectOC;
     }
+
+    protected abstract long getEnergyInputPerSecond();
 
     protected abstract long getEnergyStored();
 
@@ -167,12 +172,27 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         return true;
     }
 
+    public void invalidateInputs() {
+        this.invalidInputsForRecipes = true;
+    }
+
+    public void invalidateOutputs() {
+        this.isOutputsFull = true;
+    }
+
+    public void setParallelRecipesPerformed(int amount) {
+        this.parallelRecipesPerformed = amount;
+    }
+
     protected void updateRecipeProgress() {
         boolean drawEnergy = drawEnergy(recipeEUt);
         if (drawEnergy || (recipeEUt < 0)) {
             //as recipe starts with progress on 1 this has to be > only not => to compensate for it
             if (++progressTime > maxProgressTime) {
                 completeRecipe();
+            }
+            if (this.hasNotEnoughEnergy && getEnergyInputPerSecond() > 19 * recipeEUt) {
+                this.hasNotEnoughEnergy = false;
             }
         } else if (recipeEUt > 0) {
             //only set hasNotEnoughEnergy if this recipe is consuming recipe
@@ -191,9 +211,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
 
     protected void trySearchNewRecipe() {
         long maxVoltage = getMaxVoltage();
-        Recipe currentRecipe = null;
+        Recipe currentRecipe;
         IItemHandlerModifiable importInventory = getInputInventory();
         IMultipleTankHandler importFluids = getInputTank();
+        IItemHandlerModifiable exportInventory = getOutputInventory();
+        IMultipleTankHandler exportFluids = getOutputTank();
 
         // see if the last recipe we used still works
         if (this.previousRecipe != null && this.previousRecipe.matches(false, importInventory, importFluids))
@@ -209,11 +231,28 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.invalidInputsForRecipes = (currentRecipe == null);
 
         // proceed if we have a usable recipe.
-        if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory))
-            setupRecipe(currentRecipe);
+        if (currentRecipe != null) {
+
+            currentRecipe = findParallelRecipe(
+                    this,
+                    currentRecipe,
+                    importInventory,
+                    importFluids,
+                    exportInventory,
+                    exportFluids,
+                    maxVoltage, metaTileEntity.getParallelLimit());
+
+            if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory)) {
+                setupRecipe(currentRecipe);
+            }
+        }
         // Inputs have been inspected.
         metaTileEntity.getNotifiedItemInputList().clear();
         metaTileEntity.getNotifiedFluidInputList().clear();
+    }
+
+    public Enum<ParallelLogicType> getParallelLogicType() {
+        return ParallelLogicType.MULTIPLY;
     }
 
     protected int getMinTankCapacity(IMultipleTankHandler tanks) {
@@ -240,25 +279,45 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     /**
      * Determines if the provided recipe is possible to run from the provided inventory, or if there is anything preventing
      * the Recipe from being completed.
-     *
+     * <p>
      * Will consume the inputs of the Recipe if it is possible to run.
      *
-     * @param recipe - The Recipe that will be consumed from the inputs and ran in the machine
+     * @param recipe          - The Recipe that will be consumed from the inputs and ran in the machine
      * @param importInventory - The inventory that the recipe should be consumed from.
      *                        Used mainly for Distinct bus implementation for multiblocks to specify
      *                        a specific bus
      * @return - true if the recipe is successful, false if the recipe is not successful
      */
     protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
-        int[] resultOverclock = calculateOverclock(recipe.getEUt(), recipe.getDuration());
+
+        //Format: EU/t, Duration
+        int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.overclockPolicy.getAsLong(), recipe.getDuration());
         int totalEUt = resultOverclock[0] * resultOverclock[1];
+
         IItemHandlerModifiable exportInventory = getOutputInventory();
         IMultipleTankHandler importFluids = getInputTank();
         IMultipleTankHandler exportFluids = getOutputTank();
-        if (!(totalEUt >= 0 ? getEnergyStored() >= (totalEUt > getEnergyCapacity() / 2 ? resultOverclock[0] : totalEUt) :
-            (getEnergyStored() - resultOverclock[0] <= getEnergyCapacity()))) {
+
+        boolean enoughPower;
+        //RIP Ternary
+        if (totalEUt >= 0) {
+            int capacity;
+            if (totalEUt > getEnergyCapacity() / 2) {
+                capacity = resultOverclock[0];
+            } else {
+                capacity = totalEUt;
+            }
+
+            enoughPower = getEnergyStored() >= capacity;
+        } else {
+            int power = resultOverclock[0];
+            enoughPower = getEnergyStored() - (long) power <= getEnergyCapacity();
+        }
+
+        if (!enoughPower) {
             return false;
         }
+
         if (!MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs(exportInventory.getSlots()))) {
             this.isOutputsFull = true;
             return false;
@@ -269,10 +328,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         }
         this.isOutputsFull = false;
         return recipe.matches(true, importInventory, importFluids);
-    }
-
-    protected int[] calculateOverclock(int EUt, int duration) {
-        return calculateOverclock(EUt, this.overclockPolicy.getAsLong(), duration);
     }
 
     protected int[] calculateOverclock(int EUt, long voltage, int duration) {
@@ -320,7 +375,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     }
 
     protected void setupRecipe(Recipe recipe) {
-        int[] resultOverclock = calculateOverclock(recipe.getEUt(), recipe.getDuration());
+        int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.overclockPolicy.getAsLong(), recipe.getDuration());
         this.progressTime = 1;
         setMaxProgress(resultOverclock[1]);
         this.recipeEUt = resultOverclock[0];
@@ -348,6 +403,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.itemOutputs = null;
         this.hasNotEnoughEnergy = false;
         this.wasActiveAndNeedsUpdate = true;
+        this.parallelRecipesPerformed = 0;
     }
 
     public double getProgressPercent() {

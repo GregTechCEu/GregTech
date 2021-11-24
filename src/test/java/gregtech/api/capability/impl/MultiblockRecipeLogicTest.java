@@ -1,12 +1,11 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
-
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
@@ -25,7 +24,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -74,7 +72,7 @@ public class MultiblockRecipeLogicTest {
                 .buildAndRegister();
 
         RecipeMapMultiblockController mbt =
-                MetaTileEntities.registerMetaTileEntity(511,
+                MetaTileEntities.registerMetaTileEntity(509,
                         new MetaTileEntityElectricBlastFurnace(
                                 // super function calls the world, which equal null in test
                                 new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
@@ -104,6 +102,11 @@ public class MultiblockRecipeLogicTest {
                             @Override
                             public boolean hasMufflerMechanics() {
                                 return false;
+                            }
+
+                            @Override
+                            public int getParallelLimit() {
+                                return 1;
                             }
                         });
 
@@ -313,7 +316,7 @@ public class MultiblockRecipeLogicTest {
                 .buildAndRegister();
 
         RecipeMapMultiblockController mbt =
-                MetaTileEntities.registerMetaTileEntity(512,
+                MetaTileEntities.registerMetaTileEntity(510,
                         new MetaTileEntityElectricBlastFurnace(
                                 // super function calls the world, which equal null in test
                                 new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
@@ -339,6 +342,11 @@ public class MultiblockRecipeLogicTest {
                             @Override
                             public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
                                 return true;
+                            }
+
+                            @Override
+                            public int getParallelLimit() {
+                                return 1;
                             }
                         });
 

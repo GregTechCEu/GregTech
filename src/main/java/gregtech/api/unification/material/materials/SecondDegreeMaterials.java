@@ -2,6 +2,7 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.PropertyKey;
 
 import static gregtech.api.unification.material.Materials.*;
@@ -98,7 +99,7 @@ public class SecondDegreeMaterials {
                 .components(Nickel, 1, BlackBronze, 1, Steel, 3)
                 .toolStats(6.5f, 6.5f, 768, 21)
                 .cableProperties(GTValues.V[4], 3, 2)
-                .blastTemp(1200)
+                .blastTemp(1200, GasTier.LOW)
                 .build();
 
         DamascusSteel = new Material.Builder(2012, "damascus_steel")
@@ -107,7 +108,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL)
                 .components(Steel, 1)
                 .toolStats(8.0f, 5.0f, 1280, 21)
-                .blastTemp(1500)
+                .blastTemp(1500, GasTier.LOW)
                 .build();
 
         TungstenSteel = new Material.Builder(2013, "tungsten_steel")
@@ -118,7 +119,7 @@ public class SecondDegreeMaterials {
                 .toolStats(8.0f, 4.0f, 2560, 21)
                 .fluidPipeProperties(7568, 100, true)
                 .cableProperties(GTValues.V[5], 3, 2)
-                .blastTemp(3000)
+                .blastTemp(3000, GasTier.MID)
                 .build();
 
         CobaltBrass = new Material.Builder(2014, "cobalt_brass")
@@ -272,7 +273,7 @@ public class SecondDegreeMaterials {
                 .ingotSmeltInto(Steel)
                 .arcSmeltInto(Steel)
                 .macerateInto(Steel)
-                .blastTemp(1000)
+                .blastTemp(1000) // no gas tier for steel
                 .build();
         Steel.getProperty(PropertyKey.INGOT).setMagneticMaterial(SteelMagnetic);
 
@@ -283,7 +284,7 @@ public class SecondDegreeMaterials {
                 .components(Vanadium, 1, Chrome, 1, Steel, 7)
                 .toolStats(7.0f, 3.0f, 1920, 21)
                 .fluidPipeProperties(2073, 100, true)
-                .blastTemp(1453)
+                .blastTemp(1453, GasTier.LOW)
                 .build();
 
         Potin = new Material.Builder(2037, "potin")
@@ -324,7 +325,7 @@ public class SecondDegreeMaterials {
                 .components(Naquadah, 2, Osmiridium, 1, Trinium, 1)
                 .toolStats(8.0f, 5.0f, 5120, 21)
                 .cableProperties(GTValues.V[8], 2, 4)
-                .blastTemp(7200)
+                .blastTemp(7200, GasTier.HIGH)
                 .build();
 
         NickelSulfateSolution = new Material.Builder(2043, "nickel_sulfate_water_solution")

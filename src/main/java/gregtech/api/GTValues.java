@@ -51,6 +51,12 @@ public class GTValues {
      */
     public static final long[] V = new long[]{8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, 2097152, 8388608, 33554432, 134217728, 536870912, Integer.MAX_VALUE};
 
+
+    /**
+     * The Voltage Tiers adjusted for cable loss.
+     */
+    public static final long[] VA = new long[]{7, 30, 120, 480, 1920, 7680, 30720, 122880, 491520, 1966080, 7864320, 31457280, 125829120, 503316480, 2013265920};
+
     public static final int ULV = 0;
     public static final int LV = 1;
     public static final int MV = 2;

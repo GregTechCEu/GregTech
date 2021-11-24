@@ -240,21 +240,19 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
             if (temps.size() == 0)
                 return;
             float fluidTemperature = (float) temps.stream().mapToInt(i -> i).average().getAsDouble();
-            boolean wasDamaged = false;
             if (fluidTemperature >= 373) {
                 //100C, temperature of boiling water
                 float damageAmount = (fluidTemperature - 363) / 4.0f;
                 entityLiving.attackEntityFrom(DamageSources.getHeatDamage(), damageAmount);
-                wasDamaged = true;
+                if (entityLiving instanceof EntityPlayerMP)
+                    GTTriggers.FLUID_PIPE_DEATH_HEAT.trigger((EntityPlayerMP) entityLiving);
 
             } else if (fluidTemperature <= 183) {
                 //-90C, temperature of freezing of most gaseous elements
                 float damageAmount = fluidTemperature / 4.0f;
                 entityLiving.attackEntityFrom(DamageSources.getFrostDamage(), damageAmount);
-                wasDamaged = true;
-            }
-            if (wasDamaged && entityLiving instanceof EntityPlayerMP) {
-                GTTriggers.FLUID_PIPE_DEATH.trigger((EntityPlayerMP) entityLiving);
+                if (entityLiving instanceof EntityPlayerMP)
+                    GTTriggers.FLUID_PIPE_DEATH_COLD.trigger((EntityPlayerMP) entityLiving);
             }
         }
     }

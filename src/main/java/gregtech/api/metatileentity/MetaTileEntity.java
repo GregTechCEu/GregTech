@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerProxy;
@@ -20,9 +21,9 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.recipes.FluidKey;
 import gregtech.api.render.Textures;
-import gregtech.api.util.GTFluidUtils;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
 import gregtech.core.hooks.BloomRenderLayerHooks;
@@ -44,10 +45,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -58,11 +56,12 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
-import static gregtech.api.util.InventoryUtils.simulateItemStackMerge;
 
 public abstract class MetaTileEntity implements ICoverable {
 
@@ -495,10 +494,6 @@ public abstract class MetaTileEntity implements ICoverable {
     }
 
     public boolean canPlaceCoverOnSide(EnumFacing side) {
-        if (hasFrontFacing() && side == getFrontFacing()) {
-            //covers cannot be placed on this side
-            return false;
-        }
         ArrayList<IndexedCuboid6> collisionList = new ArrayList<>();
         addCollisionBoundingBox(collisionList);
         //noinspection RedundantIfStatement
@@ -848,7 +843,6 @@ public abstract class MetaTileEntity implements ICoverable {
     }
 
 
-
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_COVERABLE) {
             return GregtechTileCapabilities.CAPABILITY_COVERABLE.cast(this);
@@ -1004,42 +998,68 @@ public abstract class MetaTileEntity implements ICoverable {
      * <br /><br />
      * Simulating will not modify any of the input parameters. Insertion will either succeed completely, or fail
      * without modifying anything.
+     * This method should be called with {@code simulate} {@code true} first, then {@code simulate} {@code false},
+     * only if it returned {@code true}.
      *
      * @param handler  the target inventory
      * @param simulate whether to simulate ({@code true}) or actually perform the insertion ({@code false})
      * @param items    the items to insert into {@code handler}.
      * @return {@code true} if the insertion succeeded, {@code false} otherwise.
-     * @throws IllegalStateException if {@code handler} does not accept all items as expected while performing a
-     *                               real insertion. This should not be possible unless the handler is modified in
-     *                               another thread, or it does not behave in a manner conforming with the contract
-     *                               of {@link gregtech.api.util.InventoryUtils#simulateItemStackMerge simulateItemStackMerge}.
      */
     public static boolean addItemsToItemHandler(final IItemHandler handler,
                                                 final boolean simulate,
                                                 final List<ItemStack> items) {
         // determine if there is sufficient room to insert all items into the target inventory
-        final boolean canMerge = simulateItemStackMerge(items, handler);
+        if (simulate) {
+            OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(handler);
+            HashMap<ItemStackKey, Integer> stackKeyMap = GTHashMaps.fromItemStackCollection(items);
 
-        // if we're not simulating and the merge should succeed, perform the merge.
-        if (!simulate && canMerge)
-            items.forEach(stack -> {
-                ItemStack rest = ItemHandlerHelper.insertItemStacked(handler, stack, simulate);
-                if (!rest.isEmpty())
-                    throw new IllegalStateException(
-                            String.format("Insertion failed, remaining stack contained %d items.", rest.getCount()));
-            });
+            for (Map.Entry<ItemStackKey, Integer> entry : stackKeyMap.entrySet()) {
+                int amountToInsert = entry.getValue();
+                int amount = overlayedItemHandler.insertStackedItemStackKey(entry.getKey(), amountToInsert);
+                if (amount > 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
 
-        return canMerge;
+        // perform the merge.
+        items.forEach(stack -> ItemHandlerHelper.insertItemStacked(handler, stack, false));
+        return true;
     }
 
-    public static boolean addFluidsToFluidHandler(IFluidHandler handler, boolean simulate, List<FluidStack> items) {
-        boolean filledAll = true;
-        for (FluidStack stack : items) {
-            int filled = handler.fill(stack, !simulate);
-            filledAll &= filled == stack.amount;
-            if (!filledAll && simulate) return false;
+    /**
+     * Simulates the insertion of fluid into a target fluid handler, then optionally performs the insertion.
+     * <br /><br />
+     * Simulating will not modify any of the input parameters. Insertion will either succeed completely, or fail
+     * without modifying anything.
+     * This method should be called with {@code simulate} {@code true} first, then {@code simulate} {@code false},
+     * only if it returned {@code true}.
+     *
+     * @param fluidHandler the target inventory
+     * @param simulate     whether to simulate ({@code true}) or actually perform the insertion ({@code false})
+     * @param fluidStacks  the items to insert into {@code fluidHandler}.
+     * @return {@code true} if the insertion succeeded, {@code false} otherwise.
+     */
+    public static boolean addFluidsToFluidHandler(IMultipleTankHandler fluidHandler,
+                                                  boolean simulate,
+                                                  List<FluidStack> fluidStacks) {
+        if (simulate) {
+            OverlayedFluidHandler overlayedFluidHandler = new OverlayedFluidHandler(fluidHandler);
+            HashMap<FluidKey, Integer> fluidKeyMap = GTHashMaps.fromFluidCollection(fluidStacks);
+            for (Map.Entry<FluidKey, Integer> entry : fluidKeyMap.entrySet()) {
+                int amountToInsert = entry.getValue();
+                int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), amountToInsert);
+                if (inserted != amountToInsert) {
+                    return false;
+                }
+            }
+            return true;
         }
-        return filledAll;
+
+        fluidStacks.forEach(fluidStack -> fluidHandler.fill(fluidStack, true));
+        return true;
     }
 
     public final int getOutputRedstoneSignal(@Nullable EnumFacing side) {
@@ -1272,6 +1292,10 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public List<IFluidHandler> getNotifiedFluidOutputList() {
         return notifiedFluidOutputList;
+    }
+
+    public int getParallelLimit() {
+        return 1;
     }
 
     public boolean isFragile() {

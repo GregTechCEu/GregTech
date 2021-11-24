@@ -353,7 +353,7 @@ public class MixerRecipes {
                 .input(dust, Ruthenium, 2)
                 .input(dust, Iridium)
                 .notConsumable(new IntCircuitIngredient(1))
-                .output(dust, RuthenianIridium, 3)
+                .output(dust, Ruridit, 3)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(300).EUt(1920)

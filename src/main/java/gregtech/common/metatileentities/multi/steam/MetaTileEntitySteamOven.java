@@ -33,7 +33,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
 
     public MetaTileEntitySteamOven(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.FURNACE_RECIPES, CONVERSION_RATE);
-        this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE, 8);
+        this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE);
     }
 
     @Override
@@ -168,6 +168,11 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
         if (dataId == IS_WORKING) {
             this.isActive = buf.readBoolean();
         }
+    }
+
+    @Override
+    public int getParallelLimit() {
+        return 8;
     }
 
     @Nonnull

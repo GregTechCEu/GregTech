@@ -14,6 +14,11 @@ public class PrimitiveRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
+    protected long getEnergyInputPerSecond() {
+        return Integer.MAX_VALUE;
+    }
+
+    @Override
     protected long getEnergyStored() {
         return Integer.MAX_VALUE;
     }

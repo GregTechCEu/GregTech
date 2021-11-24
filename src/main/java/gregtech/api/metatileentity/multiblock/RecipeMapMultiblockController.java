@@ -6,7 +6,6 @@ import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.IMufflerHatch;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
@@ -22,7 +21,6 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFireboxCasing;
 import gregtech.common.blocks.VariantActiveBlock;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -39,7 +37,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase {
 
@@ -106,11 +103,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         this.replaceVariantBlocksActive(false);
         variantActiveBlocks.clear();
         lastActive = false;
-    }
-
-    public void outputRecoveryItems() {
-        IMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
-        muffler.recoverItemsTable(recoveryItems.stream().map(ItemStack::copy).collect(Collectors.toList()));
     }
 
     protected void replaceVariantBlocksActive(boolean isActive) {
@@ -181,7 +173,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
             }
 
-            if(canBeDistinct()) {
+            if (canBeDistinct()) {
                 ITextComponent buttonText = new TextComponentTranslation("gregtech.multiblock.universal.distinct");
                 buttonText.appendText(" ");
                 ITextComponent button = AdvancedTextWidget.withButton(isDistinct() ?
@@ -198,6 +190,9 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
             } else if (recipeMapWorkable.isActive()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
                 int currentProgress = (int) (recipeMapWorkable.getProgressPercent() * 100);
+                if (this.getParallelLimit() != 1) {
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.parallel", this.getParallelLimit()));
+                }
                 textList.add(new TextComponentTranslation("gregtech.multiblock.progress", currentProgress));
             } else {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));

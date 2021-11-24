@@ -3,6 +3,7 @@ package gregtech.api.recipes;
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.Recipe.ChanceEntry;
+import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -21,6 +22,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 /**
  * @see Recipe
@@ -40,6 +42,8 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected int duration, EUt;
     protected boolean hidden = false;
+
+    protected int parallel = 0;
 
     protected Consumer<RecipeBuilder<?>> onBuildAction = null;
 
@@ -181,6 +185,11 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R clearInputs() {
+        this.inputs.clear();
+        return (R) this;
+    }
+
     public R notConsumable(ItemStack itemStack) {
         return inputs(CountableIngredient.from(itemStack, 0));
     }
@@ -252,6 +261,11 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R clearOutputs() {
+        this.outputs.clear();
+        return (R) this;
+    }
+
     public R fluidInputs(FluidStack... inputs) {
         return fluidInputs(Arrays.asList(inputs));
     }
@@ -267,6 +281,11 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R clearFluidInputs() {
+        this.fluidInputs.clear();
+        return (R) this;
+    }
+
     public R fluidOutputs(FluidStack... outputs) {
         return fluidOutputs(Arrays.asList(outputs));
     }
@@ -275,6 +294,11 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         outputs = new ArrayList<>(outputs);
         outputs.removeIf(Objects::isNull);
         this.fluidOutputs.addAll(outputs);
+        return (R) this;
+    }
+
+    public R clearFluidOutputs() {
+        this.fluidOutputs.clear();
         return (R) this;
     }
 
@@ -311,6 +335,109 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     public R chancedOutputs(List<ChanceEntry> chancedOutputs) {
         chancedOutputs.stream().map(ChanceEntry::copy).forEach(this.chancedOutputs::add);
         return (R) this;
+    }
+
+    public R clearChancedOutput() {
+        this.chancedOutputs.clear();
+        return (R) this;
+    }
+
+    /**
+     * Copies the chanced outputs of a Recipe numberOfOperations times, so every chanced output
+     * gets an individual roll, instead of an all or nothing situation
+     *
+     * @param chancedOutputsFrom The original recipe before any parallel multiplication
+     * @param numberOfOperations The number of parallel operations that have been performed
+     */
+
+    public void chancedOutputsMultiply(Recipe chancedOutputsFrom, int numberOfOperations) {
+        for (Recipe.ChanceEntry entry : chancedOutputsFrom.getChancedOutputs()) {
+            int chance = entry.getChance();
+            int boost = entry.getBoostPerTier();
+
+            // Add individual chanced outputs per number of parallel operations performed, to mimic regular recipes.
+            // This is done instead of simply batching the chanced outputs by the number of parallel operations performed
+            IntStream.range(0, numberOfOperations).forEach(value -> {
+                this.chancedOutput(entry.getItemStack(), chance, boost);
+            });
+        }
+    }
+
+    /**
+     * Appends the passed {@link Recipe} onto the inputs and outputs, multiplied by the amount specified by multiplier
+     * The duration of the multiplied {@link Recipe} is also added to the current duration
+     *
+     * @param recipe     The Recipe to be multiplied
+     * @param multiplier Amount to multiply the recipe by
+     * @return the builder holding the multiplied recipe
+     */
+
+    public R append(Recipe recipe, int multiplier) {
+        for (Map.Entry<RecipeProperty<?>, Object> property : recipe.getPropertyValues()) {
+            this.applyProperty(property.getKey().getKey(), property.getValue());
+        }
+
+        // Create holders for the various parts of the new multiplied Recipe
+        List<CountableIngredient> newRecipeInputs = new ArrayList<>();
+        List<FluidStack> newFluidInputs = new ArrayList<>();
+        List<ItemStack> outputItems = new ArrayList<>();
+        List<FluidStack> outputFluids = new ArrayList<>();
+
+        // Populate the various holders of the multiplied Recipe
+        multiplyInputsAndOutputs(newRecipeInputs, newFluidInputs, outputItems, outputFluids, recipe, multiplier);
+
+        // Build the new Recipe with multiplied components
+        this.inputsIngredients(newRecipeInputs);
+        this.fluidInputs(newFluidInputs);
+        this.outputs(outputItems);
+        this.fluidOutputs(outputFluids);
+
+        this.EUt(recipe.getEUt());
+        this.duration(this.duration + recipe.getDuration() * multiplier);
+        this.parallel += multiplier;
+
+        chancedOutputsMultiply(recipe, multiplier);
+
+        return (R) this;
+    }
+
+    protected static void multiplyInputsAndOutputs(List<CountableIngredient> newRecipeInputs,
+                                                   List<FluidStack> newFluidInputs,
+                                                   List<ItemStack> outputItems,
+                                                   List<FluidStack> outputFluids,
+                                                   Recipe recipe,
+                                                   int numberOfOperations) {
+        recipe.getInputs().forEach(ci ->
+                newRecipeInputs.add(new CountableIngredient(ci.getIngredient(),
+                        ci.getCount() * numberOfOperations)));
+
+        recipe.getFluidInputs().forEach(fluidStack ->
+                newFluidInputs.add(new FluidStack(fluidStack.getFluid(),
+                        fluidStack.amount * numberOfOperations)));
+
+        recipe.getOutputs().forEach(itemStack ->
+                outputItems.add(copyItemStackWithCount(itemStack,
+                        itemStack.getCount() * numberOfOperations)));
+
+        recipe.getFluidOutputs().forEach(fluidStack ->
+                outputFluids.add(copyFluidStackWithAmount(fluidStack,
+                        fluidStack.amount * numberOfOperations)));
+    }
+
+    public int getParallel() {
+        return parallel;
+    }
+
+    protected static ItemStack copyItemStackWithCount(ItemStack itemStack, int count) {
+        ItemStack itemCopy = itemStack.copy();
+        itemCopy.setCount(count);
+        return itemCopy;
+    }
+
+    protected static FluidStack copyFluidStackWithAmount(FluidStack fluidStack, int count) {
+        FluidStack fluidCopy = fluidStack.copy();
+        fluidCopy.amount = count;
+        return fluidCopy;
     }
 
     public R duration(int duration) {
@@ -390,6 +517,14 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public List<FluidStack> getFluidOutputs() {
         return fluidOutputs;
+    }
+
+    public int getEUt() {
+        return EUt;
+    }
+
+    public int getDuration() {
+        return duration;
     }
 
     @Override

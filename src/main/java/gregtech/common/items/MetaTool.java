@@ -1,5 +1,6 @@
 package gregtech.common.items;
 
+import gregtech.api.GTValues;
 import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.toolitem.*;
@@ -79,6 +80,7 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
                 .addComponents(new ScrewdriverItemStat());
 
         MORTAR = addItem(12, "tool.mortar").setToolStats(new ToolMortar())
+                .setFullRepairCost(2)
                 .addOreDict(ToolDictNames.craftingToolMortar);
 
         WIRE_CUTTER = addItem(13, "tool.wire_cutter").setToolStats(new ToolWireCutter())
@@ -139,38 +141,38 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
         MINING_HAMMER = addItem(35, "tool.mining_hammer").setToolStats(new ToolMiningHammer())
                 .setFullRepairCost(14);
 
-        CHAINSAW_LV = addItem(26, "tool.chainsaw.lv").setToolStats(new ToolChainsawLV())
+        CHAINSAW_LV = addItem(26, "tool.chainsaw.lv").setToolStats(new ToolChainsaw(GTValues.LV))
                 .setFullRepairCost(4)
                 .addOreDict(ToolDictNames.craftingToolSaw)
-                .addComponents(ElectricStats.createElectricItem(100000L, 1L));
+                .addComponents(ElectricStats.createElectricItem(100000L, GTValues.LV));
 
-        CHAINSAW_MV = addItem(27, "tool.chainsaw.mv").setToolStats(new ToolChainsawMV())
+        CHAINSAW_MV = addItem(27, "tool.chainsaw.mv").setToolStats(new ToolChainsaw(GTValues.MV))
                 .setFullRepairCost(4)
                 .addOreDict(ToolDictNames.craftingToolSaw)
-                .addComponents(ElectricStats.createElectricItem(400000L, 2L));
+                .addComponents(ElectricStats.createElectricItem(400000L, GTValues.MV));
 
-        CHAINSAW_HV = addItem(28, "tool.chainsaw.hv").setToolStats(new ToolChainsawHV())
+        CHAINSAW_HV = addItem(28, "tool.chainsaw.hv").setToolStats(new ToolChainsaw(GTValues.HV))
                 .setFullRepairCost(4)
                 .addOreDict(ToolDictNames.craftingToolSaw)
-                .addComponents(ElectricStats.createElectricItem(1600000L, 3L));
+                .addComponents(ElectricStats.createElectricItem(1600000L, GTValues.HV));
 
-        WRENCH_LV = addItem(29, "tool.wrench.lv").setToolStats(new ToolWrenchLV())
+        WRENCH_LV = addItem(29, "tool.wrench.lv").setToolStats(new ToolElectricWrench(GTValues.LV))
                 .setFullRepairCost(4)
                 .addOreDict(ToolDictNames.craftingToolWrench)
                 .addComponents(new WrenchItemStat())
-                .addComponents(ElectricStats.createElectricItem(100000L, 1L));
+                .addComponents(ElectricStats.createElectricItem(100000L, GTValues.LV));
 
-        WRENCH_MV = addItem(30, "tool.wrench.mv").setToolStats(new ToolWrenchMV())
+        WRENCH_MV = addItem(30, "tool.wrench.mv").setToolStats(new ToolElectricWrench(GTValues.MV))
                 .setFullRepairCost(4)
                 .addOreDict(ToolDictNames.craftingToolWrench)
                 .addComponents(new WrenchItemStat())
-                .addComponents(ElectricStats.createElectricItem(400000L, 2L));
+                .addComponents(ElectricStats.createElectricItem(400000L, GTValues.MV));
 
-        WRENCH_HV = addItem(31, "tool.wrench.hv").setToolStats(new ToolWrenchHV())
+        WRENCH_HV = addItem(31, "tool.wrench.hv").setToolStats(new ToolElectricWrench(GTValues.HV))
                 .setFullRepairCost(4)
                 .addOreDict(ToolDictNames.craftingToolWrench)
                 .addComponents(new WrenchItemStat())
-                .addComponents(ElectricStats.createElectricItem(1600000L, 3L));
+                .addComponents(ElectricStats.createElectricItem(1600000L, GTValues.HV));
 
         SCREWDRIVER_LV = addItem(34, "tool.screwdriver.lv").setToolStats(new ToolScrewdriverLV())
                 .setFullRepairCost(1)
@@ -184,6 +186,7 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
                 .addComponents(ElectricStats.createElectricItem(100000L, 1L));
 
         PLUNGER = addItem(37, "tool.plunger").setToolStats(new ToolPlunger())
+                .setFullRepairCost(2)
                 .addOreDict(ToolDictNames.craftingToolPlunger);
     }
 
