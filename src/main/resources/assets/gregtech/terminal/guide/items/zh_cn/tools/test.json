@@ -1,13 +1,13 @@
 {
-  "multiblock": "electric_blast_furnace",
-  "section": "Multi-Block Machines/Electric",
-  "title": "Electric Blast Furnace",
+  "metaitem": "tool.wrench",
+  "section": "工具",
+  "title": "Wrench",
   "stream": [
     {
       "type": "textbox",
       "isCenter": false,
       "content": [
-        "Wrench this, wrench that"
+        "扳扳这，扳扳那"
       ]
     },
     {

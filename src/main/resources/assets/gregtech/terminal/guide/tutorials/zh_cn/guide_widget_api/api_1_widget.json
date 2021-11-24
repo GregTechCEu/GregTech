@@ -1,0 +1,304 @@
+{
+  "section": "指南页控件API",
+  "title": "控件",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "这里我们将学习什么是 §4§l控件§r, 以及它的公共属性。",
+        "控件被渲染在指南页中，是一切的基础。 §n文本控件§r, §n图片控件§r, 等等",
+        "要使用控件，只需要将对应的控件配置写在 §l\"fixed\"§r 或者 §l\"stream\"§r下即可。",
+        "有一些公共属性、效果(样式)对所有控件都有效。",
+        "-------------------------------",
+        "§lJSON§r:",
+        "{",
+        "  \"type\": \"type here\",",
+        "  \"x\": 50,",
+        "  \"y\": 100,",
+        "  \"width\": 150,",
+        "  \"height\": 40,",
+        "  \"ref\": \"ref\",",
+        "  \"stroke\": 0,",
+        "  \"stroke_width\": 1,",
+        "  \"fill\": 0,",
+        "  \"link\": \"ref\"",
+        "  \"hover_text\": [\"text here\"]",
+        "}",
+        "-------------------------------",
+        "§l目录§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "type",
+      "content": [
+        "    1.§ntype§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "xywh",
+      "content": [
+        "    2.§nx, y, width, height§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "ref",
+      "content": [
+        "    3.§nref§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "fill",
+      "content": [
+        "    4.§nfill§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "stroke",
+      "content": [
+        "    5.§nstroke§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "stroke_width",
+      "content": [
+        "    6.§nstroke_width§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "link",
+      "content": [
+        "    7.§nlink§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "hover",
+      "content": [
+        "    8.§nhover_text§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "type",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §ntype§r (§4必须§r)",
+        "§l类型§r: String",
+        "§l说明§r: 控件类型的唯一标识。通过api文档可以查看控件对应的控件类型标识。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "xywh",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nx, y, width, height§r (§4可选§r)",
+        "§l类型§r: Integer",
+        "§l说明§r: 控件的位置和大小。 在流布局中，通常不需要设置它(图片控件需要设置宽度和高度)。 在固定布局下，你必须设置这四个属性。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "ref",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nref§r (§4可选§r)",
+        "§l类型§r: String",
+        "§l缺省值§r: null",
+        "§l说明§r: 这是这个控件的一个引用标记。 同一页中的引用标记应该是唯一的。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "fill",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nfill§r (§6可选§r)",
+        "§l类型§r: Number",
+        "§l缺省值§r: 0",
+        "§l说明§r: 背景颜色。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§l示例§r: 4278190335 (0xFF0000FF)"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "fill": 4278190335,
+      "content": [
+        "§nMinecraft Formatting",
+        "§r§00 §11 §22 §33",
+        "§44 §55 §66 §77",
+        "§88 §99 §aa §bb",
+        "§cc §dd §ee §ff",
+        "§r§0k §kMinecraft",
+        "§rl §lMinecraft",
+        "§rm §mMinecraft",
+        "§rn §nMinecraft",
+        "§ro §oMinecraft",
+        "§rr §rMinecraft"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "stroke",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nstroke§r (§6可选§r)",
+        "§l类型§r: Number",
+        "§l缺省值§r: 0",
+        "§l说明§r: 边框颜色"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§l示例§r: 4278190335 (0xFF0000FF)"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "item",
+      "source": "minecraft:ender_pearl",
+      "stroke": 4278190335,
+      "width": 50,
+      "height": 50
+    },
+    {
+      "type": "textbox",
+      "ref": "stroke_width",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nstroke_width§r (§6可选§r)",
+        "§l类型§r: Number",
+        "§l缺省值§r: 1",
+        "§l说明§r: 边框宽度。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§l示例§r: 5"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "item",
+      "source": "minecraft:ender_pearl",
+      "stroke": 4278190335,
+      "stroke_width": 5,
+      "width": 50,
+      "height": 50
+    },
+    {
+      "type": "textbox",
+      "ref": "link",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nlink§r (§6可选§r)",
+        "§l类型§r: String",
+        "§l缺省值§r: null",
+        "§l说明§r: 单击可跳转到指定引用的位置。需要与引用标记一起使用，目标是ref。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§l示例§r: \"P2\""
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "fill": 4286430975,
+      "hover_text": ["\"ref\": \"P1\""],
+      "ref": "P1",
+      "link": "P2",
+      "content": ["点我!"]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§l示例§r: \"P1\""
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "fill": 4286430975,
+      "hover_text": ["\"ref\": \"P2\""],
+      "ref": "P2",
+      "link": "P1",
+      "content": ["点我!"]
+    },
+    {
+      "type": "textbox",
+      "ref": "hover",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nhover_text§r (§6可选§r)",
+        "§l类型§r: Array",
+        "§l缺省值§r: null",
+        "§l说明§r: 鼠标悬停时的展示文本。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§l示例§r: [\"这是\",\"GT图标\"]"
+      ]
+    },
+    {
+      "type": "image",
+      "hover_text": ["这是","GT图标"],
+      "form": "resource",
+      "source": "gregtech:textures/gui/icon/gregtech_logo.png",
+      "width": 100,
+      "height": 100
+    }
+  ],
+  "fixed": []
+}

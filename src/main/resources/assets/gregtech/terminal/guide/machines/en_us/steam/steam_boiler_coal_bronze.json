@@ -1,13 +1,13 @@
 {
-  "metaitem": "tool.wrench",
-  "section": "物品/工具",
-  "title": "Wrench",
+  "machine": "steam_boiler_coal_bronze",
+  "section": "Steam",
+  "title": "Small Steam Coal Boiler",
   "stream": [
     {
       "type": "textbox",
       "isCenter": false,
       "content": [
-        "扳扳这，扳扳那"
+        "Wrench this, wrench that"
       ]
     },
     {

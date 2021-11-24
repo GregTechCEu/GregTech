@@ -1,7 +1,7 @@
 {
-  "metaitem": "tool.wrench",
-  "section": "Items/Tools",
-  "title": "Wrench",
+  "multiblock": "electric_blast_furnace",
+  "section": "Electric",
+  "title": "Electric Blast Furnace",
   "stream": [
     {
       "type": "textbox",

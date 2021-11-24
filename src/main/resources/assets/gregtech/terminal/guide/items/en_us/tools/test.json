@@ -1,7 +1,7 @@
 {
-  "machine": "steam_boiler_coal_bronze",
-  "section": "Machines/Steam",
-  "title": "Small Steam Coal Boiler",
+  "metaitem": "tool.wrench",
+  "section": "Tools",
+  "title": "Wrench",
   "stream": [
     {
       "type": "textbox",
