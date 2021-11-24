@@ -148,7 +148,7 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
             }
             return result;
         }
-        return super.slotClick(slotId, dragType, clickTypeIn, player);
+        return ItemStack.EMPTY;
     }
 
     private final PerTickIntCounter transferredPerTick = new PerTickIntCounter(0);

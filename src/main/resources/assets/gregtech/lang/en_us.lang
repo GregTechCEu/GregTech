@@ -4124,6 +4124,7 @@ terminal.guide_editor.default=Default Value
 terminal.guide_editor.page_config=Page Config
 terminal.guide_editor.widgets_box=Widgets Box
 terminal.guide_editor.widget_config=Widget Config
+terminal.guide_editor.error_type=Item types do not match and will still be saved, but will not be seen in app.
 
 terminal.settings.description=The system settings for GTOS.
 terminal.settings.theme=Theme

@@ -124,7 +124,7 @@ public abstract class GuideApp<T> extends AbstractApplication implements
         }
     }
 
-    protected abstract T ofJson(JsonObject json);
+    public abstract T ofJson(JsonObject json);
 
     private JsonObject getConfig(File file) {
         JsonElement je = FileUtility.loadJson(file);
