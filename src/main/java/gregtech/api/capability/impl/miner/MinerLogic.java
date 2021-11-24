@@ -108,7 +108,8 @@ public class MinerLogic {
             return;
 
         // if the inventory is not full, drain energy etc. from the miner
-        if (!miner.isInventoryFull() && drainStorages(true)) {
+        // the storages have already been checked earlier
+        if (!miner.isInventoryFull()) {
 
             // actually drain the energy
             drainStorages(false);
