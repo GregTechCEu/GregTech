@@ -127,7 +127,7 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
                 .setOnChanged(type-> this.type = type)
                 .setColors(TerminalTheme.COLOR_B_2.getColor(), TerminalTheme.COLOR_F_1.getColor(), TerminalTheme.COLOR_B_2.getColor())
                 .setBackground(TerminalTheme.COLOR_6));
-        group.addWidget(new PhantomSlotWidget(handler, 0, 5, 55).setBackgroundTexture(TerminalTheme.COLOR_B_2));
+        group.addWidget(new PhantomSlotWidget(handler, 0, 6, 56).setBackgroundTexture(TerminalTheme.COLOR_B_2));
 
         group.addWidget(new ImageWidget(5, 80,116, 1, new ColorRectTexture(-1)));
 

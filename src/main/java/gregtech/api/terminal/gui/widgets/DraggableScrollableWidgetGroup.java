@@ -305,7 +305,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
             if (super.mouseWheelMove(mouseX, mouseY, wheelDelta)) {
                 return true;
             }
-            int moveDelta = -MathHelper.clamp(wheelDelta, -1, 1) * 5;
+            int moveDelta = -MathHelper.clamp(wheelDelta, -1, 1) * 10;
             if (getMaxHeight() - getSize().height > 0 || scrollYOffset > getMaxHeight() - getSize().height) {
                 setScrollYOffset(MathHelper.clamp(scrollYOffset + moveDelta, 0, getMaxHeight() - getSize().height));
             }
