@@ -39,6 +39,7 @@ public class CraftingRecipeLoader {
         registerFacadeRecipe(Materials.Iron, 4);
 
         ToolRecipeHandler.registerPowerUnitRecipes();
+        ToolRecipeHandler.registerManualToolRecipes();
 
         ModHandler.addShapedRecipe("small_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeSmallFluid, Materials.Wood, 6), "WsW", "W W", "WrW", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
         ModHandler.addShapedRecipe("normal_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.Wood, 2), "WWW", "s r", "WWW", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
