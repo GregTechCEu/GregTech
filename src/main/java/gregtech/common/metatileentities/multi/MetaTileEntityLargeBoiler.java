@@ -562,7 +562,9 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     public void onAttached() {
         super.onAttached();
-        this.setupSound(GTSounds.BOILER, this.getPos(), this.getWorld());
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(GTSounds.BOILER, this.getPos());
+        }
     }
 
     public boolean canCreateSound() {

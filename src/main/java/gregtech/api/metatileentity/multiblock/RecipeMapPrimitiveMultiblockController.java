@@ -63,7 +63,9 @@ public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockW
     @Override
     public void onAttached() {
         super.onAttached();
-        this.setupSound(recipeMapWorkable.getRecipeMap().getSound(), this.getPos(), this.getWorld());
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(recipeMapWorkable.getRecipeMap().getSound(), this.getPos());
+        }
     }
 
     public boolean canCreateSound() {

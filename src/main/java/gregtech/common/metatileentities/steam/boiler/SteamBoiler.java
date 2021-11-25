@@ -308,6 +308,8 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     @Override
     public void onAttached() {
         super.onAttached();
-        this.setupSound(GTSounds.BOILER, this.getPos(), this.getWorld());
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(GTSounds.BOILER, this.getPos());
+        }
     }
 }
