@@ -1,6 +1,6 @@
 # GregTech CE: Unofficial
 
-This is a fork of GregTech Community Edition for MC 1.12.2 maintained by the Gregicality development team.
+This is a fork of GregTech Community Edition for MC 1.12.2 maintained by the Gregtech CEu development team.
 
 ## Welcome to GregTech CE: Unofficial
 ### What is this?

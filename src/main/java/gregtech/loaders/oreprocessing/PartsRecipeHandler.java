@@ -73,8 +73,8 @@ public class PartsRecipeHandler {
 
         if (!boltStack.isEmpty() && !ingotStack.isEmpty()) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .notConsumable(MetaItems.SHAPE_EXTRUDER_BOLT)
                     .input(OrePrefix.ingot, material)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_BOLT)
                     .outputs(GTUtility.copyAmount(8, boltStack))
                     .duration(15)
                     .EUt(120)
@@ -334,8 +334,8 @@ public class PartsRecipeHandler {
         }
 
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_ROTOR)
                 .input(ingot, material, 5)
+                .notConsumable(MetaItems.SHAPE_EXTRUDER_ROTOR)
                 .output(rotor, material)
                 .duration((int) material.getAverageMass() * 5)
                 .EUt(material.getBlastTemperature() >= 2800 ? 256 : 64)

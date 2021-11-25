@@ -325,7 +325,7 @@ public class SecondDegreeMaterials {
                 .components(Naquadah, 2, Osmiridium, 1, Trinium, 1)
                 .toolStats(8.0f, 5.0f, 5120, 21)
                 .cableProperties(GTValues.V[8], 2, 4)
-                .blastTemp(7200, GasTier.HIGH)
+                .blastTemp(7200, GasTier.HIGH, 30720, 1000)
                 .build();
 
         NickelSulfateSolution = new Material.Builder(2043, "nickel_sulfate_water_solution")
