@@ -14,7 +14,7 @@ public class SoundHooks {
 
     public static void playRecord(RenderGlobal renderGlobal, int type, BlockPos pos, int data) {
         if (type == 1010) {
-            WorldClient world = ObfuscationReflectionHelper.getPrivateValue(RenderGlobal.class, renderGlobal, "world");
+            WorldClient world = ObfuscationReflectionHelper.getPrivateValue(RenderGlobal.class, renderGlobal, "field_72769_h");
 
             // Check if it is a normal Item first, to avoid going to the main method
             if (Item.getItemById(data) instanceof ItemRecord) {
