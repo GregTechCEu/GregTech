@@ -15,9 +15,9 @@ public class RenderGlobalVisitor extends MethodVisitor implements Opcodes {
 
     private static final ObfMapping ITEM_GETBYID_INVOKE = new ObfMapping(
             "net/minecraft/item/Item",
-            "getItemById",
+            "func_150899_d",
             "(I)Lnet/minecraft/item/Item;"
-    );
+    ).toRuntime();
 
     public RenderGlobalVisitor(MethodVisitor mv) {
         super(Opcodes.ASM5, mv);
