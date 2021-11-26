@@ -136,7 +136,7 @@ public class TextEditorWidget extends WidgetGroup {
         public boolean keyTyped(char typedChar, int keyCode) {
             if(!focus || !isActive()) return false;
             if (GuiScreen.isKeyComboCtrlV(keyCode)) {
-                this.pageInsertIntoCurrent(GuiScreen.getClipboardString());
+                this.pageInsertIntoCurrent(formatFromMarkdown(GuiScreen.getClipboardString()));
                 findFrontFormatting();
             } else {
                 switch(keyCode) {
@@ -161,6 +161,53 @@ public class TextEditorWidget extends WidgetGroup {
                 setScrollYOffset(0);
             }
             return true;
+        }
+
+        private String formatFromMarkdown(String markdown) {
+            StringBuilder builder = new StringBuilder();
+            Stack<TextFormatting> stack = new Stack<>();
+            int[] chars = markdown.chars().toArray();
+            for (int i = 0; i < chars.length; i++) {
+                if (chars[i] == '\\' && i + 1 < chars.length){
+                    if (chars[i + 1] == '*' || chars[i + 1] == '_' || chars[i + 1] == '~' || chars[i + 1] == '`') {
+                        builder.append(chars[i + 1]);
+                        i++;
+                    } else {
+                        builder.append('\\');
+                    }
+                } else if (chars[i] == '*' && i + 1 < chars.length && chars[i + 1] == '*') { // BOLD
+                    checkTextFormatting(builder, TextFormatting.BOLD, stack);
+                    i++;
+                } else if (chars[i] == '_'){
+                    if (i - 1 == -1 || !Character.isLetterOrDigit(chars[i-1])) { // ITALIC
+                        checkTextFormatting(builder, TextFormatting.ITALIC, stack);
+                    } else if (i + 1 == chars.length || !Character.isLetterOrDigit(chars[i+1])) {
+                        checkTextFormatting(builder, TextFormatting.ITALIC, stack);
+                    } else {
+                        builder.append('_');
+                    }
+                } else if (chars[i] == '~') {
+                    checkTextFormatting(builder, TextFormatting.STRIKETHROUGH, stack);
+                } else if (chars[i] == '`') {
+                    checkTextFormatting(builder, TextFormatting.UNDERLINE, stack);
+                } else {
+                    builder.append((char) chars[i]);
+                }
+            }
+            return builder.toString();
+        }
+
+        private void checkTextFormatting(StringBuilder builder, TextFormatting formatting,  Stack<TextFormatting> stack) {
+            if (!stack.isEmpty() && stack.peek() == formatting) {
+                builder.append(TextFormatting.RESET.toString());
+                stack.pop();
+                for (TextFormatting pre : stack) {
+                    builder.append(pre.toString());
+                }
+            } else {
+                stack.push(formatting);
+                builder.append(formatting.toString());
+            }
         }
 
         private static TextFormatting lookAheadChars(final String content, int index) {
