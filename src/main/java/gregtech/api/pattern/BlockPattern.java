@@ -159,12 +159,12 @@ public class BlockPattern {
                         TileEntity tileEntity = worldState.getTileEntity();
                         if (tileEntity instanceof MetaTileEntityHolder) {
                             if (((MetaTileEntityHolder) tileEntity).isValid()) {
-                                cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), tileEntity));
+                                cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), tileEntity, predicate));
                             } else {
-                                cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), null));
+                                cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), null, predicate));
                             }
                         } else {
-                            cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), tileEntity));
+                            cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), tileEntity, predicate));
                         }
                         if (!predicate.test(worldState)) {
                             if (findFirstAisle) {

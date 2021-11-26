@@ -66,12 +66,12 @@ gregtech.multiblock.primitive_water_pump.extra1=Biome Coefficient:/n  Ocean, Riv
 gregtech.multiblock.primitive_water_pump.extra2=Hatch Multipliers:/n  Pump Hatch: 1x/n  ULV Output Hatch: 2x/n  LV Output Hatch: 4x
 
 gregtech.multiblock.pattern.error=Expect components (%s) at (%s).
-gregtech.multiblock.pattern.error.limited.0=The number of components (%s) should <= %d.
-gregtech.multiblock.pattern.error.limited.1=The number of components (%s) should >= %d.
-gregtech.multiblock.pattern.error.limited.2=The number of components (%s) should <= %d in each layer.
-gregtech.multiblock.pattern.error.limited.3=The number of components (%s) should >= %d in each layer.
+gregtech.multiblock.pattern.error.limited.0=§6The number of components should <= %d.§r
+gregtech.multiblock.pattern.error.limited.1=§6The number of components should >= %d.§r
+gregtech.multiblock.pattern.error.limited.2=§6The number of components should <= %d in each layer.§r
+gregtech.multiblock.pattern.error.limited.3=§6The number of components should >= %d in each layer.§r
 
-gregtech.multiblock.pattern.error.coils=All heating coils shall be of the same type.
+gregtech.multiblock.pattern.error.coils=§6All heating coils shall be of the same type.§r
 
 item.invalid.name=Invalid item
 fluid.empty=Empty
@@ -3952,21 +3952,9 @@ gregtech.multiblock.multiple_recipemaps.tooltip=Screwdriver the controller to ch
 gregtech.multiblock.multiple_recipemaps_recipes.tooltip=Machine Modes: §e%s§r
 gregtech.multiblock.multiple_recipemaps.switch_message=The machine must be off to switch modes!
 
-gregtech.multiblock.preview.zoom=Use mousewheel or right-click+Drag to zoom
+gregtech.multiblock.preview.zoom=Use mousewheel or right-click + drag to zoom
 gregtech.multiblock.preview.rotate=Click and drag to rotate
-gregtech.multiblock.preview.any_hatch=Any tier hatch can be used to form the structure
-gregtech.multiblock.preview.any_hatch_maintenance=Any type of maintenance hatch can be used to form the structure
-gregtech.multiblock.preview.limit=Minimum Limit: %d
-gregtech.multiblock.preview.limit_per_layer=Only %d per layer
-gregtech.multiblock.preview.only=Only %s allowed
-gregtech.multiblock.preview.only_location=Only allowed at %s
-gregtech.multiblock.preview.location.b_c=Bottom Center
-gregtech.multiblock.preview.location.b_l=Bottom Layer
-gregtech.multiblock.preview.location.t_c=Top Center
-gregtech.multiblock.preview.primitive_pump.hatch=Only Pump Hatch, ULV Hatch, or LV Hatch allowed
-gregtech.multiblock.preview.location_end=Very End
-gregtech.multiblock.preview.distillation_multi_fluid=Quadruple/Nonuple Output Hatches not allowed
-gregtech.multiblock.preview.clear_amount=Must have a clear %dx%dx%d space in front
+gregtech.multiblock.preview.select=Right-click to check candidates
 
 gregtech.multiblock.blast_furnace.max_temperature=Max Temperature: %sK
 gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s

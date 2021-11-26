@@ -1,11 +1,15 @@
 package gregtech.api.pattern;
 
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.BlockInfo;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.BlockWireCoil2;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -14,6 +18,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class TraceabilityPredicate {
 
@@ -45,11 +50,12 @@ public class TraceabilityPredicate {
         return false;
     }, ()-> ArrayUtils.addAll(
             Arrays.stream(BlockWireCoil.CoilType.values()).map(type->new BlockInfo(MetaBlocks.WIRE_COIL.getState(type), null)).toArray(BlockInfo[]::new),
-            Arrays.stream(BlockWireCoil2.CoilType2.values()).map(type->new BlockInfo(MetaBlocks.WIRE_COIL2.getState(type), null)).toArray(BlockInfo[]::new)));
+            Arrays.stream(BlockWireCoil2.CoilType2.values()).map(type->new BlockInfo(MetaBlocks.WIRE_COIL2.getState(type), null)).toArray(BlockInfo[]::new)))
+            .setTooltips(Collections.singletonList("gregtech.multiblock.pattern.error.coils"));
 
 
-    protected final List<SimplePredicate> common = new ArrayList<>();
-    protected final List<SimplePredicate> limited = new ArrayList<>();
+    public final List<SimplePredicate> common = new ArrayList<>();
+    public final List<SimplePredicate> limited = new ArrayList<>();
     protected boolean isCenter;
 
     public TraceabilityPredicate(Predicate<BlockWorldState> predicate, Supplier<BlockInfo[]> candidates) {
@@ -62,6 +68,12 @@ public class TraceabilityPredicate {
 
     public TraceabilityPredicate setCenter() {
         isCenter = true;
+        return this;
+    }
+
+    public TraceabilityPredicate setTooltips(List<String> tooltips) {
+        common.forEach(predicate -> predicate.toolTips = tooltips);
+        limited.forEach(predicate -> predicate.toolTips = tooltips);
         return this;
     }
 
@@ -119,10 +131,12 @@ public class TraceabilityPredicate {
         return this;
     }
 
-    protected static class SimplePredicate{
+    public static class SimplePredicate{
         public final Supplier<BlockInfo[]> candidates;
 
         public final Predicate<BlockWorldState> predicate;
+
+        private List<String> toolTips;
 
         public int minGlobalCount = -1;
         public int maxGlobalCount = -1;
@@ -132,6 +146,27 @@ public class TraceabilityPredicate {
         public SimplePredicate(Predicate<BlockWorldState> predicate, Supplier<BlockInfo[]> candidates) {
             this.predicate = predicate;
             this.candidates = candidates;
+        }
+
+        @SideOnly(Side.CLIENT)
+        public List<String> getToolTips() {
+            List<String> result = new ArrayList<>();
+            if (toolTips != null) {
+                toolTips.forEach(tip->result.add(I18n.format(tip)));
+            }
+            if (minGlobalCount != -1) {
+                result.add(I18n.format("gregtech.multiblock.pattern.error.limited.1", "", minGlobalCount));
+            }
+            if (maxGlobalCount != -1) {
+                result.add(I18n.format("gregtech.multiblock.pattern.error.limited.0", "", maxGlobalCount));
+            }
+            if (minLayerCount != -1) {
+                result.add(I18n.format("gregtech.multiblock.pattern.error.limited.3", "", minLayerCount));
+            }
+            if (maxLayerCount != -1) {
+                result.add(I18n.format("gregtech.multiblock.pattern.error.limited.2", "", maxLayerCount));
+            }
+            return result;
         }
 
         public boolean test(BlockWorldState blockWorldState) {
@@ -163,6 +198,18 @@ public class TraceabilityPredicate {
             blockWorldState.setError(new SinglePredicateError(this, 2));
             return false;
         }
+
+        public List<ItemStack> getCandidates() {
+            return Arrays.stream(this.candidates.get()).filter(info -> info.getBlockState().getBlock() != Blocks.AIR).map(info->{
+                IBlockState blockState = info.getBlockState();
+                MetaTileEntity metaTileEntity = info.getTileEntity() instanceof MetaTileEntityHolder ? ((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity() : null;
+                if (metaTileEntity != null) {
+                    return metaTileEntity.getStackForm();
+                } else {
+                    return new ItemStack(Item.getItemFromBlock(blockState.getBlock()), 1, blockState.getBlock().damageDropped(blockState));
+                }
+            }).collect(Collectors.toList());
+        }
     }
 
     public static class SinglePredicateError extends PatternError {
@@ -176,7 +223,7 @@ public class TraceabilityPredicate {
 
         @Override
         public List<List<ItemStack>> getCandidates() {
-            return Collections.singletonList(getCandidates(predicate));
+            return Collections.singletonList(predicate.getCandidates());
         }
 
         @SideOnly(Side.CLIENT)
@@ -187,15 +234,7 @@ public class TraceabilityPredicate {
             if (type == 1) number = predicate.minGlobalCount;
             if (type == 2) number = predicate.maxLayerCount;
             if (type == 3) number = predicate.minLayerCount;
-            List<List<ItemStack>> candidates = getCandidates();
-            StringBuilder builder = new StringBuilder();
-            if (!candidates.get(0).isEmpty()) {
-                builder.append(candidates.get(0).get(0).getDisplayName());
-            }
-            if (candidates.size() > 1) {
-                builder.append("...");
-            }
-            return I18n.format("gregtech.multiblock.pattern.error.limited." + type, builder.toString(), number);
+            return I18n.format("gregtech.multiblock.pattern.error.limited." + type, number);
         }
     }
 
