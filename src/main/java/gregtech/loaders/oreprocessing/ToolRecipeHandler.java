@@ -130,6 +130,12 @@ public class ToolRecipeHandler {
         }
 
         if (material.hasFlag(GENERATE_ROD)) {
+            ModHandler.addShapedRecipe(String.format("screwdriver_%s", material.toString()),
+                    MetaItems.SCREWDRIVER.getStackForm(material),
+                    " fS", " Sh", "W  ",
+                    'S', new UnificationEntry(OrePrefix.stick, material),
+                    'W', new UnificationEntry(OrePrefix.stick, Materials.Wood));
+
             ModHandler.addShapedRecipe(String.format("crowbar_%s", material),
                     MetaItems.CROWBAR.getStackForm(material),
                     "hDS", "DSD", "SDf",
@@ -360,6 +366,11 @@ public class ToolRecipeHandler {
                     .EUt(8 *  getVoltageMultiplier(material))
                     .buildAndRegister();
         }
+        ModHandler.addShapedRecipe(String.format("hammer_%s", material.toString()),
+                MetaItems.HARD_HAMMER.getStackForm(material),
+                "XX ", "XXS", "XX ",
+                'X', new UnificationEntry(OrePrefix.ingot, material),
+                'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
     }
 
     public static void processFileHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
@@ -372,6 +383,14 @@ public class ToolRecipeHandler {
                 .duration((int) material.getAverageMass() * 2)
                 .EUt(8 * getVoltageMultiplier(material))
                 .buildAndRegister();
+
+        if (material.hasProperty(PropertyKey.INGOT)) {
+            ModHandler.addShapedRecipe(String.format("file_%s", material.toString()),
+                    MetaItems.FILE.getStackForm(material),
+                    "P", "P", "S",
+                    'P', new UnificationEntry(OrePrefix.plate, material),
+                    'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
+        }
     }
 
     private static int getVoltageMultiplier(Material material) {
@@ -380,7 +399,6 @@ public class ToolRecipeHandler {
 
     public static void registerManualToolRecipes() {
         registerFlintToolRecipes();
-        registerIronBronzeToolRecipes();
         registerMortarRecipes();
         registerSoftHammerRecipes();
     }
@@ -427,26 +445,6 @@ public class ToolRecipeHandler {
                 "F", "S",
                 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood),
                 'F', new ItemStack(Items.FLINT, 1));
-    }
-
-    private static void registerIronBronzeToolRecipes() {
-        for (Material material : new Material[]{Materials.Bronze, Materials.Iron, Materials.WroughtIron}) {
-
-            ModHandler.addShapedRecipe(String.format("hard_hammer_%s", material.toString()), HARD_HAMMER.getStackForm(material),
-                    "PP ", "PPS", "PP ",
-                    'P', new UnificationEntry(OrePrefix.ingot, material),
-                    'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
-
-            ModHandler.addShapedRecipe(String.format("file_%s", material.toString()), FILE.getStackForm(material),
-                    "P", "P", "S",
-                    'P', new UnificationEntry(OrePrefix.plate, material),
-                    'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
-
-            ModHandler.addShapedRecipe(String.format("screwdriver_%s", material.toString()), SCREWDRIVER.getStackForm(material),
-                    " fR", " Rh", "S  ",
-                    'R', new UnificationEntry(OrePrefix.stick, material),
-                    'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
-        }
     }
 
     private static void registerMortarRecipes() {
