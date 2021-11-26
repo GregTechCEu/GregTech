@@ -200,7 +200,7 @@ public class TextEditorWidget extends WidgetGroup {
                         builder.append('\\');
                     }
                 } else if (chars[i] == '*' && i + 1 < chars.length && chars[i + 1] == ' ') { // SUBLINE
-                    builder.append(' ').append(TextFormatting.BOLD).append('○').append(TextFormatting.RESET).append(' ');
+                    builder.append(' ').append(TextFormatting.BOLD).append('*').append(TextFormatting.RESET).append(' ');
                     i++;
                 } else if (chars[i] == '*' && i + 1 < chars.length && chars[i + 1] == '*') { // BOLD
                     checkTextFormatting(builder, TextFormatting.BOLD, stack);
