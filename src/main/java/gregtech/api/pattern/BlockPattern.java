@@ -156,7 +156,16 @@ public class BlockPattern {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
                         BlockPos pos = setActualRelativeOffset(x, y, z, facing).add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
                         worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
-                        cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), worldState.getTileEntity()));
+                        TileEntity tileEntity = worldState.getTileEntity();
+                        if (tileEntity instanceof MetaTileEntityHolder) {
+                            if (((MetaTileEntityHolder) tileEntity).isValid()) {
+                                cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), tileEntity));
+                            } else {
+                                cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), null));
+                            }
+                        } else {
+                            cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), tileEntity));
+                        }
                         if (!predicate.test(worldState)) {
                             if (findFirstAisle) {
                                 if (r < aisleRepetitions[c][0]) {//retreat to see if the first aisle can start later
