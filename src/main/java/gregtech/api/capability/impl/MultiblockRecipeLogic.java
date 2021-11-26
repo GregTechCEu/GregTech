@@ -3,11 +3,13 @@ package gregtech.api.capability.impl;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.metatileentity.multiblock.IMultipleRecipeMaps;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeMap;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
@@ -298,5 +300,13 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     @Override
     protected long getMaxVoltage() {
         return Math.max(getEnergyContainer().getInputVoltage(), getEnergyContainer().getOutputVoltage());
+    }
+
+    @Override
+    public RecipeMap<?> getRecipeMap() {
+        // if the multiblock has more than one RecipeMap, return the currently selected one
+        if (metaTileEntity instanceof IMultipleRecipeMaps && ((IMultipleRecipeMaps) metaTileEntity).hasMultipleRecipeMaps())
+                return ((IMultipleRecipeMaps) metaTileEntity).getCurrentRecipeMap();
+        return super.getRecipeMap();
     }
 }

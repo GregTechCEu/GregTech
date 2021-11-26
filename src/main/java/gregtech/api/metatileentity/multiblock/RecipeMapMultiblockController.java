@@ -1,10 +1,13 @@
 package gregtech.api.metatileentity.multiblock;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
@@ -21,24 +24,34 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFireboxCasing;
 import gregtech.common.blocks.VariantActiveBlock;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.stream.Stream;
 
-public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase {
+public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IMultipleRecipeMaps {
 
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
@@ -53,10 +66,18 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     private boolean isDistinct = false;
 
+    // array of possible recipes, specific to each multi - used when the multi has multiple RecipeMaps
+    protected RecipeMap<?>[] recipeMaps;
+
+    // index of the current selected recipe - used when the multi has multiple RecipeMaps
+    private int recipeMapIndex;
+
     public RecipeMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap) {
         super(metaTileEntityId);
         this.recipeMap = recipeMap;
         this.recipeMapWorkable = new MultiblockRecipeLogic(this);
+        this.recipeMapIndex = 0;
+        this.recipeMaps = null;
         resetTileAbilities();
     }
 
@@ -184,6 +205,14 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 textList.add(buttonText);
             }
 
+            if (hasMultipleRecipeMaps()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps",
+                        new TextComponentTranslation("recipemap." + this.recipeMaps[this.recipeMapIndex].getUnlocalizedName() + ".name")
+                        .setStyle(new Style().setColor(TextFormatting.AQUA)))
+                        .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.tooltip")))));
+            }
+
             if (!recipeMapWorkable.isWorkingEnabled()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
 
@@ -202,6 +231,13 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
             }
         }
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        if (this.hasMultipleRecipeMaps())
+            tooltip.add(I18n.format("gregtech.multiblock.multiple_recipemaps_recipes.tooltip", this.recipeMapsToString()));
     }
 
     @Override
@@ -235,6 +271,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setBoolean("isDistinct", isDistinct);
+        data.setTag("RecipeMapIndex", new NBTTagInt(recipeMapIndex));
         return data;
     }
 
@@ -242,18 +279,39 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         isDistinct = data.getBoolean("isDistinct");
+        recipeMapIndex = data.getInteger("RecipeMapIndex");
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isDistinct);
+        buf.writeByte(recipeMapIndex);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         isDistinct = buf.readBoolean();
+        recipeMapIndex = buf.readByte();
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.RECIPE_MAP_INDEX) {
+            recipeMapIndex = buf.readInt();
+            scheduleRenderUpdate();
+        }
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        T capabilityResult = super.getCapability(capability, side);
+        if (capabilityResult == null && capability == GregtechTileCapabilities.MULTIPLE_RECIPEMAPS) {
+            return (T) this;
+        }
+        return capabilityResult;
     }
 
     public boolean canBeDistinct() {
@@ -273,5 +331,62 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         } else {
             this.notifiedItemInputList.add(this.inputInventory);
         }
+    }
+
+    @Override
+    public RecipeMap<?>[] getAvailableRecipeMaps() {
+        return hasMultipleRecipeMaps() ? this.recipeMaps : null;
+    }
+
+    @Override
+    public int getRecipeMapIndex() {
+        return recipeMapIndex;
+    }
+
+    @Override
+    public void addRecipeMaps(RecipeMap<?>... recipeMaps) {
+        if (hasMultipleRecipeMaps())
+            this.recipeMaps = Stream.concat(Arrays.stream(this.recipeMaps), Arrays.stream(recipeMaps)).toArray(RecipeMap<?>[]::new);
+    }
+
+    @Override
+    public void setRecipeMapIndex(int index) {
+        this.recipeMapIndex = index;
+        if (!getWorld().isRemote) {
+            writeCustomData(GregtechDataCodes.RECIPE_MAP_INDEX, buf -> buf.writeInt(index));
+            markDirty();
+        }
+    }
+
+    @Override
+    public RecipeMap<?> getCurrentRecipeMap() {
+        return recipeMaps[recipeMapIndex];
+    }
+
+    @SideOnly(Side.CLIENT)
+    public String recipeMapsToString() {
+        StringBuilder recipeMapsString = new StringBuilder();
+        for(int i = 0; i < recipeMaps.length; i++) {
+            recipeMapsString.append(recipeMaps[i].getLocalizedName());
+            if(recipeMaps.length - 1 != i)
+                recipeMapsString.append(", "); // For delimiting
+        }
+        return recipeMapsString.toString();
+    }
+
+    @Override
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (!getWorld().isRemote && this.hasMultipleRecipeMaps() && !this.isActive()) {
+
+            int index;
+            if (playerIn.isSneaking()) // cycle recipemaps backwards
+                index = (recipeMapIndex - 1 < 0 ? recipeMaps.length - 1 : recipeMapIndex - 1) % recipeMaps.length;
+            else // cycle recipemaps forwards
+                index = (recipeMapIndex + 1) % recipeMaps.length;
+
+            setRecipeMapIndex(index);
+        }
+
+        return true; // return true here on the client to keep the GUI closed
     }
 }
