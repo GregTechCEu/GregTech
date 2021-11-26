@@ -206,10 +206,13 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
             }
 
             if (hasMultipleRecipeMaps()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps",
-                        new TextComponentTranslation("recipemap." + this.recipeMaps[this.recipeMapIndex].getUnlocalizedName() + ".name")
-                        .setStyle(new Style().setColor(TextFormatting.AQUA)))
+                textList.add(new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.header")
                         .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.tooltip")))));
+
+                textList.add(new TextComponentTranslation("recipemap." + this.recipeMaps[this.recipeMapIndex].getUnlocalizedName() + ".name")
+                        .setStyle(new Style().setColor(TextFormatting.AQUA)
+                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                 new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.tooltip")))));
             }
 

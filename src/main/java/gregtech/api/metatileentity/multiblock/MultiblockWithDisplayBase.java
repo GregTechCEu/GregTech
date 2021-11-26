@@ -292,7 +292,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     private void addMaintenanceText(List<ITextComponent> textList) {
         if (!hasMaintenanceProblems()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.universal.no_problems")
-                    .setStyle(new Style().setColor(TextFormatting.AQUA))
+                    .setStyle(new Style().setColor(TextFormatting.GREEN))
             );
         } else {
 

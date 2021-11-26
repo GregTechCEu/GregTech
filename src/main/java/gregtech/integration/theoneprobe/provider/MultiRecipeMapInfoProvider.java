@@ -7,6 +7,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTLog;
 import mcjty.theoneprobe.api.*;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -42,12 +43,13 @@ public class MultiRecipeMapInfoProvider implements IProbeInfoProvider {
 
 
     protected void addProbeInfo(@Nonnull IMultipleRecipeMaps iMultipleRecipeMaps, IProbeInfo iProbeInfo, TileEntity tileEntity, EnumFacing enumFacing) {
+        iProbeInfo.text(TextStyleClass.INFO + I18n.format("gregtech.multiblock.multiple_recipemaps.header"));
         if (iMultipleRecipeMaps.hasMultipleRecipeMaps()) {
             for (RecipeMap<?> recipeMap : iMultipleRecipeMaps.getAvailableRecipeMaps()) {
                 if (recipeMap.equals(iMultipleRecipeMaps.getCurrentRecipeMap()))
-                    iProbeInfo.text(TextStyleClass.INFOIMP + "{*recipemap." + recipeMap.getUnlocalizedName() + ".name*} {*<*}");
+                    iProbeInfo.text("   " + TextStyleClass.INFOIMP + "{*recipemap." + recipeMap.getUnlocalizedName() + ".name*} {*<*}");
                 else
-                    iProbeInfo.text(TextStyleClass.INFO + recipeMap.getLocalizedName());
+                    iProbeInfo.text( "   " + TextStyleClass.LABEL + recipeMap.getLocalizedName());
             }
         }
     }
