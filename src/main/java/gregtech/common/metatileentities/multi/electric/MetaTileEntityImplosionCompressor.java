@@ -7,7 +7,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.FactoryBlockPattern;
-import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
@@ -29,7 +28,6 @@ public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockContro
 
     public MetaTileEntityImplosionCompressor(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.IMPLOSION_RECIPES);
-        this.recipeMaps = new RecipeMap[]{RecipeMaps.IMPLOSION_RECIPES, RecipeMaps.BENDER_RECIPES};
     }
 
     @Override
@@ -64,7 +62,7 @@ public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockContro
     @Nonnull
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
-        return this.getCurrentRecipeMap().equals(RecipeMaps.IMPLOSION_RECIPES) ? Textures.IMPLOSION_COMPRESSOR_OVERLAY : Textures.BENDER_OVERLAY;
+        return Textures.IMPLOSION_COMPRESSOR_OVERLAY;
     }
 
     @Override
@@ -74,11 +72,6 @@ public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockContro
 
     @Override
     public boolean canBeDistinct() {
-        return true;
-    }
-
-    @Override
-    public boolean hasMultipleRecipeMaps() {
         return true;
     }
 }
