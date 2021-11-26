@@ -10,6 +10,7 @@ import gregtech.api.gui.impl.ModularUIGuiHandler;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
+import gregtech.api.metatileentity.multiblock.IMultipleRecipeMaps;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
@@ -119,7 +120,8 @@ public class GTJeiPlugin implements IModPlugin {
             registry.addRecipes(recipeList, GTValues.MODID + ":" + fuelRecipeMap.unlocalizedName);
         }
 
-        List<SteamMetaTileEntity> deferredCatalysts = new ArrayList<>();
+        List<MetaTileEntity> deferredCatalysts = new ArrayList<>();
+        List<MetaTileEntity> multipleRecipeMapCatalysts = new ArrayList<>();
         for (ResourceLocation metaTileEntityId : GregTechAPI.MTE_REGISTRY.getKeys()) {
             MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
             assert metaTileEntity != null;
@@ -128,7 +130,9 @@ public class GTJeiPlugin implements IModPlugin {
 
                 if (workableCapability instanceof AbstractRecipeLogic) {
                     if (metaTileEntity instanceof SteamMetaTileEntity) {
-                        deferredCatalysts.add((SteamMetaTileEntity) metaTileEntity);
+                        deferredCatalysts.add(metaTileEntity);
+                    } else if (metaTileEntity instanceof IMultipleRecipeMaps && ((IMultipleRecipeMaps) metaTileEntity).hasMultipleRecipeMaps()) {
+                        multipleRecipeMapCatalysts.add(metaTileEntity);
                     } else {
                         RecipeMap<?> recipeMap = ((AbstractRecipeLogic) workableCapability).getRecipeMap();
                         registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
@@ -142,12 +146,21 @@ public class GTJeiPlugin implements IModPlugin {
                 }
             }
         }
-        for (SteamMetaTileEntity steamMetaTileEntity : deferredCatalysts) {
-            IControllable workableCapability = steamMetaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+        for (MetaTileEntity deferredMetaTileEntity : deferredCatalysts) {
+            IControllable workableCapability = deferredMetaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
             RecipeMap<?> recipeMap = ((AbstractRecipeLogic) workableCapability).getRecipeMap();
-            registry.addRecipeCatalyst(steamMetaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
+            registry.addRecipeCatalyst(deferredMetaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
             if (recipeMap instanceof RecipeMapFurnace) {
-                registry.addRecipeCatalyst(steamMetaTileEntity.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
+                registry.addRecipeCatalyst(deferredMetaTileEntity.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
+            }
+        }
+
+        for (MetaTileEntity multipleRecipeMapCatalyst : multipleRecipeMapCatalysts) {
+            for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) multipleRecipeMapCatalyst).getAvailableRecipeMaps()) {
+                registry.addRecipeCatalyst(multipleRecipeMapCatalyst.getStackForm(), GTValues.MODID + ":" + recipeMap.getUnlocalizedName());
+                if (recipeMap instanceof RecipeMapFurnace) {
+                    registry.addRecipeCatalyst(multipleRecipeMapCatalyst.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
+                }
             }
         }
 
