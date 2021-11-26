@@ -22,6 +22,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.IFluidTank;
 
+import javax.annotation.Nonnull;
+
 public class RecipeLogicSteam extends AbstractRecipeLogic {
 
     private final IFluidTank steamFluidTank;
@@ -166,8 +168,14 @@ public class RecipeLogicSteam extends AbstractRecipeLogic {
     }
 
     @Override
-    protected int[] runOverclockingLogic(int recipeEUt, int recipeDuration, int maxOverclocks) {
-        return super.runOverclockingLogic(isHighPressure ? recipeEUt * 2 : recipeEUt, isHighPressure ? recipeDuration * 2 : recipeDuration, maxOverclocks);
+    protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
+        return standardOverclockingLogic((isHighPressure ? recipe.getEUt() * 2 : recipe.getEUt()) * (negativeEU ? -1 : 1),
+                getMaxVoltage(),
+                isHighPressure ? recipe.getDuration() * 2 : recipe.getDuration(),
+                getOverclockingDurationDivisor(),
+                getOverclockingVoltageMultiplier(),
+                maxOverclocks
+        );
     }
 
     @Override

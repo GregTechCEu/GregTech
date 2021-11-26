@@ -229,7 +229,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
             double durationMultiplier = hatch.getDurationMultiplier();
             if (durationMultiplier != 1.0) {
-                overclock = runOverclockingLogic(recipe.getEUt() * (negativeEU ? -1 : 1), (int) Math.round(recipe.getDuration() * durationMultiplier), maxOverclocks);
+                overclock = standardOverclockingLogic(recipe.getEUt() * (negativeEU ? -1 : 1), getMaxVoltage(), (int) Math.round(recipe.getDuration() * durationMultiplier), getOverclockingDurationDivisor(), getOverclockingVoltageMultiplier(), maxOverclocks);
             }
         }
         if (overclock == null) overclock = super.runOverclockingLogic(recipe, negativeEU, maxOverclocks);

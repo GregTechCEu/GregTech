@@ -448,18 +448,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
     protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
-        return runOverclockingLogic(recipe.getEUt() * (negativeEU ? -1 : 1), recipe.getDuration(), maxOverclocks);
-    }
-
-    /**
-     * actually runs the overclocking logic
-     * @param recipeEUt the EU/t of the recipe to overclock
-     * @param recipeDuration the duration of the recipe to overclock
-     * @param maxOverclocks the maximum amount of overclocks to perform
-     * @return an int array of {OverclockedEUt, OverclockedDuration}
-     */
-    protected int[] runOverclockingLogic(int recipeEUt, int recipeDuration, int maxOverclocks) {
-        return standardOverclockingLogic(recipeEUt, getMaxVoltage(), recipeDuration, getOverclockingDurationDivisor(), getOverclockingVoltageMultiplier(), maxOverclocks);
+        return standardOverclockingLogic(recipe.getEUt() * (negativeEU ? -1 : 1),
+                getMaxVoltage(),
+                recipe.getDuration(),
+                getOverclockingDurationDivisor(),
+                getOverclockingVoltageMultiplier(),
+                maxOverclocks
+        );
     }
 
     /**
