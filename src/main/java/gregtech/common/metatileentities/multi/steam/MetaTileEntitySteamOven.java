@@ -1,12 +1,12 @@
 package gregtech.common.metatileentities.multi.steam;
 
 
-import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.capability.impl.SteamMultiWorkable;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
@@ -18,7 +18,6 @@ import gregtech.common.blocks.BlockFireboxCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -34,6 +33,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     public MetaTileEntitySteamOven(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.FURNACE_RECIPES, CONVERSION_RATE);
         this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE);
+        this.recipeMapWorkable.setParallelLimit(8);
     }
 
     @Override
@@ -163,11 +163,6 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
         if (dataId == IS_WORKING) {
             this.isActive = buf.readBoolean();
         }
-    }
-
-    @Override
-    public int getParallelLimit() {
-        return 8;
     }
 
     @Nonnull

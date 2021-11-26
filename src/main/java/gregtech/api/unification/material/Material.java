@@ -706,6 +706,21 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier) {
+            properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp, gasTier, -1, -1));
+            return this;
+        }
+
+        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride) {
+            properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp, gasTier, eutOverride, -1));
+            return this;
+        }
+
+        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride, int durationOverride) {
+            properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp, gasTier, eutOverride, durationOverride));
+            return this;
+        }
+
         public Builder ore() {
             properties.ensureSet(PropertyKey.ORE);
             return this;

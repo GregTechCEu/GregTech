@@ -326,7 +326,6 @@ public class Materials {
     public static Material NiobiumTitanium;
     public static Material Obsidian;
     public static Material Phosphate;
-    public static Material PigIron;
     public static Material SterlingSilver;
     public static Material RoseGold;
     public static Material BlackBronze;
@@ -337,7 +336,7 @@ public class Materials {
     public static Material Pyrolusite;
     public static Material Pyrope;
     public static Material RockSalt;
-    public static Material RuthenianIridium;
+    public static Material Ruridit;
     public static Material Rubber;
     public static Material Ruby;
     public static Material Salt;

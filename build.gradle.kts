@@ -150,6 +150,17 @@ jar.apply {
     }
 }
 
+tasks.withType<Test>() {
+    testLogging {
+        events("failed")
+        showExceptions = true
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        showStackTraces = true
+        showCauses = true
+        showStandardStreams = false
+    }
+}
+
 val sourceTask: Jar = tasks.create("source", Jar::class.java) {
     from(sourceSets["main"].allSource)
     classifier = "sources"
@@ -188,7 +199,7 @@ idea {
 fun getBuildNumber(): String {
     val gitLog = git.log()
     val headCommitId = git.repository.resolve(Constants.HEAD)
-    val startCommitId = ObjectId.fromString("c795901d796fba8ce8d3cb87d0172c59f56f3c9b")
+    val startCommitId = ObjectId.fromString("f867923385572819385b53651f397a380a29c6b6")
     gitLog.addRange(startCommitId, headCommitId)
     return gitLog.call().toList().size.toString()
 }
@@ -231,10 +242,14 @@ fun getVersionFromJava(file: File): String  {
         return "$major.$minor.$revision-$branchNameOrTag"
     }
 
-    val build = getBuildNumber()
+    var version = "$major.$minor.$revision"
+    if (branchNameOrTag != null && branchNameOrTag == "master") {
+        version += ".${getBuildNumber()}"
+    }
 
     if (extra != "") {
-        return "$major.$minor.$revision.$build-$extra"
+        version += "-$extra"
     }
-    return "$major.$minor.$revision.$build"
+
+    return version
 }

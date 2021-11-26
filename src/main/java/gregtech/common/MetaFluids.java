@@ -81,8 +81,6 @@ public class MetaFluids {
             GTValues.MODID, "blocks/material_sets/ruby/fluid");
     public static final ResourceLocation FLUID_SAND_TEXTURE = new ResourceLocation(
             GTValues.MODID, "blocks/material_sets/sand/fluid");
-    public static final ResourceLocation FLUID_SHARDS_TEXTURE = new ResourceLocation(
-            GTValues.MODID, "blocks/material_sets/shards/fluid");
     public static final ResourceLocation FLUID_SHINY_TEXTURE = new ResourceLocation(
             GTValues.MODID, "blocks/material_sets/shiny/fluid");
     public static final ResourceLocation FLUID_WOOD_TEXTURE = new ResourceLocation(
@@ -158,7 +156,6 @@ public class MetaFluids {
         fluidSprites.add(FLUID_ROUGH_TEXTURE);
         fluidSprites.add(FLUID_RUBY_TEXTURE);
         fluidSprites.add(FLUID_SAND_TEXTURE);
-        fluidSprites.add(FLUID_SHARDS_TEXTURE);
         fluidSprites.add(FLUID_SHINY_TEXTURE);
         fluidSprites.add(FLUID_WOOD_TEXTURE);
 

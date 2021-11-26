@@ -21,7 +21,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.items.IItemHandlerModifiable;
+
+import javax.annotation.Nonnull;
 
 public class RecipeLogicSteam extends AbstractRecipeLogic {
 
@@ -156,8 +157,8 @@ public class RecipeLogicSteam extends AbstractRecipeLogic {
     }
 
     @Override
-    protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
-        return !this.needsVenting && super.setupAndConsumeRecipeInputs(recipe, importInventory);
+    protected boolean checkRecipe(Recipe recipe) {
+        return super.checkRecipe(recipe) && !this.needsVenting;
     }
 
     @Override
@@ -167,12 +168,14 @@ public class RecipeLogicSteam extends AbstractRecipeLogic {
     }
 
     @Override
-    protected int[] calculateOverclock(int EUt, long voltage, int duration) {
-        // double duration for normal Steam machines, double EUt for HP Steam
-        return new int[]{
-                isHighPressure ? EUt * 2 : EUt,
-                isHighPressure ? duration : duration * 2
-        };
+    protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
+        return standardOverclockingLogic((isHighPressure ? recipe.getEUt() * 2 : recipe.getEUt()) * (negativeEU ? -1 : 1),
+                getMaxVoltage(),
+                isHighPressure ? recipe.getDuration() * 2 : recipe.getDuration(),
+                getOverclockingDurationDivisor(),
+                getOverclockingVoltageMultiplier(),
+                maxOverclocks
+        );
     }
 
     @Override

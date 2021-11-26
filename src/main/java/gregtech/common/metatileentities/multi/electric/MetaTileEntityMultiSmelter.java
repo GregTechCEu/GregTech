@@ -75,11 +75,6 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     }
 
     @Override
-    public int getParallelLimit() {
-        return heatingCoilLevel * 32;
-    }
-
-    @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "CCC", "XXX")
@@ -125,10 +120,14 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         }
 
         @Override
-        public void applyParallelBonus(RecipeBuilder<?> builder) {
-            int parallelLimit = 32 * heatingCoilLevel;
+        public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
             builder.EUt(Math.max(1, 16 / heatingCoilDiscount))
-                    .duration((int) Math.max(1.0, 256 * builder.getParallel() / (parallelLimit * 1.0)));
+                    .duration((int) Math.max(1.0, 256 * builder.getParallel() / (getParallelLimit() * 1.0)));
+        }
+
+        @Override
+        public int getParallelLimit() {
+            return 32 * heatingCoilLevel;
         }
     }
 }

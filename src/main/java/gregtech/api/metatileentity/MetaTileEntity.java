@@ -45,7 +45,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.FluidActionResult;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -1292,10 +1295,6 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public List<IFluidHandler> getNotifiedFluidOutputList() {
         return notifiedFluidOutputList;
-    }
-
-    public int getParallelLimit() {
-        return 1;
     }
 
     public boolean isFragile() {

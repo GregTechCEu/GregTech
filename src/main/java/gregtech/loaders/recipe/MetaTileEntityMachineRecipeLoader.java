@@ -670,7 +670,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm(4))
                 .inputs(MetaItems.ELECTRIC_PUMP_LUV.getStackForm(4))
                 .inputs(MetaItems.CONVEYOR_MODULE_LUV.getStackForm(4))
-                .input(OrePrefix.gear, Materials.RuthenianIridium, 2)
+                .input(OrePrefix.gear, Materials.Ruridit, 2)
                 .outputs(MetaTileEntities.ADVANCED_LARGE_MINER.getStackForm())
                 .duration(400).EUt(30720).buildAndRegister();
     }

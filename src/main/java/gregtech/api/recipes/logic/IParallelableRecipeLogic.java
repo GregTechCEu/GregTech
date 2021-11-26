@@ -8,6 +8,8 @@ import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
+
 public interface IParallelableRecipeLogic {
 
     /**
@@ -16,7 +18,7 @@ public interface IParallelableRecipeLogic {
      *
      * @param builder the recipe builder
      */
-    default void applyParallelBonus(RecipeBuilder<?> builder) {
+    default void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
     }
 
     /**
@@ -66,9 +68,9 @@ public interface IParallelableRecipeLogic {
         if (parallelLimit > 1) {
             RecipeBuilder<?> parallelBuilder = null;
             if (logic.getParallelLogicType() == ParallelLogicType.MULTIPLY) {
-                parallelBuilder = findMultipliedParallelRecipe(logic.recipeMap, currentRecipe, inputs, fluidInputs, outputs, fluidOutputs, parallelLimit);
+                parallelBuilder = findMultipliedParallelRecipe(logic.getRecipeMap(), currentRecipe, inputs, fluidInputs, outputs, fluidOutputs, parallelLimit);
             } else if (logic.getParallelLogicType() == ParallelLogicType.APPEND_ITEMS) {
-                parallelBuilder = findAppendedParallelItemRecipe(logic.recipeMap, inputs, outputs, parallelLimit, maxVoltage);
+                parallelBuilder = findAppendedParallelItemRecipe(logic.getRecipeMap(), inputs, outputs, parallelLimit, maxVoltage);
             }
             // if the builder returned is null, no recipe was found.
             if (parallelBuilder == null) {

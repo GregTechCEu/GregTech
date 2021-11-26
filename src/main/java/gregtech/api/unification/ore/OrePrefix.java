@@ -141,8 +141,6 @@ public class OrePrefix {
     public static final OrePrefix toolHeadPickaxe = new OrePrefix("toolHeadPickaxe", M * 3, null, MaterialIconType.toolHeadPickaxe, ENABLE_UNIFICATION, hasToolProperty);
     // made of 1 Ingots.
     public static final OrePrefix toolHeadShovel = new OrePrefix("toolHeadShovel", M, null, MaterialIconType.toolHeadShovel, ENABLE_UNIFICATION, hasToolProperty);
-    // made of 1 Ingots.
-    public static final OrePrefix toolHeadUniversalSpade = new OrePrefix("toolHeadUniversalSpade", M * 6, null, MaterialIconType.toolHeadUniversalSpade, ENABLE_UNIFICATION, hasToolProperty);
     // made of 3 Ingots.
     public static final OrePrefix toolHeadAxe = new OrePrefix("toolHeadAxe", M * 3, null, MaterialIconType.toolHeadAxe, ENABLE_UNIFICATION, hasToolProperty);
     // made of 2 Ingots.
@@ -263,7 +261,6 @@ public class OrePrefix {
         toolHeadSword.maxStackSize = 16;
         toolHeadPickaxe.maxStackSize = 16;
         toolHeadShovel.maxStackSize = 16;
-        toolHeadUniversalSpade.maxStackSize = 16;
         toolHeadAxe.maxStackSize = 16;
         toolHeadHoe.maxStackSize = 16;
         toolHeadSense.maxStackSize = 16;

@@ -40,7 +40,7 @@ public class SteamExtractor extends SteamMetaTileEntity {
         return createUITemplate(player)
                 .widget(new SlotWidget(this.importItems, 0, 53, 25)
                         .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getFullGuiTexture("slot_%s_extractor_background")))
-                .widget(new RecipeProgressWidget(workableHandler::getProgressPercent, 79, 25, 20, 18, workableHandler.recipeMap)
+                .widget(new RecipeProgressWidget(workableHandler::getProgressPercent, 79, 25, 20, 18, workableHandler.getRecipeMap())
                         .setProgressBar(getFullGuiTexture("progress_bar_%s_extractor"),
                                 getFullGuiTexture("progress_bar_%s_extractor_filled"),
                                 ProgressWidget.MoveType.HORIZONTAL))

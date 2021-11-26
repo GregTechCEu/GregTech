@@ -21,10 +21,10 @@ public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockW
 
     // just initialize inventories based on RecipeMap values by default
     protected void initializeAbilities() {
-        this.importItems = new NotifiableItemStackHandler(recipeMapWorkable.recipeMap.getMaxInputs(), this, false);
-        this.importFluids = new FluidTankList(true, makeFluidTanks(recipeMapWorkable.recipeMap.getMaxFluidInputs(), false));
-        this.exportItems = new NotifiableItemStackHandler(recipeMapWorkable.recipeMap.getMaxOutputs(), this, true);
-        this.exportFluids = new FluidTankList(false, makeFluidTanks(recipeMapWorkable.recipeMap.getMaxFluidOutputs(), true));
+        this.importItems = new NotifiableItemStackHandler(recipeMapWorkable.getRecipeMap().getMaxInputs(), this, false);
+        this.importFluids = new FluidTankList(true, makeFluidTanks(recipeMapWorkable.getRecipeMap().getMaxFluidInputs(), false));
+        this.exportItems = new NotifiableItemStackHandler(recipeMapWorkable.getRecipeMap().getMaxOutputs(), this, true);
+        this.exportFluids = new FluidTankList(false, makeFluidTanks(recipeMapWorkable.getRecipeMap().getMaxFluidOutputs(), true));
 
         this.itemInventory = new ItemHandlerProxy(this.importItems, this.exportItems);
         this.fluidInventory = new FluidHandlerProxy(this.importFluids, this.exportFluids);

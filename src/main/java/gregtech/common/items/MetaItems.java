@@ -465,7 +465,6 @@ public final class MetaItems {
     public static ToolMetaItem<?>.MetaToolValueItem MORTAR;
     public static ToolMetaItem<?>.MetaToolValueItem WIRE_CUTTER;
     public static ToolMetaItem<?>.MetaToolValueItem BRANCH_CUTTER;
-    public static ToolMetaItem<?>.MetaToolValueItem UNIVERSAL_SPADE;
     public static ToolMetaItem<?>.MetaToolValueItem KNIFE;
     public static ToolMetaItem<?>.MetaToolValueItem BUTCHERY_KNIFE;
     public static ToolMetaItem<?>.MetaToolValueItem SENSE;
@@ -578,7 +577,6 @@ public final class MetaItems {
         add(OrePrefix.toolHeadDrill);
         add(OrePrefix.toolHeadChainsaw);
         add(OrePrefix.toolHeadWrench);
-        add(OrePrefix.toolHeadUniversalSpade);
         add(OrePrefix.toolHeadSense);
         add(OrePrefix.toolHeadBuzzSaw);
         add(OrePrefix.toolHeadScrewdriver);
@@ -605,13 +603,6 @@ public final class MetaItems {
             if (item instanceof MetaPrefixItem) {
                 ((MetaPrefixItem) item).registerOreDict();
             }
-        }
-    }
-
-    public static void registerRecipes() {
-        for (MetaItem<?> item : ITEMS) {
-            if (item instanceof MetaTool)
-                ((MetaTool) item).registerRecipes();
         }
     }
 
