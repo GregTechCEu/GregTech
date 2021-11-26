@@ -1,0 +1,49 @@
+{
+  "section": "CraftTweaker/Material",
+  "title": "Material Definition",
+  "stream": [
+    {
+      "type": "textbox",
+      "fontSize": 11,
+      "fontColor": -65536,
+      "content": [
+        "§lFirstly, you should know what is the Material."
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "Material is the basis of CEu. It defines to a substance and its properties. It usually takes the form of an §lelement§r or a §lchemical§r, but it can also take the form of something weird like the §lEnder Eye§r."
+      ]
+    },
+    {
+      "type": "textbox",
+      "fontSize": 11,
+      "fontColor": -16776961,
+      "content": [
+        "§lSecondly, it defines which properties?"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "The §lmaterial§r specifies whether it has a §lfluid§r state, §lplasma§r state, §ldust§r state, etc. When it has a specific state, the CEu will register the corresponding item or fluid automatically."
+      ]
+    },
+    {
+      "type": "textbox",
+      "fontSize": 11,
+      "fontColor": -16731136,
+      "content": [
+        "§lThirdly, What else does it define?"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "You can actually define its colors, flag, iconSet, cableProperties, Element, formula, components and so on. Don\u0027t worry, they are not complicated, will be introduced in other pages."
+      ]
+    }
+  ],
+  "fixed": []
+}

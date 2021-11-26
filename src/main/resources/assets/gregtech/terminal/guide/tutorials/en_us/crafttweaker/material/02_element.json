@@ -1,0 +1,78 @@
+{
+  "section": "CraftTweaker/Material",
+  "title": "Element",
+  "stream": [
+    {
+      "type": "textbox",
+      "fontSize": 9,
+      "content": [
+        "The §lElement§r use to specify a material as an elemental and affects its chemical fomular. CEu basically has the periodic table, so you probably won\u0027t need it. \n\n§lContents:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "element",
+      "content": [
+        "1. §9Element"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "ct",
+      "content": [
+        "2. §9CT"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "element",
+      "content": [
+        "§c§lElement:§r\n §l○ §nprotons§r – Amount of Protons\n §l○ §nneutrons§r – Amount of Neutrons (I could have made mistakes with the Neutron amount calculation, please tell me if I did something wrong)\n §l○ §nhalfLifeSeconds§r – Amount of Half Life this Material has in Seconds. -1 for stable Materials\n §l○ §ndecayTo§r – String representing the Elements it decays to. Separated by an \u0027\u0026\u0027 Character\n §l○ §nname§r – Name of the Element\n §l○ §nsymbol§r – Symbol of the Element"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§lExisting elements:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "stroke": 1623820032,
+      "stroke_width": 3,
+      "fill": 1623820032,
+      "content": [
+        " §l○ §c§lH§r: 1, 0, -1, null, \"Hydrogen\", \"H\", false\n §l○ §c§lD§r: 1, 1, -1, \"H\", \"Deuterium\", \"D\", true\n §l○ §c§lT§r: 1, 2, -1, \"D\", \"Tritium\", \"T\", true\n §l○ §c§lHe§r: 2, 2, -1, null, \"Helium\", \"He\", false\n §l○ §c§lHe3§r: 2, 1, -1, \"H\u0026D\", \"Helium-3\", \"He-3\", true\n §l○ §c§lLi§r: 3, 4, -1, null, \"Lithium\", \"Li\", false\n §l○ §c§lBe§r: 4, 5, -1, null, \"Beryllium\", \"Be\", false\n §l○ §c§lB§r: 5, 5, -1, null, \"Boron\", \"B\", false\n §l○ §c§lC§r: 6, 6, -1, null, \"Carbon\", \"C\", false\n §l○ §c§lN§r: 7, 7, -1, null, \"Nitrogen\", \"N\", false\n §l○ §c§lO§r: 8, 8, -1, null, \"Oxygen\", \"O\", false\n §l○ §c§lF§r: 9, 9, -1, null, \"Fluorine\", \"F\", false\n §l○ §c§lNe§r: 10, 10, -1, null, \"Neon\", \"Ne\", false\n §l○ §c§lNa§r: 11, 11, -1, null, \"Sodium\", \"Na\", false\n §l○ §c§lMg§r: 12, 12, -1, null, \"Magnesium\", \"Mg\", false\n §l○ §c§lAl§r: 13, 13, -1, null, \"Aluminium\", \"Al\", false\n §l○ §c§lSi§r: 14, 14, -1, null, \"Silicon\", \"Si\", false\n §l○ §c§lP§r: 15, 15, -1, null, \"Phosphorus\", \"P\", false\n §l○ §c§lS§r: 16, 16, -1, null, \"Sulfur\", \"S\", false\n §l○ §c§lCl§r: 17, 18, -1, null, \"Chlorine\", \"Cl\", false\n §l○ §c§lAr§r: 18, 22, -1, null, \"Argon\", \"Ar\", false\n §l○ §c§lK§r: 19, 20, -1, null, \"Potassium\", \"K\", false\n §l○ §c§lCa§r: 20, 20, -1, null, \"Calcium\", \"Ca\", false\n §l○ §c§lSc§r: 21, 24, -1, null, \"Scandium\", \"Sc\", false\n §l○ §c§lTi§r: 22, 26, -1, null, \"Titanium\", \"Ti\", false\n §l○ §c§lV§r: 23, 28, -1, null, \"Vanadium\", \"V\", false\n §l○ §c§lCr§r: 24, 28, -1, null, \"Chrome\", \"Cr\", false\n §l○ §c§lMn§r: 25, 30, -1, null, \"Manganese\", \"Mn\", false\n §l○ §c§lFe§r: 26, 30, -1, null, \"Iron\", \"Fe\", false\n §l○ §c§lCo§r: 27, 32, -1, null, \"Cobalt\", \"Co\", false\n §l○ §c§lNi§r: 28, 30, -1, null, \"Nickel\", \"Ni\", false\n §l○ §c§lCu§r: 29, 34, -1, null, \"Copper\", \"Cu\", false\n §l○ §c§lZn§r: 30, 35, -1, null, \"Zinc\", \"Zn\", false\n §l○ §c§lGa§r: 31, 39, -1, null, \"Gallium\", \"Ga\", false\n §l○ §c§lGe§r: 32, 40, -1, null, \"Germanium\", \"Ge\", false\n §l○ §c§lAs§r: 33, 42, -1, null, \"Arsenic\", \"As\", false\n §l○ §c§lSe§r: 34, 45, -1, null, \"Selenium\", \"Se\", false\n §l○ §c§lBr§r: 35, 45, -1, null, \"Bromine\", \"Br\", false\n §l○ §c§lKr§r: 36, 48, -1, null, \"Krypton\", \"Kr\", false\n §l○ §c§lRb§r: 37, 48, -1, null, \"Rubidium\", \"Rb\", false\n §l○ §c§lSr§r: 38, 49, -1, null, \"Strontium\", \"Sr\", false\n §l○ §c§lY§r: 39, 50, -1, null, \"Yttrium\", \"Y\", false\n §l○ §c§lZr§r: 40, 51, -1, null, \"Zirconium\", \"Zr\", false\n §l○ §c§lNb§r: 41, 53, -1, null, \"Niobium\", \"Nb\", false\n §l○ §c§lMo§r: 42, 53, -1, null, \"Molybdenum\", \"Mo\", false\n §l○ §c§lTc§r: 43, 55, -1, null, \"Technetium\", \"Tc\", false\n §l○ §c§lRu§r: 44, 57, -1, null, \"Ruthenium\", \"Ru\", false\n §l○ §c§lRh§r: 45, 58, -1, null, \"Rhodium\", \"Rh\", false\n §l○ §c§lPd§r: 46, 60, -1, null, \"Palladium\", \"Pd\", false\n §l○ §c§lAg§r: 47, 60, -1, null, \"Silver\", \"Ag\", false\n §l○ §c§lCd§r: 48, 64, -1, null, \"Cadmium\", \"Cd\", false\n §l○ §c§lIn§r: 49, 65, -1, null, \"Indium\", \"In\", false\n §l○ §c§lSn§r: 50, 68, -1, null, \"Tin\", \"Sn\", false\n §l○ §c§lSb§r: 51, 70, -1, null, \"Antimony\", \"Sb\", false\n §l○ §c§lTe§r: 52, 75, -1, null, \"Tellurium\", \"Te\", false\n §l○ §c§lI§r: 53, 74, -1, null, \"Iodine\", \"I\", false\n §l○ §c§lXe§r: 54, 77, -1, null, \"Xenon\", \"Xe\", false\n §l○ §c§lCs§r: 55, 77, -1, null, \"Caesium\", \"Cs\", false\n §l○ §c§lBa§r: 56, 81, -1, null, \"Barium\", \"Ba\", false\n §l○ §c§lLa§r: 57, 81, -1, null, \"Lanthanum\", \"La\", false\n §l○ §c§lCe§r: 58, 82, -1, null, \"Cerium\", \"Ce\", false\n §l○ §c§lPr§r: 59, 81, -1, null, \"Praseodymium\", \"Pr\", false\n §l○ §c§lNd§r: 60, 84, -1, null, \"Neodymium\", \"Nd\", false\n §l○ §c§lPm§r: 61, 83, -1, null, \"Promethium\", \"Pm\", false\n §l○ §c§lSm§r: 62, 88, -1, null, \"Samarium\", \"Sm\", false\n §l○ §c§lEu§r: 63, 88, -1, null, \"Europium\", \"Eu\", false\n §l○ §c§lGd§r: 64, 93, -1, null, \"Gadolinium\", \"Gd\", false\n §l○ §c§lTb§r: 65, 93, -1, null, \"Terbium\", \"Tb\", false\n §l○ §c§lDy§r: 66, 96, -1, null, \"Dysprosium\", \"Dy\", false\n §l○ §c§lHo§r: 67, 97, -1, null, \"Holmium\", \"Ho\", false\n §l○ §c§lEr§r: 68, 99, -1, null, \"Erbium\", \"Er\", false\n §l○ §c§lTm§r: 69, 99, -1, null, \"Thulium\", \"Tm\", false\n §l○ §c§lYb§r: 70, 103, -1, null, \"Ytterbium\", \"Yb\", false\n §l○ §c§lLu§r: 71, 103, -1, null, \"Lutetium\", \"Lu\", false\n §l○ §c§lHf§r: 72, 106, -1, null, \"Hafnium\", \"Hf\", false\n §l○ §c§lTa§r: 73, 107, -1, null, \"Tantalum\", \"Ta\", false\n §l○ §c§lW§r: 74, 109, -1, null, \"Tungsten\", \"W\", false\n §l○ §c§lRe§r: 75, 111, -1, null, \"Rhenium\", \"Re\", false\n §l○ §c§lOs§r: 76, 114, -1, null, \"Osmium\", \"Os\", false\n §l○ §c§lIr§r: 77, 115, -1, null, \"Iridium\", \"Ir\", false\n §l○ §c§lPt§r: 78, 117, -1, null, \"Platinum\", \"Pt\", false\n §l○ §c§lAu§r: 79, 117, -1, null, \"Gold\", \"Au\", false\n §l○ §c§lHg§r: 80, 120, -1, null, \"Mercury\", \"Hg\", false\n §l○ §c§lTl§r: 81, 123, -1, null, \"Thallium\", \"Tl\", false\n §l○ §c§lPb§r: 82, 125, -1, null, \"Lead\", \"Pb\", false\n §l○ §c§lBi§r: 83, 125, -1, null, \"Bismuth\", \"Bi\", false\n §l○ §c§lPo§r: 84, 124, -1, null, \"Polonium\", \"Po\", false\n §l○ §c§lAt§r: 85, 124, -1, null, \"Astatine\", \"At\", false\n §l○ §c§lRn§r: 86, 134, -1, null, \"Radon\", \"Rn\", false\n §l○ §c§lFr§r: 87, 134, -1, null, \"Francium\", \"Fr\", false\n §l○ §c§lRa§r: 88, 136, -1, null, \"Radium\", \"Ra\", false\n §l○ §c§lAc§r: 89, 136, -1, null, \"Actinium\", \"Ac\", false\n §l○ §c§lTh§r: 90, 140, -1, null, \"Thorium\", \"Th\", false\n §l○ §c§lPa§r: 91, 138, -1, null, \"Protactinium\", \"Pa\", false\n §l○ §c§lU§r: 92, 146, -1, null, \"Uranium\", \"U\", false\n §l○ §c§lU238§r: 92, 146, -1, null, \"Uranium-238\", \"U-238\", false\n §l○ §c§lU235§r: 92, 143, -1, null, \"Uranium-235\", \"U-235\", true\n §l○ §c§lNp§r: 93, 144, -1, null, \"Neptunium\", \"Np\", false\n §l○ §c§lPu§r: 94, 152, -1, null, \"Plutonium\", \"Pu\", false\n §l○ §c§lPu239§r: 94, 145, -1, null, \"Plutonium-239\", \"Pu-239\", false\n §l○ §c§lPu241§r: 94, 149, -1, null, \"Plutonium-241\", \"Pu-241\", true\n §l○ §c§lAm§r: 95, 150, -1, null, \"Americium\", \"Am\", false\n §l○ §c§lCm§r: 96, 153, -1, null, \"Curium\", \"Cm\", false\n §l○ §c§lBk§r: 97, 152, -1, null, \"Berkelium\", \"Bk\", false\n §l○ §c§lCf§r: 98, 153, -1, null, \"Californium\", \"Cf\", false\n §l○ §c§lEs§r: 99, 153, -1, null, \"Einsteinium\", \"Es\", false\n §l○ §c§lFm§r: 100, 157, -1, null, \"Fermium\", \"Fm\", false\n §l○ §c§lMd§r: 101, 157, -1, null, \"Mendelevium\", \"Md\", false\n §l○ §c§lNo§r: 102, 157, -1, null, \"Nobelium\", \"No\", false\n §l○ §c§lLr§r: 103, 159, -1, null, \"Lawrencium\", \"Lr\", false\n §l○ §c§lRf§r: 104, 161, -1, null, \"Rutherfordium\", \"Rf\", false\n §l○ §c§lDb§r: 105, 163, -1, null, \"Dubnium\", \"Db\", false\n §l○ §c§lSg§r: 106, 165, -1, null, \"Seaborgium\", \"Sg\", false\n §l○ §c§lBh§r: 107, 163, -1, null, \"Bohrium\", \"Bh\", false\n §l○ §c§lHs§r: 108, 169, -1, null, \"Hassium\", \"Hs\", false\n §l○ §c§lMt§r: 109, 167, -1, null, \"Meitnerium\", \"Mt\", false\n §l○ §c§lDs§r: 110, 171, -1, null, \"Darmstadtium\", \"Ds\", false\n §l○ §c§lRg§r: 111, 169, -1, null, \"Roentgenium\", \"Rg\", false\n §l○ §c§lCn§r: 112, 173, -1, null, \"Copernicium\", \"Cn\", false\n §l○ §c§lNh§r: 113, 171, -1, null, \"Nihonium\", \"Nh\", false\n §l○ §c§lFl§r: 114, 175, -1, null, \"Flerovium\", \"Fl\", false\n §l○ §c§lMc§r: 115, 173, -1, null, \"Moscovium\", \"Mc\", false\n §l○ §c§lLv§r: 116, 177, -1, null, \"Livermorium\", \"Lv\", false\n §l○ §c§lTs§r: 117, 177, -1, null, \"Tennessine\", \"Ts\", false\n §l○ §c§lOg§r: 118, 176, -1, null, \"Oganesson\", \"Og\", false\n §l○ §c§lTr§r: 119, 178, -1, null, \"Tritanium\", \"Tr\", false\n §l○ §c§lDr§r: 120, 180, -1, null, \"Duranium\", \"Dr\", false\n §l○ §c§lKe§r: 125, 198, -1, null, \"Trinium\", \"Ke\", false\n §l○ §c§lNq§r: 174, 352, 140, null, \"Naquadah\", \"Nq\", true\n §l○ §c§lNq1§r: 174, 354, 140, null, \"NaquadahEnriched\", \"Nq+\", true\n §l○ §c§lNq2§r: 174, 348, 140, null, \"Naquadria\", \"*Nq*\", true\n §l○ §c§lNt§r: 0, 1000, -1, null, \"Neutronium\", \"Nt\", false\n §l○ §c§lAd§r: 750, 1000, -1, null, \"Adamantium\", \"Ad\", false\n §l○ §c§lVb§r: 850, 900, -1, null, \"Vibranium\", \"Vb\", false\n §l○ §c§lTn§r: 550, 670, -1, null, \"Taranium\", \"Tn\", false"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "ct",
+      "content": [
+        "§lElements.add§r: §o§nElements.add(long protons, long neutrons, long halfLifeSeconds, String decayTo, String name, String symbol, boolean isIsotope)§r \nAdd a new element.\n\n§lElements.get§r: §o§nElements.get(String name)§r \nGet the element by name."
+      ]
+    },
+    {
+      "type": "textbox",
+      "stroke": 687800320,
+      "stroke_width": 3,
+      "fill": 687800320,
+      "content": [
+        "§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0MaterialBuilder§r§5;§r§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0Material§r§5;§r§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0Elements§r§5;§r§5\n§r§5\n§r§9var§r§5 §r§0Au§r§5 §r§5\u003d§r§5 §r§0Elements§r§5.§r§0get§r§5(§r§0Au§r§5)§r§5;§r§5 §r§8// get an existing element.§r§5\n§r§9var§r§5 §r§0name§r§5 §r§5\u003d§r§5 §r§0Au§r§5.§r§0name§r§5;§r§5 §r§8// \"Gold\"§r§5\n§r§9var§r§5 §r§0symbol§r§5 §r§5\u003d§r§5 §r§0Au§r§5.§r§0symbol§r§5;§r§5 §r§8// \"Au\"§r§5\n§r§9var§r§5 §r§0protons§r§5 §r§5\u003d§r§5 §r§0Au§r§5.§r§0protons§r§5 §r§8// 79§r§5\n§r§9var§r§5 §r§0neutrons§r§5 §r§5\u003d§r§5 §r§0Au§r§5.§r§0neutrons§r§8// 117§r§5\n§r§9var§r§5 §r§0mass§r§5 §r§5\u003d§r§5 §r§0Au§r§5.§r§0mass§r§5 §r§8// 196§r§5\n§r§5\n§r§9var§r§5 §r§0CEu§r§5 §r§5\u003d§r§5 §r§0Elements§r§5.§r§0add§r§5(§r§c999§r§5,§r§5 §r§c999§r§5,§r§5 §r§5-§r§c1§r§5,§r§5 §r§cnull§r§5,§r§5 §r§2\"GTCEu\"§r§5,§r§5 §r§2\"CEu\"§r§5,§r§5 §r§cfalse§r§5)§r§5;§r§5 §r§8// create a new element.§r§5\n§r§5\n§r§9var§r§5 §r§0myMaterial§r§5 §r§5\u003d§r§5 §r§0MaterialBuilder§r§5(§r§2\"my_material\"§r§5)§r§5.§r§0element§r§5(§r§2\"CEu\"§r§5)§r§5.§r§0build§r§5(§r§5)§r§5;§r§5 §r§8// register my element.§r§5\n§r"
+      ]
+    }
+  ],
+  "fixed": []
+}

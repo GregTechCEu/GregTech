@@ -27,11 +27,11 @@ public class TextEditorWidget extends WidgetGroup {
     private static final TextureArea STYLE = TextureArea.fullImage("textures/gui/widget/formatting.png");
     private final TextPanelWidget textPanelWidget;
 
-    private static final Pattern COMMENT = Pattern.compile("(//.*|/\\*[\\s\\S]*?\\*/)");
+    private static final Pattern COMMENT = Pattern.compile("(//.*|/\\*[\\s\\S]*?\\*/)|(#.*)");
     private static final Pattern STRING = Pattern.compile("(\"(?:[^\"\\\\]|\\\\[\\s\\S])*\"|'(?:[^'\\\\]|\\\\[\\s\\S])*')");
     private static final Pattern BOOL = Pattern.compile("\\b(true|false|null|undefined|NaN)\\b");
     private static final Pattern KEYWORD = Pattern.compile("\\b(import|var|for|if|else|return|this|while|new|function|switch|case|typeof|do|in|throw|try|catch|finally|with|instance|delete|void|break|continue)\\b");
-    private static final Pattern KEYWORD_2 = Pattern.compile("\\b(document|Date|Math|window|Object|location|navigator|Array|String|Number|Boolean|Function|RegExp)\\b");
+    private static final Pattern KEYWORD_2 = Pattern.compile("\\b(String|int|long|boolean|float|double|byte|short|document|Date|Math|window|Object|location|navigator|Array|Number|Boolean|Function|RegExp)\\b");
     private static final Pattern VARIABLE = Pattern.compile("(?:[^\\W\\d]|\\$)[\\$\\w]*");
     private static final Pattern NUMBER = Pattern.compile("(0[xX][0-9a-fA-F]+|\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?|\\.\\d+(?:[eE][+-]?\\d+)?)");
     private static final Pattern ANY = Pattern.compile("[\\s\\S]");
@@ -85,7 +85,7 @@ public class TextEditorWidget extends WidgetGroup {
         for (int y = 0; y < 2; y++) {
             for (int x = 0; x < 3; x++) {
                 TextFormatting styleFormatting = formatting[16 + y * 3 + x];
-                if (styleFormatting == TextFormatting.RESET) return;
+                if (styleFormatting == TextFormatting.RESET) break;
                 this.addWidget(new RectButtonWidget(x * 16 + 32, y * 16, 16, 16, 1)
                         .setToggleButton(STYLE.getSubArea(0.5 + x * 1.0 / 6, y * 0.5, 1.0 / 6, 0.5),
                                 (cd, pressed)-> {
@@ -100,13 +100,13 @@ public class TextEditorWidget extends WidgetGroup {
                         .setColors(0, -1, 0));
             }
         }
-        this.addWidget(new RectButtonWidget(3 * 16 + 32, 0, 16, 16, 1)
-                .setToggleButton(new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor()), (c, p)-> textPanelWidget.allowMarkdown = p)
-                .setValueSupplier(true, () -> textPanelWidget.allowMarkdown)
+        this.addWidget(new RectButtonWidget(3 * 16 + 32, 0, 16, 16, 3)
+                .setToggleButton(new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor()), (c, p)-> textPanelWidget.allowMarkdown = !p)
+                .setValueSupplier(true, () -> !textPanelWidget.allowMarkdown)
                 .setColors(TerminalTheme.COLOR_B_3.getColor(), TerminalTheme.COLOR_1.getColor(), TerminalTheme.COLOR_B_3.getColor())
                 .setIcon(new ColorRectTexture(TerminalTheme.COLOR_7.getColor()))
                 .setHoverText("Check Markdown when Ctrl+V"));
-        this.addWidget(new RectButtonWidget(3 * 16 + 32, 16, 16, 16, 1)
+        this.addWidget(new RectButtonWidget(3 * 16 + 32, 16, 16, 16, 3)
                 .setClickListener(clickData -> textPanelWidget.pageSetCurrent(""))
                 .setColors(TerminalTheme.COLOR_B_3.getColor(), TerminalTheme.COLOR_1.getColor(), TerminalTheme.COLOR_B_3.getColor())
                 .setIcon(new ColorRectTexture(TerminalTheme.COLOR_7.getColor()))
@@ -137,6 +137,7 @@ public class TextEditorWidget extends WidgetGroup {
             super(x, y, width, height);
             this.stringUpdate = stringUpdate;
             this.content = "";
+            this.allowMarkdown = true;
             if (isClientSide()) {
                 fontRenderer = Minecraft.getMinecraft().fontRenderer;
                 textHeight = fontRenderer.getWordWrappedHeight(content, width - yBarWidth);
@@ -159,7 +160,7 @@ public class TextEditorWidget extends WidgetGroup {
         public boolean keyTyped(char typedChar, int keyCode) {
             if(!focus || !isActive()) return false;
             if (GuiScreen.isKeyComboCtrlV(keyCode)) {
-                this.pageInsertIntoCurrent(formatFromMarkdown(GuiScreen.getClipboardString()));
+                this.pageInsertIntoCurrent(allowMarkdown ? formatFromMarkdown(GuiScreen.getClipboardString()) : GuiScreen.getClipboardString());
                 findFrontFormatting();
             } else {
                 switch(keyCode) {
@@ -198,6 +199,9 @@ public class TextEditorWidget extends WidgetGroup {
                     } else {
                         builder.append('\\');
                     }
+                } else if (chars[i] == '*' && i + 1 < chars.length && chars[i + 1] == ' ') { // SUBLINE
+                    builder.append(' ').append(TextFormatting.BOLD).append('○').append(TextFormatting.RESET).append(' ');
+                    i++;
                 } else if (chars[i] == '*' && i + 1 < chars.length && chars[i + 1] == '*') { // BOLD
                     checkTextFormatting(builder, TextFormatting.BOLD, stack);
                     i++;
@@ -209,7 +213,7 @@ public class TextEditorWidget extends WidgetGroup {
                     } else {
                         builder.append('_');
                     }
-                } else if (chars[i] == '~') {
+                } else if (chars[i] == '~') { // STRIKETHROUGH
                     checkTextFormatting(builder, TextFormatting.STRIKETHROUGH, stack);
                 } else if (chars[i] == '`' && i + 1 < chars.length && chars[i + 1] == '`' && i + 2 < chars.length && chars[i + 2] == '`') { // code
                     boolean find = false;
@@ -236,12 +240,13 @@ public class TextEditorWidget extends WidgetGroup {
         private String checkCode(String code) {
             Pattern[] patterns = new Pattern[]{COMMENT, STRING, BOOL, KEYWORD, KEYWORD_2, VARIABLE, NUMBER, ANY};
             TextFormatting[] colors = new TextFormatting[]{
-                    TextFormatting.GREEN, // comment
-                    TextFormatting.GRAY,  //string
+                    TextFormatting.DARK_GRAY, // comment
+                    TextFormatting.DARK_GREEN,  //string
                     TextFormatting.RED,  // value
                     TextFormatting.BLUE,  // keyword
                     TextFormatting.LIGHT_PURPLE, // keyword2
                     TextFormatting.BLACK,  // variable
+                    TextFormatting.RED,  // variable
                     TextFormatting.DARK_PURPLE}; // else
             StringBuilder builder = new StringBuilder();
             while (code.length() > 0) {

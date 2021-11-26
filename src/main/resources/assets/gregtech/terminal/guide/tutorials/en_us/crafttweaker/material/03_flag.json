@@ -1,0 +1,148 @@
+{
+  "section": "CraftTweaker/Material",
+  "title": "MaterialFlag",
+  "stream": [
+    {
+      "type": "textbox",
+      "fontSize": 9,
+      "content": [
+        "The §lMaterialFlag§r refers to some additional features it has.\n\nAvailable MaterialFlag are: "
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "element",
+      "content": [
+        "§r§4§ogeneric:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        " §l○ §n\"no_unification\"§r: Add to material to disable it\u0027s unification fully todo implement.\n §l○ §n\"decomposition_requires_hydrogen\"§r: Decomposition recipe requires hydrogen as additional input. Amount is equal to input amount.\n §l○ §n\"decomposition_by_electrolyzing\"§r: Enables electrolyzer decomposition recipe generation.\n §l○ §n\"decomposition_by_centrifuging\"§r: Enables centrifuge decomposition recipe generatio.\n §l○ §n\"disable_decomposition\"§r: Disables decomposition recipe generation for this material and all materials that has it as component.\n §l○ §n\"explosive\"§r: Add to material if it is some kind of explosive.\n §l○ §n\"flammable\"§r: Add to material if it is some kind of flammable."
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "ct",
+      "content": [
+        "§4§oGenerate a plate for this material If it\u0027s dust material, dust compressor recipe into plate will be generated If it\u0027s metal material, bending machine recipes will be generated If block is found, cutting machine recipe will be also generated:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§n\"generate_plate\"§r, §n\"generate_rod\"§r, §n\"generate_frame\"§r, §n\"generate_gear\"§r, §n\"generate_long_rod\"§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§4§oThis will prevent material from creating Shapeless recipes for dust to block and vice versa Also preventing extruding and alloy smelting recipes via SHAPE_EXTRUDING/MOLD_BLOCK:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§n\"exclude_block_crafting_recipes\"§r, §n\"exclude_plate_compressor_recipe\"§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§4§oThis will prevent material from creating Shapeless recipes for dust to block and vice versa:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§n\"exclude_block_crafting_by_hand_recipes\"§r, §n\"mortar_grindable\"§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§4§oAdd to material if it cannot be worked by any other means, than smashing or smelting. This is used for coated Materials:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§n\"no_working\"§r, §n\"no_smashing\"§r, §n\"no_smelting\"§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§4§oAdd this to your Material if you want to have its Ore Calcite heated in a Blast Furnace for more output. Already listed are: Iron, Pyrite, PigIron, WroughtIron:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§n\"blast_furnace_calcite_double\"§r, §n\"blast_furnace_calcite_triple\"§r, §n\"generate_foil\"§r, §n\"generate_bolt_screw\"§r, §n\"generate_ring\"§r, §n\"generate_spring\"§r, §n\"generate_spring_small\"§r, §n\"generate_small_gear\"§r, §n\"generate_fine_wire\"§r, §n\"generate_rotor\"§r, §n\"generate_dense\"§r, §n\"generate_round\"§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§4§oIf this material can be crystallized:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§n\"crystallizable\"§r, §n\"generate_lens\"§r, §n\"high_sifter_output\"§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    }
+  ],
+  "fixed": []
+}
