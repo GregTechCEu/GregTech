@@ -376,15 +376,19 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!getWorld().isRemote && this.hasMultipleRecipeMaps() && !this.isActive()) {
+        if (!getWorld().isRemote && this.hasMultipleRecipeMaps()) {
+            if (!this.recipeMapWorkable.isActive()) {
+                int index;
+                if (playerIn.isSneaking()) // cycle recipemaps backwards
+                    index = (recipeMapIndex - 1 < 0 ? recipeMaps.length - 1 : recipeMapIndex - 1) % recipeMaps.length;
+                else // cycle recipemaps forwards
+                    index = (recipeMapIndex + 1) % recipeMaps.length;
 
-            int index;
-            if (playerIn.isSneaking()) // cycle recipemaps backwards
-                index = (recipeMapIndex - 1 < 0 ? recipeMaps.length - 1 : recipeMapIndex - 1) % recipeMaps.length;
-            else // cycle recipemaps forwards
-                index = (recipeMapIndex + 1) % recipeMaps.length;
-
-            setRecipeMapIndex(index);
+                setRecipeMapIndex(index);
+                this.recipeMapWorkable.forceRecipeRecheck();
+            } else {
+                playerIn.sendMessage(new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.switch_message"));
+            }
         }
 
         return true; // return true here on the client to keep the GUI closed

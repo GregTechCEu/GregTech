@@ -228,6 +228,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
     }
 
+    /**
+     * used to force the workable to search for new recipes
+     * use sparingly
+     */
+    public void forceRecipeRecheck() {
+        trySearchNewRecipe();
+    }
+
     protected void trySearchNewRecipe() {
         long maxVoltage = getMaxVoltage();
         Recipe currentRecipe;

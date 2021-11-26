@@ -3940,6 +3940,7 @@ gregtech.multiblock.parallel=Performing up to %d Recipes in Parallel
 gregtech.multiblock.multiple_recipemaps=Running %s Recipes
 gregtech.multiblock.multiple_recipemaps.tooltip=Use a screwdriver on the controller to change which recipes to run.
 gregtech.multiblock.multiple_recipemaps_recipes.tooltip=Available Recipes: §e%s§r
+gregtech.multiblock.multiple_recipemaps.switch_message=The machine must be off to switch recipes!
 
 gregtech.multiblock.preview.zoom=Use mousewheel or right-click+Drag to zoom
 gregtech.multiblock.preview.rotate=Click and drag to rotate
