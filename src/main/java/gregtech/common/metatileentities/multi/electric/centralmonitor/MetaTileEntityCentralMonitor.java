@@ -219,7 +219,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     private void writeParts(PacketBuffer buf) {
-        buf.writeInt(this.getMultiblockParts().size() - 1);
+        buf.writeInt((int) this.getMultiblockParts().stream().filter(MetaTileEntityMonitorScreen.class::isInstance).count());
         this.getMultiblockParts().forEach(part->{
             if (part instanceof MetaTileEntityMonitorScreen) {
                 buf.writeBlockPos(((MetaTileEntityMonitorScreen) part).getPos());
