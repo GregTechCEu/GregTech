@@ -16,6 +16,9 @@ import gregtech.api.capability.tool.IWrenchItem;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.IFacadeCover;
+import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.toolitem.IToolStats;
+import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -332,6 +335,11 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
             if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true) &&
                     metaTileEntity.onWrenchClick(playerIn, hand, wrenchDirection, rayTraceResult)) {
+
+                if(itemStack.getItem() instanceof ToolMetaItem<?>) {
+                    IToolStats stats = ((ToolMetaItem<?>) itemStack.getItem()).getItem(itemStack).getToolStats();
+                    stats.onBreakingUse(itemStack);
+                }
                 wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
                 return true;
             }
