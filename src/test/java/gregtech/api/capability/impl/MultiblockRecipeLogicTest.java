@@ -27,6 +27,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +89,7 @@ public class MultiblockRecipeLogicTest {
 
                             // function checks for the temperature of the recipe against the coils
                             @Override
-                            public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
+                            public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
                                 return true;
                             }
 
@@ -102,11 +103,6 @@ public class MultiblockRecipeLogicTest {
                             @Override
                             public boolean hasMufflerMechanics() {
                                 return false;
-                            }
-
-                            @Override
-                            public int getParallelLimit() {
-                                return 1;
                             }
                         });
 
@@ -340,13 +336,8 @@ public class MultiblockRecipeLogicTest {
 
                             // function checks for the temperature of the recipe against the coils
                             @Override
-                            public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
+                            public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
                                 return true;
-                            }
-
-                            @Override
-                            public int getParallelLimit() {
-                                return 1;
                             }
                         });
 
