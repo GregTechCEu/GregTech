@@ -61,6 +61,11 @@ public class AbstractRecipeLogicTest {
 
         AbstractRecipeLogic arl = new AbstractRecipeLogic(atte, map) {
             @Override
+            protected long getEnergyInputPerSecond() {
+                return Long.MAX_VALUE;
+            }
+
+            @Override
             protected long getEnergyStored() {
                 return Long.MAX_VALUE;
             }

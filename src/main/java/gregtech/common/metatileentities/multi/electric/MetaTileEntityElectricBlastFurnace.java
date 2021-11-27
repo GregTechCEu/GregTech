@@ -1,13 +1,11 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.BlockWorldState;
@@ -95,9 +93,8 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     }
 
     @Override
-    public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
-        int recipeRequiredTemp = recipe.getProperty(BlastTemperatureProperty.getInstance(), 0);
-        return this.blastFurnaceTemperature >= recipeRequiredTemp;
+    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+        return this.blastFurnaceTemperature >= recipe.getProperty(BlastTemperatureProperty.getInstance(), 0);
     }
 
     public static Predicate<BlockWorldState> heatingCoilPredicate() {
@@ -180,75 +177,31 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         }
 
         @Override
-        protected void setupRecipe(Recipe recipe) {
-            int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.getMaxVoltage(), recipe.getDuration(),
+        protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
+            return blastFurnaceOverclockingLogic(recipe.getEUt(), getMaxVoltage(), recipe.getDuration(), maxOverclocks,
+                    ((MetaTileEntityElectricBlastFurnace) metaTileEntity).getBlastFurnaceTemperature(),
                     recipe.getProperty(BlastTemperatureProperty.getInstance(), 0));
-
-            this.progressTime = 1;
-            setMaxProgress(resultOverclock[1]);
-            this.recipeEUt = resultOverclock[0];
-            this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
-            int tier = getMachineTierForRecipe(recipe);
-            this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), random, tier));
-            if (this.wasActiveAndNeedsUpdate) {
-                this.wasActiveAndNeedsUpdate = false;
-            } else {
-                this.setActive(true);
-            }
         }
 
-        protected int[] calculateOverclock(int EUt, long voltage, int duration, int recipeRequiredTemp) {
-            if (!allowOverclocking) {
-                return new int[]{EUt, duration};
-            }
-            boolean negativeEU = EUt < 0;
-
-            int blastFurnaceTemperature = ((MetaTileEntityElectricBlastFurnace) this.metaTileEntity).getBlastFurnaceTemperature();
-            int amountEUDiscount = Math.max(0, (blastFurnaceTemperature - recipeRequiredTemp) / 900);
+        @Nonnull
+        public static int[] blastFurnaceOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, int maxOverclocks, int currentTemp, int recipeRequiredTemp) {
+            int amountEUDiscount = Math.max(0, (currentTemp - recipeRequiredTemp) / 900);
             int amountPerfectOC = amountEUDiscount / 2;
 
-            //apply a multiplicative 95% energy multiplier for every 900k over recipe temperature
-            EUt *= Math.min(1, Math.pow(0.95, amountEUDiscount));
+            // apply a multiplicative 95% energy multiplier for every 900k over recipe temperature
+            recipeEUt *= Math.min(1, Math.pow(0.95, amountEUDiscount));
 
-            // Apply Configurable Maintenance effects
-            double resultDuration = duration;
-            MultiblockWithDisplayBase displayBase = (MultiblockWithDisplayBase) metaTileEntity;
-            int numMaintenanceProblems = ((MultiblockWithDisplayBase) metaTileEntity).getNumMaintenanceProblems();
-            if (((MetaTileEntityElectricBlastFurnace) metaTileEntity).hasMaintenanceMechanics()) {
-                IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
-                if (hatch.getDurationMultiplier() != 1.0) {
-                    resultDuration *= hatch.getDurationMultiplier();
-                }
+            // perfect overclock for every 1800k over recipe temperature
+            if (amountPerfectOC > 0) {
+                // use the normal overclock logic to do perfect OCs up to as many times as calculated
+                int[] overclock = standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, PERFECT_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER, amountPerfectOC);
+
+                // overclock normally as much as possible after perfects are exhausted
+                return standardOverclockingLogic(overclock[0], maximumVoltage, overclock[1], STANDARD_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER, maxOverclocks);
             }
 
-            int tier = getOverclockingTier(voltage);
-            if (GTValues.V[tier] <= EUt || tier == 0)
-                return new int[]{EUt, duration};
-            if (negativeEU)
-                EUt = -EUt;
-
-            int resultEUt = EUt;
-
-            //do not overclock further if duration is already too small
-            //perfect overclock for every 1800k over recipe temperature
-            while (resultDuration >= 3 && resultEUt <= GTValues.V[tier - 1] && amountPerfectOC > 0) {
-                resultEUt *= 4;
-                resultDuration /= 4;
-                amountPerfectOC--;
-            }
-
-            //do not overclock further if duration is already too small
-            //regular overclocking
-            while (resultDuration >= 3 && resultEUt <= GTValues.V[tier - 1]) {
-                resultEUt *= 4;
-                resultDuration /= ConfigHolder.U.overclockDivisor;
-            }
-
-            // apply maintenance slowdown
-            resultDuration = (int) (resultDuration * (1 + 0.1 * numMaintenanceProblems));
-
-            return new int[]{negativeEU ? -resultEUt : resultEUt, (int) Math.ceil(resultDuration)};
-
+            // no perfects are performed, do normal overclocking
+            return standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, STANDARD_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER, maxOverclocks);
         }
     }
 }

@@ -25,7 +25,7 @@ public class SteamRockBreaker extends SteamMetaTileEntity {
     public SteamRockBreaker(ResourceLocation metaTileEntityId, boolean isHighPressure) {
         super(metaTileEntityId, RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, isHighPressure);
         this.workableHandler = new SteamRockBreakerRecipeLogic(this,
-                workableHandler.recipeMap, isHighPressure, steamFluidTank, 1.0);
+                workableHandler.getRecipeMap(), isHighPressure, steamFluidTank, 1.0);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class SteamRockBreaker extends SteamMetaTileEntity {
         return createUITemplate(player)
                 .widget(new SlotWidget(this.importItems, 0, 53, 34)
                         .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getFullGuiTexture("overlay_%s_dust")))
-                .widget(new RecipeProgressWidget(workableHandler::getProgressPercent, 79, 35, 21, 18, workableHandler.recipeMap)
+                .widget(new RecipeProgressWidget(workableHandler::getProgressPercent, 79, 35, 21, 18, workableHandler.getRecipeMap())
                         .setProgressBar(getFullGuiTexture("progress_bar_%s_macerator"),
                                 getFullGuiTexture("progress_bar_%s_macerator_filled"),
                                 ProgressWidget.MoveType.HORIZONTAL))

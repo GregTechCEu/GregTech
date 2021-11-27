@@ -254,4 +254,18 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     public boolean hasFastRenderer() {
         return true;
     }
+
+    public boolean hasTESR() {
+        if (metaTileEntity == null) return false;
+        if (metaTileEntity instanceof IFastRenderMetaTileEntity) {
+            return true;
+        }
+        for (EnumFacing side : EnumFacing.VALUES) {
+            CoverBehavior cover = metaTileEntity.getCoverAtSide(side);
+            if (cover instanceof IFastRenderMetaTileEntity) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

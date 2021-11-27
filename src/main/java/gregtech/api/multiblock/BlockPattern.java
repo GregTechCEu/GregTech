@@ -13,9 +13,9 @@ import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 public class BlockPattern {
@@ -102,7 +102,7 @@ public class BlockPattern {
         return checkPatternAt(world, centerPos, facing, null);
     }
 
-    public PatternMatchContext checkPatternAt(World world, BlockPos centerPos, EnumFacing facing, List<BlockPos> validPos) {
+    public PatternMatchContext checkPatternAt(World world, BlockPos centerPos, EnumFacing facing, Set<BlockPos> validPos) {
         int[] countMatchesCache = new int[countMatches.length];
         boolean findFirstAisle = false;
         int minZ = -centerOffset[4];

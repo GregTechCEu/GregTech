@@ -12,16 +12,21 @@ import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.sound.ISoundCreator;
+import gregtech.api.metatileentity.sound.PositionedSoundMTE;
 import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.recipes.machines.FuelRecipeMap;
+import gregtech.common.ConfigHolder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.List;
 import java.util.Map;
 
-public abstract class FueledMultiblockController extends MultiblockWithDisplayBase {
+public abstract class FueledMultiblockController extends MultiblockWithDisplayBase implements ISoundCreator {
 
     protected final FuelRecipeMap recipeMap;
     protected final FuelRecipeLogic workableHandler;
@@ -105,4 +110,17 @@ public abstract class FueledMultiblockController extends MultiblockWithDisplayBa
         this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(),
                 isStructureFormed() && workableHandler.isActive());
     }
+
+    @Override
+    public void onAttached() {
+        super.onAttached();
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(workableHandler.recipeMap.getSound(), this.getPos());
+        }
+    }
+
+    public boolean canCreateSound() {
+        return isActive();
+    }
+
 }

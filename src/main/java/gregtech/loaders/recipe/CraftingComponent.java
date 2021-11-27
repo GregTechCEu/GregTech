@@ -3,7 +3,9 @@ package gregtech.loaders.recipe;
 import gregtech.api.GTValues;
 import gregtech.api.items.OreDictNames;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.blocks.BlockTransparentCasing;
@@ -12,7 +14,9 @@ import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -50,6 +54,13 @@ public class CraftingComponent {
     public static Component STICK_RADIOACTIVE;
     public static Component PIPE_REACTOR;
 
+    public static final Map<BlastProperty.GasTier, FluidStack> EBF_GASES = new HashMap<BlastProperty.GasTier, FluidStack>() {{
+        put(BlastProperty.GasTier.LOW, Materials.Nitrogen.getFluid(1000));
+        put(BlastProperty.GasTier.MID, Materials.Helium.getFluid(100));
+        put(BlastProperty.GasTier.HIGH, Materials.Argon.getFluid(50));
+        put(BlastProperty.GasTier.HIGHER, Materials.Neon.getFluid(25));
+        put(BlastProperty.GasTier.HIGHEST, Materials.Krypton.getFluid(10));
+    }};
 
     public static void initializeComponents() {
 

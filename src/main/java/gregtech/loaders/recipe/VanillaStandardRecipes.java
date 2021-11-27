@@ -504,7 +504,7 @@ public class VanillaStandardRecipes {
             MIXER_RECIPES.recipeBuilder().duration(200).EUt(7)
                     .inputs(new ItemStack(Blocks.SAND, 4))
                     .inputs(new ItemStack(Blocks.GRAVEL, 4))
-                    .input(dye, MarkerMaterials.Color.VALUES[i])
+                    .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))
                     .outputs(new ItemStack(Blocks.CONCRETE_POWDER, 8, i))
                     .buildAndRegister();
 
@@ -512,6 +512,36 @@ public class VanillaStandardRecipes {
                     .inputs(new ItemStack(Blocks.CONCRETE_POWDER, 1, i))
                     .fluidInputs(Water.getFluid(1000))
                     .outputs(new ItemStack(Blocks.CONCRETE, 1, i))
+                    .buildAndRegister();
+
+            CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(7)
+                    .inputs(new ItemStack(Blocks.CONCRETE))
+                    .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L / 8))
+                    .outputs(new ItemStack(Blocks.CONCRETE, 1, i))
+                    .buildAndRegister();
+
+            CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(7)
+                    .inputs(new ItemStack(Blocks.HARDENED_CLAY))
+                    .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L / 8))
+                    .outputs(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, i))
+                    .buildAndRegister();
+
+            CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(7)
+                    .inputs(new ItemStack(Blocks.GLASS))
+                    .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L / 8))
+                    .outputs(new ItemStack(Blocks.STAINED_GLASS, 1, i))
+                    .buildAndRegister();
+
+            CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(7)
+                    .inputs(new ItemStack(Blocks.GLASS_PANE))
+                    .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L / 8))
+                    .outputs(new ItemStack(Blocks.STAINED_GLASS_PANE, 1, i))
+                    .buildAndRegister();
+
+            CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(7)
+                    .inputs(new ItemStack(Blocks.WOOL))
+                    .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L))
+                    .outputs(new ItemStack(Blocks.WOOL, 1, i))
                     .buildAndRegister();
 
             CUTTER_RECIPES.recipeBuilder().duration(20).EUt(7)

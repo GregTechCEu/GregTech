@@ -1,7 +1,7 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "gregtech:items/tools/handle_soft_hammer",
+    "layer0": "gregtech:items/tools/handle_hammer",
     "layer1": "gregtech:items/tools/soft_hammer"
   }
 }

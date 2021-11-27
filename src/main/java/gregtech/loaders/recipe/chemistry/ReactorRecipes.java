@@ -2,6 +2,7 @@ package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.items.MetaItems;
@@ -207,11 +208,11 @@ public class ReactorRecipes {
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Carbon, 2)
-                .input(dust, Rutile, 3)
+                .input(dust, Rutile)
                 .fluidInputs(Chlorine.getFluid(4000))
                 .fluidOutputs(CarbonMonoxide.getFluid(2000))
                 .fluidOutputs(TitaniumTetrachloride.getFluid(1000))
-                .duration(500).EUt(480).buildAndRegister();
+                .duration(400).EUt(480).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(Dimethyldichlorosilane.getFluid(1000))
@@ -1076,5 +1077,15 @@ public class ReactorRecipes {
                 .fluidInputs(Nitrogen.getFluid(1000))
                 .output(dust, NiobiumNitride, 2)
                 .duration(200).EUt(480).buildAndRegister();
+
+        // Dyes
+        for (int i = 0; i < Materials.CHEMICAL_DYES.length; i++) {
+            CHEMICAL_RECIPES.recipeBuilder()
+                    .input(dye, MarkerMaterials.Color.VALUES[i])
+                    .input(dust, Salt, 2)
+                    .fluidInputs(SulfuricAcid.getFluid(250))
+                    .fluidOutputs(Materials.CHEMICAL_DYES[i].getFluid(288))
+                    .duration(600).EUt(24).buildAndRegister();
+        }
     }
 }

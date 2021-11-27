@@ -398,6 +398,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_DRAIN;
     public static MetaItem<?>.MetaValueItem COVER_INFINITE_WATER;
     public static MetaItem<?>.MetaValueItem COVER_ENDER_FLUID_LINK;
+    public static MetaItem<?>.MetaValueItem COVER_DIGITAL_INTERFACE;
+    public static MetaItem<?>.MetaValueItem COVER_DIGITAL_INTERFACE_WIRELESS;
 
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ULV;
@@ -410,6 +412,15 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ZPM;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_UV;
 
+
+    public static MetaItem<?>.MetaValueItem PLUGIN_TEXT;
+    public static MetaItem<?>.MetaValueItem PLUGIN_ONLINE_PIC;
+    public static MetaItem<?>.MetaValueItem PLUGIN_FAKE_GUI;
+    public static MetaItem<?>.MetaValueItem PLUGIN_ADVANCED_MONITOR;
+
+    public static MetaItem<?>.MetaValueItem COLOURED_LEDS;
+    public static MetaItem<?>.MetaValueItem DISPLAY;
+
     public static MetaItem<?>.MetaValueItem INTEGRATED_CIRCUIT;
 
     public static MetaItem<?>.MetaValueItem FOAM_SPRAYER;
@@ -418,7 +429,6 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem BOTTLE_PURPLE_DRINK;
 
-    public static MetaItem<?>.MetaValueItem DYE_INDIGO;
     public static MetaItem<?>.MetaValueItem PLANT_BALL;
     public static MetaItem<?>.MetaValueItem RUBBER_DROP;
     public static MetaItem<?>.MetaValueItem ENERGIUM_DUST;
@@ -455,7 +465,6 @@ public final class MetaItems {
     public static ToolMetaItem<?>.MetaToolValueItem MORTAR;
     public static ToolMetaItem<?>.MetaToolValueItem WIRE_CUTTER;
     public static ToolMetaItem<?>.MetaToolValueItem BRANCH_CUTTER;
-    public static ToolMetaItem<?>.MetaToolValueItem UNIVERSAL_SPADE;
     public static ToolMetaItem<?>.MetaToolValueItem KNIFE;
     public static ToolMetaItem<?>.MetaToolValueItem BUTCHERY_KNIFE;
     public static ToolMetaItem<?>.MetaToolValueItem SENSE;
@@ -522,6 +531,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem IMPELLER_HV;
     public static MetaItem<?>.MetaValueItem GRAVITATION_ENGINE;
 
+    public static MetaItem<?>.MetaValueItem SUS_RECORD;
+
     private static final List<OrePrefix> orePrefixes = new ArrayList<OrePrefix>() {{
         add(OrePrefix.dust);
         add(OrePrefix.dustSmall);
@@ -568,7 +579,6 @@ public final class MetaItems {
         add(OrePrefix.toolHeadDrill);
         add(OrePrefix.toolHeadChainsaw);
         add(OrePrefix.toolHeadWrench);
-        add(OrePrefix.toolHeadUniversalSpade);
         add(OrePrefix.toolHeadSense);
         add(OrePrefix.toolHeadBuzzSaw);
         add(OrePrefix.toolHeadScrewdriver);
@@ -595,13 +605,6 @@ public final class MetaItems {
             if (item instanceof MetaPrefixItem) {
                 ((MetaPrefixItem) item).registerOreDict();
             }
-        }
-    }
-
-    public static void registerRecipes() {
-        for (MetaItem<?> item : ITEMS) {
-            if (item instanceof MetaTool)
-                ((MetaTool) item).registerRecipes();
         }
     }
 

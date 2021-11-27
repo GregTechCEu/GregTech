@@ -1,0 +1,20 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.high_voltage.89_fluid_pipe_death_cold.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.high_voltage.89_fluid_pipe_death_cold.name"
+    },
+    "icon": {
+      "item": "gregtech:fluid_pipe_normal",
+      "data": 323
+    }
+  },
+  "criteria": {
+    "fluid_pipe_death_cold": {
+      "trigger": "gregtech:fluid_pipe_death_cold"
+    }
+  },
+  "parent": "gregtech:high_voltage/41_vacuum_freezer"
+}

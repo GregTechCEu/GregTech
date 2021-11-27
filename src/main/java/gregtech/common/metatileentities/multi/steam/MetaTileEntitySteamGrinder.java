@@ -1,11 +1,11 @@
 package gregtech.common.metatileentities.multi.steam;
 
-import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.capability.impl.SteamMultiWorkable;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
@@ -31,7 +31,8 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
 
     public MetaTileEntitySteamGrinder(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.MACERATOR_RECIPES, CONVERSION_RATE);
-        this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE, 8);
+        this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE);
+        this.recipeMapWorkable.setParallelLimit(8);
     }
 
     @Override
@@ -72,4 +73,5 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
     public boolean hasMaintenanceMechanics() {
         return false;
     }
+
 }

@@ -13,14 +13,20 @@ import java.util.Objects;
 public final class ItemStackKey {
 
     private final ItemStack itemStack;
+    private final int maxStackSize;
+    private int hashCode = 0;
 
     public ItemStackKey(ItemStack itemStack) {
         this.itemStack = itemStack.copy();
         this.itemStack.setCount(1);
+        this.hashCode = makeHashCode();
+        this.maxStackSize = itemStack.getMaxStackSize();
     }
 
     public ItemStackKey(ItemStack itemStack, boolean doCopy) {
         this.itemStack = itemStack;
+        this.maxStackSize = itemStack.getMaxStackSize();
+        this.hashCode = makeHashCode();
     }
 
     public boolean isItemStackEqual(ItemStack itemStack) {
@@ -36,6 +42,10 @@ public final class ItemStackKey {
         return itemStack;
     }
 
+    public int getMaxStackSize() {
+        return maxStackSize;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -47,6 +57,10 @@ public final class ItemStackKey {
 
     @Override
     public int hashCode() {
+        return hashCode;
+    }
+
+    private int makeHashCode() {
         return Objects.hash(itemStack.getItem(),
                 GTUtility.getActualItemDamageFromStack(itemStack),
                 itemStack.getTagCompound());

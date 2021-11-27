@@ -12,24 +12,28 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.metatileentity.sound.ISoundCreator;
+import gregtech.api.metatileentity.sound.PositionedSoundMTE;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.SimpleSidedCubeRenderer;
 import gregtech.api.render.Textures;
+import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.Sound;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-public abstract class SteamMetaTileEntity extends MetaTileEntity {
+public abstract class SteamMetaTileEntity extends MetaTileEntity implements ISoundCreator {
 
     public final TextureArea BRONZE_BACKGROUND_TEXTURE;
     public final TextureArea BRONZE_SLOT_BACKGROUND_TEXTURE;
@@ -48,6 +52,11 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
         BRONZE_BACKGROUND_TEXTURE = getFullGuiTexture("%s_gui");
         BRONZE_SLOT_BACKGROUND_TEXTURE = getFullGuiTexture("slot_%s");
         this.setPaintingColor(0xFFFFFF);
+    }
+
+    @Override
+    public boolean canCreateSound() {
+        return workableHandler.isActive();
     }
 
     public RecipeLogicSteam getWorkableHandler() {
@@ -124,5 +133,13 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
                 .widget(new ImageWidget(79, 42, 18, 18, getFullGuiTexture("not_enough_steam_%s"))
                         .setPredicate(() -> workableHandler.isHasNotEnoughEnergy()))
                 .bindPlayerInventory(player.inventory, BRONZE_SLOT_BACKGROUND_TEXTURE, 0);
+    }
+
+    @Override
+    public void onAttached() {
+        super.onAttached();
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(workableHandler.getRecipeMap().getSound(), this.getPos());
+        }
     }
 }

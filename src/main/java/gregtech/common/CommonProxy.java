@@ -199,7 +199,6 @@ public class CommonProxy {
 
         GTLog.logger.info("Registering recipes...");
 
-        MetaItems.registerRecipes();
         MachineRecipeLoader.init();
         CraftingRecipeLoader.init();
         MetaTileEntityLoader.init();

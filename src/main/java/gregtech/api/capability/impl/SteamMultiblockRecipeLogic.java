@@ -29,7 +29,7 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
         super(tileEntity, recipeMap);
         this.steamFluidTank = steamFluidTank;
         this.conversionRate = conversionRate;
-        allowOverclocking = false;
+        setAllowOverclocking(false);
         combineSteamTanks();
     }
 
@@ -78,6 +78,11 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
 
         combineSteamTanks();
         super.update();
+    }
+
+    @Override
+    protected long getEnergyInputPerSecond() {
+        return 0;
     }
 
     @Override

@@ -9,7 +9,7 @@ public class LayerArmorBaseVisitor extends MethodVisitor implements Opcodes {
     public static final String TARGET_CLASS_NAME = "net/minecraft/client/renderer/entity/layers/LayerArmorBase";
     public static final ObfMapping TARGET_METHOD = new ObfMapping(TARGET_CLASS_NAME, "func_188361_a", "(Lnet/minecraft/entity/EntityLivingBase;FFFFFFFLnet/minecraft/inventory/EntityEquipmentSlot;)V");
 
-    private static final String ARMOR_HOOKS_OWNER = "gregtech/api/items/armor/ArmorRenderHooks";
+    private static final String ARMOR_HOOKS_OWNER = "gregtech/core/hooks/ArmorRenderHooks";
     private static final String ARMOR_HOOKS_SIGNATURE = "(Lnet/minecraft/client/renderer/entity/layers/LayerArmorBase;Lnet/minecraft/entity/EntityLivingBase;FFFFFFFLnet/minecraft/inventory/EntityEquipmentSlot;)V";
     private static final String ARMOR_HOOKS_METHOD_NAME = "renderArmorLayer";
 

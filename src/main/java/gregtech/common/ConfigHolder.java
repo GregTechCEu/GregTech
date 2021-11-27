@@ -99,6 +99,22 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static int gasTurbineBonusOutput = 6144;
 
+    @Config.Comment("If true, sounds will be played while machines are active. Default: true")
+    @Config.RequiresWorldRestart
+    public static boolean machineSounds = true;
+
+    @Config.Comment("If true, sounds will be played when using tools outside of crafting. Default: true")
+    public static boolean toolUseSounds = true;
+
+    @Config.Comment("If true, sounds will be played when crafting with tools. Default: true")
+    public static boolean toolCraftingSounds = true;
+
+    @Config.Comment("The EU drain per tick for each screen.")
+    @Config.Name("CentralMonitor cost")
+    @Config.RangeInt(min = 0)
+    @Config.RequiresMcRestart
+    public static int centralMonitorEuCost = 50;
+
     public static class VanillaRecipes {
 
         @Config.Comment("Whether to make glass related recipes harder. Default: true")
@@ -124,6 +140,9 @@ public class ConfigHolder {
 
         @Config.Comment("Whether to make miscellaneous recipes harder. Default: false")
         public boolean hardMiscRecipes = false;
+
+        @Config.Comment("Whether to make coloring blocks like concrete or glass harder. Default: false")
+        public boolean hardDyeRecipes = false;
 
         @Config.Comment("Whether to make flint and steel recipe require steel parts. Default: true.")
         public boolean flintAndSteelRequireSteel = true;
@@ -268,7 +287,7 @@ public class ConfigHolder {
         }
 
         public static class ClientConfig {
-			
+
             @Config.Comment("Terminal root path. Default: (config/)gregtech/terminal")
             public String terminalRootPath = "gregtech/terminal";
 

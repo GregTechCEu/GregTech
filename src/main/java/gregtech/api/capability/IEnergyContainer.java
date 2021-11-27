@@ -99,6 +99,16 @@ public interface IEnergyContainer {
     long getInputVoltage();
 
     /**
+     * @return input eu/s
+     */
+    default long getInputPerSec() {return 0L;}
+
+    /**
+     * @return output eu/s
+     */
+    default long getOutputPerSec() {return 0L;}
+
+    /**
      * @return true if information like energy capacity should be hidden from TOP.
      * Useful for cables
      */
@@ -106,4 +116,40 @@ public interface IEnergyContainer {
         return false;
     }
 
+    IEnergyContainer DEFAULT = new IEnergyContainer() {
+        @Override
+        public long acceptEnergyFromNetwork(EnumFacing enumFacing, long l, long l1) {
+            return 0;
+        }
+
+        @Override
+        public boolean inputsEnergy(EnumFacing enumFacing) {
+            return false;
+        }
+
+        @Override
+        public long changeEnergy(long l) {
+            return 0;
+        }
+
+        @Override
+        public long getEnergyStored() {
+            return 0;
+        }
+
+        @Override
+        public long getEnergyCapacity() {
+            return 0;
+        }
+
+        @Override
+        public long getInputAmperage() {
+            return 0;
+        }
+
+        @Override
+        public long getInputVoltage() {
+            return 0;
+        }
+    };
 }

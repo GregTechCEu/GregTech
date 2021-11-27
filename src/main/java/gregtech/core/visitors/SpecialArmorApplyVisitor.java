@@ -12,7 +12,7 @@ public class SpecialArmorApplyVisitor extends SafeMethodVisitor {
 
     private static final ObfMapping METHOD_MAPPING = new ObfMapping("net/minecraft/util/CombatRules", "func_189427_a", "(FFF)F").toRuntime();
 
-    private static final String ARMOR_HOOKS_OWNER = "gregtech/api/items/armor/ArmorHooks";
+    private static final String ARMOR_HOOKS_OWNER = "gregtech/core/hooks/ArmorHooks";
     private static final String ARMOR_HOOKS_SIGNATURE = "(FLnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/util/NonNullList;Lnet/minecraft/util/DamageSource;)V";
     private static final String ARMOR_HOOKS_METHOD_NAME = "damageArmor";
 

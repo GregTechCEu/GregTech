@@ -1,6 +1,5 @@
 package gregtech.api.terminal;
 
-import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.hardware.Hardware;
@@ -10,19 +9,19 @@ import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.terminal.app.VirtualTankApp;
+import gregtech.common.terminal.app.appstore.AppStoreApp;
+import gregtech.common.terminal.app.batterymanager.BatteryManagerApp;
+import gregtech.common.terminal.app.console.ConsoleApp;
 import gregtech.common.terminal.app.game.maze.MazeApp;
 import gregtech.common.terminal.app.game.minesweeper.MinesweeperApp;
 import gregtech.common.terminal.app.game.pong.PongApp;
-import gregtech.common.terminal.app.appstore.AppStoreApp;
-import gregtech.common.terminal.app.multiblockhelper.MultiBlockPreviewARApp;
-import gregtech.common.terminal.app.batterymanager.BatteryManagerApp;
-import gregtech.common.terminal.app.console.ConsoleApp;
 import gregtech.common.terminal.app.guide.ItemGuideApp;
 import gregtech.common.terminal.app.guide.MultiBlockGuideApp;
 import gregtech.common.terminal.app.guide.SimpleMachineGuideApp;
 import gregtech.common.terminal.app.guide.TutorialGuideApp;
 import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
 import gregtech.common.terminal.app.hardwaremanager.HardwareManagerApp;
+import gregtech.common.terminal.app.multiblockhelper.MultiBlockPreviewARApp;
 import gregtech.common.terminal.app.prospector.OreProspectorApp;
 import gregtech.common.terminal.app.recipechart.RecipeChartApp;
 import gregtech.common.terminal.app.settings.SettingsApp;
@@ -43,11 +42,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class TerminalRegistry {
-    private static final Map<String, AbstractApplication> APP_REGISTER = new LinkedHashMap<>();
-    private static final Map<String, Hardware> HW_REGISTER = new LinkedHashMap<>();
-    private static final Map<String, List<Hardware>[]> APP_HW_DEMAND = new HashMap<>();
-    private static final Map<String, List<ItemStack>[]> APP_UPGRADE_CONDITIONS = new HashMap<>();
-    private static final List<String> DEFAULT_APPS = new ArrayList<>();
+    protected static final Map<String, AbstractApplication> APP_REGISTER = new LinkedHashMap<>();
+    protected static final Map<String, Hardware> HW_REGISTER = new LinkedHashMap<>();
+    protected static final Map<String, List<Hardware>[]> APP_HW_DEMAND = new HashMap<>();
+    protected static final Map<String, List<ItemStack>[]> APP_UPGRADE_CONDITIONS = new HashMap<>();
+    protected static final List<String> DEFAULT_APPS = new ArrayList<>();
     @SideOnly(Side.CLIENT)
     public static File TERMINAL_PATH;
 
@@ -60,9 +59,10 @@ public class TerminalRegistry {
     public static void init() {
         // register hardware
         registerHardware(new BatteryHardware());
-        registerHardware(new DeviceHardware(1));
-        registerHardware(new DeviceHardware(2));
-        registerHardware(new DeviceHardware(3));
+        int deviceSize = DeviceHardware.DEVICE.values().length;
+        for (int i = 1; i < deviceSize; i++) {
+            registerHardware(new DeviceHardware(i));
+        }
         // register applications
         AppRegistryBuilder.create(new SimpleMachineGuideApp()).defaultApp().build();
         AppRegistryBuilder.create(new MultiBlockGuideApp()).defaultApp().build();
@@ -119,6 +119,9 @@ public class TerminalRegistry {
                 .battery(GTValues.MV, 500)
                 .device(DeviceHardware.DEVICE.WIRELESS)
                 .build();
+        if (GTValues.isModLoaded(GTValues.MODID_CT)) { // handle CT register
+            CTTerminalRegistry.register();
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -188,14 +191,16 @@ public class TerminalRegistry {
     private static class AppRegistryBuilder {
         AbstractApplication app;
         boolean isDefaultApp;
-        ImmutableList.Builder<Hardware>[] hardware;
-        ImmutableList.Builder<ItemStack>[] upgrade;
+        BatteryHardware[] battery;
+        List<Hardware>[] hardware;
+        List<ItemStack>[] upgrade;
 
         public static AppRegistryBuilder create(AbstractApplication app){
             AppRegistryBuilder builder = new AppRegistryBuilder();
             builder.app = app;
-            builder.hardware = new ImmutableList.Builder[app.getMaxTier() + 1];
-            builder.upgrade = new ImmutableList.Builder[app.getMaxTier() + 1];
+            builder.battery = new BatteryHardware[app.getMaxTier() + 1];
+            builder.hardware = new List[app.getMaxTier() + 1];
+            builder.upgrade = new List[app.getMaxTier() + 1];
             return builder;
         }
 
@@ -205,15 +210,17 @@ public class TerminalRegistry {
         }
 
         public AppRegistryBuilder battery(int batteryTier, long cost) {
-            Hardware hw = new BatteryHardware.BatteryDemand(batteryTier, cost);
+            BatteryHardware hw = new BatteryHardware.BatteryDemand(batteryTier, cost);
             for (int i = 0; i <= app.getMaxTier(); i++) {
-                this.hardware(i, hw);
+                battery[i] = hw;
             }
             return this;
         }
 
         public AppRegistryBuilder battery(int tier, int batteryTier, long cost) {
-            this.hardware(tier, new BatteryHardware.BatteryDemand(batteryTier, cost));
+            if (tier < battery.length) {
+                battery[tier] = new BatteryHardware.BatteryDemand(batteryTier, cost);
+            }
             return this;
         }
 
@@ -239,10 +246,22 @@ public class TerminalRegistry {
 
         public AppRegistryBuilder hardware(int tier, Hardware... hardware) {
             if (tier < this.hardware.length) {
-                if (this.hardware[tier] == null) {
-                    this.hardware[tier] = ImmutableList.builder();
+                this.hardware[tier] = new LinkedList<>();
+                for (Hardware hw : hardware) {
+                    this.hardware[tier].add(hw);
                 }
-                this.hardware[tier].add(hardware);
+            }
+            return this;
+        }
+
+        public AppRegistryBuilder appendHardware(int tier, Hardware... hardware) {
+            if (tier < this.hardware.length) {
+                if (this.hardware[tier] == null) {
+                    this.hardware[tier] = new LinkedList<>();
+                }
+                for (Hardware hw : hardware) {
+                    this.hardware[tier].add(hw);
+                }
             }
             return this;
         }
@@ -257,19 +276,25 @@ public class TerminalRegistry {
 
         public AppRegistryBuilder upgrade(int tier, ItemStack... upgrade) {
             if (tier < this.upgrade.length) {
-                if (this.upgrade[tier] == null) {
-                    this.upgrade[tier] = ImmutableList.builder();
+                this.upgrade[tier] = new LinkedList<>();
+                for (ItemStack up : upgrade) {
+                    this.upgrade[tier].add(up);
                 }
-                this.upgrade[tier].add(upgrade);
             }
             return this;
         }
 
         public void build() {
             TerminalRegistry.registerApp(app);
-            TerminalRegistry.registerHardwareDemand(app.getRegistryName(), isDefaultApp,
-                    Arrays.stream(hardware).map(builder->builder == null ? null : builder.build()).toArray(List[]::new),
-                    Arrays.stream(upgrade).map(builder->builder == null ? null : builder.build()).toArray(List[]::new));
+            for (int i = 0; i < hardware.length; i++) {
+                if (battery[i] != null) {
+                    if (hardware[i] == null) {
+                        hardware[i] = new LinkedList<>();
+                    }
+                    hardware[i].add(battery[i]);
+                }
+            }
+            TerminalRegistry.registerHardwareDemand(app.getRegistryName(), isDefaultApp, hardware, upgrade);
         }
     }
 }

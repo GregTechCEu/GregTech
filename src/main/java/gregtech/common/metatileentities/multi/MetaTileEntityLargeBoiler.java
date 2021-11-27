@@ -16,6 +16,8 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.sound.ISoundCreator;
+import gregtech.api.metatileentity.sound.PositionedSoundMTE;
 import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.FactoryBlockPattern;
 import gregtech.api.multiblock.PatternMatchContext;
@@ -26,8 +28,10 @@ import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.SimpleCubeRenderer;
 import gregtech.api.render.Textures;
+import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockBoilerCasing.BoilerCasingType;
 import gregtech.common.blocks.BlockFireboxCasing;
 import gregtech.common.blocks.BlockFireboxCasing.FireboxCasingType;
@@ -35,6 +39,7 @@ import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.tools.DamageValues;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -43,6 +48,7 @@ import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
@@ -59,7 +65,7 @@ import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withHoverTextTranslate;
 
-public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase implements IFuelable {
+public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase implements IFuelable, ISoundCreator {
 
     private static final int CONSUMPTION_MULTIPLIER = 100;
     private static final int BOILING_TEMPERATURE = 100;
@@ -106,7 +112,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         public final OrientedOverlayRenderer frontOverlay;
 
         BoilerType(int baseSteamOutput, float fuelConsumptionMultiplier, int temperatureEffBuff, int maxTemperature, IBlockState casingState, IBlockState fireboxState, IBlockState pipeState,
-                   ICubeRenderer solidCasingRenderer, SimpleCubeRenderer fireboxIdleRenderer, SimpleCubeRenderer firefoxActiveRenderer, OrientedOverlayRenderer frontOverlay) {
+                    ICubeRenderer solidCasingRenderer, SimpleCubeRenderer fireboxIdleRenderer, SimpleCubeRenderer firefoxActiveRenderer, OrientedOverlayRenderer frontOverlay) {
             this.baseSteamOutput = baseSteamOutput;
             this.fuelConsumptionMultiplier = fuelConsumptionMultiplier;
             this.temperatureEffBuff = temperatureEffBuff;
@@ -551,5 +557,17 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     public boolean hasMufflerMechanics() {
         return true;
+    }
+
+    @Override
+    public void onAttached() {
+        super.onAttached();
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(GTSounds.BOILER, this.getPos());
+        }
+    }
+
+    public boolean canCreateSound() {
+        return isActive;
     }
 }

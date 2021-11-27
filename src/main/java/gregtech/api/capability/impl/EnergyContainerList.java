@@ -14,6 +14,24 @@ public class EnergyContainerList implements IEnergyContainer {
     }
 
     @Override
+    public long getInputPerSec() {
+        long sum = 0;
+        for (IEnergyContainer energyContainer : energyContainerList) {
+            sum += energyContainer.getInputPerSec();
+        }
+        return sum;
+    }
+
+    @Override
+    public long getOutputPerSec() {
+        long sum = 0;
+        for (IEnergyContainer energyContainer : energyContainerList) {
+            sum += energyContainer.getOutputPerSec();
+        }
+        return sum;
+    }
+
+    @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
         long amperesUsed = 0L;
         for (IEnergyContainer energyContainer : energyContainerList) {

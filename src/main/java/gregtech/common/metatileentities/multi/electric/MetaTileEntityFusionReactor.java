@@ -2,7 +2,6 @@ package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.*;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -13,7 +12,6 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.FactoryBlockPattern;
 import gregtech.api.multiblock.PatternMatchContext;
-import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
@@ -48,7 +46,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
@@ -212,7 +209,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
         public FusionRecipeLogic(MetaTileEntityFusionReactor tileEntity) {
             super(tileEntity);
-            this.allowOverclocking = false;
+            this.setAllowOverclocking(false);
         }
 
         @Override
@@ -224,22 +221,23 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         }
 
         @Override
-        protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode mode) {
-            Recipe recipe = super.findRecipe(maxVoltage, inputs, fluidInputs, mode);
-            return (recipe != null && recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L)
-                    <= energyContainer.getEnergyCapacity()) ? recipe : null;
-        }
+        protected boolean checkRecipe(Recipe recipe) {
+            // if the reactor is not able to hold enough energy for it, do not run the recipe
+            if (recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L) > energyContainer.getEnergyCapacity())
+                 return false;
 
-        @Override
-        protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
             long heatDiff = recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L) - heat;
-            if (heatDiff <= 0) {
-                return super.setupAndConsumeRecipeInputs(recipe, importInventory);
-            }
-            if (energyContainer.getEnergyStored() < heatDiff || !super.setupAndConsumeRecipeInputs(recipe, importInventory)) {
+            // if the stored heat is >= required energy, recipe is okay to run
+            if (heatDiff <= 0)
+                return true;
+
+            // if the remaining energy needed is more than stored, do not run
+            if (energyContainer.getEnergyStored() < heatDiff)
                 return false;
-            }
+
+            // remove the energy needed
             energyContainer.removeEnergy(heatDiff);
+            // increase the stored heat
             heat += heatDiff;
             return true;
         }

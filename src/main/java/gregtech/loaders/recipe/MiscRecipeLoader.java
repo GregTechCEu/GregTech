@@ -3,14 +3,12 @@ package gregtech.loaders.recipe;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.blocks.BlockTransparentCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -235,7 +233,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Extreme, 2)
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .input(plate, RuthenianIridium, 4)
+                .input(plate, Ruridit, 4)
                 .inputs(ELECTRIC_PISTON_EV.getStackForm(2))
                 .inputs(NANO_MUSCLE_SUITE_BOOTS.getStackForm())
                 .outputs(QUARK_TECH_SUITE_BOOTS.getStackForm())
@@ -245,7 +243,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Extreme, 4)
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .input(plate, RuthenianIridium, 6)
+                .input(plate, Ruridit, 6)
                 .inputs(CONVEYOR_MODULE_EV.getStackForm(2))
                 .inputs(NANO_MUSCLE_SUITE_LEGGINGS.getStackForm())
                 .outputs(QUARK_TECH_SUITE_LEGGINGS.getStackForm())
@@ -255,7 +253,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Extreme, 4)
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .input(plate, RuthenianIridium, 8)
+                .input(plate, Ruridit, 8)
                 .inputs(FIELD_GENERATOR_EV.getStackForm(2))
                 .inputs(NANO_MUSCLE_SUITE_CHESTPLATE.getStackForm())
                 .outputs(QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
@@ -265,7 +263,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Extreme, 2)
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .input(plate, RuthenianIridium, 4)
+                .input(plate, Ruridit, 4)
                 .inputs(SENSOR_EV.getStackForm())
                 .inputs(EMITTER_EV.getStackForm())
                 .inputs(NANO_MUSCLE_SUITE_HELMET.getStackForm())
@@ -286,7 +284,7 @@ public class MiscRecipeLoader {
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(16))
                 .input(wireGtSingle, SamariumIronArsenicOxide, 8)
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
-                .input(plate, RuthenianIridium, 12)
+                .input(plate, Ruridit, 12)
                 .input(circuit, Elite, 4)
                 .inputs(QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
@@ -297,11 +295,114 @@ public class MiscRecipeLoader {
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(8))
                 .input(wireGtSingle, SamariumIronArsenicOxide, 8)
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
-                .input(plate, RuthenianIridium, 16)
+                .input(plate, Ruridit, 16)
                 .input(circuit, Elite, 2)
                 .inputs(ADVANCED_NANO_MUSCLE_CHESTPLATE.getStackForm())
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
                 .outputs(ADVANCED_QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(300)
+                .inputs(DIODE.getStackForm(32))
+                .input(dust, Glass, 1)
+                .input(dye, MarkerMaterials.Color.Red, 1)
+                .input(dye, MarkerMaterials.Color.Green, 1)
+                .input(dye, MarkerMaterials.Color.Blue, 1)
+                .input(wireFine, Aluminium, 8)
+                .fluidInputs(SolderingAlloy.getFluid(72))
+                .outputs(COLOURED_LEDS.getStackForm(32))
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(160).EUt(300)
+                .inputs(SMD_DIODE.getStackForm(16))
+                .input(dust, Glass, 1)
+                .input(dye, MarkerMaterials.Color.Red, 1)
+                .input(dye, MarkerMaterials.Color.Green, 1)
+                .input(dye, MarkerMaterials.Color.Blue, 1)
+                .input(wireFine, Aluminium, 8)
+                .fluidInputs(SolderingAlloy.getFluid(72))
+                .outputs(COLOURED_LEDS.getStackForm(32))
+                .buildAndRegister();
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(120).EUt(300)
+                .inputs(COLOURED_LEDS.getStackForm(4))
+                .inputs(PLASTIC_BOARD.getStackForm())
+                .input(wireFine, Aluminium, 4)
+                .fluidInputs(SolderingAlloy.getFluid(144))
+                .outputs(DISPLAY.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(480)
+                .inputs(DISPLAY.getStackForm())
+                .inputs((ItemStack) CraftingComponent.HULL.getIngredient(3))
+                .input(wireFine, AnnealedCopper, 8)
+                .fluidInputs(SolderingAlloy.getFluid(288))
+                .outputs(MetaTileEntities.MONITOR_SCREEN.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(500)
+                .inputs(DISPLAY.getStackForm())
+                .inputs((ItemStack) CraftingComponent.HULL.getIngredient(3))
+                .input(circuit, MarkerMaterials.Tier.Advanced, 2)
+                .fluidInputs(SolderingAlloy.getFluid(432))
+                .outputs(MetaTileEntities.CENTRAL_MONITOR.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(120)
+                .inputs(DISPLAY.getStackForm())
+                .input(plate, Aluminium)
+                .input(circuit, MarkerMaterials.Tier.Good)
+                .input(screw, StainlessSteel, 4)
+                .fluidInputs(SolderingAlloy.getFluid(144))
+                .outputs(COVER_DIGITAL_INTERFACE.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(500)
+                .inputs(COVER_DIGITAL_INTERFACE.getStackForm())
+                .inputs(WIRELESS.getStackForm())
+                .fluidInputs(SolderingAlloy.getFluid(144))
+                .outputs(COVER_DIGITAL_INTERFACE_WIRELESS.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
+                .inputs(DISPLAY.getStackForm())
+                .input(circuit, MarkerMaterials.Tier.Basic)
+                .input(wireFine, Copper, 2)
+                .fluidInputs(SolderingAlloy.getFluid(72))
+                .outputs(PLUGIN_TEXT.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
+                .inputs(DISPLAY.getStackForm())
+                .input(circuit, MarkerMaterials.Tier.Basic)
+                .input(wireFine, Iron, 2)
+                .fluidInputs(SolderingAlloy.getFluid(72))
+                .outputs(PLUGIN_ONLINE_PIC.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
+                .inputs(DISPLAY.getStackForm())
+                .input(circuit, MarkerMaterials.Tier.Basic)
+                .input(wireFine, Gold, 2)
+                .fluidInputs(SolderingAlloy.getFluid(144))
+                .outputs(PLUGIN_FAKE_GUI.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
+                .inputs(DISPLAY.getStackForm())
+                .input(circuit, MarkerMaterials.Tier.Advanced)
+                .input(wireFine, Aluminium, 2)
+                .fluidInputs(SolderingAlloy.getFluid(144))
+                .outputs(PLUGIN_ADVANCED_MONITOR.getStackForm())
+                .buildAndRegister();
+
+        // terminal
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(120)
+                .input(circuit, Good, 4)
+                .input(ELECTRIC_MOTOR_MV, 2)
+                .input(ELECTRIC_PISTON_MV, 2)
+                .input(ROBOT_ARM_MV, 2)
+                .fluidInputs(SolderingAlloy.getFluid(144))
+                .outputs(WIRELESS.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(30)
+                .input(ELECTRIC_PISTON_MV, 2)
+                .input(ELECTRIC_PISTON_MV)
+                .input(lens, Glass)
+                .input(lens, Diamond)
+                .input(circuit, Basic, 4)
+                .fluidInputs(SolderingAlloy.getFluid(144))
+                .outputs(CAMERA.getStackForm())
                 .buildAndRegister();
 
         // Tempered Glass in Arc Furnace

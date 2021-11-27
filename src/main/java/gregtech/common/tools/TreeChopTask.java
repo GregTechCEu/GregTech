@@ -69,6 +69,8 @@ public class TreeChopTask implements Task {
                     this.visitedBlockPos.size() >= MAX_BLOCKS_TO_SEARCH;
             if (finishedSearchingBlocks) {
                 this.woodBlockPos.sort(new WoodBlockComparator());
+                // break blocks from the bottom upwards
+                Collections.reverse(this.woodBlockPos);
             }
             return true;
         }

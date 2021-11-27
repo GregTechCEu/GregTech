@@ -232,7 +232,7 @@ public class SeparationRecipes {
                 .input(dust, RareEarth)
                 .chancedOutput(dustSmall, Cadmium, 2500, 400)
                 .chancedOutput(dustSmall, Neodymium, 2500, 400)
-                .chancedOutput(dustSmall, Caesium, 2500, 400)
+                .chancedOutput(dustSmall, Samarium, 2500, 400)
                 .chancedOutput(dustSmall, Cerium, 2500, 400)
                 .chancedOutput(dustSmall, Yttrium, 2500, 400)
                 .chancedOutput(dustSmall, Lanthanum, 2500, 400)
@@ -337,14 +337,6 @@ public class SeparationRecipes {
                 .duration(200).EUt(30).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Bauxite, 39)
-                .output(dust, Rutile, 6)
-                .output(dust, Aluminium, 16)
-                .fluidOutputs(Hydrogen.getFluid(10000))
-                .fluidOutputs(Oxygen.getFluid(11000))
-                .duration(624).EUt(60).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Water.getFluid(1000))
                 .fluidOutputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(Oxygen.getFluid(1000))
@@ -430,6 +422,7 @@ public class SeparationRecipes {
         // Extractor
         EXTRACTOR_RECIPES.recipeBuilder()
                 .input(dust, Monazite)
+                .output(dustSmall, RareEarth)
                 .fluidOutputs(Helium.getFluid(200))
                 .duration(64).EUt(64).buildAndRegister();
 
