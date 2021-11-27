@@ -958,6 +958,9 @@ metaarmor.energy_share.disable=Energy Supply: Gadgets charging disabled
 metaarmor.energy_share.tooltip=Supply mode: %s
 metaarmor.energy_share.tooltip.guide=To change mode shift-right click when holding item
 
+metaitem.record.sus.name=Music Disc
+metaitem.record.sus.tooltip=§7Leonz - Among Us Drip
+
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 
 cover.filter.blacklist.disabled=Whitelist
@@ -3351,6 +3354,8 @@ gregtech.machine.world_accelerator.mode_entity=Entity Mode
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side
 gregtech.machine.basic.input_from_output_side.disallow=Disallow Input from Output Side
+gregtech.machine.muffle.on=Sound Muffling: Enabled
+gregtech.machine.muffle.off=Sound Muffling: Disabled
 gregtech.machine.perfect_oc=Does not lose energy efficiency when overclocked.
 
 # Advancements
@@ -3553,6 +3558,7 @@ gregtech.advancement.ultimate_voltage.80_diamericium_titanium_coil.desc=Craft a 
 
 
 behaviour.softhammer=Activates and Deactivates Machines
+behaviour.hammer=Turns on and off Muffling for Machines (by hitting them)
 behaviour.wrench=Rotates Blocks on Rightclick
 behaviour.boor.by=by %s
 behaviour.paintspray.white.tooltip=Can paint things in White

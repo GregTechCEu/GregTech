@@ -5,6 +5,8 @@ import gregtech.common.ConfigHolder;
 import gregtech.core.util.TargetClassVisitor;
 import gregtech.core.visitors.*;
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -76,6 +78,16 @@ public class GTCETransformer implements IClassTransformer, Opcodes {
                     BlockVisitor.handleClassNode(classNode).accept(classWriter);
                     return classWriter.toByteArray();
                 }
+                break;
+            }
+            case RenderGlobalVisitor.TARGET_CLASS_NAME: {
+                if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+                    ClassReader classReader = new ClassReader(basicClass);
+                    ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+                    classReader.accept(new TargetClassVisitor(classWriter, RenderGlobalVisitor.TARGET_METHOD, RenderGlobalVisitor::new), 0);
+                    return classWriter.toByteArray();
+                }
+                break;
             }
         }
         return basicClass;

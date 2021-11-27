@@ -18,6 +18,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
@@ -53,7 +54,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IMultipleRecipeMaps {
+public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements ISoundCreator, IMultipleRecipeMaps {
 
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
@@ -348,6 +349,20 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
             this.notifiedItemInputList.add(this.inputInventory);
         }
     }
+
+
+    @Override
+    public void onAttached(Object... data) {
+        super.onAttached(data);
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(recipeMap.getSound(), this.getPos());
+        }
+    }
+
+    public boolean canCreateSound() {
+        return recipeMapWorkable.isActive();
+    }
+
 
     @Override
     public RecipeMap<?>[] getAvailableRecipeMaps() {

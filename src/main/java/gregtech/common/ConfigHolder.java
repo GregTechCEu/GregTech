@@ -99,12 +99,21 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static int gasTurbineBonusOutput = 6144;
 
+    @Config.Comment("If true, sounds will be played while machines are active. Default: true")
+    @Config.RequiresWorldRestart
+    public static boolean machineSounds = true;
+
+    @Config.Comment("If true, sounds will be played when using tools outside of crafting. Default: true")
+    public static boolean toolUseSounds = true;
+
+    @Config.Comment("If true, sounds will be played when crafting with tools. Default: true")
+    public static boolean toolCraftingSounds = true;
+
     @Config.Comment("The EU drain per tick for each screen.")
     @Config.Name("CentralMonitor cost")
     @Config.RangeInt(min = 0)
     @Config.RequiresMcRestart
     public static int centralMonitorEuCost = 50;
-
 
     public static class VanillaRecipes {
 

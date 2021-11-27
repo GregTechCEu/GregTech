@@ -1,66 +1,109 @@
 {
   "forge_marker": 1,
   "variants": {
-    "active": {
-      "false": {
-        "model": "minecraft:cube_all",
-        "textures": {
-          "all": "#bot_all"
-        }
-      },
-      "true": {
-        "model": "gregtech:cube_2_layer_all",
-        "textures": {
-          "top_all": "gregtech:blocks/casings/coils/machine_coil_bloom"
-        }
-      }
-    },
-    "variant": {
-      "cupronickel": {
-        "textures": {
-          "bot_all": "gregtech:blocks/casings/coils/machine_coil_cupronickel"
-        }
-      },
-      "kanthal": {
-        "textures": {
-          "bot_all": "gregtech:blocks/casings/coils/machine_coil_kanthal"
-        }
-      },
-      "nichrome": {
-        "textures": {
-          "bot_all": "gregtech:blocks/casings/coils/machine_coil_nichrome"
-        }
-      },
-      "tungstensteel": {
-        "textures": {
-          "bot_all": "gregtech:blocks/casings/coils/machine_coil_tungstensteel"
-        }
-      },
-      "hss_g": {
-        "textures": {
-          "bot_all": "gregtech:blocks/casings/coils/machine_coil_hssg"
-        }
-      },
-      "naquadah": {
-        "textures": {
-          "bot_all": "gregtech:blocks/casings/coils/machine_coil_naquadah"
-        }
-      },
-      "naquadah_alloy": {
-        "textures": {
-          "bot_all": "gregtech:blocks/casings/coils/machine_coil_naquadahalloy"
-        }
-      },
-      "fluxed_electrum": {
-        "textures": {
-          "bot_all": "gregtech:blocks/casings/coils/machine_coil_fluxed_electrum"
-        }
-      },
-      "diamericium_titanium": {
-        "textures": {
-          "bot_all": "gregtech:blocks/casings/coils/machine_coil_diamericium_titanium"
-        }
-      }
-    }
+	  "active=false,variant=cupronickel": {
+		  "model": "minecraft:cube_all",
+		  "textures": {
+			  "all": "gregtech:blocks/casings/coils/machine_coil_cupronickel"
+		  }
+	  },
+	  "active=true,variant=cupronickel": {
+		  "model": "gregtech:cube_2_layer_all",
+		  "textures": {
+			  "bot_all": "gregtech:blocks/casings/coils/machine_coil_cupronickel",
+			  "top_all":"gregtech:blocks/casings/coils/machine_coil_cupronickel_bloom"
+		  }
+	  },
+	  "active=false,variant=kanthal": {
+		  "model": "minecraft:cube_all",
+		  "textures": {
+			  "all": "gregtech:blocks/casings/coils/machine_coil_kanthal"
+		  }
+	  },
+	  "active=true,variant=kanthal": {
+		  "model": "gregtech:cube_2_layer_all",
+		  "textures": {
+			  "bot_all": "gregtech:blocks/casings/coils/machine_coil_kanthal",
+			  "top_all":"gregtech:blocks/casings/coils/machine_coil_kanthal_bloom"
+		  }
+	  },
+	  "active=false,variant=nichrome": {
+		  "model": "minecraft:cube_all",
+		  "textures": {
+			  "all": "gregtech:blocks/casings/coils/machine_coil_nichrome"
+		  }
+	  },
+	  "active=true,variant=nichrome": {
+		  "model": "gregtech:cube_2_layer_all",
+		  "textures": {
+			  "bot_all": "gregtech:blocks/casings/coils/machine_coil_nichrome",
+			  "top_all":"gregtech:blocks/casings/coils/machine_coil_nichrome_bloom"
+		  }
+	  },
+	  "active=false,variant=tungstensteel": {
+		  "model": "minecraft:cube_all",
+		  "textures": {
+			  "all": "gregtech:blocks/casings/coils/machine_coil_tungstensteel"
+		  }
+	  },
+	  "active=true,variant=tungstensteel": {
+		  "model": "gregtech:cube_2_layer_all",
+		  "textures": {
+			  "bot_all": "gregtech:blocks/casings/coils/machine_coil_tungstensteel",
+			  "top_all":"gregtech:blocks/casings/coils/machine_coil_tungstensteel_bloom"
+		  }
+	  },
+	  "active=false,variant=hss_g": {
+		  "model": "minecraft:cube_all",
+		  "textures": {
+			  "all": "gregtech:blocks/casings/coils/machine_coil_hssg"
+		  }
+	  },
+	  "active=true,variant=hss_g": {
+		  "model": "gregtech:cube_2_layer_all",
+		  "textures": {
+			  "bot_all": "gregtech:blocks/casings/coils/machine_coil_hssg",
+			  "top_all":"gregtech:blocks/casings/coils/machine_coil_hssg_bloom"
+		  }
+	  },
+	  "active=false,variant=naquadah": {
+		  "model": "minecraft:cube_all",
+		  "textures": {
+			  "all": "gregtech:blocks/casings/coils/machine_coil_naquadah"
+		  }
+	  },
+	  "active=true,variant=naquadah": {
+		  "model": "gregtech:cube_2_layer_all",
+		  "textures": {
+			  "bot_all": "gregtech:blocks/casings/coils/machine_coil_naquadah",
+			  "top_all":"gregtech:blocks/casings/coils/machine_coil_naquadah_bloom"
+		  }
+	  },
+	  "active=false,variant=naquadah_alloy": {
+		  "model": "minecraft:cube_all",
+		  "textures": {
+			  "all": "gregtech:blocks/casings/coils/machine_coil_naquadahalloy"
+		  }
+	  },
+	  "active=true,variant=naquadah_alloy": {
+		  "model": "gregtech:cube_2_layer_all",
+		  "textures": {
+			  "bot_all": "gregtech:blocks/casings/coils/machine_coil_naquadahalloy",
+			  "top_all":"gregtech:blocks/casings/coils/machine_coil_naquadahalloy_bloom"
+		  }
+	  },
+	  "active=false,variant=fluxed_electrum": {
+		  "model": "minecraft:cube_all",
+		  "textures": {
+			  "all": "gregtech:blocks/casings/coils/machine_coil_fluxed_electrum"
+		  }
+	  },
+	  "active=true,variant=fluxed_electrum": {
+		  "model": "gregtech:cube_2_layer_all",
+		  "textures": {
+			  "bot_all": "gregtech:blocks/casings/coils/machine_coil_fluxed_electrum",
+			  "top_all":"gregtech:blocks/casings/coils/machine_coil_fluxed_electrum_bloom"
+		  }
+	  }
   }
 }

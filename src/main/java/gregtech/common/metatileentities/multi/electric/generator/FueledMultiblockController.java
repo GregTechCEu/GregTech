@@ -11,6 +11,7 @@ import gregtech.api.capability.impl.FuelRecipeLogic;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.machines.FuelRecipeMap;
@@ -20,7 +21,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.List;
 
-public abstract class FueledMultiblockController extends MultiblockWithDisplayBase {
+public abstract class FueledMultiblockController extends MultiblockWithDisplayBase implements ISoundCreator {
 
     protected final FuelRecipeMap recipeMap;
     protected final FuelRecipeLogic workableHandler;
@@ -102,4 +103,17 @@ public abstract class FueledMultiblockController extends MultiblockWithDisplayBa
         this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(),
                 isStructureFormed() && workableHandler.isActive());
     }
+
+    @Override
+    public void onAttached(Object... data) {
+        super.onAttached(data);
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(workableHandler.recipeMap.getSound(), this.getPos());
+        }
+    }
+
+    public boolean canCreateSound() {
+        return isActive();
+    }
+
 }

@@ -30,6 +30,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.tools.DamageValues;
 import gregtech.common.tools.ToolWrench;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
@@ -46,11 +47,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.Optional.Interface;
 import net.minecraftforge.fml.common.Optional.InterfaceList;
@@ -185,6 +188,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             if (metaToolValueItem.toolStats != null) {
                 IToolStats toolStats = metaToolValueItem.toolStats;
                 int toolDamagePerCraft = toolStats.getToolDamagePerContainerCraft(stack);
+                toolStats.onCraftingUse(stack);
                 boolean canApplyDamage = damageItem(stack, toolDamagePerCraft, false);
                 if (!canApplyDamage) return stack;
             }
@@ -229,6 +233,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         if (metaToolValueItem != null) {
             IToolStats toolStats = metaToolValueItem.getToolStats();
             toolStats.onBlockDestroyed(stack, world, state, pos, entity);
+            toolStats.onBreakingUse(stack);
             damageItem(stack, toolStats.getToolDamagePerBlockBreak(stack), false);
         }
         return true;
@@ -700,6 +705,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
 
         protected IToolStats toolStats = new DummyToolStats();
         protected double amountOfMaterialToRepair = 0;
+        protected SoundEvent sound;
 
         protected MetaToolValueItem(int metaValue, String unlocalizedName) {
             super(metaValue, unlocalizedName);
@@ -710,6 +716,15 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         public MetaToolValueItem addComponents(IItemComponent... stats) {
             super.addComponents(stats);
             return this;
+        }
+
+        public MetaToolValueItem setSound(SoundEvent sound) {
+            this.sound = sound;
+            return this;
+        }
+
+        public SoundEvent getSound() {
+            return sound;
         }
 
         public MetaToolValueItem setFullRepairCost(double amountOfMaterialToRepair) {

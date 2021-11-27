@@ -7,10 +7,12 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
+import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.ModeSwitchBehavior;
 import gregtech.common.tools.ToolBase;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -202,6 +204,10 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
     }
 
     @Override
+    public void onBreakingUse(ItemStack stack) {
+    }
+
+    @Override
     public void onBlockDestroyed(ItemStack stack, World world, IBlockState state, BlockPos pos, EntityLivingBase entity) {
         if (entity instanceof EntityPlayer && !(entity instanceof FakePlayer)) {
             EntityPlayer entityPlayer = (EntityPlayer) entity;
@@ -233,6 +239,10 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
                     }
                 }
             }*/
+
+            // Only play this once!
+            if (Minecraft.getMinecraft().player != null && ConfigHolder.toolUseSounds && stack.getItem() instanceof ToolMetaItem<?>)
+                Minecraft.getMinecraft().player.playSound(((ToolMetaItem<?>) stack.getItem()).getItem(stack).getSound(), 1, 1);
         }
     }
 

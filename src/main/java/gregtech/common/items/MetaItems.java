@@ -531,6 +531,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem IMPELLER_HV;
     public static MetaItem<?>.MetaValueItem GRAVITATION_ENGINE;
 
+    public static MetaItem<?>.MetaValueItem SUS_RECORD;
+
     private static final List<OrePrefix> orePrefixes = new ArrayList<OrePrefix>() {{
         add(OrePrefix.dust);
         add(OrePrefix.dustSmall);

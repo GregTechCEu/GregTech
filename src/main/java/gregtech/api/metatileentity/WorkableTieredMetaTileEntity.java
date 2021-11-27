@@ -5,12 +5,19 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.*;
+import gregtech.api.metatileentity.sound.ISoundCreator;
+import gregtech.api.metatileentity.sound.PositionedSoundMTE;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.render.OrientedOverlayRenderer;
+import gregtech.api.sound.GTSounds;
+import gregtech.common.ConfigHolder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -24,7 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity {
+public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity implements ISoundCreator {
 
     protected final RecipeLogicEnergy workable;
     protected final OrientedOverlayRenderer renderer;
@@ -41,6 +48,10 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         reinitializeEnergyContainer();
     }
 
+    public boolean canCreateSound() {
+        return workable.isActive();
+    }
+
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
         return new RecipeLogicEnergy(this, recipeMap, () -> energyContainer);
     }
@@ -54,7 +65,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         } else this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 64L, tierVoltage, 2, 0L, 0L) {
             @Override
             public long getInputAmperage() {
-                if(getEnergyCapacity() / 2 > getEnergyStored() && workable.isActive()) {
+                if (getEnergyCapacity() / 2 > getEnergyStored() && workable.isActive()) {
                     return 2;
                 }
                 return 1;
@@ -143,5 +154,17 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
 
     public Function<Integer, Integer> getTankScalingFunction() {
         return tankScalingFunction;
+    }
+
+    public boolean isActive() {
+        return workable.isActive();
+    }
+
+    @Override
+    public void onAttached() {
+        super.onAttached();
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(this.workable.getRecipeMap().getSound(), this.getPos());
+        }
     }
 }

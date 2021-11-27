@@ -8,6 +8,7 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.SteamMultiblockRecipeLogic;
 import gregtech.api.metatileentity.MTETrait;
+import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
@@ -24,7 +25,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.List;
 
-public abstract class RecipeMapSteamMultiblockController extends MultiblockWithDisplayBase {
+public abstract class RecipeMapSteamMultiblockController extends MultiblockWithDisplayBase implements ISoundCreator {
 
     protected static final double CONVERSION_RATE = ConfigHolder.U.multiblockSteamToEU;
 
@@ -140,4 +141,17 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
         super.renderMetaTileEntity(renderState, translation, pipeline);
         this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive());
     }
+
+    @Override
+    public void onAttached(Object... data) {
+        super.onAttached(data);
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(recipeMap.getSound(), this.getPos());
+        }
+    }
+
+    public boolean canCreateSound() {
+        return recipeMapWorkable.isActive();
+    }
+
 }

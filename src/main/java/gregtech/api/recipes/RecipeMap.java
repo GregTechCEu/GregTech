@@ -13,12 +13,12 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
+import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
 import gregtech.api.unification.material.Material;
@@ -27,6 +27,7 @@ import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
@@ -73,10 +74,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private Consumer<RecipeBuilder<?>> onRecipeBuildAction;
 
+    protected SoundEvent sound;
+
     public RecipeMap(String unlocalizedName,
-                     int minInputs, int maxInputs, int minOutputs, int maxOutputs,
-                     int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs,
-                     R defaultRecipe, boolean isHidden) {
+                    int minInputs, int maxInputs, int minOutputs, int maxOutputs,
+                    int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs,
+                    R defaultRecipe, boolean isHidden) {
         this.unlocalizedName = unlocalizedName;
         this.slotOverlays = new TByteObjectHashMap<>();
         this.progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
@@ -141,6 +144,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public RecipeMap<R> setSlotOverlay(boolean isOutput, boolean isFluid, boolean isLast, TextureArea slotOverlay) {
         this.slotOverlays.put((byte) ((isOutput ? 2 : 0) + (isFluid ? 1 : 0) + (isLast ? 4 : 0)), slotOverlay);
+        return this;
+    }
+
+    public RecipeMap<R> setSound(SoundEvent sound) {
+        this.sound = sound;
         return this;
     }
 
@@ -330,10 +338,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 }
             }
         }
-        return prioritizedRecipe(priorityRecipeMap,iteratedRecipes,inputs,fluidInputs,matchingMode);
+        return prioritizedRecipe(priorityRecipeMap, iteratedRecipes, inputs, fluidInputs, matchingMode);
     }
 
-    private Recipe prioritizedRecipe(Map<Integer, LinkedList<Recipe>> priorityRecipeMap, HashSet<Recipe> iteratedRecipes,List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
+    private Recipe prioritizedRecipe(Map<Integer, LinkedList<Recipe>> priorityRecipeMap, HashSet<Recipe> iteratedRecipes, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
         for (int i = priorityRecipeMap.size(); i >= 0; i--) {
             if (priorityRecipeMap.containsKey(i)) {
                 for (Recipe tmpRecipe : priorityRecipeMap.get(i)) {
@@ -349,7 +357,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return null;
     }
 
-    private void calculateRecipePriority(Recipe recipe, HashMap<Recipe, Integer> promotedTimes, Map<Integer, LinkedList<Recipe>> priorityRecipeMap ) {
+    private void calculateRecipePriority(Recipe recipe, HashMap<Recipe, Integer> promotedTimes, Map<Integer, LinkedList<Recipe>> priorityRecipeMap) {
         Integer p = promotedTimes.get(recipe);
         if (p == null) {
             p = 0;
@@ -466,8 +474,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         } else if (itemInputsCount == 3) {
             itemSlotsToLeft = 3;
             itemSlotsToDown = 1;
-        }
-        else {
+        } else {
             //if we couldn't fit all into a perfect square,
             //increase the amount of slots to the left
             itemSlotsToLeft = (int) Math.ceil(sqrt);
@@ -497,6 +504,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return Collections.unmodifiableList(recipeSet.stream().sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList()));
     }
 
+    public SoundEvent getSound() {
+        return sound;
+    }
+
     @ZenMethod("findRecipe")
     @Method(modid = GTValues.MODID_CT)
     @Nullable
@@ -506,9 +517,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                         .map(CraftTweakerMC::getItemStack)
                         .collect(Collectors.toList());
         List<FluidStack> mcFluidInputs = fluidInputs == null ? Collections.emptyList() :
-            Arrays.stream(fluidInputs)
-                .map(CraftTweakerMC::getLiquidStack)
-                .collect(Collectors.toList());
+                Arrays.stream(fluidInputs)
+                        .map(CraftTweakerMC::getLiquidStack)
+                        .collect(Collectors.toList());
         Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, outputFluidTankCapacity, MatchingMode.DEFAULT, true);
         return backingRecipe == null ? null : new CTRecipe(this, backingRecipe);
     }
