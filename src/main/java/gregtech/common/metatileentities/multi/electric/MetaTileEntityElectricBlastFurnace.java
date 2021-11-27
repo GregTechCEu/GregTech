@@ -1,7 +1,8 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.impl.MultiblockRecipeLogic;
+import gregtech.api.capability.IHeatingCoil;
+import gregtech.api.capability.impl.HeatingCoilRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -40,7 +41,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockController {
+public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockController implements IHeatingCoil {
 
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
             MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS,
@@ -53,7 +54,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     public MetaTileEntityElectricBlastFurnace(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.BLAST_RECIPES);
         if (ConfigHolder.U.GT5u.ebfTemperatureBonuses)
-            this.recipeMapWorkable = new ElectricBlastFurnaceWorkableHandler(this);
+            this.recipeMapWorkable = new HeatingCoilRecipeLogic(this);
     }
 
     @Override
@@ -150,7 +151,8 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         }
     }
 
-    public int getBlastFurnaceTemperature() {
+    @Override
+    public int getCurrentTemperature() {
         return this.blastFurnaceTemperature;
     }
 
@@ -168,40 +170,5 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     public boolean hasMufflerMechanics() {
         return true;
-    }
-
-    public static class ElectricBlastFurnaceWorkableHandler extends MultiblockRecipeLogic {
-
-        public ElectricBlastFurnaceWorkableHandler(RecipeMapMultiblockController tileEntity) {
-            super(tileEntity);
-        }
-
-        @Override
-        protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
-            return blastFurnaceOverclockingLogic(recipe.getEUt(), getMaxVoltage(), recipe.getDuration(), maxOverclocks,
-                    ((MetaTileEntityElectricBlastFurnace) metaTileEntity).getBlastFurnaceTemperature(),
-                    recipe.getProperty(BlastTemperatureProperty.getInstance(), 0));
-        }
-
-        @Nonnull
-        public static int[] blastFurnaceOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, int maxOverclocks, int currentTemp, int recipeRequiredTemp) {
-            int amountEUDiscount = Math.max(0, (currentTemp - recipeRequiredTemp) / 900);
-            int amountPerfectOC = amountEUDiscount / 2;
-
-            // apply a multiplicative 95% energy multiplier for every 900k over recipe temperature
-            recipeEUt *= Math.min(1, Math.pow(0.95, amountEUDiscount));
-
-            // perfect overclock for every 1800k over recipe temperature
-            if (amountPerfectOC > 0) {
-                // use the normal overclock logic to do perfect OCs up to as many times as calculated
-                int[] overclock = standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, PERFECT_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER, amountPerfectOC);
-
-                // overclock normally as much as possible after perfects are exhausted
-                return standardOverclockingLogic(overclock[0], maximumVoltage, overclock[1], STANDARD_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER, maxOverclocks);
-            }
-
-            // no perfects are performed, do normal overclocking
-            return standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, STANDARD_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER, maxOverclocks);
-        }
     }
 }

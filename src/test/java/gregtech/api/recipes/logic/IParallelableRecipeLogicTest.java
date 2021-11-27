@@ -29,6 +29,7 @@ import net.minecraft.world.World;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -80,7 +81,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
                     // function checks for the temperature of the recipe against the coils
                     @Override
-                    public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
+                    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
                         return true;
                     }
 
