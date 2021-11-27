@@ -240,6 +240,7 @@ public class BlockPattern {
                             boolean find = false;
                             BlockInfo[] infos = new BlockInfo[0];
                             for (TraceabilityPredicate.SimplePredicate limit : predicate.limited) {
+                                if (limit.minLayerCount == -1 && limit.minGlobalCount == -1) continue;
                                 if (limit.minLayerCount > 0) {
                                     if (!cacheLayer.containsKey(limit)) {
                                         cacheLayer.put(limit, 1);
@@ -276,9 +277,13 @@ public class BlockPattern {
                                     }
                                     if (cacheLayer.containsKey(limit)) {
                                         cacheLayer.put(limit, cacheLayer.get(limit) + 1);
+                                    } else {
+                                        cacheLayer.put(limit, 1);
                                     }
                                     if (cacheGlobal.containsKey(limit)) {
                                         cacheGlobal.put(limit, cacheGlobal.get(limit) + 1);
+                                    } else {
+                                        cacheGlobal.put(limit, 1);
                                     }
                                     infos = ArrayUtils.addAll(infos, cacheInfos.get(limit));
                                 }
@@ -381,6 +386,7 @@ public class BlockPattern {
                         boolean find = false;
                         BlockInfo[] infos = null;
                         for (TraceabilityPredicate.SimplePredicate limit : predicate.limited) {
+                            if (limit.minLayerCount == -1 && limit.minGlobalCount == -1) continue;
                             if (limit.minLayerCount > 0) {
                                 if (!cacheLayer.containsKey(limit)) {
                                     cacheLayer.put(limit, 1);

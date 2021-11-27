@@ -59,7 +59,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
                 .aisle("XXX", "C#C", "#C#")
                 .aisle("XXX", "CSC", "#C#")
                 .where('S', selfPredicate())
-                .where('X', states(getFireboxState()).or(abilities(MultiblockAbility.STEAM)).setMaxGlobalLimited(1))
+                .where('X', states(getFireboxState()).or(abilities(MultiblockAbility.STEAM).setMaxGlobalLimited(1)))
                 .where('C', states(getCasingState()).setMinGlobalLimited(6)
                         .or(abilities(MultiblockAbility.STEAM_IMPORT_ITEMS, MultiblockAbility.STEAM_EXPORT_ITEMS)))
                 .where('#', any())
