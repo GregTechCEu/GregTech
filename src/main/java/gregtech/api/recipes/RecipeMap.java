@@ -18,7 +18,6 @@ import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
-import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
 import gregtech.api.unification.material.Material;
@@ -407,8 +406,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         int itemSlotsToDown = inputSlotGrid[1];
         int startInputsX = isOutputs ? 106 : 70 - itemSlotsToLeft * 18;
         int startInputsY = 33 - (int) (itemSlotsToDown / 2.0 * 18) + yOffset;
-        boolean wasGroupOutput = itemHandler.getSlots() + fluidHandler.getTanks() == 12;
-        if (wasGroupOutput && isOutputs) startInputsY -= 9;
+        boolean wasGroup = itemHandler.getSlots() + fluidHandler.getTanks() == 12;
+        if (wasGroup) startInputsY -= 9;
         if (itemHandler.getSlots() == 6 && fluidHandler.getTanks() == 2 && !isOutputs) startInputsY -= 9;
         for (int i = 0; i < itemSlotsToDown; i++) {
             for (int j = 0; j < itemSlotsToLeft; j++) {
@@ -419,7 +418,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 addSlot(builder, x, y, slotIndex, itemHandler, fluidHandler, invertFluids, isOutputs);
             }
         }
-        if (wasGroupOutput) startInputsY += 2;
+        if (wasGroup) startInputsY += 2;
         if (fluidInputsCount > 0 || invertFluids) {
             if (itemSlotsToDown >= fluidInputsCount && itemSlotsToLeft < 3) {
                 int startSpecX = isOutputs ? startInputsX + itemSlotsToLeft * 18 : startInputsX - 18;
