@@ -66,7 +66,7 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        NotifiableFluidTank fluidTank = new NotifiableFluidTank(TANK_LIMIT,this,false);
+        NotifiableFluidTank fluidTank = new NotifiableFluidTank(TANK_LIMIT, this, false);
         this.fluidInventory = fluidTank;
         this.importFluids = new FluidTankList(false, new NotifiableFilteredFluidHandler(TANK_LIMIT, this, false).setFillPredicate(this::canInputFluid));
         this.exportFluids = new FluidTankList(false, fluidTank);
