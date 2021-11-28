@@ -410,6 +410,9 @@ public class WorldGenRegistry {
             registeredVeinDefinitions.remove(definition);
             removedDefinitions.add(definition);
         }
+        else {
+            GTLog.logger.error("Failed to remove OreDepositDefinition at {}. Deposit was not in list of registered veins.", definition.getDepositName());
+        }
     }
 
     /**
