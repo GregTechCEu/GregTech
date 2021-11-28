@@ -19,13 +19,13 @@ public class HeatingCoilRecipeLogic extends MultiblockRecipeLogic {
 
     @Override
     protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
-        return blastFurnaceOverclockingLogic(recipe.getEUt(), getMaxVoltage(), recipe.getDuration(), maxOverclocks,
+        return heatingCoilOverclockingLogic(recipe.getEUt(), getMaxVoltage(), recipe.getDuration(), maxOverclocks,
                 ((IHeatingCoil) metaTileEntity).getCurrentTemperature(),
                 recipe.getProperty(BlastTemperatureProperty.getInstance(), 0));
     }
 
     @Nonnull
-    public static int[] blastFurnaceOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, int maxOverclocks, int currentTemp, int recipeRequiredTemp) {
+    public static int[] heatingCoilOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, int maxOverclocks, int currentTemp, int recipeRequiredTemp) {
         int amountEUDiscount = Math.max(0, (currentTemp - recipeRequiredTemp) / 900);
         int amountPerfectOC = amountEUDiscount / 2;
 
