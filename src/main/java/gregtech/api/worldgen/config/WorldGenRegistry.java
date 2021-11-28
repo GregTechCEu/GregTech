@@ -424,7 +424,7 @@ public class WorldGenRegistry {
      */
     @SuppressWarnings("unused")
     public void addVeinDefinitions(OreDepositDefinition definition) {
-        if(registeredVeinDefinitions.contains(definition)) {
+        if(!registeredVeinDefinitions.contains(definition)) {
             addonRegisteredDefinitions.add(definition);
         }
         else {
