@@ -165,4 +165,36 @@ public class BedrockFluidDepositDefinition { //todo re-balance depletion rates o
         WorldProvider worldProvider = DimensionManager.getProvider(dimensionId);
         return worldProvider != null && getDimensionFilter().test(worldProvider);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof BedrockFluidDepositDefinition))
+            return false;
+
+        BedrockFluidDepositDefinition objDeposit = (BedrockFluidDepositDefinition) obj;
+        if (this.weight != objDeposit.getWeight())
+            return false;
+        if (this.getMinimumProductionRate() != objDeposit.getMinimumProductionRate())
+            return false;
+        if (this.getMaximumProductionRate() != objDeposit.getMaximumProductionRate())
+            return false;
+        if (this.depletionAmount != objDeposit.getDepletionAmount())
+            return false;
+        if (this.depletionChance != objDeposit.getDepletionChance())
+            return false;
+        if (!this.storedFluid.equals(objDeposit.getStoredFluid()))
+            return false;
+        if (!this.assignedName.equals(objDeposit.getAssignedName()))
+            return false;
+        if (!this.description.equals(objDeposit.getDescription()))
+            return false;
+        if (this.depletedProductionRate != objDeposit.getDepletedProductionRate())
+            return false;
+        if (!this.biomeWeightModifier.equals(objDeposit.getBiomeWeightModifier()))
+            return false;
+        if (!this.dimensionFilter.equals(objDeposit.getDimensionFilter()))
+            return false;
+
+        return super.equals(obj);
+    }
 }
