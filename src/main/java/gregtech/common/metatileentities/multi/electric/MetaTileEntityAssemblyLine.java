@@ -35,10 +35,10 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     @Override
     protected BlockPattern createStructurePattern() {
-        return FactoryBlockPattern.start(LEFT, DOWN, BACK)
-                .aisle("#Y#", "GAG", "RTR", "COC")
-                .aisle("#Y#", "GAG", "RTR", "FIF").setRepeatable(3, 15)
+        return FactoryBlockPattern.start(LEFT, DOWN, FRONT)
                 .aisle("#Y#", "GSG", "RTR", "FIF")
+                .aisle("#Y#", "GAG", "RTR", "FIF").setRepeatable(3, 15)
+                .aisle("#Y#", "GAG", "RTR", "COC")
                 .where('S', selfPredicate())
                 .where('C', states(getCasingState()))
                 .where('F', states(getCasingState()).or(autoAbilities()))
