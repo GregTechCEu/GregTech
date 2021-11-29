@@ -5,8 +5,6 @@ import gregtech.common.ConfigHolder;
 import gregtech.core.util.TargetClassVisitor;
 import gregtech.core.visitors.*;
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
