@@ -215,16 +215,16 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
         RecipeBuilder<?> parallelRecipe = findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(),
-                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit);
+                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE);
 
         //Check if the correct number of parallels were done
         assertEquals(4, parallelRecipe.getParallel());
 
-        //Check that the EUt of the recipe was not modified
-        assertEquals(30, parallelRecipe.getEUt());
+        //Check that the EUt of the recipe was multiplied correctly
+        assertEquals(120, parallelRecipe.getEUt());
 
-        //Check if the recipe duration was multiplied correctly
-        assertEquals(400, parallelRecipe.getDuration());
+        //Check if the recipe duration was not modified
+        assertEquals(100, parallelRecipe.getDuration());
 
         //Check the recipe outputs
         assertFalse(parallelRecipe.getOutputs().isEmpty());
@@ -269,16 +269,16 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 2), false);
 
         RecipeBuilder<?> parallelRecipe = findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(),
-                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit);
+                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE);
 
         //Check if the correct number of parallels were done
         assertEquals(2, parallelRecipe.getParallel());
 
-        //Check that the EUt of the recipe was not modified
-        assertEquals(30, parallelRecipe.getEUt());
+        //Check that the EUt of the recipe was multiplied correctly
+        assertEquals(60, parallelRecipe.getEUt());
 
-        //Check if the recipe duration was multiplied correctly
-        assertEquals(200, parallelRecipe.getDuration());
+        //Check if the recipe duration was not modified
+        assertEquals(100, parallelRecipe.getDuration());
 
         //Check the recipe outputs
         assertFalse(parallelRecipe.getOutputs().isEmpty());
@@ -323,16 +323,16 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
         RecipeBuilder<?> parallelRecipe = findAppendedParallelItemRecipe(map, importItemBus.getImportItems(),
-                exportItemBus.getExportItems(), parallelLimit, 30);
+                exportItemBus.getExportItems(), parallelLimit, 120);
 
         //Check if the correct number of parallels were done
         assertEquals(4, parallelRecipe.getParallel());
 
-        //Check that the EUt of the recipe was not modified
-        assertEquals(30, parallelRecipe.getEUt());
+        //Check that the EUt of the recipe was multiplied correctly
+        assertEquals(120, parallelRecipe.getEUt());
 
-        //Check if the recipe duration was multiplied correctly
-        assertEquals(400, parallelRecipe.getDuration());
+        //Check if the recipe duration was not modified
+        assertEquals(100, parallelRecipe.getDuration());
 
         //Check the recipe outputs
         assertFalse(parallelRecipe.getOutputs().isEmpty());
@@ -374,16 +374,16 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 2), false);
 
         RecipeBuilder<?> parallelRecipe = findAppendedParallelItemRecipe(map, importItemBus.getImportItems(),
-                exportItemBus.getExportItems(), parallelLimit, 30);
+                exportItemBus.getExportItems(), parallelLimit, 120);
 
         //Check if the correct number of parallels were done
         assertEquals(2, parallelRecipe.getParallel());
 
-        //Check that the EUt of the recipe was not modified
-        assertEquals(30, parallelRecipe.getEUt());
+        //Check that the EUt of the recipe was multiplied correctly
+        assertEquals(60, parallelRecipe.getEUt());
 
-        //Check if the recipe duration was multiplied correctly
-        assertEquals(200, parallelRecipe.getDuration());
+        //Check if the recipe duration was not modified
+        assertEquals(100, parallelRecipe.getDuration());
 
         //Check the recipe outputs
         assertFalse(parallelRecipe.getOutputs().isEmpty());
@@ -448,14 +448,14 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
 
         Recipe outputRecipe = findParallelRecipe(mrl, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
-                exportFluidBus.getExportFluids(), 32, parallelLimit);
+                exportFluidBus.getExportFluids(), 128, parallelLimit);
 
 
-        //Check that the EUt of the recipe was not modified
-        assertEquals(30, outputRecipe.getEUt());
+        //Check that the EUt of the recipe was multiplied correctly
+        assertEquals(120, outputRecipe.getEUt());
 
-        //Check if the recipe duration was multiplied correctly
-        assertEquals(400, outputRecipe.getDuration());
+        //Check if the recipe duration was not modified
+        assertEquals(100, outputRecipe.getDuration());
 
         //Check the recipe outputs
         assertFalse(outputRecipe.getOutputs().isEmpty());
@@ -583,7 +583,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
 
         Recipe outputRecipe = findParallelRecipe(mrl, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
-                exportFluidBus.getExportFluids(), 32, parallelLimit);
+                exportFluidBus.getExportFluids(), Integer.MAX_VALUE, parallelLimit);
 
         assertNull(outputRecipe);
     }
@@ -644,7 +644,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
         Recipe outputRecipe = findParallelRecipe(mrl, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(), exportItemBus.getExportItems(),
-                exportFluidBus.getExportFluids(), 32, parallelLimit);
+                exportFluidBus.getExportFluids(), 128, parallelLimit);
 
 
         //Check that the EUt of the recipe was not modified
