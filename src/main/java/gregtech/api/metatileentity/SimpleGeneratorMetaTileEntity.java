@@ -36,7 +36,6 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
     private final ItemStackHandler containerInventory;
     private final OrientedOverlayRenderer overlayRenderer;
     private final FuelRecipeMap recipeMap;
-    private final int TANK_LIMIT = 16000;
 
     public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, FuelRecipeMap recipeMap, OrientedOverlayRenderer renderer, int tier) {
         super(metaTileEntityId, tier);
@@ -54,7 +53,7 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
 
     @Override
     protected FluidTankList createImportFluidHandler() {
-        return new FluidTankList(false, new NotifiableFilteredFluidHandler(TANK_LIMIT, this, false)
+        return new FluidTankList(false, new NotifiableFilteredFluidHandler(16000, this, false)
                 .setFillPredicate(this::canInputFluid));
     }
 
@@ -66,11 +65,7 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        NotifiableFluidTank fluidTank = new NotifiableFluidTank(TANK_LIMIT, this, false);
-        this.fluidInventory = fluidTank;
-        this.importFluids = new FluidTankList(false, new NotifiableFilteredFluidHandler(TANK_LIMIT, this, false).setFillPredicate(this::canInputFluid));
-        this.exportFluids = new FluidTankList(false, fluidTank);
-
+        this.fluidInventory = importFluids;
     }
 
     private boolean canInputFluid(FluidStack fluid) {
