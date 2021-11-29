@@ -232,7 +232,7 @@ public class SeparationRecipes {
                 .input(dust, RareEarth)
                 .chancedOutput(dustSmall, Cadmium, 2500, 400)
                 .chancedOutput(dustSmall, Neodymium, 2500, 400)
-                .chancedOutput(dustSmall, Caesium, 2500, 400)
+                .chancedOutput(dustSmall, Samarium, 2500, 400)
                 .chancedOutput(dustSmall, Cerium, 2500, 400)
                 .chancedOutput(dustSmall, Yttrium, 2500, 400)
                 .chancedOutput(dustSmall, Lanthanum, 2500, 400)
