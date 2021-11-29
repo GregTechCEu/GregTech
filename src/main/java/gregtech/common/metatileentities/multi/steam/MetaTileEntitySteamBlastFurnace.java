@@ -31,7 +31,8 @@ public class MetaTileEntitySteamBlastFurnace extends RecipeMapSteamMultiblockCon
 
     public MetaTileEntitySteamBlastFurnace(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.STEAM_BLAST_FURNACE_RECIPES, CONVERSION_RATE);
-        this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE, 4);
+        this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE);
+        this.recipeMapWorkable.setParallelLimit(4);
     }
 
     @Override
