@@ -436,7 +436,7 @@ public class ParallelLogic {
             int multiplierRecipeAmount = Math.min(amountOfCurrentItem, limitByOutput);
 
             if (multiplierRecipeAmount > 0) {
-                recipeBuilder.append(matchingRecipe, multiplierRecipeAmount, false);
+                recipeBuilder.append(matchingRecipe, multiplierRecipeAmount, true);
                 engagedItems += multiplierRecipeAmount;
             }
 
