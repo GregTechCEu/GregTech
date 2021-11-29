@@ -2394,7 +2394,7 @@ gregtech.recipe.duration=Длительность: %.1f сек.
 gregtech.recipe.amperage=Сила тока: %d
 gregtech.recipe.not_consumed=Не расходуется
 gregtech.recipe.chance=Шанс: %s%% +%s%%/уровень
-gregtech.recipe.blast_furnace_temperature=Температура: %dK (%s)
+gregtech.recipe.temperature=Температура: %dK (%s)
 gregtech.recipe.eu_to_start=Энергия для запуска: %sEU
 
 gregtech.fluid.click_to_fill=§7Нажмите с пустым контейнером для жидкости, чтобы заполнить его из бака.

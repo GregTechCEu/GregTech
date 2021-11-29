@@ -8,27 +8,27 @@ import org.apache.commons.lang3.Validate;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class BlastTemperatureProperty extends RecipeProperty<Integer> {
+public class TemperatureProperty extends RecipeProperty<Integer> {
     public static final String KEY = "temperature";
 
     private static final TreeMap<Integer, Object> registeredCoilTypes = new TreeMap<>((x, y) -> y - x);
 
-    private static BlastTemperatureProperty INSTANCE;
+    private static TemperatureProperty INSTANCE;
 
-    private BlastTemperatureProperty() {
+    private TemperatureProperty() {
         super(KEY, Integer.class);
     }
 
-    public static BlastTemperatureProperty getInstance() {
+    public static TemperatureProperty getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new BlastTemperatureProperty();
+            INSTANCE = new TemperatureProperty();
         }
         return INSTANCE;
     }
 
     @Override
     public void drawInfo(Minecraft minecraft, int x, int y, int color, Object value) {
-        minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.blast_furnace_temperature",
+        minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.temperature",
                 value, getMinTierForTemperature(castValue(value))), x, y, color);
     }
 

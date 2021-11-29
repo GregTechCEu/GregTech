@@ -3,13 +3,13 @@ package gregtech.api.capability.impl;
 import gregtech.api.capability.IHeatingCoil;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.recipeproperties.BlastTemperatureProperty;
+import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 
 import javax.annotation.Nonnull;
 
 /**
  * RecipeLogic for multiblocks that use temperature for raising speed and lowering energy usage
- * Used with RecipeMaps that run recipes using the {@link gregtech.api.recipes.recipeproperties.BlastTemperatureProperty}
+ * Used with RecipeMaps that run recipes using the {@link TemperatureProperty}
  */
 public class HeatingCoilRecipeLogic extends MultiblockRecipeLogic {
 
@@ -21,7 +21,7 @@ public class HeatingCoilRecipeLogic extends MultiblockRecipeLogic {
     protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
         return heatingCoilOverclockingLogic(recipe.getEUt(), getMaxVoltage(), recipe.getDuration(), maxOverclocks,
                 ((IHeatingCoil) metaTileEntity).getCurrentTemperature(),
-                recipe.getProperty(BlastTemperatureProperty.getInstance(), 0));
+                recipe.getProperty(TemperatureProperty.getInstance(), 0));
     }
 
     @Nonnull
