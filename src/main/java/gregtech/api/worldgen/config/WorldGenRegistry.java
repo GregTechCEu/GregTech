@@ -164,6 +164,12 @@ public class WorldGenRegistry {
         // Read the dimensions name from the dimensions file
         gatherNamedDimensions(dimensionsFile);
 
+        // Will always fail when called from initializeRegistry
+        // Placed here to delete the file before being gathered and having its definition initialized
+        if(!removedDefinitions.isEmpty()) {
+            removeExistingFiles(worldgenRootPath);
+        }
+
         // Gather the worldgen vein files from the various folders in the config
         List<Path> veinFiles = Files.walk(veinPath)
                 .filter(path -> path.toString().endsWith(".json"))
@@ -246,10 +252,6 @@ public class WorldGenRegistry {
         GTLog.logger.info("Loaded {} total worldgen definitions", registeredVeinDefinitions.size() + registeredBedrockVeinDefinitions.size());
         GTLog.logger.info("Loaded {} worldgen definitions from addon mods", addonRegisteredDefinitions.size());
 
-        //After initializing default GTCE worldgen or added veins, load attempts to remove worldgen from addon mods
-        if(!removedDefinitions.isEmpty()) {
-            removeExistingFiles(worldgenRootPath);
-        }
     }
 
     /**
