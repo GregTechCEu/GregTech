@@ -61,11 +61,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        FluidTank fluidTank = new FluidTank(getInventorySize());
-        this.fluidInventory = fluidTank;
-        this.importFluids = new FluidTankList(false, fluidTank);
-        this.exportFluids = new FluidTankList(false, fluidTank);
-
+        this.fluidInventory = importFluids;
     }
 
     @Override
