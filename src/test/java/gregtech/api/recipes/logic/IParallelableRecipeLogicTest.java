@@ -328,11 +328,11 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         //Check if the correct number of parallels were done
         assertEquals(4, parallelRecipe.getParallel());
 
-        //Check that the EUt of the recipe was multiplied correctly
-        assertEquals(120, parallelRecipe.getEUt());
+        //Check that the EUt of the recipe was not modified
+        assertEquals(30, parallelRecipe.getEUt());
 
-        //Check if the recipe duration was not modified
-        assertEquals(100, parallelRecipe.getDuration());
+        //Check if the recipe duration was multiplied correctly
+        assertEquals(400, parallelRecipe.getDuration());
 
         //Check the recipe outputs
         assertFalse(parallelRecipe.getOutputs().isEmpty());
@@ -379,11 +379,11 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         //Check if the correct number of parallels were done
         assertEquals(2, parallelRecipe.getParallel());
 
-        //Check that the EUt of the recipe was multiplied correctly
-        assertEquals(60, parallelRecipe.getEUt());
+        //Check that the EUt of the recipe was not modified
+        assertEquals(30, parallelRecipe.getEUt());
 
-        //Check if the recipe duration was not modified
-        assertEquals(100, parallelRecipe.getDuration());
+        //Check if the recipe duration was multiplied correctly
+        assertEquals(200, parallelRecipe.getDuration());
 
         //Check the recipe outputs
         assertFalse(parallelRecipe.getOutputs().isEmpty());
