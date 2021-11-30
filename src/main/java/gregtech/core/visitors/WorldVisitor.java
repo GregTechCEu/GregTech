@@ -22,11 +22,6 @@ public class WorldVisitor extends MethodVisitor implements Opcodes {
     }
 
     @Override
-    public void visitInsn(int opcode) {
-        super.visitInsn(opcode);
-    }
-
-    @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
         if (opcode == INVOKEINTERFACE && desc.equals("(Lnet/minecraft/entity/player/EntityPlayer;ILnet/minecraft/util/math/BlockPos;I)V")) {
             METHOD_PLAY_RECORD_HOOKS.visitMethodInsn(this, INVOKESTATIC);
