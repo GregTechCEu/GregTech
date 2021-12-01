@@ -4,7 +4,6 @@ import gregtech.api.capability.impl.SteamMultiWorkable;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -25,10 +24,6 @@ import static gregtech.api.render.Textures.SOLID_STEEL_CASING;
 
 public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockController {
 
-    private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-            MultiblockAbility.STEAM_IMPORT_ITEMS, MultiblockAbility.STEAM_EXPORT_ITEMS, MultiblockAbility.STEAM
-    };
-
     public MetaTileEntitySteamGrinder(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.MACERATOR_RECIPES, CONVERSION_RATE);
         this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE);
@@ -47,7 +42,7 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
                 .aisle("XXX", "X#X", "XXX")
                 .aisle("XXX", "XSX", "XXX")
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()).setMinGlobalLimited(14).or(abilities(ALLOWED_ABILITIES)))
+                .where('X', states(getCasingState()).setMinGlobalLimited(14).or(autoAbilities()))
                 .where('#', air())
                 .build();
     }

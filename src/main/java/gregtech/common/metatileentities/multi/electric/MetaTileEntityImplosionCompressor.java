@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.multi.electric;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -14,18 +13,11 @@ import gregtech.api.render.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
 public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockController {
-
-    private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-            MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.EXPORT_ITEMS,
-            MultiblockAbility.INPUT_ENERGY, MultiblockAbility.MAINTENANCE_HATCH,
-            MultiblockAbility.MUFFLER_HATCH
-    };
 
     public MetaTileEntityImplosionCompressor(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.IMPLOSION_RECIPES);
@@ -43,8 +35,7 @@ public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockContro
                 .aisle("XXX", "X#X", "XXX")
                 .aisle("XXX", "XSX", "XXX")
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()).setMinGlobalLimited(14).or(
-                        abilities(ALLOWED_ABILITIES)))
+                .where('X', states(getCasingState()).setMinGlobalLimited(14).or(autoAbilities()))
                 .where('#', air())
                 .build();
     }

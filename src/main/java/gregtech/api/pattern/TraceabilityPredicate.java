@@ -58,6 +58,14 @@ public class TraceabilityPredicate {
     public final List<SimplePredicate> limited = new ArrayList<>();
     protected boolean isCenter;
 
+    public TraceabilityPredicate() {}
+
+    public TraceabilityPredicate(TraceabilityPredicate predicate) {
+        common.addAll(predicate.common);
+        limited.addAll(predicate.limited);
+        isCenter = predicate.isCenter;
+    }
+
     public TraceabilityPredicate(Predicate<BlockWorldState> predicate, Supplier<BlockInfo[]> candidates) {
         common.add(new SimplePredicate(predicate, candidates));
     }
@@ -125,8 +133,10 @@ public class TraceabilityPredicate {
 
     public TraceabilityPredicate or(TraceabilityPredicate other) {
         if (other != null) {
-            common.addAll(other.common);
-            limited.addAll(other.limited);
+            TraceabilityPredicate newPredicate = new TraceabilityPredicate(this);
+            newPredicate.common.addAll(other.common);
+            newPredicate.limited.addAll(other.limited);
+            return newPredicate;
         }
         return this;
     }

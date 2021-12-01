@@ -118,7 +118,7 @@ public class FactoryBlockPattern {
     }
 
     public FactoryBlockPattern where(char symbol, TraceabilityPredicate blockMatcher) {
-        this.symbolMap.put(symbol, blockMatcher);
+        this.symbolMap.put(symbol, new TraceabilityPredicate(blockMatcher));
         return this;
     }
 

@@ -81,7 +81,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                 .aisle("XXX", "C#C", "XMX")
                 .aisle("XSX", "CCC", "XXX")
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()).setMinGlobalLimited(9).or(autoAbilities()))
+                .where('X', states(getCasingState()).setMinGlobalLimited(9).or(autoAbilities(true, true, true, true, true, true, false)))
                 .where('M', abilities(MultiblockAbility.MUFFLER_HATCH))
                 .where('C', heatingCoils())
                 .where('#', air())

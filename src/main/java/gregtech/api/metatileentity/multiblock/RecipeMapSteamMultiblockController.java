@@ -124,9 +124,30 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
 
     @Override
     public TraceabilityPredicate autoAbilities() {
-        TraceabilityPredicate predicate =  abilities(MultiblockAbility.STEAM).setMinGlobalLimited(1).or(super.autoAbilities());
-        if (recipeMap.getMinInputs() > 0) {
-            predicate.or(abilities(MultiblockAbility.STEAM_IMPORT_ITEMS).setMinGlobalLimited(1));
+        return autoAbilities(true, true, true, true);
+    }
+
+    public TraceabilityPredicate autoAbilities(boolean checkSteam,
+                                               boolean checkMaintainer,
+                                               boolean checkItemIn,
+                                               boolean checkItemOut) {
+        TraceabilityPredicate predicate = !checkSteam ? new TraceabilityPredicate() : abilities(MultiblockAbility.STEAM).setMinGlobalLimited(1);
+        predicate = predicate.or(!checkMaintainer ? null : super.autoAbilities());
+        if (checkItemIn) {
+            if (recipeMap.getMinInputs() > 0) {
+                predicate = predicate.or(abilities(MultiblockAbility.STEAM_IMPORT_ITEMS)).setMinGlobalLimited(recipeMap.getMinInputs());
+            }
+            else if (recipeMap.getMaxInputs() > 0) {
+                predicate = predicate.or(abilities(MultiblockAbility.STEAM_IMPORT_ITEMS));
+            }
+        }
+        if (checkItemOut) {
+            if (recipeMap.getMinOutputs() > 0) {
+                predicate = predicate.or(abilities(MultiblockAbility.STEAM_EXPORT_ITEMS)).setMinGlobalLimited(recipeMap.getMinOutputs());
+            }
+            else if (recipeMap.getMaxOutputs() > 0) {
+                predicate =  predicate.or(abilities(MultiblockAbility.STEAM_EXPORT_ITEMS));
+            }
         }
         return predicate;
     }

@@ -5,7 +5,6 @@ import gregtech.api.capability.impl.SteamMultiWorkable;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -59,9 +58,9 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
                 .aisle("XXX", "C#C", "#C#")
                 .aisle("XXX", "CSC", "#C#")
                 .where('S', selfPredicate())
-                .where('X', states(getFireboxState()).or(abilities(MultiblockAbility.STEAM).setMaxGlobalLimited(1)))
+                .where('X', states(getFireboxState()).setMinGlobalLimited(6).or(autoAbilities(true, false, false, false)))
                 .where('C', states(getCasingState()).setMinGlobalLimited(6)
-                        .or(abilities(MultiblockAbility.STEAM_IMPORT_ITEMS, MultiblockAbility.STEAM_EXPORT_ITEMS)))
+                        .or(autoAbilities(false, false, true, true)))
                 .where('#', any())
                 .build();
     }

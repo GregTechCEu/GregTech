@@ -41,7 +41,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 .aisle("#Y#", "GAG", "RTR", "COC")
                 .where('S', selfPredicate())
                 .where('C', states(getCasingState()))
-                .where('F', states(getCasingState()).or(autoAbilities()))
+                .where('F', states(getCasingState()).or(autoAbilities(false, true, false, false, true, false, false)))
                 .where('O', abilities(MultiblockAbility.EXPORT_ITEMS))
                 .where('Y', states(getCasingState()).or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1)))
                 .where('I', tilePredicate((state, tile) -> tile.metaTileEntityId.equals(MetaTileEntities.ITEM_IMPORT_BUS[0].metaTileEntityId), getCandidates(MetaTileEntities.ITEM_IMPORT_BUS[0])))
@@ -51,15 +51,6 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 .where('T', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_LINE_CASING)))
                 .where('#', any())
                 .build();
-    }
-
-    @Override
-    public TraceabilityPredicate autoAbilities() {
-        TraceabilityPredicate predicate = abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(recipeMap.getMinInputs());
-        if (hasMaintenanceMechanics()) {
-            predicate.or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setMinGlobalLimited(1));
-        }
-        return predicate;
     }
 
     @Override
