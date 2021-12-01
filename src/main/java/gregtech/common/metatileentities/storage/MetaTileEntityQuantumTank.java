@@ -7,12 +7,12 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
+import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -44,6 +44,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT_FLUIDS;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_OUTPUT_FACING;
@@ -61,11 +62,16 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     private boolean allowInputFromOutputSide = false;
     protected IFluidHandler outputFluidInventory;
 
+    private boolean locked;
+    private FluidStack lockedFluid;
+
     public MetaTileEntityQuantumTank(ResourceLocation metaTileEntityId, int tier, int maxFluidCapacity) {
         super(metaTileEntityId);
         this.tier = tier;
         this.maxFluidCapacity = maxFluidCapacity;
         this.containerInventory = new ItemStackHandler(2);
+        this.locked = false;
+        this.lockedFluid = null;
         initializeInventory();
     }
 
@@ -77,11 +83,15 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.fluidTank = new FluidTank(maxFluidCapacity);
+        this.fluidTank = new FilteredFluidHandler(maxFluidCapacity).setFillPredicate(fillPredicate());
         this.fluidInventory = fluidTank;
         this.importFluids = new FluidTankList(false, fluidTank);
         this.exportFluids = new FluidTankList(false, fluidTank);
         this.outputFluidInventory = new FluidHandlerProxy(new FluidTankList(false), exportFluids);
+    }
+
+    protected Predicate<FluidStack> fillPredicate() {
+        return fluidStack -> lockedFluid == null || fluidStack.isFluidEqual(lockedFluid);
     }
 
     @Override
@@ -113,6 +123,12 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         data.setTag("FluidInventory", fluidTank.writeToNBT(new NBTTagCompound()));
         data.setBoolean("AutoOutputFluids", autoOutputFluids);
         data.setInteger("OutputFacing", getOutputFacing().getIndex());
+        data.setBoolean("locked", locked);
+        if (this.lockedFluid != null)
+            this.lockedFluid.writeToNBT(data);
+        else
+            data.setString("Empty", "");
+
         return data;
     }
 
@@ -123,6 +139,11 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         this.fluidTank.readFromNBT(data.getCompoundTag("FluidInventory"));
         this.autoOutputFluids = data.getBoolean("AutoOutputFluids");
         this.outputFacing = EnumFacing.VALUES[data.getInteger("OutputFacing")];
+        this.locked = data.getBoolean("locked");
+        if (!data.hasKey("Empty"))
+            this.lockedFluid = FluidStack.loadFluidStackFromNBT(data);
+        else
+            this.lockedFluid = null;
     }
 
     @Override
@@ -196,32 +217,27 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        Builder builder = ModularUI.defaultBuilder();
-        int leftButtonStartX = 7;
-        builder.image(7, 16, 81, 55, GuiTextures.DISPLAY);
-        TankWidget tankWidget = new TankWidget(fluidTank, 69, 52, 18, 18)
-                .setHideTooltip(true).setAlwaysShowFull(true);
-        builder.widget(tankWidget);
-        builder.label(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF);
-        builder.dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF);
-        builder.dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF);
-        return builder.label(6, 6, getMetaFullName())
+        TankWidget tankWidget = new TankWidget(fluidTank, 69, 52, 18, 18).setHideTooltip(true).setAlwaysShowFull(true);
+        return ModularUI.defaultBuilder()
+                .image(7, 16, 81, 55, GuiTextures.DISPLAY)
+                .widget(tankWidget)
+                .label(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF)
+                .dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF)
+                .dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF)
+                .label(6, 6, getMetaFullName())
                 .widget(new FluidContainerSlotWidget(containerInventory, 0, 90, 17, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
                 .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON))
                 .widget(new SlotWidget(containerInventory, 1, 90, 54, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY)).widget(new ToggleButtonWidget(leftButtonStartX, 53, 18, 18,
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
+                .widget(new ToggleButtonWidget(7, 53, 18, 18,
                         GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
                         .setTooltipText("gregtech.gui.fluid_auto_output.tooltip"))
+                .widget(new ToggleButtonWidget(25, 53, 18, 18,
+                        GuiTextures.BUTTON_LOCK, this::isLocked, this::setLocked)
+                        .setTooltipText("gregtech.gui.fluid_lock.tooltip"))
                 .bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
-    }
-
-    @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
-        buf.writeByte(getOutputFacing().getIndex());
-        buf.writeBoolean(autoOutputFluids);
     }
 
     public EnumFacing getOutputFacing() {
@@ -274,10 +290,19 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     }
 
     @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeByte(getOutputFacing().getIndex());
+        buf.writeBoolean(autoOutputFluids);
+        buf.writeBoolean(locked);
+    }
+
+    @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.outputFacing = EnumFacing.VALUES[buf.readByte()];
         this.autoOutputFluids = buf.readBoolean();
+        this.locked = buf.readBoolean();
     }
 
     public void setOutputFacing(EnumFacing outputFacing) {
@@ -352,6 +377,18 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         if (!getWorld().isRemote) {
             writeCustomData(UPDATE_AUTO_OUTPUT_FLUIDS, buf -> buf.writeBoolean(autoOutputFluids));
             markDirty();
+        }
+    }
+
+    private boolean isLocked() {
+        return locked;
+    }
+
+    private void setLocked(boolean locked) {
+        this.locked = locked;
+        if (!getWorld().isRemote) {
+            if (locked) this.lockedFluid = this.fluidTank.getFluid();
+            else this.lockedFluid = null;
         }
     }
 }
