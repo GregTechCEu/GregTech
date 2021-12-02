@@ -138,14 +138,12 @@ public class GTJeiPlugin implements IModPlugin {
                 if (workableCapability instanceof AbstractRecipeLogic) {
                     if (metaTileEntity instanceof SteamMetaTileEntity) {
                         deferredCatalysts.add(metaTileEntity);
-                    } else {
-                        RecipeMap<?>[] recipeMaps = (metaTileEntity instanceof IMultipleRecipeMaps && ((IMultipleRecipeMaps) metaTileEntity).hasMultipleRecipeMaps()) ?
-                                ((IMultipleRecipeMaps) metaTileEntity).getAvailableRecipeMaps() :
-                                new RecipeMap<?>[]{((AbstractRecipeLogic) workableCapability).getRecipeMap()};
-
-                        for (RecipeMap<?> recipeMap : recipeMaps) {
+                    } else if (metaTileEntity instanceof IMultipleRecipeMaps && ((IMultipleRecipeMaps) metaTileEntity).hasMultipleRecipeMaps()) {
+                        for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity).getAvailableRecipeMaps()) {
                             registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
                         }
+                    } else {
+                        registerRecipeMapCatalyst(registry, ((AbstractRecipeLogic) workableCapability).getRecipeMap(), metaTileEntity);
                     }
                 } else if (workableCapability instanceof FuelRecipeLogic) {
                     FuelRecipeMap recipeMap = ((FuelRecipeLogic) workableCapability).recipeMap;
