@@ -87,13 +87,13 @@ public class TerminalRegistry {
                 .upgrade(6, MetaItems.COIN_GOLD_ANCIENT.getStackForm())
                 .device(DeviceHardware.DEVICE.SCANNER)
                 .build();
+        AppRegistryBuilder.create(new MultiBlockPreviewARApp())
+                .battery(GTValues.LV, 512)
+                .device(DeviceHardware.DEVICE.CAMERA)
+                .upgrade(0, MetaItems.COIN_DOGE.getStackForm(10))
+                .upgrade(1, MetaItems.COIN_DOGE.getStackForm(30), MetaItems.COIN_CHOCOLATE.getStackForm(10))
+                .build();
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
-            AppRegistryBuilder.create(new MultiBlockPreviewARApp())
-                    .battery(GTValues.LV, 512)
-                    .device(DeviceHardware.DEVICE.CAMERA)
-                    .upgrade(0, MetaItems.COIN_DOGE.getStackForm(10))
-                    .upgrade(1, MetaItems.COIN_DOGE.getStackForm(30), MetaItems.COIN_CHOCOLATE.getStackForm(10))
-                    .build();
             AppRegistryBuilder.create(new RecipeChartApp())
                     .battery(GTValues.LV, 100)
                     .upgrade(0, MetaItems.COIN_DOGE.getStackForm(10))

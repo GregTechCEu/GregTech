@@ -43,7 +43,6 @@ public class BlockPattern {
     protected final Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount;
 
     public Long2ObjectMap<BlockInfo> cache = new Long2ObjectOpenHashMap<>();
-//    private Iterator<Tuple<BlockPos, BlockInfo>> iterator;
     // x, y, z, minZ, maxZ
     private int[] centerOffset = null;
 
@@ -70,27 +69,6 @@ public class BlockPattern {
 
         initializeCenterOffsets();
     }
-
-//    public PatternMatchContext checkPatternFastLoadBalanceAt(World world, BlockPos centerPos, EnumFacing facing) {
-//        if (cache.isEmpty()) {
-//            return checkPatternAt(world, centerPos, facing);
-//        }
-//        if (iterator == null) iterator = cache.iterator();
-//        int count = 1;
-//        while (iterator.hasNext()) {
-//            Tuple<BlockPos, BlockInfo> tuple = iterator.next();
-//            IBlockState blockState = world.getBlockState(tuple.getFirst());
-//            if (blockState != tuple.getSecond().getBlockState() || world.getTileEntity(tuple.getFirst()) != tuple.getSecond().getTileEntity()) {
-//                iterator = null;
-//                return checkPatternAt(world, centerPos, facing);
-//            }
-//            if (count++ == cache.size() / 20) {
-//                return worldState.hasError() ? null : matchContext;
-//            }
-//        }
-//        iterator = cache.iterator();
-//        return worldState.hasError() ? null : matchContext;
-//    }
 
     private void initializeCenterOffsets() {
         loop:
