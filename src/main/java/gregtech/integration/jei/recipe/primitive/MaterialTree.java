@@ -62,14 +62,7 @@ public class MaterialTree implements IRecipeWrapper {
         // adding an empty list to itemInputs/fluidInputs makes checking if a prefix exists later much easier
         List<ItemStack> inputDusts = new ArrayList<>();
         for (OrePrefix prefix : PREFIXES) {
-            if(prefix == OrePrefix.ingot && OreDictUnifier.get(prefix, material).isEmpty()) {
-                if(material.hasProperty(PropertyKey.ORE) && material.getProperty(PropertyKey.ORE).getDirectSmeltResult() != null) {
-                    inputDusts.add(OreDictUnifier.get(OrePrefix.ingot, material.getProperty(PropertyKey.ORE).getDirectSmeltResult()));
-                }
-            }
-            else {
-                inputDusts.add(OreDictUnifier.get(prefix, material));
-            }
+            inputDusts.add(OreDictUnifier.get(prefix, material));
         }
         for (ItemStack stack : inputDusts) {
             List<ItemStack> matItemsStack = new ArrayList<>();
