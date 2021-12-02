@@ -472,6 +472,18 @@ public class Materials {
     public static Material OsmiumTetroxide;
     public static Material IridiumChloride;
 
+    public static Material FluoroantimonicAcid;
+    public static Material TitaniumTrifluoride;
+    public static Material CalciumPhosphide;
+    public static Material IndiumPhosphide;
+    public static Material BariumSulfide;
+    public static Material TriniumSulfide;
+    public static Material ZincSulfide;
+    public static Material GalliumSulfide;
+    public static Material AntimonyTrifluoride;
+    public static Material EnrichedNaquadahSulfate;
+    public static Material NaquadriaSulfate;
+
     /**
      * Organic chemistry
      */
@@ -658,6 +670,15 @@ public class Materials {
     public static Material DyeMagenta;
     public static Material DyeOrange;
     public static Material DyeWhite;
+
+    public static Material PoorEnrichedNaquadahSolution;
+    public static Material EnrichedNaquadahSolution;
+    public static Material AcidicEnrichedNaquadahSolution;
+    public static Material EnrichedNaquadahWaste;
+    public static Material PoorNaquadriaSolution;
+    public static Material NaquadriaSolution;
+    public static Material AcidicNaquadriaSolution;
+    public static Material NaquadriaWaste;
 
     /**
      * Second Degree Compounds

@@ -1366,5 +1366,76 @@ public class FirstDegreeMaterials {
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Iridium, 1, Chlorine, 3)
                 .build();
+
+        FluoroantimonicAcid = new Material.Builder(438, "fluoroantimonic_acid")
+                .fluid()
+                .components(Hydrogen, 2, Antimony, 1, Fluorine, 7)
+                .build();
+
+        TitaniumTrifluoride = new Material.Builder(439, "titanium_trifluoride")
+                .dust()
+                .color(0x8F00FF).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Titanium, 1, Fluorine, 3)
+                .build();
+
+        CalciumPhosphide = new Material.Builder(440, "calcium_phosphide")
+                .dust()
+                .color(0xA52A2A).iconSet(METALLIC)
+                .components(Calcium, 1, Phosphorus, 1)
+                .build();
+
+        IndiumPhosphide = new Material.Builder(441, "indium_phosphide")
+                .dust()
+                .color(0x582E5C).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Indium, 1, Phosphorus, 1)
+                .build();
+
+        BariumSulfide = new Material.Builder(442, "barium_sulfide")
+                .dust()
+                .color(0xF0EAD6).iconSet(METALLIC)
+                .components(Barium, 1, Sulfur, 1)
+                .build();
+
+        TriniumSulfide = new Material.Builder(443, "trinium_sulfide")
+                .dust()
+                .color(0xE68066).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Trinium, 1, Sulfur, 1)
+                .build();
+
+        ZincSulfide = new Material.Builder(444, "zinc_sulfide")
+                .dust()
+                .color(0xFFFFF6).iconSet(DULL)
+                .components(Zinc, 1, Sulfur, 1)
+                .build();
+
+        GalliumSulfide = new Material.Builder(445, "gallium_sulfide")
+                .dust()
+                .color(0xFFF59E).iconSet(SHINY)
+                .components(Gallium, 1, Sulfur, 1)
+                .build();
+
+        AntimonyTrifluoride = new Material.Builder(446, "antimony_trifluoride")
+                .dust()
+                .color(0xF7EABC).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Antimony, 1, Fluorine, 3)
+                .build();
+
+        EnrichedNaquadahSulfate = new Material.Builder(447, "enriched_naquadah_sulfate")
+                .dust()
+                .color(0x2E2E1C).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(NaquadahEnriched, 1, Sulfur, 1, Oxygen, 4)
+                .build();
+
+        NaquadriaSulfate = new Material.Builder(448, "naquadria_sulfate")
+                .dust()
+                .color(0x006633).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Naquadria, 1, Sulfur, 1, Oxygen, 4)
+                .build();
     }
 }

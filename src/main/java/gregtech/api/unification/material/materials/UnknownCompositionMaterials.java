@@ -410,5 +410,29 @@ public class UnknownCompositionMaterials {
 
         DyeWhite = new Material.Builder(1638, "dye_white")
                 .fluid().color(0xFFFFFF).build();
+
+        PoorEnrichedNaquadahSolution = new Material.Builder(1639, "poor_enriched_naquadah_solution")
+                .fluid().color(0x388438).build();
+
+        EnrichedNaquadahSolution = new Material.Builder(1640, "enriched_naquadah_solution")
+                .fluid().color(0x3AAD3A).build();
+
+        AcidicEnrichedNaquadahSolution = new Material.Builder(1641, "acidic_enriched_naquadah_solution")
+                .fluid().color(0x3DD63D).build();
+
+        EnrichedNaquadahWaste = new Material.Builder(1642, "enriched_naquadah_waste")
+                .fluid().color(0x355B35).build();
+
+        PoorNaquadriaSolution = new Material.Builder(1643, "poor_naquadria_solution")
+                .fluid().color(0x518451).build();
+
+        NaquadriaSolution = new Material.Builder(1644, "naquadria_solution")
+                .fluid().color(0x61AD61).build();
+
+        AcidicNaquadriaSolution = new Material.Builder(1645, "acidic_naquadria_solution")
+                .fluid().color(0x70D670).build();
+
+        NaquadriaWaste = new Material.Builder(1646, "naquadria_waste")
+                .fluid().color(0x425B42).build();
     }
 }

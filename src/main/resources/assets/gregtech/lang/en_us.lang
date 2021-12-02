@@ -1789,6 +1789,30 @@ material.acidic_osmium_solution=Acidic Osmium Solution
 material.iridium_metal_residue=Iridium Metal Residue
 material.rhodium_plated_palladium=Rhodium Plated Palladium
 
+material.fluoroantimonic_acid=Fluoroantimonic Acid
+material.titanium_trifluoride=Titanium Trifluoride
+material.calcium_phosphide=Calcium Phosphide
+material.indium_phosphide=Indium Phosphide
+material.barium_sulfide=Barium Sulfide
+material.trinium_sulfide=Trinium Sulfide
+material.zinc_sulfide=Zinc Sulfide
+material.gallium_sulfide=Gallium Sulfide
+material.antimony_trifluoride=Antimony Trifluoride
+material.enriched_naquadah_sulfate=Enriched Naquadah Sulfate
+material.naquadria_sulfate=Naquadria Sulfate
+
+# Rename these two?
+material.poor_enriched_naquadah_solution=Poor Enriched Naquadah Solution
+material.poor_naquadria_solution=Poor Naquadria Solution
+
+material.enriched_naquadah_solution=Enriched Naquadah Solution
+material.acidic_enriched_naquadah_solution=Acidic Enriched Naquadah Solution
+material.enriched_naquadah_waste=Enriched Naquadah Waste
+material.naquadria_solution=Naquadria Solution
+material.acidic_naquadria_solution=Acidic Naquadria Solution
+material.naquadria_waste=Naquadria Waste
+
+
 item.nether_quartz.oreNetherrack=Nether Quartz Ore
 item.gunpowder.dustTiny=Tiny Pile of Gunpowder
 item.gunpowder.dustSmall=Small Pile of Gunpowder
