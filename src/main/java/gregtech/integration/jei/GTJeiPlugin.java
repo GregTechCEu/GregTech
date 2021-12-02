@@ -11,6 +11,7 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultipleRecipeMaps;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
@@ -50,6 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @JEIPlugin
 public class GTJeiPlugin implements IModPlugin {
@@ -104,12 +106,18 @@ public class GTJeiPlugin implements IModPlugin {
 
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
             if(!recipeMap.isHidden) {
-                List<GTRecipeWrapper> recipesList = recipeMap.getRecipeList()
-                        .stream()
-                        .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay())
-                        .map(r -> new GTRecipeWrapper(recipeMap, r))
-                        .collect(Collectors.toList());
-                registry.addRecipes(recipesList, GTValues.MODID + ":" + recipeMap.unlocalizedName);
+                Stream<Recipe> recipeStream = recipeMap.getRecipeList().stream()
+                        .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay());
+
+                if (recipeMap.getSmallRecipeMap() != null) {
+                    List<Recipe> smallRecipes = recipeMap.getSmallRecipeMap().getRecipeList();
+                    recipeStream = recipeStream.filter(recipe -> !smallRecipes.contains(recipe));
+                }
+
+                registry.addRecipes(
+                        recipeStream.map(r -> new GTRecipeWrapper(recipeMap, r)).collect(Collectors.toList()),
+                        GTValues.MODID + ":" + recipeMap.unlocalizedName
+                );
             }
         }
 
@@ -121,7 +129,6 @@ public class GTJeiPlugin implements IModPlugin {
         }
 
         List<MetaTileEntity> deferredCatalysts = new ArrayList<>();
-        List<MetaTileEntity> multipleRecipeMapCatalysts = new ArrayList<>();
         for (ResourceLocation metaTileEntityId : GregTechAPI.MTE_REGISTRY.getKeys()) {
             MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
             assert metaTileEntity != null;
@@ -131,13 +138,13 @@ public class GTJeiPlugin implements IModPlugin {
                 if (workableCapability instanceof AbstractRecipeLogic) {
                     if (metaTileEntity instanceof SteamMetaTileEntity) {
                         deferredCatalysts.add(metaTileEntity);
-                    } else if (metaTileEntity instanceof IMultipleRecipeMaps && ((IMultipleRecipeMaps) metaTileEntity).hasMultipleRecipeMaps()) {
-                        multipleRecipeMapCatalysts.add(metaTileEntity);
                     } else {
-                        RecipeMap<?> recipeMap = ((AbstractRecipeLogic) workableCapability).getRecipeMap();
-                        registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
-                        if (recipeMap instanceof RecipeMapFurnace) {
-                            registry.addRecipeCatalyst(metaTileEntity.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
+                        RecipeMap<?>[] recipeMaps = (metaTileEntity instanceof IMultipleRecipeMaps && ((IMultipleRecipeMaps) metaTileEntity).hasMultipleRecipeMaps()) ?
+                                ((IMultipleRecipeMaps) metaTileEntity).getAvailableRecipeMaps() :
+                                new RecipeMap<?>[]{((AbstractRecipeLogic) workableCapability).getRecipeMap()};
+
+                        for (RecipeMap<?> recipeMap : recipeMaps) {
+                            registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
                         }
                     }
                 } else if (workableCapability instanceof FuelRecipeLogic) {
@@ -149,19 +156,7 @@ public class GTJeiPlugin implements IModPlugin {
         for (MetaTileEntity deferredMetaTileEntity : deferredCatalysts) {
             IControllable workableCapability = deferredMetaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
             RecipeMap<?> recipeMap = ((AbstractRecipeLogic) workableCapability).getRecipeMap();
-            registry.addRecipeCatalyst(deferredMetaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
-            if (recipeMap instanceof RecipeMapFurnace) {
-                registry.addRecipeCatalyst(deferredMetaTileEntity.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
-            }
-        }
-
-        for (MetaTileEntity multipleRecipeMapCatalyst : multipleRecipeMapCatalysts) {
-            for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) multipleRecipeMapCatalyst).getAvailableRecipeMaps()) {
-                registry.addRecipeCatalyst(multipleRecipeMapCatalyst.getStackForm(), GTValues.MODID + ":" + recipeMap.getUnlocalizedName());
-                if (recipeMap instanceof RecipeMapFurnace) {
-                    registry.addRecipeCatalyst(multipleRecipeMapCatalyst.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
-                }
-            }
+            registerRecipeMapCatalyst(registry, recipeMap, deferredMetaTileEntity);
         }
 
         String semiFluidMapId = GTValues.MODID + ":" + RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.getUnlocalizedName();
@@ -245,5 +240,15 @@ public class GTJeiPlugin implements IModPlugin {
                     VanillaTypes.ITEM,
                     infoPage.getDescription());
         });
+    }
+
+    private static void registerRecipeMapCatalyst(IModRegistry registry, RecipeMap<?> recipeMap, MetaTileEntity metaTileEntity) {
+        registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
+        if (recipeMap instanceof RecipeMapFurnace) {
+            registry.addRecipeCatalyst(metaTileEntity.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
+        }
+        if (recipeMap.getSmallRecipeMap() != null) {
+            registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.getSmallRecipeMap().unlocalizedName);
+        }
     }
 }
