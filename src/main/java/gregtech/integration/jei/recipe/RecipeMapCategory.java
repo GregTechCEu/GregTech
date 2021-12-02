@@ -59,10 +59,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 (exportFluids = new FluidTankList(false, exportFluidTanks)), 0
         ).build(new BlankUIHolder(), Minecraft.getMinecraft().player);
         this.modularUI.initWidgets();
-        this.backgroundDrawable = guiHelper.createBlankDrawable(modularUI.getWidth(), modularUI.getHeight() * 2 / 3 + (FONT_HEIGHT *
-                (((recipeMap.getMaxOutputs() >= 6 || recipeMap.getMaxInputs() >= 6 ||
-                        recipeMap.getMaxFluidOutputs() >= 6 || recipeMap.getMaxFluidInputs() >= 6) && recipeMap.getRecipeList().get(0).getPropertyValues().size() > 0)
-                ? recipeMap.getRecipeList().get(0).getPropertyValues().size() : 0)));
+        this.backgroundDrawable = guiHelper.createBlankDrawable(modularUI.getWidth(), modularUI.getHeight() * 2 / 3 + (FONT_HEIGHT * getRecipePropertyAmount(recipeMap)));
         categoryMap.put(recipeMap, this);
     }
 
@@ -178,5 +175,16 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
 
     public static HashMap<RecipeMap<?>, RecipeMapCategory> getCategoryMap() {
         return categoryMap;
+    }
+
+    private static boolean shouldShiftWidgets(@Nonnull RecipeMap<?> recipeMap) {
+        return recipeMap.getMaxOutputs() >= 6 || recipeMap.getMaxInputs() >= 6 ||
+                recipeMap.getMaxFluidOutputs() >= 6 || recipeMap.getMaxFluidInputs() >= 6;
+    }
+
+    private static int getRecipePropertyAmount(RecipeMap<?> recipeMap) {
+        if (shouldShiftWidgets(recipeMap))
+            return recipeMap.getRecipeList().get(0).getPropertyValues().size();
+        return 0;
     }
 }
