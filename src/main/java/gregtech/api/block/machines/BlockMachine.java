@@ -338,7 +338,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
                 if(itemStack.getItem() instanceof ToolMetaItem<?>) {
                     IToolStats stats = ((ToolMetaItem<?>) itemStack.getItem()).getItem(itemStack).getToolStats();
-                    stats.onBreakingUse(itemStack);
+                    stats.onBreakingUse(itemStack, worldIn, pos);
                 }
                 wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
                 return true;

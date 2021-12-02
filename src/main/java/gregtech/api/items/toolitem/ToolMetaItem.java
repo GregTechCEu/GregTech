@@ -233,7 +233,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         if (metaToolValueItem != null) {
             IToolStats toolStats = metaToolValueItem.getToolStats();
             toolStats.onBlockDestroyed(stack, world, state, pos, entity);
-            toolStats.onBreakingUse(stack);
+            toolStats.onBreakingUse(stack, world, pos);
             damageItem(stack, toolStats.getToolDamagePerBlockBreak(stack), false);
         }
         return true;

@@ -128,7 +128,10 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     public void update() {
         if (metaTileEntity != null) {
             metaTileEntity.update();
+        } else if (world.isRemote) { // Remove null TEs on the client
+            this.getWorld().setBlockToAir(this.getPos());
         }
+        
         if (this.needToUpdateLightning) {
             getWorld().checkLight(getPos());
             this.needToUpdateLightning = false;

@@ -204,7 +204,7 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
     }
 
     @Override
-    public void onBreakingUse(ItemStack stack) {
+    public void onBreakingUse(ItemStack stack, World world, BlockPos pos) {
     }
 
     @Override
