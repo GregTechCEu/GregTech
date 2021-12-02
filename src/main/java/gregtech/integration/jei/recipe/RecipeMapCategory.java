@@ -9,6 +9,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.integration.jei.utils.render.FluidStackTextRenderer;
@@ -59,7 +60,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 (exportFluids = new FluidTankList(false, exportFluidTanks)), 0
         ).build(new BlankUIHolder(), Minecraft.getMinecraft().player);
         this.modularUI.initWidgets();
-        this.backgroundDrawable = guiHelper.createBlankDrawable(modularUI.getWidth(), modularUI.getHeight() * 2 / 3 + (FONT_HEIGHT * getRecipePropertyAmount(recipeMap)));
+        this.backgroundDrawable = guiHelper.createBlankDrawable(modularUI.getWidth(), modularUI.getHeight() * 2 / 3 + getPropertyShiftAmount(recipeMap));
         categoryMap.put(recipeMap, this);
     }
 
@@ -182,9 +183,14 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 recipeMap.getMaxFluidOutputs() >= 6 || recipeMap.getMaxFluidInputs() >= 6;
     }
 
-    private static int getRecipePropertyAmount(RecipeMap<?> recipeMap) {
-        if (shouldShiftWidgets(recipeMap))
-            return recipeMap.getRecipeList().get(0).getPropertyValues().size();
-        return 0;
+    private static int getPropertyShiftAmount(@Nonnull RecipeMap<?> recipeMap) {
+        int maxPropertyCount = 0;
+        if (shouldShiftWidgets(recipeMap)) {
+            for (Recipe recipe : recipeMap.getRecipeList()) {
+                if (recipe.getPropertyCount() > maxPropertyCount)
+                    maxPropertyCount = recipe.getPropertyCount();
+            }
+        }
+        return maxPropertyCount * FONT_HEIGHT;
     }
 }
