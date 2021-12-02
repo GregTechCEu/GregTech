@@ -153,7 +153,6 @@ public class MaterialFlagAddition {
         oreProp = Chromite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Iron, Magnesium);
         oreProp.setSeparatedInto(Iron);
-        oreProp.setDirectSmeltResult(Chrome);
 
         oreProp = Cinnabar.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Redstone, Sulfur, Glowstone);
