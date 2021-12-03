@@ -56,9 +56,20 @@ minecraft {
     isUseDepAts = true
 }
 
+repositories {
+    maven {
+        name = "CCL Maven New"
+        setUrl("https://minecraft.curseforge.com/api/maven")
+    }
+    maven {
+        name = "ChickenBones maven"
+        setUrl("http://chickenbones.net/maven/")
+    }
+}
+
 dependencies {
-    "implementation"(files("etc/CodeChickenLib-1.12.2-3.2.3.358-deobf.jar"))
-    "runtime"(files("etc/CodeChickenLib-1.12.2-3.2.3.358-universal.jar"))
+    "deobfCompile"("codechicken:ChickenASM:1.12-1.0.2.9")
+    "deobfCompile"("codechicken-lib-1-8:CodeChickenLib-1.12.2:3.2.3.358:universal")
 
     "compile"(files("etc/CraftTweaker2-1.12-4.1.20.670.jar"))
     "compile"(files("etc/jei_1.12.2-4.16.1.301.jar"))
