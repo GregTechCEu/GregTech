@@ -1800,14 +1800,11 @@ material.gallium_sulfide=Gallium Sulfide
 material.antimony_trifluoride=Antimony Trifluoride
 material.enriched_naquadah_sulfate=Enriched Naquadah Sulfate
 material.naquadria_sulfate=Naquadria Sulfate
-
-# Rename these two?
-material.poor_enriched_naquadah_solution=Poor Enriched Naquadah Solution
-material.poor_naquadria_solution=Poor Naquadria Solution
-
+material.impure_enriched_naquadah_solution=Impure Enriched Naquadah Solution
 material.enriched_naquadah_solution=Enriched Naquadah Solution
 material.acidic_enriched_naquadah_solution=Acidic Enriched Naquadah Solution
 material.enriched_naquadah_waste=Enriched Naquadah Waste
+material.impure_naquadria_solution=Impure Naquadria Solution
 material.naquadria_solution=Naquadria Solution
 material.acidic_naquadria_solution=Acidic Naquadria Solution
 material.naquadria_waste=Naquadria Waste

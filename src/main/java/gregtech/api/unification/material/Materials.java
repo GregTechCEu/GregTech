@@ -671,11 +671,11 @@ public class Materials {
     public static Material DyeOrange;
     public static Material DyeWhite;
 
-    public static Material PoorEnrichedNaquadahSolution;
+    public static Material ImpureEnrichedNaquadahSolution;
     public static Material EnrichedNaquadahSolution;
     public static Material AcidicEnrichedNaquadahSolution;
     public static Material EnrichedNaquadahWaste;
-    public static Material PoorNaquadriaSolution;
+    public static Material ImpureNaquadriaSolution;
     public static Material NaquadriaSolution;
     public static Material AcidicNaquadriaSolution;
     public static Material NaquadriaWaste;

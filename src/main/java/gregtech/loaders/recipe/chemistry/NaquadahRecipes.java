@@ -49,8 +49,8 @@ public class NaquadahRecipes {
         LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(30720).duration(600)
                 .fluidInputs(FluoroantimonicAcid.getFluid(1000))
                 .input(dust, Naquadah, 6)
-                .fluidOutputs(PoorEnrichedNaquadahSolution.getFluid(2000))
-                .fluidOutputs(PoorNaquadriaSolution.getFluid(2000))
+                .fluidOutputs(ImpureEnrichedNaquadahSolution.getFluid(2000))
+                .fluidOutputs(ImpureNaquadriaSolution.getFluid(2000))
                 .output(dust, TitaniumTrifluoride, 4)
                 .buildAndRegister();
 
@@ -58,7 +58,7 @@ public class NaquadahRecipes {
         // ENRICHED NAQUADAH PROCESS
 
         CENTRIFUGE_RECIPES.recipeBuilder().EUt(1920).duration(400)
-                .fluidInputs(PoorEnrichedNaquadahSolution.getFluid(2000))
+                .fluidInputs(ImpureEnrichedNaquadahSolution.getFluid(2000))
                 .output(dust, IndiumPhosphide)
                 .output(dust, AntimonyTrifluoride, 2)
                 .fluidOutputs(EnrichedNaquadahSolution.getFluid(1000))
@@ -96,7 +96,7 @@ public class NaquadahRecipes {
         // NAQUADRIA PROCESS
 
         CENTRIFUGE_RECIPES.recipeBuilder().EUt(1920).duration(400)
-                .fluidInputs(PoorNaquadriaSolution.getFluid(2000))
+                .fluidInputs(ImpureNaquadriaSolution.getFluid(2000))
                 .output(dust, TriniumSulfide)
                 .output(dust, AntimonyTrifluoride, 2)
                 .fluidOutputs(NaquadriaSolution.getFluid(1000))
