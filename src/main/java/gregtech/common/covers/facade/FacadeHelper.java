@@ -42,6 +42,7 @@ public class FacadeHelper {
 
     public static boolean isValidFacade(ItemStack itemStack) {
         IBlockState rawBlockState = lookupBlockForItemUnsafe(itemStack);
+        //noinspection deprecation
         return rawBlockState != null &&
                 !rawBlockState.getBlock().hasTileEntity(rawBlockState) &&
                 !rawBlockState.getBlock().hasTileEntity() &&
@@ -64,6 +65,7 @@ public class FacadeHelper {
         Block block = ((ItemBlock) itemStack.getItem()).getBlock();
         int blockMetadata = itemStack.getItem().getMetadata(itemStack);
         try {
+            //noinspection deprecation
             return block.getStateFromMeta(blockMetadata);
         } catch (Throwable e) {
             return null;

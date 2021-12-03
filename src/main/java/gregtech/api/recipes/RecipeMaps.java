@@ -508,7 +508,8 @@ public class RecipeMaps {
             .setSlotOverlay(true, false, GuiTextures.VIAL_OVERLAY_1)
             .setSlotOverlay(true, true, GuiTextures.VIAL_OVERLAY_2)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
-            .setSound(GTSounds.CHEMICAL_REACTOR);
+            .setSound(GTSounds.CHEMICAL_REACTOR)
+            .setSmallRecipeMap(CHEMICAL_RECIPES);
 
     /**
      * If universal every Fluid also gets separate distillation recipes

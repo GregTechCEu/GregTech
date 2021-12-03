@@ -13,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -65,8 +66,10 @@ public class CrowbarBehaviour implements IItemBehaviour {
 
     private boolean tryBreakRailBlock(IBlockState blockState, World world, BlockPos blockPos, EntityPlayer player) {
         if (world.canMineBlockBody(player, blockPos) && blockState.getBlock().canHarvestBlock(world, blockPos, player)) {
-            for (ItemStack drops : blockState.getBlock().getDrops(world, blockPos, blockState, 0)) {
-                Block.spawnAsEntity(world, blockPos, drops);
+            NonNullList<ItemStack> drops = NonNullList.create();
+            blockState.getBlock().getDrops(drops, world, blockPos, blockState, 0);
+            for (ItemStack drop : drops) {
+                Block.spawnAsEntity(world, blockPos, drop);
             }
             blockState.getBlock().onPlayerDestroy(world, blockPos, blockState);
             blockState.getBlock().onBlockHarvested(world, blockPos, blockState, player);

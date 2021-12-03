@@ -164,6 +164,7 @@ public class GuiTextures {
     public static final TextureArea PROGRESS_BAR_ARC_FURNACE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_arc_furnace.png");
     public static final TextureArea PROGRESS_BAR_ARROW = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_arrow.png");
     public static final TextureArea PROGRESS_BAR_ARROW_MULTIPLE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_arrow_multiple.png");
+    public static final TextureArea PROGRESS_BAR_ASSEMBLY_LINE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_assembly_line.png");
     public static final TextureArea PROGRESS_BAR_BATH = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_bath.png");
     public static final TextureArea PROGRESS_BAR_BENDING = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_bending.png");
     public static final TextureArea PROGRESS_BAR_CANNER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_canner.png");

@@ -255,7 +255,11 @@ public class FacadeRenderer {
         return finalQuads;
     }
 
-    private final static int[][] sides = {{4, 5}, {0, 1}, {2, 3}};
+    private final static EnumFacing[][] sides = {
+            {EnumFacing.WEST, EnumFacing.EAST},
+            {EnumFacing.DOWN, EnumFacing.UP},
+            {EnumFacing.NORTH, EnumFacing.SOUTH}
+    };
 
     private static double clampF(double x, Cuboid6 b, int j) {
 

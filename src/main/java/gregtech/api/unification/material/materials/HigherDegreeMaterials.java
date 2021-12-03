@@ -11,9 +11,7 @@ import static gregtech.api.unification.material.info.MaterialIconSet.*;
 public class HigherDegreeMaterials {
 
     public static void register() {
-        /**
-         * Third Degree
-         */
+
         Redstone = new Material.Builder(2507, "redstone")
                 .dust().ore(5, 1).fluid()
                 .color(0xC80000).iconSet(ROUGH)
@@ -88,9 +86,6 @@ public class HigherDegreeMaterials {
                 .blastTemp(4200, GasTier.MID, 1920, 1300)
                 .build();
 
-        /**
-         * Fourth Degree
-         */
         RedAlloy = new Material.Builder(2517, "red_alloy")
                 .ingot(0).fluid()
                 .color(0xC80000)
@@ -133,6 +128,13 @@ public class HigherDegreeMaterials {
                 .cableProperties(GTValues.V[8], 3, 2)
                 .itemPipeProperties(128, 16)
                 .blastTemp(9000, GasTier.HIGHER, 122880, 1000)
+                .build();
+
+        IridiumMetalResidue = new Material.Builder(2522, "iridium_metal_residue")
+                .dust()
+                .color(0x5C5D68).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Iridium, 1, Chlorine, 3, PlatinumSludgeResidue, 1)
                 .build();
     }
 }

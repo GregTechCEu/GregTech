@@ -11,9 +11,7 @@ import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.api.unification.material.info.MaterialIconSet.*;
 
 public class FirstDegreeMaterials {
-    /**
-     * ID RANGE: 124-253 (incl.)
-     */
+
     public static void register() {
         Almandine = new Material.Builder(250, "almandine")
                 .gem(1).ore(6, 1)
@@ -371,7 +369,12 @@ public class FirstDegreeMaterials {
                 .components(Phosphorus, 1, Oxygen, 4)
                 .build();
 
-        // Free ID 299
+        PlatinumRaw = new Material.Builder(299, "platinum_raw")
+                .dust()
+                .color(0xFFFFC8).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Platinum, 1, Chlorine, 2)
+                .build();
 
         SterlingSilver = new Material.Builder(300, "sterling_silver")
                 .ingot().fluid()
@@ -456,7 +459,7 @@ public class FirstDegreeMaterials {
 
         Ruridit = new Material.Builder(310, "ruridit")
                 .ingot(3)
-                .color(0xA4A4A4).iconSet(BRIGHT)
+                .colorAverage().iconSet(BRIGHT)
                 .flags(GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .components(Ruthenium, 2, Iridium, 1)
                 .blastTemp(4500, GasTier.HIGH, 1920, 1600)
@@ -1295,7 +1298,7 @@ public class FirstDegreeMaterials {
         IndiumTinBariumTitaniumCuprate = new Material.Builder(429, "indium_tin_barium_titanium_cuprate")
                 .ingot().fluid()
                 .color(0x994C00).iconSet(METALLIC)
-                .flags(DECOMPOSITION_BY_ELECTROLYZING)
+                .flags(DECOMPOSITION_BY_ELECTROLYZING, GENERATE_FINE_WIRE)
                 .components(Indium, 4, Tin, 2, Barium, 2, Titanium, 1, Copper, 7, Oxygen, 14)
                 .cableProperties(GTValues.V[GTValues.LuV], 8, 0, true)
                 .blastTemp(6000, GasTier.HIGH, 7680, 1000)
@@ -1304,7 +1307,7 @@ public class FirstDegreeMaterials {
         UraniumRhodiumDinaquadide = new Material.Builder(430, "uranium_rhodium_dinaquadide")
                 .ingot().fluid()
                 .color(0x0A0A0A)
-                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING, GENERATE_FINE_WIRE)
                 .components(Uranium238, 1, Rhodium, 1, Naquadah, 2)
                 .cableProperties(GTValues.V[GTValues.ZPM], 8, 0, true)
                 .blastTemp(9000, GasTier.HIGH, 7680, 1500)
@@ -1314,7 +1317,7 @@ public class FirstDegreeMaterials {
         EnrichedNaquadahTriniumEuropiumDuranide = new Material.Builder(431, "enriched_naquadah_trinium_europium_duranide")
                 .ingot().fluid()
                 .color(0x7D9673).iconSet(METALLIC)
-                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING, GENERATE_FINE_WIRE)
                 .components(NaquadahEnriched, 4, Trinium, 3, Europium, 2, Duranium, 1)
                 .cableProperties(GTValues.V[GTValues.UV], 16, 0, true)
                 .blastTemp(9900, GasTier.HIGH, 30720, 1000)
@@ -1327,6 +1330,41 @@ public class FirstDegreeMaterials {
                 .components(Ruthenium, 1, Trinium, 2, Americium, 1, Neutronium, 2, Oxygen, 8)
                 .cableProperties(GTValues.V[GTValues.MAX], 24, 0, true)
                 .blastTemp(10800, GasTier.HIGHER)
+                .build();
+
+        InertMetalMixture = new Material.Builder(433, "inert_metal_mixture")
+                .dust()
+                .color(0xE2AE72).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Rhodium, 1, Ruthenium, 1, Oxygen, 4)
+                .build();
+
+        RhodiumSulfate = new Material.Builder(434, "rhodium_sulfate")
+                .fluid()
+                .color(0xEEAA55)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Rhodium, 2, Sulfur, 3, Oxygen, 12)
+                .build().setFormula("Rh2(SO4)3", true);
+
+        RutheniumTetroxide = new Material.Builder(435, "ruthenium_tetroxide")
+                .dust()
+                .color(0xC7C7C7)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Ruthenium, 1, Oxygen, 4)
+                .build();
+
+        OsmiumTetroxide = new Material.Builder(436, "osmium_tetroxide")
+                .dust()
+                .color(0xACAD71).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Osmium, 1, Oxygen, 4)
+                .build();
+
+        IridiumChloride = new Material.Builder(437, "iridium_chloride")
+                .dust()
+                .color(0x013220).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Iridium, 1, Chlorine, 3)
                 .build();
     }
 }

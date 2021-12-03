@@ -942,20 +942,6 @@ public class ReactorRecipes {
                 .duration(500).EUt(30).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(crushedPurified, Chalcopyrite)
-                .fluidInputs(NitricAcid.getFluid(1000))
-                .output(dustTiny, PlatinumGroupSludge)
-                .fluidOutputs(CopperSulfateSolution.getFluid(1000))
-                .duration(50).EUt(30).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input(crushedPurified, Pentlandite)
-                .fluidInputs(NitricAcid.getFluid(1000))
-                .output(dustTiny, PlatinumGroupSludge)
-                .fluidOutputs(NickelSulfateSolution.getFluid(1000))
-                .duration(50).EUt(30).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Quicklime, 2)
                 .fluidInputs(CarbonDioxide.getFluid(1000))
                 .output(dust, Calcite, 5)

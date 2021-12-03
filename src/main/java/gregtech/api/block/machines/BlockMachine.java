@@ -242,6 +242,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         if (holder != null && sampleMetaTileEntity != null) {
             MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity);
             if (stack.hasTagCompound()) {
+                //noinspection ConstantConditions
                 metaTileEntity.initFromItemStackData(stack.getTagCompound());
             }
             if (metaTileEntity.isValidFrontFacing(EnumFacing.UP)) {

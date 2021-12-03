@@ -2,7 +2,6 @@ import net.minecraftforge.gradle.user.UserBaseExtension
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Constants
 import org.eclipse.jgit.lib.ObjectId
-import java.util.*
 
 buildscript {
     repositories {
@@ -35,28 +34,12 @@ apply {
     plugin("net.minecraftforge.gradle.forge")
 }
 
-val config: Properties = file("build.properties").inputStream().let {
-    val prop = Properties()
-    prop.load(it)
-    return@let prop
-}
-
-val mcVersion = config["minecraft.version"] as String
-val mcFullVersion = "$mcVersion-${config["forge.version"]}"
-val shortVersion = mcVersion.substring(0, mcVersion.lastIndexOf("."))
-val strippedVersion = shortVersion.replace(".", "") + "0"
-
-val chickenasmVersion = config["chickenasm.version"] as String
-val cclVersion = config["ccl.version"] as String
-val crafttweakerVersion = config["crafttweaker.version"] as String
-val jeiVersion = config["jei.version"] as String
-val topVersion = config["top.version"] as String
-val ctmVersion = config["ctm.version"] as String
-
 val git: Git = Git.open(projectDir)
 
+val mcVersion = "1.12.2"
+val forgeVersion = "14.23.5.2847"
+val mcFullVersion = "$mcVersion-$forgeVersion"
 val modVersion = getVersionFromJava(file("src/main/java/gregtech/GregTechVersion.java"))
-val modVersionNoBuild = modVersion.substring(0, modVersion.lastIndexOf('.'))
 version = "$mcVersion-$modVersion"
 group = "gregtech"
 
@@ -73,44 +56,14 @@ minecraft {
     isUseDepAts = true
 }
 
-repositories {
-    maven { //JEI
-        name = "Progwml6 maven"
-        setUrl("http://dvs1.progwml6.com/files/maven/")
-    }
-    maven { //JEI fallback
-        name = "ModMaven"
-        setUrl("modmaven.k-4u.nl")
-    }
-    maven {
-        name = "tterrag maven"
-        setUrl("http://maven.tterrag.com/")
-    }
-    maven {
-        name = "ChickenBones maven"
-        setUrl("http://chickenbones.net/maven/")
-    }
-    maven {
-        name = "CoFH Maven"
-        setUrl("http://maven.covers1624.net")
-    }
-    maven {
-        name = "CraftTweaker Maven"
-        setUrl("https://maven.blamejared.com/")
-    }
-    maven {
-        name = "CCL Maven New"
-        setUrl("https://minecraft.curseforge.com/api/maven")
-    }
-}
-
 dependencies {
-    "deobfCompile"("codechicken:ChickenASM:$shortVersion-$chickenasmVersion")
-    "deobfCompile"("codechicken-lib-1-8:CodeChickenLib-$mcVersion:$cclVersion:universal")
-    "deobfCompile"("CraftTweaker2:CraftTweaker2-MC$strippedVersion-Main:$crafttweakerVersion")
-    "deobfCompile"("mezz.jei:jei_$mcVersion:$jeiVersion")
-    "deobfCompile"("mcjty.theoneprobe:TheOneProbe-$shortVersion:$shortVersion-$topVersion")
-    "deobfCompile"("team.chisel.ctm:CTM:MC$mcVersion-$ctmVersion")
+    "implementation"(files("etc/CodeChickenLib-1.12.2-3.2.3.358-deobf.jar"))
+    "runtime"(files("etc/CodeChickenLib-1.12.2-3.2.3.358-universal.jar"))
+
+    "compile"(files("etc/CraftTweaker2-1.12-4.1.20.670.jar"))
+    "compile"(files("etc/jei_1.12.2-4.16.1.301.jar"))
+    "compile"(files("etc/theoneprobe-1.12-1.4.28.jar"))
+    "compile"(files("etc/CTM-MC1.12.2-1.0.2.31.jar"))
 
     "testImplementation"("junit:junit:4.13.1")
 }

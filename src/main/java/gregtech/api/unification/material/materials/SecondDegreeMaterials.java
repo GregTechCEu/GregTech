@@ -67,7 +67,7 @@ public class SecondDegreeMaterials {
                 .gem(1).ore(6, 4)
                 .color(0x4646DC).iconSet(LAPIS)
                 .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, NO_WORKING, DECOMPOSITION_BY_ELECTROLYZING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
-                        GENERATE_PLATE)
+                        GENERATE_PLATE, GENERATE_ROD)
                 .components(Lazurite, 12, Sodalite, 2, Pyrite, 1, Calcite, 1)
                 .build();
 
@@ -321,23 +321,23 @@ public class SecondDegreeMaterials {
         NaquadahAlloy = new Material.Builder(2042, "naquadah_alloy")
                 .ingot(5).fluid()
                 .color(0x282828).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_RING, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME)
+                .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_RING, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_DENSE)
                 .components(Naquadah, 2, Osmiridium, 1, Trinium, 1)
                 .toolStats(8.0f, 5.0f, 5120, 21)
                 .cableProperties(GTValues.V[8], 2, 4)
                 .blastTemp(7200, GasTier.HIGH, 30720, 1000)
                 .build();
 
-        NickelSulfateSolution = new Material.Builder(2043, "nickel_sulfate_water_solution")
+        SulfuricNickelSolution = new Material.Builder(2043, "sulfuric_nickel_solution")
                 .fluid()
                 .color(0x3EB640)
-                .components(Nickel, 1, Sulfur, 1, Oxygen, 4, Water, 6)
+                .components(Nickel, 1, Oxygen, 1, SulfuricAcid, 1)
                 .build();
 
-        CopperSulfateSolution = new Material.Builder(2044, "copper_sulfate_water_solution")
+        SulfuricCopperSolution = new Material.Builder(2044, "sulfuric_copper_solution")
                 .fluid()
                 .color(0x48A5C0)
-                .components(Copper, 1, Sulfur, 1, Oxygen, 4, Water, 5)
+                .components(Copper, 1, Oxygen, 1, SulfuricAcid, 1)
                 .build();
 
         LeadZincSolution = new Material.Builder(2045, "lead_zinc_solution")
@@ -422,6 +422,49 @@ public class SecondDegreeMaterials {
                 .color(0xFFB132)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(NitricAcid, 1, HydrochloricAcid, 1)
+                .build();
+
+        PlatinumSludgeResidue = new Material.Builder(2057, "platinum_sludge_residue")
+                .dust()
+                .color(0x827951)
+                .components(SiliconDioxide, 2, Gold, 3)
+                .build();
+
+        PalladiumRaw = new Material.Builder(2058, "palladium_raw")
+                .dust()
+                .color(Palladium.getMaterialRGB()).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Palladium, 1, Ammonia, 1)
+                .build();
+
+        RarestMetalMixture = new Material.Builder(2059, "rarest_metal_mixture")
+                .dust()
+                .color(0x832E11).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Iridium, 1, Osmium, 1, Oxygen, 4, Water, 1)
+                .build();
+
+        AmmoniumChloride = new Material.Builder(2060, "ammonium_chloride")
+                .dust()
+                .color(0x9711A6)
+                .components(Ammonia, 1, HydrochloricAcid, 1)
+                .build()
+                .setFormula("NH4Cl", true);
+
+        AcidicOsmiumSolution = new Material.Builder(2061, "acidic_osmium_solution")
+                .fluid()
+                .color(0xA3AA8A)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Osmium, 1, Oxygen, 4, Water, 1, HydrochloricAcid, 1)
+                .build();
+
+        RhodiumPlatedPalladium = new Material.Builder(2062, "rhodium_plated_palladium")
+                .ingot().fluid()
+                .color(0xDAC5C5).iconSet(SHINY)
+                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
+                .components(Palladium, 3, Rhodium, 1)
+                .toolStats(12.0f, 3.0f, 1024, 33)
+                .blastTemp(4500, GasTier.HIGH, 7680, 1200)
                 .build();
     }
 }

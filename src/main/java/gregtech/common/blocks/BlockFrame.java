@@ -92,11 +92,13 @@ public final class BlockFrame extends Block {
 
     @Nonnull
     @Override
+    @SuppressWarnings("deprecation")
     public EnumPushReaction getPushReaction(@Nonnull IBlockState state) {
         return EnumPushReaction.DESTROY;
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public AxisAlignedBB getCollisionBoundingBox(@Nonnull IBlockState blockState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
         return COLLISION_BOX;
     }
@@ -108,12 +110,14 @@ public final class BlockFrame extends Block {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean isOpaqueCube(@Nonnull IBlockState state) {
         return false;
     }
 
     @Nonnull
     @Override
+    @SuppressWarnings("deprecation")
     public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
         return BlockFaceShape.UNDEFINED;
     }

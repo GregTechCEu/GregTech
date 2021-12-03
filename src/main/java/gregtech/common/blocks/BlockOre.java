@@ -20,7 +20,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -62,7 +61,7 @@ public class BlockOre extends BlockFalling implements IBlockOre {
 
     protected void initBlockState() {
         BlockStateContainer stateContainer = createStateContainer();
-        ObfuscationReflectionHelper.setPrivateValue(Block.class, this, stateContainer, 21); //this.stateContainer
+        this.blockState = stateContainer;
         setDefaultState(stateContainer.getBaseState());
     }
 

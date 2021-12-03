@@ -55,9 +55,6 @@ public class Material implements Comparable<Material> {
      */
     private String chemicalFormula;
 
-    // Used to hide "unused" materials in CEu but allow addons to re-enable them
-    private boolean isHidden;
-
     // TODO Fix isotope tooltips being set toSmallDownNumbers
     private String calculateChemicalFormula() {
         if (chemicalFormula != null) return this.chemicalFormula;
@@ -368,11 +365,11 @@ public class Material implements Comparable<Material> {
     }
 
     public boolean isHidden() {
-        return isHidden;
+        return this.materialInfo.isHidden;
     }
 
     public void setHidden(boolean hidden) {
-        this.isHidden = hidden;
+        this.materialInfo.isHidden = hidden;
     }
 
     /**
@@ -383,8 +380,6 @@ public class Material implements Comparable<Material> {
         private final MaterialInfo materialInfo;
         private final MaterialProperties properties;
         private final MaterialFlags flags;
-
-        private boolean isHidden = false;
 
         /*
          * The temporary list of components for this Material.
@@ -696,6 +691,11 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        public Builder setHidden() {
+            this.materialInfo.isHidden = true;
+            return this;
+        }
+
         public Builder toolStats(float speed, float damage, int durability, int enchantability) {
             properties.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, durability, enchantability));
             return this;
@@ -828,17 +828,10 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder hidden() {
-            this.isHidden = true;
-            return this;
-        }
-
         public Material build() {
             materialInfo.componentList = ImmutableList.copyOf(composition);
             materialInfo.verifyInfo(properties, averageRGB);
-            Material m = new Material(materialInfo, properties, flags);
-            if (isHidden) m.setHidden(true);
-            return m;
+            return new Material(materialInfo, properties, flags);
         }
     }
 
@@ -889,6 +882,12 @@ public class Material implements Comparable<Material> {
          * Default: none.
          */
         private Element element;
+
+        /**
+         * Field used to hide Materials from JEI, but keep them generated.
+         * Allows GTCEu to generate all elements without needing to use all of them.
+         */
+        private boolean isHidden = false;
 
         private MaterialInfo(int metaItemSubId, String name) {
             this.metaItemSubId = metaItemSubId;

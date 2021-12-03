@@ -75,7 +75,7 @@ public class CraftingRecipeLoader {
 
         for (MetaValueItem batteryItem : ToolRecipeHandler.batteryItems[0]) {
             ModHandler.addShapedEnergyTransferRecipe("scanner_" + batteryItem.unlocalizedName, MetaItems.SCANNER.getStackForm(),
-                    batteryItem::isItemEqual, true,
+                    batteryItem::isItemEqual, true, true,
                     "DGD", "CGC", "SBS",
                     'D', new UnificationEntry(OrePrefix.plate, Materials.Diamond),
                     'G', new UnificationEntry(OrePrefix.paneGlass),
@@ -86,13 +86,13 @@ public class CraftingRecipeLoader {
 
         for (Material material : new Material[]{Materials.Lapis, Materials.Lazurite, Materials.Sodalite}) {
             String recipeName = "lapotron_crystal_" + material.toString();
-            ModHandler.addShapedEnergyTransferRecipeWithOverride(recipeName, MetaItems.LAPOTRON_CRYSTAL.getStackForm(),
-                    Ingredient.fromStacks(MetaItems.ENERGY_CRYSTAL.getStackForm()), false, false,
+            ModHandler.addShapedEnergyTransferRecipe(recipeName, MetaItems.LAPOTRON_CRYSTAL.getStackForm(),
+                    Ingredient.fromStacks(MetaItems.ENERGIUM_CRYSTAL.getStackForm()), false, false,
                     "XCX", "RER", "XCX",
                     'X', new UnificationEntry(OrePrefix.plate, material),
                     'R', new UnificationEntry(OrePrefix.stick, material),
                     'C', new UnificationEntry(OrePrefix.circuit, Tier.Extreme),
-                    'E', MetaItems.ENERGY_CRYSTAL.getStackForm());
+                    'E', MetaItems.ENERGIUM_CRYSTAL.getStackForm());
 
             ModHandler.addShapelessRecipe(recipeName + "_alt", MetaItems.LAPOTRON_CRYSTAL.getStackForm(),
                     new UnificationEntry(OrePrefix.gemExquisite, Materials.Sapphire),
@@ -121,7 +121,7 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe("component_sawblade_diamond", MetaItems.COMPONENT_SAW_BLADE_DIAMOND.getStackForm(), " D ", "DGD", " D ", 'D', new UnificationEntry(OrePrefix.dustSmall, Materials.Diamond), 'G', new UnificationEntry(OrePrefix.gear, Materials.CobaltBrass));
         ModHandler.addShapedRecipe("component_sawblade_tungsten", MetaItems.COMPONENT_SAW_BLADE_TUNGSTEN.getStackForm(), " D ", "DGD", " D ", 'D', new UnificationEntry(OrePrefix.plate, Materials.TungstenCarbide), 'G', new UnificationEntry(OrePrefix.gear, Materials.Ultimet));
 
-        ModHandler.addShapedRecipe("nano_saber", MetaItems.NANO_SABER.getStackForm(), "PIC", "PIC", "XEX", 'P', new UnificationEntry(OrePrefix.plate, Materials.Platinum), 'I', new UnificationEntry(OrePrefix.plate, Ruridit), 'C', MetaItems.CARBON_PLATE.getStackForm(), 'X', new UnificationEntry(OrePrefix.circuit, Tier.Extreme), 'E', MetaItems.ENERGY_CRYSTAL.getStackForm());
+        ModHandler.addShapedRecipe("nano_saber", MetaItems.NANO_SABER.getStackForm(), "PIC", "PIC", "XEX", 'P', new UnificationEntry(OrePrefix.plate, Materials.Platinum), 'I', new UnificationEntry(OrePrefix.plate, Ruridit), 'C', MetaItems.CARBON_PLATE.getStackForm(), 'X', new UnificationEntry(OrePrefix.circuit, Tier.Extreme), 'E', MetaItems.ENERGIUM_CRYSTAL.getStackForm());
 
         ModHandler.addShapedRecipe("solar_panel/solar_panel_basic", MetaItems.COVER_SOLAR_PANEL.getStackForm(), "WGW", "CPC", 'W', MetaItems.SILICON_WAFER.getStackForm(), 'G', "paneGlass", 'C', new UnificationEntry(OrePrefix.circuit, Tier.Basic), 'P', MetaItems.CARBON_PLATE.getStackForm());
         ModHandler.addShapedRecipe("solar_panel/solar_panel_ulv", MetaItems.COVER_SOLAR_PANEL_ULV.getStackForm(), "WGW", "CAC", "P P", 'W', MetaItems.GLOWSTONE_WAFER.getStackForm(), 'G', "paneGlass", 'C', new UnificationEntry(OrePrefix.circuit, Tier.Advanced), 'P', OreDictUnifier.get(OrePrefix.plate, GalliumArsenide), 'A', OreDictUnifier.get(OrePrefix.wireGtQuadruple, Graphene));

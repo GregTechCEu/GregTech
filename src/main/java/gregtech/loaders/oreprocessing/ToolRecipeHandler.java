@@ -77,7 +77,7 @@ public class ToolRecipeHandler {
                 String recipeName = String.format("%s_%s", powerUnitItems[i].unlocalizedName, batteryItem.unlocalizedName);
 
                 ModHandler.addShapedEnergyTransferRecipe(recipeName, powerUnitStack,
-                        Ingredient.fromStacks(batteryStack), false,
+                        Ingredient.fromStacks(batteryStack), true, false,
                         "S d", "GMG", "PBP",
                         'M', motorItems[i].getStackForm(),
                         'S', new UnificationEntry(OrePrefix.screw, baseMaterials[i]),
@@ -94,7 +94,7 @@ public class ToolRecipeHandler {
             ItemStack powerUnitStack = powerUnitItems[i].getStackForm();
             String recipeNameSecond = String.format("%s_%s_unit", toolItems[i].unlocalizedName, material);
             ModHandler.addShapedEnergyTransferRecipe(recipeNameSecond, drillStack,
-                    Ingredient.fromStacks(powerUnitStack), true,
+                    Ingredient.fromStacks(powerUnitStack), true, true,
                     "wHd", " U ",
                     'H', new UnificationEntry(toolPrefix, material),
                     'U', powerUnitStack);

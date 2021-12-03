@@ -335,7 +335,7 @@ public class MixerRecipes {
                 .input(dust, Chrome)
                 .input(dust, Steel, 7)
                 .notConsumable(new IntCircuitIngredient(1))
-                .output(dust, TungstenSteel, 2)
+                .output(dust, VanadiumSteel, 9)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(200).EUt(480)
@@ -383,6 +383,13 @@ public class MixerRecipes {
                 .input(dust, Iridium, 3)
                 .notConsumable(new IntCircuitIngredient(1))
                 .output(dust, Osmiridium, 4)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(400).EUt(7680)
+                .input(dust, Palladium, 3)
+                .input(dust, Rhodium)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, RhodiumPlatedPalladium, 4)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(400).EUt(7680)

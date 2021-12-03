@@ -16,6 +16,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MusicDiscStats implements IMusicDisc, IItemBehaviour {
 
+    public static final int SOUND_TYPE = 1050;
+
     private final SoundEvent sound;
 
     public MusicDiscStats(SoundEvent sound) {
@@ -35,7 +37,7 @@ public class MusicDiscStats implements IMusicDisc, IItemBehaviour {
         if (iblockstate.getBlock() == Blocks.JUKEBOX && !(Boolean)iblockstate.getValue(BlockJukebox.HAS_RECORD)) {
             if (!world.isRemote) {
                 ((BlockJukebox)Blocks.JUKEBOX).insertRecord(world, pos, iblockstate, itemStack);
-                world.playEvent(1010, pos, itemStack.getItemDamage());
+                world.playEvent(SOUND_TYPE, pos, itemStack.getItemDamage());
                 itemStack.shrink(1);
                 player.addStat(StatList.RECORD_PLAYED);
             }

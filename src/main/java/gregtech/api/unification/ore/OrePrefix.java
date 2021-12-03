@@ -254,6 +254,7 @@ public class OrePrefix {
         gemFlawless.maxStackSize = 32;
         gemExquisite.maxStackSize = 16;
 
+        plateDouble.maxStackSize = 32;
         plateDense.maxStackSize = 7;
         rotor.maxStackSize = 16;
         gear.maxStackSize = 16;
@@ -552,7 +553,7 @@ public class OrePrefix {
     // todo clean this up
     public String getLocalNameForItem(Material material) {
         String specifiedUnlocalized = "item." + material.toString() + "." + this.name;
-        if (LocalizationUtils.hasKey(specifiedUnlocalized)) return I18n.format(specifiedUnlocalized);
+        if (LocalizationUtils.hasKey(specifiedUnlocalized)) return LocalizationUtils.format(specifiedUnlocalized);
         String unlocalized = "item.material.oreprefix." + this.name;
         String matLocalized = material.getLocalizedName();
         String formatted = LocalizationUtils.format(unlocalized, matLocalized);

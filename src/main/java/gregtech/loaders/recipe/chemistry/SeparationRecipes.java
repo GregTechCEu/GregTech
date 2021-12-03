@@ -238,16 +238,6 @@ public class SeparationRecipes {
                 .chancedOutput(dustSmall, Lanthanum, 2500, 400)
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(900).EUt(30)
-                .input(dust, PlatinumGroupSludge)
-                .output(dust, SiliconDioxide)
-                .output(dustTiny, Gold)
-                .output(dustTiny, Platinum)
-                .chancedOutput(dustTiny, Palladium, 8000, 900)
-                .chancedOutput(dustTiny, Iridium, 6000, 850)
-                .chancedOutput(dustTiny, Osmium, 6000, 850)
-                .buildAndRegister();
-
         CENTRIFUGE_RECIPES.recipeBuilder().duration(50).EUt(30)
                 .inputs(new ItemStack(Blocks.SAND, 1, 1))
                 .chancedOutput(dust, Iron, 5000, 500)

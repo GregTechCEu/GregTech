@@ -8,7 +8,6 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import javax.annotation.Nonnull;
@@ -21,20 +20,8 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
     private final Predicate<ItemStack> chargePredicate;
     private final boolean transferMaxCharge;
 
-    public ShapedOreEnergyTransferRecipe(ResourceLocation group, @Nonnull ItemStack result, Predicate<ItemStack> chargePredicate, boolean transferMaxCharge, Object... recipe) {
-        this(group, result, chargePredicate, transferMaxCharge, CraftingHelper.parseShaped(recipe));
-    }
-
     public ShapedOreEnergyTransferRecipe(ResourceLocation group, @Nonnull ItemStack result, Predicate<ItemStack> chargePredicate, boolean overrideCharge, boolean transferMaxCharge, Object... recipe) {
-        this(group, result, chargePredicate, overrideCharge, transferMaxCharge, CraftingHelper.parseShaped(recipe));
-    }
-
-    public ShapedOreEnergyTransferRecipe(ResourceLocation group, @Nonnull ItemStack result, Predicate<ItemStack> chargePredicate, boolean transferMaxCharge, ShapedPrimer primer) {
-        this(group, result, chargePredicate, true, transferMaxCharge, primer);
-    }
-
-    public ShapedOreEnergyTransferRecipe(ResourceLocation group, @Nonnull ItemStack result, Predicate<ItemStack> chargePredicate, boolean overrideCharge, boolean transferMaxCharge, ShapedPrimer primer) {
-        super(group, result, primer);
+        super(group, result, CraftingHelper.parseShaped(recipe));
         this.chargePredicate = chargePredicate;
         this.transferMaxCharge = transferMaxCharge;
         if (overrideCharge) {

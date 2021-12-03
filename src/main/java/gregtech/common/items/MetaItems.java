@@ -141,7 +141,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem BATTERY_HV_CADMIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_HV_LITHIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_HV_SODIUM;
-    public static MetaItem<?>.MetaValueItem ENERGY_CRYSTAL;
+    public static MetaItem<?>.MetaValueItem ENERGIUM_CRYSTAL;
     public static MetaItem<?>.MetaValueItem LAPOTRON_CRYSTAL;
 
     public static MetaItem<?>.MetaValueItem BATTERY_EV_VANADIUM;
