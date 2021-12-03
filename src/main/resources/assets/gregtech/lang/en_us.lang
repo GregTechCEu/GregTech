@@ -445,7 +445,7 @@ metaitem.circuit.integrated.tooltip=Use to open configuration GUI
 metaitem.circuit.integrated.gui=Programmed Circuit Configuration
 metaitem.circuit.integrated.jei_description=JEI is only showing recipes for the given configuration.\n\nYou can select a configuration in the Programmed Circuit configuration tab.
 
-metaitem.glass_lens.white.name=Glass Lens (White)
+item.glass.lens=Glass Lens (White)
 metaitem.glass_lens.orange.name=Glass Lens (Orange)
 metaitem.glass_lens.magenta.name=Glass Lens (Magenta)
 metaitem.glass_lens.light_blue.name=Glass Lens (Light Blue)

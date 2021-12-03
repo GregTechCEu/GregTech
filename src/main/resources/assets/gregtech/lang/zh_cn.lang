@@ -339,7 +339,7 @@ metaitem.circuit.integrated.name=编程电路
 metaitem.circuit.integrated.tooltip=右击打开配置界面
 metaitem.circuit.integrated.gui=编程电路配置
 
-metaitem.glass_lens.white.name=玻璃透镜 (白色的)
+item.glass.lens=玻璃透镜 (白色的)
 metaitem.glass_lens.orange.name=玻璃透镜 (橘子)
 metaitem.glass_lens.magenta.name=玻璃透镜 (品紅)
 metaitem.glass_lens.light_blue.name=玻璃透镜 (淺藍)

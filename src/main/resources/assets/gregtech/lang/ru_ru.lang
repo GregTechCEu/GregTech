@@ -411,7 +411,7 @@ metaitem.circuit.integrated.gui=Конфигурация интегрально�
 # TODO
 metaitem.circuit.integrated.jei_description=JEI is only showing recipes for the given configuration.\n\nYou can select a configuration in the Programmed Circuit configuration tab.
 
-metaitem.glass_lens.white.name=Стекло Линза (Белый)
+item.glass.lens=Стекло Линза (Белый)
 metaitem.glass_lens.orange.name=Стекло Линза (Оранжевый)
 metaitem.glass_lens.magenta.name=Стекло Линза (Пурпурный)
 metaitem.glass_lens.light_blue.name=Стекло Линза (Голубой)

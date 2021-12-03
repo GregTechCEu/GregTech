@@ -32,5 +32,8 @@ public enum OreDictNames {
     craftingLensPurple,
     craftingLensRed,
     craftingLensWhite,
-    craftingLensYellow
+    craftingLensYellow,
+
+    // Represents all dyed Glass Lenses, and the undyed version
+    craftingLensGlass
 }

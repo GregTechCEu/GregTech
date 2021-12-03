@@ -609,7 +609,7 @@ public final class MetaItems {
                 ((MetaPrefixItem) item).registerOreDict();
             }
         }
-        for (Map.Entry<MarkerMaterial, MetaItem.MetaValueItem> entry : GLASS_LENSES.entrySet()) {
+        for (Map.Entry<MarkerMaterial, MetaValueItem> entry : GLASS_LENSES.entrySet()) {
             // Register "craftingLensWhite" for example
             OreDictUnifier.registerOre(entry.getValue().getStackForm(), OrePrefix.craftingLens, entry.getKey());
             // Register "craftingLensGlass", intended only for recipes to dye lenses and not in the Engraver

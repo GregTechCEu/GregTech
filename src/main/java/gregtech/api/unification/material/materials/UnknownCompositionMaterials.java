@@ -257,7 +257,7 @@ public class UnknownCompositionMaterials {
         NetherStar = new Material.Builder(1602, "nether_star")
                 .gem(4)
                 .iconSet(NETHERSTAR)
-                .flags(STD_SOLID, GENERATE_LENS, NO_SMASHING, NO_SMELTING)
+                .flags(STD_SOLID, NO_SMASHING, NO_SMELTING)
                 .build();
 
         Endstone = new Material.Builder(1603, "endstone")
