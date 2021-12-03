@@ -336,19 +336,22 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             }
         }
         int[][] aisleRepetitions = this.structurePattern.aisleRepetitions;
-        int[] repetition = new int[aisleRepetitions.length];
-        for (int i = 0; i < aisleRepetitions.length; i++) {
-            repetition[i] = aisleRepetitions[i][0];
-        }
-        List<MultiblockShapeInfo> pages = new LinkedList<>();
-        pages.add(new MultiblockShapeInfo(this.structurePattern.getPreview(repetition)));
-        for (int i = 0; i < repetition.length; i++) {
-            int base = repetition[i];
-            for(int j = base + 1; j <= aisleRepetitions[i][1]; j++) {
-                repetition[i] = j;
-                pages.add(new MultiblockShapeInfo(this.structurePattern.getPreview(repetition)));
+        return repetitionDFS(new ArrayList<>(), aisleRepetitions, new Stack<>());
+    }
+
+    private List<MultiblockShapeInfo> repetitionDFS(List<MultiblockShapeInfo> pages, int[][] aisleRepetitions, Stack<Integer> repetitionStack) {
+        if (repetitionStack.size() == aisleRepetitions.length) {
+            int[] repetition = new int[repetitionStack.size()];
+            for (int i = 0; i < repetitionStack.size(); i++) {
+                repetition[i] = repetitionStack.get(i);
             }
-            repetition[i] = base;
+            pages.add(new MultiblockShapeInfo(this.structurePattern.getPreview(repetition)));
+        } else {
+            for (int i = aisleRepetitions[repetitionStack.size()][0]; i <= aisleRepetitions[repetitionStack.size()][1]; i++) {
+                repetitionStack.push(i);
+                repetitionDFS(pages, aisleRepetitions, repetitionStack);
+                repetitionStack.pop();
+            }
         }
         return pages;
     }
