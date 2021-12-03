@@ -159,6 +159,9 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         } else {
             zoom = (float) MathHelper.clamp(zoom + (Mouse.getEventDWheel() < 0 ? 0.5 : -0.5), 3, 999);
             setNextLayer(getLayerIndex());
+            if (predicates != null && predicates.size() > 0) {
+                setItemStackGroup();
+            }
         }
         if (getCurrentRenderer() != null) {
             TrackedDummyWorld world = (TrackedDummyWorld) getCurrentRenderer().world;
@@ -332,7 +335,18 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                 return true;
             }
         }
-        if (mouseButton == 1 && getCurrentRenderer().getLastTraceResult() != null) {
+        if (mouseButton == 1) {
+            if (getCurrentRenderer().getLastTraceResult() == null) {
+                if (this.selected != null) {
+                    this.selected = null;
+                    for (int i = 0; i < predicates.size(); i++) {
+                        recipeLayout.getItemStacks().set(i + MAX_PARTS, ItemStack.EMPTY);
+                    }
+                    predicates.clear();
+                    return true;
+                }
+                return false;
+            }
             BlockPos selected = getCurrentRenderer().getLastTraceResult().getBlockPos();
             if (!Objects.equals(this.selected, selected)) {
                 for (int i = 0; i < predicates.size(); i++) {
@@ -344,20 +358,26 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                 if (predicate!= null) {
                     predicates.addAll(predicate.common);
                     predicates.addAll(predicate.limited);
-                    IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
-                    for (int i = 0; i < predicates.size(); i++) {
-                        itemStackGroup.init(i + MAX_PARTS, true, 5 + (i / 6) * SLOT_SIZE, (i % 6) * SLOT_SIZE + 10);
-                        itemStackGroup.set(i + MAX_PARTS, predicates.get(i).getCandidates());
-                    }
-                    itemStackGroup.addTooltipCallback((slotIndex, input, itemStack, tooltip)->{
-                        if (slotIndex >= MAX_PARTS && slotIndex < MAX_PARTS + predicates.size()) {
-                            tooltip.addAll(predicates.get(slotIndex - MAX_PARTS).getToolTips());
-                        }
-                    });
+                    setItemStackGroup();
                 }
+                return true;
             }
         }
         return false;
+    }
+
+
+    private void setItemStackGroup() {
+        IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
+        for (int i = 0; i < predicates.size(); i++) {
+            itemStackGroup.init(i + MAX_PARTS, true, 5 + (i / 6) * SLOT_SIZE, (i % 6) * SLOT_SIZE + 10);
+            itemStackGroup.set(i + MAX_PARTS, predicates.get(i).getCandidates());
+        }
+        itemStackGroup.addTooltipCallback((slotIndex, input, itemStack, tooltip)->{
+            if (slotIndex >= MAX_PARTS && slotIndex < MAX_PARTS + predicates.size()) {
+                tooltip.addAll(predicates.get(slotIndex - MAX_PARTS).getToolTips());
+            }
+        });
     }
 
     @Nonnull

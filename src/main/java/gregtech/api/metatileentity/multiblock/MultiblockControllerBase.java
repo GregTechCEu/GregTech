@@ -355,6 +355,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     @SideOnly(Side.CLIENT)
     public String[] getDescription() {
-        return new String[]{I18n.format(String.format("gregtech.multiblock.%s.description", metaTileEntityId.getPath()))};
+        String key = String.format("gregtech.multiblock.%s.description", metaTileEntityId.getPath());
+        return I18n.hasKey(key) ? new String[]{I18n.format(key)} : new String[0];
     }
 }

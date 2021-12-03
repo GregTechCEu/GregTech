@@ -238,6 +238,11 @@ public class GTJeiPlugin implements IModPlugin {
         }
 
         //Multiblock info page registration
-        MultiblockInfoCategory.REGISTER.forEach(mte->registry.addIngredientInfo(mte.getStackForm(), VanillaTypes.ITEM, mte.getDescription()));
+        MultiblockInfoCategory.REGISTER.forEach(mte->{
+            String[] desc = mte.getDescription();
+            if (desc.length > 0) {
+                registry.addIngredientInfo(mte.getStackForm(), VanillaTypes.ITEM, mte.getDescription());
+            }
+        });
     }
 }

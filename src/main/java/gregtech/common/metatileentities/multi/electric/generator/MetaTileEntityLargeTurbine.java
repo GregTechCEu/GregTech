@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.api.render.ICubeRenderer;
@@ -19,7 +20,6 @@ import gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -136,22 +136,19 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
         if (turbineType == null)
             return null;
 
-        FactoryBlockPattern blockPattern = FactoryBlockPattern.start()
+        TraceabilityPredicate predicate = states(getCasingState()).or(autoAbilities());
+        return FactoryBlockPattern.start()
                 .aisle("CCCC", "CHHC", "CCCC")
-                .aisle("CHHC", "RGGD", "CHHC")
+                .aisle("CHHC", "RGGD", "CTTC")
                 .aisle("CCCC", "CSHC", "CCCC")
                 .where('S', selfPredicate())
                 .where('G', states(getGearBoxState()))
                 .where('C', states(getCasingState()))
                 .where('R', abilities(ABILITY_ROTOR_HOLDER))
-                .where('D', abilities(MultiblockAbility.OUTPUT_ENERGY));
-
-                if (turbineType.hasMufflerHatch)
-                    blockPattern.where('H', states(getCasingState()).or(autoAbilities()).or(abilities(MultiblockAbility.MUFFLER_HATCH).setMinGlobalLimited(1).setMinGlobalLimited(1)));
-                else
-                    blockPattern.where('H', states(getCasingState()).or(autoAbilities()));
-
-                return blockPattern.build();
+                .where('D', abilities(MultiblockAbility.OUTPUT_ENERGY))
+                .where('H', predicate)
+                .where('T', predicate.or(turbineType.hasMufflerHatch ? abilities(MultiblockAbility.MUFFLER_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1) : null))
+                .build();
     }
 
     @Override
