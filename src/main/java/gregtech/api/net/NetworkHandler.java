@@ -223,29 +223,9 @@ public class NetworkHandler {
                 }
         ));
 
-        registerPacket(7, CPacketPluginSynced.class, new NetworkHandler.PacketCodec<>(
-                (packet, buf) -> {
-                    MetaTileEntityMonitorScreen screen = packet.plugin.getScreen();
-                    buf.writeVarInt(screen.getWorld().provider.getDimension());
-                    buf.writeBlockPos(screen.getPos());
-                    buf.writeVarInt(packet.id);
-                    if(packet.payloadWriter != null) {
-                        packet.payloadWriter.accept(buf);
-                    }
-                },
-                (buf) -> {
-                    int dim = buf.readVarInt();
-                    BlockPos pos = buf.readBlockPos();
-                    TileEntity te = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dim).getTileEntity(pos);
-                    if(te instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) te).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
-                        MonitorPluginBaseBehavior pluginBaseBehavior = ((MetaTileEntityMonitorScreen) ((MetaTileEntityHolder) te).getMetaTileEntity()).plugin;
-                        if (pluginBaseBehavior != null) {
-                            return new CPacketPluginSynced(pluginBaseBehavior, buf);
-                        }
-                    }
-                    return new CPacketPluginSynced(null, buf);
-                }
-        ));
+        CPacketPluginSynced.registerPacket(7);
+
+        CPacketRecoverMTE.registerPacket(8);
 
         registerServerExecutor(PacketUIClientAction.class, (packet, handler) -> {
             Container openContainer = handler.player.openContainer;
@@ -263,11 +243,9 @@ public class NetworkHandler {
             }
         });
 
-        registerServerExecutor(CPacketPluginSynced.class, (packet, handler) -> {
-            if (packet.plugin != null) {
-                packet.plugin.readPluginAction(handler.player, packet.id, packet.buf);
-            }
-        });
+        CPacketPluginSynced.registerExecutor();
+
+        CPacketRecoverMTE.registerExecutor();
 
         if (FMLCommonHandler.instance().getSide().isClient()) {
             initClient();
