@@ -100,10 +100,10 @@ public abstract class FueledMultiblockController extends MultiblockWithDisplayBa
     public TraceabilityPredicate autoAbilities(boolean checkEnergyOut,
                                                boolean checkMaintainer,
                                                boolean checkFluidIn) {
-        TraceabilityPredicate predicate = !checkEnergyOut ? new TraceabilityPredicate() : abilities(MultiblockAbility.OUTPUT_ENERGY).setMinGlobalLimited(1);
+        TraceabilityPredicate predicate = !checkEnergyOut ? new TraceabilityPredicate() : abilities(MultiblockAbility.OUTPUT_ENERGY);
         predicate = predicate.or(!checkMaintainer ? null : super.autoAbilities());
         if (checkFluidIn) {
-            predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1));
+            predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(1));
         }
         return predicate;
     }

@@ -341,12 +341,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             repetition[i] = aisleRepetitions[i][0];
         }
         List<MultiblockShapeInfo> pages = new LinkedList<>();
-        pages.add(new MultiblockShapeInfo(this.structurePattern.getTraceabilityBlocks(repetition)));
+        pages.add(new MultiblockShapeInfo(this.structurePattern.getPreview(repetition)));
         for (int i = 0; i < repetition.length; i++) {
             int base = repetition[i];
             for(int j = base + 1; j <= aisleRepetitions[i][1]; j++) {
                 repetition[i] = j;
-                pages.add(new MultiblockShapeInfo(this.structurePattern.getTraceabilityBlocks(repetition)));
+                pages.add(new MultiblockShapeInfo(this.structurePattern.getPreview(repetition)));
             }
             repetition[i] = base;
         }

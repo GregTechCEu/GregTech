@@ -344,7 +344,7 @@ public class BlockPattern {
         });
     }
 
-    public BlockInfo[][][] getTraceabilityBlocks(int[] repetition) {
+    public BlockInfo[][][] getPreview(int[] repetition) {
         Map<TraceabilityPredicate.SimplePredicate, BlockInfo[]> cacheInfos = new HashMap<>();
         Map<TraceabilityPredicate.SimplePredicate, Integer> cacheGlobal = new HashMap<>();
         Map<BlockPos, BlockInfo> blocks = new HashMap<>();
@@ -390,22 +390,70 @@ public class BlockPattern {
                             find = true;
                             break;
                         }
-                        if (!find) {
-                            if (predicate.common.isEmpty()) {
-                                for (TraceabilityPredicate.SimplePredicate limit : predicate.limited) {
-                                    if (limit.maxGlobalCount == -1 && limit.maxLayerCount == -1) {
-                                        if (!cacheInfos.containsKey(limit)) {
-                                            cacheInfos.put(limit, limit.candidates == null ? null : limit.candidates.get());
-                                        }
-                                        infos = cacheInfos.get(limit);
+                        if (!find) { // check common with previewCount
+                            for (TraceabilityPredicate.SimplePredicate common : predicate.common) {
+                                if (common.previewCount > 0) {
+                                    if (!cacheGlobal.containsKey(common)) {
+                                        cacheGlobal.put(common, 1);
+                                    } else if (cacheGlobal.get(common) < common.previewCount) {
+                                        cacheGlobal.put(common, cacheGlobal.get(common) + 1);
+                                    } else {
+                                        continue;
                                     }
                                 }
-                            } else {
-                                TraceabilityPredicate.SimplePredicate common = predicate.common.get(0);
                                 if (!cacheInfos.containsKey(common)) {
                                     cacheInfos.put(common, common.candidates == null ? null : common.candidates.get());
                                 }
                                 infos = cacheInfos.get(common);
+                                find = true;
+                                break;
+                            }
+                            if (!find) { // check limit with previewCount
+                                for (TraceabilityPredicate.SimplePredicate limit : predicate.limited) {
+                                    if ((limit.maxGlobalCount == -1 || cacheGlobal.getOrDefault(limit, 0) < limit.maxGlobalCount) &&
+                                            (limit.maxLayerCount == -1 || cacheLayer.getOrDefault(limit, 0) < limit.maxLayerCount) &&
+                                            (limit.previewCount == -1 || cacheGlobal.getOrDefault(limit, 0) < limit.previewCount)) {
+                                        if (limit.minLayerCount > 0) {
+                                            if (!cacheLayer.containsKey(limit)) {
+                                                cacheLayer.put(limit, 1);
+                                            } else{
+                                                cacheLayer.put(limit, cacheLayer.get(limit) + 1);
+                                            }
+                                        }
+                                        if (limit.minGlobalCount > 0 || limit.previewCount > 0) {
+                                            if (!cacheGlobal.containsKey(limit)) {
+                                                cacheGlobal.put(limit, 1);
+                                            } else {
+                                                cacheGlobal.put(limit, cacheGlobal.get(limit) + 1);
+                                            }
+                                        }
+                                        if (!cacheInfos.containsKey(limit)) {
+                                            cacheInfos.put(limit, limit.candidates == null ? null : limit.candidates.get());
+                                        }
+                                        infos = cacheInfos.get(limit);
+                                        find = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!find) { // check without previewCount
+                                if (predicate.common.isEmpty()) {
+                                    for (TraceabilityPredicate.SimplePredicate limit : predicate.limited) {
+                                        if (limit.maxGlobalCount == -1 && limit.maxLayerCount == -1) {
+                                            if (!cacheInfos.containsKey(limit)) {
+                                                cacheInfos.put(limit, limit.candidates == null ? null : limit.candidates.get());
+                                            }
+                                            infos = cacheInfos.get(limit);
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    TraceabilityPredicate.SimplePredicate common = predicate.common.get(0);
+                                    if (!cacheInfos.containsKey(common)) {
+                                        cacheInfos.put(common, common.candidates == null ? null : common.candidates.get());
+                                    }
+                                    infos = cacheInfos.get(common);
+                                }
                             }
                         }
                         BlockInfo info = infos == null || infos.length == 0 ? BlockInfo.EMPTY : infos[0];

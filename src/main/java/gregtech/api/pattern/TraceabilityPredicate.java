@@ -121,6 +121,12 @@ public class TraceabilityPredicate {
         return this;
     }
 
+    public TraceabilityPredicate setPreviewCount(int count) {
+        common.forEach(predicate -> predicate.previewCount = count);
+        limited.forEach(predicate -> predicate.previewCount = count);
+        return this;
+    }
+
     public boolean test(BlockWorldState blockWorldState) {
         boolean flag = false;
         for (SimplePredicate predicate : limited) {
@@ -152,6 +158,8 @@ public class TraceabilityPredicate {
         public int maxGlobalCount = -1;
         public int minLayerCount = -1;
         public int maxLayerCount = -1;
+
+        public int previewCount = -1;
 
         public SimplePredicate(Predicate<BlockWorldState> predicate, Supplier<BlockInfo[]> candidates) {
             this.predicate = predicate;
