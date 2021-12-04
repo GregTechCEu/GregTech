@@ -275,7 +275,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     private void damageTool(ItemStack itemStack) {
         if (itemStack.getItem() instanceof ToolMetaItem) {
             ToolMetaItem<?> toolMetaItem = (ToolMetaItem<?>) itemStack.getItem();
-            toolMetaItem.damageItem(itemStack, 1, true, false);
+            toolMetaItem.damageItem(itemStack, null, 1, true, false);
         }
     }
 

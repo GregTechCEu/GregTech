@@ -75,7 +75,7 @@ public class TreeChopTask implements Task {
             return true;
         }
         if (toolMetaItem.isUsable(itemInMainHand, damagePerBlockBreak) && tryBreakAny()) {
-            toolMetaItem.damageItem(itemInMainHand, damagePerBlockBreak, false);
+            toolMetaItem.damageItem(itemInMainHand, player, damagePerBlockBreak, false);
             return true;
         }
         return false;

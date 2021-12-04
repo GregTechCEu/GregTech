@@ -364,7 +364,7 @@ public class GTUtility {
         if (item instanceof IToolItem) {
             //if item implements IDamagableItem, it manages it's own durability itself
             IToolItem damagableItem = (IToolItem) item;
-            return damagableItem.damageItem(itemStack, vanillaDamage, simulate);
+            return damagableItem.damageItem(itemStack, null, vanillaDamage, simulate);
 
         } else if (itemStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null)) {
             //if we're using electric item, use default energy multiplier for textures

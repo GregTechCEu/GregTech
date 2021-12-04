@@ -30,7 +30,6 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.tools.DamageValues;
 import gregtech.common.tools.ToolWrench;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
@@ -42,6 +41,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -189,7 +189,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
                 IToolStats toolStats = metaToolValueItem.toolStats;
                 int toolDamagePerCraft = toolStats.getToolDamagePerContainerCraft(stack);
                 toolStats.onCraftingUse(stack);
-                boolean canApplyDamage = damageItem(stack, toolDamagePerCraft, false);
+                boolean canApplyDamage = damageItem(stack, ForgeHooks.getCraftingPlayer(), toolDamagePerCraft, false);
                 if (!canApplyDamage) return stack;
             }
         }
@@ -234,7 +234,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             IToolStats toolStats = metaToolValueItem.getToolStats();
             toolStats.onBlockDestroyed(stack, world, state, pos, entity);
             toolStats.onBreakingUse(stack, world, pos);
-            damageItem(stack, toolStats.getToolDamagePerBlockBreak(stack), false);
+            damageItem(stack, entity, toolStats.getToolDamagePerBlockBreak(stack), false);
         }
         return true;
     }
@@ -326,7 +326,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         T metaValueItem = getItem(stack);
         if (metaValueItem != null) {
             IToolStats toolStats = metaValueItem.getToolStats();
-            if (!damageItem(stack, toolStats.getToolDamagePerEntityAttack(stack), false)) {
+            if (!damageItem(stack, attacker, toolStats.getToolDamagePerEntityAttack(stack), false)) {
                 return true;
             }
             float additionalDamage = toolStats.getNormalDamageBonus(target, stack, attacker);
@@ -348,7 +348,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public int damageItem(ItemStack stack, int vanillaDamage, boolean allowPartial, boolean simulate) {
+    public int damageItem(ItemStack stack, EntityLivingBase entity, int vanillaDamage, boolean allowPartial, boolean simulate) {
         IElectricItem capability = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (capability != null) {
             int energyAmount = ConfigHolder.energyUsageMultiplier * vanillaDamage;
@@ -383,6 +383,8 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             int newDamageValue = itemDamage + calculateToolDamage(stack, itemRand, vanillaDamage);
             if (!simulate && !setInternalDamage(stack, newDamageValue)) {
                 GTUtility.setItem(stack, toolStats.getBrokenStack(stack));
+                if (entity != null)
+                    entity.playSound(SoundEvents.ENTITY_ITEM_BREAK, 1, 1);
             }
             return Math.min(vanillaDamage, damageRemaining);
         }
@@ -635,7 +637,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
 
     @Override
     public void wrenchUsed(EntityPlayer player, EnumHand hand, ItemStack wrench, RayTraceResult rayTrace) {
-        this.damageItem(player.getHeldItem(hand), DamageValues.DAMAGE_FOR_WRENCH, false);
+        this.damageItem(player.getHeldItem(hand), player, DamageValues.DAMAGE_FOR_WRENCH, false);
     }
 
     // CoFH Hammer Compat
@@ -659,12 +661,12 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
 
     @Override
     public void toolUsed(ItemStack item, EntityLivingBase user, BlockPos pos) {
-        this.damageItem(item, DamageValues.DAMAGE_FOR_WRENCH, false);
+        this.damageItem(item, user, DamageValues.DAMAGE_FOR_WRENCH, false);
     }
 
     @Override
     public void toolUsed(ItemStack item, EntityLivingBase user, Entity entity) {
-        this.damageItem(item, DamageValues.DAMAGE_FOR_WRENCH, false);
+        this.damageItem(item, user, DamageValues.DAMAGE_FOR_WRENCH, false);
     }
 
     // EIO Wrench Compat
@@ -684,7 +686,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
 
     @Override
     public void used(@Nonnull EnumHand stack, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) {
-        this.damageItem(player.getHeldItem(stack), DamageValues.DAMAGE_FOR_WRENCH, false);
+        this.damageItem(player.getHeldItem(stack), player, DamageValues.DAMAGE_FOR_WRENCH, false);
     }
 
     // Applied Energistics Wrench Compat
@@ -694,11 +696,16 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         if (metaToolValueItem != null) {
             IToolStats toolStats = metaToolValueItem.getToolStats();
             if (toolStats instanceof ToolWrench) {
-                damageItem(wrench, DamageValues.DAMAGE_FOR_WRENCH, false);
+                damageItem(wrench, player, DamageValues.DAMAGE_FOR_WRENCH, false);
                 return true;
             }
         }
         return false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean isFull3D() {
+        return true;
     }
 
     public class MetaToolValueItem extends MetaValueItem {

@@ -226,7 +226,7 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
                         blockState.getPlayerRelativeBlockHardness(entityPlayer, world, currentPos) > 0.0f &&
                         stack.canHarvestBlock(blockState)) {
                     GTUtility.harvestBlock(world, currentPos, entityPlayer);
-                    ((ToolMetaItem<?>) stack.getItem()).damageItem(stack, damagePerBlockBreak, false);
+                    ((ToolMetaItem<?>) stack.getItem()).damageItem(stack, entityPlayer, damagePerBlockBreak, false);
                 }
             });
             /*
