@@ -5,7 +5,6 @@ import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.unification.material.Material;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,6 +15,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -184,5 +184,12 @@ public interface IToolStats {
     default void onBreakingUse(ItemStack stack, World world, BlockPos pos) {
         if (ConfigHolder.toolUseSounds && stack.getItem() instanceof ToolMetaItem<?>)
             world.playSound(null, pos, ((ToolMetaItem<?>) stack.getItem()).getItem(stack).getSound(), SoundCategory.PLAYERS, 1, 1);
+    }
+
+    static void onOtherUse(@Nonnull ItemStack stack, World world, BlockPos pos) {
+        if (stack.getItem() instanceof ToolMetaItem<?>) {
+            IToolStats stats = ((ToolMetaItem<?>) stack.getItem()).getItem(stack).getToolStats();
+            stats.onBreakingUse(stack, world, pos);
+        }
     }
 }

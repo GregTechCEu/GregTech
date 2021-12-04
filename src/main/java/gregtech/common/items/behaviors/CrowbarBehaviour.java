@@ -3,6 +3,7 @@ package gregtech.common.items.behaviors;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.util.GTUtility;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRailBase;
@@ -43,6 +44,7 @@ public class CrowbarBehaviour implements IItemBehaviour {
                 } else {
                     if (tryRotateRailBlock(blockState, world, blockPos)) {
                         GTUtility.doDamageItem(stack, cost, false);
+                        IToolStats.onOtherUse(stack, world, blockPos);
                         return EnumActionResult.SUCCESS;
                     }
                     return EnumActionResult.FAIL;
@@ -58,6 +60,7 @@ public class CrowbarBehaviour implements IItemBehaviour {
                 }
                 boolean result = coverable.removeCover(coverSide);
                 GTUtility.doDamageItem(stack, cost, false);
+                IToolStats.onOtherUse(stack, world, blockPos);
                 return result ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
             }
         }
