@@ -307,20 +307,21 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-
         ModularUI.Builder builder = ModularUI.extendedBuilder();
-        builder.image(7, 4, 145, 128, GuiTextures.DISPLAY);
-        builder.label(11, 9, this.getMetaFullName(), 16777215);
+        builder.image(7, 4, 162, 121, GuiTextures.DISPLAY);
+        builder.label(11, 9, this.getMetaFullName(), 0xFFFFFF);
         builder.widget((new AdvancedTextWidget(11, 19, this::addDisplayText,
                 0xFFFFFF)).setMaxWidthLimit(139).setClickHandler(this::handleDisplayClick));
         builder.widget((new AdvancedTextWidget(63, 30, this::addDisplayText2,
                 0xFFFFFF)).setMaxWidthLimit(68).setClickHandler(this::handleDisplayClick));
         builder.bindPlayerInventory(entityPlayer.inventory, 134);
 
-        builder.widget(new ToggleButtonWidget(154, 4, 16, 16,
-                this.minerLogic::isChunkMode, this.minerLogic::setChunkMode).setTooltipText("gregtech.gui.chunkmode"));
-        builder.widget(new ToggleButtonWidget(154, 22, 16, 16,
-                this.minerLogic::isSilkTouchMode, this.minerLogic::setSilkTouchMode).setTooltipText("gregtech.gui.silktouch"));
+        builder.widget(new ToggleButtonWidget(133, 107, 18, 18,
+                this.minerLogic::isChunkMode, this.minerLogic::setChunkMode).setButtonTexture(GuiTextures.BUTTON_CHUNK_MODE)
+                .setTooltipText("gregtech.gui.chunkmode"));
+        builder.widget(new ToggleButtonWidget(151, 107, 18, 18,
+                this.minerLogic::isSilkTouchMode, this.minerLogic::setSilkTouchMode).setButtonTexture(GuiTextures.BUTTON_SILK_TOUCH_MODE)
+                .setTooltipText("gregtech.gui.silktouch"));
 
         return builder.build(getHolder(), entityPlayer);
     }
