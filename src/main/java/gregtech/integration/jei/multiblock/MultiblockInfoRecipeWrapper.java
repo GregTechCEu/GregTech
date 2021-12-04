@@ -15,7 +15,6 @@ import gregtech.api.render.scene.ImmediateWorldSceneRenderer;
 import gregtech.api.render.scene.TrackedDummyWorld;
 import gregtech.api.render.scene.WorldSceneRenderer;
 import gregtech.api.util.BlockInfo;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackKey;
 import gregtech.api.util.RenderUtil;
 import mezz.jei.api.IGuiHelper;
@@ -28,6 +27,7 @@ import mezz.jei.gui.recipes.RecipeLayout;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -323,7 +323,11 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
     private void drawMultiblockName(int recipeWidth) {
         String localizedName = I18n.format(controller.getMetaFullName());
-        GTUtility.drawCenteredSizedText(recipeWidth / 2, 0, localizedName, 0x333333, 1.3);
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        List<String> lines = fontRenderer.listFormattedStringToWidth(localizedName, recipeWidth - 10);
+        for (int i = 0; i < lines.size(); i++) {
+            fontRenderer.drawString(lines.get(i), (recipeWidth - fontRenderer.getStringWidth(lines.get(i))) / 2, fontRenderer.FONT_HEIGHT * i, 0x333333);
+        }
     }
 
     @Override

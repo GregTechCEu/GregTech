@@ -338,19 +338,6 @@ public class GTUtility {
         return wasRemovedByPlayer;
     }
 
-
-    @SideOnly(Side.CLIENT)
-    public static void drawCenteredSizedText(int x, int y, String string, int color, double sizeMultiplier) {
-        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-        int textWidth = fontRenderer.getStringWidth(string);
-        int textHeight = fontRenderer.FONT_HEIGHT;
-        GlStateManager.pushMatrix();
-        GlStateManager.scale(sizeMultiplier, sizeMultiplier, 0.0);
-        GlStateManager.translate(-textWidth * sizeMultiplier / 2.0, -textHeight * sizeMultiplier / 2.0, 0);
-        fontRenderer.drawString(string, x, y, color);
-        GlStateManager.popMatrix();
-    }
-
     /**
      * Applies specific amount of damage to item, either to durable items (which implement IDamagableItem)
      * or to electric items, which have capability IElectricItem
