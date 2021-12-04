@@ -2,6 +2,7 @@ package gregtech.api.pattern;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.BlockInfo;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.BlockWireCoil2;
@@ -22,8 +23,11 @@ import java.util.stream.Collectors;
 
 public class TraceabilityPredicate {
 
+    // Allow any block.
     public static TraceabilityPredicate ANY = new TraceabilityPredicate((state)->true);
+    // Allow the air block.
     public static TraceabilityPredicate AIR = new TraceabilityPredicate(blockWorldState -> blockWorldState.getBlockState().getBlock().isAir(blockWorldState.getBlockState(), blockWorldState.getWorld(), blockWorldState.getPos()));
+    // Allow all heating coils, and require them to have the same type.
     public static TraceabilityPredicate HEATING_COILS = new TraceabilityPredicate(blockWorldState -> {
         IBlockState blockState = blockWorldState.getBlockState();
         if ((blockState.getBlock() instanceof BlockWireCoil)) {
@@ -74,11 +78,17 @@ public class TraceabilityPredicate {
         this(predicate, null);
     }
 
+    /**
+     * Mark it as the controller of this multi. Normally you won't call it yourself. Use {@link MultiblockControllerBase#selfPredicate()} plz.
+     */
     public TraceabilityPredicate setCenter() {
         isCenter = true;
         return this;
     }
 
+    /**
+     * Add tooltips for candidates. They are shown in JEI Pages.
+     */
     public TraceabilityPredicate setTooltips(String... tips) {
         List<String> tooltips = Arrays.stream(tips).collect(Collectors.toList());
         common.forEach(predicate -> predicate.toolTips = tooltips);
@@ -86,6 +96,9 @@ public class TraceabilityPredicate {
         return this;
     }
 
+    /**
+     * Set the minimum number of candidate blocks.
+     */
     public TraceabilityPredicate setMinGlobalLimited(int min) {
         limited.addAll(common);
         common.clear();
@@ -95,6 +108,9 @@ public class TraceabilityPredicate {
         return this;
     }
 
+    /**
+     * Set the maximum number of candidate blocks.
+     */
     public TraceabilityPredicate setMaxGlobalLimited(int max) {
         limited.addAll(common);
         common.clear();
@@ -104,6 +120,9 @@ public class TraceabilityPredicate {
         return this;
     }
 
+    /**
+     * Set the minimum number of candidate blocks for each aisle layer.
+     */
     public TraceabilityPredicate setMinLayerLimited(int layer) {
         limited.addAll(common);
         common.clear();
@@ -113,6 +132,9 @@ public class TraceabilityPredicate {
         return this;
     }
 
+    /**
+     * Set the maximum number of candidate blocks for each aisle layer.
+     */
     public TraceabilityPredicate setMaxLayerLimited(int layer) {
         limited.addAll(common);
         common.clear();
@@ -122,6 +144,9 @@ public class TraceabilityPredicate {
         return this;
     }
 
+    /**
+     * Set the number of it appears in JEI pages. It only affects JEI preview. (The specific number)
+     */
     public TraceabilityPredicate setPreviewCount(int count) {
         common.forEach(predicate -> predicate.previewCount = count);
         limited.forEach(predicate -> predicate.previewCount = count);
