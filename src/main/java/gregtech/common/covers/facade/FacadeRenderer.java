@@ -20,10 +20,12 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
 import net.minecraftforge.client.model.pipeline.VertexLighterSmoothAo;
 
@@ -53,10 +55,13 @@ public class FacadeRenderer {
         ResourceUtils.registerReloadListener(resourceManager -> itemQuadCache.invalidateAll());
     }
 
-    public static boolean renderBlockCover(CCRenderState ccrs, Matrix4 translation, IBlockAccess world, BlockPos pos, int side, IBlockState state, Cuboid6 bounds) {
+    public static boolean renderBlockCover(CCRenderState ccrs, Matrix4 translation, IBlockAccess world, BlockPos pos, int side, IBlockState state, Cuboid6 bounds, BlockRenderLayer layer) {
 
         EnumFacing face = EnumFacing.VALUES[side];
         IBlockAccess coverAccess = new FacadeBlockAccess(world, pos, face, state);
+        if (layer != null && !state.getBlock().canRenderInLayer(state, layer)) {
+            return false;
+        }
         BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 
         try {
