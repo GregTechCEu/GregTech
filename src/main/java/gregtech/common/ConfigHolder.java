@@ -297,9 +297,6 @@ public class ConfigHolder {
 
             @Config.Comment("Shader Settings")
             public Shader shader = new Shader();
-
-            @Config.Comment("Allows player data to be stored in .minecraft for cross-modpack purposes, such as capes. Default: true")
-            public boolean persistentDataActive = true;
         }
 
         public static class Shader {
