@@ -18,7 +18,6 @@ import gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType;
 import gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -80,7 +79,7 @@ public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockControl
                 .where('G', states(MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.TITANIUM_GEARBOX)))
                 .where('C', states(getCasingState()).or(autoAbilities()))
                 .where('D', abilities(MultiblockAbility.OUTPUT_ENERGY))
-                .where('A', states(MetaBlocks.MULTIBLOCK_CASING.getState(MultiblockCasingType.ENGINE_INTAKE_CASING)))
+                .where('A', states(MetaBlocks.MULTIBLOCK_CASING.getState(MultiblockCasingType.ENGINE_INTAKE_CASING)).setTooltips("gregtech.multiblock.pattern.clear_amount_1"))
                 .where('Y', selfPredicate())
                 .build();
     }

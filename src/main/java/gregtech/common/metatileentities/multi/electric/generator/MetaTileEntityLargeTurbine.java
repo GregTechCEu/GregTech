@@ -144,7 +144,7 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
                 .where('S', selfPredicate())
                 .where('G', states(getGearBoxState()))
                 .where('C', states(getCasingState()))
-                .where('R', abilities(ABILITY_ROTOR_HOLDER))
+                .where('R', abilities(ABILITY_ROTOR_HOLDER).setTooltips("gregtech.multiblock.pattern.clear_amount_3"))
                 .where('D', abilities(MultiblockAbility.OUTPUT_ENERGY))
                 .where('H', predicate)
                 .where('T', predicate.or(turbineType.hasMufflerHatch ? abilities(MultiblockAbility.MUFFLER_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1) : null))
