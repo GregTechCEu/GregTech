@@ -118,14 +118,12 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
         this.minerLogic.setVoltageTier(GTUtility.getTierByVoltage(this.energyContainer.getInputVoltage()));
         this.minerLogic.setOverclockAmount(Math.max(1, GTUtility.getTierByVoltage(this.energyContainer.getInputVoltage()) - this.tier));
-        this.minerLogic.setOutputInventory(this.outputInventory);
         this.minerLogic.initPos(getPos(), this.minerLogic.getCurrentRadius());
     }
 
     private void resetTileAbilities() {
         this.inputFluidInventory = new FluidTankList(true);
         this.outputInventory = new ItemStackHandler(0);
-        this.minerLogic.setOutputInventory(this.outputInventory);
         this.energyContainer = new EnergyContainerList(Lists.newArrayList());
     }
 
@@ -156,13 +154,17 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), this.isActive());
+        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), this.minerLogic.isWorking());
         minerLogic.renderPipe(renderState, translation, pipeline);
     }
 
     @Override
     protected void updateFormedValid() {
         this.minerLogic.performMining();
+        if (!getWorld().isRemote && this.minerLogic.wasActiveAndNeedsUpdate()) {
+            this.minerLogic.setWasActiveAndNeedsUpdate(false);
+            this.minerLogic.setActive(false);
+        }
     }
 
     @Override
@@ -181,14 +183,14 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     @Override
-    protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
+    protected boolean checkStructureComponents(List<IMultiblockPart> parts, @Nonnull Map<MultiblockAbility<Object>, List<Object>> abilities) {
         int itemOutputsCount = abilities.getOrDefault(MultiblockAbility.EXPORT_ITEMS, Collections.emptyList()).size();
         int fluidInputsCount = abilities.getOrDefault(MultiblockAbility.IMPORT_FLUIDS, Collections.emptyList()).size();
         return itemOutputsCount >= 1 && fluidInputsCount >= 1 && abilities.containsKey(MultiblockAbility.INPUT_ENERGY);
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.miner.multi.modes"));
         tooltip.add(I18n.format("gregtech.machine.miner.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.miner.multi.tooltip", this.minerLogic.getCurrentRadius() / CHUNK_LENGTH, this.minerLogic.getCurrentRadius() / CHUNK_LENGTH));
@@ -216,9 +218,9 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             textList.add(new TextComponentString(String.format("Chunk Radius: %d", this.minerLogic.getCurrentRadius() / CHUNK_LENGTH)));
             if (this.minerLogic.isDone())
                 textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
-            else if (this.minerLogic.isActive())
+            else if (this.minerLogic.isWorking())
                 textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.working").setStyle(new Style().setColor(TextFormatting.GOLD)));
-            else
+            else if (!this.isWorkingEnabled())
                 textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
             if (this.isInventoryFull)
                 textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
@@ -299,10 +301,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         return Textures.LARGE_MINER_OVERLAY_BASIC;
     }
 
-    @Override
-    public boolean isActive() {
-        return super.isActive() && this.isWorkingEnabled();
-    }
     public long getMaxVoltage() {
         return GTValues.V[GTUtility.getTierByVoltage(energyContainer.getInputVoltage())];
     }
@@ -393,12 +391,12 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     public boolean isWorkingEnabled() {
-        return this.minerLogic.isActive();
+        return this.minerLogic.isWorkingEnabled();
     }
 
     @Override
     public void setWorkingEnabled(boolean isActivationAllowed) {
-        this.minerLogic.setActive(isActivationAllowed);
+        this.minerLogic.setWorkingEnabled(isActivationAllowed);
     }
 
     public int getMaxChunkRadius() {
@@ -411,5 +409,10 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }
         return super.getCapability(capability, side);
+    }
+
+    @Override
+    public IItemHandlerModifiable getExportItems() {
+        return this.outputInventory;
     }
 }

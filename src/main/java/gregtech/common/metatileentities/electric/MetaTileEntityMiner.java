@@ -36,6 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -82,10 +83,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        if (this.minerLogic.isActive())
-            Textures.SCREEN.renderSided(EnumFacing.UP, renderState, translation, pipeline);
-        else
-            Textures.BLANK_SCREEN.renderSided(EnumFacing.UP, renderState, translation, pipeline);
+        Textures.SCREEN.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         for (EnumFacing renderSide : EnumFacing.HORIZONTALS) {
             if (renderSide == getFrontFacing()) {
                 Textures.PIPE_OUT_OVERLAY.renderSided(renderSide, renderState, translation, pipeline);
@@ -96,14 +94,12 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
+    protected ModularUI createUI(@Nonnull EntityPlayer entityPlayer) {
         int rowSize = (int) Math.sqrt(inventorySize);
-        ModularUI.Builder builder;
+        ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 195, 176);
+        builder.bindPlayerInventory(entityPlayer.inventory, 94);
 
-        if (getTier() == 3) {
-            builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 195, 176);
-            builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 16, 94);
-
+        if (getTier() == GTValues.HV) {
             for (int y = 0; y < rowSize; y++) {
                 for (int x = 0; x < rowSize; x++) {
                     int index = y * rowSize + x;
@@ -111,11 +107,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
                             .setBackgroundTexture(GuiTextures.SLOT));
                 }
             }
-
         } else {
-            builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 195, 176);
-            builder.bindPlayerInventory(entityPlayer.inventory, 94);
-
             for (int y = 0; y < rowSize; y++) {
                 for (int x = 0; x < rowSize; x++) {
                     int index = y * rowSize + x;
@@ -126,27 +118,27 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         }
 
         builder.image(7, 16, 105, 75, GuiTextures.DISPLAY)
-                .label(10, 5, getMetaFullName());
+                .label(6, 6, getMetaFullName());
         builder.widget(new AdvancedTextWidget(10, 19, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(84));
         builder.widget(new AdvancedTextWidget(70, 19, this::addDisplayText2, 0xFFFFFF)
                 .setMaxWidthLimit(84));
-        builder.widget(new SlotWidget(chargerInventory, 0, getTier() == 3 ? 88 : 79, 72)
+        builder.widget(new SlotWidget(chargerInventory, 0, 171, 152)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY));
 
         return builder.build(getHolder(), entityPlayer);
     }
 
-    private void addDisplayText(List<ITextComponent> textList) {
+    private void addDisplayText(@Nonnull List<ITextComponent> textList) {
         textList.add(new TextComponentString(String.format("sX: %d", this.minerLogic.getX().get())));
         textList.add(new TextComponentString(String.format("sY: %d", this.minerLogic.getY().get())));
         textList.add(new TextComponentString(String.format("sZ: %d", this.minerLogic.getZ().get())));
         textList.add(new TextComponentString(String.format("Radius: %d", this.minerLogic.getCurrentRadius())));
         if (this.minerLogic.isDone())
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
-        else if (this.minerLogic.isActive())
+        else if (this.minerLogic.isWorking())
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.working").setStyle(new Style().setColor(TextFormatting.GOLD)));
-        else
+        else if (!this.isWorkingEnabled())
             textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
         if (isInventoryFull)
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
@@ -154,14 +146,14 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.needspower").setStyle(new Style().setColor(TextFormatting.RED)));
     }
 
-    private void addDisplayText2(List<ITextComponent> textList) {
+    private void addDisplayText2(@Nonnull List<ITextComponent> textList) {
         textList.add(new TextComponentString(String.format("mX: %d", this.minerLogic.getMineX().get())));
         textList.add(new TextComponentString(String.format("mY: %d", this.minerLogic.getMineY().get())));
         textList.add(new TextComponentString(String.format("mZ: %d", this.minerLogic.getMineZ().get())));
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VN[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.machine.miner.tooltip"));
@@ -188,6 +180,11 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
             if (getOffsetTimer() % 5 == 0)
                 pushItemsIntoNearbyHandlers(getFrontFacing());
+
+            if (this.minerLogic.wasActiveAndNeedsUpdate()) {
+                this.minerLogic.setWasActiveAndNeedsUpdate(false);
+                this.minerLogic.setActive(false);
+            }
         }
     }
 
@@ -272,11 +269,11 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
     @Override
     public boolean isWorkingEnabled() {
-        return !this.isInventoryFull;
+        return this.minerLogic.isWorkingEnabled();
     }
 
     @Override
     public void setWorkingEnabled(boolean isActivationAllowed) {
-        this.minerLogic.setActive(isActivationAllowed);
+        this.minerLogic.setWorkingEnabled(isActivationAllowed);
     }
 }

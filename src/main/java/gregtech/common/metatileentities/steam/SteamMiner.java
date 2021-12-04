@@ -107,7 +107,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int rowSize = (int) Math.sqrt(inventorySize);
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BRONZE_BACKGROUND, 175, 180);
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BRONZE_BACKGROUND, 175, 176);
         builder.bindPlayerInventory(entityPlayer.inventory, 94);
 
         for (int y = 0; y < rowSize; y++) {
@@ -120,7 +120,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.BRONZE_SLOT, 10);
 
         builder.image(7, 16, 105, 75, GuiTextures.BRONZE_DISPLAY)
-                .label(10, 5, getMetaFullName());
+                .label(6, 6, getMetaFullName());
         builder.widget(new AdvancedTextWidget(10, 19, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(84));
         builder.widget(new AdvancedTextWidget(70, 19, this::addDisplayText2, 0xFFFFFF)
@@ -137,9 +137,9 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         textList.add(new TextComponentString(String.format("Radius: %d", this.minerLogic.getCurrentRadius())));
         if (this.minerLogic.isDone())
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
-        else if (this.minerLogic.isActive())
+        else if (this.minerLogic.isWorking())
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.working").setStyle(new Style().setColor(TextFormatting.GOLD)));
-        else
+        else if (!this.isWorkingEnabled())
             textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
         if (this.isInventoryFull)
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
@@ -175,8 +175,15 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     public void update() {
         super.update();
         this.minerLogic.performMining();
-        if (!getWorld().isRemote && getOffsetTimer() % 5 == 0)
+        if (!getWorld().isRemote) {
+            if (getOffsetTimer() % 5 == 0)
                 pushItemsIntoNearbyHandlers(getFrontFacing());
+
+            if (this.minerLogic.wasActiveAndNeedsUpdate()) {
+                this.minerLogic.setWasActiveAndNeedsUpdate(false);
+                this.minerLogic.setActive(false);
+            }
+        }
     }
 
     @Override
@@ -264,14 +271,15 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     public void setInventoryFull(boolean isFull) {
         this.isInventoryFull = isFull;
     }
+
     @Override
     public boolean isWorkingEnabled() {
-        return this.minerLogic.isActive();
+        return this.minerLogic.isWorkingEnabled();
     }
 
     @Override
     public void setWorkingEnabled(boolean isActivationAllowed) {
-        this.minerLogic.setActive(isActivationAllowed);
+        this.minerLogic.setWorkingEnabled(isActivationAllowed);
     }
 
     @Override

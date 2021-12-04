@@ -26,8 +26,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,8 +50,6 @@ public class MinerLogic {
 
     private final ICubeRenderer PIPE_TEXTURE;
 
-    private IItemHandlerModifiable outputInventory;
-
     private final LinkedList<BlockPos> blocksToMine = new LinkedList<>();
 
     private final AtomicInteger x = new AtomicInteger(Integer.MAX_VALUE);
@@ -68,7 +66,9 @@ public class MinerLogic {
     private int pipeLength = 0;
     private int currentRadius;
     private boolean isDone;
-    private boolean isActive = true;
+    private boolean isActive = false;
+    private boolean isWorkingEnabled = true;
+    protected boolean wasActiveAndNeedsUpdate;
 
     /**
      * Creates the general logic for all in-world ore block miners
@@ -78,7 +78,7 @@ public class MinerLogic {
      * @param speed the speed in ticks per block mined
      * @param maximumRadius the maximum radius (square shaped) the miner can mine in
      */
-    public MinerLogic(MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, ICubeRenderer pipeTexture) {
+    public MinerLogic(@Nonnull MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, ICubeRenderer pipeTexture) {
         this.metaTileEntity = metaTileEntity;
         this.miner = (IMiner) metaTileEntity;
         this.fortune = fortune;
@@ -87,7 +87,6 @@ public class MinerLogic {
         this.maximumRadius = maximumRadius;
         this.isDone = false;
         this.PIPE_TEXTURE = pipeTexture;
-        this.outputInventory = metaTileEntity.getExportItems();
     }
 
     /**
@@ -100,7 +99,7 @@ public class MinerLogic {
             return;
 
         // Inactive miners do nothing
-        if (!this.isActive)
+        if (!this.isWorkingEnabled)
             return;
 
         // check if mining is possible
@@ -110,11 +109,16 @@ public class MinerLogic {
         // if the inventory is not full, drain energy etc. from the miner
         // the storages have already been checked earlier
         if (!miner.isInventoryFull()) {
-
             // actually drain the energy
             drainStorages(false);
+
+            // since energy is being consumed the miner is now active
+            if (!this.isActive)
+                setActive(true);
         } else {
-            return;
+            // the miner cannot drain, therefore it is inactive
+            if (this.isActive)
+                setActive(false);
         }
 
         // drill a hole beneath the miner and extend the pipe downwards by one
@@ -157,6 +161,7 @@ public class MinerLogic {
             blocksToMine.addAll(getBlocksToMine());
             if (blocksToMine.isEmpty()) {
                 this.isDone = true;
+                this.wasActiveAndNeedsUpdate = true;
                 this.setActive(false);
             }
         }
@@ -221,7 +226,7 @@ public class MinerLogic {
      * @param blockToMine the {@link BlockPos} of the block being mined
      * @param blockState the {@link IBlockState} of the block being mined
      */
-    protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, IBlockState blockState) {
+    protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, @Nonnull IBlockState blockState) {
         blockState.getBlock().getDrops(blockDrops, world, blockToMine, blockState, 0); // regular ores do not get fortune applied
     }
 
@@ -236,8 +241,8 @@ public class MinerLogic {
         // If the block's drops can fit in the inventory, move the previously mined position to the block
         // replace the ore block with cobblestone instead of breaking it to prevent mob spawning
         // remove the ore block's position from the mining queue
-        if (MetaTileEntity.addItemsToItemHandler(outputInventory, true, blockDrops)) {
-            MetaTileEntity.addItemsToItemHandler(outputInventory, false, blockDrops);
+        if (MetaTileEntity.addItemsToItemHandler(metaTileEntity.getExportItems(), true, blockDrops)) {
+            MetaTileEntity.addItemsToItemHandler(metaTileEntity.getExportItems(), false, blockDrops);
             world.setBlockState(blocksToMine.getFirst(), Blocks.COBBLESTONE.getDefaultState());
             mineX.set(blocksToMine.getFirst().getX());
             mineZ.set(blocksToMine.getFirst().getZ());
@@ -260,7 +265,7 @@ public class MinerLogic {
      * @param pos the {@link BlockPos} of the miner itself
      * @param currentRadius the currently set mining radius
      */
-    public void initPos(BlockPos pos, int currentRadius) {
+    public void initPos(@Nonnull BlockPos pos, int currentRadius) {
         x.set(pos.getX() - currentRadius);
         z.set(pos.getZ() - currentRadius);
         y.set(pos.getY() - 1);
@@ -280,7 +285,7 @@ public class MinerLogic {
      * @param z the z coordinate
      * @return {@code true} if the coordinates are invalid, else false
      */
-    private static boolean checkCoordinatesInvalid(AtomicInteger x, AtomicInteger y, AtomicInteger z) {
+    private static boolean checkCoordinatesInvalid(@Nonnull AtomicInteger x, @Nonnull AtomicInteger y, @Nonnull AtomicInteger z) {
         return x.get() == Integer.MAX_VALUE && y.get() == Integer.MAX_VALUE && z.get() == Integer.MAX_VALUE;
     }
 
@@ -357,7 +362,7 @@ public class MinerLogic {
      * @param map the recipemap from which to get the drops
      * @param tier the tier at which the operation is performed, used for calculating the chanced output boost
      */
-    protected static void applyTieredHammerNoRandomDrops(Random random, IBlockState blockState, List<ItemStack> drops, int fortuneLevel, RecipeMap<?> map, int tier) {
+    protected static void applyTieredHammerNoRandomDrops(Random random, @Nonnull IBlockState blockState, List<ItemStack> drops, int fortuneLevel, @Nonnull RecipeMap<?> map, int tier) {
         ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
         Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0, MatchingMode.IGNORE_FLUIDS);
         if (recipe != null && !recipe.getOutputs().isEmpty()) {
@@ -398,7 +403,7 @@ public class MinerLogic {
      * writes all needed values to NBT
      * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#writeToNBT(NBTTagCompound)} method
      */
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound data) {
         data.setTag("xPos", new NBTTagInt(x.get()));
         data.setTag("yPos", new NBTTagInt(y.get()));
         data.setTag("zPos", new NBTTagInt(z.get()));
@@ -410,6 +415,8 @@ public class MinerLogic {
         data.setTag("szPos", new NBTTagInt(startZ.get()));
         data.setTag("tempY", new NBTTagInt(pipeY.get()));
         data.setTag("isActive", new NBTTagInt(this.isActive ? 1 : 0));
+        data.setTag("isWorkingEnabled", new NBTTagInt(this.isWorkingEnabled ? 1 : 0));
+        data.setTag("wasActiveAndNeedsUpdate", new NBTTagInt(this.wasActiveAndNeedsUpdate ? 1 : 0));
         data.setTag("pipeLength", new NBTTagInt(pipeLength));
         data.setTag("currentRadius", new NBTTagInt(currentRadius));
         data.setTag("isDone", new NBTTagInt(isDone ? 1 : 0));
@@ -420,7 +427,7 @@ public class MinerLogic {
      * reads all needed values from NBT
      * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#readFromNBT(NBTTagCompound)} method
      */
-    public void readFromNBT(NBTTagCompound data) {
+    public void readFromNBT(@Nonnull NBTTagCompound data) {
         x.set(data.getInteger("xPos"));
         y.set(data.getInteger("yPos"));
         z.set(data.getInteger("zPos"));
@@ -432,6 +439,8 @@ public class MinerLogic {
         startZ.set(data.getInteger("szPos"));
         pipeY.set(data.getInteger("tempY"));
         setActive(data.getInteger("isActive") != 0);
+        setWorkingEnabled(data.getInteger("isWorkingEnabled") != 0);
+        setWasActiveAndNeedsUpdate(data.getInteger("wasActiveAndNeedsUpdate") != 0);
         pipeLength = data.getInteger("pipeLength");
         this.currentRadius = data.getInteger("currentRadius");
         this.isDone = data.getInteger("isDone") != 0;
@@ -441,18 +450,22 @@ public class MinerLogic {
      * writes all needed values to InitialSyncData
      * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#writeInitialSyncData(PacketBuffer)} method
      */
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@Nonnull PacketBuffer buf) {
         buf.writeInt(pipeLength);
         buf.writeBoolean(this.isActive);
+        buf.writeBoolean(this.isWorkingEnabled);
+        buf.writeBoolean(this.wasActiveAndNeedsUpdate);
     }
 
     /**
      * reads all needed values from InitialSyncData
      * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#receiveInitialSyncData(PacketBuffer)} method
      */
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@Nonnull PacketBuffer buf) {
         this.pipeLength = buf.readInt();
         setActive(buf.readBoolean());
+        setWorkingEnabled(buf.readBoolean());
+        setWasActiveAndNeedsUpdate(buf.readBoolean());
     }
 
     /**
@@ -583,7 +596,7 @@ public class MinerLogic {
 
     /**
      *
-     * @return true if the miner is actively working
+     * @return true if the miner is active
      */
     public boolean isActive() {
         return this.isActive;
@@ -603,6 +616,48 @@ public class MinerLogic {
 
     /**
      *
+     * @param workingEnabled the new state of the miner's ability to work: true to change to enabled, else false
+     */
+    public void setWorkingEnabled(boolean workingEnabled) {
+        this.isWorkingEnabled = workingEnabled;
+        metaTileEntity.markDirty();
+    }
+
+    /**
+     *
+     * @return whether working is enabled for the logic
+     */
+    public boolean isWorkingEnabled() {
+        return isWorkingEnabled;
+    }
+
+    /**
+     *
+     * @return whether the miner is currently working
+     */
+    public boolean isWorking() {
+        return isActive && isWorkingEnabled;
+    }
+
+    /**
+     *
+     * @return whether the miner was active and needs an update
+     */
+    public boolean wasActiveAndNeedsUpdate() {
+        return this.wasActiveAndNeedsUpdate;
+    }
+
+    /**
+     * set whether the miner was active and needs an update
+     *
+     * @param wasActiveAndNeedsUpdate the state to set
+     */
+    public void setWasActiveAndNeedsUpdate(boolean wasActiveAndNeedsUpdate) {
+        this.wasActiveAndNeedsUpdate = wasActiveAndNeedsUpdate;
+    }
+
+    /**
+     *
      * @return the miner's fortune level
      */
     public int getFortune() {
@@ -615,12 +670,5 @@ public class MinerLogic {
      */
     public int getSpeed() {
         return this.speed;
-    }
-
-    /**
-     * sets the output inventory to something else
-     */
-    public void setOutputInventory(IItemHandlerModifiable outputInventory) {
-        this.outputInventory = outputInventory;
     }
 }

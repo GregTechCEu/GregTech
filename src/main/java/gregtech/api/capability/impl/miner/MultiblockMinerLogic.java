@@ -13,6 +13,8 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 
+import javax.annotation.Nonnull;
+
 public class MultiblockMinerLogic extends MinerLogic {
 
     private static final int CHUNK_LENGTH = 16;
@@ -36,12 +38,11 @@ public class MultiblockMinerLogic extends MinerLogic {
     public MultiblockMinerLogic(MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, ICubeRenderer pipeTexture, RecipeMap<?> blockDropRecipeMap) {
         super(metaTileEntity, fortune, speed, maximumRadius, pipeTexture);
         this.blockDropRecipeMap = blockDropRecipeMap;
-        this.setActive(false);
     }
 
     @Override
     protected boolean drainStorages(boolean simulate) {
-        return super.drainStorages(simulate) &&  miner.drainFluid(simulate);
+        return super.drainStorages(simulate) && miner.drainFluid(simulate);
     }
 
     @Override
@@ -51,7 +52,7 @@ public class MultiblockMinerLogic extends MinerLogic {
     }
 
     @Override
-    protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, IBlockState blockState) {
+    protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, @Nonnull IBlockState blockState) {
         if (!isSilkTouchMode) // 3X the ore compared to the single blocks
             applyTieredHammerNoRandomDrops(world.rand, blockState, blockDrops, 3, this.blockDropRecipeMap, this.voltageTier);
         else
@@ -59,7 +60,7 @@ public class MultiblockMinerLogic extends MinerLogic {
     }
 
     @Override
-    public void initPos(BlockPos pos, int currentRadius) {
+    public void initPos(@Nonnull BlockPos pos, int currentRadius) {
         if (!isChunkMode) {
             super.initPos(pos, currentRadius);
         } else {
@@ -114,30 +115,30 @@ public class MultiblockMinerLogic extends MinerLogic {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound data) {
         data.setBoolean("isChunkMode", isChunkMode);
         data.setBoolean("isSilkTouchMode", isSilkTouchMode);
         return super.writeToNBT(data);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound data) {
+    public void readFromNBT(@Nonnull NBTTagCompound data) {
         this.isChunkMode = data.getBoolean("isChunkMode");
         this.isSilkTouchMode = data.getBoolean("isSilkTouchMode");
         super.readFromNBT(data);
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@Nonnull PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
         buf.writeBoolean(this.isChunkMode);
         buf.writeBoolean(this.isSilkTouchMode);
-        super.writeInitialSyncData(buf);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@Nonnull PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
         this.isChunkMode = buf.readBoolean();
         this.isSilkTouchMode = buf.readBoolean();
-        super.receiveInitialSyncData(buf);
     }
 }
