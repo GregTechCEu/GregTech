@@ -125,7 +125,7 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
                 .setSound(GTSounds.PLUNGER_TOOL);
 
         MINING_HAMMER = addItem(19, "tool.mining_hammer").setToolStats(new ToolMiningHammer())
-                .setFullRepairCost(14);
+                .setFullRepairCost(6);
 
         DRILL_LV = addItem(20, "tool.drill.lv").setToolStats(new ToolDrills.ToolDrillLV())
                 .setFullRepairCost(4)

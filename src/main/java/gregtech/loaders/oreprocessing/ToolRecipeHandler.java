@@ -179,11 +179,9 @@ public class ToolRecipeHandler {
     public static void processPlate(OrePrefix platePrefix, Material material, ToolProperty property) {
         ModHandler.addShapedRecipe(String.format("mining_hammer_%s", material.toString()),
                 MetaItems.MINING_HAMMER.getStackForm(material),
-                "PIP", "IBI", "fRh",
-                'I', new UnificationEntry(OrePrefix.ingot, material),
-                'B', new UnificationEntry(OrePrefix.block, material),
+                "PP ", "PPR", "PP ",
                 'P', new UnificationEntry(OrePrefix.plate, material),
-                'R', new UnificationEntry(OrePrefix.stick, Materials.Iron));
+                'R', new UnificationEntry(OrePrefix.stick, Materials.Wood));
     }
 
 
