@@ -865,7 +865,7 @@ public class VanillaStandardRecipes {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.LEATHER))
                 .inputs(new ItemStack(Items.LEAD))
-                .fluidInputs(Materials.Glue.getFluid(72))
+                .fluidInputs(Materials.Glue.getFluid(100))
                 .outputs(new ItemStack(Items.NAME_TAG))
                 .duration(100).EUt(7).buildAndRegister();
 

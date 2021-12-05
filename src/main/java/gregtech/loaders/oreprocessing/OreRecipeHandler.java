@@ -73,9 +73,9 @@ public class OreRecipeHandler {
         } else {
             ingotStack = OreDictUnifier.get(OrePrefix.dust, smeltingMaterial);
         }
-        ingotStack.setCount(ingotStack.getCount() * property.getOreMultiplier());
-        crushedStack.setCount(crushedStack.getCount() * property.getOreMultiplier());
         int oreTypeMultiplier = orePrefix == OrePrefix.oreNetherrack || orePrefix == OrePrefix.oreEndstone ? 2 : 1;
+        ingotStack.setCount(ingotStack.getCount() * property.getOreMultiplier() * oreTypeMultiplier);
+        crushedStack.setCount(crushedStack.getCount() * property.getOreMultiplier());
 
         if (!crushedStack.isEmpty()) {
             RecipeMaps.FORGE_HAMMER_RECIPES.recipeBuilder()

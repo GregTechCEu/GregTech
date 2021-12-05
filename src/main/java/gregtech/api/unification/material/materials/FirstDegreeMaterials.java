@@ -735,9 +735,17 @@ public class FirstDegreeMaterials {
                 .blastTemp(4500, GasTier.HIGH, 30720, 900)
                 .build();
 
-        // Free ID 345
+        Tenorite = new Material.Builder(345, "tenorite")
+                .dust(1).ore()
+                .color(0x606060)
+                .components(Copper, 1, Oxygen, 1)
+                .build();
 
-        // Free ID 346
+        Cuprite = new Material.Builder(346, "cuprite")
+                .dust().ore()
+                .color(0x770000).iconSet(RUBY)
+                .components(Copper, 2, Oxygen, 1)
+                .build();
 
         Bornite = new Material.Builder(347, "bornite")
                 .dust(1).ore()

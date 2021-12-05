@@ -322,6 +322,13 @@ public class CircuitRecipes {
         ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(30)
                 .input(wireFine, Copper, 4)
                 .input(dustSmall, GalliumArsenide)
+                .fluidInputs(Glass.getFluid(L))
+                .output(DIODE)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(30)
+                .input(wireFine, Copper, 4)
+                .input(dustSmall, GalliumArsenide)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .output(DIODE, 2)
                 .buildAndRegister();
@@ -583,7 +590,7 @@ public class CircuitRecipes {
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(8)
                 .input(foil, Copper, 4)
                 .input(plate, Wood)
-                .fluidInputs(Glue.getFluid(72))
+                .fluidInputs(Glue.getFluid(100))
                 .output(BASIC_CIRCUIT_BOARD)
                 .buildAndRegister();
 
@@ -619,7 +626,7 @@ public class CircuitRecipes {
         ASSEMBLER_RECIPES.recipeBuilder().duration(30).EUt(8)
                 .input(dust, Wood)
                 .notConsumable(SHAPE_MOLD_PLATE)
-                .fluidInputs(Glue.getFluid(36))
+                .fluidInputs(Glue.getFluid(50))
                 .output(PHENOLIC_BOARD)
                 .buildAndRegister();
 

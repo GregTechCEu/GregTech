@@ -306,6 +306,14 @@ public class MaterialFlagAddition {
         oreProp = Graphite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Carbon);
 
+        oreProp = Tenorite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Iron, Manganese, Malachite);
+        oreProp.setDirectSmeltResult(Copper);
+
+        oreProp = Cuprite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Iron, Antimony, Malachite);
+        oreProp.setDirectSmeltResult(Copper);
+
         oreProp = Bornite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Pyrite, Cobalt, Cadmium, Gold);
         oreProp.setWashedIn(Mercury);

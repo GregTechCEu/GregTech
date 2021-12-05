@@ -109,7 +109,7 @@ public class AssemblerRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30)
                 .input(plate, Wood)
                 .circuitMeta(12)
-                .fluidInputs(Glue.getFluid(60))
+                .fluidInputs(Glue.getFluid(50))
                 .output(pipeSmallFluid, Wood)
                 .buildAndRegister();
 
