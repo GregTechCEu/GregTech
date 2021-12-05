@@ -3551,3 +3551,5 @@ gregtech.cover.fluid_detector.message_fluid_storage_normal=Monitoring Normal Flu
 gregtech.cover.fluid_detector.message_fluid_storage_inverted=Monitoring Inverted Fluid Storage
 gregtech.cover.item_detector.message_item_storage_normal=Monitoring Normal Item Storage
 gregtech.cover.item_detector.message_item_storage_inverted=Monitoring Inverted Item Storage
+
+fluid.tile.lava=Lava
