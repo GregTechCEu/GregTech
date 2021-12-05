@@ -367,12 +367,13 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
      * Appends the passed {@link Recipe} onto the inputs and outputs, multiplied by the amount specified by multiplier
      * The duration of the multiplied {@link Recipe} is also added to the current duration
      *
-     * @param recipe     The Recipe to be multiplied
-     * @param multiplier Amount to multiply the recipe by
+     * @param recipe            The Recipe to be multiplied
+     * @param multiplier        Amount to multiply the recipe by
+     * @param multiplyDuration  Whether duration should be multiplied instead of EUt
      * @return the builder holding the multiplied recipe
      */
 
-    public R append(Recipe recipe, int multiplier) {
+    public R append(Recipe recipe, int multiplier, boolean multiplyDuration) {
         for (Map.Entry<RecipeProperty<?>, Object> property : recipe.getPropertyValues()) {
             this.applyProperty(property.getKey().getKey(), property.getValue());
         }
@@ -392,8 +393,8 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.outputs(outputItems);
         this.fluidOutputs(outputFluids);
 
-        this.EUt(recipe.getEUt());
-        this.duration(this.duration + recipe.getDuration() * multiplier);
+        this.EUt(multiplyDuration ? recipe.getEUt() : this.EUt + recipe.getEUt() * multiplier);
+        this.duration(multiplyDuration ? this.duration + recipe.getDuration() * multiplier : recipe.getDuration());
         this.parallel += multiplier;
 
         chancedOutputsMultiply(recipe, multiplier);

@@ -214,9 +214,22 @@ public class PartsRecipeHandler {
                 .EUt(16)
                 .buildAndRegister();
 
-        EnumDyeColor dyeColor = determineDyeColor(material.getMaterialRGB());
-        MarkerMaterial colorMaterial = MarkerMaterials.Color.COLORS.get(dyeColor);
-        OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, colorMaterial);
+        if (material == Materials.Diamond) { // override Diamond Lens to be LightBlue
+            OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.LightBlue);
+        } else if (material == Materials.Ruby) { // override Ruby Lens to be Red
+            OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.Red);
+        } else if (material == Materials.Emerald) { // override Emerald Lens to be Green
+            OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.Green);
+        } else if (material == Materials.Glass) { // override Glass Lens to be White, and have "default" oredict
+            OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.White);
+            OreDictUnifier.registerOre(stack, OrePrefix.craftingLens.name() + material.toCamelCaseString());
+        } else { // add more custom lenses here if needed
+
+            // Default behavior for determining lens color, left for addons and CraftTweaker
+            EnumDyeColor dyeColor = determineDyeColor(material.getMaterialRGB());
+            MarkerMaterial colorMaterial = MarkerMaterials.Color.COLORS.get(dyeColor);
+            OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, colorMaterial);
+        }
     }
 
     public static void processPlate(OrePrefix platePrefix, Material material, DustProperty property) {

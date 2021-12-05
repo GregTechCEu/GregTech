@@ -34,7 +34,7 @@ public interface IParallelableRecipeLogic {
      * @param parallelLimit the maximum number of parallel recipes to be performed
      * @return the recipe builder with the parallelized recipe. returns null the recipe cant fit
      */
-    default RecipeBuilder<?> findMultipliedParallelRecipe(RecipeMap<?> recipeMap, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelLimit) {
+    default RecipeBuilder<?> findMultipliedParallelRecipe(RecipeMap<?> recipeMap, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelLimit, long maxVoltage) {
         return ParallelLogic.doParallelRecipes(
                 currentRecipe,
                 recipeMap,
@@ -42,7 +42,8 @@ public interface IParallelableRecipeLogic {
                 fluidInputs,
                 outputs,
                 fluidOutputs,
-                parallelLimit);
+                parallelLimit,
+                maxVoltage);
     }
 
     /**
@@ -68,7 +69,7 @@ public interface IParallelableRecipeLogic {
         if (parallelLimit > 1) {
             RecipeBuilder<?> parallelBuilder = null;
             if (logic.getParallelLogicType() == ParallelLogicType.MULTIPLY) {
-                parallelBuilder = findMultipliedParallelRecipe(logic.getRecipeMap(), currentRecipe, inputs, fluidInputs, outputs, fluidOutputs, parallelLimit);
+                parallelBuilder = findMultipliedParallelRecipe(logic.getRecipeMap(), currentRecipe, inputs, fluidInputs, outputs, fluidOutputs, parallelLimit, maxVoltage);
             } else if (logic.getParallelLogicType() == ParallelLogicType.APPEND_ITEMS) {
                 parallelBuilder = findAppendedParallelItemRecipe(logic.getRecipeMap(), inputs, outputs, parallelLimit, maxVoltage);
             }

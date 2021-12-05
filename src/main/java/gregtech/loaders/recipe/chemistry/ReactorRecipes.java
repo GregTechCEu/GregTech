@@ -73,10 +73,16 @@ public class ReactorRecipes {
                 .duration(120).EUt(30).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, Sodium, 2)
+                .input(dust, Sulfur)
+                .output(dust, SodiumSulfide, 3)
+                .duration(60).EUt(30).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, SodiumSulfide, 3)
                 .fluidInputs(Dichlorobenzene.getFluid(1000))
                 .fluidInputs(Air.getFluid(16000))
-                .output(dust, Salt, 2)
+                .output(dust, Salt, 4)
                 .fluidOutputs(PolyphenyleneSulfide.getFluid(1000))
                 .duration(240).EUt(360).buildAndRegister();
 
@@ -84,7 +90,7 @@ public class ReactorRecipes {
                 .input(dust, SodiumSulfide, 3)
                 .fluidInputs(Dichlorobenzene.getFluid(1000))
                 .fluidInputs(Oxygen.getFluid(8000))
-                .output(dust, Salt, 2)
+                .output(dust, Salt, 4)
                 .fluidOutputs(PolyphenyleneSulfide.getFluid(1500))
                 .duration(240).EUt(360).buildAndRegister();
 

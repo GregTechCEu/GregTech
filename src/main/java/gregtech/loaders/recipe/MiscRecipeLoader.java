@@ -1,9 +1,12 @@
 package gregtech.loaders.recipe;
 
+import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
+import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -411,5 +414,38 @@ public class MiscRecipeLoader {
                 .outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS))
                 .buildAndRegister();
 
+        // Dyed Lens Decomposition
+        for (MetaValueItem item : GLASS_LENSES.values()) {
+            EXTRACTOR_RECIPES.recipeBuilder().EUt(32).duration(60)
+                    .input(item)
+                    .fluidOutputs(Glass.getFluid(108))
+                    .buildAndRegister();
+
+            MACERATOR_RECIPES.recipeBuilder().EUt(8).duration(22)
+                    .input(item)
+                    .output(dustSmall, Glass, 3)
+                    .buildAndRegister();
+        }
+
+        // Dyed Lens Recipes
+        RecipeBuilder<?> builder = CHEMICAL_BATH_RECIPES.recipeBuilder().EUt(480).duration(200).input(craftingLens, Glass);
+        final int dyeAmount = 288;
+
+        builder.copy().fluidInputs(DyeWhite.getFluid(dyeAmount))    .output(lens, Glass)                      .buildAndRegister();
+        builder.copy().fluidInputs(DyeOrange.getFluid(dyeAmount))   .output(GLASS_LENSES.get(Color.Orange))   .buildAndRegister();
+        builder.copy().fluidInputs(DyeMagenta.getFluid(dyeAmount))  .output(GLASS_LENSES.get(Color.Magenta))  .buildAndRegister();
+        builder.copy().fluidInputs(DyeLightBlue.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.LightBlue)).buildAndRegister();
+        builder.copy().fluidInputs(DyeYellow.getFluid(dyeAmount))   .output(GLASS_LENSES.get(Color.Yellow))   .buildAndRegister();
+        builder.copy().fluidInputs(DyeLime.getFluid(dyeAmount))     .output(GLASS_LENSES.get(Color.Lime))     .buildAndRegister();
+        builder.copy().fluidInputs(DyePink.getFluid(dyeAmount))     .output(GLASS_LENSES.get(Color.Pink))     .buildAndRegister();
+        builder.copy().fluidInputs(DyeGray.getFluid(dyeAmount))     .output(GLASS_LENSES.get(Color.Gray))     .buildAndRegister();
+        builder.copy().fluidInputs(DyeLightGray.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.LightGray)).buildAndRegister();
+        builder.copy().fluidInputs(DyeCyan.getFluid(dyeAmount))     .output(GLASS_LENSES.get(Color.Cyan))     .buildAndRegister();
+        builder.copy().fluidInputs(DyePurple.getFluid(dyeAmount))   .output(GLASS_LENSES.get(Color.Purple))   .buildAndRegister();
+        builder.copy().fluidInputs(DyeBlue.getFluid(dyeAmount))     .output(GLASS_LENSES.get(Color.Blue))     .buildAndRegister();
+        builder.copy().fluidInputs(DyeBrown.getFluid(dyeAmount))    .output(GLASS_LENSES.get(Color.Brown))    .buildAndRegister();
+        builder.copy().fluidInputs(DyeGreen.getFluid(dyeAmount))    .output(GLASS_LENSES.get(Color.Green))    .buildAndRegister();
+        builder.copy().fluidInputs(DyeRed.getFluid(dyeAmount))      .output(GLASS_LENSES.get(Color.Red))      .buildAndRegister();
+        builder.copy().fluidInputs(DyeBlack.getFluid(dyeAmount))    .output(GLASS_LENSES.get(Color.Black))    .buildAndRegister();
     }
 }

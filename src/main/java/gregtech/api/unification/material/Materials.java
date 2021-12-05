@@ -120,7 +120,6 @@ public class Materials {
         STD_SOLID.addAll(Arrays.asList(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD));
 
         STD_GEM.addAll(STD_SOLID);
-        STD_GEM.add(GENERATE_LENS);
 
         STD_METAL.add(GENERATE_PLATE);
 
@@ -375,8 +374,6 @@ public class Materials {
     public static Material Graphene;
     public static Material Jasper;
     public static Material Osmiridium;
-    public static Material Tenorite;
-    public static Material Cuprite;
     public static Material Bornite;
     public static Material Chalcocite;
     public static Material Enargite;
@@ -471,6 +468,18 @@ public class Materials {
     public static Material RutheniumTetroxide;
     public static Material OsmiumTetroxide;
     public static Material IridiumChloride;
+
+    public static Material FluoroantimonicAcid;
+    public static Material TitaniumTrifluoride;
+    public static Material CalciumPhosphide;
+    public static Material IndiumPhosphide;
+    public static Material BariumSulfide;
+    public static Material TriniumSulfide;
+    public static Material ZincSulfide;
+    public static Material GalliumSulfide;
+    public static Material AntimonyTrifluoride;
+    public static Material EnrichedNaquadahSulfate;
+    public static Material NaquadriaSulfate;
 
     /**
      * Organic chemistry
@@ -658,6 +667,15 @@ public class Materials {
     public static Material DyeMagenta;
     public static Material DyeOrange;
     public static Material DyeWhite;
+
+    public static Material ImpureEnrichedNaquadahSolution;
+    public static Material EnrichedNaquadahSolution;
+    public static Material AcidicEnrichedNaquadahSolution;
+    public static Material EnrichedNaquadahWaste;
+    public static Material ImpureNaquadriaSolution;
+    public static Material NaquadriaSolution;
+    public static Material AcidicNaquadriaSolution;
+    public static Material NaquadriaWaste;
 
     /**
      * Second Degree Compounds

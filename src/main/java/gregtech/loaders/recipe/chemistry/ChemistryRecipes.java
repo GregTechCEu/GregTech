@@ -26,6 +26,7 @@ public class ChemistryRecipes {
         FuelRecipeChains.init();
         GemSlurryRecipes.init();
         PlatGroupMetalsRecipes.init();
+        NaquadahRecipes.init();
 
 
         // A Few Random Recipes

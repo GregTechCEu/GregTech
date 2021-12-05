@@ -5,16 +5,17 @@ import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.unification.material.Material;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -175,12 +176,21 @@ public interface IToolStats {
     }
 
     default void onCraftingUse(ItemStack stack) {
-        if (ConfigHolder.toolCraftingSounds && ForgeHooks.getCraftingPlayer() != null && stack.getItem() instanceof ToolMetaItem<?>)
-            ForgeHooks.getCraftingPlayer().playSound(((ToolMetaItem<?>) stack.getItem()).getItem(stack).getSound(), 1, 1);
+        if (ConfigHolder.toolCraftingSounds && ForgeHooks.getCraftingPlayer() != null && stack.getItem() instanceof ToolMetaItem<?>) {
+            EntityPlayer player = ForgeHooks.getCraftingPlayer();
+            player.getEntityWorld().playSound(player, player.getPosition(), ((ToolMetaItem<?>) stack.getItem()).getItem(stack).getSound(), SoundCategory.PLAYERS, 1, 1);
+        }
     }
 
-    default void onBreakingUse(ItemStack stack) {
-        if (ConfigHolder.toolUseSounds && Minecraft.getMinecraft().player != null && stack.getItem() instanceof ToolMetaItem<?>)
-            Minecraft.getMinecraft().player.playSound(((ToolMetaItem<?>) stack.getItem()).getItem(stack).getSound(), 1, 1);
+    default void onBreakingUse(ItemStack stack, World world, BlockPos pos) {
+        if (ConfigHolder.toolUseSounds && stack.getItem() instanceof ToolMetaItem<?>)
+            world.playSound(null, pos, ((ToolMetaItem<?>) stack.getItem()).getItem(stack).getSound(), SoundCategory.PLAYERS, 1, 1);
+    }
+
+    static void onOtherUse(@Nonnull ItemStack stack, World world, BlockPos pos) {
+        if (stack.getItem() instanceof ToolMetaItem<?>) {
+            IToolStats stats = ((ToolMetaItem<?>) stack.getItem()).getItem(stack).getToolStats();
+            stats.onBreakingUse(stack, world, pos);
+        }
     }
 }

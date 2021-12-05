@@ -6,19 +6,15 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.vec.Cuboid6;
-import com.google.common.collect.Lists;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.BlockCustomParticle;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.tool.IHammerItem;
 import gregtech.api.capability.tool.IScrewdriverItem;
 import gregtech.api.capability.tool.IWrenchItem;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.IFacadeCover;
-import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IToolStats;
-import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -70,12 +66,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class BlockMachine extends BlockCustomParticle implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
 
-    private static final List<IndexedCuboid6> EMPTY_COLLISION_BOX = Lists.newArrayList(new IndexedCuboid6(null, Cuboid6.full));
+    private static final List<IndexedCuboid6> EMPTY_COLLISION_BOX = Collections.emptyList();
     private static final IUnlistedProperty<String> HARVEST_TOOL = new UnlistedStringProperty("harvest_tool");
     private static final IUnlistedProperty<Integer> HARVEST_LEVEL = new UnlistedIntegerProperty("harvest_level");
     //used for rendering purposes of non-opaque machines like chests and tanks
@@ -175,6 +172,11 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         metaTileEntity.addCollisionBoundingBox(collisionList);
         metaTileEntity.addCoverCollisionBoundingBox(collisionList);
         return collisionList;
+    }
+
+    @Override
+    public boolean doesSideBlockRendering(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+        return state.isOpaqueCube() && getMetaTileEntity(world, pos) != null;
     }
 
     @Nonnull
@@ -325,6 +327,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             if (screwdriver.damageItem(DamageValues.DAMAGE_FOR_SCREWDRIVER, true) &&
                     metaTileEntity.onCoverScrewdriverClick(playerIn, hand, rayTraceResult)) {
                 screwdriver.damageItem(DamageValues.DAMAGE_FOR_SCREWDRIVER, false);
+                IToolStats.onOtherUse(itemStack, worldIn, pos);
                 return true;
             }
             return false;
@@ -337,11 +340,8 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true) &&
                     metaTileEntity.onWrenchClick(playerIn, hand, wrenchDirection, rayTraceResult)) {
 
-                if(itemStack.getItem() instanceof ToolMetaItem<?>) {
-                    IToolStats stats = ((ToolMetaItem<?>) itemStack.getItem()).getItem(itemStack).getToolStats();
-                    stats.onBreakingUse(itemStack);
-                }
                 wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
+                IToolStats.onOtherUse(itemStack, worldIn, pos);
                 return true;
             }
             return false;

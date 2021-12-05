@@ -1,13 +1,14 @@
 package gregtech.common.items;
 
 import gregtech.api.GTValues;
-import gregtech.api.items.OreDictNames;
 import gregtech.api.items.metaitem.*;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterial;
+import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Component;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Materials;
@@ -260,13 +261,9 @@ public class MetaItem1 extends StandardMetaItem {
         TOOL_DATA_ORB = addItem(262, "tool.dataorb");
 
         // Special Machine Components: ID 266-280
-        COMPONENT_SAW_BLADE_DIAMOND = addItem(266, "component.sawblade.diamond").addOreDict(OreDictNames.craftingSawBlade)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.CobaltBrass, GTValues.M * 4), new MaterialStack(Materials.Diamond, GTValues.M)));
-        COMPONENT_SAW_BLADE_TUNGSTEN = addItem(267, "component.sawblade.tungsten").addOreDict(OreDictNames.craftingSawBlade)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Ultimet, GTValues.M * 4), new MaterialStack(Materials.TungstenCarbide, GTValues.M * 4)));
-        COMPONENT_GRINDER_DIAMOND = addItem(268, "component.grinder.diamond").addOreDict(OreDictNames.craftingGrinder)
+        COMPONENT_GRINDER_DIAMOND = addItem(266, "component.grinder.diamond")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, GTValues.M * 8), new MaterialStack(Materials.Diamond, GTValues.M * 5)));
-        COMPONENT_GRINDER_TUNGSTEN = addItem(269, "component.grinder.tungsten").addOreDict(OreDictNames.craftingGrinder)
+        COMPONENT_GRINDER_TUNGSTEN = addItem(267, "component.grinder.tungsten")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tungsten, GTValues.M * 4), new MaterialStack(Materials.VanadiumSteel, GTValues.M * 8), new MaterialStack(Materials.Diamond, GTValues.M)));
 
         // Special Eyes/Stars: ID 281-289
@@ -580,10 +577,18 @@ public class MetaItem1 extends StandardMetaItem {
         PLUGIN_ONLINE_PIC = addItem(782, "plugin.online_pic").addComponents(new OnlinePicPluginBehavior());
         PLUGIN_TEXT = addItem(783, "plugin.text").addComponents(new TextPluginBehavior());
 
-        COLOURED_LEDS = addItem(800, "coloured.leds");
-        DISPLAY = addItem(801, "display");
+        COLOURED_LEDS = addItem(798, "coloured.leds");
+        DISPLAY = addItem(799, "display");
 
-        SUS_RECORD = addItem(802, "record.sus").addComponents(new MusicDiscStats(GTSounds.RECORD_SOUND)).setRarity(EnumRarity.RARE).setMaxStackSize(1).setInvisible();
+        // Records: 800-819
+        SUS_RECORD = addItem(800, "record.sus").addComponents(new MusicDiscStats(GTSounds.RECORD_SOUND)).setRarity(EnumRarity.RARE).setMaxStackSize(1).setInvisible();
+
+        // Dyed Glass Lenses: 820-840
+        for (int i = 0; i < MarkerMaterials.Color.VALUES.length; i++) {
+            MarkerMaterial color = MarkerMaterials.Color.VALUES[i];
+            if (color != MarkerMaterials.Color.White) {
+                GLASS_LENSES.put(color, addItem(820 + i, String.format("glass_lens.%s", color.toString())));
+            }
+        }
     }
-
 }

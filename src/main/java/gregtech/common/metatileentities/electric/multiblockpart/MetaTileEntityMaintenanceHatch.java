@@ -259,7 +259,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
             for (ItemStack itemStack : entityPlayer.inventory.mainInventory) {
                 if (itemStack.isItemEqualIgnoreDurability(tool.getStackForm())) {
                     ((IMaintenance) this.getController()).setMaintenanceFixed(problemIndex);
-                    tool.getToolStats().onBreakingUse(itemStack);
+                    tool.getToolStats().onBreakingUse(itemStack, getWorld(), getPos());
                     damageTool(itemStack);
                     this.setTaped(false);
                 }
@@ -275,7 +275,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     private void damageTool(ItemStack itemStack) {
         if (itemStack.getItem() instanceof ToolMetaItem) {
             ToolMetaItem<?> toolMetaItem = (ToolMetaItem<?>) itemStack.getItem();
-            toolMetaItem.damageItem(itemStack, 1, true, false);
+            toolMetaItem.damageItem(itemStack, null, 1, true, false);
         }
     }
 

@@ -339,6 +339,23 @@ metaitem.circuit.integrated.name=编程电路
 metaitem.circuit.integrated.tooltip=右击打开配置界面
 metaitem.circuit.integrated.gui=编程电路配置
 
+item.glass.lens=玻璃透镜 (白色的)
+metaitem.glass_lens.orange.name=玻璃透镜 (橘子)
+metaitem.glass_lens.magenta.name=玻璃透镜 (品紅)
+metaitem.glass_lens.light_blue.name=玻璃透镜 (淺藍)
+metaitem.glass_lens.yellow.name=玻璃透镜 (黃色)
+metaitem.glass_lens.lime.name=玻璃透镜 (酸橙)
+metaitem.glass_lens.pink.name=玻璃透镜 (粉色的)
+metaitem.glass_lens.gray.name=玻璃透镜 (灰色的)
+metaitem.glass_lens.light_gray.name=玻璃透镜 (淺灰)
+metaitem.glass_lens.cyan.name=玻璃透镜 (青色)
+metaitem.glass_lens.purple.name=玻璃透镜 (紫色的)
+metaitem.glass_lens.blue.name=玻璃透镜 (藍色)
+metaitem.glass_lens.brown.name=玻璃透镜 (棕色的)
+metaitem.glass_lens.green.name=玻璃透镜 (綠色)
+metaitem.glass_lens.red.name=玻璃透镜 (红色的)
+metaitem.glass_lens.black.name=玻璃透镜 (黑色的)
+
 #CIRCUITS LOCALIZATION
 metaitem.boule.silicon.name=单晶硅
 metaitem.boule.glowstone.name=萤石掺杂的单晶硅
@@ -429,7 +446,6 @@ metaitem.carbon.fibers.name=粗制碳网
 metaitem.carbon.mesh.name=粗制碳板
 metaitem.carbon.plate.name=碳板
 
-metaitem.component.sawblade.diamond.name=钻石锯片
 metaitem.component.grinder.diamond.name=钻石研磨头
 metaitem.component.grinder.tungsten.name=钨研磨头
 
@@ -857,8 +873,6 @@ material.nitration_mixture=硝酸混酸
 material.fireclay=耐火砖
 material.brick=砖
 material.coke=焦煤
-material.tenorite=黑铜矿
-material.cuprite=赤铜矿
 material.bornite=斑铜矿
 material.chalcocite=辉铜矿
 material.enargite=硫砷铜矿
@@ -3535,3 +3549,5 @@ gregtech.cover.fluid_detector.message_fluid_storage_normal=Monitoring Normal Flu
 gregtech.cover.fluid_detector.message_fluid_storage_inverted=Monitoring Inverted Fluid Storage
 gregtech.cover.item_detector.message_item_storage_normal=Monitoring Normal Item Storage
 gregtech.cover.item_detector.message_item_storage_inverted=Monitoring Inverted Item Storage
+
+fluid.tile.lava=Lava

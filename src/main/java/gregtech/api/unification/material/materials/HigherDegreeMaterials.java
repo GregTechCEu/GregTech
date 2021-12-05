@@ -22,7 +22,7 @@ public class HigherDegreeMaterials {
         EnderEye = new Material.Builder(2508, "ender_eye")
                 .gem(1)
                 .color(0x66FF66)
-                .flags(GENERATE_LENS, NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
                 .build();
 
         Diatomite = new Material.Builder(2509, "diatomite")

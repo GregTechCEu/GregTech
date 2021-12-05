@@ -165,13 +165,14 @@ public class RecipeLogicSteam extends AbstractRecipeLogic {
     protected void completeRecipe() {
         super.completeRecipe();
         setNeedsVenting(true);
+        tryDoVenting();
     }
 
     @Override
     protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
         return standardOverclockingLogic((isHighPressure ? recipe.getEUt() * 2 : recipe.getEUt()) * (negativeEU ? -1 : 1),
                 getMaxVoltage(),
-                isHighPressure ? recipe.getDuration() * 2 : recipe.getDuration(),
+                isHighPressure ? recipe.getDuration() : recipe.getDuration() * 2,
                 getOverclockingDurationDivisor(),
                 getOverclockingVoltageMultiplier(),
                 maxOverclocks

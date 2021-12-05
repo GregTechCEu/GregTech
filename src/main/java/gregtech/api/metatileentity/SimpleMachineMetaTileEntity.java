@@ -172,13 +172,16 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
                         playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
                     }
                 }
+
                 if (facing == getOutputFacingFluids() || hitFacing == getOutputFacingFluids()) {
                     if (isAllowInputFromOutputSideFluids()) {
                         setAllowInputFromOutputSideFluids(false);
-                        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
+                        if (getOutputFacingItems() != getOutputFacingFluids())
+                            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
                     } else {
                         setAllowInputFromOutputSideFluids(true);
-                        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
+                        if (getOutputFacingItems() != getOutputFacingFluids())
+                            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
                     }
                 }
             }

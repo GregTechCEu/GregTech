@@ -16,12 +16,6 @@ public class MixerRecipes {
                 .duration(500).EUt(2).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-                .input(dust, Sodium, 2)
-                .input(dust, Sulfur)
-                .output(dust, SodiumSulfide, 3)
-                .duration(60).EUt(30).buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder()
                 .fluidInputs(PolyvinylAcetate.getFluid(1000))
                 .fluidInputs(Acetone.getFluid(1500))
                 .fluidOutputs(Glue.getFluid(2500))

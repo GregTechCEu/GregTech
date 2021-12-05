@@ -7,6 +7,8 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.ToolMetaItem;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
 import gregtech.common.items.armor.MetaArmor;
@@ -21,9 +23,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public final class MetaItems {
 
@@ -247,6 +247,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem TOOL_DATA_STICK;
     public static MetaItem<?>.MetaValueItem TOOL_DATA_ORB;
 
+    public static final Map<MarkerMaterial, MetaValueItem> GLASS_LENSES = new HashMap<>();
+
     public static MetaItem<?>.MetaValueItem SILICON_BOULE;
     public static MetaItem<?>.MetaValueItem GLOWSTONE_BOULE;
     public static MetaItem<?>.MetaValueItem NAQUADAH_BOULE;
@@ -371,8 +373,6 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem WETWARE_SUPER_COMPUTER_UV;
     public static MetaItem<?>.MetaValueItem WETWARE_MAINFRAME_UHV;
 
-    public static MetaItem<?>.MetaValueItem COMPONENT_SAW_BLADE_DIAMOND;
-    public static MetaItem<?>.MetaValueItem COMPONENT_SAW_BLADE_TUNGSTEN;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_DIAMOND;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_TUNGSTEN;
 
@@ -605,6 +605,12 @@ public final class MetaItems {
             if (item instanceof MetaPrefixItem) {
                 ((MetaPrefixItem) item).registerOreDict();
             }
+        }
+        for (Map.Entry<MarkerMaterial, MetaValueItem> entry : GLASS_LENSES.entrySet()) {
+            // Register "craftingLensWhite" for example
+            OreDictUnifier.registerOre(entry.getValue().getStackForm(), OrePrefix.craftingLens, entry.getKey());
+            // Register "craftingLensGlass", intended only for recipes to dye lenses and not in the Engraver
+            OreDictUnifier.registerOre(entry.getValue().getStackForm(), String.format("%s%s", OrePrefix.craftingLens.name(), "Glass"));
         }
     }
 

@@ -214,6 +214,7 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.LeadZincSolution, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.NaturalGas, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Blaze, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.FluoroantimonicAcid, FluidType.NORMAL);
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
             if (material.isHidden()) continue;

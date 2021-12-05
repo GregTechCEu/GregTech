@@ -1,9 +1,7 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
-import gregtech.api.items.OreDictNames;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.ore.OrePrefix;
@@ -294,8 +292,8 @@ public class CraftingComponent {
                 {0, new UnificationEntry(OrePrefix.gem, Materials.Diamond)},
                 {1, new UnificationEntry(OrePrefix.gem, Materials.Diamond)},
                 {2, new UnificationEntry(OrePrefix.gem, Materials.Diamond)},
-                {3, OreDictNames.craftingGrinder},
-                {4, OreDictNames.craftingGrinder},
+                {3, MetaItems.COMPONENT_GRINDER_DIAMOND.getStackForm()},
+                {4, MetaItems.COMPONENT_GRINDER_DIAMOND.getStackForm()},
                 {5, MetaItems.COMPONENT_GRINDER_TUNGSTEN.getStackForm()},
                 {GTValues.FALLBACK, MetaItems.COMPONENT_GRINDER_TUNGSTEN.getStackForm()},
 
@@ -303,13 +301,16 @@ public class CraftingComponent {
 
         SAWBLADE = new Component(Stream.of(new Object[][]{
 
-                {0, OreDictNames.craftingSawBlade},
-                {1, OreDictNames.craftingSawBlade},
-                {2, OreDictNames.craftingSawBlade},
-                {3, OreDictNames.craftingSawBlade},
-                {4, OreDictNames.craftingSawBlade},
-                {5, MetaItems.COMPONENT_SAW_BLADE_TUNGSTEN.getStackForm()},
-                {GTValues.FALLBACK, MetaItems.COMPONENT_SAW_BLADE_TUNGSTEN.getStackForm()},
+                {0, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Bronze)},
+                {1, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.CobaltBrass)},
+                {2, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.VanadiumSteel)},
+                {3, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.BlackBronze)},
+                {4, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Ultimet)},
+                {5, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.TungstenCarbide)},
+                {6, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.HSSS)},
+                {7, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Duranium)},
+                {8, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Tritanium)},
+                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Tritanium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 

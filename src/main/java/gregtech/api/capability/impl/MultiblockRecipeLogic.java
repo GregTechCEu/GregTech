@@ -131,8 +131,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         Recipe currentRecipe;
         List<IItemHandlerModifiable> importInventory = getInputBuses();
         IMultipleTankHandler importFluids = getInputTank();
-        IItemHandlerModifiable exportInventory = getOutputInventory();
-        IMultipleTankHandler exportFluids = getOutputTank();
 
         //if fluids changed, iterate all input busses again
         if (metaTileEntity.getNotifiedFluidInputList().size() > 0) {
@@ -146,21 +144,10 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
         // Our caching implementation
         // This guarantees that if we get a recipe cache hit, our efficiency is no different from other machines
-        if (previousRecipe != null && previousRecipe.matches(false, importInventory.get(lastRecipeIndex), importFluids) && checkRecipe(previousRecipe)) {
+        if (checkPreviousRecipeDistinct(importInventory.get(lastRecipeIndex)) && checkRecipe(previousRecipe)) {
             currentRecipe = previousRecipe;
             currentDistinctInputBus = importInventory.get(lastRecipeIndex);
-            currentRecipe = findParallelRecipe(
-                    this,
-                    currentRecipe,
-                    importInventory.get(lastRecipeIndex),
-                    importFluids,
-                    exportInventory,
-                    exportFluids,
-                    maxVoltage, getParallelLimit());
-
-            // If a valid recipe is found, immediately attempt to return it to prevent inventory scanning
-            if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory.get(lastRecipeIndex))) {
-                setupRecipe(currentRecipe);
+            if(prepareRecipeDistinct(currentRecipe)) {
                 metaTileEntity.getNotifiedItemInputList().remove(importInventory.get(lastRecipeIndex));
 
                 // No need to cache the previous recipe here, as it is not null and matched by the current recipe,
@@ -185,18 +172,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             if (currentRecipe != null && checkRecipe(currentRecipe)) {
                 this.previousRecipe = currentRecipe;
                 currentDistinctInputBus = bus;
-                currentRecipe = findParallelRecipe(
-                        this,
-                        currentRecipe,
-                        importInventory.get(i),
-                        importFluids,
-                        exportInventory,
-                        exportFluids,
-                        maxVoltage,getParallelLimit());
-
-                if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory.get(i))) {
+                if(prepareRecipeDistinct(currentRecipe)) {
                     lastRecipeIndex = i;
-                    setupRecipe(currentRecipe);
                     metaTileEntity.getNotifiedItemInputList().remove(bus);
                     return;
                 }
@@ -218,6 +195,29 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         } else {
             super.invalidateInputs();
         }
+    }
+
+    protected boolean checkPreviousRecipeDistinct(IItemHandlerModifiable previousBus) {
+        return previousRecipe != null && previousRecipe.matches(false, previousBus, getInputTank());
+    }
+
+    protected boolean prepareRecipeDistinct(Recipe recipe) {
+        recipe = findParallelRecipe(
+                this,
+                recipe,
+                currentDistinctInputBus,
+                getInputTank(),
+                getOutputInventory(),
+                getOutputTank(),
+                getMaxVoltage(),
+                getParallelLimit());
+
+        if (recipe != null && setupAndConsumeRecipeInputs(recipe, currentDistinctInputBus)) {
+            setupRecipe(recipe);
+            return true;
+        }
+
+        return false;
     }
 
     @Override

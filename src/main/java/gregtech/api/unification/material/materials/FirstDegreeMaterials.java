@@ -16,7 +16,7 @@ public class FirstDegreeMaterials {
         Almandine = new Material.Builder(250, "almandine")
                 .gem(1).ore(6, 1)
                 .color(0xFF0000)
-                .flags(STD_GEM, GENERATE_LENS)
+                .flags(STD_GEM)
                 .components(Aluminium, 2, Iron, 3, Silicon, 3, Oxygen, 12)
                 .build();
 
@@ -215,7 +215,7 @@ public class FirstDegreeMaterials {
         Emerald = new Material.Builder(278, "emerald")
                 .gem().ore()
                 .color(0x50FF50).iconSet(EMERALD)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_PLATE)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_PLATE, GENERATE_LENS)
                 .components(Beryllium, 3, Aluminium, 2, Silicon, 6, Oxygen, 18)
                 .toolStats(10.0f, 2.0f, 368, 15)
                 .build();
@@ -236,7 +236,7 @@ public class FirstDegreeMaterials {
         GreenSapphire = new Material.Builder(281, "green_sapphire")
                 .gem().ore()
                 .color(0x64C882).iconSet(GEM_HORIZONTAL)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Oxygen, 3)
                 .toolStats(8.0f, 3.0f, 368, 15)
                 .build();
@@ -446,7 +446,6 @@ public class FirstDegreeMaterials {
         Pyrope = new Material.Builder(308, "pyrope")
                 .gem().ore(4, 1)
                 .color(0x783264).iconSet(RUBY)
-                .flags(GENERATE_LENS)
                 .components(Aluminium, 2, Magnesium, 3, Silicon, 3, Oxygen, 12)
                 .build();
 
@@ -468,7 +467,7 @@ public class FirstDegreeMaterials {
         Ruby = new Material.Builder(311, "ruby")
                 .gem().ore()
                 .color(0xFF6464).iconSet(RUBY)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
                 .components(Chrome, 1, Aluminium, 2, Oxygen, 3)
                 .toolStats(8.5f, 3.0f, 256, 33)
                 .build();
@@ -490,7 +489,7 @@ public class FirstDegreeMaterials {
         Sapphire = new Material.Builder(314, "sapphire")
                 .gem().ore()
                 .color(0x6464C8).iconSet(GEM_VERTICAL)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Oxygen, 3)
                 .toolStats(7.5f, 4.0f, 256, 15)
                 .build();
@@ -563,7 +562,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Steel = new Material.Builder(324, "steel")
-                .ingot().fluid()
+                .ingot(3).fluid()
                 .color(0x808080).iconSet(METALLIC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_DENSE, GENERATE_SPRING,
                         GENERATE_SPRING_SMALL, GENERATE_FRAME, DISABLE_DECOMPOSITION)
@@ -584,7 +583,7 @@ public class FirstDegreeMaterials {
         Tanzanite = new Material.Builder(326, "tanzanite")
                 .gem().ore(2, 1)
                 .color(0x4000C8).iconSet(GEM_VERTICAL)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Calcium, 2, Aluminium, 3, Silicon, 3, Hydrogen, 1)
                 .toolStats(7.0f, 2.0f, 256, 15)
                 .build();
@@ -606,7 +605,7 @@ public class FirstDegreeMaterials {
         Topaz = new Material.Builder(329, "topaz")
                 .gem(3).ore(2, 1)
                 .color(0xFF8000).iconSet(GEM_HORIZONTAL)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Silicon, 1, Fluorine, 1, Hydrogen, 2)
                 .toolStats(7.0f, 2.0f, 256, 15)
                 .build();
@@ -736,17 +735,9 @@ public class FirstDegreeMaterials {
                 .blastTemp(4500, GasTier.HIGH, 30720, 900)
                 .build();
 
-        Tenorite = new Material.Builder(345, "tenorite")
-                .dust(1).ore()
-                .color(0x606060)
-                .components(Copper, 1, Oxygen, 1)
-                .build();
+        // Free ID 345
 
-        Cuprite = new Material.Builder(346, "cuprite")
-                .dust().ore()
-                .color(0x770000).iconSet(RUBY)
-                .components(Copper, 2, Oxygen, 1)
-                .build();
+        // Free ID 346
 
         Bornite = new Material.Builder(347, "bornite")
                 .dust(1).ore()
@@ -1189,7 +1180,7 @@ public class FirstDegreeMaterials {
         EnderPearl = new Material.Builder(416, "ender_pearl")
                 .gem(1)
                 .color(0x6CDCC8)
-                .flags(GENERATE_LENS, NO_SMASHING, NO_SMELTING)
+                .flags(NO_SMASHING, NO_SMELTING, GENERATE_PLATE)
                 .components(Beryllium, 1, Potassium, 4, Nitrogen, 5)
                 .build();
 
@@ -1365,6 +1356,77 @@ public class FirstDegreeMaterials {
                 .color(0x013220).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Iridium, 1, Chlorine, 3)
+                .build();
+
+        FluoroantimonicAcid = new Material.Builder(438, "fluoroantimonic_acid")
+                .fluid()
+                .components(Hydrogen, 2, Antimony, 1, Fluorine, 7)
+                .build();
+
+        TitaniumTrifluoride = new Material.Builder(439, "titanium_trifluoride")
+                .dust()
+                .color(0x8F00FF).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Titanium, 1, Fluorine, 3)
+                .build();
+
+        CalciumPhosphide = new Material.Builder(440, "calcium_phosphide")
+                .dust()
+                .color(0xA52A2A).iconSet(METALLIC)
+                .components(Calcium, 1, Phosphorus, 1)
+                .build();
+
+        IndiumPhosphide = new Material.Builder(441, "indium_phosphide")
+                .dust()
+                .color(0x582E5C).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Indium, 1, Phosphorus, 1)
+                .build();
+
+        BariumSulfide = new Material.Builder(442, "barium_sulfide")
+                .dust()
+                .color(0xF0EAD6).iconSet(METALLIC)
+                .components(Barium, 1, Sulfur, 1)
+                .build();
+
+        TriniumSulfide = new Material.Builder(443, "trinium_sulfide")
+                .dust()
+                .color(0xE68066).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Trinium, 1, Sulfur, 1)
+                .build();
+
+        ZincSulfide = new Material.Builder(444, "zinc_sulfide")
+                .dust()
+                .color(0xFFFFF6).iconSet(DULL)
+                .components(Zinc, 1, Sulfur, 1)
+                .build();
+
+        GalliumSulfide = new Material.Builder(445, "gallium_sulfide")
+                .dust()
+                .color(0xFFF59E).iconSet(SHINY)
+                .components(Gallium, 1, Sulfur, 1)
+                .build();
+
+        AntimonyTrifluoride = new Material.Builder(446, "antimony_trifluoride")
+                .dust()
+                .color(0xF7EABC).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Antimony, 1, Fluorine, 3)
+                .build();
+
+        EnrichedNaquadahSulfate = new Material.Builder(447, "enriched_naquadah_sulfate")
+                .dust()
+                .color(0x2E2E1C).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(NaquadahEnriched, 1, Sulfur, 1, Oxygen, 4)
+                .build();
+
+        NaquadriaSulfate = new Material.Builder(448, "naquadria_sulfate")
+                .dust()
+                .color(0x006633).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Naquadria, 1, Sulfur, 1, Oxygen, 4)
                 .build();
     }
 }

@@ -401,7 +401,7 @@ public class SeparationRecipes {
                 .output(dust, SodaAsh, 6)
                 .output(dust, SodiumBicarbonate, 6)
                 .fluidOutputs(Water.getFluid(2000))
-                .duration(784).EUt(60).build();
+                .duration(784).EUt(60).buildAndRegister();
 
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
