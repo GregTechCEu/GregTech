@@ -405,6 +405,14 @@ public class ModHandler {
             // Then try to get a single Material (UnificationEntry needs this, for example)
             MaterialStack materialStack = OreDictUnifier.getMaterial(stack);
             if (materialStack != null) func.accept(materialStack, lastChar);
+
+            // Gather any secondary materials if this item has an OrePrefix
+            OrePrefix prefix = OreDictUnifier.getPrefix(stack);
+            if (prefix != null && !prefix.secondaryMaterials.isEmpty()) {
+                for (MaterialStack ms : prefix.secondaryMaterials) {
+                    func.accept(ms, lastChar);
+                }
+            }
         }
 
         return new ItemMaterialInfo(materialStacksExploded.entrySet().stream()

@@ -16,6 +16,7 @@ import gregtech.api.util.GTUtility;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 
 import static gregtech.api.GTValues.L;
 import static gregtech.api.GTValues.M;
-import static gregtech.api.unification.material.info.MaterialFlags.FLAMMABLE;
+import static gregtech.api.unification.material.info.MaterialFlags.*;
 
 public class RecyclingRecipes {
 
@@ -89,7 +90,7 @@ public class RecyclingRecipes {
                 .inputs(input.copy())
                 .outputs(outputs)
                 .duration(calculateDuration(materials))
-                .EUt(8 * multiplier)
+                .EUt(4 * multiplier)
                 .buildAndRegister();
     }
 
@@ -136,13 +137,14 @@ public class RecyclingRecipes {
         // - Combine any MaterialStacks that have the same Material
         materials = combineStacks(materials.stream()
                 .map(RecyclingRecipes::getArcSmeltingResult)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList()));
 
         // Finalize the output List
         List<ItemStack> outputs = finalizeOutputs(
                 materials,
                 RecipeMaps.ARC_FURNACE_RECIPES.getMaxOutputs(),
-                OreDictUnifier::getIngotOrDust
+                RecyclingRecipes::getArcIngotOrDust
         );
 
         // Exit if no valid outputs exist for this recycling Recipe.
@@ -161,14 +163,23 @@ public class RecyclingRecipes {
         Material material = materialStack.material;
         long amount = materialStack.amount;
 
+        if (material.hasFlag(EXPLOSIVE)) {
+            return new MaterialStack(Materials.Ash, amount / 16);
+        }
+
         // If the Material is Flammable, return Ash
         if (material.hasFlag(FLAMMABLE)) {
-            return new MaterialStack(Materials.Ash, amount);
+            return new MaterialStack(Materials.Ash, amount / 8);
         }
 
         // Else if the Material is a Gem, process its output (see below)
         if (material.hasProperty(PropertyKey.GEM)) {
             return getGemArcSmeltResult(materialStack);
+        }
+
+        // Else if the Material has NO_SMELTING, return nothing
+        if (material.hasFlag(NO_SMELTING)) {
+            return null;
         }
 
         // Else if the Material is an Ingot, return  the Arc Smelting
@@ -182,6 +193,13 @@ public class RecyclingRecipes {
         return materialStack;
     }
 
+    private static ItemStack getArcIngotOrDust(@Nonnull MaterialStack stack) {
+        if (stack.material == Materials.Carbon) {
+            return OreDictUnifier.getDust(stack);
+        }
+        return OreDictUnifier.getIngotOrDust(stack);
+    }
+
     private static MaterialStack getGemArcSmeltResult(MaterialStack materialStack) {
         Material material = materialStack.material;
         long amount = materialStack.amount;
@@ -189,17 +207,17 @@ public class RecyclingRecipes {
         // If the Gem Material has Oxygen in it, return Ash
         if (material.getMaterialComponents().stream()
                 .anyMatch(stack -> stack.material == Materials.Oxygen)) {
-            return new MaterialStack(Materials.Ash, amount);
+            return new MaterialStack(Materials.Ash, amount / 8);
         }
 
         // Else if the Gem Material has Carbon in it, return Carbon
         if (material.getMaterialComponents().stream()
                 .anyMatch(stack -> stack.material == Materials.Carbon)) {
-            return new MaterialStack(Materials.Carbon, amount);
+            return new MaterialStack(Materials.Carbon, amount / 8);
         }
 
         // Else return Dark Ash
-        return new MaterialStack(Materials.DarkAsh, amount);
+        return new MaterialStack(Materials.DarkAsh, amount / 8);
     }
 
     private static int calculateVoltageMultiplier(List<MaterialStack> materials) {

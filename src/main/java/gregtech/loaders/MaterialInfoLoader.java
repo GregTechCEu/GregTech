@@ -10,6 +10,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.BlockWireCoil2.CoilType2;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -65,6 +66,56 @@ public class MaterialInfoLoader {
                         new MaterialStack(Materials.Trinium, OrePrefix.foil.materialAmount * 8),
                         new MaterialStack(Materials.Neutronium, OrePrefix.ingot.materialAmount))
         );
+
+        OreDictUnifier.registerOre(MetaTileEntities.HULL[0].getStackForm(), new ItemMaterialInfo(
+                new MaterialStack(Materials.WroughtIron, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.Lead, OrePrefix.cableGtSingle.materialAmount * 2),
+                new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
+
+        OreDictUnifier.registerOre(MetaTileEntities.HULL[1].getStackForm(), new ItemMaterialInfo(
+                new MaterialStack(Materials.Steel, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.Tin, OrePrefix.cableGtSingle.materialAmount * 2),
+                new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
+
+        OreDictUnifier.registerOre(MetaTileEntities.HULL[2].getStackForm(), new ItemMaterialInfo(
+                new MaterialStack(Materials.Aluminium, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.Copper, OrePrefix.cableGtSingle.materialAmount * 2),
+                new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
+
+        OreDictUnifier.registerOre(MetaTileEntities.HULL[3].getStackForm(), new ItemMaterialInfo(
+                new MaterialStack(Materials.StainlessSteel, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.Gold, OrePrefix.cableGtSingle.materialAmount * 2),
+                new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
+
+        OreDictUnifier.registerOre(MetaTileEntities.HULL[4].getStackForm(), new ItemMaterialInfo(
+                new MaterialStack(Materials.Titanium, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.Aluminium, OrePrefix.cableGtSingle.materialAmount * 2),
+                new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
+
+        OreDictUnifier.registerOre(MetaTileEntities.HULL[5].getStackForm(), new ItemMaterialInfo(
+                new MaterialStack(Materials.TungstenSteel, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.Tungsten, OrePrefix.cableGtSingle.materialAmount * 2),
+                new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
+
+        OreDictUnifier.registerOre(MetaTileEntities.HULL[6].getStackForm(), new ItemMaterialInfo(
+                new MaterialStack(Materials.RhodiumPlatedPalladium, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.VanadiumGallium, OrePrefix.cableGtSingle.materialAmount * 2),
+                new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
+
+        OreDictUnifier.registerOre(MetaTileEntities.HULL[7].getStackForm(), new ItemMaterialInfo(
+                new MaterialStack(Materials.NaquadahAlloy, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.Naquadah, OrePrefix.cableGtSingle.materialAmount * 2),
+                new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
+
+        OreDictUnifier.registerOre(MetaTileEntities.HULL[8].getStackForm(), new ItemMaterialInfo(
+                new MaterialStack(Materials.Livermorium, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.NaquadahAlloy, OrePrefix.cableGtSingle.materialAmount * 2),
+                new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
+
+        OreDictUnifier.registerOre(MetaTileEntities.HULL[14].getStackForm(), new ItemMaterialInfo(
+                new MaterialStack(Materials.Neutronium, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.RutheniumTriniumAmericiumNeutronate, OrePrefix.cableGtSingle.materialAmount * 2),
+                new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
 
         if (ConfigHolder.recipes.hardWoodRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Items.ACACIA_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2), new MaterialStack(Materials.Iron, OrePrefix.screw.materialAmount)));
