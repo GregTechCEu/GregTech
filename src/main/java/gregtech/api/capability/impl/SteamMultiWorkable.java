@@ -3,7 +3,6 @@ package gregtech.api.capability.impl;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.recipes.RecipeBuilder;
-import gregtech.api.recipes.logic.IParallelableRecipeLogic;
 
 
 /**
