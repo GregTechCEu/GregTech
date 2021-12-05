@@ -373,8 +373,6 @@ public class Materials {
     public static Material Graphene;
     public static Material Jasper;
     public static Material Osmiridium;
-    public static Material Tenorite;
-    public static Material Cuprite;
     public static Material Bornite;
     public static Material Chalcocite;
     public static Material Enargite;
