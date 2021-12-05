@@ -12,7 +12,7 @@ import gregtech.api.recipes.logic.IParallelableRecipeLogic;
  * Not recommended to use this Handler if you do not
  * need multi-recipe logic for your Multi.
  */
-public class SteamMultiWorkable extends SteamMultiblockRecipeLogic implements IParallelableRecipeLogic {
+public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
 
     public SteamMultiWorkable(RecipeMapSteamMultiblockController tileEntity, double conversionRate) {
         super(tileEntity, tileEntity.recipeMap, tileEntity.getSteamFluidTank(), conversionRate);
