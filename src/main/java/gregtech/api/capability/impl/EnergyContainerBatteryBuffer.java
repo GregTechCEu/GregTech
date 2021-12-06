@@ -1,7 +1,5 @@
 package gregtech.api.capability.impl;
 
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
@@ -17,11 +15,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import java.util.BitSet;
+import javax.annotation.Nonnull;
 
 public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyContainer {
 
-    private final BitSet batterySlotsUsedThisTick = new BitSet();
     private final int tier;
     private long amps = 0;
     private long lastEnergyInputPerSec = 0;
@@ -36,35 +33,62 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
 
     @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
-        long usedAmps = 0;
-        amperage -= amps;
-        if(amperage <= 0)
+        if (amps >= getInputAmperage())
             return 0;
-        if (side == null || inputsEnergy(side)) {
+        long canAccept = getEnergyCapacity() - getEnergyStored();
+        if (canAccept < voltage)
+            return 0;
+
+        if (voltage > 0L && (side == null || inputsEnergy(side))) {
             if (voltage > getInputVoltage()) {
                 GTUtility.doOvervoltageExplosion(metaTileEntity, voltage);
                 return Math.min(amperage, getInputAmperage() - amps);
             }
             IItemHandlerModifiable inventory = getInventory();
+            long nonFullBatteries = getInputAmperage();
+            if (nonFullBatteries == 0)
+                return 0;
+
+            // distribute energy evenly
+            long distributed = voltage * Math.min(amperage, nonFullBatteries);
             for (int i = 0; i < inventory.getSlots(); i++) {
-                if (batterySlotsUsedThisTick.get(i)) continue;
                 ItemStack batteryStack = inventory.getStackInSlot(i);
                 IElectricItem electricItem = getBatteryContainer(batteryStack);
-                if (electricItem == null) continue;
-                if (chargeItemWithVoltage(electricItem, voltage, getTier(), true)) {
-                    chargeItemWithVoltage(electricItem, voltage, getTier(), false);
-                    inventory.setStackInSlot(i, batteryStack);
-                    this.batterySlotsUsedThisTick.set(i);
-                    if(++usedAmps == amperage) break;
+                // non batteries and full batteries are ignored
+                if (electricItem == null || electricItem.getCharge() == electricItem.getMaxCharge())
+                    continue;
+
+                // if the potential distributed voltage cannot all fit,
+                // decrease distributed voltage so it will not overfill the battery
+                if (!chargeItemWithVoltage(electricItem, distributed, getTier(), true)) {
+                    long space = electricItem.getMaxCharge() - electricItem.getCharge();
+                    distributed -= space;
                 }
             }
+            // no energy can be distributed, so do nothing
+            if (distributed <= 0)
+                return 0;
+
+            // distribute the charge to each battery
+            distributed /= nonFullBatteries;
+
+            for (int i = 0; i < inventory.getSlots(); i++) {
+                ItemStack batteryStack = inventory.getStackInSlot(i);
+                IElectricItem electricItem = getBatteryContainer(batteryStack);
+                // non batteries and full batteries are ignored
+                if (electricItem == null || electricItem.getCharge() == electricItem.getMaxCharge())
+                    continue;
+
+                // fill every battery with the distributed voltage
+                if (chargeItemWithVoltage(electricItem, distributed, getTier(), true)) {
+                    chargeItemWithVoltage(electricItem, distributed, getTier(), false);
+                    inventory.setStackInSlot(i, batteryStack);
+                }
+            }
+            // not using getInputAmperage() so that the amperage is correctly drawn this tick
+            return Math.min(amperage, nonFullBatteries);
         }
-        if (usedAmps > 0L) {
-            notifyEnergyListener(false);
-        }
-        amps += usedAmps;
-        energyInputPerSec += voltage * usedAmps;
-        return usedAmps;
+        return 0;
     }
 
     @Override
@@ -77,7 +101,7 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
         return lastEnergyOutputPerSec;
     }
 
-    private static boolean chargeItemWithVoltage(IElectricItem electricItem, long voltage, int tier, boolean simulate) {
+    private static boolean chargeItemWithVoltage(@Nonnull IElectricItem electricItem, long voltage, int tier, boolean simulate) {
         long charged = electricItem.charge(voltage, tier, false, simulate);
         return charged > 0;
     }
@@ -100,7 +124,6 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
                 energyInputPerSec = 0;
                 energyOutputPerSec = 0;
             }
-            this.batterySlotsUsedThisTick.clear();
             EnumFacing outFacing = metaTileEntity.getFrontFacing();
             TileEntity tileEntity = metaTileEntity.getWorld().getTileEntity(metaTileEntity.getPos().offset(outFacing));
             if (tileEntity == null) {
@@ -111,31 +134,49 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
                 return;
             }
 
+            if (getOutputAmperage() == 0)
+                return;
+
             IItemHandlerModifiable inventory = getInventory();
-            long voltage = getOutputVoltage();
-            long maxAmperage = 0L;
-            TIntList slotsList = new TIntArrayList();
+            // distribute energy evenly
+            long distributed = getOutputVoltage();
+            if (distributed == 0)
+                return;
+
             for (int i = 0; i < inventory.getSlots(); i++) {
                 ItemStack batteryStack = inventory.getStackInSlot(i);
                 IElectricItem electricItem = getBatteryContainer(batteryStack);
-                if (electricItem == null) continue;
-                if (electricItem.discharge(voltage, getTier(), true, true, true) == voltage) {
-                    slotsList.add(i);
-                    maxAmperage++;
+                // non batteries and empty batteries are ignored
+                if (electricItem == null || electricItem.getCharge() == 0)
+                    continue;
+
+                // if the potential distributed voltage cannot all drain,
+                // decrease distributed voltage so it will not overdrain the battery
+                if (electricItem.discharge(distributed, getTier(), true, true, true) != distributed) {
+                    long space = distributed - electricItem.getCharge();
+                    distributed -= space;
                 }
             }
-            if (maxAmperage == 0) return;
-            long amperageUsed = energyContainer.acceptEnergyFromNetwork(outFacing.getOpposite(), voltage, maxAmperage);
-            if (amperageUsed == 0) return;
-            energyOutputPerSec += amperageUsed * voltage;
-            for (int i : slotsList.toArray()) {
+            // no energy can be distributed, so do nothing
+            if (distributed <= 0)
+                return;
+
+            long amperageUsed = energyContainer.acceptEnergyFromNetwork(outFacing.getOpposite(), distributed / getOutputAmperage(), getOutputAmperage());
+            if (amperageUsed <= 0)
+                return;
+
+            for (int i = 0; i < inventory.getSlots(); i++) {
                 ItemStack batteryStack = inventory.getStackInSlot(i);
                 IElectricItem electricItem = getBatteryContainer(batteryStack);
-                if (electricItem == null) continue;
-                electricItem.discharge(voltage, getTier(), true, true, false);
+                // non batteries and empty batteries are ignored
+                if (electricItem == null || electricItem.getCharge() == 0)
+                    continue;
+
+                // drain every battery with the distributed voltage
+                electricItem.discharge(distributed, getTier(), true, true, false);
                 inventory.setStackInSlot(i, batteryStack);
-                if (--amperageUsed == 0) break;
             }
+            energyOutputPerSec += distributed;
             notifyEnergyListener(false);
         }
     }
@@ -168,15 +209,15 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
 
     @Override
     public long getInputAmperage() {
-        long inputAmperage = 0L;
-        IItemHandlerModifiable inventory = getInventory();
-        for (int i = 0; i < inventory.getSlots(); i++) {
-            ItemStack batteryStack = inventory.getStackInSlot(i);
+        // input amperage is equal to the amount of non-full batteries
+        int count = 0;
+        for (int i = 0; i < getInventory().getSlots(); i++) {
+            ItemStack batteryStack = getInventory().getStackInSlot(i);
             IElectricItem electricItem = getBatteryContainer(batteryStack);
-            if (electricItem == null) continue;
-            inputAmperage++;
+            if (electricItem != null && electricItem.getCharge() != electricItem.getMaxCharge())
+                count++;
         }
-        return inputAmperage;
+        return count;
     }
 
     public IElectricItem getBatteryContainer(ItemStack itemStack) {
@@ -233,7 +274,15 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
 
     @Override
     public long getOutputAmperage() {
-        return getInputAmperage();
+        // output amperage is equal to the amount of non-empty batteries
+        int count = 0;
+        for (int i = 0; i < getInventory().getSlots(); i++) {
+            ItemStack batteryStack = getInventory().getStackInSlot(i);
+            IElectricItem electricItem = getBatteryContainer(batteryStack);
+            if (electricItem != null && electricItem.getCharge() != 0)
+                count++;
+        }
+        return count;
     }
 
     @Override
