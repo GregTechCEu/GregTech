@@ -35,7 +35,7 @@ We work with our addon-partners to attempt to preserve backwards-compatibility.
 
 ## Contribution
 ### Current state of project
-GTCEu is under active development with regular updates. It is primarily maintained by the Gregicality and Omnifactory development teams. The GTCEu community is very active and regularly contributes code, testing and ideas.
+GTCEu is under active development with regular updates. The GTCEu community is very active and regularly contributes code, testing and ideas.
 We are always looking for contributors!
 
 ### How to contribute

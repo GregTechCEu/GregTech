@@ -37,8 +37,8 @@ public class HardHammerBehavior implements IItemBehaviour {
             MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
             metaTileEntity.toggleMuffled();
             player.sendMessage(metaTileEntity.isMuffled() ?
-                    new TextComponentTranslation("behaviour.soft_hammer.enabled") :
-                    new TextComponentTranslation("behaviour.soft_hammer.disabled"));
+                    new TextComponentTranslation("gregtech.machine.muffle.off") :
+                    new TextComponentTranslation("gregtech.machine.muffle.on"));
             GTUtility.doDamageItem(stack, cost, false);
             IToolStats.onOtherUse(stack, world, pos);
             return EnumActionResult.SUCCESS;

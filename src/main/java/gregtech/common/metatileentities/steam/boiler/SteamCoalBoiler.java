@@ -56,6 +56,11 @@ public class SteamCoalBoiler extends SteamBoiler implements IFuelable {
     }
 
     @Override
+    protected int getCooldownInterval() {
+        return isHighPressure ? 40 : 45;
+    }
+
+    @Override
     public IItemHandlerModifiable createExportItemHandler() {
         return new ItemStackHandler(1);
     }

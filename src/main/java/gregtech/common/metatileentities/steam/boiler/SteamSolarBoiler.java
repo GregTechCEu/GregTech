@@ -36,8 +36,13 @@ public class SteamSolarBoiler extends SteamBoiler {
     @Override
     protected void tryConsumeNewFuel() {
         if (checkCanSeeSun()) {
-            setFuelMaxBurnTime(5);
+            setFuelMaxBurnTime(20);
         }
+    }
+
+    @Override
+    protected int getCooldownInterval() {
+        return isHighPressure ? 50 : 45;
     }
 
     @Override

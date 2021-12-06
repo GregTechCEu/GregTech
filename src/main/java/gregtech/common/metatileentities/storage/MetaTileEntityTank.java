@@ -105,6 +105,7 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
             }
         };
         this.fluidInventory = getActualFluidTank();
+        this.paintingColor = 0xFFFFFF;
     }
 
     @Override

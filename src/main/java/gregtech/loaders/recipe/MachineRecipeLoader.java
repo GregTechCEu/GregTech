@@ -512,13 +512,13 @@ public class MachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, EnderPearl, 9)
-                .input(plateDouble, TungstenSteel)
-                .input(SENSOR_LUV)
-                .input(EMITTER_LUV)
-                .input(ELECTRIC_PUMP_LUV)
-                .fluidInputs(Chrome.getFluid(L * 2))
+                .input(plateDouble, StainlessSteel)
+                .input(SENSOR_HV)
+                .input(EMITTER_HV)
+                .input(ELECTRIC_PUMP_HV)
+                .fluidInputs(Polyethylene.getFluid(L * 2))
                 .output(COVER_ENDER_FLUID_LINK)
-                .EUt(30720).duration(320)
+                .EUt(480).duration(320)
                 .buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, WroughtIron, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.ULV)).circuitMeta(8).duration(25).buildAndRegister();

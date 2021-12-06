@@ -197,14 +197,16 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
                 fuelBurnTimeLeft -= isHighPressure ? 2 : 1;
                 if (fuelBurnTimeLeft == 0) {
                     this.fuelMaxBurnTime = 0;
-                    this.timeBeforeCoolingDown = 40;
+                    this.timeBeforeCoolingDown = getCooldownInterval();
                     //boiler has no fuel now, so queue burning state update
                     this.wasBurningAndNeedsUpdate = true;
                 }
             }
         } else if (timeBeforeCoolingDown == 0) {
-            if (currentTemperature > 0)
+            if (currentTemperature > 0) {
                 currentTemperature--;
+                timeBeforeCoolingDown = getCooldownInterval();
+            }
         } else --timeBeforeCoolingDown;
     }
 
@@ -245,6 +247,8 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     }
 
     protected abstract void tryConsumeNewFuel();
+
+    protected abstract int getCooldownInterval();
 
     public int getMaxTemperate() {
         return isHighPressure ? 1000 : 500;

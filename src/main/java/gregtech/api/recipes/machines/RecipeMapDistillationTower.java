@@ -52,8 +52,8 @@ public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationR
     public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
         builder.widget(new ImageWidget(41, 1, 72, 72, GuiTextures.PROGRESS_BAR_DISTILLATION_TOWER));
-        addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
-        addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
+        addInventorySlotGroup(builder, importItems, importFluids, false, 9);
+        addInventorySlotGroup(builder, exportItems, exportFluids, true, 9);
         if (this.specialTexture != null && this.specialTexturePosition != null)
             addSpecialTexture(builder);
         return builder;

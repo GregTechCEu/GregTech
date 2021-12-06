@@ -255,6 +255,7 @@ public class ReactorRecipes {
         // NaCl + H2SO4 -> NaHSO4 + HCl
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Salt, 2)
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidInputs(SulfuricAcid.getFluid(1000))
                 .output(dust, SodiumBisulfate, 7)
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))

@@ -36,6 +36,8 @@ public class VanillaOverrideRecipes {
         if (ConfigHolder.vanillaRecipes.hardDyeRecipes)
             dyeRecipes();
         toolArmorRecipes();
+
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:tnt"));
     }
 
     private static void woodRecipes() {
@@ -172,9 +174,14 @@ public class VanillaOverrideRecipes {
         ModHandler.addShapedRecipe("quartz_sand", OreDictUnifier.get(OrePrefix.dust, Materials.QuartzSand), "S", "m",
                 'S', new ItemStack(Blocks.SAND));
 
-        ModHandler.addShapedRecipe("glass_dust_flint", OreDictUnifier.get(OrePrefix.dust, Materials.Glass), "QF",
-                'Q', new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
-                'F', new UnificationEntry(OrePrefix.dustTiny, Materials.Flint));
+        RecipeMaps.SIFTER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.SAND))
+                .output(OrePrefix.dust, Materials.QuartzSand)
+                .duration(60).EUt(16).buildAndRegister();
+
+        ModHandler.addShapelessRecipe("glass_dust_flint", OreDictUnifier.get(OrePrefix.dust, Materials.Glass),
+                new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
+                new UnificationEntry(OrePrefix.dustTiny, Materials.Flint));
 
         ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.SAND, 1, GTValues.W));
         ModHandler.removeRecipes(new ItemStack(Items.GLASS_BOTTLE, 3));

@@ -21,6 +21,7 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.FluidKey;
 import gregtech.api.render.Textures;
 import gregtech.api.util.*;
@@ -33,6 +34,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -41,7 +43,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.PooledMutableBlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -734,6 +735,18 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public void writeInitialSyncData(PacketBuffer buf) {
         buf.writeByte(this.frontFacing.getIndex());
+        boolean isPainted = false;
+        if(this.paintingColor != DEFAULT_PAINTING_COLOR && !(this instanceof MultiblockControllerBase)) {
+            for(EnumDyeColor color : EnumDyeColor.values()) {
+                if(this.paintingColor == color.colorValue) {
+                    isPainted = true;
+                    break;
+                }
+            }
+            if(!isPainted) {
+                setPaintingColor(DEFAULT_PAINTING_COLOR);
+            }
+        }
         buf.writeInt(this.paintingColor);
         buf.writeShort(mteTraits.size());
         for (MTETrait trait : mteTraits) {
@@ -1186,7 +1199,7 @@ public abstract class MetaTileEntity implements ICoverable {
         }
         data.setTag("Covers", coversList);
         data.setBoolean(TAG_KEY_FRAGILE, isFragile);
-        data.setBoolean(TAG_KEY_MUFFLED, isFragile);
+        data.setBoolean(TAG_KEY_MUFFLED, muffled);
         return data;
     }
 
