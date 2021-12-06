@@ -94,37 +94,6 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
     }
 
     @Override
-    public boolean fillInternalTankFromFluidContainer(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, int inputSlot, int outputSlot) {
-        ItemStack inputContainerStack = importItems.extractItem(inputSlot, 1, true);
-        IFluidHandlerItem fluidHandlerItem = FluidUtil.getFluidHandler(inputContainerStack);
-        if (fluidHandlerItem != null && ModHandler.isSteam(fluidHandlerItem.drain(1, false)))
-            return false;
-        return super.fillInternalTankFromFluidContainer(importItems, exportItems, inputSlot, outputSlot);
-    }
-
-    @Override
-    public void pullFluidsFromNearbyHandlers(EnumFacing... allowedFaces) {
-        BlockPos.PooledMutableBlockPos blockPos = BlockPos.PooledMutableBlockPos.retain();
-        EnumFacing[] AllowedFaces = allowedFaces;
-        int length = allowedFaces.length;
-
-        for (int i = 0; i < length; ++i) {
-            EnumFacing nearbyFacing = AllowedFaces[i];
-            blockPos.setPos(this.getPos()).move(nearbyFacing);
-            TileEntity tileEntity = this.getWorld().getTileEntity(blockPos);
-            if (tileEntity != null) {
-                IFluidHandler fluidHandler = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing.getOpposite());
-                IFluidHandler myFluidHandler = this.getCoverCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing);
-                if (fluidHandler != null && myFluidHandler != null && ModHandler.isSteam(fluidHandler.drain(1, false))) {
-                    GTFluidUtils.transferFluids(fluidHandler, myFluidHandler, 2147483647);
-                }
-            }
-        }
-        blockPos.release();
-    }
-
-
-    @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
