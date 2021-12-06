@@ -33,6 +33,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -733,6 +734,17 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public void writeInitialSyncData(PacketBuffer buf) {
         buf.writeByte(this.frontFacing.getIndex());
+        boolean isPainted = false;
+        if(this.paintingColor != DEFAULT_PAINTING_COLOR) {
+            for(EnumDyeColor color : EnumDyeColor.values()) {
+                if(this.paintingColor == color.colorValue) {
+                    isPainted = true;
+                }
+            }
+            if(!isPainted) {
+                setPaintingColor(DEFAULT_PAINTING_COLOR);
+            }
+        }
         buf.writeInt(this.paintingColor);
         buf.writeShort(mteTraits.size());
         for (MTETrait trait : mteTraits) {
