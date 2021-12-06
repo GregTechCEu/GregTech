@@ -10,6 +10,7 @@ import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.ThermalFluidHandlerItemStack;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -33,7 +34,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -48,10 +50,9 @@ import java.util.function.Predicate;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT_FLUIDS;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_OUTPUT_FACING;
+import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
 
-//todo allow super tanks to fill from machine fluid slots in the gui
 public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITieredMetaTileEntity, IActiveOutputSide {
-
 
     private final int tier;
     private final int maxFluidCapacity;
@@ -123,12 +124,9 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         data.setTag("FluidInventory", fluidTank.writeToNBT(new NBTTagCompound()));
         data.setBoolean("AutoOutputFluids", autoOutputFluids);
         data.setInteger("OutputFacing", getOutputFacing().getIndex());
-        data.setBoolean("locked", locked);
-        if (this.lockedFluid != null)
-            this.lockedFluid.writeToNBT(data);
-        else
-            data.setString("Empty", "");
-
+        if (this.lockedFluid != null) {
+            data.setTag("LockedFluid", lockedFluid.writeToNBT(new NBTTagCompound()));
+        }
         return data;
     }
 
@@ -139,23 +137,25 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         this.fluidTank.readFromNBT(data.getCompoundTag("FluidInventory"));
         this.autoOutputFluids = data.getBoolean("AutoOutputFluids");
         this.outputFacing = EnumFacing.VALUES[data.getInteger("OutputFacing")];
-        this.locked = data.getBoolean("locked");
-        if (!data.hasKey("Empty"))
-            this.lockedFluid = FluidStack.loadFluidStackFromNBT(data);
-        else
-            this.lockedFluid = null;
+        this.lockedFluid = FluidStack.loadFluidStackFromNBT(data.getCompoundTag("LockedFluid"));
+        this.locked = lockedFluid == null;
     }
 
     @Override
     public void initFromItemStackData(NBTTagCompound itemStack) {
         super.initFromItemStackData(itemStack);
-        fluidTank.readFromNBT(itemStack);
+        if (itemStack.hasKey(FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
+            fluidTank.setFluid(FluidStack.loadFluidStackFromNBT(itemStack.getCompoundTag(FLUID_NBT_KEY)));
+        }
     }
 
     @Override
     public void writeItemStackData(NBTTagCompound itemStack) {
         super.writeItemStackData(itemStack);
-        fluidTank.writeToNBT(itemStack);
+        FluidStack stack = fluidTank.getFluid();
+        if (stack != null && stack.amount > 0) {
+            itemStack.setTag(FLUID_NBT_KEY, stack.writeToNBT(new NBTTagCompound()));
+        }
     }
 
     @Override
@@ -208,10 +208,12 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.quantum_tank.capacity", maxFluidCapacity));
         NBTTagCompound compound = stack.getTagCompound();
-        if (compound != null && compound.hasKey("FluidName")) {
-            FluidStack fluidStack = new FluidStack(FluidRegistry.getFluid(compound.getString("FluidName")), 1000);
-            tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip.name", fluidStack.getLocalizedName()));
-            tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip.count", compound.getInteger("Amount")));
+        if (compound != null && compound.hasKey(FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
+            FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FLUID_NBT_KEY));
+            if (fluidStack != null) {
+                tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip.name", fluidStack.getLocalizedName()));
+                tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip.count", fluidStack.amount));
+            }
         }
     }
 
@@ -331,7 +333,11 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             return null;
         }
         return super.getCapability(capability, side);
+    }
 
+    @Override
+    public ICapabilityProvider initItemStackCapabilities(ItemStack itemStack) {
+        return new ThermalFluidHandlerItemStack(itemStack, maxFluidCapacity, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     @Override
