@@ -148,7 +148,6 @@ public class MachineBuilderWidget extends WidgetGroup {
     @SideOnly(Side.CLIENT)
     public void setSceneWidget(MachineSceneWidget sceneWidget) {
         this.sceneWidget = sceneWidget;
-        this.sceneWidget.setMaxZoom(15);
         this.highLightBlocks = new HashSet<>();
         sceneWidget.getWorldSceneRenderer().addRenderedBlocks(highLightBlocks, this::highLightRender);
         sceneWidget.setOnSelected(this::setFocus);

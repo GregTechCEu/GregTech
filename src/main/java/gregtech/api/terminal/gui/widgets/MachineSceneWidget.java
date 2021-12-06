@@ -56,7 +56,6 @@ public class MachineSceneWidget extends WidgetGroup {
     private float rotationYaw = 45;
     private float rotationPitch;
     private float zoom = 5;
-    private float maxZoom = 10;
     private float alpha = 1f;
     private boolean blendColor = true;
     private Set<BlockPos> cores;
@@ -88,10 +87,6 @@ public class MachineSceneWidget extends WidgetGroup {
             worldSceneRenderer.releaseFBO();
             worldSceneRenderer = null;
         }
-    }
-
-    public void setMaxZoom(float maxZoom) {
-        this.maxZoom = maxZoom;
     }
 
     public Set<BlockPos> getCores() {
@@ -285,7 +280,7 @@ public class MachineSceneWidget extends WidgetGroup {
     @Override
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
         if (isMouseOverElement(mouseX, mouseY)) {
-            zoom = (float) MathHelper.clamp(zoom + (wheelDelta < 0 ? 0.5 : -0.5), 3, maxZoom);
+            zoom = (float) MathHelper.clamp(zoom + (wheelDelta < 0 ? 0.5 : -0.5), 3, 999);
             if (worldSceneRenderer != null) {
                 worldSceneRenderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
             }

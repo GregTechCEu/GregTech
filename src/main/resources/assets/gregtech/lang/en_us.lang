@@ -4255,7 +4255,7 @@ terminal.ore_prospector.tier.5=radius size 6
 terminal.ore_prospector.tier.6=radius size 7
 
 terminal.console.description=A tool to help you free your inventory, it's time to say goodbye to wrench, screwdriver, hammer, and crowbar.
-terminal.console.notice=Please right click the machine when opening the terminal.
+terminal.console.notice=Please shift-right-click a machine when opening the terminal.
 terminal.console.front=Set as front
 terminal.console.items=set as items output
 terminal.console.fluids=set as fluids output
