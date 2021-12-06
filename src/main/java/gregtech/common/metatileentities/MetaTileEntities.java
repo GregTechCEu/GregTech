@@ -563,7 +563,7 @@ public class MetaTileEntities {
 
         // Battery Buffer, IDs 1315-1374
         endPos = GTValues.HT ? BATTERY_BUFFER.length - 1 : Math.min(BATTERY_BUFFER.length - 1, GTValues.UV + 1);
-        int[] batteryBufferSlots = new int[]{1, 4, 9, 16};
+        int[] batteryBufferSlots = new int[]{1, 4, 8, 16};
         for (int i = 0; i < endPos; i++) {
             BATTERY_BUFFER[i] = new MetaTileEntityBatteryBuffer[batteryBufferSlots.length];
             for (int slot = 0; slot < batteryBufferSlots.length; slot++) {
