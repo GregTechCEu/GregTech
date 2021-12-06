@@ -237,9 +237,16 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     public TraceabilityPredicate autoAbilities() {
-        TraceabilityPredicate predicate = null;
-        if (hasMaintenanceMechanics()) {
-            predicate = abilities(MultiblockAbility.MAINTENANCE_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1);
+        return autoAbilities(true, true);
+    }
+
+    public TraceabilityPredicate autoAbilities(boolean checkMaintainer, boolean checkMuffler) {
+        TraceabilityPredicate predicate = new TraceabilityPredicate();
+        if (checkMaintainer && hasMaintenanceMechanics()) {
+            predicate = predicate.or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1));
+        }
+        if (checkMuffler && hasMufflerMechanics()) {
+            predicate =  predicate.or(abilities(MultiblockAbility.MUFFLER_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1));
         }
         return predicate;
     }

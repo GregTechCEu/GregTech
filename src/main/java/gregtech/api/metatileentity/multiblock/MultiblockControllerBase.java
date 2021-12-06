@@ -124,7 +124,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return getLightValueForPart(null);
     }
 
-    public static TraceabilityPredicate tilePredicate(BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate, Supplier<BlockInfo[]> candidates) {
+    public static TraceabilityPredicate tilePredicate(@Nonnull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate, @Nullable Supplier<BlockInfo[]> candidates) {
         return new TraceabilityPredicate(blockWorldState -> {
             TileEntity tileEntity = blockWorldState.getTileEntity();
             if (!(tileEntity instanceof MetaTileEntityHolder))
@@ -141,16 +141,16 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         }, candidates);
     }
 
-    public static TraceabilityPredicate tilePredicate(BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate) {
-        return tilePredicate(predicate, null);
-    }
-
     public static TraceabilityPredicate metaTileEntities(MetaTileEntity... metaTileEntities) {
         ResourceLocation[] ids = Arrays.stream(metaTileEntities).map(tile->tile.metaTileEntityId).toArray(ResourceLocation[]::new);
-        return tilePredicate((state, tile) -> ArrayUtils.contains(ids, tile.metaTileEntityId), getCandidates(metaTileEntities));
+        TraceabilityPredicate predicate = tilePredicate((state, tile) -> ArrayUtils.contains(ids, tile.metaTileEntityId), getCandidates(metaTileEntities));
+        if (metaTileEntities.length == 1) {
+            predicate.addTooltips("gregtech.multiblock.pattern.single");
+        }
+        return predicate;
     }
 
-    public static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities){
+    private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities){
         return ()->Arrays.stream(metaTileEntities).map(tile->{
             MetaTileEntityHolder holder = new MetaTileEntityHolder();
             holder.setMetaTileEntity(tile);
@@ -159,7 +159,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         }).toArray(BlockInfo[]::new);
     }
 
-    public static Supplier<BlockInfo[]> getCandidates(IBlockState... allowedStates){
+    private static Supplier<BlockInfo[]> getCandidates(IBlockState... allowedStates){
         return ()->Arrays.stream(allowedStates).map(state-> new BlockInfo(state, null)).toArray(BlockInfo[]::new);
     }
 
@@ -170,7 +170,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public static TraceabilityPredicate states(IBlockState... allowedStates) {
-        return new TraceabilityPredicate(blockWorldState -> {
+        TraceabilityPredicate predicate =  new TraceabilityPredicate(blockWorldState -> {
             IBlockState state = blockWorldState.getBlockState();
             if (state.getBlock() instanceof VariantActiveBlock) {
                 state = state.withProperty(VariantActiveBlock.ACTIVE, false);
@@ -178,6 +178,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             }
             return ArrayUtils.contains(allowedStates, state);
         }, getCandidates(allowedStates));
+        if (allowedStates.length == 1) {
+            predicate.addTooltips("gregtech.multiblock.pattern.single");
+        }
+        return predicate;
     }
 
     public static TraceabilityPredicate blocks(Block... block) {

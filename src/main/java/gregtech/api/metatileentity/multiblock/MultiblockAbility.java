@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class MultiblockAbility<T> {
 
     public static void registerMultiblockAbility(MultiblockAbility<?> ability, MetaTileEntity part) {
         if (!REGISTER.containsKey(ability)) {
-            REGISTER.put(ability, new LinkedList<>());
+            REGISTER.put(ability, new ArrayList<>());
         }
         REGISTER.get(ability).add(part);
     }

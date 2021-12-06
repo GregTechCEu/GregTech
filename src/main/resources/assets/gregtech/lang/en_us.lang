@@ -4025,13 +4025,15 @@ gregtech.multiblock.preview.rotate=Click and drag to rotate
 gregtech.multiblock.preview.select=Right-click to check candidates
 
 gregtech.multiblock.pattern.error=Expect components (%s) at (%s).
-gregtech.multiblock.pattern.error.limited.0=§6The number of components should <= %d.§r
-gregtech.multiblock.pattern.error.limited.1=§6The number of components should >= %d.§r
-gregtech.multiblock.pattern.error.limited.2=§6The number of components should <= %d in each layer.§r
-gregtech.multiblock.pattern.error.limited.3=§6The number of components should >= %d in each layer.§r
-gregtech.multiblock.pattern.error.coils=§6All heating coils shall be of the same type.§r
+gregtech.multiblock.pattern.error.limited.0=§cThe number of components should <= %d.§r
+gregtech.multiblock.pattern.error.limited.1=§cThe number of components should >= %d.§r
+gregtech.multiblock.pattern.error.limited.2=§cThe number of components should <= %d in each layer.§r
+gregtech.multiblock.pattern.error.limited.3=§cThe number of components should >= %d in each layer.§r
+gregtech.multiblock.pattern.error.coils=§cAll heating coils shall be of the same type.§r
 gregtech.multiblock.pattern.clear_amount_1=§6Must have a clear 1x1x1 space in front.§r
 gregtech.multiblock.pattern.clear_amount_3=§6Must have a clear 3x3x1 space in front.§r
+gregtech.multiblock.pattern.single=§6Only this block can be used.§r
+gregtech.multiblock.pattern.location_end=§cVery End.§r
 
 gregtech.multiblock.blast_furnace.max_temperature=Max Temperature: %sK
 gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s

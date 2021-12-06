@@ -55,7 +55,7 @@ public class TraceabilityPredicate {
     }, ()-> ArrayUtils.addAll(
             Arrays.stream(BlockWireCoil.CoilType.values()).map(type->new BlockInfo(MetaBlocks.WIRE_COIL.getState(type), null)).toArray(BlockInfo[]::new),
             Arrays.stream(BlockWireCoil2.CoilType2.values()).map(type->new BlockInfo(MetaBlocks.WIRE_COIL2.getState(type), null)).toArray(BlockInfo[]::new)))
-            .setTooltips("gregtech.multiblock.pattern.error.coils");
+            .addTooltips("gregtech.multiblock.pattern.error.coils");
 
 
     public final List<SimplePredicate> common = new ArrayList<>();
@@ -89,10 +89,22 @@ public class TraceabilityPredicate {
     /**
      * Add tooltips for candidates. They are shown in JEI Pages.
      */
-    public TraceabilityPredicate setTooltips(String... tips) {
-        List<String> tooltips = Arrays.stream(tips).collect(Collectors.toList());
-        common.forEach(predicate -> predicate.toolTips = tooltips);
-        limited.forEach(predicate -> predicate.toolTips = tooltips);
+    public TraceabilityPredicate addTooltips(String... tips) {
+        if (tips.length > 0) {
+            List<String> tooltips = Arrays.stream(tips).collect(Collectors.toList());
+            common.forEach(predicate -> {
+                if (predicate.toolTips == null) {
+                    predicate.toolTips = new ArrayList<>();
+                }
+                predicate.toolTips.addAll(tooltips);
+            });
+            limited.forEach(predicate -> {
+                if (predicate.toolTips == null) {
+                    predicate.toolTips = new ArrayList<>();
+                }
+                predicate.toolTips.addAll(tooltips);
+            });
+        }
         return this;
     }
 

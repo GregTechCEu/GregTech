@@ -364,7 +364,7 @@ public class BlockPattern {
                         boolean find = false;
                         BlockInfo[] infos = null;
                         for (TraceabilityPredicate.SimplePredicate limit : predicate.limited) {
-                            if (limit.minLayerCount == -1 && limit.minGlobalCount == -1) continue;
+                            if (limit.minLayerCount == -1 && limit.minGlobalCount == -1 && limit.previewCount == -1) continue;
                             if (limit.minLayerCount > 0) {
                                 if (!cacheLayer.containsKey(limit)) {
                                     cacheLayer.put(limit, 1);
@@ -374,7 +374,15 @@ public class BlockPattern {
                                     continue;
                                 }
                             }
-                            if (limit.minGlobalCount > 0) {
+                            if (cacheGlobal.getOrDefault(limit, 0) < limit.previewCount) {
+                                if (!cacheGlobal.containsKey(limit)) {
+                                    cacheGlobal.put(limit, 1);
+                                } else if (cacheGlobal.get(limit) < limit.previewCount) {
+                                    cacheGlobal.put(limit, cacheGlobal.get(limit) + 1);
+                                } else {
+                                    continue;
+                                }
+                            } else if (limit.minGlobalCount > 0) {
                                 if (!cacheGlobal.containsKey(limit)) {
                                     cacheGlobal.put(limit, 1);
                                 } else if (cacheGlobal.get(limit) < limit.minGlobalCount) {
@@ -400,6 +408,8 @@ public class BlockPattern {
                                     } else {
                                         continue;
                                     }
+                                } else {
+                                    continue;
                                 }
                                 if (!cacheInfos.containsKey(common)) {
                                     cacheInfos.put(common, common.candidates == null ? null : common.candidates.get());
@@ -408,38 +418,20 @@ public class BlockPattern {
                                 find = true;
                                 break;
                             }
-                            if (!find) { // check limit with previewCount
-                                for (TraceabilityPredicate.SimplePredicate limit : predicate.limited) {
-                                    if ((limit.maxGlobalCount == -1 || cacheGlobal.getOrDefault(limit, 0) < limit.maxGlobalCount) &&
-                                            (limit.maxLayerCount == -1 || cacheLayer.getOrDefault(limit, 0) < limit.maxLayerCount) &&
-                                            (limit.previewCount == -1 || cacheGlobal.getOrDefault(limit, 0) < limit.previewCount)) {
-                                        if (limit.minLayerCount > 0) {
-                                            if (!cacheLayer.containsKey(limit)) {
-                                                cacheLayer.put(limit, 1);
-                                            } else{
-                                                cacheLayer.put(limit, cacheLayer.get(limit) + 1);
-                                            }
+                            if (!find) { // check without previewCount
+                                for (TraceabilityPredicate.SimplePredicate common : predicate.common) {
+                                    if (common.previewCount == -1) {
+                                        if (!cacheInfos.containsKey(common)) {
+                                            cacheInfos.put(common, common.candidates == null ? null : common.candidates.get());
                                         }
-                                        if (limit.minGlobalCount > 0 || limit.previewCount > 0) {
-                                            if (!cacheGlobal.containsKey(limit)) {
-                                                cacheGlobal.put(limit, 1);
-                                            } else {
-                                                cacheGlobal.put(limit, cacheGlobal.get(limit) + 1);
-                                            }
-                                        }
-                                        if (!cacheInfos.containsKey(limit)) {
-                                            cacheInfos.put(limit, limit.candidates == null ? null : limit.candidates.get());
-                                        }
-                                        infos = cacheInfos.get(limit);
+                                        infos = cacheInfos.get(common);
                                         find = true;
                                         break;
                                     }
                                 }
-                            }
-                            if (!find) { // check without previewCount
-                                if (predicate.common.isEmpty()) {
+                                if (!find) {
                                     for (TraceabilityPredicate.SimplePredicate limit : predicate.limited) {
-                                        if (limit.maxGlobalCount == -1 && limit.maxLayerCount == -1) {
+                                        if (limit.maxGlobalCount == -1 && limit.maxLayerCount == -1 && limit.previewCount == -1) {
                                             if (!cacheInfos.containsKey(limit)) {
                                                 cacheInfos.put(limit, limit.candidates == null ? null : limit.candidates.get());
                                             }
@@ -447,12 +439,6 @@ public class BlockPattern {
                                             break;
                                         }
                                     }
-                                } else {
-                                    TraceabilityPredicate.SimplePredicate common = predicate.common.get(0);
-                                    if (!cacheInfos.containsKey(common)) {
-                                        cacheInfos.put(common, common.candidates == null ? null : common.candidates.get());
-                                    }
-                                    infos = cacheInfos.get(common);
                                 }
                             }
                         }

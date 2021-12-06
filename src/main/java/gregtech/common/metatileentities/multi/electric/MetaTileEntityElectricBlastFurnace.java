@@ -40,7 +40,10 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockController implements IHeatingCoil {
 
@@ -161,16 +164,16 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.MV], EnumFacing.NORTH)
                 .where('I', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.LV], EnumFacing.SOUTH)
                 .where('O', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.LV], EnumFacing.SOUTH)
-                .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.LV], EnumFacing.EAST)
-                .where('D', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.LV], EnumFacing.WEST)
+                .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.LV], EnumFacing.WEST)
+                .where('D', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.LV], EnumFacing.EAST)
                 .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.UP)
                 .where('M', () -> ConfigHolder.U.GT5u.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH : MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF), EnumFacing.NORTH);
-        for (CoilType coilType : CoilType.values()) {
-            shapeInfo.add(builder.where('C', MetaBlocks.WIRE_COIL.getState(coilType)).build());
-        }
-        for (CoilType2 coilType : CoilType2.values()) {
-            shapeInfo.add(builder.where('C', MetaBlocks.WIRE_COIL2.getState(coilType)).build());
-        }
+        Arrays.stream(CoilType.values())
+                .sorted(Comparator.comparingInt(CoilType::getLevel))
+                .forEach(coilType -> shapeInfo.add(builder.where('C', MetaBlocks.WIRE_COIL.getState(coilType)).build()));
+        Arrays.stream(CoilType2.values())
+                .sorted(Comparator.comparingInt(CoilType2::getLevel))
+                .forEach(coilType -> shapeInfo.add(builder.where('C', MetaBlocks.WIRE_COIL2.getState(coilType)).build()));
         return shapeInfo;
     }
 }

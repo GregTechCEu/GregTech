@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
@@ -70,16 +71,18 @@ public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockControl
 
     @Override
     protected BlockPattern createStructurePattern() {
+        TraceabilityPredicate predicate = states(getCasingState()).or(autoAbilities(true, true, true, true, false));
         return FactoryBlockPattern.start()
                 .aisle("XXX", "XDX", "XXX")
-                .aisle("XCX", "CGC", "XCX")
-                .aisle("XCX", "CGC", "XCX")
+                .aisle("XCX", "CGC", "XTX")
+                .aisle("XCX", "CGC", "XTX")
                 .aisle("AAA", "AYA", "AAA")
                 .where('X', states(getCasingState()))
                 .where('G', states(MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.TITANIUM_GEARBOX)))
-                .where('C', states(getCasingState()).or(autoAbilities()))
+                .where('C', predicate)
+                .where('T', predicate.or(autoAbilities(false, false, false, false, true)))
                 .where('D', abilities(MultiblockAbility.OUTPUT_ENERGY))
-                .where('A', states(MetaBlocks.MULTIBLOCK_CASING.getState(MultiblockCasingType.ENGINE_INTAKE_CASING)).setTooltips("gregtech.multiblock.pattern.clear_amount_1"))
+                .where('A', states(MetaBlocks.MULTIBLOCK_CASING.getState(MultiblockCasingType.ENGINE_INTAKE_CASING)).addTooltips("gregtech.multiblock.pattern.clear_amount_1"))
                 .where('Y', selfPredicate())
                 .build();
     }

@@ -136,7 +136,7 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
         if (turbineType == null)
             return null;
 
-        TraceabilityPredicate predicate = states(getCasingState()).or(autoAbilities());
+        TraceabilityPredicate predicate = states(getCasingState()).or(autoAbilities(true, true, true, true, false));
         return FactoryBlockPattern.start()
                 .aisle("CCCC", "CHHC", "CCCC")
                 .aisle("CHHC", "RGGD", "CTTC")
@@ -144,10 +144,10 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
                 .where('S', selfPredicate())
                 .where('G', states(getGearBoxState()))
                 .where('C', states(getCasingState()))
-                .where('R', abilities(ABILITY_ROTOR_HOLDER).setTooltips("gregtech.multiblock.pattern.clear_amount_3"))
+                .where('R', abilities(ABILITY_ROTOR_HOLDER).addTooltips("gregtech.multiblock.pattern.clear_amount_3"))
                 .where('D', abilities(MultiblockAbility.OUTPUT_ENERGY))
                 .where('H', predicate)
-                .where('T', predicate.or(turbineType.hasMufflerHatch ? abilities(MultiblockAbility.MUFFLER_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1) : null))
+                .where('T', predicate.or(autoAbilities(false, false, false, false, true)))
                 .build();
     }
 

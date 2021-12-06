@@ -9,7 +9,9 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.render.scene.ImmediateWorldSceneRenderer;
 import gregtech.api.render.scene.TrackedDummyWorld;
@@ -100,6 +102,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private IDrawable infoIcon;
     private boolean drawInfoIcon;
     private ItemStack tooltipBlockStack;
+    private List<String> predicateTips;
 
     private BlockPos selected;
     private final List<TraceabilityPredicate.SimplePredicate> predicates;
@@ -278,6 +281,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         }
 
         this.tooltipBlockStack = null;
+        this.predicateTips = null;
         RayTraceResult rayTraceResult = renderer.getLastTraceResult();
         boolean insideView = mouseX >= 0 && mouseY >= 0 &&
                 mouseX < recipeWidth && mouseY < sceneHeight;
@@ -308,6 +312,25 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         if (!(leftClickHeld || rightClickHeld) && rayTraceResult != null && !renderer.world.isAirBlock(rayTraceResult.getBlockPos())) {
             IBlockState blockState = renderer.world.getBlockState(rayTraceResult.getBlockPos());
             ItemStack itemStack = blockState.getBlock().getPickBlock(blockState, rayTraceResult, renderer.world, rayTraceResult.getBlockPos(), minecraft.player);
+            TraceabilityPredicate predicates = patterns[currentRendererPage].predicateMap.get(rayTraceResult.getBlockPos());
+            if (predicates != null) {
+                BlockWorldState worldState = new BlockWorldState();
+                worldState.update(renderer.world, rayTraceResult.getBlockPos(), new PatternMatchContext(), new HashMap<>(), new HashMap<>(), predicates);
+                for (TraceabilityPredicate.SimplePredicate common : predicates.common) {
+                    if (common.test(worldState)) {
+                        predicateTips = common.getToolTips();
+                        break;
+                    }
+                }
+                if (predicateTips == null) {
+                    for (TraceabilityPredicate.SimplePredicate limit : predicates.limited) {
+                        if (limit.test(worldState)) {
+                            predicateTips = limit.getToolTips();
+                            break;
+                        }
+                    }
+                }
+            }
             if (itemStack != null && !itemStack.isEmpty()) {
                 this.tooltipBlockStack = itemStack;
             }
@@ -400,6 +423,9 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                 } else {
                     tooltip.set(k, TextFormatting.GRAY + tooltip.get(k));
                 }
+            }
+            if (predicateTips != null) {
+                tooltip.addAll(predicateTips);
             }
             return tooltip;
         }

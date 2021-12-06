@@ -133,21 +133,9 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
                 .where('S', selfPredicate())
                 .where('X', states(MetaBlocks.STEAM_CASING.getState(BlockSteamCasing.SteamCasingType.PUMP_DECK)))
                 .where('F', states(MetaBlocks.FRAMES.get(Materials.Wood).getBlockState().getBaseState()))
-                .where('H', abilities(MultiblockAbility.PUMP_FLUID_HATCH).or(hatchPredicate()))
+                .where('H', abilities(MultiblockAbility.PUMP_FLUID_HATCH).or(metaTileEntities(MetaTileEntities.FLUID_EXPORT_HATCH[0], MetaTileEntities.FLUID_EXPORT_HATCH[1])))
                 .where('*', any())
                 .build();
-    }
-
-    private static TraceabilityPredicate hatchPredicate() {
-        return tilePredicate((state, tile) -> {
-            if (tile instanceof IMultiblockAbilityPart<?>) {
-                IMultiblockAbilityPart<?> abilityPart = (IMultiblockAbilityPart<?>) tile;
-                if (abilityPart.getAbility() == MultiblockAbility.EXPORT_FLUIDS) {
-                    return ((MetaTileEntityFluidHatch) tile).getTier() <= 1;
-                }
-            }
-            return false;
-        }, getCandidates(MetaTileEntities.FLUID_EXPORT_HATCH[0], MetaTileEntities.FLUID_EXPORT_HATCH[1]));
     }
 
     @Override
