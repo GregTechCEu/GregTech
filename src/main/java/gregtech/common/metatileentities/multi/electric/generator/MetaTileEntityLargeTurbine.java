@@ -20,6 +20,7 @@ import gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -149,6 +150,11 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
                 .where('H', predicate)
                 .where('T', predicate.or(autoAbilities(false, false, false, false, true)))
                 .build();
+    }
+
+    @Override
+    public String[] getDescription() {
+        return new String[]{I18n.format("gregtech.multiblock.large_turbine.description")};
     }
 
     @Override

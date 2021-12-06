@@ -36,6 +36,7 @@ import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.tools.DamageValues;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -414,6 +415,11 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                         .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1))
                         .or(autoAbilities())) // maintainer
                 .build();
+    }
+
+    @Override
+    public String[] getDescription() {
+        return new String[]{I18n.format("gregtech.multiblock.large_boiler.description")};
     }
 
     @Override

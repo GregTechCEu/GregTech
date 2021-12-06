@@ -409,6 +409,11 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
+    public String[] getDescription() {
+        return new String[]{I18n.format("gregtech.multiblock.central_monitor.tooltip.1")};
+    }
+
+    @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         lastUpdate = 0;
