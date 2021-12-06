@@ -21,6 +21,7 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.FluidKey;
 import gregtech.api.render.Textures;
 import gregtech.api.util.*;
@@ -735,10 +736,11 @@ public abstract class MetaTileEntity implements ICoverable {
     public void writeInitialSyncData(PacketBuffer buf) {
         buf.writeByte(this.frontFacing.getIndex());
         boolean isPainted = false;
-        if(this.paintingColor != DEFAULT_PAINTING_COLOR) {
+        if(this.paintingColor != DEFAULT_PAINTING_COLOR && !(this instanceof MultiblockControllerBase)) {
             for(EnumDyeColor color : EnumDyeColor.values()) {
                 if(this.paintingColor == color.colorValue) {
                     isPainted = true;
+                    break;
                 }
             }
             if(!isPainted) {
