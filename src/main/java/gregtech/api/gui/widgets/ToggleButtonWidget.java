@@ -25,6 +25,7 @@ public class ToggleButtonWidget extends Widget {
     private final BooleanSupplier isPressedCondition;
     private final BooleanConsumer setPressedExecutor;
     private String tooltipText;
+    private Object[] tooltipArgs;
     protected boolean isPressed;
 
     public ToggleButtonWidget(int xPosition, int yPosition, int width, int height, BooleanSupplier isPressedCondition, BooleanConsumer setPressedExecutor) {
@@ -46,9 +47,10 @@ public class ToggleButtonWidget extends Widget {
         return this;
     }
 
-    public ToggleButtonWidget setTooltipText(String tooltipText) {
+    public ToggleButtonWidget setTooltipText(String tooltipText, Object... args) {
         Preconditions.checkNotNull(tooltipText, "tooltipText");
         this.tooltipText = tooltipText;
+        this.tooltipArgs = args;
         return this;
     }
 
@@ -69,7 +71,7 @@ public class ToggleButtonWidget extends Widget {
         if (isMouseOverElement(mouseX, mouseY) && tooltipText != null) {
             String postfix = isPressed ? ".enabled" : ".disabled";
             String tooltipHoverString = tooltipText + postfix;
-            List<String> hoverList = Arrays.asList(I18n.format(tooltipHoverString).split("/n"));
+            List<String> hoverList = Arrays.asList(I18n.format(tooltipHoverString, tooltipArgs).split("/n"));
             drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
         }
     }

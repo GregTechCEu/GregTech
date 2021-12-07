@@ -680,6 +680,7 @@ public class GTUtility {
     }
 
     public static FluidStack copyAmount(int amount, FluidStack fluidStack) {
+        if (fluidStack == null) return null;
         FluidStack stack = fluidStack.copy();
         stack.amount = amount;
         return stack;
