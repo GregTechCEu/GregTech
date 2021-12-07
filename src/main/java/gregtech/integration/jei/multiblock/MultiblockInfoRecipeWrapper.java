@@ -228,6 +228,13 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             setNextLayer(-1);
             updateParts();
             getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
+            if (this.selected != null) {
+                this.selected = null;
+                for (int i = 0; i < predicates.size(); i++) {
+                    recipeLayout.getItemStacks().set(i + MAX_PARTS, ItemStack.EMPTY);
+                }
+                predicates.clear();
+            }
         }
     }
 
@@ -509,8 +516,16 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         Vector3f minPos = world.getMinPos();
         center = new Vector3f(minPos.x + size.x / 2, minPos.y + size.y / 2, minPos.z + size.z / 2);
         worldSceneRenderer.addRenderedBlocks(world.renderedBlocks, null);
-        worldSceneRenderer.setOnLookingAt(ray -> renderBlockOverLay(ray.getBlockPos(), 150, 150, 150));
-        worldSceneRenderer.setAfterWorldRender(renderer -> renderBlockOverLay(selected, 255, 0, 0));
+        worldSceneRenderer.setOnLookingAt(ray -> {});
+        worldSceneRenderer.setAfterWorldRender(renderer -> {
+            BlockPos look = worldSceneRenderer.getLastTraceResult() == null ? null : worldSceneRenderer.getLastTraceResult().getBlockPos();
+            if (look != null && look.equals(selected)) {
+                renderBlockOverLay(selected, 200, 75, 75);
+                return;
+            }
+            renderBlockOverLay(look, 150, 150, 150);
+            renderBlockOverLay(selected, 255, 0, 0);
+        });
         world.updateEntities();
         world.setRenderFilter(pos->worldSceneRenderer.renderedBlocksMap.keySet().stream().anyMatch(c->c.contains(pos)));
         List<ItemStack> parts = gatherBlockDrops(worldSceneRenderer.world, blockMap, blockDrops).values().stream().sorted((one, two) -> {
