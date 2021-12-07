@@ -43,7 +43,7 @@ public class LCRCombined {
                 .fluidInputs(Oxygen.getFluid(3000))
                 .fluidOutputs(Ammonia.getFluid(4000))
                 .fluidOutputs(CarbonMonoxide.getFluid(3000))
-                .EUt(30)
+                .EUt(480)
                 .duration(320)
                 .buildAndRegister();
 
