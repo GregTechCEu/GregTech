@@ -118,6 +118,9 @@ public class FactoryBlockPattern {
     }
 
     public FactoryBlockPattern where(char symbol, TraceabilityPredicate blockMatcher) {
+        if (blockMatcher.limited.size() + blockMatcher.common.size() == 1) {
+            blockMatcher.addTooltips("gregtech.multiblock.pattern.single");
+        }
         this.symbolMap.put(symbol, new TraceabilityPredicate(blockMatcher));
         return this;
     }
