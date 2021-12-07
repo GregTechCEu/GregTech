@@ -4319,3 +4319,4 @@ monitor.gui.title.plugin=Plugin:
 monitor.gui.title.config=Config
 
 fluid.tile.lava=Lava
+fluid.tile.water=Water

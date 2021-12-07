@@ -3452,3 +3452,4 @@ gregtech.universal.clear_nbt_recipe.tooltip=§cThis will destroy all contents!
 gregtech.multiblock.primitive_water_pump.description=The Primitive Water Pump is a pre-Steam Era multiblock that collects water once per second, depending on the Biome it is in. It can use a Pump, ULV, or LV Output Hatch, increasing the amount of water per tier. Follows the formula: Biome Coefficient * Hatch Multiplier.
 
 fluid.tile.lava=Lava
+fluid.tile.water=Water

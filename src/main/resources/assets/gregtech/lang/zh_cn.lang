@@ -3553,3 +3553,4 @@ gregtech.cover.item_detector.message_item_storage_normal=Monitoring Normal Item 
 gregtech.cover.item_detector.message_item_storage_inverted=Monitoring Inverted Item Storage
 
 fluid.tile.lava=Lava
+fluid.tile.water=Water
