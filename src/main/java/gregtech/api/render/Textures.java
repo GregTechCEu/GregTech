@@ -279,7 +279,7 @@ public class Textures {
     public static void renderFaceBloom(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite) {
         if (ops.length > 0 && ops[0] instanceof GTBlockOperation) {
             GTBlockOperation op = (GTBlockOperation) ops[0];
-            if (op.layer != BloomRenderLayerHooks.BLOOM || !op.shouldSideBeRendered(face, bounds)) {
+            if (op.layer != BloomRenderLayerHooks.getRealBloomLayer() || !op.shouldSideBeRendered(face, bounds)) {
                 return;
             }
         }

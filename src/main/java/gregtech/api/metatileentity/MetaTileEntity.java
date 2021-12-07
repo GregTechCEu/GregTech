@@ -206,7 +206,7 @@ public abstract class MetaTileEntity implements ICoverable {
 
     @SideOnly(Side.CLIENT)
     public boolean canRenderInLayer(BlockRenderLayer renderLayer) {
-        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED || renderLayer == BloomRenderLayerHooks.BLOOM;
+        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED || renderLayer == BloomRenderLayerHooks.getRealBloomLayer();
     }
 
     @SideOnly(Side.CLIENT)

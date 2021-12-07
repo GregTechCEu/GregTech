@@ -40,6 +40,10 @@ public class BloomRenderLayerHooks {
     private static List<Runnable> RENDER_DYNAMICS;
     private static Map<ICustomRenderFast, List<Consumer<BufferBuilder>>> RENDER_FAST;
 
+    public static BlockRenderLayer getRealBloomLayer(){
+        return Shaders.isOptiFineShaderPackLoaded() ? BlockRenderLayer.CUTOUT : BLOOM;
+    }
+
     public static void init() {
         BLOOM = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[]{String.class}, "Bloom");
         RENDER_FAST = Maps.newHashMap();
@@ -53,14 +57,18 @@ public class BloomRenderLayerHooks {
     public static int renderBloomBlockLayer(RenderGlobal renderglobal, BlockRenderLayer blockRenderLayer, double partialTicks, int pass, Entity entity) {
         Minecraft mc = Minecraft.getMinecraft();
         mc.profiler.endStartSection("BTLayer");
-        if (!ConfigHolder.U.clientConfig.shader.bloom.emissiveTexturesBloom) {
+        if (Shaders.isOptiFineShaderPackLoaded()) {
+            int result =  renderglobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
+            RENDER_DYNAMICS.clear();
+            RENDER_FAST.clear();
+            return result;
+        } else if (!ConfigHolder.U.clientConfig.shader.bloom.emissiveTexturesBloom) {
             GlStateManager.depthMask(true);
             renderglobal.renderBlockLayer(BloomRenderLayerHooks.BLOOM, partialTicks, pass, entity);
             GlStateManager.depthMask(false);
             int result =  renderglobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
             RENDER_DYNAMICS.clear();
             RENDER_FAST.clear();
-            mc.profiler.endStartSection("bloom");
             return result;
         }
 

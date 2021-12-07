@@ -4,6 +4,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.*;
 import gregtech.core.hooks.BlockHooks;
+import gregtech.core.hooks.CTMHooks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -146,7 +147,7 @@ public class CustomTextureBakedModel implements IBakedModel {
                             .collect(Collectors.toList()));
                 }
             }
-            return ret;
+            return CTMHooks.getQuadsWithOptiFine(ret, layer, this, state, side, rand);
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
