@@ -372,7 +372,7 @@ public class OrePrefix {
         cableGtDouble.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount));
         cableGtQuadruple.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount * 2));
         cableGtOctal.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount * 3));
-        cableGtHex.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount * 4));
+        cableGtHex.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount * 5));
 
         plateDouble.setIgnored(Materials.BorosilicateGlass);
         plate.setIgnored(Materials.BorosilicateGlass);

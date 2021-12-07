@@ -353,7 +353,7 @@ public class ModHandler {
         while (recipe[itr] instanceof String) {
             String s = (String) recipe[itr];
             for (char c : s.toCharArray()) {
-                if (Character.isLowerCase(c)) continue; // skip tools
+                if (getToolNameByCharacter(c) != null) continue; // skip tools
                 int count = inputCountMap.getOrDefault(c, 0);
                 inputCountMap.put(c, count + 1);
             }
