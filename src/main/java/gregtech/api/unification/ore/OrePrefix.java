@@ -582,4 +582,9 @@ public class OrePrefix {
     public static Collection<OrePrefix> values() {
         return PREFIXES.values();
     }
+
+    @Override
+    public String toString() {
+        return name + "/" + id;
+    }
 }
