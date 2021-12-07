@@ -452,7 +452,6 @@ public class SeparationRecipes {
 
         EXTRACTOR_RECIPES.recipeBuilder().duration(128).EUt(4)
                 .inputs(new ItemStack(Items.COAL, 1, 1))
-                .chancedOutput(dust, Ash, 1000, 200)
                 .fluidOutputs(WoodTar.getFluid(100))
                 .buildAndRegister();
 

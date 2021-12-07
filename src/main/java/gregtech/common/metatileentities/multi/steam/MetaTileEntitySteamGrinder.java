@@ -17,6 +17,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -34,11 +35,16 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
             @Override
             public void applyParallelBonus(RecipeBuilder<?> builder) {
                 super.applyParallelBonus(builder);
-                if (builder.getOutputs().size() == 0) {
-                    Recipe.ChanceEntry output = builder.getChancedOutputs().get(0);
+                if (builder.getOutputs().size() > 0) {
+                    ItemStack output = builder.getOutputs().get(0).copy();
+                    builder.clearOutputs();
                     builder.clearChancedOutput();
-                    builder.chancedOutputs(Collections.singletonList(output));
-                } else builder.clearChancedOutput();
+                    builder.outputs(output);
+                } else {
+                    Recipe.ChanceEntry entry = builder.getChancedOutputs().get(0);
+                    builder.clearChancedOutput();
+                    builder.chancedOutputs(Collections.nCopies(builder.getParallel(), entry));
+                }
             }
         };
         this.recipeMapWorkable.setParallelLimit(8);

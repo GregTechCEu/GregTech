@@ -31,12 +31,13 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
 
     @Override
     public ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
-        initNBT(holder.getCurrentItem());
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 170, 238);
+        initNBT(holder.getCurrentItem());
 
         builder.widget(new ImageTextFieldWidget(20, 10, 130, 12, GuiTextures.CLIPBOARD_TEXT_BOX,
                 () -> getTitle(holder), (x) -> setTitle(holder, x), 23, 0xFFFFFF)
-                .setValidator((x) -> true));
+                .setValidator((x) -> true)
+                .doesClientCallback(true));
 
         for (int i = 0; i < 8; i++) {
             int finalI = i;
@@ -44,7 +45,8 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
                     () -> getButtonState(holder, finalI), (x) -> setButton(holder, finalI, x)));
             builder.widget(new ImageTextFieldWidget(24, 40 + 20 * i, 140, 12, GuiTextures.CLIPBOARD_TEXT_BOX,
                     () -> getString(holder, finalI), (x) -> setString(holder, finalI, x), 23, 0xFFFFFF)
-                    .setValidator((x) -> true));
+                    .setValidator((x) -> true)
+                    .doesClientCallback(true));
         }
 
         builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, -1))
@@ -52,7 +54,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
         builder.widget(new ClickButtonWidget(124, 200, 16, 16, "", (x) -> incrPageNum(holder, 1))
                 .setButtonTexture(GuiTextures.BUTTON_RIGHT).setShouldClientCallback(true));
         builder.widget(new SimpleTextWidget(85, 208, "", 0xFFFFFF,
-                () -> (getPageNum(holder) + 1) + " / " + MAX_PAGES));
+                () -> (getPageNum(holder) + 1) + " / " + MAX_PAGES, true));
 
         return builder.build(holder, entityPlayer);
     }
