@@ -65,24 +65,27 @@ public class PipeTankList implements IFluidHandler {
 
         FluidStack copy = resource.copy();
         copy.amount = max;
-        pipe.didInsertFrom(facing);
         return pipe.getFluidPipeNet().fill(copy, pipe.getPos(), doFill);
     }
 
     @Nullable
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain) {
-        GTLog.logger.warn("Don't use drain(int, bool) on Fluid pipes");
         return null;
     }
 
     @Nullable
-    @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain) {
+    public FluidStack drainInternal(FluidStack resource, boolean doDrain) {
         if (resource == null || resource.amount <= 0)
             return null;
         FluidStack drained = resource.copy();
         drained.amount = pipe.getFluidPipeNet().drain(resource, pipe.getPos(), false, doDrain);
         return drained;
+    }
+
+    @Nullable
+    @Override
+    public FluidStack drain(FluidStack fluidStack, boolean b) {
+        return null;
     }
 }

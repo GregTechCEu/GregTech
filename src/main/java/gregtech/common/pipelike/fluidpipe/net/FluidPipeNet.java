@@ -4,8 +4,8 @@ import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
-import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
+import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ITickable;
@@ -20,7 +20,9 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
     private final Set<FluidStack> fluids = new HashSet<>();
     private final Map<FluidStack, BlockPos> dirtyStacks = new HashMap<>();
     private final Map<FluidStack, BlockPos> fluidsToRemove = new HashMap<>();
+    private final Map<FluidStack, List<TileEntityFluidPipeTickable>> requestedPipes = new HashMap<>();
     private long netCapacity = -1;
+    private long timer = 0;
 
     public FluidPipeNet(WorldPipeNet<FluidPipeProperties, FluidPipeNet> world) {
         super(world);
@@ -69,8 +71,9 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                 return amount;
             }
         }
-        GTLog.logger.error("Tried draining {} * {} but is not in the net", stack.getFluid().getName(), stack.amount);
-        return 0;
+        throw new IllegalStateException(String.format("Tried draining %s * %s but is not in the net", stack.getFluid().getName(), stack.amount));
+        //GTLog.logger.error("Tried draining {} * {} but is not in the net", stack.getFluid().getName(), stack.amount);
+        //return 0;
     }
 
     public int fill(FluidStack stack, BlockPos pos, boolean doFill) {
@@ -111,10 +114,52 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
         parentNet.recountFluids();
     }
 
+    public void requestFluidForPipe(FluidStack stack, TileEntityFluidPipeTickable pipe) {
+        requestedPipes.computeIfAbsent(getFluidStack(stack), key -> new ArrayList<>()).add(pipe);
+    }
+
     @Override
     public void update() {
         if (getWorldData() != null && getAllNodes().size() > 0) {
             checkDirty();
+            if (++timer % TileEntityFluidPipe.FREQUENCY == 0) {
+                if (requestedPipes.size() > 0) {
+                    for (Map.Entry<FluidStack, List<TileEntityFluidPipeTickable>> entry : requestedPipes.entrySet()) {
+                        int toDistribute = entry.getKey().amount;
+                        BlockPos pos = null;
+                        while (toDistribute > 0 && entry.getValue().size() > 0) {
+                            int c = toDistribute / entry.getValue().size();
+                            int m = c == 0 ? toDistribute % entry.getValue().size() : 0;
+                            Iterator<TileEntityFluidPipeTickable> iterator = entry.getValue().iterator();
+                            while (iterator.hasNext()) {
+                                TileEntityFluidPipeTickable pipe = iterator.next();
+                                FluidStack toInsert = entry.getKey().copy();
+                                toInsert.amount = c;
+                                if (m > 0) {
+                                    toInsert.amount++;
+                                    m--;
+                                }
+                                int inserted = pipe.distribute(toInsert);
+                                if (inserted > 0 && pos == null) {
+                                    pos = pipe.getPos();
+                                }
+                                if (inserted < toInsert.amount) {
+                                    iterator.remove();
+                                }
+                                toDistribute -= inserted;
+                            }
+                        }
+                        if (pos != null) {
+                            FluidStack drainFromNet = entry.getKey().copy();
+                            drainFromNet.amount = entry.getKey().amount - toDistribute;
+                            drain(drainFromNet, pos, false, true);
+                        }
+                    }
+                    requestedPipes.clear();
+                } else {
+                    timer = 0;
+                }
+            }
             if (fluidsToRemove.size() > 0) {
                 for (Map.Entry<FluidStack, BlockPos> entry : fluidsToRemove.entrySet()) {
                     List<TileEntityFluidPipe> pipes = FluidNetWalker.getPipesForFluid(getWorldData(), entry.getValue(), entry.getKey());
@@ -153,7 +198,9 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                             }
                             FluidStack stack = dirtyStack.copy();
                             stack.amount = count;
-                            int set = pipe.setFluidAuto(stack, round > 0);
+                            int channel = pipe.findChannel(stack);
+                            pipe.setContainingFluid(null, channel, false);
+                            int set = pipe.setContainingFluid(stack, channel, round > 0);
                             if (count > set)
                                 pipeIterator.remove();
                             amount -= set;

@@ -42,9 +42,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     private static final Random random = new Random();
     private final EnumMap<EnumFacing, PipeTankList> tanks = new EnumMap<>(EnumFacing.class);
     private FluidTank[] fluidTanks;
-    private final EnumMap<EnumFacing, Integer> lastInserted = new EnumMap<>(EnumFacing.class);
     private List<Pair<IFluidHandler, Predicate<FluidStack>>> neighbourCache = new ArrayList<>();
-    protected static final int FREQUENCY = 5;
+    public static final int FREQUENCY = 5;
 
     private final EnumSet<EnumFacing> openConnections = EnumSet.noneOf(EnumFacing.class);
 
@@ -70,14 +69,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         return super.getCapabilityInternal(capability, facing);
     }
 
-    public void didInsertFrom(EnumFacing facing) {
-        lastInserted.put(facing, 20);
-    }
-
-    public EnumMap<EnumFacing, Integer> getLastInserted() {
-        return lastInserted;
-    }
-
     protected EnumSet<EnumFacing> getOpenFaces() {
         return openConnections;
     }
@@ -89,8 +80,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     public List<Pair<IFluidHandler, Predicate<FluidStack>>> getNeighbourHandlers() {
         List<Pair<IFluidHandler, Predicate<FluidStack>>> handlers = new ArrayList<>();
         for (EnumFacing facing : getOpenFaces()) {
-            if (getLastInserted().containsKey(facing))
-                continue;
             TileEntity tile = getWorld().getTileEntity(pos.offset(facing));
             if (tile == null) continue;
             IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite());
