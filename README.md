@@ -1,6 +1,6 @@
 # GregTech CE: Unofficial
 
-This is a fork of GregTech Community Edition for MC 1.12.2 maintained by the Gregicality development team.
+This is a fork of GregTech Community Edition for MC 1.12.2 maintained by the Gregtech CEu development team.
 
 ## Welcome to GregTech CE: Unofficial
 ### What is this?
@@ -35,7 +35,7 @@ We work with our addon-partners to attempt to preserve backwards-compatibility.
 
 ## Contribution
 ### Current state of project
-GTCEu is under active development with regular updates. It is primarily maintained by the Gregicality and Omnifactory development teams. The GTCEu community is very active and regularly contributes code, testing and ideas.
+GTCEu is under active development with regular updates. The GTCEu community is very active and regularly contributes code, testing and ideas.
 We are always looking for contributors!
 
 ### How to contribute

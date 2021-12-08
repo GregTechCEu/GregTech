@@ -6,6 +6,7 @@ import gregtech.api.unification.material.materials.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 
@@ -31,7 +32,15 @@ import static gregtech.api.unification.material.info.MaterialFlags.*;
  */
 public class Materials {
 
+    private static final AtomicBoolean INIT = new AtomicBoolean(false);
+
+    public static Material[] CHEMICAL_DYES;
+
     public static void register() {
+        if (INIT.getAndSet(true)) {
+            return;
+        }
+
         MarkerMaterials.register();
 
         /*
@@ -88,6 +97,17 @@ public class Materials {
          * - FREE RANGE 24000-31999
          * - Reserved for CraftTweaker: 32000-32767
          */
+
+        CHEMICAL_DYES = new Material[]{
+                Materials.DyeWhite, Materials.DyeOrange,
+                Materials.DyeMagenta, Materials.DyeLightBlue,
+                Materials.DyeYellow, Materials.DyeLime,
+                Materials.DyePink, Materials.DyeGray,
+                Materials.DyeLightGray, Materials.DyeCyan,
+                Materials.DyePurple, Materials.DyeBlue,
+                Materials.DyeBrown, Materials.DyeGreen,
+                Materials.DyeRed, Materials.DyeBlack
+        };
     }
 
     public static final List<MaterialFlag> STD_SOLID = new ArrayList<>();
@@ -100,7 +120,6 @@ public class Materials {
         STD_SOLID.addAll(Arrays.asList(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD));
 
         STD_GEM.addAll(STD_SOLID);
-        STD_GEM.add(GENERATE_LENS);
 
         STD_METAL.add(GENERATE_PLATE);
 
@@ -277,7 +296,6 @@ public class Materials {
     public static Material Chromite;
     public static Material Cinnabar;
     public static Material Water;
-    public static Material Clay;
     public static Material Coal;
     public static Material Cobaltite;
     public static Material Cooperite;
@@ -306,7 +324,6 @@ public class Materials {
     public static Material NiobiumTitanium;
     public static Material Obsidian;
     public static Material Phosphate;
-    public static Material PigIron;
     public static Material SterlingSilver;
     public static Material RoseGold;
     public static Material BlackBronze;
@@ -317,7 +334,7 @@ public class Materials {
     public static Material Pyrolusite;
     public static Material Pyrope;
     public static Material RockSalt;
-    public static Material RuthenianIridium;
+    public static Material Ruridit;
     public static Material Rubber;
     public static Material Ruby;
     public static Material Salt;
@@ -446,6 +463,25 @@ public class Materials {
     public static Material EnrichedNaquadahTriniumEuropiumDuranide;
     public static Material RutheniumTriniumAmericiumNeutronate;
 
+    public static Material PlatinumRaw;
+    public static Material InertMetalMixture;
+    public static Material RhodiumSulfate;
+    public static Material RutheniumTetroxide;
+    public static Material OsmiumTetroxide;
+    public static Material IridiumChloride;
+
+    public static Material FluoroantimonicAcid;
+    public static Material TitaniumTrifluoride;
+    public static Material CalciumPhosphide;
+    public static Material IndiumPhosphide;
+    public static Material BariumSulfide;
+    public static Material TriniumSulfide;
+    public static Material ZincSulfide;
+    public static Material GalliumSulfide;
+    public static Material AntimonyTrifluoride;
+    public static Material EnrichedNaquadahSulfate;
+    public static Material NaquadriaSulfate;
+
     /**
      * Organic chemistry
      */
@@ -514,6 +550,12 @@ public class Materials {
     public static Material Ethylbenzene;
     public static Material Naphthalene;
     public static Material Nitrobenzene;
+    public static Material PlatinumSludgeResidue;
+    public static Material PalladiumRaw;
+    public static Material RarestMetalMixture;
+    public static Material AmmoniumChloride;
+    public static Material AcidicOsmiumSolution;
+    public static Material RhodiumPlatedPalladium;
 
     /**
      * Not possible to determine exact Components
@@ -597,8 +639,6 @@ public class Materials {
     public static Material Gelatin;
     public static Material Agar;
     public static Material Andesite;
-    public static Material Diorite;
-    public static Material Granite;
     public static Material Vinteum;
     public static Material Milk;
     public static Material Cocoa;
@@ -610,6 +650,31 @@ public class Materials {
     public static Material RubySlurry;
     public static Material SapphireSlurry;
     public static Material GreenSapphireSlurry;
+    public static Material DyeBlack;
+    public static Material DyeRed;
+    public static Material DyeGreen;
+    public static Material DyeBrown;
+    public static Material DyeBlue;
+    public static Material DyePurple;
+    public static Material DyeCyan;
+    public static Material DyeLightGray;
+    public static Material DyeGray;
+    public static Material DyePink;
+    public static Material DyeLime;
+    public static Material DyeYellow;
+    public static Material DyeLightBlue;
+    public static Material DyeMagenta;
+    public static Material DyeOrange;
+    public static Material DyeWhite;
+
+    public static Material ImpureEnrichedNaquadahSolution;
+    public static Material EnrichedNaquadahSolution;
+    public static Material AcidicEnrichedNaquadahSolution;
+    public static Material EnrichedNaquadahWaste;
+    public static Material ImpureNaquadriaSolution;
+    public static Material NaquadriaSolution;
+    public static Material AcidicNaquadriaSolution;
+    public static Material NaquadriaWaste;
 
     /**
      * Second Degree Compounds
@@ -651,12 +716,10 @@ public class Materials {
     public static Material SteelMagnetic;
     public static Material VanadiumSteel;
     public static Material Potin;
-    public static Material Brick;
-    public static Material Fireclay;
     public static Material BorosilicateGlass;
     public static Material NaquadahAlloy;
-    public static Material NickelSulfateSolution;
-    public static Material CopperSulfateSolution;
+    public static Material SulfuricNickelSolution;
+    public static Material SulfuricCopperSolution;
     public static Material LeadZincSolution;
     public static Material NitrationMixture;
     public static Material DilutedSulfuricAcid;
@@ -670,6 +733,7 @@ public class Materials {
     public static Material LiquidEnderAir;
     public static Material AquaRegia;
     public static Material SaltWater;
+    public static Material Clay;
 
     /**
      * Third Degree Materials
@@ -684,6 +748,11 @@ public class Materials {
     public static Material Redrock;
     public static Material GarnetSand;
     public static Material HSSG;
+    public static Material IridiumMetalResidue;
+    public static Material Granite;
+    public static Material Brick;
+    public static Material Fireclay;
+    public static Material Diorite;
 
     /**
      * Fourth Degree Materials

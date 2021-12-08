@@ -15,6 +15,7 @@ import gregtech.api.multiblock.IPatternCenterPredicate;
 import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
+import gregtech.api.render.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockFireboxCasing;
@@ -105,7 +106,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getFrontDefaultTexture() {
-        return getFrontOverlay().sprites.get(OrientedOverlayRenderer.OverlayFace.FRONT).getSprite(false);
+        return getFrontOverlay().sprites.get(OrientedOverlayRenderer.OverlayFace.FRONT).getSprite(false, false);
     }
 
     public int getLightValueForPart(IMultiblockPart sourcePart) {

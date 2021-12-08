@@ -48,26 +48,47 @@ public class OrientedOverlayRenderer implements IIconRegister {
 
         private final TextureAtlasSprite normalSprite;
         private final TextureAtlasSprite activeSprite;
+        private final TextureAtlasSprite pausedSprite;
 
         private final TextureAtlasSprite normalSpriteEmissive;
         private final TextureAtlasSprite activeSpriteEmissive;
+        private final TextureAtlasSprite pausedSpriteEmissive;
 
         public ActivePredicate(TextureAtlasSprite normalSprite,
                                TextureAtlasSprite activeSprite,
+                               TextureAtlasSprite pausedSprite,
                                TextureAtlasSprite normalSpriteEmissive,
-                               TextureAtlasSprite activeSpriteEmissive) {
+                               TextureAtlasSprite activeSpriteEmissive,
+                               TextureAtlasSprite pausedSpriteEmissive) {
+
             this.normalSprite = normalSprite;
             this.activeSprite = activeSprite;
+            this.pausedSprite = pausedSprite;
             this.normalSpriteEmissive = normalSpriteEmissive;
             this.activeSpriteEmissive = activeSpriteEmissive;
+            this.pausedSpriteEmissive = pausedSpriteEmissive;
         }
 
-        public TextureAtlasSprite getSprite(boolean active) {
-            return active ? activeSprite : normalSprite;
+        public TextureAtlasSprite getSprite(boolean active, boolean workingEnabled) {
+            if (active) {
+                if (workingEnabled) {
+                    return activeSprite;
+                } else if (pausedSprite != null) {
+                    return pausedSprite;
+                }
+            }
+            return normalSprite;
         }
 
-        public TextureAtlasSprite getEmissiveSprite(boolean active) {
-            return active ? activeSpriteEmissive : normalSpriteEmissive;
+        public TextureAtlasSprite getEmissiveSprite(boolean active, boolean workingEnabled) {
+            if (active) {
+                if (workingEnabled) {
+                    return activeSpriteEmissive;
+                } else if (pausedSpriteEmissive != null) {
+                    return pausedSpriteEmissive;
+                }
+            }
+            return normalSpriteEmissive;
         }
     }
 
@@ -89,27 +110,31 @@ public class OrientedOverlayRenderer implements IIconRegister {
             TextureAtlasSprite normalSprite = textureMap.registerSprite(normalLocation);
             ResourceLocation activeLocation = new ResourceLocation(GTValues.MODID, String.format("blocks/%s/overlay_%s_active", basePath, faceName));
             TextureAtlasSprite activeSprite = textureMap.registerSprite(activeLocation);
+            ResourceLocation pausedLocation = new ResourceLocation(GTValues.MODID, String.format("blocks/%s/overlay_%s_paused", basePath, faceName));
+            TextureAtlasSprite pausedSprite = ResourceHelper.isTextureExist(pausedLocation) ? textureMap.registerSprite(pausedLocation) : null;
 
             ResourceLocation normalLocationEmissive = new ResourceLocation(GTValues.MODID, String.format("blocks/%s/overlay_%s_emissive", basePath, faceName));
             TextureAtlasSprite normalSpriteEmissive = ResourceHelper.isTextureExist(normalLocationEmissive) ? textureMap.registerSprite(normalLocationEmissive) : null;
             ResourceLocation activeLocationEmissive = new ResourceLocation(GTValues.MODID, String.format("blocks/%s/overlay_%s_active_emissive", basePath, faceName));
             TextureAtlasSprite activeSpriteEmissive = ResourceHelper.isTextureExist(activeLocationEmissive) ? textureMap.registerSprite(activeLocationEmissive) : null;
-            sprites.put(overlayFace, new ActivePredicate(normalSprite, activeSprite, normalSpriteEmissive, activeSpriteEmissive));
+            ResourceLocation pausedLocationEmissive = new ResourceLocation(GTValues.MODID, String.format("blocks/%s/overlay_%s_paused_emissive", basePath, faceName));
+            TextureAtlasSprite pausedSpriteEmissive = ResourceHelper.isTextureExist(pausedLocationEmissive) ? textureMap.registerSprite(pausedLocationEmissive) : null;
+            sprites.put(overlayFace, new ActivePredicate(normalSprite, activeSprite, pausedSprite, normalSpriteEmissive, activeSpriteEmissive, pausedSpriteEmissive));
         }
     }
 
     @SideOnly(Side.CLIENT)
-    public void render(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, Cuboid6 bounds, EnumFacing frontFacing, boolean isActive) {
+    public void render(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
         for (EnumFacing renderSide : EnumFacing.VALUES) {
             ActivePredicate predicate = sprites.get(OverlayFace.bySide(renderSide, frontFacing));
             if (predicate != null) {
 
-                TextureAtlasSprite renderSprite = predicate.getSprite(isActive);
+                TextureAtlasSprite renderSprite = predicate.getSprite(isActive, isWorkingEnabled);
                 Textures.renderFace(renderState, translation, ops, renderSide, bounds, renderSprite);
 
-                TextureAtlasSprite emissiveSprite = predicate.getEmissiveSprite(isActive);
+                TextureAtlasSprite emissiveSprite = predicate.getEmissiveSprite(isActive, isWorkingEnabled);
                 if (emissiveSprite != null) {
-                    if (ConfigHolder.U.clientConfig.machinesEemissiveTextures) {
+                    if (ConfigHolder.U.clientConfig.machinesEmissiveTextures) {
                         IVertexOperation[] lightPipeline = ArrayUtils.add(ops, new LightMapOperation(240, 240));
                         Textures.renderFaceBloom(renderState, translation, lightPipeline, renderSide, bounds, emissiveSprite);
                     } else {
@@ -122,7 +147,7 @@ public class OrientedOverlayRenderer implements IIconRegister {
     }
 
     @SideOnly(Side.CLIENT)
-    public void render(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, EnumFacing frontFacing, boolean isActive) {
-        render(renderState, translation, pipeline, Cuboid6.full, frontFacing, isActive);
+    public void render(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
+        render(renderState, translation, pipeline, Cuboid6.full, frontFacing, isActive, isWorkingEnabled);
     }
 }

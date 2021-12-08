@@ -1,7 +1,6 @@
 package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-import net.minecraft.init.Items;
 
 import static gregtech.api.recipes.RecipeMaps.MIXER_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
@@ -17,12 +16,6 @@ public class MixerRecipes {
                 .duration(500).EUt(2).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-                .input(dust, Sodium, 2)
-                .input(dust, Sulfur)
-                .output(dust, SodiumSulfide, 3)
-                .duration(60).EUt(30).buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder()
                 .fluidInputs(PolyvinylAcetate.getFluid(1000))
                 .fluidInputs(Acetone.getFluid(1500))
                 .fluidOutputs(Glue.getFluid(2500))
@@ -33,20 +26,6 @@ public class MixerRecipes {
                 .fluidInputs(MethylAcetate.getFluid(1500))
                 .fluidOutputs(Glue.getFluid(2500))
                 .duration(50).EUt(8).buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder()
-                .input(dust, Wood, 4)
-                .fluidInputs(SulfuricAcid.getFluid(1000))
-                .output(Items.COAL, 1, 1)
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
-                .duration(1200).EUt(2).buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder()
-                .input(Items.SUGAR, 4)
-                .fluidInputs(SulfuricAcid.getFluid(1000))
-                .output(Items.COAL, 1, 1)
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
-                .duration(1200).EUt(2).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
                 .input(dust, Gallium)
@@ -119,7 +98,7 @@ public class MixerRecipes {
                 .input(dust, Nickel)
                 .input(dust, Zinc)
                 .input(dust, Iron, 4)
-                .notConsumable(new IntCircuitIngredient(1))
+                .notConsumable(new IntCircuitIngredient(2))
                 .output(dust, FerriteMixture, 6)
                 .buildAndRegister();
 
@@ -168,6 +147,13 @@ public class MixerRecipes {
                 .input(dust, Chrome)
                 .notConsumable(new IntCircuitIngredient(1))
                 .output(dust, Kanthal, 3)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(500).EUt(120)
+                .input(dust, Chrome, 4)
+                .input(dust, Nickel)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, Nichrome, 5)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(400).EUt(7)
@@ -338,6 +324,21 @@ public class MixerRecipes {
                 .output(dust, Magnalium, 3)
                 .buildAndRegister();
 
+        MIXER_RECIPES.recipeBuilder().duration(100).EUt(30)
+                .input(dust, Vanadium)
+                .input(dust, Chrome)
+                .input(dust, Steel, 7)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, VanadiumSteel, 9)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(480)
+                .input(dust, Tungsten)
+                .input(dust, Steel)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, TungstenSteel, 2)
+                .buildAndRegister();
+
         MIXER_RECIPES.recipeBuilder().duration(200).EUt(3500)
                 .input(dust, TungstenSteel, 5)
                 .input(dust, Chrome)
@@ -368,7 +369,7 @@ public class MixerRecipes {
                 .input(dust, Ruthenium, 2)
                 .input(dust, Iridium)
                 .notConsumable(new IntCircuitIngredient(1))
-                .output(dust, RuthenianIridium, 3)
+                .output(dust, Ruridit, 3)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(300).EUt(1920)
@@ -376,6 +377,13 @@ public class MixerRecipes {
                 .input(dust, Iridium, 3)
                 .notConsumable(new IntCircuitIngredient(1))
                 .output(dust, Osmiridium, 4)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(400).EUt(7680)
+                .input(dust, Palladium, 3)
+                .input(dust, Rhodium)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, RhodiumPlatedPalladium, 4)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(400).EUt(7680)
@@ -396,15 +404,15 @@ public class MixerRecipes {
         MIXER_RECIPES.recipeBuilder().duration(600).EUt(24)
                 .input(dust, Manganese)
                 .input(dust, Phosphorus)
-                .notConsumable(new IntCircuitIngredient(2))
+                .notConsumable(new IntCircuitIngredient(1))
                 .output(dust, ManganesePhosphide, 2)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(600).EUt(120)
                 .input(dust, Magnesium)
                 .input(dust, Boron, 2)
-                .notConsumable(new IntCircuitIngredient(2))
-                .output(dust, MagnesiumDiboride, 2)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, MagnesiumDiboride, 3)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(400).EUt(480)
@@ -413,14 +421,14 @@ public class MixerRecipes {
                 .input(dust, Copper, 3)
                 .fluidInputs(Mercury.getFluid(1000))
                 .fluidInputs(Oxygen.getFluid(8000))
-                .notConsumable(new IntCircuitIngredient(2))
+                .notConsumable(new IntCircuitIngredient(1))
                 .output(dust, MercuryBariumCalciumCuprate, 16)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(200).EUt(1920)
                 .input(dust, Uranium238)
                 .input(dust, Platinum, 3)
-                .notConsumable(new IntCircuitIngredient(2))
+                .notConsumable(new IntCircuitIngredient(1))
                 .output(dust, UraniumTriplatinum, 4)
                 .buildAndRegister();
 
@@ -429,7 +437,7 @@ public class MixerRecipes {
                 .input(dust, Iron)
                 .input(dust, Arsenic)
                 .fluidInputs(Oxygen.getFluid(1000))
-                .notConsumable(new IntCircuitIngredient(2))
+                .notConsumable(new IntCircuitIngredient(1))
                 .output(dust, SamariumIronArsenicOxide, 4)
                 .buildAndRegister();
 
@@ -440,7 +448,7 @@ public class MixerRecipes {
                 .input(dust, Titanium)
                 .input(dust, Copper, 7)
                 .fluidInputs(Oxygen.getFluid(14000))
-                .notConsumable(new IntCircuitIngredient(2))
+                .notConsumable(new IntCircuitIngredient(1))
                 .output(dust, IndiumTinBariumTitaniumCuprate, 16)
                 .buildAndRegister();
 
@@ -448,7 +456,7 @@ public class MixerRecipes {
                 .input(dust, Uranium238)
                 .input(dust, Rhodium)
                 .input(dust, Naquadah, 2)
-                .notConsumable(new IntCircuitIngredient(2))
+                .notConsumable(new IntCircuitIngredient(1))
                 .output(dust, UraniumRhodiumDinaquadide, 4)
                 .buildAndRegister();
 
@@ -457,7 +465,7 @@ public class MixerRecipes {
                 .input(dust, Trinium, 3)
                 .input(dust, Europium, 2)
                 .input(dust, Duranium)
-                .notConsumable(new IntCircuitIngredient(2))
+                .notConsumable(new IntCircuitIngredient(1))
                 .output(dust, EnrichedNaquadahTriniumEuropiumDuranide, 10)
                 .buildAndRegister();
 
@@ -467,7 +475,7 @@ public class MixerRecipes {
                 .input(dust, Americium)
                 .input(dust, Neutronium, 2)
                 .fluidInputs(Oxygen.getFluid(8000))
-                .notConsumable(new IntCircuitIngredient(2))
+                .notConsumable(new IntCircuitIngredient(1))
                 .output(dust, RutheniumTriniumAmericiumNeutronate, 14)
                 .buildAndRegister();
     }

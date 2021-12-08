@@ -68,7 +68,9 @@ public class CustomTexture {
             for (int i = 0; i < format.getElementCount(); i++) {
                 VertexFormatElement ele = format.getElement(i);
                 //Stuff for Light or UV
-                if (ele.getUsage() == VertexFormatElement.EnumUsage.UV) {
+                if (ele.getUsage() == VertexFormatElement.EnumUsage.COLOR) {
+                    unpackedBuilder.put(i, 1, 1, 1, 1);
+                } else if (ele.getUsage() == VertexFormatElement.EnumUsage.UV) {
                     if (ele.getIndex() == 1) {
                         unpackedBuilder.put(i, ((float) blockLight * 0x20) / 0xFFFF, ((float) skyLight * 0x20) / 0xFFFF);
                     } else if (ele.getIndex() == 0) {

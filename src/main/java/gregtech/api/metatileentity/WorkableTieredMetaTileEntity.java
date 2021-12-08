@@ -5,12 +5,19 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.*;
+import gregtech.api.metatileentity.sound.ISoundCreator;
+import gregtech.api.metatileentity.sound.PositionedSoundMTE;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.render.OrientedOverlayRenderer;
+import gregtech.api.sound.GTSounds;
+import gregtech.common.ConfigHolder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -24,7 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity {
+public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity implements ISoundCreator {
 
     protected final RecipeLogicEnergy workable;
     protected final OrientedOverlayRenderer renderer;
@@ -41,6 +48,10 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         reinitializeEnergyContainer();
     }
 
+    public boolean canCreateSound() {
+        return workable.isActive();
+    }
+
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
         return new RecipeLogicEnergy(this, recipeMap, () -> energyContainer);
     }
@@ -54,7 +65,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         } else this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 64L, tierVoltage, 2, 0L, 0L) {
             @Override
             public long getInputAmperage() {
-                if(getEnergyCapacity() / 2 > getEnergyStored() && workable.isActive()) {
+                if (getEnergyCapacity() / 2 > getEnergyStored() && workable.isActive()) {
                     return 2;
                 }
                 return 1;
@@ -70,25 +81,25 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        renderer.render(renderState, translation, pipeline, getFrontFacing(), workable.isActive());
+        renderer.render(renderState, translation, pipeline, getFrontFacing(), workable.isActive(), workable.isWorkingEnabled());
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         if (workable == null) return new ItemStackHandler(0);
-        return new NotifiableItemStackHandler(workable.recipeMap.getMaxInputs(), this, false);
+        return new NotifiableItemStackHandler(workable.getRecipeMap().getMaxInputs(), this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
         if (workable == null) return new ItemStackHandler(0);
-        return new NotifiableItemStackHandler(workable.recipeMap.getMaxOutputs(), this, true);
+        return new NotifiableItemStackHandler(workable.getRecipeMap().getMaxOutputs(), this, true);
     }
 
     @Override
     protected FluidTankList createImportFluidHandler() {
         if (workable == null) return new FluidTankList(false);
-        FilteredFluidHandler[] fluidImports = new FilteredFluidHandler[workable.recipeMap.getMaxFluidInputs()];
+        FilteredFluidHandler[] fluidImports = new FilteredFluidHandler[workable.getRecipeMap().getMaxFluidInputs()];
         for (int i = 0; i < fluidImports.length; i++) {
             NotifiableFilteredFluidHandler filteredFluidHandler = new NotifiableFilteredFluidHandler(this.tankScalingFunction.apply(this.getTier()), this, false);
             filteredFluidHandler.setFillPredicate(this::canInputFluid);
@@ -100,7 +111,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     @Override
     protected FluidTankList createExportFluidHandler() {
         if (workable == null) return new FluidTankList(false);
-        FluidTank[] fluidExports = new FluidTank[workable.recipeMap.getMaxFluidOutputs()];
+        FluidTank[] fluidExports = new FluidTank[workable.getRecipeMap().getMaxFluidOutputs()];
         for (int i = 0; i < fluidExports.length; i++) {
             fluidExports[i] = new NotifiableFluidTank(this.tankScalingFunction.apply(this.getTier()), this, true);
         }
@@ -108,7 +119,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     }
 
     protected boolean canInputFluid(FluidStack inputFluid) {
-        RecipeMap<?> recipeMap = workable.recipeMap;
+        RecipeMap<?> recipeMap = workable.getRecipeMap();
         if (recipeMap.canInputFluidForce(inputFluid.getFluid()))
             return true; //if recipe map forces input of given fluid, return true
         Set<Recipe> matchingRecipes = null;
@@ -143,5 +154,17 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
 
     public Function<Integer, Integer> getTankScalingFunction() {
         return tankScalingFunction;
+    }
+
+    public boolean isActive() {
+        return workable.isActive();
+    }
+
+    @Override
+    public void onAttached() {
+        super.onAttached();
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(this.workable.getRecipeMap().getSound(), this.getPos());
+        }
     }
 }

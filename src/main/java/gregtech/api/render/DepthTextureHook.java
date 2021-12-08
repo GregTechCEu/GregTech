@@ -1,8 +1,9 @@
 package gregtech.api.render;
 
+import gregtech.api.render.shader.Shaders;
 import gregtech.api.util.RenderUtil;
 import gregtech.common.ConfigHolder;
-import gregtech.common.asm.hooks.BloomRenderLayerHooks;
+import gregtech.core.hooks.BloomRenderLayerHooks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -37,7 +38,7 @@ public class DepthTextureHook {
     private static int lastWidth, lastHeight;
 
     private static boolean shouldRenderDepthTexture() {
-        return lastBind && ConfigHolder.U.clientConfig.hookDepthTexture && OpenGlHelper.isFramebufferEnabled();
+        return lastBind && !Shaders.isOptiFineShaderPackLoaded() && ConfigHolder.U.clientConfig.hookDepthTexture && OpenGlHelper.isFramebufferEnabled();
     }
 
     public static void onPreWorldRender(TickEvent.RenderTickEvent event) {

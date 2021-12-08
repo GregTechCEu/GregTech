@@ -48,6 +48,7 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT_FLUIDS;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_OUTPUT_FACING;
 
+//todo allow super tanks to fill from machine fluid slots in the gui
 public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITieredMetaTileEntity, IActiveOutputSide {
 
 

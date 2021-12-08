@@ -274,7 +274,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
             RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.LuV].getStackForm())
-                    .input(OrePrefix.cableGtSingle, Materials.YttriumBariumCuprate, 2)
+                    .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
                     .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
                     .input(OrePrefix.circuit, MarkerMaterials.Tier.Master, 2)
                     .inputs(MetaItems.VOLTAGE_COIL_LUV.getStackForm(2))
@@ -286,7 +286,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
             RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.LuV].getStackForm())
-                    .input(OrePrefix.cableGtSingle, Materials.YttriumBariumCuprate, 2)
+                    .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
                     .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
                     .input(OrePrefix.circuit, MarkerMaterials.Tier.Master, 2)
                     .inputs(MetaItems.VOLTAGE_COIL_LUV.getStackForm(2))
@@ -322,7 +322,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
             RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.UV].getStackForm())
-                    .input(OrePrefix.cableGtDouble, Materials.NiobiumTitanium, 2)
+                    .input(OrePrefix.cableGtDouble, Materials.YttriumBariumCuprate, 2)
                     .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
                     .input(OrePrefix.circuit, MarkerMaterials.Tier.Super, 2)
                     .inputs(MetaItems.VOLTAGE_COIL_UV.getStackForm(2))
@@ -334,7 +334,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
             RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.UV].getStackForm())
-                    .input(OrePrefix.cableGtDouble, Materials.NiobiumTitanium, 2)
+                    .input(OrePrefix.cableGtDouble, Materials.YttriumBariumCuprate, 2)
                     .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
                     .input(OrePrefix.circuit, MarkerMaterials.Tier.Super, 2)
                     .inputs(MetaItems.VOLTAGE_COIL_UV.getStackForm(2))
@@ -406,10 +406,10 @@ public class MetaTileEntityMachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(TRANSFORMER[GTValues.IV].getStackForm())
                 .inputs(MetaItems.ELECTRIC_PUMP_HV.getStackForm())
-                .input(OrePrefix.wireGtQuadruple, Materials.YttriumBariumCuprate)
+                .input(OrePrefix.wireGtQuadruple, Materials.NiobiumTitanium)
                 .input(OrePrefix.wireGtOctal, Materials.Tungsten)
                 .input(OrePrefix.springSmall, Materials.Tungsten)
-                .input(OrePrefix.spring, Materials.YttriumBariumCuprate)
+                .input(OrePrefix.spring, Materials.NiobiumTitanium)
                 .fluidInputs(Materials.Lubricant.getFluid(2000))
                 .outputs(ADJUSTABLE_TRANSFORMER[GTValues.IV].getStackForm())
                 .duration(200).EUt(7680).buildAndRegister();
@@ -418,8 +418,8 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputs(TRANSFORMER[GTValues.LuV].getStackForm())
                 .inputs(MetaItems.ELECTRIC_PUMP_EV.getStackForm())
                 .input(OrePrefix.wireGtQuadruple, Materials.VanadiumGallium)
-                .input(OrePrefix.wireGtOctal, Materials.YttriumBariumCuprate)
-                .input(OrePrefix.springSmall, Materials.YttriumBariumCuprate)
+                .input(OrePrefix.wireGtOctal, Materials.NiobiumTitanium)
+                .input(OrePrefix.springSmall, Materials.NiobiumTitanium)
                 .input(OrePrefix.spring, Materials.VanadiumGallium)
                 .fluidInputs(Materials.Lubricant.getFluid(2000))
                 .outputs(ADJUSTABLE_TRANSFORMER[GTValues.LuV].getStackForm())
@@ -428,10 +428,10 @@ public class MetaTileEntityMachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(TRANSFORMER[GTValues.ZPM].getStackForm())
                 .inputs(MetaItems.ELECTRIC_PUMP_EV.getStackForm())
-                .input(OrePrefix.wireGtQuadruple, Materials.NiobiumTitanium)
+                .input(OrePrefix.wireGtQuadruple, Materials.YttriumBariumCuprate)
                 .input(OrePrefix.wireGtOctal, Materials.VanadiumGallium)
                 .input(OrePrefix.springSmall, Materials.VanadiumGallium)
-                .input(OrePrefix.spring, Materials.NiobiumTitanium)
+                .input(OrePrefix.spring, Materials.YttriumBariumCuprate)
                 .fluidInputs(Materials.Lubricant.getFluid(2000))
                 .outputs(ADJUSTABLE_TRANSFORMER[GTValues.ZPM].getStackForm())
                 .duration(200).EUt(131072).buildAndRegister();
@@ -440,8 +440,8 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputs(TRANSFORMER[GTValues.UV].getStackForm())
                 .inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
                 .input(OrePrefix.wireGtQuadruple, Materials.Europium)
-                .input(OrePrefix.wireGtOctal, Materials.NiobiumTitanium)
-                .input(OrePrefix.springSmall, Materials.NiobiumTitanium)
+                .input(OrePrefix.wireGtOctal, Materials.YttriumBariumCuprate)
+                .input(OrePrefix.springSmall, Materials.YttriumBariumCuprate)
                 .input(OrePrefix.spring, Materials.Europium)
                 .fluidInputs(Materials.Lubricant.getFluid(2000))
                 .outputs(ADJUSTABLE_TRANSFORMER[GTValues.UV].getStackForm())
@@ -515,7 +515,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputs(MetaItems.VOLTAGE_COIL_LUV.getStackForm(2))
                 .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
                 .input(OrePrefix.wireGtQuadruple, Materials.HSSG, 4)
-                .input(OrePrefix.plateDouble, Materials.Chrome)
+                .input(OrePrefix.plateDouble, Materials.RhodiumPlatedPalladium)
                 .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.LuV].getStackForm())
                 .duration(100).EUt(32768).buildAndRegister();
 
@@ -607,7 +607,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputs(MetaItems.VOLTAGE_COIL_LUV.getStackForm(2))
                 .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
                 .input(OrePrefix.wireGtQuadruple, Materials.HSSG, 4)
-                .input(OrePrefix.plateDouble, Materials.Chrome)
+                .input(OrePrefix.plateDouble, Materials.RhodiumPlatedPalladium)
                 .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.LuV].getStackForm())
                 .duration(100).EUt(32768).buildAndRegister();
 
@@ -631,10 +631,47 @@ public class MetaTileEntityMachineRecipeLoader {
                 .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.UV].getStackForm())
                 .duration(100).EUt(524288).buildAndRegister();
 
+        // Maintenance Hatch
+
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(HULL[GTValues.LV].getStackForm())
                 .circuitMeta(1)
                 .outputs(MAINTENANCE_HATCH.getStackForm())
                 .duration(100).EUt(30).buildAndRegister();
+
+        // Multiblock Miners
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(HULL[GTValues.EV].getStackForm())
+                .input(OrePrefix.frameGt, Materials.Titanium, 4)
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Extreme, 4)
+                .inputs(MetaItems.ELECTRIC_MOTOR_EV.getStackForm(4))
+                .inputs(MetaItems.ELECTRIC_PUMP_EV.getStackForm(4))
+                .inputs(MetaItems.CONVEYOR_MODULE_EV.getStackForm(4))
+                .input(OrePrefix.gear, Materials.Tungsten, 2)
+                .outputs(MetaTileEntities.BASIC_LARGE_MINER.getStackForm())
+                .duration(400).EUt(1920).buildAndRegister();
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(HULL[GTValues.IV].getStackForm())
+                .input(OrePrefix.frameGt, Materials.TungstenSteel, 4)
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Elite, 4)
+                .inputs(MetaItems.ELECTRIC_MOTOR_IV.getStackForm(4))
+                .inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm(4))
+                .inputs(MetaItems.CONVEYOR_MODULE_IV.getStackForm(4))
+                .input(OrePrefix.gear, Materials.Ultimet, 2)
+                .outputs(MetaTileEntities.LARGE_MINER.getStackForm())
+                .duration(400).EUt(7680).buildAndRegister();
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(HULL[GTValues.LuV].getStackForm())
+                .input(OrePrefix.frameGt, Materials.HSSS, 4)
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Master, 4)
+                .inputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm(4))
+                .inputs(MetaItems.ELECTRIC_PUMP_LUV.getStackForm(4))
+                .inputs(MetaItems.CONVEYOR_MODULE_LUV.getStackForm(4))
+                .input(OrePrefix.gear, Materials.Ruridit, 2)
+                .outputs(MetaTileEntities.ADVANCED_LARGE_MINER.getStackForm())
+                .duration(400).EUt(30720).buildAndRegister();
     }
 }

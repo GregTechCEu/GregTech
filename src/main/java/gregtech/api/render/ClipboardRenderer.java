@@ -75,6 +75,7 @@ public class ClipboardRenderer implements TextureUtils.IIconRegister {
 
     @SideOnly(Side.CLIENT)
     public void renderGUI(double x, double y, double z, EnumFacing rotation, MetaTileEntityClipboard clipboard, float partialTicks) {
+        GlStateManager.color(1,1,1,1);
         GlStateManager.pushMatrix();
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
@@ -92,6 +93,8 @@ public class ClipboardRenderer implements TextureUtils.IIconRegister {
 
         if (clipboard.guiCache != null) {
             Pair<Double, Double> result = clipboard.checkLookingAt(Minecraft.getMinecraft().player);
+            GlStateManager.translate(0, 0, 0.01);
+            GlStateManager.scale(1, 1, -1);
             if (result == null) {
                 clipboard.guiCache.drawScreen(0, 0, partialTicks);
             } else {

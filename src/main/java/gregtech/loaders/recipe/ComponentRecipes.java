@@ -22,41 +22,41 @@ public class ComponentRecipes {
     public static void register() {
 
         //Field Generators Start ---------------------------------------------------------------------------------------
-        ModHandler.addShapedRecipe("field_generator/field_generator_lv", MetaItems.FIELD_GENERATOR_LV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtSingle, Materials.Osmium), 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'G', new UnificationEntry(OrePrefix.gem, Materials.EnderPearl), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic));
-        ModHandler.addShapedRecipe("field_generator/field_generator_mv", MetaItems.FIELD_GENERATOR_MV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtDouble, Materials.Osmium), 'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium), 'G', new UnificationEntry(OrePrefix.gem, Materials.EnderEye), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Good));
-        ModHandler.addShapedRecipe("field_generator/field_generator_hv", MetaItems.FIELD_GENERATOR_HV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Osmium), 'P', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel), 'G', MetaItems.QUANTUM_EYE.getStackForm(), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Advanced));
-        ModHandler.addShapedRecipe("field_generator/field_generator_ev", MetaItems.FIELD_GENERATOR_EV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Osmium), 'P', new UnificationEntry(OrePrefix.plateDouble, Materials.Titanium), 'G', new UnificationEntry(OrePrefix.gem, Materials.NetherStar), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Extreme));
-        ModHandler.addShapedRecipe("field_generator/field_generator_iv", MetaItems.FIELD_GENERATOR_IV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Osmium), 'P', new UnificationEntry(OrePrefix.plateDouble, Materials.TungstenSteel), 'G', MetaItems.QUANTUM_STAR.getStackForm(), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Elite));
+        ModHandler.addShapedRecipe("field_generator/field_generator_lv", MetaItems.FIELD_GENERATOR_LV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.ManganesePhosphide), 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'G', new UnificationEntry(OrePrefix.gemFlawless, Materials.Quartzite), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic));
+        ModHandler.addShapedRecipe("field_generator/field_generator_mv", MetaItems.FIELD_GENERATOR_MV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.MagnesiumDiboride), 'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium), 'G', new UnificationEntry(OrePrefix.gem, Materials.EnderPearl), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Good));
+        ModHandler.addShapedRecipe("field_generator/field_generator_hv", MetaItems.FIELD_GENERATOR_HV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.MercuryBariumCalciumCuprate), 'P', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel), 'G', new UnificationEntry(OrePrefix.gem, Materials.EnderEye), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Advanced));
+        ModHandler.addShapedRecipe("field_generator/field_generator_ev", MetaItems.FIELD_GENERATOR_EV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.UraniumTriplatinum), 'P', new UnificationEntry(OrePrefix.plateDouble, Materials.Titanium), 'G', MetaItems.QUANTUM_EYE.getStackForm(), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Extreme));
+        ModHandler.addShapedRecipe("field_generator/field_generator_iv", MetaItems.FIELD_GENERATOR_IV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.SamariumIronArsenicOxide), 'P', new UnificationEntry(OrePrefix.plateDouble, Materials.TungstenSteel), 'G', MetaItems.QUANTUM_STAR.getStackForm(), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Elite));
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.gem, Materials.EnderPearl)
+                .input(OrePrefix.gemFlawless, Materials.Quartzite)
                 .input(OrePrefix.plate, Materials.Steel, 2)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Basic, 2)
-                .fluidInputs(Materials.Osmium.getFluid(L * 2))
+                .input(OrePrefix.wireGtQuadruple, Materials.ManganesePhosphide, 4)
                 .outputs(MetaItems.FIELD_GENERATOR_LV.getStackForm())
                 .duration(100).EUt(30).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.gem, Materials.EnderEye)
+                .input(OrePrefix.gem, Materials.EnderPearl)
                 .input(OrePrefix.plate, Materials.Aluminium, 2)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Good, 2)
-                .fluidInputs(Materials.Osmium.getFluid(L * 4))
+                .input(OrePrefix.wireGtQuadruple, Materials.MagnesiumDiboride, 4)
                 .outputs(MetaItems.FIELD_GENERATOR_MV.getStackForm())
                 .duration(100).EUt(30).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(MetaItems.QUANTUM_EYE.getStackForm())
+                .input(OrePrefix.gem, Materials.EnderEye)
                 .input(OrePrefix.plate, Materials.StainlessSteel, 2)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Advanced, 2)
-                .fluidInputs(Materials.Osmium.getFluid(L * 8))
+                .input(OrePrefix.wireGtQuadruple, Materials.MercuryBariumCalciumCuprate, 4)
                 .outputs(MetaItems.FIELD_GENERATOR_HV.getStackForm())
                 .duration(100).EUt(30).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.gem, Materials.NetherStar)
+                .inputs(MetaItems.QUANTUM_EYE.getStackForm())
                 .input(OrePrefix.plateDouble, Materials.Titanium, 2)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Extreme, 2)
-                .fluidInputs(Materials.Osmium.getFluid(L * 8))
+                .input(OrePrefix.wireGtQuadruple, Materials.UraniumTriplatinum, 4)
                 .outputs(MetaItems.FIELD_GENERATOR_EV.getStackForm())
                 .duration(100).EUt(30).buildAndRegister();
 
@@ -64,9 +64,51 @@ public class ComponentRecipes {
                 .inputs(MetaItems.QUANTUM_STAR.getStackForm())
                 .input(OrePrefix.plateDouble, Materials.TungstenSteel, 2)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Elite, 2)
-                .fluidInputs(Materials.Osmium.getFluid(L * 8))
+                .input(OrePrefix.wireGtQuadruple, Materials.SamariumIronArsenicOxide, 4)
                 .outputs(MetaItems.FIELD_GENERATOR_IV.getStackForm())
                 .duration(100).EUt(30).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.frameGt, Materials.HSSG)
+                .input(OrePrefix.plate, Materials.HSSG, 4)
+                .inputs(MetaItems.QUANTUM_STAR.getStackForm())
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Master)
+                .input(OrePrefix.wireFine, Materials.IndiumTinBariumTitaniumCuprate, 32)
+                .input(OrePrefix.wireFine, Materials.IndiumTinBariumTitaniumCuprate, 32)
+                .input(OrePrefix.wireFine, Materials.IndiumTinBariumTitaniumCuprate, 32)
+                .input(OrePrefix.wireFine, Materials.IndiumTinBariumTitaniumCuprate, 32)
+                .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .outputs(MetaItems.FIELD_GENERATOR_LUV.getStackForm())
+                .duration(600).EUt(5760).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.frameGt, Materials.NaquadahAlloy)
+                .input(OrePrefix.plate, Materials.NaquadahAlloy, 4)
+                .inputs(MetaItems.QUANTUM_STAR.getStackForm())
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Ultimate)
+                .input(OrePrefix.wireFine, Materials.UraniumRhodiumDinaquadide, 32)
+                .input(OrePrefix.wireFine, Materials.UraniumRhodiumDinaquadide, 32)
+                .input(OrePrefix.wireFine, Materials.UraniumRhodiumDinaquadide, 32)
+                .input(OrePrefix.wireFine, Materials.UraniumRhodiumDinaquadide, 32)
+                .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .outputs(MetaItems.FIELD_GENERATOR_ZPM.getStackForm())
+                .duration(600).EUt(23040).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.frameGt, Materials.Tritanium)
+                .input(OrePrefix.plate, Materials.Tritanium, 4)
+                .inputs(MetaItems.QUANTUM_STAR.getStackForm())
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Super)
+                .input(OrePrefix.wireFine, Materials.EnrichedNaquadahTriniumEuropiumDuranide, 32)
+                .input(OrePrefix.wireFine, Materials.EnrichedNaquadahTriniumEuropiumDuranide, 32)
+                .input(OrePrefix.wireFine, Materials.EnrichedNaquadahTriniumEuropiumDuranide, 32)
+                .input(OrePrefix.wireFine, Materials.EnrichedNaquadahTriniumEuropiumDuranide, 32)
+                .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .outputs(MetaItems.FIELD_GENERATOR_UV.getStackForm())
+                .duration(600).EUt(92160).buildAndRegister();
 
 
         //Robot Arms Start ---------------------------------------------------------------------------------------------
@@ -120,6 +162,45 @@ public class ComponentRecipes {
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Elite)
                 .outputs(MetaItems.ROBOT_ARM_IV.getStackForm())
                 .duration(100).EUt(30).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.stickLong, Materials.HSSG, 2)
+                .input(OrePrefix.gearSmall, Materials.HSSG)
+                .input(OrePrefix.spring, Materials.HSSG)
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Master)
+                .inputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm(2))
+                .inputs(MetaItems.ELECTRIC_PISTON_LUV.getStackForm())
+                .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 4)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .fluidInputs(Materials.Lubricant.getFluid(250))
+                .outputs(MetaItems.ROBOT_ARM_LUV.getStackForm())
+                .duration(600).EUt(5760).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.stickLong, Materials.NaquadahAlloy, 2)
+                .input(OrePrefix.gearSmall, Materials.NaquadahAlloy)
+                .input(OrePrefix.spring, Materials.NaquadahAlloy)
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Ultimate)
+                .inputs(MetaItems.ELECTRIC_MOTOR_ZPM.getStackForm(2))
+                .inputs(MetaItems.ELECTRIC_PISTON_ZPM.getStackForm())
+                .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 4)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .fluidInputs(Materials.Lubricant.getFluid(500))
+                .outputs(MetaItems.ROBOT_ARM_ZPM.getStackForm())
+                .duration(600).EUt(23040).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.stickLong, Materials.Tritanium, 2)
+                .input(OrePrefix.gearSmall, Materials.Tritanium)
+                .input(OrePrefix.spring, Materials.Tritanium)
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Super)
+                .inputs(MetaItems.ELECTRIC_MOTOR_UV.getStackForm(2))
+                .inputs(MetaItems.ELECTRIC_PISTON_UV.getStackForm())
+                .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 4)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .fluidInputs(Materials.Lubricant.getFluid(1000))
+                .outputs(MetaItems.ROBOT_ARM_UV.getStackForm())
+                .duration(600).EUt(92160).buildAndRegister();
 
 
         //Motors Start--------------------------------------------------------------------------------------------------
@@ -178,6 +259,51 @@ public class ComponentRecipes {
                 .outputs(MetaItems.ELECTRIC_MOTOR_IV.getStackForm())
                 .duration(100).EUt(30).buildAndRegister();
 
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.stickLong, Materials.SamariumMagnetic)
+                .input(OrePrefix.stickLong, Materials.HSSG)
+                .input(OrePrefix.ring, Materials.HSSG, 4)
+                .input(OrePrefix.round, Materials.HSSG, 8)
+                .input(OrePrefix.wireFine, Materials.Ruridit, 16)
+                .input(OrePrefix.wireFine, Materials.Ruridit, 16)
+                .input(OrePrefix.wireFine, Materials.Ruridit, 16)
+                .input(OrePrefix.wireFine, Materials.Ruridit, 16)
+                .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .fluidInputs(Materials.Lubricant.getFluid(250))
+                .outputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm())
+                .duration(600).EUt(5760).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.stickLong, Materials.SamariumMagnetic)
+                .input(OrePrefix.stickLong, Materials.NaquadahAlloy)
+                .input(OrePrefix.ring, Materials.NaquadahAlloy, 4)
+                .input(OrePrefix.round, Materials.NaquadahAlloy, 8)
+                .input(OrePrefix.wireFine, Materials.Duranium, 16)
+                .input(OrePrefix.wireFine, Materials.Duranium, 16)
+                .input(OrePrefix.wireFine, Materials.Duranium, 16)
+                .input(OrePrefix.wireFine, Materials.Duranium, 16)
+                .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 2)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .fluidInputs(Materials.Lubricant.getFluid(500))
+                .outputs(MetaItems.ELECTRIC_MOTOR_ZPM.getStackForm())
+                .duration(600).EUt(23040).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.stickLong, Materials.SamariumMagnetic)
+                .input(OrePrefix.stickLong, Materials.Tritanium)
+                .input(OrePrefix.ring, Materials.Tritanium, 4)
+                .input(OrePrefix.round, Materials.Tritanium, 8)
+                .input(OrePrefix.wireFine, Materials.YttriumBariumCuprate, 16)
+                .input(OrePrefix.wireFine, Materials.YttriumBariumCuprate, 16)
+                .input(OrePrefix.wireFine, Materials.YttriumBariumCuprate, 16)
+                .input(OrePrefix.wireFine, Materials.YttriumBariumCuprate, 16)
+                .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 2)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .fluidInputs(Materials.Lubricant.getFluid(1000))
+                .outputs(MetaItems.ELECTRIC_MOTOR_UV.getStackForm())
+                .duration(600).EUt(92160).buildAndRegister();
+
 
         //Sensors Start-------------------------------------------------------------------------------------------------
         ModHandler.addShapedRecipe("sensor/sensor_lv", MetaItems.SENSOR_LV.getStackForm(), "P G", "PR ", "XPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'R', new UnificationEntry(OrePrefix.stick, Materials.Brass), 'G', new UnificationEntry(OrePrefix.gem, Materials.Quartzite), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic));
@@ -225,6 +351,48 @@ public class ComponentRecipes {
                 .input(OrePrefix.gem, Materials.EnderEye)
                 .outputs(MetaItems.SENSOR_IV.getStackForm())
                 .duration(100).EUt(30).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.frameGt, Materials.HSSG)
+                .input(OrePrefix.stickLong, Materials.Rhodium)
+                .inputs(MetaItems.QUANTUM_EYE.getStackForm())
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Master)
+                .input(OrePrefix.foil, Materials.Palladium, 8)
+                .input(OrePrefix.foil, Materials.Palladium, 8)
+                .input(OrePrefix.foil, Materials.Palladium, 8)
+                .input(OrePrefix.foil, Materials.Palladium, 8)
+                .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .outputs(MetaItems.SENSOR_LUV.getStackForm())
+                .duration(600).EUt(5760).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.frameGt, Materials.NaquadahAlloy)
+                .input(OrePrefix.stickLong, Materials.Ruthenium)
+                .inputs(MetaItems.QUANTUM_EYE.getStackForm())
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Ultimate)
+                .input(OrePrefix.foil, Materials.Trinium, 8)
+                .input(OrePrefix.foil, Materials.Trinium, 8)
+                .input(OrePrefix.foil, Materials.Trinium, 8)
+                .input(OrePrefix.foil, Materials.Trinium, 8)
+                .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 2)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .outputs(MetaItems.SENSOR_ZPM.getStackForm())
+                .duration(600).EUt(23040).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.frameGt, Materials.Tritanium)
+                .input(OrePrefix.stickLong, Materials.Naquadria)
+                .inputs(MetaItems.QUANTUM_EYE.getStackForm())
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Super)
+                .input(OrePrefix.foil, Materials.FluxedElectrum, 8)
+                .input(OrePrefix.foil, Materials.FluxedElectrum, 8)
+                .input(OrePrefix.foil, Materials.FluxedElectrum, 8)
+                .input(OrePrefix.foil, Materials.FluxedElectrum, 8)
+                .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 2)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .outputs(MetaItems.SENSOR_UV.getStackForm())
+                .duration(600).EUt(92160).buildAndRegister();
 
 
         //Emitters Start------------------------------------------------------------------------------------------------
@@ -279,6 +447,48 @@ public class ComponentRecipes {
                 .outputs(MetaItems.EMITTER_IV.getStackForm())
                 .duration(100).EUt(30).buildAndRegister();
 
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.frameGt, Materials.HSSG)
+                .input(OrePrefix.plate, Materials.Rhodium)
+                .inputs(MetaItems.QUANTUM_STAR.getStackForm())
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Master, 2)
+                .input(OrePrefix.foil, Materials.Palladium, 8)
+                .input(OrePrefix.foil, Materials.Palladium, 8)
+                .input(OrePrefix.foil, Materials.Palladium, 8)
+                .input(OrePrefix.foil, Materials.Palladium, 8)
+                .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .outputs(MetaItems.EMITTER_LUV.getStackForm())
+                .duration(600).EUt(5760).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.frameGt, Materials.NaquadahAlloy)
+                .input(OrePrefix.plate, Materials.Ruthenium)
+                .inputs(MetaItems.QUANTUM_STAR.getStackForm())
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Ultimate, 2)
+                .input(OrePrefix.foil, Materials.Trinium, 8)
+                .input(OrePrefix.foil, Materials.Trinium, 8)
+                .input(OrePrefix.foil, Materials.Trinium, 8)
+                .input(OrePrefix.foil, Materials.Trinium, 8)
+                .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 2)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .outputs(MetaItems.EMITTER_ZPM.getStackForm())
+                .duration(600).EUt(23040).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.frameGt, Materials.Tritanium)
+                .input(OrePrefix.plate, Materials.Naquadria)
+                .inputs(MetaItems.QUANTUM_STAR.getStackForm())
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Super, 2)
+                .input(OrePrefix.foil, Materials.FluxedElectrum, 8)
+                .input(OrePrefix.foil, Materials.FluxedElectrum, 8)
+                .input(OrePrefix.foil, Materials.FluxedElectrum, 8)
+                .input(OrePrefix.foil, Materials.FluxedElectrum, 8)
+                .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 2)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .outputs(MetaItems.EMITTER_UV.getStackForm())
+                .duration(600).EUt(92160).buildAndRegister();
+
 
         //Pistons Start-------------------------------------------------------------------------------------------------
         ModHandler.addShapedRecipe("electric_piston/electric_piston_lv", MetaItems.ELECTRIC_PISTON_LV.getStackForm(), "PPP", "CRR", "CMG", 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin), 'R', new UnificationEntry(OrePrefix.stick, Materials.Steel), 'G', new UnificationEntry(OrePrefix.gearSmall, Materials.Steel), 'M', MetaItems.ELECTRIC_MOTOR_LV.getStackForm());
@@ -331,6 +541,43 @@ public class ComponentRecipes {
                 .inputs(MetaItems.ELECTRIC_MOTOR_IV.getStackForm())
                 .outputs(MetaItems.ELECTRIC_PISTON_IV.getStackForm())
                 .duration(100).EUt(30).buildAndRegister();
+
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.plate, Materials.HSSG, 2)
+                .input(OrePrefix.stickLong, Materials.HSSG)
+                .input(OrePrefix.gear, Materials.HSSG)
+                .input(OrePrefix.spring, Materials.HSSG)
+                .inputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm())
+                .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .fluidInputs(Materials.Lubricant.getFluid(250))
+                .outputs(MetaItems.ELECTRIC_PISTON_LUV.getStackForm())
+                .duration(600).EUt(5760).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.plate, Materials.NaquadahAlloy, 2)
+                .input(OrePrefix.stickLong, Materials.NaquadahAlloy)
+                .input(OrePrefix.gear, Materials.NaquadahAlloy)
+                .input(OrePrefix.spring, Materials.NaquadahAlloy)
+                .inputs(MetaItems.ELECTRIC_MOTOR_ZPM.getStackForm())
+                .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 2)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .fluidInputs(Materials.Lubricant.getFluid(500))
+                .outputs(MetaItems.ELECTRIC_PISTON_ZPM.getStackForm())
+                .duration(600).EUt(23040).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.plate, Materials.Tritanium, 2)
+                .input(OrePrefix.stickLong, Materials.Tritanium)
+                .input(OrePrefix.gear, Materials.Tritanium)
+                .input(OrePrefix.spring, Materials.Tritanium)
+                .inputs(MetaItems.ELECTRIC_MOTOR_UV.getStackForm())
+                .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 2)
+                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .fluidInputs(Materials.Lubricant.getFluid(1000))
+                .outputs(MetaItems.ELECTRIC_PISTON_UV.getStackForm())
+                .duration(600).EUt(92160).buildAndRegister();
 
 
         //Conveyors Start-----------------------------------------------------------------------------------------------
@@ -388,6 +635,42 @@ public class ComponentRecipes {
                         .circuitMeta(1)
                         .outputs(MetaItems.CONVEYOR_MODULE_IV.getStackForm())
                         .duration(100).EUt(30).buildAndRegister();
+
+            RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                    .input(OrePrefix.gearSmall, Materials.HSSG, 2)
+                    .input(OrePrefix.ring, Materials.HSSG, 2)
+                    .input(OrePrefix.screw, Materials.HSSG, 4)
+                    .input(OrePrefix.round, Materials.HSSG, 16)
+                    .inputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm(2))
+                    .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
+                    .fluidInputs(Materials.StyreneButadieneRubber.getFluid(GTValues.L * 8))
+                    .fluidInputs(Materials.Lubricant.getFluid(250))
+                    .outputs(MetaItems.CONVEYOR_MODULE_LUV.getStackForm())
+                    .duration(600).EUt(5760).buildAndRegister();
+
+            RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                    .input(OrePrefix.gearSmall, Materials.NaquadahAlloy, 2)
+                    .input(OrePrefix.ring, Materials.NaquadahAlloy, 2)
+                    .input(OrePrefix.screw, Materials.NaquadahAlloy, 4)
+                    .input(OrePrefix.round, Materials.NaquadahAlloy, 16)
+                    .inputs(MetaItems.ELECTRIC_MOTOR_ZPM.getStackForm(2))
+                    .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 2)
+                    .fluidInputs(Materials.Polybenzimidazole.getFluid(GTValues.L * 8))
+                    .fluidInputs(Materials.Lubricant.getFluid(500))
+                    .outputs(MetaItems.CONVEYOR_MODULE_ZPM.getStackForm())
+                    .duration(600).EUt(23040).buildAndRegister();
+
+            RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                    .input(OrePrefix.gearSmall, Materials.Tritanium, 2)
+                    .input(OrePrefix.ring, Materials.Tritanium, 2)
+                    .input(OrePrefix.screw, Materials.Tritanium, 4)
+                    .input(OrePrefix.round, Materials.Tritanium, 16)
+                    .inputs(MetaItems.ELECTRIC_MOTOR_UV.getStackForm(2))
+                    .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 2)
+                    .fluidInputs(Materials.Polybenzimidazole.getFluid(GTValues.L * 8))
+                    .fluidInputs(Materials.Lubricant.getFluid(1000))
+                    .outputs(MetaItems.CONVEYOR_MODULE_UV.getStackForm())
+                    .duration(600).EUt(92160).buildAndRegister();
 
 
             //Pumps Start---------------------------------------------------------------------------------------------------
@@ -450,6 +733,43 @@ public class ComponentRecipes {
                         .duration(100).EUt(30).buildAndRegister();
         }
 
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.plate, Materials.HSSG, 2)
+                .input(OrePrefix.pipeNormalFluid, Materials.NiobiumTitanium)
+                .input(OrePrefix.rotor, Materials.HSSG)
+                .input(OrePrefix.screw, Materials.HSSG, 4)
+                .inputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm())
+                .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
+                .fluidInputs(Materials.SiliconeRubber.getFluid(GTValues.L))
+                .fluidInputs(Materials.Lubricant.getFluid(250))
+                .outputs(MetaItems.ELECTRIC_PUMP_LUV.getStackForm())
+                .duration(600).EUt(5760).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.plate, Materials.NaquadahAlloy, 2)
+                .input(OrePrefix.pipeNormalFluid, Materials.Iridium)
+                .input(OrePrefix.rotor, Materials.NaquadahAlloy)
+                .input(OrePrefix.screw, Materials.NaquadahAlloy, 4)
+                .inputs(MetaItems.ELECTRIC_MOTOR_ZPM.getStackForm())
+                .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 2)
+                .fluidInputs(Materials.SiliconeRubber.getFluid(GTValues.L))
+                .fluidInputs(Materials.Lubricant.getFluid(500))
+                .outputs(MetaItems.ELECTRIC_PUMP_ZPM.getStackForm())
+                .duration(600).EUt(23040).buildAndRegister();
+
+        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(OrePrefix.plate, Materials.Tritanium, 2)
+                .input(OrePrefix.pipeNormalFluid, Materials.Europium)
+                .input(OrePrefix.rotor, Materials.Tritanium)
+                .input(OrePrefix.screw, Materials.Tritanium, 4)
+                .inputs(MetaItems.ELECTRIC_MOTOR_UV.getStackForm())
+                .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 2)
+                .fluidInputs(Materials.SiliconeRubber.getFluid(GTValues.L))
+                .fluidInputs(Materials.Lubricant.getFluid(1000))
+                .outputs(MetaItems.ELECTRIC_PUMP_UV.getStackForm())
+                .duration(600).EUt(92160).buildAndRegister();
+
+        //Fluid Regulators----------------------------------------------------------------------------------------------
         Material[] circuitTiers = new Material[]{MarkerMaterials.Tier.Basic, MarkerMaterials.Tier.Good, MarkerMaterials.Tier.Advanced, MarkerMaterials.Tier.Extreme,
                 MarkerMaterials.Tier.Elite, MarkerMaterials.Tier.Master, MarkerMaterials.Tier.Ultimate, MarkerMaterials.Tier.Super};
 

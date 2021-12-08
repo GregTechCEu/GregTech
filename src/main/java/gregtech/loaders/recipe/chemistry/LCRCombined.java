@@ -43,7 +43,7 @@ public class LCRCombined {
                 .fluidInputs(Oxygen.getFluid(3000))
                 .fluidOutputs(Ammonia.getFluid(4000))
                 .fluidOutputs(CarbonMonoxide.getFluid(3000))
-                .EUt(30)
+                .EUt(480)
                 .duration(320)
                 .buildAndRegister();
 
@@ -55,6 +55,15 @@ public class LCRCombined {
                 .fluidOutputs(Water.getFluid(1000))
                 .EUt(30)
                 .duration(160)
+                .buildAndRegister();
+
+        LARGE_CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(24))
+                .input(dust, Sulfur)
+                .fluidInputs(Water.getFluid(4000))
+                .fluidOutputs(SulfuricAcid.getFluid(1000))
+                .EUt(480)
+                .duration(320)
                 .buildAndRegister();
     }
 }

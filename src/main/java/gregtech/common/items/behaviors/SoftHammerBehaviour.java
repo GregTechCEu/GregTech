@@ -3,6 +3,7 @@ package gregtech.common.items.behaviors;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,6 +13,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -35,12 +37,13 @@ public class SoftHammerBehaviour implements IItemBehaviour {
         if (tileEntity != null) {
             IControllable controllable = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, side);
             if (controllable != null) {
-                if (controllable.isWorkingEnabled()) {
-                    controllable.setWorkingEnabled(false);
-                } else {
-                    controllable.setWorkingEnabled(true);
-                }
+                boolean setEnabled = !controllable.isWorkingEnabled();
+                controllable.setWorkingEnabled(setEnabled);
+                player.sendMessage(setEnabled ?
+                        new TextComponentTranslation("behaviour.soft_hammer.enabled") :
+                        new TextComponentTranslation("behaviour.soft_hammer.disabled"));
                 GTUtility.doDamageItem(stack, cost, false);
+                IToolStats.onOtherUse(stack, world, pos);
                 return EnumActionResult.SUCCESS;
             }
         }

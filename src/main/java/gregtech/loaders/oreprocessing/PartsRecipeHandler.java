@@ -73,8 +73,8 @@ public class PartsRecipeHandler {
 
         if (!boltStack.isEmpty() && !ingotStack.isEmpty()) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .notConsumable(MetaItems.SHAPE_EXTRUDER_BOLT)
                     .input(OrePrefix.ingot, material)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_BOLT)
                     .outputs(GTUtility.copyAmount(8, boltStack))
                     .duration(15)
                     .EUt(120)
@@ -189,6 +189,12 @@ public class PartsRecipeHandler {
                         .duration((int) material.getAverageMass())
                         .EUt(material.getBlastTemperature() >= 2800 ? 256 : 64)
                         .buildAndRegister();
+
+                RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder().duration((int) material.getAverageMass()).EUt(30)
+                        .input(ingot, material, 2)
+                        .notConsumable(MetaItems.SHAPE_MOLD_GEAR_SMALL.getStackForm())
+                        .output(gearSmall, material)
+                        .buildAndRegister();
             } else {
                 ModHandler.addShapedRecipe(String.format("gear_%s", material), stack,
                         "RPR", "PwP", "RPR",
@@ -208,9 +214,22 @@ public class PartsRecipeHandler {
                 .EUt(16)
                 .buildAndRegister();
 
-        EnumDyeColor dyeColor = determineDyeColor(material.getMaterialRGB());
-        MarkerMaterial colorMaterial = MarkerMaterials.Color.COLORS.get(dyeColor);
-        OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, colorMaterial);
+        if (material == Materials.Diamond) { // override Diamond Lens to be LightBlue
+            OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.LightBlue);
+        } else if (material == Materials.Ruby) { // override Ruby Lens to be Red
+            OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.Red);
+        } else if (material == Materials.Emerald) { // override Emerald Lens to be Green
+            OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.Green);
+        } else if (material == Materials.Glass) { // override Glass Lens to be White, and have "default" oredict
+            OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.White);
+            OreDictUnifier.registerOre(stack, OrePrefix.craftingLens.name() + material.toCamelCaseString());
+        } else { // add more custom lenses here if needed
+
+            // Default behavior for determining lens color, left for addons and CraftTweaker
+            EnumDyeColor dyeColor = determineDyeColor(material.getMaterialRGB());
+            MarkerMaterial colorMaterial = MarkerMaterials.Color.COLORS.get(dyeColor);
+            OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, colorMaterial);
+        }
     }
 
     public static void processPlate(OrePrefix platePrefix, Material material, DustProperty property) {
@@ -312,10 +331,10 @@ public class PartsRecipeHandler {
     public static void processRotor(OrePrefix rotorPrefix, Material material, IngotProperty property) {
         ItemStack stack = OreDictUnifier.get(rotorPrefix, material);
         ModHandler.addShapedRecipe(String.format("rotor_%s", material.toString()), stack,
-                "PdP", " R ", "PSP",
-                'P', new UnificationEntry(OrePrefix.plate, material),
-                'R', new UnificationEntry(OrePrefix.ring, material),
-                'S', new UnificationEntry(OrePrefix.screw, material));
+                "ChC", "SRf", "CdC",
+                'C', new UnificationEntry(plate, material),
+                'S', new UnificationEntry(screw, material),
+                'R', new UnificationEntry(ring, material));
 
         if (material.hasFluid()) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
@@ -328,8 +347,8 @@ public class PartsRecipeHandler {
         }
 
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_ROTOR)
                 .input(ingot, material, 5)
+                .notConsumable(MetaItems.SHAPE_EXTRUDER_ROTOR)
                 .output(rotor, material)
                 .duration((int) material.getAverageMass() * 5)
                 .EUt(material.getBlastTemperature() >= 2800 ? 256 : 64)

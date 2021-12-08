@@ -8,10 +8,12 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.gui.impl.ModularUIGui;
+import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTLog;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.state.IBlockState;
@@ -221,6 +223,9 @@ public class NetworkHandler {
                 }
         ));
 
+        CPacketPluginSynced.registerPacket(7);
+
+        CPacketRecoverMTE.registerPacket(8);
 
         registerServerExecutor(PacketUIClientAction.class, (packet, handler) -> {
             Container openContainer = handler.player.openContainer;
@@ -232,11 +237,15 @@ public class NetworkHandler {
             }
         });
 
-        NetworkHandler.registerServerExecutor(PacketClipboardUIWidgetUpdate.class, (packet, handler) -> {
+        registerServerExecutor(PacketClipboardUIWidgetUpdate.class, (packet, handler) -> {
             if (packet.clipboard != null) {
                 packet.clipboard.readUIAction(handler.player, packet.id, packet.buf);
             }
         });
+
+        CPacketPluginSynced.registerExecutor();
+
+        CPacketRecoverMTE.registerExecutor();
 
         if (FMLCommonHandler.instance().getSide().isClient()) {
             initClient();

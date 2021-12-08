@@ -74,7 +74,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new SimpleMachineMetaTileEntity(metaTileEntityId, workable.recipeMap, renderer, getTier(), hasFrontFacing, getTankScalingFunction());
+        return new SimpleMachineMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), hasFrontFacing, getTankScalingFunction());
     }
 
     @Override
@@ -107,8 +107,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     }
 
     @Override
-    public boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition coverDefinition) {
-        boolean coverPlaced = super.placeCoverOnSide(side, itemStack, coverDefinition);
+    public boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition coverDefinition, EntityPlayer player) {
+        boolean coverPlaced = super.placeCoverOnSide(side, itemStack, coverDefinition, player);
         if (coverPlaced) {
             CoverBehavior cover = getCoverAtSide(side);
             if (cover != null && cover.shouldCoverInteractWithOutputside()) {
@@ -172,13 +172,16 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
                         playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
                     }
                 }
+
                 if (facing == getOutputFacingFluids() || hitFacing == getOutputFacingFluids()) {
                     if (isAllowInputFromOutputSideFluids()) {
                         setAllowInputFromOutputSideFluids(false);
-                        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
+                        if (getOutputFacingItems() != getOutputFacingFluids())
+                            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
                     } else {
                         setAllowInputFromOutputSideFluids(true);
-                        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
+                        if (getOutputFacingItems() != getOutputFacingFluids())
+                            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
                     }
                 }
             }
@@ -396,7 +399,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     }
 
     protected ModularUI.Builder createGuiTemplate(EntityPlayer player) {
-        RecipeMap<?> workableRecipeMap = workable.recipeMap;
+        RecipeMap<?> workableRecipeMap = workable.getRecipeMap();
         int yOffset = 0;
         if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 || workableRecipeMap.getMaxOutputs() >= 6 || workableRecipeMap.getMaxFluidOutputs() >= 6) {
             yOffset = FONT_HEIGHT;

@@ -20,7 +20,7 @@ public abstract class AbstractToolItemCapabilityProvider<T> implements ICapabili
     protected abstract Capability<T> getCapability();
 
     public boolean damageItem(int damage, boolean simulate) {
-        return ((IToolItem) itemStack.getItem()).damageItem(itemStack, damage, simulate);
+        return ((IToolItem) itemStack.getItem()).damageItem(itemStack, null, damage, simulate);
     }
 
     @Override

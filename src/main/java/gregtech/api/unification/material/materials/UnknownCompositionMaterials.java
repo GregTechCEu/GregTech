@@ -257,7 +257,7 @@ public class UnknownCompositionMaterials {
         NetherStar = new Material.Builder(1602, "nether_star")
                 .gem(4)
                 .iconSet(NETHERSTAR)
-                .flags(STD_SOLID, GENERATE_LENS, NO_SMASHING, NO_SMELTING)
+                .flags(STD_SOLID, NO_SMASHING, NO_SMELTING)
                 .build();
 
         Endstone = new Material.Builder(1603, "endstone")
@@ -292,20 +292,11 @@ public class UnknownCompositionMaterials {
                 .color(0x4F7942).iconSet(ROUGH)
                 .build();
 
-        Andesite = new Material.Builder(1609, "andesite")
-                .dust()
-                .color(0xBEBEBE).iconSet(ROUGH)
-                .build();
+        // FREE ID 1609
 
-        Diorite = new Material.Builder(1610, "diorite")
-                .dust()
-                .iconSet(ROUGH)
-                .build();
+        // FREE ID 1610
 
-        Granite = new Material.Builder(1611, "granite")
-                .dust()
-                .color(0xCFA18C).iconSet(ROUGH)
-                .build();
+        // FREE ID 1611
 
         Vinteum = new Material.Builder(1612, "vinteum")
                 .gem(3).ore()
@@ -361,5 +352,78 @@ public class UnknownCompositionMaterials {
 
         GreenSapphireSlurry = new Material.Builder(1622, "green_sapphire_slurry")
                 .fluid().color(0x64c882).build();
+
+        // These colors are much nicer looking than those in MC's EnumDyeColor
+        DyeBlack = new Material.Builder(1623, "dye_black")
+                .fluid().color(0x202020).build();
+
+        DyeRed = new Material.Builder(1624, "dye_red")
+                .fluid().color(0xFF0000).build();
+
+        DyeGreen = new Material.Builder(1625, "dye_green")
+                .fluid().color(0x00FF00).build();
+
+        DyeBrown = new Material.Builder(1626, "dye_brown")
+                .fluid().color(0x604000).build();
+
+        DyeBlue = new Material.Builder(1627, "dye_blue")
+                .fluid().color(0x0020FF).build();
+
+        DyePurple = new Material.Builder(1628, "dye_purple")
+                .fluid().color(0x800080).build();
+
+        DyeCyan = new Material.Builder(1629, "dye_cyan")
+                .fluid().color(0x00FFFF).build();
+
+        DyeLightGray = new Material.Builder(1630, "dye_light_gray")
+                .fluid().color(0xC0C0C0).build();
+
+        DyeGray = new Material.Builder(1631, "dye_gray")
+                .fluid().color(0x808080).build();
+
+        DyePink = new Material.Builder(1632, "dye_pink")
+                .fluid().color(0xFFC0C0).build();
+
+        DyeLime = new Material.Builder(1633, "dye_lime")
+                .fluid().color(0x80FF80).build();
+
+        DyeYellow = new Material.Builder(1634, "dye_yellow")
+                .fluid().color(0xFFFF00).build();
+
+        DyeLightBlue = new Material.Builder(1635, "dye_light_blue")
+                .fluid().color(0x6080FF).build();
+
+        DyeMagenta = new Material.Builder(1636, "dye_magenta")
+                .fluid().color(0xFF00FF).build();
+
+        DyeOrange = new Material.Builder(1637, "dye_orange")
+                .fluid().color(0xFF8000).build();
+
+        DyeWhite = new Material.Builder(1638, "dye_white")
+                .fluid().color(0xFFFFFF).build();
+
+        ImpureEnrichedNaquadahSolution = new Material.Builder(1639, "impure_enriched_naquadah_solution")
+                .fluid().color(0x388438).build();
+
+        EnrichedNaquadahSolution = new Material.Builder(1640, "enriched_naquadah_solution")
+                .fluid().color(0x3AAD3A).build();
+
+        AcidicEnrichedNaquadahSolution = new Material.Builder(1641, "acidic_enriched_naquadah_solution")
+                .fluid().color(0x3DD63D).build();
+
+        EnrichedNaquadahWaste = new Material.Builder(1642, "enriched_naquadah_waste")
+                .fluid().color(0x355B35).build();
+
+        ImpureNaquadriaSolution = new Material.Builder(1643, "impure_naquadria_solution")
+                .fluid().color(0x518451).build();
+
+        NaquadriaSolution = new Material.Builder(1644, "naquadria_solution")
+                .fluid().color(0x61AD61).build();
+
+        AcidicNaquadriaSolution = new Material.Builder(1645, "acidic_naquadria_solution")
+                .fluid().color(0x70D670).build();
+
+        NaquadriaWaste = new Material.Builder(1646, "naquadria_waste")
+                .fluid().color(0x425B42).build();
     }
 }

@@ -199,13 +199,8 @@ metaitem.large_fluid_cell.aluminium.name=%s Aluminium Cell
 metaitem.large_fluid_cell.stainless_steel.name=%s Stainless Steel Cell
 metaitem.large_fluid_cell.titanium.name=%s Titanium Cell
 metaitem.large_fluid_cell.tungstensteel.name=%s вольфрамовая капсула
-metaitem.large_fluid_cell.chrome.name=%s Chrome Cell
-metaitem.large_fluid_cell.iridium.name=%s Iridium Cell
-metaitem.large_fluid_cell.osmium.name=%s Osmium Cell
-metaitem.large_fluid_cell.neutronium.name=%s Neutronium Cell
 
 # TODO
-gregtech.item.fluid_cell.jei_description=The Extractor can be used to clear the inventory of any type of cell.
 
 metaitem.spray.can.dyes.white.name=Аэрозоль (Белый)
 metaitem.spray.can.dyes.orange.name=Аэрозоль (Оранжевый)
@@ -416,6 +411,23 @@ metaitem.circuit.integrated.gui=Конфигурация интегрально�
 # TODO
 metaitem.circuit.integrated.jei_description=JEI is only showing recipes for the given configuration.\n\nYou can select a configuration in the Programmed Circuit configuration tab.
 
+item.glass.lens=Стекло Линза (Белый)
+metaitem.glass_lens.orange.name=Стекло Линза (Оранжевый)
+metaitem.glass_lens.magenta.name=Стекло Линза (Пурпурный)
+metaitem.glass_lens.light_blue.name=Стекло Линза (Голубой)
+metaitem.glass_lens.yellow.name=Стекло Линза (Желтый)
+metaitem.glass_lens.lime.name=Стекло Линза (Лаймовый)
+metaitem.glass_lens.pink.name=Стекло Линза (Розовый)
+metaitem.glass_lens.gray.name=Стекло Линза (Серый)
+metaitem.glass_lens.light_gray.name=Стекло Линза (Cветло-Cерый)
+metaitem.glass_lens.cyan.name=Стекло Линза (Бирюзовый)
+metaitem.glass_lens.purple.name=Стекло Линза (Фиолетовый)
+metaitem.glass_lens.blue.name=Стекло Линза (Синий)
+metaitem.glass_lens.brown.name=Стекло Линза (Коричневый)
+metaitem.glass_lens.green.name=Стекло Линза (Зеленый)
+metaitem.glass_lens.red.name=Стекло Линза (Красный)
+metaitem.glass_lens.black.name=Стекло Линза (Черный)
+
 #CIRCUITS LOCALIZATION
 # TODO
 metaitem.boule.silicon.name=Кремниевый монокристалл
@@ -624,21 +636,11 @@ metaitem.bio_chaff.name=Bio Chaff
 metaitem.carbon.fibers.name=Сырые углеродные волокна
 metaitem.carbon.mesh.name=углеродная сеть
 metaitem.carbon.plate.name=Углеродный лист
-metaitem.ingot.mixed_metal=Усиленный сплав
-metaitem.plate.advanced_alloy=Усиленный сплав (Пластина)
-metaitem.ingot.iridium_alloy=Иридиевый сплав
-metaitem.plate.iridium_alloy=Иридиевый сплав (Пластина)
 metaitem.neutron_reflector.name=Нейтронный отражатель
 metaitem.neutron_reflector.tooltip=Indestructible
 
-metaitem.component.sawblade.diamond.name=Алмазный пильный диск
 metaitem.component.grinder.diamond.name=Алмазная шлифовальная головка
 metaitem.component.grinder.tungsten.name=Вольфрамовая шлифовальная головка
-
-metaitem.ingot.mixed_metal.name=Усиленный сплав
-metaitem.plate.advanced_alloy.name=Усиленный сплав (Пластина)
-metaitem.ingot.iridium_alloy.name=Иридиевый сплав
-metaitem.plate.iridium_alloy.name=Иридиевый сплав (Пластина)
 
 metaitem.quantumeye.tooltip=Квантовый глаз
 metaitem.quantumeye.name=Улучшенный глаз энда
@@ -668,6 +670,8 @@ metaitem.cover.energy.detector.name=Детектор энергии
 metaitem.cover.energy.detector.tooltip=Выдает сигнал красного камня по заполнению
 metaitem.cover.player.detector.name=Детектор игрока
 metaitem.cover.player.detector.tooltip=Выдает сигнал красного камня
+metaitem.cover.drain.name=Drain Cover
+
 
 # TODO
 metaitem.cover.facade.name=%s Facade
@@ -747,7 +751,6 @@ metaitem.tool.screwdriver.tooltip=/nЩелкните правой кнопкой
 metaitem.tool.mortar.name=%s ступа
 metaitem.tool.wire_cutter.name=%s кусачки
 metaitem.tool.branch_cutter.name=%s секатор
-metaitem.tool.universal_spade.name=%s универсальная лопата
 metaitem.tool.knife.name=%s нож
 metaitem.tool.butchery_knife.name=%s нож-топорик мясника
 metaitem.tool.butchery_knife.tooltip=Имеет низкую скорость атаки
@@ -840,7 +843,7 @@ cover.fluid_regulator.transfer_mode.description=§eTransfer Any§r - in this mod
 cover.fluid_regulator.supply_exact=Supply Exact: %s
 cover.fluid_regulator.keep_exact=Keep Exact: %s
 
-cover.machine_controller.name=Настройки контроллера машины
+cover.machine_controller.title=Настройки контроллера машины
 cover.machine_controller.normal=Нормально
 cover.machine_controller.inverted=Инвертировано
 cover.machine_controller.redstone=Минимальный Редстоун сигнал: %d
@@ -925,7 +928,6 @@ item.material.oreprefix.crystal=%s (Кристалл)
 item.material.oreprefix.toolHeadSword=%s (Клинок меча)
 item.material.oreprefix.toolHeadPickaxe=%s (Кайло)
 item.material.oreprefix.toolHeadShovel=%s (Лопата)
-item.material.oreprefix.toolHeadUniversalSpade=%s (Наконечник универсальной лопаты)
 item.material.oreprefix.toolHeadAxe=%s (Топорище)
 item.material.oreprefix.toolHeadHoe=%s (Лезвие мотыги)
 item.material.oreprefix.toolHeadSense=%s (Лезвие косы)
@@ -1149,7 +1151,6 @@ material.nitro_carbon=Нитро-углерод
 material.nitrogen_dioxide=Диоксид азота
 material.obsidian=Обсидиан
 material.phosphate=Трикальцийфосфат
-material.pig_iron=Чугун
 material.plastic=Полиэтилен
 material.polycaprolactam=Поликапролактам
 material.polytetrafluoroethylene=Политетрафторэтилен
@@ -2409,7 +2410,7 @@ gregtech.recipe.duration=Длительность: %.1f сек.
 gregtech.recipe.amperage=Сила тока: %d
 gregtech.recipe.not_consumed=Не расходуется
 gregtech.recipe.chance=Шанс: %s%% +%s%%/уровень
-gregtech.recipe.blast_furnace_temperature=Температура: %dK (%s)
+gregtech.recipe.temperature=Температура: %dK (%s)
 gregtech.recipe.eu_to_start=Энергия для запуска: %sEU
 
 gregtech.fluid.click_to_fill=§7Нажмите с пустым контейнером для жидкости, чтобы заполнить его из бака.
@@ -2548,7 +2549,6 @@ metaitem.plate.highly_advanced_system_on_chip.tooltip=Highly Advanced System on 
 metaitem.plate.ultra_low_power_integrated_circuit.tooltip=Ultra Low Power Circuit
 metaitem.plate.low_power_integrated_circuit.tooltip=Low Power Circuit
 metaitem.plate.simple_system_on_chip.tooltip=Simple System on a Chip
-metaitem.ingot.iridium_alloy.tooltip=Used to make Iridium Alloy Plates
 metaitem.brick.fireclay.tooltip=Heat resistant
 cover.filter.mode.filter_both=Filter Insert/Extract
 cover.universal.manual_import_export.mode.disabled=Manual I/O: Disabled
@@ -2720,7 +2720,7 @@ tile.machine_casing.extended_mega_ultimate_voltage.name=UXV Machine Casing
 tile.steam_casing.bronze.tooltip=For your first Steam Machines
 tile.steam_casing.steel.tooltip=For improved Steam Machines
 tile.multiblock_casing.assembly_line.name=Assembly Line Casing
-tile.transparent_casing.reinforced_glass.name=Reinforced Glass
+tile.transparent_casing.tempered_glass.name=Tempered Glass
 gregtech.machine.drum.wood.name=Wooden Barrel
 gregtech.machine.drum.bronze.name=Bronze Drum
 gregtech.machine.drum.steel.name=Steel Drum
@@ -3450,3 +3450,6 @@ info.infinite_energy.uxv=Voltage: UXV
 info.infinite_energy.max=Voltage: MAX
 gregtech.universal.clear_nbt_recipe.tooltip=§cThis will destroy all contents!
 gregtech.multiblock.primitive_water_pump.description=The Primitive Water Pump is a pre-Steam Era multiblock that collects water once per second, depending on the Biome it is in. It can use a Pump, ULV, or LV Output Hatch, increasing the amount of water per tier. Follows the formula: Biome Coefficient * Hatch Multiplier.
+
+fluid.tile.lava=Lava
+fluid.tile.water=Water

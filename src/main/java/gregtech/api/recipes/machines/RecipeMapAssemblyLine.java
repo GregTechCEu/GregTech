@@ -3,52 +3,36 @@ package gregtech.api.recipes.machines;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ProgressWidget;
+import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
-import java.util.function.DoubleSupplier;
 
 public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap<R> {
-    private TextureArea progressBarTexture;
-    private ProgressWidget.MoveType moveType;
 
-    public RecipeMapAssemblyLine(String unlocalizedName, int minInputs, int maxInputs, int minOutputs, int maxOutputs, int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs, R defaultRecipe, boolean isHidden) {
+    public RecipeMapAssemblyLine(String unlocalizedName,
+                                 int minInputs, int maxInputs, int minOutputs, int maxOutputs,
+                                 int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs,
+                                 R defaultRecipe, boolean isHidden) {
         super(unlocalizedName, minInputs, maxInputs, minOutputs, maxOutputs, minFluidInputs, maxFluidInputs, minFluidOutputs, maxFluidOutputs, defaultRecipe, isHidden);
     }
 
     @Override
     @Nonnull
-    public RecipeMapAssemblyLine<R> setProgressBar(TextureArea progressBar, ProgressWidget.MoveType moveType) {
-        this.progressBarTexture = progressBar;
-        this.moveType = moveType;
-        super.setProgressBar(progressBar, moveType);
-        return this;
-    }
-
-    @Override
-    @Nonnull
-    public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
-        ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 176, 216) {
-            @Override
-            public ModularUI.Builder bindPlayerInventory(InventoryPlayer inventoryPlayer) {
-                this.bindPlayerInventory(inventoryPlayer, 134);
-                return this;
-            }
-
-        };
-        builder.widget(new ProgressWidget(progressSupplier, 109, 22, 20, 20, this.progressBarTexture, this.moveType));
+    public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 176)
+                .widget(new ProgressWidget(200, 80, 1, 54, 72, GuiTextures.PROGRESS_BAR_ASSEMBLY_LINE, ProgressWidget.MoveType.HORIZONTAL))
+                .widget(new ProgressWidget(200, 138, 19, 10, 18, GuiTextures.PROGRESS_BAR_ASSEMBLY_LINE_ARROW, ProgressWidget.MoveType.VERTICAL));
         this.addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
         this.addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
         return builder;
     }
 
     @Override
-    protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
+    protected void addInventorySlotGroup(ModularUI.Builder builder, @Nonnull IItemHandlerModifiable itemHandler, @Nonnull FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
         int itemInputsCount = itemHandler.getSlots();
         int fluidInputsCount = fluidHandler.getTanks();
         boolean invertFluids = false;
@@ -61,46 +45,29 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
         int[] inputSlotGrid = determineSlotsGrid(itemInputsCount);
         int itemSlotsToLeft = inputSlotGrid[0];
         int itemSlotsToDown = inputSlotGrid[1];
-        int startInputsX = isOutputs ? 138 : 101 - itemSlotsToLeft * 18;
-        int startInputsY = 32 - (int) (itemSlotsToDown / 2.0 * 18) + yOffset;
-        for (int i = 0; i < itemSlotsToDown; i++) {
-            for (int j = 0; j < itemSlotsToLeft; j++) {
-                int slotIndex = i * itemSlotsToLeft + j;
-                addSlot(builder, startInputsX + 18 * j, startInputsY + 18 * i, slotIndex, itemHandler, fluidHandler, invertFluids, isOutputs);
-            }
-        }
-        if (fluidInputsCount > 0 || invertFluids) {
-            if (itemSlotsToDown >= fluidInputsCount) {
-                int startSpecX = isOutputs ? startInputsX + itemSlotsToLeft * 18 : startInputsX - 18;
-                for (int i = 0; i < fluidInputsCount; i++) {
-                    addSlot(builder, startSpecX, startInputsY + 18 * i, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
-                }
-            } else {
-                int startSpecY = startInputsY + itemSlotsToDown * 18;
-                int offsetX = isOutputs ? 0 : 18;
-                for (int i = 0; i < fluidInputsCount; i++) {
-                    addSlot(builder, startInputsX - offsetX + 18 * i, startSpecY, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
-                }
-            }
-        }
-    }
+        int startInputsX = 80 - itemSlotsToLeft * 18;
+        int startInputsY = 37 - (int) (itemSlotsToDown / 2.0 * 18);
 
-    protected static int[] determineSlotsGrid(int itemInputsCount) {
-        int itemSlotsToLeft = 0;
-        int itemSlotsToDown = 0;
-        double sqrt = Math.sqrt(itemInputsCount);
-        if (sqrt % 1 == 0) { //check if square root is integer
-            //case for 1, 4, 9 slots - it's square inputs (the most common case)
-            itemSlotsToLeft = itemSlotsToDown = (int) sqrt;
-        } else if (itemInputsCount % 3 == 0) {
-            //case for 3 and 6 slots - 3 by horizontal and i / 3 by vertical (common case too)
-            itemSlotsToDown = itemInputsCount / 3;
-            itemSlotsToLeft = 3;
-        } else if (itemInputsCount % 2 == 0) {
-            //case for 2 inputs - 2 by horizontal and i / 3 by vertical (for 2 slots)
-            itemSlotsToDown = itemInputsCount / 2;
-            itemSlotsToLeft = 2;
+        if (!isOutputs) {
+            // Data Slot
+            builder.widget(new SlotWidget(itemHandler, 15, startInputsX + 18 * 7, 1 + 18 * 2, true, true)
+                    .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DATA_ORB_OVERLAY));
+            for (int i = 0; i < itemSlotsToDown; i++) {
+                for (int j = 0; j < itemSlotsToLeft; j++) {
+                    int slotIndex = i * itemSlotsToLeft + j/* + 1*/; // needed for data slot
+                    addSlot(builder, startInputsX + 18 * j, startInputsY + 18 * i, slotIndex, itemHandler, fluidHandler, invertFluids, false);
+                }
+            }
+            if (fluidInputsCount > 0 || invertFluids) {
+                if (itemSlotsToDown >= fluidInputsCount) {
+                    int startSpecX = startInputsX + 18 * 5;
+                    for (int i = 0; i < fluidInputsCount; i++) {
+                        addSlot(builder, startSpecX, startInputsY + 18 * i, i, itemHandler, fluidHandler, true, false);
+                    }
+                }
+            }
+        } else {
+            addSlot(builder, startInputsX + 18 * 4, 1, 0/*18*/, itemHandler, fluidHandler, invertFluids, true); // Output Slot - 18 for data slot
         }
-        return new int[]{itemSlotsToLeft, itemSlotsToDown};
     }
 }

@@ -40,6 +40,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
         super(metaTileEntityId);
         this.material = material;
         this.inventorySize = inventorySize;
+        this.paintingColor = 0xFFFFFF;
         initializeInventory();
     }
 

@@ -6,6 +6,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.vecmath.Vector3f;
@@ -24,12 +25,21 @@ import java.util.function.Predicate;
 public class TrackedDummyWorld extends DummyWorld {
     public final Set<BlockPos> renderedBlocks = new HashSet<>();
     private Predicate<BlockPos> renderFilter;
+    private final World proxyWorld;
 
     private final Vector3f minPos = new Vector3f(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
     private final Vector3f maxPos = new Vector3f(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
 
     public void setRenderFilter(Predicate<BlockPos> renderFilter) {
         this.renderFilter = renderFilter;
+    }
+
+    public TrackedDummyWorld(){
+        proxyWorld = null;
+    }
+
+    public TrackedDummyWorld(World world){
+        proxyWorld = world;
     }
 
     public void addBlocks(Map<BlockPos, BlockInfo> renderedBlocks) {
@@ -47,7 +57,7 @@ public class TrackedDummyWorld extends DummyWorld {
     public TileEntity getTileEntity(@Nonnull BlockPos pos) {
         if (renderFilter != null && !renderFilter.test(pos))
             return null;
-        return super.getTileEntity(pos);
+        return proxyWorld != null ? proxyWorld.getTileEntity(pos) : super.getTileEntity(pos);
     }
 
     @Nonnull
@@ -55,7 +65,7 @@ public class TrackedDummyWorld extends DummyWorld {
     public IBlockState getBlockState(@Nonnull BlockPos pos) {
         if (renderFilter != null && !renderFilter.test(pos))
             return Blocks.AIR.getDefaultState(); //return air if not rendering this block
-        return super.getBlockState(pos);
+        return proxyWorld != null ? proxyWorld.getBlockState(pos) : super.getBlockState(pos);
     }
 
     @Override

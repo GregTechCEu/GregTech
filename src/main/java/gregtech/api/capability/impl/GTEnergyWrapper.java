@@ -148,7 +148,6 @@ public class GTEnergyWrapper implements IEnergyContainer {
             int consumable = container.receiveEnergy(safeCastLongToInt(maximalValue + receive), true);
 
             // Machine unable to consume any power
-            // Probably unnecessary in this case, but just to be safe
             if (consumable == 0)
                 return 0;
 
@@ -264,6 +263,14 @@ public class GTEnergyWrapper implements IEnergyContainer {
             return 0L;
 
         return (long) (cap.getEnergyStored() / ConfigHolder.U.energyOptions.feToEuRatio);
+    }
+
+    @Override
+    public long getEnergyCanBeInserted() {
+        // most RF/FE cables blindly try to insert energy without checking if there is space, since the recieving IEnergyStorage should handle it
+        // this simulates that behavior in most places by allowing our "is there space" checks to pass and letting the cable attempt to insert energy
+        // if the wrapped TE actually cannot accept any more energy, the energy transfer will return 0 before any changes to our internal rf buffer
+        return Math.max(1, getEnergyCapacity() - getEnergyStored());
     }
 
     @Override

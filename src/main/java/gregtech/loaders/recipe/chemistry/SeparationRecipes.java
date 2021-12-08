@@ -232,20 +232,10 @@ public class SeparationRecipes {
                 .input(dust, RareEarth)
                 .chancedOutput(dustSmall, Cadmium, 2500, 400)
                 .chancedOutput(dustSmall, Neodymium, 2500, 400)
-                .chancedOutput(dustSmall, Caesium, 2500, 400)
+                .chancedOutput(dustSmall, Samarium, 2500, 400)
                 .chancedOutput(dustSmall, Cerium, 2500, 400)
                 .chancedOutput(dustSmall, Yttrium, 2500, 400)
                 .chancedOutput(dustSmall, Lanthanum, 2500, 400)
-                .buildAndRegister();
-
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(900).EUt(30)
-                .input(dust, PlatinumGroupSludge)
-                .output(dust, SiliconDioxide)
-                .output(dustTiny, Gold)
-                .output(dustTiny, Platinum)
-                .chancedOutput(dustTiny, Palladium, 8000, 900)
-                .chancedOutput(dustTiny, Iridium, 6000, 850)
-                .chancedOutput(dustTiny, Osmium, 6000, 850)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(50).EUt(30)
@@ -314,6 +304,12 @@ public class SeparationRecipes {
                 .fluidOutputs(Oil.getFluid(1000))
                 .buildAndRegister();
 
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(60).EUt(30)
+                .input(dust, QuartzSand, 2)
+                .output(dust, Quartzite)
+                .chancedOutput(dust, CertusQuartz, 2000, 200)
+                .buildAndRegister();
+
 
         // Electrolyzer
         ELECTROLYZER_RECIPES.recipeBuilder()
@@ -335,14 +331,6 @@ public class SeparationRecipes {
                 .output(dust, Sulfur)
                 .chancedOutput(dustSmall, Gallium, 2000, 1000)
                 .duration(200).EUt(30).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Bauxite, 39)
-                .output(dust, Rutile, 6)
-                .output(dust, Aluminium, 16)
-                .fluidOutputs(Hydrogen.getFluid(10000))
-                .fluidOutputs(Oxygen.getFluid(11000))
-                .duration(624).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Water.getFluid(1000))
@@ -419,7 +407,7 @@ public class SeparationRecipes {
                 .output(dust, SodaAsh, 6)
                 .output(dust, SodiumBicarbonate, 6)
                 .fluidOutputs(Water.getFluid(2000))
-                .duration(784).EUt(60).build();
+                .duration(784).EUt(60).buildAndRegister();
 
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
@@ -430,6 +418,7 @@ public class SeparationRecipes {
         // Extractor
         EXTRACTOR_RECIPES.recipeBuilder()
                 .input(dust, Monazite)
+                .output(dustSmall, RareEarth)
                 .fluidOutputs(Helium.getFluid(200))
                 .duration(64).EUt(64).buildAndRegister();
 
@@ -469,7 +458,6 @@ public class SeparationRecipes {
 
         EXTRACTOR_RECIPES.recipeBuilder().duration(128).EUt(4)
                 .inputs(new ItemStack(Items.COAL, 1, 1))
-                .chancedOutput(dust, Ash, 1000, 200)
                 .fluidOutputs(WoodTar.getFluid(100))
                 .buildAndRegister();
 

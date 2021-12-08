@@ -39,6 +39,8 @@ public class BloomEffect {
             uniformCache.glUniform1I("buffer_a", 0);
             uniformCache.glUniform1I("buffer_b", 1);
             uniformCache.glUniform1F("intensive", strength);
+            uniformCache.glUniform1F("threshold_up", (float) ConfigHolder.U.clientConfig.shader.bloom.highBrightnessThreshold);
+            uniformCache.glUniform1F("threshold_down", (float) ConfigHolder.U.clientConfig.shader.bloom.lowBrightnessThreshold);
         });
 
         GlStateManager.setActiveTexture(GL13.GL_TEXTURE1);

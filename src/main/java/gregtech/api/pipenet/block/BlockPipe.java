@@ -14,6 +14,7 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.ICoverable.CoverSideData;
 import gregtech.api.cover.ICoverable.PrimaryBoxData;
 import gregtech.api.cover.IFacadeCover;
+import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.tile.AttachmentType;
@@ -22,6 +23,7 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.render.IBlockAppearance;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+import gregtech.common.advancement.GTTriggers;
 import gregtech.common.tools.DamageValues;
 import gregtech.integration.ctm.IFacadeWrapper;
 import net.minecraft.block.Block;
@@ -34,6 +36,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -243,17 +246,17 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (rayTraceResult == null || pipeTile == null) {
             return false;
         }
-        return onPipeActivated(playerIn, hand, rayTraceResult, pipeTile);
+        return onPipeActivated(worldIn, pos, playerIn, hand, rayTraceResult, pipeTile);
     }
 
-    public boolean onPipeActivated(EntityPlayer entityPlayer, EnumHand hand, CuboidRayTraceResult hit, IPipeTile<PipeType, NodeDataType> pipeTile) {
+    public boolean onPipeActivated(World world, BlockPos pos, EntityPlayer entityPlayer, EnumHand hand, CuboidRayTraceResult hit, IPipeTile<PipeType, NodeDataType> pipeTile) {
         ItemStack itemStack = entityPlayer.getHeldItem(hand);
         EnumFacing coverSide = ICoverable.traceCoverSide(hit);
         if (coverSide == null)
             return false;
 
         if (!(hit.cuboid6.data instanceof CoverSideData)) {
-            switch (onPipeToolUsed(itemStack, coverSide, pipeTile, entityPlayer)) {
+            switch (onPipeToolUsed(world, pos, itemStack, coverSide, pipeTile, entityPlayer)) {
                 case 1:
                     return true;
                 case 0:
@@ -270,26 +273,37 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             if (screwdriver.damageItem(DamageValues.DAMAGE_FOR_SCREWDRIVER, true) &&
                     coverBehavior.onScrewdriverClick(entityPlayer, hand, hit) == EnumActionResult.SUCCESS) {
                 screwdriver.damageItem(DamageValues.DAMAGE_FOR_SCREWDRIVER, false);
+                IToolStats.onOtherUse(itemStack, world, pos);
                 return true;
             }
             return false;
         }
-        return coverBehavior.onRightClick(entityPlayer, hand, hit) == EnumActionResult.SUCCESS;
+
+        EnumActionResult result = coverBehavior.onRightClick(entityPlayer, hand, hit);
+        if (result == EnumActionResult.PASS) {
+            return entityPlayer.isSneaking() && coverBehavior.onScrewdriverClick(entityPlayer, hand, hit) != EnumActionResult.PASS;
+        } else if (result == EnumActionResult.SUCCESS) {
+            if (!world.isRemote)
+                GTTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) entityPlayer);
+        }
+        return true;
     }
 
     /**
      * @return 1 if successfully used tool, 0 if failed to use tool,
      * -1 if ItemStack failed the capability check (no action done, continue checks).
      */
-    public int onPipeToolUsed(ItemStack stack, EnumFacing coverSide, IPipeTile<PipeType, NodeDataType> pipeTile, EntityPlayer entityPlayer) {
+    public int onPipeToolUsed(World world, BlockPos pos, ItemStack stack, EnumFacing coverSide, IPipeTile<PipeType, NodeDataType> pipeTile, EntityPlayer entityPlayer) {
         IWrenchItem wrenchItem = stack.getCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
         if (wrenchItem != null) {
             if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true)) {
                 if (!entityPlayer.world.isRemote) {
                     boolean isOpen = pipeTile.isConnectionOpen(AttachmentType.PIPE, coverSide);
-                    if (isOpen || canConnect(pipeTile, coverSide))
+                    if (isOpen || canConnect(pipeTile, coverSide)) {
                         pipeTile.setConnectionBlocked(AttachmentType.PIPE, coverSide, isOpen, false);
-                    wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
+                        wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
+                        IToolStats.onOtherUse(stack, world, pos);
+                    }
                 }
                 return 1;
             }
@@ -339,14 +353,18 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         }
     }
 
-    @SideOnly(Side.CLIENT)
     @Nullable
     @Override
     public RayTraceResult collisionRayTrace(@Nonnull IBlockState blockState, World worldIn, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
         if (worldIn.isRemote) {
-            return RayTracer.rayTraceCuboidsClosest(start, end, pos, getCollisionBox(worldIn, pos, Minecraft.getMinecraft().player));
+            return getClientCollisionRayTrace(worldIn, pos, start, end);
         }
         return RayTracer.rayTraceCuboidsClosest(start, end, pos, FULL_CUBE_COLLISION);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public RayTraceResult getClientCollisionRayTrace(World worldIn, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
+        return RayTracer.rayTraceCuboidsClosest(start, end, pos, getCollisionBox(worldIn, pos, Minecraft.getMinecraft().player));
     }
 
     @Nonnull

@@ -115,7 +115,6 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
         renderState.reset();
         renderState.bind(buffer);
         renderState.setBrightness(world, pos);
-        IVertexOperation[] pipeline = {new Translation(pos)};
 
         BlockCable blockCable = (BlockCable) state.getBlock();
         TileEntityCable tileEntityCable = (TileEntityCable) blockCable.getPipeTileEntity(world, pos);
@@ -126,9 +125,13 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
         Material material = tileEntityCable.getPipeMaterial();
         if (insulation != null && material != null) {
             BlockRenderLayer renderLayer = MinecraftForgeClient.getRenderLayer();
+
             if (renderLayer == BlockRenderLayer.CUTOUT) {
+                renderState.lightMatrix.locate(world, pos);
+                IVertexOperation[] pipeline = new IVertexOperation[]{new Translation(pos), renderState.lightMatrix};
                 renderCableBlock(material, insulation, paintingColor, renderState, pipeline, connectedSidesMask);
             }
+
             ICoverable coverable = tileEntityCable.getCoverableImplementation();
             coverable.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), new GTBlockOperation(renderLayer, GTBlockOperation.PASS_MASK));
         }
@@ -137,7 +140,7 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
 
     public void renderCableBlock(Material material, Insulation insulation1, int insulationColor1, CCRenderState state, IVertexOperation[] pipeline, int connectMask) {
         int wireColor = GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB());
-        float thickness = insulation1.thickness;
+        float thickness = insulation1.getThickness();
 
         IVertexOperation[] wire = ArrayUtils.addAll(pipeline, new IconTransformation(wireTexture), new ColourMultiplier(wireColor));
         IVertexOperation[] overlays = wire;

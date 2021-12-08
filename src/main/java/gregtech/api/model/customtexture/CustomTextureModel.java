@@ -3,6 +3,7 @@ package gregtech.api.model.customtexture;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import gregtech.core.hooks.CTMHooks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BlockPart;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -49,7 +50,8 @@ public class CustomTextureModel implements IModel {
     }
 
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        return (layers < 0 && state.getBlock().getRenderLayer() == layer) || ((layers >> layer.ordinal()) & 1) == 1;
+        boolean flag = (layers < 0 && state.getBlock().getRenderLayer() == layer) || ((layers >> layer.ordinal()) & 1) == 1;
+        return CTMHooks.checkLayerWithOptiFine(flag, layers, layer);
     }
 
     @Override

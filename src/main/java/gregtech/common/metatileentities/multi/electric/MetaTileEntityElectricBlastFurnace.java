@@ -1,13 +1,12 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.IMaintenanceHatch;
-import gregtech.api.capability.impl.MultiblockRecipeLogic;
+import gregtech.api.capability.IHeatingCoil;
+import gregtech.api.capability.impl.HeatingCoilRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.BlockWorldState;
@@ -15,7 +14,7 @@ import gregtech.api.multiblock.FactoryBlockPattern;
 import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.recipeproperties.BlastTemperatureProperty;
+import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
@@ -42,7 +41,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockController {
+public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockController implements IHeatingCoil {
 
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
             MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS,
@@ -55,7 +54,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     public MetaTileEntityElectricBlastFurnace(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.BLAST_RECIPES);
         if (ConfigHolder.U.GT5u.ebfTemperatureBonuses)
-            this.recipeMapWorkable = new ElectricBlastFurnaceWorkableHandler(this);
+            this.recipeMapWorkable = new HeatingCoilRecipeLogic(this);
     }
 
     @Override
@@ -95,9 +94,8 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     }
 
     @Override
-    public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
-        int recipeRequiredTemp = recipe.getProperty(BlastTemperatureProperty.getInstance(), 0);
-        return this.blastFurnaceTemperature >= recipeRequiredTemp;
+    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+        return this.blastFurnaceTemperature >= recipe.getProperty(TemperatureProperty.getInstance(), 0);
     }
 
     public static Predicate<BlockWorldState> heatingCoilPredicate() {
@@ -124,7 +122,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                 .aisle("XXX", "CCC", "CCC", "XXX")
                 .aisle("XXX", "C#C", "C#C", "XMX")
                 .aisle("XSX", "CCC", "CCC", "XXX")
-                .setAmountAtLeast('L', 10)
+                .setAmountAtLeast('L', 9)
                 .where('S', selfPredicate())
                 .where('L', statePredicate(getCasingState()))
                 .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
@@ -153,7 +151,8 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         }
     }
 
-    public int getBlastFurnaceTemperature() {
+    @Override
+    public int getCurrentTemperature() {
         return this.blastFurnaceTemperature;
     }
 
@@ -171,84 +170,5 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     public boolean hasMufflerMechanics() {
         return true;
-    }
-
-    public static class ElectricBlastFurnaceWorkableHandler extends MultiblockRecipeLogic {
-
-        public ElectricBlastFurnaceWorkableHandler(RecipeMapMultiblockController tileEntity) {
-            super(tileEntity);
-        }
-
-        @Override
-        protected void setupRecipe(Recipe recipe) {
-            int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.getMaxVoltage(), recipe.getDuration(),
-                    recipe.getProperty(BlastTemperatureProperty.getInstance(), 0));
-
-            this.progressTime = 1;
-            setMaxProgress(resultOverclock[1]);
-            this.recipeEUt = resultOverclock[0];
-            this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
-            int tier = getMachineTierForRecipe(recipe);
-            this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), random, tier));
-            if (this.wasActiveAndNeedsUpdate) {
-                this.wasActiveAndNeedsUpdate = false;
-            } else {
-                this.setActive(true);
-            }
-        }
-
-        protected int[] calculateOverclock(int EUt, long voltage, int duration, int recipeRequiredTemp) {
-            if (!allowOverclocking) {
-                return new int[]{EUt, duration};
-            }
-            boolean negativeEU = EUt < 0;
-
-            int blastFurnaceTemperature = ((MetaTileEntityElectricBlastFurnace) this.metaTileEntity).getBlastFurnaceTemperature();
-            int amountEUDiscount = Math.max(0, (blastFurnaceTemperature - recipeRequiredTemp) / 900);
-            int amountPerfectOC = amountEUDiscount / 2;
-
-            //apply a multiplicative 95% energy multiplier for every 900k over recipe temperature
-            EUt *= Math.min(1, Math.pow(0.95, amountEUDiscount));
-
-            // Apply Configurable Maintenance effects
-            double resultDuration = duration;
-            MultiblockWithDisplayBase displayBase = (MultiblockWithDisplayBase) metaTileEntity;
-            int numMaintenanceProblems = ((MultiblockWithDisplayBase) metaTileEntity).getNumMaintenanceProblems();
-            if (((MetaTileEntityElectricBlastFurnace) metaTileEntity).hasMaintenanceMechanics()) {
-                IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
-                if (hatch.getDurationMultiplier() != 1.0) {
-                    resultDuration *= hatch.getDurationMultiplier();
-                }
-            }
-
-            int tier = getOverclockingTier(voltage);
-            if (GTValues.V[tier] <= EUt || tier == 0)
-                return new int[]{EUt, duration};
-            if (negativeEU)
-                EUt = -EUt;
-
-            int resultEUt = EUt;
-
-            //do not overclock further if duration is already too small
-            //perfect overclock for every 1800k over recipe temperature
-            while (resultDuration >= 3 && resultEUt <= GTValues.V[tier - 1] && amountPerfectOC > 0) {
-                resultEUt *= 4;
-                resultDuration /= 4;
-                amountPerfectOC--;
-            }
-
-            //do not overclock further if duration is already too small
-            //regular overclocking
-            while (resultDuration >= 3 && resultEUt <= GTValues.V[tier - 1]) {
-                resultEUt *= 4;
-                resultDuration /= ConfigHolder.U.overclockDivisor;
-            }
-
-            // apply maintenance slowdown
-            resultDuration = (int) (resultDuration * (1 + 0.1 * numMaintenanceProblems));
-
-            return new int[]{negativeEU ? -resultEUt : resultEUt, (int) Math.ceil(resultDuration)};
-
-        }
     }
 }

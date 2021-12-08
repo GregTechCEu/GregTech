@@ -7,6 +7,8 @@ import gregtech.api.unification.material.properties.WireProperties;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -14,6 +16,10 @@ import java.util.List;
 import java.util.Map;
 
 public class EnergyNet extends PipeNet<WireProperties> {
+
+    private long lastEnergyFluxPerSec;
+    private long energyFluxPerSec;
+    private long lastTime;
 
     private final Map<BlockPos, List<RoutePath>> NET_DATA = new HashMap<>();
 
@@ -33,6 +39,24 @@ public class EnergyNet extends PipeNet<WireProperties> {
 
     public void nodeNeighbourChanged(BlockPos pos) {
         NET_DATA.clear();
+    }
+
+    public long getEnergyFluxPerSec() {
+        World world = getWorldData();
+        if (world != null && !world.isRemote && (world.getWorldTime() - lastTime) >= 20) {
+            lastTime = world.getWorldTime();
+            clearCache();
+        }
+        return lastEnergyFluxPerSec;
+    }
+
+    public void addEnergyFluxPerSec(long energy) {
+        energyFluxPerSec += energy;
+    }
+
+    public void clearCache() {
+        lastEnergyFluxPerSec = energyFluxPerSec;
+        energyFluxPerSec = 0;
     }
 
     @Override

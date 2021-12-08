@@ -14,6 +14,8 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
 import gregtech.common.items.behaviors.CrowbarBehaviour;
@@ -54,6 +56,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -72,6 +75,8 @@ import static gregtech.api.GTValues.V;
 public class GTUtility {
 
     private static final XSTR random = new XSTR();
+
+    private static TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
 
     public static Runnable combine(Runnable... runnables) {
         return () -> {
@@ -249,6 +254,43 @@ public class GTUtility {
         return merged;
     }
 
+    /**
+     * Attempts to merge given ItemStack with ItemStacks in list supplied
+     * growing up to their max stack size
+     *
+     * @param stackToAdd item stack to merge.
+     * @return a list of stacks, with optimized stack sizes
+     */
+
+    public static List<ItemStack> addStackToItemStackList(ItemStack stackToAdd, List<ItemStack> itemStackList) {
+        if (!itemStackList.isEmpty()) {
+            for (ItemStack stackInList : itemStackList) {
+                if (ItemStackHashStrategy.comparingAllButCount().equals(stackInList, stackToAdd)) {
+                    if (stackInList.getCount() < stackInList.getMaxStackSize()) {
+                        int insertable = stackInList.getMaxStackSize() - stackInList.getCount();
+                        if (insertable >= stackToAdd.getCount()) {
+                            stackInList.grow(stackToAdd.getCount());
+                            stackToAdd = ItemStack.EMPTY;
+                        } else {
+                            stackInList.grow(insertable);
+                            stackToAdd = stackToAdd.copy();
+                            stackToAdd.setCount(stackToAdd.getCount() - insertable);
+                        }
+                        if (stackToAdd.isEmpty()) {
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!stackToAdd.isEmpty()) {
+                itemStackList.add(stackToAdd);
+            }
+        } else {
+            itemStackList.add(stackToAdd.copy());
+        }
+        return itemStackList;
+    }
+
     public static boolean harvestBlock(World world, BlockPos pos, EntityPlayer player) {
         IBlockState blockState = world.getBlockState(pos);
         TileEntity tileEntity = world.getTileEntity(pos);
@@ -323,7 +365,7 @@ public class GTUtility {
         if (item instanceof IToolItem) {
             //if item implements IDamagableItem, it manages it's own durability itself
             IToolItem damagableItem = (IToolItem) item;
-            return damagableItem.damageItem(itemStack, vanillaDamage, simulate);
+            return damagableItem.damageItem(itemStack, null, vanillaDamage, simulate);
 
         } else if (itemStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null)) {
             //if we're using electric item, use default energy multiplier for textures
@@ -900,10 +942,10 @@ public class GTUtility {
     }
 
     public static AxisAlignedBB rotateAroundYAxis(AxisAlignedBB aabb, EnumFacing from, EnumFacing to) {
-        if(from == EnumFacing.UP || from == EnumFacing.DOWN || to == EnumFacing.UP || to == EnumFacing.DOWN)
+        if (from == EnumFacing.UP || from == EnumFacing.DOWN || to == EnumFacing.UP || to == EnumFacing.DOWN)
             throw new IllegalArgumentException("Either the second or third parameters were EnumFacing.DOWN or EnumFacing.UP.");
         AxisAlignedBB rotatedAABB = new AxisAlignedBB(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ);
-        while(from != to) {
+        while (from != to) {
             from = from.rotateY();
             rotatedAABB = new AxisAlignedBB(1 - rotatedAABB.maxZ, rotatedAABB.minY, rotatedAABB.minX, 1 - rotatedAABB.minZ, rotatedAABB.maxY, rotatedAABB.maxX);
         }
@@ -928,7 +970,7 @@ public class GTUtility {
 
     /**
      * Alternative function for tank sizes, takes a tier input and returns the corresponding size
-     *
+     * <p>
      * This function scales the same as the default function except it stops scaling past HV
      */
     public static final Function<Integer, Integer> hvCappedTankSizeFunction = tier -> {
@@ -942,7 +984,7 @@ public class GTUtility {
 
     /**
      * Alternative function for tank sizes, takes a tier input and returns the corresponding size
-     *
+     * <p>
      * This function is meant for use with machine that need very large tanks, it stops scaling past HV
      */
     public static final Function<Integer, Integer> largeTankSizeFunction = tier -> {
@@ -953,4 +995,58 @@ public class GTUtility {
         // HV+
         return 64000;
     };
+
+    public static String romanNumeralString(int num) {
+
+        if (romanNumeralConversions.isEmpty()) { // Initialize on first run-through.
+            romanNumeralConversions.put(1000, "M");
+            romanNumeralConversions.put(900, "CM");
+            romanNumeralConversions.put(500, "D");
+            romanNumeralConversions.put(400, "CD");
+            romanNumeralConversions.put(100, "C");
+            romanNumeralConversions.put(90, "XC");
+            romanNumeralConversions.put(50, "L");
+            romanNumeralConversions.put(40, "XL");
+            romanNumeralConversions.put(10, "X");
+            romanNumeralConversions.put(9, "IX");
+            romanNumeralConversions.put(5, "V");
+            romanNumeralConversions.put(4, "IV");
+            romanNumeralConversions.put(1, "I");
+        }
+
+        int conversion = romanNumeralConversions.floorKey(num);
+        if (num == conversion) {
+            return romanNumeralConversions.get(num);
+        }
+        return romanNumeralConversions.get(conversion) + romanNumeralString(num - conversion);
+    }
+
+    public static boolean isOre(Block block) {
+        OrePrefix orePrefix = OreDictUnifier.getPrefix(new ItemStack(block));
+        return orePrefix != null && orePrefix.name().startsWith("ore");
+    }
+
+    /**
+     * @param values to find the mean of
+     * @return the mean value
+     */
+    public static long mean(@Nonnull long[] values) {
+        if(values.length == 0L)
+            return 0L;
+
+        long sum = 0L;
+        for (long v : values)
+            sum += v;
+        return sum / values.length;
+    }
+
+    /**
+     *
+     * @param world the {@link World} to get the average tick time of
+     * @return the mean tick time
+     */
+    public static double getMeanTickTime(@Nonnull World world) {
+        return mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
+    }
+
 }

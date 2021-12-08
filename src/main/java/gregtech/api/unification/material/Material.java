@@ -179,6 +179,11 @@ public class Material implements Comparable<Material> {
         return materialInfo.color;
     }
 
+    @ZenGetter("hasFluidColor")
+    public boolean hasFluidColor() {
+        return materialInfo.hasFluidColor;
+    }
+
     public void setMaterialIconSet(MaterialIconSet materialIconSet) {
         materialInfo.iconSet = materialIconSet;
     }
@@ -201,7 +206,7 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null)
             return materialInfo.element.getProtons();
         if (materialInfo.componentList.isEmpty())
-            return Elements.get("Neutronium").getProtons();
+            return Elements.get("Technetium").getProtons();
         long totalProtons = 0;
         for (MaterialStack material : materialInfo.componentList) {
             totalProtons += material.amount * material.material.getProtons();
@@ -214,7 +219,7 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null)
             return materialInfo.element.getNeutrons();
         if (materialInfo.componentList.isEmpty())
-            return Elements.get("Neutronium").getNeutrons();
+            return Elements.get("Technetium").getNeutrons();
         long totalNeutrons = 0;
         for (MaterialStack material : materialInfo.componentList) {
             totalNeutrons += material.amount * material.material.getNeutrons();
@@ -227,7 +232,7 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null)
             return materialInfo.element.getMass();
         if (materialInfo.componentList.isEmpty())
-            return Elements.get("Neutronium").getMass();
+            return Elements.get("Technetium").getMass();
         long totalMass = 0;
         for (MaterialStack material : materialInfo.componentList) {
             totalMass += material.amount * material.material.getMass();
@@ -240,7 +245,7 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null)
             return materialInfo.element.getProtons();
         if (materialInfo.componentList.isEmpty())
-            return Math.max(1, Elements.get("Neutronium").getProtons());
+            return Math.max(1, Elements.get("Technetium").getProtons());
         long totalProtons = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {
             totalAmount += material.amount;
@@ -254,7 +259,7 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null)
             return materialInfo.element.getNeutrons();
         if (materialInfo.componentList.isEmpty())
-            return Elements.get("Neutronium").getNeutrons();
+            return Elements.get("Technetium").getNeutrons();
         long totalNeutrons = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {
             totalAmount += material.amount;
@@ -269,7 +274,7 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null)
             return materialInfo.element.getMass();
         if (materialInfo.componentList.size() <= 0)
-            return Elements.get("Neutronium").getMass();
+            return Elements.get("Technetium").getMass();
         long totalMass = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {
             totalAmount += material.amount;
@@ -362,6 +367,14 @@ public class Material implements Comparable<Material> {
     public void postVerify() {
         this.chemicalFormula = calculateChemicalFormula();
         calculateDecompositionType();
+    }
+
+    public boolean isHidden() {
+        return this.materialInfo.isHidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.materialInfo.isHidden = hidden;
     }
 
     /**
@@ -602,7 +615,21 @@ public class Material implements Comparable<Material> {
          * @param color The RGB-formatted Color.
          */
         public Builder color(int color) {
+            color(color, true);
+            return this;
+        }
+
+        /**
+         * Set the Color of this Material.<br>
+         * Defaults to 0xFFFFFF unless {@link Builder#colorAverage()} was called, where
+         * it will be a weighted average of the components of the Material.
+         *
+         * @param color The RGB-formatted Color.
+         * @param noFluid Whether the fluid should be colored or not.
+         */
+        public Builder color(int color, boolean hasFluidColor) {
             this.materialInfo.color = color;
+            this.materialInfo.hasFluidColor = hasFluidColor;
             return this;
         }
 
@@ -683,6 +710,11 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        public Builder setHidden() {
+            this.materialInfo.isHidden = true;
+            return this;
+        }
+
         public Builder toolStats(float speed, float damage, int durability, int enchantability) {
             properties.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, durability, enchantability));
             return this;
@@ -690,6 +722,21 @@ public class Material implements Comparable<Material> {
 
         public Builder blastTemp(int temp) {
             properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp));
+            return this;
+        }
+
+        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier) {
+            properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp, gasTier, -1, -1));
+            return this;
+        }
+
+        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride) {
+            properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp, gasTier, eutOverride, -1));
+            return this;
+        }
+
+        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride, int durationOverride) {
+            properties.setProperty(PropertyKey.BLAST, new BlastProperty(temp, gasTier, eutOverride, durationOverride));
             return this;
         }
 
@@ -833,6 +880,13 @@ public class Material implements Comparable<Material> {
         private int color = -1;
 
         /**
+         * The color of this Material.
+         * <p>
+         * Default: 0xFFFFFF if no Components, otherwise it will be the average of Components.
+         */
+        private boolean hasFluidColor = true;
+
+        /**
          * The IconSet of this Material.
          * <p>
          * Default: - GEM_VERTICAL if it has GemProperty.
@@ -854,6 +908,12 @@ public class Material implements Comparable<Material> {
          * Default: none.
          */
         private Element element;
+
+        /**
+         * Field used to hide Materials from JEI, but keep them generated.
+         * Allows GTCEu to generate all elements without needing to use all of them.
+         */
+        private boolean isHidden = false;
 
         private MaterialInfo(int metaItemSubId, String name) {
             this.metaItemSubId = metaItemSubId;

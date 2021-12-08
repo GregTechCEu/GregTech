@@ -1,8 +1,8 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.*;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -13,7 +13,6 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.FactoryBlockPattern;
 import gregtech.api.multiblock.PatternMatchContext;
-import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
@@ -22,9 +21,13 @@ import gregtech.api.render.ICustomRenderFast;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.RenderBufferHelper;
-import gregtech.common.asm.hooks.BloomRenderLayerHooks;
-import gregtech.common.blocks.*;
+import gregtech.api.util.RenderUtil;
+import gregtech.api.util.interpolate.Eases;
+import gregtech.common.blocks.BlockFusionCasing;
+import gregtech.common.blocks.BlockGlassCasing;
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.core.hooks.BloomRenderLayerHooks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -32,28 +35,34 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
-
-import static gregtech.api.util.RelativeDirection.*;
+import java.util.Objects;
 
 public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController implements IFastRenderMetaTileEntity {
 
     private final int tier;
     private EnergyContainerList inputEnergyContainers;
     private long heat = 0; // defined in TileEntityFusionReactor but serialized in FusionRecipeLogic
+    private Integer color;
 
     public MetaTileEntityFusionReactor(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, RecipeMaps.FUSION_RECIPES);
@@ -76,35 +85,36 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     @Override
     protected BlockPattern createStructurePattern() {
         FactoryBlockPattern.start();
-        return FactoryBlockPattern.start(LEFT, DOWN, BACK)
+        return FactoryBlockPattern.start()
                 .aisle("###############", "######OGO######", "###############")
-                .aisle("######ICI######", "####GG###GG####", "######ICI######")
-                .aisle("####CC###CC####", "###E##OSO##E###", "####CC###CC####")
-                .aisle("###C#######C###", "##EcEC###CEcE##", "###C#######C###")
-                .aisle("##C#########C##", "#G#E#######E#G#", "##C#########C##")
-                .aisle("##C#########C##", "#G#C#######C#G#", "##C#########C##")
-                .aisle("#I###########I#", "O#O#########O#O", "#I###########I#")
-                .aisle("#C###########C#", "G#C#########C#G", "#C###########C#")
-                .aisle("#I###########I#", "O#O#########O#O", "#I###########I#")
-                .aisle("##C#########C##", "#G#C#######C#G#", "##C#########C##")
-                .aisle("##C#########C##", "#G#E#######E#G#", "##C#########C##")
-                .aisle("###C#######C###", "##EcEC###CEcE##", "###C#######C###")
-                .aisle("####CC###CC####", "###E##OCO##E###", "####CC###CC####")
-                .aisle("######ICI######", "####GG###GG####", "######ICI######")
-                .aisle("###############", "######OGO######", "###############")
+                .aisle("######ICI######", "####GGAAAGG####", "######ICI######")
+                .aisle("####CC###CC####", "###EAAOGOAAE###", "####CC###CC####")
+                .aisle("###C#######C###", "##EKEG###GEKE##", "###C#######C###")
+                .aisle("##C#########C##", "#GAE#######EAG#", "##C#########C##")
+                .aisle("##C#########C##", "#GAG#######GAG#", "##C#########C##")
+                .aisle("#I###########I#", "OAO#########OAO", "#I###########I#")
+                .aisle("#C###########C#", "GAG#########GAG", "#C###########C#")
+                .aisle("#I###########I#", "OAO#########OAO", "#I###########I#")
+                .aisle("##C#########C##", "#GAG#######GAG#", "##C#########C##")
+                .aisle("##C#########C##", "#GAE#######EAG#", "##C#########C##")
+                .aisle("###C#######C###", "##EKEG###GEKE##", "###C#######C###")
+                .aisle("####CC###CC####", "###EAAOGOAAE###", "####CC###CC####")
+                .aisle("######ICI######", "####GGAAAGG####", "######ICI######")
+                .aisle("###############", "######OSO######", "###############")
                 .where('S', selfPredicate())
-                .where('G', statePredicate(MetaBlocks.TRANSPARENT_CASING.getState(BlockTransparentCasing.CasingType.REINFORCED_GLASS)).or(statePredicate(getCasingState())))
+                .where('G', statePredicate(MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.FUSION_GLASS)).or(statePredicate(getCasingState())))
                 .where('C', statePredicate(getCasingState()))
-                .where('c', statePredicate(getCoilState()))
                 .where('O', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.EXPORT_FLUIDS)))
                 .where('E', statePredicate(getCasingState()).or(tilePredicate((state, tile) -> {
-                    for (int i = tier; i < GTValues.UV + 1; i++) {
+                    for (int i = tier; i <= GTValues.UV; i++) {
                         if (tile.metaTileEntityId.equals(MetaTileEntities.ENERGY_INPUT_HATCH[i].metaTileEntityId))
                             return true;
                     }
                     return false;
                 })))
                 .where('I', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS)))
+                .where('K', statePredicate(getCoilState()))
+                .where('A', isAirPredicate())
                 .where('#', (tile) -> true)
                 .build();
     }
@@ -119,26 +129,19 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     }
 
     private IBlockState getCasingState() {
-        switch (tier) {
-            case 6:
-                return MetaBlocks.MACHINE_CASING.getState(BlockMachineCasing.MachineCasingType.LuV);
-            case 7:
-                return MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.FUSION_CASING);
-            case 8:
-            default:
-                return MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.FUSION_CASING_MK2);
-        }
+        if (tier == GTValues.LuV)
+            return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.FUSION_CASING);
+        if (tier == GTValues.ZPM)
+            return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.FUSION_CASING_MK2);
+
+        return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.FUSION_CASING_MK3);
     }
 
     private IBlockState getCoilState() {
-        switch (tier) {
-            case 6:
-                return MetaBlocks.FUSION_COIL.getState(BlockFusionCoil.CoilType.SUPERCONDUCTOR);
-            case 7:
-            case 8:
-            default:
-                return MetaBlocks.FUSION_COIL.getState(BlockFusionCoil.CoilType.FUSION_COIL);
-        }
+        if (tier == GTValues.LuV)
+            return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL);
+
+        return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.FUSION_COIL);
     }
 
     @Override
@@ -156,7 +159,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         this.outputFluidInventory = new FluidTankList(true, getAbilities(MultiblockAbility.EXPORT_FLUIDS));
         List<IEnergyContainer> energyInputs = getAbilities(MultiblockAbility.INPUT_ENERGY);
         this.inputEnergyContainers = new EnergyContainerList(energyInputs);
-        long euCapacity = energyInputs.size() * 10000000L * (long) Math.pow(2, tier - 6);
+        long euCapacity = calculateEnergyStorageFactor(energyInputs.size());
         this.energyContainer = new EnergyContainerHandler(this, euCapacity, GTValues.V[tier], 0, 0, 0) {
             @Override
             public String getName() {
@@ -165,46 +168,73 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         };
     }
 
+    private long calculateEnergyStorageFactor(int energyInputAmount) {
+        return energyInputAmount * (long) Math.pow(2, tier - 6) * 10000000L;
+    }
+
     @Override
     protected void updateFormedValid() {
-        if (!getWorld().isRemote) {
-            if (this.inputEnergyContainers.getEnergyStored() > 0) {
-                long energyAdded = this.energyContainer.addEnergy(this.inputEnergyContainers.getEnergyStored());
-                if (energyAdded > 0) this.inputEnergyContainers.removeEnergy(energyAdded);
+        if (this.inputEnergyContainers.getEnergyStored() > 0) {
+            long energyAdded = this.energyContainer.addEnergy(this.inputEnergyContainers.getEnergyStored());
+            if (energyAdded > 0) this.inputEnergyContainers.removeEnergy(energyAdded);
+        }
+        super.updateFormedValid();
+        if (recipeMapWorkable.isWorking() && color == null) {
+            if (recipeMapWorkable.getPreviousRecipe() != null && recipeMapWorkable.getPreviousRecipe().getFluidOutputs().size() > 0) {
+                int newColor = 0xFF000000 | recipeMapWorkable.getPreviousRecipe().getFluidOutputs().get(0).getFluid().getColor();
+                if (!Objects.equals(color, newColor)) {
+                    color = newColor;
+                    writeCustomData(GregtechDataCodes.UPDATE_COLOR, this::writeColor);
+                }
             }
-            super.updateFormedValid();
+        } else if (!recipeMapWorkable.isWorking() && color != null){
+            color = null;
+            writeCustomData(GregtechDataCodes.UPDATE_COLOR, this::writeColor);
+        }
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        writeColor(buf);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        readColor(buf);
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.UPDATE_COLOR) {
+            readColor(buf);
+        }
+    }
+
+    private void readColor(PacketBuffer buf) {
+        color = buf.readBoolean() ? buf.readVarInt() : null;
+    }
+
+    private void writeColor(PacketBuffer buf) {
+        buf.writeBoolean(color != null);
+        if (color != null) {
+            buf.writeVarInt(color);
         }
     }
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        if (!this.isStructureFormed()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.invalid_structure").setStyle(new Style().setColor(TextFormatting.RED)));
-        }
-        if (this.isStructureFormed()) {
-            if (!this.recipeMapWorkable.isWorkingEnabled()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-            } else if (this.recipeMapWorkable.isActive()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
-                int currentProgress;
-                if (energyContainer.getEnergyCapacity() > 0) {
-                    currentProgress = (int) (this.recipeMapWorkable.getProgressPercent() * 100.0D);
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.progress", currentProgress));
-                } else {
-                    currentProgress = -this.recipeMapWorkable.getRecipeEUt();
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.generation_eu", currentProgress));
-                }
-            } else {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
-            }
-
-            if (this.recipeMapWorkable.isHasNotEnoughEnergy()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-        }
-
+        super.addDisplayText(textList);
         textList.add(new TextComponentString("EU: " + this.energyContainer.getEnergyStored() + " / " + this.energyContainer.getEnergyCapacity()));
         textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.heat", heat));
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.machine.fusion_reactor.capacity", calculateEnergyStorageFactor(16) / 1000000L));
     }
 
     @Nonnull
@@ -226,7 +256,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
         public FusionRecipeLogic(MetaTileEntityFusionReactor tileEntity) {
             super(tileEntity);
-            this.allowOverclocking = false;
+            this.setAllowOverclocking(false);
         }
 
         @Override
@@ -238,22 +268,23 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         }
 
         @Override
-        protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode mode) {
-            Recipe recipe = super.findRecipe(maxVoltage, inputs, fluidInputs, mode);
-            return (recipe != null && recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L)
-                    <= energyContainer.getEnergyCapacity()) ? recipe : null;
-        }
+        protected boolean checkRecipe(Recipe recipe) {
+            // if the reactor is not able to hold enough energy for it, do not run the recipe
+            if (recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L) > energyContainer.getEnergyCapacity())
+                 return false;
 
-        @Override
-        protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
             long heatDiff = recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L) - heat;
-            if (heatDiff <= 0) {
-                return super.setupAndConsumeRecipeInputs(recipe, importInventory);
-            }
-            if (energyContainer.getEnergyStored() < heatDiff || !super.setupAndConsumeRecipeInputs(recipe, importInventory)) {
+            // if the stored heat is >= required energy, recipe is okay to run
+            if (heatDiff <= 0)
+                return true;
+
+            // if the remaining energy needed is more than stored, do not run
+            if (energyContainer.getEnergyStored() < heatDiff)
                 return false;
-            }
+
+            // remove the energy needed
             energyContainer.removeEnergy(heatDiff);
+            // increase the stored heat
             heat += heatDiff;
             return true;
         }
@@ -274,20 +305,23 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        if (MinecraftForgeClient.getRenderPass() == 0 && recipeMapWorkable.isWorking()) {
+        if (color != null && MinecraftForgeClient.getRenderPass() == 0) {
+            final int c = color;
             BloomRenderLayerHooks.requestRenderFast(RENDER_HANDLER, (buffer)->{
-                final float r = 1;
-                final float g = .2f;
-                final float b = .2f;
+                int color = RenderUtil.colorInterpolator(c, -1).apply(Eases.EaseQuadIn.getInterpolation(Math.abs((Math.abs(getOffsetTimer() % 50) + partialTicks) - 25) / 25));
+                float a = (float)(color >> 24 & 255) / 255.0F;
+                float r = (float)(color >> 16 & 255) / 255.0F;
+                float g = (float)(color >> 8 & 255) / 255.0F;
+                float b = (float)(color & 255) / 255.0F;
                 Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
                 if (entity != null) {
                     buffer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION_COLOR);
                     RenderBufferHelper.renderRing(buffer,
-                            x + getFrontFacing().getXOffset() * 5 + 0.5,
+                                x + getFrontFacing().getOpposite().getXOffset() * 7 + 0.5,
                             y + 0.5,
-                            z + getFrontFacing().getZOffset() * 5 + 0.5,
+                            z + getFrontFacing().getOpposite().getZOffset() * 7 + 0.5,
                             6, 0.2, 10, 20,
-                            r, g, b, 1, EnumFacing.Axis.Y);
+                            r, g, b, a, EnumFacing.Axis.Y);
                     Tessellator.getInstance().draw();
                 }
             });
@@ -297,7 +331,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         return new AxisAlignedBB(this.getPos().offset(getFrontFacing().getOpposite()).offset(getFrontFacing().rotateY(),6),
-                this.getPos().offset(getFrontFacing(), 12).offset(getFrontFacing().rotateY().getOpposite(),6));
+                this.getPos().offset(getFrontFacing().getOpposite(), 13).offset(getFrontFacing().rotateY().getOpposite(),6));
     }
 
     @Override

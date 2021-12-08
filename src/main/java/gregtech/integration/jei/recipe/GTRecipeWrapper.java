@@ -4,6 +4,7 @@ import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
@@ -96,7 +97,7 @@ public class GTRecipeWrapper implements IRecipeWrapper {
         }
     }
 
-    public void addTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
+    public void addItemTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
         boolean notConsumed = input && recipe.isNotConsumedInput(ingredient);
         ChanceEntry entry = input ? null : chanceOutput.get(slotIndex);
 
@@ -105,6 +106,14 @@ public class GTRecipeWrapper implements IRecipeWrapper {
             double boost = entry.getBoostPerTier() / 100.0;
             tooltip.add(I18n.format("gregtech.recipe.chance", chance, boost));
         } else if (notConsumed) {
+            tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
+        }
+    }
+
+    public void addFluidTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
+        boolean notConsumed = input && recipe.isNotConsumedInput(ingredient);
+
+        if (notConsumed) {
             tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
         }
     }
@@ -137,6 +146,7 @@ public class GTRecipeWrapper implements IRecipeWrapper {
     }
 
     private int getPropertyListHeight() {
+        if (recipeMap == RecipeMaps.COKE_OVEN_RECIPES) return LINE_HEIGHT - 6; // fun hack TODO Make this easier to position
         return (recipe.getPropertyCount() + 3) * LINE_HEIGHT - 3;
     }
 }

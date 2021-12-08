@@ -51,7 +51,7 @@ public class CoverFacade extends CoverBehavior implements IFacadeCover {
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
         BlockRenderLayer oldLayer = MinecraftForgeClient.getRenderLayer();
         ForgeHooksClient.setRenderLayer(layer);
-        FacadeRenderer.renderBlockCover(renderState, translation, coverHolder.getWorld(), coverHolder.getPos(), attachedSide.getIndex(), facadeState, plateBox);
+        FacadeRenderer.renderBlockCover(renderState, translation, coverHolder.getWorld(), coverHolder.getPos(), attachedSide.getIndex(), facadeState, plateBox, layer);
         ForgeHooksClient.setRenderLayer(oldLayer);
     }
 

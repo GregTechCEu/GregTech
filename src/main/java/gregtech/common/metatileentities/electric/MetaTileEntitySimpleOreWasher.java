@@ -23,6 +23,6 @@ public class MetaTileEntitySimpleOreWasher extends SimpleMachineMetaTileEntity {
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntitySimpleOreWasher(metaTileEntityId, workable.recipeMap, renderer, getTier());
+        return new MetaTileEntitySimpleOreWasher(metaTileEntityId, workable.getRecipeMap(), renderer, getTier());
     }
 }

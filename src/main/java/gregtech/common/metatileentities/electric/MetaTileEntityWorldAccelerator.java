@@ -139,7 +139,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
                         }
                         if (world.isBlockLoaded(pos)) {
                             for (int i = 0; i < speed; i++) {
-                                if (GTValues.RNG.nextInt(getTier() / 100) == 0) {
+                                if (GTValues.RNG.nextInt(100) < getTier()) {
                                     // Rongmario:
                                     // randomTick instead of updateTick since some modders can mistake where to put their code.
                                     // Fresh IBlockState before every randomTick, this could easily change after every randomTick call
@@ -161,9 +161,9 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (isTEMode()) {
-            Textures.WORLD_ACCELERATOR_TE_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive);
+            Textures.WORLD_ACCELERATOR_TE_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive, isWorkingEnabled());
         } else {
-            Textures.WORLD_ACCELERATOR_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive);
+            Textures.WORLD_ACCELERATOR_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive, isWorkingEnabled());
         }
     }
 

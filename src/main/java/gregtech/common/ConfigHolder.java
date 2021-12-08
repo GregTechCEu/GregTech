@@ -99,6 +99,22 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static int gasTurbineBonusOutput = 6144;
 
+    @Config.Comment("If true, sounds will be played while machines are active. Default: true")
+    @Config.RequiresWorldRestart
+    public static boolean machineSounds = true;
+
+    @Config.Comment("If true, sounds will be played when using tools outside of crafting. Default: true")
+    public static boolean toolUseSounds = true;
+
+    @Config.Comment("If true, sounds will be played when crafting with tools. Default: true")
+    public static boolean toolCraftingSounds = true;
+
+    @Config.Comment("The EU drain per tick for each screen.")
+    @Config.Name("CentralMonitor cost")
+    @Config.RangeInt(min = 0)
+    @Config.RequiresMcRestart
+    public static int centralMonitorEuCost = 50;
+
     public static class VanillaRecipes {
 
         @Config.Comment("Whether to make glass related recipes harder. Default: true")
@@ -119,11 +135,14 @@ public class ConfigHolder {
         @Config.Comment("Whether to make redstone related recipes harder. Default: false")
         public boolean hardRedstoneRecipes = false;
 
-        @Config.Comment("Recipes for items like iron doors, trapdoors, buckets, pressure plates, cauldrons, hoppers, and iron bars require iron plates, sticks, and more. Default: true")
+        @Config.Comment("Recipes for items like iron doors, trapdoors, buckets, cauldrons, hoppers, and iron bars require iron plates, sticks, and more. Default: true")
         public boolean hardIronRecipes = true;
 
         @Config.Comment("Whether to make miscellaneous recipes harder. Default: false")
         public boolean hardMiscRecipes = false;
+
+        @Config.Comment("Whether to make coloring blocks like concrete or glass harder. Default: false")
+        public boolean hardDyeRecipes = false;
 
         @Config.Comment("Whether to make flint and steel recipe require steel parts. Default: true.")
         public boolean flintAndSteelRequireSteel = true;
@@ -193,6 +212,9 @@ public class ConfigHolder {
         @Config.Comment("Steam to EU multiplier for Steam Multiblocks. 1.0 means 1 Steam -> 1 EU. 0.5 means 2 Steam -> 1 EU. Default: 0.5")
         @Config.RequiresWorldRestart
         public double multiblockSteamToEU = 0.5;
+
+        @Config.Comment("Whether to generate flawed and chipped gems for materials and recipes involving them. Useful for mods like Terrafirmacraft. Default: false")
+        public boolean generateLowQualityGems = false;
 
         public static class GT5U {
 
@@ -269,7 +291,7 @@ public class ConfigHolder {
         }
 
         public static class ClientConfig {
-			
+
             @Config.Comment("Terminal root path. Default: (config/)gregtech/terminal")
             public String terminalRootPath = "gregtech/terminal";
 
@@ -281,10 +303,10 @@ public class ConfigHolder {
             public double resolution = 2;
 
             @Config.Comment("Whether or not to enable Emissive Textures for GregTech Machines. Default: true")
-            public boolean machinesEemissiveTextures = true;
+            public boolean machinesEmissiveTextures = true;
 
             @Config.Comment("Whether or not to enable Emissive Textures for GregTech Casings when the multi-block is working. Default: true")
-            public boolean casingsActiveEemissiveTextures = true;
+            public boolean casingsActiveEmissiveTextures = true;
 
             @Config.Comment("Shader Settings")
             public Shader shader = new Shader();
@@ -305,6 +327,14 @@ public class ConfigHolder {
             @Config.Comment("Bloom Algorithm: 0-Simple Gaussian Blur Bloom(Fast). 1-Unity Bloom. 2-Unreal Bloom")
             @Config.RangeInt(min = 0, max = 2)
             public int bloomStyle = 2;
+
+            @Config.Comment("The brightness after bloom should not exceed this value. It can be used to limit the brightness of highlights (e.g., daytiome. and this value should be greater than lowBrightnessThreshold)")
+            @Config.RangeDouble(min = 0)
+            public double highBrightnessThreshold = 1.3;
+
+            @Config.Comment("The brightness after bloom should not smaller than this value. It can be used to limit the brightness of dusky parts (e.g., night/caves. and this value should be smaller than highBrightnessThreshold)")
+            @Config.RangeDouble(min = 0)
+            public double lowBrightnessThreshold = 0.3;
 
             @Config.Comment("Mipmap Size. (2-5)=>(fast-slow)=>(low quality-high quality)")
             @Config.RangeInt(min = 2, max = 5)

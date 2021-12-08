@@ -37,16 +37,16 @@
         "all": "gregtech:blocks/casings/pipe/machine_casing_grate"
       }
     },
-    "active=false,variant=assembler": {
+    "active=false,variant=assembly_control": {
       "model": "minecraft:cube_all",
       "textures": {
-        "all": "gregtech:blocks/casings/mechanic/machine_casing_assembler"
+        "all": "gregtech:blocks/casings/mechanic/machine_casing_assembly_control"
       }
     },
-    "active=true,variant=assembler": {
+    "active=true,variant=assembly_control": {
       "model": "minecraft:cube_all",
       "textures": {
-        "all": "gregtech:blocks/casings/mechanic/machine_casing_assembler"
+        "all": "gregtech:blocks/casings/mechanic/machine_casing_assembly_control"
       }
     },
     "active=false,variant=assembly_line": {
@@ -60,32 +60,6 @@
       "textures": {
         "bot_all": "gregtech:blocks/casings/mechanic/machine_casing_assembly_line",
         "top_all": "gregtech:blocks/casings/mechanic/machine_casing_assembly_line_bloom"
-      }
-    },
-    "active=false,variant=fusion": {
-      "model": "minecraft:cube_all",
-      "textures": {
-        "all": "gregtech:blocks/casings/fusion/machine_casing_fusion"
-      }
-    },
-    "active=true,variant=fusion": {
-      "model": "gregtech:cube_2_layer_all",
-      "textures": {
-        "bot_all": "gregtech:blocks/casings/fusion/machine_casing_fusion",
-        "top_all": "gregtech:blocks/casings/fusion/machine_casing_fusion_bloom"
-      }
-    },
-    "active=false,variant=fusion_mk2": {
-      "model": "minecraft:cube_all",
-      "textures": {
-        "all": "gregtech:blocks/casings/fusion/machine_casing_fusion_2"
-      }
-    },
-    "active=true,variant=fusion_mk2": {
-      "model": "gregtech:cube_2_layer_all",
-      "textures": {
-        "bot_all": "gregtech:blocks/casings/fusion/machine_casing_fusion_2",
-        "top_all": "gregtech:blocks/casings/fusion/machine_casing_fusion_bloom"
       }
     }
   }

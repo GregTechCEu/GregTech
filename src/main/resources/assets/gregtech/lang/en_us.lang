@@ -56,9 +56,9 @@ gregtech.multiblock.multi_smelter.description=The Multi Smelter is a multiblock 
 gregtech.multiblock.large_boiler.description=Large Boilers are multiblocks that generate steam from an energy source and water. Said energy source is usually a solid fuel or some high-density fluid. Tiers differ only by amount of steam outputted.
 gregtech.multiblock.large_turbine.description=Large Turbines are multiblocks that generate power from steam, gases, and plasma by having them spin the turbine's rotor. Energy output is based on rotor efficiency and current speed of turbine. Gearbox casings are used in the center of the structure.
 gregtech.multiblock.assembly_line.description=The Assembly Line is a large multiblock structure consisting of 5 to 16 "slices". In theory, it's large Assembling Machine, used for creating advanced crafting components.
-gregtech.multiblock.fusion_reactor_mk1.description=The Fusion Reactor Mark 1 is a large multiblock structure used for fusing elements into heavier ones. The Mark 1 Fusion Reactor can use LuV, ZPM or UV Energy Hatches. For every Hatch it has its buffer increases by 10M EU.
-gregtech.multiblock.fusion_reactor_mk2.description=The Fusion Reactor Mark 2 is a large multiblock structure used for fusing elements into heavier ones. The Mark 2 Fusion Reactor can use ZPM or UV Energy Hatches. For every Hatch it has its buffer increases by 20M EU.
-gregtech.multiblock.fusion_reactor_mk3.description=The Fusion Reactor Mark 3 is a large multiblock structure used for fusing elements into heavier ones. The Mark 3 Fusion Reactor can only use UV Energy Hatches. For every Hatch it has its buffer increases by 40M EU.
+gregtech.multiblock.fusion_reactor_mk1.description=The Fusion Reactor Mark 1 is a large multiblock structure used for fusing elements into heavier ones. It can only use LuV, ZPM, and UV Energy Hatches. For every Hatch it has, its buffer increases by 10M EU, and has a maximum of 160M.
+gregtech.multiblock.fusion_reactor_mk2.description=The Fusion Reactor Mark 2 is a large multiblock structure used for fusing elements into heavier ones. It can only use ZPM and UV Energy Hatches. For every Hatch it has, its buffer increases by 20M EU, and has a maximum of 320M.
+gregtech.multiblock.fusion_reactor_mk3.description=The Fusion Reactor Mark 3 is a large multiblock structure used for fusing elements into heavier ones. It can only use UV Energy Hatches. For every Hatch it has, its buffer increases by 40M EU, and has a maximum of 640M.
 gregtech.multiblock.fusion_reactor.heat=Heat: %d
 gregtech.multiblock.large_chemical_reactor.description=The Large Chemical Reactor performs chemical reactions at 100% energy efficiency. Overclocks multiply both speed and energy by 4. The multiblock requires exactly 1 Cupronickel Coil Block, which must be placed adjacent to the PTFE Pipe casing located in the center.
 gregtech.multiblock.primitive_water_pump.description=The Primitive Water Pump is a pre-Steam Era multiblock that collects water once per second, depending on the Biome it is in. It can use a Pump, ULV, or LV Output Hatch, increasing the amount of water per tier. Follows the formula: Biome Coefficient * Hatch Multiplier.
@@ -76,6 +76,7 @@ metaitem.electric.discharge_mode.disabled=§eDischarge Mode Disabled
 metaitem.electric.discharge_mode.tooltip=Use while sneaking to toggle discharge mode
 
 metaitem.dust.tooltip.purify=Throw into Cauldron to get clean Dust
+metaitem.crushed.tooltip.purify=Throw into Cauldron to get Purified Ore
 metaitem.int_circuit.configuration=Configuration: %,d
 metaitem.credit.copper.name=Copper Credit
 metaitem.credit.copper.tooltip=0.125 Credits
@@ -223,12 +224,6 @@ metaitem.large_fluid_cell.aluminium.name=%s Aluminium Cell
 metaitem.large_fluid_cell.stainless_steel.name=%s Stainless Steel Cell
 metaitem.large_fluid_cell.titanium.name=%s Titanium Cell
 metaitem.large_fluid_cell.tungstensteel.name=%s Tungstensteel Cell
-metaitem.large_fluid_cell.chrome.name=%s Chrome Cell
-metaitem.large_fluid_cell.iridium.name=%s Iridium Cell
-metaitem.large_fluid_cell.osmium.name=%s Osmium Cell
-metaitem.large_fluid_cell.neutronium.name=%s Neutronium Cell
-
-gregtech.item.fluid_cell.jei_description=The Extractor can be used to clear the inventory of any type of cell.
 
 metaitem.spray.can.dyes.white.name=Spray Can (White)
 metaitem.spray.can.dyes.orange.name=Spray Can (Orange)
@@ -313,7 +308,7 @@ metaitem.battery.zpm.naquadria.tooltip=Reusable Battery
 metaitem.battery.uv.naquadria.name=Large Naquadria Battery
 metaitem.battery.uv.naquadria.tooltip=Reusable Battery
 
-metaitem.energy_crystal.name=Energy Crystal
+metaitem.energy_crystal.name=Energium Crystal
 metaitem.energy_crystal.tooltip=Reusable Battery
 metaitem.lapotron_crystal.name=Lapotron Crystal
 metaitem.lapotron_crystal.tooltip=Reusable Battery
@@ -451,6 +446,23 @@ metaitem.circuit.integrated.tooltip=Use to open configuration GUI
 metaitem.circuit.integrated.gui=Programmed Circuit Configuration
 metaitem.circuit.integrated.jei_description=JEI is only showing recipes for the given configuration.\n\nYou can select a configuration in the Programmed Circuit configuration tab.
 
+item.glass.lens=Glass Lens (White)
+metaitem.glass_lens.orange.name=Glass Lens (Orange)
+metaitem.glass_lens.magenta.name=Glass Lens (Magenta)
+metaitem.glass_lens.light_blue.name=Glass Lens (Light Blue)
+metaitem.glass_lens.yellow.name=Glass Lens (Yellow)
+metaitem.glass_lens.lime.name=Glass Lens (Lime)
+metaitem.glass_lens.pink.name=Glass Lens (Pink)
+metaitem.glass_lens.gray.name=Glass Lens (Gray)
+metaitem.glass_lens.light_gray.name=Glass Lens (Light Gray)
+metaitem.glass_lens.cyan.name=Glass Lens (Cyan)
+metaitem.glass_lens.purple.name=Glass Lens (Purple)
+metaitem.glass_lens.blue.name=Glass Lens (Blue)
+metaitem.glass_lens.brown.name=Glass Lens (Brown)
+metaitem.glass_lens.green.name=Glass Lens (Green)
+metaitem.glass_lens.red.name=Glass Lens (Red)
+metaitem.glass_lens.black.name=Glass Lens (Black)
+
 #CIRCUITS LOCALIZATION
 metaitem.boule.silicon.name=Monocrystalline Silicon Boule
 metaitem.boule.silicon.tooltip=Raw Circuit
@@ -530,35 +542,35 @@ metaitem.component.advanced_smd.resistor.name=Advanced SMD Resistor
 metaitem.component.advanced_smd.resistor.tooltip=Advanced Electronic Component
 
 metaitem.wafer.highly_advanced_system_on_chip.name=HASoC Wafer
-metaitem.wafer.highly_advanced_system_on_chip.tooltip=Raw Circuit
+metaitem.wafer.highly_advanced_system_on_chip.tooltip=Raw Highly Advanced Circuit
 metaitem.wafer.advanced_system_on_chip.name=ASoC Wafer
-metaitem.wafer.advanced_system_on_chip.tooltip=Raw Circuit
+metaitem.wafer.advanced_system_on_chip.tooltip=Raw Advanced Circuit
 metaitem.wafer.integrated_logic_circuit.name=Integrated Logic Circuit Wafer
-metaitem.wafer.integrated_logic_circuit.tooltip=Raw Circuit
+metaitem.wafer.integrated_logic_circuit.tooltip=Raw Integrated Circuit
 metaitem.wafer.central_processing_unit.name=CPU Wafer
-metaitem.wafer.central_processing_unit.tooltip=Raw Circuit
+metaitem.wafer.central_processing_unit.tooltip=Raw Processing Unit
 metaitem.wafer.high_power_integrated_circuit.name=HPIC Wafer
-metaitem.wafer.high_power_integrated_circuit.tooltip=Raw Circuit
+metaitem.wafer.high_power_integrated_circuit.tooltip=Raw High Power Circuit
 metaitem.wafer.nand_memory_chip.name=NAND Wafer
-metaitem.wafer.nand_memory_chip.tooltip=Raw Circuit
+metaitem.wafer.nand_memory_chip.tooltip=Raw Logic Gate
 metaitem.wafer.ultra_low_power_integrated_circuit.name=ULPIC Wafer
-metaitem.wafer.ultra_low_power_integrated_circuit.tooltip=Raw Circuit
+metaitem.wafer.ultra_low_power_integrated_circuit.tooltip=Raw Ultra Low Power Circuit
 metaitem.wafer.low_power_integrated_circuit.name=LPIC Wafer
-metaitem.wafer.low_power_integrated_circuit.tooltip=Raw Circuit
+metaitem.wafer.low_power_integrated_circuit.tooltip=Raw Low Power Circuit
 metaitem.wafer.power_integrated_circuit.name=PIC Wafer
-metaitem.wafer.power_integrated_circuit.tooltip=Raw Circuit
+metaitem.wafer.power_integrated_circuit.tooltip=Raw Power Circuit
 metaitem.wafer.nano_central_processing_unit.name=Nano CPU Wafer
-metaitem.wafer.nano_central_processing_unit.tooltip=Raw Circuit
+metaitem.wafer.nano_central_processing_unit.tooltip=Raw Nano Circuit
 metaitem.wafer.nor_memory_chip.name=NOR Wafer
-metaitem.wafer.nor_memory_chip.tooltip=Raw Circuit
+metaitem.wafer.nor_memory_chip.tooltip=Raw Logic Gate
 metaitem.wafer.qbit_central_processing_unit.name=Qubit CPU Wafer
-metaitem.wafer.qbit_central_processing_unit.tooltip=Raw Circuit
+metaitem.wafer.qbit_central_processing_unit.tooltip=Raw Qubit Circuit
 metaitem.wafer.random_access_memory.name=RAM Wafer
-metaitem.wafer.random_access_memory.tooltip=Raw Circuit
+metaitem.wafer.random_access_memory.tooltip=Raw Memory
 metaitem.wafer.system_on_chip.name=SoC Wafer
-metaitem.wafer.system_on_chip.tooltip=Raw Circuit
+metaitem.wafer.system_on_chip.tooltip=Raw Basic Circuit
 metaitem.wafer.simple_system_on_chip.name=Simple SoC Wafer
-metaitem.wafer.simple_system_on_chip.tooltip=Raw Primitive Circuit
+metaitem.wafer.simple_system_on_chip.tooltip=Raw Simple Circuit
 metaitem.engraved.crystal_chip.name=Engraved Crystal Chip
 metaitem.engraved.crystal_chip.tooltip=Needed for Circuits
 metaitem.crystal.raw.name=Raw Crystal Chip
@@ -567,35 +579,40 @@ metaitem.crystal.raw_chip.name=Raw Crystal Chip Parts
 metaitem.crystal.raw_chip.tooltip=Raw Crystal Processor Parts
 metaitem.engraved.lapotron_chip.name=Engraved Lapotron Crystal Chip
 
-metaitem.crystal.central_processing_unit.name=Crystal Processing Unit
-metaitem.crystal.central_processing_unit.tooltip=Crystal CPU
+metaitem.crystal.central_processing_unit.name=Crystal CPU
+metaitem.crystal.central_processing_unit.tooltip=Crystal Processing Unit
 metaitem.crystal.system_on_chip.name=Crystal SoC
-metaitem.crystal.system_on_chip.tooltip=Crystal System on a Chip
+metaitem.crystal.system_on_chip.tooltip=Crystal System on Chip
 metaitem.plate.advanced_system_on_chip.name=ASoC
 metaitem.plate.advanced_system_on_chip.tooltip=Advanced System on Chip
 metaitem.plate.highly_advanced_system_on_chip.name=HASoC
-metaitem.plate.highly_advanced_system_on_chip.tooltip=Highly Advanced System on a Chip
-metaitem.plate.integrated_logic_circuit.name=Integrated Logic Circuit
-metaitem.plate.central_processing_unit.name=Central Processing Unit
-metaitem.plate.high_power_integrated_circuit.name=High Power IC
-metaitem.plate.high_power_integrated_circuit.tooltip=High Power Circuit
-metaitem.plate.nand_memory_chip.name=NAND Gate
+metaitem.plate.highly_advanced_system_on_chip.tooltip=Highly Advanced System on Chip
+metaitem.plate.integrated_logic_circuit.name=Integrated Circuit
+metaitem.plate.integrated_logic_circuit.tooltip=Integrated Logic Circuit
+metaitem.plate.central_processing_unit.name=CPU
+metaitem.plate.central_processing_unit.tooltip=Central Processing Unit
+metaitem.plate.high_power_integrated_circuit.name=HPIC
+metaitem.plate.high_power_integrated_circuit.tooltip=High Power IC
+metaitem.plate.nand_memory_chip.name=NAND
+metaitem.plate.nand_memory_chip.tooltip=NAND Logic Gate
 metaitem.plate.nano_central_processing_unit.name=Nano CPU
 metaitem.plate.nano_central_processing_unit.tooltip=Nano Central Processing Unit
-metaitem.plate.nor_memory_chip.name=NOR Gate
-metaitem.plate.ultra_low_power_integrated_circuit.name=Ultra Low Power IC
-metaitem.plate.ultra_low_power_integrated_circuit.tooltip=Ultra Low Power Circuit
-metaitem.plate.low_power_integrated_circuit.name=Low Power IC
-metaitem.plate.low_power_integrated_circuit.tooltip=Low Power Circuit
-metaitem.plate.power_integrated_circuit.name=Power IC
-metaitem.plate.power_integrated_circuit.tooltip=Power Integrated Circuit
+metaitem.plate.nor_memory_chip.name=NOR
+metaitem.plate.nor_memory_chip.tooltip=NOR Logic Gate
+metaitem.plate.ultra_low_power_integrated_circuit.name=ULPIC
+metaitem.plate.ultra_low_power_integrated_circuit.tooltip=Ultra Low Power IC
+metaitem.plate.low_power_integrated_circuit.name=LPIC
+metaitem.plate.low_power_integrated_circuit.tooltip=Low Power IC
+metaitem.plate.power_integrated_circuit.name=PIC
+metaitem.plate.power_integrated_circuit.tooltip=Power IC
 metaitem.plate.qbit_central_processing_unit.name=Qubit CPU
+metaitem.plate.qbit_central_processing_unit.tooltip=Qubit Central Processing Unit
 metaitem.plate.random_access_memory.name=RAM
 metaitem.plate.random_access_memory.tooltip=Random Access Memory
 metaitem.plate.system_on_chip.name=SoC
-metaitem.plate.system_on_chip.tooltip=System on a Chip
+metaitem.plate.system_on_chip.tooltip=System on Chip
 metaitem.plate.simple_system_on_chip.name=Simple SoC
-metaitem.plate.simple_system_on_chip.tooltip=Simple System on a Chip
+metaitem.plate.simple_system_on_chip.tooltip=Simple System on Chip
 
 
 # T1: Electronic
@@ -679,24 +696,12 @@ metaitem.bio_chaff.name=Bio Chaff
 metaitem.carbon.fibers.name=Raw Carbon Fibers
 metaitem.carbon.mesh.name=Carbon Fiber Mesh
 metaitem.carbon.plate.name=Carbon Fiber Plate
-metaitem.ingot.mixed_metal=Mixed Metal Ingot
-metaitem.plate.advanced_alloy=Advanced Alloy Plate
-metaitem.ingot.iridium_alloy=Iridium Alloy Ingot
-metaitem.ingot.iridium_alloy.tooltip=Used to make Iridium Alloy Plates
-metaitem.plate.iridium_alloy=Iridium Alloy Plate
 metaitem.neutron_reflector.name=Iridium Neutron Reflector
 metaitem.neutron_reflector.tooltip=Indestructible
 metaitem.duct_tape.name=BrainTech Aerospace Advanced Reinforced Duct Tape FAL-84
 
-metaitem.component.sawblade.diamond.name=Diamond Saw Blade
-metaitem.component.sawblade.tungsten.name=Tungsten Saw Blade
 metaitem.component.grinder.diamond.name=Diamond Grinding Head
 metaitem.component.grinder.tungsten.name=Tungsten Grinding Head
-
-metaitem.ingot.mixed_metal.name=Mixed Metal Ingot
-metaitem.plate.advanced_alloy.name=Advanced Alloy Plate
-metaitem.ingot.iridium_alloy.name=Iridium Alloy Ingot
-metaitem.plate.iridium_alloy.name=Reinforced Iridium Alloy
 
 metaitem.quantumeye.name=Quantum Eye
 metaitem.quantumeye.tooltip=Improved Ender Eye
@@ -726,6 +731,7 @@ metaitem.cover.energy.detector.name=Energy Detector
 metaitem.cover.energy.detector.tooltip=Gives out Energy Amount as Redstone (as Cover)
 metaitem.cover.player.detector.name=Player Detector
 metaitem.cover.player.detector.tooltip=Gives out close Players as Redstone (as Cover)
+metaitem.cover.drain.name=Drain Cover
 
 metaitem.cover.facade.name=%s Facade
 metaitem.cover.facade.tooltip=Decorative outfit
@@ -760,6 +766,11 @@ metaitem.cover.solar.panel.uv.tooltip=Ultimate Voltage Solar Panel
 
 metaitem.cover.infinite_water.name=Infinite Water Cover
 metaitem.cover.infinite_water.tooltip=Creates 16 Buckets of Water every second (as Cover)
+metaitem.cover.ender_fluid_link.name=Ender Fluid Link Cover
+metaitem.cover.ender_fluid_link.tooltip=Link your fluid tanks to the Ender! (as Cover)
+
+metaitem.cover.drain=Drain Cover
+
 
 metaitem.gelled_toluene.name=Gelled Toluene
 metaitem.gelled_toluene.tooltip=Raw Explosive
@@ -767,25 +778,22 @@ metaitem.gelled_toluene.tooltip=Raw Explosive
 metaitem.bottle.purple.drink.name=Purple Drink
 metaitem.bottle.purple.drink.tooltip=How about Lemonade. Or some Ice Tea? I got Purple Drink!
 
-metaitem.dye.indigo.name=Indigo Dye
-metaitem.dye.indigo.tooltip=Blue Dye
-
-metaitem.dye.white.name=White Dye
-metaitem.dye.orange.name=Orange Dye
-metaitem.dye.magenta.name=Magenta Dye
-metaitem.dye.light_blue.name=Light Blue Dye
-metaitem.dye.yellow.name=Yellow Dye
-metaitem.dye.lime.name=Lime Dye
-metaitem.dye.pink.name=Pink Dye
-metaitem.dye.gray.name=Gray Dye
-metaitem.dye.silver.name=Light Gray Dye
-metaitem.dye.cyan.name=Cyan Dye
-metaitem.dye.purple.name=Purple Dye
-metaitem.dye.blue.name=Blue Dye
-metaitem.dye.brown.name=Brown Dye
-metaitem.dye.green.name=Green Dye
-metaitem.dye.red.name=Red Dye
-metaitem.dye.black.name=Black Dye
+metaitem.dye.black.name=Chemical Black Dye
+metaitem.dye.red.name=Chemical Red Dye
+metaitem.dye.green.name=Chemical Green Dye
+metaitem.dye.brown.name=Chemical Brown Dye
+metaitem.dye.blue.name=Chemical Blue Dye
+metaitem.dye.purple.name=Chemical Purple Dye
+metaitem.dye.cyan.name=Chemical Cyan Dye
+metaitem.dye.light_gray.name=Chemical Light Gray Dye
+metaitem.dye.gray.name=Chemical Gray Dye
+metaitem.dye.pink.name=Chemical Pink Dye
+metaitem.dye.lime.name=Chemical Lime Dye
+metaitem.dye.yellow.name=Chemical Yellow Dye
+metaitem.dye.light_blue.name=Chemical Light Blue Dye
+metaitem.dye.magenta.name=Chemical Magenta Dye
+metaitem.dye.orange.name=Chemical Orange Dye
+metaitem.dye.white.name=Chemical White Dye
 
 metaitem.rubber_drop.name=Sticky Resin
 metaitem.plant_ball.name=Plant Ball
@@ -823,7 +831,6 @@ metaitem.tool.screwdriver.tooltip=Adjusts Covers and Machines
 metaitem.tool.mortar.name=%s Mortar
 metaitem.tool.wire_cutter.name=%s Wire Cutter
 metaitem.tool.branch_cutter.name=%s Branch Cutter
-metaitem.tool.universal_spade.name=%s Universal Spade
 metaitem.tool.knife.name=%s Knife
 metaitem.tool.butchery_knife.name=%s Butchery Knife
 metaitem.tool.butchery_knife.tooltip=Has a slow Attack Rate
@@ -964,6 +971,9 @@ metaarmor.energy_share.disable=Energy Supply: Gadgets charging disabled
 metaarmor.energy_share.tooltip=Supply mode: %s
 metaarmor.energy_share.tooltip.guide=To change mode shift-right click when holding item
 
+metaitem.record.sus.name=Music Disc
+metaitem.record.sus.tooltip=§7Leonz - Among Us Drip
+
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 
 cover.filter.blacklist.disabled=Whitelist
@@ -1030,7 +1040,7 @@ cover.fluid_regulator.transfer_mode.description=§eTransfer Any§r - in this mod
 cover.fluid_regulator.supply_exact=Supply Exact: %s
 cover.fluid_regulator.keep_exact=Keep Exact: %s
 
-cover.machine_controller.name=Machine Controller Settings
+cover.machine_controller.title=Machine Controller Settings
 cover.machine_controller.normal=Normal
 cover.machine_controller.inverted=Inverted
 cover.machine_controller.inverted.description=§eNormal§r - in this mode, the cover will require a signal weaker than the set redstone level to run/n§eInverted§r - in this mode, the cover will require a signal stronger than the set redstone level to run
@@ -1042,6 +1052,13 @@ cover.machine_controller.mode.cover_south=Control Cover (South)
 cover.machine_controller.mode.cover_north=Control Cover (North)
 cover.machine_controller.mode.cover_east=Control Cover (East)
 cover.machine_controller.mode.cover_west=Control Cover (West)
+
+cover.ender_fluid_link.title=Ender Fluid Link
+cover.ender_fluid_link.iomode.enabled=I/O Enabled
+cover.ender_fluid_link.iomode.disabled=I/O Disabled
+cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode/nPrivate mode uses the player who originally placed the cover
+cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
+cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore
@@ -1116,7 +1133,6 @@ item.material.oreprefix.crystal=%s Crystal
 item.material.oreprefix.toolHeadSword=%s Sword Blade
 item.material.oreprefix.toolHeadPickaxe=%s Pickaxe Head
 item.material.oreprefix.toolHeadShovel=%s Shovel Head
-item.material.oreprefix.toolHeadUniversalSpade=%s Universal Spade Head
 item.material.oreprefix.toolHeadAxe=%s Axe Head
 item.material.oreprefix.toolHeadHoe=%s Hoe Head
 item.material.oreprefix.toolHeadSense=%s Sense Blade
@@ -1125,7 +1141,7 @@ item.material.oreprefix.toolHeadHammer=%s Hammer Head
 item.material.oreprefix.toolHeadPlow=%s Plow Head
 item.material.oreprefix.toolHeadSaw=%s Saw Blade
 item.material.oreprefix.toolHeadBuzzSaw=%s Buzzsaw Blade
-item.material.oreprefix.toolHeadScrewdriver=%s Screwdriver Tip
+item.material.oreprefix.toolHeadScrewdriver=%s Screwdriver Head
 item.material.oreprefix.toolHeadDrill=%s Drill Tip
 item.material.oreprefix.toolHeadChainsaw=%s Chainsaw Tip
 item.material.oreprefix.toolHeadWrench=%s Wrench Tip
@@ -1403,7 +1419,6 @@ material.nitro_carbon=Nitro-Carbon
 material.nitrogen_dioxide=Nitrogen Dioxide
 material.obsidian=Obsidian
 material.phosphate=Phosphate
-material.pig_iron=Pig Iron
 material.plastic=Polyethylene (PE)
 material.polycaprolactam=Polycaprolactam
 material.polytetrafluoroethylene=Polytetrafluoroethylene (PTFE)
@@ -1413,7 +1428,7 @@ material.pyrite=Pyrite
 material.pyrolusite=Pyrolusite
 material.pyrope=Pyrope
 material.rock_salt=Rock Salt
-material.ruthenian_iridium=Ruthenian Iridium
+material.ruridit=Ruridit
 material.rubber=Rubber
 material.raw_rubber=Raw Rubber
 material.ruby=Ruby
@@ -1487,8 +1502,8 @@ material.sterilized_growth_medium=Sterilized Growth Medium
 material.vinyl_acetate=Vinyl Acetate
 material.gallium_arsenide=Gallium Arsenide
 material.polyphenylene_sulfide=Polyphenylene Sulfide
-material.nickel_sulfate_water_solution=Nickel Sulfate Water Solution
-material.copper_sulfate_water_solution=Copper Sulfate Water Solution
+material.sulfuric_nickel_solution=Sulfuric Nickel Solution
+material.sulfuric_copper_solution=Sulfuric Copper Solution
 material.propane=Propane
 material.propene=Propene
 material.ethane=Ethane
@@ -1711,7 +1726,7 @@ material.wheat=Wheat
 material.meat=Mince Meat
 
 material.sodium_bicarbonate=Sodium Bicarbonate
-material.polybenzimidazole=Polybenzimidazole
+material.polybenzimidazole=Polybenzimidazole (PBI)
 material.diphenyl_isophthalate=Diphenyl Isophthalate
 material.phthalic_acid=Phthalic Acid
 material.dimethylbenzene=Dimethylbenzene
@@ -1763,6 +1778,58 @@ material.ruthenium_trinium_americium_neutronate=Ruthenium Trinium Americium Neut
 material.ruby_slurry=Ruby Slurry
 material.sapphire_slurry=Sapphire Slurry
 material.green_sapphire_slurry=Green Sapphire Slurry
+
+material.dye_black=Chemical Black Dye
+material.dye_red=Chemical Red Dye
+material.dye_green=Chemical Green Dye
+material.dye_brown=Chemical Brown Dye
+material.dye_blue=Chemical Blue Dye
+material.dye_purple=Chemical Purple Dye
+material.dye_cyan=Chemical Cyan Dye
+material.dye_light_gray=Chemical Light Gray Dye
+material.dye_gray=Chemical Gray Dye
+material.dye_pink=Chemical Pink Dye
+material.dye_lime=Chemical Lime Dye
+material.dye_yellow=Chemical Yellow Dye
+material.dye_light_blue=Chemical Light Blue Dye
+material.dye_magenta=Chemical Magenta Dye
+material.dye_orange=Chemical Orange Dye
+material.dye_white=Chemical White Dye
+
+material.platinum_raw=Raw Platinum
+material.inert_metal_mixture=Inert Metal Mixture
+material.rhodium_sulfate=Rhodium Sulfate
+material.ruthenium_tetroxide=Ruthenium Tetroxide
+material.osmium_tetroxide=Osmium Tetroxide
+material.iridium_chloride=Iridium Chloride
+material.platinum_sludge_residue=Platinum Sludge Residue
+material.palladium_raw=Raw Palladium
+material.rarest_metal_mixture=Rarest Metal Mixture
+material.ammonium_chloride=Ammonium Chloride
+material.acidic_osmium_solution=Acidic Osmium Solution
+material.iridium_metal_residue=Iridium Metal Residue
+material.rhodium_plated_palladium=Rhodium Plated Palladium
+
+material.fluoroantimonic_acid=Fluoroantimonic Acid
+material.titanium_trifluoride=Titanium Trifluoride
+material.calcium_phosphide=Calcium Phosphide
+material.indium_phosphide=Indium Phosphide
+material.barium_sulfide=Barium Sulfide
+material.trinium_sulfide=Trinium Sulfide
+material.zinc_sulfide=Zinc Sulfide
+material.gallium_sulfide=Gallium Sulfide
+material.antimony_trifluoride=Antimony Trifluoride
+material.enriched_naquadah_sulfate=Enriched Naquadah Sulfate
+material.naquadria_sulfate=Naquadria Sulfate
+material.impure_enriched_naquadah_solution=Impure Enriched Naquadah Solution
+material.enriched_naquadah_solution=Enriched Naquadah Solution
+material.acidic_enriched_naquadah_solution=Acidic Enriched Naquadah Solution
+material.enriched_naquadah_waste=Enriched Naquadah Waste
+material.impure_naquadria_solution=Impure Naquadria Solution
+material.naquadria_solution=Naquadria Solution
+material.acidic_naquadria_solution=Acidic Naquadria Solution
+material.naquadria_waste=Naquadria Waste
+
 
 item.nether_quartz.oreNetherrack=Nether Quartz Ore
 item.gunpowder.dustTiny=Tiny Pile of Gunpowder
@@ -1836,13 +1903,6 @@ item.polyvinyl_chloride.nugget=Polyvinyl Chloride (PVC) Chip
 item.polyvinyl_chloride.ingot=Polyvinyl Chloride (PVC) Bar
 item.polyvinyl_chloride.plate=Polyvinyl Chloride (PVC) Sheet
 item.polyvinyl_chloride.foil=Thin Polyvinyl Chloride (PVC) Sheet
-item.polystyrene.dustTiny=Tiny Pile of Polystyrene Pulp
-item.polystyrene.dustSmall=Small Pile of Polystyrene Pulp
-item.polystyrene.dust=Polystyrene Pulp
-item.polystyrene.nugget=Polystyrene Chip
-item.polystyrene.ingot=Polystyrene Bar
-item.polystyrene.plate=Polystyrene Sheet
-item.polystyrene.foil=Thin Polystyrene Sheet
 item.polyphenylene_sulfide.dustTiny=Tiny Pile of Polyphenylene Sulfide Pulp
 item.polyphenylene_sulfide.dustSmall=Small Pile of Polyphenylene Sulfide Pulp
 item.polyphenylene_sulfide.dust=Polyphenylene Sulfide Pulp
@@ -1850,13 +1910,13 @@ item.polyphenylene_sulfide.nugget=Polyphenylene Sulfide Chip
 item.polyphenylene_sulfide.ingot=Polyphenylene Sulfide Bar
 item.polyphenylene_sulfide.plate=Polyphenylene Sulfide Sheet
 item.polyphenylene_sulfide.foil=Thin Polyphenylene Sulfide Sheet
-item.polybenzimidazole.dustTiny=Tiny Pile of Polybenzimidazole Pulp
-item.polybenzimidazole.dustSmall=Small Pile of Polybenzimidazole Pulp
-item.polybenzimidazole.dust=Polybenzimidazole Pulp
-item.polybenzimidazole.nugget=Polybenzimidazole Chip
-item.polybenzimidazole.ingot=Polybenzimidazole Bar
-item.polybenzimidazole.plate=Polybenzimidazole Sheet
-item.polybenzimidazole.foil=Thin Polybenzimidazole Sheet
+item.polybenzimidazole.dustTiny=Tiny Pile of Polybenzimidazole (PBI) Pulp
+item.polybenzimidazole.dustSmall=Small Pile of Polybenzimidazole (PBI) Pulp
+item.polybenzimidazole.dust=Polybenzimidazole (PBI) Pulp
+item.polybenzimidazole.nugget=Polybenzimidazole (PBI) Chip
+item.polybenzimidazole.ingot=Polybenzimidazole (PBI) Bar
+item.polybenzimidazole.plate=Polybenzimidazole (PBI) Sheet
+item.polybenzimidazole.foil=Thin Polybenzimidazole (PBI) Sheet
 item.rock_salt.dustTiny=Tiny Pile of Rock Salt
 item.rock_salt.dustSmall=Small Pile of Rock Salt
 item.rock_salt.dustImpure=Impure Pile of Rock Salt
@@ -1967,6 +2027,29 @@ item.wheat.dust=Flour
 item.meat.dustTiny=Tiny Pile of Mince Meat
 item.meat.dustSmall=Small Pile of Mince Meat
 item.meat.dust=Mince Meat
+item.borosilicate_glass.ingot=Borosilicate Glass Bar
+item.borosilicate_glass.wireFine=Borosilicate Glass Fibers
+item.platinum_group_sludge.dustTiny=Tiny Clump of Platinum Group Sludge
+item.platinum_group_sludge.dustSmall=Small Clump of Platinum Group Sludge
+item.platinum_group_sludge.dust=Platinum Group Sludge
+item.platinum_raw.dustTiny=Tiny Pile of Raw Platinum Powder
+item.platinum_raw.dustSmall=Small Pile of Raw Platinum Powder
+item.platinum_raw.dust=Raw Platinum Powder
+item.palladium_raw.dustTiny=Tiny Pile of Raw Palladium Powder
+item.palladium_raw.dustSmall=Small Pile of Raw Palladium Powder
+item.palladium_raw.dust=Raw Palladium Powder
+item.inert_metal_mixture.dustTiny=Tiny Pile of Inert Metal Mixture
+item.inert_metal_mixture.dustSmall=Small Pile of Inert Metal Mixture
+item.inert_metal_mixture.dust=Inert Metal Mixture
+item.rarest_metal_mixture.dustTiny=Tiny Pile of Rarest Metal Mixture
+item.rarest_metal_mixture.dustSmall=Small Pile of Rarest Metal Mixture
+item.rarest_metal_mixture.dust=Rarest Metal Mixture
+item.platinum_sludge_residue.dustTiny=Tiny Pile of Platinum Sludge Residue
+item.platinum_sludge_residue.dustSmall=Small Pile of Platinum Sludge Residue
+item.platinum_sludge_residue.dust=Platinum Sludge Residue
+item.iridium_metal_residue.dustTiny=Tiny Pile of Iridium Metal Residue
+item.iridium_metal_residue.dustSmall=Small Pile of Iridium Metal Residue
+item.iridium_metal_residue.dust=Iridium Metal Residue
 
 recipemap.ore_washer.name=Ore Washer
 recipemap.thermal_centrifuge.name=Thermal Centrifuge
@@ -2038,6 +2121,8 @@ recipemap.coke_oven.name=Coke Oven
 
 behaviour.hoe=Can till dirt
 behaviour.soft_hammer=Activates and Deactivates Machines
+behaviour.soft_hammer.enabled=Working Enabled
+behaviour.soft_hammer.disabled=Working Disabled
 behaviour.lighter.tooltip=Can light things on fire
 behaviour.lighter.uses=Remaining uses: %,d
 behavior.plunger.description=Use to clear 1000 L out of a machine's output tank./nUse while sneaking to clear 1000 L out of a machine's input tank./nInput tank clearing works only on GT machines!
@@ -2079,6 +2164,17 @@ metaitem.terminal.tooltip.hardware=§aHardware: %d
 metaitem.wireless.name=Wireless Transmitter
 metaitem.camera.name=Camera
 
+metaitem.plugin.tooltips.1=Plugins can be added to the screen for more functionality.
+metaitem.plugin.proxy.tooltips.1=(Please adjust to proxy mode in the screen)
+metaitem.plugin.text.name=Text Plugin
+metaitem.plugin.online_pic.name=Online Picture Plugin
+metaitem.plugin.fake_gui.name=GUI Proxy Plugin
+metaitem.plugin.advanced_monitor.name=Advanced Monitor Proxy Plugin
+metaitem.cover.digital.name=Digital Interface Cover
+metaitem.cover.digital.wireless.name=Wireless Digital Interface Cover
+metaitem.coloured.leds.name=Coloured LEDs
+metaitem.display.name=Display
+
 tile.casing.ulv=ULV Machine Casing
 tile.casing.lv=LV Machine Casing
 tile.casing.mv=MV Machine Casing
@@ -2102,10 +2198,6 @@ tile.wire_coil.naquadah.name=Naquadah Coil Block
 tile.wire_coil.naquadah_alloy.name=Naquadah Alloy Coil Block
 tile.wire_coil.fluxed_electrum.name=Fluxed Electrum Coil Block
 tile.wire_coil.diamericium_titanium.name=Diamericium Titanium Coil Block
-
-# Fusion coil blocks
-tile.fusion_coil.superconductor.name=Superconducting Coil Block
-tile.fusion_coil.fusion_coil.name=Fusion Coil Block
 
 # General casing block tooltip
 tile.machine_casing.tooltip1=Mobs cannot Spawn on this Block
@@ -2188,13 +2280,19 @@ tile.turbine_casing.tungstensteel_turbine_casing.name=Tungstensteel Turbine Casi
 # Multiblock casing blocks
 tile.multiblock_casing.engine_intake.name=Engine Intake Casing
 tile.multiblock_casing.grate.name=Grate Machine Casing
-tile.multiblock_casing.assembler.name=Assembler Machine Casing
+tile.multiblock_casing.assembly_control.name=Assembly Control Casing
 tile.multiblock_casing.assembly_line.name=Assembly Line Casing
-tile.multiblock_casing.fusion.name=Fusion Machine Casing
-tile.multiblock_casing.fusion_mk2.name=Fusion Machine Casing MK II
+
+# Fusion casing blocks
+tile.fusion_casing.superconductor_coil.name=Superconducting Coil Block
+tile.fusion_casing.fusion_coil.name=Fusion Coil Block
+tile.fusion_casing.fusion_casing.name=Fusion Machine Casing
+tile.fusion_casing.fusion_casing_mk2.name=Fusion Machine Casing MK II
+tile.fusion_casing.fusion_casing_mk3.name=Fusion Machine Casing MK III
 
 # Transparent casing blocks
-tile.transparent_casing.reinforced_glass.name=Reinforced Glass
+tile.transparent_casing.tempered_glass.name=Tempered Glass
+tile.transparent_casing.fusion_glass.name=Fusion Glass
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
@@ -2350,6 +2448,9 @@ gregtech.machine.steam_rock_breaker_bronze.name=Steam Rock Breaker
 gregtech.machine.steam_rock_breaker_bronze.tooltip=Place Water and Lava adjancent
 gregtech.machine.steam_rock_breaker_steel.name=High Pressure Steam Rock Breaker
 gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava adjancent
+gregtech.machine.steam_miner.name=Steam Miner
+gregtech.machine.steam_miner.tooltip=Mines ores below the miner ONLY!
+gregtech.machine.steam_miner.description=Working Area: §b%dx%d§7 blocks. §b%ds§7 per block. Uses §b16mB/t§7 of steam.
 
 # Generators
 gregtech.machine.combustion_generator.lv.name=Basic Combustion Generator
@@ -3374,6 +3475,8 @@ gregtech.machine.world_accelerator.mode_entity=Entity Mode
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side
 gregtech.machine.basic.input_from_output_side.disallow=Disallow Input from Output Side
+gregtech.machine.muffle.on=Sound Muffling: Enabled
+gregtech.machine.muffle.off=Sound Muffling: Disabled
 gregtech.machine.perfect_oc=Does not lose energy efficiency when overclocked.
 
 # Advancements
@@ -3417,8 +3520,8 @@ gregtech.advancement.steam.83_hp_solar_boiler.name=Solar OP Pls Nerf
 gregtech.advancement.steam.83_hp_solar_boiler.desc=Craft a High Pressure Solar Boiler.
 gregtech.advancement.steam.85_steam_vent_death.name=Get out of the way!
 gregtech.advancement.steam.85_steam_vent_death.desc=Die to a venting Steam Machine.
-gregtech.advancement.steam.87_fluid_pipe_death.name=Boiling Hot!
-gregtech.advancement.steam.87_fluid_pipe_death.desc=Die to a Fluid Pipe full of Hot Fluid.
+gregtech.advancement.steam.87_fluid_pipe_death_heat.name=Boiling Hot!
+gregtech.advancement.steam.87_fluid_pipe_death_heat.desc=Die to a Fluid Pipe full of Hot Fluid.
 gregtech.advancement.root_lv.name=Low Voltage
 gregtech.advancement.root_lv.desc=Craft a Basic Steam Turbine
 gregtech.advancement.low_voltage.17_lv_pump.name=Pump
@@ -3493,6 +3596,8 @@ gregtech.advancement.high_voltage.82_large_chemical_reactor.name=Large Chemical 
 gregtech.advancement.high_voltage.82_large_chemical_reactor.desc=Set up a Large Chemical Reactor for more efficient chemistry.
 gregtech.advancement.high_voltage.84_rotor_holder_open.name=A Painful Way to Go Out
 gregtech.advancement.high_voltage.84_rotor_holder_open.desc=Die by opening a spinning Rotor Holder.
+gregtech.advancement.high_voltage.89_fluid_pipe_death_cold.name=Freezing Cold!
+gregtech.advancement.high_voltage.89_fluid_pipe_death_cold.desc=Die to a Fluid Pipe full of Cold Fluid.
 gregtech.advancement.root_ev.name=Extreme Voltage
 gregtech.advancement.root_ev.desc=Cool down a Hot Titanium Ingot.
 gregtech.advancement.extreme_voltage.47_nichrome_coil.name=Upgrade your Coils to Level III
@@ -3574,6 +3679,7 @@ gregtech.advancement.ultimate_voltage.80_diamericium_titanium_coil.desc=Craft a 
 
 
 behaviour.softhammer=Activates and Deactivates Machines
+behaviour.hammer=Turns on and off Muffling for Machines (by hitting them)
 behaviour.wrench=Rotates Blocks on Rightclick
 behaviour.boor.by=by %s
 behaviour.paintspray.white.tooltip=Can paint things in White
@@ -3612,6 +3718,8 @@ gregtech.machine.coke_oven.name=Coke Oven
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
 gregtech.machine.coke_oven_hatch.tooltip=Allows automation access to coke oven. Must be centered on coke oven side.
 
+
+
 gregtech.machine.large_combustion_engine.name=Large Combustion Engine
 gregtech.machine.large_turbine.steam.name=Large Steam Turbine
 gregtech.machine.large_turbine.gas.name=Large Gas Turbine
@@ -3626,8 +3734,43 @@ gregtech.machine.assembly_line.name=Assembly Line
 gregtech.machine.fusion_reactor.luv.name=Fusion Reactor Computer Mark 1
 gregtech.machine.fusion_reactor.zpm.name=Fusion Reactor Computer Mark 2
 gregtech.machine.fusion_reactor.uv.name=Fusion Reactor Computer Mark 3
+gregtech.machine.fusion_reactor.capacity=§7Maximum Energy Storage: §e%sM EU
+
+gregtech.machine.miner.lv.name=Basic Miner
+gregtech.machine.miner.mv.name=Advanced Miner
+gregtech.machine.miner.hv.name=Advanced Miner II
+gregtech.machine.miner.tooltip=Mines ores below the miner ONLY! Use screwdriver to configure radius.
+gregtech.machine.miner.usage=Max Working Area: §b%dx%d§7 blocks. §b%ds§7 per block. Uses §b%d§7 EU/t.
+
+gregtech.machine.large_miner.ev.name=Basic Large Miner
+gregtech.machine.large_miner.iv.name=Advanced Large Miner
+gregtech.machine.large_miner.luv.name=Advanced Large Miner II
+gregtech.machine.miner.multi.modes=Has Silk Touch and Chunk Aligned Modes.
+gregtech.machine.miner.multi.tooltip=Max Working Area: §b%dx%d§7 chunks.
+gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator.
+gregtech.machine.miner.multi.description=A multiblock mining machine that covers a large area and produces huge quantity of ore.
+#Small ores lang: gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator. Small ore Fortune §b%d§7.
+gregtech.machine.miner.fluid_usage=Consumes §b%dmb§7 of §e%s§7 per tick. Each overclock doubles the fluid consumption.
+gregtech.machine.miner.overclock=Requires §e%s§7 power. Overclocks up to §e%s§7.
 
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
+
+gregtech.machine.central_monitor.name=Central Monitor
+gregtech.multiblock.central_monitor.low_power=Low Power
+gregtech.multiblock.central_monitor.height=Screen Height:
+gregtech.multiblock.central_monitor.width=Screen Width: %d
+gregtech.multiblock.central_monitor.height_modify=Modify Height: %d
+gregtech.multiblock.central_monitor.tooltip.1=This is a screen that monitors machines proxied by the Digital Interface Cover. You can easily monitor the Fluids, Items, Energy, and States of machines proxied in Energy Network.
+gregtech.multiblock.central_monitor.tooltip.2=You can build the central monitor screen from 3X2 to %dX%d (width X height).
+gregtech.multiblock.central_monitor.tooltip.3=The default height is 3. You can adjust the screen height in the GUI before the structure is formed.
+gregtech.multiblock.central_monitor.tooltip.4=Energy consumption: %d EU/s for each screen.
+gregtech.multiblock.monitor_screen.tooltip.1=The GUI can be opened with a right-click of a screwdriver.
+gregtech.multiblock.monitor_screen.tooltip.2=The proxy mode of Digital Interface Cover can delegate machines' capabilities and GUI. (Yes, you can connect pipes directly on the screen.)
+gregtech.multiblock.monitor_screen.tooltip.3=The screen also supports plugins.
+
+
+gregtech.machine.monitor_screen.name=Monitor Screen
+
 
 # Multiblock Tooltips
 gregtech.machine.primitive_blast_furnace.bronze.tooltip=Structure: 3x3x4 (WxLxH) The entire structure is made out of Primitive Bricks (32 in total)./nFirst Layer is a 3x3 square./nSecond, third, and fourth layers are hollow, without the middle block./nThis block goes on the middle of any side in the second layer./nThe sides of Blast Furnaces can be shared, if the side does not have a controller./n
@@ -3775,6 +3918,7 @@ gregtech.machine.rotor_holder.tooltip2=Holds Rotor in place so it will not fly a
 gregtech.machine.rotor_holder.hv.name=HV Rotor Holder
 gregtech.machine.rotor_holder.luv.name=LuV Rotor Holder
 gregtech.machine.rotor_holder.uhv.name=UHV Rotor Holder
+gregtech.machine.rotor_holder.max.name=MAX Rotor Holder
 
 gregtech.machine.maintenance_hatch.name=Maintenance Hatch
 gregtech.machine.maintenance_hatch.tooltip=For maintaining Multiblocks
@@ -3839,7 +3983,7 @@ gregtech.recipe.duration=Duration: %,.2f secs
 gregtech.recipe.amperage=Amperage: %,d
 gregtech.recipe.not_consumed=§bDoes not get consumed in the process
 gregtech.recipe.chance=Chance: %s%% +%s%%/tier
-gregtech.recipe.blast_furnace_temperature=Temperature: %,dK (%s)
+gregtech.recipe.temperature=Temperature: %,dK (%s)
 gregtech.recipe.explosive=Explosive: %s
 gregtech.recipe.eu_to_start=Energy To Start: %sEU
 gregtech.recipe.dimensions=Dimensions: %s
@@ -3869,6 +4013,10 @@ gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
+gregtech.gui.silktouch.enabled=Silk Touch Enabled: Click to Disable./n§7Switching requires an idle machine.
+gregtech.gui.silktouch.disabled=Silk Touch Disabled: Click to Enable./n§7Switching requires an idle machine.
+gregtech.gui.chunkmode.enabled=Chunk Mode Enabled: Click to Disable./n§7Switching requires an idle machine.
+gregtech.gui.chunkmode.disabled=Chunk Mode Disabled: Click to Enable./n§7Switching requires an idle machine.
 
 gregtech.jei.ore_by_product_from_ore=Use %s for %s
 gregtech.jei.ore_by_product_from_machine=Produce by processing %s with %s
@@ -3926,6 +4074,11 @@ gregtech.multiblock.universal.distinct=Distinct Buses:
 gregtech.multiblock.universal.distinct.no=No
 gregtech.multiblock.universal.distinct.yes=Yes
 gregtech.multiblock.universal.distinct.info=If enabled, each Item Input Bus will be treated as fully distinct from each other for recipe lookup. Useful for things like Programmed Circuits, Extruder Shapes, etc.
+gregtech.multiblock.parallel=Performing up to %d Recipes in Parallel
+gregtech.multiblock.multiple_recipemaps.header=Machine Mode:
+gregtech.multiblock.multiple_recipemaps.tooltip=Screwdriver the controller to change which machine mode to use.
+gregtech.multiblock.multiple_recipemaps_recipes.tooltip=Machine Modes: §e%s§r
+gregtech.multiblock.multiple_recipemaps.switch_message=The machine must be off to switch modes!
 
 gregtech.multiblock.preview.zoom=Use mousewheel or right-click+Drag to zoom
 gregtech.multiblock.preview.rotate=Click and drag to rotate
@@ -3971,6 +4124,16 @@ gregtech.multiblock.large_boiler.heat_efficiency=Heat Efficiency: %d%%
 gregtech.multiblock.large_boiler.heat_efficiency.tooltip=The higher boiler temperature is, the higher it's fuel efficiency
 gregtech.multiblock.large_boiler.throttle.tooltip=Boiler can output less steam and consume less fuel, but it comes with price: the fuel efficiency is lower at higher throttle rates.
 gregtech.multiblock.large_boiler.throttle_modify=Modify Throttle:
+
+gregtech.multiblock.large_miner.done=Done!
+gregtech.multiblock.large_miner.working=Working...
+gregtech.multiblock.large_miner.invfull=Inventory Full!
+gregtech.multiblock.large_miner.needspower=Needs Power!
+gregtech.multiblock.large_miner.vent=Venting Blocked!
+gregtech.multiblock.large_miner.steam=Needs Steam!
+gregtech.multiblock.large_miner.radius=Radius: %d Blocks
+gregtech.multiblock.large_miner.errorradius=Cannot change radius while working!
+gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
 
 gregtech.command.usage=Usage: /gregtech <worldgen/util>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
@@ -4040,6 +4203,7 @@ gregtech.terminal.app_name.hardware=Hardware Manager
 gregtech.terminal.app_name.store=App Store
 gregtech.terminal.app_name.multiblock_ar=Multiblock Helper
 gregtech.terminal.app_name.world_prospector=World Prospector
+gregtech.terminal.app_name.vtank_viewer=Virtual Tank Viewer
 
 terminal.app_name.description=No description.
 terminal.app_name.tier=Tier %d
@@ -4197,3 +4361,22 @@ terminal.world_prospector.tier.2=Radius 60m (4 slot)
 terminal.world_prospector.radius=Radius %sm
 terminal.world_prospector.reference=Select a reference
 terminal.world_prospector.color=Select box color
+
+terminal.vtank_viewer.description=Never lose any fluids to changing ender link frequencies again! Here's a scrollable list of every virtual tank that you have access to in your world.
+terminal.vtank_viewer.title=Virtual Tank Viewer
+terminal.vtank_viewer.refresh=Refresh tank index
+
+metaitem.cover.digital.title.mode=Mode:
+metaitem.cover.digital.title.spin=Spin:
+metaitem.cover.digital.wireless.tooltip.1=§eRight click on the central monitor to bind remotely to it.
+metaitem.cover.digital.wireless.tooltip.2=§eShift Right click to remove the current binding.
+metaitem.cover.digital.wireless.tooltip.3=§cBinding: (%s)
+monitor.gui.title.back=Back
+monitor.gui.title.scale=Scale:
+monitor.gui.title.argb=ARGB:
+monitor.gui.title.slot=Slot:
+monitor.gui.title.plugin=Plugin:
+monitor.gui.title.config=Config
+
+fluid.tile.lava=Lava
+fluid.tile.water=Water

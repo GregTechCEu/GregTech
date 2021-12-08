@@ -411,7 +411,7 @@ public class WorldProspectorARApp extends ARApplication {
         Minecraft mc = Minecraft.getMinecraft();
         World world = mc.world;
         Entity viewer = mc.getRenderViewEntity();
-        if (world != null && viewer != null) {
+        if (world != null && viewer != null && !Shaders.isOptiFineShaderPackLoaded()) {
 
             Framebuffer fbo = mc.getFramebuffer();
 

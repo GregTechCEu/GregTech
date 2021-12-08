@@ -11,6 +11,7 @@ import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.BlockPipe.PipeConnectionData;
 import gregtech.api.render.GTBlockOperation;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.RenderUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -44,7 +45,7 @@ public interface ICoverable {
 
     <T> T getCapability(Capability<T> capability, EnumFacing side);
 
-    boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition definition);
+    boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition definition, EntityPlayer player);
 
     boolean removeCover(EnumFacing side);
 
@@ -86,7 +87,7 @@ public interface ICoverable {
                 coverBehavior.renderCoverPlate(renderState, translation, platePipeline, plateBox, layer);
             }
             if (coverBehavior.canRenderInLayer(layer)) {
-                coverBehavior.renderCover(renderState, translation.copy(), coverPipeline, plateBox, layer);
+                coverBehavior.renderCover(renderState, RenderUtil.adjustTrans(translation, sideFacing, 1), coverPipeline, plateBox, layer);
                 if (coverPlateThickness == 0.0 && shouldRenderBackSide() && coverBehavior.canRenderBackside()) {
                     //machine is full block, but still not opaque - render cover on the back side too
                     Matrix4 backTranslation = translation.copy();
@@ -96,7 +97,7 @@ public interface ICoverable {
                         REVERSE_HORIZONTAL_ROTATION.apply(backTranslation);
                     }
                     backTranslation.translate(-sideFacing.getXOffset(), -sideFacing.getYOffset(), -sideFacing.getZOffset());
-                    coverBehavior.renderCover(renderState, backTranslation, coverPipeline, plateBox, layer);
+                    coverBehavior.renderCover(renderState, backTranslation, coverPipeline, plateBox, layer); // may need to translate the layer here as well
                 }
             }
         }
