@@ -215,6 +215,10 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.NaturalGas, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Blaze, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.FluoroantimonicAcid, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.Naquadah, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.NaquadahEnriched, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.Naquadria, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.Ice, FluidType.NORMAL);
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
             if (material.isHidden()) continue;
@@ -294,7 +298,10 @@ public class MetaFluids {
 
             fluid = new MaterialFluid(fluidName, material, fluidState, textureLocation);
             fluid.setTemperature(temperature);
-            fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
+            if (material.hasFluidColor())
+                fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
+            else
+                fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(0xFFFFFF));
 
             // set properties and register
             setStateProperties(fluid, fluidState);

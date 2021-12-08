@@ -515,7 +515,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputs(MetaItems.VOLTAGE_COIL_LUV.getStackForm(2))
                 .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
                 .input(OrePrefix.wireGtQuadruple, Materials.HSSG, 4)
-                .input(OrePrefix.plateDouble, Materials.Chrome)
+                .input(OrePrefix.plateDouble, Materials.RhodiumPlatedPalladium)
                 .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.LuV].getStackForm())
                 .duration(100).EUt(32768).buildAndRegister();
 
@@ -607,7 +607,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputs(MetaItems.VOLTAGE_COIL_LUV.getStackForm(2))
                 .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
                 .input(OrePrefix.wireGtQuadruple, Materials.HSSG, 4)
-                .input(OrePrefix.plateDouble, Materials.Chrome)
+                .input(OrePrefix.plateDouble, Materials.RhodiumPlatedPalladium)
                 .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.LuV].getStackForm())
                 .duration(100).EUt(32768).buildAndRegister();
 

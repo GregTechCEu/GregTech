@@ -2,7 +2,6 @@ package gregtech.api.util;
 
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.TextureArea;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -12,8 +11,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.item.ItemStack;
 import net.minecraft.client.shader.Framebuffer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.GuiIngameForge;
@@ -31,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.function.Function;
 
 @SideOnly(Side.CLIENT)
 public class RenderUtil {
@@ -272,6 +272,25 @@ public class RenderUtil {
                 break;
         }
         return trans;
+    }
+
+    public static Function<Float, Integer> colorInterpolator(int color1, int color2) {
+        int a = color1 >> 24 & 255;
+        int r = color1 >> 16 & 255;
+        int g = color1 >> 8 & 255;
+        int b = color1 & 255;
+
+        int a2 = color2 >> 24 & 255;
+        int r2 = color2 >> 16 & 255;
+        int g2 = color2 >> 8 & 255;
+        int b2 = color2 & 255;
+        return (f)->{
+            int A = (int) (a * (1 - f) + a2 * (f));
+            int R = (int) (r * (1 - f) + r2 * (f));
+            int G = (int) (g * (1 - f) + g2 * (f));
+            int B = (int) (b * (1 - f) + b2 * (f));
+            return A << 24 | R << 16 | G << 8 | B;
+        };
     }
 
     public static void renderRect(float x, float y, float width, float height, float z, int color) {

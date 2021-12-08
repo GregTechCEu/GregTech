@@ -40,6 +40,10 @@ public class BloomRenderLayerHooks {
     private static List<Runnable> RENDER_DYNAMICS;
     private static Map<ICustomRenderFast, List<Consumer<BufferBuilder>>> RENDER_FAST;
 
+    public static BlockRenderLayer getRealBloomLayer(){
+        return Shaders.isOptiFineShaderPackLoaded() ? BlockRenderLayer.CUTOUT : BLOOM;
+    }
+
     public static void init() {
         BLOOM = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[]{String.class}, "Bloom");
         RENDER_FAST = Maps.newHashMap();
@@ -53,15 +57,32 @@ public class BloomRenderLayerHooks {
     public static int renderBloomBlockLayer(RenderGlobal renderglobal, BlockRenderLayer blockRenderLayer, double partialTicks, int pass, Entity entity) {
         Minecraft mc = Minecraft.getMinecraft();
         mc.profiler.endStartSection("BTLayer");
-        if (!ConfigHolder.U.clientConfig.shader.bloom.emissiveTexturesBloom) {
-            GlStateManager.depthMask(true);
-            renderglobal.renderBlockLayer(BloomRenderLayerHooks.BLOOM, partialTicks, pass, entity);
-            GlStateManager.depthMask(false);
+        if (Shaders.isOptiFineShaderPackLoaded()) {
             int result =  renderglobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
             RENDER_DYNAMICS.clear();
             RENDER_FAST.clear();
-            mc.profiler.endStartSection("bloom");
             return result;
+        } else if (!ConfigHolder.U.clientConfig.shader.bloom.emissiveTexturesBloom) {
+            GlStateManager.depthMask(true);
+            renderglobal.renderBlockLayer(BloomRenderLayerHooks.BLOOM, partialTicks, pass, entity);
+            // render dynamics
+            if (!RENDER_DYNAMICS.isEmpty()) {
+                RENDER_DYNAMICS.forEach(Runnable::run);
+                RENDER_DYNAMICS.clear();
+            }
+
+            // render fast
+            if (!RENDER_FAST.isEmpty()) {
+                BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+                RENDER_FAST.forEach((handler, list)->{
+                    handler.preDraw(buffer);
+                    list.forEach(consumer->consumer.accept(buffer));
+                    handler.postDraw(buffer);
+                });
+                RENDER_FAST.clear();
+            }
+            GlStateManager.depthMask(false);
+            return renderglobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
         }
 
         Framebuffer fbo = mc.getFramebuffer();

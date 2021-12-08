@@ -73,6 +73,7 @@ public class HigherDegreeMaterials {
         GarnetSand = new Material.Builder(2515, "garnet_sand")
                 .dust(1).ore()
                 .color(0xC86400).iconSet(SAND)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(GarnetRed, 1, GarnetYellow, 1)
                 .build();
 

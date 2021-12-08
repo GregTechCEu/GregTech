@@ -20,8 +20,6 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
-import static gregtech.common.metatileentities.MetaTileEntities.*;
-
 public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRecipeWrapper> {
 
     private final IDrawable background;
@@ -61,9 +59,9 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         put("steam_grinder", new MultiblockInfoRecipeWrapper(new SteamGrinderInfo()));
         put("steam_oven", new MultiblockInfoRecipeWrapper(new SteamOvenInfo()));
         put("central_monitor", new MultiblockInfoRecipeWrapper(new CentralMonitorInfo()));
-        put("basic_large_miner", new MultiblockInfoRecipeWrapper(new LargeMinerInfo(BASIC_LARGE_MINER)));
-        put("large_miner", new MultiblockInfoRecipeWrapper(new LargeMinerInfo(LARGE_MINER)));
-        put("advanced_large_miner", new MultiblockInfoRecipeWrapper(new LargeMinerInfo(ADVANCED_LARGE_MINER)));
+        put("basic_large_miner", new MultiblockInfoRecipeWrapper(new LargeMinerInfo(MetaTileEntities.BASIC_LARGE_MINER)));
+        put("large_miner", new MultiblockInfoRecipeWrapper(new LargeMinerInfo(MetaTileEntities.LARGE_MINER)));
+        put("advanced_large_miner", new MultiblockInfoRecipeWrapper(new LargeMinerInfo(MetaTileEntities.ADVANCED_LARGE_MINER)));
 
     }};
 

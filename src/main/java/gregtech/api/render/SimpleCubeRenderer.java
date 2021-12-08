@@ -48,7 +48,7 @@ public class SimpleCubeRenderer implements ICubeRenderer, IIconRegister {
     public void renderSided(EnumFacing side, Matrix4 translation, Cuboid6 bounds, CCRenderState renderState, IVertexOperation[] pipeline) {
         Textures.renderFace(renderState, translation, pipeline, side, bounds, sprite);
         if (spriteEmissive != null) {
-            if (ConfigHolder.U.clientConfig.machinesEemissiveTextures) {
+            if (ConfigHolder.U.clientConfig.machinesEmissiveTextures) {
                 IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
                 Textures.renderFaceBloom(renderState, translation, lightPipeline, side, bounds, spriteEmissive);
             } else Textures.renderFace(renderState, translation, pipeline, side, bounds, spriteEmissive);

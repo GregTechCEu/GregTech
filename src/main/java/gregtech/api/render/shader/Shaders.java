@@ -8,7 +8,6 @@ import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -19,18 +18,18 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL30;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 import static codechicken.lib.render.shader.ShaderHelper.getStream;
 import static codechicken.lib.render.shader.ShaderHelper.readShader;
 import static codechicken.lib.render.shader.ShaderObject.ShaderType.FRAGMENT;
 import static codechicken.lib.render.shader.ShaderObject.ShaderType.VERTEX;
-import static org.lwjgl.opengl.GL11.glGetInteger;
 
 /**
  * Created with IntelliJ IDEA.
@@ -61,14 +60,33 @@ public class Shaders {
     public static ShaderObject S_BLUR;
     public static ShaderObject COMPOSITE;
 
-
-
+    // OptiFine
+    private static BooleanSupplier isShaderPackLoaded;
 
     static {
         mc = Minecraft.getMinecraft();
         FULL_IMAGE_PROGRAMS = new HashMap<>();
         if (allowedShader()) {
             initShaders();
+        }
+        try { // hook optFine. thanks to Scannable.
+            final Class<?> clazz = Class.forName("net.optifine.shaders.Shaders");
+            final Field shaderPackLoaded = clazz.getDeclaredField("shaderPackLoaded");
+            shaderPackLoaded.setAccessible(true);
+            isShaderPackLoaded = () -> {
+                try {
+                    return shaderPackLoaded.getBoolean(null);
+                } catch (final IllegalAccessException e) {
+                    GTLog.logger.warn("Failed reading field indicating whether shaders are enabled. Shader mod integration disabled.");
+                    isShaderPackLoaded = null;
+                    return false;
+                }
+            };
+            GTLog.logger.info("Find optiFine mod loaded.");
+        } catch (ClassNotFoundException e) {
+            GTLog.logger.info("No optiFine mod found.");
+        } catch (NoSuchFieldException | NoClassDefFoundError e) {
+            GTLog.logger.warn("Failed integrating with shader mod. Ignoring.");
         }
     }
 
@@ -108,6 +126,10 @@ public class Shaders {
 
     public static boolean allowedShader() {
         return OpenGlHelper.shadersSupported && ConfigHolder.U.clientConfig.shader.useShader;
+    }
+
+    public static boolean isOptiFineShaderPackLoaded() {
+        return isShaderPackLoaded != null && isShaderPackLoaded.getAsBoolean();
     }
 
     public static Framebuffer renderFullImageInFBO(Framebuffer fbo, ShaderObject frag, Consumer<ShaderProgram.UniformCache> uniformCache) {

@@ -82,7 +82,7 @@ public class SimpleSidedCubeRenderer implements ICubeRenderer, IIconRegister {
             Textures.renderFace(renderState, translation, pipeline, renderSide, bounds, renderSprite);
             TextureAtlasSprite spriteEmissive = spritesEmissive.get(overlayFace);
             if (spriteEmissive != null) {
-                if (ConfigHolder.U.clientConfig.machinesEemissiveTextures) {
+                if (ConfigHolder.U.clientConfig.machinesEmissiveTextures) {
                     IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
                     Textures.renderFaceBloom(renderState, translation, lightPipeline, renderSide, bounds, spriteEmissive);
                 } else Textures.renderFace(renderState, translation, pipeline, renderSide, bounds, spriteEmissive);

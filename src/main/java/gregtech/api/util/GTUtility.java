@@ -56,6 +56,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -1023,6 +1024,29 @@ public class GTUtility {
     public static boolean isOre(Block block) {
         OrePrefix orePrefix = OreDictUnifier.getPrefix(new ItemStack(block));
         return orePrefix != null && orePrefix.name().startsWith("ore");
+    }
+
+    /**
+     * @param values to find the mean of
+     * @return the mean value
+     */
+    public static long mean(@Nonnull long[] values) {
+        if(values.length == 0L)
+            return 0L;
+
+        long sum = 0L;
+        for (long v : values)
+            sum += v;
+        return sum / values.length;
+    }
+
+    /**
+     *
+     * @param world the {@link World} to get the average tick time of
+     * @return the mean tick time
+     */
+    public static double getMeanTickTime(@Nonnull World world) {
+        return mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
     }
 
 }

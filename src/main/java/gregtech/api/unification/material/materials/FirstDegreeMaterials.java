@@ -244,7 +244,7 @@ public class FirstDegreeMaterials {
 
         Ice = new Material.Builder(283, "ice")
                 .dust(0).fluid()
-                .color(0xC8C8FF).iconSet(SHINY)
+                .color(0xC8C8FF, false).iconSet(SHINY)
                 .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();

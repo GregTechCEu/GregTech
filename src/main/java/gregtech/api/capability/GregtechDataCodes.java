@@ -25,6 +25,11 @@ public class GregtechDataCodes {
     public static final int UPDATE_LOCKED_STATE = 8;
     public static final int UPDATE_CONTENTS_SEED = 9;
 
+    // Steam Machines
+    public static final int NEEDS_VENTING = 2;
+    public static final int VENTING_SIDE = 3;
+    public static final int VENTING_STUCK = 4;
+
     // Misc TEs (Transformer, World Accelerator)
     public static final int SYNC_TILE_MODE = 100;
 
@@ -69,6 +74,9 @@ public class GregtechDataCodes {
     public static final int DEFORM_TANK = 2;
     public static final int SYNC_FLUID_CHANGE = 3;
     public static final int SYNC_TANK_SHAPE = 4;
+
+    // Fusion Reactor
+    public static final int UPDATE_COLOR = 371;
 
     // Central Monitor
     public static final int UPDATE_ALL = 1;

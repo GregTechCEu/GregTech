@@ -10,7 +10,7 @@ import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.common.blocks.BlockTransparentCasing;
+import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
@@ -136,7 +136,8 @@ public class MiscRecipeLoader {
         //armor
         // Nightvision Goggles
         ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(128)
-                .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS))
+                .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.TEMPERED_GLASS))
                 .inputs(EMITTER_MV.getStackForm(2))
                 .inputs(DUCT_TAPE.getStackForm(2))
                 .inputs(BATTERY_HV_LITHIUM.getStackForm())
@@ -171,7 +172,8 @@ public class MiscRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(512)
                 .input(circuit, Advanced, 2)
-                .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS))
+                .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.TEMPERED_GLASS))
                 .inputs(NIGHTVISION_GOGGLES.getStackForm())
                 .inputs(CARBON_PLATE.getStackForm(5))
                 .inputs(BATTERY_HV_LITHIUM.getStackForm())
@@ -439,7 +441,8 @@ public class MiscRecipeLoader {
         // Tempered Glass in Arc Furnace
         ARC_FURNACE_RECIPES.recipeBuilder().duration(60).EUt(30)
                 .input(block, Glass)
-                .outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS))
+                .outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.TEMPERED_GLASS))
                 .buildAndRegister();
 
         // Dyed Lens Decomposition

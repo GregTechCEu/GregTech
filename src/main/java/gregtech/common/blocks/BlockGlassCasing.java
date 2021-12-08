@@ -17,9 +17,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class BlockTransparentCasing extends VariantActiveBlock<BlockTransparentCasing.CasingType> {
+public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.CasingType> {
 
-    public BlockTransparentCasing() {
+    public BlockGlassCasing() {
         super(Material.IRON);
         setTranslationKey("transparent_casing");
         setHardness(5.0f);
@@ -37,7 +37,7 @@ public class BlockTransparentCasing extends VariantActiveBlock<BlockTransparentC
     @Override
     @Nonnull
     public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.TRANSLUCENT;
+        return BlockRenderLayer.CUTOUT; // The glasses here dont have the transparency as an ice block, and should not be rendered in TRANSLUCENT.
     }
 
     @Override

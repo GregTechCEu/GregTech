@@ -73,7 +73,7 @@ public class SecondDegreeMaterials {
 
         Blaze = new Material.Builder(2008, "blaze")
                 .dust(1).fluid()
-                .color(0xFFC800).iconSet(FINE)
+                .color(0xFFC800, false).iconSet(FINE)
                 .flags(NO_SMELTING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING) //todo burning flag
                 .components(DarkAsh, 1, Sulfur, 1)
                 .build();
