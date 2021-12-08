@@ -182,15 +182,15 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public static TraceabilityPredicate air() {
-        return TraceabilityPredicate.AIR;
+        return TraceabilityPredicate.AIR.get();
     }
 
     public static TraceabilityPredicate any() {
-        return TraceabilityPredicate.ANY;
+        return TraceabilityPredicate.ANY.get();
     }
 
     public static TraceabilityPredicate heatingCoils() {
-        return TraceabilityPredicate.HEATING_COILS;
+        return TraceabilityPredicate.HEATING_COILS.get();
     }
 
     public TraceabilityPredicate selfPredicate() {

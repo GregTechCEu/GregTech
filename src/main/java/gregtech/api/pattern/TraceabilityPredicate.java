@@ -24,11 +24,11 @@ import java.util.stream.Collectors;
 public class TraceabilityPredicate {
 
     // Allow any block.
-    public static TraceabilityPredicate ANY = new TraceabilityPredicate((state)->true);
+    public static Supplier<TraceabilityPredicate> ANY = () -> new TraceabilityPredicate((state)->true);
     // Allow the air block.
-    public static TraceabilityPredicate AIR = new TraceabilityPredicate(blockWorldState -> blockWorldState.getBlockState().getBlock().isAir(blockWorldState.getBlockState(), blockWorldState.getWorld(), blockWorldState.getPos()));
+    public static Supplier<TraceabilityPredicate> AIR = () -> new TraceabilityPredicate(blockWorldState -> blockWorldState.getBlockState().getBlock().isAir(blockWorldState.getBlockState(), blockWorldState.getWorld(), blockWorldState.getPos()));
     // Allow all heating coils, and require them to have the same type.
-    public static TraceabilityPredicate HEATING_COILS = new TraceabilityPredicate(blockWorldState -> {
+    public static Supplier<TraceabilityPredicate> HEATING_COILS = () -> new TraceabilityPredicate(blockWorldState -> {
         IBlockState blockState = blockWorldState.getBlockState();
         if ((blockState.getBlock() instanceof BlockWireCoil)) {
             BlockWireCoil blockWireCoil = (BlockWireCoil) blockState.getBlock();

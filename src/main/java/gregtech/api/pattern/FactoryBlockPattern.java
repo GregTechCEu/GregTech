@@ -46,7 +46,7 @@ public class FactoryBlockPattern {
             }
         }
         if (flags != 0x7) throw new IllegalArgumentException("Must have 3 different axes!");
-        this.symbolMap.put(' ', TraceabilityPredicate.ANY);
+        this.symbolMap.put(' ', TraceabilityPredicate.ANY.get());
     }
 
     /**
