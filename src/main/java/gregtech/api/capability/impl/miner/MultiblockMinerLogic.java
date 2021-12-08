@@ -97,7 +97,7 @@ public class MultiblockMinerLogic extends MinerLogic {
     }
 
     public void setChunkMode(boolean isChunkMode) {
-        if (!isActive()) {
+        if (!isWorkingEnabled()) {
             getX().set(Integer.MAX_VALUE);
             getY().set(Integer.MAX_VALUE);
             getZ().set(Integer.MAX_VALUE);
@@ -110,7 +110,7 @@ public class MultiblockMinerLogic extends MinerLogic {
     }
 
     public void setSilkTouchMode(boolean isSilkTouchMode) {
-        if (!isActive())
+        if (!isWorkingEnabled())
             this.isSilkTouchMode = isSilkTouchMode;
     }
 
