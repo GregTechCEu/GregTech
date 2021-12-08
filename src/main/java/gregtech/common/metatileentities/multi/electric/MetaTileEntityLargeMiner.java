@@ -54,9 +54,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static gregtech.api.unification.material.Materials.DrillingFluid;
 
@@ -178,6 +176,11 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 .where('F', states(MetaBlocks.FRAMES.get(getMaterial()).getDefaultState()))
                 .where('#', any())
                 .build();
+    }
+
+    @Override
+    public String[] getDescription() {
+        return new String[]{I18n.format("gregtech.machine.miner.multi.description")};
     }
 
     @Override
