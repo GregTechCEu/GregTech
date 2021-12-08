@@ -161,9 +161,9 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (isTEMode()) {
-            Textures.WORLD_ACCELERATOR_TE_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive);
+            Textures.WORLD_ACCELERATOR_TE_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive, isWorkingEnabled());
         } else {
-            Textures.WORLD_ACCELERATOR_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive);
+            Textures.WORLD_ACCELERATOR_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive, isWorkingEnabled());
         }
     }
 

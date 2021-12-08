@@ -6,21 +6,19 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.sound.ISoundCreator;
-import gregtech.api.metatileentity.sound.PositionedSoundMTE;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.SimpleSidedCubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTUtility;
-import gregtech.common.ConfigHolder;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,7 +46,6 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
 
     private static final EnumFacing[] STEAM_PUSH_DIRECTIONS = ArrayUtils.add(EnumFacing.HORIZONTALS, EnumFacing.UP);
 
-    public final TextureArea BRONZE_BACKGROUND_TEXTURE;
     public final TextureArea BRONZE_SLOT_BACKGROUND_TEXTURE;
 
     public final TextureArea SLOT_FURNACE_BACKGROUND;
@@ -73,7 +70,6 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
         super(metaTileEntityId);
         this.renderer = renderer;
         this.isHighPressure = isHighPressure;
-        BRONZE_BACKGROUND_TEXTURE = getGuiTexture("%s_gui");
         BRONZE_SLOT_BACKGROUND_TEXTURE = getGuiTexture("slot_%s");
         SLOT_FURNACE_BACKGROUND = getGuiTexture("slot_%s_furnace_background");
         this.containerInventory = new ItemStackHandler(2);
@@ -104,7 +100,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         getBaseRenderer().render(renderState, translation, colouredPipeline);
-        renderer.render(renderState, translation, pipeline, getFrontFacing(), isBurning());
+        renderer.render(renderState, translation, pipeline, getFrontFacing(), isBurning(), true);
     }
 
     @Override
@@ -281,27 +277,25 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     }
 
     public ModularUI.Builder createUITemplate(EntityPlayer player) {
-        return ModularUI.builder(BRONZE_BACKGROUND_TEXTURE, 176, 166)
-                .widget(new LabelWidget(6, 6, getMetaFullName()))
-
+        return ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(isHighPressure), 176, 166)
+                .label(6, 6, getMetaFullName())
                 .widget(new ProgressWidget(this::getTemperaturePercent, 96, 26, 10, 54)
-                        .setProgressBar(getGuiTexture("bar_%s_empty"),
-                                getGuiTexture("bar_heat"),
+                        .setProgressBar(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure),
+                                GuiTextures.PROGRESS_BAR_BOILER_HEAT,
                                 MoveType.VERTICAL))
 
                 .widget(new TankWidget(waterFluidTank, 83, 26, 10, 54)
-                        .setBackgroundTexture(getGuiTexture("bar_%s_empty")))
+                        .setBackgroundTexture(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure)))
                 .widget(new TankWidget(steamFluidTank, 70, 26, 10, 54)
-                        .setBackgroundTexture(getGuiTexture("bar_%s_empty")))
+                        .setBackgroundTexture(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure)))
 
                 .widget(new FluidContainerSlotWidget(containerInventory, 0, 43, 26, true)
-                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getGuiTexture("overlay_%s_in")))
-                .widget(new SlotWidget(containerInventory, 1, 43, 62, true, false)
-                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getGuiTexture("overlay_%s_out")))
-                .widget(new ImageWidget(43, 44, 18, 18)
-                        .setImage(getGuiTexture("overlay_%s_fluid_container")))
+                        .setBackgroundTexture(GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.IN_SLOT_OVERLAY_STEAM.get(isHighPressure)))
+                .slot(containerInventory, 1, 43, 62, true, false,
+                        GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.OUT_SLOT_OVERLAY_STEAM.get(isHighPressure))
+                .image(43, 44, 18, 18, GuiTextures.CANISTER_OVERLAY_STEAM.get(isHighPressure))
 
-                .bindPlayerInventory(player.inventory, BRONZE_SLOT_BACKGROUND_TEXTURE, 0);
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT_STEAM.get(isHighPressure), 0);
     }
 
     @Override

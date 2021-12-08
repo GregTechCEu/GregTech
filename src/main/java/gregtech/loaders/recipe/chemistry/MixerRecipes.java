@@ -98,7 +98,7 @@ public class MixerRecipes {
                 .input(dust, Nickel)
                 .input(dust, Zinc)
                 .input(dust, Iron, 4)
-                .notConsumable(new IntCircuitIngredient(1))
+                .notConsumable(new IntCircuitIngredient(2))
                 .output(dust, FerriteMixture, 6)
                 .buildAndRegister();
 

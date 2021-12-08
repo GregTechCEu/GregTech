@@ -85,7 +85,7 @@ public class ModHandler {
         return material == Materials.Wood;
     }
 
-    public static ItemStack getBurningFuelRemainder(Random random, ItemStack fuelStack) {
+    public static ItemStack getBurningFuelRemainder(ItemStack fuelStack) {
         float remainderChance;
         ItemStack remainder;
         if (OreDictUnifier.getOreDictionaryNames(fuelStack).contains("fuelCoke")) {
@@ -106,7 +106,7 @@ public class ModHandler {
                 remainderChance = 0.5f;
             } else return ItemStack.EMPTY;
         }
-        return random.nextFloat() <= remainderChance ? remainder : ItemStack.EMPTY;
+        return GTValues.RNG.nextFloat() <= remainderChance ? remainder : ItemStack.EMPTY;
     }
 
     ///////////////////////////////////////////////////

@@ -304,6 +304,12 @@ public class SeparationRecipes {
                 .fluidOutputs(Oil.getFluid(1000))
                 .buildAndRegister();
 
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(60).EUt(30)
+                .input(dust, QuartzSand, 2)
+                .output(dust, Quartzite)
+                .chancedOutput(dust, CertusQuartz, 2000, 200)
+                .buildAndRegister();
+
 
         // Electrolyzer
         ELECTROLYZER_RECIPES.recipeBuilder()

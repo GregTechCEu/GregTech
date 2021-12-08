@@ -152,12 +152,7 @@ public class FirstDegreeMaterials {
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();
 
-        Clay = new Material.Builder(270, "clay")
-                .dust(1)
-                .color(0xC8C8DC).iconSet(ROUGH)
-                .flags(MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
-                .components(Sodium, 2, Lithium, 1, Aluminium, 2, Silicon, 2, Water, 6)
-                .build();
+        // FREE ID 270
 
         Coal = new Material.Builder(271, "coal")
                 .gem(1, 1600).ore() //default coal burn time in vanilla
@@ -249,7 +244,7 @@ public class FirstDegreeMaterials {
 
         Ice = new Material.Builder(283, "ice")
                 .dust(0).fluid()
-                .color(0xC8C8FF).iconSet(SHINY)
+                .color(0xC8C8FF, false).iconSet(SHINY)
                 .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();

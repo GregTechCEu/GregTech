@@ -174,10 +174,10 @@ public class VanillaOverrideRecipes {
         ModHandler.addShapedRecipe("quartz_sand", OreDictUnifier.get(OrePrefix.dust, Materials.QuartzSand), "S", "m",
                 'S', new ItemStack(Blocks.SAND));
 
-        RecipeMaps.SIFTER_RECIPES.recipeBuilder()
+        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.SAND))
                 .output(OrePrefix.dust, Materials.QuartzSand)
-                .duration(60).EUt(16).buildAndRegister();
+                .duration(30).EUt(4).buildAndRegister();
 
         ModHandler.addShapelessRecipe("glass_dust_flint", OreDictUnifier.get(OrePrefix.dust, Materials.Glass),
                 new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),

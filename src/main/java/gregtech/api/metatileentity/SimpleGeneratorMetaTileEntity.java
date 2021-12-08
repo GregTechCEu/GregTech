@@ -86,7 +86,7 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity implemen
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.overlayRenderer.render(renderState, translation, pipeline, getFrontFacing(), workableHandler.isActive());
+        this.overlayRenderer.render(renderState, translation, pipeline, getFrontFacing(), workableHandler.isActive(), workableHandler.isWorkingEnabled());
         Textures.ENERGY_OUT.renderSided(getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
     }
 

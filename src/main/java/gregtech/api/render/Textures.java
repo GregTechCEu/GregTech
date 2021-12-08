@@ -153,7 +153,6 @@ public class Textures {
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_OVERLAY = new OrientedOverlayRenderer("machines/world_accelerator", FRONT, BACK, SIDE);
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_TE_OVERLAY = new OrientedOverlayRenderer("machines/world_accelerator_te", FRONT, BACK, SIDE);
 
-
     // Simple Overlay Renderers
     public static final SimpleOverlayRenderer SCREEN = new SimpleOverlayRenderer("overlay/machine/overlay_screen");
     public static final SimpleOverlayRenderer DISPLAY = new SimpleOverlayRenderer("cover/overlay_display");
@@ -196,8 +195,11 @@ public class Textures {
     public static final SimpleOverlayRenderer ENERGY_OUT_ULTRA = new SimpleOverlayRenderer("overlay/machine/overlay_energy_out_ultra");
     public static final SimpleOverlayRenderer ENERGY_IN_ULTRA = new SimpleOverlayRenderer("overlay/machine/overlay_energy_in_ultra");
     public static final SimpleOverlayRenderer CONVEYOR_OVERLAY = new SimpleOverlayRenderer("cover/overlay_conveyor");
+    public static final SimpleOverlayRenderer CONVEYOR_OVERLAY_INVERTED = new SimpleOverlayRenderer("cover/overlay_conveyor_inverted");
     public static final SimpleOverlayRenderer ARM_OVERLAY = new SimpleOverlayRenderer("cover/overlay_arm");
+    public static final SimpleOverlayRenderer ARM_OVERLAY_INVERTED = new SimpleOverlayRenderer("cover/overlay_arm_inverted");
     public static final SimpleOverlayRenderer PUMP_OVERLAY = new SimpleOverlayRenderer("cover/overlay_pump");
+    public static final SimpleOverlayRenderer PUMP_OVERLAY_INVERTED = new SimpleOverlayRenderer("cover/overlay_pump_inverted");
     public static final SimpleOverlayRenderer AIR_VENT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_air_vent");
     public static final SimpleOverlayRenderer BLOWER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_blower");
     public static final SimpleOverlayRenderer BLOWER_ACTIVE_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_blower_active");
@@ -215,21 +217,23 @@ public class Textures {
     public static final SimpleOverlayRenderer CHUNK_MINER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_chunk_miner");
     public static final SimpleOverlayRenderer BLANK_SCREEN = new SimpleOverlayRenderer("overlay/machine/overlay_blank_screen");
 
-    public static SimpleOverlayRenderer COVER_INTERFACE_FLUID = new SimpleOverlayRenderer("cover/cover_interface_fluid");
-    public static SimpleOverlayRenderer COVER_INTERFACE_FLUID_GLASS = new SimpleOverlayRenderer("cover/cover_interface_fluid_glass");
-    public static SimpleOverlayRenderer COVER_INTERFACE_ITEM = new SimpleOverlayRenderer("cover/cover_interface_item");
-    public static SimpleOverlayRenderer COVER_INTERFACE_ENERGY = new SimpleOverlayRenderer("cover/cover_interface_energy");
-    public static SimpleOverlayRenderer COVER_INTERFACE_MACHINE_ON = new SimpleOverlayRenderer("cover/cover_interface_machine_on");
-    public static SimpleOverlayRenderer COVER_INTERFACE_MACHINE_OFF = new SimpleOverlayRenderer("cover/cover_interface_machine_off");
-    public static SimpleOverlayRenderer COVER_INTERFACE_PROXY = new SimpleOverlayRenderer("cover/cover_interface_proxy");
-    public static SimpleOverlayRenderer COVER_INTERFACE_WIRELESS = new SimpleOverlayRenderer("cover/cover_interface_wireless");
-    public static TextureArea BUTTON_FLUID = TextureArea.fullImage("textures/blocks/cover/cover_interface_fluid_button.png");
-    public static TextureArea BUTTON_ITEM = TextureArea.fullImage("textures/blocks/cover/cover_interface_item_button.png");
-    public static TextureArea BUTTON_ENERGY = TextureArea.fullImage("textures/blocks/cover/cover_interface_energy_button.png");
-    public static TextureArea BUTTON_MACHINE = TextureArea.fullImage("textures/blocks/cover/cover_interface_machine_button.png");
-    public static TextureArea BUTTON_INTERFACE = TextureArea.fullImage("textures/blocks/cover/cover_interface_computer_button.png");
-    public static TextureArea COVER_INTERFACE_MACHINE_ON_PROXY = TextureArea.fullImage("textures/blocks/cover/cover_interface_machine_on_proxy.png");
-    public static TextureArea COVER_INTERFACE_MACHINE_OFF_PROXY = TextureArea.fullImage("textures/blocks/cover/cover_interface_machine_off_proxy.png");
+    public static final SimpleOverlayRenderer COVER_INTERFACE_FLUID = new SimpleOverlayRenderer("cover/cover_interface_fluid");
+    public static final SimpleOverlayRenderer COVER_INTERFACE_FLUID_GLASS = new SimpleOverlayRenderer("cover/cover_interface_fluid_glass");
+    public static final SimpleOverlayRenderer COVER_INTERFACE_ITEM = new SimpleOverlayRenderer("cover/cover_interface_item");
+    public static final SimpleOverlayRenderer COVER_INTERFACE_ENERGY = new SimpleOverlayRenderer("cover/cover_interface_energy");
+    public static final SimpleOverlayRenderer COVER_INTERFACE_MACHINE_ON = new SimpleOverlayRenderer("cover/cover_interface_machine_on");
+    public static final SimpleOverlayRenderer COVER_INTERFACE_MACHINE_OFF = new SimpleOverlayRenderer("cover/cover_interface_machine_off");
+    public static final SimpleOverlayRenderer COVER_INTERFACE_PROXY = new SimpleOverlayRenderer("cover/cover_interface_proxy");
+    public static final SimpleOverlayRenderer COVER_INTERFACE_WIRELESS = new SimpleOverlayRenderer("cover/cover_interface_wireless");
+
+    // Texture Areas
+    public static final TextureArea BUTTON_FLUID = TextureArea.fullImage("textures/blocks/cover/cover_interface_fluid_button.png");
+    public static final TextureArea BUTTON_ITEM = TextureArea.fullImage("textures/blocks/cover/cover_interface_item_button.png");
+    public static final TextureArea BUTTON_ENERGY = TextureArea.fullImage("textures/blocks/cover/cover_interface_energy_button.png");
+    public static final TextureArea BUTTON_MACHINE = TextureArea.fullImage("textures/blocks/cover/cover_interface_machine_button.png");
+    public static final TextureArea BUTTON_INTERFACE = TextureArea.fullImage("textures/blocks/cover/cover_interface_computer_button.png");
+    public static final TextureArea COVER_INTERFACE_MACHINE_ON_PROXY = TextureArea.fullImage("textures/blocks/cover/cover_interface_machine_on_proxy.png");
+    public static final TextureArea COVER_INTERFACE_MACHINE_OFF_PROXY = TextureArea.fullImage("textures/blocks/cover/cover_interface_machine_off_proxy.png");
 
 
     static {
@@ -275,7 +279,7 @@ public class Textures {
     public static void renderFaceBloom(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite) {
         if (ops.length > 0 && ops[0] instanceof GTBlockOperation) {
             GTBlockOperation op = (GTBlockOperation) ops[0];
-            if (op.layer != BloomRenderLayerHooks.BLOOM || !op.shouldSideBeRendered(face, bounds)) {
+            if (op.layer != BloomRenderLayerHooks.getRealBloomLayer() || !op.shouldSideBeRendered(face, bounds)) {
                 return;
             }
         }

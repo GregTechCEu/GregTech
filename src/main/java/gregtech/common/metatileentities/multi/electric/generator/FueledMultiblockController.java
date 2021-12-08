@@ -117,7 +117,7 @@ public abstract class FueledMultiblockController extends MultiblockWithDisplayBa
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(),
-                isStructureFormed() && workableHandler.isActive());
+                isStructureFormed() && workableHandler.isActive(), workableHandler.isWorkingEnabled());
     }
 
     @Override

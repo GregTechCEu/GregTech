@@ -154,7 +154,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected void updateFormedValid() {
         if (!hasMufflerMechanics() || isMufflerFaceFree())
             this.recipeMapWorkable.updateWorkable();
-        boolean state = this.recipeMapWorkable.isWorking() && ConfigHolder.U.clientConfig.casingsActiveEemissiveTextures;
+        boolean state = this.recipeMapWorkable.isWorking() && ConfigHolder.U.clientConfig.casingsActiveEmissiveTextures;
         if (lastActive != state) {
             lastActive = state;
             replaceVariantBlocksActive(lastActive);
@@ -300,7 +300,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive());
+        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
     }
 
     @Override

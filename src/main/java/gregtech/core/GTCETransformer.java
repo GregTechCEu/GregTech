@@ -84,6 +84,18 @@ public class GTCETransformer implements IClassTransformer, Opcodes {
                 classReader.accept(new TargetClassVisitor(classWriter, WorldVisitor.TARGET_METHOD, WorldVisitor::new), 0);
                 return classWriter.toByteArray();
             }
+            case ModelCTMVisitor.TARGET_CLASS_NAME: {
+                ClassReader classReader = new ClassReader(basicClass);
+                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+                classReader.accept(new TargetClassVisitor(classWriter, ModelCTMVisitor.TARGET_METHOD, ModelCTMVisitor::new), 0);
+                return classWriter.toByteArray();
+            }
+            case AbstractCTMBakedModelVisitor.TARGET_CLASS_NAME: {
+                ClassReader classReader = new ClassReader(basicClass);
+                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+                classReader.accept(new TargetClassVisitor(classWriter, AbstractCTMBakedModelVisitor.TARGET_METHOD, AbstractCTMBakedModelVisitor::new), 0);
+                return classWriter.toByteArray();
+            }
         }
         return basicClass;
     }

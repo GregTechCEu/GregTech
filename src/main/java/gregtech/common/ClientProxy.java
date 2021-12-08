@@ -2,7 +2,6 @@ package gregtech.common;
 
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.ItemNBTUtils;
-import codechicken.lib.util.ResourceUtils;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.GTValues;
@@ -142,7 +141,6 @@ public class ClientProxy extends CommonProxy {
     public void onPostLoad() {
         super.onPostLoad();
         TerminalRegistry.initTerminalFiles();
-        ResourceUtils.registerReloadListener(ToolRenderHandler.INSTANCE);
         ModCompatibility.initCompat();
         FacadeRenderer.init();
         startCapeLoadingThread();

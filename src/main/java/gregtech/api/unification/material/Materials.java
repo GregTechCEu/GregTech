@@ -296,7 +296,6 @@ public class Materials {
     public static Material Chromite;
     public static Material Cinnabar;
     public static Material Water;
-    public static Material Clay;
     public static Material Coal;
     public static Material Cobaltite;
     public static Material Cooperite;
@@ -640,8 +639,6 @@ public class Materials {
     public static Material Gelatin;
     public static Material Agar;
     public static Material Andesite;
-    public static Material Diorite;
-    public static Material Granite;
     public static Material Vinteum;
     public static Material Milk;
     public static Material Cocoa;
@@ -719,8 +716,6 @@ public class Materials {
     public static Material SteelMagnetic;
     public static Material VanadiumSteel;
     public static Material Potin;
-    public static Material Brick;
-    public static Material Fireclay;
     public static Material BorosilicateGlass;
     public static Material NaquadahAlloy;
     public static Material SulfuricNickelSolution;
@@ -738,6 +733,7 @@ public class Materials {
     public static Material LiquidEnderAir;
     public static Material AquaRegia;
     public static Material SaltWater;
+    public static Material Clay;
 
     /**
      * Third Degree Materials
@@ -753,6 +749,10 @@ public class Materials {
     public static Material GarnetSand;
     public static Material HSSG;
     public static Material IridiumMetalResidue;
+    public static Material Granite;
+    public static Material Brick;
+    public static Material Fireclay;
+    public static Material Diorite;
 
     /**
      * Fourth Degree Materials

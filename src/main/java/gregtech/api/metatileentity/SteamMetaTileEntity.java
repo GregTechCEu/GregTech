@@ -8,22 +8,16 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.RecipeLogicSteam;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.metatileentity.sound.ISoundCreator;
-import gregtech.api.metatileentity.sound.PositionedSoundMTE;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.SimpleSidedCubeRenderer;
 import gregtech.api.render.Textures;
-import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTUtility;
-import gregtech.common.ConfigHolder;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.Sound;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.*;
@@ -35,8 +29,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public abstract class SteamMetaTileEntity extends MetaTileEntity implements ISoundCreator {
 
-    public final TextureArea BRONZE_BACKGROUND_TEXTURE;
-    public final TextureArea BRONZE_SLOT_BACKGROUND_TEXTURE;
+    protected static final int STEAM_CAPACITY = 16000;
 
     protected final boolean isHighPressure;
     protected final OrientedOverlayRenderer renderer;
@@ -49,18 +42,12 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ISou
                 recipeMap, isHighPressure, steamFluidTank, 1.0);
         this.isHighPressure = isHighPressure;
         this.renderer = renderer;
-        BRONZE_BACKGROUND_TEXTURE = getFullGuiTexture("%s_gui");
-        BRONZE_SLOT_BACKGROUND_TEXTURE = getFullGuiTexture("slot_%s");
         this.setPaintingColor(0xFFFFFF);
     }
 
     @Override
     public boolean canCreateSound() {
         return workableHandler.isActive();
-    }
-
-    public RecipeLogicSteam getWorkableHandler() {
-        return workableHandler;
     }
 
     @SideOnly(Side.CLIENT)
@@ -102,7 +89,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ISou
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         getBaseRenderer().render(renderState, translation, colouredPipeline);
-        renderer.render(renderState, translation, pipeline, getFrontFacing(), workableHandler.isActive());
+        renderer.render(renderState, translation, pipeline, getFrontFacing(), workableHandler.isActive(), workableHandler.isWorkingEnabled());
         Textures.STEAM_VENT_OVERLAY.renderSided(workableHandler.getVentingSide(), renderState, translation, pipeline);
     }
 
@@ -112,27 +99,17 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ISou
 
     @Override
     public FluidTankList createImportFluidHandler() {
-        this.steamFluidTank = new FilteredFluidHandler(getSteamCapacity())
+        this.steamFluidTank = new FilteredFluidHandler(STEAM_CAPACITY)
                 .setFillPredicate(ModHandler::isSteam);
         return new FluidTankList(false, steamFluidTank);
     }
 
-    public int getSteamCapacity() {
-        return 16000;
-    }
-
-    protected TextureArea getFullGuiTexture(String pathTemplate) {
-        String type = isHighPressure ? "steel" : "bronze";
-        return TextureArea.fullImage(String.format("textures/gui/steam/%s/%s.png",
-                type, pathTemplate.replace("%s", type)));
-    }
-
     public ModularUI.Builder createUITemplate(EntityPlayer player) {
-        return ModularUI.builder(BRONZE_BACKGROUND_TEXTURE, 176, 166)
-                .widget(new LabelWidget(6, 6, getMetaFullName()))
-                .widget(new ImageWidget(79, 42, 18, 18, getFullGuiTexture("not_enough_steam_%s"))
+        return ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(isHighPressure), 176, 166)
+                .label(6, 6, getMetaFullName())
+                .widget(new ImageWidget(79, 42, 18, 18, GuiTextures.INDICATOR_NO_STEAM.get(isHighPressure))
                         .setPredicate(() -> workableHandler.isHasNotEnoughEnergy()))
-                .bindPlayerInventory(player.inventory, BRONZE_SLOT_BACKGROUND_TEXTURE, 0);
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT_STEAM.get(isHighPressure), 0);
     }
 
     @Override

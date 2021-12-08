@@ -844,19 +844,19 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
             translation.apply(rotation);
         }
         if (mode == MODE.PROXY) {
-            Textures.COVER_INTERFACE_PROXY.renderSided(this.attachedSide, cuboid6, ccRenderState, ops, RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+            Textures.COVER_INTERFACE_PROXY.renderSided(this.attachedSide, cuboid6, ccRenderState, ops, translation);
         } else if (mode == MODE.FLUID) {
-            Textures.COVER_INTERFACE_FLUID.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+            Textures.COVER_INTERFACE_FLUID.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), translation);
             Textures.COVER_INTERFACE_FLUID_GLASS.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 3));
         } else if (mode == MODE.ITEM) {
-            Textures.COVER_INTERFACE_ITEM.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+            Textures.COVER_INTERFACE_ITEM.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), translation);
         } else if (mode == MODE.ENERGY) {
-            Textures.COVER_INTERFACE_ENERGY.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+            Textures.COVER_INTERFACE_ENERGY.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), translation);
         } else if (mode == MODE.MACHINE) {
             if (isWorkingEnabled) {
-                Textures.COVER_INTERFACE_MACHINE_ON.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+                Textures.COVER_INTERFACE_MACHINE_ON.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), translation);
             } else {
-                Textures.COVER_INTERFACE_MACHINE_OFF.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+                Textures.COVER_INTERFACE_MACHINE_OFF.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), translation);
             }
         }
     }

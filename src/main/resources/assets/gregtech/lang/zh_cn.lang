@@ -634,7 +634,7 @@ cover.pump.mode.export=模式: 过滤输出
 cover.pump.mode.import=模式: 过滤输入
 cover.pump.fluid_filter.title=流体过滤
 
-cover.machine_controller.name=机器控制覆盖板设置
+cover.machine_controller.title=机器控制覆盖板设置
 cover.machine_controller.normal=不反转信号
 cover.machine_controller.inverted=反转信号
 cover.machine_controller.redstone=最小红石信号强度: %d
@@ -3553,3 +3553,4 @@ gregtech.cover.item_detector.message_item_storage_normal=Monitoring Normal Item 
 gregtech.cover.item_detector.message_item_storage_inverted=Monitoring Inverted Item Storage
 
 fluid.tile.lava=Lava
+fluid.tile.water=Water

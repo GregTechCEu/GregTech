@@ -380,15 +380,13 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
-        return createUITemplate(this::jeiProgressBar, importItems, exportItems, importFluids, exportFluids, yOffset);
-    }
-
-    private double timer = 0;
-
-    private double jeiProgressBar() {
-        timer += 0.0005;
-        if (timer > 1.0) timer = 0.0;
-        return timer;
+        ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
+        builder.widget(new RecipeProgressWidget(200, 78, 23 + yOffset, 20, 20, progressBarTexture, moveType, this));
+        addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
+        addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
+        if (this.specialTexture != null && this.specialTexturePosition != null)
+            addSpecialTexture(builder);
+        return builder;
     }
 
     //this DOES NOT include machine control widgets or binds player inventory

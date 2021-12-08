@@ -98,6 +98,6 @@ public class CoverDigitalInterfaceWireless extends CoverDigitalInterface{
 
     @Override
     public void renderCover(CCRenderState ccRenderState, Matrix4 translation, IVertexOperation[] ops, Cuboid6 cuboid6, BlockRenderLayer blockRenderLayer) {
-        Textures.COVER_INTERFACE_WIRELESS.renderSided(this.attachedSide, cuboid6, ccRenderState, ops, RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+        Textures.COVER_INTERFACE_WIRELESS.renderSided(this.attachedSide, cuboid6, ccRenderState, ops, translation);
     }
 }

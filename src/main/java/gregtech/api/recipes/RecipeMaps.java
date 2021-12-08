@@ -44,7 +44,7 @@ public class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> ORE_WASHER_RECIPES = new RecipeMap<>("ore_washer", 1, 1, 1, 3, 0, 1, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(16), false)
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.HORIZONTAL)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.CIRCULAR)
             .setSound(GTSounds.BATH);
 
 
@@ -153,7 +153,7 @@ public class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> MIXER_RECIPES = new RecipeMap<>("mixer", 0, 6, 0, 1, 0, 2, 0, 1, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.DUST_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.HORIZONTAL)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.CIRCULAR)
             .setSound(GTSounds.MIXER);
 
     /**
@@ -228,7 +228,7 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_BATH_RECIPES = new RecipeMap<>("chemical_bath", 1, 1, 1, 3, 1, 1, 0, 0, new SimpleRecipeBuilder(), false)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.HORIZONTAL)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.CIRCULAR)
             .setSound(GTSounds.BATH);
 
     /**
@@ -748,7 +748,6 @@ public class RecipeMaps {
     public static final RecipeMapAssemblyLine<SimpleRecipeBuilder> ASSEMBLY_LINE_RECIPES = (RecipeMapAssemblyLine<SimpleRecipeBuilder>) new RecipeMapAssemblyLine<>("assembly_line", 4, 16, 1, 1, 0, 4, 0, 0, new SimpleRecipeBuilder(), false)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
             .setSound(GTSounds.ASSEMBLER);
-    // ASSEMBLY_LINE_RECIPES.setSlotOverlay(false, false, GuiTextures.MOLD_OVERLAY); TODO Fix this (???)
 
     @ZenProperty
     public static final RecipeMap<CircuitAssemblerRecipeBuilder> CIRCUIT_ASSEMBLER_RECIPES = new RecipeMap<>("circuit_assembler",
@@ -803,7 +802,7 @@ public class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> SIMPLE_WASHER_RECIPES = new RecipeMap<>("simple_washer", 1, 1, 1, 1, 1, 1, 0, 0, new SimpleRecipeBuilder(), true)
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.HORIZONTAL)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.CIRCULAR)
             .setSound(GTSounds.BATH);
 
     public static final RecipeMap<SimpleRecipeBuilder> ROCK_BREAKER_RECIPES = new RecipeMap<>("rock_breaker", 1, 1, 1, 4, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
@@ -817,7 +816,7 @@ public class RecipeMaps {
             .setSound(GTSounds.FIRE);
 
     @ZenProperty
-    public static final RecipeMap<PrimitiveRecipeBuilder> COKE_OVEN_RECIPES = new RecipeMap<>("coke_oven", 1, 1, 0, 1, 0, 0, 0, 1, new PrimitiveRecipeBuilder(), false)
+    public static final RecipeMap<PrimitiveRecipeBuilder> COKE_OVEN_RECIPES = new RecipeMapCokeOven<>("coke_oven", 1, 1, 0, 1, 0, 0, 0, 1, new PrimitiveRecipeBuilder(), false)
             .setSound(GTSounds.FIRE);
 
     //////////////////////////////////////

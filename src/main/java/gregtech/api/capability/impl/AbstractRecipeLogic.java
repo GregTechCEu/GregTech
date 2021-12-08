@@ -157,6 +157,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return this.recipeMap;
     }
 
+    public Recipe getPreviousRecipe() {
+        return previousRecipe;
+    }
+
     protected boolean shouldSearchForRecipes() {
         return canWorkWithInputs() && canFitNewOutputs();
     }
@@ -604,6 +608,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     public void setWorkingEnabled(boolean workingEnabled) {
         this.workingEnabled = workingEnabled;
         metaTileEntity.markDirty();
+        World world = metaTileEntity.getWorld();
+        if (world != null && !world.isRemote) {
+            writeCustomData(5, buf -> buf.writeBoolean(workingEnabled));
+        }
     }
 
     public void setAllowOverclocking(boolean allowOverclocking) {
@@ -676,17 +684,22 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         if (dataId == 1) {
             this.isActive = buf.readBoolean();
             getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
+        } else if (dataId == 5) {
+            this.workingEnabled = buf.readBoolean();
+            getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
         }
     }
 
     @Override
     public void writeInitialData(PacketBuffer buf) {
         buf.writeBoolean(this.isActive);
+        buf.writeBoolean(this.workingEnabled);
     }
 
     @Override
     public void receiveInitialData(PacketBuffer buf) {
         this.isActive = buf.readBoolean();
+        this.workingEnabled = buf.readBoolean();
     }
 
     @Override

@@ -73,7 +73,7 @@ public class SecondDegreeMaterials {
 
         Blaze = new Material.Builder(2008, "blaze")
                 .dust(1).fluid()
-                .color(0xFFC800).iconSet(FINE)
+                .color(0xFFC800, false).iconSet(FINE)
                 .flags(NO_SMELTING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING) //todo burning flag
                 .components(DarkAsh, 1, Sulfur, 1)
                 .build();
@@ -191,6 +191,7 @@ public class SecondDegreeMaterials {
         QuartzSand = new Material.Builder(2023, "quartz_sand")
                 .dust(1)
                 .color(0xC8C8C8).iconSet(SAND)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(CertusQuartz, 1, Quartzite, 1)
                 .build();
 
@@ -302,19 +303,14 @@ public class SecondDegreeMaterials {
                 .components(Boron, 1, SiliconDioxide, 7)
                 .build();
 
-        Brick = new Material.Builder(2039, "brick")
-                .dust(1)
-                .color(0x9B5643).iconSet(ROUGH)
-                .flags(EXCLUDE_BLOCK_CRAFTING_RECIPES, DECOMPOSITION_BY_CENTRIFUGING)
-                .components(Clay, 1)
+        Andesite = new Material.Builder(2039, "andesite")
+                .dust()
+                .color(0xBEBEBE).iconSet(ROUGH)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Asbestos, 4, Saltpeter, 1)
                 .build();
 
-        Fireclay = new Material.Builder(2040, "fireclay")
-                .dust()
-                .color(0xADA09B).iconSet(ROUGH)
-                .flags(DECOMPOSITION_BY_CENTRIFUGING)
-                .components(Clay, 1)
-                .build();
+        // FREE ID 2040
 
         // FREE ID 2041
 
@@ -465,6 +461,13 @@ public class SecondDegreeMaterials {
                 .components(Palladium, 3, Rhodium, 1)
                 .toolStats(12.0f, 3.0f, 1024, 33)
                 .blastTemp(4500, GasTier.HIGH, 7680, 1200)
+                .build();
+
+        Clay = new Material.Builder(2063, "clay")
+                .dust(1)
+                .color(0xC8C8DC).iconSet(ROUGH)
+                .flags(MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
+                .components(Sodium, 2, Lithium, 1, Aluminium, 2, Silicon, 2, Water, 6)
                 .build();
     }
 }

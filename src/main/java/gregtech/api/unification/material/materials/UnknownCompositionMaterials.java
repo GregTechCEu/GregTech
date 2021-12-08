@@ -292,20 +292,11 @@ public class UnknownCompositionMaterials {
                 .color(0x4F7942).iconSet(ROUGH)
                 .build();
 
-        Andesite = new Material.Builder(1609, "andesite")
-                .dust()
-                .color(0xBEBEBE).iconSet(ROUGH)
-                .build();
+        // FREE ID 1609
 
-        Diorite = new Material.Builder(1610, "diorite")
-                .dust()
-                .iconSet(ROUGH)
-                .build();
+        // FREE ID 1610
 
-        Granite = new Material.Builder(1611, "granite")
-                .dust()
-                .color(0xCFA18C).iconSet(ROUGH)
-                .build();
+        // FREE ID 1611
 
         Vinteum = new Material.Builder(1612, "vinteum")
                 .gem(3).ore()

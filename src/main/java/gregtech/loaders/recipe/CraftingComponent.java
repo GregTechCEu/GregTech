@@ -6,7 +6,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.common.blocks.BlockTransparentCasing;
+import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -225,11 +225,16 @@ public class CraftingComponent {
         GLASS = new Component(Stream.of(new Object[][]{
 
                 {GTValues.FALLBACK, new ItemStack(Blocks.GLASS, 1, GTValues.W)},
-                {4, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS)},
-                {5, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS)},
-                {6, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS)},
-                {7, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS)},
-                {8, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS)}
+                {4, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.TEMPERED_GLASS)},
+                {5, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.TEMPERED_GLASS)},
+                {6, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.TEMPERED_GLASS)},
+                {7, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.TEMPERED_GLASS)},
+                {8, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.TEMPERED_GLASS)}
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 

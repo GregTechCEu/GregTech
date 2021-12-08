@@ -1040,7 +1040,7 @@ cover.fluid_regulator.transfer_mode.description=§eTransfer Any§r - in this mod
 cover.fluid_regulator.supply_exact=Supply Exact: %s
 cover.fluid_regulator.keep_exact=Keep Exact: %s
 
-cover.machine_controller.name=Machine Controller Settings
+cover.machine_controller.title=Machine Controller Settings
 cover.machine_controller.normal=Normal
 cover.machine_controller.inverted=Inverted
 cover.machine_controller.inverted.description=§eNormal§r - in this mode, the cover will require a signal weaker than the set redstone level to run/n§eInverted§r - in this mode, the cover will require a signal stronger than the set redstone level to run
@@ -3686,9 +3686,10 @@ gregtech.machine.miner.usage=Max Working Area: §b%dx%d§7 blocks. §b%ds§7 per
 gregtech.machine.large_miner.ev.name=Basic Large Miner
 gregtech.machine.large_miner.iv.name=Advanced Large Miner
 gregtech.machine.large_miner.luv.name=Advanced Large Miner II
-gregtech.machine.miner.multi.modes=Has Silk Touch and Chunk Boundary Modes.
+gregtech.machine.miner.multi.modes=Has Silk Touch and Chunk Aligned Modes.
 gregtech.machine.miner.multi.tooltip=Max Working Area: §b%dx%d§7 chunks.
 gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator.
+gregtech.machine.miner.multi.description=A multiblock mining machine that covers a large area and produces huge quantity of ore.
 #Small ores lang: gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator. Small ore Fortune §b%d§7.
 gregtech.machine.miner.fluid_usage=Consumes §b%dmb§7 of §e%s§7 per tick. Each overclock doubles the fluid consumption.
 gregtech.machine.miner.overclock=Requires §e%s§7 power. Overclocks up to §e%s§7.
@@ -4318,3 +4319,4 @@ monitor.gui.title.plugin=Plugin:
 monitor.gui.title.config=Config
 
 fluid.tile.lava=Lava
+fluid.tile.water=Water

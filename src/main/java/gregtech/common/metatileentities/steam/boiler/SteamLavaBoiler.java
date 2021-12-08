@@ -6,6 +6,7 @@ import gregtech.api.capability.IFuelable;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidFuelInfo;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -89,7 +90,7 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return createUITemplate(entityPlayer)
                 .widget(new TankWidget(lavaFluidTank, 119, 26, 10, 54)
-                        .setBackgroundTexture(getGuiTexture("bar_%s_empty")))
+                        .setBackgroundTexture(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure)))
                 .build(getHolder(), entityPlayer);
     }
 }

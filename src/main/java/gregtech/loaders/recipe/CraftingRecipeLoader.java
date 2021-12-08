@@ -11,7 +11,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
-import gregtech.common.blocks.BlockTransparentCasing;
+import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockGregLog.LogVariant;
 import gregtech.common.blocks.wood.BlockGregPlank;
@@ -123,7 +123,8 @@ public class CraftingRecipeLoader {
 
         ModHandler.addShapedRecipe("solar_panel/solar_panel_basic", MetaItems.COVER_SOLAR_PANEL.getStackForm(), "WGW", "CPC", 'W', MetaItems.SILICON_WAFER.getStackForm(), 'G', "paneGlass", 'C', new UnificationEntry(OrePrefix.circuit, Tier.Basic), 'P', MetaItems.CARBON_PLATE.getStackForm());
         ModHandler.addShapedRecipe("solar_panel/solar_panel_ulv", MetaItems.COVER_SOLAR_PANEL_ULV.getStackForm(), "WGW", "CAC", "P P", 'W', MetaItems.GLOWSTONE_WAFER.getStackForm(), 'G', "paneGlass", 'C', new UnificationEntry(OrePrefix.circuit, Tier.Advanced), 'P', OreDictUnifier.get(OrePrefix.plate, GalliumArsenide), 'A', OreDictUnifier.get(OrePrefix.wireGtQuadruple, Graphene));
-        ModHandler.addShapedRecipe("solar_panel/solar_panel_lv", MetaItems.COVER_SOLAR_PANEL_LV.getStackForm(), "WGW", "CAC", "P P", 'W', MetaItems.NAQUADAH_WAFER.getStackForm(), 'G', MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS), 'C', new UnificationEntry(OrePrefix.circuit, Tier.Master), 'P', OreDictUnifier.get(OrePrefix.plate, IndiumGalliumPhosphide), 'A', OreDictUnifier.get(OrePrefix.wireGtHex, Graphene));
+        ModHandler.addShapedRecipe("solar_panel/solar_panel_lv", MetaItems.COVER_SOLAR_PANEL_LV.getStackForm(), "WGW", "CAC", "P P", 'W', MetaItems.NAQUADAH_WAFER.getStackForm(), 'G', MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                BlockGlassCasing.CasingType.TEMPERED_GLASS), 'C', new UnificationEntry(OrePrefix.circuit, Tier.Master), 'P', OreDictUnifier.get(OrePrefix.plate, IndiumGalliumPhosphide), 'A', OreDictUnifier.get(OrePrefix.wireGtHex, Graphene));
 
         ModHandler.addShapedRecipe("universal_fluid_cell", MetaItems.FLUID_CELL_UNIVERSAL.getStackForm(), "C", 'C', MetaItems.FLUID_CELL);
         ModHandler.addShapedRecipe("universal_fluid_cell_revert", MetaItems.FLUID_CELL.getStackForm(), "C", 'C', MetaItems.FLUID_CELL_UNIVERSAL);

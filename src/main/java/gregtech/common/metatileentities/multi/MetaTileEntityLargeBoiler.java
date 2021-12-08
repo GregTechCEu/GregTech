@@ -353,6 +353,11 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         }
     }
 
+    @Override
+    public boolean isActive() {
+        return super.isActive() && isActive;
+    }
+
     private double getThrottleMultiplier() {
         return throttlePercentage / 100.0;
     }
@@ -425,7 +430,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), isActive);
+        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), isActive, true);
     }
 
     @Nonnull

@@ -179,6 +179,11 @@ public class Material implements Comparable<Material> {
         return materialInfo.color;
     }
 
+    @ZenGetter("hasFluidColor")
+    public boolean hasFluidColor() {
+        return materialInfo.hasFluidColor;
+    }
+
     public void setMaterialIconSet(MaterialIconSet materialIconSet) {
         materialInfo.iconSet = materialIconSet;
     }
@@ -610,7 +615,21 @@ public class Material implements Comparable<Material> {
          * @param color The RGB-formatted Color.
          */
         public Builder color(int color) {
+            color(color, true);
+            return this;
+        }
+
+        /**
+         * Set the Color of this Material.<br>
+         * Defaults to 0xFFFFFF unless {@link Builder#colorAverage()} was called, where
+         * it will be a weighted average of the components of the Material.
+         *
+         * @param color The RGB-formatted Color.
+         * @param noFluid Whether the fluid should be colored or not.
+         */
+        public Builder color(int color, boolean hasFluidColor) {
             this.materialInfo.color = color;
+            this.materialInfo.hasFluidColor = hasFluidColor;
             return this;
         }
 
@@ -859,6 +878,13 @@ public class Material implements Comparable<Material> {
          * Default: 0xFFFFFF if no Components, otherwise it will be the average of Components.
          */
         private int color = -1;
+
+        /**
+         * The color of this Material.
+         * <p>
+         * Default: 0xFFFFFF if no Components, otherwise it will be the average of Components.
+         */
+        private boolean hasFluidColor = true;
 
         /**
          * The IconSet of this Material.

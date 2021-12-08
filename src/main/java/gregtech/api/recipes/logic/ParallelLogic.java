@@ -427,13 +427,13 @@ public class ParallelLogic {
                         String.format("Got recipe with null ingredient %s", matchingRecipe));
 
             //equivalent of getting the max ratio from the inputs from Parallel logic
-            int amountOfCurrentItem = Math.min(parallelAmount - engagedItems, currentInputItem.getCount());
+            int ingredientRatio = Math.min(parallelAmount - engagedItems, currentInputItem.getCount() / Math.max(matchingRecipe.getInputs().get(0).getCount(), 1));
 
             //how much we can add to the output inventory
-            int limitByOutput = limitParallelByItemsIncremental(recipeBuilder.getOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, amountOfCurrentItem);
+            int limitByOutput = limitParallelByItemsIncremental(recipeBuilder.getOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, ingredientRatio);
 
             //amount to actually multiply the recipe by
-            int multiplierRecipeAmount = Math.min(amountOfCurrentItem, limitByOutput);
+            int multiplierRecipeAmount = Math.min(ingredientRatio, limitByOutput);
 
             if (multiplierRecipeAmount > 0) {
                 recipeBuilder.append(matchingRecipe, multiplierRecipeAmount, true);

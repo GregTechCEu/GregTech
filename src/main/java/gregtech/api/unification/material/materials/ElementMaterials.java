@@ -944,7 +944,7 @@ public class ElementMaterials {
 
         Naquadah = new Material.Builder(124, "naquadah")
                 .ingot(4).fluid().ore()
-                .color(0x323232).iconSet(METALLIC)
+                .color(0x323232, false).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_SPRING, GENERATE_FINE_WIRE)
                 .element(Elements.Nq)
                 .toolStats(6.0f, 4.0f, 1280, 21)
@@ -955,7 +955,7 @@ public class ElementMaterials {
 
         NaquadahEnriched = new Material.Builder(125, "naquadah_enriched")
                 .ingot(4).fluid().ore()
-                .color(0x3C3C3C).iconSet(METALLIC)
+                .color(0x3C3C3C, false).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .element(Elements.Nq1)
                 .toolStats(6.0f, 4.0f, 1280, 21)
@@ -964,7 +964,7 @@ public class ElementMaterials {
 
         Naquadria = new Material.Builder(126, "naquadria")
                 .ingot(3).fluid()
-                .color(0x1E1E1E).iconSet(SHINY)
+                .color(0x1E1E1E, false).iconSet(SHINY)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_GEAR, GENERATE_DENSE, GENERATE_FINE_WIRE)
                 .element(Elements.Nq2)
                 .blastTemp(9000, GasTier.HIGH, 122880, 1200)
