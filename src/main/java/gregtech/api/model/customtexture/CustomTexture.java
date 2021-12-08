@@ -38,15 +38,13 @@ public class CustomTexture {
         if (meta == null) {
             return quad;
         }
-        Builder builder = new Builder(quad.getFormat(), quad.getSprite());
-        quad.pipe(builder);
-        return rebake(builder);
+        return rebake(meta.blockLight, meta.skyLight, quad);
     }
 
-    public BakedQuad rebake(Builder builder) {
+    public static BakedQuad rebake(int blockLight, int skyLight, BakedQuad quad) {
+        Builder builder = new Builder(quad.getFormat(), quad.getSprite());
+        quad.pipe(builder);
         VertexFormat format = builder.vertexFormat;
-        int blockLight = meta.blockLight;
-        int skyLight = meta.skyLight;
         // Sorry OF users
         boolean hasLightmap = (blockLight > 0 || skyLight > 0) && !FMLClientHandler.instance().hasOptifine();
         if (hasLightmap) {
@@ -88,12 +86,12 @@ public class CustomTexture {
 
     public static class Builder implements IVertexConsumer {
 
-        private final VertexFormat vertexFormat;
-        private final TextureAtlasSprite sprite;
-        private int quadTint = -1;
-        private EnumFacing quadOrientation;
-        private boolean applyDiffuseLighting;
-        private final ListMultimap<VertexFormatElement.EnumUsage, float[]> data = MultimapBuilder.enumKeys(VertexFormatElement.EnumUsage.class).arrayListValues().build();
+        public final VertexFormat vertexFormat;
+        public final TextureAtlasSprite sprite;
+        public int quadTint = -1;
+        public EnumFacing quadOrientation;
+        public boolean applyDiffuseLighting;
+        public final ListMultimap<VertexFormatElement.EnumUsage, float[]> data = MultimapBuilder.enumKeys(VertexFormatElement.EnumUsage.class).arrayListValues().build();
 
         public Builder(VertexFormat vertexFormat, TextureAtlasSprite sprite){
             this.vertexFormat = vertexFormat;

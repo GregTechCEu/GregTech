@@ -11,6 +11,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.IBlockOre;
 import gregtech.common.blocks.properties.PropertyStoneType;
+import gregtech.core.hooks.BloomRenderLayerHooks;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockStateContainer;
@@ -130,10 +131,9 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
         }
     }
 
-    @Nonnull
     @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT_MIPPED;
+    public boolean canRenderInLayer(@Nonnull IBlockState state, @Nonnull BlockRenderLayer layer) {
+        return layer == BlockRenderLayer.CUTOUT_MIPPED || (material.getProperty(PropertyKey.ORE).isEmissive() && layer == BloomRenderLayerHooks.getRealBloomLayer()) ;
     }
 
     private BlockStateContainer createStateContainer() {

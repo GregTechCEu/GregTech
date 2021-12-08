@@ -1,4 +1,4 @@
-package gregtech.common.blocks.modelfactories;
+package gregtech.api.model.modelfactories;
 
 import gregtech.api.model.ModelFactory;
 import gregtech.api.unification.material.Material;
@@ -50,12 +50,13 @@ public class FrameBakedModel implements IBakedModel {
             }
             BakedQuad materialFaceQuad = materialFace.get(side);
             if (materialFaceQuad == null) {
-                materialFace.put(side == null ? EnumFacing.NORTH : side, materialFaceQuad = ModelFactory.getBakery().makeBakedQuad(
+                side = side == null ? EnumFacing.NORTH : side;
+                materialFace.put(side, materialFaceQuad = ModelFactory.getBakery().makeBakedQuad(
                         new Vector3f(0F, 0F, 0F),
                         new Vector3f(16F, 16F, 16F),
                         new BlockPartFace(side, 1, "", new BlockFaceUV(new float[] { 0.0F, 0.0F, 16.0F, 16.0F, 0.0F, 0.0F, 16.0F, 16.0F }, 0)),
                         ModelLoader.defaultTextureGetter().apply(MaterialIconType.frameGt.getBlockPath(material.getMaterialIconSet())),
-                        side == null ? EnumFacing.NORTH : side,
+                        side,
                         ModelRotation.X0_Y0,
                         null,
                         true,

@@ -1,4 +1,4 @@
-package gregtech.common.blocks.modelfactories;
+package gregtech.api.model.modelfactories;
 
 import gregtech.api.model.ModelFactory;
 import gregtech.api.unification.material.Material;
@@ -6,6 +6,7 @@ import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.common.blocks.BlockCompressed;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.*;
@@ -19,7 +20,9 @@ import net.minecraftforge.client.model.ModelLoader;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.util.vector.Vector3f;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +41,7 @@ public class CompressedBlockBakedModel implements IBakedModel {
     }
 
     @Override
+    @Nonnull
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         List<BakedQuad> quads = new ArrayList<>();
         if (state != null) {
@@ -48,12 +52,13 @@ public class CompressedBlockBakedModel implements IBakedModel {
             }
             BakedQuad materialFaceQuad = materialFace.get(side);
             if (materialFaceQuad == null) {
-                materialFace.put(side == null ? EnumFacing.NORTH : side, materialFaceQuad = ModelFactory.getBakery().makeBakedQuad(
+                side = side == null ? EnumFacing.NORTH : side;
+                materialFace.put(side, materialFaceQuad = ModelFactory.getBakery().makeBakedQuad(
                         new Vector3f(0F, 0F, 0F),
                         new Vector3f(16F, 16F, 16F),
                         new BlockPartFace(side, 1, "", new BlockFaceUV(new float[] { 0.0F, 0.0F, 16.0F, 16.0F, 0.0F, 0.0F, 16.0F, 16.0F }, 0)),
                         ModelLoader.defaultTextureGetter().apply(MaterialIconType.block.getBlockPath(material.getMaterialIconSet())),
-                        side == null ? EnumFacing.NORTH : side,
+                        side,
                         ModelRotation.X0_Y0,
                         null,
                         true,

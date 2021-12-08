@@ -1,4 +1,4 @@
-package gregtech.common.blocks.modelfactories;
+package gregtech.api.model.modelfactories;
 
 import codechicken.lib.render.item.CCRenderItem;
 import codechicken.lib.texture.TextureUtils;

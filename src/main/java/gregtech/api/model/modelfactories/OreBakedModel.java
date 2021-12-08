@@ -1,24 +1,36 @@
-package gregtech.common.blocks.modelfactories;
+package gregtech.api.model.modelfactories;
 
 import gregtech.api.model.ModelFactory;
+import gregtech.api.model.customtexture.CustomTexture;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.common.blocks.BlockOre;
+import gregtech.core.hooks.BloomRenderLayerHooks;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import java.util.*;
@@ -38,6 +50,7 @@ public class OreBakedModel implements IBakedModel {
    }
 
     @Override
+    @Nonnull
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         List<BakedQuad> quads = new ArrayList<>();
         if (state != null) {
@@ -48,23 +61,36 @@ public class OreBakedModel implements IBakedModel {
                 stoneTypeModels.put(stoneType, stoneTypeModel = Minecraft.getMinecraft().blockRenderDispatcher.getModelForState(stoneType.stone.get()));
             }
             particle.set(stoneTypeModel.getParticleTexture());
-            quads.addAll(stoneTypeModel.getQuads(stoneType.stone.get(), side, rand));
-            Map<EnumFacing, BakedQuad> materialFace = materialFaces.get(ore.material.getMaterialIconSet());
+            BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
+            boolean hasEmissive = ore.material.getProperty(PropertyKey.ORE).isEmissive();
+            boolean isEmissiveLayer = hasEmissive && (layer == BloomRenderLayerHooks.getRealBloomLayer() || layer == null);
+            if (!hasEmissive || !isEmissiveLayer || layer == null) {
+                quads.addAll(stoneTypeModel.getQuads(stoneType.stone.get(), side, rand));
+            }
+            if (hasEmissive && !isEmissiveLayer) {
+                return quads;
+            }
+            Map<EnumFacing, BakedQuad> materialFace =  materialFaces.get(ore.material.getMaterialIconSet());
             if (materialFace == null) {
                 materialFaces.put(ore.material.getMaterialIconSet(), materialFace = new Object2ObjectOpenHashMap<>());
             }
+            side = side == null ? EnumFacing.NORTH : side;
             BakedQuad materialFaceQuad = materialFace.get(side);
             if (materialFaceQuad == null) {
-                materialFace.put(side == null ? EnumFacing.NORTH : side, materialFaceQuad = ModelFactory.getBakery().makeBakedQuad(
+                materialFaceQuad = ModelFactory.getBakery().makeBakedQuad(
                         new Vector3f(0, 0, 0),
                         new Vector3f(16, 16, 16),
                         new BlockPartFace(side, 1, "", new BlockFaceUV(new float[] { 0.0F, 0.0F, 16.0F, 16.0F, 0.0F, 0.0F, 16.0F, 16.0F }, 0)),
                         ModelLoader.defaultTextureGetter().apply(MaterialIconType.ore.getBlockPath(ore.material.getMaterialIconSet())),
-                        side == null ? EnumFacing.NORTH : side,
+                        side,
                         ModelRotation.X0_Y0,
                         null,
                         true,
-                        true));
+                        true);
+                if (isEmissiveLayer) {
+                    materialFaceQuad = CustomTexture.rebake(15, 15, materialFaceQuad);
+                }
+                materialFace.put(side, materialFaceQuad);
             }
             quads.add(materialFaceQuad);
         } else {
