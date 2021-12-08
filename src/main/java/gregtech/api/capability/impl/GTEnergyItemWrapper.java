@@ -43,16 +43,6 @@ public class GTEnergyItemWrapper implements IElectricItem {
         return energyStorage;
     }
 
-    /**
-     * Safely cast a Long to an Int without overflow.
-     *
-     * @param v The Long value to cast to an Int.
-     * @return v, casted to Int, or Integer.MAX_VALUE if it would overflow.
-     */
-    public static int safeCastLongToInt(long v) {
-        return v > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) v;
-    }
-
     @Override
     public boolean canProvideChargeExternally() {
         return true;
@@ -75,16 +65,16 @@ public class GTEnergyItemWrapper implements IElectricItem {
     public long charge(long amount, int chargerTier, boolean ignoreTransferLimit, boolean simulate) {
         IEnergyStorage storage = getEnergyStorage();
         if (storage == null) return 0;
-        int max = Math.min(FeCompat.convertToFe(amount), storage.getMaxEnergyStored() - storage.getEnergyStored());
-        return FeCompat.convertToEu(storage.receiveEnergy(max, simulate));
+        int max = Math.min(FeCompat.nativeToFe(amount), storage.getMaxEnergyStored() - storage.getEnergyStored());
+        return FeCompat.nativeToEu(storage.receiveEnergy(max, simulate));
     }
 
     @Override
     public long discharge(long amount, int dischargerTier, boolean ignoreTransferLimit, boolean externally, boolean simulate) {
         IEnergyStorage storage = getEnergyStorage();
         if (storage == null) return 0;
-        int max = Math.min(FeCompat.convertToFe(amount), storage.getEnergyStored());
-        return FeCompat.convertToEu(storage.extractEnergy(max, simulate));
+        int max = Math.min(FeCompat.nativeToFe(amount), storage.getEnergyStored());
+        return FeCompat.nativeToEu(storage.extractEnergy(max, simulate));
     }
 
     @Override
@@ -96,7 +86,7 @@ public class GTEnergyItemWrapper implements IElectricItem {
     public long getMaxCharge() {
         IEnergyStorage storage = getEnergyStorage();
         if (storage != null)
-            return FeCompat.convertToEu(storage.getMaxEnergyStored());
+            return FeCompat.nativeToEu(storage.getMaxEnergyStored());
         return 0;
     }
 
@@ -104,7 +94,7 @@ public class GTEnergyItemWrapper implements IElectricItem {
     public long getCharge() {
         IEnergyStorage storage = getEnergyStorage();
         if (storage != null)
-            return FeCompat.convertToEu(storage.getEnergyStored());
+            return FeCompat.nativeToEu(storage.getEnergyStored());
         return 0;
     }
 

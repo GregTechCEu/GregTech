@@ -22,7 +22,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.render.Textures;
 import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
-import gregtech.common.ConfigHolder;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -743,10 +742,10 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                         return 0;
                     }
                     public long getEnergyStored() {
-                        return (long) (fe.getEnergyStored() / ConfigHolder.U.energyOptions.rfRatio);
+                        return FeCompat.nativeToEu(fe.getEnergyStored());
                     }
                     public long getEnergyCapacity() {
-                        return (long) (fe.getMaxEnergyStored() / ConfigHolder.U.energyOptions.rfRatio);
+                        return FeCompat.nativeToEu(fe.getMaxEnergyStored());
                     }
                     public long getInputAmperage() {
                         return 0;

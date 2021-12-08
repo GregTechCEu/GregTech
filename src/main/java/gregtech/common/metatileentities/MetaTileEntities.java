@@ -204,11 +204,11 @@ public class MetaTileEntities {
     public static MetaTileEntityWorkbench WORKBENCH;
     public static MetaTileEntityCreativeEnergy CREATIVE_ENERGY;
 
-    public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[GTValues.V.length - 1][4];
-
     public static MetaTileEntityClipboard CLIPBOARD_TILE;
     public static MetaTileEntityMonitorScreen MONITOR_SCREEN;
     public static MetaTileEntityCentralMonitor CENTRAL_MONITOR;
+
+    public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[GTValues.V.length - 1][4];
 
     public static void init() {
         GTLog.logger.info("Registering MetaTileEntities");
@@ -722,7 +722,9 @@ public class MetaTileEntities {
 
         CLIPBOARD_TILE = registerMetaTileEntity(1666, new MetaTileEntityClipboard(gregtechId("clipboard")));
 
-        // ENERGY CONVERTER, IDs 1667-1718
+        MONITOR_SCREEN = registerMetaTileEntity(1667, new MetaTileEntityMonitorScreen(gregtechId("monitor_screen")));
+
+        // ENERGY CONVERTER, IDs 1668-1719
         endPos = GTValues.HT ? ENERGY_CONVERTER.length - 1 : Math.min(ENERGY_CONVERTER.length - 1, GTValues.UV);
         for(int i = 0; i < endPos; i++) {
             String vn = GTValues.VN[i + 1].toLowerCase();
@@ -730,11 +732,9 @@ public class MetaTileEntities {
             for(int j = 0; j < tiers; j++) {
                 int amps = (int) Math.pow(j+1, 2);
                 String id = "energy_converter." + vn + "." + amps;
-                ENERGY_CONVERTER[i][j] = registerMetaTileEntity(1667 + j + i * tiers, new MetaTileEntityConverter(gregtechId(id), i+1, amps));
+                ENERGY_CONVERTER[i][j] = registerMetaTileEntity(1668 + j + i * tiers, new MetaTileEntityConverter(gregtechId(id), i+1, amps));
             }
         }
-
-        MONITOR_SCREEN = registerMetaTileEntity(1667, new MetaTileEntityMonitorScreen(gregtechId("monitor_screen")));
 
         /*
          * FOR ADDON DEVELOPERS:

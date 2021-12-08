@@ -1,6 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -252,7 +253,7 @@ public class GTEnergyWrapper implements IEnergyContainer {
         if (cap == null)
             return 0L;
 
-        return (long) (cap.getMaxEnergyStored() / ConfigHolder.U.energyOptions.feToEuRatio);
+        return FeCompat.nativeToEu(cap.getMaxEnergyStored());
     }
 
     @Override
@@ -262,7 +263,7 @@ public class GTEnergyWrapper implements IEnergyContainer {
         if (cap == null)
             return 0L;
 
-        return (long) (cap.getEnergyStored() / ConfigHolder.U.energyOptions.feToEuRatio);
+        return FeCompat.nativeToEu(cap.getEnergyStored());
     }
 
     @Override
@@ -297,7 +298,7 @@ public class GTEnergyWrapper implements IEnergyContainer {
         if (maxInput == 0)
             return 0;
 
-        maxInput = (long) (maxInput / ConfigHolder.U.energyOptions.feToEuRatio);
+        maxInput = FeCompat.nativeToEu(maxInput);
         return GTValues.V[GTUtility.getTierByVoltage(maxInput)];
     }
 

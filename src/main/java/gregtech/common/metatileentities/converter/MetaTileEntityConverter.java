@@ -16,7 +16,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.render.Textures;
 import gregtech.api.util.PipelineUtil;
-import gregtech.common.ConfigHolder;
 import gregtech.common.tools.DamageValues;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
@@ -55,14 +54,6 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
         initializeInventory();
     }
 
-    public MetaTileEntityConverter(ResourceLocation metaTileEntityId, int tier, ConverterTrait trait) {
-        super(metaTileEntityId);
-        this.tier = tier;
-        converterTrait = trait.copyNew(this);
-        this.slots = converterTrait.getBaseAmps();
-        initializeInventory();
-    }
-
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         ItemStack itemStack = playerIn.getHeldItem(hand);
@@ -78,13 +69,13 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
                 return false;
 
             if (converterTrait.isFeToEu()) {
-                setConversionMode(false);
+                setFeToEu(false);
                 playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_eu",
-                        converterTrait.getBaseAmps(), converterTrait.getVoltage(), FeCompat.convertToFe(converterTrait.getVoltage() * converterTrait.getBaseAmps())));
+                        converterTrait.getBaseAmps(), converterTrait.getVoltage(), FeCompat.converterToEu(converterTrait.getVoltage() * converterTrait.getBaseAmps(), false)));
             } else {
-                setConversionMode(true);
+                setFeToEu(true);
                 playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_fe",
-                        (long) (ConfigHolder.U.energyOptions.feToEuRatio * converterTrait.getVoltage() * converterTrait.getBaseAmps()), converterTrait.getBaseAmps(), converterTrait.getVoltage()));
+                        FeCompat.converterToEu(converterTrait.getVoltage() * converterTrait.getBaseAmps(), true), converterTrait.getBaseAmps(), converterTrait.getVoltage()));
             }
             return true;
         }
@@ -92,8 +83,8 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
         return super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
-    public void setConversionMode(boolean inverted) {
-        converterTrait.setMode(inverted);
+    public void setFeToEu(boolean feToEu) {
+        converterTrait.setFeToEu(feToEu);
         if (!getWorld().isRemote) {
             writeCustomData(SYNC_TILE_MODE, b -> b.writeBoolean(converterTrait.isFeToEu()));
             getHolder().notifyBlockUpdate();
@@ -104,7 +95,7 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         if(dataId == SYNC_TILE_MODE) {
-            converterTrait.setMode(buf.readBoolean());
+            converterTrait.setFeToEu(buf.readBoolean());
             getHolder().scheduleChunkForRenderUpdate();
         }
         super.receiveCustomData(dataId, buf);
@@ -112,7 +103,7 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityConverter(metaTileEntityId, tier, converterTrait);
+        return new MetaTileEntityConverter(metaTileEntityId, tier, slots);
     }
 
     @Override
@@ -123,7 +114,7 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
-        converterTrait.setMode(buf.readBoolean());
+        converterTrait.setFeToEu(buf.readBoolean());
         super.receiveInitialSyncData(buf);
     }
 
@@ -219,8 +210,8 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
         long amps = converterTrait.getBaseAmps();
         tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_tool_usage"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", converterTrait.getEnergyEUContainer().getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", FeCompat.convertToEu(voltage * amps), amps, voltage, GTValues.VN[tier]));
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VN[tier], FeCompat.convertToFe(voltage * amps)));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", FeCompat.converterToFe(voltage * amps, true), amps, voltage, GTValues.VN[tier]));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VN[tier], FeCompat.converterToFe(voltage * amps, false)));
     }
 
 
