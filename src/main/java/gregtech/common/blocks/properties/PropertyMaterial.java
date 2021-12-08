@@ -47,15 +47,14 @@ public class PropertyMaterial extends PropertyHelper<Material> {
     @Nonnull
     @Override
     public String getName(Material material) {
-        String name = material.toString();
-        return name == null ? "unnamed" : name;
+        return material.toString();
     }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj instanceof PropertyMaterial && super.equals(obj)) {
+        } else if (obj instanceof PropertyMaterial) {
             PropertyMaterial propertyMaterial = (PropertyMaterial) obj;
             return this.allowedValues.equals(propertyMaterial.allowedValues);
         } else {

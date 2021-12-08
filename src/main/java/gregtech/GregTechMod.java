@@ -10,7 +10,6 @@ import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.sound.GTSounds;
-import gregtech.api.model.ResourcePackHook;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
@@ -23,9 +22,6 @@ import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.*;
 import gregtech.core.hooks.BloomRenderLayerHooks;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.blocks.modelfactories.BlockCompressedFactory;
-import gregtech.common.blocks.modelfactories.BlockFrameFactory;
-import gregtech.common.blocks.modelfactories.BlockOreFactory;
 import gregtech.common.command.GregTechCommand;
 import gregtech.common.covers.CoverBehaviors;
 import gregtech.common.covers.filter.FilterTypeRegistry;
@@ -56,10 +52,6 @@ public class GregTechMod {
         FluidRegistry.enableUniversalBucket();
         if (FMLCommonHandler.instance().getSide().isClient()) {
             BloomRenderLayerHooks.init();
-            ResourcePackHook.init();
-            BlockOreFactory.init();
-            BlockCompressedFactory.init();
-            BlockFrameFactory.init();
         }
     }
 

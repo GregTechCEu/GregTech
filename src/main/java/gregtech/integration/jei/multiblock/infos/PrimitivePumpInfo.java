@@ -3,6 +3,7 @@ package gregtech.integration.jei.multiblock.infos;
 import com.google.common.collect.Lists;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.unification.material.Materials;
+import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.BlockSteamCasing.SteamCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -28,6 +29,7 @@ public class PrimitivePumpInfo extends MultiblockInfoPage {
 
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
+        BlockFrame woodenFrame = MetaBlocks.FRAMES.get(Materials.Wood);
         return Lists.newArrayList(MultiblockShapeInfo.builder()
                 .aisle("XXXX", "##F#", "##F#")
                 .aisle("XXHX", "F##F", "FFFF")
@@ -35,7 +37,7 @@ public class PrimitivePumpInfo extends MultiblockInfoPage {
                 .where('S', MetaTileEntities.PRIMITIVE_WATER_PUMP, EnumFacing.WEST)
                 .where('X', MetaBlocks.STEAM_CASING.getState(SteamCasingType.PUMP_DECK))
                 .where('H', MetaTileEntities.PUMP_OUTPUT_HATCH, EnumFacing.UP)
-                .where('F', MetaBlocks.FRAMES.get(Materials.Wood).getBlockState().getBaseState())
+                .where('F', woodenFrame.getDefaultState().withProperty(woodenFrame.variantProperty, Materials.Wood))
                 .where('#', Blocks.AIR.getDefaultState())
                 .build());
     }
