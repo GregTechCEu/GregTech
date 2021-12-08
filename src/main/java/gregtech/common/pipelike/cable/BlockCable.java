@@ -145,10 +145,10 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
             TileEntityCable cable = (TileEntityCable) getPipeTileEntity(worldIn, pos);
             if (cable != null && cable.getNodeData().lossPerBlock > 0) {
-                long voltage = cable.getCurrentVoltage();
-                long amperage = cable.getCurrentAmperage();
+                long voltage = cable.getCurrentMaxVoltage();
+                double amperage = cable.getAverageAmperage();
                 if (voltage > 0L && amperage > 0L) {
-                    float damageAmount = (GTUtility.getTierByVoltage(voltage) + 1) * amperage * 4;
+                    float damageAmount = (float) ((GTUtility.getTierByVoltage(voltage) + 1) * amperage * 4);
                     entityLiving.attackEntityFrom(DamageSources.getElectricDamage(), damageAmount);
                     if (entityLiving instanceof EntityPlayerMP) {
                         GTTriggers.ELECTROCUTION_DEATH.trigger((EntityPlayerMP) entityLiving);
