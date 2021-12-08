@@ -154,7 +154,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), this.minerLogic.isWorking());
+        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), this.minerLogic.isWorking(), this.isWorkingEnabled());
         minerLogic.renderPipe(renderState, translation, pipeline);
     }
 

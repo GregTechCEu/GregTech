@@ -107,19 +107,19 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int rowSize = (int) Math.sqrt(inventorySize);
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BRONZE_BACKGROUND, 175, 176);
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(false), 175, 176);
         builder.bindPlayerInventory(entityPlayer.inventory, 94);
 
         for (int y = 0; y < rowSize; y++) {
             for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
                 builder.widget(new SlotWidget(exportItems, index, 142 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
-                        .setBackgroundTexture(GuiTextures.BRONZE_SLOT));
+                        .setBackgroundTexture(GuiTextures.SLOT_STEAM.get(false)));
             }
         }
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.BRONZE_SLOT, 10);
+        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT_STEAM.get(false), 10);
 
-        builder.image(7, 16, 105, 75, GuiTextures.BRONZE_DISPLAY)
+        builder.image(7, 16, 105, 75, GuiTextures.DISPLAY_STEAM.get(false))
                 .label(6, 6, getMetaFullName());
         builder.widget(new AdvancedTextWidget(10, 19, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(84));
