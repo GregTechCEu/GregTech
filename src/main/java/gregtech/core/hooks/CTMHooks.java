@@ -16,10 +16,6 @@ import java.util.List;
 public class CTMHooks {
     public static ThreadLocal<Boolean> ENABLE = new ThreadLocal<>();
 
-    public static boolean canRenderInLayer(boolean flag, byte layers, BlockRenderLayer layer) {
-        return checkLayerWithOptiFine(flag, layers, layer);
-    }
-
     public static boolean checkLayerWithOptiFine(boolean flag, byte layers, BlockRenderLayer layer) {
         if (Shaders.isOptiFineShaderPackLoaded()) {
             if (flag) {
