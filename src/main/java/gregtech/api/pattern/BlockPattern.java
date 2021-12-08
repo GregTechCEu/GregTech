@@ -295,7 +295,7 @@ public class BlockPattern {
                                 }
                                 if (found == null) continue;
                             } else {
-                                found = candidates.get(0).copy();
+                                found = candidates.get(candidates.size() - 1).copy();
                             }
                             ItemBlock itemBlock = (ItemBlock) found.getItem();
                             IBlockState state = itemBlock.getBlock().getStateFromMeta(itemBlock.getMetadata(found.getMetadata()));
