@@ -3,7 +3,6 @@ package gregtech.common.pipelike.itempipe.net;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.*;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
@@ -25,8 +24,8 @@ public class ItemNetHandler implements IItemHandler {
     private final TileEntityItemPipeTickable pipe;
     private final World world;
     private final EnumFacing facing;
-    private int simulatedTransfers = 0;
     private final Map<String, String> simulatedTransfersGlobalRoundRobin = new HashMap<>();
+    private int simulatedTransfers = 0;
 
     public ItemNetHandler(ItemPipeNet net, TileEntityItemPipe pipe, EnumFacing facing) {
         this.net = net;
@@ -36,6 +35,41 @@ public class ItemNetHandler implements IItemHandler {
             this.pipe = (TileEntityItemPipeTickable) pipe.setSupportsTicking();
         this.facing = facing;
         this.world = pipe.getWorld();
+    }
+
+    private static String createDestinationString(BlockPos pos) {
+        return pos.getX() + ";" +
+                pos.getY() + ";" +
+                pos.getZ();
+    }
+
+    public static void transferTo(Map<String, String> map, BlockPos pos, EnumFacing facing) {
+        String sPos = createDestinationString(pos);
+        String facings = map.get(sPos);
+        char c = facing.name().charAt(0);
+        if (facings == null) {
+            facings = Character.toString(c);
+        } else {
+            for (int i = 0; i < facings.length(); i++) {
+                if (c == facings.charAt(i))
+                    return;
+            }
+            facings += c;
+        }
+        map.put(sPos, facings);
+    }
+
+    public static boolean didTransferTo(Map<String, String> map, BlockPos pos, EnumFacing facing) {
+        String sPos = createDestinationString(pos);
+        String facings = map.get(sPos);
+        if (facings == null)
+            return false;
+        char c = facing.name().charAt(0);
+        for (int i = 0, n = facings.length(); i < n; i++) {
+            if (c == facings.charAt(i))
+                return true;
+        }
+        return false;
     }
 
     @Nonnull
@@ -99,29 +133,25 @@ public class ItemNetHandler implements IItemHandler {
             remaining = insertToHandlers(handlersCopy, handlers.size(), remaining, simulate, global);
         return remaining;
     }
+
     /**
      * Inserts items equally to all handlers
      * if it couldn't insert all items, the handler will be removed
      *
-     * @param copy to insert to
+     * @param copy     to insert to
      * @param stack    to insert
      * @param simulate simulate
      * @return remainder
      */
     private ItemStack insertToHandlers(List<ItemPipeNet.Inventory> copy, int destinations, ItemStack stack, boolean simulate, boolean global) {
-        GTLog.logger.info("Inserting to {} handlers, simulate {}, global {}", destinations, simulate, global);
         Iterator<ItemPipeNet.Inventory> handlerIterator = copy.listIterator();
         int remaining = stack.getCount();
         int count = stack.getCount();
         int c = count / destinations;
         int m = c == 0 ? count % destinations : 0;
-        int i = -1;
         while (handlerIterator.hasNext()) {
-            i++;
             ItemPipeNet.Inventory handler = handlerIterator.next();
-            boolean isMarked = didTransferTo(handler, simulate);
-            GTLog.logger.info(" - handler {} is marked: {}", i, isMarked);
-            if (global && isMarked) {
+            if (global && didTransferTo(handler, simulate)) {
                 continue;
             }
             int amount = c;
@@ -135,18 +165,15 @@ public class ItemNetHandler implements IItemHandler {
             int r = insert(handler, toInsert, simulate).getCount();
             if (r < amount) {
                 remaining -= (amount - r);
-                boolean marked;
-                if (marked = global) {
+                if (global) {
                     transferTo(handler, simulate);
                 }
-                GTLog.logger.info(" - inserted {} into handler {}, marked {}", amount - r, i, marked);
             }
 
-            if(global || r > 0)
+            if (global || r > 0)
                 handlerIterator.remove();
 
             if (global && !handlerIterator.hasNext()) {
-                GTLog.logger.info(" - resetting marks");
                 resetTransferred(simulate);
             }
         }
@@ -307,7 +334,7 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     private void transferTo(ItemPipeNet.Inventory handler, boolean simulate) {
-        if(simulate)
+        if (simulate)
             transferTo(simulatedTransfersGlobalRoundRobin, handler.getPipePos(), handler.getFaceToHandler());
         else
             pipe.transferTo(handler.getPipePos(), handler.getFaceToHandler());
@@ -315,50 +342,15 @@ public class ItemNetHandler implements IItemHandler {
 
     private boolean didTransferTo(ItemPipeNet.Inventory handler, boolean simulate) {
         boolean didPipeTransfer = pipe.didTransferTo(handler.getPipePos(), handler.getFaceToHandler());
-        if(simulate)
+        if (simulate)
             return didPipeTransfer || didTransferTo(simulatedTransfersGlobalRoundRobin, handler.getPipePos(), handler.getFaceToHandler());
         return didPipeTransfer;
     }
 
     private void resetTransferred(boolean simulated) {
-        if(simulated)
+        if (simulated)
             simulatedTransfersGlobalRoundRobin.clear();
         else
             pipe.resetTransferred();
-    }
-
-    private static String createDestinationString(BlockPos pos) {
-        return pos.getX() + ";" +
-                pos.getY() + ";" +
-                pos.getZ();
-    }
-
-    public static void transferTo(Map<String, String> map, BlockPos pos, EnumFacing facing) {
-        String sPos = createDestinationString(pos);
-        String facings = map.get(sPos);
-        char c = facing.name().charAt(0);
-        if(facings == null) {
-            facings = Character.toString(c);
-        } else {
-            for(int i = 0; i < facings.length(); i++) {
-                if(c == facings.charAt(i))
-                    return;
-            }
-            facings += c;
-        }
-        map.put(sPos, facings);
-    }
-
-    public static boolean didTransferTo(Map<String, String> map, BlockPos pos, EnumFacing facing) {
-        String sPos = createDestinationString(pos);
-        String facings = map.get(sPos);
-        if(facings == null)
-            return false;
-        char c = facing.name().charAt(0);
-        for(int i = 0, n = facings.length(); i < n; i++) {
-            if(c == facings.charAt(i))
-                return true;
-        }
-        return false;
     }
 }
