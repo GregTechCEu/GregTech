@@ -157,6 +157,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return this.recipeMap;
     }
 
+    public Recipe getPreviousRecipe() {
+        return previousRecipe;
+    }
+
     protected boolean shouldSearchForRecipes() {
         return canWorkWithInputs() && canFitNewOutputs();
     }

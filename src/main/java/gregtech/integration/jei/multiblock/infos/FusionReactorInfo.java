@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.common.blocks.BlockFusionCasing;
-import gregtech.common.blocks.BlockTransparentCasing;
+import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.jei.multiblock.MultiblockInfoPage;
@@ -53,7 +53,8 @@ public class FusionReactorInfo extends MultiblockInfoPage {
                 .aisle("###############", "######NMN######", "###############")
                 .where('M', MetaTileEntities.FUSION_REACTOR[tier - GTValues.LuV], EnumFacing.WEST)
                 .where('C', MetaBlocks.FUSION_CASING.getState(getCasing(tier)))
-                .where('G', MetaBlocks.TRANSPARENT_CASING.getState(BlockTransparentCasing.CasingType.FUSION_GLASS))
+                .where('G', MetaBlocks.TRANSPARENT_CASING.getState(
+                        BlockGlassCasing.CasingType.FUSION_GLASS))
                 .where('K', getCoil(tier))
                 .where('W', MetaTileEntities.FLUID_EXPORT_HATCH[tier], EnumFacing.NORTH)
                 .where('E', MetaTileEntities.FLUID_EXPORT_HATCH[tier], EnumFacing.SOUTH)

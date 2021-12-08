@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.*;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
@@ -20,8 +21,10 @@ import gregtech.api.render.ICustomRenderFast;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.RenderBufferHelper;
+import gregtech.api.util.RenderUtil;
+import gregtech.api.util.interpolate.Eases;
 import gregtech.common.blocks.BlockFusionCasing;
-import gregtech.common.blocks.BlockTransparentCasing;
+import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.core.hooks.BloomRenderLayerHooks;
@@ -36,6 +39,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -51,12 +55,14 @@ import org.lwjgl.opengl.GL11;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController implements IFastRenderMetaTileEntity {
 
     private final int tier;
     private EnergyContainerList inputEnergyContainers;
     private long heat = 0; // defined in TileEntityFusionReactor but serialized in FusionRecipeLogic
+    private Integer color;
 
     public MetaTileEntityFusionReactor(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, RecipeMaps.FUSION_RECIPES);
@@ -96,7 +102,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                 .aisle("######ICI######", "####GGAAAGG####", "######ICI######")
                 .aisle("###############", "######OSO######", "###############")
                 .where('S', selfPredicate())
-                .where('G', statePredicate(MetaBlocks.TRANSPARENT_CASING.getState(BlockTransparentCasing.CasingType.FUSION_GLASS)).or(statePredicate(getCasingState())))
+                .where('G', statePredicate(MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.FUSION_GLASS)).or(statePredicate(getCasingState())))
                 .where('C', statePredicate(getCasingState()))
                 .where('O', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.EXPORT_FLUIDS)))
                 .where('E', statePredicate(getCasingState()).or(tilePredicate((state, tile) -> {
@@ -168,12 +174,53 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
     @Override
     protected void updateFormedValid() {
-        if (!getWorld().isRemote) {
-            if (this.inputEnergyContainers.getEnergyStored() > 0) {
-                long energyAdded = this.energyContainer.addEnergy(this.inputEnergyContainers.getEnergyStored());
-                if (energyAdded > 0) this.inputEnergyContainers.removeEnergy(energyAdded);
+        if (this.inputEnergyContainers.getEnergyStored() > 0) {
+            long energyAdded = this.energyContainer.addEnergy(this.inputEnergyContainers.getEnergyStored());
+            if (energyAdded > 0) this.inputEnergyContainers.removeEnergy(energyAdded);
+        }
+        super.updateFormedValid();
+        if (recipeMapWorkable.isWorking() && color == null) {
+            if (recipeMapWorkable.getPreviousRecipe() != null && recipeMapWorkable.getPreviousRecipe().getFluidOutputs().size() > 0) {
+                int newColor = 0xFF000000 | recipeMapWorkable.getPreviousRecipe().getFluidOutputs().get(0).getFluid().getColor();
+                if (!Objects.equals(color, newColor)) {
+                    color = newColor;
+                    writeCustomData(GregtechDataCodes.UPDATE_COLOR, this::writeColor);
+                }
             }
-            super.updateFormedValid();
+        } else if (!recipeMapWorkable.isWorking() && color != null){
+            color = null;
+            writeCustomData(GregtechDataCodes.UPDATE_COLOR, this::writeColor);
+        }
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        writeColor(buf);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        readColor(buf);
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.UPDATE_COLOR) {
+            readColor(buf);
+        }
+    }
+
+    private void readColor(PacketBuffer buf) {
+        color = buf.readBoolean() ? buf.readVarInt() : null;
+    }
+
+    private void writeColor(PacketBuffer buf) {
+        buf.writeBoolean(color != null);
+        if (color != null) {
+            buf.writeVarInt(color);
         }
     }
 
@@ -258,11 +305,14 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
     @Override
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        if (MinecraftForgeClient.getRenderPass() == 0 && recipeMapWorkable.isWorking()) {
+        if (color != null && MinecraftForgeClient.getRenderPass() == 0) {
+            final int c = color;
             BloomRenderLayerHooks.requestRenderFast(RENDER_HANDLER, (buffer)->{
-                final float r = 1;
-                final float g = .2f;
-                final float b = .2f;
+                int color = RenderUtil.colorInterpolator(c, -1).apply(Eases.EaseQuadIn.getInterpolation(Math.abs((Math.abs(getOffsetTimer() % 50) + partialTicks) - 25) / 25));
+                float a = (float)(color >> 24 & 255) / 255.0F;
+                float r = (float)(color >> 16 & 255) / 255.0F;
+                float g = (float)(color >> 8 & 255) / 255.0F;
+                float b = (float)(color & 255) / 255.0F;
                 Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
                 if (entity != null) {
                     buffer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION_COLOR);
@@ -271,7 +321,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                             y + 0.5,
                             z + getFrontFacing().getOpposite().getZOffset() * 7 + 0.5,
                             6, 0.2, 10, 20,
-                            r, g, b, 1, EnumFacing.Axis.Y);
+                            r, g, b, a, EnumFacing.Axis.Y);
                     Tessellator.getInstance().draw();
                 }
             });
@@ -281,7 +331,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         return new AxisAlignedBB(this.getPos().offset(getFrontFacing().getOpposite()).offset(getFrontFacing().rotateY(),6),
-                this.getPos().offset(getFrontFacing(), 12).offset(getFrontFacing().rotateY().getOpposite(),6));
+                this.getPos().offset(getFrontFacing().getOpposite(), 13).offset(getFrontFacing().rotateY().getOpposite(),6));
     }
 
     @Override

@@ -299,10 +299,10 @@ public class ConfigHolder {
             public double resolution = 2;
 
             @Config.Comment("Whether or not to enable Emissive Textures for GregTech Machines. Default: true")
-            public boolean machinesEemissiveTextures = true;
+            public boolean machinesEmissiveTextures = true;
 
             @Config.Comment("Whether or not to enable Emissive Textures for GregTech Casings when the multi-block is working. Default: true")
-            public boolean casingsActiveEemissiveTextures = true;
+            public boolean casingsActiveEmissiveTextures = true;
 
             @Config.Comment("Shader Settings")
             public Shader shader = new Shader();
@@ -323,6 +323,14 @@ public class ConfigHolder {
             @Config.Comment("Bloom Algorithm: 0-Simple Gaussian Blur Bloom(Fast). 1-Unity Bloom. 2-Unreal Bloom")
             @Config.RangeInt(min = 0, max = 2)
             public int bloomStyle = 2;
+
+            @Config.Comment("The brightness after bloom should not exceed this value. It can be used to limit the brightness of highlights (e.g., daytiome. and this value should be greater than lowBrightnessThreshold)")
+            @Config.RangeDouble(min = 0)
+            public double highBrightnessThreshold = 1.3;
+
+            @Config.Comment("The brightness after bloom should not smaller than this value. It can be used to limit the brightness of dusky parts (e.g., night/caves. and this value should be smaller than highBrightnessThreshold)")
+            @Config.RangeDouble(min = 0)
+            public double lowBrightnessThreshold = 0.3;
 
             @Config.Comment("Mipmap Size. (2-5)=>(fast-slow)=>(low quality-high quality)")
             @Config.RangeInt(min = 2, max = 5)

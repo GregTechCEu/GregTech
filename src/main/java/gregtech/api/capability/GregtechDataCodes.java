@@ -70,6 +70,9 @@ public class GregtechDataCodes {
     public static final int SYNC_FLUID_CHANGE = 3;
     public static final int SYNC_TANK_SHAPE = 4;
 
+    // Fusion Reactor
+    public static final int UPDATE_COLOR = 371;
+
     // Central Monitor
     public static final int UPDATE_ALL = 1;
     public static final int UPDATE_COVERS = 2;

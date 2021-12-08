@@ -65,11 +65,24 @@ public class BloomRenderLayerHooks {
         } else if (!ConfigHolder.U.clientConfig.shader.bloom.emissiveTexturesBloom) {
             GlStateManager.depthMask(true);
             renderglobal.renderBlockLayer(BloomRenderLayerHooks.BLOOM, partialTicks, pass, entity);
+            // render dynamics
+            if (!RENDER_DYNAMICS.isEmpty()) {
+                RENDER_DYNAMICS.forEach(Runnable::run);
+                RENDER_DYNAMICS.clear();
+            }
+
+            // render fast
+            if (!RENDER_FAST.isEmpty()) {
+                BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+                RENDER_FAST.forEach((handler, list)->{
+                    handler.preDraw(buffer);
+                    list.forEach(consumer->consumer.accept(buffer));
+                    handler.postDraw(buffer);
+                });
+                RENDER_FAST.clear();
+            }
             GlStateManager.depthMask(false);
-            int result =  renderglobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
-            RENDER_DYNAMICS.clear();
-            RENDER_FAST.clear();
-            return result;
+            return renderglobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
         }
 
         Framebuffer fbo = mc.getFramebuffer();
