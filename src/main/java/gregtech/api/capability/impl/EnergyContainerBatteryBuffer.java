@@ -85,6 +85,7 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
                     inventory.setStackInSlot(i, batteryStack);
                 }
             }
+            energyInputPerSec += distributed;
             // not using getInputAmperage() so that the amperage is correctly drawn this tick
             return Math.min(amperage, nonFullBatteries);
         }
@@ -161,7 +162,7 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
             if (distributed <= 0)
                 return;
 
-            long amperageUsed = energyContainer.acceptEnergyFromNetwork(outFacing.getOpposite(), distributed / getOutputAmperage(), getOutputAmperage());
+            long amperageUsed = energyContainer.acceptEnergyFromNetwork(outFacing.getOpposite(), distributed * getOutputAmperage(), getOutputAmperage());
             if (amperageUsed <= 0)
                 return;
 
