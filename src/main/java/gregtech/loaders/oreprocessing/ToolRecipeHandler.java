@@ -122,7 +122,7 @@ public class ToolRecipeHandler {
 
     public static void processStick(OrePrefix stickPrefix, Material material, ToolProperty property) {
         if (material.hasProperty(PropertyKey.INGOT)) {
-            ModHandler.addShapedRecipe(String.format("plunger_%s", material),
+            ModHandler.addMirroredShapedRecipe(String.format("plunger_%s", material),
                     MetaItems.PLUNGER.getStackForm(material),
                     "xRR", " SR", "S f",
                     'S', new UnificationEntry(OrePrefix.stick, material),
@@ -130,13 +130,13 @@ public class ToolRecipeHandler {
         }
 
         if (material.hasFlag(GENERATE_ROD)) {
-            ModHandler.addShapedRecipe(String.format("screwdriver_%s", material.toString()),
+            ModHandler.addMirroredShapedRecipe(String.format("screwdriver_%s", material.toString()),
                     MetaItems.SCREWDRIVER.getStackForm(material),
                     " fS", " Sh", "W  ",
                     'S', new UnificationEntry(OrePrefix.stick, material),
                     'W', new UnificationEntry(OrePrefix.stick, Materials.Wood));
 
-            ModHandler.addShapedRecipe(String.format("crowbar_%s", material),
+            ModHandler.addMirroredShapedRecipe(String.format("crowbar_%s", material),
                     MetaItems.CROWBAR.getStackForm(material),
                     "hDS", "DSD", "SDf",
                     'S', new UnificationEntry(OrePrefix.stick, material),
@@ -177,7 +177,7 @@ public class ToolRecipeHandler {
     }
 
     public static void processPlate(OrePrefix platePrefix, Material material, ToolProperty property) {
-        ModHandler.addShapedRecipe(String.format("mining_hammer_%s", material.toString()),
+        ModHandler.addMirroredShapedRecipe(String.format("mining_hammer_%s", material.toString()),
                 MetaItems.MINING_HAMMER.getStackForm(material),
                 "PP ", "PPR", "PP ",
                 'P', new UnificationEntry(OrePrefix.plate, material),
@@ -364,7 +364,7 @@ public class ToolRecipeHandler {
                     .EUt(8 *  getVoltageMultiplier(material))
                     .buildAndRegister();
         }
-        ModHandler.addShapedRecipe(String.format("hammer_%s", material.toString()),
+        ModHandler.addMirroredShapedRecipe(String.format("hammer_%s", material.toString()),
                 MetaItems.HARD_HAMMER.getStackForm(material),
                 "XX ", "XXS", "XX ",
                 'X', new UnificationEntry(OrePrefix.ingot, material),
@@ -469,13 +469,13 @@ public class ToolRecipeHandler {
 
             if (ModHandler.isMaterialWood(material)) {
                 MetaItems.SOFT_HAMMER.setToolData(itemStack, material, 48, 1, 4.0f, 1.0f);
-                ModHandler.addShapedRecipe(String.format("soft_hammer_%s", material.toString()), itemStack,
+                ModHandler.addMirroredShapedRecipe(String.format("soft_hammer_%s", material.toString()), itemStack,
                         "XX ", "XXS", "XX ",
                         'X', new UnificationEntry(OrePrefix.plank, material),
                         'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
             } else {
                 MetaItems.SOFT_HAMMER.setToolData(itemStack, material, 128 * (1 << i), 1, 4.0f, 1.0f);
-                ModHandler.addShapedRecipe(String.format("soft_hammer_%s", material.toString()), itemStack,
+                ModHandler.addMirroredShapedRecipe(String.format("soft_hammer_%s", material.toString()), itemStack,
                         "XX ", "XXS", "XX ",
                         'X', new UnificationEntry(OrePrefix.ingot, material),
                         'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
