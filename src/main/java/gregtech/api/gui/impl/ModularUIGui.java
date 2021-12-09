@@ -2,6 +2,7 @@ package gregtech.api.gui.impl;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.TimedProgressSupplier;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.net.PacketUIWidgetUpdate;
@@ -28,6 +29,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
     public static final float rColorForOverlay = 1;
     public static final float gColorForOverlay = 1;
     public static final float bColorForOverlay = 1;
+    private long lastUpdateFrame = System.currentTimeMillis() / 16;
 
     public ModularUI getModularUI() {
         return modularUI;
@@ -72,6 +74,11 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        long frame = System.currentTimeMillis() / 16;
+        if(frame > this.lastUpdateFrame) {
+            this.lastUpdateFrame = frame;
+            modularUI.guiWidgets.values().forEach(Widget::updateScreenOnFrame);
+        }
         this.hoveredSlot = null;
         drawDefaultBackground();
 

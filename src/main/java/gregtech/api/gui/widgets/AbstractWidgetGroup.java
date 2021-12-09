@@ -261,6 +261,15 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     }
 
     @Override
+    public void updateScreenOnFrame() {
+        for (Widget widget : widgets) {
+            if (widget.isActive()) {
+                widget.updateScreenOnFrame();
+            }
+        }
+    }
+
+    @Override
     public void drawInForeground(int mouseX, int mouseY) {
         for (Widget widget : widgets) {
             if (widget.isVisible()) {

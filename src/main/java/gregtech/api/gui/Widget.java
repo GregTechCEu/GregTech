@@ -176,6 +176,12 @@ public abstract class Widget {
     }
 
     /**
+     * Called clientside approximately every 1/60th of a second with this modular UI open
+     */
+    public void updateScreenOnFrame() {
+    }
+
+    /**
      * Called each draw tick to draw this widget in GUI
      */
     @SideOnly(Side.CLIENT)
