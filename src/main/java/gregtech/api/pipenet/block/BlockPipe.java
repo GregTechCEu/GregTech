@@ -63,6 +63,8 @@ import static gregtech.api.metatileentity.MetaTileEntity.FULL_CUBE_COLLISION;
 @SuppressWarnings("deprecation")
 public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType, WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>> extends BuiltInRenderBlock implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
 
+    protected final ThreadLocal<IPipeTile<PipeType, NodeDataType>> tileEntities = new ThreadLocal<>();
+
     public BlockPipe() {
         super(net.minecraft.block.material.Material.IRON);
         setTranslationKey("pipe");
@@ -72,6 +74,26 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         setResistance(3.0f);
         setLightOpacity(0);
         disableStats();
+    }
+
+    public static Cuboid6 getSideBox(EnumFacing side, float thickness) {
+        float min = (1.0f - thickness) / 2.0f;
+        float max = min + thickness;
+        if (side == null) {
+            return new Cuboid6(min, min, min, max, max, max);
+        } else if (side == EnumFacing.DOWN) {
+            return new Cuboid6(min, 0.0f, min, max, min, max);
+        } else if (side == EnumFacing.UP) {
+            return new Cuboid6(min, max, min, max, 1.0f, max);
+        } else if (side == EnumFacing.WEST) {
+            return new Cuboid6(0.0f, min, min, min, max, max);
+        } else if (side == EnumFacing.EAST) {
+            return new Cuboid6(max, min, min, 1.0f, max, max);
+        } else if (side == EnumFacing.NORTH) {
+            return new Cuboid6(min, min, 0.0f, max, max, min);
+        } else if (side == EnumFacing.SOUTH) {
+            return new Cuboid6(min, min, max, max, max, 1.0f);
+        } else throw new IllegalArgumentException(side.toString());
     }
 
     public abstract Class<PipeType> getPipeTypeClass();
@@ -130,19 +152,8 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             setTileEntityData((TileEntityPipeBase<PipeType, NodeDataType>) pipeTile, stack);
             if (ConfigHolder.machines.gt6StylePipesCables && placer instanceof EntityPlayer) {
                 RayTraceResult rt2 = GTUtility.getBlockLookingAt((EntityPlayer) placer, pos);
-                if (rt2 != null) {
-                    for (EnumFacing facing : EnumFacing.VALUES) {
-                        BlockPos otherPipePos = null;
-
-                        if (GTUtility.arePosEqual(rt2.getBlockPos(), pos.offset(facing, 1)))
-                            otherPipePos = rt2.getBlockPos();
-                        if (otherPipePos != null) {
-                            if (canConnect(getPipeTileEntity(worldIn, pos), facing)) {
-                                pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, false, false);
-                            }
-                            return;
-                        }
-                    }
+                if (rt2 != null && canConnect(getPipeTileEntity(worldIn, pos), rt2.sideHit.getOpposite())) {
+                    pipeTile.setConnectionBlocked(AttachmentType.PIPE, rt2.sideHit.getOpposite(), false, false);
                 }
             } else {
                 for (EnumFacing facing : EnumFacing.VALUES) {
@@ -326,8 +337,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             coverBehavior.onLeftClick(playerIn, rayTraceResult);
         }
     }
-
-    protected final ThreadLocal<IPipeTile<PipeType, NodeDataType>> tileEntities = new ThreadLocal<>();
 
     @SuppressWarnings("unchecked")
     @Override
@@ -521,26 +530,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         public PipeConnectionData(EnumFacing side) {
             this.side = side;
         }
-    }
-
-    public static Cuboid6 getSideBox(EnumFacing side, float thickness) {
-        float min = (1.0f - thickness) / 2.0f;
-        float max = min + thickness;
-        if (side == null) {
-            return new Cuboid6(min, min, min, max, max, max);
-        } else if (side == EnumFacing.DOWN) {
-            return new Cuboid6(min, 0.0f, min, max, min, max);
-        } else if (side == EnumFacing.UP) {
-            return new Cuboid6(min, max, min, max, 1.0f, max);
-        } else if (side == EnumFacing.WEST) {
-            return new Cuboid6(0.0f, min, min, min, max, max);
-        } else if (side == EnumFacing.EAST) {
-            return new Cuboid6(max, min, min, 1.0f, max, max);
-        } else if (side == EnumFacing.NORTH) {
-            return new Cuboid6(min, min, 0.0f, max, max, min);
-        } else if (side == EnumFacing.SOUTH) {
-            return new Cuboid6(min, min, max, max, max, 1.0f);
-        } else throw new IllegalArgumentException(side.toString());
     }
 
 }
