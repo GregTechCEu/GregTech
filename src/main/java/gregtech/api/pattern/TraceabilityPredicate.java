@@ -127,6 +127,10 @@ public class TraceabilityPredicate {
         return this;
     }
 
+    public TraceabilityPredicate setMinGlobalLimited(int min, int previewCount) {
+        return this.setMinGlobalLimited(min).setPreviewCount(previewCount);
+    }
+
     /**
      * Set the maximum number of candidate blocks.
      */
@@ -139,28 +143,40 @@ public class TraceabilityPredicate {
         return this;
     }
 
+    public TraceabilityPredicate setMaxGlobalLimited(int max, int previewCount) {
+        return this.setMaxGlobalLimited(max).setPreviewCount(previewCount);
+    }
+
     /**
      * Set the minimum number of candidate blocks for each aisle layer.
      */
-    public TraceabilityPredicate setMinLayerLimited(int layer) {
+    public TraceabilityPredicate setMinLayerLimited(int min) {
         limited.addAll(common);
         common.clear();
         for (SimplePredicate predicate : limited) {
-            predicate.minLayerCount = layer;
+            predicate.minLayerCount = min;
         }
         return this;
+    }
+
+    public TraceabilityPredicate setMinLayerLimited(int min, int previewCount) {
+        return this.setMinLayerLimited(min).setPreviewCount(previewCount);
     }
 
     /**
      * Set the maximum number of candidate blocks for each aisle layer.
      */
-    public TraceabilityPredicate setMaxLayerLimited(int layer) {
+    public TraceabilityPredicate setMaxLayerLimited(int max) {
         limited.addAll(common);
         common.clear();
         for (SimplePredicate predicate : limited) {
-            predicate.maxLayerCount = layer;
+            predicate.maxLayerCount = max;
         }
         return this;
+    }
+
+    public TraceabilityPredicate setMaxLayerLimited(int max, int previewCount) {
+        return this.setMaxLayerLimited(max).setPreviewCount(previewCount);
     }
 
     /**
