@@ -1,6 +1,7 @@
 package gregtech.api.gui.widgets;
 
 import com.google.common.collect.Lists;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.util.GTUtility;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import static gregtech.api.capability.GregtechDataCodes.*;
 import static gregtech.api.gui.impl.ModularUIGui.*;
 
 /**
@@ -73,7 +75,7 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
 
                 if (stack != null) {
                     NBTTagCompound compound = stack.writeToNBT(new NBTTagCompound());
-                    writeClientAction(13, buf -> buf.writeCompoundTag(compound));
+                    writeClientAction(LOAD_PHANTOM_FLUID_STACK_FROM_NBT, buf -> buf.writeCompoundTag(compound));
                 }
 
                 if (isClient) {
@@ -86,7 +88,7 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
     @Override
     public void handleClientAction(int id, PacketBuffer buf) {
         super.handleClientAction(id, buf);
-        if (id == 12) {
+        if (id == VOID_PHANTOM_FLUID) {
             ItemStack stack = gui.entityPlayer.inventory.getItemStack().copy();
             if (!stack.isEmpty()) {
                 stack.setCount(1);
@@ -98,7 +100,7 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
             } else {
                 phantomTank.setFluid(null);
             }
-        } else if (id == 13) {
+        } else if (id == LOAD_PHANTOM_FLUID_STACK_FROM_NBT) {
             FluidStack stack;
             try {
                 stack = FluidStack.loadFluidStackFromNBT(buf.readCompoundTag());
@@ -120,7 +122,7 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY)) {
-            writeClientAction(12, buf -> {});
+            writeClientAction(VOID_PHANTOM_FLUID, buf -> {});
             if (isClient) {
                 phantomTank.setFluid(null);
             }
@@ -190,15 +192,15 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
         FluidStack stack = phantomTank.getFluid();
         if (stack == null && lastPhantomStack != null) {
             lastPhantomStack = null;
-            writeUpdateInfo(10, buf -> {});
+            writeUpdateInfo(REMOVE_PHANTOM_FLUID_TYPE, buf -> {});
         } else if (stack != null) {
             if (!stack.isFluidEqual(lastPhantomStack)) {
                 lastPhantomStack = stack.copy();
                 NBTTagCompound stackTag = stack.writeToNBT(new NBTTagCompound());
-                writeUpdateInfo(11, buf -> buf.writeCompoundTag(stackTag));
+                writeUpdateInfo(CHANGE_PHANTOM_FLUID, buf -> buf.writeCompoundTag(stackTag));
             } else if (stack.amount != 0) {
                 lastPhantomStack.amount = 0;
-                writeUpdateInfo(12, buf -> {});
+                writeUpdateInfo(VOID_PHANTOM_FLUID, buf -> {});
             }
         }
     }
@@ -206,9 +208,9 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
     @Override
     public void readUpdateInfo(int id, PacketBuffer buf) {
         super.readUpdateInfo(id, buf);
-        if (id == 10) {
+        if (id == REMOVE_PHANTOM_FLUID_TYPE) {
             lastPhantomStack = null;
-        } else if (id == 11) {
+        } else if (id == CHANGE_PHANTOM_FLUID) {
             NBTTagCompound stackTag;
             try {
                 stackTag = buf.readCompoundTag();
@@ -216,7 +218,7 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
                 return;
             }
             lastPhantomStack = FluidStack.loadFluidStackFromNBT(stackTag);
-        } else if (id == 12) {
+        } else if (id == VOID_PHANTOM_FLUID) {
             lastPhantomStack.amount = 0;
         }
     }
