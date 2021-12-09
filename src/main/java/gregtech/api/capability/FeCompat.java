@@ -22,7 +22,7 @@ public class FeCompat {
      * @return fe
      */
     public static int convertToFe(long eu, double ratio){
-        return (int) (eu / ratio);
+        return (int) (eu * ratio);
     }
 
     /**
@@ -30,7 +30,7 @@ public class FeCompat {
      * @return eu
      */
     public static long convertToEu(long fe, double ratio){
-        return (int) (fe * ratio);
+        return (int) (fe / ratio);
     }
 
     public static int nativeToFe(long eu){
