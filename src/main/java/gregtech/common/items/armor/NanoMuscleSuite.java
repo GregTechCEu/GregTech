@@ -1,6 +1,5 @@
 package gregtech.common.items.armor;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
@@ -18,7 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
@@ -32,49 +30,36 @@ public class NanoMuscleSuite extends ArmorLogicSuite {
     }
 
     @Override
-    public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
+    public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack itemStack) {
         IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);
         byte toggleTimer = nbtData.getByte("toggleTimer");
-        boolean ret = false;
         if (SLOT == EntityEquipmentSlot.HEAD) {
             boolean nightvision = nbtData.getBoolean("Nightvision");
-            if (ArmorUtils.isKeyDown(player, EnumKey.MENU) && ArmorUtils.isKeyDown(player, EnumKey.MODE_SWITCH) && toggleTimer == 0) {
+            if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.MODE_SWITCH)) {
                 toggleTimer = 10;
-                nightvision = !nightvision;
-                if (!world.isRemote) {
-                    nbtData.setBoolean("Nightvision", nightvision);
-                    if (nightvision) {
+                if (!nightvision && item.getCharge() >= 4) {
+                    nightvision = true;
+                    if (!world.isRemote)
                         player.sendMessage(new TextComponentTranslation("metaarmor.nms.nightvision.enabled"));
-                    } else {
-                        player.sendMessage(new TextComponentTranslation("metaarmor.nms.nightvision.disabled"));
+                } else if (nightvision) {
+                    nightvision = false;
+                    disableNightVision(world, player, true);
+                } else {
+                    if (!world.isRemote) {
+                        player.sendMessage(new TextComponentTranslation("metaarmor.message.nightvision.error"));
                     }
                 }
+
+                if (!world.isRemote) {
+                    nbtData.setBoolean("Nightvision", nightvision);
+                }
             }
 
-            if (nightvision && !world.isRemote && item != null && item.getCharge() >= (energyPerUse / 100)) {
-                BlockPos pos = new BlockPos((int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ));
-                int skylight = player.getEntityWorld().getLightFromNeighbors(pos);
-                if (skylight > 8) {
-                    player.removePotionEffect(MobEffects.NIGHT_VISION);
-                    player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 100, 0, true, true));
-                } else {
-                    player.removePotionEffect(MobEffects.BLINDNESS);
-                    player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 300, 0, true, true));
-                }
-                ret = true;
-                item.discharge((energyPerUse / 100), GTValues.HV, true, false, false);
-            }
-
-            if (!nightvision && !world.isRemote) {
-                PotionEffect blindness = player.getActivePotionEffect(MobEffects.BLINDNESS);
-                PotionEffect night_vision = player.getActivePotionEffect(MobEffects.NIGHT_VISION);
-                if (blindness != null) {
-                    if (blindness.getDuration() < 1) player.removePotionEffect(MobEffects.BLINDNESS);
-                }
-                if (night_vision != null) {
-                    if (night_vision.getDuration() < 1) player.removePotionEffect(MobEffects.NIGHT_VISION);
-                }
+            if (nightvision && !world.isRemote && item.getCharge() >= 4) {
+                player.removePotionEffect(MobEffects.BLINDNESS);
+                player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 999999, 0, true, false));
+                item.discharge((4), this.tier, true, false, false);
             }
 
             if (!world.isRemote && toggleTimer > 0) {
@@ -82,8 +67,13 @@ public class NanoMuscleSuite extends ArmorLogicSuite {
                 nbtData.setByte("toggleTimer", toggleTimer);
             }
         }
-        if (ret) {
-            player.inventoryContainer.detectAndSendChanges();
+        player.inventoryContainer.detectAndSendChanges();
+    }
+
+    public void disableNightVision(@Nonnull World world, EntityPlayer player, boolean sendMsg) {
+        if (!world.isRemote) {
+            player.removePotionEffect(MobEffects.NIGHT_VISION);
+            if (sendMsg) player.sendMessage(new TextComponentTranslation("metaarmor.nms.nightvision.disabled"));
         }
     }
 

@@ -971,6 +971,9 @@ metaarmor.jetpack.hover.disable=Jetpack: Hover Mode Disabled
 metaarmor.jetpack.flight.enable=Jetpack: Flight Enabled
 metaarmor.jetpack.flight.disable=Jetpack: Flight Disabled
 
+metaarmor.nms.share.enable=NanoMuscle™ Suite: Charging Enabled
+metaarmor.nms.share.disable=NanoMuscle™ Suite: Charging Disabled
+
 metaarmor.message.nightvision.enabled=§bNightVision: §aOn
 metaarmor.message.nightvision.disabled=§bNightVision: §cOff
 metaarmor.message.nightvision.error=§cNot enough power!

@@ -15,16 +15,16 @@ public class MetaArmor extends ArmorMetaItem<ArmorMetaItem<?>.ArmorMetaValueItem
 
         MetaItems.SEMIFLUID_JETPACK = addItem(2, "liquid_fuel_jetpack").setArmorLogic(new PowerlessJetpack());
         MetaItems.IMPELLER_JETPACK = addItem(3, "impeller_jetpack").setArmorLogic(new Jetpack(30, 1_000_000L * (long) Math.max(1, Math.pow(4, ConfigHolder.U.equipment.voltageTierImpeller - 2)), ConfigHolder.U.equipment.voltageTierImpeller)).setModelAmount(8).setRarity(EnumRarity.UNCOMMON);
-        MetaItems.ADVANCED_IMPELLER_JETPACK = addItem(4, "advanced_impeller_jetpack").setArmorLogic(new AdvancedJetpack(120, 4_000_000L * (long) Math.max(1, Math.pow(4, ConfigHolder.U.equipment.voltageTierAdvImpeller - 3)), ConfigHolder.U.equipment.voltageTierAdvImpeller)).setRarity(EnumRarity.RARE);
+        MetaItems.ADVANCED_IMPELLER_JETPACK = addItem(4, "advanced_impeller_jetpack").setArmorLogic(new AdvancedJetpack(120, 6_400_000L * (long) Math.max(1, Math.pow(4, ConfigHolder.U.equipment.voltageTierAdvImpeller - 4)), ConfigHolder.U.equipment.voltageTierAdvImpeller)).setRarity(EnumRarity.RARE);
 
         int energyPerUse = 5000;
         int tier = ConfigHolder.U.equipment.voltageTierNanoSuit;
-        long maxCapacity = 1600000L * (long) Math.max(1, Math.pow(4, tier - 3));
+        long maxCapacity = 1_600_000L * (long) Math.max(1, Math.pow(4, tier - 3));
         MetaItems.NANO_MUSCLE_SUITE_HELMET = addItem(20, "nms.helmet").setArmorLogic(new NanoMuscleSuite(EntityEquipmentSlot.HEAD, energyPerUse, maxCapacity, tier)).setRarity(EnumRarity.UNCOMMON);
         MetaItems.NANO_MUSCLE_SUITE_CHESTPLATE = addItem(21, "nms.chestplate").setArmorLogic(new NanoMuscleSuite(EntityEquipmentSlot.CHEST, energyPerUse, maxCapacity, tier)).setRarity(EnumRarity.UNCOMMON);
         MetaItems.NANO_MUSCLE_SUITE_LEGGINGS = addItem(22, "nms.leggings").setArmorLogic(new NanoMuscleSuite(EntityEquipmentSlot.LEGS, energyPerUse, maxCapacity, tier)).setRarity(EnumRarity.UNCOMMON);
         MetaItems.NANO_MUSCLE_SUITE_BOOTS = addItem(23, "nms.boots").setArmorLogic(new NanoMuscleSuite(EntityEquipmentSlot.FEET, energyPerUse, maxCapacity, tier)).setRarity(EnumRarity.UNCOMMON);
-        MetaItems.ADVANCED_NANO_MUSCLE_CHESTPLATE = addItem(30, "nms.advanced_chestplate").setArmorLogic(new AdvancedNanoMuscleSuite(5000, 13000000L * (long) Math.max(1, Math.pow(4, ConfigHolder.U.equipment.voltageTierAdvNanoSuit - 4)), ConfigHolder.U.equipment.voltageTierAdvNanoSuit)).setRarity(EnumRarity.RARE);
+        MetaItems.ADVANCED_NANO_MUSCLE_CHESTPLATE = addItem(30, "nms.advanced_chestplate").setArmorLogic(new AdvancedNanoMuscleSuite(energyPerUse, 13000000L * (long) Math.max(1, Math.pow(4, ConfigHolder.U.equipment.voltageTierAdvNanoSuit - 4)), ConfigHolder.U.equipment.voltageTierAdvNanoSuit)).setRarity(EnumRarity.RARE);
 
         energyPerUse = 10000;
         tier = ConfigHolder.U.equipment.voltageTierQuarkTech;

@@ -31,7 +31,6 @@ public class NightvisionGoggles extends ArmorLogicSuite {
         IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);
         byte toggleTimer = nbtData.getByte("toggleTimer");
-        boolean ret = false;
         if (!player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem().equals(itemStack.getItem())) {
             disableNightVision(world, player, false);
         }
@@ -60,18 +59,14 @@ public class NightvisionGoggles extends ArmorLogicSuite {
             if (nightvision && !world.isRemote && item.getCharge() >= energyPerUse) {
                 player.removePotionEffect(MobEffects.BLINDNESS);
                 player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 999999, 0, true, false));
-                ret = true;
                 item.discharge((energyPerUse), this.tier, true, false, false);
             }
 
-            if (!world.isRemote && toggleTimer > 0) {
-                --toggleTimer;
-                nbtData.setByte("toggleTimer", toggleTimer);
-            }
+            if (toggleTimer > 0) --toggleTimer;
+
+            nbtData.setByte("toggleTimer", toggleTimer);
         }
-        if (ret) {
-            player.inventoryContainer.detectAndSendChanges();
-        }
+        player.inventoryContainer.detectAndSendChanges();
     }
 
     public void disableNightVision(@Nonnull World world, EntityPlayer player, boolean sendMsg) {

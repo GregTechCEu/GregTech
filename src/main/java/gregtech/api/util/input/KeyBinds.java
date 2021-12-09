@@ -30,6 +30,7 @@ public class KeyBinds {
                 Minecraft.getMinecraft().gameSettings.keyBindSneak,
                 Minecraft.getMinecraft().gameSettings.keyBindSprint,
                 null,
+                null,
                 null);
     }
 
