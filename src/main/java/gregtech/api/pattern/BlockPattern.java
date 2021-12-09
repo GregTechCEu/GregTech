@@ -390,6 +390,8 @@ public class BlockPattern {
                                 } else {
                                     continue;
                                 }
+                            } else {
+                                continue;
                             }
                             if (!cacheInfos.containsKey(limit)) {
                                 cacheInfos.put(limit, limit.candidates == null ? null : limit.candidates.get());
