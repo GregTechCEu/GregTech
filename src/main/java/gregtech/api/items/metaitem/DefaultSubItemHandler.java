@@ -18,6 +18,11 @@ import java.util.List;
 
 public class DefaultSubItemHandler implements ISubItemHandler {
 
+    public static final DefaultSubItemHandler INSTANCE = new DefaultSubItemHandler();
+
+    private DefaultSubItemHandler() {
+    }
+
     @Override
     public String getItemSubType(ItemStack itemStack) {
         return getFluidContainerSubType(itemStack);

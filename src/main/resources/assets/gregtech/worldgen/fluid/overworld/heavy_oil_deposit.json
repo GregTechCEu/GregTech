@@ -1,0 +1,19 @@
+{
+  "weight": 15,
+  "name": "Overworld Heavy Oil Deposit",
+  "rate": {
+    "min": 100,
+    "max": 425
+  },
+  "depletion": {
+    "amount": 1,
+    "chance": 5,
+    "depleted_production_rate": 40
+  },
+  "fluid": "oil_heavy",
+  "biome_modifier": {
+    "type": "biome_dictionary",
+    "ocean": 5,
+    "sandy": 10
+  }
+}

@@ -151,7 +151,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem BATTERY_UV_NAQUADRIA;
 
     public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB;
-    public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB2;
+    public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB_CLUSTER;
     public static MetaItem<?>.MetaValueItem ZERO_POINT_MODULE;
     public static MetaItem<?>.MetaValueItem ULTIMATE_BATTERY;
 
@@ -441,6 +441,9 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem NANO_SABER;
     public static MetaItem<?>.MetaValueItem SCANNER;
+    public static MetaItem<?>.MetaValueItem PROSPECTOR_LV;
+    public static MetaItem<?>.MetaValueItem PROSPECTOR_HV;
+    public static MetaItem<?>.MetaValueItem PROSPECTOR_LUV;
     public static MetaItem<?>.MetaValueItem WIRELESS;
     public static MetaItem<?>.MetaValueItem CAMERA;
     public static MetaItem<?>.MetaValueItem TERMINAL;

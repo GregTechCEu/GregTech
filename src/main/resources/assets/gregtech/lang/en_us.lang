@@ -2154,7 +2154,15 @@ metaitem.scanner.tooltip=Hold right mouse button on surface rocks/nto discover u
 behavior.scanner.analyzing=Analyzing...
 behavior.scanner.analyzing_failed=Analyzing failed!
 behavior.scanner.analyzing_complete=Analyzing complete!
-behavior.scanner.not_enough_energy=Analyzing failed: Not Enough Energy!
+behavior.scanner.not_enough_energy=Not Enough Energy!
+
+metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
+metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
+metaitem.prospector.luv.name=Electric Prospector's Scanner (LuV)
+metaitem.prospector.mode.ores=Ore Prospection Mode
+metaitem.prospector.mode.fluid=Fluid Prospection Mode
+metaitem.prospector.tooltip.ores=Scans Ores in a %s Chunk Radius
+metaitem.prospector.tooltip.fluids=Scans Ores and Fluids in a %s Chunk Radius
 
 metaitem.terminal.name=Terminal
 metaitem.terminal.tooltip=Sharp tools make good work
@@ -4132,6 +4140,7 @@ gregtech.terminal.app_name.settings=System Settings
 gregtech.terminal.app_name.guide_editor=Guide Editor
 gregtech.terminal.app_name.recipe_chart=Recipe Chart
 gregtech.terminal.app_name.ore_prospector=Ore Prospector
+gregtech.terminal.app_name.fluid_prospector=Fluid Prospector
 gregtech.terminal.app_name.pong=Pong
 gregtech.terminal.app_name.minesweeper=Minesweeper
 gregtech.terminal.app_name.maze=Theseus's Escape
@@ -4243,8 +4252,8 @@ terminal.recipe_chart.tier.3=cache of 8 pages
 
 terminal.prospector.vis_mode=switching color mode
 terminal.prospector.list=All Resources
-terminal.prospector.ore=Ore statistics
-terminal.prospector.fluid=Fluid statistics
+terminal.prospector.ore=Ore Data
+terminal.prospector.fluid=Fluid Data
 
 terminal.ore_prospector.description=Hate the scanner toy? Don't want to run around looking for ores? Come and look at it.
 terminal.ore_prospector.tier.0=radius size 1
@@ -4254,6 +4263,15 @@ terminal.ore_prospector.tier.3=radius size 4
 terminal.ore_prospector.tier.4=radius size 5
 terminal.ore_prospector.tier.5=radius size 6
 terminal.ore_prospector.tier.6=radius size 7
+
+terminal.fluid_prospector.description=You know, there's gold in bedrocks.
+terminal.fluid_prospector.tier.0=radius size 1
+terminal.fluid_prospector.tier.1=radius size 2
+terminal.fluid_prospector.tier.2=radius size 3
+terminal.fluid_prospector.tier.3=radius size 4
+terminal.fluid_prospector.tier.4=radius size 5
+terminal.fluid_prospector.tier.5=radius size 6
+terminal.fluid_prospector.tier.6=radius size 7
 
 terminal.console.description=A tool to help you free your inventory, it's time to say goodbye to wrench, screwdriver, hammer, and crowbar.
 terminal.console.notice=Please shift-right-click a machine when opening the terminal.
