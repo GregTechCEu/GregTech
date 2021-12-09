@@ -29,6 +29,7 @@ public class KeyBinds {
                 Minecraft.getMinecraft().gameSettings.keyBindJump,
                 Minecraft.getMinecraft().gameSettings.keyBindSneak,
                 Minecraft.getMinecraft().gameSettings.keyBindSprint,
+                null,
                 null);
     }
 

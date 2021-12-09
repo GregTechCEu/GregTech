@@ -934,6 +934,7 @@ metaitem.voltage_coil.max.name=Maximum Voltage Coil
 metaitem.voltage_coil.max.tooltip=Maximum Coil
 
 metaitem.liquid_fuel_jetpack.name=Liquid-Fueled Jetpack
+metaitem.liquid_fuel_jetpack.tooltip=Uses Combustion Generator Fuels for Thrust
 metaitem.impeller_jetpack.name=Thruster Jetpack
 metaitem.advanced_impeller_jetpack.name=Advanced Thruster Jetpack
 metaitem.battery_pack.lv.name=Battery Pack (§eLV§r)

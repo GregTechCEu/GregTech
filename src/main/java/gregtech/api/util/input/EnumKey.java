@@ -12,7 +12,8 @@ public enum EnumKey {
     JUMP(null, 0, null),
     SHIFT(null, 0, null),
     BOOST(null, 0, null),
-    FLY_KEY("Fly key", Keyboard.KEY_F, Key.KEYS_CATEGORY);
+    FLY_KEY("Jetpack Flight", Keyboard.KEY_F, Key.KEYS_CATEGORY),
+    HOVER_KEY("Jetpack Hover", Keyboard.KEY_H, Key.KEYS_CATEGORY);
 
     public final String NAME;
     public final String CATEGORY;
