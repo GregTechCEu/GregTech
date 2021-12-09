@@ -29,24 +29,17 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 
 public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> extends SyncedTileEntityBase implements IPipeTile<PipeType, NodeDataType> {
 
+    protected final PipeCoverableImplementation coverableImplementation = new PipeCoverableImplementation(this);
+    protected int insulationColor = DEFAULT_COVER_COLOR;
     private TIntIntMap openConnectionsMap = new TIntIntHashMap();
     private int openConnections = 0;
-
-    protected int insulationColor = DEFAULT_COVER_COLOR;
-    protected final PipeCoverableImplementation coverableImplementation = new PipeCoverableImplementation(this);
     private NodeDataType cachedNodeData;
     private BlockPipe<PipeType, NodeDataType, ?> pipeBlock;
     private PipeType pipeType = getPipeTypeClass().getEnumConstants()[0];
-    private boolean detachedConversionMode = false;
-    private boolean wasInDetachedConversionMode = false;
 
     public TileEntityPipeBase() {
         openConnectionsMap.put(AttachmentType.PIPE.ordinal(), 0);
         recomputeBlockedConnections();
-    }
-
-    public boolean wasInDetachedConversionMode() {
-        return wasInDetachedConversionMode;
     }
 
     public void setPipeData(BlockPipe<PipeType, NodeDataType, ?> pipeBlock, PipeType pipeType) {
@@ -137,9 +130,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void setInsulationColor(int insulationColor) {
         this.insulationColor = insulationColor;
         if (!getWorld().isRemote) {
-            if (!detachedConversionMode) {
-                getPipeBlock().getWorldPipeNet(getWorld()).updateMark(getPos(), getCableMark());
-            }
+            getPipeBlock().getWorldPipeNet(getWorld()).updateMark(getPos(), getCableMark());
             writeCustomData(UPDATE_INSULATION_COLOR, buffer -> buffer.writeInt(insulationColor));
             markDirty();
         }
@@ -167,9 +158,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         this.openConnectionsMap.put(at, openConnections);
         recomputeBlockedConnections();
         if (!getWorld().isRemote) {
-            if (!detachedConversionMode) {
-                updateSideBlockedConnection(side);
-            }
+            updateSideBlockedConnection(side);
             writeCustomData(UPDATE_CONNECTIONS, buffer -> {
                 buffer.writeVarInt(at);
                 buffer.writeVarInt(openConnections);
@@ -216,15 +205,13 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     private void updateSideBlockedConnection(EnumFacing side) {
-        if (!detachedConversionMode) {
-            WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
-            boolean isSideOpen = false;
-            int sideIndex = 1 << side.getIndex();
-            for (int blockedConnections : openConnectionsMap.values()) {
-                isSideOpen |= (blockedConnections & sideIndex) > 0;
-            }
-            worldPipeNet.updateBlockedConnections(getPos(), side, !isSideOpen);
+        WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
+        boolean isSideOpen = false;
+        int sideIndex = 1 << side.getIndex();
+        for (int blockedConnections : openConnectionsMap.values()) {
+            isSideOpen |= (blockedConnections & sideIndex) > 0;
         }
+        worldPipeNet.updateBlockedConnections(getPos(), side, !isSideOpen);
     }
 
     private int withSideConnectionBlocked(int blockedConnections, EnumFacing side, boolean blocked) {
