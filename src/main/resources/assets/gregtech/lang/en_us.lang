@@ -2154,7 +2154,11 @@ metaitem.scanner.tooltip=Hold right mouse button on surface rocks/nto discover u
 behavior.scanner.analyzing=Analyzing...
 behavior.scanner.analyzing_failed=Analyzing failed!
 behavior.scanner.analyzing_complete=Analyzing complete!
-behavior.scanner.not_enough_energy=Analyzing failed: Not Enough Energy!
+behavior.scanner.not_enough_energy=Not Enough Energy!
+
+metaitem.prospector.lv.name=Low Voltage Prospector's Scanner
+metaitem.prospector.hv.name=High Voltage Prospector's Scanner
+metaitem.prospector.luv.name=Ludicrous Voltage Prospector's Scanner
 
 metaitem.terminal.name=Terminal
 metaitem.terminal.tooltip=Sharp tools make good work
