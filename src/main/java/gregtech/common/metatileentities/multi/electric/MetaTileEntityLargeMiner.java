@@ -170,9 +170,9 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 .aisle("CSC", "#F#", "#F#", "#F#", "###", "###", "###")
                 .where('S', selfPredicate())
                 .where('C', states(getCasingState()).setMinGlobalLimited(3)
-                        .or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1))
-                        .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1))
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1)))
+                        .or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1))
+                        .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(1))
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setPreviewCount(1)))
                 .where('F', states(MetaBlocks.FRAMES.get(getMaterial()).getDefaultState()))
                 .where('#', any())
                 .build();

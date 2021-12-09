@@ -121,7 +121,7 @@ public class FactoryBlockPattern {
         if (blockMatcher.limited.size() + blockMatcher.common.size() == 1) {
             blockMatcher.addTooltips("gregtech.multiblock.pattern.single");
         }
-        this.symbolMap.put(symbol, new TraceabilityPredicate(blockMatcher));
+        this.symbolMap.put(symbol, new TraceabilityPredicate(blockMatcher).sort());
         return this;
     }
 

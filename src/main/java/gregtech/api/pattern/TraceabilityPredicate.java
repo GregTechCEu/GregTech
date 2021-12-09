@@ -86,6 +86,13 @@ public class TraceabilityPredicate {
         return this;
     }
 
+    public TraceabilityPredicate sort() {
+        limited.sort((a, b)->{
+            return ((a.minLayerCount + 1) * 100 + a.minGlobalCount) - ((b.minLayerCount + 1) * 100 + b.minGlobalCount);
+        });
+        return this;
+    }
+
     /**
      * Add tooltips for candidates. They are shown in JEI Pages.
      */
