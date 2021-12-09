@@ -16,9 +16,9 @@ import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
-import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
@@ -266,32 +266,48 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                                                boolean checkMuffler) {
         TraceabilityPredicate predicate = super.autoAbilities(checkMaintainer, checkMuffler)
                 .or(checkEnergyIn ? abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3).setPreviewCount(1) : new TraceabilityPredicate());
-        if (checkItemIn) {
-            if (recipeMap.getMinInputs() > 0) {
-                predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
-            } else if (recipeMap.getMaxInputs() > 0) {
-                predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setPreviewCount(1));
+
+        boolean checkedItemsIn = false;
+        boolean checkedItemsOut = false;
+        boolean checkedFluidsIn = false;
+        boolean checkedFluidsOut = false;
+
+        for (RecipeMap<?> recipeMap : getAvailableRecipeMaps()) {
+            if (!checkedItemsIn && checkItemIn) {
+                if (recipeMap.getMinInputs() > 0) {
+                    checkedItemsIn = true;
+                    predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
+                } else if (recipeMap.getMaxInputs() > 0) {
+                    checkedItemsIn = true;
+                    predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setPreviewCount(1));
+                }
             }
-        }
-        if (checkItemOut) {
-            if (recipeMap.getMinOutputs() > 0) {
-                predicate =  predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
-            } else if (recipeMap.getMaxOutputs() > 0) {
-                predicate = predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS).setPreviewCount(1));
+            if (!checkedItemsOut && checkItemOut) {
+                if (recipeMap.getMinOutputs() > 0) {
+                    checkedItemsOut = true;
+                    predicate = predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
+                } else if (recipeMap.getMaxOutputs() > 0) {
+                    checkedItemsOut = true;
+                    predicate = predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS).setPreviewCount(1));
+                }
             }
-        }
-        if (checkFluidIn) {
-            if (recipeMap.getMinFluidInputs() > 0) {
-                predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(recipeMap.getMinFluidInputs()));
-            } else if (recipeMap.getMaxFluidInputs() > 0) {
-                predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setPreviewCount(1));
+            if (!checkedFluidsIn && checkFluidIn) {
+                if (recipeMap.getMinFluidInputs() > 0) {
+                    checkedFluidsIn = true;
+                    predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(recipeMap.getMinFluidInputs()));
+                } else if (recipeMap.getMaxFluidInputs() > 0) {
+                    checkedFluidsIn = true;
+                    predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setPreviewCount(1));
+                }
             }
-        }
-        if (checkFluidOut) {
-            if (recipeMap.getMinFluidOutputs() > 0) {
-                predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(recipeMap.getMinFluidOutputs()));
-            } else if (recipeMap.getMaxFluidOutputs() > 0) {
-                predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setPreviewCount(1));
+            if (!checkedFluidsOut && checkFluidOut) {
+                if (recipeMap.getMinFluidOutputs() > 0) {
+                    checkedFluidsOut = true;
+                    predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(recipeMap.getMinFluidOutputs()));
+                } else if (recipeMap.getMaxFluidOutputs() > 0) {
+                    checkedFluidsOut = true;
+                    predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setPreviewCount(1));
+                }
             }
         }
         return predicate;
@@ -385,7 +401,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     @Override
     public RecipeMap<?>[] getAvailableRecipeMaps() {
-        return hasMultipleRecipeMaps() ? this.recipeMaps : null;
+        return hasMultipleRecipeMaps() ? this.recipeMaps : new RecipeMap<?>[]{this.recipeMap};
     }
 
     @Override
