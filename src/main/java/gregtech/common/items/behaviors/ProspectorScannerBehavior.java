@@ -6,7 +6,6 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.impl.ModularUIContainer;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
@@ -39,7 +38,6 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
     private int mode;
 
     private WidgetOreList widgetOreList;
-    private WidgetProspectingMap widgetProspectingMap;
 
     public ProspectorScannerBehavior(int radius, int tier) {
         this.radius = radius + 1;
@@ -95,10 +93,7 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 332, 200);
         this.widgetOreList = new WidgetOreList(32 * radius - 6, 18, 332 - 32 * radius, 176);
         builder.widget(this.widgetOreList);
-        this.widgetProspectingMap = new WidgetProspectingMap(6, 18, radius, this.widgetOreList, mode, 1);
-        builder.widget(widgetProspectingMap);
-        builder.widget(new ToggleButtonWidget(311, 3, 18, 18, widgetProspectingMap::getDarkMode, this::setDarkMode)
-                .setButtonTexture(GuiTextures.BUTTON_BLACKLIST));
+        builder.widget(new WidgetProspectingMap(6, 18, radius, this.widgetOreList, mode, 1));
         return builder.label(6, 6, getTranslationKey()).build(holder, entityPlayer);
     }
 
@@ -111,11 +106,6 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         IItemBehaviour.super.addInformation(itemStack, lines);
         if (tier >= GTValues.HV) lines.add(I18n.format("metaitem.prospector.tooltip.fluids", radius));
         else lines.add(I18n.format("metaitem.prospector.tooltip.ores", radius));
-    }
-
-    private void setDarkMode(boolean isDarkMode) {
-        this.widgetProspectingMap.setDarkMode(isDarkMode);
-        this.widgetProspectingMap.updateScreen();
     }
 
     @Override
