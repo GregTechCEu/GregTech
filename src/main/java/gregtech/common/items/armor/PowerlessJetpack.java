@@ -1,7 +1,5 @@
 package gregtech.common.items.armor;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import gregtech.api.items.armor.ArmorMetaItem.ArmorMetaValueItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.items.armor.IArmorLogic;
@@ -15,13 +13,10 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -62,7 +57,30 @@ public class PowerlessJetpack implements IArmorLogic {
     @Override
     public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack stack) {
         IFluidHandlerItem internalTank = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+
+        NBTTagCompound data = GTUtility.getOrCreateNbtCompound(stack);
+        int burnTime = 0;
+        byte toggleTimer = 0;
+        boolean hover = false;
+
         FuelRecipe currentRecipe = null;
+        FluidStack fuel = currentRecipe.getRecipeFluid();
+        if (data.hasKey("burnTimer")) burnTime = data.getShort("burnTimer");
+        if (data.hasKey("toggleTimer")) toggleTimer = data.getByte("toggleTimer");
+        if (data.hasKey("hover")) hover = data.getBoolean("hover");
+
+        if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.HOVER_KEY)) {
+            hover = !hover;
+            toggleTimer = 10;
+            data.setBoolean("hover", hover);
+            if (!world.isRemote) {
+                if (hover)
+                    player.sendMessage(new TextComponentTranslation("metaarmor.jetpack.hover.enable"));
+                else
+                    player.sendMessage(new TextComponentTranslation("metaarmor.jetpack.hover.disable"));
+            }
+        }
+
         if (internalTank != null && !player.isInWater() && !player.isInLava()) {
             FluidStack fluidStack = internalTank.drain(1, false);
             if (previousRecipe != null && fluidStack != null && fluidStack.isFluidEqual(previousRecipe.getRecipeFluid()) && fluidStack.amount > 0) {
@@ -81,28 +99,6 @@ public class PowerlessJetpack implements IArmorLogic {
 
             if (currentRecipe == null)
                 return;
-
-            NBTTagCompound data = GTUtility.getOrCreateNbtCompound(stack);
-            int burnTime = 0;
-            byte toggleTimer = 0;
-            boolean hover = false;
-
-            FluidStack fuel = currentRecipe.getRecipeFluid();
-            if (data.hasKey("burnTimer")) burnTime = data.getShort("burnTimer");
-            if (data.hasKey("toggleTimer")) toggleTimer = data.getByte("toggleTimer");
-            if (data.hasKey("hover")) hover = data.getBoolean("hover");
-
-            if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.HOVER_KEY)) {
-                hover = !hover;
-                toggleTimer = 10;
-                data.setBoolean("hover", hover);
-                if (!world.isRemote) {
-                    if (hover)
-                        player.sendMessage(new TextComponentTranslation("metaarmor.jetpack.hover.enable"));
-                    else
-                        player.sendMessage(new TextComponentTranslation("metaarmor.jetpack.hover.disable"));
-                }
-            }
 
             if (burnTime > 0 || internalTank.drain(fuel, false).amount >= fuel.amount) {
                 if (!hover) {
@@ -172,15 +168,6 @@ public class PowerlessJetpack implements IArmorLogic {
     @Override
     public EntityEquipmentSlot getEquipmentSlot(ItemStack itemStack) {
         return EntityEquipmentSlot.CHEST;
-    }
-
-    @Override
-    public void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage, EntityEquipmentSlot equipmentSlot) {
-    }
-
-    @Override
-    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
-        return ImmutableMultimap.of();
     }
 
     @Override
@@ -269,11 +256,6 @@ public class PowerlessJetpack implements IArmorLogic {
                     return new FluidTankProperties[]{new FluidTankProperties(getFluid(), capacity, true, false)};
                 }
             };
-        }
-
-        @Override
-        public void addInformation(ItemStack itemStack, @Nonnull List<String> lines) {
-            lines.add(I18n.format("metaitem.liquid_fuel_jetpack.tooltip"));
         }
     }
 }

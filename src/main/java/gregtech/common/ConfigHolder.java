@@ -364,14 +364,12 @@ public class ConfigHolder {
         @Config.Comment({"Should EV and IV Drills be enabled, which may cause lag when used on low-end devices?", "Default: true"})
         public boolean enableHighTierDrills = true;
 
-        @Config.Comment({"NightVision Goggles Voltage Tier.", "Default: 2 (LV)"})
+        @Config.Comment("NightVision Goggles Voltage Tier. Default: 1 (LV)")
         @Config.RangeInt(min = 0, max = 14)
-        @Config.SlidingOption
-        public int voltageTierNightVision = 2;
+        public int voltageTierNightVision = 1;
 
-        @Config.Comment({"NanoSuit Voltage Tier.", "Default: 3 (MV)"})
+        @Config.Comment("NanoSuit Voltage Tier. Default: 3 (HV)")
         @Config.RangeInt(min = 0, max = 14)
-        @Config.SlidingOption
         public int voltageTierNanoSuit = 3;
 
         @Config.Comment({"Advanced NanoSuit Chestplate Voltage Tier.", "Default: 4 (EV)"})

@@ -968,6 +968,9 @@ metaarmor.qts.nightvision.disabled=QuarkTech™ Suite: NightVision Disabled
 metaarmor.jetpack.hover.enable=Jetpack: Hover Mode Enabled
 metaarmor.jetpack.hover.disable=Jetpack: Hover Mode Disabled
 
+metaarmor.jetpack.flight.enable=Jetpack: Flight Enabled
+metaarmor.jetpack.flight.disable=Jetpack: Flight Disabled
+
 metaarmor.message.nightvision.enabled=§bNightVision: §aOn
 metaarmor.message.nightvision.disabled=§bNightVision: §cOff
 metaarmor.message.nightvision.error=§cNot enough power!

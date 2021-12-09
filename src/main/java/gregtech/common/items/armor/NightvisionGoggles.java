@@ -6,7 +6,6 @@ import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
-import gregtech.common.ConfigHolder;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,10 +21,6 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class NightvisionGoggles extends ArmorLogicSuite {
-
-    public NightvisionGoggles() {
-        this(4, 400000L * (long) Math.max(1, Math.pow(4, ConfigHolder.U.equipment.voltageTierNightVision - 2)), ConfigHolder.U.equipment.voltageTierNightVision, EntityEquipmentSlot.HEAD);
-    }
 
     public NightvisionGoggles(int energyPerUse, long capacity, int voltageTier, EntityEquipmentSlot slot) {
         super(energyPerUse, capacity, voltageTier, slot);
@@ -43,7 +38,7 @@ public class NightvisionGoggles extends ArmorLogicSuite {
         if (SLOT == EntityEquipmentSlot.HEAD) {
             boolean nightvision = nbtData.getBoolean("Nightvision");
             if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.MODE_SWITCH)) {
-                toggleTimer = 8;
+                toggleTimer = 10;
                 if (!nightvision && item.getCharge() >= energyPerUse) {
                     nightvision = true;
                     if (!world.isRemote)

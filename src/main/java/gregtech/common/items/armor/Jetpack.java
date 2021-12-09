@@ -1,8 +1,5 @@
 package gregtech.common.items.armor;
 
-
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
@@ -12,7 +9,6 @@ import gregtech.api.util.input.EnumKey;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -34,49 +30,50 @@ public class Jetpack extends ArmorLogicSuite {
     }
 
     @Override
-    public void onArmorTick(World world, EntityPlayer player, ItemStack stack) {
+    public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack stack) {
         IElectricItem container = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (container.canUse(energyPerUse) && !player.isInWater() && !player.isInLava()) {
-            NBTTagCompound data = GTUtility.getOrCreateNbtCompound(stack);
-            byte toggleTimer = 0;
-            boolean hover = false;
-            boolean res = false;
-            if (data.hasKey("toggleTimer")) toggleTimer = data.getByte("toggleTimer");
-            if (data.hasKey("hover")) hover = data.getBoolean("hover");
+        if (container == null)
+            return;
 
-            if (ArmorUtils.isKeyDown(player, EnumKey.MODE_SWITCH) && ArmorUtils.isKeyDown(player, EnumKey.JUMP) && toggleTimer == 0) {
-                hover = !hover;
-                toggleTimer = 10;
-                if (!world.isRemote) {
-                    data.setBoolean("hover", hover);
-                    if (hover) {
-                        player.sendMessage(new TextComponentTranslation("metaarmor.jetpack.hover.enable"));
-                    } else {
-                        player.sendMessage(new TextComponentTranslation("metaarmor.jetpack.hover.disable"));
-                    }
-                }
+        NBTTagCompound data = GTUtility.getOrCreateNbtCompound(stack);
+        byte toggleTimer = 0;
+        boolean hover = false;
+        if (data.hasKey("toggleTimer")) toggleTimer = data.getByte("toggleTimer");
+        if (data.hasKey("hover")) hover = data.getBoolean("hover");
+
+        if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.HOVER_KEY)) {
+            hover = !hover;
+            toggleTimer = 10;
+            data.setBoolean("hover", hover);
+            if (!world.isRemote) {
+                if (hover)
+                    player.sendMessage(new TextComponentTranslation("metaarmor.jetpack.hover.enable"));
+                else
+                    player.sendMessage(new TextComponentTranslation("metaarmor.jetpack.hover.disable"));
             }
+        }
 
+        if (!player.isInWater() && !player.isInLava() && container.canUse(energyPerUse)) {
             if (!hover) {
-                if (ArmorUtils.isKeyDown(player, EnumKey.JUMP)) {
+                if (ArmorUtils.isKeyDown(player, EnumKey.JUMP)) { //todo prevent holding space + e from flying upwards
                     if (player.motionY < 0.6D) player.motionY += 0.2D;
                     if (ArmorUtils.isKeyDown(player, EnumKey.FORWARD)) {
                         player.moveRelative(0.0F, 0.0F, 1.0F, 0.1F);
                     }
                     ArmorUtils.spawnParticle(world, player, EnumParticleTypes.CLOUD, -0.6D);
                     ArmorUtils.playJetpackSound(player);
-                    res = true;
                 }
             } else {
                 if (!player.onGround) {
                     ArmorUtils.spawnParticle(world, player, EnumParticleTypes.CLOUD, -0.3D);
                     ArmorUtils.playJetpackSound(player);
                 }
+
                 if (ArmorUtils.isKeyDown(player, EnumKey.FORWARD) && player.motionX < 0.5D && player.motionZ < 0.5D) {
                     player.moveRelative(0.0F, 0.0F, 1.0F, 0.025F);
                 }
 
-                if (ArmorUtils.isKeyDown(player, EnumKey.JUMP)) {
+                if (ArmorUtils.isKeyDown(player, EnumKey.JUMP)) { //todo prevent holding space + e from flying upwards
                     if (player.motionY < 0.5D) {
                         player.motionY += 0.125D;
                     }
@@ -93,10 +90,9 @@ public class Jetpack extends ArmorLogicSuite {
                     }
                 }
                 player.fallDistance = 0.0F;
-                res = true;
             }
 
-            if (res && !player.onGround) {
+            if (!player.onGround && (hover || ArmorUtils.isKeyDown(player, EnumKey.JUMP))) {
                 container.discharge(energyPerUse, container.getTier(), false, false, false);
             }
 
@@ -112,15 +108,6 @@ public class Jetpack extends ArmorLogicSuite {
     }
 
     @Override
-    public void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage, EntityEquipmentSlot equipmentSlot) {
-    }
-
-    @Override
-    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
-        return ImmutableMultimap.of();
-    }
-
-    @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
         return "gregtech:textures/armor/jetpack.png";
     }
@@ -128,11 +115,6 @@ public class Jetpack extends ArmorLogicSuite {
     @Override
     public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
         return new ArmorProperties(0, 0, 0);
-    }
-
-    @Override
-    public double getDamageAbsorption() {
-        return 0;
     }
 
     @SideOnly(Side.CLIENT)
@@ -155,6 +137,5 @@ public class Jetpack extends ArmorLogicSuite {
         }
         this.HUD.draw();
         this.HUD.reset();
-
     }
 }

@@ -1,5 +1,6 @@
 package gregtech.api.items.armor;
 
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import gregtech.api.items.armor.ArmorMetaItem.ArmorMetaValueItem;
 import net.minecraft.client.gui.ScaledResolution;
@@ -33,9 +34,13 @@ public interface IArmorLogic {
 
     EntityEquipmentSlot getEquipmentSlot(ItemStack itemStack);
 
-    void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage, EntityEquipmentSlot equipmentSlot);
+    default void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage, EntityEquipmentSlot equipmentSlot) {
 
-    Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack);
+    }
+
+    default Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
+        return ImmutableMultimap.of();
+    }
 
     default boolean isValidArmor(ItemStack itemStack, Entity entity, EntityEquipmentSlot equipmentSlot) {
         return getEquipmentSlot(itemStack) == equipmentSlot;

@@ -11,11 +11,11 @@ public class MetaArmor extends ArmorMetaItem<ArmorMetaItem<?>.ArmorMetaValueItem
 
     @Override
     public void registerSubItems() {
-        MetaItems.NIGHTVISION_GOGGLES = addItem(1, "nightvision_goggles").setArmorLogic(new NightvisionGoggles()).setRarity(EnumRarity.UNCOMMON);
+        MetaItems.NIGHTVISION_GOGGLES = addItem(1, "nightvision_goggles").setArmorLogic(new NightvisionGoggles(4, 400_000L * (long) Math.max(1, Math.pow(4, ConfigHolder.U.equipment.voltageTierNightVision - 1)), ConfigHolder.U.equipment.voltageTierNightVision, EntityEquipmentSlot.HEAD));
 
-        MetaItems.SEMIFLUID_JETPACK = addItem(2, "liquid_fuel_jetpack").setArmorLogic(new PowerlessJetpack()).setRarity(EnumRarity.UNCOMMON);
-        MetaItems.IMPELLER_JETPACK = addItem(3, "impeller_jetpack").setArmorLogic(new Jetpack(125, 2520000L * (long) Math.max(1, Math.pow(4, ConfigHolder.U.equipment.voltageTierImpeller - 2)), ConfigHolder.U.equipment.voltageTierImpeller)).setModelAmount(8).setRarity(EnumRarity.UNCOMMON);
-        MetaItems.ADVANCED_IMPELLER_JETPACK = addItem(4, "advanced_impeller_jetpack").setArmorLogic(new AdvancedJetpack(512, 11400000L * (long) Math.max(1, Math.pow(4, ConfigHolder.U.equipment.voltageTierAdvImpeller - 3)), ConfigHolder.U.equipment.voltageTierAdvImpeller)).setRarity(EnumRarity.RARE);
+        MetaItems.SEMIFLUID_JETPACK = addItem(2, "liquid_fuel_jetpack").setArmorLogic(new PowerlessJetpack());
+        MetaItems.IMPELLER_JETPACK = addItem(3, "impeller_jetpack").setArmorLogic(new Jetpack(30, 1_000_000L * (long) Math.max(1, Math.pow(4, ConfigHolder.U.equipment.voltageTierImpeller - 2)), ConfigHolder.U.equipment.voltageTierImpeller)).setModelAmount(8).setRarity(EnumRarity.UNCOMMON);
+        MetaItems.ADVANCED_IMPELLER_JETPACK = addItem(4, "advanced_impeller_jetpack").setArmorLogic(new AdvancedJetpack(120, 4_000_000L * (long) Math.max(1, Math.pow(4, ConfigHolder.U.equipment.voltageTierAdvImpeller - 3)), ConfigHolder.U.equipment.voltageTierAdvImpeller)).setRarity(EnumRarity.RARE);
 
         int energyPerUse = 5000;
         int tier = ConfigHolder.U.equipment.voltageTierNanoSuit;

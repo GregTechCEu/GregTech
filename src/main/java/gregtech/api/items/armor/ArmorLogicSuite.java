@@ -122,7 +122,9 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
         return "";
     }
 
-    public abstract double getDamageAbsorption();
+    public double getDamageAbsorption() {
+        return 0;
+    }
 
     @SideOnly(Side.CLIENT)
     public boolean isNeedDrawHUD() {
