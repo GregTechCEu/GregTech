@@ -5,9 +5,9 @@ import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
-import gregtech.api.sound.GTSounds;
 import gregtech.api.recipes.builders.*;
 import gregtech.api.recipes.machines.*;
+import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import net.minecraft.init.SoundEvents;
@@ -747,7 +747,7 @@ public class RecipeMaps {
             .setSound(GTSounds.ASSEMBLER);
 
     @ZenProperty
-    public static final RecipeMapAssemblyLine<SimpleRecipeBuilder> ASSEMBLY_LINE_RECIPES = (RecipeMapAssemblyLine<SimpleRecipeBuilder>) new RecipeMapAssemblyLine<>("assembly_line", 4, 16, 1, 1, 0, 4, 0, 0, new SimpleRecipeBuilder(), false)
+    public static final RecipeMapAssemblyLine ASSEMBLY_LINE_RECIPES = (RecipeMapAssemblyLine) new RecipeMapAssemblyLine("assembly_line", 4, 16, 1, 1, 0, 4, 0, 0, new AssemblyLineRecipeBuilder(), false)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
             .setSound(GTSounds.ASSEMBLER);
 
