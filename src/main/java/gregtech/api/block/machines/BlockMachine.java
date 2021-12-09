@@ -252,7 +252,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             } else {
                 metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
             }
-            if (ConfigHolder.machines.gt6StylePipesCables) {
+            if (ConfigHolder.machines.gt6StylePipesCables && !worldIn.isRemote) {
                 if (placer instanceof EntityPlayer) {
                     EntityPlayer player = (EntityPlayer) placer;
                     RayTraceResult rt2 = GTUtility.getBlockLookingAt(player, pos);

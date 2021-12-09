@@ -168,7 +168,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             if (facing == null) throw new NullPointerException("Facing is null");
             boolean open = pipeTile.isConnectionOpenAny(facing);
             boolean canConnect = canConnect(pipeTile, facing);
-            if (!open && canConnect && !ConfigHolder.machines.gt6StylePipesCables)
+            if (!open && canConnect && !ConfigHolder.machines.gt6StylePipesCables && state.getBlock() != blockIn)
                 pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, false, false);
             if (open && !canConnect)
                 pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, true, false);
