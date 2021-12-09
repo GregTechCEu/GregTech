@@ -13,6 +13,7 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import gregtech.common.terminal.app.prospector.widget.WidgetProspectingMap;
 import gregtech.common.terminal.component.SearchComponent;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,10 +22,9 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -55,10 +55,10 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
                 if (getNextMode() == WidgetProspectingMap.ORE_PROSPECTING_MODE) {
                     if (this.tier >= FLUID_PROSPECTION_THRESHOLD)
                         incrementMode();
-                    player.sendMessage(new TextComponentTranslation("Ore Prospection"));
+                    player.sendMessage(new TextComponentTranslation("metaitem.prospector.mode.ores"));
                 } else if (getNextMode() == WidgetProspectingMap.FLUID_PROSPECTING_MODE && this.tier >= FLUID_PROSPECTION_THRESHOLD) {
                     incrementMode();
-                    player.sendMessage(new TextComponentTranslation("Fluid Prospection"));
+                    player.sendMessage(new TextComponentTranslation("metaitem.prospector.mode.fluid"));
                 }
             } else if (checkCanUseScanner(heldItem, player, true)) {
                 PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
@@ -106,7 +106,13 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         return String.format("metaitem.prospector.%s.name", GTValues.VN[tier].toLowerCase(Locale.ROOT));
     }
 
-    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, List<String> lines) {
+        IItemBehaviour.super.addInformation(itemStack, lines);
+        if (tier >= GTValues.HV) lines.add(I18n.format("metaitem.prospector.tooltip.fluids", radius));
+        else lines.add(I18n.format("metaitem.prospector.tooltip.ores", radius));
+    }
+
     private void setDarkMode(boolean isDarkMode) {
         this.widgetProspectingMap.setDarkMode(isDarkMode);
         this.widgetProspectingMap.updateScreen();

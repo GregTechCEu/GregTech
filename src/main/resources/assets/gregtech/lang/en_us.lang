@@ -2159,6 +2159,10 @@ behavior.scanner.not_enough_energy=Not Enough Energy!
 metaitem.prospector.lv.name=Low Voltage Prospector's Scanner
 metaitem.prospector.hv.name=High Voltage Prospector's Scanner
 metaitem.prospector.luv.name=Ludicrous Voltage Prospector's Scanner
+metaitem.prospector.mode.ores=Ore Prospection Mode
+metaitem.prospector.mode.fluid=Fluid Prospection Mode
+metaitem.prospector.tooltip.ores=Scans Ores in a %s Chunk Radius
+metaitem.prospector.tooltip.fluids=Scans Ores and Fluids in a %s Chunk Radius
 
 metaitem.terminal.name=Terminal
 metaitem.terminal.tooltip=Sharp tools make good work

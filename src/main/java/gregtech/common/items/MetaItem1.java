@@ -384,7 +384,7 @@ public class MetaItem1 extends StandardMetaItem {
         CLIPBOARD = addItem(465, "clipboard").addComponents(new ClipboardBehavior()).setMaxStackSize(1);
         TERMINAL = addItem(466, "terminal").addComponents(new HardwareProvider(), new TerminalBehaviour()).setMaxStackSize(1);
         PROSPECTOR_LV = addItem(467, "prospector.lv").addComponents(ElectricStats.createElectricItem(100_000L, GTValues.LV), new ProspectorScannerBehavior(2, GTValues.LV));
-        PROSPECTOR_HV = addItem(468, "prospector.hv").addComponents(ElectricStats.createElectricItem(1_600_000L, GTValues.HV), new ProspectorScannerBehavior(4, GTValues.HV));
+        PROSPECTOR_HV = addItem(468, "prospector.hv").addComponents(ElectricStats.createElectricItem(1_600_000L, GTValues.HV), new ProspectorScannerBehavior(3, GTValues.HV));
         PROSPECTOR_LUV = addItem(469, "prospector.luv").addComponents(ElectricStats.createElectricItem(1_000_000_000L, GTValues.LuV), new ProspectorScannerBehavior(5, GTValues.LuV));
 
         // Misc Crafting Items: ID 491-515
