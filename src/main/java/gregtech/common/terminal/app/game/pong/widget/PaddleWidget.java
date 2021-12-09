@@ -20,8 +20,8 @@ public class PaddleWidget extends Widget {
     }
 
     @Override
-    public void updateScreen() {
-        super.updateScreen();
+    public void updateScreenOnFrame() {
+        super.updateScreenOnFrame();
         if (this.getSelfPosition().getY() < 30) {
             this.setSelfPosition(new Position(this.getSelfPosition().getX(), 30));
         }

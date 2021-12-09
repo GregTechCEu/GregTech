@@ -30,11 +30,7 @@ public abstract class AnimaWidgetGroup extends WidgetGroup {
         if (interpolator != null) {
             interpolator.update();
         }
-        super.updateScreen();
-    }
-
-    @Override
-    public void updateScreen() {
+        super.updateScreenOnFrame();
     }
 
     @SideOnly(Side.CLIENT)

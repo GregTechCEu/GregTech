@@ -81,7 +81,6 @@ public class PongApp extends AbstractApplication {
 
     @Override
     public void updateScreenOnFrame() {
-        super.updateScreenOnFrame();
         if (ball.getSelfPosition().getX() < 10) {
             this.score(false); // Right side gains a point
         } else if (ball.getSelfPosition().getX() > 323) {
@@ -142,6 +141,7 @@ public class PongApp extends AbstractApplication {
         } else {
             userInput = -1;
         }
+        super.updateScreenOnFrame();
     }
 
     public int simplePaddleAI(PaddleWidget paddle) {
