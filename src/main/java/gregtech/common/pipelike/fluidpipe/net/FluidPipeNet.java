@@ -89,7 +89,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                 return amount;
             }
         }
-        stack.amount = (int) Math.min(stack.amount, netCapacity - stack.amount);
+        stack.amount = (int) Math.min(stack.amount, netCapacity);
         if (!doFill)
             return stack.amount;
         fluids.add(stack);

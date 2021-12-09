@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
-import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
