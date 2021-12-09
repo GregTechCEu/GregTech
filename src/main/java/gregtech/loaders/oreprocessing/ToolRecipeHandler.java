@@ -1,5 +1,6 @@
 package gregtech.loaders.oreprocessing;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.toolitem.ToolMetaItem.MetaToolValueItem;
@@ -61,16 +62,20 @@ public class ToolRecipeHandler {
         baseMaterials = new Material[]{Materials.Steel, Materials.Aluminium, Materials.StainlessSteel, Materials.Titanium, Materials.TungstenSteel};
         powerUnitItems = new MetaValueItem[]{MetaItems.POWER_UNIT_LV, MetaItems.POWER_UNIT_MV, MetaItems.POWER_UNIT_HV, MetaItems.POWER_UNIT_EV, MetaItems.POWER_UNIT_IV};
         batteryItems = new MetaValueItem[][]{
+                {MetaItems.BATTERY_ULV_TANTALUM},
                 {MetaItems.BATTERY_LV_LITHIUM, MetaItems.BATTERY_LV_CADMIUM, MetaItems.BATTERY_LV_SODIUM},
                 {MetaItems.BATTERY_MV_LITHIUM, MetaItems.BATTERY_MV_CADMIUM, MetaItems.BATTERY_MV_SODIUM},
-                {MetaItems.BATTERY_HV_LITHIUM, MetaItems.BATTERY_HV_CADMIUM, MetaItems.BATTERY_HV_SODIUM},
-                {MetaItems.LAPOTRON_CRYSTAL},
-                {MetaItems.ENERGY_LAPOTRONIC_ORB}};
+                {MetaItems.BATTERY_HV_LITHIUM, MetaItems.BATTERY_HV_CADMIUM, MetaItems.BATTERY_HV_SODIUM, MetaItems.ENERGIUM_CRYSTAL},
+                {MetaItems.BATTERY_EV_VANADIUM, MetaItems.LAPOTRON_CRYSTAL},
+                {MetaItems.BATTERY_IV_VANADIUM, MetaItems.ENERGY_LAPOTRONIC_ORB},
+                {MetaItems.BATTERY_LUV_VANADIUM, MetaItems.ENERGY_LAPOTRONIC_ORB_CLUSTER},
+                {MetaItems.BATTERY_ZPM_NAQUADRIA, MetaItems.ENERGY_LAPOTRONIC_MODULE},
+                {MetaItems.BATTERY_UV_NAQUADRIA, MetaItems.ENERGY_LAPOTRONIC_CLUSTER}};
     }
 
     public static void registerPowerUnitRecipes() {
         for (int i = 0; i < powerUnitItems.length; i++) {
-            for (MetaValueItem batteryItem : batteryItems[i]) {
+            for (MetaValueItem batteryItem : batteryItems[i + 1]) {
                 ItemStack batteryStack = batteryItem.getStackForm();
                 long maxCharge = batteryStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null).getMaxCharge();
                 ItemStack powerUnitStack = powerUnitItems[i].getMaxChargeOverrideStack(maxCharge);
@@ -399,6 +404,7 @@ public class ToolRecipeHandler {
         registerFlintToolRecipes();
         registerMortarRecipes();
         registerSoftHammerRecipes();
+        registerProspectorRecipes();
     }
 
     private static void registerFlintToolRecipes() {
@@ -480,6 +486,51 @@ public class ToolRecipeHandler {
                         'X', new UnificationEntry(OrePrefix.ingot, material),
                         'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
             }
+        }
+    }
+
+    private static void registerProspectorRecipes() {
+        for (MetaValueItem batteryItem : batteryItems[GTValues.LV]) {
+            ModHandler.addShapedEnergyTransferRecipe("scanner_" + batteryItem.unlocalizedName, MetaItems.SCANNER.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "DGD", "CGC", "SBS",
+                    'D', new UnificationEntry(OrePrefix.plate, Materials.Diamond),
+                    'G', new UnificationEntry(OrePrefix.paneGlass),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic),
+                    'S', new UnificationEntry(OrePrefix.plate, Materials.Steel),
+                    'B', batteryItem.getStackForm());
+
+            ModHandler.addShapedEnergyTransferRecipe("prospector_lv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_LV.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "EPS", "CDC", "PBP",
+                    'E', MetaItems.EMITTER_LV.getStackForm(),
+                    'P', new UnificationEntry(OrePrefix.plate, Materials.Steel),
+                    'S', MetaItems.SENSOR_LV.getStackForm(),
+                    'D', new UnificationEntry(OrePrefix.plate, Materials.Glass),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic),
+                    'B', batteryItem.getStackForm());
+        }
+        for (MetaValueItem batteryItem : batteryItems[GTValues.HV]) {
+            ModHandler.addShapedEnergyTransferRecipe("prospector_hv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_HV.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "EPS", "CDC", "PBP",
+                    'E', MetaItems.EMITTER_HV.getStackForm(),
+                    'P', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel),
+                    'S', MetaItems.SENSOR_HV.getStackForm(),
+                    'D', MetaItems.COVER_SCREEN.getStackForm(),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Advanced),
+                    'B', batteryItem.getStackForm());
+        }
+        for (MetaValueItem batteryItem : batteryItems[GTValues.LuV]) {
+            ModHandler.addShapedEnergyTransferRecipe("prospector_luv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_LUV.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "EPS", "CDC", "PBP",
+                    'E', MetaItems.EMITTER_LUV.getStackForm(),
+                    'P', new UnificationEntry(OrePrefix.plate, Materials.RhodiumPlatedPalladium),
+                    'S', MetaItems.SENSOR_LUV.getStackForm(),
+                    'D', MetaItems.COVER_SCREEN.getStackForm(),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Master),
+                    'B', batteryItem.getStackForm());
         }
     }
 }

@@ -1400,7 +1400,7 @@ public class CircuitRecipes {
                 .input(SMD_TRANSISTOR, 32)
                 .input(wireFine, Platinum, 64)
                 .fluidInputs(SolderingAlloy.getFluid(L * 5))
-                .output(ENERGY_LAPOTRONIC_ORB2)
+                .output(ENERGY_LAPOTRONIC_ORB_CLUSTER)
                 .buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(80000).duration(500)
@@ -1416,7 +1416,7 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_TRANSISTOR, 8)
                 .input(wireFine, Platinum, 64)
                 .fluidInputs(SolderingAlloy.getFluid(L * 5))
-                .output(ENERGY_LAPOTRONIC_ORB2)
+                .output(ENERGY_LAPOTRONIC_ORB_CLUSTER)
                 .buildAndRegister();
     }
 }

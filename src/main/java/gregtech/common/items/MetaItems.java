@@ -151,7 +151,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem BATTERY_UV_NAQUADRIA;
 
     public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB;
-    public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB2;
+    public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB_CLUSTER;
     public static MetaItem<?>.MetaValueItem ZERO_POINT_MODULE;
     public static MetaItem<?>.MetaValueItem ULTIMATE_BATTERY;
 

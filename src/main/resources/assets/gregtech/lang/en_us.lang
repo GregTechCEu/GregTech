@@ -2156,9 +2156,9 @@ behavior.scanner.analyzing_failed=Analyzing failed!
 behavior.scanner.analyzing_complete=Analyzing complete!
 behavior.scanner.not_enough_energy=Not Enough Energy!
 
-metaitem.prospector.lv.name=Low Voltage Prospector's Scanner
-metaitem.prospector.hv.name=High Voltage Prospector's Scanner
-metaitem.prospector.luv.name=Ludicrous Voltage Prospector's Scanner
+metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
+metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
+metaitem.prospector.luv.name=Electric Prospector's Scanner (LuV)
 metaitem.prospector.mode.ores=Ore Prospection Mode
 metaitem.prospector.mode.fluid=Fluid Prospection Mode
 metaitem.prospector.tooltip.ores=Scans Ores in a %s Chunk Radius
