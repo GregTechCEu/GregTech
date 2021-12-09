@@ -390,7 +390,7 @@ public class BlockPattern {
                                 } else {
                                     continue;
                                 }
-                            } else {
+                            } else if (limit.minLayerCount <= 0){
                                 continue;
                             }
                             if (!cacheInfos.containsKey(limit)) {
@@ -433,13 +433,31 @@ public class BlockPattern {
                                 }
                                 if (!find) {
                                     for (TraceabilityPredicate.SimplePredicate limit : predicate.limited) {
-                                        if (limit.maxGlobalCount == -1 && limit.maxLayerCount == -1 && limit.previewCount == -1) {
-                                            if (!cacheInfos.containsKey(limit)) {
-                                                cacheInfos.put(limit, limit.candidates == null ? null : limit.candidates.get());
+                                        if (limit.previewCount != -1) {
+                                            continue;
+                                        } else if (limit.maxGlobalCount != -1 || limit.maxLayerCount != -1) {
+                                            if (cacheGlobal.getOrDefault(limit, 0) < limit.maxGlobalCount) {
+                                                if (!cacheGlobal.containsKey(limit)) {
+                                                    cacheGlobal.put(limit, 1);
+                                                } else {
+                                                    cacheGlobal.put(limit, cacheGlobal.get(limit) + 1);
+                                                }
+                                            } else if (cacheLayer.getOrDefault(limit, 0) < limit.maxLayerCount) {
+                                                if (!cacheLayer.containsKey(limit)) {
+                                                    cacheLayer.put(limit, 1);
+                                                } else {
+                                                    cacheLayer.put(limit, cacheLayer.get(limit) + 1);
+                                                }
+                                            } else {
+                                                continue;
                                             }
-                                            infos = cacheInfos.get(limit);
-                                            break;
                                         }
+
+                                        if (!cacheInfos.containsKey(limit)) {
+                                            cacheInfos.put(limit, limit.candidates == null ? null : limit.candidates.get());
+                                        }
+                                        infos = cacheInfos.get(limit);
+                                        break;
                                     }
                                 }
                             }
