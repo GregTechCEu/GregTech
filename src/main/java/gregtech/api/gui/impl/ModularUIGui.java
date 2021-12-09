@@ -2,11 +2,9 @@ package gregtech.api.gui.impl;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.TimedProgressSupplier;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.net.PacketUIWidgetUpdate;
-import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
