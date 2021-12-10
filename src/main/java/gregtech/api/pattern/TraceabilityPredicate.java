@@ -166,6 +166,14 @@ public class TraceabilityPredicate {
     }
 
     /**
+     * Sets the Minimum and Maximum limit to the passed value
+     * @param limit The Maximum and Minimum limit
+     */
+    public TraceabilityPredicate setExactLimit(int limit) {
+        return this.setMinGlobalLimited(limit).setMaxGlobalLimited(limit);
+    }
+
+    /**
      * Set the number of it appears in JEI pages. It only affects JEI preview. (The specific number)
      */
     public TraceabilityPredicate setPreviewCount(int count) {

@@ -50,7 +50,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 .where('L', states(getCasingState()))
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()).setMinGlobalLimited(11).or(autoAbilities())
-                        .or(abilities(MultiblockAbility.MACHINE_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1)))
+                        .or(abilities(MultiblockAbility.MACHINE_HATCH).setExactLimit(1)))
                 .where('#', air())
                 .build();
     }
