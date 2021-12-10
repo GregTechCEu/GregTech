@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
+import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IMultipleTankHandler;
@@ -14,6 +15,7 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
@@ -906,4 +908,29 @@ public class GTUtility {
     public static double getMeanTickTime(@Nonnull World world) {
         return mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
     }
+
+    /**
+     * Checks whether a machine is not a multiblock and has a recipemap not present in a blacklist
+     *
+     *
+     * @param machineStack the ItemStack containing the machine to check the validity of
+     * @return whether the machine is valid or not
+     */
+    public static boolean isMachineValidForMachineHatch(ItemStack machineStack, String[] recipeMapBlacklist) {
+        MetaTileEntity machine = MachineItemBlock.getMetaTileEntity(machineStack);
+        if (machine instanceof WorkableTieredMetaTileEntity)
+            return !findMachineInBlacklist(machine.getRecipeMap().getUnlocalizedName(), recipeMapBlacklist);
+
+        return false;
+    }
+
+    /**
+     * Attempts to find a passed in RecipeMap unlocalized name in a list of names
+     * @param unlocalizedName The unlocalized name of a RecipeMap
+     * @return {@code true} If the RecipeMap is in the config blacklist
+     */
+    public static boolean findMachineInBlacklist(String unlocalizedName, String[] recipeMapBlacklist) {
+        return Arrays.asList(recipeMapBlacklist).contains(unlocalizedName);
+    }
+
 }

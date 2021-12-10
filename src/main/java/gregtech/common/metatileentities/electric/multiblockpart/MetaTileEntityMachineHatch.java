@@ -3,13 +3,14 @@ package gregtech.common.metatileentities.electric.multiblockpart;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.metatileentity.IMachineHatchMultiblock;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.common.metatileentities.multi.electric.MetaTileEntityProcessingArray;
+import gregtech.api.util.GTUtility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -96,8 +97,8 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
         @Override
         public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
             MultiblockControllerBase controller = getController();
-            if (controller != null)
-                return MetaTileEntityProcessingArray.isMachineValid(stack);
+            if (controller instanceof IMachineHatchMultiblock)
+                return GTUtility.isMachineValidForMachineHatch(stack, ((IMachineHatchMultiblock) controller).getBlacklist());
 
             //If the controller is null, this part is not attached to any Multiblock
             return true;

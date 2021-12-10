@@ -4,10 +4,10 @@ import gregtech.api.GTValues;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
+import gregtech.api.metatileentity.IMachineHatchMultiblock;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
@@ -17,6 +17,7 @@ import gregtech.api.recipes.*;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
+import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
@@ -27,9 +28,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 
-public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController {
+public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController implements IMachineHatchMultiblock {
 
     public MetaTileEntityProcessingArray(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.PROCESSING_ARRAY_RECIPES);
@@ -80,29 +80,13 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         return true;
     }
 
-    /**
-     *
-     * @param machineStack the ItemStack containing the machine to check the validity of
-     * @return whether the machine is valid or not
-     */
-    public static boolean isMachineValid(ItemStack machineStack) {
-        MetaTileEntity machine = MachineItemBlock.getMetaTileEntity(machineStack);
-        if (machine instanceof WorkableTieredMetaTileEntity)
-            return !findMachineInBlacklist(machine.getRecipeMap().getUnlocalizedName());
-
-        return false;
+    @Override
+    public String[] getBlacklist() {
+        return ConfigHolder.machines.processingArrayBlacklist;
     }
 
-    /**
-     * Attempts to find a passed in RecipeMap unlocalized name in a list of names
-     * @param unlocalizedName The unlocalized name of a RecipeMap
-     * @return {@code true} If the RecipeMap is in the config blacklist
-     */
-    private static boolean findMachineInBlacklist(String unlocalizedName) {
-        return Arrays.asList(ConfigHolder.machines.processingArrayBlacklist).contains(unlocalizedName);
-    }
-
-    protected static class ProcessingArrayWorkable extends MultiblockRecipeLogic {
+    @SuppressWarnings("InnerClassMayBeStatic")
+    protected class ProcessingArrayWorkable extends MultiblockRecipeLogic {
 
         ItemStack currentMachineStack = null;
         ItemStack oldMachineStack = null;
@@ -136,10 +120,10 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
          */
         @Override
         public boolean isRecipeMapValid(RecipeMap<?> recipeMap) {
-            if (findMachineInBlacklist(recipeMap.getUnlocalizedName()))
+            if (GTUtility.findMachineInBlacklist(recipeMap.getUnlocalizedName(), ((IMachineHatchMultiblock) metaTileEntity).getBlacklist()))
                 return false;
 
-            return isMachineValid(currentMachineStack);
+            return GTUtility.isMachineValidForMachineHatch(currentMachineStack, ((IMachineHatchMultiblock) metaTileEntity).getBlacklist());
         }
 
         @Override
