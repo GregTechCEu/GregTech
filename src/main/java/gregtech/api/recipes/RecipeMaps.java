@@ -820,8 +820,8 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.CIRCULAR)
             .setSound(GTSounds.BATH);
 
-    @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> PROCESSING_ARRAY_RECIPES = new RecipeMap<>("processing_array", 0, 9, 0, 6, 0, 3, 0, 2, new SimpleRecipeBuilder(), false)
+    // do not expose to CT: this is a fake recipemap meant for registering the Processing Array
+    public static final RecipeMap<SimpleRecipeBuilder> PROCESSING_ARRAY_RECIPES = new RecipeMap<>("processing_array", 0, 1, 0, 1, 0, 1, 0, 1, new SimpleRecipeBuilder(), true)
             .setSound(GTSounds.ARC);
 
     //////////////////////////////////////

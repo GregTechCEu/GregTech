@@ -7,16 +7,13 @@ import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.*;
-import gregtech.api.recipes.builders.CircuitAssemblerRecipeBuilder;
-import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
-import gregtech.api.recipes.builders.SimpleRecipeBuilder;
-import gregtech.api.recipes.builders.UniversalDistillationRecipeBuilder;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
@@ -34,16 +31,6 @@ import java.util.Arrays;
 
 public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController {
 
-    private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-            MultiblockAbility.IMPORT_ITEMS,
-            MultiblockAbility.EXPORT_ITEMS,
-            MultiblockAbility.IMPORT_FLUIDS,
-            MultiblockAbility.EXPORT_FLUIDS,
-            MultiblockAbility.INPUT_ENERGY,
-            MultiblockAbility.MACHINE_HATCH,
-            MultiblockAbility.MAINTENANCE_HATCH
-    };
-
     public MetaTileEntityProcessingArray(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.PROCESSING_ARRAY_RECIPES);
         this.recipeMapWorkable = new ProcessingArrayWorkable(this);
@@ -56,20 +43,16 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
     @Override
     protected BlockPattern createStructurePattern() {
-
         return FactoryBlockPattern.start()
                 .aisle("XXX", "XXX", "XXX")
                 .aisle("XXX", "X#X", "XXX")
                 .aisle("XXX", "XSX", "XXX")
-                .setAmountAtLeast('L', 11)
-                .setAmountLimit('M', 1, 1)
-                .where('M', abilityPartPredicate(MultiblockAbility.MACHINE_HATCH))
-                .where('L', statePredicate(getCasingState()))
+                .where('L', states(getCasingState()))
                 .where('S', selfPredicate())
-                .where('X',
-                        statePredicate(getCasingState())
-                                .or(abilityPartPredicate(ALLOWED_ABILITIES)))
-                .where('#', isAirPredicate()).build();
+                .where('X', states(getCasingState()).setMinGlobalLimited(11).or(autoAbilities())
+                        .or(abilities(MultiblockAbility.MACHINE_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1)))
+                .where('#', air())
+                .build();
     }
 
     public IBlockState getCasingState() {
@@ -97,7 +80,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         return true;
     }
 
-    protected class ProcessingArrayWorkable extends MultiblockRecipeLogic {
+    protected static class ProcessingArrayWorkable extends MultiblockRecipeLogic {
 
         ItemStack currentMachineStack = null;
         ItemStack oldMachineStack = null;
@@ -131,20 +114,10 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
          */
         @Override
         public boolean isRecipeMapValid(RecipeMap<?> recipeMap) {
-            if (findMachineInBlacklist(recipeMap.getUnlocalizedName())) {
+            if (findMachineInBlacklist(recipeMap.getUnlocalizedName()))
                 return false;
-            }
 
-            RecipeBuilder<?> recipeBuilder = recipeMap.recipeBuilder();
-
-
-            return (recipeBuilder instanceof SimpleRecipeBuilder ||
-                    recipeBuilder instanceof IntCircuitRecipeBuilder ||
-                    recipeBuilder instanceof UniversalDistillationRecipeBuilder ||
-                    recipeBuilder instanceof CircuitAssemblerRecipeBuilder) &&
-                    //These are multiblocks that are also SimpleRecipeBuilder. Need a better way to exclude these
-                    !(recipeMap == RecipeMaps.VACUUM_RECIPES || recipeMap == RecipeMaps.LARGE_CHEMICAL_RECIPES ||
-                            recipeMap == RecipeMaps.ASSEMBLY_LINE_RECIPES || recipeMap == RecipeMaps.PROCESSING_ARRAY_RECIPES);
+            return  MachineItemBlock.getMetaTileEntity(currentMachineStack) instanceof WorkableTieredMetaTileEntity;
 
         }
 
@@ -153,9 +126,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
             findMachineStack();
 
-            if(currentMachineStack.isEmpty() || this.activeRecipeMap == null) {
+            if (currentMachineStack.isEmpty() || this.activeRecipeMap == null)
                 return null;
-            }
 
             //Find available recipes based on the tier of the machines the processing array is operating upon and the voltage provided to the Processing Array
             return super.findRecipe(maxVoltage, inputs, fluidInputs, mode);
@@ -172,10 +144,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
          * @return {@code true} If the RecipeMap is in the config blacklist
          */
         private boolean findMachineInBlacklist(String unlocalizedName) {
-
-            String[] blacklist = ConfigHolder.U.multiblockConfig.processingArrayBlacklist;
-
-            return Arrays.asList(blacklist).contains(unlocalizedName);
+            return Arrays.asList(ConfigHolder.machines.processingArrayBlacklist).contains(unlocalizedName);
         }
 
         public void findMachineStack() {
@@ -187,18 +156,14 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
             MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(machine);
 
-            if(mte == null) {
+            if (mte == null)
                 this.activeRecipeMap = null;
-            }
-            else {
+            else
                 this.activeRecipeMap = mte.getRecipeMap();
-            }
 
 
             //Find the voltage tier of the machine.
-            this.machineTier = mte instanceof ITieredMetaTileEntity
-                    ? ((ITieredMetaTileEntity) mte).getTier()
-                    : 0;
+            this.machineTier = mte instanceof ITieredMetaTileEntity ? ((ITieredMetaTileEntity) mte).getTier() : 0;
 
             this.machineVoltage = GTValues.V[this.machineTier];
 
@@ -223,9 +188,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
             findMachineStack();
 
-            if(this.currentMachineStack == null || this.currentMachineStack.isEmpty()) {
+            if (this.currentMachineStack == null || this.currentMachineStack.isEmpty())
                 return;
-            }
 
             super.trySearchNewRecipeCombined();
         }

@@ -40,10 +40,6 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static WorldGenOptions worldgen = new WorldGenOptions();
 
-    @Config.Comment("Options for Multiblock Features")
-    @Config.Name("Multiblock Options")
-    public MultiblockConfig multiblockConfig = new MultiblockConfig();
-
 
     public static class MachineOptions {
 
@@ -114,6 +110,11 @@ public class ConfigHolder {
         @Config.Comment({"Additional Fluids to allow in GT Boilers in place of Water or Distilled Water.",
                 "Useful for mods like TerraFirmaCraft with different Fluids for Water", "Default: none"})
         public String[] boilerFluids = new String[0];
+
+        @Config.Comment({"Blacklist of machines for the Processing Array.",
+                "Add the unlocalized Recipe Map name to blacklist the machine."})
+        @Config.Name("Processing Array Machine Blacklist")
+        public String[] processingArrayBlacklist = new String[0];
     }
 
     public static class WorldGenOptions {
@@ -427,12 +428,4 @@ public class ConfigHolder {
             public int energyConsumption = 64;
         }
     }
-
-        public static class MultiblockConfig {
-
-            @Config.Comment({"Blacklist of machines for the Processing Array.",
-                    "Add the unlocalized Recipe Map name to blacklist the machine."})
-            @Config.Name("Processing Array Machine Blacklist")
-            public String[] processingArrayBlacklist = new String[0];
-        }
 }
