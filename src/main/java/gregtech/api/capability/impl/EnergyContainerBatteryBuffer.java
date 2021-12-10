@@ -59,8 +59,9 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
 
             //Remove energy used and then transfer overflow energy into the internal buffer
             setEnergyStored(getInternalStorage() - internalAmps * voltage + energy);
+            return usedAmps;
         }
-        return usedAmps;
+        return 0;
     }
 
     @Override
