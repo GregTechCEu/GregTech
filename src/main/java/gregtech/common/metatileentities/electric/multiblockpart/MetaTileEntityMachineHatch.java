@@ -68,6 +68,11 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
 
     }
 
+    @Override
+    public boolean canPartShare() {
+        return false;
+    }
+
     private class LimitedImportHandler extends ItemStackHandler {
 
         public LimitedImportHandler() {
