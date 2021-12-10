@@ -3,6 +3,7 @@ package gregtech.loaders.recipe;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.stack.UnificationEntry;
 
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
@@ -64,7 +65,7 @@ public class BatteryRecipes {
                 .buildAndRegister();
 
         // EV
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(480)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[HV])
                 .input(cableGtSingle, Aluminium, 2)
                 .input(plate, BlueSteel, 2)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(144))
@@ -72,7 +73,7 @@ public class BatteryRecipes {
                 .buildAndRegister();
 
         // IV
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(1920)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
                 .input(cableGtSingle, Platinum, 2)
                 .input(plate, RoseGold, 6)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(288))
@@ -80,7 +81,7 @@ public class BatteryRecipes {
                 .buildAndRegister();
 
         // LuV
-        ASSEMBLER_RECIPES.recipeBuilder().duration(300).EUt(7680)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(300).EUt(VA[IV])
                 .input(cableGtSingle, NiobiumTitanium, 2)
                 .input(plate, RedSteel, 18)
                 .fluidInputs(Polybenzimidazole.getFluid(144))
@@ -88,7 +89,7 @@ public class BatteryRecipes {
                 .buildAndRegister();
 
         // ZPM
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30720)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LuV])
                 .input(cableGtSingle, Naquadah, 2)
                 .input(plate, Europium, 6)
                 .fluidInputs(Polybenzimidazole.getFluid(288))
@@ -96,7 +97,7 @@ public class BatteryRecipes {
                 .buildAndRegister();
 
         // UV
-        ASSEMBLER_RECIPES.recipeBuilder().duration(300).EUt(122880)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(300).EUt(VA[ZPM])
                 .input(cableGtSingle, NaquadahAlloy, 2)
                 .input(plate, Americium, 18)
                 .fluidInputs(Polybenzimidazole.getFluid(576))
@@ -163,7 +164,7 @@ public class BatteryRecipes {
                 .buildAndRegister();
 
         // EV
-        CANNER_RECIPES.recipeBuilder().duration(100).EUt(480)
+        CANNER_RECIPES.recipeBuilder().duration(100).EUt(VA[HV])
                 .input(BATTERY_HULL_SMALL_VANADIUM)
                 .input(dust, Vanadium, 2)
                 .output(BATTERY_EV_VANADIUM)
@@ -177,7 +178,7 @@ public class BatteryRecipes {
                 .buildAndRegister();
 
         // LuV
-        CANNER_RECIPES.recipeBuilder().duration(200).EUt(1920)
+        CANNER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
                 .input(BATTERY_HULL_LARGE_VANADIUM)
                 .input(dust, Vanadium, 16)
                 .output(BATTERY_LUV_VANADIUM)
@@ -191,7 +192,7 @@ public class BatteryRecipes {
                 .buildAndRegister();
 
         // UV
-        CANNER_RECIPES.recipeBuilder().duration(300).EUt(7680)
+        CANNER_RECIPES.recipeBuilder().duration(300).EUt(VA[IV])
                 .input(BATTERY_HULL_LARGE_NAQUADRIA)
                 .input(dust, Naquadria, 16)
                 .output(BATTERY_UV_NAQUADRIA)

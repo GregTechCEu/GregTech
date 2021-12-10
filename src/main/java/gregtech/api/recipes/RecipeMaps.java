@@ -14,6 +14,8 @@ import net.minecraft.init.SoundEvents;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenProperty;
 
+import static gregtech.api.GTValues.*;
+
 @ZenClass("mods.gregtech.recipe.RecipeMaps")
 @ZenRegister
 public class RecipeMaps {
@@ -33,7 +35,7 @@ public class RecipeMaps {
 
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> MACERATOR_RECIPES = new RecipeMap<>("macerator", 1, 1, 1, 3, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(150).EUt(8), false)
+    public static final RecipeMap<SimpleRecipeBuilder> MACERATOR_RECIPES = new RecipeMap<>("macerator", 1, 1, 1, 3, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(150).EUt(VA[ULV]), false)
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_MACERATE, MoveType.HORIZONTAL)
@@ -221,7 +223,7 @@ public class RecipeMaps {
      * 				.fluidInputs(Materials.Water.getFluid(100))
      * 				.outputs(new ItemStack(Items.paper, 1, 0))
      * 				.duration(100)
-     * 				.EUt(8)
+     * 				.EUt(VA[ULV])
      * 				.buildAndRegister();
      * </pre>
      */
@@ -256,7 +258,7 @@ public class RecipeMaps {
      * 				.fluidInputs(Materials.Water.getFluid(6))
      * 				.fluidOutputs(Materials.Water.getGas(960))
      * 				.duration(30)
-     * 				.EUt(32)
+     * 				.EUt(30)
      * 				.buildAndRegister();
      * </pre>
      */
@@ -313,7 +315,7 @@ public class RecipeMaps {
      * 				.fluidInputs(Materials.Steel.getFluid(72))
      * 				.outputs(ItemList.IC2_Item_Casing_Steel.get(1))
      * 				.duration(16)
-     * 				.EUt(8)
+     * 				.EUt(VA[ULV])
      * 				.buildAndRegister();
      * </pre>
      */
@@ -429,7 +431,7 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<ImplosionRecipeBuilder> IMPLOSION_RECIPES = new RecipeMap<>("implosion_compressor", 2, 3, 1, 2, 0, 0, 0, 0, new ImplosionRecipeBuilder().duration(20).EUt(30), false)
+    public static final RecipeMap<ImplosionRecipeBuilder> IMPLOSION_RECIPES = new RecipeMap<>("implosion_compressor", 2, 3, 1, 2, 0, 0, 0, 0, new ImplosionRecipeBuilder().duration(20).EUt(VA[LV]), false)
             .setSlotOverlay(false, false, true, GuiTextures.IMPLOSION_OVERLAY_1)
             .setSlotOverlay(false, false, false, GuiTextures.IMPLOSION_OVERLAY_2)
             .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
@@ -447,7 +449,7 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> VACUUM_RECIPES = new RecipeMap<>("vacuum_freezer", 0, 1, 0, 1, 0, 1, 0, 1, new SimpleRecipeBuilder().EUt(120), false)
+    public static final RecipeMap<SimpleRecipeBuilder> VACUUM_RECIPES = new RecipeMap<>("vacuum_freezer", 0, 1, 0, 1, 0, 1, 0, 1, new SimpleRecipeBuilder().EUt(VA[MV]), false)
             .setSound(GTSounds.COOLING);
 
     /**
@@ -465,7 +467,7 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_RECIPES = new RecipeMap<>("chemical_reactor", 0, 2, 0, 2, 0, 3, 0, 2, new SimpleRecipeBuilder().EUt(30), false)
+    public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_RECIPES = new RecipeMap<>("chemical_reactor", 0, 2, 0, 2, 0, 3, 0, 2, new SimpleRecipeBuilder().EUt(VA[LV]), false)
             .setSlotOverlay(false, false, false, GuiTextures.MOLECULAR_OVERLAY_1)
             .setSlotOverlay(false, false, true, GuiTextures.MOLECULAR_OVERLAY_2)
             .setSlotOverlay(false, true, false, GuiTextures.MOLECULAR_OVERLAY_3)
@@ -500,7 +502,7 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> LARGE_CHEMICAL_RECIPES = new RecipeMap<>("large_chemical_reactor", 0, 3, 0, 3, 0, 5, 0, 4, new SimpleRecipeBuilder().EUt(30), false)
+    public static final RecipeMap<SimpleRecipeBuilder> LARGE_CHEMICAL_RECIPES = new RecipeMap<>("large_chemical_reactor", 0, 3, 0, 3, 0, 5, 0, 4, new SimpleRecipeBuilder().EUt(VA[LV]), false)
             .setSlotOverlay(false, false, false, GuiTextures.MOLECULAR_OVERLAY_1)
             .setSlotOverlay(false, false, true, GuiTextures.MOLECULAR_OVERLAY_2)
             .setSlotOverlay(false, true, false, GuiTextures.MOLECULAR_OVERLAY_3)
@@ -592,7 +594,7 @@ public class RecipeMaps {
      * 				.inputs(OreDictUnifier.get(OrePrefix.plate, Materials.Tin, 12L))
      * 				.outputs(ItemList.Cell_Empty.get(6))
      * 				.duration(1200)
-     * 				.EUt(8)
+     * 				.EUt(7)
      * 				.buildAndRegister();
      * </pre>
      */
@@ -661,7 +663,7 @@ public class RecipeMaps {
      * 				.fluidInputs(Materials.Lubricant.getFluid(1))
      * 				.outputs(new ItemStack(Blocks.PLANKS), OreDictUnifier.get(OrePrefix.dust, Materials.Wood, 1L))
      * 				.duration(200)
-     * 				.EUt(8)
+     * 				.EUt(7)
      * 				.buildAndRegister();
      * </pre>
      */
@@ -699,7 +701,7 @@ public class RecipeMaps {
      * 				.notConsumable(ItemList.Shape_Extruder_Rod)
      * 				.outputs(OreDictUnifier.get(OrePrefix.stick, Materials.Iron.smeltInto, 2))
      * 				.duration(64)
-     * 				.EUt(8)
+     * 				.EUt(7)
      * 				.buildAndRegister();
      * </pre>
      */

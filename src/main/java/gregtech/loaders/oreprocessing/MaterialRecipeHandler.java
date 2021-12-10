@@ -21,8 +21,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.util.*;
 
-import static gregtech.api.GTValues.L;
-import static gregtech.api.GTValues.M;
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ALLOY_SMELTER_RECIPES;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
@@ -234,7 +233,7 @@ public class MaterialRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT)
                     .fluidInputs(material.getFluid(L))
                     .outputs(OreDictUnifier.get(ingotPrefix, material))
-                    .duration(20).EUt(8)
+                    .duration(20).EUt(VA[ULV])
                     .buildAndRegister();
         }
 
@@ -248,14 +247,14 @@ public class MaterialRecipeHandler {
                     .buildAndRegister();
         }
 
-        ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(8).duration((int) material.getAverageMass())
+        ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getAverageMass())
                 .input(ingot, material)
                 .notConsumable(MetaItems.SHAPE_MOLD_NUGGET.getStackForm())
                 .output(nugget, material, 9)
                 .buildAndRegister();
 
         if (!OreDictUnifier.get(block, material).isEmpty()) {
-            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(8).duration((int) material.getAverageMass() * 9)
+            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getAverageMass() * 9)
                     .input(block, material)
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT.getStackForm())
                     .output(ingot, material, 9)
@@ -351,7 +350,7 @@ public class MaterialRecipeHandler {
                     .outputs(ingotStack)
                     .buildAndRegister();
 
-            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(8).duration((int) material.getAverageMass())
+            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getAverageMass())
                     .input(nugget, material, 9)
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT.getStackForm())
                     .output(ingot, material)
@@ -363,7 +362,7 @@ public class MaterialRecipeHandler {
                         .fluidInputs(material.getFluid(L))
                         .outputs(OreDictUnifier.get(orePrefix, material, 9))
                         .duration((int) material.getAverageMass())
-                        .EUt(8)
+                        .EUt(VA[ULV])
                         .buildAndRegister();
             }
         } else if (material.hasProperty(PropertyKey.GEM)) {
@@ -388,7 +387,7 @@ public class MaterialRecipeHandler {
                     .input(OrePrefix.stick, material, 4)
                     .circuitMeta(4)
                     .outputs(OreDictUnifier.get(framePrefix, material, 1))
-                    .EUt(8).duration(64)
+                    .EUt(VA[ULV]).duration(64)
                     .buildAndRegister();
         }
     }
@@ -401,7 +400,7 @@ public class MaterialRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_BLOCK)
                     .fluidInputs(material.getFluid((int) (materialAmount * L / M)))
                     .outputs(blockStack)
-                    .duration((int) material.getAverageMass()).EUt(8)
+                    .duration((int) material.getAverageMass()).EUt(VA[ULV])
                     .buildAndRegister();
         }
 
@@ -411,7 +410,7 @@ public class MaterialRecipeHandler {
                 RecipeMaps.CUTTER_RECIPES.recipeBuilder()
                         .input(blockPrefix, material)
                         .outputs(GTUtility.copyAmount((int) (materialAmount / M), plateStack))
-                        .duration((int) (material.getAverageMass() * 8L)).EUt(30)
+                        .duration((int) (material.getAverageMass() * 8L)).EUt(VA[LV])
                         .buildAndRegister();
             }
         }

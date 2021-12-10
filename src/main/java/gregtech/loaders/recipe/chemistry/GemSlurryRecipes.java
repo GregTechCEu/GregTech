@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe.chemistry;
 
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.CENTRIFUGE_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.MIXER_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
@@ -11,13 +12,13 @@ public class GemSlurryRecipes {
     public static void init() {
 
         // Ruby
-        MIXER_RECIPES.recipeBuilder().duration(280).EUt(1920)
+        MIXER_RECIPES.recipeBuilder().duration(280).EUt(VA[EV])
                 .input(dust, Ruby, 6)
                 .fluidInputs(AquaRegia.getFluid(2000))
                 .fluidOutputs(RubySlurry.getFluid(2000))
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(320).EUt(480)
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(320).EUt(VA[HV])
                 .fluidInputs(RubySlurry.getFluid(2000))
                 .output(dust, Aluminium, 2)
                 .output(dust, Chrome)
@@ -30,13 +31,13 @@ public class GemSlurryRecipes {
                 .buildAndRegister();
 
         // Sapphire
-        MIXER_RECIPES.recipeBuilder().duration(280).EUt(1920)
+        MIXER_RECIPES.recipeBuilder().duration(280).EUt(VA[EV])
                 .input(dust, Sapphire, 5)
                 .fluidInputs(AquaRegia.getFluid(2000))
                 .fluidOutputs(SapphireSlurry.getFluid(2000))
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(320).EUt(480)
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(320).EUt(VA[HV])
                 .fluidInputs(SapphireSlurry.getFluid(2000))
                 .output(dust, Aluminium, 2)
                 .chancedOutput(dustTiny, Titanium, 2000, 0)
@@ -48,13 +49,13 @@ public class GemSlurryRecipes {
                 .buildAndRegister();
 
         // Green Sapphire
-        MIXER_RECIPES.recipeBuilder().duration(280).EUt(1920)
+        MIXER_RECIPES.recipeBuilder().duration(280).EUt(VA[EV])
                 .input(dust, GreenSapphire, 5)
                 .fluidInputs(AquaRegia.getFluid(2000))
                 .fluidOutputs(GreenSapphireSlurry.getFluid(2000))
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(320).EUt(480)
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(320).EUt(VA[HV])
                 .fluidInputs(GreenSapphireSlurry.getFluid(2000))
                 .output(dust, Aluminium, 2)
                 .chancedOutput(dustTiny, Beryllium, 2000, 0)

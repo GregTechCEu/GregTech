@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 
 public class DecompositionRecipeHandler {
@@ -100,7 +101,7 @@ public class DecompositionRecipeHandler {
         } else {
             builder = RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
                     .duration((int) Math.ceil(material.getAverageMass() * totalInputAmount * 1.5))
-                    .EUt(30);
+                    .EUt(VA[LV]);
         }
         builder.outputs(outputs);
         builder.fluidOutputs(fluidOutputs);
