@@ -24,7 +24,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
 
     @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
-        if (amperage <= 0 || voltage <= 0 || amps >= amperage)
+        if (amperage <= 0 || voltage <= 0)
             return 0;
 
         TIntList slotsList = getNonFullBatteries();
