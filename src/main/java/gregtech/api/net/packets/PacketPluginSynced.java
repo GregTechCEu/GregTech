@@ -3,9 +3,8 @@ package gregtech.api.net.packets;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.net.IPacket;
+import gregtech.api.net.NetworkUtils;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import lombok.NoArgsConstructor;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
@@ -30,8 +29,7 @@ public class PacketPluginSynced implements IPacket {
 
     @Override
     public void encode(PacketBuffer buf) {
-        buf.writeVarInt(updateData.readableBytes());
-        buf.writeBytes(updateData);
+        NetworkUtils.writePacketBuffer(buf, updateData);
         buf.writeVarInt(dimension);
         buf.writeBlockPos(pos);
         buf.writeVarInt(id);
@@ -39,13 +37,10 @@ public class PacketPluginSynced implements IPacket {
 
     @Override
     public void decode(PacketBuffer buf) {
-        ByteBuf directSliceBuffer = buf.readBytes(buf.readVarInt());
-        ByteBuf copiedDataBuffer = Unpooled.copiedBuffer(directSliceBuffer);
-        directSliceBuffer.release();
+        this.updateData = NetworkUtils.readPacketBuffer(buf);
         this.dimension = buf.readVarInt();
         this.pos = buf.readBlockPos();
         this.id = buf.readVarInt();
-        this.updateData = new PacketBuffer(copiedDataBuffer);
     }
 
     // TODO This could be cleaned up still

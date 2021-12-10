@@ -2,8 +2,7 @@ package gregtech.api.net.packets;
 
 import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.net.IPacket;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+import gregtech.api.net.NetworkUtils;
 import lombok.NoArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -27,21 +26,16 @@ public class PacketUIWidgetUpdate implements IPacket {
 
     @Override
     public void encode(PacketBuffer buf) {
-        buf.writeVarInt(updateData.readableBytes());
-        buf.writeBytes(updateData);
+        NetworkUtils.writePacketBuffer(buf, updateData);
         buf.writeVarInt(windowId);
         buf.writeVarInt(widgetId);
     }
 
     @Override
     public void decode(PacketBuffer buf) {
-        ByteBuf directSliceBuffer = buf.readBytes(buf.readVarInt());
-        ByteBuf copiedDataBuffer = Unpooled.copiedBuffer(directSliceBuffer);
-        directSliceBuffer.release();
-
+        this.updateData = NetworkUtils.readPacketBuffer(buf);
         this.windowId = buf.readVarInt();
         this.widgetId = buf.readVarInt();
-        this.updateData = new PacketBuffer(copiedDataBuffer);
     }
 
     @SideOnly(Side.CLIENT)

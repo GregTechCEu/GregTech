@@ -3,9 +3,8 @@ package gregtech.api.net.packets;
 import gregtech.api.GregTechAPI;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.net.IPacket;
+import gregtech.api.net.NetworkUtils;
 import gregtech.api.util.GTLog;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import lombok.NoArgsConstructor;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.PacketBuffer;
@@ -32,8 +31,7 @@ public class PacketUIOpen implements IPacket {
 
     @Override
     public void encode(PacketBuffer buf) {
-        buf.writeVarInt(serializedHolder.readableBytes());
-        buf.writeBytes(serializedHolder);
+        NetworkUtils.writePacketBuffer(buf, serializedHolder);
         buf.writeVarInt(uiFactoryId);
         buf.writeVarInt(windowId);
         buf.writeVarInt(initialWidgetUpdates.size());
@@ -44,12 +42,8 @@ public class PacketUIOpen implements IPacket {
 
     @Override
     public void decode(PacketBuffer buf) {
-        ByteBuf directSliceBuffer = buf.readBytes(buf.readVarInt());
-        ByteBuf copiedDataBuffer = Unpooled.copiedBuffer(directSliceBuffer);
-        directSliceBuffer.release();
-
+        this.serializedHolder = NetworkUtils.readPacketBuffer(buf);
         this.uiFactoryId = buf.readVarInt();
-        this.serializedHolder = new PacketBuffer(copiedDataBuffer);
         this.windowId = buf.readVarInt();
         this.initialWidgetUpdates = new ArrayList<>();
 
