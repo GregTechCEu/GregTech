@@ -5,9 +5,9 @@ import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
-import gregtech.api.sound.GTSounds;
 import gregtech.api.recipes.builders.*;
 import gregtech.api.recipes.machines.*;
+import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import net.minecraft.init.SoundEvents;
@@ -819,8 +819,8 @@ public class RecipeMaps {
     public static final RecipeMap<PrimitiveRecipeBuilder> COKE_OVEN_RECIPES = new RecipeMapCokeOven<>("coke_oven", 1, 1, 0, 1, 0, 0, 0, 1, new PrimitiveRecipeBuilder(), false)
             .setSound(GTSounds.FIRE);
 
-    @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> PROCESSING_ARRAY_RECIPES = new RecipeMap<>("processing_array", 0, 9, 0, 6, 0, 3, 0, 2, new SimpleRecipeBuilder(), false)
+    // do not expose to CT: this is a fake recipemap meant for registering the Processing Array
+    public static final RecipeMap<SimpleRecipeBuilder> PROCESSING_ARRAY_RECIPES = new RecipeMap<>("processing_array", 0, 1, 0, 1, 0, 1, 0, 1, new SimpleRecipeBuilder(), true)
             .setSound(GTSounds.ARC);
 
     //////////////////////////////////////

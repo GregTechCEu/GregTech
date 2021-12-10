@@ -41,10 +41,6 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static WorldGenOptions worldgen = new WorldGenOptions();
 
-    @Config.Comment("Options for Multiblock Features")
-    @Config.Name("Multiblock Options")
-    public MultiblockConfig multiblockConfig = new MultiblockConfig();
-
 
     public static class MachineOptions {
 
@@ -109,6 +105,11 @@ public class ConfigHolder {
 
         @Config.Comment("If true, sounds will be played while machines are active. Default: true")
         public boolean machineSounds = true;
+
+        @Config.Comment({"Blacklist of machines for the Processing Array.",
+                "Add the unlocalized Recipe Map name to blacklist the machine."})
+        @Config.Name("Processing Array Machine Blacklist")
+        public String[] processingArrayBlacklist = new String[0];
     }
 
     public static class WorldGenOptions {
@@ -392,12 +393,4 @@ public class ConfigHolder {
             public int energyConsumption = 64;
         }
     }
-
-        public static class MultiblockConfig {
-
-            @Config.Comment({"Blacklist of machines for the Processing Array.",
-                    "Add the unlocalized Recipe Map name to blacklist the machine."})
-            @Config.Name("Processing Array Machine Blacklist")
-            public String[] processingArrayBlacklist = new String[0];
-        }
 }
