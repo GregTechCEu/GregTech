@@ -112,8 +112,8 @@ public class ConfigHolder {
         public String[] boilerFluids = new String[0];
 
         @Config.Comment({"Blacklist of machines for the Processing Array.",
-                "Add the unlocalized Recipe Map name to blacklist the machine."})
-        @Config.Name("Processing Array Machine Blacklist")
+                "Add the unlocalized Recipe Map name to blacklist the machine.",
+                "Default: All machines allowed"})
         public String[] processingArrayBlacklist = new String[0];
     }
 
