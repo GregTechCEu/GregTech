@@ -11,9 +11,7 @@ import static gregtech.api.unification.material.info.MaterialIconSet.*;
 public class HigherDegreeMaterials {
 
     public static void register() {
-        /**
-         * Third Degree
-         */
+
         Redstone = new Material.Builder(2507, "redstone")
                 .dust().ore(5, 1).fluid()
                 .color(0xC80000).iconSet(ROUGH)
@@ -24,7 +22,7 @@ public class HigherDegreeMaterials {
         EnderEye = new Material.Builder(2508, "ender_eye")
                 .gem(1)
                 .color(0x66FF66)
-                .flags(GENERATE_LENS, NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
                 .build();
 
         Diatomite = new Material.Builder(2509, "diatomite")
@@ -75,6 +73,7 @@ public class HigherDegreeMaterials {
         GarnetSand = new Material.Builder(2515, "garnet_sand")
                 .dust(1).ore()
                 .color(0xC86400).iconSet(SAND)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(GarnetRed, 1, GarnetYellow, 1)
                 .build();
 
@@ -88,9 +87,6 @@ public class HigherDegreeMaterials {
                 .blastTemp(4200, GasTier.MID, 1920, 1300)
                 .build();
 
-        /**
-         * Fourth Degree
-         */
         RedAlloy = new Material.Builder(2517, "red_alloy")
                 .ingot(0).fluid()
                 .color(0xC80000)
@@ -133,6 +129,41 @@ public class HigherDegreeMaterials {
                 .cableProperties(GTValues.V[8], 3, 2)
                 .itemPipeProperties(128, 16)
                 .blastTemp(9000, GasTier.HIGHER, 122880, 1000)
+                .build();
+
+        IridiumMetalResidue = new Material.Builder(2522, "iridium_metal_residue")
+                .dust()
+                .color(0x5C5D68).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Iridium, 1, Chlorine, 3, PlatinumSludgeResidue, 1)
+                .build();
+
+        Granite = new Material.Builder(2523, "granite")
+                .dust()
+                .color(0xCFA18C).iconSet(ROUGH)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .components(SiliconDioxide, 4, Redrock, 1)
+                .build();
+
+        Brick = new Material.Builder(2524, "brick")
+                .dust(1)
+                .color(0x9B5643).iconSet(ROUGH)
+                .flags(EXCLUDE_BLOCK_CRAFTING_RECIPES, DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Clay, 1)
+                .build();
+
+        Fireclay = new Material.Builder(2525, "fireclay")
+                .dust()
+                .color(0xADA09B).iconSet(ROUGH)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Clay, 1, Brick, 1)
+                .build();
+
+        Diorite = new Material.Builder(2526, "diorite")
+                .dust()
+                .iconSet(ROUGH)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Mirabilite, 2, Clay, 7)
                 .build();
     }
 }

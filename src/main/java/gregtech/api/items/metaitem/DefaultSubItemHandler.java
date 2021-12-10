@@ -18,6 +18,11 @@ import java.util.List;
 
 public class DefaultSubItemHandler implements ISubItemHandler {
 
+    public static final DefaultSubItemHandler INSTANCE = new DefaultSubItemHandler();
+
+    private DefaultSubItemHandler() {
+    }
+
     @Override
     public String getItemSubType(ItemStack itemStack) {
         return getFluidContainerSubType(itemStack);
@@ -33,7 +38,7 @@ public class DefaultSubItemHandler implements ISubItemHandler {
         }
         if (creativeTab == CreativeTabs.SEARCH) {
             if (itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
-                if (!ConfigHolder.hideFilledCellsInJEI) {
+                if (!ConfigHolder.compat.hideFilledCellsInJEI) {
                     addFluidContainerVariants(itemStack, subItems);
                 }
             }

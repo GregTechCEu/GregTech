@@ -1,6 +1,5 @@
 package gregtech.core.hooks;
 
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import gregtech.api.render.DepthTextureHook;
@@ -26,19 +25,18 @@ import java.util.function.Consumer;
 
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 
-/**
- * Created with IntelliJ IDEA.
- *
- * @Author: KilaBash
- * @Date: 2021/10/04
- * @Description:
- */
+@SuppressWarnings("unused")
 @SideOnly(Side.CLIENT)
 public class BloomRenderLayerHooks {
+
     public static BlockRenderLayer BLOOM;
     private static Framebuffer BLOOM_FBO;
     private static List<Runnable> RENDER_DYNAMICS;
     private static Map<ICustomRenderFast, List<Consumer<BufferBuilder>>> RENDER_FAST;
+
+    public static BlockRenderLayer getRealBloomLayer(){
+        return Shaders.isOptiFineShaderPackLoaded() ? BlockRenderLayer.CUTOUT : BLOOM;
+    }
 
     public static void init() {
         BLOOM = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[]{String.class}, "Bloom");
@@ -53,15 +51,32 @@ public class BloomRenderLayerHooks {
     public static int renderBloomBlockLayer(RenderGlobal renderglobal, BlockRenderLayer blockRenderLayer, double partialTicks, int pass, Entity entity) {
         Minecraft mc = Minecraft.getMinecraft();
         mc.profiler.endStartSection("BTLayer");
-        if (!ConfigHolder.U.clientConfig.shader.bloom.emissiveTexturesBloom) {
-            GlStateManager.depthMask(true);
-            renderglobal.renderBlockLayer(BloomRenderLayerHooks.BLOOM, partialTicks, pass, entity);
-            GlStateManager.depthMask(false);
+        if (Shaders.isOptiFineShaderPackLoaded()) {
             int result =  renderglobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
             RENDER_DYNAMICS.clear();
             RENDER_FAST.clear();
-            mc.profiler.endStartSection("bloom");
             return result;
+        } else if (!ConfigHolder.client.shader.emissiveTexturesBloom) {
+            GlStateManager.depthMask(true);
+            renderglobal.renderBlockLayer(BloomRenderLayerHooks.BLOOM, partialTicks, pass, entity);
+            // render dynamics
+            if (!RENDER_DYNAMICS.isEmpty()) {
+                RENDER_DYNAMICS.forEach(Runnable::run);
+                RENDER_DYNAMICS.clear();
+            }
+
+            // render fast
+            if (!RENDER_FAST.isEmpty()) {
+                BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+                RENDER_FAST.forEach((handler, list)->{
+                    handler.preDraw(buffer);
+                    list.forEach(consumer->consumer.accept(buffer));
+                    handler.postDraw(buffer);
+                });
+                RENDER_FAST.clear();
+            }
+            GlStateManager.depthMask(false);
+            return renderglobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
         }
 
         Framebuffer fbo = mc.getFramebuffer();
@@ -130,15 +145,15 @@ public class BloomRenderLayerHooks {
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         // render bloom effect to fbo
-        switch (ConfigHolder.U.clientConfig.shader.bloom.bloomStyle) {
+        switch (ConfigHolder.client.shader.bloomStyle) {
             case 0:
-                BloomEffect.renderLOG(BLOOM_FBO, fbo, (float) ConfigHolder.U.clientConfig.shader.bloom.strength);
+                BloomEffect.renderLOG(BLOOM_FBO, fbo, (float) ConfigHolder.client.shader.strength);
                 break;
             case 1:
-                BloomEffect.renderUnity(BLOOM_FBO, fbo, (float) ConfigHolder.U.clientConfig.shader.bloom.strength);
+                BloomEffect.renderUnity(BLOOM_FBO, fbo, (float) ConfigHolder.client.shader.strength);
                 break;
             case 2:
-                BloomEffect.renderUnreal(BLOOM_FBO, fbo, (float) ConfigHolder.U.clientConfig.shader.bloom.strength);
+                BloomEffect.renderUnreal(BLOOM_FBO, fbo, (float) ConfigHolder.client.shader.strength);
                 break;
             default:
                 GlStateManager.depthMask(false);
@@ -173,5 +188,4 @@ public class BloomRenderLayerHooks {
             RENDER_FAST.get(handler).add(render);
         }
     }
-
 }

@@ -30,7 +30,7 @@ public class FuelRecipeChains {
         CHEMICAL_RECIPES.recipeBuilder().EUt(30).duration(100)
                 .fluidInputs(Nitrogen.getFluid(2000))
                 .fluidInputs(Oxygen.getFluid(1000))
-                .notConsumable(new IntCircuitIngredient(1))
+                .notConsumable(new IntCircuitIngredient(4))
                 .fluidOutputs(NitrousOxide.getFluid(1000))
                 .buildAndRegister();
 

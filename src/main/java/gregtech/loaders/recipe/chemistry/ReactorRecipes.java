@@ -73,10 +73,16 @@ public class ReactorRecipes {
                 .duration(120).EUt(30).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, Sodium, 2)
+                .input(dust, Sulfur)
+                .output(dust, SodiumSulfide, 3)
+                .duration(60).EUt(30).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, SodiumSulfide, 3)
                 .fluidInputs(Dichlorobenzene.getFluid(1000))
                 .fluidInputs(Air.getFluid(16000))
-                .output(dust, Salt, 2)
+                .output(dust, Salt, 4)
                 .fluidOutputs(PolyphenyleneSulfide.getFluid(1000))
                 .duration(240).EUt(360).buildAndRegister();
 
@@ -84,7 +90,7 @@ public class ReactorRecipes {
                 .input(dust, SodiumSulfide, 3)
                 .fluidInputs(Dichlorobenzene.getFluid(1000))
                 .fluidInputs(Oxygen.getFluid(8000))
-                .output(dust, Salt, 2)
+                .output(dust, Salt, 4)
                 .fluidOutputs(PolyphenyleneSulfide.getFluid(1500))
                 .duration(240).EUt(360).buildAndRegister();
 
@@ -208,7 +214,7 @@ public class ReactorRecipes {
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Carbon, 2)
-                .input(dust, Rutile, 3)
+                .input(dust, Rutile)
                 .fluidInputs(Chlorine.getFluid(4000))
                 .fluidOutputs(CarbonMonoxide.getFluid(2000))
                 .fluidOutputs(TitaniumTetrachloride.getFluid(1000))
@@ -249,6 +255,7 @@ public class ReactorRecipes {
         // NaCl + H2SO4 -> NaHSO4 + HCl
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Salt, 2)
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidInputs(SulfuricAcid.getFluid(1000))
                 .output(dust, SodiumBisulfate, 7)
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
@@ -940,20 +947,6 @@ public class ReactorRecipes {
                 .fluidInputs(Oxygen.getFluid(3000))
                 .output(dust, Calcite, 5)
                 .duration(500).EUt(30).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input(crushedPurified, Chalcopyrite)
-                .fluidInputs(NitricAcid.getFluid(1000))
-                .output(dustTiny, PlatinumGroupSludge)
-                .fluidOutputs(CopperSulfateSolution.getFluid(1000))
-                .duration(50).EUt(30).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input(crushedPurified, Pentlandite)
-                .fluidInputs(NitricAcid.getFluid(1000))
-                .output(dustTiny, PlatinumGroupSludge)
-                .fluidOutputs(NickelSulfateSolution.getFluid(1000))
-                .duration(50).EUt(30).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Quicklime, 2)

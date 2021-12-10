@@ -185,11 +185,11 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         if (fluidSourceBlocks.isEmpty()) {
             if (getOffsetTimer() % 20 == 0) {
                 BlockPos downPos = selfPos.down(1);
-                if (downPos != null && downPos.getY() >= 0) {
+                if (downPos.getY() >= 0) {
                     IBlockState downBlock = getWorld().getBlockState(downPos);
                     if (downBlock.getBlock() instanceof BlockLiquid ||
                             downBlock.getBlock() instanceof IFluidBlock ||
-                            !downBlock.isTopSolid()) {
+                            !downBlock.isSideSolid(getWorld(), downPos, EnumFacing.UP)) {
                         this.pumpHeadY++;
                     }
                 }

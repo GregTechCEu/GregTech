@@ -37,6 +37,5 @@ public class GTToolTypes {
 
     public static final List<ToolMetaItem<?>.MetaToolValueItem> crowbars = new ArrayList<ToolMetaItem<?>.MetaToolValueItem>() {{
         add(MetaItems.CROWBAR);
-        add(MetaItems.UNIVERSAL_SPADE);
     }};
 }

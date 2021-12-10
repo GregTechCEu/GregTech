@@ -166,7 +166,7 @@ public class VanillaStandardRecipes {
 
         for (int i = 0; i < 16; i++) {
             // nerf glass panes
-            if (ConfigHolder.vanillaRecipes.hardGlassRecipes) {
+            if (ConfigHolder.recipes.hardGlassRecipes) {
                 ModHandler.removeRecipes(new ItemStack(Blocks.STAINED_GLASS_PANE, 16, i));
             }
 
@@ -178,7 +178,7 @@ public class VanillaStandardRecipes {
                     .buildAndRegister();
         }
 
-        if (ConfigHolder.vanillaRecipes.hardGlassRecipes)
+        if (ConfigHolder.recipes.hardGlassRecipes)
             ModHandler.removeRecipes(new ItemStack(Blocks.GLASS_PANE, 16));
 
         ModHandler.addShapedRecipe("glass_pane", new ItemStack(Blocks.GLASS_PANE, 2), "sG", 'G', new ItemStack(Blocks.GLASS));
@@ -244,6 +244,13 @@ public class VanillaStandardRecipes {
         ModHandler.addShapelessRecipe("gravel_to_flint", new ItemStack(Items.FLINT, 1), 'm', Blocks.GRAVEL);
         ModHandler.addShapelessRecipe("bone_to_bone_meal", new ItemStack(Items.DYE, 4, 15), 'm', Items.BONE);
         ModHandler.addShapelessRecipe("blaze_rod_to_powder", new ItemStack(Items.BLAZE_POWDER, 3), 'm', Items.BLAZE_ROD);
+
+        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Items.WHEAT))
+                .output(OrePrefix.dust, Materials.Wheat)
+                .duration(400)
+                .EUt(2)
+                .buildAndRegister();
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.DYE, 1, EnumDyeColor.BROWN.getDyeDamage()))
@@ -426,6 +433,8 @@ public class VanillaStandardRecipes {
         ModHandler.addShapedRecipe("sticky_resin_torch", new ItemStack(Blocks.TORCH, 3), "X", "Y", 'X', MetaItems.RUBBER_DROP, 'Y', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_sulfur", new ItemStack(Blocks.TORCH, 2), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Sulfur), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_phosphorus", new ItemStack(Blocks.TORCH, 6), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Phosphorus), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
+        ModHandler.addShapedRecipe("torch_coke", new ItemStack(Blocks.TORCH, 8), "C", "S", 'C', new UnificationEntry(OrePrefix.gem, Materials.Coke), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
+        ModHandler.addShapedRecipe("torch_coke_dust", new ItemStack(Blocks.TORCH, 8), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Coke), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(dust, Redstone).input(stick, Wood).outputs(new ItemStack(Blocks.REDSTONE_TORCH, 1)).duration(400).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Sulfur).outputs(new ItemStack(Blocks.TORCH, 2)).duration(400).buildAndRegister();
@@ -668,7 +677,7 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Items.COMPARATOR))
                 .duration(800).EUt(1).buildAndRegister();
 
-        if (ConfigHolder.vanillaRecipes.hardRedstoneRecipes)
+        if (ConfigHolder.recipes.hardRedstoneRecipes)
             return;
 
         ModHandler.addShapedRecipe("piston_bronze", new ItemStack(Blocks.PISTON, 1), "WWW", "CBC", "CRC",
@@ -751,7 +760,7 @@ public class VanillaStandardRecipes {
                 .duration(800).EUt(4)
                 .buildAndRegister();
 
-        if (!ConfigHolder.vanillaRecipes.hardToolArmorRecipes) {
+        if (!ConfigHolder.recipes.hardToolArmorRecipes) {
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(dust, Redstone)
                     .input(plate, Iron, 4)
@@ -805,7 +814,7 @@ public class VanillaStandardRecipes {
                 'P', new UnificationEntry(OrePrefix.ring, Materials.Iron)
         );
 
-        if (!ConfigHolder.vanillaRecipes.hardIronRecipes)
+        if (!ConfigHolder.recipes.hardIronRecipes)
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .input(OrePrefix.plate, Materials.Iron, 4)
                     .circuitMeta(4)
@@ -863,7 +872,7 @@ public class VanillaStandardRecipes {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.LEATHER))
                 .inputs(new ItemStack(Items.LEAD))
-                .fluidInputs(Materials.Glue.getFluid(72))
+                .fluidInputs(Materials.Glue.getFluid(100))
                 .outputs(new ItemStack(Items.NAME_TAG))
                 .duration(100).EUt(7).buildAndRegister();
 
@@ -883,8 +892,8 @@ public class VanillaStandardRecipes {
         FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(128).EUt(16).notConsumable(SHAPE_MOLD_ANVIL).fluidInputs(Iron.getFluid(L * 31)).outputs(new ItemStack(Blocks.ANVIL)).buildAndRegister();
         FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(128).EUt(16).notConsumable(SHAPE_MOLD_ANVIL).fluidInputs(WroughtIron.getFluid(L * 31)).outputs(new ItemStack(Blocks.ANVIL)).buildAndRegister();
 
-        ALLOY_SMELTER_RECIPES.recipeBuilder().input(ingot, Iron, 31).notConsumable(SHAPE_MOLD_ANVIL).outputs(new ItemStack(Blocks.ANVIL)).duration(512).EUt(60).buildAndRegister();
-        ALLOY_SMELTER_RECIPES.recipeBuilder().input(ingot, WroughtIron, 31).notConsumable(SHAPE_MOLD_ANVIL).outputs(new ItemStack(Blocks.ANVIL)).duration(512).EUt(60).buildAndRegister();
+        ALLOY_SMELTER_RECIPES.recipeBuilder().input(ingot, Iron, 31).notConsumable(SHAPE_MOLD_ANVIL).outputs(new ItemStack(Blocks.ANVIL)).duration(512).EUt(16).buildAndRegister();
+        ALLOY_SMELTER_RECIPES.recipeBuilder().input(ingot, WroughtIron, 31).notConsumable(SHAPE_MOLD_ANVIL).outputs(new ItemStack(Blocks.ANVIL)).duration(512).EUt(16).buildAndRegister();
 
         ModHandler.addSmeltingRecipe(new ItemStack(Items.SLIME_BALL), RUBBER_DROP.getStackForm());
 
@@ -936,7 +945,7 @@ public class VanillaStandardRecipes {
 
         ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(4).duration(40).inputs(new ItemStack(Items.NETHERBRICK, 2)).inputs(new ItemStack(Items.NETHER_WART, 2)).outputs(new ItemStack(Blocks.RED_NETHER_BRICK)).buildAndRegister();
 
-        if (!ConfigHolder.vanillaRecipes.hardMiscRecipes) {
+        if (!ConfigHolder.recipes.hardMiscRecipes) {
             ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(6).circuitMeta(4).input("plankWood", 4).outputs(new ItemStack(Blocks.CRAFTING_TABLE)).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().circuitMeta(8).input(OrePrefix.stoneCobble, Materials.Stone, 8).outputs(new ItemStack(Blocks.FURNACE)).duration(100).EUt(7).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().inputs(new ItemStack(Blocks.OBSIDIAN, 4)).input(gem, Diamond, 2).inputs(new ItemStack(Items.BOOK)).outputs(new ItemStack(Blocks.ENCHANTING_TABLE)).duration(100).EUt(7).buildAndRegister();
@@ -975,7 +984,7 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Blocks.RAIL, 32))
                 .duration(200).EUt(30).buildAndRegister();
 
-        if (!ConfigHolder.vanillaRecipes.hardRedstoneRecipes) {
+        if (!ConfigHolder.recipes.hardRedstoneRecipes) {
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .input(OrePrefix.stick, Materials.Gold, 12)
                     .input(OrePrefix.stick, Materials.Wood)
@@ -1017,6 +1026,12 @@ public class VanillaStandardRecipes {
                     .outputs(new ItemStack(Blocks.STONE, 1, 6))
                     .duration(100).EUt(8).buildAndRegister();
         }
+
+        AUTOCLAVE_RECIPES.recipeBuilder()
+                .input(OrePrefix.dust, Materials.Clay)
+                .fluidInputs(Materials.Water.getFluid(250))
+                .outputs(new ItemStack(Items.CLAY_BALL))
+                .duration(600).EUt(24).buildAndRegister();
     }
 
     /**

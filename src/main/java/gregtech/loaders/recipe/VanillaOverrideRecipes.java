@@ -25,27 +25,29 @@ public class VanillaOverrideRecipes {
 
     public static void init() {
         woodRecipes();
-        if (ConfigHolder.vanillaRecipes.hardGlassRecipes)
+        if (ConfigHolder.recipes.hardGlassRecipes)
             glassRecipes();
-        if (ConfigHolder.vanillaRecipes.hardRedstoneRecipes)
+        if (ConfigHolder.recipes.hardRedstoneRecipes)
             redstoneRecipes();
-        if (ConfigHolder.vanillaRecipes.hardIronRecipes)
+        if (ConfigHolder.recipes.hardIronRecipes)
             metalRecipes();
-        if (ConfigHolder.vanillaRecipes.hardMiscRecipes)
+        if (ConfigHolder.recipes.hardMiscRecipes)
             miscRecipes();
-        if (ConfigHolder.vanillaRecipes.hardDyeRecipes)
+        if (ConfigHolder.recipes.hardDyeRecipes)
             dyeRecipes();
         toolArmorRecipes();
+
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:tnt"));
     }
 
     private static void woodRecipes() {
-        if (ConfigHolder.vanillaRecipes.nerfStickCrafting) {
+        if (ConfigHolder.recipes.nerfStickCrafting) {
             ModHandler.removeRecipeByName(new ResourceLocation("minecraft:stick"));
             ModHandler.addShapedRecipe("stick_saw", new ItemStack(Items.STICK, 4), "s", "P", "P", 'P', new UnificationEntry(OrePrefix.plank, Materials.Wood));
             ModHandler.addShapedRecipe("stick_normal", new ItemStack(Items.STICK, 2), "P", "P", 'P', new UnificationEntry(OrePrefix.plank, Materials.Wood));
         }
 
-        if (ConfigHolder.vanillaRecipes.nerfPaperCrafting) {
+        if (ConfigHolder.recipes.nerfPaperCrafting) {
             ModHandler.removeRecipeByName(new ResourceLocation("minecraft:paper"));
             ModHandler.removeRecipeByName(new ResourceLocation("minecraft:sugar"));
             ModHandler.addShapedRecipe("paper_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Paper, 2), "SSS", " m ", 'S', new ItemStack(Items.REEDS));
@@ -57,7 +59,7 @@ public class VanillaOverrideRecipes {
                     .setMirrored(false).setRegistryName("paper"));
         }
 
-        if (!ConfigHolder.vanillaRecipes.hardWoodRecipes)
+        if (!ConfigHolder.recipes.hardWoodRecipes)
             return;
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:ladder"));
@@ -172,9 +174,14 @@ public class VanillaOverrideRecipes {
         ModHandler.addShapedRecipe("quartz_sand", OreDictUnifier.get(OrePrefix.dust, Materials.QuartzSand), "S", "m",
                 'S', new ItemStack(Blocks.SAND));
 
-        ModHandler.addShapedRecipe("glass_dust_flint", OreDictUnifier.get(OrePrefix.dust, Materials.Glass), "QF",
-                'Q', new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
-                'F', new UnificationEntry(OrePrefix.dustTiny, Materials.Flint));
+        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.SAND))
+                .output(OrePrefix.dust, Materials.QuartzSand)
+                .duration(30).EUt(4).buildAndRegister();
+
+        ModHandler.addShapelessRecipe("glass_dust_flint", OreDictUnifier.get(OrePrefix.dust, Materials.Glass),
+                new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
+                new UnificationEntry(OrePrefix.dustTiny, Materials.Flint));
 
         ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.SAND, 1, GTValues.W));
         ModHandler.removeRecipes(new ItemStack(Items.GLASS_BOTTLE, 3));
@@ -723,7 +730,7 @@ public class VanillaOverrideRecipes {
      * + Replaces Vanilla Armor and Tool recipes
      */
     private static void toolArmorRecipes() {
-        if (ConfigHolder.vanillaRecipes.flintAndSteelRequireSteel) {
+        if (ConfigHolder.recipes.flintAndSteelRequireSteel) {
             ModHandler.removeRecipeByName(new ResourceLocation("minecraft:flint_and_steel"));
             ModHandler.addShapedRecipe("flint_and_steel", new ItemStack(Items.FLINT_AND_STEEL), "G", "F", "S",
                     'G', new UnificationEntry(OrePrefix.gearSmall, Materials.Steel),
@@ -732,7 +739,7 @@ public class VanillaOverrideRecipes {
             );
         }
 
-        if (!ConfigHolder.vanillaRecipes.hardToolArmorRecipes)
+        if (!ConfigHolder.recipes.hardToolArmorRecipes)
             return;
 
         createShovelRecipe("iron_shovel", new ItemStack(Items.IRON_SHOVEL), Materials.Iron);

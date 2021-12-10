@@ -16,5 +16,6 @@ public class TheOneProbeCompatibility {
         oneProbe.registerProvider(new TransformerInfoProvider());
         oneProbe.registerProvider(new DiodeInfoProvider());
         oneProbe.registerProvider(new MultiblockInfoProvider());
+        oneProbe.registerProvider(new MultiRecipeMapInfoProvider());
     }
 }

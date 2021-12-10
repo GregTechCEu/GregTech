@@ -20,7 +20,7 @@ import static gregtech.api.GTValues.W;
 public class MaterialInfoLoader {
 
     public static void init() {
-        if (ConfigHolder.U.GT5u.harderHeatingCoils) {
+        if (ConfigHolder.recipes.harderHeatingCoils) {
             OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.CUPRONICKEL),
                     new ItemMaterialInfo(new MaterialStack(Materials.Cupronickel, OrePrefix.wireGtDouble.materialAmount * 8),
                             new MaterialStack(Materials.Bronze, OrePrefix.foil.materialAmount * 8),
@@ -82,7 +82,7 @@ public class MaterialInfoLoader {
             }
         }
 
-        if (ConfigHolder.vanillaRecipes.hardWoodRecipes) {
+        if (ConfigHolder.recipes.hardWoodRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Items.ACACIA_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2), new MaterialStack(Materials.Iron, OrePrefix.screw.materialAmount)));
             OreDictUnifier.registerOre(new ItemStack(Items.BIRCH_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2), new MaterialStack(Materials.Iron, OrePrefix.screw.materialAmount)));
             OreDictUnifier.registerOre(new ItemStack(Items.JUNGLE_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2), new MaterialStack(Materials.Iron, OrePrefix.screw.materialAmount)));
@@ -98,7 +98,7 @@ public class MaterialInfoLoader {
             OreDictUnifier.registerOre(new ItemStack(Items.DARK_OAK_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2)));
         }
 
-        if (ConfigHolder.vanillaRecipes.hardIronRecipes)
+        if (ConfigHolder.recipes.hardIronRecipes)
             OreDictUnifier.registerOre(new ItemStack(Items.IRON_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 4 + OrePrefix.dustTiny.materialAmount), new MaterialStack(Materials.Steel, OrePrefix.dustTiny.materialAmount)));
         else
             OreDictUnifier.registerOre(new ItemStack(Items.IRON_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 2)));
@@ -147,7 +147,7 @@ public class MaterialInfoLoader {
         OreDictUnifier.registerOre(new ItemStack(Blocks.STONE_BUTTON, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M)));
         OreDictUnifier.registerOre(new ItemStack(Blocks.REDSTONE_TORCH, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M / 2), new MaterialStack(Materials.Redstone, M)));
 
-        if (ConfigHolder.vanillaRecipes.hardRedstoneRecipes) {
+        if (ConfigHolder.recipes.hardRedstoneRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Blocks.WOODEN_PRESSURE_PLATE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M), new MaterialStack(Materials.Iron, M / 2)));
             OreDictUnifier.registerOre(new ItemStack(Blocks.STONE_PRESSURE_PLATE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M), new MaterialStack(Materials.Iron, M * 6 / 8)));
             OreDictUnifier.registerOre(new ItemStack(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Gold, M), new MaterialStack(Materials.Steel, M)));
@@ -190,7 +190,7 @@ public class MaterialInfoLoader {
         OreDictUnifier.registerOre(new ItemStack(Blocks.STAINED_GLASS_PANE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Glass, OrePrefix.dustTiny.materialAmount * 3)));
         OreDictUnifier.registerOre(new ItemStack(Blocks.GLASS_PANE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Glass, OrePrefix.dustTiny.materialAmount * 3)));
 
-        if (ConfigHolder.vanillaRecipes.hardToolArmorRecipes) {
+        if (ConfigHolder.recipes.hardToolArmorRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Items.CLOCK, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Gold, M + OrePrefix.ring.materialAmount + OrePrefix.bolt.materialAmount * 3), new MaterialStack(Materials.Redstone, M)));
             OreDictUnifier.registerOre(new ItemStack(Items.COMPASS, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M + OrePrefix.screw.materialAmount * 3), new MaterialStack(Materials.RedAlloy, OrePrefix.bolt.materialAmount), new MaterialStack(Materials.Zinc, OrePrefix.ring.materialAmount)));
         } else {
@@ -198,7 +198,7 @@ public class MaterialInfoLoader {
             OreDictUnifier.registerOre(new ItemStack(Items.COMPASS, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Iron, M * 4), new MaterialStack(Materials.Redstone, M)));
         }
 
-        if (ConfigHolder.vanillaRecipes.hardMiscRecipes) {
+        if (ConfigHolder.recipes.hardMiscRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Blocks.BEACON, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.NetherStar, M + OrePrefix.lens.materialAmount), new MaterialStack(Materials.Obsidian, M * 3), new MaterialStack(Materials.Glass, M * 4)));
             OreDictUnifier.registerOre(new ItemStack(Blocks.ENCHANTING_TABLE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Diamond, M * 4), new MaterialStack(Materials.Obsidian, M * 3), new MaterialStack(Materials.Paper, M * 9)));
         } else {
@@ -219,7 +219,7 @@ public class MaterialInfoLoader {
         OreDictUnifier.registerOre(new ItemStack(Blocks.CHEST, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 8)));
         OreDictUnifier.registerOre(new ItemStack(Blocks.TRAPPED_CHEST, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 8), new MaterialStack(Materials.Iron, OrePrefix.ring.materialAmount * 2L)));
 
-        if (ConfigHolder.vanillaRecipes.hardMiscRecipes) {
+        if (ConfigHolder.recipes.hardMiscRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Blocks.NOTEBLOCK, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 8), new MaterialStack(Materials.RedAlloy, OrePrefix.stick.materialAmount)));
             OreDictUnifier.registerOre(new ItemStack(Blocks.JUKEBOX, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Diamond, OrePrefix.bolt.materialAmount), new MaterialStack(Materials.Iron, OrePrefix.gear.materialAmount + OrePrefix.ring.materialAmount), new MaterialStack(Materials.RedAlloy, M)));
         } else {
@@ -230,7 +230,7 @@ public class MaterialInfoLoader {
         OreDictUnifier.registerOre(new ItemStack(Blocks.CRAFTING_TABLE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2)));
         OreDictUnifier.registerOre(new ItemStack(Blocks.PISTON, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M * 4), new MaterialStack(Materials.Wood, M * 3)));
         OreDictUnifier.registerOre(new ItemStack(Blocks.STICKY_PISTON, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M * 4), new MaterialStack(Materials.Wood, M * 3)));
-        if (ConfigHolder.vanillaRecipes.hardRedstoneRecipes) {
+        if (ConfigHolder.recipes.hardRedstoneRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Blocks.DISPENSER, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M * 2), new MaterialStack(Materials.RedAlloy, M / 2), new MaterialStack(Materials.Iron, M * 4 + M / 4)));
             OreDictUnifier.registerOre(new ItemStack(Blocks.DROPPER, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M * 2), new MaterialStack(Materials.RedAlloy, M / 2), new MaterialStack(Materials.Iron, M * 2 + M * 3 / 4)));
         } else {

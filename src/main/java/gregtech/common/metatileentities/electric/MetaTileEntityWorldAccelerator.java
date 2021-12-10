@@ -43,7 +43,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     private static Class<?> cofhTileClass;
 
     private static boolean considerTile(TileEntity tile) {
-        if (!ConfigHolder.U.GT5u.accelerateGTMachines && tile instanceof MetaTileEntityHolder) {
+        if (!ConfigHolder.machines.accelerateGTMachines && tile instanceof MetaTileEntityHolder) {
             return false;
         }
         if (cofhTileClass == null) {
@@ -161,9 +161,9 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (isTEMode()) {
-            Textures.WORLD_ACCELERATOR_TE_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive);
+            Textures.WORLD_ACCELERATOR_TE_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive, isWorkingEnabled());
         } else {
-            Textures.WORLD_ACCELERATOR_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive);
+            Textures.WORLD_ACCELERATOR_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive, isWorkingEnabled());
         }
     }
 

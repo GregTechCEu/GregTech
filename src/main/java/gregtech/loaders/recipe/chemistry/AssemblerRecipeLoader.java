@@ -10,7 +10,6 @@ import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.BRONZE_BRICKS;
 import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.TITANIUM_STABLE;
-import static gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_LINE_CASING;
 import static gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType.ENGINE_INTAKE_CASING;
 import static gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType.*;
 import static gregtech.common.blocks.MetaBlocks.*;
@@ -40,13 +39,6 @@ public class AssemblerRecipeLoader {
                 .input(gear, Titanium, 2)
                 .input(frameGt, Titanium)
                 .outputs(TURBINE_CASING.getItemVariant(TITANIUM_GEARBOX, 2))
-                .duration(100).EUt(30).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ROBOT_ARM_IV, 2)
-                .input(plate, Steel, 4)
-                .input(frameGt, TungstenSteel)
-                .outputs(MULTIBLOCK_CASING.getItemVariant(ASSEMBLY_LINE_CASING, 2))
                 .duration(100).EUt(30).buildAndRegister();
 
         // Other
@@ -117,19 +109,19 @@ public class AssemblerRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30)
                 .input(plate, Wood)
                 .circuitMeta(12)
-                .fluidInputs(Glue.getFluid(60))
-                .output(pipeSmallFluid, Wood, 6)
+                .fluidInputs(Glue.getFluid(50))
+                .output(pipeSmallFluid, Wood)
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30)
                 .input(plate, Wood, 3)
                 .circuitMeta(4)
                 .fluidInputs(Glue.getFluid(20))
-                .output(pipeNormalFluid, Wood, 4)
+                .output(pipeNormalFluid, Wood)
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(30)
-                .input(plate, Wood, 3)
+                .input(plate, Wood, 6)
                 .circuitMeta(2)
                 .fluidInputs(Glue.getFluid(10))
                 .output(pipeLargeFluid, Wood)

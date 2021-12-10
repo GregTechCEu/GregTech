@@ -132,7 +132,6 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         renderState.reset();
         renderState.bind(buffer);
         renderState.setBrightness(world, pos);
-        IVertexOperation[] pipeline = {new Translation(pos)};
 
         BlockItemPipe blockFluidPipe = ((BlockItemPipe) state.getBlock());
         TileEntityItemPipe tileEntityPipe = (TileEntityItemPipe) blockFluidPipe.getPipeTileEntity(world, pos);
@@ -149,8 +148,11 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         if (itemPipeType != null && pipeMaterial != null) {
             BlockRenderLayer renderLayer = MinecraftForgeClient.getRenderLayer();
 
-            if (renderLayer == BlockRenderLayer.CUTOUT)
+            if (renderLayer == BlockRenderLayer.CUTOUT) {
+                renderState.lightMatrix.locate(world, pos);
+                IVertexOperation[] pipeline = new IVertexOperation[]{new Translation(pos), renderState.lightMatrix};
                 renderPipeBlock(pipeMaterial, itemPipeType, paintingColor, renderState, pipeline, connectedSidesMap);
+            }
 
             ICoverable coverable = tileEntityPipe.getCoverableImplementation();
             coverable.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), new GTBlockOperation(renderLayer, GTBlockOperation.PASS_MASK));

@@ -24,10 +24,9 @@ import java.util.Map.Entry;
 /**
  * @apiNote codechicken.asm.ObfMapping
  */
+@SuppressWarnings({"unused", "UnstableApiUsage"})
 public class ObfMapping extends Remapper {
 
-    //Use when unit testing is a thing.
-    private static final boolean isUnitTest = Boolean.getBoolean("ccl.unit_testing");
     public static final ObfRemapper obfMapper = new ObfRemapper();
     public static Remapper mcpMapper = null;
     public static final boolean obfuscated;
@@ -241,9 +240,6 @@ public class ObfMapping extends Remapper {
 
         @SuppressWarnings("unchecked")
         public ObfRemapper() {
-            if (isUnitTest) {
-                return;
-            }
             try {
                 Field rawFieldMapsField = FMLDeobfuscatingRemapper.class.getDeclaredField("rawFieldMaps");
                 Field rawMethodMapsField = FMLDeobfuscatingRemapper.class.getDeclaredField("rawMethodMaps");
@@ -253,7 +249,7 @@ public class ObfMapping extends Remapper {
                 Map<String, Map<String, String>> rawMethodMaps = (Map<String, Map<String, String>>) rawMethodMapsField.get(FMLDeobfuscatingRemapper.INSTANCE);
 
                 if (rawFieldMaps == null) {
-                    throw new IllegalStateException("codechicken.lib.asm.ObfMapping loaded too early. Make sure all references are in or after the asm transformer load stage");
+                    throw new IllegalStateException("gregtech.core.util.ObfMapping loaded too early. Make sure all references are in or after the asm transformer load stage");
                 }
 
                 for (Map<String, String> map : rawFieldMaps.values()) {

@@ -4,14 +4,12 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.UniversalDistillationRecipeBuilder;
 import net.minecraftforge.items.IItemHandlerModifiable;
-
-import java.util.function.DoubleSupplier;
 
 public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationRecipeBuilder> {
 
@@ -49,11 +47,11 @@ public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationR
 
     @Override
     //this DOES NOT include machine control widgets or binds player inventory
-    public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+    public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
-        builder.widget(new ImageWidget(41, 1, 72, 72, GuiTextures.PROGRESS_BAR_DISTILLATION_TOWER));
-        addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
-        addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
+        builder.widget(new ProgressWidget(200, 47, 8, 66, 58, GuiTextures.PROGRESS_BAR_DISTILLATION_TOWER, ProgressWidget.MoveType.HORIZONTAL));
+        addInventorySlotGroup(builder, importItems, importFluids, false, 9);
+        addInventorySlotGroup(builder, exportItems, exportFluids, true, 9);
         if (this.specialTexture != null && this.specialTexturePosition != null)
             addSpecialTexture(builder);
         return builder;

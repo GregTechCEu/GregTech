@@ -16,9 +16,10 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.metatileentity.sound.ISoundCreator;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipes.FuelRecipe;
@@ -26,8 +27,8 @@ import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.SimpleCubeRenderer;
 import gregtech.api.render.Textures;
+import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockBoilerCasing.BoilerCasingType;
 import gregtech.common.blocks.BlockFireboxCasing;
 import gregtech.common.blocks.BlockFireboxCasing.FireboxCasingType;
@@ -35,6 +36,7 @@ import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.tools.DamageValues;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -53,13 +55,16 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withHoverTextTranslate;
 
-public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase implements IFuelable {
+public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase implements IFuelable, ISoundCreator {
 
     private static final int CONSUMPTION_MULTIPLIER = 100;
     private static final int BOILING_TEMPERATURE = 100;
@@ -105,8 +110,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         public final SimpleCubeRenderer firefoxActiveRenderer;
         public final OrientedOverlayRenderer frontOverlay;
 
-        BoilerType(int baseSteamOutput, float fuelConsumptionMultiplier, int temperatureEffBuff, int maxTemperature, IBlockState casingState, IBlockState fireboxState, IBlockState pipeState,
-                   ICubeRenderer solidCasingRenderer, SimpleCubeRenderer fireboxIdleRenderer, SimpleCubeRenderer firefoxActiveRenderer, OrientedOverlayRenderer frontOverlay) {
+        BoilerType(int baseSteamOutput, float fuelConsumptionMultiplier, int temperatureEffBuff, int maxTemperature, IBlockState casingState, IBlockState fireboxState, IBlockState pipeState, ICubeRenderer solidCasingRenderer, SimpleCubeRenderer fireboxIdleRenderer, SimpleCubeRenderer firefoxActiveRenderer, OrientedOverlayRenderer frontOverlay) {
             this.baseSteamOutput = baseSteamOutput;
             this.fuelConsumptionMultiplier = fuelConsumptionMultiplier;
             this.temperatureEffBuff = temperatureEffBuff;
@@ -138,7 +142,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     public MetaTileEntityLargeBoiler(ResourceLocation metaTileEntityId, BoilerType boilerType) {
         super(metaTileEntityId);
         this.boilerType = boilerType;
-        reinitializeStructurePattern();
     }
 
     @Override
@@ -350,6 +353,11 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         }
     }
 
+    @Override
+    public boolean isActive() {
+        return super.isActive() && isActive;
+    }
+
     private double getThrottleMultiplier() {
         return throttlePercentage / 100.0;
     }
@@ -403,21 +411,26 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 .aisle("XXX", "CCC", "CCC", "CCC")
                 .aisle("XXX", "CPC", "CPC", "CCC")
                 .aisle("XXX", "CSC", "CCC", "CCC")
-                .setAmountAtLeast('X', 4)
-                .setAmountAtLeast('C', 20)
                 .where('S', selfPredicate())
-                .where('P', statePredicate(boilerType.pipeState))
-                .where('X', state -> statePredicate(boilerType.fireboxState)
-                        .or(abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.MUFFLER_HATCH)).test(state))
-                .where('C', statePredicate(boilerType.casingState).or(abilityPartPredicate(
-                        MultiblockAbility.EXPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH)))
+                .where('P', states(boilerType.pipeState))
+                .where('X', states(boilerType.fireboxState).setMinGlobalLimited(4)
+                        .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1))
+                        .or(abilities(MultiblockAbility.IMPORT_ITEMS).setMinGlobalLimited(1)))
+                .where('C', states(boilerType.casingState).setMinGlobalLimited(20)
+                        .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1))
+                        .or(autoAbilities())) // maintainer
                 .build();
+    }
+
+    @Override
+    public String[] getDescription() {
+        return new String[]{I18n.format("gregtech.multiblock.large_boiler.description")};
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), isActive);
+        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), isActive, true);
     }
 
     @Nonnull
@@ -426,15 +439,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         return boilerType.frontOverlay;
     }
 
-    @Override
-    protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
-        //noinspection SuspiciousMethodCalls
-        int importFluidsSize = abilities.getOrDefault(MultiblockAbility.IMPORT_FLUIDS, Collections.emptyList()).size();
-        //noinspection SuspiciousMethodCalls
-        return importFluidsSize >= 1 && (importFluidsSize >= 2 ||
-                abilities.containsKey(MultiblockAbility.IMPORT_ITEMS)) &&
-                abilities.containsKey(MultiblockAbility.EXPORT_FLUIDS);
-    }
+
 
     private boolean isFireboxPart(IMultiblockPart sourcePart) {
         return isStructureFormed() && (((MetaTileEntity) sourcePart).getPos().getY() < getPos().getY());
@@ -551,5 +556,17 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     public boolean hasMufflerMechanics() {
         return true;
+    }
+
+    @Override
+    public void onAttached(Object... data) {
+        super.onAttached(data);
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(GTSounds.BOILER, this.getPos());
+        }
+    }
+
+    public boolean canCreateSound() {
+        return isActive;
     }
 }

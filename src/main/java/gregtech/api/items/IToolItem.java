@@ -1,5 +1,6 @@
 package gregtech.api.items;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -14,8 +15,8 @@ public interface IToolItem {
      * DO NOT USE METHODS BELOW TO CHECK IF TOOL CAN RECEIVE SPECIFIED AMOUNT OF DAMAGE,
      * Use this method with simulate = true to check so, because it can be different for electric items!
      */
-    default boolean damageItem(ItemStack stack, int damage, boolean simulate) {
-        return damageItem(stack, damage, false, simulate) > 0;
+    default boolean damageItem(ItemStack stack, EntityLivingBase entity, int damage, boolean simulate) {
+        return damageItem(stack, entity, damage, false, simulate) > 0;
     }
 
     /**
@@ -33,7 +34,7 @@ public interface IToolItem {
      * @param simulate     pass true to do a dry run of the process
      * @return the actual damage applied
      */
-    int damageItem(ItemStack stack, int damage, boolean allowPartial, boolean simulate);
+    int damageItem(ItemStack stack, EntityLivingBase entity, int damage, boolean allowPartial, boolean simulate);
 
     /**
      * @return amount of internal damage this item have

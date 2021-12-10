@@ -2,7 +2,6 @@ package gregtech.api.recipes.logic;
 
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.*;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.*;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import net.minecraft.item.ItemStack;
@@ -363,7 +362,7 @@ public class ParallelLogic {
         return minMultiplier;
     }
 
-    public static RecipeBuilder<?> doParallelRecipes(Recipe currentRecipe, RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids, IItemHandlerModifiable exportInventory, IMultipleTankHandler exportFluids, int parallelAmount) {
+    public static RecipeBuilder<?> doParallelRecipes(Recipe currentRecipe, RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids, IItemHandlerModifiable exportInventory, IMultipleTankHandler exportFluids, int parallelAmount, long maxVoltage) {
         int multiplierByInputs = getMaxRecipeMultiplier(currentRecipe, importInventory, importFluids, parallelAmount);
         if (multiplierByInputs == 0) {
             return null;
@@ -372,10 +371,11 @@ public class ParallelLogic {
         // Simulate the merging of the maximum amount of recipes
         // and limit by the amount we can successfully merge
         int limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
-        int parallelizable = Math.min(multiplierByInputs, limitByOutput);
+        int limitByVoltage = (int) (maxVoltage / currentRecipe.getEUt());
+        int parallelizable = Math.min(limitByVoltage, Math.min(multiplierByInputs, limitByOutput));
 
         if (parallelizable > 0) {
-            recipeBuilder.append(currentRecipe, parallelizable);
+            recipeBuilder.append(currentRecipe, parallelizable, false);
         }
 
         return recipeBuilder;
@@ -427,16 +427,16 @@ public class ParallelLogic {
                         String.format("Got recipe with null ingredient %s", matchingRecipe));
 
             //equivalent of getting the max ratio from the inputs from Parallel logic
-            int amountOfCurrentItem = Math.min(parallelAmount - engagedItems, currentInputItem.getCount());
+            int ingredientRatio = Math.min(parallelAmount - engagedItems, currentInputItem.getCount() / Math.max(matchingRecipe.getInputs().get(0).getCount(), 1));
 
             //how much we can add to the output inventory
-            int limitByOutput = limitParallelByItemsIncremental(recipeBuilder.getOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, amountOfCurrentItem);
+            int limitByOutput = limitParallelByItemsIncremental(recipeBuilder.getOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, ingredientRatio);
 
             //amount to actually multiply the recipe by
-            int multiplierRecipeAmount = Math.min(amountOfCurrentItem, limitByOutput);
+            int multiplierRecipeAmount = Math.min(ingredientRatio, limitByOutput);
 
             if (multiplierRecipeAmount > 0) {
-                recipeBuilder.append(matchingRecipe, multiplierRecipeAmount);
+                recipeBuilder.append(matchingRecipe, multiplierRecipeAmount, true);
                 engagedItems += multiplierRecipeAmount;
             }
 

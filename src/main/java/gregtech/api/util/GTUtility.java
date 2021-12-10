@@ -56,6 +56,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -338,19 +339,6 @@ public class GTUtility {
         return wasRemovedByPlayer;
     }
 
-
-    @SideOnly(Side.CLIENT)
-    public static void drawCenteredSizedText(int x, int y, String string, int color, double sizeMultiplier) {
-        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-        int textWidth = fontRenderer.getStringWidth(string);
-        int textHeight = fontRenderer.FONT_HEIGHT;
-        GlStateManager.pushMatrix();
-        GlStateManager.scale(sizeMultiplier, sizeMultiplier, 0.0);
-        GlStateManager.translate(-textWidth * sizeMultiplier / 2.0, -textHeight * sizeMultiplier / 2.0, 0);
-        fontRenderer.drawString(string, x, y, color);
-        GlStateManager.popMatrix();
-    }
-
     /**
      * Applies specific amount of damage to item, either to durable items (which implement IDamagableItem)
      * or to electric items, which have capability IElectricItem
@@ -364,12 +352,12 @@ public class GTUtility {
         if (item instanceof IToolItem) {
             //if item implements IDamagableItem, it manages it's own durability itself
             IToolItem damagableItem = (IToolItem) item;
-            return damagableItem.damageItem(itemStack, vanillaDamage, simulate);
+            return damagableItem.damageItem(itemStack, null, vanillaDamage, simulate);
 
         } else if (itemStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null)) {
             //if we're using electric item, use default energy multiplier for textures
             IElectricItem capability = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-            int energyNeeded = vanillaDamage * ConfigHolder.energyUsageMultiplier;
+            int energyNeeded = vanillaDamage * ConfigHolder.machines.energyUsageMultiplier;
             //noinspection ConstantConditions
             return capability.discharge(energyNeeded, Integer.MAX_VALUE, true, false, simulate) == energyNeeded;
 
@@ -734,7 +722,7 @@ public class GTUtility {
             double posZ = pos.getZ() + 0.5;
             ((WorldServer) metaTileEntity.getWorld()).spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY, posZ,
                     10, 0.2, 0.2, 0.2, 0.0);
-            metaTileEntity.getWorld().createExplosion(null, posX, posY, posZ, getTierByVoltage(voltage), ConfigHolder.doExplosions);
+            metaTileEntity.getWorld().createExplosion(null, posX, posY, posZ, getTierByVoltage(voltage), ConfigHolder.machines.doExplosions);
         }
     }
 
@@ -1023,6 +1011,29 @@ public class GTUtility {
     public static boolean isOre(Block block) {
         OrePrefix orePrefix = OreDictUnifier.getPrefix(new ItemStack(block));
         return orePrefix != null && orePrefix.name().startsWith("ore");
+    }
+
+    /**
+     * @param values to find the mean of
+     * @return the mean value
+     */
+    public static long mean(@Nonnull long[] values) {
+        if(values.length == 0L)
+            return 0L;
+
+        long sum = 0L;
+        for (long v : values)
+            sum += v;
+        return sum / values.length;
+    }
+
+    /**
+     *
+     * @param world the {@link World} to get the average tick time of
+     * @return the mean tick time
+     */
+    public static double getMeanTickTime(@Nonnull World world) {
+        return mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
     }
 
 }

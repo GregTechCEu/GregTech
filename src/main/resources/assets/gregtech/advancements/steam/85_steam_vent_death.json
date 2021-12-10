@@ -1,10 +1,10 @@
 {
   "display": {
     "description": {
-      "translate": "gregtech.advancement.85_steam_vent_death.desc"
+      "translate": "gregtech.advancement.steam.85_steam_vent_death.desc"
     },
     "title": {
-      "translate": "gregtech.advancement.85_steam_vent_death.name"
+      "translate": "gregtech.advancement.steam.85_steam_vent_death.name"
     },
     "icon": {
       "item": "gregtech:meta_item_1",

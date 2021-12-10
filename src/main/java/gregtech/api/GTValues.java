@@ -120,6 +120,8 @@ public class GTValues {
                 Class.forName(modid);
                 isLoaded = true;
             } catch (ClassNotFoundException ignored) {
+            } catch (NoClassDefFoundError noClassDefFoundError) {
+                isLoaded = true;
             }
         }
         isModLoadedCache.put(modid, isLoaded);

@@ -29,7 +29,7 @@ import static gregtech.api.unification.ore.OrePrefix.*;
 
 public class MaterialRecipeHandler {
 
-    private static final List<OrePrefix> GEM_ORDER = ConfigHolder.U.generateLowQualityGems ? Arrays.asList(
+    private static final List<OrePrefix> GEM_ORDER = ConfigHolder.recipes.generateLowQualityGems ? Arrays.asList(
             OrePrefix.gemChipped, OrePrefix.gemFlawed, OrePrefix.gem, OrePrefix.gemFlawless, OrePrefix.gemExquisite) :
             Arrays.asList(OrePrefix.gem, OrePrefix.gemFlawless, OrePrefix.gemExquisite);
 
@@ -202,7 +202,7 @@ public class MaterialRecipeHandler {
         }
 
         if (!material.hasFlag(NO_SMASHING) && material.hasProperty(PropertyKey.TOOL)) {
-            if (ConfigHolder.U.GT6.plateWrenches && material.hasFlag(GENERATE_PLATE)) {
+            if (ConfigHolder.recipes.plateWrenches && material.hasFlag(GENERATE_PLATE)) {
                 ModHandler.addShapedRecipe(String.format("wrench_%s", material.toString()),
                         MetaItems.WRENCH.getStackForm(material),
                         "PhP", "PPP", " P ", 'P', new UnificationEntry(plate, material));

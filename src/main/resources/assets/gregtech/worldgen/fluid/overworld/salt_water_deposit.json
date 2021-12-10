@@ -1,0 +1,20 @@
+{
+  "weight": 0,
+  "name": "Overworld Salt Water Deposit",
+  "rate": {
+    "min": 50,
+    "max": 200
+  },
+  "depletion": {
+    "amount": 1,
+    "chance": 5,
+    "depleted_production_rate": 25
+  },
+  "fluid": "salt_water",
+  "biome_modifier": {
+    "type": "biome_map",
+    "ocean": 150,
+    "frozen_ocean": 150,
+    "deep_ocean": 200
+  }
+}

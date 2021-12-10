@@ -85,7 +85,7 @@ public class ModHandler {
         return material == Materials.Wood;
     }
 
-    public static ItemStack getBurningFuelRemainder(Random random, ItemStack fuelStack) {
+    public static ItemStack getBurningFuelRemainder(ItemStack fuelStack) {
         float remainderChance;
         ItemStack remainder;
         if (OreDictUnifier.getOreDictionaryNames(fuelStack).contains("fuelCoke")) {
@@ -106,7 +106,7 @@ public class ModHandler {
                 remainderChance = 0.5f;
             } else return ItemStack.EMPTY;
         }
-        return random.nextFloat() <= remainderChance ? remainder : ItemStack.EMPTY;
+        return GTValues.RNG.nextFloat() <= remainderChance ? remainder : ItemStack.EMPTY;
     }
 
     ///////////////////////////////////////////////////
@@ -243,11 +243,7 @@ public class ModHandler {
         ForgeRegistries.RECIPES.register(shapedOreRecipe);
     }
 
-    public static void addShapedEnergyTransferRecipe(String regName, ItemStack result, Predicate<ItemStack> chargePredicate, boolean transferMaxCharge, Object... recipe) {
-        addShapedEnergyTransferRecipeWithOverride(regName, result, chargePredicate, true, transferMaxCharge, recipe);
-    }
-
-    public static void addShapedEnergyTransferRecipeWithOverride(String regName, ItemStack result, Predicate<ItemStack> chargePredicate, boolean overrideCharge, boolean transferMaxCharge, Object... recipe) {
+    public static void addShapedEnergyTransferRecipe(String regName, ItemStack result, Predicate<ItemStack> chargePredicate, boolean overrideCharge, boolean transferMaxCharge, Object... recipe) {
         boolean skip = false;
         if (result.isEmpty()) {
             GTLog.logger.error("Result cannot be an empty ItemStack. Recipe: {}", regName);
@@ -485,7 +481,7 @@ public class ModHandler {
                 break;
             }
         }
-        if (ConfigHolder.debug) {
+        if (ConfigHolder.misc.debug) {
             if (wasRemoved)
                 GTLog.logger.info("Removed Smelting Recipe for Input: {}", input.getDisplayName());
             else GTLog.logger.error("Failed to Remove Smelting Recipe for Input: {}", input.getDisplayName());
@@ -497,7 +493,7 @@ public class ModHandler {
     public static int removeRecipes(ItemStack output) {
         int recipesRemoved = removeRecipes(recipe -> ItemStack.areItemStacksEqual(recipe.getRecipeOutput(), output));
 
-        if (ConfigHolder.debug) {
+        if (ConfigHolder.misc.debug) {
             if (recipesRemoved != 0)
                 GTLog.logger.info("Removed {} Recipe(s) with Output: {}", recipesRemoved, output.getDisplayName());
             else GTLog.logger.error("Failed to Remove Recipe with Output: {}", output.getDisplayName());
@@ -530,7 +526,7 @@ public class ModHandler {
      *                 Can also accept a String.
      */
     public static void removeRecipeByName(ResourceLocation location) {
-        if (ConfigHolder.debug) {
+        if (ConfigHolder.misc.debug) {
             String recipeName = location.toString();
             if (ForgeRegistries.RECIPES.containsKey(location))
                 GTLog.logger.info("Removed Recipe with Name: {}", recipeName);

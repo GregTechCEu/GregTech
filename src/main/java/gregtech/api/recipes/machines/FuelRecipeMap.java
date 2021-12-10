@@ -5,8 +5,10 @@ import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GTValues;
 import gregtech.api.recipes.FluidKey;
+import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipes.FuelRecipe;
 import gregtech.api.util.LocalizationUtils;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -25,10 +27,20 @@ public class FuelRecipeMap {
 
     private final Map<FluidKey, FuelRecipe> recipeFluidMap = new HashMap<>();
     private final List<FuelRecipe> recipeList = new ArrayList<>();
+    private SoundEvent sound;
 
     public FuelRecipeMap(String unlocalizedName) {
         this.unlocalizedName = unlocalizedName;
         RECIPE_MAPS.add(this);
+    }
+
+    public SoundEvent getSound() {
+        return sound;
+    }
+
+    public FuelRecipeMap setSound(SoundEvent sound) {
+        this.sound = sound;
+        return this;
     }
 
     @ZenGetter("recipeMaps")

@@ -79,7 +79,7 @@ public class PlungerBehaviour implements IItemBehaviour, IItemCapabilityProvider
                     double operations = result;
                     operations /= 1000;
                     final int damage = (int) Math.ceil(operations);
-                    result = 1000 * plunger.damageItem(container, damage, true, !doFill);
+                    result = 1000 * plunger.damageItem(container, null, damage, true, !doFill);
                 }
                 // TODO play sound (how to get the player?)
                 return result;

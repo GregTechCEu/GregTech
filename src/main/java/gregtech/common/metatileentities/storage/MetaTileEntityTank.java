@@ -105,6 +105,7 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
             }
         };
         this.fluidInventory = getActualFluidTank();
+        this.paintingColor = 0xFFFFFF;
     }
 
     @Override
@@ -162,8 +163,8 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
     }
 
     @Override
-    public void onAttached() {
-        super.onAttached();
+    public void onAttached(Object... data) {
+        super.onAttached(data);
         recomputeTankSizeNow(true);
     }
 
@@ -482,7 +483,7 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
     @Override
     public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
         super.getSubItems(creativeTab, subItems);
-        if (creativeTab == CreativeTabs.SEARCH && !ConfigHolder.hideFilledTanksInJEI) {
+        if (creativeTab == CreativeTabs.SEARCH && !ConfigHolder.compat.hideFilledTanksInJEI) {
             DefaultSubItemHandler.addFluidContainerVariants(getStackForm(), subItems);
         }
     }

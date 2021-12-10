@@ -2,10 +2,7 @@ package gregtech.api.capability;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.EUToFEProvider;
-import gregtech.api.capability.tool.ICutterItem;
-import gregtech.api.capability.tool.IScrewdriverItem;
-import gregtech.api.capability.tool.ISoftHammerItem;
-import gregtech.api.capability.tool.IWrenchItem;
+import gregtech.api.capability.tool.*;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -35,6 +32,10 @@ public class GregtechCapabilities {
 
     @CapabilityInject(ISoftHammerItem.class)
     public static Capability<ISoftHammerItem> CAPABILITY_MALLET = null;
+
+    @CapabilityInject(IHammerItem.class)
+    public static Capability<IHammerItem> CAPABILITY_HAMMER = null;
+
 
     @CapabilityInject(IFuelable.class)
     public static Capability<IFuelable> CAPABILITY_FUELABLE = null;

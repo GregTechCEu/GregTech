@@ -1,13 +1,16 @@
 package gregtech.loaders.recipe;
 
+import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
+import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.common.blocks.BlockTransparentCasing;
+import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
@@ -47,9 +50,9 @@ public class MiscRecipeLoader {
                 .outputs(new ItemStack(Items.FERMENTED_SPIDER_EYE))
                 .buildAndRegister();
 
-        RecipeMaps.SIFTER_RECIPES.recipeBuilder().duration(800).EUt(16)
+        RecipeMaps.SIFTER_RECIPES.recipeBuilder().duration(100).EUt(16)
                 .inputs(new ItemStack(Blocks.GRAVEL))
-                .outputs(new ItemStack(Items.FLINT))
+                .output(gem, Flint)
                 .buildAndRegister();
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder()
@@ -75,37 +78,66 @@ public class MiscRecipeLoader {
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
-                .notConsumable(new ItemStack(Blocks.STONE, 1, 1))
-                .outputs(new ItemStack(Blocks.STONE, 1, 1))
+                .notConsumable(stone, Andesite)
+                .output(stone, Andesite)
                 .duration(16)
-                .EUt(30)
+                .EUt(120)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
-                .notConsumable(new ItemStack(Blocks.STONE, 1, 3))
-                .outputs(new ItemStack(Blocks.STONE, 1, 3))
+                .notConsumable(stone, Granite)
+                .output(stone, Granite)
                 .duration(16)
-                .EUt(30)
+                .EUt(120)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
-                .notConsumable(new ItemStack(Blocks.STONE, 1, 5))
-                .outputs(new ItemStack(Blocks.STONE, 1, 5))
+                .notConsumable(stone, Diorite)
+                .output(stone, Diorite)
                 .duration(16)
-                .EUt(30)
+                .EUt(120)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
-                .input(dust, Redstone)
+                .notConsumable(dust, Redstone)
                 .outputs(new ItemStack(Blocks.OBSIDIAN, 1))
-                .duration(128)
-                .EUt(30)
+                .duration(16)
+                .EUt(480)
+                .buildAndRegister();
+
+        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+                .notConsumable(stone, Marble)
+                .output(stone, Marble)
+                .duration(16)
+                .EUt(480)
+                .buildAndRegister();
+
+        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+                .notConsumable(stone, Basalt)
+                .output(stone, Basalt)
+                .duration(16)
+                .EUt(480)
+                .buildAndRegister();
+
+        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+                .notConsumable(stone, GraniteRed)
+                .output(stone, GraniteRed)
+                .duration(16)
+                .EUt(1920)
+                .buildAndRegister();
+
+        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+                .notConsumable(stone, GraniteBlack)
+                .output(stone, GraniteBlack)
+                .duration(16)
+                .EUt(1920)
                 .buildAndRegister();
 
         //armor
         // Nightvision Goggles
         ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(128)
-                .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS))
+                .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.TEMPERED_GLASS))
                 .inputs(EMITTER_MV.getStackForm(2))
                 .inputs(DUCT_TAPE.getStackForm(2))
                 .inputs(BATTERY_HV_LITHIUM.getStackForm())
@@ -118,7 +150,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Advanced)
                 .inputs(CARBON_PLATE.getStackForm(7))
                 .inputs(BATTERY_HV_LITHIUM.getStackForm())
-                .circuitMeta(0)
+                .circuitMeta(4)
                 .outputs(NANO_MUSCLE_SUITE_CHESTPLATE.getStackForm())
                 .buildAndRegister();
 
@@ -140,7 +172,8 @@ public class MiscRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(512)
                 .input(circuit, Advanced, 2)
-                .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS))
+                .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.TEMPERED_GLASS))
                 .inputs(NIGHTVISION_GOGGLES.getStackForm())
                 .inputs(CARBON_PLATE.getStackForm(5))
                 .inputs(BATTERY_HV_LITHIUM.getStackForm())
@@ -408,8 +441,42 @@ public class MiscRecipeLoader {
         // Tempered Glass in Arc Furnace
         ARC_FURNACE_RECIPES.recipeBuilder().duration(60).EUt(30)
                 .input(block, Glass)
-                .outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS))
+                .outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.TEMPERED_GLASS))
                 .buildAndRegister();
 
+        // Dyed Lens Decomposition
+        for (MetaValueItem item : GLASS_LENSES.values()) {
+            EXTRACTOR_RECIPES.recipeBuilder().EUt(32).duration(60)
+                    .input(item)
+                    .fluidOutputs(Glass.getFluid(108))
+                    .buildAndRegister();
+
+            MACERATOR_RECIPES.recipeBuilder().EUt(8).duration(22)
+                    .input(item)
+                    .output(dustSmall, Glass, 3)
+                    .buildAndRegister();
+        }
+
+        // Dyed Lens Recipes
+        RecipeBuilder<?> builder = CHEMICAL_BATH_RECIPES.recipeBuilder().EUt(480).duration(200).input(craftingLens, Glass);
+        final int dyeAmount = 288;
+
+        builder.copy().fluidInputs(DyeWhite.getFluid(dyeAmount))    .output(lens, Glass)                      .buildAndRegister();
+        builder.copy().fluidInputs(DyeOrange.getFluid(dyeAmount))   .output(GLASS_LENSES.get(Color.Orange))   .buildAndRegister();
+        builder.copy().fluidInputs(DyeMagenta.getFluid(dyeAmount))  .output(GLASS_LENSES.get(Color.Magenta))  .buildAndRegister();
+        builder.copy().fluidInputs(DyeLightBlue.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.LightBlue)).buildAndRegister();
+        builder.copy().fluidInputs(DyeYellow.getFluid(dyeAmount))   .output(GLASS_LENSES.get(Color.Yellow))   .buildAndRegister();
+        builder.copy().fluidInputs(DyeLime.getFluid(dyeAmount))     .output(GLASS_LENSES.get(Color.Lime))     .buildAndRegister();
+        builder.copy().fluidInputs(DyePink.getFluid(dyeAmount))     .output(GLASS_LENSES.get(Color.Pink))     .buildAndRegister();
+        builder.copy().fluidInputs(DyeGray.getFluid(dyeAmount))     .output(GLASS_LENSES.get(Color.Gray))     .buildAndRegister();
+        builder.copy().fluidInputs(DyeLightGray.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.LightGray)).buildAndRegister();
+        builder.copy().fluidInputs(DyeCyan.getFluid(dyeAmount))     .output(GLASS_LENSES.get(Color.Cyan))     .buildAndRegister();
+        builder.copy().fluidInputs(DyePurple.getFluid(dyeAmount))   .output(GLASS_LENSES.get(Color.Purple))   .buildAndRegister();
+        builder.copy().fluidInputs(DyeBlue.getFluid(dyeAmount))     .output(GLASS_LENSES.get(Color.Blue))     .buildAndRegister();
+        builder.copy().fluidInputs(DyeBrown.getFluid(dyeAmount))    .output(GLASS_LENSES.get(Color.Brown))    .buildAndRegister();
+        builder.copy().fluidInputs(DyeGreen.getFluid(dyeAmount))    .output(GLASS_LENSES.get(Color.Green))    .buildAndRegister();
+        builder.copy().fluidInputs(DyeRed.getFluid(dyeAmount))      .output(GLASS_LENSES.get(Color.Red))      .buildAndRegister();
+        builder.copy().fluidInputs(DyeBlack.getFluid(dyeAmount))    .output(GLASS_LENSES.get(Color.Black))    .buildAndRegister();
     }
 }

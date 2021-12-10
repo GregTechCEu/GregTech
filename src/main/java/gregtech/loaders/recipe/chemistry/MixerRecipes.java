@@ -16,12 +16,6 @@ public class MixerRecipes {
                 .duration(500).EUt(2).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-                .input(dust, Sodium, 2)
-                .input(dust, Sulfur)
-                .output(dust, SodiumSulfide, 3)
-                .duration(60).EUt(30).buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder()
                 .fluidInputs(PolyvinylAcetate.getFluid(1000))
                 .fluidInputs(Acetone.getFluid(1500))
                 .fluidOutputs(Glue.getFluid(2500))
@@ -104,7 +98,7 @@ public class MixerRecipes {
                 .input(dust, Nickel)
                 .input(dust, Zinc)
                 .input(dust, Iron, 4)
-                .notConsumable(new IntCircuitIngredient(1))
+                .notConsumable(new IntCircuitIngredient(2))
                 .output(dust, FerriteMixture, 6)
                 .buildAndRegister();
 
@@ -335,7 +329,7 @@ public class MixerRecipes {
                 .input(dust, Chrome)
                 .input(dust, Steel, 7)
                 .notConsumable(new IntCircuitIngredient(1))
-                .output(dust, TungstenSteel, 2)
+                .output(dust, VanadiumSteel, 9)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(200).EUt(480)
@@ -383,6 +377,13 @@ public class MixerRecipes {
                 .input(dust, Iridium, 3)
                 .notConsumable(new IntCircuitIngredient(1))
                 .output(dust, Osmiridium, 4)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(400).EUt(7680)
+                .input(dust, Palladium, 3)
+                .input(dust, Rhodium)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, RhodiumPlatedPalladium, 4)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(400).EUt(7680)
