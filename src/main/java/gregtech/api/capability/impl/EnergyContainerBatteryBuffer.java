@@ -1,7 +1,7 @@
 package gregtech.api.capability.impl;
 
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
+import java.util.List;
+import java.util.ArrayList;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
@@ -27,8 +27,8 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
         if (amperage <= 0 || voltage <= 0)
             return 0;
 
-        TIntList slotsList = getNonFullBatteries();
-        long maxAmps = slotsList.size() * 2L - amps;
+        List<IElectricItem> batteries = getNonFullBatteries();
+        long maxAmps = batteries.size() * 2L - amps;
         long usedAmps = Math.min(maxAmps, amperage);
         if (maxAmps <= 0)
             return 0;
@@ -47,13 +47,9 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
             energyInputPerSec += usedAmps * voltage;
 
             long energy = (usedAmps + internalAmps) * voltage;
-            long distributed = energy / slotsList.size();
+            long distributed = energy / batteries.size();
 
-            IItemHandlerModifiable inventory = getInventory();
-            for (int i : slotsList.toArray()) {
-                ItemStack batteryStack = inventory.getStackInSlot(i);
-                IElectricItem electricItem = getBatteryContainer(batteryStack);
-                if (electricItem == null) continue;
+            for (IElectricItem electricItem : batteries) {
                 energy -= electricItem.charge(distributed, getTier(), true, false);
             }
 
@@ -88,11 +84,11 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
         }
 
         long voltage = getOutputVoltage();
-        TIntList slotsList = getNonEmptyBatteries();
-        if (slotsList.size() > 0) {
+        List<IElectricItem> batteries = getNonEmptyBatteries();
+        if (batteries.size() > 0) {
             //Prioritize as many packets as available of energy created
             long internalAmps = Math.abs(Math.min(0, getInternalStorage() / voltage));
-            long genAmps = Math.max(0, slotsList.size() - internalAmps);
+            long genAmps = Math.max(0, batteries.size() - internalAmps);
             long outAmps = 0L;
 
             if (genAmps > 0) {
@@ -103,13 +99,9 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
             }
 
             long energy = (outAmps + internalAmps) * voltage;
-            long distributed = energy / slotsList.size();
+            long distributed = energy / batteries.size();
 
-            IItemHandlerModifiable inventory = getInventory();
-            for (int i : slotsList.toArray()) {
-                ItemStack batteryStack = inventory.getStackInSlot(i);
-                IElectricItem electricItem = getBatteryContainer(batteryStack);
-                if (electricItem == null) continue;
+            for (IElectricItem electricItem : batteries) {
                 energy -= electricItem.discharge(distributed, getTier(), true, true, false);
             }
 
@@ -122,32 +114,32 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
         return energyStored;
     }
 
-    private TIntList getNonFullBatteries() {
+    private List<IElectricItem> getNonFullBatteries() {
         IItemHandlerModifiable inventory = getInventory();
-        TIntList slotsList = new TIntArrayList();
+        List<IElectricItem> batteries = new ArrayList<>();
         for (int i = 0; i < inventory.getSlots(); i++) {
             ItemStack batteryStack = inventory.getStackInSlot(i);
             IElectricItem electricItem = getBatteryContainer(batteryStack);
             if (electricItem == null) continue;
             if (electricItem.getCharge() < electricItem.getMaxCharge()) {
-                slotsList.add(i);
+                batteries.add(electricItem);
             }
         }
-        return slotsList;
+        return batteries;
     }
 
-    private TIntList getNonEmptyBatteries() {
+    private List<IElectricItem> getNonEmptyBatteries() {
         IItemHandlerModifiable inventory = getInventory();
-        TIntList slotsList = new TIntArrayList();
+        List<IElectricItem> batteries = new ArrayList<>();
         for (int i = 0; i < inventory.getSlots(); i++) {
             ItemStack batteryStack = inventory.getStackInSlot(i);
             IElectricItem electricItem = getBatteryContainer(batteryStack);
             if (electricItem == null) continue;
             if (electricItem.getCharge() > 0) {
-                slotsList.add(i);
+                batteries.add(electricItem);
             }
         }
-        return slotsList;
+        return batteries;
     }
 
     @Override
