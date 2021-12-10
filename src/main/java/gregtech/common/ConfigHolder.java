@@ -237,6 +237,9 @@ public class ConfigHolder {
 
     public static class ClientOptions {
 
+        @Config.Name("Gui Config")
+        public GuiConfig guiConfig = new GuiConfig();
+
         @Config.Name("Armor HUD Location")
         public ArmorHud armorHud = new ArmorHud();
 
@@ -267,6 +270,12 @@ public class ConfigHolder {
         @Config.Comment("IWhether or not sounds should be played when crafting with tools. Default: true")
         public boolean toolCraftingSounds = true;
 
+        public static class GuiConfig {
+            @Config.Comment("The scrolling speed of widgets")
+            @Config.RangeInt(min = 1)
+            public int scrollSpeed = 13;
+        }
+
         public static class ArmorHud {
 
             @Config.Comment({"Sets HUD location", "1 - left-upper corner", "2 - right-upper corner", "3 - left-bottom corner", "4 - right-bottom corner"})
@@ -296,11 +305,11 @@ public class ConfigHolder {
 
             @Config.Comment("The brightness after bloom should not exceed this value. It can be used to limit the brightness of highlights (e.g., daytime. and this value should be greater than lowBrightnessThreshold)")
             @Config.RangeDouble(min = 0)
-            public double highBrightnessThreshold = 1.3;
+            public double highBrightnessThreshold = 1.1;
 
             @Config.Comment("The brightness after bloom should not smaller than this value. It can be used to limit the brightness of dusky parts (e.g., night/caves. and this value should be smaller than highBrightnessThreshold)")
             @Config.RangeDouble(min = 0)
-            public double lowBrightnessThreshold = 0.3;
+            public double lowBrightnessThreshold = 0.1;
 
             @Config.Comment("Mipmap Size. (2-5)=>(fast-slow)=>(low quality-high quality)")
             @Config.RangeInt(min = 2, max = 5)
