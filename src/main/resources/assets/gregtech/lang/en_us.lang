@@ -3660,6 +3660,7 @@ gregtech.machine.multi_furnace.name=Multi Smelter
 gregtech.machine.cracker.name=Cracking Unit
 gregtech.machine.cracker.tooltip.1=Every coil after §aCupronickel§7 reduces energy usage by §a5%%§7.
 gregtech.machine.coke_oven.name=Coke Oven
+gregtech.machine.processing_array.name=Processing Array
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
 gregtech.machine.coke_oven_hatch.tooltip=Allows automation access to coke oven. Must be centered on coke oven side.
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
@@ -3891,6 +3892,8 @@ gregtech.muffler.recovery_tooltip=Recovers Items §b%d%%§7 of the time!
 
 gregtech.machine.pump_hatch.name=Pump Output Hatch
 gregtech.machine.pump_hatch.tooltip=Primitive Fluid Output for Water Pump
+
+gregtech.machine.machine_hatch.name=Machine Access Interface
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s

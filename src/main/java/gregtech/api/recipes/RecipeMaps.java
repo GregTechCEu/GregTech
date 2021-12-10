@@ -820,6 +820,10 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.CIRCULAR)
             .setSound(GTSounds.BATH);
 
+    @ZenProperty
+    public static final RecipeMap<SimpleRecipeBuilder> PROCESSING_ARRAY_RECIPES = new RecipeMap<>("processing_array", 0, 9, 0, 6, 0, 3, 0, 2, new SimpleRecipeBuilder(), false)
+            .setSound(GTSounds.ARC);
+
     //////////////////////////////////////
     //         Fuel Recipe Maps         //
     //////////////////////////////////////

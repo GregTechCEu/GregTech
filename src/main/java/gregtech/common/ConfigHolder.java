@@ -40,6 +40,11 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static WorldGenOptions worldgen = new WorldGenOptions();
 
+    @Config.Comment("Options for Multiblock Features")
+    @Config.Name("Multiblock Options")
+    public MultiblockConfig multiblockConfig = new MultiblockConfig();
+
+
     public static class MachineOptions {
 
         @Config.Comment({"Sets the bonus EU output of Steam Turbines.", "Default: 6144"})
@@ -422,4 +427,12 @@ public class ConfigHolder {
             public int energyConsumption = 64;
         }
     }
+
+        public static class MultiblockConfig {
+
+            @Config.Comment({"Blacklist of machines for the Processing Array.",
+                    "Add the unlocalized Recipe Map name to blacklist the machine."})
+            @Config.Name("Processing Array Machine Blacklist")
+            public String[] processingArrayBlacklist = new String[0];
+        }
 }

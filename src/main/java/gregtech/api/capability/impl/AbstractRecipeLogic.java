@@ -343,7 +343,16 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode mode) {
+
+        if(!isRecipeMapValid(getRecipeMap())) {
+            return null;
+        }
+
         return getRecipeMap().findRecipe(maxVoltage, inputs, fluidInputs, getMinTankCapacity(getOutputTank()), mode);
+    }
+
+    public boolean isRecipeMapValid(RecipeMap<?> recipeMap) {
+        return true;
     }
 
     protected static boolean areItemStacksEqual(ItemStack stackA, ItemStack stackB) {
