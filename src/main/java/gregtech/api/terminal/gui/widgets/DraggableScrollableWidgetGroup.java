@@ -8,6 +8,7 @@ import gregtech.api.terminal.gui.IDraggable;
 import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
+import gregtech.common.ConfigHolder;
 import net.minecraft.util.math.MathHelper;
 
 public class DraggableScrollableWidgetGroup extends WidgetGroup {
@@ -318,7 +319,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
             if (super.mouseWheelMove(mouseX, mouseY, wheelDelta)) {
                 return true;
             }
-            int moveDelta = -MathHelper.clamp(wheelDelta, -1, 1) * 10;
+            int moveDelta = -MathHelper.clamp(wheelDelta, -1, 1) * ConfigHolder.U.guiConfig.scrollSpeed;
             if (getMaxHeight() - getSize().height > 0 || scrollYOffset > getMaxHeight() - getSize().height) {
                 setScrollYOffset(MathHelper.clamp(scrollYOffset + moveDelta, 0, getMaxHeight() - getSize().height));
             }

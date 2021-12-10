@@ -192,6 +192,10 @@ public class ConfigHolder {
         @Config.RequiresMcRestart
         public ClientConfig clientConfig = new ClientConfig();
 
+        @Config.Comment("Gui configs")
+        @Config.Name("Gui Options")
+        public GuiConfig guiConfig = new GuiConfig();
+
         @Config.Comment("Divisor for Recipe Duration per Overclock. Default: 2.0")
         @Config.RangeDouble(min = 2.0, max = 3.0)
         public double overclockDivisor = 2.0;
@@ -275,6 +279,12 @@ public class ConfigHolder {
             @Config.Comment("GTEU to Forge Energy (RF and alike) ratio. Default: 4 FE to 1 EU")
             @Config.RangeDouble() // to ensure positive number
             public double rfRatio = 4;
+        }
+
+        public static class GuiConfig {
+            @Config.Comment("The scrolling speed of widgets")
+            @Config.RangeInt(min = 1)
+            public int scrollSpeed = 13;
         }
 
         public static class ClientConfig {
