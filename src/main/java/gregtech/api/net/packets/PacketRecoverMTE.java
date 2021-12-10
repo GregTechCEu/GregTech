@@ -2,13 +2,12 @@ package gregtech.api.net.packets;
 
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.net.IPacket;
+import gregtech.api.net.NetworkUtils;
 import lombok.NoArgsConstructor;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 @NoArgsConstructor
 public class PacketRecoverMTE implements IPacket {
@@ -35,9 +34,7 @@ public class PacketRecoverMTE implements IPacket {
 
     @Override
     public void executeServer(NetHandlerPlayServer handler) {
-        World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension);
-        TileEntity te = world.getTileEntity(pos);
-
+        TileEntity te = NetworkUtils.getTileEntityServer(dimension, pos);
         if (te instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) te).isValid()) {
             ((MetaTileEntityHolder) te).sendInitialSyncData();
         }

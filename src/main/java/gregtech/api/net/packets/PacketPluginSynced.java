@@ -10,7 +10,6 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 @NoArgsConstructor
 public class PacketPluginSynced implements IPacket {
@@ -46,7 +45,7 @@ public class PacketPluginSynced implements IPacket {
     // TODO This could be cleaned up still
     @Override
     public void executeServer(NetHandlerPlayServer handler) {
-        TileEntity te = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension).getTileEntity(pos);
+        TileEntity te = NetworkUtils.getTileEntityServer(dimension, pos);
         if (te instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) te).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
             MonitorPluginBaseBehavior plugin = ((MetaTileEntityMonitorScreen) ((MetaTileEntityHolder) te).getMetaTileEntity()).plugin;
             if (plugin != null) {

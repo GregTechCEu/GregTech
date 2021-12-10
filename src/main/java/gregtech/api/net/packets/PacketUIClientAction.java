@@ -39,11 +39,9 @@ public class PacketUIClientAction implements IPacket {
     @Override
     public void executeServer(NetHandlerPlayServer handler) {
         Container openContainer = handler.player.openContainer;
-        if (openContainer instanceof ModularUIContainer &&
-                openContainer.windowId == windowId) {
+        if (openContainer instanceof ModularUIContainer && openContainer.windowId == windowId) {
             ModularUI modularUI = ((ModularUIContainer) openContainer).getModularUI();
-            PacketBuffer buffer = updateData;
-            modularUI.guiWidgets.get(widgetId).handleClientAction(buffer.readVarInt(), buffer);
+            modularUI.guiWidgets.get(widgetId).handleClientAction(updateData.readVarInt(), updateData);
         }
     }
 }
