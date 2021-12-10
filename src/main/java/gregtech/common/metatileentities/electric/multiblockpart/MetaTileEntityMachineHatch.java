@@ -1,13 +1,15 @@
 package gregtech.common.metatileentities.electric.multiblockpart;
 
-import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.multiblock.*;
-import gregtech.api.recipes.RecipeMap;
+import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityProcessingArray;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -93,27 +95,9 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
 
         @Override
         public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-
-            MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(stack);
-
-            if(mte == null) {
-                return false;
-            }
-
-
-            RecipeMap<?> recipeMap = mte.getRecipeMap();
-
-            if(recipeMap == null) {
-                return false;
-            }
-
             MultiblockControllerBase controller = getController();
-            if(controller != null) {
-                //If this Multiblock Part is attached to a controller, check if it is valid for insertion
-                if(controller instanceof RecipeMapMultiblockController) {
-                    return ((RecipeMapMultiblockController) controller).getRecipeMapWorkable().isRecipeMapValid(recipeMap);
-                }
-            }
+            if (controller != null)
+                return MetaTileEntityProcessingArray.isMachineValid(stack);
 
             //If the controller is null, this part is not attached to any Multiblock
             return true;

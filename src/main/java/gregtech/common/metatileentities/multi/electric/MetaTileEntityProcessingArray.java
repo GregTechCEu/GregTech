@@ -80,6 +80,28 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         return true;
     }
 
+    /**
+     *
+     * @param machineStack the ItemStack containing the machine to check the validity of
+     * @return whether the machine is valid or not
+     */
+    public static boolean isMachineValid(ItemStack machineStack) {
+        MetaTileEntity machine = MachineItemBlock.getMetaTileEntity(machineStack);
+        if (machine instanceof WorkableTieredMetaTileEntity)
+            return !findMachineInBlacklist(machine.getRecipeMap().getUnlocalizedName());
+
+        return false;
+    }
+
+    /**
+     * Attempts to find a passed in RecipeMap unlocalized name in a list of names
+     * @param unlocalizedName The unlocalized name of a RecipeMap
+     * @return {@code true} If the RecipeMap is in the config blacklist
+     */
+    private static boolean findMachineInBlacklist(String unlocalizedName) {
+        return Arrays.asList(ConfigHolder.machines.processingArrayBlacklist).contains(unlocalizedName);
+    }
+
     protected static class ProcessingArrayWorkable extends MultiblockRecipeLogic {
 
         ItemStack currentMachineStack = null;
@@ -117,8 +139,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             if (findMachineInBlacklist(recipeMap.getUnlocalizedName()))
                 return false;
 
-            return  MachineItemBlock.getMetaTileEntity(currentMachineStack) instanceof WorkableTieredMetaTileEntity;
-
+            return isMachineValid(currentMachineStack);
         }
 
         @Override
@@ -136,15 +157,6 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         @Override
         public RecipeMap<?> getRecipeMap() {
             return activeRecipeMap;
-        }
-
-        /**
-         * Attempts to find a passed in RecipeMap unlocalized name in a list of names
-         * @param unlocalizedName The unlocalized name of a RecipeMap
-         * @return {@code true} If the RecipeMap is in the config blacklist
-         */
-        private boolean findMachineInBlacklist(String unlocalizedName) {
-            return Arrays.asList(ConfigHolder.machines.processingArrayBlacklist).contains(unlocalizedName);
         }
 
         public void findMachineStack() {
