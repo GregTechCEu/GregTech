@@ -917,6 +917,11 @@ public class GTUtility {
      * @return whether the machine is valid or not
      */
     public static boolean isMachineValidForMachineHatch(ItemStack machineStack, String[] recipeMapBlacklist) {
+
+        if(machineStack == null || machineStack.isEmpty()) {
+            return false;
+        }
+
         MetaTileEntity machine = MachineItemBlock.getMetaTileEntity(machineStack);
         if (machine instanceof WorkableTieredMetaTileEntity)
             return !findMachineInBlacklist(machine.getRecipeMap().getUnlocalizedName(), recipeMapBlacklist);
