@@ -13,16 +13,14 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.impl.FluidHandlerProxy;
-import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.ItemHandlerProxy;
-import gregtech.api.capability.impl.NotifiableFluidTank;
+import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.FluidKey;
+import gregtech.api.recipes.RecipeMap;
 import gregtech.api.render.Textures;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
@@ -1355,5 +1353,15 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public boolean isMuffled() {
         return muffled;
+    }
+
+    public RecipeMap<?> getRecipeMap() {
+
+        for(int i = 0; i < mteTraits.size(); i++) {
+            if(mteTraits.get(i).getName().equals("RecipeMapWorkable")) {
+                return ((AbstractRecipeLogic) mteTraits.get(i)).getRecipeMap();
+            }
+        }
+        return null;
     }
 }

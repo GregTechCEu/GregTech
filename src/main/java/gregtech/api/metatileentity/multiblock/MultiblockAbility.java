@@ -37,6 +37,8 @@ public class MultiblockAbility<T> {
     public static final MultiblockAbility<IMaintenanceHatch> MAINTENANCE_HATCH = new MultiblockAbility<>();
     public static final MultiblockAbility<IMufflerHatch> MUFFLER_HATCH = new MultiblockAbility<>();
 
+    public static final MultiblockAbility<IItemHandlerModifiable> MACHINE_HATCH = new MultiblockAbility<>();
+
     public static final Map<MultiblockAbility<?>, List<MetaTileEntity>> REGISTER = new Object2ObjectOpenHashMap<>();
 
     public static void registerMultiblockAbility(MultiblockAbility<?> ability, MetaTileEntity part) {

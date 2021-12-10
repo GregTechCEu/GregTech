@@ -819,6 +819,10 @@ public class RecipeMaps {
     public static final RecipeMap<PrimitiveRecipeBuilder> COKE_OVEN_RECIPES = new RecipeMapCokeOven<>("coke_oven", 1, 1, 0, 1, 0, 0, 0, 1, new PrimitiveRecipeBuilder(), false)
             .setSound(GTSounds.FIRE);
 
+    @ZenProperty
+    public static final RecipeMap<SimpleRecipeBuilder> PROCESSING_ARRAY_RECIPES = new RecipeMap<>("processing_array", 0, 9, 0, 6, 0, 3, 0, 2, new SimpleRecipeBuilder(), false)
+            .setSound(GTSounds.ARC);
+
     //////////////////////////////////////
     //         Fuel Recipe Maps         //
     //////////////////////////////////////
