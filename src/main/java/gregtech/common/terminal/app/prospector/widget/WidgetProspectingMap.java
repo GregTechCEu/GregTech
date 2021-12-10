@@ -2,7 +2,7 @@ package gregtech.common.terminal.app.prospector.widget;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
-import gregtech.api.net.SProspectingPacket;
+import gregtech.api.net.packets.PacketProspecting;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
@@ -87,7 +87,7 @@ public class WidgetProspectingMap extends Widget {
             int oz = side == 3 ? r : side == 0 ? -(offset - r + 1) : side == 1 ? -r : (offset - r + 1);
 
             Chunk chunk = world.getChunk(cX + ox, cZ + oz);
-            SProspectingPacket packet = new SProspectingPacket(cX + ox, cZ + oz, (int) player.posX, (int) player.posZ, this.mode);
+            PacketProspecting packet = new PacketProspecting(cX + ox, cZ + oz, (int) player.posX, (int) player.posZ, this.mode);
 
             switch (mode) {
                 case ORE_PROSPECTING_MODE:
@@ -135,7 +135,7 @@ public class WidgetProspectingMap extends Widget {
     public void readUpdateInfo(int id, PacketBuffer buffer) {
         super.readUpdateInfo(id, buffer);
         if (id == 2) {
-            SProspectingPacket packet = SProspectingPacket.readPacketData(buffer);
+            PacketProspecting packet = PacketProspecting.readPacketData(buffer);
             if (packet != null) {
                 if (texture == null) {
                     texture = new ProspectingTexture(packet.mode, chunkRadius, darkMode);

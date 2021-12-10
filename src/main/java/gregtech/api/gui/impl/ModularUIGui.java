@@ -4,7 +4,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.net.PacketUIWidgetUpdate;
+import gregtech.api.net.packets.PacketUIWidgetUpdate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;

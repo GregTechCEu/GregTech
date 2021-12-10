@@ -1,12 +1,14 @@
-package gregtech.api.net;
+package gregtech.api.net.packets;
 
+import lombok.NoArgsConstructor;
 import net.minecraft.network.PacketBuffer;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SProspectingPacket {
+@NoArgsConstructor
+public class PacketProspecting {
     public int chunkX;
     public int chunkZ;
     public int posX;
@@ -15,7 +17,7 @@ public class SProspectingPacket {
     public HashMap<Byte, String>[][] map;
     public Set<String> ores;
 
-    public SProspectingPacket(int chunkX, int chunkZ, int posX, int posZ, int mode) {
+    public PacketProspecting(int chunkX, int chunkZ, int posX, int posZ, int mode) {
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
         this.posX = posX;
@@ -29,8 +31,8 @@ public class SProspectingPacket {
         ores = new HashSet<>();
     }
 
-    public static SProspectingPacket readPacketData(PacketBuffer buffer) {
-        SProspectingPacket packet = new SProspectingPacket(buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt());
+    public static PacketProspecting readPacketData(PacketBuffer buffer) {
+        PacketProspecting packet = new PacketProspecting(buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt());
         int aSize = 0;
         if (packet.mode == 0)
             aSize = 16;
