@@ -279,7 +279,7 @@ public class ParallelLogic {
                     available += inventoryEntry.getValue();
                 }
             }
-            if (available > needed) {
+            if (available >= needed) {
                 int ratio = Math.min(parallelAmount, available / needed);
                 if (ratio < minMultiplier) {
                     minMultiplier = ratio;
@@ -324,7 +324,7 @@ public class ParallelLogic {
             for (Map.Entry<FluidKey, Integer> inputFluid : countFluid.entrySet()) {
                 if (notConsumableFluid.getKey().equals(inputFluid.getKey())) {
                     available = inputFluid.getValue();
-                    if (available > needed) {
+                    if (available >= needed) {
                         inputFluid.setValue(available - needed);
                         available -= needed;
                         break;
