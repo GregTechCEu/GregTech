@@ -58,7 +58,7 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
 
     @Override
     protected void reinitializeEnergyContainer() {
-        this.energyContainer = new EnergyContainerBatteryBuffer(this, getTier());
+        this.energyContainer = new EnergyContainerBatteryBuffer(this, getTier(), inventorySize);
     }
 
     @Override
