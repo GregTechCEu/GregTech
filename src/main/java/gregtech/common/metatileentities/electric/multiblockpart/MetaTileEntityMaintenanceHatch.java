@@ -431,4 +431,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     public void registerAbilities(List<IMaintenanceHatch> abilityList) {
         abilityList.add(this);
     }
+
+    @Override
+    public boolean canPartShare() {
+        return false;
+    }
 }
