@@ -223,4 +223,13 @@ public class GuiTextures {
     public final static TextureArea ICON_CALCULATOR = TextureArea.fullImage("textures/gui/terminal/icon/other/calculator_hover.png");
     public final static TextureArea UI_FRAME_SIDE_UP = TextureArea.fullImage("textures/gui/terminal/frame_side_up.png");
     public final static TextureArea UI_FRAME_SIDE_DOWN = TextureArea.fullImage("textures/gui/terminal/frame_side_down.png");
+
+    // Texture Areas
+    public static final TextureArea BUTTON_FLUID = TextureArea.fullImage("textures/blocks/cover/cover_interface_fluid_button.png");
+    public static final TextureArea BUTTON_ITEM = TextureArea.fullImage("textures/blocks/cover/cover_interface_item_button.png");
+    public static final TextureArea BUTTON_ENERGY = TextureArea.fullImage("textures/blocks/cover/cover_interface_energy_button.png");
+    public static final TextureArea BUTTON_MACHINE = TextureArea.fullImage("textures/blocks/cover/cover_interface_machine_button.png");
+    public static final TextureArea BUTTON_INTERFACE = TextureArea.fullImage("textures/blocks/cover/cover_interface_computer_button.png");
+    public static final TextureArea COVER_INTERFACE_MACHINE_ON_PROXY = TextureArea.fullImage("textures/blocks/cover/cover_interface_machine_on_proxy.png");
+    public static final TextureArea COVER_INTERFACE_MACHINE_OFF_PROXY = TextureArea.fullImage("textures/blocks/cover/cover_interface_machine_off_proxy.png");
 }

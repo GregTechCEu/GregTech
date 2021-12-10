@@ -18,7 +18,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
 
-public class SimpleOverlayRenderer implements IIconRegister {
+public class SimpleOverlayRenderer implements IOverlayRenderer, IIconRegister {
 
     private final String basePath;
 
@@ -31,6 +31,7 @@ public class SimpleOverlayRenderer implements IIconRegister {
 
     public SimpleOverlayRenderer(String basePath) {
         this.basePath = basePath;
+        Textures.CUBE_SIDE_RENDERER_REGISTER.put(basePath, this);
         Textures.iconRegisters.add(this);
     }
 

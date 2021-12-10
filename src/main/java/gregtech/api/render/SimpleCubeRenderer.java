@@ -31,6 +31,7 @@ public class SimpleCubeRenderer implements ICubeRenderer, IIconRegister {
 
     public SimpleCubeRenderer(String basePath) {
         this.basePath = basePath;
+        Textures.CUBE_RENDERER_REGISTER.put(basePath, this);
         Textures.iconRegisters.add(this);
     }
 
