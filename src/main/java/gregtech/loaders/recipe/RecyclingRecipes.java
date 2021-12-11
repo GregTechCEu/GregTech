@@ -63,8 +63,11 @@ public class RecyclingRecipes {
         // TODO Make sure this is okay
         //do not apply arc smelting for gems, solid materials and dust materials
         //only generate recipes for ingot materials
-        if (components.size() == 1 && !components.get(0).material.hasProperty(PropertyKey.INGOT)) {
-            ignoreArcSmelting = true;
+        if (components.size() == 1) {
+            Material m = components.get(0).material;
+            if (!(m.hasProperty(PropertyKey.INGOT) && m.getProperty(PropertyKey.INGOT).getArcSmeltInto() != m)) {
+                ignoreArcSmelting = true;
+            }
         }
 
         // Call to the three recycling methods
@@ -115,7 +118,7 @@ public class RecyclingRecipes {
 
         // Build the final Recipe.
         RecipeBuilder<?> extractorBuilder = RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-                .inputs(input)
+                .inputs(input.copy())
                 .fluidOutputs(fluidMs.material.getFluid((int) (fluidMs.amount * L / M)))
                 .duration((int) duration)
                 .EUt(32 * multiplier);
@@ -152,7 +155,7 @@ public class RecyclingRecipes {
 
         // Build the final Recipe.
         RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
-                .inputs(input)
+                .inputs(input.copy())
                 .outputs(outputs)
                 .duration(calculateDuration(materials))
                 .EUt(30 * multiplier)
@@ -238,7 +241,7 @@ public class RecyclingRecipes {
         if (highestTemp == 0) return 1;
 
         // If less then 2000K, multiplier of 4
-        if (highestTemp < 2000) return 4;
+        if (highestTemp < 2000) return 4; // todo make this a better value?
 
         // If above 2000K, multiplier of 16
         return 16;
