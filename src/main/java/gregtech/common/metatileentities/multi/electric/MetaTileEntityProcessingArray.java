@@ -112,6 +112,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             super.invalidate();
             // Reset locally cached variables upon invalidation
             currentMachineStack = ItemStack.EMPTY;
+            machineChanged = true;
             machineTier = 0;
             machineVoltage = 0L;
             activeRecipeMap = null;
@@ -147,8 +148,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 } else {
                     invalidInputsForRecipes = false;
                 }
-                return (currentMachineStack.isEmpty() || this.activeRecipeMap == null);
-            } else return (!currentMachineStack.isEmpty() && this.activeRecipeMap != null);
+            }
+            return (!currentMachineStack.isEmpty() && this.activeRecipeMap != null);
         }
 
         @Override
