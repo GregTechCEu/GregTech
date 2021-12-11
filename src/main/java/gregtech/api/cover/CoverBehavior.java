@@ -9,7 +9,7 @@ import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.gui.IUIHolder;
-import gregtech.api.render.SimpleSidedCubeRenderer.RenderSide;
+import gregtech.api.render.cuberenderer.SimpleSidedCubeRenderer.RenderSide;
 import gregtech.api.render.Textures;
 import gregtech.core.hooks.BloomRenderLayerHooks;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

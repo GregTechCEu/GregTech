@@ -2,7 +2,7 @@ package gregtech.api.capability.impl.miner;
 
 import gregtech.api.capability.IVentable;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.render.SimpleCubeRenderer;
+import gregtech.api.render.cuberenderer.SimpleCubeRenderer;
 
 public class SteamMinerLogic extends MinerLogic {
 

@@ -1,4 +1,4 @@
-package gregtech.api.render;
+package gregtech.api.render.cuberenderer;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
@@ -7,6 +7,9 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.gui.resources.ResourceHelper;
+import gregtech.api.render.ICubeRenderer;
+import gregtech.api.render.cclop.LightMapOperation;
+import gregtech.api.render.Textures;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -19,7 +22,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class OrientedOverlayRenderer implements IIconRegister {
+public class OrientedOverlayRenderer implements ICubeRenderer, IIconRegister {
 
     public enum OverlayFace {
         FRONT, BACK, TOP, BOTTOM, SIDE;
@@ -37,8 +40,8 @@ public class OrientedOverlayRenderer implements IIconRegister {
         }
     }
 
-    private final String basePath;
-    private final OverlayFace[] faces;
+    protected final String basePath;
+    protected final OverlayFace[] faces;
 
     @SideOnly(Side.CLIENT)
     public Map<OverlayFace, ActivePredicate> sprites;
@@ -95,6 +98,7 @@ public class OrientedOverlayRenderer implements IIconRegister {
     public OrientedOverlayRenderer(String basePath, OverlayFace... faces) {
         this.basePath = basePath;
         this.faces = faces;
+        Textures.CUBE_RENDERER_REGISTRY.put(basePath, this);
         Textures.iconRegisters.add(this);
     }
 
@@ -123,31 +127,31 @@ public class OrientedOverlayRenderer implements IIconRegister {
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public void render(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
+    @Override
+    public TextureAtlasSprite getParticleSprite() {
+        return sprites.get(OverlayFace.FRONT).getSprite(false, false);
+    }
+
+    @Override
+    public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
         for (EnumFacing renderSide : EnumFacing.VALUES) {
             ActivePredicate predicate = sprites.get(OverlayFace.bySide(renderSide, frontFacing));
             if (predicate != null) {
 
                 TextureAtlasSprite renderSprite = predicate.getSprite(isActive, isWorkingEnabled);
-                Textures.renderFace(renderState, translation, ops, renderSide, bounds, renderSprite);
+                Textures.renderFace(renderState, translation, pipeline, renderSide, bounds, renderSprite);
 
                 TextureAtlasSprite emissiveSprite = predicate.getEmissiveSprite(isActive, isWorkingEnabled);
                 if (emissiveSprite != null) {
                     if (ConfigHolder.client.machinesEmissiveTextures) {
-                        IVertexOperation[] lightPipeline = ArrayUtils.add(ops, new LightMapOperation(240, 240));
+                        IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
                         Textures.renderFaceBloom(renderState, translation, lightPipeline, renderSide, bounds, emissiveSprite);
                     } else {
                         // have to still render both overlays or else textures will be broken
-                        Textures.renderFace(renderState, translation, ops, renderSide, bounds, emissiveSprite);
+                        Textures.renderFace(renderState, translation, pipeline, renderSide, bounds, emissiveSprite);
                     }
                 }
             }
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void render(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
-        render(renderState, translation, pipeline, Cuboid6.full, frontFacing, isActive, isWorkingEnabled);
     }
 }

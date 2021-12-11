@@ -1,4 +1,4 @@
-package gregtech.api.render;
+package gregtech.api.render.renderers;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
@@ -7,6 +7,9 @@ import codechicken.lib.texture.TextureUtils.IIconRegister;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.render.Textures;
+import gregtech.api.render.cclop.ColourOperation;
+import gregtech.api.render.cclop.LightMapOperation;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;

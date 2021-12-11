@@ -14,7 +14,7 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.render.SimpleOverlayRenderer;
+import gregtech.api.render.cuberenderer.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import net.minecraft.client.resources.I18n;

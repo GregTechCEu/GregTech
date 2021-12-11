@@ -21,7 +21,7 @@ import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.render.IBlockAppearance;
-import gregtech.api.render.MetaTileEntityRenderer;
+import gregtech.api.render.renderers.MetaTileEntityRenderer;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.tools.DamageValues;

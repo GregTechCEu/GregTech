@@ -1,4 +1,4 @@
-package gregtech.api.render;
+package gregtech.api.render.renderers;
 
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.ARApplication;

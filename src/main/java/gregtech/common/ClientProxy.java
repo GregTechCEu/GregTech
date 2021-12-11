@@ -7,7 +7,7 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.GTValues;
 import gregtech.api.model.customtexture.CustomTextureModelHandler;
 import gregtech.api.model.customtexture.MetadataSectionCTM;
-import gregtech.api.render.MetaTileEntityRenderer;
+import gregtech.api.render.renderers.MetaTileEntityRenderer;
 import gregtech.api.render.ToolRenderHandler;
 import gregtech.api.render.shader.Shaders;
 import gregtech.api.terminal.TerminalRegistry;

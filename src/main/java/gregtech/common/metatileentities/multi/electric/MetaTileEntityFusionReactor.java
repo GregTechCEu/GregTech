@@ -18,7 +18,6 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.ICustomRenderFast;
-import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.RenderBufferHelper;
 import gregtech.api.util.RenderUtil;
@@ -237,7 +236,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         return Textures.FUSION_REACTOR_OVERLAY;
     }
 

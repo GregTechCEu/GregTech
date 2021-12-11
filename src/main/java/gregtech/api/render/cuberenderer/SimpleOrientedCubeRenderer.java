@@ -1,4 +1,4 @@
-package gregtech.api.render;
+package gregtech.api.render.cuberenderer;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
@@ -7,6 +7,9 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.gui.resources.ResourceHelper;
+import gregtech.api.render.ICubeRenderer;
+import gregtech.api.render.cclop.LightMapOperation;
+import gregtech.api.render.Textures;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -19,7 +22,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class SimpleOrientedCubeRenderer implements IIconRegister {
+public class SimpleOrientedCubeRenderer implements ICubeRenderer, IIconRegister {
 
     private final String basePath;
 
@@ -35,6 +38,7 @@ public class SimpleOrientedCubeRenderer implements IIconRegister {
 
     public SimpleOrientedCubeRenderer(String basePath) {
         this.basePath = basePath;
+        Textures.CUBE_RENDERER_REGISTRY.put(basePath, this);
         Textures.iconRegisters.add(this);
     }
 
@@ -58,19 +62,19 @@ public class SimpleOrientedCubeRenderer implements IIconRegister {
         return sprites.get(CubeSide.FRONT);
     }
 
-    @SideOnly(Side.CLIENT)
-    public void render(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, Cuboid6 bounds, EnumFacing frontFacing) {
-        Textures.renderFace(renderState, translation, ops, EnumFacing.UP, bounds, sprites.get(CubeSide.TOP));
-        Textures.renderFace(renderState, translation, ops, EnumFacing.DOWN, bounds, sprites.get(CubeSide.BOTTOM));
+    @Override
+    public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
+        Textures.renderFace(renderState, translation, pipeline, EnumFacing.UP, bounds, sprites.get(CubeSide.TOP));
+        Textures.renderFace(renderState, translation, pipeline, EnumFacing.DOWN, bounds, sprites.get(CubeSide.BOTTOM));
 
-        Textures.renderFace(renderState, translation, ops, frontFacing, bounds, sprites.get(CubeSide.FRONT));
-        Textures.renderFace(renderState, translation, ops, frontFacing.getOpposite(), bounds, sprites.get(CubeSide.BACK));
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, sprites.get(CubeSide.FRONT));
+        Textures.renderFace(renderState, translation, pipeline, frontFacing.getOpposite(), bounds, sprites.get(CubeSide.BACK));
 
-        Textures.renderFace(renderState, translation, ops, frontFacing.rotateY(), bounds, sprites.get(CubeSide.LEFT));
-        Textures.renderFace(renderState, translation, ops, frontFacing.rotateYCCW(), bounds, sprites.get(CubeSide.RIGHT));
+        Textures.renderFace(renderState, translation, pipeline, frontFacing.rotateY(), bounds, sprites.get(CubeSide.LEFT));
+        Textures.renderFace(renderState, translation, pipeline, frontFacing.rotateYCCW(), bounds, sprites.get(CubeSide.RIGHT));
 
         IVertexOperation[] lightPipeline = ConfigHolder.client.machinesEmissiveTextures ?
-                ArrayUtils.add(ops, new LightMapOperation(240, 240)) : ops;
+                ArrayUtils.add(pipeline, new LightMapOperation(240, 240)) : pipeline;
 
         if (spritesEmissive.containsKey(CubeSide.TOP)) Textures.renderFaceBloom(renderState, translation, lightPipeline, EnumFacing.UP, bounds, sprites.get(CubeSide.TOP));
         if (spritesEmissive.containsKey(CubeSide.BOTTOM)) Textures.renderFaceBloom(renderState, translation, lightPipeline, EnumFacing.DOWN, bounds, sprites.get(CubeSide.BOTTOM));

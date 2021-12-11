@@ -1,4 +1,4 @@
-package gregtech.api.render;
+package gregtech.api.render.cuberenderer;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
@@ -7,6 +7,9 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.gui.resources.ResourceHelper;
+import gregtech.api.render.ICubeRenderer;
+import gregtech.api.render.cclop.LightMapOperation;
+import gregtech.api.render.Textures;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -75,19 +78,16 @@ public class SimpleSidedCubeRenderer implements ICubeRenderer, IIconRegister {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void render(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 bounds) {
-        for (EnumFacing renderSide : EnumFacing.VALUES) {
-            RenderSide overlayFace = RenderSide.bySide(renderSide);
-            TextureAtlasSprite renderSprite = sprites.get(overlayFace);
-            Textures.renderFace(renderState, translation, pipeline, renderSide, bounds, renderSprite);
-            TextureAtlasSprite spriteEmissive = spritesEmissive.get(overlayFace);
-            if (spriteEmissive != null) {
-                if (ConfigHolder.client.machinesEmissiveTextures) {
-                    IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
-                    Textures.renderFaceBloom(renderState, translation, lightPipeline, renderSide, bounds, spriteEmissive);
-                } else Textures.renderFace(renderState, translation, pipeline, renderSide, bounds, spriteEmissive);
-            }
+    public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
+        RenderSide overlayFace = RenderSide.bySide(frontFacing);
+        TextureAtlasSprite renderSprite = sprites.get(overlayFace);
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, renderSprite);
+        TextureAtlasSprite spriteEmissive = spritesEmissive.get(overlayFace);
+        if (spriteEmissive != null) {
+            if (ConfigHolder.client.machinesEmissiveTextures) {
+                IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
+                Textures.renderFaceBloom(renderState, translation, lightPipeline, frontFacing, bounds, spriteEmissive);
+            } else Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, spriteEmissive);
         }
     }
 }

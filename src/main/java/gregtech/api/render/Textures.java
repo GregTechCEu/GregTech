@@ -10,6 +10,13 @@ import codechicken.lib.vec.TransformationList;
 import codechicken.lib.vec.uv.IconTransformation;
 import codechicken.lib.vec.uv.UVTransformationList;
 import gregtech.api.GTValues;
+import gregtech.api.render.cclop.GTBlockOperation;
+import gregtech.api.render.cclop.UVMirror;
+import gregtech.api.render.cuberenderer.*;
+import gregtech.api.render.renderers.ClipboardRenderer;
+import gregtech.api.render.renderers.LargeTurbineRenderer;
+import gregtech.api.render.renderers.SafeRenderer;
+import gregtech.api.render.renderers.TankRenderer;
 import gregtech.api.util.GTLog;
 import gregtech.common.render.CrateRenderer;
 import gregtech.common.render.DrumRenderer;
@@ -26,12 +33,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static gregtech.api.render.OrientedOverlayRenderer.OverlayFace.*;
+import static gregtech.api.render.cuberenderer.OrientedOverlayRenderer.OverlayFace.*;
 
 public class Textures {
 
     public static final Map<String, ICubeRenderer> CUBE_RENDERER_REGISTRY = new HashMap<>();
-    public static final Map<String, IOverlayRenderer> CUBE_SIDE_RENDERER_REGISTRY = new HashMap<>();
 
     private static final ThreadLocal<BlockFace> blockFaces = ThreadLocal.withInitial(BlockFace::new);
     public static final List<IIconRegister> iconRegisters = new ArrayList<>();

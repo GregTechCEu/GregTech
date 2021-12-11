@@ -12,7 +12,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.render.SimpleOverlayRenderer;
+import gregtech.api.render.cuberenderer.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.PipelineUtil;
 import gregtech.common.tools.DamageValues;

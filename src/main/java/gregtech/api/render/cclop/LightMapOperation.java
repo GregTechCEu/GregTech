@@ -1,4 +1,4 @@
-package gregtech.api.render;
+package gregtech.api.render.cclop;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;

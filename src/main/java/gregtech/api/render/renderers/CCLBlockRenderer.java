@@ -1,4 +1,4 @@
-package gregtech.api.render;
+package gregtech.api.render.renderers;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.block.BlockRenderingRegistry;
@@ -10,6 +10,8 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.GTValues;
+import gregtech.api.render.ICCLBlockRenderer;
+import gregtech.api.render.Textures;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ModCompatibility;
 import net.minecraft.block.state.IBlockState;

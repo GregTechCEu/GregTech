@@ -11,7 +11,6 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
@@ -98,7 +97,7 @@ public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockControl
 
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         return Textures.DIESEL_ENGINE_OVERLAY;
     }
 

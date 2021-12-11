@@ -9,7 +9,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.*;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.BlockPipe.PipeConnectionData;
-import gregtech.api.render.GTBlockOperation;
+import gregtech.api.render.cclop.GTBlockOperation;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.RenderUtil;
 import net.minecraft.entity.player.EntityPlayer;

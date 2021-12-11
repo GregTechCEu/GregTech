@@ -1,4 +1,4 @@
-package gregtech.api.render;
+package gregtech.api.render.renderers;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
@@ -6,6 +6,7 @@ import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
+import gregtech.api.render.Textures;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;

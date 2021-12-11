@@ -1,4 +1,4 @@
-package gregtech.api.render;
+package gregtech.api.render.renderers;
 
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.render.BlockRenderer;
@@ -18,6 +18,8 @@ import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.render.Textures;
+import gregtech.api.render.cclop.GTBlockOperation;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ModCompatibility;
 import net.minecraft.block.state.IBlockState;

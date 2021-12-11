@@ -1,4 +1,4 @@
-package gregtech.api.render;
+package gregtech.api.render.cuberenderer;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
@@ -7,6 +7,9 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.gui.resources.ResourceHelper;
+import gregtech.api.render.ICubeRenderer;
+import gregtech.api.render.cclop.LightMapOperation;
+import gregtech.api.render.Textures;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -18,7 +21,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
 
-public class SimpleCubeRenderer implements ICubeRenderer, IIconRegister {
+public class SimpleOverlayRenderer implements ICubeRenderer, IIconRegister {
 
     private final String basePath;
 
@@ -29,7 +32,7 @@ public class SimpleCubeRenderer implements ICubeRenderer, IIconRegister {
     @SideOnly(Side.CLIENT)
     private TextureAtlasSprite spriteEmissive;
 
-    public SimpleCubeRenderer(String basePath) {
+    public SimpleOverlayRenderer(String basePath) {
         this.basePath = basePath;
         Textures.CUBE_RENDERER_REGISTRY.put(basePath, this);
         Textures.iconRegisters.add(this);
@@ -45,33 +48,20 @@ public class SimpleCubeRenderer implements ICubeRenderer, IIconRegister {
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public void renderSided(EnumFacing side, Matrix4 translation, Cuboid6 bounds, CCRenderState renderState, IVertexOperation[] pipeline) {
-        Textures.renderFace(renderState, translation, pipeline, side, bounds, sprite);
+    @Override
+    public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, sprite);
         if (spriteEmissive != null) {
             if (ConfigHolder.client.machinesEmissiveTextures) {
                 IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
-                Textures.renderFaceBloom(renderState, translation, lightPipeline, side, bounds, spriteEmissive);
-            } else Textures.renderFace(renderState, translation, pipeline, side, bounds, spriteEmissive);
+                Textures.renderFaceBloom(renderState, translation, lightPipeline, frontFacing, bounds, spriteEmissive);
+            } else Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, spriteEmissive);
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void renderSided(EnumFacing side, CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        renderSided(side, translation, Cuboid6.full, renderState, pipeline);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getParticleSprite() {
         return sprite;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void render(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 bounds) {
-        for (EnumFacing side : EnumFacing.values()) {
-            renderSided(side, translation, bounds, renderState, pipeline);
-        }
     }
 }

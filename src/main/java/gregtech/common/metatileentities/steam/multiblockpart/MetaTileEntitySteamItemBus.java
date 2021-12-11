@@ -11,7 +11,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.SimpleOverlayRenderer;
+import gregtech.api.render.cuberenderer.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityItemBus;

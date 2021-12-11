@@ -10,7 +10,7 @@ import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.render.SimpleOverlayRenderer;
+import gregtech.api.render.cuberenderer.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.PipelineUtil;
 import gregtech.common.tools.DamageValues;

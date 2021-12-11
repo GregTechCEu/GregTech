@@ -17,7 +17,7 @@ import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.render.GTBlockOperation;
+import gregtech.api.render.cclop.GTBlockOperation;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.ItemPipeProperties;

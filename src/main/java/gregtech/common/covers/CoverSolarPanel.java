@@ -8,7 +8,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.render.SimpleSidedCubeRenderer;
+import gregtech.api.render.cuberenderer.SimpleSidedCubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
 import gregtech.common.pipelike.cable.net.EnergyNetHandler;

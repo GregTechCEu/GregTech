@@ -5,7 +5,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.render.MetaTileEntityRenderer;
+import gregtech.api.render.renderers.MetaTileEntityRenderer;
 import gregtech.api.render.MetaTileEntityTESR;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;

@@ -16,7 +16,7 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.render.TankRenderer;
+import gregtech.api.render.renderers.TankRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.ByteBufUtils;

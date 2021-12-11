@@ -14,8 +14,8 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.SimpleSidedCubeRenderer;
+import gregtech.api.render.ICubeRenderer;
+import gregtech.api.render.cuberenderer.SimpleSidedCubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTUtility;
@@ -51,7 +51,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     public final TextureArea SLOT_FURNACE_BACKGROUND;
 
     protected final boolean isHighPressure;
-    private final OrientedOverlayRenderer renderer;
+    private final ICubeRenderer renderer;
 
     protected FluidTank waterFluidTank;
     protected FluidTank steamFluidTank;
@@ -66,7 +66,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     private boolean wasBurningAndNeedsUpdate;
     private final ItemStackHandler containerInventory;
 
-    public SteamBoiler(ResourceLocation metaTileEntityId, boolean isHighPressure, OrientedOverlayRenderer renderer) {
+    public SteamBoiler(ResourceLocation metaTileEntityId, boolean isHighPressure, ICubeRenderer renderer) {
         super(metaTileEntityId);
         this.renderer = renderer;
         this.isHighPressure = isHighPressure;
@@ -100,7 +100,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         getBaseRenderer().render(renderState, translation, colouredPipeline);
-        renderer.render(renderState, translation, pipeline, getFrontFacing(), isBurning(), true);
+        renderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isBurning(), true);
     }
 
     @Override
