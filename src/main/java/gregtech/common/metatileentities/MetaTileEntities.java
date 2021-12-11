@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
+import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity2;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -99,6 +100,7 @@ public class MetaTileEntities {
     public static final SimpleGeneratorMetaTileEntity[] COMBUSTION_GENERATOR = new SimpleGeneratorMetaTileEntity[4];
     public static final SimpleGeneratorMetaTileEntity[] STEAM_TURBINE = new SimpleGeneratorMetaTileEntity[4];
     public static final SimpleGeneratorMetaTileEntity[] GAS_TURBINE = new SimpleGeneratorMetaTileEntity[4];
+    public static final SimpleGeneratorMetaTileEntity2[] COMBUSTION_GENERATOR2 = new SimpleGeneratorMetaTileEntity2[4];
     //MULTIBLOCK PARTS SECTION
     public static final MetaTileEntityItemBus[] ITEM_IMPORT_BUS = new MetaTileEntityItemBus[GTValues.UHV + 1]; // ULV-UHV
     public static final MetaTileEntityItemBus[] ITEM_EXPORT_BUS = new MetaTileEntityItemBus[GTValues.UHV + 1];
@@ -705,6 +707,8 @@ public class MetaTileEntities {
         CREATIVE_TANK = registerMetaTileEntity(1669, new MetaTileEntityCreativeTank(gregtechId("creative_tank")));
 
 
+
+        COMBUSTION_GENERATOR2[0] = registerMetaTileEntity(1668, new SimpleGeneratorMetaTileEntity2(gregtechId("combustion_generator2"), RecipeMaps.COMBUSTION_GENERATOR_FUELS_2, Textures.COMBUSTION_GENERATOR_OVERLAY, 1, true));
 
         /*
          * FOR ADDON DEVELOPERS:
