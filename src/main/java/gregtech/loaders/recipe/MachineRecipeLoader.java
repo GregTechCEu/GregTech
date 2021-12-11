@@ -817,37 +817,37 @@ public class MachineRecipeLoader {
                 .inputs(new ItemStack(Items.PORKCHOP))
                 .output(dustSmall, Meat, 6)
                 .output(dustTiny, Bone)
-                .duration(102).EUt(4).buildAndRegister();
+                .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.FISH, 1, GTValues.W))
                 .output(dustSmall, Meat, 6)
                 .output(dustTiny, Bone)
-                .duration(102).EUt(4).buildAndRegister();
+                .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.CHICKEN))
                 .output(dust, Meat)
                 .output(dustTiny, Bone)
-                .duration(102).EUt(4).buildAndRegister();
+                .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.BEEF))
                 .output(dustSmall, Meat, 6)
                 .output(dustTiny, Bone)
-                .duration(102).EUt(4).buildAndRegister();
+                .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.RABBIT))
                 .output(dustSmall, Meat, 6)
                 .output(dustTiny, Bone)
-                .duration(102).EUt(4).buildAndRegister();
+                .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.MUTTON))
                 .output(dust, Meat)
                 .output(dustTiny, Bone)
-                .duration(102).EUt(4).buildAndRegister();
+                .duration(102).buildAndRegister();
 
 
     }

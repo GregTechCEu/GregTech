@@ -136,12 +136,12 @@ public class DecompositionRecipeHandler {
     private static int getElectrolyzingVoltage(List<Material> components) {
         //tungsten-containing materials electrolyzing requires 1920
         if (components.contains(Materials.Tungsten))
-            return 1920; //EV voltage (tungstate and scheelite electrolyzing)
+            return VA[EV]; //EV voltage (tungstate and scheelite electrolyzing)
         //Binary compound materials require 30 EU/t
         if (components.size() <= 2) {
-            return 30;
+            return VA[LV];
         }
-        return 2 * 30;
+        return 2 * VA[LV];
     }
 
 }

@@ -35,7 +35,7 @@ public class RecipeMaps {
 
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> MACERATOR_RECIPES = new RecipeMap<>("macerator", 1, 1, 1, 3, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(150).EUt(VA[ULV]), false)
+    public static final RecipeMap<SimpleRecipeBuilder> MACERATOR_RECIPES = new RecipeMap<>("macerator", 1, 1, 1, 3, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(150).EUt(2), false)
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_MACERATE, MoveType.HORIZONTAL)
@@ -223,7 +223,7 @@ public class RecipeMaps {
      * 				.fluidInputs(Materials.Water.getFluid(100))
      * 				.outputs(new ItemStack(Items.paper, 1, 0))
      * 				.duration(100)
-     * 				.EUt(VA[ULV])
+     * 				.EUt(8)
      * 				.buildAndRegister();
      * </pre>
      */
@@ -258,7 +258,7 @@ public class RecipeMaps {
      * 				.fluidInputs(Materials.Water.getFluid(6))
      * 				.fluidOutputs(Materials.Water.getGas(960))
      * 				.duration(30)
-     * 				.EUt(30)
+     * 				.EUt(32)
      * 				.buildAndRegister();
      * </pre>
      */
@@ -315,7 +315,7 @@ public class RecipeMaps {
      * 				.fluidInputs(Materials.Steel.getFluid(72))
      * 				.outputs(ItemList.IC2_Item_Casing_Steel.get(1))
      * 				.duration(16)
-     * 				.EUt(VA[ULV])
+     * 				.EUt(8)
      * 				.buildAndRegister();
      * </pre>
      */
@@ -594,7 +594,7 @@ public class RecipeMaps {
      * 				.inputs(OreDictUnifier.get(OrePrefix.plate, Materials.Tin, 12L))
      * 				.outputs(ItemList.Cell_Empty.get(6))
      * 				.duration(1200)
-     * 				.EUt(7)
+     * 				.EUt(8)
      * 				.buildAndRegister();
      * </pre>
      */
@@ -663,7 +663,7 @@ public class RecipeMaps {
      * 				.fluidInputs(Materials.Lubricant.getFluid(1))
      * 				.outputs(new ItemStack(Blocks.PLANKS), OreDictUnifier.get(OrePrefix.dust, Materials.Wood, 1L))
      * 				.duration(200)
-     * 				.EUt(7)
+     * 				.EUt(8)
      * 				.buildAndRegister();
      * </pre>
      */
@@ -701,7 +701,7 @@ public class RecipeMaps {
      * 				.notConsumable(ItemList.Shape_Extruder_Rod)
      * 				.outputs(OreDictUnifier.get(OrePrefix.stick, Materials.Iron.smeltInto, 2))
      * 				.duration(64)
-     * 				.EUt(7)
+     * 				.EUt(8)
      * 				.buildAndRegister();
      * </pre>
      */

@@ -452,7 +452,7 @@ public class MiscRecipeLoader {
                     .fluidOutputs(Glass.getFluid(108))
                     .buildAndRegister();
 
-            MACERATOR_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(22)
+            MACERATOR_RECIPES.recipeBuilder().duration(22)
                     .input(item)
                     .output(dustSmall, Glass, 3)
                     .buildAndRegister();

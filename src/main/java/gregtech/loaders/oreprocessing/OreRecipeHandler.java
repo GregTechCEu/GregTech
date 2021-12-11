@@ -89,7 +89,7 @@ public class OreRecipeHandler {
                     .input(orePrefix, material)
                     .outputs(GTUtility.copyAmount((int) Math.round(amountOfCrushedOre) * 2 * oreTypeMultiplier, crushedStack))
                     .chancedOutput(byproductStack, 1400, 850)
-                    .duration(400).EUt(12);
+                    .duration(400);
             for (MaterialStack secondaryMaterial : orePrefix.secondaryMaterials) {
                 if (secondaryMaterial.material.hasProperty(PropertyKey.DUST)) {
                     ItemStack dustStack = OreDictUnifier.getDust(secondaryMaterial);
@@ -128,7 +128,7 @@ public class OreRecipeHandler {
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .input(crushedPrefix, material)
                 .outputs(impureDustStack)
-                .duration(200).EUt(12)
+                .duration(200)
                 .chancedOutput(OreDictUnifier.get(OrePrefix.dust, byproductMaterial, property.getByProductMultiplier()), 1400, 850)
                 .buildAndRegister();
 
@@ -204,7 +204,7 @@ public class OreRecipeHandler {
                 .input(centrifugedPrefix, material)
                 .outputs(dustStack)
                 .chancedOutput(byproductStack, 1400, 850)
-                .duration(200).EUt(12)
+                .duration(200)
                 .buildAndRegister();
 
         ModHandler.addShapelessRecipe(String.format("centrifuged_ore_to_dust_%s", material), dustStack,
@@ -232,7 +232,6 @@ public class OreRecipeHandler {
                 .outputs(dustStack)
                 .chancedOutput(byproductStack, 1400, 850)
                 .duration(200)
-                .EUt(12)
                 .buildAndRegister();
 
         RecipeMaps.SIMPLE_WASHER_RECIPES.recipeBuilder()

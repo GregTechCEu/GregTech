@@ -193,6 +193,6 @@ public class WireRecipeHandler {
     }
 
     private static int getVoltageMultiplier(Material material) {
-        return material.getBlastTemperature() >= 2800 ? 32 : 8;
+        return material.getBlastTemperature() >= 2800 ? VA[LV] : VA[ULV];
     }
 }

@@ -217,7 +217,7 @@ public class VanillaStandardRecipes {
                 .inputs(new ItemStack(Blocks.GRAVEL, 1))
                 .output(dust, Stone)
                 .chancedOutput(new ItemStack(Items.FLINT), 1000, 1000)
-                .EUt(2).duration(400)
+                .duration(400)
                 .buildAndRegister();
 
         FORGE_HAMMER_RECIPES.recipeBuilder()
@@ -249,21 +249,18 @@ public class VanillaStandardRecipes {
                 .inputs(new ItemStack(Items.WHEAT))
                 .output(OrePrefix.dust, Materials.Wheat)
                 .duration(400)
-                .EUt(2)
                 .buildAndRegister();
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.DYE, 1, EnumDyeColor.BROWN.getDyeDamage()))
                 .outputs(OreDictUnifier.get(OrePrefix.dust, Materials.Cocoa, 1))
                 .duration(400)
-                .EUt(2)
                 .buildAndRegister();
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.REEDS, 1))
                 .outputs(new ItemStack(Items.SUGAR, 1))
                 .duration(400)
-                .EUt(2)
                 .buildAndRegister();
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
@@ -271,21 +268,18 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Items.MELON, 8, 0))
                 .chancedOutput(new ItemStack(Items.MELON_SEEDS, 1), 8000, 500)
                 .duration(400)
-                .EUt(2)
                 .buildAndRegister();
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.PUMPKIN, 1, 0))
                 .outputs(new ItemStack(Items.PUMPKIN_SEEDS, 4, 0))
                 .duration(400)
-                .EUt(2)
                 .buildAndRegister();
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.MELON, 1, 0))
                 .outputs(new ItemStack(Items.MELON_SEEDS, 1, 0))
                 .duration(400)
-                .EUt(2)
                 .buildAndRegister();
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
@@ -293,7 +287,6 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Items.STRING, 3))
                 .chancedOutput(new ItemStack(Items.STRING, 1), 2000, 800)
                 .duration(400)
-                .EUt(2)
                 .buildAndRegister();
     }
 

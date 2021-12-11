@@ -178,7 +178,7 @@ public class VanillaOverrideRecipes {
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.SAND))
                 .output(OrePrefix.dust, Materials.QuartzSand)
-                .duration(30).EUt(4).buildAndRegister();
+                .duration(30).buildAndRegister();
 
         ModHandler.addShapelessRecipe("glass_dust_flint", OreDictUnifier.get(OrePrefix.dust, Materials.Glass),
                 new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),

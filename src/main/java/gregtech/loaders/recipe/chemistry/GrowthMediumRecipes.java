@@ -17,7 +17,7 @@ public class GrowthMediumRecipes {
     public static void init() {
 
         // Bio Chaff
-        MACERATOR_RECIPES.recipeBuilder().EUt(VA[LV]).duration(200)
+        MACERATOR_RECIPES.recipeBuilder().duration(200)
                 .input(PLANT_BALL, 2)
                 .output(BIO_CHAFF)
                 .output(BIO_CHAFF)
@@ -25,7 +25,7 @@ public class GrowthMediumRecipes {
                 //.chancedOutput(BIO_CHAFF, 2500, 0) TODO Enable once macerator gets 4th slot
                 .buildAndRegister();
 
-        MACERATOR_RECIPES.recipeBuilder().EUt(2).duration(300)
+        MACERATOR_RECIPES.recipeBuilder().duration(300)
                 .input(BIO_CHAFF)
                 .outputs(new ItemStack(Blocks.DIRT))
                 .buildAndRegister();
