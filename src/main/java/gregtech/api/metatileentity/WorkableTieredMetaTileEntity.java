@@ -28,6 +28,7 @@ import java.util.function.Function;
 public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity implements ISoundCreator {
 
     protected final RecipeLogicEnergy workable;
+    protected final RecipeMap<?> recipeMap;
     protected final ICubeRenderer renderer;
 
     private final Function<Integer, Integer> tankScalingFunction;
@@ -37,6 +38,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         super(metaTileEntityId, tier);
         this.renderer = renderer;
         this.workable = createWorkable(recipeMap);
+        this.recipeMap = recipeMap;
         this.tankScalingFunction = tankScalingFunction;
         initializeInventory();
         reinitializeEnergyContainer();

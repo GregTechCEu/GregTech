@@ -6,7 +6,6 @@ import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.common.ConfigHolder;
 
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
@@ -15,32 +14,6 @@ public class FuelRecipeLogic2 extends RecipeLogicEnergy {
 
     public FuelRecipeLogic2(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, Supplier<IEnergyContainer> energyContainer) {
         super(tileEntity, recipeMap, energyContainer);
-    }
-
-    @Override
-    protected void updateRecipeProgress() {
-        boolean drawEnergy = drawEnergy(recipeEUt);
-        if (drawEnergy) {
-            //as recipe starts with progress on 1 this has to be > only not => to compensate for it
-            if (++progressTime > maxProgressTime) {
-                completeRecipe();
-            }
-            if (this.hasNotEnoughEnergy && getEnergyInputPerSecond() > 19L * recipeEUt) {
-                this.hasNotEnoughEnergy = false;
-            }
-        } else if (recipeEUt > 0) {
-            //only set hasNotEnoughEnergy if this recipe is consuming recipe
-            //generators always have enough energy
-            this.hasNotEnoughEnergy = true;
-            //if current progress value is greater than 2, decrement it by 2
-            if (progressTime >= 2) {
-                if (ConfigHolder.machines.recipeProgressLowEnergy) {
-                    this.progressTime = 1;
-                } else {
-                    this.progressTime = Math.max(1, progressTime - 2);
-                }
-            }
-        }
     }
 
     @Override
@@ -65,5 +38,10 @@ public class FuelRecipeLogic2 extends RecipeLogicEnergy {
     public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
         // the builder automatically multiplies by -1, so nothing extra is needed here
         builder.EUt(builder.getEUt());
+    }
+
+    @Override
+    public int getParallelLimit() {
+        return (int) Math.max(1, Math.pow(4, getOverclockTier() - 1));
     }
 }
