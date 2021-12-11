@@ -49,6 +49,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected int parallelRecipesPerformed;
     private long overclockVoltage = 0;
 
+    protected boolean canRecipeProgress = true;
+
     protected int progressTime;
     protected int maxProgressTime;
     protected int recipeEUt;
@@ -134,6 +136,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         World world = getMetaTileEntity().getWorld();
         if (world != null && !world.isRemote) {
             if (workingEnabled) {
+                if (getMetaTileEntity().getOffsetTimer() % 20 == 0) {
+                    if (!canProgressRecipe())
+                        this.canRecipeProgress = false;
+                    else if (!this.canRecipeProgress)
+                        this.canRecipeProgress = true;
+                }
+
                 if (progressTime > 0) {
                     updateRecipeProgress();
                 }
@@ -209,7 +218,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     protected void updateRecipeProgress() {
-        boolean drawEnergy = drawEnergy(recipeEUt);
+        boolean drawEnergy = false;
+        if (canRecipeProgress)
+            drawEnergy = drawEnergy(recipeEUt);
         if (drawEnergy) {
             //as recipe starts with progress on 1 this has to be > only not => to compensate for it
             if (++progressTime > maxProgressTime) {
@@ -231,6 +242,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                 }
             }
         }
+    }
+
+    /**
+     *
+     * @return {@code true} if the recipe can progress, else false
+     */
+    protected boolean canProgressRecipe() {
+        return true;
     }
 
     /**
