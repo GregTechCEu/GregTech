@@ -212,7 +212,6 @@ public class GTJeiPlugin implements IModPlugin {
 
         String oreSpawnID = GTValues.MODID + ":" + "ore_spawn_location";
         registry.addRecipes(oreInfoList, oreSpawnID);
-        registry.addRecipeCatalyst(MetaItems.SCANNER.getStackForm(), oreSpawnID);
         registry.addRecipeCatalyst(MetaItems.PROSPECTOR_LV.getStackForm(), oreSpawnID);
         registry.addRecipeCatalyst(MetaItems.PROSPECTOR_HV.getStackForm(), oreSpawnID);
         registry.addRecipeCatalyst(MetaItems.PROSPECTOR_LUV.getStackForm(), oreSpawnID);

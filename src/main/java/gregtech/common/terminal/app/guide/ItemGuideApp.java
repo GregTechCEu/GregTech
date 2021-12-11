@@ -14,7 +14,7 @@ import java.util.Objects;
 public class ItemGuideApp extends GuideApp<ItemGuideApp.GuideItem> {
 
     public ItemGuideApp() {
-        super("items", new ItemStackTexture(MetaItems.SCANNER.getStackForm()));
+        super("items", new ItemStackTexture(MetaItems.PROSPECTOR_LV.getStackForm()));
     }
 
     @Override

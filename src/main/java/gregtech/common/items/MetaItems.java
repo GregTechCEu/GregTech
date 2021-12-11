@@ -440,7 +440,6 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem POWER_UNIT_IV;
 
     public static MetaItem<?>.MetaValueItem NANO_SABER;
-    public static MetaItem<?>.MetaValueItem SCANNER;
     public static MetaItem<?>.MetaValueItem PROSPECTOR_LV;
     public static MetaItem<?>.MetaValueItem PROSPECTOR_HV;
     public static MetaItem<?>.MetaValueItem PROSPECTOR_LUV;
