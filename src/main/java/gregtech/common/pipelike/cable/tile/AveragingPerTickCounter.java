@@ -64,6 +64,7 @@ public class AveragingPerTickCounter {
         checkValueState(world);
         if (!dirty)
             return lastAverage;
+        dirty = false;
         return lastAverage = Arrays.stream(values).sum() / (double) (values.length);
     }
 
