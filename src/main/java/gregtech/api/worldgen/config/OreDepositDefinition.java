@@ -204,4 +204,50 @@ public class OreDepositDefinition implements IWorldgenDefinition {
     public ShapeGenerator getShapeGenerator() {
         return shapeGenerator;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof OreDepositDefinition))
+            return false;
+
+        OreDepositDefinition objDeposit = (OreDepositDefinition) obj;
+        if (this.weight != objDeposit.getWeight())
+            return false;
+        if (this.density != objDeposit.getDensity())
+            return false;
+        if (this.priority != objDeposit.getPriority())
+            return false;
+        if (this.countAsVein != objDeposit.isVein())
+            return false;
+        if (this.getMinimumHeight() != objDeposit.getMinimumHeight())
+            return false;
+        if (this.getMaximumHeight() != objDeposit.getMaximumHeight())
+            return false;
+        if ((this.assignedName == null && objDeposit.getAssignedName() != null) ||
+                (this.assignedName != null && objDeposit.getAssignedName() == null) ||
+                (this.assignedName != null && objDeposit.getAssignedName() != null && !this.assignedName.equals(objDeposit.getAssignedName())))
+            return false;
+        if ((this.description == null && objDeposit.getDescription() != null) ||
+                (this.description != null && objDeposit.getDescription() == null) ||
+                (this.description != null && objDeposit.getDescription() != null && !this.description.equals(objDeposit.getDescription())))
+            return false;
+        if ((this.biomeWeightModifier == null && objDeposit.getBiomeWeightModifier() != null) ||
+                (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() == null) ||
+                (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() != null && !this.biomeWeightModifier.equals(objDeposit.getBiomeWeightModifier())))
+            return false;
+        if ((this.dimensionFilter == null && objDeposit.getDimensionFilter() != null) ||
+                (this.dimensionFilter != null && objDeposit.getDimensionFilter() == null) ||
+                (this.dimensionFilter != null && objDeposit.getDimensionFilter() != null && !this.dimensionFilter.equals(objDeposit.getDimensionFilter())))
+            return false;
+        if ((this.generationPredicate == null && objDeposit.getGenerationPredicate() != null) ||
+                (this.generationPredicate != null && objDeposit.getGenerationPredicate() == null) ||
+                (this.generationPredicate != null && objDeposit.getGenerationPredicate() != null && !this.generationPredicate.equals(objDeposit.getGenerationPredicate())))
+            return false;
+        if ((this.veinPopulator == null && objDeposit.getVeinPopulator() != null) ||
+                (this.veinPopulator != null && objDeposit.getVeinPopulator() == null) ||
+                (this.veinPopulator != null && objDeposit.getVeinPopulator() != null && !this.veinPopulator.equals(objDeposit.getVeinPopulator())))
+            return false;
+
+        return super.equals(obj);
+    }
 }

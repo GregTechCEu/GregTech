@@ -197,9 +197,13 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition { //to
             return false;
         if (this.depletedProductionRate != objDeposit.getDepletedProductionRate())
             return false;
-        if (!this.biomeWeightModifier.equals(objDeposit.getBiomeWeightModifier()))
+        if ((this.biomeWeightModifier == null && objDeposit.getBiomeWeightModifier() != null) ||
+                (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() == null) ||
+                (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() != null && !this.biomeWeightModifier.equals(objDeposit.getBiomeWeightModifier())))
             return false;
-        if (!this.dimensionFilter.equals(objDeposit.getDimensionFilter()))
+        if ((this.dimensionFilter == null && objDeposit.getDimensionFilter() != null) ||
+                (this.dimensionFilter != null && objDeposit.getDimensionFilter() == null) ||
+                (this.dimensionFilter != null && objDeposit.getDimensionFilter() != null && !this.dimensionFilter.equals(objDeposit.getDimensionFilter())))
             return false;
 
         return super.equals(obj);
