@@ -60,20 +60,19 @@ public class RecyclingRecipes {
         // Calculate the voltage multiplier based on if a Material has a Blast Property
         int voltageMultiplier = calculateVoltageMultiplier(components);
 
-        // TODO Make sure this is okay
+        registerMaceratorRecycling(input, components, voltageMultiplier);
+        registerExtractorRecycling(input, components, voltageMultiplier);
+        if (ignoreArcSmelting) return;
+
         //do not apply arc smelting for gems, solid materials and dust materials
         //only generate recipes for ingot materials
         if (components.size() == 1) {
             Material m = components.get(0).material;
             if (!(m.hasProperty(PropertyKey.INGOT) && m.getProperty(PropertyKey.INGOT).getArcSmeltInto() != m)) {
-                ignoreArcSmelting = true;
+                return;
             }
         }
-
-        // Call to the three recycling methods
-        registerMaceratorRecycling(input, components, voltageMultiplier);
-        registerExtractorRecycling(input, components, voltageMultiplier);
-        if (!ignoreArcSmelting) registerArcRecycling(input, components, voltageMultiplier);
+        registerArcRecycling(input, components, voltageMultiplier);
     }
 
     private static void registerMaceratorRecycling(ItemStack input, List<MaterialStack> materials, int multiplier) {
