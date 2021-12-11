@@ -18,6 +18,6 @@ public interface IScannableBlock {
 
 
     default int getScanDuration(IBlockAccess world, BlockPos pos, IBlockState blockState, EntityPlayer player) {
-        return 60;
+        return 59;
     }
 }

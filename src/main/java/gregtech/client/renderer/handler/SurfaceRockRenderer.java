@@ -20,8 +20,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.PositionedRect;
 import gregtech.api.util.Size;
-import gregtech.common.blocks.surfacerock.BlockSurfaceRock;
-import gregtech.common.blocks.surfacerock.TileEntitySurfaceRock;
+import gregtech.common.blocks.BlockSurfaceRock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -30,7 +29,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
@@ -43,9 +41,9 @@ import java.util.List;
 import java.util.Random;
 
 @SideOnly(Side.CLIENT)
-public class StoneRenderer implements ICCBlockRenderer {
+public class SurfaceRockRenderer implements ICCBlockRenderer {
 
-    private static final StoneRenderer INSTANCE = new StoneRenderer();
+    private static final SurfaceRockRenderer INSTANCE = new SurfaceRockRenderer();
     public static EnumBlockRenderType BLOCK_RENDER_TYPE;
     private static final CCModel[] placeholderModels = new CCModel[1];
 
@@ -97,14 +95,6 @@ public class StoneRenderer implements ICCBlockRenderer {
     }
 
     private static CCModel getActualModel(IBlockAccess world, BlockPos pos) {
-        TileEntitySurfaceRock tileEntity = BlockSurfaceRock.getTileEntity(world, pos);
-        if (tileEntity != null) {
-            if (tileEntity.cachedModel == null) {
-                Random random = new Random(MathHelper.getPositionRandom(pos));
-                tileEntity.cachedModel = generateModel(random);
-            }
-            return (CCModel) tileEntity.cachedModel;
-        }
         return placeholderModels[0];
     }
 
