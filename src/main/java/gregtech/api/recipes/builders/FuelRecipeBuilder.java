@@ -30,6 +30,11 @@ public class FuelRecipeBuilder extends RecipeBuilder<FuelRecipeBuilder> {
         return new FuelRecipeBuilder(this);
     }
 
+    @Override
+    public FuelRecipeBuilder EUt(int EUt) {
+        return super.EUt(EUt * -1);
+    }
+
     public FuelRecipeBuilder boostFluid(FluidStack fluidStack, int duration, int boostFactor) {
         boostFluids.put(fluidStack, new Integer[]{duration, boostFactor});
         return this;
