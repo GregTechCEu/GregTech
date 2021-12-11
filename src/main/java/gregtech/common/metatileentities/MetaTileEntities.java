@@ -214,6 +214,8 @@ public class MetaTileEntities {
     //MISC MACHINES SECTION
     public static MetaTileEntityWorkbench WORKBENCH;
     public static MetaTileEntityCreativeEnergy CREATIVE_ENERGY;
+    public static MetaTileEntityCreativeTank CREATIVE_TANK;
+    public static MetaTileEntityCreativeChest CREATIVE_CHEST;
     public static MetaTileEntityClipboard CLIPBOARD_TILE;
     public static MetaTileEntityMonitorScreen MONITOR_SCREEN;
     public static MetaTileEntityCentralMonitor CENTRAL_MONITOR;
@@ -695,6 +697,10 @@ public class MetaTileEntities {
         CLIPBOARD_TILE = registerMetaTileEntity(1666, new MetaTileEntityClipboard(gregtechId("clipboard")));
 
         MONITOR_SCREEN = registerMetaTileEntity(1667, new MetaTileEntityMonitorScreen(gregtechId("monitor_screen")));
+
+        // Creative Chest and Tank, IDs 1668-1669
+        CREATIVE_CHEST = registerMetaTileEntity(1668, new MetaTileEntityCreativeChest(gregtechId("creative_chest")));
+
 
         /*
          * FOR ADDON DEVELOPERS:
