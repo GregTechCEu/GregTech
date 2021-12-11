@@ -195,7 +195,8 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         ((EnergyContainerHandler) this.energyContainer).setEnergyStored(energyStored);
     }
 
-    private void initializeAbilities() {
+    @Override
+    protected void initializeAbilities() {
         this.inputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.IMPORT_ITEMS));
         this.inputFluidInventory = new FluidTankList(true, getAbilities(MultiblockAbility.IMPORT_FLUIDS));
         this.outputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.EXPORT_ITEMS));

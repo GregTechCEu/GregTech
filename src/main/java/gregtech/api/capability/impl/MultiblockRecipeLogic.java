@@ -2,6 +2,7 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMaintenanceHatch;
+import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.multiblock.IMultipleRecipeMaps;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -40,6 +41,11 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     public void updateWorkable() {
         super.update();
+    }
+
+    @Override
+    protected boolean canProgressRecipe() {
+        return !((IMultiblockController) metaTileEntity).isStructureObstructed();
     }
 
     /**
