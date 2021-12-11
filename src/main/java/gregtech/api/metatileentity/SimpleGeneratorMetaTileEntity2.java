@@ -59,6 +59,14 @@ public class SimpleGeneratorMetaTileEntity2 extends WorkableTieredMetaTileEntity
     }
 
     @Override
+    protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
+        final FuelRecipeLogic2 result = new FuelRecipeLogic2(this, recipeMap, () -> energyContainer);
+        result.enableOverclockVoltage();
+        result.setParallelLimit((int) Math.max(1, Math.pow(4, getTier() - 1)));
+        return result;
+    }
+
+    @Override
     protected void initializeInventory() {
         super.initializeInventory();
         this.outputItemInventory = new ItemHandlerProxy(new ItemStackHandler(0), exportItems);
@@ -90,12 +98,6 @@ public class SimpleGeneratorMetaTileEntity2 extends WorkableTieredMetaTileEntity
             return null;
         }
         return super.getCapability(capability, side);
-    }
-    @Override
-    protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
-        final FuelRecipeLogic2 result = new FuelRecipeLogic2(this, recipeMap, () -> energyContainer);
-        result.enableOverclockVoltage();
-        return result;
     }
 
     protected ModularUI.Builder createGuiTemplate(EntityPlayer player) {
