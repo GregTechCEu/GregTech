@@ -27,6 +27,7 @@ import org.apache.commons.io.IOUtils;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -54,7 +55,8 @@ public class WorldGenRegistry {
     private final List<OreDepositDefinition> registeredVeinDefinitions = new ArrayList<>();
     private final List<BedrockFluidDepositDefinition> registeredBedrockVeinDefinitions = new ArrayList<>();
     private final List<OreDepositDefinition> addonRegisteredDefinitions = new ArrayList<>();
-    private List<OreDepositDefinition> removedDefinitions = new ArrayList<>();
+    private List<OreDepositDefinition> removedVeinDefinitions = new ArrayList<>();
+    private List<BedrockFluidDepositDefinition> removedBedrockVeinDefinitions = new ArrayList<>();
     private final Map<WorldProvider, WorldOreVeinCache> oreVeinCache = new WeakHashMap<>();
 
     private class WorldOreVeinCache {
@@ -166,8 +168,11 @@ public class WorldGenRegistry {
 
         // Will always fail when called from initializeRegistry
         // Placed here to delete the file before being gathered and having its definition initialized
-        if(!removedDefinitions.isEmpty()) {
-            removeExistingFiles(worldgenRootPath);
+        if(!removedVeinDefinitions.isEmpty()) {
+            removeExistingFiles(veinPath, removedVeinDefinitions);
+        }
+        if(!removedBedrockVeinDefinitions.isEmpty()) {
+            removeExistingFiles(bedrockVeinPath, removedBedrockVeinDefinitions);
         }
 
         // Gather the worldgen vein files from the various folders in the config
@@ -360,10 +365,9 @@ public class WorldGenRegistry {
         }
     }
 
-    private void removeExistingFiles(Path configRoot){
-
-        for(OreDepositDefinition definition : removedDefinitions) {
-            Path filePath = configRoot.resolve(Paths.get(definition.getDepositName()));
+    private void removeExistingFiles(Path root, @Nonnull List<? extends IWorldgenDefinition> definitions){
+        for(IWorldgenDefinition definition : definitions) {
+            Path filePath = root.resolve(Paths.get(definition.getDepositName()));
 
             try {
                 if(Files.exists(filePath)) {
@@ -407,13 +411,23 @@ public class WorldGenRegistry {
      * @param definition The {@link OreDepositDefinition} to remove
      */
     @SuppressWarnings("unused")
-    public void removeVeinDefinitions(OreDepositDefinition definition) {
-        if(registeredVeinDefinitions.contains(definition)) {
-            registeredVeinDefinitions.remove(definition);
-            removedDefinitions.add(definition);
-        }
-        else {
-            GTLog.logger.error("Failed to remove OreDepositDefinition at {}. Deposit was not in list of registered veins.", definition.getDepositName());
+    public void removeVeinDefinitions(IWorldgenDefinition definition) {
+        if (definition instanceof OreDepositDefinition) {
+
+            if (registeredVeinDefinitions.contains(definition)) {
+                registeredVeinDefinitions.remove(definition);
+                removedVeinDefinitions.add((OreDepositDefinition) definition);
+            } else {
+                GTLog.logger.error("Failed to remove OreDepositDefinition at {}. Deposit was not in list of registered veins.", definition.getDepositName());
+            }
+        } else if (definition instanceof BedrockFluidDepositDefinition) {
+            if (registeredBedrockVeinDefinitions.contains(definition)) {
+                registeredBedrockVeinDefinitions.remove(definition);
+                removedBedrockVeinDefinitions.add((BedrockFluidDepositDefinition) definition);
+            } else {
+                GTLog.logger.error("Failed to remove BedrockFluidDepositDefinition at {}. Deposit was not in list of registered veins.", definition.getDepositName());
+            }
+
         }
     }
 

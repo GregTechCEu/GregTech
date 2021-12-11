@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 
 @ZenClass("mods.gregtech.ore.BedrockFluidDepositDefinition")
 @ZenRegister
-public class BedrockFluidDepositDefinition { //todo re-balance depletion rates of default veins
+public class BedrockFluidDepositDefinition implements IWorldgenDefinition { //todo re-balance depletion rates of default veins
 
     private final String depositName;
 
@@ -88,6 +88,7 @@ public class BedrockFluidDepositDefinition { //todo re-balance depletion rates o
     }
 
     //This is the file name
+    @Override
     @ZenGetter("depositName")
     public String getDepositName() {
         return depositName;
@@ -184,9 +185,13 @@ public class BedrockFluidDepositDefinition { //todo re-balance depletion rates o
             return false;
         if (!this.storedFluid.equals(objDeposit.getStoredFluid()))
             return false;
-        if (!this.assignedName.equals(objDeposit.getAssignedName()))
+        if ((this.assignedName == null && objDeposit.getAssignedName() != null) ||
+                (this.assignedName != null && objDeposit.getAssignedName() == null) ||
+                (this.assignedName != null && objDeposit.getAssignedName() != null && !this.assignedName.equals(objDeposit.getAssignedName())))
             return false;
-        if (!this.description.equals(objDeposit.getDescription()))
+        if ((this.description == null && objDeposit.getDescription() != null) ||
+                (this.description != null && objDeposit.getDescription() == null) ||
+                (this.description != null && objDeposit.getDescription() != null && !this.description.equals(objDeposit.getDescription())))
             return false;
         if (this.depletedProductionRate != objDeposit.getDepletedProductionRate())
             return false;

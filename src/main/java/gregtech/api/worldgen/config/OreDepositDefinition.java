@@ -27,7 +27,7 @@ import java.util.function.Predicate;
 
 @ZenClass("mods.gregtech.ore.OreDepositDefinition")
 @ZenRegister
-public class OreDepositDefinition {
+public class OreDepositDefinition implements IWorldgenDefinition {
 
     public static final Function<Biome, Integer> NO_BIOME_INFLUENCE = biome -> 0;
     public static final Predicate<WorldProvider> PREDICATE_SURFACE_WORLD = WorldProvider::isSurfaceWorld;
@@ -98,6 +98,7 @@ public class OreDepositDefinition {
     }
 
     //This is the file name
+    @Override
     @ZenGetter("depositName")
     public String getDepositName() {
         return depositName;
