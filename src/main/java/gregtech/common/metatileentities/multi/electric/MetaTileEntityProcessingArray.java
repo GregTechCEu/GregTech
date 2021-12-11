@@ -2,7 +2,6 @@ package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
 import gregtech.api.block.machines.MachineItemBlock;
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.IMachineHatchMultiblock;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
@@ -13,7 +12,9 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.recipes.*;
+import gregtech.api.recipes.RecipeBuilder;
+import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
@@ -25,11 +26,12 @@ import gregtech.common.metatileentities.electric.MetaTileEntityMacerator;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 
 public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController implements IMachineHatchMultiblock {
+
+    private boolean machineChanged;
 
     public MetaTileEntityProcessingArray(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.PROCESSING_ARRAY_RECIPES);
@@ -81,6 +83,11 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     @Override
+    public void notifyMachineChanged() {
+        machineChanged = true;
+    }
+
+    @Override
     public String[] getBlacklist() {
         return ConfigHolder.machines.processingArrayBlacklist;
     }
@@ -88,8 +95,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     @SuppressWarnings("InnerClassMayBeStatic")
     protected class ProcessingArrayWorkable extends MultiblockRecipeLogic {
 
-        ItemStack currentMachineStack = null;
-        ItemStack oldMachineStack = null;
+        ItemStack currentMachineStack = ItemStack.EMPTY;
         //The Voltage Tier of the machines the PA is operating upon, from GTValues.V
         private int machineTier;
         //The maximum Voltage of the machines the PA is operating upon
@@ -105,8 +111,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         public void invalidate() {
             super.invalidate();
             // Reset locally cached variables upon invalidation
-            currentMachineStack = null;
-            oldMachineStack = null;
+            currentMachineStack = ItemStack.EMPTY;
+            machineChanged = true;
             machineTier = 0;
             machineVoltage = 0L;
             activeRecipeMap = null;
@@ -115,27 +121,35 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         /**
          * Checks if a provided Recipe Map is valid to be used in the processing array
          * Will filter out anything in the config blacklist, and also any non-singleblock machines
+         *
          * @param recipeMap The recipeMap to check
          * @return {@code true} if the provided recipeMap is valid for use
          */
         @Override
         public boolean isRecipeMapValid(RecipeMap<?> recipeMap) {
-            if (GTUtility.findMachineInBlacklist(recipeMap.getUnlocalizedName(), ((IMachineHatchMultiblock) metaTileEntity).getBlacklist()))
+            if (recipeMap == null || GTUtility.findMachineInBlacklist(recipeMap.getUnlocalizedName(), ((IMachineHatchMultiblock) metaTileEntity).getBlacklist()))
                 return false;
 
             return GTUtility.isMachineValidForMachineHatch(currentMachineStack, ((IMachineHatchMultiblock) metaTileEntity).getBlacklist());
         }
 
         @Override
-        protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode mode) {
+        protected boolean shouldSearchForRecipes() {
+            return canWorkWithMachines() && super.shouldSearchForRecipes();
+        }
 
-            findMachineStack();
-
-            if (currentMachineStack.isEmpty() || this.activeRecipeMap == null)
-                return null;
-
-            //Find available recipes based on the tier of the machines the processing array is operating upon and the voltage provided to the Processing Array
-            return super.findRecipe(maxVoltage, inputs, fluidInputs, mode);
+        public boolean canWorkWithMachines() {
+            if (machineChanged) {
+                findMachineStack();
+                machineChanged = false;
+                previousRecipe = null;
+                if (isDistinct()) {
+                    invalidatedInputList.clear();
+                } else {
+                    invalidInputsForRecipes = false;
+                }
+            }
+            return (!currentMachineStack.isEmpty() && this.activeRecipeMap != null);
         }
 
         @Override
@@ -166,74 +180,6 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             this.currentMachineStack = machine;
         }
 
-        /**
-         * Will check if the previous machine stack and the current machine stack are different
-         *
-         * @param newMachineStack - The current machine stack
-         * @return - true if the machine stacks are not equal, false if they are equal
-         */
-        protected boolean didMachinesChange(ItemStack newMachineStack) {
-            if (newMachineStack == null || this.oldMachineStack == null)
-                return newMachineStack != this.oldMachineStack;
-
-            return !ItemStack.areItemStacksEqual(this.oldMachineStack, newMachineStack);
-        }
-
-        @Override
-        protected void trySearchNewRecipeCombined() {
-
-            findMachineStack();
-
-            if (this.currentMachineStack == null || this.currentMachineStack.isEmpty())
-                return;
-
-            super.trySearchNewRecipeCombined();
-        }
-
-        @Override
-        protected boolean checkPreviousRecipe() {
-            boolean result = super.checkPreviousRecipe();
-
-            if(didMachinesChange(currentMachineStack)) {
-                oldMachineStack = null;
-                return false;
-            }
-
-            return result;
-        }
-
-        @Override
-        protected boolean checkPreviousRecipeDistinct(IItemHandlerModifiable previousBus) {
-            boolean result = super.checkPreviousRecipeDistinct(previousBus);
-
-            if(didMachinesChange(currentMachineStack)) {
-                oldMachineStack = null;
-                return false;
-            }
-
-            return result;
-        }
-
-        @Override
-        protected boolean prepareRecipe(Recipe recipe) {
-            boolean result = super.prepareRecipe(recipe);
-            if(result) {
-                this.oldMachineStack = currentMachineStack;
-            }
-
-            return result;
-        }
-
-        @Override
-        protected boolean prepareRecipeDistinct(Recipe recipe) {
-            boolean result = super.prepareRecipe(recipe);
-            if(result) {
-                this.oldMachineStack = currentMachineStack;
-            }
-
-            return result;
-        }
-
         @Override
         protected int getOverclockingTier(long voltage) {
             return this.machineTier;
@@ -255,7 +201,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(currentMachineStack);
 
             //Clear the chanced outputs of LV and MV macerators, as they do not have the slots to get byproducts
-            if(mte instanceof MetaTileEntityMacerator && machineTier < GTValues.HV) {
+            if (mte instanceof MetaTileEntityMacerator && machineTier < GTValues.HV) {
                 builder.clearChancedOutput();
             }
         }

@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.electric.multiblockpart;
 
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
@@ -15,14 +16,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable> {
 
-    private IItemHandlerModifiable machineHandler;
+    private final IItemHandlerModifiable machineHandler;
 
     public MetaTileEntityMachineHatch(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier, false);
@@ -59,7 +59,7 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
     protected ModularUI createUI(EntityPlayer entityPlayer) {
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-                18 + 18 + 94)
+                        18 + 18 + 94)
                 .label(10, 5, getMetaFullName());
 
         builder.widget(new SlotWidget(machineHandler, 0,
@@ -76,18 +76,17 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
         return false;
     }
 
-    private class LimitedImportHandler extends ItemStackHandler {
+    private class LimitedImportHandler extends NotifiableItemStackHandler {
 
         public LimitedImportHandler() {
-            super(1);
+            super(1, null, false);
         }
-
 
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
 
-            if(!isItemValid(slot, stack)) {
+            if (!isItemValid(slot, stack)) {
                 return stack;
             }
 
@@ -108,16 +107,23 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
 
-            if(getController() instanceof RecipeMapMultiblockController) {
+            if (getController() instanceof RecipeMapMultiblockController) {
 
                 RecipeMapMultiblockController controller = (RecipeMapMultiblockController) getController();
 
-                if(controller != null && controller.isActive()) {
+                if (controller != null && controller.isActive()) {
                     return ItemStack.EMPTY;
                 }
             }
 
             return super.extractItem(slot, amount, simulate);
+        }
+
+        @Override
+        public <T> void addToNotifiedList(MetaTileEntity metaTileEntity, T handler, boolean isExport) {
+            if (metaTileEntity instanceof IMachineHatchMultiblock && metaTileEntity.isValid()) {
+                ((IMachineHatchMultiblock) metaTileEntity).notifyMachineChanged();
+            }
         }
     }
 }
