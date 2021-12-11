@@ -699,7 +699,9 @@ public class MetaTileEntities {
 
 
 
-        COMBUSTION_GENERATOR2[0] = registerMetaTileEntity(1668, new SimpleGeneratorMetaTileEntity2(gregtechId("combustion_generator2"), RecipeMaps.COMBUSTION_GENERATOR_FUELS_2, Textures.COMBUSTION_GENERATOR_OVERLAY, 1, true));
+        COMBUSTION_GENERATOR2[0] = registerMetaTileEntity(1668, new SimpleGeneratorMetaTileEntity2(gregtechId("combustion_generator2.lv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS_2, Textures.COMBUSTION_GENERATOR_OVERLAY, 1, true));
+        COMBUSTION_GENERATOR2[1] = registerMetaTileEntity(1669, new SimpleGeneratorMetaTileEntity2(gregtechId("combustion_generator2.mv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS_2, Textures.COMBUSTION_GENERATOR_OVERLAY, 2, true));
+        COMBUSTION_GENERATOR2[2] = registerMetaTileEntity(1670, new SimpleGeneratorMetaTileEntity2(gregtechId("combustion_generator2.hv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS_2, Textures.COMBUSTION_GENERATOR_OVERLAY, 3, true));
 
         /*
          * FOR ADDON DEVELOPERS:

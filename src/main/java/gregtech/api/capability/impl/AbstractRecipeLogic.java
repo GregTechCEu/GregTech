@@ -386,34 +386,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return - true if the recipe is successful, false if the recipe is not successful
      */
     protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
-
-        //Format: EU/t, Duration
-        int[] resultOverclock = calculateOverclock(recipe);
-        int totalEUt = resultOverclock[0] * resultOverclock[1];
+        if (!hasEnoughPower(calculateOverclock(recipe))) {
+            return false;
+        }
 
         IItemHandlerModifiable exportInventory = getOutputInventory();
         IMultipleTankHandler importFluids = getInputTank();
         IMultipleTankHandler exportFluids = getOutputTank();
-
-        boolean enoughPower;
-        //RIP Ternary
-        if (totalEUt >= 0) {
-            int capacity;
-            if (totalEUt > getEnergyCapacity() / 2) {
-                capacity = resultOverclock[0];
-            } else {
-                capacity = totalEUt;
-            }
-
-            enoughPower = getEnergyStored() >= capacity;
-        } else {
-            int power = resultOverclock[0];
-            enoughPower = getEnergyStored() - (long) power <= getEnergyCapacity();
-        }
-
-        if (!enoughPower) {
-            return false;
-        }
 
         if (!MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs(exportInventory.getSlots()))) {
             this.isOutputsFull = true;
@@ -425,6 +404,25 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
         this.isOutputsFull = false;
         return recipe.matches(true, importInventory, importFluids);
+    }
+
+    protected boolean hasEnoughPower(@Nonnull int[] resultOverclock) {
+        int totalEUt = resultOverclock[0] * resultOverclock[1];
+
+        //RIP Ternary
+        if (totalEUt >= 0) {
+            int capacity;
+            if (totalEUt > getEnergyCapacity() / 2) {
+                capacity = resultOverclock[0];
+            } else {
+                capacity = totalEUt;
+            }
+
+            return getEnergyStored() >= capacity;
+        } else {
+            int power = resultOverclock[0];
+            return getEnergyStored() - (long) power <= getEnergyCapacity();
+        }
     }
 
     /**
