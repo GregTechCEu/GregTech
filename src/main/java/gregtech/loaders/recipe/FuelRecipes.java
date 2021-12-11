@@ -26,14 +26,6 @@ public class FuelRecipes {
         registerCombustionGeneratorFuel(Gasoline.getFluid(1), 24, LV);
         registerCombustionGeneratorFuel(HighOctaneGasoline.getFluid(1), 68, LV);
 
-        RecipeMaps.COMBUSTION_GENERATOR_FUELS_2.recipeBuilder()
-                .fluidInputs(Diesel.getFluid(1))
-                .boostFluid(Air.getFluid(2000), 20, 3)
-                .boostFluid(Lubricant.getFluid(1), 20, -1)
-                .duration(15)
-                .EUt(32)
-                .buildAndRegister();
-
         //steam generator fuels
         registerSteamGeneratorFuel(Steam.getFluid(640), 10, LV);
 
@@ -86,17 +78,37 @@ public class FuelRecipes {
 
     public static void registerCombustionGeneratorFuel(FluidStack fuelStack, int duration, int tier) {
         RecipeMaps.COMBUSTION_GENERATOR_FUELS.addRecipe(new FuelRecipe(fuelStack, duration, GTValues.V[tier]));
+        RecipeMaps.COMBUSTION_GENERATOR_FUELS_2.recipeBuilder()
+                .fluidInputs(fuelStack)
+                .duration(duration)
+                .EUt((int) GTValues.V[tier])
+                .buildAndRegister();
     }
 
     public static void registerSteamGeneratorFuel(FluidStack fuelStack, int duration, int tier) {
         RecipeMaps.STEAM_TURBINE_FUELS.addRecipe(new FuelRecipe(fuelStack, duration, GTValues.V[tier]));
+        RecipeMaps.STEAM_TURBINE_FUELS_2.recipeBuilder()
+                .fluidInputs(fuelStack)
+                .duration(duration)
+                .EUt((int) GTValues.V[tier])
+                .buildAndRegister();
     }
 
     public static void registerGasGeneratorFuel(FluidStack fuelStack, int duration, int tier) {
         RecipeMaps.GAS_TURBINE_FUELS.addRecipe(new FuelRecipe(fuelStack, duration, GTValues.V[tier]));
+        RecipeMaps.GAS_TURBINE_FUELS_2.recipeBuilder()
+                .fluidInputs(fuelStack)
+                .duration(duration)
+                .EUt((int) GTValues.V[tier])
+                .buildAndRegister();
     }
 
     public static void registerSemiFluidGeneratorFuel(FluidStack fuelStack, int duration, int tier) {
         RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.addRecipe(new FuelRecipe(fuelStack, duration, GTValues.V[tier]));
+        RecipeMaps.SEMI_FLUID_GENERATOR_FUELS_2.recipeBuilder()
+                .fluidInputs(fuelStack)
+                .duration(duration)
+                .EUt((int) GTValues.V[tier])
+                .buildAndRegister();
     }
 }
