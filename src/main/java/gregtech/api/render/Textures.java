@@ -30,8 +30,8 @@ import static gregtech.api.render.OrientedOverlayRenderer.OverlayFace.*;
 
 public class Textures {
 
-    public static final Map<String, ICubeRenderer> CUBE_RENDERER_REGISTER = new HashMap<>();
-    public static final Map<String, IOverlayRenderer> CUBE_SIDE_RENDERER_REGISTER = new HashMap<>();
+    public static final Map<String, ICubeRenderer> CUBE_RENDERER_REGISTRY = new HashMap<>();
+    public static final Map<String, IOverlayRenderer> CUBE_SIDE_RENDERER_REGISTRY = new HashMap<>();
 
     private static final ThreadLocal<BlockFace> blockFaces = ThreadLocal.withInitial(BlockFace::new);
     public static final List<IIconRegister> iconRegisters = new ArrayList<>();

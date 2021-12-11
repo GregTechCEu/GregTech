@@ -13,8 +13,8 @@ import java.util.*;
 
 @SuppressWarnings("InstantiationOfUtilityClass")
 public class MultiblockAbility<T> {
-    public static final Map<String, MultiblockAbility<?>> NAME_REGISTER = new HashMap<>();
-    public static final Map<MultiblockAbility<?>, List<MetaTileEntity>> REGISTER = new Object2ObjectOpenHashMap<>();
+    public static final Map<String, MultiblockAbility<?>> NAME_REGISTRY = new HashMap<>();
+    public static final Map<MultiblockAbility<?>, List<MetaTileEntity>> REGISTRY = new Object2ObjectOpenHashMap<>();
 
     public static final MultiblockAbility<IItemHandlerModifiable> EXPORT_ITEMS = new MultiblockAbility<>("export_items");
     public static final MultiblockAbility<IItemHandlerModifiable> IMPORT_ITEMS = new MultiblockAbility<>("import_items");
@@ -37,13 +37,13 @@ public class MultiblockAbility<T> {
     public static final MultiblockAbility<IMufflerHatch> MUFFLER_HATCH = new MultiblockAbility<>("muffler_hatch");
 
     public static void registerMultiblockAbility(MultiblockAbility<?> ability, MetaTileEntity part) {
-        if (!REGISTER.containsKey(ability)) {
-            REGISTER.put(ability, new ArrayList<>());
+        if (!REGISTRY.containsKey(ability)) {
+            REGISTRY.put(ability, new ArrayList<>());
         }
-        REGISTER.get(ability).add(part);
+        REGISTRY.get(ability).add(part);
     }
 
     public MultiblockAbility(String name){
-        NAME_REGISTER.put(name.toLowerCase(), this);
+        NAME_REGISTRY.put(name.toLowerCase(), this);
     }
 }

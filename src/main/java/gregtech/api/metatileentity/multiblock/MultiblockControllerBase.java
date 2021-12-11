@@ -5,7 +5,6 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -15,13 +14,11 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.VariantActiveBlock;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -163,7 +160,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public static TraceabilityPredicate abilities(MultiblockAbility<?>... allowedAbilities) {
         return tilePredicate((state, tile) -> tile instanceof IMultiblockAbilityPart<?> &&
                         ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()),
-                getCandidates(Arrays.stream(allowedAbilities).flatMap(ability -> MultiblockAbility.REGISTER.get(ability).stream()).toArray(MetaTileEntity[]::new)));
+                getCandidates(Arrays.stream(allowedAbilities).flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream()).toArray(MetaTileEntity[]::new)));
     }
 
     public static TraceabilityPredicate states(IBlockState... allowedStates) {

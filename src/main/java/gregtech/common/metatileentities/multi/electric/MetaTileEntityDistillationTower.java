@@ -15,7 +15,6 @@ import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiFluidHatch;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -68,7 +67,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
                         .or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1))
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1)))
                 .where('X', states(getCasingState())
-                        .or(metaTileEntities(MultiblockAbility.REGISTER.get(MultiblockAbility.EXPORT_FLUIDS).stream()
+                        .or(metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.EXPORT_FLUIDS).stream()
                                 .filter(mte->!(mte instanceof MetaTileEntityMultiFluidHatch))
                                 .toArray(MetaTileEntity[]::new))
                                 .setMinLayerLimited(1).setMaxLayerLimited(1))

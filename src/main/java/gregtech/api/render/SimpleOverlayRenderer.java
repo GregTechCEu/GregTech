@@ -31,7 +31,7 @@ public class SimpleOverlayRenderer implements IOverlayRenderer, IIconRegister {
 
     public SimpleOverlayRenderer(String basePath) {
         this.basePath = basePath;
-        Textures.CUBE_SIDE_RENDERER_REGISTER.put(basePath, this);
+        Textures.CUBE_SIDE_RENDERER_REGISTRY.put(basePath, this);
         Textures.iconRegisters.add(this);
     }
 
