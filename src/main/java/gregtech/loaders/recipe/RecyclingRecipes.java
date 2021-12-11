@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe;
 
 import com.google.common.collect.ImmutableList;
+import gregtech.api.GTValues;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
@@ -92,7 +93,7 @@ public class RecyclingRecipes {
                 .inputs(input.copy())
                 .outputs(outputs)
                 .duration(calculateDuration(materials))
-                .EUt(4 * multiplier)
+                .EUt(2 * multiplier)
                 .buildAndRegister();
     }
 
@@ -120,7 +121,7 @@ public class RecyclingRecipes {
                 .inputs(input.copy())
                 .fluidOutputs(fluidMs.material.getFluid((int) (fluidMs.amount * L / M)))
                 .duration((int) duration)
-                .EUt(32 * multiplier);
+                .EUt(GTValues.VA[GTValues.LV] * multiplier);
 
         // Null check the Item before adding it to the Builder.
         // - Try to output an Ingot, otherwise output a Dust.
@@ -157,7 +158,7 @@ public class RecyclingRecipes {
                 .inputs(input.copy())
                 .outputs(outputs)
                 .duration(calculateDuration(materials))
-                .EUt(30 * multiplier)
+                .EUt(GTValues.VA[GTValues.LV] * multiplier)
                 .buildAndRegister();
     }
 
