@@ -7,6 +7,7 @@ import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.packets.PacketKeysPressed;
 import gregtech.api.util.VirtualTankRegistry;
