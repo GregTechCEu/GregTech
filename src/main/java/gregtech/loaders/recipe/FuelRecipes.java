@@ -26,6 +26,14 @@ public class FuelRecipes {
         registerCombustionGeneratorFuel(Gasoline.getFluid(1), 24, LV);
         registerCombustionGeneratorFuel(HighOctaneGasoline.getFluid(1), 68, LV);
 
+        RecipeMaps.COMBUSTION_GENERATOR_FUELS_2.recipeBuilder()
+                .fluidInputs(Diesel.getFluid(1))
+                .boostFluid(Air.getFluid(2000), 20, 3)
+                .boostFluid(Lubricant.getFluid(1), 20, -1)
+                .duration(15)
+                .EUt(32)
+                .buildAndRegister();
+
         //steam generator fuels
         registerSteamGeneratorFuel(Steam.getFluid(640), 10, LV);
 
