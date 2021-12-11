@@ -20,67 +20,51 @@ import static gregtech.api.GTValues.W;
 public class MaterialInfoLoader {
 
     public static void init() {
-        if (ConfigHolder.recipes.harderHeatingCoils) {
-            OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.CUPRONICKEL),
-                    new ItemMaterialInfo(new MaterialStack(Materials.Cupronickel, OrePrefix.wireGtDouble.materialAmount * 8),
-                            new MaterialStack(Materials.Bronze, OrePrefix.foil.materialAmount * 8),
-                            new MaterialStack(Materials.TinAlloy, OrePrefix.ingot.materialAmount))
-            );
-            OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.KANTHAL),
-                    new ItemMaterialInfo(new MaterialStack(Materials.Kanthal, OrePrefix.wireGtDouble.materialAmount * 8),
-                            new MaterialStack(Materials.Aluminium, OrePrefix.foil.materialAmount * 8),
-                            new MaterialStack(Materials.Copper, OrePrefix.ingot.materialAmount))
-            );
-            OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.NICHROME),
-                    new ItemMaterialInfo(new MaterialStack(Materials.Nichrome, OrePrefix.wireGtDouble.materialAmount * 8),
-                            new MaterialStack(Materials.StainlessSteel, OrePrefix.foil.materialAmount * 8),
-                            new MaterialStack(Materials.Aluminium, OrePrefix.ingot.materialAmount))
-            );
-            OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.TUNGSTENSTEEL),
-                    new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, OrePrefix.wireGtDouble.materialAmount * 8),
-                            new MaterialStack(Materials.VanadiumSteel, OrePrefix.foil.materialAmount * 8),
-                            new MaterialStack(Materials.Nichrome, OrePrefix.ingot.materialAmount))
-            );
-            OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.HSS_G),
-                    new ItemMaterialInfo(new MaterialStack(Materials.HSSG, OrePrefix.wireGtDouble.materialAmount * 8),
-                            new MaterialStack(Materials.TungstenCarbide, OrePrefix.foil.materialAmount * 8),
-                            new MaterialStack(Materials.Tungsten, OrePrefix.ingot.materialAmount))
-            );
-            OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.NAQUADAH),
-                    new ItemMaterialInfo(new MaterialStack(Materials.Naquadah, OrePrefix.wireGtDouble.materialAmount * 8),
-                            new MaterialStack(Materials.Osmium, OrePrefix.foil.materialAmount * 8),
-                            new MaterialStack(Materials.TungstenSteel, OrePrefix.ingot.materialAmount))
-            );
-            OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.NAQUADAH_ALLOY),
-                    new ItemMaterialInfo(new MaterialStack(Materials.NaquadahAlloy, OrePrefix.wireGtDouble.materialAmount * 8),
-                            new MaterialStack(Materials.Osmiridium, OrePrefix.foil.materialAmount * 8),
-                            new MaterialStack(Materials.Naquadah, OrePrefix.ingot.materialAmount))
-            );
-            OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.FLUXED_ELECTRUM),
-                    new ItemMaterialInfo(new MaterialStack(Materials.FluxedElectrum, OrePrefix.wireGtDouble.materialAmount * 8),
-                            new MaterialStack(Materials.Naquadria, OrePrefix.foil.materialAmount * 8),
-                            new MaterialStack(Materials.NaquadahAlloy, OrePrefix.ingot.materialAmount))
-            );
-            OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL2.getItemVariant(CoilType2.DIAMERICIUM_TITANIUM),
-                    new ItemMaterialInfo(new MaterialStack(Materials.DiamericiumTitanium, OrePrefix.wireGtDouble.materialAmount * 8),
-                            new MaterialStack(Materials.Trinium, OrePrefix.foil.materialAmount * 8),
-                            new MaterialStack(Materials.Neutronium, OrePrefix.ingot.materialAmount))
-            );
-
-        } else {
-            for (CoilType coilType : CoilType.values()) {
-                if (coilType.getMaterial().hasProperty(PropertyKey.DUST)) {
-                    ItemStack outputStack = MetaBlocks.WIRE_COIL.getItemVariant(coilType);
-                    OreDictUnifier.registerOre(outputStack, new ItemMaterialInfo(new MaterialStack(coilType.getMaterial(), OrePrefix.wireGtDouble.materialAmount * 8)));
-                }
-            }
-            for (CoilType2 coilType : CoilType2.values()) {
-                if (coilType.getMaterial().hasProperty(PropertyKey.DUST)) {
-                    ItemStack outputStack = MetaBlocks.WIRE_COIL2.getItemVariant(coilType);
-                    OreDictUnifier.registerOre(outputStack, new ItemMaterialInfo(new MaterialStack(coilType.getMaterial(), OrePrefix.wireGtDouble.materialAmount * 8)));
-                }
-            }
-        }
+        OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.CUPRONICKEL),
+                new ItemMaterialInfo(new MaterialStack(Materials.Cupronickel, OrePrefix.wireGtDouble.materialAmount * 8),
+                        new MaterialStack(Materials.Bronze, OrePrefix.foil.materialAmount * 8),
+                        new MaterialStack(Materials.TinAlloy, OrePrefix.ingot.materialAmount))
+        );
+        OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.KANTHAL),
+                new ItemMaterialInfo(new MaterialStack(Materials.Kanthal, OrePrefix.wireGtDouble.materialAmount * 8),
+                        new MaterialStack(Materials.Aluminium, OrePrefix.foil.materialAmount * 8),
+                        new MaterialStack(Materials.Copper, OrePrefix.ingot.materialAmount))
+        );
+        OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.NICHROME),
+                new ItemMaterialInfo(new MaterialStack(Materials.Nichrome, OrePrefix.wireGtDouble.materialAmount * 8),
+                        new MaterialStack(Materials.StainlessSteel, OrePrefix.foil.materialAmount * 8),
+                        new MaterialStack(Materials.Aluminium, OrePrefix.ingot.materialAmount))
+        );
+        OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.TUNGSTENSTEEL),
+                new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, OrePrefix.wireGtDouble.materialAmount * 8),
+                        new MaterialStack(Materials.VanadiumSteel, OrePrefix.foil.materialAmount * 8),
+                        new MaterialStack(Materials.Nichrome, OrePrefix.ingot.materialAmount))
+        );
+        OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.HSS_G),
+                new ItemMaterialInfo(new MaterialStack(Materials.HSSG, OrePrefix.wireGtDouble.materialAmount * 8),
+                        new MaterialStack(Materials.TungstenCarbide, OrePrefix.foil.materialAmount * 8),
+                        new MaterialStack(Materials.Tungsten, OrePrefix.ingot.materialAmount))
+        );
+        OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.NAQUADAH),
+                new ItemMaterialInfo(new MaterialStack(Materials.Naquadah, OrePrefix.wireGtDouble.materialAmount * 8),
+                        new MaterialStack(Materials.Osmium, OrePrefix.foil.materialAmount * 8),
+                        new MaterialStack(Materials.TungstenSteel, OrePrefix.ingot.materialAmount))
+        );
+        OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.NAQUADAH_ALLOY),
+                new ItemMaterialInfo(new MaterialStack(Materials.NaquadahAlloy, OrePrefix.wireGtDouble.materialAmount * 8),
+                        new MaterialStack(Materials.Osmiridium, OrePrefix.foil.materialAmount * 8),
+                        new MaterialStack(Materials.Naquadah, OrePrefix.ingot.materialAmount))
+        );
+        OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.FLUXED_ELECTRUM),
+                new ItemMaterialInfo(new MaterialStack(Materials.FluxedElectrum, OrePrefix.wireGtDouble.materialAmount * 8),
+                        new MaterialStack(Materials.Naquadria, OrePrefix.foil.materialAmount * 8),
+                        new MaterialStack(Materials.NaquadahAlloy, OrePrefix.ingot.materialAmount))
+        );
+        OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL2.getItemVariant(CoilType2.DIAMERICIUM_TITANIUM),
+                new ItemMaterialInfo(new MaterialStack(Materials.DiamericiumTitanium, OrePrefix.wireGtDouble.materialAmount * 8),
+                        new MaterialStack(Materials.Trinium, OrePrefix.foil.materialAmount * 8),
+                        new MaterialStack(Materials.Neutronium, OrePrefix.ingot.materialAmount))
+        );
 
         if (ConfigHolder.recipes.hardWoodRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Items.ACACIA_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2), new MaterialStack(Materials.Iron, OrePrefix.screw.materialAmount)));

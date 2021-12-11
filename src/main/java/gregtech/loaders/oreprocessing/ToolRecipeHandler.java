@@ -26,6 +26,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.ArrayList;
 import java.util.function.Function;
 
+import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.common.items.MetaItems.*;
 
@@ -397,7 +398,7 @@ public class ToolRecipeHandler {
     }
 
     private static int getVoltageMultiplier(Material material) {
-        return material.getBlastTemperature() > 2800 ? 32 : 8;
+        return material.getBlastTemperature() > 2800 ? VA[LV] : VA[ULV];
     }
 
     public static void registerManualToolRecipes() {

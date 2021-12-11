@@ -223,7 +223,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             this.hasNotEnoughEnergy = true;
             //if current progress value is greater than 2, decrement it by 2
             if (progressTime >= 2) {
-                if (ConfigHolder.machines.insufficientEnergySupplyWipesRecipeProgress) {
+                if (ConfigHolder.machines.recipeProgressLowEnergy) {
                     this.progressTime = 1;
                 } else {
                     this.progressTime = Math.max(1, progressTime - 2);

@@ -3,7 +3,6 @@ package gregtech.integration.theoneprobe.provider;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.util.GTLog;
 import mcjty.theoneprobe.api.ElementAlignment;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
@@ -30,10 +29,8 @@ public class ElectricContainerInfoProvider extends CapabilityInfoProvider<IEnerg
 
     @Override
     protected void addProbeInfo(IEnergyContainer capability, IProbeInfo probeInfo, TileEntity tileEntity, EnumFacing sideHit) {
-        GTLog.logger.info("cap: {}", capability);
         long energyStored = capability.getEnergyStored();
         long maxStorage = capability.getEnergyCapacity();
-        GTLog.logger.info("energyStored: {}, maxStorage: {}", energyStored, maxStorage);
         if (maxStorage == 0) return; //do not add empty max storage progress bar
         IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
         String additionalSpacing = tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, sideHit) ? "   " : "";
