@@ -778,7 +778,7 @@ public class ComponentRecipes {
                     .inputs(PUMPS[i].getStackForm())
                     .input(OrePrefix.circuit, circuitTiers[i], 2)
                     .outputs(FLUID_REGULATORS[i].getStackForm())
-                    .EUt((int) (GTValues.V[i + 1] * 30 / 32))
+                    .EUt(GTValues.VA[i + 1])
                     .duration(400 - 50 * i)
                     .buildAndRegister();
         }

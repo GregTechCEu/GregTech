@@ -115,7 +115,7 @@ public class MaterialRecipeHandler {
             duration = Math.max(1, (int) (material.getAverageMass() * blastTemp / 50L));
         }
         int EUt = property.getEUtOverride();
-        if (EUt <= 0) EUt = 120;
+        if (EUt <= 0) EUt = VA[MV];
 
         BlastRecipeBuilder blastBuilder = RecipeMaps.BLAST_RECIPES.recipeBuilder()
                 .input(dust, material)
