@@ -829,4 +829,7 @@ public class RecipeMaps {
     @ZenProperty
     public static final FuelRecipeMap STEAM_TURBINE_FUELS = new FuelRecipeMap("steam_turbine")
             .setSound(GTSounds.TURBINE);
+
+    public static final RecipeMap<FuelRecipeBuilder> COMBUSTION_GENERATOR_FUELS_2 = new RecipeMap<>("combustion_generator_2", 0, 0, 0, 0, 1, 1, 0, 0, new FuelRecipeBuilder(), false)
+            .setSound(GTSounds.COMBUSTION);
 }
