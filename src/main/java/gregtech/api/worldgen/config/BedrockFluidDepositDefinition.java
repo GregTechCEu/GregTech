@@ -18,6 +18,7 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
 import stanhebben.zenscript.annotations.ZenMethod;
 
+import javax.annotation.Nonnull;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -44,7 +45,8 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition { //to
         this.depositName = depositName;
     }
 
-    public boolean initializeFromConfig(JsonObject configRoot) {
+    @Override
+    public boolean initializeFromConfig(@Nonnull JsonObject configRoot) {
         // the weight value for determining which vein will appear
         this.weight = configRoot.get("weight").getAsInt();
         // the [minimum, maximum) production rate of the vein

@@ -1,10 +1,13 @@
 package gregtech.api.worldgen.config;
 
-import stanhebben.zenscript.annotations.ZenGetter;
+import com.google.gson.JsonObject;
+
+import javax.annotation.Nonnull;
 
 public interface IWorldgenDefinition {
 
     //This is the file name
-    @ZenGetter("depositName")
     String getDepositName();
+
+    boolean initializeFromConfig(@Nonnull JsonObject configRoot);
 }

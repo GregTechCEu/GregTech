@@ -55,6 +55,7 @@ public class WorldGenRegistry {
     private final List<OreDepositDefinition> registeredVeinDefinitions = new ArrayList<>();
     private final List<BedrockFluidDepositDefinition> registeredBedrockVeinDefinitions = new ArrayList<>();
     private final List<OreDepositDefinition> addonRegisteredDefinitions = new ArrayList<>();
+    private final List<BedrockFluidDepositDefinition> addonRegisteredBedrockVeinDefinitions = new ArrayList<>();
     private List<OreDepositDefinition> removedVeinDefinitions = new ArrayList<>();
     private List<BedrockFluidDepositDefinition> removedBedrockVeinDefinitions = new ArrayList<>();
     private final Map<WorldProvider, WorldOreVeinCache> oreVeinCache = new WeakHashMap<>();
@@ -233,29 +234,13 @@ public class WorldGenRegistry {
             }
         }
 
-        for(OreDepositDefinition definition : addonRegisteredDefinitions) {
-
-            JsonObject element = FileUtility.tryExtractFromFile(worldgenRootPath.resolve(definition.getDepositName()));
-
-            if(element == null) {
-                GTLog.logger.error("Addon mod tried to register bad ore definition at {}", definition.getDepositName());
-                addonRegisteredDefinitions.remove(definition);
-                continue;
-            }
-
-            try {
-                definition.initializeFromConfig(element);
-                registeredVeinDefinitions.add(definition);
-            }
-            catch (RuntimeException exception) {
-                GTLog.logger.error("Failed to parse addon worldgen definition {}", definition.getDepositName(), exception);
-            }
-
-        }
+        addAddonFiles(veinPath, addonRegisteredDefinitions, registeredVeinDefinitions);
+        addAddonFiles(bedrockVeinPath, addonRegisteredBedrockVeinDefinitions, registeredBedrockVeinDefinitions);
 
         GTLog.logger.info("Loaded {} bedrock worldgen definitions", registeredBedrockVeinDefinitions.size());
-        GTLog.logger.info("Loaded {} total worldgen definitions", registeredVeinDefinitions.size() + registeredBedrockVeinDefinitions.size());
         GTLog.logger.info("Loaded {} worldgen definitions from addon mods", addonRegisteredDefinitions.size());
+        GTLog.logger.info("Loaded {} bedrock worldgen definitions from addon mods", addonRegisteredBedrockVeinDefinitions.size());
+        GTLog.logger.info("Loaded {} total worldgen definitions", registeredVeinDefinitions.size() + registeredBedrockVeinDefinitions.size());
 
     }
 
@@ -381,6 +366,27 @@ public class WorldGenRegistry {
         }
     }
 
+    private <T extends IWorldgenDefinition> void addAddonFiles(Path root, @Nonnull List<T> definitions, @Nonnull List<T> registeredDefinitions){
+        for(IWorldgenDefinition definition : definitions) {
+
+            JsonObject element = FileUtility.tryExtractFromFile(root.resolve(definition.getDepositName()));
+
+            if(element == null) {
+                GTLog.logger.error("Addon mod tried to register bad ore definition at {}", definition.getDepositName());
+                definitions.remove(definition);
+                continue;
+            }
+
+            try {
+                definition.initializeFromConfig(element);
+                registeredDefinitions.add((T) definition);
+            }
+            catch (RuntimeException exception) {
+                GTLog.logger.error("Failed to parse addon worldgen definition {}", definition.getDepositName(), exception);
+            }
+        }
+    }
+
     /**
      * Gathers the designated named dimensions from the designated json file
      *
@@ -448,6 +454,26 @@ public class WorldGenRegistry {
         }
         else {
             GTLog.logger.error("Failed to add ore vein definition at {}. Definition already exists", definition.getDepositName());
+        }
+    }
+
+    /**
+     * Adds the provided BedrockFluidDepositDefinition to the list and Map of registered definitions
+     * Will not create an entry if a file already exists for the provided definition
+     *
+     * After adding all veins, call {@link WorldGenRegistry#reinitializeRegisteredVeins()} to initialize the new veins
+     * Or, register veins before {@link WorldGenRegistry#initializeRegistry()} is called, and the veins will be loaded with the
+     * default veins
+     *
+     * @param definition The BedrockFluidDepositDefinition to add to the list of registered veins
+     */
+    @SuppressWarnings("unused")
+    public void addVeinDefinitions(BedrockFluidDepositDefinition definition) {
+        if(!addonRegisteredBedrockVeinDefinitions.contains(definition)) {
+            addonRegisteredBedrockVeinDefinitions.add(definition);
+        }
+        else {
+            GTLog.logger.error("Failed to add bedrock fluid deposit definition at {}. Definition already exists", definition.getDepositName());
         }
     }
 

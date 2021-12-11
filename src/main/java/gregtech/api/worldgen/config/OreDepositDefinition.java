@@ -22,6 +22,7 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
 import stanhebben.zenscript.annotations.ZenMethod;
 
+import javax.annotation.Nonnull;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -55,7 +56,8 @@ public class OreDepositDefinition implements IWorldgenDefinition {
         this.depositName = depositName;
     }
 
-    public void initializeFromConfig(JsonObject configRoot) {
+    @Override
+    public boolean initializeFromConfig(@Nonnull JsonObject configRoot) {
         this.weight = configRoot.get("weight").getAsInt();
         this.density = configRoot.get("density").getAsFloat();
         if (configRoot.has("name")) {
@@ -95,6 +97,7 @@ public class OreDepositDefinition implements IWorldgenDefinition {
         if (veinPopulator != null) {
             veinPopulator.initializeForVein(this);
         }
+        return true;
     }
 
     //This is the file name
