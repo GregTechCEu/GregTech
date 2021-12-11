@@ -82,6 +82,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         return true;
     }
 
+    @Override
     public void notifyMachineChanged() {
         machineChanged = true;
     }

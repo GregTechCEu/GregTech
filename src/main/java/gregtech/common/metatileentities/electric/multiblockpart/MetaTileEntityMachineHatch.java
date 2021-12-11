@@ -12,7 +12,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.util.GTUtility;
-import gregtech.common.metatileentities.multi.electric.MetaTileEntityProcessingArray;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -122,8 +121,8 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
 
         @Override
         public <T> void addToNotifiedList(MetaTileEntity metaTileEntity, T handler, boolean isExport) {
-            if (metaTileEntity instanceof MetaTileEntityProcessingArray && metaTileEntity.isValid()) {
-                ((MetaTileEntityProcessingArray) metaTileEntity).notifyMachineChanged();
+            if (metaTileEntity instanceof IMachineHatchMultiblock && metaTileEntity.isValid()) {
+                ((IMachineHatchMultiblock) metaTileEntity).notifyMachineChanged();
             }
         }
     }
