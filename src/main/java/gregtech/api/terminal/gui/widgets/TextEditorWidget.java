@@ -69,16 +69,17 @@ public class TextEditorWidget extends WidgetGroup {
                 TextFormatting colorFormatting = formatting[y * 4 + x];
                 this.addWidget(new RectButtonWidget(x * 8, y * 8, 8, 8, 1)
                         .setToggleButton(PALETTE.getSubArea(0.5 + x * 0.125, y * 0.25, 0.125, 0.25),
-                                (cd, pressed)-> {
+                                (cd, pressed) -> {
                                     if (pressed) {
                                         textPanelWidget.addFormatting(colorFormatting);
                                     } else {
                                         textPanelWidget.removeFormatting(colorFormatting);
                                     }
                                 })
-                .setValueSupplier(true, ()-> colorFormatting == textPanelWidget.getFrontColorFormatting())
-                .setIcon(PALETTE.getSubArea(x * 0.125, y * 0.25, 0.125, 0.25))
-                .setColors(0, -1, 0));
+                        .setValueSupplier(true, () -> colorFormatting == textPanelWidget.getFrontColorFormatting())
+                        .setIcon(PALETTE.getSubArea(x * 0.125, y * 0.25, 0.125, 0.25))
+                        .setColors(0, -1, 0)
+                        .setHoverText(colorFormatting.getFriendlyName()));
             }
         }
         // style
@@ -97,7 +98,8 @@ public class TextEditorWidget extends WidgetGroup {
                                 })
                         .setValueSupplier(true, ()-> textPanelWidget.getFrontStyleFormatting().contains(styleFormatting))
                         .setIcon(STYLE.getSubArea(x * 1.0 / 6, y * 0.5, 1.0 / 6, 0.5))
-                        .setColors(0, -1, 0));
+                        .setColors(0, -1, 0)
+                        .setHoverText(styleFormatting.getFriendlyName()));
             }
         }
         this.addWidget(new RectButtonWidget(3 * 16 + 32, 0, 16, 16, 3)
