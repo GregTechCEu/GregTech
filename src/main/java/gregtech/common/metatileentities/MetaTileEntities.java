@@ -581,7 +581,7 @@ public class MetaTileEntities {
             WORLD_ACCELERATOR[7] = registerMetaTileEntity(1397, new MetaTileEntityWorldAccelerator(gregtechId("world_accelerator.uv"), 8));
         }
 
-        MACHINE_HATCH = registerMetaTileEntity(1398, new MetaTileEntityMachineHatch(gregtechId("machine_hatch"), 0));
+        MACHINE_HATCH = registerMetaTileEntity(1398, new MetaTileEntityMachineHatch(gregtechId("machine_hatch"), 5));
         // Free Range: 1405-1509
 
         // Buffers, IDs 1510-1512

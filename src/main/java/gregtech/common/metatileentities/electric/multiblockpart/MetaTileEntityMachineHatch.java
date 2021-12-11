@@ -1,5 +1,8 @@
 package gregtech.common.metatileentities.electric.multiblockpart;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -11,6 +14,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -32,7 +36,7 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityMachineHatch(metaTileEntityId, 0);
+        return new MetaTileEntityMachineHatch(metaTileEntityId, getTier());
     }
 
     @Override
@@ -57,7 +61,6 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
                         18 + 18 + 94)
                 .label(10, 5, getMetaFullName());
@@ -66,9 +69,13 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
                 81, 18, true, true)
                 .setBackgroundTexture(GuiTextures.SLOT));
 
-
         return builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 + 12).build(getHolder(), entityPlayer);
+    }
 
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        Textures.PIPE_IN_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
     }
 
     @Override
