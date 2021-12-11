@@ -43,7 +43,7 @@ public class PolarizingRecipeHandler {
     }
 
     private static int getVoltageMultiplier(Material material) {
-        return material.getBlastTemperature() >= 1200 ? VA[LV] : VA[ULV];
+        return material.getBlastTemperature() >= 1200 ? VA[LV] : 2;
     }
 
 }
