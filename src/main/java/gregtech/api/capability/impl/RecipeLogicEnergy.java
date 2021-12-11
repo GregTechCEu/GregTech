@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 public class RecipeLogicEnergy extends AbstractRecipeLogic {
 
-    private final Supplier<IEnergyContainer> energyContainer;
+    protected final Supplier<IEnergyContainer> energyContainer;
 
     public RecipeLogicEnergy(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, Supplier<IEnergyContainer> energyContainer) {
         super(tileEntity, recipeMap);
