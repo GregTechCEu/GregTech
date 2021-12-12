@@ -80,6 +80,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     public List<Pair<IFluidHandler, Predicate<FluidStack>>> getNeighbourHandlers() {
         List<Pair<IFluidHandler, Predicate<FluidStack>>> handlers = new ArrayList<>();
         for (EnumFacing facing : getOpenFaces()) {
+            if (!isConnectionOpenAny(facing)) continue;
             TileEntity tile = getWorld().getTileEntity(pos.offset(facing));
             if (tile == null) continue;
             IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite());
