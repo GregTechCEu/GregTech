@@ -2627,12 +2627,7 @@ tile.gt.seal.name=Sealed Block
 tile.surface_rock_new.name=Surface Rock
 gregtech.block.surface_rock.material=Rock Material: %s
 gregtech.block.surface_rock.underground_materials=Underground Materials: %s
-metaitem.scanner.name=Scanner
-metaitem.scanner.tooltip=Hold right mouse button on surface rocks/nto discover underground materials
-behavior.scanner.analyzing=Analyzing...
-behavior.scanner.analyzing_failed=Analyzing failed!
-behavior.scanner.analyzing_complete=Analyzing complete!
-behavior.scanner.not_enough_energy=Analyzing failed: Not Enough Energy!
+
 tile.wire_coil.fluxed_electrum.name=Fluxed Electrum Coil Block
 tile.wire_coil.diamericium_titanium.name=Diamericium Titanium Coil Block
 tile.fusion_coil.superconductor.name=Superconducting Coil Block
