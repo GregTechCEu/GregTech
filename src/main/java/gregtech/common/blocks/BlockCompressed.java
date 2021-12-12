@@ -98,6 +98,10 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
         return getItem(getDefaultState().withProperty(variantProperty, material));
     }
 
+    public IBlockState getBlock(Material material) {
+        return getDefaultState().withProperty(variantProperty, material);
+    }
+
     @Override
     public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
         blockState.getValidStates().stream()

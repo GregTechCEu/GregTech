@@ -173,7 +173,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                         .or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1))
                         .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(1))
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setPreviewCount(1)))
-                .where('F', states(MetaBlocks.FRAMES.get(getMaterial()).getDefaultState()))
+                .where('F', states(MetaBlocks.FRAMES.get(getMaterial()).getBlock(getMaterial())))
                 .where('#', any())
                 .build();
     }

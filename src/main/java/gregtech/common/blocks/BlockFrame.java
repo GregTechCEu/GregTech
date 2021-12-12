@@ -126,6 +126,10 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         return getItem(getDefaultState().withProperty(variantProperty, material));
     }
 
+    public IBlockState getBlock(Material material) {
+        return getDefaultState().withProperty(variantProperty, material);
+    }
+
     @Override
     public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
         return false;
