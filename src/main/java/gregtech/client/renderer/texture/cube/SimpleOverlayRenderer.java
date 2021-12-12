@@ -41,8 +41,15 @@ public class SimpleOverlayRenderer implements ICubeRenderer, IIconRegister {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerIcons(TextureMap textureMap) {
-        this.sprite = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/" + basePath));
-        ResourceLocation emissiveLocation = new ResourceLocation(GTValues.MODID, "blocks/" + basePath + "_emissive");
+        String modID = GTValues.MODID;
+        String basePath = this.basePath;
+        String[] split = this.basePath.split(":");
+        if (split.length == 2) {
+            modID = split[0];
+            basePath = split[1];
+        }
+        this.sprite = textureMap.registerSprite(new ResourceLocation(modID, "blocks/" + basePath));
+        ResourceLocation emissiveLocation = new ResourceLocation(modID, "blocks/" + basePath + "_emissive");
         if (ResourceHelper.isTextureExist(emissiveLocation)) {
             this.spriteEmissive = textureMap.registerSprite(emissiveLocation);
         }

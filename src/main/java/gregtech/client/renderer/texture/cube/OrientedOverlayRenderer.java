@@ -107,21 +107,27 @@ public class OrientedOverlayRenderer implements ICubeRenderer, IIconRegister {
     @SideOnly(Side.CLIENT)
     public void registerIcons(TextureMap textureMap) {
         this.sprites = new EnumMap<>(OverlayFace.class);
+        String modID = GTValues.MODID;
+        String basePath = this.basePath;
+        String[] split = this.basePath.split(":");
+        if (split.length == 2) {
+            modID = split[0];
+            basePath = split[1];
+        }
         for (OverlayFace overlayFace : faces) {
             String faceName = overlayFace.name().toLowerCase();
-
-            ResourceLocation normalLocation = new ResourceLocation(GTValues.MODID, String.format("blocks/%s/overlay_%s", basePath, faceName));
+            ResourceLocation normalLocation = new ResourceLocation(modID, String.format("blocks/%s/overlay_%s", basePath, faceName));
             TextureAtlasSprite normalSprite = textureMap.registerSprite(normalLocation);
-            ResourceLocation activeLocation = new ResourceLocation(GTValues.MODID, String.format("blocks/%s/overlay_%s_active", basePath, faceName));
+            ResourceLocation activeLocation = new ResourceLocation(modID, String.format("blocks/%s/overlay_%s_active", basePath, faceName));
             TextureAtlasSprite activeSprite = textureMap.registerSprite(activeLocation);
-            ResourceLocation pausedLocation = new ResourceLocation(GTValues.MODID, String.format("blocks/%s/overlay_%s_paused", basePath, faceName));
+            ResourceLocation pausedLocation = new ResourceLocation(modID, String.format("blocks/%s/overlay_%s_paused", basePath, faceName));
             TextureAtlasSprite pausedSprite = ResourceHelper.isTextureExist(pausedLocation) ? textureMap.registerSprite(pausedLocation) : null;
 
-            ResourceLocation normalLocationEmissive = new ResourceLocation(GTValues.MODID, String.format("blocks/%s/overlay_%s_emissive", basePath, faceName));
+            ResourceLocation normalLocationEmissive = new ResourceLocation(modID, String.format("blocks/%s/overlay_%s_emissive", basePath, faceName));
             TextureAtlasSprite normalSpriteEmissive = ResourceHelper.isTextureExist(normalLocationEmissive) ? textureMap.registerSprite(normalLocationEmissive) : null;
-            ResourceLocation activeLocationEmissive = new ResourceLocation(GTValues.MODID, String.format("blocks/%s/overlay_%s_active_emissive", basePath, faceName));
+            ResourceLocation activeLocationEmissive = new ResourceLocation(modID, String.format("blocks/%s/overlay_%s_active_emissive", basePath, faceName));
             TextureAtlasSprite activeSpriteEmissive = ResourceHelper.isTextureExist(activeLocationEmissive) ? textureMap.registerSprite(activeLocationEmissive) : null;
-            ResourceLocation pausedLocationEmissive = new ResourceLocation(GTValues.MODID, String.format("blocks/%s/overlay_%s_paused_emissive", basePath, faceName));
+            ResourceLocation pausedLocationEmissive = new ResourceLocation(modID, String.format("blocks/%s/overlay_%s_paused_emissive", basePath, faceName));
             TextureAtlasSprite pausedSpriteEmissive = ResourceHelper.isTextureExist(pausedLocationEmissive) ? textureMap.registerSprite(pausedLocationEmissive) : null;
             sprites.put(overlayFace, new ActivePredicate(normalSprite, activeSprite, pausedSprite, normalSpriteEmissive, activeSpriteEmissive, pausedSpriteEmissive));
         }

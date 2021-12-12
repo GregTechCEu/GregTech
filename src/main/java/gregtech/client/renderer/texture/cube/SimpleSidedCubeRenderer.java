@@ -53,13 +53,20 @@ public class SimpleSidedCubeRenderer implements ICubeRenderer, IIconRegister {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerIcons(TextureMap textureMap) {
+        String modID = GTValues.MODID;
+        String basePath = this.basePath;
+        String[] split = this.basePath.split(":");
+        if (split.length == 2) {
+            modID = split[0];
+            basePath = split[1];
+        }
         this.sprites = new EnumMap<>(RenderSide.class);
         this.spritesEmissive = new EnumMap<>(RenderSide.class);
         for (RenderSide overlayFace : RenderSide.values()) {
             String faceName = overlayFace.name().toLowerCase();
-            ResourceLocation resourceLocation = new ResourceLocation(GTValues.MODID, String.format("blocks/%s/%s", basePath, faceName));
+            ResourceLocation resourceLocation = new ResourceLocation(modID, String.format("blocks/%s/%s", basePath, faceName));
             sprites.put(overlayFace, textureMap.registerSprite(resourceLocation));
-            ResourceLocation emissiveLocation = new ResourceLocation(GTValues.MODID, String.format("blocks/%s/%s_emissive", basePath, faceName));
+            ResourceLocation emissiveLocation = new ResourceLocation(modID, String.format("blocks/%s/%s_emissive", basePath, faceName));
             if (ResourceHelper.isTextureExist(emissiveLocation)) {
                 spritesEmissive.put(overlayFace, textureMap.registerSprite(emissiveLocation));
             }
