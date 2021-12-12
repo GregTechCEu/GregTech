@@ -1,5 +1,6 @@
 package gregtech.loaders.oreprocessing;
 
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -54,7 +55,6 @@ public class RecyclingRecipeHandler {
         boolean ignoreArcSmelting = IGNORE_ARC_SMELTING.contains(thingPrefix) && !(
                 material.hasProperty(PropertyKey.INGOT)
                         && material.getProperty(PropertyKey.INGOT).getArcSmeltInto() != material);
-        RecyclingRecipes.registerArcRecyclingRecipe(builder -> builder.input(thingPrefix, material), materialStacks, ignoreArcSmelting);
+        RecyclingRecipes.registerRecyclingRecipes(OreDictUnifier.get(thingPrefix, material), materialStacks, ignoreArcSmelting);
     }
-
 }

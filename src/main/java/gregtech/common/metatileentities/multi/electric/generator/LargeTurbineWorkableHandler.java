@@ -106,11 +106,11 @@ public class LargeTurbineWorkableHandler extends FuelRecipeLogic {
     private int getBonusForTurbineType(MetaTileEntityLargeTurbine turbine) {
         switch (turbine.turbineType) {
             case GAS:
-                return ConfigHolder.gasTurbineBonusOutput;
+                return ConfigHolder.machines.gasTurbineBonusOutput;
             case PLASMA:
-                return ConfigHolder.plasmaTurbineBonusOutput;
+                return ConfigHolder.machines.plasmaTurbineBonusOutput;
             case STEAM:
-                return ConfigHolder.steamTurbineBonusOutput;
+                return ConfigHolder.machines.steamTurbineBonusOutput;
             default:
                 return 1;
         }

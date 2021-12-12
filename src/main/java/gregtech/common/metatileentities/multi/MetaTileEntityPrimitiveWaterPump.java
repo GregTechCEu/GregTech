@@ -10,20 +10,22 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.BlockWorldState;
-import gregtech.api.multiblock.FactoryBlockPattern;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.blocks.BlockSteamCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.*;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
@@ -31,7 +33,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
 
@@ -129,24 +131,11 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
                 .aisle("XXHX", "F**F", "FFFF")
                 .aisle("SXXX", "**F*", "**F*")
                 .where('S', selfPredicate())
-                .where('X', statePredicate(MetaBlocks.STEAM_CASING.getState(BlockSteamCasing.SteamCasingType.PUMP_DECK)))
-                .where('F', statePredicate(MetaBlocks.FRAMES.get(Materials.Wood).getBlockState().getBaseState()))
-                .where('H', hatchPredicate())
-                .where('*', (x) -> true)
+                .where('X', states(MetaBlocks.STEAM_CASING.getState(BlockSteamCasing.SteamCasingType.PUMP_DECK)))
+                .where('F', states(MetaBlocks.FRAMES.get(Materials.Wood).getBlockState().getBaseState()))
+                .where('H', abilities(MultiblockAbility.PUMP_FLUID_HATCH).or(metaTileEntities(MetaTileEntities.FLUID_EXPORT_HATCH[0], MetaTileEntities.FLUID_EXPORT_HATCH[1])))
+                .where('*', any())
                 .build();
-    }
-
-    private static Predicate<BlockWorldState> hatchPredicate() {
-        return tilePredicate((state, tile) -> {
-            if (tile instanceof IMultiblockAbilityPart<?>) {
-                IMultiblockAbilityPart<?> abilityPart = (IMultiblockAbilityPart<?>) tile;
-                if (abilityPart.getAbility() == MultiblockAbility.PUMP_FLUID_HATCH) return true;
-                if (abilityPart.getAbility() == MultiblockAbility.EXPORT_FLUIDS) {
-                    return ((MetaTileEntityFluidHatch) tile).getTier() <= 1;
-                }
-            }
-            return false;
-        });
     }
 
     @Override

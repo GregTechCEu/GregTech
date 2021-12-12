@@ -1,6 +1,5 @@
 package gregtech.loaders.recipe;
 
-import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
@@ -59,7 +58,7 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe("plank_to_wooden_shape", MetaItems.WOODEN_FORM_EMPTY.getStackForm(), "   ", " X ", "s  ", 'X', new UnificationEntry(OrePrefix.plank, Materials.Wood));
         ModHandler.addShapedRecipe("wooden_shape_brick", MetaItems.WOODEN_FORM_BRICK.getStackForm(), "k ", " X", 'X', MetaItems.WOODEN_FORM_EMPTY.getStackForm());
 
-        if (ConfigHolder.vanillaRecipes.hardMiscRecipes) {
+        if (ConfigHolder.recipes.hardMiscRecipes) {
             ModHandler.addShapelessRecipe("compressed_clay", MetaItems.COMPRESSED_CLAY.getStackForm(), MetaItems.WOODEN_FORM_BRICK.getStackForm(), new ItemStack(Items.CLAY_BALL));
             ModHandler.addSmeltingRecipe(MetaItems.COMPRESSED_CLAY.getStackForm(), new ItemStack(Items.BRICK));
         }
@@ -72,17 +71,6 @@ public class CraftingRecipeLoader {
         ModHandler.addSmeltingRecipe(new UnificationEntry(OrePrefix.nugget, Materials.Iron), OreDictUnifier.get(OrePrefix.nugget, Materials.WroughtIron));
 
         ModHandler.addShapedRecipe("clipboard", MetaItems.CLIPBOARD.getStackForm(), " Sd", "BWR", "PPP", 'P', Items.PAPER, 'R', new UnificationEntry(OrePrefix.springSmall, Iron), 'B', new UnificationEntry(OrePrefix.bolt, Iron), 'S', new UnificationEntry(OrePrefix.screw, Iron), 'W', new UnificationEntry(OrePrefix.plate, Wood));
-
-        for (MetaValueItem batteryItem : ToolRecipeHandler.batteryItems[0]) {
-            ModHandler.addShapedEnergyTransferRecipe("scanner_" + batteryItem.unlocalizedName, MetaItems.SCANNER.getStackForm(),
-                    batteryItem::isItemEqual, true, true,
-                    "DGD", "CGC", "SBS",
-                    'D', new UnificationEntry(OrePrefix.plate, Materials.Diamond),
-                    'G', new UnificationEntry(OrePrefix.paneGlass),
-                    'C', new UnificationEntry(OrePrefix.circuit, Tier.Basic),
-                    'S', new UnificationEntry(OrePrefix.plate, Materials.Steel),
-                    'B', batteryItem.getStackForm());
-        }
 
         for (Material material : new Material[]{Materials.Lapis, Materials.Lazurite, Materials.Sodalite}) {
             String recipeName = "lapotron_crystal_" + material.toString();

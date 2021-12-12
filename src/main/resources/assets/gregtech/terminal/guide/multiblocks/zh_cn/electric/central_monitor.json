@@ -1,0 +1,183 @@
+{
+  "section": "电力",
+  "title": "中央监控器",
+  "stream": [
+    {
+      "type": "slots",
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1028,
+          "count": 1
+        },
+        {
+          "id": "gregtech:machine",
+          "damage": 1667,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§l目录:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "introduction",
+      "content": [
+        "1. §9介绍"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "fluid",
+      "content": [
+        "2. §9如何构建它"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "item",
+      "content": [
+        "3. §r§9如何使用它"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "energy",
+      "content": [
+        "4. §9插件"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/107856228-c1f6eb80-6e61-11eb-8098-454ea7133ca1.png",
+      "width": 190,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "ref": "introduction",
+      "content": [
+        "§l介绍"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§c§l中央监控仪§r是一个用来监控（可视化和交互）的多方块.\n\n它可以监控并交互机器的存储及运行状态，它包含§9数字化接口覆盖版§r§9§r的所有功能，并将机器的其他接口扩展到屏幕上。\n\n此外，还有许多插件支持更多高级功能。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "fluid",
+      "content": [
+        "§l怎么构建它？"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "为了构建它，你需要一个§c§l中央监控器§r，一些§c§l监控屏幕§r，一些§c§l不锈钢机械方块§r，个至少一个§c§l能源输入仓§r.\n\n屏幕尺寸从3×2到14×9(宽 × 高)不等。默认高度是3，但是你可以在结构成型前在GUI中设置高度。\n\n§l能源消耗：§r每个屏幕50 EU/s。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "item",
+      "content": [
+        "§l如何使用它？"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "1. §c§l中央监控器的§r的背后可以连接线缆，线缆所处的电网中可以监控所有被代理的机器（§9数字化接口覆盖版§r设置为代理模式，并放置在线和机器的接口处。) 此外，绑定了中央控制器的§9无线覆盖版§r同样可以使用，避免使用线缆。\n\n2. 右击§c§l中央监控器§r或者扳手右击§c§l监控屏幕§r可以打开GUI进行设置。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "energy",
+      "content": [
+        "§l插件"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "将插件放入插件槽中使用。有关具体功能，请参阅其指南页。以下是支持的插件。\n\n§4§l注意§r§4: §r在§c§l中央监控器§r中，有些插件需要使用代理模式工作，而代理模式仅用于插件。"
+      ]
+    },
+    {
+      "type": "card",
+      "fill": -3745585,
+      "width": 170,
+      "height": 60,
+      "isShadow": true
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\n\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    }
+  ],
+  "fixed": [
+    {
+      "type": "slots",
+      "x": 48,
+      "y": 730,
+      "width": 100,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 780,
+          "count": 1
+        },
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 781,
+          "count": 1
+        },
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 782,
+          "count": 1
+        },
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 783,
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "metatileentity": "central_monitor"
+}

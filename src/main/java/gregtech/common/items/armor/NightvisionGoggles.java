@@ -24,7 +24,7 @@ import java.util.List;
 public class NightvisionGoggles extends ArmorLogicSuite {
 
     public NightvisionGoggles() {
-        this(3600, 400000L * (long) Math.max(1, Math.pow(4, ConfigHolder.U.equipment.voltageTierNightVision - 2)), ConfigHolder.U.equipment.voltageTierNightVision, EntityEquipmentSlot.HEAD);
+        this(3600, 400000L * (long) Math.max(1, Math.pow(4, ConfigHolder.tools.voltageTierNightVision - 2)), ConfigHolder.tools.voltageTierNightVision, EntityEquipmentSlot.HEAD);
     }
 
     public NightvisionGoggles(int energyPerUse, long capacity, int voltageTier, EntityEquipmentSlot slot) {

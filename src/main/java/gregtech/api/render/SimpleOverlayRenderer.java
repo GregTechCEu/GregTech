@@ -18,7 +18,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
 
-public class SimpleOverlayRenderer implements IIconRegister {
+public class SimpleOverlayRenderer implements IOverlayRenderer, IIconRegister {
 
     private final String basePath;
 
@@ -31,6 +31,7 @@ public class SimpleOverlayRenderer implements IIconRegister {
 
     public SimpleOverlayRenderer(String basePath) {
         this.basePath = basePath;
+        Textures.CUBE_SIDE_RENDERER_REGISTRY.put(basePath, this);
         Textures.iconRegisters.add(this);
     }
 
@@ -48,7 +49,7 @@ public class SimpleOverlayRenderer implements IIconRegister {
     public void renderSided(EnumFacing side, Cuboid6 bounds, CCRenderState renderState, IVertexOperation[] pipeline, Matrix4 translation) {
         Textures.renderFace(renderState, translation, pipeline, side, bounds, sprite);
         if (spriteEmissive != null) {
-            if (ConfigHolder.U.clientConfig.machinesEmissiveTextures) {
+            if (ConfigHolder.client.machinesEmissiveTextures) {
                 IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
                 Textures.renderFaceBloom(renderState, translation, lightPipeline, side, bounds, spriteEmissive);
             } else Textures.renderFace(renderState, translation, pipeline, side, bounds, spriteEmissive);

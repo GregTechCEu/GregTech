@@ -4,8 +4,8 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.PacketUIOpen;
-import gregtech.api.net.PacketUIWidgetUpdate;
+import gregtech.api.net.packets.PacketUIOpen;
+import gregtech.api.net.packets.PacketUIWidgetUpdate;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -54,7 +54,7 @@ public abstract class UIFactory<E extends IUIHolder> {
         container.accumulatedUpdates.clear();
 
         PacketUIOpen packet = new PacketUIOpen(uiFactoryId, serializedHolder, currentWindowId, updateData);
-        NetworkHandler.channel.sendTo(NetworkHandler.packet2proxy(packet), player);
+        NetworkHandler.channel.sendTo(packet.toFMLPacket(), player);
 
         container.addListener(player);
         player.openContainer = container;

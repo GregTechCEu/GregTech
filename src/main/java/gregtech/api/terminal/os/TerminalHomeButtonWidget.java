@@ -98,7 +98,7 @@ public class TerminalHomeButtonWidget extends CircleButtonWidget {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        if (mouseClickTime > 5) { // click
+        if (mouseClickTime > 3) { // click
             Pair<SystemCall, String> pair = actions[actionMap(false, isCtrlDown(), isShiftDown())];
             sendToServer(pair);
             playButtonClickSound();
@@ -113,7 +113,7 @@ public class TerminalHomeButtonWidget extends CircleButtonWidget {
         if (isMouseOverElement(mouseX, mouseY)) {
             if (mouseClickTime == -1) {
                 mouseClickTime = 0;
-            } else if (mouseClickTime <= 5) { // double click
+            } else if (mouseClickTime <= 3) { // double click
                 Pair<SystemCall, String> pair = actions[actionMap(true, isCtrlDown(), isShiftDown())];
                 sendToServer(pair);
                 playButtonClickSound();

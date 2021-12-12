@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class FileUtility {
     public static final JsonParser jsonParser = new JsonParser();
-    public static final Gson gson = new Gson();
+    public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private FileUtility() {
     }

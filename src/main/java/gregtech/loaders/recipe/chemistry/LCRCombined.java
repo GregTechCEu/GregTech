@@ -2,6 +2,7 @@ package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.LARGE_CHEMICAL_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
@@ -19,7 +20,7 @@ public class LCRCombined {
                 .fluidOutputs(Epoxy.getFluid(1000))
                 .fluidOutputs(SaltWater.getFluid(1000))
                 .fluidOutputs(DilutedHydrochloricAcid.getFluid(1000))
-                .EUt(30)
+                .EUt(VA[LV])
                 .duration(24 * 20)
                 .buildAndRegister();
 
@@ -32,7 +33,7 @@ public class LCRCombined {
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
                 .fluidOutputs(Epichlorohydrin.getFluid(1000))
                 .fluidOutputs(SaltWater.getFluid(1000))
-                .EUt(30)
+                .EUt(VA[LV])
                 .duration(24 * 20)
                 .buildAndRegister();
 
@@ -43,7 +44,7 @@ public class LCRCombined {
                 .fluidInputs(Oxygen.getFluid(3000))
                 .fluidOutputs(Ammonia.getFluid(4000))
                 .fluidOutputs(CarbonMonoxide.getFluid(3000))
-                .EUt(480)
+                .EUt(VA[HV])
                 .duration(320)
                 .buildAndRegister();
 
@@ -53,7 +54,7 @@ public class LCRCombined {
                 .fluidInputs(CarbonDioxide.getFluid(1000))
                 .fluidOutputs(Methane.getFluid(1000))
                 .fluidOutputs(Water.getFluid(1000))
-                .EUt(30)
+                .EUt(VA[LV])
                 .duration(160)
                 .buildAndRegister();
 
@@ -62,7 +63,7 @@ public class LCRCombined {
                 .input(dust, Sulfur)
                 .fluidInputs(Water.getFluid(4000))
                 .fluidOutputs(SulfuricAcid.getFluid(1000))
-                .EUt(480)
+                .EUt(VA[HV])
                 .duration(320)
                 .buildAndRegister();
     }

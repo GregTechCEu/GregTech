@@ -113,8 +113,8 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ISou
     }
 
     @Override
-    public void onAttached() {
-        super.onAttached();
+    public void onAttached(Object... data) {
+        super.onAttached(data);
         if (getWorld() != null && getWorld().isRemote) {
             this.setupSound(workableHandler.getRecipeMap().getSound(), this.getPos());
         }

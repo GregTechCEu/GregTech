@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.NonNullList;
 
+@SuppressWarnings("unused")
 public class ArmorHooks {
 
     public static void damageArmor(float damage, EntityLivingBase entity, NonNullList<ItemStack> inventory, DamageSource damageSource) {

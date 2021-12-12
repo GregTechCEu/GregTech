@@ -92,7 +92,7 @@ public class TreeListWidget<K, T> extends Widget {
 
     @Override
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
-        if (this.isMouseOverElement(mouseX, mouseY, true)) {
+        if (this.isMouseOverElement(mouseX, mouseY)) {
             int moveDelta = -MathHelper.clamp(wheelDelta, -1, 1) * 5;
             this.scrollOffset = MathHelper.clamp(scrollOffset + moveDelta, 0, Math.max(list.size() * ITEM_HEIGHT - getSize().height, 0));
             return true;

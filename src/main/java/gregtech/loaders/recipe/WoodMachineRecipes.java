@@ -13,6 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
@@ -43,7 +44,7 @@ public class WoodMachineRecipes {
             IRecipe outputRecipe = outputPair.getKey();
 
             //wood nerf
-            if (ConfigHolder.vanillaRecipes.nerfWoodCrafting) {
+            if (ConfigHolder.recipes.nerfWoodCrafting) {
                 //remove the old recipe
                 ModHandler.removeRecipeByName(outputRecipe.getRegistryName());
 
@@ -64,7 +65,7 @@ public class WoodMachineRecipes {
             CUTTER_RECIPES.recipeBuilder().inputs(stack)
                     .fluidInputs(Lubricant.getFluid(1))
                     .outputs(GTUtility.copyAmount((int) (originalOutput * 1.5), plankStack), OreDictUnifier.get(dust, Wood, 2))
-                    .duration(200).EUt(8)
+                    .duration(200).EUt(VA[ULV])
                     .buildAndRegister();
 
             ItemStack doorStack = ModHandler.getRecipeOutput(DummyWorld.INSTANCE,
@@ -86,7 +87,7 @@ public class WoodMachineRecipes {
                 CUTTER_RECIPES.recipeBuilder()
                         .inputs(GTUtility.copyAmount(1, plankStack))
                         .outputs(GTUtility.copyAmount(2, slabStack))
-                        .duration(200).EUt(8)
+                        .duration(200).EUt(VA[ULV])
                         .buildAndRegister();
 
                 ModHandler.addShapedRecipe(slabStack.getDisplayName() + "_saw", GTUtility.copyAmount(2, slabStack), "sS", 'S', GTUtility.copyAmount(1, plankStack));

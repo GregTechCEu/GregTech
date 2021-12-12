@@ -22,7 +22,7 @@ public class TutorialGuideApp extends GuideApp<String> {
     }
 
     @Override
-    protected String ofJson(JsonObject json) {
+    public String ofJson(JsonObject json) {
         if (json.has("tutorial"))
             return json.get("tutorial").getAsString();
         return json.get("title").getAsString();

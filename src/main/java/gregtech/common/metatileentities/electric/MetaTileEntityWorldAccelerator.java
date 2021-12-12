@@ -43,7 +43,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     private static Class<?> cofhTileClass;
 
     private static boolean considerTile(TileEntity tile) {
-        if (!ConfigHolder.U.GT5u.accelerateGTMachines && tile instanceof MetaTileEntityHolder) {
+        if (!ConfigHolder.machines.accelerateGTMachines && tile instanceof MetaTileEntityHolder) {
             return false;
         }
         if (cofhTileClass == null) {

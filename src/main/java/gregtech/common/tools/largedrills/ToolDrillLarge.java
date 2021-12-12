@@ -242,7 +242,7 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
 
             // Only play this once!
             if (world.isRemote) {
-                if (Minecraft.getMinecraft().player != null && ConfigHolder.toolUseSounds && stack.getItem() instanceof ToolMetaItem<?>)
+                if (Minecraft.getMinecraft().player != null && ConfigHolder.client.toolUseSounds && stack.getItem() instanceof ToolMetaItem<?>)
                     Minecraft.getMinecraft().player.playSound(((ToolMetaItem<?>) stack.getItem()).getItem(stack).getSound(), 1, 1);
             }
         }

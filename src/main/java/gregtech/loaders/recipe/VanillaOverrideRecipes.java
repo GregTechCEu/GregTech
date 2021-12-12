@@ -19,21 +19,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
 
 public class VanillaOverrideRecipes {
 
     public static void init() {
         woodRecipes();
-        if (ConfigHolder.vanillaRecipes.hardGlassRecipes)
+        if (ConfigHolder.recipes.hardGlassRecipes)
             glassRecipes();
-        if (ConfigHolder.vanillaRecipes.hardRedstoneRecipes)
+        if (ConfigHolder.recipes.hardRedstoneRecipes)
             redstoneRecipes();
-        if (ConfigHolder.vanillaRecipes.hardIronRecipes)
+        if (ConfigHolder.recipes.hardIronRecipes)
             metalRecipes();
-        if (ConfigHolder.vanillaRecipes.hardMiscRecipes)
+        if (ConfigHolder.recipes.hardMiscRecipes)
             miscRecipes();
-        if (ConfigHolder.vanillaRecipes.hardDyeRecipes)
+        if (ConfigHolder.recipes.hardDyeRecipes)
             dyeRecipes();
         toolArmorRecipes();
 
@@ -41,13 +42,13 @@ public class VanillaOverrideRecipes {
     }
 
     private static void woodRecipes() {
-        if (ConfigHolder.vanillaRecipes.nerfStickCrafting) {
+        if (ConfigHolder.recipes.nerfWoodCrafting) {
             ModHandler.removeRecipeByName(new ResourceLocation("minecraft:stick"));
             ModHandler.addShapedRecipe("stick_saw", new ItemStack(Items.STICK, 4), "s", "P", "P", 'P', new UnificationEntry(OrePrefix.plank, Materials.Wood));
             ModHandler.addShapedRecipe("stick_normal", new ItemStack(Items.STICK, 2), "P", "P", 'P', new UnificationEntry(OrePrefix.plank, Materials.Wood));
         }
 
-        if (ConfigHolder.vanillaRecipes.nerfPaperCrafting) {
+        if (ConfigHolder.recipes.nerfPaperCrafting) {
             ModHandler.removeRecipeByName(new ResourceLocation("minecraft:paper"));
             ModHandler.removeRecipeByName(new ResourceLocation("minecraft:sugar"));
             ModHandler.addShapedRecipe("paper_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Paper, 2), "SSS", " m ", 'S', new ItemStack(Items.REEDS));
@@ -59,7 +60,7 @@ public class VanillaOverrideRecipes {
                     .setMirrored(false).setRegistryName("paper"));
         }
 
-        if (!ConfigHolder.vanillaRecipes.hardWoodRecipes)
+        if (!ConfigHolder.recipes.hardWoodRecipes)
             return;
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:ladder"));
@@ -177,7 +178,7 @@ public class VanillaOverrideRecipes {
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.SAND))
                 .output(OrePrefix.dust, Materials.QuartzSand)
-                .duration(30).EUt(4).buildAndRegister();
+                .duration(30).buildAndRegister();
 
         ModHandler.addShapelessRecipe("glass_dust_flint", OreDictUnifier.get(OrePrefix.dust, Materials.Glass),
                 new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
@@ -201,7 +202,7 @@ public class VanillaOverrideRecipes {
                 'G', new UnificationEntry(OrePrefix.gearSmall, Materials.Iron),
                 'A', new UnificationEntry(OrePrefix.stick, Materials.RedAlloy));
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(30)
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 2))
                 .input(OrePrefix.ring, Materials.Iron)
                 .input(OrePrefix.spring, Materials.Iron, 2)
@@ -234,7 +235,7 @@ public class VanillaOverrideRecipes {
                 .input("cobblestone", 1)
                 .fluidInputs(Materials.RedAlloy.getFluid(GTValues.L))
                 .outputs(new ItemStack(Blocks.PISTON))
-                .duration(240).EUt(8).buildAndRegister();
+                .duration(240).EUt(VA[ULV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.stick, Materials.Steel)
@@ -252,7 +253,7 @@ public class VanillaOverrideRecipes {
                 .input("cobblestone", 4)
                 .fluidInputs(Materials.RedAlloy.getFluid(GTValues.L * 3))
                 .outputs(new ItemStack(Blocks.PISTON, 4))
-                .duration(240).EUt(30).buildAndRegister();
+                .duration(240).EUt(VA[LV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.stick, Materials.StainlessSteel)
@@ -261,7 +262,7 @@ public class VanillaOverrideRecipes {
                 .input("cobblestone", 8)
                 .fluidInputs(Materials.RedAlloy.getFluid(GTValues.L * 4))
                 .outputs(new ItemStack(Blocks.PISTON, 8))
-                .duration(600).EUt(30).buildAndRegister();
+                .duration(600).EUt(VA[LV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.stick, Materials.Titanium)
@@ -270,7 +271,7 @@ public class VanillaOverrideRecipes {
                 .input("cobblestone", 16)
                 .fluidInputs(Materials.RedAlloy.getFluid(GTValues.L * 8))
                 .outputs(new ItemStack(Blocks.PISTON, 16))
-                .duration(800).EUt(30).buildAndRegister();
+                .duration(800).EUt(VA[LV]).buildAndRegister();
 
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:stone_pressure_plate"));
@@ -306,13 +307,13 @@ public class VanillaOverrideRecipes {
                 .input(OrePrefix.spring, Materials.Iron)
                 .inputs(new ItemStack(Blocks.STONE_SLAB, 2))
                 .outputs(new ItemStack(Blocks.STONE_PRESSURE_PLATE, 2))
-                .duration(100).EUt(7).buildAndRegister();
+                .duration(100).EUt(VA[ULV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.spring, Materials.Iron)
                 .input(OrePrefix.plank, Materials.Wood, 2)
                 .outputs(new ItemStack(Blocks.WOODEN_PRESSURE_PLATE, 2))
-                .duration(100).EUt(7).buildAndRegister();
+                .duration(100).EUt(VA[ULV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.spring, Materials.Steel)
@@ -337,12 +338,12 @@ public class VanillaOverrideRecipes {
         RecipeMaps.CUTTER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.STONE_PRESSURE_PLATE))
                 .outputs(new ItemStack(Blocks.STONE_BUTTON, 12))
-                .duration(25).EUt(7).buildAndRegister();
+                .duration(25).EUt(VA[ULV]).buildAndRegister();
 
         RecipeMaps.CUTTER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.WOODEN_PRESSURE_PLATE))
                 .outputs(new ItemStack(Blocks.WOODEN_BUTTON, 12))
-                .duration(25).EUt(7).buildAndRegister();
+                .duration(25).EUt(VA[ULV]).buildAndRegister();
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:lever"));
         ModHandler.addShapedRecipe("lever", new ItemStack(Blocks.LEVER), "B", "S",
@@ -467,7 +468,7 @@ public class VanillaOverrideRecipes {
                 .input(OrePrefix.screw, Materials.Steel)
                 .input(OrePrefix.stick, Materials.Wood)
                 .outputs(new ItemStack(Blocks.GOLDEN_RAIL, 8))
-                .duration(200).EUt(30).buildAndRegister();
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:detector_rail"));
         ModHandler.addShapedRecipe("detector_rail", new ItemStack(Blocks.DETECTOR_RAIL), "SPS", "IWI", "IdI",
@@ -483,7 +484,7 @@ public class VanillaOverrideRecipes {
                 .input(OrePrefix.screw, Materials.Iron)
                 .input(OrePrefix.stick, Materials.Wood)
                 .outputs(new ItemStack(Blocks.DETECTOR_RAIL, 2))
-                .duration(200).EUt(30).buildAndRegister();
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:rail"));
         ModHandler.addShapedRecipe("rail", new ItemStack(Blocks.RAIL, 8), "ShS", "IWI", "IdI",
@@ -506,7 +507,7 @@ public class VanillaOverrideRecipes {
                 .input(OrePrefix.screw, Materials.Iron)
                 .input(OrePrefix.stick, Materials.Wood)
                 .outputs(new ItemStack(Blocks.ACTIVATOR_RAIL, 2))
-                .duration(200).EUt(30).buildAndRegister();
+                .duration(200).EUt(VA[LV]).buildAndRegister();
     }
 
     /**
@@ -526,7 +527,7 @@ public class VanillaOverrideRecipes {
                 .input(OrePrefix.plate, Materials.Iron, 4)
                 .fluidInputs(Materials.Steel.getFluid(GTValues.L / 9))
                 .outputs(new ItemStack(Items.IRON_DOOR))
-                .duration(400).EUt(7).buildAndRegister();
+                .duration(400).EUt(VA[ULV]).buildAndRegister();
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:cauldron"));
         ModHandler.addShapedRecipe("cauldron", new ItemStack(Items.CAULDRON), "X X", "XhX", "XXX",
@@ -699,7 +700,7 @@ public class VanillaOverrideRecipes {
                 .input(OrePrefix.stoneCobble, Materials.Stone, 8)
                 .inputs(new ItemStack(Items.FLINT))
                 .outputs(new ItemStack(Blocks.FURNACE))
-                .duration(100).EUt(7).buildAndRegister();
+                .duration(100).EUt(VA[ULV]).buildAndRegister();
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:crafting_table"));
         ModHandler.addShapedRecipe("crafting_table", new ItemStack(Blocks.CRAFTING_TABLE), "FF", "WW", 'F', new ItemStack(Items.FLINT), 'W', new UnificationEntry(OrePrefix.log, Materials.Wood));
@@ -730,7 +731,7 @@ public class VanillaOverrideRecipes {
      * + Replaces Vanilla Armor and Tool recipes
      */
     private static void toolArmorRecipes() {
-        if (ConfigHolder.vanillaRecipes.flintAndSteelRequireSteel) {
+        if (ConfigHolder.recipes.flintAndSteelRequireSteel) {
             ModHandler.removeRecipeByName(new ResourceLocation("minecraft:flint_and_steel"));
             ModHandler.addShapedRecipe("flint_and_steel", new ItemStack(Items.FLINT_AND_STEEL), "G", "F", "S",
                     'G', new UnificationEntry(OrePrefix.gearSmall, Materials.Steel),
@@ -739,7 +740,7 @@ public class VanillaOverrideRecipes {
             );
         }
 
-        if (!ConfigHolder.vanillaRecipes.hardToolArmorRecipes)
+        if (!ConfigHolder.recipes.hardToolArmorRecipes)
             return;
 
         createShovelRecipe("iron_shovel", new ItemStack(Items.IRON_SHOVEL), Materials.Iron);

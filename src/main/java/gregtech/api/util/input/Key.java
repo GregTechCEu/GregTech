@@ -18,6 +18,11 @@ public class Key {
         this.state = false;
     }
 
+    public Key(EnumKey type, boolean state) {
+        this.KEY = type;
+        this.state = state;
+    }
+
     @SideOnly(Side.CLIENT)
     public Key(EnumKey type, KeyBinding bind) {
         this.KEY = type;

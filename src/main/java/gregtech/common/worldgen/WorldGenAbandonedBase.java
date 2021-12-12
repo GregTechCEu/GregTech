@@ -20,7 +20,7 @@ import java.util.Random;
 public class WorldGenAbandonedBase implements IWorldGenerator {
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
-        if (ConfigHolder.abandonedBaseRarity == 0 ||
+        if (ConfigHolder.worldgen.abandonedBaseRarity == 0 ||
                 world.getWorldType() == WorldType.FLAT ||
                 world.provider.getDimensionType() != DimensionType.OVERWORLD ||
                 !world.getWorldInfo().isMapFeaturesEnabled()) {
@@ -28,7 +28,7 @@ public class WorldGenAbandonedBase implements IWorldGenerator {
         }
         BlockPos randomPos = new BlockPos(chunkX * 16 + 8, 0, chunkZ * 16 + 8);
 
-        if (random.nextInt(ConfigHolder.abandonedBaseRarity) == 0) {
+        if (random.nextInt(ConfigHolder.worldgen.abandonedBaseRarity) == 0) {
             int variantNumber = random.nextInt(3);
             Rotation rotation = Rotation.values()[random.nextInt(Rotation.values().length)];
             ResourceLocation templateId = new ResourceLocation(GTValues.MODID, "abandoned_base/abandoned_base_1_" + variantNumber);

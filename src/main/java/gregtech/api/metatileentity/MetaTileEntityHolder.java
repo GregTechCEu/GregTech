@@ -5,7 +5,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.gui.IUIHolder;
-import gregtech.api.net.CPacketRecoverMTE;
+import gregtech.api.net.packets.PacketRecoverMTE;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.util.GTLog;
 import net.minecraft.block.state.IBlockState;
@@ -45,10 +45,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         Preconditions.checkNotNull(sampleMetaTileEntity, "metaTileEntity");
         this.metaTileEntity = sampleMetaTileEntity.createMetaTileEntity(this);
         this.metaTileEntity.holder = this;
-        if(data.length != 0) {
-            this.metaTileEntity.preInit(data);
-        }
-        this.metaTileEntity.onAttached();
+        this.metaTileEntity.onAttached(data);
         if (hasWorld() && !getWorld().isRemote) {
             updateBlockOpacity();
             sendInitialSyncData();
@@ -89,6 +86,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
             NBTTagCompound metaTileEntityData = compound.getCompoundTag("MetaTileEntity");
             if (sampleMetaTileEntity != null) {
                 this.metaTileEntity = sampleMetaTileEntity.createMetaTileEntity(this);
+                this.metaTileEntity.onAttached();
                 this.metaTileEntity.holder = this;
                 this.metaTileEntity.readFromNBT(metaTileEntityData);
             } else {
@@ -128,7 +126,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         if (metaTileEntity != null) {
             metaTileEntity.update();
         } else if (world.isRemote) { // recover the mte
-            NetworkHandler.channel.sendToServer(new CPacketRecoverMTE(world, getPos()).toFMLPacket());
+            NetworkHandler.channel.sendToServer(new PacketRecoverMTE(world.provider.getDimension(), getPos()).toFMLPacket());
         }
         
         if (this.needToUpdateLightning) {

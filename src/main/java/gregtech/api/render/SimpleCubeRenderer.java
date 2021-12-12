@@ -31,6 +31,7 @@ public class SimpleCubeRenderer implements ICubeRenderer, IIconRegister {
 
     public SimpleCubeRenderer(String basePath) {
         this.basePath = basePath;
+        Textures.CUBE_RENDERER_REGISTRY.put(basePath, this);
         Textures.iconRegisters.add(this);
     }
 
@@ -48,7 +49,7 @@ public class SimpleCubeRenderer implements ICubeRenderer, IIconRegister {
     public void renderSided(EnumFacing side, Matrix4 translation, Cuboid6 bounds, CCRenderState renderState, IVertexOperation[] pipeline) {
         Textures.renderFace(renderState, translation, pipeline, side, bounds, sprite);
         if (spriteEmissive != null) {
-            if (ConfigHolder.U.clientConfig.machinesEmissiveTextures) {
+            if (ConfigHolder.client.machinesEmissiveTextures) {
                 IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
                 Textures.renderFaceBloom(renderState, translation, lightPipeline, side, bounds, spriteEmissive);
             } else Textures.renderFace(renderState, translation, pipeline, side, bounds, spriteEmissive);

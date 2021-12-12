@@ -27,7 +27,7 @@ public class EUToFEProvider implements ICapabilityProvider {
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
 
-        if (!ConfigHolder.U.energyOptions.nativeEUToFE)
+        if (!ConfigHolder.compat.energy.nativeEUToFE)
             return false;
 
         if (lock.isLocked() || capability != GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
@@ -48,7 +48,7 @@ public class EUToFEProvider implements ICapabilityProvider {
     @SuppressWarnings("unchecked")
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
 
-        if (!ConfigHolder.U.energyOptions.nativeEUToFE)
+        if (!ConfigHolder.compat.energy.nativeEUToFE)
             return null;
 
         if (lock.isLocked() || capability != GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)

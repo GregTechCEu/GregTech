@@ -24,28 +24,35 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 @SideOnly(Side.CLIENT)
 public class ToolRenderHandler {
 
     public static final ToolRenderHandler INSTANCE = new ToolRenderHandler();
 
+    private static final MethodHandle damagedBlocksHandle;
     private static final MethodHandle destroyBlockIconsHandle;
 
     static {
+        MethodHandle damagedBlocks = null;
         MethodHandle destroyBlockIcons = null;
         try {
+            Field damagedBlocksField = ObfuscationReflectionHelper.findField(RenderGlobal.class, "field_72738_E");
+            damagedBlocks = MethodHandles.lookup().unreflectGetter(damagedBlocksField);
             Field destroyBlockIconsField = ObfuscationReflectionHelper.findField(RenderGlobal.class, "field_94141_F");
             destroyBlockIcons = MethodHandles.lookup().unreflectGetter(destroyBlockIconsField);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+        damagedBlocksHandle = damagedBlocks;
         destroyBlockIconsHandle = destroyBlockIcons;
     }
 
     private ToolRenderHandler() {
     }
 
+    @SuppressWarnings("unchecked")
     @SubscribeEvent
     public void onDrawBlockOutline(DrawBlockHighlightEvent event) throws Throwable {
         EntityPlayer player = event.getPlayer();
@@ -58,8 +65,9 @@ public class ToolRenderHandler {
                 //noinspection ConstantConditions
                 event.getContext().drawSelectionBox(player, new RayTraceResult(Vec3d.ZERO, null, pos), 0, event.getPartialTicks());
             }
-            DestroyBlockProgress progress = event.getContext().damagedBlocks.get(player.getEntityId());
-            if (progress != null && Minecraft.getMinecraft().playerController.getIsHittingBlock()) {
+
+            DestroyBlockProgress progress = ((Map<Integer, DestroyBlockProgress>) damagedBlocksHandle.invokeExact(event.getContext())).get(player.getEntityId());
+            if (progress != null) {
                 preRenderDamagedBlocks();
                 drawBlockDamageTexture(event, blocksToRender, progress.getPartialBlockDamage());
                 postRenderDamagedBlocks();
