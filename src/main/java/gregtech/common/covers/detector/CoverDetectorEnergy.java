@@ -27,7 +27,7 @@ public class CoverDetectorEnergy extends CoverBehavior implements ITickable {
 
     @Override
     public boolean canAttach() {
-        return coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, attachedSide) != null;
+        return coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null) != null;
     }
 
     @Override

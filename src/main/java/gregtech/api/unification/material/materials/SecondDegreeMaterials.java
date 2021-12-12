@@ -5,6 +5,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.PropertyKey;
 
+import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.api.unification.material.info.MaterialIconSet.*;
@@ -321,7 +322,7 @@ public class SecondDegreeMaterials {
                 .components(Naquadah, 2, Osmiridium, 1, Trinium, 1)
                 .toolStats(8.0f, 5.0f, 5120, 21)
                 .cableProperties(GTValues.V[8], 2, 4)
-                .blastTemp(7200, GasTier.HIGH, 30720, 1000)
+                .blastTemp(7200, GasTier.HIGH, VA[LuV], 1000)
                 .build();
 
         SulfuricNickelSolution = new Material.Builder(2043, "sulfuric_nickel_solution")
@@ -460,7 +461,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
                 .components(Palladium, 3, Rhodium, 1)
                 .toolStats(12.0f, 3.0f, 1024, 33)
-                .blastTemp(4500, GasTier.HIGH, 7680, 1200)
+                .blastTemp(4500, GasTier.HIGH, VA[IV], 1200)
                 .build();
 
         Clay = new Material.Builder(2063, "clay")

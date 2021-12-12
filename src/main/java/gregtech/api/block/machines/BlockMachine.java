@@ -90,7 +90,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Override
     public boolean canHarvestBlock(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
-        if (ConfigHolder.U.GT5u.requireWrenchForMachines) {
+        if (ConfigHolder.machines.requireWrenchForMachines) {
             return player.getHeldItemMainhand().hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
         }
         return super.canHarvestBlock(world, pos, player);
@@ -252,7 +252,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             } else {
                 metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
             }
-            if (ConfigHolder.U.GT6.gt6StylePipesCables) {
+            if (ConfigHolder.machines.gt6StylePipesCables) {
                 if (placer instanceof EntityPlayer) {
                     EntityPlayer player = (EntityPlayer) placer;
                     RayTraceResult rt2 = GTUtility.getBlockLookingAt(player, pos);

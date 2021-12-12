@@ -20,7 +20,7 @@ public class BloomEffect {
         PingPongBuffer.updateSize(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
         BlurEffect.updateSize(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
         highLightFBO.bindFramebufferTexture();
-        blend(BlurEffect.renderBlur1((float) ConfigHolder.U.clientConfig.shader.bloom.step), backgroundFBO, strength);
+        blend(BlurEffect.renderBlur1((float) ConfigHolder.client.shader.step), backgroundFBO, strength);
     }
 
     private static void blend(Framebuffer bloom, Framebuffer backgroundFBO, float strength) {
@@ -39,8 +39,8 @@ public class BloomEffect {
             uniformCache.glUniform1I("buffer_a", 0);
             uniformCache.glUniform1I("buffer_b", 1);
             uniformCache.glUniform1F("intensive", strength);
-            uniformCache.glUniform1F("threshold_up", (float) ConfigHolder.U.clientConfig.shader.bloom.highBrightnessThreshold);
-            uniformCache.glUniform1F("threshold_down", (float) ConfigHolder.U.clientConfig.shader.bloom.lowBrightnessThreshold);
+            uniformCache.glUniform1F("threshold_up", (float) ConfigHolder.client.shader.highBrightnessThreshold);
+            uniformCache.glUniform1F("threshold_down", (float) ConfigHolder.client.shader.lowBrightnessThreshold);
         });
 
         GlStateManager.setActiveTexture(GL13.GL_TEXTURE1);
@@ -53,7 +53,7 @@ public class BloomEffect {
     }
 
     private static void cleanUP(int lastWidth, int lastHeight) {
-        if (BUFFERS_D == null || BUFFERS_D.length != ConfigHolder.U.clientConfig.shader.bloom.nMips) {
+        if (BUFFERS_D == null || BUFFERS_D.length != ConfigHolder.client.shader.nMips) {
             if (BUFFERS_D != null) {
                 for (int i = 0; i < BUFFERS_D.length; i++) {
                     BUFFERS_D[i].deleteFramebuffer();
@@ -61,13 +61,13 @@ public class BloomEffect {
                 }
             }
 
-            BUFFERS_D = new Framebuffer[ConfigHolder.U.clientConfig.shader.bloom.nMips];
-            BUFFERS_U = new Framebuffer[ConfigHolder.U.clientConfig.shader.bloom.nMips];
+            BUFFERS_D = new Framebuffer[ConfigHolder.client.shader.nMips];
+            BUFFERS_U = new Framebuffer[ConfigHolder.client.shader.nMips];
 
             int resX = lastWidth / 2;
             int resY = lastHeight / 2;
 
-            for (int i = 0; i < ConfigHolder.U.clientConfig.shader.bloom.nMips; i++) {
+            for (int i = 0; i < ConfigHolder.client.shader.nMips; i++) {
                 BUFFERS_D[i] = new Framebuffer(resX, resY, false);
                 BUFFERS_U[i] = new Framebuffer(resX, resY, false);
                 BUFFERS_D[i].setFramebufferColor(0, 0, 0, 0);
@@ -80,7 +80,7 @@ public class BloomEffect {
         } else if (RenderUtil.updateFBOSize(BUFFERS_D[0], lastWidth / 2, lastHeight / 2)) {
             int resX = lastWidth / 2;
             int resY = lastHeight / 2;
-            for (int i = 0; i < ConfigHolder.U.clientConfig.shader.bloom.nMips; i++) {
+            for (int i = 0; i < ConfigHolder.client.shader.nMips; i++) {
                 RenderUtil.updateFBOSize(BUFFERS_D[i], resX, resY);
                 RenderUtil.updateFBOSize(BUFFERS_U[i], resX, resY);
                 BUFFERS_D[i].setFramebufferFilter(GL11.GL_LINEAR);
@@ -142,7 +142,7 @@ public class BloomEffect {
         // blur all mips
         int[] kernelSizeArray = new int[]{3, 5, 7, 9, 11};
         highLightFBO.bindFramebufferTexture();
-        final float step = (float) ConfigHolder.U.clientConfig.shader.bloom.step;
+        final float step = (float) ConfigHolder.client.shader.step;
         for (int i = 0; i < BUFFERS_D.length; i++) {
             Framebuffer buffer_h = BUFFERS_D[i];
             int kernel = kernelSizeArray[i];

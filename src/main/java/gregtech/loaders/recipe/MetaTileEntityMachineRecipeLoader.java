@@ -9,12 +9,13 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 
+import static gregtech.api.GTValues.*;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
 
 public class MetaTileEntityMachineRecipeLoader {
 
     public static void init() {
-        if (ConfigHolder.U.GT5u.harderEnergyHatches) {
+        if (ConfigHolder.recipes.harderEnergyHatches) {
 
             // Energy Output Hatches
 
@@ -26,7 +27,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .input(OrePrefix.rotor, Materials.Lead)
                     .fluidInputs(Materials.Lubricant.getFluid(2000))
                     .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.ULV].getStackForm())
-                    .duration(200).EUt(7).buildAndRegister();
+                    .duration(200).EUt(VA[ULV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.LV].getStackForm())
@@ -36,7 +37,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(MetaItems.ELECTRIC_PUMP_LV.getStackForm())
                     .fluidInputs(Materials.Lubricant.getFluid(2000))
                     .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.LV].getStackForm())
-                    .duration(200).EUt(30).buildAndRegister();
+                    .duration(200).EUt(VA[LV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.MV].getStackForm())
@@ -46,7 +47,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(MetaItems.ELECTRIC_PUMP_MV.getStackForm())
                     .fluidInputs(Materials.Lubricant.getFluid(2000))
                     .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.MV].getStackForm())
-                    .duration(200).EUt(120).buildAndRegister();
+                    .duration(200).EUt(VA[MV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.HV].getStackForm())
@@ -56,7 +57,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(MetaItems.ELECTRIC_PUMP_HV.getStackForm())
                     .fluidInputs(Materials.Helium.getFluid(1000))
                     .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.HV].getStackForm())
-                    .duration(200).EUt(480).buildAndRegister();
+                    .duration(200).EUt(VA[HV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.HV].getStackForm())
@@ -66,7 +67,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(MetaItems.ELECTRIC_PUMP_HV.getStackForm())
                     .fluidInputs(Materials.SodiumPotassium.getFluid(1000))
                     .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.HV].getStackForm())
-                    .duration(200).EUt(480).buildAndRegister();
+                    .duration(200).EUt(VA[HV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.EV].getStackForm())
@@ -76,7 +77,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(MetaItems.ELECTRIC_PUMP_EV.getStackForm())
                     .fluidInputs(Materials.Helium.getFluid(2000))
                     .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.EV].getStackForm())
-                    .duration(200).EUt(1920).buildAndRegister();
+                    .duration(200).EUt(VA[EV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.EV].getStackForm())
@@ -86,7 +87,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(MetaItems.ELECTRIC_PUMP_EV.getStackForm())
                     .fluidInputs(Materials.SodiumPotassium.getFluid(2000))
                     .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.EV].getStackForm())
-                    .duration(200).EUt(1920).buildAndRegister();
+                    .duration(200).EUt(VA[EV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.IV].getStackForm())
@@ -96,7 +97,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
                     .fluidInputs(Materials.Helium.getFluid(3000))
                     .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.IV].getStackForm())
-                    .duration(200).EUt(7680).buildAndRegister();
+                    .duration(200).EUt(VA[IV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.IV].getStackForm())
@@ -106,7 +107,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
                     .fluidInputs(Materials.SodiumPotassium.getFluid(3000))
                     .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.IV].getStackForm())
-                    .duration(200).EUt(7680).buildAndRegister();
+                    .duration(200).EUt(VA[IV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.LuV].getStackForm())
@@ -118,7 +119,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .fluidInputs(Materials.Helium.getFluid(6000))
                     .fluidInputs(Materials.SolderingAlloy.getFluid(720))
                     .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.LuV].getStackForm())
-                    .duration(400).EUt(30720).buildAndRegister();
+                    .duration(400).EUt(VA[LuV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.LuV].getStackForm())
@@ -130,7 +131,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .fluidInputs(Materials.SodiumPotassium.getFluid(6000))
                     .fluidInputs(Materials.SolderingAlloy.getFluid(720))
                     .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.LuV].getStackForm())
-                    .duration(400).EUt(30720).buildAndRegister();
+                    .duration(400).EUt(VA[LuV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.ZPM].getStackForm())
@@ -142,7 +143,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .fluidInputs(Materials.Helium.getFluid(6000))
                     .fluidInputs(Materials.SolderingAlloy.getFluid(1440))
                     .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.ZPM].getStackForm())
-                    .duration(600).EUt(122880).buildAndRegister();
+                    .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
             RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.ZPM].getStackForm())
@@ -154,7 +155,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .fluidInputs(Materials.SodiumPotassium.getFluid(6000))
                     .fluidInputs(Materials.SolderingAlloy.getFluid(1440))
                     .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.ZPM].getStackForm())
-                    .duration(600).EUt(122880).buildAndRegister();
+                    .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
             RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.UV].getStackForm())
@@ -166,7 +167,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .fluidInputs(Materials.Helium.getFluid(12000))
                     .fluidInputs(Materials.SolderingAlloy.getFluid(2880))
                     .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.UV].getStackForm())
-                    .duration(800).EUt(491520).buildAndRegister();
+                    .duration(800).EUt(VA[UV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.UV].getStackForm())
@@ -178,7 +179,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .fluidInputs(Materials.SodiumPotassium.getFluid(12000))
                     .fluidInputs(Materials.SolderingAlloy.getFluid(2880))
                     .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.UV].getStackForm())
-                    .duration(800).EUt(491520).buildAndRegister();
+                    .duration(800).EUt(VA[UV]).buildAndRegister();
 
             // Energy Input Hatches
 
@@ -190,7 +191,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .input(OrePrefix.rotor, Materials.Lead)
                     .fluidInputs(Materials.Lubricant.getFluid(2000))
                     .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.ULV].getStackForm())
-                    .duration(200).EUt(7).buildAndRegister();
+                    .duration(200).EUt(VA[ULV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.LV].getStackForm())
@@ -200,7 +201,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(MetaItems.ELECTRIC_PUMP_LV.getStackForm())
                     .fluidInputs(Materials.Lubricant.getFluid(2000))
                     .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.LV].getStackForm())
-                    .duration(200).EUt(30).buildAndRegister();
+                    .duration(200).EUt(VA[LV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.MV].getStackForm())
@@ -210,7 +211,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(MetaItems.ELECTRIC_PUMP_MV.getStackForm())
                     .fluidInputs(Materials.Lubricant.getFluid(2000))
                     .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.MV].getStackForm())
-                    .duration(200).EUt(120).buildAndRegister();
+                    .duration(200).EUt(VA[MV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.HV].getStackForm())
@@ -220,7 +221,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(MetaItems.ELECTRIC_PUMP_HV.getStackForm())
                     .fluidInputs(Materials.Helium.getFluid(1000))
                     .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV].getStackForm())
-                    .duration(200).EUt(480).buildAndRegister();
+                    .duration(200).EUt(VA[HV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.HV].getStackForm())
@@ -230,7 +231,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(MetaItems.ELECTRIC_PUMP_HV.getStackForm())
                     .fluidInputs(Materials.SodiumPotassium.getFluid(1000))
                     .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV].getStackForm())
-                    .duration(200).EUt(480).buildAndRegister();
+                    .duration(200).EUt(VA[HV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.EV].getStackForm())
@@ -240,7 +241,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(MetaItems.ELECTRIC_PUMP_EV.getStackForm())
                     .fluidInputs(Materials.Helium.getFluid(2000))
                     .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.EV].getStackForm())
-                    .duration(200).EUt(1920).buildAndRegister();
+                    .duration(200).EUt(VA[EV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.EV].getStackForm())
@@ -250,7 +251,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(MetaItems.ELECTRIC_PUMP_EV.getStackForm())
                     .fluidInputs(Materials.SodiumPotassium.getFluid(2000))
                     .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.EV].getStackForm())
-                    .duration(200).EUt(1920).buildAndRegister();
+                    .duration(200).EUt(VA[EV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.IV].getStackForm())
@@ -260,7 +261,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
                     .fluidInputs(Materials.Helium.getFluid(3000))
                     .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.IV].getStackForm())
-                    .duration(200).EUt(7680).buildAndRegister();
+                    .duration(200).EUt(VA[IV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.IV].getStackForm())
@@ -270,7 +271,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
                     .fluidInputs(Materials.SodiumPotassium.getFluid(3000))
                     .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.IV].getStackForm())
-                    .duration(200).EUt(7680).buildAndRegister();
+                    .duration(200).EUt(VA[IV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.LuV].getStackForm())
@@ -282,7 +283,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .fluidInputs(Materials.Helium.getFluid(6000))
                     .fluidInputs(Materials.SolderingAlloy.getFluid(720))
                     .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.LuV].getStackForm())
-                    .duration(400).EUt(30720).buildAndRegister();
+                    .duration(400).EUt(VA[LuV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.LuV].getStackForm())
@@ -294,7 +295,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .fluidInputs(Materials.SodiumPotassium.getFluid(6000))
                     .fluidInputs(Materials.SolderingAlloy.getFluid(720))
                     .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.LuV].getStackForm())
-                    .duration(400).EUt(30720).buildAndRegister();
+                    .duration(400).EUt(VA[LuV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.ZPM].getStackForm())
@@ -306,7 +307,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .fluidInputs(Materials.Helium.getFluid(6000))
                     .fluidInputs(Materials.SolderingAlloy.getFluid(1440))
                     .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.ZPM].getStackForm())
-                    .duration(600).EUt(122880).buildAndRegister();
+                    .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
             RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.ZPM].getStackForm())
@@ -318,7 +319,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .fluidInputs(Materials.SodiumPotassium.getFluid(6000))
                     .fluidInputs(Materials.SolderingAlloy.getFluid(1440))
                     .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.ZPM].getStackForm())
-                    .duration(600).EUt(122880).buildAndRegister();
+                    .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
             RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.UV].getStackForm())
@@ -330,7 +331,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .fluidInputs(Materials.Helium.getFluid(12000))
                     .fluidInputs(Materials.SolderingAlloy.getFluid(2880))
                     .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.UV].getStackForm())
-                    .duration(800).EUt(491520).buildAndRegister();
+                    .duration(800).EUt(VA[UV]).buildAndRegister();
 
             RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                     .inputs(HULL[GTValues.UV].getStackForm())
@@ -342,7 +343,7 @@ public class MetaTileEntityMachineRecipeLoader {
                     .fluidInputs(Materials.SodiumPotassium.getFluid(12000))
                     .fluidInputs(Materials.SolderingAlloy.getFluid(2880))
                     .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.UV].getStackForm())
-                    .duration(800).EUt(491520).buildAndRegister();
+                    .duration(800).EUt(VA[UV]).buildAndRegister();
 
         }
 
@@ -357,7 +358,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.spring, Materials.Tin)
                 .fluidInputs(Materials.Lubricant.getFluid(2000))
                 .outputs(ADJUSTABLE_TRANSFORMER[GTValues.ULV].getStackForm())
-                .duration(200).EUt(7).buildAndRegister();
+                .duration(200).EUt(VA[ULV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(TRANSFORMER[GTValues.LV].getStackForm())
@@ -368,7 +369,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.spring, Materials.Copper)
                 .fluidInputs(Materials.Lubricant.getFluid(2000))
                 .outputs(ADJUSTABLE_TRANSFORMER[GTValues.LV].getStackForm())
-                .duration(200).EUt(30).buildAndRegister();
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(TRANSFORMER[GTValues.MV].getStackForm())
@@ -379,7 +380,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.spring, Materials.Gold)
                 .fluidInputs(Materials.Lubricant.getFluid(2000))
                 .outputs(ADJUSTABLE_TRANSFORMER[GTValues.MV].getStackForm())
-                .duration(200).EUt(120).buildAndRegister();
+                .duration(200).EUt(VA[MV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(TRANSFORMER[GTValues.HV].getStackForm())
@@ -390,7 +391,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.spring, Materials.Aluminium)
                 .fluidInputs(Materials.Lubricant.getFluid(2000))
                 .outputs(ADJUSTABLE_TRANSFORMER[GTValues.HV].getStackForm())
-                .duration(200).EUt(480).buildAndRegister();
+                .duration(200).EUt(VA[HV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(TRANSFORMER[GTValues.EV].getStackForm())
@@ -401,7 +402,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.spring, Materials.Tungsten)
                 .fluidInputs(Materials.Lubricant.getFluid(2000))
                 .outputs(ADJUSTABLE_TRANSFORMER[GTValues.EV].getStackForm())
-                .duration(200).EUt(1920).buildAndRegister();
+                .duration(200).EUt(VA[EV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(TRANSFORMER[GTValues.IV].getStackForm())
@@ -412,7 +413,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.spring, Materials.NiobiumTitanium)
                 .fluidInputs(Materials.Lubricant.getFluid(2000))
                 .outputs(ADJUSTABLE_TRANSFORMER[GTValues.IV].getStackForm())
-                .duration(200).EUt(7680).buildAndRegister();
+                .duration(200).EUt(VA[IV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(TRANSFORMER[GTValues.LuV].getStackForm())
@@ -423,7 +424,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.spring, Materials.VanadiumGallium)
                 .fluidInputs(Materials.Lubricant.getFluid(2000))
                 .outputs(ADJUSTABLE_TRANSFORMER[GTValues.LuV].getStackForm())
-                .duration(200).EUt(32768).buildAndRegister();
+                .duration(200).EUt(VA[LuV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(TRANSFORMER[GTValues.ZPM].getStackForm())
@@ -434,7 +435,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.spring, Materials.YttriumBariumCuprate)
                 .fluidInputs(Materials.Lubricant.getFluid(2000))
                 .outputs(ADJUSTABLE_TRANSFORMER[GTValues.ZPM].getStackForm())
-                .duration(200).EUt(131072).buildAndRegister();
+                .duration(200).EUt(VA[ZPM]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(TRANSFORMER[GTValues.UV].getStackForm())
@@ -445,7 +446,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.spring, Materials.Europium)
                 .fluidInputs(Materials.Lubricant.getFluid(2000))
                 .outputs(ADJUSTABLE_TRANSFORMER[GTValues.UV].getStackForm())
-                .duration(200).EUt(524288).buildAndRegister();
+                .duration(200).EUt(VA[UV]).buildAndRegister();
 
         // Adjustable Input Hatches
 
@@ -457,7 +458,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.RedAlloy, 4)
                 .input(OrePrefix.plateDouble, Materials.WroughtIron)
                 .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.ULV].getStackForm())
-                .duration(100).EUt(7).buildAndRegister();
+                .duration(100).EUt(VA[ULV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ADJUSTABLE_TRANSFORMER[GTValues.LV].getStackForm())
@@ -467,7 +468,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.Copper, 4)
                 .input(OrePrefix.plateDouble, Materials.Steel)
                 .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.LV].getStackForm())
-                .duration(100).EUt(30).buildAndRegister();
+                .duration(100).EUt(VA[LV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ADJUSTABLE_TRANSFORMER[GTValues.MV].getStackForm())
@@ -477,7 +478,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.Cupronickel, 4)
                 .input(OrePrefix.plateDouble, Materials.Aluminium)
                 .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.MV].getStackForm())
-                .duration(100).EUt(120).buildAndRegister();
+                .duration(100).EUt(VA[MV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ADJUSTABLE_TRANSFORMER[GTValues.HV].getStackForm())
@@ -487,7 +488,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.Kanthal, 4)
                 .input(OrePrefix.plateDouble, Materials.StainlessSteel)
                 .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.HV].getStackForm())
-                .duration(100).EUt(480).buildAndRegister();
+                .duration(100).EUt(VA[HV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ADJUSTABLE_TRANSFORMER[GTValues.EV].getStackForm())
@@ -497,7 +498,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.Nichrome, 4)
                 .input(OrePrefix.plateDouble, Materials.Titanium)
                 .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.EV].getStackForm())
-                .duration(100).EUt(1920).buildAndRegister();
+                .duration(100).EUt(VA[EV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ADJUSTABLE_TRANSFORMER[GTValues.IV].getStackForm())
@@ -507,7 +508,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.TungstenSteel, 4)
                 .input(OrePrefix.plateDouble, Materials.TungstenSteel)
                 .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.IV].getStackForm())
-                .duration(100).EUt(7680).buildAndRegister();
+                .duration(100).EUt(VA[IV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ADJUSTABLE_TRANSFORMER[GTValues.LuV].getStackForm())
@@ -517,7 +518,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.HSSG, 4)
                 .input(OrePrefix.plateDouble, Materials.RhodiumPlatedPalladium)
                 .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.LuV].getStackForm())
-                .duration(100).EUt(32768).buildAndRegister();
+                .duration(100).EUt(VA[LuV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ADJUSTABLE_TRANSFORMER[GTValues.ZPM].getStackForm())
@@ -527,7 +528,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.Naquadah, 4)
                 .input(OrePrefix.plateDouble, Materials.Iridium)
                 .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.ZPM].getStackForm())
-                .duration(100).EUt(131072).buildAndRegister();
+                .duration(100).EUt(VA[ZPM]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ADJUSTABLE_TRANSFORMER[GTValues.UV].getStackForm())
@@ -537,7 +538,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.NaquadahAlloy, 4)
                 .input(OrePrefix.plateDouble, Materials.Osmium)
                 .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.UV].getStackForm())
-                .duration(100).EUt(524288).buildAndRegister();
+                .duration(100).EUt(VA[UV]).buildAndRegister();
 
         // Adjustable Output Hatches
 
@@ -549,7 +550,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.RedAlloy, 4)
                 .input(OrePrefix.plateDouble, Materials.WroughtIron)
                 .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.ULV].getStackForm())
-                .duration(100).EUt(7).buildAndRegister();
+                .duration(100).EUt(VA[ULV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ADJUSTABLE_TRANSFORMER[GTValues.LV].getStackForm())
@@ -559,7 +560,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.Copper, 4)
                 .input(OrePrefix.plateDouble, Materials.Steel)
                 .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.LV].getStackForm())
-                .duration(100).EUt(30).buildAndRegister();
+                .duration(100).EUt(VA[LV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ADJUSTABLE_TRANSFORMER[GTValues.MV].getStackForm())
@@ -569,7 +570,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.Cupronickel, 4)
                 .input(OrePrefix.plateDouble, Materials.Aluminium)
                 .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.MV].getStackForm())
-                .duration(100).EUt(120).buildAndRegister();
+                .duration(100).EUt(VA[MV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ADJUSTABLE_TRANSFORMER[GTValues.HV].getStackForm())
@@ -579,7 +580,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.Kanthal, 4)
                 .input(OrePrefix.plateDouble, Materials.StainlessSteel)
                 .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.HV].getStackForm())
-                .duration(100).EUt(480).buildAndRegister();
+                .duration(100).EUt(VA[HV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ADJUSTABLE_TRANSFORMER[GTValues.EV].getStackForm())
@@ -589,7 +590,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.Nichrome, 4)
                 .input(OrePrefix.plateDouble, Materials.Titanium)
                 .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.EV].getStackForm())
-                .duration(100).EUt(1920).buildAndRegister();
+                .duration(100).EUt(VA[EV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ADJUSTABLE_TRANSFORMER[GTValues.IV].getStackForm())
@@ -599,7 +600,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.TungstenSteel, 4)
                 .input(OrePrefix.plateDouble, Materials.TungstenSteel)
                 .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.IV].getStackForm())
-                .duration(100).EUt(7680).buildAndRegister();
+                .duration(100).EUt(VA[IV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ADJUSTABLE_TRANSFORMER[GTValues.LuV].getStackForm())
@@ -609,7 +610,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.HSSG, 4)
                 .input(OrePrefix.plateDouble, Materials.RhodiumPlatedPalladium)
                 .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.LuV].getStackForm())
-                .duration(100).EUt(32768).buildAndRegister();
+                .duration(100).EUt(VA[LuV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ADJUSTABLE_TRANSFORMER[GTValues.ZPM].getStackForm())
@@ -619,7 +620,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.Naquadah, 4)
                 .input(OrePrefix.plateDouble, Materials.Iridium)
                 .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.ZPM].getStackForm())
-                .duration(100).EUt(131072).buildAndRegister();
+                .duration(100).EUt(VA[ZPM]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ADJUSTABLE_TRANSFORMER[GTValues.UV].getStackForm())
@@ -629,7 +630,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(OrePrefix.wireGtQuadruple, Materials.NaquadahAlloy, 4)
                 .input(OrePrefix.plateDouble, Materials.Osmium)
                 .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.UV].getStackForm())
-                .duration(100).EUt(524288).buildAndRegister();
+                .duration(100).EUt(VA[UV]).buildAndRegister();
 
         // Maintenance Hatch
 
@@ -637,7 +638,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputs(HULL[GTValues.LV].getStackForm())
                 .circuitMeta(1)
                 .outputs(MAINTENANCE_HATCH.getStackForm())
-                .duration(100).EUt(30).buildAndRegister();
+                .duration(100).EUt(VA[LV]).buildAndRegister();
 
         // Multiblock Miners
 
@@ -650,7 +651,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputs(MetaItems.CONVEYOR_MODULE_EV.getStackForm(4))
                 .input(OrePrefix.gear, Materials.Tungsten, 2)
                 .outputs(MetaTileEntities.BASIC_LARGE_MINER.getStackForm())
-                .duration(400).EUt(1920).buildAndRegister();
+                .duration(400).EUt(VA[EV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(HULL[GTValues.IV].getStackForm())
@@ -661,7 +662,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputs(MetaItems.CONVEYOR_MODULE_IV.getStackForm(4))
                 .input(OrePrefix.gear, Materials.Ultimet, 2)
                 .outputs(MetaTileEntities.LARGE_MINER.getStackForm())
-                .duration(400).EUt(7680).buildAndRegister();
+                .duration(400).EUt(VA[IV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(HULL[GTValues.LuV].getStackForm())
@@ -672,6 +673,6 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputs(MetaItems.CONVEYOR_MODULE_LUV.getStackForm(4))
                 .input(OrePrefix.gear, Materials.Ruridit, 2)
                 .outputs(MetaTileEntities.ADVANCED_LARGE_MINER.getStackForm())
-                .duration(400).EUt(30720).buildAndRegister();
+                .duration(400).EUt(VA[LuV]).buildAndRegister();
     }
 }

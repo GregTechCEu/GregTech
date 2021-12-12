@@ -1,5 +1,6 @@
 package gregtech.loaders.oreprocessing;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.toolitem.ToolMetaItem.MetaToolValueItem;
@@ -25,6 +26,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.ArrayList;
 import java.util.function.Function;
 
+import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.common.items.MetaItems.*;
 
@@ -61,16 +63,20 @@ public class ToolRecipeHandler {
         baseMaterials = new Material[]{Materials.Steel, Materials.Aluminium, Materials.StainlessSteel, Materials.Titanium, Materials.TungstenSteel};
         powerUnitItems = new MetaValueItem[]{MetaItems.POWER_UNIT_LV, MetaItems.POWER_UNIT_MV, MetaItems.POWER_UNIT_HV, MetaItems.POWER_UNIT_EV, MetaItems.POWER_UNIT_IV};
         batteryItems = new MetaValueItem[][]{
+                {MetaItems.BATTERY_ULV_TANTALUM},
                 {MetaItems.BATTERY_LV_LITHIUM, MetaItems.BATTERY_LV_CADMIUM, MetaItems.BATTERY_LV_SODIUM},
                 {MetaItems.BATTERY_MV_LITHIUM, MetaItems.BATTERY_MV_CADMIUM, MetaItems.BATTERY_MV_SODIUM},
-                {MetaItems.BATTERY_HV_LITHIUM, MetaItems.BATTERY_HV_CADMIUM, MetaItems.BATTERY_HV_SODIUM},
-                {MetaItems.LAPOTRON_CRYSTAL},
-                {MetaItems.ENERGY_LAPOTRONIC_ORB}};
+                {MetaItems.BATTERY_HV_LITHIUM, MetaItems.BATTERY_HV_CADMIUM, MetaItems.BATTERY_HV_SODIUM, MetaItems.ENERGIUM_CRYSTAL},
+                {MetaItems.BATTERY_EV_VANADIUM, MetaItems.LAPOTRON_CRYSTAL},
+                {MetaItems.BATTERY_IV_VANADIUM, MetaItems.ENERGY_LAPOTRONIC_ORB},
+                {MetaItems.BATTERY_LUV_VANADIUM, MetaItems.ENERGY_LAPOTRONIC_ORB_CLUSTER},
+                {MetaItems.BATTERY_ZPM_NAQUADRIA, MetaItems.ENERGY_LAPOTRONIC_MODULE},
+                {MetaItems.BATTERY_UV_NAQUADRIA, MetaItems.ENERGY_LAPOTRONIC_CLUSTER}};
     }
 
     public static void registerPowerUnitRecipes() {
         for (int i = 0; i < powerUnitItems.length; i++) {
-            for (MetaValueItem batteryItem : batteryItems[i]) {
+            for (MetaValueItem batteryItem : batteryItems[i + 1]) {
                 ItemStack batteryStack = batteryItem.getStackForm();
                 long maxCharge = batteryStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null).getMaxCharge();
                 ItemStack powerUnitStack = powerUnitItems[i].getMaxChargeOverrideStack(maxCharge);
@@ -122,7 +128,7 @@ public class ToolRecipeHandler {
 
     public static void processStick(OrePrefix stickPrefix, Material material, ToolProperty property) {
         if (material.hasProperty(PropertyKey.INGOT)) {
-            ModHandler.addShapedRecipe(String.format("plunger_%s", material),
+            ModHandler.addMirroredShapedRecipe(String.format("plunger_%s", material),
                     MetaItems.PLUNGER.getStackForm(material),
                     "xRR", " SR", "S f",
                     'S', new UnificationEntry(OrePrefix.stick, material),
@@ -130,13 +136,13 @@ public class ToolRecipeHandler {
         }
 
         if (material.hasFlag(GENERATE_ROD)) {
-            ModHandler.addShapedRecipe(String.format("screwdriver_%s", material.toString()),
+            ModHandler.addMirroredShapedRecipe(String.format("screwdriver_%s", material.toString()),
                     MetaItems.SCREWDRIVER.getStackForm(material),
                     " fS", " Sh", "W  ",
                     'S', new UnificationEntry(OrePrefix.stick, material),
                     'W', new UnificationEntry(OrePrefix.stick, Materials.Wood));
 
-            ModHandler.addShapedRecipe(String.format("crowbar_%s", material),
+            ModHandler.addMirroredShapedRecipe(String.format("crowbar_%s", material),
                     MetaItems.CROWBAR.getStackForm(material),
                     "hDS", "DSD", "SDf",
                     'S', new UnificationEntry(OrePrefix.stick, material),
@@ -177,7 +183,7 @@ public class ToolRecipeHandler {
     }
 
     public static void processPlate(OrePrefix platePrefix, Material material, ToolProperty property) {
-        ModHandler.addShapedRecipe(String.format("mining_hammer_%s", material.toString()),
+        ModHandler.addMirroredShapedRecipe(String.format("mining_hammer_%s", material.toString()),
                 MetaItems.MINING_HAMMER.getStackForm(material),
                 "PP ", "PPR", "PP ",
                 'P', new UnificationEntry(OrePrefix.plate, material),
@@ -186,7 +192,7 @@ public class ToolRecipeHandler {
 
 
     public static void processDrillHead(OrePrefix drillHead, Material material, ToolProperty property) {
-        if (ConfigHolder.U.GT5u.enableHighTierDrills) {
+        if (ConfigHolder.tools.enableHighTierDrills) {
             processSimpleElectricToolHead(drillHead, material, new MetaToolValueItem[]{MetaItems.DRILL_LV, MetaItems.DRILL_MV, MetaItems.DRILL_HV, MetaItems.DRILL_EV, MetaItems.DRILL_IV});
         } else {
             processSimpleElectricToolHead(drillHead, material, new MetaToolValueItem[]{MetaItems.DRILL_LV, MetaItems.DRILL_MV, MetaItems.DRILL_HV});
@@ -364,7 +370,7 @@ public class ToolRecipeHandler {
                     .EUt(8 *  getVoltageMultiplier(material))
                     .buildAndRegister();
         }
-        ModHandler.addShapedRecipe(String.format("hammer_%s", material.toString()),
+        ModHandler.addMirroredShapedRecipe(String.format("hammer_%s", material.toString()),
                 MetaItems.HARD_HAMMER.getStackForm(material),
                 "XX ", "XXS", "XX ",
                 'X', new UnificationEntry(OrePrefix.ingot, material),
@@ -392,13 +398,14 @@ public class ToolRecipeHandler {
     }
 
     private static int getVoltageMultiplier(Material material) {
-        return material.getBlastTemperature() > 2800 ? 32 : 8;
+        return material.getBlastTemperature() > 2800 ? VA[LV] : VA[ULV];
     }
 
     public static void registerManualToolRecipes() {
         registerFlintToolRecipes();
         registerMortarRecipes();
         registerSoftHammerRecipes();
+        registerProspectorRecipes();
     }
 
     private static void registerFlintToolRecipes() {
@@ -469,17 +476,62 @@ public class ToolRecipeHandler {
 
             if (ModHandler.isMaterialWood(material)) {
                 MetaItems.SOFT_HAMMER.setToolData(itemStack, material, 48, 1, 4.0f, 1.0f);
-                ModHandler.addShapedRecipe(String.format("soft_hammer_%s", material.toString()), itemStack,
+                ModHandler.addMirroredShapedRecipe(String.format("soft_hammer_%s", material.toString()), itemStack,
                         "XX ", "XXS", "XX ",
                         'X', new UnificationEntry(OrePrefix.plank, material),
                         'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
             } else {
                 MetaItems.SOFT_HAMMER.setToolData(itemStack, material, 128 * (1 << i), 1, 4.0f, 1.0f);
-                ModHandler.addShapedRecipe(String.format("soft_hammer_%s", material.toString()), itemStack,
+                ModHandler.addMirroredShapedRecipe(String.format("soft_hammer_%s", material.toString()), itemStack,
                         "XX ", "XXS", "XX ",
                         'X', new UnificationEntry(OrePrefix.ingot, material),
                         'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
             }
+        }
+    }
+
+    private static void registerProspectorRecipes() {
+        for (MetaValueItem batteryItem : batteryItems[GTValues.LV]) {
+            ModHandler.addShapedEnergyTransferRecipe("scanner_" + batteryItem.unlocalizedName, MetaItems.SCANNER.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "DGD", "CGC", "SBS",
+                    'D', new UnificationEntry(OrePrefix.plate, Materials.Diamond),
+                    'G', new UnificationEntry(OrePrefix.paneGlass),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic),
+                    'S', new UnificationEntry(OrePrefix.plate, Materials.Steel),
+                    'B', batteryItem.getStackForm());
+
+            ModHandler.addShapedEnergyTransferRecipe("prospector_lv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_LV.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "EPS", "CDC", "PBP",
+                    'E', MetaItems.EMITTER_LV.getStackForm(),
+                    'P', new UnificationEntry(OrePrefix.plate, Materials.Steel),
+                    'S', MetaItems.SENSOR_LV.getStackForm(),
+                    'D', new UnificationEntry(OrePrefix.plate, Materials.Glass),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic),
+                    'B', batteryItem.getStackForm());
+        }
+        for (MetaValueItem batteryItem : batteryItems[GTValues.HV]) {
+            ModHandler.addShapedEnergyTransferRecipe("prospector_hv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_HV.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "EPS", "CDC", "PBP",
+                    'E', MetaItems.EMITTER_HV.getStackForm(),
+                    'P', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel),
+                    'S', MetaItems.SENSOR_HV.getStackForm(),
+                    'D', MetaItems.COVER_SCREEN.getStackForm(),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Advanced),
+                    'B', batteryItem.getStackForm());
+        }
+        for (MetaValueItem batteryItem : batteryItems[GTValues.LuV]) {
+            ModHandler.addShapedEnergyTransferRecipe("prospector_luv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_LUV.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "EPS", "CDC", "PBP",
+                    'E', MetaItems.EMITTER_LUV.getStackForm(),
+                    'P', new UnificationEntry(OrePrefix.plate, Materials.RhodiumPlatedPalladium),
+                    'S', MetaItems.SENSOR_LUV.getStackForm(),
+                    'D', MetaItems.COVER_SCREEN.getStackForm(),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Master),
+                    'B', batteryItem.getStackForm());
         }
     }
 }

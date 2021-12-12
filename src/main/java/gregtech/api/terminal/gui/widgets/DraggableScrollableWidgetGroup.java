@@ -301,7 +301,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
 
     @Override
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
-        if (this.isMouseOverElement(mouseX, mouseY, true)) {
+        if (this.isMouseOverElement(mouseX, mouseY)) {
             if (super.mouseWheelMove(mouseX, mouseY, wheelDelta)) {
                 return true;
             }

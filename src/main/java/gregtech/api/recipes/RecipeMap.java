@@ -67,9 +67,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private static final Comparator<Recipe> RECIPE_DURATION_THEN_EU =
             Comparator.comparingInt(Recipe::getDuration)
-                    .thenComparingInt(Recipe::getEUt);
+                    .thenComparingInt(Recipe::getEUt)
+                    .thenComparing(Recipe::hashCode);
 
-    private final Set<Recipe> recipeSet = new HashSet<>();
+    private final Set<Recipe> recipeSet = new TreeSet<>(RECIPE_DURATION_THEN_EU);
 
     private Consumer<RecipeBuilder<?>> onRecipeBuildAction;
 
@@ -213,7 +214,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 });
                 recipeFluidMap.computeIfAbsent(fluidKey, k -> new HashSet<>()).add(recipe);
             }
-        } else if (ConfigHolder.debug) {
+        } else if (ConfigHolder.misc.debug) {
             GTLog.logger.debug("Recipe: " + recipe.toString() + " is a duplicate and was not added");
         }
     }
@@ -509,7 +510,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
 
     public List<Recipe> getRecipeList() {
-        return Collections.unmodifiableList(recipeSet.stream().sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList()));
+        return Collections.unmodifiableList(new ArrayList<>(recipeSet));
     }
 
     public SoundEvent getSound() {

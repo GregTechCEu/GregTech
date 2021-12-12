@@ -37,7 +37,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
 
     public static final double STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER = 4.0;
-    public static final double STANDARD_OVERCLOCK_DURATION_DIVISOR = ConfigHolder.U.overclockDivisor;
+    public static final double STANDARD_OVERCLOCK_DURATION_DIVISOR = ConfigHolder.machines.overclockDivisor;
     public static final double PERFECT_OVERCLOCK_DURATION_DIVISOR = 4.0;
 
     private final RecipeMap<?> recipeMap;
@@ -223,7 +223,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             this.hasNotEnoughEnergy = true;
             //if current progress value is greater than 2, decrement it by 2
             if (progressTime >= 2) {
-                if (ConfigHolder.insufficientEnergySupplyWipesRecipeProgress) {
+                if (ConfigHolder.machines.recipeProgressLowEnergy) {
                     this.progressTime = 1;
                 } else {
                     this.progressTime = Math.max(1, progressTime - 2);

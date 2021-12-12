@@ -66,11 +66,11 @@
           "side": "gregtech:blocks/casings/hermetic_casing/hermetic_casing_uv"
         }
       },
-      "hermetic_casing_max": {
+      "hermetic_casing_uhv": {
         "textures": {
-          "bottom": "gregtech:blocks/casings/voltage/max/bottom",
-          "top": "gregtech:blocks/casings/voltage/max/top",
-          "side": "gregtech:blocks/casings/hermetic_casing/hermetic_casing_max"
+          "bottom": "gregtech:blocks/casings/voltage/uhv/bottom",
+          "top": "gregtech:blocks/casings/voltage/uhv/top",
+          "side": "gregtech:blocks/casings/hermetic_casing/hermetic_casing_uhv"
         }
       }
     }

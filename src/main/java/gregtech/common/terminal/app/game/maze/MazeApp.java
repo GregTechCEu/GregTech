@@ -48,7 +48,7 @@ public class MazeApp extends AbstractApplication {
             this.setOs(os);
             this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
             // enemy 0: Title
-            this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "Theseus's Escape", 0xFFFFFFFF), 0);
+            this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "Theseus's Escape", 0xFFFFFFFF).setXCentered(true), 0);
             this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 30, 30, "Play",
                     (clickData -> {
                         this.setGameState(1);

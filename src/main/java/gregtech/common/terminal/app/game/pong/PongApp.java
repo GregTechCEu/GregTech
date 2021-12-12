@@ -80,17 +80,7 @@ public class PongApp extends AbstractApplication {
     }
 
     @Override
-    public void updateScreen() {
-        super.updateScreen();
-        timer++;
-        if (Keyboard.isKeyDown(Keyboard.KEY_UP) ^ Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-            if (Keyboard.isKeyDown(Keyboard.KEY_UP))
-                userInput = 1;
-            else
-                userInput = 0;
-        } else {
-            userInput = -1;
-        }
+    public void updateScreenOnFrame() {
         if (ball.getSelfPosition().getX() < 10) {
             this.score(false); // Right side gains a point
         } else if (ball.getSelfPosition().getX() > 323) {
@@ -101,7 +91,7 @@ public class PongApp extends AbstractApplication {
 
             TwoDimensionalRayTracer.TwoDimensionalRayTraceResult result = TwoDimensionalRayTracer.nearestBoxSegmentCollision(
                     new Vector2f(ball.getSelfPosition().x, ball.getSelfPosition().y),
-                    new Vector2f((float) (Math.cos(ball.theta) * 6), (float) (Math.sin(ball.theta) * 6)),
+                    new Vector2f((float) (Math.cos(ball.theta) * 2), (float) (Math.sin(ball.theta) * 2)),
                     solidObjects,
                     new Vector2f(4, 4));
             while (result.time != 1 && timeLeft != 0) {
@@ -128,13 +118,13 @@ public class PongApp extends AbstractApplication {
                 timeLeft -= result.time * timeLeft;
                 result = TwoDimensionalRayTracer.nearestBoxSegmentCollision(
                         new Vector2f(ball.getSelfPosition().x, ball.getSelfPosition().y),
-                        new Vector2f((float) (Math.cos(ball.theta) * 8 * timeLeft), (float) (Math.sin(ball.theta) * 8 * timeLeft)),
+                        new Vector2f((float) (Math.cos(ball.theta) * 3 * timeLeft), (float) (Math.sin(ball.theta) * 3 * timeLeft)),
                         solidObjects,
                         new Vector2f(4, 4));
                 // To prevent it getting permanently lodged into something.
-                ball.addSelfPosition((Math.cos(ball.theta) * 6 * (result.time + 0.1) * timeLeft), (Math.sin(ball.theta) * 6 * (result.time + 0.1) * timeLeft));
+                ball.addSelfPosition((Math.cos(ball.theta) * 2 * (result.time + 0.1) * (timeLeft + 0.1)), (Math.sin(ball.theta) * 2 * (result.time + 0.1) * (timeLeft + 0.1)));
             }
-            ball.addSelfPosition((Math.cos(ball.theta) * 6 * timeLeft), (Math.sin(ball.theta) * 6 * timeLeft));
+            ball.addSelfPosition((Math.cos(ball.theta) * 2 * timeLeft), (Math.sin(ball.theta) * 2 * timeLeft));
             solidObjects.remove(2);
             solidObjects.remove(2);
         }
@@ -142,6 +132,16 @@ public class PongApp extends AbstractApplication {
             ball.setSelfPosition(new Position(ball.getSelfPosition().getX(), 211));
         } else if (ball.getSelfPosition().getY() < 10)
             ball.setSelfPosition(new Position(ball.getSelfPosition().getX(), 21));
+        timer++;
+        if (Keyboard.isKeyDown(Keyboard.KEY_UP) ^ Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+            if (Keyboard.isKeyDown(Keyboard.KEY_UP))
+                userInput = 1;
+            else
+                userInput = 0;
+        } else {
+            userInput = -1;
+        }
+        super.updateScreenOnFrame();
     }
 
     public int simplePaddleAI(PaddleWidget paddle) {

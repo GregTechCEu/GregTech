@@ -30,15 +30,17 @@ public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubIte
 
     @Override
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
-        ItemStack itemStack = player.getHeldItem(hand);
-        itemStack.getOrCreateSubCompound("terminal").removeTag("_click");
-        if (pos != null) {
-            itemStack.getOrCreateSubCompound("terminal").setTag("_click", NBTUtil.createPosTag(pos));
-            if (!world.isRemote) {
-                PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
-                holder.openUI();
+        if (player.isSneaking()) {
+            ItemStack itemStack = player.getHeldItem(hand);
+            itemStack.getOrCreateSubCompound("terminal").removeTag("_click");
+            if (pos != null) {
+                itemStack.getOrCreateSubCompound("terminal").setTag("_click", NBTUtil.createPosTag(pos));
+                if (!world.isRemote) {
+                    PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
+                    holder.openUI();
+                }
+                return EnumActionResult.SUCCESS;
             }
-            return EnumActionResult.SUCCESS;
         }
         return EnumActionResult.PASS;
     }

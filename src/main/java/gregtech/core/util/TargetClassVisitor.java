@@ -33,7 +33,7 @@ public class TargetClassVisitor extends ClassVisitor {
         MethodVisitor visitor = super.visitMethod(access, name, desc, signature, exceptions);
         String methodKey = name + desc;
         if (this.methodKey.matches(name, desc)) {
-            FMLLog.log("GTCETransformer", Level.INFO, "Patched method %s in %s successfully", methodKey, className);
+            FMLLog.log("GregTechTransformer", Level.INFO, "Patched method %s in %s successfully", methodKey, className);
             this.foundMethod = true;
             return visitorCreator.apply(visitor);
         }
@@ -45,7 +45,7 @@ public class TargetClassVisitor extends ClassVisitor {
     public void visitEnd() {
         super.visitEnd();
         if (!foundMethod) {
-            FMLLog.log("ArmorRenderTransformer", Level.FATAL, "Failed to find method %s in %s.", methodKey, className);
+            FMLLog.log("GregTechTransformer", Level.FATAL, "Failed to find method %s in %s.", methodKey, className);
             throw new RuntimeException("Failed to patch method " + methodKey + ", loading cannot continue. Check your environment is correct.");
         }
     }

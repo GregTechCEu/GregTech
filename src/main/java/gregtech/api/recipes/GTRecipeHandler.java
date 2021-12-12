@@ -42,7 +42,7 @@ public class GTRecipeHandler {
         List<ItemStack> itemIn = new ArrayList<>();
         for (ItemStack s : itemInputs) {
             itemIn.add(s);
-            if(ConfigHolder.debug) {
+            if(ConfigHolder.misc.debug) {
                 itemNames.add(String.format("%s x %d", s.getDisplayName(), s.getCount()));
             }
         }
@@ -50,13 +50,13 @@ public class GTRecipeHandler {
         List<FluidStack> fluidIn = new ArrayList<>();
         for (FluidStack s : fluidInputs) {
             fluidIn.add(s);
-            if(ConfigHolder.debug) {
+            if(ConfigHolder.misc.debug) {
                 fluidNames.add(String.format("%s x %d", s.getFluid().getName(), s.amount));
             }
         }
 
         boolean wasRemoved = map.removeRecipe(map.findRecipe(Long.MAX_VALUE, itemIn, fluidIn, Integer.MAX_VALUE, MatchingMode.DEFAULT));
-        if (ConfigHolder.debug) {
+        if (ConfigHolder.misc.debug) {
             if (wasRemoved)
                 GTLog.logger.info("Removed Recipe for inputs: Items: {} Fluids: {}", itemNames, fluidNames);
             else GTLog.logger.error("Failed to Remove Recipe for inputs: Items: {} Fluids: {}", itemNames, fluidNames);
@@ -90,7 +90,7 @@ public class GTRecipeHandler {
         for (Recipe r : recipes)
             map.removeRecipe(r);
 
-        if(ConfigHolder.debug)
+        if(ConfigHolder.misc.debug)
             GTLog.logger.info("Removed all recipes for Recipe Map: {}", map.unlocalizedName);
     }
 }

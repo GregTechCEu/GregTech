@@ -3,6 +3,7 @@ package gregtech.loaders.recipe.chemistry;
 import gregtech.api.unification.OreDictUnifier;
 import net.minecraft.init.Items;
 
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.CHEMICAL_BATH_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
@@ -27,7 +28,7 @@ public class ChemicalBathRecipes {
                 .input(Items.REEDS, 1, true)
                 .fluidInputs(Water.getFluid(100))
                 .output(Items.PAPER)
-                .duration(100).EUt(8).buildAndRegister();
+                .duration(100).EUt(VA[ULV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(dust, Wood)
@@ -45,7 +46,7 @@ public class ChemicalBathRecipes {
                 .input(Items.REEDS, 1, true)
                 .fluidInputs(DistilledWater.getFluid(100))
                 .output(Items.PAPER)
-                .duration(100).EUt(8).buildAndRegister();
+                .duration(100).EUt(VA[ULV]).buildAndRegister();
 
         //todo add these to ore byproducts
         CHEMICAL_BATH_RECIPES.recipeBuilder()
@@ -54,7 +55,7 @@ public class ChemicalBathRecipes {
                 .output(crushedPurified, Gold)
                 .chancedOutput(OreDictUnifier.get(dust, Copper), 7000, 580)
                 .chancedOutput(OreDictUnifier.get(dust, Stone), 4000, 650)
-                .duration(800).EUt(8).buildAndRegister();
+                .duration(800).EUt(VA[ULV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(crushed, Nickel)
@@ -62,7 +63,7 @@ public class ChemicalBathRecipes {
                 .output(crushedPurified, Nickel)
                 .chancedOutput(OreDictUnifier.get(dust, Nickel), 7000, 580)
                 .chancedOutput(OreDictUnifier.get(dust, Stone), 4000, 650)
-                .duration(800).EUt(8).buildAndRegister();
+                .duration(800).EUt(VA[ULV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(crushed, Cooperite)
@@ -70,7 +71,7 @@ public class ChemicalBathRecipes {
                 .output(crushedPurified, Cooperite)
                 .chancedOutput(OreDictUnifier.get(dust, Nickel), 7000, 580)
                 .chancedOutput(OreDictUnifier.get(dust, Stone), 4000, 650)
-                .duration(800).EUt(8).buildAndRegister();
+                .duration(800).EUt(VA[ULV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(crushed, Copper)
@@ -78,7 +79,7 @@ public class ChemicalBathRecipes {
                 .output(crushedPurified, Copper)
                 .chancedOutput(OreDictUnifier.get(dust, Copper), 7000, 580)
                 .chancedOutput(OreDictUnifier.get(dust, Stone), 4000, 650)
-                .duration(800).EUt(8).buildAndRegister();
+                .duration(800).EUt(VA[ULV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(crushed, Platinum)
@@ -86,7 +87,7 @@ public class ChemicalBathRecipes {
                 .output(crushedPurified, Platinum)
                 .chancedOutput(OreDictUnifier.get(dust, Nickel), 7000, 580)
                 .chancedOutput(OreDictUnifier.get(dust, Stone), 4000, 650)
-                .duration(800).EUt(8).buildAndRegister();
+                .duration(800).EUt(VA[ULV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(crushed, Chalcopyrite)
@@ -94,6 +95,6 @@ public class ChemicalBathRecipes {
                 .output(crushedPurified, Chalcopyrite)
                 .chancedOutput(OreDictUnifier.get(dust, Cobalt), 7000, 580)
                 .chancedOutput(OreDictUnifier.get(dust, Stone), 4000, 650)
-                .duration(800).EUt(8).buildAndRegister();
+                .duration(800).EUt(VA[ULV]).buildAndRegister();
     }
 }

@@ -11,6 +11,7 @@ import net.minecraft.world.IWorldEventListener;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
+@SuppressWarnings("unused")
 public class SoundHooks {
 
     public static void playRecord(IWorldEventListener listener, EntityPlayer player, int type, BlockPos pos, int data) {

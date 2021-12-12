@@ -214,7 +214,7 @@ public class ArmorUtils {
             int windowHeight = new ScaledResolution(mc).getScaledHeight();
             int windowWidth = new ScaledResolution(mc).getScaledWidth();
             int stringWidth = mc.fontRenderer.getStringWidth(stringList.get(index));
-            ConfigHolder.UnofficialOptions.ArmorHud configs = ConfigHolder.U.equipment.armorHud;
+            ConfigHolder.ClientOptions.ArmorHud configs = ConfigHolder.client.armorHud;
             switch (configs.hudLocation) {
                 case 1:
                     posX = 1 + configs.hudOffsetX;
@@ -229,7 +229,7 @@ public class ArmorUtils {
                     posY = windowHeight - fontHeight * (stringAmount - index) - 1 - configs.hudOffsetY;
                     break;
                 case 4:
-                    posX = windowWidth - (1 + ConfigHolder.U.equipment.armorHud.hudOffsetX) - stringWidth;
+                    posX = windowWidth - (1 + configs.hudOffsetX) - stringWidth;
                     posY = windowHeight - fontHeight * (stringAmount - index) - 1 - configs.hudOffsetY;
                     break;
                 default:

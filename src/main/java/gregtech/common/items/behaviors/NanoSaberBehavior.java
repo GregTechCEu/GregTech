@@ -27,9 +27,9 @@ public class NanoSaberBehavior extends ToggleEnergyConsumerBehavior implements I
     private final double additionalAttackDamage;
 
     public NanoSaberBehavior() {
-        super(ConfigHolder.nanoSaberConfiguration.energyConsumption);
-        this.baseAttackDamage = ConfigHolder.nanoSaberConfiguration.nanoSaberBaseDamage;
-        this.additionalAttackDamage = ConfigHolder.nanoSaberConfiguration.nanoSaberDamageBoost;
+        super(ConfigHolder.tools.nanoSaber.energyConsumption);
+        this.baseAttackDamage = ConfigHolder.tools.nanoSaber.nanoSaberBaseDamage;
+        this.additionalAttackDamage = ConfigHolder.tools.nanoSaber.nanoSaberDamageBoost;
     }
 
     @Override

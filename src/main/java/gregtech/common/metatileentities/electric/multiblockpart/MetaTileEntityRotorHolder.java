@@ -319,6 +319,11 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         abilityList.add(this);
     }
 
+    @Override
+    public boolean canPartShare() {
+        return false;
+    }
+
     private class InventoryRotorHolder extends ItemStackHandler {
 
         public InventoryRotorHolder() {

@@ -6,6 +6,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class JEIHooks {
 
     /**

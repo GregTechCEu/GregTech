@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 
 public class DecompositionRecipeHandler {
@@ -100,7 +101,7 @@ public class DecompositionRecipeHandler {
         } else {
             builder = RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
                     .duration((int) Math.ceil(material.getAverageMass() * totalInputAmount * 1.5))
-                    .EUt(30);
+                    .EUt(VA[LV]);
         }
         builder.outputs(outputs);
         builder.fluidOutputs(fluidOutputs);
@@ -135,12 +136,12 @@ public class DecompositionRecipeHandler {
     private static int getElectrolyzingVoltage(List<Material> components) {
         //tungsten-containing materials electrolyzing requires 1920
         if (components.contains(Materials.Tungsten))
-            return 1920; //EV voltage (tungstate and scheelite electrolyzing)
+            return VA[EV]; //EV voltage (tungstate and scheelite electrolyzing)
         //Binary compound materials require 30 EU/t
         if (components.size() <= 2) {
-            return 30;
+            return VA[LV];
         }
-        return 2 * 30;
+        return 2 * VA[LV];
     }
 
 }

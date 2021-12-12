@@ -134,7 +134,7 @@ public class OrientedOverlayRenderer implements IIconRegister {
 
                 TextureAtlasSprite emissiveSprite = predicate.getEmissiveSprite(isActive, isWorkingEnabled);
                 if (emissiveSprite != null) {
-                    if (ConfigHolder.U.clientConfig.machinesEmissiveTextures) {
+                    if (ConfigHolder.client.machinesEmissiveTextures) {
                         IVertexOperation[] lightPipeline = ArrayUtils.add(ops, new LightMapOperation(240, 240));
                         Textures.renderFaceBloom(renderState, translation, lightPipeline, renderSide, bounds, emissiveSprite);
                     } else {

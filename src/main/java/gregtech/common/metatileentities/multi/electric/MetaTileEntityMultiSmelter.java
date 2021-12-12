@@ -7,9 +7,9 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.render.ICubeRenderer;
@@ -28,11 +28,6 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
-
-    private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-            MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.EXPORT_ITEMS,
-            MultiblockAbility.INPUT_ENERGY, MultiblockAbility.MAINTENANCE_HATCH
-    };
 
     protected int heatingCoilLevel;
     protected int heatingCoilDiscount;
@@ -85,13 +80,11 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                 .aisle("XXX", "CCC", "XXX")
                 .aisle("XXX", "C#C", "XMX")
                 .aisle("XSX", "CCC", "XXX")
-                .setAmountAtLeast('L', 9)
                 .where('S', selfPredicate())
-                .where('L', statePredicate(getCasingState()))
-                .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
-                .where('M', abilityPartPredicate(MultiblockAbility.MUFFLER_HATCH))
-                .where('C', MetaTileEntityElectricBlastFurnace.heatingCoilPredicate())
-                .where('#', isAirPredicate())
+                .where('X', states(getCasingState()).setMinGlobalLimited(9).or(autoAbilities(true, true, true, true, true, true, false)))
+                .where('M', abilities(MultiblockAbility.MUFFLER_HATCH))
+                .where('C', heatingCoils())
+                .where('#', air())
                 .build();
     }
 

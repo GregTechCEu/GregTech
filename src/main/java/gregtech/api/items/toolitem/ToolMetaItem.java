@@ -343,7 +343,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
 
     public boolean isUsable(ItemStack stack, int damage) {
         IElectricItem capability = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        int energyAmount = ConfigHolder.energyUsageMultiplier * damage;
+        int energyAmount = ConfigHolder.machines.energyUsageMultiplier * damage;
         return capability == null || capability.canUse(energyAmount);
     }
 
@@ -351,15 +351,15 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     public int damageItem(ItemStack stack, EntityLivingBase entity, int vanillaDamage, boolean allowPartial, boolean simulate) {
         IElectricItem capability = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (capability != null) {
-            int energyAmount = ConfigHolder.energyUsageMultiplier * vanillaDamage;
+            int energyAmount = ConfigHolder.machines.energyUsageMultiplier * vanillaDamage;
             long discharged = capability.discharge(energyAmount, capability.getTier(), true, false, true);
             // if we can't discharge full amount of energy
             if (discharged < energyAmount) {
                 // when asked use the discharged energy and recalculate the equivalent damage
                 if (allowPartial && discharged > 0) {
                     energyAmount = (int) discharged;
-                    vanillaDamage = energyAmount / ConfigHolder.energyUsageMultiplier;
-                    if (energyAmount % ConfigHolder.energyUsageMultiplier != 0)
+                    vanillaDamage = energyAmount / ConfigHolder.machines.energyUsageMultiplier;
+                    if (energyAmount % ConfigHolder.machines.energyUsageMultiplier != 0)
                         ++vanillaDamage;
                 } else {
                     // Can't do the operation

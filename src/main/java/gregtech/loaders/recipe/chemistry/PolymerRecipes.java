@@ -2,6 +2,7 @@ package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.CHEMICAL_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.LARGE_CHEMICAL_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
@@ -15,7 +16,7 @@ public class PolymerRecipes {
     }
 
     private static void polybenzimidazoleProcess() {
-        CHEMICAL_RECIPES.recipeBuilder().EUt(7680).duration(100)
+        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[IV]).duration(100)
                 .fluidInputs(Diaminobenzidine.getFluid(1000))
                 .fluidInputs(DiphenylIsophtalate.getFluid(1000))
                 .fluidOutputs(Phenol.getFluid(1000))
@@ -23,7 +24,7 @@ public class PolymerRecipes {
                 .buildAndRegister();
 
         // 3,3-Diaminobenzidine
-        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(7680).duration(100)
+        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[IV]).duration(100)
                 .fluidInputs(Dichlorobenzidine.getFluid(1000))
                 .fluidInputs(Ammonia.getFluid(2000))
                 .notConsumable(dust, Zinc)
@@ -31,21 +32,21 @@ public class PolymerRecipes {
                 .fluidOutputs(HydrochloricAcid.getFluid(2000))
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().EUt(1920).duration(200)
+        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(200)
                 .input(dustTiny, Copper)
                 .fluidInputs(Nitrochlorobenzene.getFluid(1000))
                 .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(Dichlorobenzidine.getFluid(1000))
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().EUt(1920).duration(1800)
+        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(1800)
                 .input(dust, Copper)
                 .fluidInputs(Nitrochlorobenzene.getFluid(9000))
                 .notConsumable(new IntCircuitIngredient(9))
                 .fluidOutputs(Dichlorobenzidine.getFluid(9000))
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().EUt(480).duration(100)
+        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(100)
                 .fluidInputs(NitrationMixture.getFluid(2000))
                 .fluidInputs(Chlorobenzene.getFluid(1000))
                 .notConsumable(new IntCircuitIngredient(1))
@@ -53,7 +54,7 @@ public class PolymerRecipes {
                 .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().EUt(30).duration(240)
+        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(240)
                 .fluidInputs(Chlorine.getFluid(2000))
                 .fluidInputs(Benzene.getFluid(1000))
                 .notConsumable(new IntCircuitIngredient(1))
@@ -62,7 +63,7 @@ public class PolymerRecipes {
                 .buildAndRegister();
 
         // Diphenyl Isophthalate
-        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(7680).duration(100)
+        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[IV]).duration(100)
                 .fluidInputs(Phenol.getFluid(2000))
                 .fluidInputs(SulfuricAcid.getFluid(1000))
                 .fluidInputs(PhthalicAcid.getFluid(1000))
@@ -70,7 +71,7 @@ public class PolymerRecipes {
                 .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
                 .buildAndRegister();
 
-        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(1920).duration(100)
+        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(100)
                 .input(dustTiny, PotassiumDichromate)
                 .fluidInputs(Dimethylbenzene.getFluid(1000))
                 .fluidInputs(Oxygen.getFluid(2000))
@@ -78,7 +79,7 @@ public class PolymerRecipes {
                 .fluidOutputs(Water.getFluid(2000))
                 .buildAndRegister();
 
-        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(1920).duration(900)
+        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(900)
                 .input(dust, PotassiumDichromate)
                 .fluidInputs(Dimethylbenzene.getFluid(9000))
                 .fluidInputs(Oxygen.getFluid(18000))
@@ -86,7 +87,7 @@ public class PolymerRecipes {
                 .fluidOutputs(Water.getFluid(18000))
                 .buildAndRegister();
 
-        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(30).duration(125)
+        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(125)
                 .fluidInputs(Naphthalene.getFluid(2000))
                 .fluidInputs(SulfuricAcid.getFluid(1000))
                 .input(dustTiny, Potassium)
@@ -94,7 +95,7 @@ public class PolymerRecipes {
                 .fluidOutputs(HydrogenSulfide.getFluid(1000))
                 .buildAndRegister();
 
-        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(30).duration(1125)
+        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(1125)
                 .fluidInputs(Naphthalene.getFluid(18000))
                 .fluidInputs(SulfuricAcid.getFluid(9000))
                 .input(dust, Potassium)
@@ -102,14 +103,14 @@ public class PolymerRecipes {
                 .fluidOutputs(HydrogenSulfide.getFluid(9000))
                 .buildAndRegister();
 
-        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(120).duration(4000)
+        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[MV]).duration(4000)
                 .fluidInputs(Methane.getFluid(1000))
                 .fluidInputs(Benzene.getFluid(1000))
                 .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(Dimethylbenzene.getFluid(1000))
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().EUt(480).duration(100)
+        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(100)
                 .input(dust, Saltpeter, 10)
                 .input(dust, ChromiumTrioxide, 8)
                 .output(dust, PotassiumDichromate, 11)

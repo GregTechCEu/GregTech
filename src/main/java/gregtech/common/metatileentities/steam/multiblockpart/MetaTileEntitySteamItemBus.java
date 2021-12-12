@@ -27,7 +27,7 @@ import java.util.List;
 
 public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus implements IMultiblockAbilityPart<IItemHandlerModifiable> {
 
-    private static final boolean IS_STEEL = ConfigHolder.U.steelSteamMultiblocks;
+    private static final boolean IS_STEEL = ConfigHolder.machines.steelSteamMultiblocks;
 
     public MetaTileEntitySteamItemBus(ResourceLocation metaTileEntityId, boolean isExportHatch) {
         super(metaTileEntityId, 1, isExportHatch);
