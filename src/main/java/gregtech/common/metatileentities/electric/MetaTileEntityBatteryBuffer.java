@@ -155,8 +155,8 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", inventorySize));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), tierName));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), tierName));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", inventorySize));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", energyContainer.getInputAmperage()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", energyContainer.getOutputAmperage()));
     }
 
     @Override
