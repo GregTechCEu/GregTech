@@ -153,7 +153,12 @@ public class FirstDegreeMaterials {
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();
 
-        // FREE ID 270
+        LiquidOxygen = new Material.Builder(270, "liquid_oxygen")
+                .fluid()
+                .color(0x6688DD)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Oxygen, 1)
+                .build();
 
         Coal = new Material.Builder(271, "coal")
                 .gem(1, 1600).ore() //default coal burn time in vanilla
