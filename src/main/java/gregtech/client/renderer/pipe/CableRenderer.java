@@ -1,4 +1,4 @@
-package gregtech.client.renderer.handler.pipe;
+package gregtech.client.renderer.pipe;
 
 import codechicken.lib.render.BlockRenderer;
 import codechicken.lib.render.BlockRenderer.BlockFace;

@@ -1,4 +1,4 @@
-package gregtech.client.renderer.handler.scene;
+package gregtech.client.renderer.scene;
 
 import net.minecraft.util.BlockRenderLayer;
 

@@ -1,4 +1,4 @@
-package gregtech.client.renderer.handler.scene;
+package gregtech.client.renderer.scene;
 
 import gregtech.api.util.GTLog;
 import net.minecraft.client.renderer.BufferBuilder;
