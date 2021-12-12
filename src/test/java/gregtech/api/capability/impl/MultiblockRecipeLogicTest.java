@@ -196,7 +196,7 @@ public class MultiblockRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt) {
+            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -452,7 +452,7 @@ public class MultiblockRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt) {
+            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
                 return true;
             }
 

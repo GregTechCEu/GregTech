@@ -170,6 +170,7 @@ public class MetaTileEntities {
     public static MetaTileEntityCrackingUnit CRACKER;
     public static MetaTileEntityMultiSmelter MULTI_FURNACE;
     public static MetaTileEntityLargeCombustionEngine LARGE_COMBUSTION_ENGINE;
+    public static MetaTileEntityLargeCombustionEngine EXTREME_COMBUSTION_ENGINE;
     public static MetaTileEntityLargeTurbine LARGE_STEAM_TURBINE;
     public static MetaTileEntityLargeTurbine LARGE_GAS_TURBINE;
     public static MetaTileEntityLargeTurbine LARGE_PLASMA_TURBINE;
@@ -462,36 +463,37 @@ public class MetaTileEntities {
         PYROLYSE_OVEN = registerMetaTileEntity(1004, new MetaTileEntityPyrolyseOven(gregtechId("pyrolyse_oven")));
         DISTILLATION_TOWER = registerMetaTileEntity(1005, new MetaTileEntityDistillationTower(gregtechId("distillation_tower")));
         MULTI_FURNACE = registerMetaTileEntity(1006, new MetaTileEntityMultiSmelter(gregtechId("multi_furnace")));
-        LARGE_COMBUSTION_ENGINE = registerMetaTileEntity(1007, new MetaTileEntityLargeCombustionEngine(gregtechId("large_combustion_engine")));
-        CRACKER = registerMetaTileEntity(1008, new MetaTileEntityCrackingUnit(gregtechId("cracker")));
+        LARGE_COMBUSTION_ENGINE = registerMetaTileEntity(1007, new MetaTileEntityLargeCombustionEngine(gregtechId("large_combustion_engine"), GTValues.EV));
+        EXTREME_COMBUSTION_ENGINE = registerMetaTileEntity(1008, new MetaTileEntityLargeCombustionEngine(gregtechId("extreme_combustion_engine"), GTValues.IV));
+        CRACKER = registerMetaTileEntity(1009, new MetaTileEntityCrackingUnit(gregtechId("cracker")));
 
-        LARGE_STEAM_TURBINE = registerMetaTileEntity(1009, new MetaTileEntityLargeTurbine(gregtechId("large_turbine.steam"), TurbineType.STEAM));
-        LARGE_GAS_TURBINE = registerMetaTileEntity(1010, new MetaTileEntityLargeTurbine(gregtechId("large_turbine.gas"), TurbineType.GAS));
-        LARGE_PLASMA_TURBINE = registerMetaTileEntity(1011, new MetaTileEntityLargeTurbine(gregtechId("large_turbine.plasma"), TurbineType.PLASMA));
+        LARGE_STEAM_TURBINE = registerMetaTileEntity(1010, new MetaTileEntityLargeTurbine(gregtechId("large_turbine.steam"), TurbineType.STEAM));
+        LARGE_GAS_TURBINE = registerMetaTileEntity(1011, new MetaTileEntityLargeTurbine(gregtechId("large_turbine.gas"), TurbineType.GAS));
+        LARGE_PLASMA_TURBINE = registerMetaTileEntity(1012, new MetaTileEntityLargeTurbine(gregtechId("large_turbine.plasma"), TurbineType.PLASMA));
 
-        LARGE_BRONZE_BOILER = registerMetaTileEntity(1012, new MetaTileEntityLargeBoiler(gregtechId("large_boiler.bronze"), BoilerType.BRONZE));
-        LARGE_STEEL_BOILER = registerMetaTileEntity(1013, new MetaTileEntityLargeBoiler(gregtechId("large_boiler.steel"), BoilerType.STEEL));
-        LARGE_TITANIUM_BOILER = registerMetaTileEntity(1014, new MetaTileEntityLargeBoiler(gregtechId("large_boiler.titanium"), BoilerType.TITANIUM));
-        LARGE_TUNGSTENSTEEL_BOILER = registerMetaTileEntity(1015, new MetaTileEntityLargeBoiler(gregtechId("large_boiler.tungstensteel"), BoilerType.TUNGSTENSTEEL));
+        LARGE_BRONZE_BOILER = registerMetaTileEntity(1013, new MetaTileEntityLargeBoiler(gregtechId("large_boiler.bronze"), BoilerType.BRONZE));
+        LARGE_STEEL_BOILER = registerMetaTileEntity(1014, new MetaTileEntityLargeBoiler(gregtechId("large_boiler.steel"), BoilerType.STEEL));
+        LARGE_TITANIUM_BOILER = registerMetaTileEntity(1015, new MetaTileEntityLargeBoiler(gregtechId("large_boiler.titanium"), BoilerType.TITANIUM));
+        LARGE_TUNGSTENSTEEL_BOILER = registerMetaTileEntity(1016, new MetaTileEntityLargeBoiler(gregtechId("large_boiler.tungstensteel"), BoilerType.TUNGSTENSTEEL));
 
-        COKE_OVEN = registerMetaTileEntity(1016, new MetaTileEntityCokeOven(gregtechId("coke_oven")));
-        COKE_OVEN_HATCH = registerMetaTileEntity(1017, new MetaTileEntityCokeOvenHatch(gregtechId("coke_oven_hatch")));
+        COKE_OVEN = registerMetaTileEntity(1017, new MetaTileEntityCokeOven(gregtechId("coke_oven")));
+        COKE_OVEN_HATCH = registerMetaTileEntity(1018, new MetaTileEntityCokeOvenHatch(gregtechId("coke_oven_hatch")));
 
-        ASSEMBLY_LINE = registerMetaTileEntity(1018, new MetaTileEntityAssemblyLine(gregtechId("assembly_line")));
-        FUSION_REACTOR[0] = registerMetaTileEntity(1019, new MetaTileEntityFusionReactor(gregtechId("fusion_reactor.luv"), GTValues.LuV));
-        FUSION_REACTOR[1] = registerMetaTileEntity(1020, new MetaTileEntityFusionReactor(gregtechId("fusion_reactor.zpm"), GTValues.ZPM));
-        FUSION_REACTOR[2] = registerMetaTileEntity(1021, new MetaTileEntityFusionReactor(gregtechId("fusion_reactor.uv"), GTValues.UV));
+        ASSEMBLY_LINE = registerMetaTileEntity(1019, new MetaTileEntityAssemblyLine(gregtechId("assembly_line")));
+        FUSION_REACTOR[0] = registerMetaTileEntity(1020, new MetaTileEntityFusionReactor(gregtechId("fusion_reactor.luv"), GTValues.LuV));
+        FUSION_REACTOR[1] = registerMetaTileEntity(1021, new MetaTileEntityFusionReactor(gregtechId("fusion_reactor.zpm"), GTValues.ZPM));
+        FUSION_REACTOR[2] = registerMetaTileEntity(1022, new MetaTileEntityFusionReactor(gregtechId("fusion_reactor.uv"), GTValues.UV));
 
-        LARGE_CHEMICAL_REACTOR = registerMetaTileEntity(1022, new MetaTileEntityLargeChemicalReactor(gregtechId("large_chemical_reactor")));
+        LARGE_CHEMICAL_REACTOR = registerMetaTileEntity(1023, new MetaTileEntityLargeChemicalReactor(gregtechId("large_chemical_reactor")));
 
-        STEAM_OVEN = registerMetaTileEntity(1023, new MetaTileEntitySteamOven(gregtechId("steam_oven")));
-        STEAM_GRINDER = registerMetaTileEntity(1024, new MetaTileEntitySteamGrinder(gregtechId("steam_grinder")));
+        STEAM_OVEN = registerMetaTileEntity(1024, new MetaTileEntitySteamOven(gregtechId("steam_oven")));
+        STEAM_GRINDER = registerMetaTileEntity(1025, new MetaTileEntitySteamGrinder(gregtechId("steam_grinder")));
 
-        BASIC_LARGE_MINER = registerMetaTileEntity(1025, new MetaTileEntityLargeMiner(gregtechId("large_miner.ev"), GTValues.EV, 16, 3, 4, Materials.Steel, 8));
-        LARGE_MINER = registerMetaTileEntity(1026, new MetaTileEntityLargeMiner(gregtechId("large_miner.iv"), GTValues.IV, 4, 5, 5, Materials.Titanium, 16));
-        ADVANCED_LARGE_MINER = registerMetaTileEntity(1027, new MetaTileEntityLargeMiner(gregtechId("large_miner.luv"), GTValues.LuV, 1, 7, 6, Materials.TungstenSteel, 32));
+        BASIC_LARGE_MINER = registerMetaTileEntity(1026, new MetaTileEntityLargeMiner(gregtechId("large_miner.ev"), GTValues.EV, 16, 3, 4, Materials.Steel, 8));
+        LARGE_MINER = registerMetaTileEntity(1027, new MetaTileEntityLargeMiner(gregtechId("large_miner.iv"), GTValues.IV, 4, 5, 5, Materials.Titanium, 16));
+        ADVANCED_LARGE_MINER = registerMetaTileEntity(1028, new MetaTileEntityLargeMiner(gregtechId("large_miner.luv"), GTValues.LuV, 1, 7, 6, Materials.TungstenSteel, 32));
 
-        CENTRAL_MONITOR = registerMetaTileEntity(1028, new MetaTileEntityCentralMonitor(gregtechId("central_monitor")));
+        CENTRAL_MONITOR = registerMetaTileEntity(1029, new MetaTileEntityCentralMonitor(gregtechId("central_monitor")));
 
         PROCESSING_ARRAY = registerMetaTileEntity(1029, new MetaTileEntityProcessingArray(gregtechId("processing_array"), 0));
         ADVANCED_PROCESSING_ARRAY = registerMetaTileEntity(1030, new MetaTileEntityProcessingArray(gregtechId("advanced_processing_array"), 1));

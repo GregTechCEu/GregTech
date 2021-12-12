@@ -76,7 +76,7 @@ public class AbstractRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt) {
+            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
                 return true;
             }
 

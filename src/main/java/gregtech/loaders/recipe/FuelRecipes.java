@@ -77,7 +77,6 @@ public class FuelRecipes {
     }
 
     public static void registerCombustionGeneratorFuel(FluidStack fuelStack, int duration, int tier) {
-        RecipeMaps.COMBUSTION_GENERATOR_FUELS.addRecipe(new FuelRecipe(fuelStack, duration, GTValues.V[tier]));
         RecipeMaps.COMBUSTION_GENERATOR_FUELS_2.recipeBuilder()
                 .fluidInputs(fuelStack)
                 .duration(duration)

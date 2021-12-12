@@ -89,7 +89,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     protected abstract long getEnergyCapacity();
 
-    protected abstract boolean drawEnergy(int recipeEUt);
+    protected abstract boolean drawEnergy(int recipeEUt, boolean simulate);
 
     abstract long getMaxVoltage();
 
@@ -218,10 +218,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     protected void updateRecipeProgress() {
-        boolean drawEnergy = false;
-        if (canRecipeProgress)
-            drawEnergy = drawEnergy(recipeEUt);
-        if (drawEnergy) {
+        if (canRecipeProgress && drawEnergy(recipeEUt, true)) {
+            drawEnergy(recipeEUt, false);
             //as recipe starts with progress on 1 this has to be > only not => to compensate for it
             if (++progressTime > maxProgressTime) {
                 completeRecipe();

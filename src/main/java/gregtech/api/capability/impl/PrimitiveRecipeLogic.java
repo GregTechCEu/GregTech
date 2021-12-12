@@ -32,7 +32,7 @@ public class PrimitiveRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected boolean drawEnergy(int recipeEUt) {
+    protected boolean drawEnergy(int recipeEUt, boolean simulate) {
         return true; // spoof energy being drawn
     }
 
