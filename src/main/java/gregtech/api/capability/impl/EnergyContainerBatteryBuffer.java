@@ -50,7 +50,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
             long distributed = energy / batteries.size();
 
             for (IElectricItem electricItem : batteries) {
-                energy -= electricItem.charge(distributed, getTier(), true, false);
+                energy -= electricItem.charge(Math.min(distributed, GTValues.V[electricItem.getTier()] * 2L), getTier(), true, false);
             }
 
             //Remove energy used and then transfer overflow energy into the internal buffer
@@ -102,7 +102,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
             long distributed = energy / batteries.size();
 
             for (IElectricItem electricItem : batteries) {
-                energy -= electricItem.discharge(distributed, getTier(), true, true, false);
+                energy -= electricItem.discharge(distributed, getTier(), false, true, false);
             }
 
             //Subtract energy created out of thin air from the buffer
