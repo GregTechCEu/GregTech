@@ -8,7 +8,7 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.net.packets.PacketPluginSynced;
+import gregtech.api.net.packets.CPacketPluginSynced;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
@@ -119,7 +119,7 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
     public final void writePluginAction(int id, @Nonnull Consumer<PacketBuffer> dataWriter) {
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         dataWriter.accept(buffer);
-        NetworkHandler.channel.sendToServer(new PacketPluginSynced(
+        NetworkHandler.channel.sendToServer(new CPacketPluginSynced(
                 this.getScreen().getWorld().provider.getDimension(),
                 this.getScreen().getPos(),
                 id, buffer).toFMLPacket());

@@ -10,13 +10,13 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 
 @NoArgsConstructor
-public class PacketUIClientAction implements IPacket {
+public class CPacketUIClientAction implements IPacket {
 
     private int windowId;
     private int widgetId;
     private PacketBuffer updateData;
 
-    public PacketUIClientAction(int windowId, int widgetId, PacketBuffer updateData) {
+    public CPacketUIClientAction(int windowId, int widgetId, PacketBuffer updateData) {
         this.windowId = windowId;
         this.widgetId = widgetId;
         this.updateData = updateData;

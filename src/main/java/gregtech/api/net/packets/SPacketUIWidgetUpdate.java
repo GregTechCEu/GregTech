@@ -12,13 +12,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @NoArgsConstructor
-public class PacketUIWidgetUpdate implements IPacket {
+public class SPacketUIWidgetUpdate implements IPacket {
 
     public int windowId;
     public int widgetId;
     public PacketBuffer updateData;
 
-    public PacketUIWidgetUpdate(int windowId, int widgetId, PacketBuffer updateData) {
+    public SPacketUIWidgetUpdate(int windowId, int widgetId, PacketBuffer updateData) {
         this.windowId = windowId;
         this.widgetId = widgetId;
         this.updateData = updateData;

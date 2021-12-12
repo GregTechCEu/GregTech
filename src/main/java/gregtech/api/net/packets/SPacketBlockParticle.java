@@ -15,13 +15,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @NoArgsConstructor
-public class PacketBlockParticle implements IPacket {
+public class SPacketBlockParticle implements IPacket {
 
     private BlockPos blockPos;
     private Vector3 entityPos;
     private int particlesAmount;
 
-    public PacketBlockParticle(BlockPos blockPos, Vector3 entityPos, int particlesAmount) {
+    public SPacketBlockParticle(BlockPos blockPos, Vector3 entityPos, int particlesAmount) {
         this.blockPos = blockPos;
         this.entityPos = entityPos;
         this.particlesAmount = particlesAmount;

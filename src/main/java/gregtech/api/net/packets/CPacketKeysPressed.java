@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-public class PacketKeysPressed implements IPacket {
+public class CPacketKeysPressed implements IPacket {
 
     private List<Key> playerKeys;
 
-    public PacketKeysPressed(List<Key> playerKeys) {
+    public CPacketKeysPressed(List<Key> playerKeys) {
         this.playerKeys = playerKeys;
     }
 

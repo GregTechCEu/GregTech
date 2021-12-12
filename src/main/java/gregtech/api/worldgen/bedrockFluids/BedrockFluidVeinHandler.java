@@ -1,6 +1,6 @@
 package gregtech.api.worldgen.bedrockFluids;
 
-import gregtech.api.net.packets.PacketFluidVeinList;
+import gregtech.api.net.packets.SPacketFluidVeinList;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -211,7 +211,7 @@ public class BedrockFluidVeinHandler {
                 if (entry.getKey() != null && entry.getValue() != null)
                     packetMap.put(entry.getValue(), entry.getValue().getVein().getWeight());
             }
-            NetworkHandler.channel.sendToAll(new PacketFluidVeinList(packetMap).toFMLPacket());
+            NetworkHandler.channel.sendToAll(new SPacketFluidVeinList(packetMap).toFMLPacket());
         }
     }
 

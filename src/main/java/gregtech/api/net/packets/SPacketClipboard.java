@@ -9,11 +9,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @NoArgsConstructor
-public class PacketClipboard implements IPacket {
+public class SPacketClipboard implements IPacket {
 
     private String text;
 
-    public PacketClipboard(final String text) {
+    public SPacketClipboard(final String text) {
         this.text = text;
     }
 

@@ -15,14 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-public class PacketUIOpen implements IPacket {
+public class SPacketUIOpen implements IPacket {
 
     private int uiFactoryId;
     private PacketBuffer serializedHolder;
     private int windowId;
-    private List<PacketUIWidgetUpdate> initialWidgetUpdates;
+    private List<SPacketUIWidgetUpdate> initialWidgetUpdates;
 
-    public PacketUIOpen(int uiFactoryId, PacketBuffer serializedHolder, int windowId, List<PacketUIWidgetUpdate> initialWidgetUpdates) {
+    public SPacketUIOpen(int uiFactoryId, PacketBuffer serializedHolder, int windowId, List<SPacketUIWidgetUpdate> initialWidgetUpdates) {
         this.uiFactoryId = uiFactoryId;
         this.serializedHolder = serializedHolder;
         this.windowId = windowId;
@@ -35,7 +35,7 @@ public class PacketUIOpen implements IPacket {
         buf.writeVarInt(uiFactoryId);
         buf.writeVarInt(windowId);
         buf.writeVarInt(initialWidgetUpdates.size());
-        for (PacketUIWidgetUpdate packet : initialWidgetUpdates) {
+        for (SPacketUIWidgetUpdate packet : initialWidgetUpdates) {
             packet.encode(buf);
         }
     }
@@ -49,7 +49,7 @@ public class PacketUIOpen implements IPacket {
 
         int packetsToRead = buf.readVarInt();
         for (int i = 0; i < packetsToRead; i++) {
-            PacketUIWidgetUpdate packet = new PacketUIWidgetUpdate();
+            SPacketUIWidgetUpdate packet = new SPacketUIWidgetUpdate();
             packet.decode(buf);
             this.initialWidgetUpdates.add(packet);
         }

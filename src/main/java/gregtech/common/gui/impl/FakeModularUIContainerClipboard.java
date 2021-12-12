@@ -5,7 +5,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.FakeModularGuiContainer;
 import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.packets.PacketClipboardUIWidgetUpdate;
+import gregtech.api.net.packets.CPacketClipboardUIWidgetUpdate;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import io.netty.buffer.Unpooled;
 import net.minecraft.inventory.Slot;
@@ -92,7 +92,7 @@ public class FakeModularUIContainerClipboard extends FakeModularGuiContainer {
         packetBuffer.writeVarInt(widgetId);
         packetBuffer.writeVarInt(updateId);
         payloadWriter.accept(packetBuffer);
-        NetworkHandler.channel.sendToServer(new PacketClipboardUIWidgetUpdate(
+        NetworkHandler.channel.sendToServer(new CPacketClipboardUIWidgetUpdate(
                 this.clipboard.getWorld().provider.getDimension(),
                 this.clipboard.getPos(),
                 updateId, packetBuffer

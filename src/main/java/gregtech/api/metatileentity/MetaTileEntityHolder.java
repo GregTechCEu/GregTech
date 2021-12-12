@@ -5,7 +5,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.gui.IUIHolder;
-import gregtech.api.net.packets.PacketRecoverMTE;
+import gregtech.api.net.packets.CPacketRecoverMTE;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.util.GTLog;
 import net.minecraft.block.state.IBlockState;
@@ -126,7 +126,11 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         if (metaTileEntity != null) {
             metaTileEntity.update();
         } else if (world.isRemote) { // recover the mte
-            NetworkHandler.channel.sendToServer(new PacketRecoverMTE(world.provider.getDimension(), getPos()).toFMLPacket());
+            NetworkHandler.channel.sendToServer(new CPacketRecoverMTE(world.provider.getDimension(), getPos()).toFMLPacket());
+        } else { // remove the block
+            if (world.getBlockState(pos).getBlock() instanceof BlockMachine) {
+                world.setBlockToAir(pos);
+            }
         }
         
         if (this.needToUpdateLightning) {
