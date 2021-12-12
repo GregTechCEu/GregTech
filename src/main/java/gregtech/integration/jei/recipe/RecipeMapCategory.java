@@ -168,7 +168,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     public void drawExtras(@Nonnull Minecraft minecraft) {
         for (Widget widget : modularUI.guiWidgets.values()) {
             if (widget instanceof ProgressWidget) widget.detectAndSendChanges();
-            widget.drawInBackground(0, 0, new IRenderContext() {
+            widget.drawInBackground(0, 0, minecraft.getRenderPartialTicks(), new IRenderContext() {
             });
             widget.drawInForeground(0, 0);
         }
