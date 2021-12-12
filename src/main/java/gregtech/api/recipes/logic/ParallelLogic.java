@@ -252,7 +252,7 @@ public class ParallelLogic {
             for (Map.Entry<ItemStackKey, Integer> inventoryEntry : countIngredients.entrySet()) {
                 if (recipeInputEntry.getKey().apply(inventoryEntry.getKey().getItemStackRaw())) {
                     available = inventoryEntry.getValue();
-                    if (available >= needed) {
+                    if (available > needed) {
                         inventoryEntry.setValue(available - needed);
                         available -= needed;
                         break;
@@ -323,7 +323,7 @@ public class ParallelLogic {
             for (Map.Entry<FluidKey, Integer> inputFluid : countFluid.entrySet()) {
                 if (notConsumableFluid.getKey().equals(inputFluid.getKey())) {
                     available = inputFluid.getValue();
-                    if (available >= needed) {
+                    if (available > needed) {
                         inputFluid.setValue(available - needed);
                         available -= needed;
                         break;

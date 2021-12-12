@@ -410,8 +410,15 @@ public class Recipe {
 
     public boolean hasInputFluid(FluidStack fluid) {
         for (FluidStack fluidStack : fluidInputs) {
-            if (fluidStack.isFluidEqual(fluid)) {
-                return true;
+            if (fluid.getFluid() == fluidStack.getFluid()) {
+                if (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable")) {
+                    fluidStack = fluidStack.copy();
+                    fluidStack.tag.removeTag("nonConsumable");
+                    if (fluidStack.tag.isEmpty()) {
+                        fluidStack.tag = null;
+                    }
+                }
+                return fluidStack.isFluidEqual(fluid);
             }
         }
         return false;

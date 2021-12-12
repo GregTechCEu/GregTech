@@ -138,7 +138,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
                     matchingRecipes = new HashSet<>(recipeMap.getRecipesForFluid(fluidInTank));
                 } else {
                     //else, remove recipes that don't contain fluid in this tank from list
-                    matchingRecipes.removeIf(recipe -> !recipe.hasInputFluid(fluidInTank));
+                    matchingRecipes.retainAll(recipeMap.getRecipesForFluid(fluidInTank));
                 }
             }
         }
@@ -146,8 +146,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
             //if all tanks are empty, generally fluid can be inserted if there are recipes for it
             return !recipeMap.getRecipesForFluid(inputFluid).isEmpty();
         } else {
-            //otherwise, we can insert fluid only if one of recipes accept it as input
-            return matchingRecipes.stream().anyMatch(recipe -> recipe.hasInputFluid(inputFluid));
+            return true;
         }
     }
 
