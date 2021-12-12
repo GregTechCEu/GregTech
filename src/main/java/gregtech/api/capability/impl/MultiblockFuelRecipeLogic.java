@@ -12,6 +12,8 @@ import javax.annotation.Nonnull;
 
 public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
 
+    protected int totalContinuousRunningTime;
+
     public MultiblockFuelRecipeLogic(RecipeMapMultiblockController tileEntity) {
         super(tileEntity);
     }
@@ -57,6 +59,40 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
 
     @Override
     public int getParallelLimit() {
-        return (int) Math.max(1, Math.pow(4, getOverclockTier() - 1));
+        return (int) (Math.max(1, Math.pow(4, getOverclockTier() - 1)) * getDurationBoost());
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if (workingEnabled && progressTime > 0) {
+            totalContinuousRunningTime = Math.max(0, totalContinuousRunningTime + 1);
+        } else {
+            totalContinuousRunningTime = 0;
+        }
+    }
+
+    protected float getDurationBoost() {
+        return 1.0f;
+    }
+
+    protected float getVoltageBoost() {
+        return 1.0f;
+    }
+
+    @Override
+    protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+        long euToDraw = (long) (recipeEUt * getVoltageBoost());
+        long resultEnergy = getEnergyStored() - euToDraw;
+        if (resultEnergy >= 0L && resultEnergy <= getEnergyCapacity()) {
+            if (!simulate) getEnergyContainer().changeEnergy(-euToDraw);
+            return true;
+        } else return false;
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        totalContinuousRunningTime = 0;
     }
 }

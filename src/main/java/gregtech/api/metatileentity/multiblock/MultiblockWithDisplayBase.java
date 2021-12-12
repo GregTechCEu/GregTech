@@ -30,7 +30,9 @@ import net.minecraft.util.text.event.HoverEvent.Action;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
@@ -275,7 +277,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
     }
 
-    private void addMaintenanceText(List<ITextComponent> textList) {
+    protected void addMaintenanceText(List<ITextComponent> textList) {
         if (!hasMaintenanceProblems()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.universal.no_problems")
                     .setStyle(new Style().setColor(TextFormatting.GREEN))

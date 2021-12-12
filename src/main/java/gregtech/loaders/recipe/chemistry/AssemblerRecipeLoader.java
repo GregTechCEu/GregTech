@@ -8,9 +8,9 @@ import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.BRONZE_BRICKS;
-import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.TITANIUM_STABLE;
+import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.*;
 import static gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType.ENGINE_INTAKE_CASING;
+import static gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType.EXTREME_ENGINE_INTAKE_CASING;
 import static gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType.*;
 import static gregtech.common.blocks.MetaBlocks.*;
 import static gregtech.common.items.MetaItems.*;
@@ -41,12 +41,26 @@ public class AssemblerRecipeLoader {
                 .outputs(TURBINE_CASING.getItemVariant(TITANIUM_GEARBOX, 2))
                 .duration(100).EUt(VA[LV]).buildAndRegister();
 
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plate, TungstenSteel, 4)
+                .input(gear, TungstenSteel, 2)
+                .input(frameGt, TungstenSteel)
+                .outputs(TURBINE_CASING.getItemVariant(TUNGSTENSTEEL_GEARBOX, 2))
+                .duration(100).EUt(VA[LV]).buildAndRegister();
+
         // Other
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(rotor, Titanium, 2)
                 .input(pipeNormalFluid, Titanium, 4)
                 .inputs(METAL_CASING.getItemVariant(TITANIUM_STABLE))
                 .outputs(MULTIBLOCK_CASING.getItemVariant(ENGINE_INTAKE_CASING, 2))
+                .duration(100).EUt(VA[LV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(rotor, TungstenSteel, 2)
+                .input(pipeNormalFluid, TungstenSteel, 4)
+                .inputs(METAL_CASING.getItemVariant(TUNGSTENSTEEL_ROBUST))
+                .outputs(MULTIBLOCK_CASING.getItemVariant(EXTREME_ENGINE_INTAKE_CASING, 2))
                 .duration(100).EUt(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()

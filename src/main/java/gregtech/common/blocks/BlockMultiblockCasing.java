@@ -30,6 +30,7 @@ public class BlockMultiblockCasing extends VariantActiveBlock<BlockMultiblockCas
     public enum MultiblockCasingType implements IStringSerializable {
 
         ENGINE_INTAKE_CASING("engine_intake"),
+        EXTREME_ENGINE_INTAKE_CASING("extreme_engine_intake"),
         GRATE_CASING("grate"),
         ASSEMBLY_CONTROL("assembly_control"),
         ASSEMBLY_LINE_CASING("assembly_line");
