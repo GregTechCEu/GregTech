@@ -1,12 +1,11 @@
-package gregtech.api.model.modelfactories;
+package gregtech.client.model.modelfactories;
 
-import gregtech.api.model.ModelFactory;
+import gregtech.client.model.ModelFactory;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.common.blocks.BlockCompressed;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.*;
@@ -22,7 +21,6 @@ import org.lwjgl.util.vector.Vector3f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
 import java.util.List;

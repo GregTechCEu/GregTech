@@ -1,6 +1,6 @@
-package gregtech.api.model.modelfactories;
+package gregtech.client.model.modelfactories;
 
-import gregtech.api.model.ModelFactory;
+import gregtech.client.model.ModelFactory;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;

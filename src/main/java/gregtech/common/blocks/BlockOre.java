@@ -2,16 +2,16 @@ package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.model.IModelSupplier;
-import gregtech.api.model.SimpleStateMapper;
+import gregtech.client.model.IModelSupplier;
+import gregtech.client.model.SimpleStateMapper;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.IBlockOre;
+import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.blocks.properties.PropertyStoneType;
-import gregtech.core.hooks.BloomRenderLayerHooks;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockStateContainer;
@@ -133,7 +133,7 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
 
     @Override
     public boolean canRenderInLayer(@Nonnull IBlockState state, @Nonnull BlockRenderLayer layer) {
-        return layer == BlockRenderLayer.CUTOUT_MIPPED || (material.getProperty(PropertyKey.ORE).isEmissive() && layer == BloomRenderLayerHooks.getRealBloomLayer()) ;
+        return layer == BlockRenderLayer.CUTOUT_MIPPED || (material.getProperty(PropertyKey.ORE).isEmissive() && layer == BloomEffectUtil.getRealBloomLayer()) ;
     }
 
     private BlockStateContainer createStateContainer() {

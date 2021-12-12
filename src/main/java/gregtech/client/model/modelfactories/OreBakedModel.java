@@ -1,21 +1,18 @@
-package gregtech.api.model.modelfactories;
+package gregtech.client.model.modelfactories;
 
-import gregtech.api.model.ModelFactory;
-import gregtech.api.model.customtexture.CustomTexture;
+import gregtech.client.model.ModelFactory;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
+import gregtech.client.model.customtexture.CustomTexture;
+import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.blocks.BlockOre;
-import gregtech.core.hooks.BloomRenderLayerHooks;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -24,10 +21,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import javax.annotation.Nonnull;
@@ -63,7 +57,7 @@ public class OreBakedModel implements IBakedModel {
             particle.set(stoneTypeModel.getParticleTexture());
             BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
             boolean hasEmissive = ore.material.getProperty(PropertyKey.ORE).isEmissive();
-            boolean isEmissiveLayer = hasEmissive && (layer == BloomRenderLayerHooks.getRealBloomLayer() || layer == null);
+            boolean isEmissiveLayer = hasEmissive && (layer == BloomEffectUtil.getRealBloomLayer() || layer == null);
             if (!hasEmissive || !isEmissiveLayer || layer == null) {
                 quads.addAll(stoneTypeModel.getQuads(stoneType.stone.get(), side, rand));
             }

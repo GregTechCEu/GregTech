@@ -2,8 +2,8 @@ package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.model.IModelSupplier;
-import gregtech.api.model.SimpleStateMapper;
+import gregtech.client.model.IModelSupplier;
+import gregtech.client.model.SimpleStateMapper;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconType;

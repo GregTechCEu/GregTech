@@ -1,4 +1,4 @@
-package gregtech.api.model;
+package gregtech.client.model;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;

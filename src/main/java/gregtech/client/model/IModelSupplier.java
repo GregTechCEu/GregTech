@@ -1,4 +1,4 @@
-package gregtech.api.model;
+package gregtech.client.model;
 
 import net.minecraftforge.client.event.TextureStitchEvent;
 
