@@ -59,7 +59,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
 
     @Override
     public int getParallelLimit() {
-        return (int) (Math.max(1, Math.pow(4, getOverclockTier() - 1)) * getDurationBoost());
+        return boostConsumption((int) (Math.max(1, Math.pow(4, getOverclockTier() - 1))));
     }
 
     @Override
@@ -72,17 +72,17 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         }
     }
 
-    protected float getDurationBoost() {
-        return 1.0f;
+    protected int boostConsumption(int consumption) {
+        return consumption;
     }
 
-    protected float getVoltageBoost() {
-        return 1.0f;
+    protected long boostProduction(int production) {
+        return production;
     }
 
     @Override
     protected boolean drawEnergy(int recipeEUt, boolean simulate) {
-        long euToDraw = (long) (recipeEUt * getVoltageBoost());
+        long euToDraw = boostProduction(recipeEUt);
         long resultEnergy = getEnergyStored() - euToDraw;
         if (resultEnergy >= 0L && resultEnergy <= getEnergyCapacity()) {
             if (!simulate) getEnergyContainer().changeEnergy(-euToDraw);

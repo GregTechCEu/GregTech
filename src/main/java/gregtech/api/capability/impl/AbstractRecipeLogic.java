@@ -219,6 +219,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     protected void updateRecipeProgress() {
         if (canRecipeProgress && drawEnergy(recipeEUt, true)) {
+            if (!isActive)
+                setActive(true);
+
             drawEnergy(recipeEUt, false);
             //as recipe starts with progress on 1 this has to be > only not => to compensate for it
             if (++progressTime > maxProgressTime) {
@@ -239,6 +242,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                     this.progressTime = Math.max(1, progressTime - 2);
                 }
             }
+        } else {
+            if (isActive)
+                setActive(false);
         }
     }
 
@@ -688,11 +694,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     protected void setActive(boolean active) {
-        this.isActive = active;
-        metaTileEntity.markDirty();
-        World world = metaTileEntity.getWorld();
-        if (world != null && !world.isRemote) {
-            writeCustomData(1, buf -> buf.writeBoolean(active));
+        if (this.isActive != active) {
+            this.isActive = active;
+            metaTileEntity.markDirty();
+            World world = metaTileEntity.getWorld();
+            if (world != null && !world.isRemote) {
+                writeCustomData(1, buf -> buf.writeBoolean(active));
+            }
         }
     }
 
@@ -782,13 +790,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void writeInitialData(PacketBuffer buf) {
+    public void writeInitialData(@Nonnull PacketBuffer buf) {
         buf.writeBoolean(this.isActive);
         buf.writeBoolean(this.workingEnabled);
     }
 
     @Override
-    public void receiveInitialData(PacketBuffer buf) {
+    public void receiveInitialData(@Nonnull PacketBuffer buf) {
         this.isActive = buf.readBoolean();
         this.workingEnabled = buf.readBoolean();
     }
@@ -797,6 +805,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setBoolean("WorkEnabled", workingEnabled);
+        compound.setBoolean("CanRecipeProgress", canRecipeProgress);
         compound.setBoolean(ALLOW_OVERCLOCKING, allowOverclocking);
         compound.setLong(OVERCLOCK_VOLTAGE, this.overclockVoltage);
         if (progressTime > 0) {
@@ -818,8 +827,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound compound) {
+    public void deserializeNBT(@Nonnull NBTTagCompound compound) {
         this.workingEnabled = compound.getBoolean("WorkEnabled");
+        this.canRecipeProgress = compound.getBoolean("CanRecipeProgress");
         this.progressTime = compound.getInteger("Progress");
         if (compound.hasKey(ALLOW_OVERCLOCKING)) {
             this.allowOverclocking = compound.getBoolean(ALLOW_OVERCLOCKING);
