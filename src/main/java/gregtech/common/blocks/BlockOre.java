@@ -2,7 +2,6 @@ package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.unification.ore.StoneTypes;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
 import gregtech.api.unification.material.Material;
@@ -33,7 +32,6 @@ import net.minecraftforge.client.model.ModelLoader;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Random;
 
 public class BlockOre extends Block implements IBlockOre, IModelSupplier {
 
@@ -144,6 +142,16 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
             return super.getItem(worldIn, pos, state);
         }
         return new ItemStack(this, 1, 0);
+    }
+
+    @Override
+    @Nonnull
+    protected ItemStack getSilkTouchDrop(IBlockState state) {
+        StoneType stoneType = state.getValue(STONE_TYPE);
+        if (stoneType.shouldBeDroppedAsItem) {
+            return super.getSilkTouchDrop(state);
+        }
+        return super.getSilkTouchDrop(this.getDefaultState());
     }
 
     @Override
