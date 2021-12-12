@@ -2,6 +2,7 @@ package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.unification.ore.StoneTypes;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
 import gregtech.api.unification.material.Material;
@@ -25,12 +26,14 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Random;
 
 public class BlockOre extends Block implements IBlockOre, IModelSupplier {
 
@@ -123,9 +126,30 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
     }
 
     @Override
+    public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
+        StoneType stoneType = state.getValue(STONE_TYPE);
+        if (stoneType.shouldBeDroppedAsItem) {
+            super.getDrops(drops, world, pos, state, fortune);
+        } else {
+            super.getDrops(drops, world, pos, this.getDefaultState(), fortune);
+        }
+    }
+
+    @Override
+    @Nonnull
+    @SuppressWarnings("deprecation")
+    public ItemStack getItem(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+        StoneType stoneType = state.getValue(STONE_TYPE);
+        if (stoneType.shouldBeDroppedAsItem) {
+            return super.getItem(worldIn, pos, state);
+        }
+        return new ItemStack(this, 1, 0);
+    }
+
+    @Override
     public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
         if (tab == CreativeTabs.SEARCH) {
-            blockState.getValidStates().forEach(blockState -> list.add(getItem(blockState)));
+            blockState.getValidStates().stream().filter(state -> state.getValue(STONE_TYPE).shouldBeDroppedAsItem).forEach(blockState -> list.add(getItem(blockState)));
         } else if (tab == GregTechAPI.TAB_GREGTECH_ORES) {
             list.add(getItem(getDefaultState()));
         }

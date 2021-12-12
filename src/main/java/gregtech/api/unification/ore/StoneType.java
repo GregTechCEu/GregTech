@@ -36,10 +36,11 @@ public class StoneType implements Comparable<StoneType> {
     private final com.google.common.base.Predicate<IBlockState> predicate;
     public final boolean unbreakable;
     public final boolean affectedByGravity;
+    public final boolean shouldBeDroppedAsItem;
 
     public static final GTControlledRegistry<String, StoneType> STONE_TYPE_REGISTRY = new GTControlledRegistry<>(128);
 
-    public StoneType(int id, String name, ResourceLocation backgroundSideTexture, ResourceLocation backgroundTopTexture, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial, String harvestTool, int flags, Supplier<IBlockState> stone, Predicate<IBlockState> predicate) {
+    public StoneType(int id, String name, ResourceLocation backgroundSideTexture, ResourceLocation backgroundTopTexture, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial, String harvestTool, int flags, Supplier<IBlockState> stone, Predicate<IBlockState> predicate, boolean shouldBeDroppedAsItem) {
         Preconditions.checkArgument(
                 stoneMaterial.hasProperty(PropertyKey.DUST),
                 "Stone type must be made with a Material with the Dust Property!"
@@ -55,11 +56,12 @@ public class StoneType implements Comparable<StoneType> {
         this.affectedByGravity = (flags & AFFECTED_BY_GRAVITY) > 0;
         this.stone = stone;
         this.predicate = predicate::test;
+        this.shouldBeDroppedAsItem = shouldBeDroppedAsItem;
         STONE_TYPE_REGISTRY.register(id, name, this);
     }
 
-    public StoneType(int id, String name, ResourceLocation backgroundTexture, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial, String harvestTool, int flags, Supplier<IBlockState> stone, Predicate<IBlockState> predicate) {
-        this(id, name, backgroundTexture, backgroundTexture, soundType, processingPrefix, stoneMaterial, harvestTool, flags, stone, predicate);
+    public StoneType(int id, String name, ResourceLocation backgroundTexture, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial, String harvestTool, int flags, Supplier<IBlockState> stone, Predicate<IBlockState> predicate, boolean shouldBeDroppedAsItem) {
+        this(id, name, backgroundTexture, backgroundTexture, soundType, processingPrefix, stoneMaterial, harvestTool, flags, stone, predicate, shouldBeDroppedAsItem);
     }
 
     @Override
