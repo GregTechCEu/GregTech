@@ -12,9 +12,10 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.sound.GTSounds;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.cube.OrientedOverlayRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -39,7 +40,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     private boolean machineChanged;
 
     public MetaTileEntityProcessingArray(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, RecipeMaps.PROCESSING_ARRAY_RECIPES);
+        super(metaTileEntityId, null);
         this.recipeMapWorkable = new ProcessingArrayWorkable(this);
     }
 
@@ -103,6 +104,31 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     @Override
     public String[] getBlacklist() {
         return ConfigHolder.machines.processingArrayBlacklist;
+    }
+
+    @Override
+    public void onAttached(Object... data) {
+        reinitializeStructurePattern();
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(GTSounds.ARC, this.getPos());
+        }
+    }
+
+    @Override
+    public TraceabilityPredicate autoAbilities(boolean checkEnergyIn, boolean checkMaintainer, boolean checkItemIn, boolean checkItemOut, boolean checkFluidIn, boolean checkFluidOut, boolean checkMuffler) {
+        TraceabilityPredicate predicate = super.autoAbilities(checkMaintainer, checkMuffler)
+                .or(checkEnergyIn ? abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(4).setPreviewCount(1) : new TraceabilityPredicate());
+
+        predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setPreviewCount(1));
+
+        predicate = predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS).setPreviewCount(1));
+
+        predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setPreviewCount(1));
+
+        predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setPreviewCount(1));
+
+        return predicate;
+
     }
 
     @SuppressWarnings("InnerClassMayBeStatic")
