@@ -19,9 +19,6 @@ import java.util.function.Supplier;
  */
 public class StoneType implements Comparable<StoneType> {
 
-    public static final int AFFECTED_BY_GRAVITY = 1;
-    public static final int UNBREAKABLE = 1 << 1;
-
     public final String name;
     public final String harvestTool;
     public final ResourceLocation backgroundSideTexture;
@@ -34,13 +31,11 @@ public class StoneType implements Comparable<StoneType> {
     //we are using guava predicate because isReplaceableOreGen uses it
     @SuppressWarnings("Guava")
     private final com.google.common.base.Predicate<IBlockState> predicate;
-    public final boolean unbreakable;
-    public final boolean affectedByGravity;
     public final boolean shouldBeDroppedAsItem;
 
     public static final GTControlledRegistry<String, StoneType> STONE_TYPE_REGISTRY = new GTControlledRegistry<>(128);
 
-    public StoneType(int id, String name, ResourceLocation backgroundSideTexture, ResourceLocation backgroundTopTexture, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial, String harvestTool, int flags, Supplier<IBlockState> stone, Predicate<IBlockState> predicate, boolean shouldBeDroppedAsItem) {
+    public StoneType(int id, String name, ResourceLocation backgroundSideTexture, ResourceLocation backgroundTopTexture, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial, String harvestTool, Supplier<IBlockState> stone, Predicate<IBlockState> predicate, boolean shouldBeDroppedAsItem) {
         Preconditions.checkArgument(
                 stoneMaterial.hasProperty(PropertyKey.DUST),
                 "Stone type must be made with a Material with the Dust Property!"
@@ -52,16 +47,14 @@ public class StoneType implements Comparable<StoneType> {
         this.processingPrefix = processingPrefix;
         this.stoneMaterial = stoneMaterial;
         this.harvestTool = harvestTool;
-        this.unbreakable = (flags & UNBREAKABLE) > 0;
-        this.affectedByGravity = (flags & AFFECTED_BY_GRAVITY) > 0;
         this.stone = stone;
         this.predicate = predicate::test;
         this.shouldBeDroppedAsItem = shouldBeDroppedAsItem;
         STONE_TYPE_REGISTRY.register(id, name, this);
     }
 
-    public StoneType(int id, String name, ResourceLocation backgroundTexture, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial, String harvestTool, int flags, Supplier<IBlockState> stone, Predicate<IBlockState> predicate, boolean shouldBeDroppedAsItem) {
-        this(id, name, backgroundTexture, backgroundTexture, soundType, processingPrefix, stoneMaterial, harvestTool, flags, stone, predicate, shouldBeDroppedAsItem);
+    public StoneType(int id, String name, ResourceLocation backgroundTexture, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial, String harvestTool, Supplier<IBlockState> stone, Predicate<IBlockState> predicate, boolean shouldBeDroppedAsItem) {
+        this(id, name, backgroundTexture, backgroundTexture, soundType, processingPrefix, stoneMaterial, harvestTool, stone, predicate, shouldBeDroppedAsItem);
     }
 
     @Override
