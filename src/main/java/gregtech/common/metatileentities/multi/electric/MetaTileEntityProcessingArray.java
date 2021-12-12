@@ -26,8 +26,13 @@ import gregtech.common.metatileentities.electric.MetaTileEntityMacerator;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController implements IMachineHatchMultiblock {
 
@@ -64,6 +69,14 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.ROBUST_TUNGSTENSTEEL_CASING;
+    }
+
+    @Override
+    protected void addDisplayText(List<ITextComponent> textList) {
+        super.addDisplayText(textList);
+        if(this.isActive()) {
+            textList.add(new TextComponentTranslation("gregtech.machine.machine_hatch.locked").setStyle(new Style().setColor(TextFormatting.RED)));
+        }
     }
 
     @Nonnull
