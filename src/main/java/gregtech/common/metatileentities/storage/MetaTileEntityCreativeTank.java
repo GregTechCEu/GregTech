@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.storage;
 
 import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
@@ -11,6 +12,7 @@ import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.render.Textures;
+import gregtech.api.util.GTUtility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,6 +23,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.List;
 import java.util.function.Function;
@@ -41,11 +44,11 @@ public class MetaTileEntityCreativeTank extends MetaTileEntity {
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.VOLTAGE_CASINGS[14].render(renderState, translation, pipeline, Cuboid6.full);
-        for (EnumFacing face : EnumFacing.VALUES) {
-            Textures.INFINITE_EMITTER_FACE.renderSided(face, renderState, translation, pipeline);
-        }
+        Textures.VOLTAGE_CASINGS[14].render(renderState, translation, ArrayUtils.add(pipeline,
+                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
+        Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         Textures.PIPE_OUT_OVERLAY.renderSided(this.getFrontFacing(), renderState, translation, pipeline);
+        Textures.FLUID_OUTPUT_OVERLAY.renderSided(this.getFrontFacing(), renderState, translation, pipeline);
     }
 
     @Override
@@ -58,7 +61,8 @@ public class MetaTileEntityCreativeTank extends MetaTileEntity {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BORDERED_BACKGROUND, 176, 209)
                 .bindPlayerInventory(entityPlayer.inventory, 126);
         builder.widget(new PhantomFluidWidget(36, 6, 18, 18,
-                () -> this.fluidTank.getFluid(), data -> {this.fluidTank.setFluid(data);
+                () -> this.fluidTank.getFluid(), data -> {
+            this.fluidTank.setFluid(data);
         })
                 .showTip(false).setBackgroundTexture(GuiTextures.SLOT_DARKENED));
         builder.label(7, 9, "Fluid");
