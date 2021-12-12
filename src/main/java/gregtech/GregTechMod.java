@@ -73,7 +73,7 @@ public class GregTechMod {
     @Mod.Instance(GTValues.MODID)
     public static GregTechMod instance;
 
-    @SidedProxy(modId = GTValues.MODID, clientSide = "gregtech.common.ClientProxy", serverSide = "gregtech.common.CommonProxy")
+    @SidedProxy(modId = GTValues.MODID, clientSide = "gregtech.client.ClientProxy", serverSide = "gregtech.common.CommonProxy")
     public static CommonProxy proxy;
 
     @Mod.EventHandler

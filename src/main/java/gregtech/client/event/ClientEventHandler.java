@@ -1,4 +1,4 @@
-package gregtech.client.events;
+package gregtech.client.event;
 
 import gregtech.client.utils.DepthTextureUtil;
 import gregtech.client.renderer.handler.TerminalARRenderer;

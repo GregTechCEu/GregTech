@@ -1,4 +1,4 @@
-package gregtech.common;
+package gregtech.client;
 
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.ItemNBTUtils;
@@ -17,6 +17,10 @@ import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ModCompatibility;
 import gregtech.api.util.input.KeyBinds;
+import gregtech.common.CommonProxy;
+import gregtech.common.ConfigHolder;
+import gregtech.common.MetaEntities;
+import gregtech.common.MetaFluids;
 import gregtech.common.blocks.*;
 import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.common.items.MetaItems;
