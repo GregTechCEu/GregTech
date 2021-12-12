@@ -141,12 +141,4 @@ public class MetaTileEntityCreativeChest extends MetaTileEntity {
             return val;
         };
     }
-
-    @Override
-    public IItemHandler getItemInventory() {
-        ItemStackHandler fakeHandler = new ItemStackHandler(1);
-        ItemStack fakeStack = new ItemStack(this.handler.getStackInSlot(0).getItem(), 69);
-        fakeHandler.setStackInSlot(0, fakeStack);
-        return fakeHandler;
-    }
 }

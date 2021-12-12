@@ -1,206 +1,129 @@
 package gregtech.common.metatileentities.storage;
 
 import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
-import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.ClickButtonWidget;
-import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.TextFieldWidget2;
+import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.render.Textures;
-import gregtech.api.util.GTUtility;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.Capability;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.List;
 import java.util.function.Function;
 
-public class MetaTileEntityCreativeTank extends MetaTileEntity implements IEnergyContainer {
+public class MetaTileEntityCreativeTank extends MetaTileEntity {
 
-    private long voltage = 0;
-    private int amps = 1;
+    private int mBPerCycle = 1;
+    private int ticksPerCycle = 1;
+    private FluidTank fluidTank = new FluidTank(1);
 
-    private int setTier = 0;
     private boolean active = false;
-
-    private long lastEnergyOutputPerSec = 0;
-    private long energyOutputPerSec = 0;
 
     private final List<Character> ALLOWED_CHARS = Lists.newArrayList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
 
-    public MetaTileEntityCreativeTank() {
-        super(new ResourceLocation(GTValues.MODID, "infinite_energy"));
+    public MetaTileEntityCreativeTank(ResourceLocation metaTileEntityId) {
+        super(metaTileEntityId);
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        IVertexOperation[] renderPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
-        Textures.VOLTAGE_CASINGS[14].render(renderState, translation, renderPipeline, Cuboid6.full);
+        Textures.VOLTAGE_CASINGS[14].render(renderState, translation, pipeline, Cuboid6.full);
         for (EnumFacing face : EnumFacing.VALUES) {
             Textures.INFINITE_EMITTER_FACE.renderSided(face, renderState, translation, pipeline);
         }
-    }
-
-    @Override
-    public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(Textures.VOLTAGE_CASINGS[this.setTier].getParticleSprite(), this.getPaintingColor());
+        Textures.PIPE_OUT_OVERLAY.renderSided(this.getFrontFacing(), renderState, translation, pipeline);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityCreativeTank();
-    }
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
-            return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(this);
-        return super.getCapability(capability, side);
+        return new MetaTileEntityCreativeTank(this.metaTileEntityId);
     }
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.defaultBuilder()
-                .widget(new CycleButtonWidget(7, 7, 30, 20, GTValues.VN, () -> setTier, tier -> {
-                    setTier = tier;
-                    voltage = GTValues.V[setTier];
-                }));
-        builder.label(7, 32, "Voltage");
-        builder.widget(new ImageWidget(7, 44, 156, 20, GuiTextures.DISPLAY));
-        builder.widget(new TextFieldWidget2(9, 50, 152, 16, () -> String.valueOf(voltage), value -> {
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BORDERED_BACKGROUND, 176, 209)
+                .bindPlayerInventory(entityPlayer.inventory, 126);
+        builder.widget(new PhantomFluidWidget(36, 6, 18, 18,
+                () -> this.fluidTank.getFluid(), data -> {this.fluidTank.setFluid(data);
+        })
+                .showTip(false).setBackgroundTexture(GuiTextures.SLOT_DARKENED));
+        builder.label(7, 9, "Fluid");
+        builder.widget(new ImageWidget(7, 45, 154, 14, GuiTextures.DISPLAY));
+        builder.widget(new TextFieldWidget2(9, 47, 152, 10, () -> String.valueOf(mBPerCycle), value -> {
             if (!value.isEmpty()) {
-                voltage = Long.parseLong(value);
-                setTier = 0;
+                mBPerCycle = Integer.parseInt(value);
             }
         }).setAllowedChars("0123456789").setMaxLength(19).setValidator(getTextFieldValidator()));
+        builder.label(7, 28, "mB per cycle");
 
-        builder.label(7, 74, "Amperage");
-        builder.widget(new ClickButtonWidget(7, 87, 20, 20, "-", data -> amps = amps-- == -1 ? 0 : amps--));
-        builder.widget(new ImageWidget(29, 87, 118, 20, GuiTextures.DISPLAY));
-        builder.widget(new TextFieldWidget2(31, 93, 114, 16, () -> String.valueOf(amps), value -> {
+        builder.widget(new ImageWidget(7, 82, 154, 14, GuiTextures.DISPLAY));
+        builder.widget(new TextFieldWidget2(9, 84, 152, 10, () -> String.valueOf(ticksPerCycle), value -> {
             if (!value.isEmpty()) {
-                amps = Integer.parseInt(value);
+                ticksPerCycle = Integer.parseInt(value);
             }
         }).setMaxLength(10).setNumbersOnly(0, Integer.MAX_VALUE));
-        builder.widget(new ClickButtonWidget(149, 87, 20, 20, "+", data -> amps++));
+        builder.label(7, 65, "Ticks per cycle");
 
-        builder.widget(new CycleButtonWidget(7, 139, 162, 20, () -> active, value -> active = value, "Not active", "Active"));
+
+        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> active = value, "Not active", "Active"));
 
         return builder.build(getHolder(), entityPlayer);
     }
 
     @Override
-    public long getOutputPerSec() {
-        return lastEnergyOutputPerSec;
-    }
-
-    @Override
     public void update() {
         super.update();
-        if (getOffsetTimer() % 20 == 0) {
-            lastEnergyOutputPerSec = energyOutputPerSec;
-            energyOutputPerSec = 0;
+        if (getOffsetTimer() % ticksPerCycle != 0 || fluidTank.getFluid() == null
+                || getWorld().isRemote || !active) return;
+
+        FluidStack stack = fluidTank.getFluid().copy();
+
+        TileEntity tile = getWorld().getTileEntity(getPos().offset(this.getFrontFacing()));
+        if (tile != null) {
+            IFluidHandler fluidHandler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, frontFacing);
+            if (fluidHandler == null || fluidHandler.getTankProperties().length == 0)
+                return;
+
+            stack.amount = mBPerCycle;
+            int canInsertAmount = fluidHandler.fill(stack, false);
+            stack.amount = Math.min(mBPerCycle, canInsertAmount);
+
+            fluidHandler.fill(stack, true);
         }
-        if (getWorld().isRemote || !active || voltage <= 0 || amps <= 0) return;
-        int ampsUsed = 0;
-        for (EnumFacing facing : EnumFacing.values()) {
-            EnumFacing opposite = facing.getOpposite();
-            TileEntity tile = getWorld().getTileEntity(getPos().offset(facing));
-            if (tile != null) {
-                IEnergyContainer container = tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, opposite);
-                if (container == null || !container.inputsEnergy(opposite) || container.getEnergyCanBeInserted() == 0)
-                    continue;
-                ampsUsed += container.acceptEnergyFromNetwork(opposite, voltage, amps - ampsUsed);
-                if (ampsUsed >= amps)
-                    break;
-            }
-        }
-        energyOutputPerSec += ampsUsed * voltage;
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        data.setLong("Voltage", voltage);
-        data.setInteger("Amps", amps);
-        data.setByte("Tier", (byte) setTier);
+        NBTTagCompound fluidTankTag = new NBTTagCompound();
+        fluidTank.writeToNBT(fluidTankTag);
+        data.setTag("FluidTank", fluidTankTag);
+        data.setInteger("mBPerCycle", mBPerCycle);
+        data.setInteger("TicksPerCycle", ticksPerCycle);
         data.setBoolean("Active", active);
         return super.writeToNBT(data);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
-        voltage = data.getLong("Voltage");
-        amps = data.getInteger("Amps");
-        setTier = data.getByte("Tier");
+        fluidTank.readFromNBT(data.getCompoundTag("FluidTank"));
+        mBPerCycle = data.getInteger("mBPerCycle");
+        ticksPerCycle = data.getInteger("TicksPerCycle");
         active = data.getBoolean("Active");
         super.readFromNBT(data);
-    }
-
-    @Override
-    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
-        return 0;
-    }
-
-    @Override
-    public boolean inputsEnergy(EnumFacing side) {
-        return false;
-    }
-
-    @Override
-    public boolean outputsEnergy(EnumFacing side) {
-        return true;
-    }
-
-    @Override
-    public long changeEnergy(long differenceAmount) {
-        return 0;
-    }
-
-    @Override
-    public long getEnergyStored() {
-        return 69;
-    }
-
-    @Override
-    public long getEnergyCapacity() {
-        return 420;
-    }
-
-    @Override
-    public long getInputAmperage() {
-        return 0;
-    }
-
-    @Override
-    public long getInputVoltage() {
-        return 0;
-    }
-
-    @Override
-    public long getOutputVoltage() {
-        return voltage;
-    }
-
-    @Override
-    public long getOutputAmperage() {
-        return amps;
     }
 
     public Function<String, String> getTextFieldValidator() {
@@ -220,5 +143,4 @@ public class MetaTileEntityCreativeTank extends MetaTileEntity implements IEnerg
             return val;
         };
     }
-
 }
