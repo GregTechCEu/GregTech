@@ -2,8 +2,10 @@ package gregtech.common.blocks.properties;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import gregtech.api.GTValues;
 import gregtech.api.unification.ore.StoneType;
 import net.minecraft.block.properties.PropertyHelper;
+import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -52,7 +54,7 @@ public class PropertyStoneType extends PropertyHelper<StoneType> {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj instanceof PropertyStoneType && super.equals(obj)) {
+        } else if (obj instanceof PropertyStoneType) {
             PropertyStoneType propertyStoneType = (PropertyStoneType) obj;
             return this.allowedValues.equals(propertyStoneType.allowedValues);
         } else {

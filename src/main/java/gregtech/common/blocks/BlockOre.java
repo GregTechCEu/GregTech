@@ -1,33 +1,40 @@
 package gregtech.common.blocks;
 
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.model.IModelSupplier;
+import gregtech.api.model.SimpleStateMapper;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.IBlockOre;
 import gregtech.common.blocks.properties.PropertyStoneType;
+import gregtech.core.hooks.BloomRenderLayerHooks;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFalling;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.model.ModelLoader;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Random;
 
-public class BlockOre extends BlockFalling implements IBlockOre {
+public class BlockOre extends Block implements IBlockOre, IModelSupplier {
+
+    public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "ore_block"), "normal");
 
     public final PropertyStoneType STONE_TYPE;
     public final Material material;
@@ -111,23 +118,9 @@ public class BlockOre extends BlockFalling implements IBlockOre {
         return STONE_TYPE.getAllowedValues().indexOf(state.getValue(STONE_TYPE));
     }
 
-    @Override
-    @SuppressWarnings("deprecation")
-    public float getBlockHardness(IBlockState blockState, @Nonnull World worldIn, @Nonnull BlockPos pos) {
-        return blockState.getValue(STONE_TYPE).unbreakable ? -1.0f : this.blockHardness;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public float getExplosionResistance(World world, @Nonnull BlockPos pos, @Nullable Entity exploder, @Nonnull Explosion explosion) {
-        return world.getBlockState(pos).getValue(STONE_TYPE).unbreakable ? 1200000.0F : getExplosionResistance(exploder);
-    }
-
-    @SuppressWarnings("deprecation")
     public ItemStack getItem(IBlockState blockState) {
         return new ItemStack(this, 1, getMetaFromState(blockState));
     }
-
 
     @Override
     public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
@@ -138,10 +131,9 @@ public class BlockOre extends BlockFalling implements IBlockOre {
         }
     }
 
-    @Nonnull
     @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT_MIPPED;
+    public boolean canRenderInLayer(@Nonnull IBlockState state, @Nonnull BlockRenderLayer layer) {
+        return layer == BlockRenderLayer.CUTOUT_MIPPED || (material.getProperty(PropertyKey.ORE).isEmissive() && layer == BloomRenderLayerHooks.getRealBloomLayer()) ;
     }
 
     private BlockStateContainer createStateContainer() {
@@ -149,39 +141,25 @@ public class BlockOre extends BlockFalling implements IBlockOre {
     }
 
     @Override
-    public void onBlockAdded(@Nonnull World worldIn, @Nonnull BlockPos pos, IBlockState state) {
-        if (state.getValue(STONE_TYPE).affectedByGravity)
-            worldIn.scheduleUpdate(pos, this, this.tickRate(worldIn));
-    }
-
-    @Override
-    public void neighborChanged(IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
-        if (state.getValue(STONE_TYPE).affectedByGravity)
-            worldIn.scheduleUpdate(pos, this, this.tickRate(worldIn));
-    }
-
-    @Override
-    public void updateTick(@Nonnull World worldIn, @Nonnull BlockPos pos, IBlockState state, @Nonnull Random rand) {
-        if (state.getValue(STONE_TYPE).affectedByGravity)
-            super.updateTick(worldIn, pos, state, rand);
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void randomDisplayTick(IBlockState stateIn, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Random rand) {
-        if (stateIn.getValue(STONE_TYPE).affectedByGravity)
-            super.randomDisplayTick(stateIn, worldIn, pos, rand);
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public int getDustColor(@Nonnull IBlockState state) {
-        return this.material.getMaterialRGB();
-    }
-
-    @Override
     public IBlockState getOreBlock(StoneType stoneType) {
         return this.getDefaultState().withProperty(this.STONE_TYPE, stoneType);
     }
 
+    @Override
+    public void onTextureStitch(TextureStitchEvent.Pre event) {
+        event.getMap().registerSprite(MaterialIconType.block.getBlockPath(material.getMaterialIconSet()));
+        for (IBlockState state : this.getBlockState().getValidStates()) {
+            StoneType stoneType = state.getValue(STONE_TYPE);
+            event.getMap().registerSprite(stoneType.backgroundTopTexture);
+            event.getMap().registerSprite(stoneType.backgroundSideTexture);
+        }
+    }
+
+    @Override
+    public void onModelRegister() {
+        ModelLoader.setCustomStateMapper(this, new SimpleStateMapper(MODEL_LOCATION));
+        for (IBlockState state : this.getBlockState().getValidStates()) {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), MODEL_LOCATION);
+        }
+    }
 }

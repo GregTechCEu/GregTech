@@ -7,6 +7,7 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -96,7 +97,7 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
         //replace blocks without updating physics
         for (BlockPos framePos : frameBlocks) {
             IBlockState blockState = world.getBlockState(framePos);
-            boolean isNormalFrame = ModHandler.isMaterialWood(((BlockFrame) blockState.getBlock()).frameMaterial) || isSneaking;
+            boolean isNormalFrame = blockState.getBlock().getMaterial(blockState) == Material.WOOD || isSneaking;
             if (isNormalFrame) {
                 blockState.getBlock().dropBlockAsItem(world, framePos, blockState, 0);
             }

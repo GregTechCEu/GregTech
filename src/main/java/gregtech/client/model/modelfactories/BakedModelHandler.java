@@ -1,16 +1,14 @@
-package gregtech.common.blocks.modelfactories;
+package gregtech.api.model.modelfactories;
 
 import codechicken.lib.render.item.CCRenderItem;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.TransformUtils;
+import gregtech.common.blocks.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -81,6 +79,9 @@ public class BakedModelHandler {
             ModelBuiltInRenderer bakedModel = new ModelBuiltInRenderer(tuple.getSecond());
             event.getModelRegistry().putObject(resourceLocation, bakedModel);
         }
+        event.getModelRegistry().putObject(BlockOre.MODEL_LOCATION, OreBakedModel.INSTANCE);
+        event.getModelRegistry().putObject(BlockCompressed.MODEL_LOCATION, CompressedBlockBakedModel.INSTANCE);
+        event.getModelRegistry().putObject(BlockFrame.MODEL_LOCATION, FrameBakedModel.INSTANCE);
     }
 
     private static class ModelBuiltInRenderer implements IBakedModel {

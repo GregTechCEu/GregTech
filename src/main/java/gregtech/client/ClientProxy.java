@@ -12,6 +12,9 @@ import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialIconSet;
+import gregtech.api.unification.material.info.MaterialIconType;
+import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTLog;
@@ -52,6 +55,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -89,15 +93,13 @@ public class ClientProxy extends CommonProxy {
         return state.getValue(block.variantProperty).getMaterialRGB();
     };
 
-    public static final IBlockColor FRAME_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) -> {
-        Material material = ((BlockFrame) state.getBlock()).frameMaterial;
-        return material.getMaterialRGB();
-    };
+    public static final IBlockColor FRAME_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
+            state.getValue(((BlockFrame) state.getBlock()).variantProperty).getMaterialRGB();
 
     public static final IItemColor FRAME_ITEM_COLOR = (stack, tintIndex) -> {
-        IBlockState frameState = ((FrameItemBlock) stack.getItem()).getBlockState(stack);
-        BlockFrame block = (BlockFrame) frameState.getBlock();
-        return block.frameMaterial.getMaterialRGB();
+        BlockFrame block = (BlockFrame) ((ItemBlock) stack.getItem()).getBlock();
+        IBlockState state = block.getStateFromMeta(stack.getItemDamage());
+        return state.getValue(block.variantProperty).getMaterialRGB();
     };
 
     public static final IBlockColor ORE_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
@@ -157,6 +159,17 @@ public class ClientProxy extends CommonProxy {
         MetaBlocks.registerStateMappers();
         MetaBlocks.registerItemModels();
         MetaItems.registerModels();
+    }
+
+    @SubscribeEvent
+    public static void registerSprites(TextureStitchEvent.Pre event) {
+        for (MaterialIconSet set : MaterialIconSet.ICON_SETS.values()) {
+            event.getMap().registerSprite(MaterialIconType.ore.getBlockPath(set));
+            event.getMap().registerSprite(MaterialIconType.block.getBlockPath(set));
+        }
+        MetaBlocks.COMPRESSED.values().stream().distinct().forEach(c -> c.onTextureStitch(event));
+        MetaBlocks.FRAMES.values().stream().distinct().forEach(f -> f.onTextureStitch(event));
+        MetaBlocks.ORES.forEach(o -> o.onTextureStitch(event));
     }
 
     @SubscribeEvent

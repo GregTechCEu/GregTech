@@ -15,6 +15,7 @@ public class FrameItemBlock extends ItemBlock {
     public FrameItemBlock(BlockFrame block) {
         super(block);
         this.frameBlock = block;
+        setHasSubtypes(true);
     }
 
     @Override
@@ -22,7 +23,6 @@ public class FrameItemBlock extends ItemBlock {
         return damage;
     }
 
-    @SuppressWarnings("deprecation")
     public IBlockState getBlockState(ItemStack stack) {
         return frameBlock.getStateFromMeta(getMetadata(stack.getItemDamage()));
     }
@@ -30,8 +30,7 @@ public class FrameItemBlock extends ItemBlock {
     @Nonnull
     @Override
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
-        Material material = frameBlock.frameMaterial;
+        Material material = getBlockState(stack).getValue(frameBlock.variantProperty);
         return OrePrefix.frameGt.getLocalNameForItem(material);
     }
-
 }
