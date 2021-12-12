@@ -8,6 +8,7 @@ import gregtech.api.GTValues;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
+import gregtech.client.renderer.handler.SurfaceRockRenderer;
 import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
@@ -28,7 +29,6 @@ import gregtech.common.items.MetaItems;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
-import gregtech.client.renderer.handler.StoneRenderer;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -123,7 +123,7 @@ public class ClientProxy extends CommonProxy {
         CableRenderer.preInit();
         FluidPipeRenderer.preInit();
         ItemPipeRenderer.preInit();
-        StoneRenderer.preInit();
+        SurfaceRockRenderer.preInit();
         MetaEntities.initRenderers();
         TextureUtils.addIconRegister(MetaFluids::registerSprites);
     }

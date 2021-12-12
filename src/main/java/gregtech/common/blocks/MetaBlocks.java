@@ -18,8 +18,6 @@ import gregtech.api.unification.ore.StoneType;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
 import gregtech.client.model.modelfactories.BakedModelHandler;
-import gregtech.common.blocks.surfacerock.BlockSurfaceRock;
-import gregtech.common.blocks.surfacerock.TileEntitySurfaceRock;
 import gregtech.common.blocks.wood.BlockGregLeaves;
 import gregtech.common.blocks.wood.BlockGregLog;
 import gregtech.common.blocks.wood.BlockGregPlank;
@@ -319,7 +317,6 @@ public class MetaBlocks {
         GameRegistry.registerTileEntity(TileEntityItemPipe.class, new ResourceLocation(GTValues.MODID, "item_pipe"));
         GameRegistry.registerTileEntity(TileEntityFluidPipeTickable.class, new ResourceLocation(GTValues.MODID, "fluid_pipe_active"));
         GameRegistry.registerTileEntity(TileEntityItemPipeTickable.class, new ResourceLocation(GTValues.MODID, "item_pipe_active"));
-        GameRegistry.registerTileEntity(TileEntitySurfaceRock.class, new ResourceLocation(GTValues.MODID, "surface_rock"));
     }
 
     @SideOnly(Side.CLIENT)
