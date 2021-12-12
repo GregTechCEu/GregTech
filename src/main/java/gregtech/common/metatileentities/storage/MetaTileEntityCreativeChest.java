@@ -13,12 +13,11 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -35,8 +34,6 @@ public class MetaTileEntityCreativeChest extends MetaTileEntity {
     private final ItemStackHandler handler = new ItemStackHandler(1);
 
     private boolean active = false;
-
-    private final List<Character> ALLOWED_CHARS = Lists.newArrayList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
 
     public MetaTileEntityCreativeChest(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -57,7 +54,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntity {
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BORDERED_BACKGROUND, 176, 209)
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 209)
                 .bindPlayerInventory(entityPlayer.inventory, 126);
         builder.widget(new PhantomSlotWidget(handler, 0, 36, 6).setBackgroundTexture(GuiTextures.SLOT_DARKENED).setChangeListener(this::markDirty));
         builder.label(7, 9, "Item");
