@@ -6,6 +6,7 @@ import gregtech.api.util.GTLog;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -29,6 +30,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     public void update() {
         if (!isActive() && currentHeat > 0) { // might need to call on controller
             currentHeat--;
+            writeCustomData(700, buf -> buf.writeVarInt(currentHeat));
         }
         super.update();
     }
@@ -115,7 +117,10 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
                     boiler.getOutputTank().fill(ModHandler.getSteam(recipeEUt * 2), true);
                 }
             }
-        } else currentHeat++;
+        } else {
+            currentHeat++;
+            writeCustomData(700, buf -> buf.writeVarInt(currentHeat));
+        }
 
         if (++progressTime > maxProgressTime) {
             completeRecipe();
@@ -154,6 +159,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = super.serializeNBT();
+        compound.setInteger("Heat", currentHeat);
         compound.setInteger("ExcessFuel", excessFuel);
         compound.setInteger("ExcessWater", excessWater);
         compound.setInteger("ExcessProjectedEU", excessProjectedEU);
@@ -163,9 +169,30 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     @Override
     public void deserializeNBT(NBTTagCompound compound) {
         super.deserializeNBT(compound);
+        this.currentHeat = compound.getInteger("Heat");
         this.excessFuel = compound.getInteger("ExcessFuel");
         this.excessWater = compound.getInteger("ExcessWater");
         this.excessProjectedEU = compound.getInteger("ExcessProjectedEU");
+    }
+
+    @Override
+    public void writeInitialData(PacketBuffer buf) {
+        super.writeInitialData(buf);
+        buf.writeVarInt(currentHeat);
+    }
+
+    @Override
+    public void receiveInitialData(PacketBuffer buf) {
+        super.receiveInitialData(buf);
+        this.currentHeat = buf.readVarInt();
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == 700) { // Should put this value in GregtechDataCodes.
+            this.currentHeat = buf.readVarInt();
+        }
     }
 
     // Required overrides to use RecipeLogic, but all of them are redirected by the above overrides.
