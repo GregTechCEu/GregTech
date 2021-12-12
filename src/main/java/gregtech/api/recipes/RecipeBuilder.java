@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -206,27 +207,46 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R notConsumable(ItemStack itemStack) {
-        return inputs(CountableIngredient.from(itemStack, 0));
+        return inputs(CountableIngredient.from(itemStack, itemStack.getCount())
+                .setNonConsumable());
+    }
+
+    public R notConsumable(OrePrefix prefix, Material material, int amount) {
+        return inputs(CountableIngredient.from(prefix, material, amount)
+                .setNonConsumable());
     }
 
     public R notConsumable(OrePrefix prefix, Material material) {
-        return input(prefix, material, 0);
+        return notConsumable(prefix, material, 1);
     }
 
     public R notConsumable(Ingredient ingredient) {
-        return inputs(new CountableIngredient(ingredient, 0));
+        return inputs(new CountableIngredient(ingredient, 1)
+                .setNonConsumable());
     }
 
     public R notConsumable(MetaItem<?>.MetaValueItem item) {
-        return inputs(CountableIngredient.from(item.getStackForm(), 0));
+        return inputs(CountableIngredient.from(item.getStackForm(), 1)
+                .setNonConsumable());
+    }
+
+    public R notConsumable(Fluid fluid, int amount) {
+        FluidStack ncf = new FluidStack(fluid, amount, new NBTTagCompound());
+        ncf.tag.setBoolean("nonConsumable", true);
+        return fluidInputs(ncf);
     }
 
     public R notConsumable(Fluid fluid) {
-        return fluidInputs(new FluidStack(fluid, 0));
+        return notConsumable(fluid, 1);
     }
 
     public R notConsumable(FluidStack fluidStack) {
-        return fluidInputs(new FluidStack(fluidStack, 0));
+        FluidStack ncf = fluidStack.copy();
+        if (ncf.tag == null) {
+            ncf.tag = new NBTTagCompound();
+        }
+        ncf.tag.setBoolean("nonConsumable", true);
+        return fluidInputs(ncf);
     }
 
     public R output(OrePrefix orePrefix, Material material) {

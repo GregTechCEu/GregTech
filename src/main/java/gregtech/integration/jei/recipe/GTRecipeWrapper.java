@@ -37,9 +37,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     private static final int LINE_HEIGHT = 10;
 
-    private final Int2ObjectMap<ChanceEntry> chanceOutput = new Int2ObjectOpenHashMap<>();
-    private final Int2BooleanMap notConsumedItemInput = new Int2BooleanOpenHashMap();
-    private final Int2BooleanMap notConsumedFluidInput = new Int2BooleanOpenHashMap();
+    private final Map<Object, ChanceEntry> chanceOutput = new HashMap<>();
+    private final Set<ItemStack> notConsumedItemInput = new HashSet<>();
+    private final Set<FluidStack> notConsumedFluidInput = new HashSet<>();
     private final RecipeMap<?> recipeMap;
     private final Recipe recipe;
     private String lastCopiedRemoval;
@@ -55,44 +55,54 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     @Override
     public void getIngredients(@Nonnull IIngredients ingredients) {
-        int currentItemSlot = 0;
-        int currentFluidSlot = 0;
 
         // Inputs
         if (!recipe.getInputs().isEmpty()) {
             List<List<ItemStack>> matchingInputs = new ArrayList<>(recipe.getInputs().size());
+            int currentItemSlot = 0;
             for (CountableIngredient ci : recipe.getInputs()) {
                 matchingInputs.add(Arrays.stream(ci.getIngredient().getMatchingStacks())
                         .sorted(OreDictUnifier.getItemStackComparator())
-                        .map(is -> GTUtility.copyAmount(ci.getCount() == 0 ? 1 : ci.getCount(), is))
+                        .map(is -> GTUtility.copyAmount(ci.getCount(), is))
                         .collect(Collectors.toList()));
-                notConsumedItemInput.put(currentItemSlot++, ci.getCount() == 0);
+                if (ci.isNonConsumable()) {
+                    notConsumedItemInput.addAll(matchingInputs.get(currentItemSlot));
+                }
+                currentItemSlot++;
             }
             ingredients.setInputLists(VanillaTypes.ITEM, matchingInputs);
         }
-        currentItemSlot = recipeMap.getMaxInputs();
 
         // Fluid Inputs
         if (!recipe.getFluidInputs().isEmpty()) {
-            ingredients.setInputs(VanillaTypes.FLUID, recipe.getFluidInputs().stream()
-                    .map(fs -> GTUtility.copyAmount(fs.amount == 0 ? 1 : fs.amount, fs))
-                    .collect(Collectors.toList()));
+            List<FluidStack> matchingFluidInputs = new ArrayList<>(recipe.getFluidInputs().size());
+
             for (FluidStack fs : recipe.getFluidInputs()) {
-                notConsumedFluidInput.put(currentFluidSlot++, fs.amount == 0);
+                if (fs.tag != null && fs.tag.hasKey("nonConsumable")) {
+                    FluidStack fluidCopy = GTUtility.copyAmount(fs.amount, fs);
+                    fluidCopy.tag.removeTag("nonConsumable");
+                    if (fluidCopy.tag.isEmpty()) {
+                        fluidCopy.tag = null;
+                    }
+                    notConsumedFluidInput.add(fluidCopy);
+                    matchingFluidInputs.add(fluidCopy);
+                } else {
+                    matchingFluidInputs.add(fs);
+                }
             }
+            ingredients.setInputs(VanillaTypes.FLUID, matchingFluidInputs);
         }
 
         // Outputs
         if (!recipe.getOutputs().isEmpty() || !recipe.getChancedOutputs().isEmpty()) {
             List<ItemStack> recipeOutputs = recipe.getOutputs()
                     .stream().map(ItemStack::copy).collect(Collectors.toList());
-            currentItemSlot += recipeOutputs.size();
 
             List<ChanceEntry> chancedOutputs = recipe.getChancedOutputs();
             chancedOutputs.sort(Comparator.comparingInt(entry -> entry == null ? 0 : entry.getChance()));
             for (ChanceEntry chancedEntry : chancedOutputs) {
-                chanceOutput.put(currentItemSlot++, chancedEntry);
-                recipeOutputs.add(chancedEntry.getItemStack());
+                chanceOutput.put(chancedEntry.getItemStackRaw(), chancedEntry);
+                recipeOutputs.add(chancedEntry.getItemStackRaw());
             }
             ingredients.setOutputs(VanillaTypes.ITEM, recipeOutputs);
         }
@@ -106,8 +116,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     }
 
     public void addItemTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
-        boolean notConsumed = input && recipe.isNotConsumedInput(ingredient);
-        ChanceEntry entry = input ? null : chanceOutput.get(slotIndex);
+        boolean notConsumed = input && isNotConsumedInput(ingredient);
+
+        ChanceEntry entry = input ? null : chanceOutput.get(ingredient);
 
         if (entry != null) {
             double chance = entry.getChance() / 100.0;
@@ -119,7 +130,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     }
 
     public void addFluidTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
-        boolean notConsumed = input && recipe.isNotConsumedInput(ingredient);
+        boolean notConsumed = input && isNotConsumedInput(ingredient);
 
         if (notConsumed) {
             tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
@@ -163,16 +174,17 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                 .setActiveSupplier(creativePlayerCtPredicate));
     }
 
-    public Int2ObjectMap<ChanceEntry> getChanceOutputMap() {
-        return chanceOutput;
+    public boolean hasChancedOutput(ItemStack itemStack) {
+        return chanceOutput.get(itemStack) != null && !chanceOutput.get(itemStack).getItemStack().isEmpty();
     }
 
-    public Int2BooleanMap getNotConsumedItemInputs() {
-        return notConsumedItemInput;
-    }
-
-    public Int2BooleanMap getNotConsumedFluidInputs() {
-        return notConsumedFluidInput;
+    public boolean isNotConsumedInput(Object stack) {
+        if (stack instanceof ItemStack) {
+            return notConsumedItemInput.contains(stack);
+        } else if (stack instanceof FluidStack) {
+            return notConsumedFluidInput.contains(stack);
+        }
+        return false;
     }
 
     private int getPropertyListHeight() {

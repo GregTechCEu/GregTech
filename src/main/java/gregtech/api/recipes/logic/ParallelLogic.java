@@ -231,17 +231,16 @@ public class ParallelLogic {
         int minMultiplier = Integer.MAX_VALUE;
         //map the recipe ingredients to account for duplicated and notConsumable ingredients.
         //notConsumable ingredients are not counted towards the max ratio
-        IngredientHashStrategy hashStrategy = new IngredientHashStrategy();
-        Object2IntOpenCustomHashMap<Ingredient> notConsumableMap = new Object2IntOpenCustomHashMap<>(hashStrategy);
-        Object2IntOpenCustomHashMap<Ingredient> countableMap = new Object2IntOpenCustomHashMap<>(hashStrategy);
+        Object2IntOpenCustomHashMap<Ingredient> notConsumableMap = new Object2IntOpenCustomHashMap<>(IngredientHashStrategy.INSTANCE);
+        Object2IntOpenCustomHashMap<Ingredient> countableMap = new Object2IntOpenCustomHashMap<>(IngredientHashStrategy.INSTANCE);
         for (CountableIngredient recipeInputs : recipe.getInputs()) {
             int ingredientCount = recipeInputs.getCount();
-            if (ingredientCount > 0) {
-                countableMap.computeIfPresent(recipeInputs.getIngredient(), (k, v) -> v + recipeInputs.getCount());
-                countableMap.putIfAbsent(recipeInputs.getIngredient(), recipeInputs.getCount());
+            if (recipeInputs.isNonConsumable()) {
+                notConsumableMap.computeIfPresent(recipeInputs.getIngredient(), (k, v) -> v + ingredientCount);
+                notConsumableMap.putIfAbsent(recipeInputs.getIngredient(), ingredientCount);
             } else {
-                notConsumableMap.computeIfPresent(recipeInputs.getIngredient(), (k, v) -> v + 1);
-                notConsumableMap.putIfAbsent(recipeInputs.getIngredient(), 1);
+                countableMap.computeIfPresent(recipeInputs.getIngredient(), (k, v) -> v + ingredientCount);
+                countableMap.putIfAbsent(recipeInputs.getIngredient(), ingredientCount);
             }
         }
 
@@ -253,7 +252,7 @@ public class ParallelLogic {
             for (Map.Entry<ItemStackKey, Integer> inventoryEntry : countIngredients.entrySet()) {
                 if (recipeInputEntry.getKey().apply(inventoryEntry.getKey().getItemStackRaw())) {
                     available = inventoryEntry.getValue();
-                    if (available > needed) {
+                    if (available >= needed) {
                         inventoryEntry.setValue(available - needed);
                         available -= needed;
                         break;
@@ -307,9 +306,9 @@ public class ParallelLogic {
         HashMap<FluidKey, Integer> notConsumableMap = new HashMap<>();
         for (FluidStack fluidStack : recipe.getFluidInputs()) {
             int fluidAmount = fluidStack.amount;
-            if (fluidAmount == 0) {
-                notConsumableMap.computeIfPresent(new FluidKey(fluidStack), (k, v) -> v + 1);
-                notConsumableMap.putIfAbsent(new FluidKey(fluidStack), 1);
+            if (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable")) {
+                notConsumableMap.computeIfPresent(new FluidKey(fluidStack), (k, v) -> v + fluidAmount);
+                notConsumableMap.putIfAbsent(new FluidKey(fluidStack), fluidAmount);
             } else {
                 fluidCountMap.computeIfPresent(new FluidKey(fluidStack), (k, v) -> v + fluidAmount);
                 fluidCountMap.putIfAbsent(new FluidKey(fluidStack), fluidAmount);
@@ -350,7 +349,7 @@ public class ParallelLogic {
                     available += inputFluid.getValue();
                 }
             }
-            if (available > needed) {
+            if (available >= needed) {
                 int ratio = Math.min(parallelAmount, available / needed);
                 if (ratio < minMultiplier) {
                     minMultiplier = ratio;
