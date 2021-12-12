@@ -45,7 +45,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntity {
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         Textures.VOLTAGE_CASINGS[14].render(renderState, translation, pipeline, Cuboid6.full);
-        Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
+        Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(this.getFrontFacing().getOpposite(), renderState, translation, pipeline);
         Textures.PIPE_OUT_OVERLAY.renderSided(this.getFrontFacing(), renderState, translation, pipeline);
         Textures.ITEM_OUTPUT_OVERLAY.renderSided(this.getFrontFacing(), renderState, translation, pipeline);
     }
