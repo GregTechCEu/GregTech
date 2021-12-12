@@ -3,7 +3,7 @@ package gregtech.api.gui.widgets;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
-import gregtech.api.util.RenderUtil;
+import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.client.renderer.GlStateManager;

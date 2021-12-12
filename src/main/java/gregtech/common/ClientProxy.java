@@ -5,11 +5,10 @@ import codechicken.lib.util.ItemNBTUtils;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.GTValues;
-import gregtech.api.model.customtexture.CustomTextureModelHandler;
-import gregtech.api.model.customtexture.MetadataSectionCTM;
-import gregtech.api.render.renderers.MetaTileEntityRenderer;
-import gregtech.api.render.ToolRenderHandler;
-import gregtech.api.render.shader.Shaders;
+import gregtech.client.model.customtexture.CustomTextureModelHandler;
+import gregtech.client.model.customtexture.MetadataSectionCTM;
+import gregtech.client.renderer.handler.MetaTileEntityRenderer;
+import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -19,12 +18,12 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.ModCompatibility;
 import gregtech.api.util.input.KeyBinds;
 import gregtech.common.blocks.*;
-import gregtech.common.covers.facade.FacadeRenderer;
+import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.common.items.MetaItems;
-import gregtech.common.render.CableRenderer;
-import gregtech.common.render.FluidPipeRenderer;
-import gregtech.common.render.ItemPipeRenderer;
-import gregtech.common.render.StoneRenderer;
+import gregtech.client.renderer.handler.pipe.CableRenderer;
+import gregtech.client.renderer.handler.pipe.FluidPipeRenderer;
+import gregtech.client.renderer.handler.pipe.ItemPipeRenderer;
+import gregtech.client.renderer.handler.StoneRenderer;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -123,8 +122,6 @@ public class ClientProxy extends CommonProxy {
         StoneRenderer.preInit();
         MetaEntities.initRenderers();
         TextureUtils.addIconRegister(MetaFluids::registerSprites);
-        MinecraftForge.EVENT_BUS.register(ToolRenderHandler.INSTANCE);
-
     }
 
     @Override

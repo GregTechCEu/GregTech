@@ -6,6 +6,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.util.*;
+import gregtech.client.utils.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;

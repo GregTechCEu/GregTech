@@ -6,7 +6,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.SizedTextureArea;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
-import gregtech.api.util.RenderUtil;
+import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

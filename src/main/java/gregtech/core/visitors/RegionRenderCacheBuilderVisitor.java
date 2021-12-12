@@ -13,7 +13,7 @@ public class RegionRenderCacheBuilderVisitor extends MethodVisitor implements Op
             "field_179040_a",
             "[Lnet/minecraft/client/renderer/BufferBuilder;").toRuntime();
     private static final ObfMapping METHOD_BLOOM_HOOKS = new ObfMapping(
-            "gregtech/core/hooks/BloomRenderLayerHooks",
+            "gregtech/client/utils/BloomEffectUtil",
             "initBloomRenderLayer",
             "([Lnet/minecraft/client/renderer/BufferBuilder;)V");
 

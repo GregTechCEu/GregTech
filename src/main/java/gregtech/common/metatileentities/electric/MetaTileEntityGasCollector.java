@@ -9,8 +9,8 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.GasCollectorDimensionProperty;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;

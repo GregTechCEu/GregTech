@@ -10,8 +10,8 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
@@ -23,8 +23,8 @@ import javax.annotation.Nonnull;
 
 import java.util.Collections;
 
-import static gregtech.api.render.Textures.BRONZE_PLATED_BRICKS;
-import static gregtech.api.render.Textures.SOLID_STEEL_CASING;
+import static gregtech.client.renderer.texture.Textures.BRONZE_PLATED_BRICKS;
+import static gregtech.client.renderer.texture.Textures.SOLID_STEEL_CASING;
 
 public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockController {
 

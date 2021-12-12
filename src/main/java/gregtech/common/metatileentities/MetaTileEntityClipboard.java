@@ -46,7 +46,7 @@ import java.util.Optional;
 
 import static codechicken.lib.raytracer.RayTracer.*;
 import static gregtech.api.capability.GregtechDataCodes.*;
-import static gregtech.api.render.Textures.CLIPBOARD_RENDERER;
+import static gregtech.client.renderer.texture.Textures.CLIPBOARD_RENDERER;
 import static gregtech.common.items.MetaItems.CLIPBOARD;
 
 public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRenderMetaTileEntity {

@@ -8,7 +8,7 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.common.covers.facade.FacadeHelper;
-import gregtech.common.covers.facade.FacadeRenderer;
+import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.common.items.behaviors.FacadeItem;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;

@@ -4,7 +4,7 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.widgets.TextFieldWidget;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
-import gregtech.api.util.RenderUtil;
+import gregtech.client.utils.RenderUtil;
 import gregtech.common.gui.widget.WidgetARGB;
 import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
 import net.minecraft.entity.player.EntityPlayer;

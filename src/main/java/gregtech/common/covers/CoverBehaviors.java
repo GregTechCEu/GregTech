@@ -6,7 +6,7 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTLog;
 import gregtech.common.covers.detector.CoverDetectorEnergy;
 import gregtech.common.covers.detector.CoverDetectorFluid;

@@ -1,6 +1,7 @@
 package gregtech.api;
 
 import gregtech.api.util.XSTR;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -105,6 +106,13 @@ public class GTValues {
             MODID_COFH = "cofhcore",
             MODID_APPENG = "appliedenergistics2",
             MODID_JEI = "jei";
+
+    private static Boolean isClient;
+
+    public static boolean isClientSide() {
+        if (isClient == null) isClient = FMLCommonHandler.instance().getSide().isClient();
+        return isClient;
+    }
 
     //because forge is too fucking retarded to cache results or at least do not create fucking
     //immutable collections every time you retrieve indexed mod list

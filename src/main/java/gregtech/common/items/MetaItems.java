@@ -11,8 +11,8 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
+import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.common.items.armor.MetaArmor;
-import gregtech.common.render.FacadeItemModel;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.EnumDyeColor;
@@ -636,7 +636,7 @@ public final class MetaItems {
     @SideOnly(Side.CLIENT)
     public static void registerBakedModels(ModelBakeEvent event) {
         GTLog.logger.info("Registering special item models");
-        registerSpecialItemModel(event, COVER_FACADE, new FacadeItemModel());
+        registerSpecialItemModel(event, COVER_FACADE, new FacadeRenderer());
     }
 
     @SideOnly(Side.CLIENT)

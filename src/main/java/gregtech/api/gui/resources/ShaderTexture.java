@@ -3,7 +3,7 @@ package gregtech.api.gui.resources;
 import codechicken.lib.render.shader.ShaderObject;
 import codechicken.lib.render.shader.ShaderProgram;
 import gregtech.api.gui.Widget;
-import gregtech.api.render.shader.Shaders;
+import gregtech.client.shader.Shaders;
 import gregtech.common.ConfigHolder;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;

@@ -8,7 +8,7 @@ import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.util.Position;
-import gregtech.api.util.RenderUtil;
+import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
 import gregtech.api.util.TextFormattingUtil;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;

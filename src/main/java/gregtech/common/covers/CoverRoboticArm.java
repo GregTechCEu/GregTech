@@ -9,7 +9,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 import net.minecraft.entity.player.EntityPlayer;

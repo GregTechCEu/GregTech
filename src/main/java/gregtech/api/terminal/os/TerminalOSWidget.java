@@ -14,7 +14,7 @@ import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.terminal.os.menu.TerminalMenuWidget;
 import gregtech.api.util.Position;
-import gregtech.api.util.RenderUtil;
+import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
 import gregtech.common.items.behaviors.TerminalBehaviour;
 import gregtech.common.terminal.app.settings.widgets.OsSettings;

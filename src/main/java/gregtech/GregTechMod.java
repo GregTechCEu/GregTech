@@ -10,7 +10,7 @@ import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.sound.GTSounds;
-import gregtech.api.model.ResourcePackHook;
+import gregtech.client.model.ResourcePackHook;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
@@ -37,7 +37,7 @@ import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.worldgen.LootTableHelper;
 import gregtech.common.worldgen.WorldGenAbandonedBase;
 import gregtech.common.worldgen.WorldGenRubberTree;
-import gregtech.core.hooks.BloomRenderLayerHooks;
+import gregtech.client.utils.BloomEffectUtil;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -62,7 +62,7 @@ public class GregTechMod {
     static {
         FluidRegistry.enableUniversalBucket();
         if (FMLCommonHandler.instance().getSide().isClient()) {
-            BloomRenderLayerHooks.init();
+            BloomEffectUtil.init();
             ResourcePackHook.init();
             BlockOreFactory.init();
             BlockCompressedFactory.init();

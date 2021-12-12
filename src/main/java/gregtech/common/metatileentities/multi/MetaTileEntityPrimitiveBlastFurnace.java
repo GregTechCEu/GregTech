@@ -16,10 +16,10 @@ import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockContro
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.render.*;
-import gregtech.api.render.cclop.ColourOperation;
-import gregtech.api.render.cclop.LightMapOperation;
-import gregtech.api.render.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.cclop.ColourOperation;
+import gregtech.client.renderer.cclop.LightMapOperation;
+import gregtech.client.renderer.ICubeRenderer;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.entity.player.EntityPlayer;

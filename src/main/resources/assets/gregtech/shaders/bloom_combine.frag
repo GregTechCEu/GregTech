@@ -6,6 +6,7 @@ varying vec2 textureCoords;
 uniform sampler2D buffer_a;
 uniform sampler2D buffer_b;
 uniform float intensive;
+uniform float base;
 uniform float threshold_up;
 uniform float threshold_down;
 
@@ -23,5 +24,5 @@ vec3 rgb2hsv(vec3 c) {
 void main(void){
     vec3 bloom = texture2D(buffer_b, textureCoords).rgb * intensive;
     vec3 background = texture2D(buffer_a, textureCoords).rgb;
-    gl_FragColor = vec4(background + bloom * ((1 - rgb2hsv(background).z) * (threshold_up - threshold_down) + threshold_down), 1.);
+    gl_FragColor = vec4(background + bloom * ((1 - rgb2hsv(background).z) * (threshold_up - threshold_down) + threshold_down + base), 1.);
 }

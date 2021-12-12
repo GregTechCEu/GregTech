@@ -2,7 +2,7 @@ package gregtech.api.capability.impl.miner;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.render.ICubeRenderer;
+import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
