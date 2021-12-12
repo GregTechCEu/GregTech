@@ -165,8 +165,8 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         this.currentTemperature = 0; //reset temperature
         this.fuelBurnTicksLeft = 0;
         this.hasNoWater = false;
-        this.isActive = false;
         this.throttlePercentage = 100;
+        setActive(false);
         replaceFireboxAsActive(false);
     }
 
@@ -232,10 +232,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         this.lastTickSteamOutput = 0;
         if (currentTemperature >= BOILING_TEMPERATURE) {
             boolean doWaterDrain = getOffsetTimer() % 20 == 0;
-            FluidStack drainedWater = fluidImportInventory.drain(Materials.Water.getFluid(1), doWaterDrain);
-            if (drainedWater == null || drainedWater.amount == 0) {
-                drainedWater = fluidImportInventory.drain(Materials.DistilledWater.getFluid(1), doWaterDrain);
-            }
+            FluidStack drainedWater = ModHandler.getWaterFromContainer(fluidImportInventory, doWaterDrain);
             if (drainedWater != null && drainedWater.amount > 0) {
                 if (currentTemperature > BOILING_TEMPERATURE && hasNoWater) {
                     float explosionPower = currentTemperature / (float) BOILING_TEMPERATURE * 2.0f;
@@ -437,8 +434,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     protected ICubeRenderer getFrontOverlay() {
         return boilerType.frontOverlay;
     }
-
-
 
     private boolean isFireboxPart(IMultiblockPart sourcePart) {
         return isStructureFormed() && (((MetaTileEntity) sourcePart).getPos().getY() < getPos().getY());

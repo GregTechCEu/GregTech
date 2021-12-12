@@ -190,7 +190,14 @@ public class OreDictUnifier {
             }
         }
         ItemMaterialInfo info = materialUnificationInfo.get(simpleItemStack);
-        return info == null ? null : info.material.copy();
+        return info == null ? null : info.getMaterial().copy();
+    }
+
+    @Nullable
+    public static ItemMaterialInfo getMaterialInfo(ItemStack itemStack) {
+        if (itemStack.isEmpty()) return null;
+        ItemAndMetadata simpleItemStack = new ItemAndMetadata(itemStack);
+        return materialUnificationInfo.get(simpleItemStack);
     }
 
     @Nullable
@@ -239,7 +246,8 @@ public class OreDictUnifier {
 
     public static ItemStack get(String oreDictName) {
         List<ItemStack> itemStacks = oreDictNameStacks.get(oreDictName);
-        return itemStacks.size() > 0 ? itemStacks.get(0).copy() : ItemStack.EMPTY;
+        if (itemStacks == null || itemStacks.size() == 0) return ItemStack.EMPTY;
+        return itemStacks.get(0).copy();
     }
 
     public static List<Entry<ItemStack, ItemMaterialInfo>> getAllItemInfos() {
@@ -267,7 +275,6 @@ public class OreDictUnifier {
         return ItemStack.EMPTY;
     }
 
-
     public static ItemStack getDust(MaterialStack materialStack) {
         return getDust(materialStack.material, materialStack.amount);
     }
@@ -275,11 +282,31 @@ public class OreDictUnifier {
     public static ItemStack getIngot(Material material, long materialAmount) {
         if (!material.hasProperty(PropertyKey.INGOT) || materialAmount <= 0)
             return ItemStack.EMPTY;
+        if (materialAmount % (M * 9) == 0)
+            return get(OrePrefix.block, material, (int) (materialAmount / (M * 9)));
         if (materialAmount % M == 0 || materialAmount >= M * 16)
             return get(OrePrefix.ingot, material, (int) (materialAmount / M));
         else if ((materialAmount * 9) >= M)
             return get(OrePrefix.nugget, material, (int) ((materialAmount * 9) / M));
         return ItemStack.EMPTY;
+    }
+
+    public static ItemStack getIngot(MaterialStack materialStack) {
+        return getIngot(materialStack.material, materialStack.amount);
+    }
+
+    /**
+     * Returns an Ingot of the material if it exists. Otherwise it returns a Dust.
+     * Returns ItemStack.EMPTY if neither exist.
+     */
+    public static ItemStack getIngotOrDust(Material material, long materialAmount) {
+        ItemStack ingotStack = getIngot(material, materialAmount);
+        if (ingotStack != ItemStack.EMPTY) return ingotStack;
+        return getDust(material, materialAmount);
+    }
+
+    public static ItemStack getIngotOrDust(MaterialStack materialStack) {
+        return getIngotOrDust(materialStack.material, materialStack.amount);
     }
 
     synchronized private static <T> void addAndSort(List<T> list, T itemToAdd, Comparator<T> comparator) {

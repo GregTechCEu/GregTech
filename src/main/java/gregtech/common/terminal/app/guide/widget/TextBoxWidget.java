@@ -68,13 +68,13 @@ public class TextBoxWidget extends GuideWidget {
 
     @Override
     public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
-        super.loadConfigurator(group, config, isFixed, needUpdate);
-        group.addWidget(new NumberConfigurator(group, config, "space", 1).setOnUpdated(needUpdate));
-        group.addWidget(new NumberConfigurator(group, config, "fontSize", 9).setOnUpdated(needUpdate));
-        group.addWidget(new ColorConfigurator(group, config, "fontColor", 0xff000000).setOnUpdated(needUpdate));
-        group.addWidget(new BooleanConfigurator(group, config, "isShadow", false).setOnUpdated(needUpdate));
-        group.addWidget(new BooleanConfigurator(group, config, "isCenter", false).setOnUpdated(needUpdate));
         group.addWidget(new TextListConfigurator(group, 200, config, "content").setOnUpdated(needUpdate));
+        group.addWidget(new BooleanConfigurator(group, config, "isCenter", false).setOnUpdated(needUpdate));
+        group.addWidget(new NumberConfigurator(group, config, "fontSize", 9).setOnUpdated(needUpdate));
+        group.addWidget(new BooleanConfigurator(group, config, "isShadow", false).setOnUpdated(needUpdate));
+        group.addWidget(new ColorConfigurator(group, config, "fontColor", 0xff000000).setOnUpdated(needUpdate));
+        group.addWidget(new NumberConfigurator(group, config, "space", 1).setOnUpdated(needUpdate));
+        super.loadConfigurator(group, config, isFixed, needUpdate);
     }
 
     @Override

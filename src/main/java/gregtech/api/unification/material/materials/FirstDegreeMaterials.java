@@ -1324,7 +1324,7 @@ public class FirstDegreeMaterials {
                 .color(0xFFFFFF).iconSet(BRIGHT)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Ruthenium, 1, Trinium, 2, Americium, 1, Neutronium, 2, Oxygen, 8)
-                .cableProperties(GTValues.V[GTValues.MAX], 24, 0, true)
+                .cableProperties(GTValues.V[GTValues.UHV], 24, 0, true)
                 .blastTemp(10800, GasTier.HIGHER)
                 .build();
 

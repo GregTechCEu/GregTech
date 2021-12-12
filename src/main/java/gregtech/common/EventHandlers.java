@@ -7,10 +7,9 @@ import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.net.KeysPacket;
 import gregtech.api.net.NetworkHandler;
+import gregtech.api.net.packets.PacketKeysPressed;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.Key;
 import gregtech.api.util.input.KeyBinds;
@@ -146,7 +145,9 @@ public class EventHandlers {
                     needNewPacket = true;
                 }
             }
-            if (needNewPacket) NetworkHandler.INSTANCE.sendToServer(new KeysPacket(KeyBinds.REGISTRY));
+            if (needNewPacket) {
+                NetworkHandler.channel.sendToServer(new PacketKeysPressed(KeyBinds.REGISTRY).toFMLPacket());
+            }
         }
     }
 

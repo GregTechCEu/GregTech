@@ -36,13 +36,13 @@ public class ItemGuideApp extends GuideApp<ItemGuideApp.GuideItem> {
     }
 
     @Override
-    protected GuideItem ofJson(JsonObject json) {
+    public GuideItem ofJson(JsonObject json) {
         return GuideItem.ofJson(json);
     }
 
     public static class GuideItem {
-        private final ItemStack stack;
-        private final String name;
+        public final ItemStack stack;
+        public final String name;
 
         public GuideItem(ItemStack stack, String name) {
             this.stack = stack;
@@ -61,7 +61,7 @@ public class ItemGuideApp extends GuideApp<ItemGuideApp.GuideItem> {
             if (json.has("item")) {
                 JsonElement element = json.get("item");
                 if (element.isJsonPrimitive()) {
-                    String[] s = json.getAsString().split(":");
+                    String[] s = element.getAsString().split(":");
                     if (s.length < 2) return null;
                     Item item = Item.getByNameOrId(s[0] + ":" + s[1]);
                     if (item == null) return null;

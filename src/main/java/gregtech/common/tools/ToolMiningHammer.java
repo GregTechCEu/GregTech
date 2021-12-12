@@ -161,6 +161,9 @@ public class ToolMiningHammer extends ToolBase {
     }
 
     private static BlockPos rotate(BlockPos origin, int x, int y, EnumFacing sideHit, EnumFacing horizontalFacing) {
+        if (sideHit == null) {
+            return BlockPos.ORIGIN;
+        }
         switch (sideHit.getAxis()) {
             case X:
                 return origin.add(0, y, x);

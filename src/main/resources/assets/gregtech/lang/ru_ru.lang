@@ -2318,7 +2318,7 @@ gregtech.machine.item_bus.import.iv.name=Входной люк (IV)
 gregtech.machine.item_bus.import.luv.name=Входной люк (LuV)
 gregtech.machine.item_bus.import.zpm.name=Входной люк (ZPM)
 gregtech.machine.item_bus.import.uv.name=Входной люк (UV)
-gregtech.machine.item_bus.import.max.name=Входной люк (Макс.)
+gregtech.machine.item_bus.import.uhv.name=Входной люк (UHV)
 
 gregtech.machine.item_bus.export.tooltip=Выдает готовые предметы из агрегата
 
@@ -2331,7 +2331,7 @@ gregtech.machine.item_bus.export.iv.name=Выходной люк IV)
 gregtech.machine.item_bus.export.luv.name=Выходной люк (LuV)
 gregtech.machine.item_bus.export.zpm.name=Выходной люк (ZPM)
 gregtech.machine.item_bus.export.uv.name=Выходной люк (UV)
-gregtech.machine.item_bus.export.max.name=Выходной люк (Макс.)
+gregtech.machine.item_bus.export.uhv.name=Выходной люк (UHV)
 
 gregtech.machine.fluid_hatch.import.tooltip=Для подачи жидкости в агрегат
 
@@ -2344,7 +2344,7 @@ gregtech.machine.fluid_hatch.import.iv.name=Жидкостный входной 
 gregtech.machine.fluid_hatch.import.luv.name=Жидкостный входной люк (LuV)
 gregtech.machine.fluid_hatch.import.zpm.name=Жидкостный входной люк (ZPM)
 gregtech.machine.fluid_hatch.import.uv.name=Жидкостный входной люк (UV)
-gregtech.machine.fluid_hatch.import.max.name=Жидкостный входной люк (Макс.)
+gregtech.machine.fluid_hatch.import.uhv.name=Жидкостный входной люк (UHV)
 
 gregtech.machine.fluid_hatch.export.tooltip=Для слива жидкости из агрегата
 
@@ -2357,7 +2357,7 @@ gregtech.machine.fluid_hatch.export.iv.name=Жидкостный выходно�
 gregtech.machine.fluid_hatch.export.luv.name=Жидкостный выходной люк (LuV)
 gregtech.machine.fluid_hatch.export.zpm.name=Жидкостный выходной люк (ZPM)
 gregtech.machine.fluid_hatch.export.uv.name=Жидкостный выходной люк (UV)
-gregtech.machine.fluid_hatch.export.max.name=Жидкостный выходной люк (Макс.)
+gregtech.machine.fluid_hatch.export.uhv.name=Жидкостный выходной люк (UHV)
 
 gregtech.machine.energy_hatch.input.tooltip=Разъем для подключения кабелей к агрегату
 

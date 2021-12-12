@@ -1,0 +1,81 @@
+{
+  "section": "CraftTweaker/Material",
+  "title": "Modify Existing Materials",
+  "stream": [
+    {
+      "type": "textbox",
+      "fontSize": 9,
+      "content": [
+        "You can get Materials by the §lMaterialRegistry§r."
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "element",
+      "content": [
+        "1. §9Getters"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "ct",
+      "content": [
+        "2. §9Setters"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "element",
+      "content": [
+        "§c§lGetters:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        " §l○§r §o§nMaterialRegistry.get(String materialName)§r get §nMaterial§r by name.\n\n §l○§r §o§nMaterialRegistry.getAllMaterials()§r get §nMaterial§r List.\n\n §l○§r §o§ngetChemicalFormula()§r get default formula.\n\n §l○§r §o§nmaterialRGB§r get default materialRGB.\n\n §l○§r §o§nradioactive§r get default radioactive.\n\n §l○§r §o§nprotons§r get default protons.\n\n §l○§r §o§nneutrons§r get default neutrons.\n\n §l○§r §o§nmass§r get default mass.\n\n §l○§r §o§naverageProtons§r get default averageProtons.\n\n §l○§r §o§naverageNeutrons§r get default averageNeutrons.\n\n §l○§r §o§naverageMass§r get default averageMass.\n\n §l○§r §o§nblastTemperature§r get default blastTemperature.\n\n §l○§r §o§ncamelCaseName§r get default camelCaseName.\n\n §l○§r §o§nunlocalizedName§r get default unlocalizedName.\n\n §l○§r §o§nlocalizedName§r get default localizedName.\n\n §l○§r §o§nname§r get default name."
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "ct",
+      "content": [
+        "§c§lSetters:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        " §l○§r §o§nsetFormula(String formula, @Optional boolean withFormatting)§r Set the formula of this Material.\n\n §l○§r §o§naddFlags(String... names)§r Add additional flags to this Material.\n\n §l○§r §o§nsetMaterialRGB(int materialRGB)§r Set the color of this Material.\n\n §l○§r §o§nsetFormula(String formula, @Optional boolean withFormatting)§r Set the formula of this Material."
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "stroke": 687800320,
+      "stroke_width": 3,
+      "fill": 687800320,
+      "content": [
+        "§5\n§r§8#loader gregtech§r§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0MaterialRegistry§r§5;§r§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0Material§r§5;§r§5\n§r§5\n§r§9var§r§5 §r§0gold§r§5 §r§5\u003d§r§5 §r§0MaterialRegistry§r§5.§r§0get§r§5(§r§2\"gold\"§r§5)§r§5;§r§5\n§r§9var§r§5 §r§0name§r§5 §r§5\u003d§r§5 §r§0gold§r§5.§r§0name§r§5;§r§5 §r§8// \"gold\"§r§5\n§r§9var§r§5 §r§0color§r§5 §r§5\u003d§r§5 §r§0gold§r§5.§r§0materialRGB§r§5;§r§5 §r§8// 0xFFE650§r§5\n§r§0gold§r§5.§r§0setFormula§r§5(§r§2\"AggA\"§r§5)§r§5;§r§5 §r§8// set formula§r§5\n§r§9var§r§5 §r§0formula§r§5 §r§5\u003d§r§5 §r§0gold§r§5.§r§0getChemicalFormula§r§5(§r§5)§r§5;§r§5 §r§8// \"AggA\"§r§5\n§r§0gold§r§5.§r§0addFlag§r§5(§r§2\"generate_long_rod\"§r§5,§r§5 §r§2\"generate_gear\"§r§5)§r§5;§r§5 §r§8// add gold long rod, add gold gear§r§5\n§r"
+      ]
+    }
+  ],
+  "fixed": []
+}

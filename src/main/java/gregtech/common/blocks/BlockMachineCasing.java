@@ -36,7 +36,7 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
         for (MachineCasingType variant : VALUES) {
-            if (variant == MachineCasingType.MAX || variant.ordinal() < MachineCasingType.UHV.ordinal() || GTValues.HT) {
+            if (variant.ordinal() <= MachineCasingType.UHV.ordinal() || GTValues.HT) {
                 list.add(getItemVariant(variant));
             }
         }
@@ -76,7 +76,5 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
         private static String makeName(String voltageName) {
             return String.join("_", voltageName.toLowerCase().split(" "));
         }
-
     }
-
 }

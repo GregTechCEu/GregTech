@@ -39,6 +39,7 @@ public class GuidePageWidget extends DraggableScrollableWidgetGroup {
                 .setYScrollBarWidth(4)
                 .setYBarStyle(new ColorRectTexture(new Color(142, 142, 142)),
                         new ColorRectTexture(new Color(148, 226, 193)));
+        this.setUseScissor(false);
 
     }
 

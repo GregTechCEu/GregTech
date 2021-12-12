@@ -1,30 +1,45 @@
 package gregtech.common.terminal.app.guideeditor.widget;
 
 import com.google.gson.JsonObject;
+import gregtech.api.GregTechAPI;
+import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.gui.widgets.tab.IGuiTextureTabInfo;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.terminal.TerminalRegistry;
-import gregtech.api.util.FileUtility;
-import gregtech.common.terminal.app.guide.widget.GuidePageWidget;
-import gregtech.common.terminal.app.guide.widget.IGuideWidget;
-import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
+import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.CustomTabListRenderer;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
+import gregtech.api.terminal.gui.widgets.SelectorWidget;
 import gregtech.api.terminal.gui.widgets.TextEditorWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalTheme;
+import gregtech.api.util.FileUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.common.inventory.handlers.SingleItemStackHandler;
+import gregtech.common.terminal.app.guide.GuideApp;
+import gregtech.common.terminal.app.guide.ItemGuideApp;
+import gregtech.common.terminal.app.guide.MultiBlockGuideApp;
+import gregtech.common.terminal.app.guide.SimpleMachineGuideApp;
+import gregtech.common.terminal.app.guide.widget.GuidePageWidget;
+import gregtech.common.terminal.app.guide.widget.IGuideWidget;
+import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.awt.*;
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
     public String json;
@@ -35,10 +50,16 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
     private final DraggableScrollableWidgetGroup widgetConfigurator;
     private final CircleButtonWidget[] addButton;
     private final GuideEditorApp app;
+    private final IItemHandlerModifiable handler;
+    private final List<String> candidates;
+    private String type;
 
     public GuideConfigEditor(int x, int y, int width, int height, GuideEditorApp app) {
         super(x, y + 10, new CustomTabListRenderer(TerminalTheme.COLOR_F_2, TerminalTheme.COLOR_B_3, 30, 10));
         setSize(new Size(width, height));
+        candidates = TerminalRegistry.getAllApps().stream().filter(GuideApp.class::isInstance).map(AbstractApplication::getUnlocalizedName).collect(Collectors.toList());
+        type = candidates.get(candidates.size() - 1);
+        handler = new SingleItemStackHandler(1);
         addButton = new CircleButtonWidget[2];
         widgetSelector = createWidgetSelector();
         widgetConfigurator = createConfigurator();
@@ -98,9 +119,20 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
                 .setTextSupplier(()-> getPageEditor().getSection(), true)
                 .setMaxStringLength(Integer.MAX_VALUE)
                 .setValidator(s->true));
-        group.addWidget(new ImageWidget(5, 48,116, 1, new ColorRectTexture(-1)));
-        group.addWidget(new LabelWidget(5, 55, "title", -1).setShadow(true));
-        titleEditor = new TextEditorWidget(5, 65, 116, 70, s->{
+        group.addWidget(new ImageWidget(5, 40,116, 1, new ColorRectTexture(-1)));
+        group.addWidget(new LabelWidget(5, 45, "type", -1).setShadow(true));
+
+        group.addWidget(new SelectorWidget(30, 55, 91, 20, candidates, -1,
+                ()->type, true).setIsUp(true)
+                .setOnChanged(type-> this.type = type)
+                .setColors(TerminalTheme.COLOR_B_2.getColor(), TerminalTheme.COLOR_F_1.getColor(), TerminalTheme.COLOR_B_2.getColor())
+                .setBackground(TerminalTheme.COLOR_6));
+        group.addWidget(new PhantomSlotWidget(handler, 0, 6, 56).setBackgroundTexture(TerminalTheme.COLOR_B_2));
+
+        group.addWidget(new ImageWidget(5, 80,116, 1, new ColorRectTexture(-1)));
+
+        group.addWidget(new LabelWidget(5, 85, "title", -1).setShadow(true));
+        titleEditor = new TextEditorWidget(5, 95, 116, 70, s->{
             if (pageEditor != null) {
                 pageEditor.setTitle(s);
             }
@@ -141,7 +173,12 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
     public void loadConfigurator(IGuideWidget widget) {
         widgetConfigurator.clearAllWidgets();
         if (widget != null) {
-            widget.loadConfigurator(widgetConfigurator, widget.getConfig(), widget.isFixed(), widget::updateValue);
+            widget.loadConfigurator(widgetConfigurator, widget.getConfig(), widget.isFixed(), type->{
+                widget.updateValue(type);
+                if (pageEditor != null) {
+                    pageEditor.computeMax();
+                }
+            });
             widgetConfigurator.addWidget(new WidgetGroup(new Position(5, widgetConfigurator.getWidgetBottomHeight() + 5), Size.ZERO));
         }
     }
@@ -152,6 +189,8 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
                 pageEditor.loadJsonConfig("{\"section\":\"default\",\"title\":\"Template\",\"stream\":[],\"fixed\":[]}");
                 getPageEditor().setSection("default");
                 updateTitle("Template");
+                type = candidates.get(candidates.size() - 1);
+                handler.setStackInSlot(0, ItemStack.EMPTY);
             }
         }).setClientSide().open();
     }
@@ -166,6 +205,24 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
                        pageEditor.loadJsonConfig(config);
                        getPageEditor().setSection(config.get("section").getAsString());
                        updateTitle(config.get("title").getAsString());
+                       for (AbstractApplication app : TerminalRegistry.getAllApps()) {
+                           if (app instanceof GuideApp) {
+                               Object object = ((GuideApp<?>) app).ofJson(config);
+                               if (object != null) {
+                                   type = app.getUnlocalizedName();
+                                   if (object instanceof ItemGuideApp.GuideItem) {
+                                       handler.setStackInSlot(0, ((ItemGuideApp.GuideItem) object).stack.copy());
+                                   } else if (object instanceof MetaTileEntity) {
+                                       handler.setStackInSlot(0, ((MetaTileEntity) object).getStackForm());
+                                   } else if (object instanceof ItemStack) {
+                                       handler.setStackInSlot(0, ((ItemStack) object).copy());
+                                   } else {
+                                       handler.setStackInSlot(0, ItemStack.EMPTY);
+                                   }
+                                   break;
+                               }
+                           }
+                       }
                    } catch (Exception e) {
                        TerminalDialogWidget.showInfoDialog(app.getOs(), "terminal.component.error", "terminal.component.load_file.error").setClientSide().open();
                    }
@@ -179,12 +236,39 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
             File file = new File(TerminalRegistry.TERMINAL_PATH,"guide");
             TerminalDialogWidget.showFileDialog(app.getOs(), "terminal.component.save_file", file, false, result->{
                 if (result != null) {
-                    if(!FileUtility.saveJson(result, pageEditor.getJsonConfig())) {
+                    if(!FileUtility.saveJson(result, saveType(pageEditor.getJsonConfig()))) {
                         TerminalDialogWidget.showInfoDialog(app.getOs(), "terminal.component.error", "terminal.component.save_file.error").setClientSide().open();
                     }
                 }
             }).setClientSide().open();
         }
+    }
+
+    private JsonObject saveType(JsonObject jsonObject) {
+        ItemStack stack = handler.getStackInSlot(0);
+        for (AbstractApplication app : TerminalRegistry.getAllApps()) {
+            if (app instanceof GuideApp) {
+                if (type.equals(app.getUnlocalizedName())) {
+                    if (app instanceof ItemGuideApp) {
+                        if (stack.isEmpty()) {
+                            TerminalDialogWidget.showInfoDialog(app.getOs(), "terminal.component.warning", "terminal.guide_editor.error_type").setClientSide().open();
+                        } else {
+                            jsonObject.addProperty("item", Item.REGISTRY.getNameForObject(stack.getItem()).toString() + ":" + stack.getMetadata());
+                        }
+                    } else if ((app instanceof MultiBlockGuideApp || app instanceof SimpleMachineGuideApp)
+                            && stack.getItem() instanceof MachineItemBlock) {
+                        MetaTileEntity mte = GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
+                        if (mte != null) {
+                            jsonObject.addProperty("metatileentity", GregTechAPI.MTE_REGISTRY.getNameForObject(mte).getPath());
+                        } else {
+                            TerminalDialogWidget.showInfoDialog(app.getOs(), "terminal.component.warning", "terminal.guide_editor.error_type").setClientSide().open();
+                        }
+                    }
+                    return jsonObject;
+                }
+            }
+        }
+        return jsonObject;
     }
 
     private void addFixed(ClickData data) {

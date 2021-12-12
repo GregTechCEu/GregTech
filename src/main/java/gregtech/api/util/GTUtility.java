@@ -668,6 +668,7 @@ public class GTUtility {
     }
 
     public static FluidStack copyAmount(int amount, FluidStack fluidStack) {
+        if (fluidStack == null) return null;
         FluidStack stack = fluidStack.copy();
         stack.amount = amount;
         return stack;
@@ -1035,5 +1036,4 @@ public class GTUtility {
     public static double getMeanTickTime(@Nonnull World world) {
         return mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
     }
-
 }

@@ -3364,7 +3364,7 @@ tile.hermetic_casing.hermetic_casing_iv.name=Hermetic Casing V
 tile.hermetic_casing.hermetic_casing_luv.name=Hermetic Casing VI
 tile.hermetic_casing.hermetic_casing_zpm.name=Hermetic Casing VII
 tile.hermetic_casing.hermetic_casing_uv.name=Hermetic Casing VIII
-tile.hermetic_casing.hermetic_casing_max.name=Hermetic Casing IX
+tile.hermetic_casing.hermetic_casing_uhv.name=Hermetic Casing IX
 
 #Gas Collectors
 gregtech.machine.gas_collector.lv.name=Basic Gas Collector
@@ -3739,7 +3739,7 @@ gregtech.machine.item_bus.import.iv.name=IV Input Bus
 gregtech.machine.item_bus.import.luv.name=LuV Input Bus
 gregtech.machine.item_bus.import.zpm.name=ZPM Input Bus
 gregtech.machine.item_bus.import.uv.name=UV Input Bus
-gregtech.machine.item_bus.import.max.name=MAX Input Bus
+gregtech.machine.item_bus.import.uhv.name=UHV Input Bus
 
 gregtech.machine.item_bus.export.tooltip=Item Output for Multiblocks
 
@@ -3752,7 +3752,7 @@ gregtech.machine.item_bus.export.iv.name=IV Output Bus
 gregtech.machine.item_bus.export.luv.name=LuV Output Bus
 gregtech.machine.item_bus.export.zpm.name=ZPM Output Bus
 gregtech.machine.item_bus.export.uv.name=UV Output Bus
-gregtech.machine.item_bus.export.max.name=MAX Output Bus
+gregtech.machine.item_bus.export.uhv.name=UHV Output Bus
 
 gregtech.machine.fluid_hatch.import.tooltip=Fluid Input for Multiblocks
 
@@ -3765,7 +3765,7 @@ gregtech.machine.fluid_hatch.import.iv.name=IV Input Hatch
 gregtech.machine.fluid_hatch.import.luv.name=LuV Input Hatch
 gregtech.machine.fluid_hatch.import.zpm.name=ZPM Input Hatch
 gregtech.machine.fluid_hatch.import.uv.name=UV Input Hatch
-gregtech.machine.fluid_hatch.import.max.name=MAX Input Hatch
+gregtech.machine.fluid_hatch.import.uhv.name=UHV Input Hatch
 
 gregtech.machine.fluid_hatch.export.tooltip=Fluid Output for Multiblocks
 
@@ -3785,7 +3785,7 @@ gregtech.machine.fluid_hatch.export.iv.name=IV Output Hatch
 gregtech.machine.fluid_hatch.export.luv.name=LuV Output Hatch
 gregtech.machine.fluid_hatch.export.zpm.name=ZPM Output Hatch
 gregtech.machine.fluid_hatch.export.uv.name=UV Output Hatch
-gregtech.machine.fluid_hatch.export.max.name=MAX Output Hatch
+gregtech.machine.fluid_hatch.export.uhv.name=UHV Output Hatch
 
 gregtech.machine.energy_hatch.input.tooltip=Energy Input for Multiblocks
 
@@ -3962,6 +3962,12 @@ gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
+gregtech.gui.fluid_lock.tooltip.enabled=Fluid Locking Enabled
+gregtech.gui.fluid_lock.tooltip.disabled=Fluid Locking Disabled
+gregtech.gui.fluid_voiding_partial.tooltip.enabled=Fluid Voiding (Above %d%%) Enabled
+gregtech.gui.fluid_voiding_partial.tooltip.disabled=Fluid Voiding (Above %d%%) Disabled
+gregtech.gui.fluid_voiding_all.tooltip.enabled=Fluid Voiding (All) Enabled
+gregtech.gui.fluid_voiding_all.tooltip.disabled=Fluid Voiding (All) Disabled
 gregtech.gui.silktouch.enabled=Silk Touch Enabled: Click to Disable./n§7Switching requires an idle machine.
 gregtech.gui.silktouch.disabled=Silk Touch Disabled: Click to Enable./n§7Switching requires an idle machine.
 gregtech.gui.chunkmode.enabled=Chunk Mode Enabled: Click to Disable./n§7Switching requires an idle machine.
@@ -4215,6 +4221,7 @@ terminal.guide_editor.default=Default Value
 terminal.guide_editor.page_config=Page Config
 terminal.guide_editor.widgets_box=Widgets Box
 terminal.guide_editor.widget_config=Widget Config
+terminal.guide_editor.error_type=Item types do not match and will still be saved, but will not be seen in app.
 
 terminal.settings.description=The system settings for GTOS.
 terminal.settings.theme=Theme

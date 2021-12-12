@@ -1,0 +1,207 @@
+{
+  "section": "指南页控件API",
+  "title": "2. 图片控件",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "我们将学习实用的§4§l图片控件§r。这里支持三种不同形式的图像:§4Url§r, §4Item§r, and §4ResourceLocation§r。别担心，一切都很容易。",
+        "-------------------------------",
+        "§l控件类型标识§r: §nimage§r",
+        "-------------------------------",
+        "§lJSON§r:",
+        "{",
+        "  \"type\": \"image\",",
+        "  \"form\": \"Item\",",
+        "  \"source\": \"minecraft:ender_pearl\",",
+        "  \"width\": 100,",
+        "  \"height\": 100",
+        "}",
+        "-------------------------------",
+        "§l目录§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "form",
+      "content": [
+        "    1.§nform§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "source",
+      "content": [
+        "    2.§nsource§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "wh",
+      "content": [
+        "    3.§nwidth, height§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "form",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nform§r (§4必须§r)",
+        "§l类型§r: String",
+        "§l说明§r: 它只能是 §4Url§r, §4Item§r, 或 §4ResourceLocation§r中的一个。",
+        "    \"url\" -- image url.",
+        "    \"item\" -- The registered name of the Item in game.",
+        "    \"resource\" -- The resource location."
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§l示例§r: \"url\""
+      ]
+    },
+    {
+      "type": "image",
+      "hover_text": ["https://z3.ax1x.com/2021/07/29/Wb4Djs.gif"],
+      "form": "url",
+      "source": "https://z3.ax1x.com/2021/07/29/Wb4Djs.gif",
+      "stroke": 4278190080,
+      "stroke_width": 2,
+      "width": 100,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§l示例§r: \"item\""
+      ]
+    },
+    {
+      "type": "image",
+      "hover_text": ["minecraft:ender_pearl"],
+      "form": "item",
+      "source": "minecraft:ender_pearl",
+      "width": 100,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§l示例§r: \"resource\""
+      ]
+    },
+    {
+      "type": "image",
+      "hover_text": ["gregtech:textures/gui/icon/coke_oven.png"],
+      "form": "resource",
+      "source": "gregtech:textures/gui/icon/coke_oven.png",
+      "width": 100,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "ref": "source",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nsource§r (§4必须§r)",
+        "§l类型§r: String",
+        "§l说明§r: The source of the picture. The three images above correspond to the following sources:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§l示例§r: \"https://z3.ax1x.com/2021/07/29/Wb4Djs.gif\""
+      ]
+    },
+    {
+      "type": "image",
+      "hover_text": ["https://z3.ax1x.com/2021/07/29/Wb4Djs.gif"],
+      "form": "url",
+      "source": "https://z3.ax1x.com/2021/07/29/Wb4Djs.gif",
+      "stroke": 4278190080,
+      "stroke_width": 2,
+      "width": 100,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§l示例§r: \"minecraft:ender_pearl\""
+      ]
+    },
+    {
+      "type": "image",
+      "hover_text": ["minecraft:ender_pearl"],
+      "form": "item",
+      "source": "minecraft:ender_pearl",
+      "width": 100,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§l示例§r: \"gregtech:textures/gui/icon/coke_oven.png\""
+      ]
+    },
+    {
+      "type": "image",
+      "hover_text": ["gregtech:textures/gui/icon/coke_oven.png"],
+      "form": "resource",
+      "source": "gregtech:textures/gui/icon/coke_oven.png",
+      "width": 100,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "ref": "wh",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nwidth, height§r (§4必须§r)",
+        "§l类型§r: Integer",
+        "§l说明§r: 图片尺寸。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§l示例§r: \"50, 50\""
+      ]
+    },
+    {
+      "type": "image",
+      "hover_text": ["minecraft:ender_pearl"],
+      "form": "item",
+      "source": "minecraft:ender_pearl",
+      "width": 50,
+      "height": 50
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§l示例§r: \"100， 50\""
+      ]
+    },
+    {
+      "type": "image",
+      "hover_text": ["minecraft:ender_pearl"],
+      "form": "item",
+      "source": "minecraft:ender_pearl",
+      "width": 100,
+      "height": 50
+    }
+  ],
+  "fixed": []
+}

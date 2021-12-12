@@ -309,6 +309,13 @@ public class ReactorRecipes {
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(Chlorine.getFluid(4000))
+                .fluidInputs(Ethane.getFluid(1000))
+                .fluidOutputs(VinylChloride.getFluid(1000))
+                .fluidOutputs(HydrochloricAcid.getFluid(3000))
+                .duration(160).EUt(VA[LV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Apatite, 9)
                 .fluidInputs(SulfuricAcid.getFluid(5000))
                 .fluidInputs(Water.getFluid(10000))

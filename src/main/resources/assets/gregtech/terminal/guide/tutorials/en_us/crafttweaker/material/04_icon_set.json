@@ -1,0 +1,59 @@
+{
+  "section": "CraftTweaker/Material",
+  "title": "MaterialIconSet",
+  "stream": [
+    {
+      "type": "textbox",
+      "fontSize": 9,
+      "content": [
+        "The §lMaterialIconSet§r will determine the appearance of the material."
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "element",
+      "content": [
+        "§rAvailable MaterialIconSet are:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§l\"NONE\", \"METALLIC\", \"DULL\", \"MAGNETIC\", \"QUARTZ\", \"DIAMOND\", \"EMERALD\", \"SHINY\", \"ROUGH\", \"FINE\", \"SAND\", \"FLINT\", \"RUBY\",  \"LAPIS\", \"FLUID\", \"GAS\", \"LIGNITE\", \"OPAL\", \"GLASS\", \"WOOD\", \"GEM_HORIZONTAL\", \"GEM_VERTICAL\", \"PAPER\", \"NETHERSTAR\", \"BRIGHT\"§r."
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "ct",
+      "content": [
+        "For example, the following figure shows the appearance of ores with different Materialiconsets."
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/143435701-058dcfea-ea35-4976-a7ba-7901fa791e36.png",
+      "width": 190,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    }
+  ],
+  "fixed": []
+}
