@@ -3,15 +3,9 @@ package gregtech.api.recipes.builders;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.recipes.FuelRecipe2;
 import gregtech.api.util.ValidationResult;
-import net.minecraftforge.fluids.FluidStack;
-
-import java.util.HashMap;
 
 public class FuelRecipeBuilder extends RecipeBuilder<FuelRecipeBuilder> {
-
-    private final HashMap<FluidStack, Integer[]> boostFluids = new HashMap<>();
 
     public FuelRecipeBuilder() {
 
@@ -35,13 +29,8 @@ public class FuelRecipeBuilder extends RecipeBuilder<FuelRecipeBuilder> {
         return super.EUt(EUt * -1);
     }
 
-    public FuelRecipeBuilder boostFluid(FluidStack fluidStack, int duration, int boostFactor) {
-        boostFluids.put(fluidStack, new Integer[]{duration, boostFactor});
-        return this;
-    }
-
     public ValidationResult<Recipe> build() {
         return ValidationResult.newResult(finalizeAndValidate(),
-                new FuelRecipe2(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, boostFluids, duration, EUt, hidden));
+                new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden));
     }
 }

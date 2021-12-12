@@ -213,10 +213,10 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    protected boolean drawEnergy(int recipeEUt) {
+    protected boolean drawEnergy(int recipeEUt, boolean simulate) {
         int resultDraw = (int) Math.ceil(recipeEUt / conversionRate);
         return resultDraw >= 0 && steamFluidTank.getFluidAmount() >= resultDraw &&
-                steamFluidTank.drain(resultDraw, true) != null;
+                steamFluidTank.drain(resultDraw, !simulate) != null;
     }
 
     @Override
