@@ -1,5 +1,6 @@
 package gregtech.common.blocks;
 
+import gregtech.api.GTValues;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -62,8 +63,7 @@ public class BlockSurfaceRock extends Block {
 
     @Override
     public void getDrops(NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
-        Random rand = new Random();
-        int amount = 3 + rand.nextInt((int) (2 + fortune * 1.5));
+        int amount = 3 + GTValues.RNG.nextInt((int) (2 + fortune * 1.5));
         drops.add(getDropStack(world, pos, state, amount));
     }
 
