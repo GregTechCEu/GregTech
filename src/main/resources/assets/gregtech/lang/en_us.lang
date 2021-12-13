@@ -937,10 +937,6 @@ metaitem.liquid_fuel_jetpack.name=Liquid-Fueled Jetpack
 metaitem.liquid_fuel_jetpack.tooltip=Uses Combustion Generator Fuels for Thrust
 metaitem.impeller_jetpack.name=Thruster Jetpack
 metaitem.advanced_impeller_jetpack.name=Advanced Thruster Jetpack
-metaitem.battery_pack.lv.name=Battery Pack (§eLV§r)
-metaitem.battery_pack.mv.name=Battery Pack (§eMV§r)
-metaitem.battery_pack.hv.name=Battery Pack (§eHV§r)
-
 metaitem.nightvision_goggles.name=NightVision Goggles
 
 metaitem.nms.chestplate.name=NanoMuscle™ Suite Chestplate

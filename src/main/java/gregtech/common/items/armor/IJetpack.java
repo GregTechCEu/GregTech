@@ -1,13 +1,13 @@
 package gregtech.common.items.armor;
 
 import gregtech.api.items.armor.ArmorUtils;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -105,8 +105,9 @@ public interface IJetpack {
                         player.moveRelative(speedSideways, 0, 0, speedSideways);
                     if (ArmorUtils.isKeyDown(player, EnumKey.RIGHT))
                         player.moveRelative(-speedSideways, 0, 0, speedSideways);
-                    if (!player.getEntityWorld().isRemote)
-                        player.fallDistance -= getFallDamageReduction();
+                    if (!player.getEntityWorld().isRemote) {
+                        player.fallDistance = 0;
+                    }
                 }
                 ArmorUtils.spawnParticle(player.getEntityWorld(), player, getParticle(), -0.6D);
             }
@@ -132,20 +133,15 @@ public interface IJetpack {
         }
     }
 
-    default void performEmergencyHover(@Nonnull ItemStack stack, EntityPlayer player) {
-        NBTTagCompound data = stack.getTagCompound();
-        if (data == null)
-            return;
+    //todo this doesn't work
+    default void performEmergencyHover(@Nonnull ItemStack stack, @Nonnull EntityPlayer player) {
+        NBTTagCompound data =  GTUtility.getOrCreateNbtCompound(stack);
 
-        if (data.hasKey("flyMode"))
-            data.setBoolean("flyMode", true);
-        if (data.hasKey("hover"))
-            data.setBoolean("hover", true);
+        data.setBoolean("flyMode", true);
+        data.setBoolean("hover", true);
 
-        if (player != null) {
-            ITextComponent msg = new TextComponentTranslation("metaarmor.jetpack.emergency_hover_mode");
-            msg.setStyle(new Style().setColor(TextFormatting.RED));
-            player.sendStatusMessage(msg, true);
-        }
+        player.inventoryContainer.detectAndSendChanges();
+        player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.emergency_hover_mode")
+                .setStyle(new Style().setColor(TextFormatting.RED)), true);
     }
 }

@@ -124,7 +124,7 @@ public class AdvancedJetpack extends Jetpack {
 
     @Override
     public float getFallDamageReduction() {
-        return 3.5f;
+        return 2.0f;
     }
 
     @SideOnly(Side.CLIENT)
@@ -158,7 +158,6 @@ public class AdvancedJetpack extends Jetpack {
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
         return "gregtech:textures/armor/advanced_jetpack.png";
     }
-
 
     @Override
     public void addToolComponents(ArmorMetaItem.ArmorMetaValueItem mvi) {

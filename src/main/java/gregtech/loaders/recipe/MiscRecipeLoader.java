@@ -242,7 +242,6 @@ public class MiscRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().duration(800).EUt(400)
                 .input(circuit, Good, 4)
                 .input(circuit, Advanced)
-                .inputs(BATPACK_HV.getStackForm())
                 .inputs(IMPELLER_HV.getStackForm(6))
                 .inputs(BATTERY_HV_CADMIUM.getStackForm())
                 .input(plate, Aluminium)
@@ -250,25 +249,6 @@ public class MiscRecipeLoader {
                 .input(stick, Aluminium, 2)
                 .outputs(ADVANCED_IMPELLER_JETPACK.getStackForm())
                 .buildAndRegister();
-
-        // Battery Packs
-        ModHandler.addShapedRecipe("battery_pack.lv", BATPACK_LV.getStackForm(),
-                "BPB", "BCB", "B B",
-                'B', BATTERY_LV_LITHIUM,
-                'C', new UnificationEntry(circuit, Basic),
-                'P', new UnificationEntry(plate, Steel));
-
-        ModHandler.addShapedRecipe("battery_pack.mv", BATPACK_MV.getStackForm(),
-                "BPB", "BCB", "B B",
-                'B', BATTERY_MV_LITHIUM,
-                'C', new UnificationEntry(circuit, Good),
-                'P', new UnificationEntry(plate, Aluminium));
-
-        ModHandler.addShapedRecipe("battery_pack.hv", BATPACK_HV.getStackForm(),
-                "BPB", "BCB", "B B",
-                'B', BATTERY_HV_LITHIUM,
-                'C', new UnificationEntry(circuit, Advanced),
-                'P', new UnificationEntry(plate, StainlessSteel));
 
         // QuarkTech Suite
         ASSEMBLER_RECIPES.recipeBuilder().duration(2400).EUt(1600)

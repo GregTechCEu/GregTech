@@ -525,10 +525,6 @@ public final class MetaItems {
     public static ArmorMetaItem<?>.ArmorMetaValueItem SEMIFLUID_JETPACK;
     public static ArmorMetaItem<?>.ArmorMetaValueItem IMPELLER_JETPACK;
 
-    public static ArmorMetaItem<?>.ArmorMetaValueItem BATPACK_LV;
-    public static ArmorMetaItem<?>.ArmorMetaValueItem BATPACK_MV;
-    public static ArmorMetaItem<?>.ArmorMetaValueItem BATPACK_HV;
-
     public static ArmorMetaItem<?>.ArmorMetaValueItem ADVANCED_IMPELLER_JETPACK;
     public static ArmorMetaItem<?>.ArmorMetaValueItem ADVANCED_NANO_MUSCLE_CHESTPLATE;
     public static ArmorMetaItem<?>.ArmorMetaValueItem ADVANCED_QUARK_TECH_SUITE_CHESTPLATE;

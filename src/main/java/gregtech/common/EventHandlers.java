@@ -14,6 +14,7 @@ import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.Key;
 import gregtech.api.util.input.KeyBinds;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.armor.IJetpack;
 import gregtech.common.items.armor.PowerlessJetpack;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
@@ -157,31 +158,22 @@ public class EventHandlers {
             EntityLivingBase entity = (EntityLivingBase) event.getEntity();
             ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
             ItemStack jet = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-            final ItemStack NANO = MetaItems.NANO_MUSCLE_SUITE_BOOTS.getStackForm();
-            final ItemStack QUARK = MetaItems.QUARK_TECH_SUITE_BOOTS.getStackForm();
-            final ItemStack JET = MetaItems.IMPELLER_JETPACK.getStackForm();
-            final ItemStack ADJET = MetaItems.ADVANCED_IMPELLER_JETPACK.getStackForm();
-            final ItemStack FLUIDJET = MetaItems.SEMIFLUID_JETPACK.getStackForm();
 
+            if (!jet.isEmpty() && jet.getItem() instanceof IJetpack) {
+                event.setDamageMultiplier(1 / Math.max(0.00001f, ((IJetpack) jet.getItem()).getFallDamageReduction()));
+            }
+            ItemStack armorPiece = jet.isEmpty() ? armor : jet;
 
-            if (!(jet.isItemEqual(JET) || jet.isItemEqual(ADJET) || (jet.isItemEqual(FLUIDJET)) || armor.isItemEqual(QUARK) || armor.isItemEqual(NANO))) {
+            if (armorPiece.isEmpty())
                 return;
-            }
-            if (jet.isItemEqual(FLUIDJET)) {
-                event.setCanceled(true);
-            } else {
-                ItemStack armorPiece = jet.isEmpty() ? armor : jet;
 
-                ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) armorPiece.getItem()).getItem(armorPiece);
-                ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
-                IElectricItem item = armorPiece.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                if (item == null) return;
-                int energyCost = (armorLogic.getEnergyPerUse() * Math.round(event.getDistance()));
-                if (item.getCharge() >= energyCost) {
-                    item.discharge(energyCost, item.getTier(), true, false, false);
-                    event.setCanceled(true);
-                }
-            }
+            ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) armorPiece.getItem()).getItem(armorPiece);
+            ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
+            IElectricItem item = armorPiece.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+            if (item == null) return;
+            int energyCost = (armorLogic.getEnergyPerUse() * Math.round(event.getDistance()));
+            if (item.getCharge() >= energyCost)
+                item.discharge(energyCost, item.getTier(), true, false, false);
         }
     }
 

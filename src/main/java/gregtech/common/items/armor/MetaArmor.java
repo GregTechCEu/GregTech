@@ -1,6 +1,5 @@
 package gregtech.common.items.armor;
 
-import gregtech.api.GTValues;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
@@ -34,9 +33,5 @@ public class MetaArmor extends ArmorMetaItem<ArmorMetaItem<?>.ArmorMetaValueItem
         MetaItems.QUARK_TECH_SUITE_LEGGINGS = addItem(42, "qts.leggings").setArmorLogic(new QuarkTechSuite(EntityEquipmentSlot.LEGS, energyPerUse, maxCapacity, tier)).setRarity(EnumRarity.RARE);
         MetaItems.QUARK_TECH_SUITE_BOOTS = addItem(43, "qts.boots").setArmorLogic(new QuarkTechSuite(EntityEquipmentSlot.FEET, energyPerUse, maxCapacity, tier)).setRarity(EnumRarity.RARE);
         MetaItems.ADVANCED_QUARK_TECH_SUITE_CHESTPLATE = addItem(50, "qts.advanced_chestplate").setArmorLogic(new AdvancedQuarkTechSuite(10000, 100000000L * (long) Math.max(1, Math.pow(4, ConfigHolder.U.equipment.voltageTierAdvQuarkTech - 5)), ConfigHolder.U.equipment.voltageTierAdvQuarkTech)).setRarity(EnumRarity.EPIC);
-
-        MetaItems.BATPACK_LV = addItem(70, "battery_pack.lv").setArmorLogic(new BatteryPack(0, ConfigHolder.U.equipment.batpack.capacityLV, GTValues.LV)).setModelAmount(8);
-        MetaItems.BATPACK_MV = addItem(71, "battery_pack.mv").setArmorLogic(new BatteryPack(0, ConfigHolder.U.equipment.batpack.capacityMV, GTValues.MV)).setModelAmount(8);
-        MetaItems.BATPACK_HV = addItem(72, "battery_pack.hv").setArmorLogic(new BatteryPack(0, ConfigHolder.U.equipment.batpack.capacityHV, GTValues.HV)).setModelAmount(8);
     }
 }
