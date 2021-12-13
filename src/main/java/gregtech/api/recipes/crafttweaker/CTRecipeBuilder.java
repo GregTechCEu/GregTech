@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @ZenRegister
 public class CTRecipeBuilder {
 
-    private final RecipeBuilder<?> backingBuilder;
+    public final RecipeBuilder<?> backingBuilder;
 
     public CTRecipeBuilder(RecipeBuilder<?> backingBuilder) {
         this.backingBuilder = backingBuilder;
