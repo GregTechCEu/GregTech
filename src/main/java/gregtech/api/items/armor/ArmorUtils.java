@@ -27,10 +27,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 public class ArmorUtils {
@@ -50,24 +47,58 @@ public class ArmorUtils {
     }
 
     /**
-     * Searching in player's inventory for tool/armor item, w
+     * Searches all three player inventories for items that can be charged
      *
      * @param tier of charger
-     * @return index of slot, where is item
+     * @return Map of the inventory and a list of the index of a chargable item
      */
-    public static int getChargeableItem(EntityPlayer player, int tier) {
-        int result = -1;
+    public static Map<NonNullList<ItemStack>, List<Integer>> getChargeableItem(EntityPlayer player, int tier) {
+        Map<NonNullList<ItemStack>, List<Integer>> inventorySlotMap = new HashMap<>();
+
+        List<Integer> openMainSlots = new ArrayList<>();
         for (int i = 0; i < player.inventory.mainInventory.size(); i++) {
             ItemStack current = player.inventory.mainInventory.get(i);
             IElectricItem item = current.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
             if (item == null) continue;
 
             if (isPossibleToCharge(current) && item.getTier() <= tier) {
-                result = i;
-                break;
+                openMainSlots.add(i);
             }
         }
-        return result;
+
+        if(!openMainSlots.isEmpty()) {
+            inventorySlotMap.put(player.inventory.mainInventory, openMainSlots);
+        }
+
+
+        List<Integer> openArmorSlots = new ArrayList<>();
+        for(int i = 0; i < player.inventory.armorInventory.size(); i++) {
+            ItemStack current = player.inventory.armorInventory.get(i);
+            IElectricItem item = current.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+            if(item == null) {
+                continue;
+            }
+
+            if(isPossibleToCharge(current) && item.getTier() <= tier) {
+                openArmorSlots.add(i);
+            }
+        }
+
+        if(!openArmorSlots.isEmpty()) {
+            inventorySlotMap.put(player.inventory.armorInventory, openArmorSlots);
+        }
+
+        ItemStack offHand = player.inventory.offHandInventory.get(0);
+        IElectricItem offHandItem = offHand.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if(offHandItem == null) {
+            return inventorySlotMap;
+        }
+
+        if(isPossibleToCharge(offHand) && offHandItem.getTier() <= tier) {
+            inventorySlotMap.put(player.inventory.offHandInventory, Collections.singletonList(0));
+        }
+
+        return inventorySlotMap;
     }
 
     /**

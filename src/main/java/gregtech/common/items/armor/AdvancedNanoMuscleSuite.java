@@ -6,27 +6,26 @@ import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
-import gregtech.common.items.MetaItems;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.*;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import java.util.List;
+import java.util.*;
 
 public class AdvancedNanoMuscleSuite extends NanoMuscleSuite {
-    private int cachedSlotId = -1;
+    //A replacement for checking the current world time, to get around the gamerule that stops it
+    private long timer = 0L;
+    private Map<NonNullList<ItemStack>, List<Integer>> inventoryIndexMap;
+
 
     public AdvancedNanoMuscleSuite(int energyPerUse, long capacity, int tier) {
         super(EntityEquipmentSlot.CHEST, energyPerUse, capacity, tier);
@@ -81,46 +80,47 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite {
             }
         }
 
-        // Backpack mechanics
-        if (canShare) {
-            // Trying to find item in inventory
-            if (cachedSlotId < 0) {
-                // Do not call this method often
-                if (world.getWorldTime() % 40 == 0) {
-                    cachedSlotId = ArmorUtils.getChargeableItem(player, cont.getTier());
-                }
-            } else {
-                ItemStack cachedItem = player.inventory.mainInventory.get(cachedSlotId);
-                if (!ArmorUtils.isPossibleToCharge(cachedItem)) {
-                    cachedSlotId = -1;
-                }
+        // Charging mechanics
+        if (canShare && !world.isRemote) {
+
+            // Check for new things to charge every 5 seconds
+            if (timer % 100 == 0) {
+                inventoryIndexMap = ArmorUtils.getChargeableItem(player, cont.getTier());
             }
 
+            if(inventoryIndexMap != null && !inventoryIndexMap.isEmpty()) {
 
-            // Do neighbor armor charge
-            //todo this doesn't work
-            for (int i = 0; i < player.inventory.armorInventory.size(); i++) {
-                IElectricItem chargeable = player.inventory.armorInventory.get(i).getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                if (chargeable == null) continue;
-                if (player.inventory.armorInventory.get(i).isItemEqual(MetaItems.ADVANCED_QUARK_TECH_SUITE_CHESTPLATE.getStackForm()))
-                    continue;
-                if ((chargeable.getCharge() + chargeable.getTransferLimit() * 10) <= chargeable.getMaxCharge() && cont.canUse(chargeable.getTransferLimit() * 10) && world.getWorldTime() % 10 == 0) {
-                    long delta = chargeable.charge(chargeable.getTransferLimit() * 10, chargeable.getTier(), true, false);
-                    if (delta > 0) cont.discharge(delta, cont.getTier(), true, false, false);
-                    player.inventoryContainer.detectAndSendChanges();
-                }
-            }
+                // Charge all inventory slots
+                for(Map.Entry<NonNullList<ItemStack>, List<Integer>> inventoryMap : inventoryIndexMap.entrySet()) {
+                    Iterator<Integer> inventoryIterator = inventoryMap.getValue().iterator();
+                    while(inventoryIterator.hasNext()) {
+                        int slot = inventoryIterator.next();
+                        IElectricItem chargable = inventoryMap.getKey().get(slot).getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
 
-            // Do charge
-            if (cachedSlotId >= 0) {
-                IElectricItem chargeable = player.inventory.mainInventory.get(cachedSlotId).getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                if (chargeable == null) {
-                    return;
-                }
-                if (cont.canUse(chargeable.getTransferLimit() * 10) && world.getWorldTime() % 10 == 0) {
-                    long delta = chargeable.charge(chargeable.getTransferLimit() * 10, chargeable.getTier(), true, false);
-                    if (delta > 0) cont.discharge(delta, cont.getTier(), true, false, false);
-                    player.inventoryContainer.detectAndSendChanges();
+                        // Safety check the null, it should not actually happen. Also don't try and charge itself
+                        if(chargable == null || chargable == cont) {
+                            inventoryIterator.remove();
+                            continue;
+                        }
+
+                        long attemptedChargeAmount = chargable.getTransferLimit() * 10;
+
+                        // Accounts for tick differences when charging items
+                        if(chargable.getCharge() < chargable.getMaxCharge() && cont.canUse(attemptedChargeAmount) && timer % 10 == 0) {
+                            long delta = chargable.charge(attemptedChargeAmount, cont.getTier(), true, false);
+                            if(delta > 0) {
+                                cont.discharge(delta, cont.getTier(), true, false, false);
+                            }
+                            if(chargable.getCharge() == chargable.getMaxCharge()) {
+                                inventoryIterator.remove();
+                            }
+                            player.inventoryContainer.detectAndSendChanges();
+                        }
+                    }
+
+                    if(inventoryMap.getValue().isEmpty()) {
+                        inventoryIndexMap.remove(inventoryMap.getKey());
+                    }
                 }
             }
         }
@@ -190,7 +190,7 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite {
             cont.discharge(120, cont.getTier(), true, false, false);
         }
 
-        if (world.getWorldTime() % 40 == 0 && !player.onGround) {
+        if (timer % 40 == 0 && !player.onGround) {
             ArmorUtils.resetPlayerFloatingTime(player);
         }
 
@@ -201,6 +201,11 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite {
         data.setBoolean("hover", hoverMode);
         data.setByte("toggleTimer", toggleTimer);
         player.inventoryContainer.detectAndSendChanges();
+
+        timer++;
+        if(timer == Long.MAX_VALUE) {
+            timer = 0;
+        }
     }
 
     @Override
