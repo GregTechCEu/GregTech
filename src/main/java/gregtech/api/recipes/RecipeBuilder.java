@@ -481,13 +481,26 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
                                                    List<FluidStack> outputFluids,
                                                    Recipe recipe,
                                                    int numberOfOperations) {
-        recipe.getInputs().forEach(ci ->
+        recipe.getInputs().forEach(ci -> {
+            if (ci.isNonConsumable()) {
                 newRecipeInputs.add(new CountableIngredient(ci.getIngredient(),
-                        ci.getCount() * numberOfOperations)));
+                        ci.getCount()).setNonConsumable());
+            } else {
+                newRecipeInputs.add(new CountableIngredient(ci.getIngredient(),
+                        ci.getCount() * numberOfOperations));
+            }
+        });
 
-        recipe.getFluidInputs().forEach(fluidStack ->
+        recipe.getFluidInputs().forEach(fluidStack -> {
+            if (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable")) {
+                FluidStack fs = new FluidStack(fluidStack.getFluid(), fluidStack.amount, new NBTTagCompound());
+                fs.tag.setBoolean("nonConsumable", true);
+                newFluidInputs.add(fs);
+            } else {
                 newFluidInputs.add(new FluidStack(fluidStack.getFluid(),
-                        fluidStack.amount * numberOfOperations)));
+                        fluidStack.amount * (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable") ? 1 : numberOfOperations)));
+            }
+        });
 
         recipe.getOutputs().forEach(itemStack ->
                 outputItems.add(copyItemStackWithCount(itemStack,
