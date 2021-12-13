@@ -4,8 +4,10 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.EnergyContainerBatteryBuffer;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -101,9 +103,11 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
             @Nonnull
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-                if (((EnergyContainerBatteryBuffer) energyContainer).getBatteryContainer(stack) == null)
-                    return stack; //do not allow to insert non-battery items
-                return super.insertItem(slot, stack, simulate);
+                IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                if (electricItem != null && getTier() >= electricItem.getTier()) {
+                    return super.insertItem(slot, stack, simulate);
+                }
+                return stack;
             }
 
             @Override

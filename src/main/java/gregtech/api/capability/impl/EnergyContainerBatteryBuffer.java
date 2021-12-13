@@ -135,7 +135,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
             ItemStack batteryStack = inventory.getStackInSlot(i);
             IElectricItem electricItem = getBatteryContainer(batteryStack);
             if (electricItem == null) continue;
-            if (electricItem.getCharge() > 0) {
+            if (electricItem.canProvideChargeExternally() && electricItem.getCharge() > 0) {
                 batteries.add(electricItem);
             }
         }
@@ -179,8 +179,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
 
     public IElectricItem getBatteryContainer(ItemStack itemStack) {
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (electricItem != null && getTier() >= electricItem.getTier() &&
-                electricItem.canProvideChargeExternally())
+        if (electricItem != null && getTier() >= electricItem.getTier())
             return electricItem;
         return null;
     }
