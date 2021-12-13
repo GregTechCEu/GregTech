@@ -1,7 +1,10 @@
 {
   "weight": 90,
   "density": 0.4,
-  "min_height": 40,
+  "max_height": 50,
+  "dimension_filter": [
+    "name:the_end"
+  ],
   "vein_populator": {
     "type": "surface_rock",
     "material": "aluminium"
@@ -9,8 +12,8 @@
   "generator": {
     "type": "ellipsoid",
     "radius": [
-      15,
-      17
+      12,
+      15
     ]
   },
   "filler": {
@@ -23,11 +26,11 @@
           "value": "ore:bauxite"
         },
         {
-          "weight": 30,
+          "weight": 5,
           "value": "ore:aluminium"
         },
         {
-          "weight": 15,
+          "weight": 45,
           "value": "ore:ilmenite"
         },
         {
