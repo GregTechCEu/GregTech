@@ -151,7 +151,7 @@ public class MaterialPropertyExpansion {
             m.getProperty(PropertyKey.TOOL).setToolDurability(toolDurability);
             m.getProperty(PropertyKey.TOOL).setToolEnchantability(toolEnchantability);
             m.getProperty(PropertyKey.TOOL).setShouldIgnoreCraftingTools(shouldIgnoreCraftingTools);
-        } else m.setProperty(PropertyKey.TOOL, new ToolProperty(toolSpeed, toolAttackDamage, toolDurability, toolEnchantability));
+        } else m.setProperty(PropertyKey.TOOL, new ToolProperty(toolSpeed, toolAttackDamage, toolDurability, toolEnchantability, shouldIgnoreCraftingTools));
     }
 
     @ZenMethod
