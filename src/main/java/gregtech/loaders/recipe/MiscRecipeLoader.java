@@ -143,62 +143,6 @@ public class MiscRecipeLoader {
                 .EUt(VA[EV])
                 .buildAndRegister();
 
-        //armor
-        // Nightvision Goggles
-        ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(VA[MV])
-                .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(
-                        BlockGlassCasing.CasingType.TEMPERED_GLASS))
-                .inputs(EMITTER_MV.getStackForm(2))
-                .inputs(DUCT_TAPE.getStackForm(2))
-                .inputs(BATTERY_HV_LITHIUM.getStackForm())
-                .outputs(NIGHTVISION_GOGGLES.getStackForm())
-                .circuitMeta(3)
-                .buildAndRegister();
-
-        // NanoMuscle Suite
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(VA[HV])
-                .input(circuit, Advanced)
-                .inputs(CARBON_FIBER_PLATE.getStackForm(7))
-                .inputs(BATTERY_HV_LITHIUM.getStackForm())
-                .circuitMeta(4)
-                .outputs(NANO_CHESTPLATE.getStackForm())
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(VA[HV])
-                .input(circuit, Advanced)
-                .inputs(CARBON_FIBER_PLATE.getStackForm(6))
-                .inputs(BATTERY_HV_LITHIUM.getStackForm())
-                .circuitMeta(1)
-                .outputs(NANO_LEGGINGS.getStackForm())
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(VA[HV])
-                .input(circuit, Advanced)
-                .inputs(CARBON_FIBER_PLATE.getStackForm(4))
-                .inputs(BATTERY_HV_LITHIUM.getStackForm())
-                .circuitMeta(2)
-                .outputs(NANO_BOOTS.getStackForm())
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(VA[HV])
-                .input(circuit, Advanced, 2)
-                .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(
-                        BlockGlassCasing.CasingType.TEMPERED_GLASS))
-                .inputs(NIGHTVISION_GOGGLES.getStackForm())
-                .inputs(CARBON_FIBER_PLATE.getStackForm(5))
-                .inputs(BATTERY_HV_LITHIUM.getStackForm())
-                .circuitMeta(3)
-                .outputs(NANO_HELMET.getStackForm())
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(1024)
-                .input(circuit, Advanced, 2)
-                .inputs(NANO_CHESTPLATE.getStackForm())
-                .inputs(ELECTRIC_JETPACK_ADVANCED.getStackForm())
-                .inputs(DUCT_TAPE.getStackForm(2))
-                .inputs(POWER_INTEGRATED_CIRCUIT.getStackForm(4))
-                .outputs(NANO_CHESTPLATE_ADVANCED.getStackForm())
-                .buildAndRegister();
         // Jetpacks
         ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(100)
                 .input(circuit, Good, 6)

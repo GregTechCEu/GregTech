@@ -372,44 +372,39 @@ public class ConfigHolder {
         @Config.RangeInt(min = 0, max = 14)
         public int voltageTierNanoSuit = 3;
 
-        @Config.Comment({"Advanced NanoSuit Chestplate Voltage Tier.", "Default: 4 (EV)"})
-        @Config.RangeInt(min = 0, max = 14)
-        @Config.SlidingOption
-        public int voltageTierAdvNanoSuit = 4;
+            @Config.Comment({"Advanced NanoSuit Chestplate Voltage Tier.", "Default: 3 (HV)"})
+            @Config.RangeInt(min = 0, max = 14)
+            public int voltageTierAdvNanoSuit = 3;
 
         @Config.Comment({"QuarkTech Suit Voltage Tier.", "Default: 5 (IV)"})
         @Config.RangeInt(min = 0, max = 14)
         @Config.SlidingOption
         public int voltageTierQuarkTech = 5;
 
-        @Config.Comment({"Advanced QuarkTech Suit Chestplate Voltage Tier.", "Default: 5 (IV)"})
-        @Config.RangeInt(min = 0, max = 14)
-        @Config.SlidingOption
-        public int voltageTierAdvQuarkTech = 5;
+            @Config.Comment({"Advanced QuarkTech Suit Chestplate Voltage Tier.", "Default: 5 (LuV)"})
+            @Config.RangeInt(min = 0, max = 14)
+            public int voltageTierAdvQuarkTech = 6;
 
-        @Config.Comment({"Impeller Jetpack Voltage Tier.", "Default: 2 (MV)"})
-        @Config.RangeInt(min = 0, max = 14)
-        @Config.SlidingOption
-        public int voltageTierImpeller = 2;
+            @Config.Comment({"Electric Impeller Jetpack Voltage Tier.", "Default: 2 (MV)"})
+            @Config.RangeInt(min = 0, max = 14)
+            public int voltageTierImpeller = 2;
 
-        @Config.Comment({"Advanced Impeller Jetpack Voltage Tier.", "Default: 3 (HV)"})
-        @Config.RangeInt(min = 0, max = 14)
-        @Config.SlidingOption
-        public int voltageTierAdvImpeller = 3;
+            @Config.Comment({"Advanced Electric Jetpack Voltage Tier.", "Default: 3 (HV)"})
+            @Config.RangeInt(min = 0, max = 14)
+            public int voltageTierAdvImpeller = 3;
 
-        public static class BatPack {
-            @Config.Comment({"Total LV BatPack capacity.", "Default: 600,000"})
-            @Config.RangeInt(min = 1)
-            public int capacityLV = 600000;
-
-            @Config.Comment({"Total MV BatPack capacity.", "Default: 2,400,000"})
-            @Config.RangeInt(min = 1)
-            public int capacityMV = 2400000;
-
-            @Config.Comment({"Total HV BatPack capacity.", "Default: 9,600,000"})
-            @Config.RangeInt(min = 1)
-            public int capacityHV = 9600000;
+            @Config.Comment("Armor HUD Location")
+            public ArmorHud armorHud = new ArmorHud();
         }
+
+        public static class ArmorHud {
+            @Config.Comment({"Sets HUD location", "1 - left-upper corner", "2 - right-upper corner", "3 - left-bottom corner", "4 - right-bottom corner"})
+            public byte hudLocation = 1;
+            @Config.Comment("Horizontal offset of HUD [0 ~ 100)")
+            public byte hudOffsetX = 0;
+            @Config.Comment("Vertical offset of HUD [0 ~ 100)")
+            public byte hudOffsetY = 0;
+
 
         public static class NanoSaber {
 
