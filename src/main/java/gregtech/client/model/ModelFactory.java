@@ -121,9 +121,6 @@ public class ModelFactory {
     }
 
     public IBakedModel bake() {
-        if (!sprites.containsKey("particle")) {
-            GTLog.logger.error("ModelFactory is baking a model without a valid particle sprite!");
-        }
         IModel mapped = template.model.retexture(ImmutableMap.copyOf(sprites));
         if (mutation != null) {
             mutation.apply(mapped);
