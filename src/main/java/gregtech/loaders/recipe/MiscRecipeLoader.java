@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe;
 
+import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeBuilder;
@@ -157,26 +158,26 @@ public class MiscRecipeLoader {
         // NanoMuscle Suite
         ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(VA[HV])
                 .input(circuit, Advanced)
-                .inputs(CARBON_PLATE.getStackForm(7))
+                .inputs(CARBON_FIBER_PLATE.getStackForm(7))
                 .inputs(BATTERY_HV_LITHIUM.getStackForm())
                 .circuitMeta(4)
-                .outputs(NANO_MUSCLE_SUITE_CHESTPLATE.getStackForm())
+                .outputs(NANO_CHESTPLATE.getStackForm())
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(VA[HV])
                 .input(circuit, Advanced)
-                .inputs(CARBON_PLATE.getStackForm(6))
+                .inputs(CARBON_FIBER_PLATE.getStackForm(6))
                 .inputs(BATTERY_HV_LITHIUM.getStackForm())
                 .circuitMeta(1)
-                .outputs(NANO_MUSCLE_SUITE_LEGGINGS.getStackForm())
+                .outputs(NANO_LEGGINGS.getStackForm())
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(VA[HV])
                 .input(circuit, Advanced)
-                .inputs(CARBON_PLATE.getStackForm(4))
+                .inputs(CARBON_FIBER_PLATE.getStackForm(4))
                 .inputs(BATTERY_HV_LITHIUM.getStackForm())
                 .circuitMeta(2)
-                .outputs(NANO_MUSCLE_SUITE_BOOTS.getStackForm())
+                .outputs(NANO_BOOTS.getStackForm())
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(VA[HV])
@@ -184,33 +185,21 @@ public class MiscRecipeLoader {
                 .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(
                         BlockGlassCasing.CasingType.TEMPERED_GLASS))
                 .inputs(NIGHTVISION_GOGGLES.getStackForm())
-                .inputs(CARBON_PLATE.getStackForm(5))
+                .inputs(CARBON_FIBER_PLATE.getStackForm(5))
                 .inputs(BATTERY_HV_LITHIUM.getStackForm())
                 .circuitMeta(3)
-                .outputs(NANO_MUSCLE_SUITE_HELMET.getStackForm())
+                .outputs(NANO_HELMET.getStackForm())
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(1024)
                 .input(circuit, Advanced, 2)
-                .inputs(NANO_MUSCLE_SUITE_CHESTPLATE.getStackForm())
-                .inputs(ADVANCED_IMPELLER_JETPACK.getStackForm())
+                .inputs(NANO_CHESTPLATE.getStackForm())
+                .inputs(ELECTRIC_JETPACK_ADVANCED.getStackForm())
                 .inputs(DUCT_TAPE.getStackForm(2))
                 .inputs(POWER_INTEGRATED_CIRCUIT.getStackForm(4))
-                .outputs(ADVANCED_NANO_MUSCLE_CHESTPLATE.getStackForm())
+                .outputs(NANO_CHESTPLATE_ADVANCED.getStackForm())
                 .buildAndRegister();
         // Jetpacks
-        ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(100)
-                .input(circuit, Good, 6)
-                .inputs(MetaTileEntities.STEEL_TANK.getStackForm())
-                .inputs(ELECTRIC_PUMP_MV.getStackForm(2))
-                .input(pipeSmallFluid, Polyethylene, 2)
-                .input(pipeNormalFluid, Steel, 2)
-                .input(plate, Aluminium)
-                .input(screw, Aluminium, 4)
-                .input(stick, Aluminium, 2)
-                .outputs(SEMIFLUID_JETPACK.getStackForm())
-                .buildAndRegister();
-
         ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(100)
                 .input(circuit, Good, 6)
                 .inputs(BATTERY_MV_CADMIUM.getStackForm(6))
@@ -218,16 +207,7 @@ public class MiscRecipeLoader {
                 .input(plate, Aluminium)
                 .input(screw, Aluminium, 4)
                 .input(stick, Aluminium, 2)
-                .outputs(IMPELLER_JETPACK.getStackForm())
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(60)
-                .input(cableGtSingle, Copper)
-                .inputs(ELECTRIC_MOTOR_MV.getStackForm())
-                .input(stick, Steel)
-                .input(rotor, Polyethylene, 2)
-                .input(pipeNormalFluid, Polyethylene)
-                .outputs(IMPELLER_MV.getStackForm())
+                .outputs(ELECTRIC_JETPACK.getStackForm())
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(60)
@@ -239,89 +219,77 @@ public class MiscRecipeLoader {
                 .outputs(IMPELLER_HV.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(800).EUt(400)
-                .input(circuit, Good, 4)
-                .input(circuit, Advanced)
-                .inputs(IMPELLER_HV.getStackForm(6))
-                .inputs(BATTERY_HV_CADMIUM.getStackForm())
-                .input(plate, Aluminium)
-                .input(screw, Aluminium, 4)
-                .input(stick, Aluminium, 2)
-                .outputs(ADVANCED_IMPELLER_JETPACK.getStackForm())
-                .buildAndRegister();
-
         // QuarkTech Suite
-        ASSEMBLER_RECIPES.recipeBuilder().duration(2400).EUt(1600)
-                .input(circuit, Extreme, 2)
-                .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .input(plate, Ruridit, 4)
-                .inputs(ELECTRIC_PISTON_EV.getStackForm(2))
-                .inputs(NANO_MUSCLE_SUITE_BOOTS.getStackForm())
-                .outputs(QUARK_TECH_SUITE_BOOTS.getStackForm())
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(2400).EUt(1600)
-                .input(circuit, Extreme, 4)
-                .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .input(plate, Ruridit, 6)
-                .inputs(CONVEYOR_MODULE_EV.getStackForm(2))
-                .inputs(NANO_MUSCLE_SUITE_LEGGINGS.getStackForm())
-                .outputs(QUARK_TECH_SUITE_LEGGINGS.getStackForm())
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(2400).EUt(1600)
-                .input(circuit, Extreme, 4)
-                .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .input(plate, Ruridit, 8)
-                .inputs(FIELD_GENERATOR_EV.getStackForm(2))
-                .inputs(NANO_MUSCLE_SUITE_CHESTPLATE.getStackForm())
-                .outputs(QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(2400).EUt(1600)
-                .input(circuit, Extreme, 2)
-                .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .input(plate, Ruridit, 4)
-                .inputs(SENSOR_EV.getStackForm())
-                .inputs(EMITTER_EV.getStackForm())
-                .inputs(NANO_MUSCLE_SUITE_HELMET.getStackForm())
-                .outputs(QUARK_TECH_SUITE_HELMET.getStackForm())
-                .buildAndRegister();
-
-        ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(1800).EUt(7100)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt((int) GTValues.VA[GTValues.IV])
+                .input(circuit, Master, 2)
+                .input(wireGtQuadruple, Tungsten, 5)
+                .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
+                .inputs(SENSOR_IV.getStackForm())
                 .inputs(FIELD_GENERATOR_IV.getStackForm())
-                .inputs(FIELD_GENERATOR_EV.getStackForm(2))
-                .input(circuit, Master, 4)
-                .input(wireGtSingle, SamariumIronArsenicOxide, 4)
-                .inputs(POWER_INTEGRATED_CIRCUIT.getStackForm(4))
-                .fluidInputs(SolderingAlloy.getFluid(L * 8))
-                .outputs(GRAVITATION_ENGINE.getStackForm())
+                .input(screw, TungstenSteel, 4)
+                .input(plate, Iridium, 5)
+                .input(foil, Ruthenium, 20)
+                .input(wireFine, Rhodium, 32)
+                .fluidInputs(Titanium.getFluid(L * 10))
+                .outputs(QUANTUM_HELMET.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(3600).EUt(VA[IV])
-                .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(16))
-                .input(wireGtSingle, SamariumIronArsenicOxide, 8)
-                .inputs(GRAVITATION_ENGINE.getStackForm(2))
-                .input(plate, Ruridit, 12)
-                .input(circuit, Elite, 4)
-                .inputs(QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
-                .fluidInputs(SolderingAlloy.getFluid(L * 8))
-                .outputs(ADVANCED_QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt((int) GTValues.VA[GTValues.IV])
+                .input(circuit, Master, 2)
+                .input(wireGtQuadruple, Tungsten, 8)
+                .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
+                .inputs(EMITTER_IV.getStackForm(2))
+                .inputs(FIELD_GENERATOR_IV.getStackForm(3))
+                .input(screw, TungstenSteel, 4)
+                .input(plate, Iridium, 8)
+                .input(foil, Ruthenium, 32)
+                .input(wireFine, Rhodium, 48)
+                .fluidInputs(Titanium.getFluid(L * 16))
+                .outputs(QUANTUM_CHESTPLATE.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(3600).EUt(VA[IV])
-                .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(8))
-                .input(wireGtSingle, SamariumIronArsenicOxide, 8)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt((int) GTValues.VA[GTValues.IV])
+                .input(circuit, Master, 2)
+                .input(wireGtQuadruple, Tungsten, 7)
+                .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
+                .inputs(ELECTRIC_MOTOR_IV.getStackForm(4))
+                .inputs(FIELD_GENERATOR_IV.getStackForm(2))
+                .input(screw, TungstenSteel, 4)
+                .input(plate, Iridium, 7)
+                .input(foil, Ruthenium, 28)
+                .input(wireFine, Rhodium, 40)
+                .fluidInputs(Titanium.getFluid(L * 14))
+                .outputs(QUANTUM_LEGGINGS.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt((int) GTValues.VA[GTValues.IV])
+                .input(circuit, Master, 2)
+                .input(wireGtQuadruple, Tungsten, 4)
+                .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
+                .inputs(ELECTRIC_PISTON_IV.getStackForm(2))
+                .inputs(FIELD_GENERATOR_IV.getStackForm())
+                .input(screw, TungstenSteel, 4)
+                .input(plate, Iridium, 4)
+                .input(foil, Ruthenium, 16)
+                .input(wireFine, Rhodium, 16)
+                .fluidInputs(Titanium.getFluid(L * 8))
+                .outputs(QUANTUM_BOOTS.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(1000).EUt((int) GTValues.VA[GTValues.LuV])
+                .inputs(QUANTUM_CHESTPLATE.getStackForm())
+                .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
+                .input(wireFine, NiobiumTitanium, 64)
+                .input(wireGtQuadruple, Osmium, 6)
+                .input(plateDouble, Iridium, 4)
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
-                .input(plate, Ruridit, 16)
-                .input(circuit, Elite, 2)
-                .inputs(ADVANCED_NANO_MUSCLE_CHESTPLATE.getStackForm())
-                .fluidInputs(SolderingAlloy.getFluid(L * 8))
-                .outputs(ADVANCED_QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
+                .input(circuit, Ultimate)
+                .input(plateDense, RhodiumPlatedPalladium, 2)
+                .inputs(ENERGY_LAPOTRONIC_ORB2.getStackForm())
+                .inputs(FIELD_GENERATOR_LUV.getStackForm(2))
+                .inputs(ELECTRIC_MOTOR_LUV.getStackForm(2))
+                .input(screw, HSSS, 8)
+                .outputs(QUANTUM_CHESTPLATE_ADVANCED.getStackForm())
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(300)

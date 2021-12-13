@@ -933,10 +933,10 @@ metaitem.voltage_coil.uxv.tooltip=Legendary Coil
 metaitem.voltage_coil.max.name=Maximum Voltage Coil
 metaitem.voltage_coil.max.tooltip=Maximum Coil
 
-metaitem.liquid_fuel_jetpack.name=Liquid-Fueled Jetpack
+metaitem.liquid_fuel_jetpack.name=Liquid-Fueled Impeller Jetpack
 metaitem.liquid_fuel_jetpack.tooltip=Uses Combustion Generator Fuels for Thrust
-metaitem.impeller_jetpack.name=Thruster Jetpack
-metaitem.advanced_impeller_jetpack.name=Advanced Thruster Jetpack
+metaitem.electric_jetpack.name=Electric Thruster Jetpack
+metaitem.advanced_electric_jetpack.name=Advanced Thruster Jetpack
 metaitem.nightvision_goggles.name=NightVision Goggles
 
 metaitem.nms.chestplate.name=NanoMuscle™ Suite Chestplate

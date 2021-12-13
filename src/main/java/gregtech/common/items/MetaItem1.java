@@ -394,7 +394,7 @@ public class MetaItem1 extends StandardMetaItem {
         GELLED_TOLUENE = addItem(498, "gelled_toluene");
         CARBON_FIBERS = addItem(499, "carbon.fibers");
         CARBON_MESH = addItem(500, "carbon.mesh");
-        CARBON_PLATE = addItem(501, "carbon.plate");
+        CARBON_FIBER_PLATE = addItem(501, "carbon.plate");
         DUCT_TAPE = addItem(502, "duct_tape");
         WIRELESS = addItem(503, "wireless");
         CAMERA = addItem(504, "camera");

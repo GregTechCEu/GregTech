@@ -114,7 +114,7 @@ public class NanoMuscleSuite extends ArmorLogicSuite {
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
         ItemStack currentChest = Minecraft.getMinecraft().player.inventory.armorItemInSlot(EntityEquipmentSlot.CHEST.getIndex());
-        ItemStack advancedChest = MetaItems.ADVANCED_NANO_MUSCLE_CHESTPLATE.getStackForm();
+        ItemStack advancedChest = MetaItems.NANO_CHESTPLATE_ADVANCED.getStackForm();
         String armorTexture = "nano_muscule_suite";
         if (advancedChest.isItemEqual(currentChest)) armorTexture = "advanced_nano_muscle_suite";
         return SLOT != EntityEquipmentSlot.LEGS ?

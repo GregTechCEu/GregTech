@@ -243,7 +243,7 @@ public class QuarkTechSuite extends ArmorLogicSuite {
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
         ItemStack currentChest = Minecraft.getMinecraft().player.inventory.armorItemInSlot(EntityEquipmentSlot.CHEST.getIndex());
-        ItemStack advancedChest = MetaItems.ADVANCED_QUARK_TECH_SUITE_CHESTPLATE.getStackForm();
+        ItemStack advancedChest = MetaItems.QUANTUM_CHESTPLATE_ADVANCED.getStackForm();
         String armorTexture = "quark_tech_suite";
         if (advancedChest.isItemEqual(currentChest)) armorTexture = "advanced_quark_tech_suite";
         return SLOT != EntityEquipmentSlot.LEGS ?
