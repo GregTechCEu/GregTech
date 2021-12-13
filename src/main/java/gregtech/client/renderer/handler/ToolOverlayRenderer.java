@@ -8,6 +8,7 @@ import gregtech.api.cover.ICoverable.PrimaryBoxData;
 import gregtech.api.items.toolitem.IAOEItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
@@ -96,6 +97,8 @@ public class ToolOverlayRenderer {
                 AxisAlignedBB box = blockState.getSelectedBoundingBox(world, pos).grow(0.002D).offset(-d3, -d4, -d5);
                 RenderGlobal.drawSelectionBoundingBox(box, 0.0F, 0.0F, 0.0F, 0.4F);
                 drawOverlayLines(facing, box);
+                if (tileEntity instanceof TileEntityPipeBase)
+                    drawPipeOverlayLines(facing, box, (TileEntityPipeBase) tileEntity);
             }
 
             GlStateManager.depthMask(true);
@@ -298,6 +301,149 @@ public class ToolOverlayRenderer {
 
         startLine(buffer, bottomLeft.copy().add(shiftVert));
         endLine(buffer, bottomRight.copy().add(shiftVert));
+
+        tessellator.draw();
+    }
+
+    private static void drawPipeOverlayLines(EnumFacing facing, AxisAlignedBB box, TileEntityPipeBase pipe) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(3, DefaultVertexFormats.POSITION_COLOR);
+
+        Vector3 topRight = new Vector3(box.maxX, box.maxY, box.maxZ);
+        Vector3 bottomRight = new Vector3(box.maxX, box.minY, box.maxZ);
+        Vector3 bottomLeft = new Vector3(box.minX, box.minY, box.maxZ);
+        Vector3 topLeft = new Vector3(box.minX, box.maxY, box.maxZ);
+        Vector3 shift = new Vector3(0.25, 0, 0);
+        Vector3 shiftVert = new Vector3(0, 0.25, 0);
+
+        Vector3 cubeCenter = new Vector3(box.getCenter());
+
+        boolean leftBlocked;
+        boolean topBlocked;
+        boolean rightBlocked;
+        boolean bottomBlocked;
+
+        topRight.subtract(cubeCenter);
+        bottomRight.subtract(cubeCenter);
+        bottomLeft.subtract(cubeCenter);
+        topLeft.subtract(cubeCenter);
+
+        switch (facing) {
+            case WEST: {
+                topRight.rotate(Math.PI / 2, Vector3.down);
+                bottomRight.rotate(Math.PI / 2, Vector3.down);
+                bottomLeft.rotate(Math.PI / 2, Vector3.down);
+                topLeft.rotate(Math.PI / 2, Vector3.down);
+                shift.rotate(Math.PI / 2, Vector3.down);
+                shiftVert.rotate(Math.PI / 2, Vector3.down);
+
+                leftBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.NORTH);
+                topBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.UP);
+                rightBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.SOUTH);
+                bottomBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.DOWN);
+                break;
+            }
+            case EAST: {
+                topRight.rotate(-Math.PI / 2, Vector3.down);
+                bottomRight.rotate(-Math.PI / 2, Vector3.down);
+                bottomLeft.rotate(-Math.PI / 2, Vector3.down);
+                topLeft.rotate(-Math.PI / 2, Vector3.down);
+                shift.rotate(-Math.PI / 2, Vector3.down);
+                shiftVert.rotate(-Math.PI / 2, Vector3.down);
+
+                leftBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.SOUTH);
+                topBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.UP);
+                rightBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.NORTH);
+                bottomBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.DOWN);
+                break;
+            }
+            case NORTH: {
+                topRight.rotate(Math.PI, Vector3.down);
+                bottomRight.rotate(Math.PI, Vector3.down);
+                bottomLeft.rotate(Math.PI, Vector3.down);
+                topLeft.rotate(Math.PI, Vector3.down);
+                shift.rotate(Math.PI, Vector3.down);
+                shiftVert.rotate(Math.PI, Vector3.down);
+
+                leftBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.EAST);
+                topBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.UP);
+                rightBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.WEST);
+                bottomBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.DOWN);
+                break;
+            }
+            case UP: {
+                Vector3 side = new Vector3(1, 0, 0);
+                topRight.rotate(-Math.PI / 2, side);
+                bottomRight.rotate(-Math.PI / 2, side);
+                bottomLeft.rotate(-Math.PI / 2, side);
+                topLeft.rotate(-Math.PI / 2, side);
+                shift.rotate(-Math.PI / 2, side);
+                shiftVert.rotate(-Math.PI / 2, side);
+
+                leftBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.WEST);
+                topBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.NORTH);
+                rightBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.EAST);
+                bottomBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.SOUTH);
+                break;
+            }
+            case DOWN: {
+                Vector3 side = new Vector3(1, 0, 0);
+                topRight.rotate(Math.PI / 2, side);
+                bottomRight.rotate(Math.PI / 2, side);
+                bottomLeft.rotate(Math.PI / 2, side);
+                topLeft.rotate(Math.PI / 2, side);
+                shift.rotate(Math.PI / 2, side);
+                shiftVert.rotate(Math.PI / 2, side);
+
+                leftBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.WEST);
+                topBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.SOUTH);
+                rightBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.EAST);
+                bottomBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.NORTH);
+                break;
+            }
+            default: {
+                leftBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.WEST);
+                topBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.UP);
+                rightBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.EAST);
+                bottomBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.DOWN);
+            }
+        }
+
+        topRight.add(cubeCenter);
+        bottomRight.add(cubeCenter);
+        bottomLeft.add(cubeCenter);
+        topLeft.add(cubeCenter);
+
+        if (leftBlocked) {
+            startLine(buffer, topLeft.copy().add(shiftVert.copy().negate()));
+            endLine(buffer, bottomLeft.copy().add(shiftVert.copy()).add(shift));
+
+            startLine(buffer, topLeft.copy().add(shiftVert.copy().negate()).add(shift));
+            endLine(buffer, bottomLeft.copy().add(shiftVert));
+        }
+        if (topBlocked) {
+            startLine(buffer, topLeft.copy().add(shift));
+            endLine(buffer, topRight.copy().add(shift.copy().negate()).add(shiftVert.copy().negate()));
+
+            startLine(buffer, topLeft.copy().add(shift).add(shiftVert.copy().negate()));
+            endLine(buffer, topRight.copy().add(shift.copy().negate()));
+        }
+        if (rightBlocked) {
+            startLine(buffer, topRight.copy().add(shiftVert.copy().negate()));
+            endLine(buffer, bottomRight.copy().add(shiftVert.copy()).add(shift.copy().negate()));
+
+            startLine(buffer, topRight.copy().add(shiftVert.copy().negate()).add(shift.copy().negate()));
+            endLine(buffer, bottomRight.copy().add(shiftVert));
+        }
+        if (bottomBlocked) {
+            startLine(buffer, bottomLeft.copy().add(shift));
+            endLine(buffer, bottomRight.copy().add(shift.copy().negate()).add(shiftVert));
+
+            startLine(buffer, bottomLeft.copy().add(shift).add(shiftVert));
+            endLine(buffer, bottomRight.copy().add(shift.copy().negate()));
+        }
+
 
         tessellator.draw();
     }
