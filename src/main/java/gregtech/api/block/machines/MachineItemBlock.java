@@ -4,6 +4,11 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.pipenet.block.BlockPipe;
+import gregtech.api.pipenet.tile.AttachmentType;
+import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.common.ConfigHolder;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -47,8 +52,19 @@ public class MachineItemBlock extends ItemBlock {
         MetaTileEntity metaTileEntity = getMetaTileEntity(stack);
         //prevent rendering glitch before meta tile entity sync to client, but after block placement
         //set opaque property on the placing on block, instead during set of meta tile entity
-        return super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ,
+        boolean superVal = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ,
                 newState.withProperty(BlockMachine.OPAQUE, metaTileEntity != null && metaTileEntity.isOpaqueCube()));
+        if (superVal && ConfigHolder.machines.gt6StylePipesCables && !world.isRemote) {
+            BlockPos possiblePipe = pos.offset(side.getOpposite());
+            Block block = world.getBlockState(possiblePipe).getBlock();
+            if (block instanceof BlockPipe) {
+                IPipeTile pipeTile = ((BlockPipe<?, ?, ?>) block).getPipeTileEntity(world, possiblePipe);
+                if (pipeTile != null && ((BlockPipe<?, ?, ?>) block).canPipeConnectToBlock(pipeTile, side.getOpposite(), world.getTileEntity(pos))) {
+                    pipeTile.setConnectionBlocked(AttachmentType.PIPE, side, false, false);
+                }
+            }
+        }
+        return superVal;
     }
 
     @Nullable
