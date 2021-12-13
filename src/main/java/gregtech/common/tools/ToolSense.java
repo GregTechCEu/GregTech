@@ -46,7 +46,7 @@ public class ToolSense extends ToolBase {
 
                             player.world.playEvent(2001, offsetPos, Block.getStateId(blockState));
                             ToolUtility.applyHarvestBehavior(offsetPos, player);
-                            toolMetaItem.damageItem(stack, damagePerBlockBreak, false);
+                            toolMetaItem.damageItem(stack, player, damagePerBlockBreak, false);
 
                         } else if (blockState.getMaterial() == Material.PLANTS ||
                                 blockState.getMaterial() == Material.LEAVES ||
@@ -54,7 +54,7 @@ public class ToolSense extends ToolBase {
 
                             player.world.playEvent(2001, offsetPos, Block.getStateId(blockState));
                             player.world.setBlockToAir(offsetPos);
-                            toolMetaItem.damageItem(stack, damagePerBlockBreak, false);
+                            toolMetaItem.damageItem(stack, player, damagePerBlockBreak, false);
                         }
                     }
 

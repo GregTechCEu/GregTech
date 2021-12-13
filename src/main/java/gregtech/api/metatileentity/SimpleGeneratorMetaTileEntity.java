@@ -12,10 +12,11 @@ import gregtech.api.gui.widgets.FluidContainerSlotWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.recipes.machines.FuelRecipeMap;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
-import gregtech.api.util.PipelineUtil;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.PipelineUtil;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -30,14 +31,14 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
+public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity implements ISoundCreator {
 
     private final FuelRecipeLogic workableHandler;
     private final ItemStackHandler containerInventory;
-    private final OrientedOverlayRenderer overlayRenderer;
+    private final ICubeRenderer overlayRenderer;
     private final FuelRecipeMap recipeMap;
 
-    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, FuelRecipeMap recipeMap, OrientedOverlayRenderer renderer, int tier) {
+    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, FuelRecipeMap recipeMap, ICubeRenderer renderer, int tier) {
         super(metaTileEntityId, tier);
         this.containerInventory = new ItemStackHandler(2);
         this.overlayRenderer = renderer;
@@ -86,7 +87,7 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.overlayRenderer.render(renderState, translation, pipeline, getFrontFacing(), workableHandler.isActive());
+        this.overlayRenderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), workableHandler.isActive(), workableHandler.isWorkingEnabled());
         Textures.ENERGY_OUT.renderSided(getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
     }
 
@@ -151,4 +152,17 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), GTValues.VN[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
     }
+
+    @Override
+    public void onAttached(Object... data) {
+        super.onAttached(data);
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(recipeMap.getSound(), this.getPos());
+        }
+    }
+
+    public boolean canCreateSound() {
+        return workableHandler.isActive();
+    }
+
 }

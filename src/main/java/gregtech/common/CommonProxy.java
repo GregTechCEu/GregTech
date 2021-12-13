@@ -7,8 +7,8 @@ import gregtech.api.enchants.EnchantmentEnderDamage;
 import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
-import gregtech.api.recipes.recipeproperties.BlastTemperatureProperty;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
+import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.DustProperty;
@@ -177,11 +177,11 @@ public class CommonProxy {
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         // registers coiltypes for the BlastTemperatureProperty used in Blast Furnace Recipes
         for (BlockWireCoil.CoilType values : BlockWireCoil.CoilType.values()) {
-            BlastTemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
+            TemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
                     String.format("tile.wire_coil.%s.name", values.getName()));
         }
         for (BlockWireCoil2.CoilType2 values : BlockWireCoil2.CoilType2.values()) {
-            BlastTemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
+            TemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
                     String.format("tile.wire_coil2.%s.name", values.getName()));
         }
 
@@ -199,7 +199,6 @@ public class CommonProxy {
 
         GTLog.logger.info("Registering recipes...");
 
-        MetaItems.registerRecipes();
         MachineRecipeLoader.init();
         CraftingRecipeLoader.init();
         MetaTileEntityLoader.init();

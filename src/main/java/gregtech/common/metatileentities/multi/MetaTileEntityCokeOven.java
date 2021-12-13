@@ -14,14 +14,14 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockController;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
@@ -47,9 +47,9 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
                 .aisle("XXX", "XZX", "XXX")
                 .aisle("XZX", "Z#Z", "XZX")
                 .aisle("XXX", "XYX", "XXX")
-                .where('Z', statePredicate(getCasingState()).or(tilePredicate((state, tile) -> tile instanceof MetaTileEntityCokeOvenHatch)))
-                .where('X', statePredicate(getCasingState()))
-                .where('#', isAirPredicate())
+                .where('Z', states(getCasingState()).or(metaTileEntities(MetaTileEntities.COKE_OVEN_HATCH)))
+                .where('X', states(getCasingState()))
+                .where('#', air())
                 .where('Y', selfPredicate())
                 .build();
     }
@@ -71,12 +71,12 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive());
+        getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
     }
 
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         return Textures.COKE_OVEN_OVERLAY;
     }
 

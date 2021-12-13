@@ -1,4 +1,4 @@
-#version 130
+#version 120
 
 uniform float u_time;
 uniform float radius;
@@ -9,7 +9,7 @@ uniform vec2 u_resolution;
 uniform float u_zFar; // mc.gameSettings.renderDistanceChunks * 16 * MathHelper.SQRT_2
 uniform float u_FOV;
 
-in vec2 textureCoords;
+varying vec2 textureCoords;
 
 const float zNear = 0.05; // default of entity view
 const float width = 10;

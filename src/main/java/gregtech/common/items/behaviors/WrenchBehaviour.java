@@ -1,6 +1,8 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.toolitem.IToolStats;
+import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.resources.I18n;
@@ -27,7 +29,9 @@ public class WrenchBehaviour implements IItemBehaviour {
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         if (!world.isRemote && !world.isAirBlock(pos)) {
             ItemStack stack = player.getHeldItem(hand);
+
             TileEntity tileEntity = world.getTileEntity(pos);
+
             if (tileEntity instanceof MetaTileEntityHolder)
                 //machines handle wrench click manually
                 return EnumActionResult.PASS;

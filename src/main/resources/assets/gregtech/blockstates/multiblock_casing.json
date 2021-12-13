@@ -37,16 +37,16 @@
         "all": "gregtech:blocks/casings/pipe/machine_casing_grate"
       }
     },
-    "active=false,variant=assembler": {
+    "active=false,variant=assembly_control": {
       "model": "minecraft:cube_all",
       "textures": {
-        "all": "gregtech:blocks/casings/mechanic/machine_casing_assembler"
+        "all": "gregtech:blocks/casings/mechanic/machine_casing_assembly_control"
       }
     },
-    "active=true,variant=assembler": {
+    "active=true,variant=assembly_control": {
       "model": "minecraft:cube_all",
       "textures": {
-        "all": "gregtech:blocks/casings/mechanic/machine_casing_assembler"
+        "all": "gregtech:blocks/casings/mechanic/machine_casing_assembly_control"
       }
     },
     "active=false,variant=assembly_line": {

@@ -16,6 +16,11 @@ public class RecipeLogicEnergy extends AbstractRecipeLogic {
     }
 
     @Override
+    protected long getEnergyInputPerSecond() {
+        return energyContainer.get().getInputPerSec();
+    }
+
+    @Override
     protected long getEnergyStored() {
         return energyContainer.get().getEnergyStored();
     }

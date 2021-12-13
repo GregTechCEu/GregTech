@@ -86,6 +86,11 @@ public class TextFieldWidget extends Widget {
         this.textResponder = textResponder;
     }
 
+    public TextFieldWidget doesClientCallback(boolean isClient) {
+        this.isClient = isClient;
+        return this;
+    }
+
     public TextFieldWidget setTextSupplier(Supplier<String> textSupplier, boolean isClient) {
         this.isClient = isClient;
         this.textSupplier = textSupplier;

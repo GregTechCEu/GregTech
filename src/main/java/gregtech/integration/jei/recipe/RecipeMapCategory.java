@@ -9,6 +9,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.integration.jei.utils.render.FluidStackTextRenderer;
@@ -41,9 +42,8 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     private final FluidTankList importFluids, exportFluids;
     private final IDrawable backgroundDrawable;
 
-    private final int FONT_HEIGHT = 9;
+    private static final int FONT_HEIGHT = 9;
     private static final HashMap<RecipeMap<?>, RecipeMapCategory> categoryMap = new HashMap<>();
-    private double timer = 0;
 
     public RecipeMapCategory(RecipeMap<?> recipeMap, IGuiHelper guiHelper) {
         this.recipeMap = recipeMap;
@@ -57,12 +57,10 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 (importItems = new ItemStackHandler(recipeMap.getMaxInputs())),
                 (exportItems = new ItemStackHandler(recipeMap.getMaxOutputs())),
                 (importFluids = new FluidTankList(false, importFluidTanks)),
-                (exportFluids = new FluidTankList(false, exportFluidTanks)),
-                (recipeMap.getMaxOutputs() >= 6 || recipeMap.getMaxInputs() >= 6 ||
-                        recipeMap.getMaxFluidOutputs() >= 6 || recipeMap.getMaxFluidInputs() >= 6) ? FONT_HEIGHT : 0
+                (exportFluids = new FluidTankList(false, exportFluidTanks)), 0
         ).build(new BlankUIHolder(), Minecraft.getMinecraft().player);
         this.modularUI.initWidgets();
-        this.backgroundDrawable = guiHelper.createBlankDrawable(modularUI.getWidth(), modularUI.getHeight() * 2 / 3);
+        this.backgroundDrawable = guiHelper.createBlankDrawable(modularUI.getWidth(), modularUI.getHeight() * 2 / 3 + getPropertyShiftAmount(recipeMap));
         categoryMap.put(recipeMap, this);
     }
 
@@ -170,7 +168,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     public void drawExtras(@Nonnull Minecraft minecraft) {
         for (Widget widget : modularUI.guiWidgets.values()) {
             if (widget instanceof ProgressWidget) widget.detectAndSendChanges();
-            widget.drawInBackground(0, 0, new IRenderContext() {
+            widget.drawInBackground(0, 0, minecraft.getRenderPartialTicks(), new IRenderContext() {
             });
             widget.drawInForeground(0, 0);
         }
@@ -178,5 +176,21 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
 
     public static HashMap<RecipeMap<?>, RecipeMapCategory> getCategoryMap() {
         return categoryMap;
+    }
+
+    private static boolean shouldShiftWidgets(@Nonnull RecipeMap<?> recipeMap) {
+        return recipeMap.getMaxOutputs() >= 6 || recipeMap.getMaxInputs() >= 6 ||
+                recipeMap.getMaxFluidOutputs() >= 6 || recipeMap.getMaxFluidInputs() >= 6;
+    }
+
+    private static int getPropertyShiftAmount(@Nonnull RecipeMap<?> recipeMap) {
+        int maxPropertyCount = 0;
+        if (shouldShiftWidgets(recipeMap)) {
+            for (Recipe recipe : recipeMap.getRecipeList()) {
+                if (recipe.getPropertyCount() > maxPropertyCount)
+                    maxPropertyCount = recipe.getPropertyCount();
+            }
+        }
+        return maxPropertyCount * FONT_HEIGHT;
     }
 }

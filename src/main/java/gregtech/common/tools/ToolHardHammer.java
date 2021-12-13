@@ -2,6 +2,7 @@ package gregtech.common.tools;
 
 import com.google.common.collect.ImmutableSet;
 import gregtech.api.enchants.EnchantmentHardHammer;
+import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.RecipeMaps;
 import net.minecraft.block.material.Material;
@@ -88,11 +89,13 @@ public class ToolHardHammer extends ToolBase {
         ToolUtility.applyHammerDrops(world.rand, blockState, dropList, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, toolStack), player);
     }
 
-
-
-
     @Override
     public Set<String> getToolClasses(ItemStack stack) {
         return HAMMER_TOOL_CLASSES;
+    }
+
+    @Override
+    public void onStatsAddedToTool(MetaItem.MetaValueItem item) {
+        item.addComponents(new HardHammerBehavior(DamageValues.DAMAGE_FOR_HAMMER));
     }
 }

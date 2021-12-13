@@ -6,12 +6,13 @@ import gregtech.api.capability.IFuelable;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidFuelInfo;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -59,6 +60,11 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
         }
     }
 
+    @Override
+    protected int getCooldownInterval() {
+        return isHighPressure ? 40 : 45;
+    }
+
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         T result = super.getCapability(capability, side);
         if (result != null)
@@ -84,7 +90,7 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return createUITemplate(entityPlayer)
                 .widget(new TankWidget(lavaFluidTank, 119, 26, 10, 54)
-                        .setBackgroundTexture(getGuiTexture("bar_%s_empty")))
+                        .setBackgroundTexture(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure)))
                 .build(getHolder(), entityPlayer);
     }
 }

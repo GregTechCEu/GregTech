@@ -1,9 +1,6 @@
 package gregtech.api.recipes.recipeproperties;
 
-import gregtech.api.util.GTLog;
-import org.apache.logging.log4j.LogManager;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.*;
@@ -19,11 +16,6 @@ public class RecipePropertyStorageTest {
     private static final DefaultProperty<Integer> wrongCast = new DefaultProperty<>("wrongCast", Integer.class);
 
     private RecipePropertyStorage storage;
-
-    @BeforeClass
-    public static void initTestClassStub() {
-        GTLog.init(LogManager.getLogger(RecipePropertyStorageTest.class));
-    }
 
     @Before
     public void initTestStub() {

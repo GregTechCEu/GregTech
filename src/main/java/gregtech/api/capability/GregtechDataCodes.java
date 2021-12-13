@@ -25,6 +25,11 @@ public class GregtechDataCodes {
     public static final int UPDATE_LOCKED_STATE = 8;
     public static final int UPDATE_CONTENTS_SEED = 9;
 
+    // Steam Machines
+    public static final int NEEDS_VENTING = 2;
+    public static final int VENTING_SIDE = 3;
+    public static final int VENTING_STUCK = 4;
+
     // Misc TEs (Transformer, World Accelerator)
     public static final int SYNC_TILE_MODE = 100;
 
@@ -69,4 +74,39 @@ public class GregtechDataCodes {
     public static final int DEFORM_TANK = 2;
     public static final int SYNC_FLUID_CHANGE = 3;
     public static final int SYNC_TANK_SHAPE = 4;
+
+    // Fusion Reactor
+    public static final int UPDATE_COLOR = 371;
+
+    // Central Monitor
+    public static final int UPDATE_ALL = 1;
+    public static final int UPDATE_COVERS = 2;
+    public static final int UPDATE_HEIGHT = 3;
+    public static final int UPDATE_ACTIVE = 4;
+    public static final int UPDATE_PLUGIN_ITEM = 3;
+
+    // Central Monitor Plugin
+    public static final int UPDATE_PLUGIN_DATA = 2;
+    public static final int UPDATE_PLUGIN_CONFIG = 0;
+    public static final int ACTION_PLUGIN_CONFIG = 0;
+    public static final int UPDATE_PLUGIN_CLICK = -2;
+    public static final int UPDATE_ADVANCED_VALID_POS = 1;
+    public static final int UPDATE_FAKE_GUI = 1;
+    public static final int ACTION_FAKE_GUI = 1;
+    public static final int UPDATE_FAKE_GUI_DETECT = -1;
+
+    // Digital Interface
+    public static final int UPDATE_MODE = 1;
+    public static final int UPDATE_FLUID = 2;
+    public static final int UPDATE_ITEM = 3;
+    public static final int UPDATE_ENERGY = 4;
+    public static final int UPDATE_ENERGY_PER = 5;
+    public static final int UPDATE_MACHINE = 6;
+
+    // Phantom Tanks
+    public static final int REMOVE_PHANTOM_FLUID_TYPE = 10;
+    public static final int CHANGE_PHANTOM_FLUID = 11;
+    public static final int VOID_PHANTOM_FLUID = 12;
+    public static final int LOAD_PHANTOM_FLUID_STACK_FROM_NBT = 13;
+
 }

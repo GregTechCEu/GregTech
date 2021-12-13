@@ -1,10 +1,12 @@
 package gregtech.api;
 
 import gregtech.api.util.XSTR;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.time.LocalDate;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
@@ -44,7 +46,7 @@ public class GTValues {
      */
     public static final short W = OreDictionary.WILDCARD_VALUE;
 
-    public static final XSTR RNG = new XSTR();
+    public static final Random RNG = new XSTR();
 
     /**
      * The Voltage Tiers. Use this Array instead of the old named Voltage Variables
@@ -53,9 +55,9 @@ public class GTValues {
 
 
     /**
-     * The Voltage Tiers adjusted for cable loss.
+     * The Voltage Tiers adjusted for cable loss. Use this for recipe EU/t to avoid full-amp recipes
      */
-    public static final long[] VA = new long[]{7, 30, 120, 480, 1920, 7680, 30720, 122880, 491520, 1966080, 7864320, 31457280, 125829120, 503316480, 2013265920};
+    public static final int[] VA = new int[]{7, 30, 120, 480, 1920, 7680, 30720, 122880, 491520, 1966080, 7864320, 31457280, 125829120, 503316480, 2013265920};
 
     public static final int ULV = 0;
     public static final int LV = 1;
@@ -106,6 +108,13 @@ public class GTValues {
             MODID_APPENG = "appliedenergistics2",
             MODID_JEI = "jei";
 
+    private static Boolean isClient;
+
+    public static boolean isClientSide() {
+        if (isClient == null) isClient = FMLCommonHandler.instance().getSide().isClient();
+        return isClient;
+    }
+
     //because forge is too fucking retarded to cache results or at least do not create fucking
     //immutable collections every time you retrieve indexed mod list
     private static final ConcurrentMap<String, Boolean> isModLoadedCache = new ConcurrentHashMap<>();
@@ -120,6 +129,8 @@ public class GTValues {
                 Class.forName(modid);
                 isLoaded = true;
             } catch (ClassNotFoundException ignored) {
+            } catch (NoClassDefFoundError noClassDefFoundError) {
+                isLoaded = true;
             }
         }
         isModLoadedCache.put(modid, isLoaded);

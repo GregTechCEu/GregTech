@@ -81,8 +81,6 @@ public class MetaFluids {
             GTValues.MODID, "blocks/material_sets/ruby/fluid");
     public static final ResourceLocation FLUID_SAND_TEXTURE = new ResourceLocation(
             GTValues.MODID, "blocks/material_sets/sand/fluid");
-    public static final ResourceLocation FLUID_SHARDS_TEXTURE = new ResourceLocation(
-            GTValues.MODID, "blocks/material_sets/shards/fluid");
     public static final ResourceLocation FLUID_SHINY_TEXTURE = new ResourceLocation(
             GTValues.MODID, "blocks/material_sets/shiny/fluid");
     public static final ResourceLocation FLUID_WOOD_TEXTURE = new ResourceLocation(
@@ -158,7 +156,6 @@ public class MetaFluids {
         fluidSprites.add(FLUID_ROUGH_TEXTURE);
         fluidSprites.add(FLUID_RUBY_TEXTURE);
         fluidSprites.add(FLUID_SAND_TEXTURE);
-        fluidSprites.add(FLUID_SHARDS_TEXTURE);
         fluidSprites.add(FLUID_SHINY_TEXTURE);
         fluidSprites.add(FLUID_WOOD_TEXTURE);
 
@@ -217,6 +214,11 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.LeadZincSolution, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.NaturalGas, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Blaze, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.FluoroantimonicAcid, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.Naquadah, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.NaquadahEnriched, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.Naquadria, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.Ice, FluidType.NORMAL);
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
             if (material.isHidden()) continue;
@@ -296,7 +298,10 @@ public class MetaFluids {
 
             fluid = new MaterialFluid(fluidName, material, fluidState, textureLocation);
             fluid.setTemperature(temperature);
-            fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
+            if (material.hasFluidColor())
+                fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
+            else
+                fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(0xFFFFFF));
 
             // set properties and register
             setStateProperties(fluid, fluidState);

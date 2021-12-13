@@ -26,7 +26,6 @@ public class MaterialIconSet {
     public static final MaterialIconSet DIAMOND = new MaterialIconSet("DIAMOND");
     public static final MaterialIconSet EMERALD = new MaterialIconSet("EMERALD");
     public static final MaterialIconSet SHINY = new MaterialIconSet("SHINY");
-    public static final MaterialIconSet SHARDS = new MaterialIconSet("SHARDS");
     public static final MaterialIconSet ROUGH = new MaterialIconSet("ROUGH");
     public static final MaterialIconSet FINE = new MaterialIconSet("FINE");
     public static final MaterialIconSet SAND = new MaterialIconSet("SAND");
@@ -39,7 +38,6 @@ public class MaterialIconSet {
     public static final MaterialIconSet OPAL = new MaterialIconSet("OPAL");
     public static final MaterialIconSet GLASS = new MaterialIconSet("GLASS");
     public static final MaterialIconSet WOOD = new MaterialIconSet("WOOD");
-    public static final MaterialIconSet LEAF = new MaterialIconSet("LEAF");
     public static final MaterialIconSet GEM_HORIZONTAL = new MaterialIconSet("GEM_HORIZONTAL");
     public static final MaterialIconSet GEM_VERTICAL = new MaterialIconSet("GEM_VERTICAL");
     public static final MaterialIconSet PAPER = new MaterialIconSet("PAPER");

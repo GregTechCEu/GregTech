@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.electric;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
@@ -13,7 +12,7 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.BlockUtility;
 import gregtech.api.util.GregFakePlayer;
 import net.minecraft.block.Block;
@@ -62,7 +61,7 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        Textures.ROCK_BREAKER_OVERLAY.render(renderState, translation, pipeline, Cuboid6.full, getFrontFacing(), false);
+        Textures.ROCK_BREAKER_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), false, false);
         Textures.PIPE_OUT_OVERLAY.renderSided(getOutputFacing(), renderState, translation, pipeline);
     }
 

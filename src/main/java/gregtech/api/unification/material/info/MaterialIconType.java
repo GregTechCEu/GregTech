@@ -77,20 +77,10 @@ public class MaterialIconType {
     public static final MaterialIconType toolHeadDrill = new MaterialIconType("toolHeadDrill");
     public static final MaterialIconType toolHeadChainsaw = new MaterialIconType("toolHeadChainsaw");
     public static final MaterialIconType toolHeadSense = new MaterialIconType("toolHeadSense");
-    public static final MaterialIconType toolHeadArrow = new MaterialIconType("toolHeadArrow");
     public static final MaterialIconType toolHeadScrewdriver = new MaterialIconType("toolHeadScrewdriver");
-    public static final MaterialIconType toolHeadSoldering = new MaterialIconType("toolHeadSoldering");
     public static final MaterialIconType toolHeadWrench = new MaterialIconType("toolHeadWrench");
-    public static final MaterialIconType toolHeadUniversalSpade = new MaterialIconType("toolHeadUniversalSpade");
-
-    public static final MaterialIconType crateGtDust = new MaterialIconType("crateGtDust");
-    public static final MaterialIconType crateGtIngot = new MaterialIconType("crateGtIngot");
-    public static final MaterialIconType crateGtGem = new MaterialIconType("crateGtGem");
-    public static final MaterialIconType crateGtPlate = new MaterialIconType("crateGtPlate");
 
     public static final MaterialIconType turbineBlade = new MaterialIconType("turbineBlade");
-    public static final MaterialIconType handleMallet = new MaterialIconType("handleMallet");
-    public static final MaterialIconType toolHeadMallet = new MaterialIconType("toolHeadMallet");
     public static final MaterialIconType coke = new MaterialIconType("coke");
 
     // BLOCK TEXTURES

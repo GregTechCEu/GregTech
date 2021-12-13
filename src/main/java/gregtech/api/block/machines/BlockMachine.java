@@ -6,7 +6,6 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.vec.Cuboid6;
-import com.google.common.collect.Lists;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.BlockCustomParticle;
 import gregtech.api.capability.GregtechCapabilities;
@@ -15,13 +14,14 @@ import gregtech.api.capability.tool.IWrenchItem;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.IFacadeCover;
+import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.render.IBlockAppearance;
-import gregtech.api.render.MetaTileEntityRenderer;
+import gregtech.api.pipenet.IBlockAppearance;
+import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.tools.DamageValues;
@@ -66,12 +66,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class BlockMachine extends BlockCustomParticle implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
 
-    private static final List<IndexedCuboid6> EMPTY_COLLISION_BOX = Lists.newArrayList(new IndexedCuboid6(null, Cuboid6.full));
+    private static final List<IndexedCuboid6> EMPTY_COLLISION_BOX = Collections.emptyList();
     private static final IUnlistedProperty<String> HARVEST_TOOL = new UnlistedStringProperty("harvest_tool");
     private static final IUnlistedProperty<Integer> HARVEST_LEVEL = new UnlistedIntegerProperty("harvest_level");
     //used for rendering purposes of non-opaque machines like chests and tanks
@@ -89,7 +90,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Override
     public boolean canHarvestBlock(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
-        if (ConfigHolder.U.GT5u.requireWrenchForMachines) {
+        if (ConfigHolder.machines.requireWrenchForMachines) {
             return player.getHeldItemMainhand().hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
         }
         return super.canHarvestBlock(world, pos, player);
@@ -173,6 +174,11 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         return collisionList;
     }
 
+    @Override
+    public boolean doesSideBlockRendering(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
+        return state.isOpaqueCube() && getMetaTileEntity(world, pos) != null;
+    }
+
     @Nonnull
     @Override
     public ItemStack getPickBlock(@Nonnull IBlockState state, @Nonnull RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
@@ -238,6 +244,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         if (holder != null && sampleMetaTileEntity != null) {
             MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity);
             if (stack.hasTagCompound()) {
+                //noinspection ConstantConditions
                 metaTileEntity.initFromItemStackData(stack.getTagCompound());
             }
             if (metaTileEntity.isValidFrontFacing(EnumFacing.UP)) {
@@ -245,7 +252,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             } else {
                 metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
             }
-            if (ConfigHolder.U.GT6.gt6StylePipesCables) {
+            if (ConfigHolder.machines.gt6StylePipesCables) {
                 if (placer instanceof EntityPlayer) {
                     EntityPlayer player = (EntityPlayer) placer;
                     RayTraceResult rt2 = GTUtility.getBlockLookingAt(player, pos);
@@ -320,6 +327,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             if (screwdriver.damageItem(DamageValues.DAMAGE_FOR_SCREWDRIVER, true) &&
                     metaTileEntity.onCoverScrewdriverClick(playerIn, hand, rayTraceResult)) {
                 screwdriver.damageItem(DamageValues.DAMAGE_FOR_SCREWDRIVER, false);
+                IToolStats.onOtherUse(itemStack, worldIn, pos);
                 return true;
             }
             return false;
@@ -331,7 +339,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
             if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true) &&
                     metaTileEntity.onWrenchClick(playerIn, hand, wrenchDirection, rayTraceResult)) {
+
                 wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
+                IToolStats.onOtherUse(itemStack, worldIn, pos);
                 return true;
             }
             return false;

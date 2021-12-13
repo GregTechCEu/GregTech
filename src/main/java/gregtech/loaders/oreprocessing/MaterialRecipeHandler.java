@@ -9,32 +9,28 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.properties.DustProperty;
-import gregtech.api.unification.material.properties.GemProperty;
-import gregtech.api.unification.material.properties.IngotProperty;
-import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
+import gregtech.loaders.recipe.CraftingComponent;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 
 import java.util.*;
 
-import static gregtech.api.GTValues.L;
-import static gregtech.api.GTValues.M;
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ALLOY_SMELTER_RECIPES;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 
 public class MaterialRecipeHandler {
 
-    private static final List<OrePrefix> GEM_ORDER = ConfigHolder.U.generateLowQualityGems ? Arrays.asList(
+    private static final List<OrePrefix> GEM_ORDER = ConfigHolder.recipes.generateLowQualityGems ? Arrays.asList(
             OrePrefix.gemChipped, OrePrefix.gemFlawed, OrePrefix.gem, OrePrefix.gemFlawless, OrePrefix.gemExquisite) :
             Arrays.asList(OrePrefix.gem, OrePrefix.gemFlawless, OrePrefix.gemExquisite);
-
-    private static final Set<Material> circuitRequiringMaterials = new HashSet<>();
 
     public static void register() {
         OrePrefix.ingot.addProcessingHandler(PropertyKey.INGOT, MaterialRecipeHandler::processIngot);
@@ -50,12 +46,6 @@ public class MaterialRecipeHandler {
         for (OrePrefix orePrefix : GEM_ORDER) {
             orePrefix.addProcessingHandler(PropertyKey.GEM, MaterialRecipeHandler::processGemConversion);
         }
-
-        setMaterialRequiresCircuit(Materials.Silicon);
-    }
-
-    public static void setMaterialRequiresCircuit(Material material) {
-        circuitRequiringMaterials.add(material);
     }
 
     public static void processDust(OrePrefix dustPrefix, Material mat, DustProperty property) {
@@ -104,25 +94,7 @@ public class MaterialRecipeHandler {
                 if (blastTemp <= 0) {
                     ModHandler.addSmeltingRecipe(new UnificationEntry(dustPrefix, mat), ingotStack);
                 } else {
-                    int duration = Math.max(1, (int) (mat.getAverageMass() * blastTemp / 50L));
-
-                    BlastRecipeBuilder ingotSmeltingBuilder = RecipeMaps.BLAST_RECIPES.recipeBuilder()
-                            .inputs(dustStack)
-                            .outputs(ingotStack)
-                            .blastFurnaceTemp(blastTemp)
-                            .duration(duration).EUt(120);
-                    if (circuitRequiringMaterials.contains(mat)) {
-                        ingotSmeltingBuilder.inputs(new CountableIngredient(new IntCircuitIngredient(1), 0));
-                    }
-                    ingotSmeltingBuilder.buildAndRegister();
-
-                    if (hasHotIngot) {
-                        RecipeMaps.VACUUM_RECIPES.recipeBuilder()
-                                .input(OrePrefix.ingotHot, mat)
-                                .output(OrePrefix.ingot, mat)
-                                .duration((int) mat.getAverageMass() * 3)
-                                .buildAndRegister();
-                    }
+                    processEBFRecipe(mat, mat.getProperty(PropertyKey.BLAST), ingotStack);
                 }
             }
         } else {
@@ -132,6 +104,53 @@ public class MaterialRecipeHandler {
                         .outputs(OreDictUnifier.get(OrePrefix.plate, mat))
                         .buildAndRegister();
             }
+        }
+    }
+
+    private static void processEBFRecipe(Material material, BlastProperty property, ItemStack output) {
+        int blastTemp = property.getBlastTemperature();
+        BlastProperty.GasTier gasTier = property.getGasTier();
+        int duration = property.getDurationOverride();
+        if (duration <= 0) {
+            duration = Math.max(1, (int) (material.getAverageMass() * blastTemp / 50L));
+        }
+        int EUt = property.getEUtOverride();
+        if (EUt <= 0) EUt = VA[MV];
+
+        BlastRecipeBuilder blastBuilder = RecipeMaps.BLAST_RECIPES.recipeBuilder()
+                .input(dust, material)
+                .outputs(output)
+                .blastFurnaceTemp(blastTemp)
+                .EUt(EUt);
+
+        if (gasTier != null) {
+            FluidStack gas = CraftingComponent.EBF_GASES.get(gasTier).copy();
+
+            blastBuilder.copy()
+                    .notConsumable(new IntCircuitIngredient(1))
+                    .duration(duration)
+                    .buildAndRegister();
+
+            blastBuilder.copy()
+                    .notConsumable(new IntCircuitIngredient(2))
+                    .fluidInputs(gas)
+                    .duration((int) (duration * 0.67))
+                    .buildAndRegister();
+        } else {
+            blastBuilder.duration(duration);
+            if (material == Materials.Silicon) {
+                blastBuilder.notConsumable(new IntCircuitIngredient(1));
+            }
+            blastBuilder.buildAndRegister();
+        }
+
+        // Add Vacuum Freezer recipe if required.
+        if (ingotHot.doGenerateItem(material)) {
+            RecipeMaps.VACUUM_RECIPES.recipeBuilder()
+                    .input(ingotHot, material)
+                    .output(ingot, material)
+                    .duration((int) material.getAverageMass() * 3)
+                    .buildAndRegister();
         }
     }
 
@@ -182,15 +201,9 @@ public class MaterialRecipeHandler {
         }
 
         if (!material.hasFlag(NO_SMASHING) && material.hasProperty(PropertyKey.TOOL)) {
-            if (ConfigHolder.U.GT6.plateWrenches && material.hasFlag(GENERATE_PLATE)) {
-                ModHandler.addShapedRecipe(String.format("wrench_%s", material.toString()),
-                        MetaItems.WRENCH.getStackForm(material),
-                        "PhP", "PPP", " P ", 'P', new UnificationEntry(plate, material));
-            } else {
-                ModHandler.addShapedRecipe(String.format("wrench_%s", material.toString()),
-                        MetaItems.WRENCH.getStackForm(material),
-                        "IhI", "III", " I ", 'I', new UnificationEntry(ingotPrefix, material));
-            }
+            ModHandler.addShapedRecipe(String.format("wrench_%s", material.toString()),
+                    MetaItems.WRENCH.getStackForm(material),
+                    "IhI", "III", " I ", 'I', new UnificationEntry(ingotPrefix, material));
         }
 
         if (material.hasFlag(GENERATE_ROD)) {
@@ -214,7 +227,7 @@ public class MaterialRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT)
                     .fluidInputs(material.getFluid(L))
                     .outputs(OreDictUnifier.get(ingotPrefix, material))
-                    .duration(20).EUt(8)
+                    .duration(20).EUt(VA[ULV])
                     .buildAndRegister();
         }
 
@@ -228,14 +241,14 @@ public class MaterialRecipeHandler {
                     .buildAndRegister();
         }
 
-        ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(8).duration((int) material.getAverageMass())
+        ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getAverageMass())
                 .input(ingot, material)
                 .notConsumable(MetaItems.SHAPE_MOLD_NUGGET.getStackForm())
                 .output(nugget, material, 9)
                 .buildAndRegister();
 
         if (!OreDictUnifier.get(block, material).isEmpty()) {
-            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(8).duration((int) material.getAverageMass() * 9)
+            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getAverageMass() * 9)
                     .input(block, material)
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT.getStackForm())
                     .output(ingot, material, 9)
@@ -331,7 +344,7 @@ public class MaterialRecipeHandler {
                     .outputs(ingotStack)
                     .buildAndRegister();
 
-            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(8).duration((int) material.getAverageMass())
+            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getAverageMass())
                     .input(nugget, material, 9)
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT.getStackForm())
                     .output(ingot, material)
@@ -343,7 +356,7 @@ public class MaterialRecipeHandler {
                         .fluidInputs(material.getFluid(L))
                         .outputs(OreDictUnifier.get(orePrefix, material, 9))
                         .duration((int) material.getAverageMass())
-                        .EUt(8)
+                        .EUt(VA[ULV])
                         .buildAndRegister();
             }
         } else if (material.hasProperty(PropertyKey.GEM)) {
@@ -368,7 +381,7 @@ public class MaterialRecipeHandler {
                     .input(OrePrefix.stick, material, 4)
                     .circuitMeta(4)
                     .outputs(OreDictUnifier.get(framePrefix, material, 1))
-                    .EUt(8).duration(64)
+                    .EUt(VA[ULV]).duration(64)
                     .buildAndRegister();
         }
     }
@@ -381,7 +394,7 @@ public class MaterialRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_BLOCK)
                     .fluidInputs(material.getFluid((int) (materialAmount * L / M)))
                     .outputs(blockStack)
-                    .duration((int) material.getAverageMass()).EUt(8)
+                    .duration((int) material.getAverageMass()).EUt(VA[ULV])
                     .buildAndRegister();
         }
 
@@ -391,7 +404,7 @@ public class MaterialRecipeHandler {
                 RecipeMaps.CUTTER_RECIPES.recipeBuilder()
                         .input(blockPrefix, material)
                         .outputs(GTUtility.copyAmount((int) (materialAmount / M), plateStack))
-                        .duration((int) (material.getAverageMass() * 8L)).EUt(30)
+                        .duration((int) (material.getAverageMass() * 8L)).EUt(VA[LV])
                         .buildAndRegister();
             }
         }
@@ -442,6 +455,6 @@ public class MaterialRecipeHandler {
     }
 
     private static int getVoltageMultiplier(Material material) {
-        return material.getBlastTemperature() >= 2800 ? 32 : 8;
+        return material.getBlastTemperature() >= 2800 ? VA[LV] : VA[ULV];
     }
 }

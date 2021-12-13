@@ -206,7 +206,7 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
         this.veinGeneratedMap = new HashMap<>();
         if (!cachedDepositMap.isEmpty()) {
             int currentCycle = 0;
-            int maxCycles = ConfigHolder.minVeinsInSection + (ConfigHolder.additionalVeinsInSection == 0 ? 0 : gridRandom.nextInt(ConfigHolder.additionalVeinsInSection + 1));
+            int maxCycles = ConfigHolder.worldgen.minVeinsInSection + (ConfigHolder.worldgen.additionalVeinsInSection == 0 ? 0 : gridRandom.nextInt(ConfigHolder.worldgen.additionalVeinsInSection + 1));
             ArrayList<OreDepositDefinition> veins = new ArrayList<>();
             while (currentCycle < cachedDepositMap.size() && currentCycle < maxCycles) {
                 //instead of removing already generated veins, we swap last element with one we selected
@@ -250,13 +250,13 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
 
     private int calculateVeinCenterX() {
         int gridSizeX = WorldGeneratorImpl.GRID_SIZE_X * 16;
-        int offset = ConfigHolder.generateVeinsInCenterOfChunk ? gridSizeX / 2 : gridRandom.nextInt(gridSizeX);
+        int offset = ConfigHolder.worldgen.generateVeinsInCenterOfChunk ? gridSizeX / 2 : gridRandom.nextInt(gridSizeX);
         return gridX * gridSizeX + offset;
     }
 
     private int calculateVeinCenterZ() {
         int gridSizeZ = WorldGeneratorImpl.GRID_SIZE_Z * 16;
-        int offset = ConfigHolder.generateVeinsInCenterOfChunk ? gridSizeZ / 2 : gridRandom.nextInt(gridSizeZ);
+        int offset = ConfigHolder.worldgen.generateVeinsInCenterOfChunk ? gridSizeZ / 2 : gridRandom.nextInt(gridSizeZ);
         return gridZ * gridSizeZ + offset;
     }
 

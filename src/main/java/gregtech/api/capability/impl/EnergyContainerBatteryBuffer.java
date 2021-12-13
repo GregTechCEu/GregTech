@@ -24,6 +24,10 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
     private final BitSet batterySlotsUsedThisTick = new BitSet();
     private final int tier;
     private long amps = 0;
+    private long lastEnergyInputPerSec = 0;
+    private long lastEnergyOutputPerSec = 0;
+    private long energyInputPerSec = 0;
+    private long energyOutputPerSec = 0;
 
     public EnergyContainerBatteryBuffer(MetaTileEntity metaTileEntity, int tier) {
         super(metaTileEntity);
@@ -59,7 +63,18 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
             notifyEnergyListener(false);
         }
         amps += usedAmps;
+        energyInputPerSec += voltage * usedAmps;
         return usedAmps;
+    }
+
+    @Override
+    public long getInputPerSec() {
+        return lastEnergyInputPerSec;
+    }
+
+    @Override
+    public long getOutputPerSec() {
+        return lastEnergyOutputPerSec;
     }
 
     private static boolean chargeItemWithVoltage(IElectricItem electricItem, long voltage, int tier, boolean simulate) {
@@ -79,6 +94,12 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
     public void update() {
         amps = 0;
         if (!metaTileEntity.getWorld().isRemote) {
+            if (metaTileEntity.getOffsetTimer() % 20 == 0) {
+                lastEnergyInputPerSec = energyInputPerSec;
+                lastEnergyOutputPerSec = energyOutputPerSec;
+                energyInputPerSec = 0;
+                energyOutputPerSec = 0;
+            }
             this.batterySlotsUsedThisTick.clear();
             EnumFacing outFacing = metaTileEntity.getFrontFacing();
             TileEntity tileEntity = metaTileEntity.getWorld().getTileEntity(metaTileEntity.getPos().offset(outFacing));
@@ -106,6 +127,7 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
             if (maxAmperage == 0) return;
             long amperageUsed = energyContainer.acceptEnergyFromNetwork(outFacing.getOpposite(), voltage, maxAmperage);
             if (amperageUsed == 0) return;
+            energyOutputPerSec += amperageUsed * voltage;
             for (int i : slotsList.toArray()) {
                 ItemStack batteryStack = inventory.getStackInSlot(i);
                 IElectricItem electricItem = getBatteryContainer(batteryStack);
@@ -183,6 +205,7 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
         if (energyAdded > 0L) {
             notifyEnergyListener(false);
         }
+        energyInputPerSec += energyAdded;
         return energyAdded;
     }
 

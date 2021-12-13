@@ -1,0 +1,20 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.steam.87_fluid_pipe_death_heat.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.steam.87_fluid_pipe_death_heat.name"
+    },
+    "icon": {
+      "item": "gregtech:fluid_pipe_normal",
+      "data": 260
+    }
+  },
+  "criteria": {
+    "fluid_pipe_death_heat": {
+      "trigger": "gregtech:fluid_pipe_death_heat"
+    }
+  },
+  "parent": "gregtech:steam/4_bronze_boiler"
+}

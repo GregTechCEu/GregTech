@@ -1,21 +1,19 @@
 package gregtech.common.metatileentities.electric;
 
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.RecipeLogicEnergy;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
-import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.GasCollectorDimensionProperty;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -23,7 +21,7 @@ import java.util.function.Supplier;
 
 public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
 
-    public MetaTileEntityGasCollector(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier, boolean hasFrontFacing,
+    public MetaTileEntityGasCollector(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean hasFrontFacing,
                                       Function<Integer, Integer> tankScalingFunction) {
         super(metaTileEntityId, recipeMap, renderer, tier, hasFrontFacing, tankScalingFunction);
     }
@@ -41,7 +39,7 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
         return result;
     }
 
-    protected boolean checkRecipe(Recipe recipe) {
+    protected boolean checkRecipe(@Nonnull Recipe recipe) {
         List<Integer> recipeDimensions = recipe.getProperty(GasCollectorDimensionProperty.getInstance(), new ArrayList<>());
         for (Integer dimension : recipeDimensions) {
             if (dimension == this.getWorld().provider.getDimension()) {
@@ -58,30 +56,8 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
         }
 
         @Override
-        protected void trySearchNewRecipe() {
-            long maxVoltage = getMaxVoltage();
-            Recipe currentRecipe = null;
-            IItemHandlerModifiable importInventory = getInputInventory();
-            IMultipleTankHandler importFluids = getInputTank();
-
-            // see if the last recipe we used still works
-            if (this.previousRecipe != null && this.previousRecipe.matches(false, importInventory, importFluids))
-                currentRecipe = this.previousRecipe;
-                // If there is no active recipe, then we need to find one.
-            else {
-                currentRecipe = findRecipe(maxVoltage, importInventory, importFluids, MatchingMode.IGNORE_FLUIDS);
-            }
-            // If a recipe was found, then inputs were valid. Cache found recipe.
-            if (currentRecipe != null) {
-                this.previousRecipe = currentRecipe;
-            }
-            this.invalidInputsForRecipes = (currentRecipe == null);
-            // proceed if we have a usable recipe.
-            if (currentRecipe != null && ((MetaTileEntityGasCollector) metaTileEntity).checkRecipe(currentRecipe) && setupAndConsumeRecipeInputs(currentRecipe, importInventory))
-                setupRecipe(currentRecipe);
-            // Inputs have been inspected.
-            metaTileEntity.getNotifiedItemInputList().clear();
-            metaTileEntity.getNotifiedFluidInputList().clear();
+        protected boolean checkRecipe(Recipe recipe) {
+            return ((MetaTileEntityGasCollector) metaTileEntity).checkRecipe(recipe);
         }
     }
 }

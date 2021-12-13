@@ -31,7 +31,6 @@ public class SimpleTextWidget extends Widget {
     protected boolean isShadow;
     protected float scale = 1;
     protected int width;
-    protected boolean dropShadow;
 
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier) {
         this(xPosition, yPosition, formatLocale, color, textSupplier, false);
@@ -43,11 +42,6 @@ public class SimpleTextWidget extends Widget {
         this.formatLocale = formatLocale;
         this.textSupplier = textSupplier;
         this.clientWidget = clientWidget;
-    }
-
-    public SimpleTextWidget setDropShadow(boolean dropShadow) {
-        this.dropShadow = dropShadow;
-        return this;
     }
 
     public SimpleTextWidget setWidth(int width) {

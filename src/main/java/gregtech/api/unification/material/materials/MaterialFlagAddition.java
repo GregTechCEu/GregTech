@@ -1,5 +1,6 @@
 package gregtech.api.unification.material.materials;
 
+import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 
@@ -8,490 +9,490 @@ import static gregtech.api.unification.material.Materials.*;
 public class MaterialFlagAddition {
 
     public static void register() {
-        OreProperty prop = Aluminium.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Bauxite);
+        OreProperty oreProp = Aluminium.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Bauxite);
 
-        prop = Antimony.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Zinc, Iron, Zinc);
-        prop.setSeparatedInto(Iron);
-        prop.setWashedIn(SodiumPersulfate);
+        oreProp = Antimony.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Zinc, Iron, Zinc);
+        oreProp.setSeparatedInto(Iron);
+        oreProp.setWashedIn(SodiumPersulfate);
 
-        prop = Beryllium.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Emerald);
+        oreProp = Beryllium.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Emerald);
 
-        prop = Chrome.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Iron, Magnesium);
-        prop.setSeparatedInto(Iron);
+        oreProp = Chrome.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Iron, Magnesium);
+        oreProp.setSeparatedInto(Iron);
 
-        prop = Cobalt.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Cobaltite);
-        prop.setWashedIn(SodiumPersulfate);
+        oreProp = Cobalt.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Cobaltite);
+        oreProp.setWashedIn(SodiumPersulfate);
 
-        prop = Copper.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Cobalt, Gold, Nickel, Gold);
-        prop.setWashedIn(Mercury);
+        oreProp = Copper.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Cobalt, Gold, Nickel, Gold);
+        oreProp.setWashedIn(Mercury);
 
-        prop = Gold.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Copper, Nickel, Gold);
-        prop.setWashedIn(Mercury);
+        oreProp = Gold.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Copper, Nickel, Gold);
+        oreProp.setWashedIn(Mercury);
 
-        prop = Iridium.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Platinum, Osmium, Platinum);
-        prop.setSeparatedInto(Osmium, Trinium);
-        prop.setWashedIn(Mercury);
+        oreProp = Iridium.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Platinum, Osmium, Platinum);
+        oreProp.setSeparatedInto(Osmium, Trinium);
+        oreProp.setWashedIn(Mercury);
 
-        prop = Iron.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Nickel, Tin, Nickel);
-        prop.setWashedIn(SodiumPersulfate);
+        oreProp = Iron.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Nickel, Tin, Nickel);
+        oreProp.setWashedIn(SodiumPersulfate);
 
-        prop = Lead.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Silver, Sulfur, Silver);
-        prop.setWashedIn(Mercury);
+        oreProp = Lead.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Silver, Sulfur, Silver);
+        oreProp.setWashedIn(Mercury);
 
-        prop = Lithium.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Lithium);
+        oreProp = Lithium.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Lithium);
 
-        //prop = Magnesium.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(Olivine);
+        //oreProp = Magnesium.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(Olivine);
 
-        //prop = Manganese.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(Chrome, Iron);
-        //prop.setSeparatedInto(Iron);
+        //oreProp = Manganese.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(Chrome, Iron);
+        //oreProp.setSeparatedInto(Iron);
 
-        prop = Neodymium.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Monazite, RareEarth);
+        oreProp = Neodymium.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Monazite, RareEarth);
 
-        prop = Nickel.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Cobalt, Platinum, Iron, Platinum);
-        prop.setSeparatedInto(Iron);
-        prop.setWashedIn(Mercury);
+        oreProp = Nickel.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Cobalt, Platinum, Iron, Platinum);
+        oreProp.setSeparatedInto(Iron);
+        oreProp.setWashedIn(Mercury);
 
-        prop = Osmium.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Iridium, Osmium);
-        prop.setWashedIn(Mercury);
+        oreProp = Osmium.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Iridium, Osmium);
+        oreProp.setWashedIn(Mercury);
 
-        prop = Platinum.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Nickel, Iridium);
-        prop.setWashedIn(Mercury);
+        oreProp = Platinum.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Nickel, Iridium);
+        oreProp.setWashedIn(Mercury);
 
-        //prop = Plutonium239.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(Uranium238, Lead);
+        //oreProp = Plutonium239.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(Uranium238, Lead);
 
-        //prop = Silicon.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(SiliconDioxide);
+        //oreProp = Silicon.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(SiliconDioxide);
 
-        prop = Silver.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Lead, Sulfur, Silver);
-        prop.setWashedIn(Mercury);
+        oreProp = Silver.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Lead, Sulfur, Silver);
+        oreProp.setWashedIn(Mercury);
 
-        prop = Sulfur.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Sulfur);
+        oreProp = Sulfur.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Sulfur);
 
-        prop = Thorium.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Uranium238, Lead);
+        oreProp = Thorium.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Uranium238, Lead);
 
-        prop = Tin.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Iron, Zinc);
-        prop.setSeparatedInto(Iron);
-        prop.setWashedIn(SodiumPersulfate);
+        oreProp = Tin.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Iron, Zinc);
+        oreProp.setSeparatedInto(Iron);
+        oreProp.setWashedIn(SodiumPersulfate);
 
-        //prop = Titanium.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(Almandine);
+        //oreProp = Titanium.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(Almandine);
 
-        //prop = Tungsten.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(Manganese, Molybdenum);
+        //oreProp = Tungsten.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(Manganese, Molybdenum);
 
-        prop = Uranium238.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Lead, Uranium235, Thorium);
+        oreProp = Uranium238.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Lead, Uranium235, Thorium);
 
-        prop = Zinc.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Tin, Gallium);
-        prop.setWashedIn(SodiumPersulfate);
+        oreProp = Zinc.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Tin, Gallium);
+        oreProp.setWashedIn(SodiumPersulfate);
 
-        prop = Naquadah.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(NaquadahEnriched);
-        prop.setSeparatedInto(NaquadahEnriched, Trinium);
+        oreProp = Naquadah.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(NaquadahEnriched);
+        oreProp.setSeparatedInto(NaquadahEnriched, Trinium);
 
-        prop = NaquadahEnriched.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Naquadah, Naquadria);
+        oreProp = NaquadahEnriched.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Naquadah, Naquadria);
 
-        prop = Almandine.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(GarnetRed, Aluminium);
+        oreProp = Almandine.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(GarnetRed, Aluminium);
 
-        //prop = Andradite.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(GarnetYellow, Iron);
-        //prop.setSeparatedInto(Iron);
+        //oreProp = Andradite.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(GarnetYellow, Iron);
+        //oreProp.setSeparatedInto(Iron);
 
-        prop = Asbestos.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Asbestos, Silicon, Magnesium);
+        oreProp = Asbestos.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Asbestos, Silicon, Magnesium);
 
-        prop = BlueTopaz.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Topaz);
+        oreProp = BlueTopaz.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Topaz);
 
-        prop = BrownLimonite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Malachite, YellowLimonite);
-        prop.setSeparatedInto(Iron);
-        prop.setDirectSmeltResult(Iron);
+        oreProp = BrownLimonite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Malachite, YellowLimonite);
+        oreProp.setSeparatedInto(Iron);
+        oreProp.setDirectSmeltResult(Iron);
 
-        prop = Calcite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Andradite, Malachite);
+        oreProp = Calcite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Andradite, Malachite);
 
-        prop = Cassiterite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Tin, Bismuth);
-        prop.setDirectSmeltResult(Tin);
+        oreProp = Cassiterite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Tin, Bismuth);
+        oreProp.setDirectSmeltResult(Tin);
 
-        prop = CassiteriteSand.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Tin);
-        prop.setDirectSmeltResult(Tin);
+        oreProp = CassiteriteSand.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Tin);
+        oreProp.setDirectSmeltResult(Tin);
 
-        prop = Chalcopyrite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Pyrite, Cobalt, Cadmium, Gold);
-        prop.setWashedIn(Mercury);
-        prop.setDirectSmeltResult(Copper);
+        oreProp = Chalcopyrite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Pyrite, Cobalt, Cadmium, Gold);
+        oreProp.setWashedIn(Mercury);
+        oreProp.setDirectSmeltResult(Copper);
 
-        prop = Chromite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Iron, Magnesium);
-        prop.setSeparatedInto(Iron);
-        prop.setDirectSmeltResult(Chrome);
+        oreProp = Chromite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Iron, Magnesium);
+        oreProp.setSeparatedInto(Iron);
 
-        prop = Cinnabar.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Redstone, Sulfur, Glowstone);
+        oreProp = Cinnabar.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Redstone, Sulfur, Glowstone);
 
-        prop = Coal.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Coal, Thorium);
+        oreProp = Coal.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Coal, Thorium);
 
-        prop = Cobaltite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Cobalt, Cobaltite);
-        prop.setWashedIn(SodiumPersulfate);
-        prop.setDirectSmeltResult(Cobalt);
+        oreProp = Cobaltite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Cobalt, Cobaltite);
+        oreProp.setWashedIn(SodiumPersulfate);
+        oreProp.setDirectSmeltResult(Cobalt);
 
-        prop = Cooperite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Palladium, Nickel, Iridium, Cooperite);
-        prop.setWashedIn(Mercury);
-        prop.setDirectSmeltResult(Platinum);
+        oreProp = Cooperite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Palladium, Nickel, Iridium, Cooperite);
+        oreProp.setWashedIn(Mercury);
+        oreProp.setDirectSmeltResult(Platinum);
 
-        prop = Diamond.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Graphite);
+        oreProp = Diamond.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Graphite);
 
-        prop = Emerald.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Beryllium, Aluminium);
+        oreProp = Emerald.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Beryllium, Aluminium);
 
-        prop = Galena.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Sulfur, Silver, Lead, Silver);
-        prop.setWashedIn(Mercury);
-        prop.setDirectSmeltResult(Lead);
+        oreProp = Galena.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Sulfur, Silver, Lead, Silver);
+        oreProp.setWashedIn(Mercury);
+        oreProp.setDirectSmeltResult(Lead);
 
-        prop = Garnierite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Nickel);
-        prop.setWashedIn(SodiumPersulfate);
-        prop.setDirectSmeltResult(Nickel);
+        oreProp = Garnierite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Nickel);
+        oreProp.setWashedIn(SodiumPersulfate);
+        oreProp.setDirectSmeltResult(Nickel);
 
-        prop = GreenSapphire.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Aluminium, Sapphire);
+        oreProp = GreenSapphire.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Aluminium, Sapphire);
 
-        prop = Grossular.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(GarnetYellow, Calcium);
+        oreProp = Grossular.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(GarnetYellow, Calcium);
 
-        prop = Ilmenite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Iron, Rutile);
-        prop.setSeparatedInto(Iron);
+        oreProp = Ilmenite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Iron, Rutile);
+        oreProp.setSeparatedInto(Iron);
 
-        prop = Bauxite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Grossular, Rutile, Gallium);
+        oreProp = Bauxite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Grossular, Rutile, Gallium);
 
-        prop = Lazurite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Sodalite, Lapis);
+        oreProp = Lazurite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Sodalite, Lapis);
 
-        prop = Magnesite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Magnesium);
-        prop.setDirectSmeltResult(Magnesium);
+        oreProp = Magnesite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Magnesium);
+        oreProp.setDirectSmeltResult(Magnesium);
 
-        prop = Magnetite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Iron, Gold);
-        prop.setSeparatedInto(Gold);
-        prop.setWashedIn(Mercury);
-        prop.setDirectSmeltResult(Iron);
+        oreProp = Magnetite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Iron, Gold);
+        oreProp.setSeparatedInto(Gold);
+        oreProp.setWashedIn(Mercury);
+        oreProp.setDirectSmeltResult(Iron);
 
-        prop = Molybdenite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Molybdenum);
-        prop.setDirectSmeltResult(Molybdenum);
+        oreProp = Molybdenite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Molybdenum);
+        oreProp.setDirectSmeltResult(Molybdenum);
 
-        prop = Phosphate.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Phosphorus);
+        oreProp = Phosphate.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Phosphorus);
 
-        prop = Pyrite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Sulfur, TricalciumPhosphate, Iron);
-        prop.setSeparatedInto(Iron);
-        prop.setDirectSmeltResult(Iron);
+        oreProp = Pyrite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Sulfur, TricalciumPhosphate, Iron);
+        oreProp.setSeparatedInto(Iron);
+        oreProp.setDirectSmeltResult(Iron);
 
-        prop = Pyrolusite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Manganese);
-        prop.setDirectSmeltResult(Manganese);
+        oreProp = Pyrolusite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Manganese);
+        oreProp.setDirectSmeltResult(Manganese);
 
-        prop = Pyrope.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(GarnetRed, Magnesium);
+        oreProp = Pyrope.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(GarnetRed, Magnesium);
 
-        prop = RockSalt.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Salt, Borax);
+        oreProp = RockSalt.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Salt, Borax);
 
-        prop = Ruby.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Chrome, GarnetRed);
+        oreProp = Ruby.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Chrome, GarnetRed);
 
-        prop = Salt.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(RockSalt, Borax);
+        oreProp = Salt.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(RockSalt, Borax);
 
-        prop = Saltpeter.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Salt, Potassium);
+        oreProp = Saltpeter.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Salt, Potassium);
 
-        prop = Sapphire.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Aluminium, GreenSapphire);
+        oreProp = Sapphire.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Aluminium, GreenSapphire);
 
-        prop = Scheelite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Manganese, Molybdenum, Calcium);
+        oreProp = Scheelite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Manganese, Molybdenum, Calcium);
 
-        prop = Sodalite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Lazurite, Lapis);
+        oreProp = Sodalite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Lazurite, Lapis);
 
-        prop = Tantalite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Manganese, Niobium, Tantalum);
+        oreProp = Tantalite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Manganese, Niobium, Tantalum);
 
-        prop = Spessartine.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(GarnetRed, Manganese);
+        oreProp = Spessartine.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(GarnetRed, Manganese);
 
-        prop = Sphalerite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(GarnetYellow, Cadmium, Gallium, Zinc);
-        prop.setWashedIn(SodiumPersulfate);
-        prop.setDirectSmeltResult(Zinc);
+        oreProp = Sphalerite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(GarnetYellow, Cadmium, Gallium, Zinc);
+        oreProp.setWashedIn(SodiumPersulfate);
+        oreProp.setDirectSmeltResult(Zinc);
 
-        prop = Stibnite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Antimony);
-        prop.setDirectSmeltResult(Antimony);
+        oreProp = Stibnite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Antimony);
+        oreProp.setDirectSmeltResult(Antimony);
 
-        prop = Tanzanite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Opal);
+        oreProp = Tanzanite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Opal);
 
-        prop = Tetrahedrite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Antimony, Zinc, Tetrahedrite);
-        prop.setWashedIn(SodiumPersulfate);
-        prop.setDirectSmeltResult(Copper);
+        oreProp = Tetrahedrite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Antimony, Zinc, Tetrahedrite);
+        oreProp.setWashedIn(SodiumPersulfate);
+        oreProp.setDirectSmeltResult(Copper);
 
-        prop = Topaz.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(BlueTopaz);
+        oreProp = Topaz.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(BlueTopaz);
 
-        prop = Tungstate.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Manganese, Silver, Lithium, Silver);
-        prop.setWashedIn(Mercury);
+        oreProp = Tungstate.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Manganese, Silver, Lithium, Silver);
+        oreProp.setWashedIn(Mercury);
 
-        prop = Uraninite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Uranium238, Thorium, Uranium235);
+        oreProp = Uraninite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Uranium238, Thorium, Uranium235);
 
-        //prop = Uvarovite.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(GarnetYellow, Chrome);
+        //oreProp = Uvarovite.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(GarnetYellow, Chrome);
 
-        prop = YellowLimonite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Nickel, BrownLimonite, Cobalt, Nickel);
-        prop.setSeparatedInto(Iron);
-        prop.setWashedIn(SodiumPersulfate);
-        prop.setDirectSmeltResult(Iron);
+        oreProp = YellowLimonite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Nickel, BrownLimonite, Cobalt, Nickel);
+        oreProp.setSeparatedInto(Iron);
+        oreProp.setWashedIn(SodiumPersulfate);
+        oreProp.setDirectSmeltResult(Iron);
 
-        prop = NetherQuartz.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Netherrack);
+        oreProp = NetherQuartz.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Netherrack);
 
-        prop = CertusQuartz.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Quartzite, Barite);
+        oreProp = CertusQuartz.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Quartzite, Barite);
 
-        prop = Quartzite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(CertusQuartz, Barite);
+        oreProp = Quartzite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(CertusQuartz, Barite);
 
-        prop = Graphite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Carbon);
+        oreProp = Graphite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Carbon);
 
-        prop = Tenorite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Iron, Manganese, Malachite);
-        prop.setDirectSmeltResult(Copper);
+        oreProp = Bornite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Pyrite, Cobalt, Cadmium, Gold);
+        oreProp.setWashedIn(Mercury);
+        oreProp.setDirectSmeltResult(Copper);
 
-        prop = Cuprite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Iron, Antimony, Malachite);
-        prop.setDirectSmeltResult(Copper);
+        oreProp = Chalcocite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Sulfur, Lead, Silver);
+        oreProp.setDirectSmeltResult(Copper);
 
-        prop = Bornite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Pyrite, Cobalt, Cadmium, Gold);
-        prop.setWashedIn(Mercury);
-        prop.setDirectSmeltResult(Copper);
+        oreProp = Enargite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Pyrite, Zinc, Quartzite);
 
-        prop = Chalcocite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Sulfur, Lead, Silver);
-        prop.setDirectSmeltResult(Copper);
+        oreProp = Tennantite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Iron, Antimony, Zinc);
 
-        prop = Enargite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Pyrite, Zinc, Quartzite);
+        oreProp = Bastnasite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Neodymium, RareEarth);
+        oreProp.setSeparatedInto(Neodymium);
 
-        prop = Tennantite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Iron, Antimony, Zinc);
+        oreProp = Pentlandite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Iron, Sulfur, Cobalt);
+        oreProp.setSeparatedInto(Iron);
+        oreProp.setWashedIn(SodiumPersulfate);
+        oreProp.setDirectSmeltResult(Nickel);
 
-        prop = Bastnasite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Neodymium, RareEarth);
-        prop.setSeparatedInto(Neodymium);
+        oreProp = Spodumene.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Aluminium, Lithium);
 
-        prop = Pentlandite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Iron, Sulfur, Cobalt);
-        prop.setSeparatedInto(Iron);
-        prop.setWashedIn(SodiumPersulfate);
-        prop.setDirectSmeltResult(Nickel);
+        oreProp = Lepidolite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Lithium, Caesium, Boron);
 
-        prop = Spodumene.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Aluminium, Lithium);
+        oreProp = Glauconite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Sodium, Aluminium, Iron);
+        oreProp.setSeparatedInto(Iron);
 
-        prop = Lepidolite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Lithium, Caesium, Boron);
+        //oreProp = GlauconiteSand.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(Sodium, Aluminium, Iron);
+        //oreProp.setSeparatedInto(Iron);
 
-        prop = Glauconite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Sodium, Aluminium, Iron);
-        prop.setSeparatedInto(Iron);
+        oreProp = Malachite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Copper, BrownLimonite, Calcite, Copper);
+        oreProp.setWashedIn(SodiumPersulfate);
+        oreProp.setDirectSmeltResult(Copper);
 
-        //prop = GlauconiteSand.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(Sodium, Aluminium, Iron);
-        //prop.setSeparatedInto(Iron);
+        oreProp = Olivine.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Pyrope, Magnesium, Manganese);
 
-        prop = Malachite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Copper, BrownLimonite, Calcite, Copper);
-        prop.setWashedIn(SodiumPersulfate);
-        prop.setDirectSmeltResult(Copper);
+        oreProp = Opal.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Tanzanite);
 
-        prop = Olivine.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Pyrope, Magnesium, Manganese);
+        oreProp = Amethyst.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Amethyst);
 
-        prop = Opal.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Tanzanite);
+        oreProp = Lapis.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Lazurite, Sodalite, Pyrite);
 
-        prop = Amethyst.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Amethyst);
+        //oreProp = Niter.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(Saltpeter);
 
-        prop = Lapis.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Lazurite, Sodalite, Pyrite);
+        oreProp = Apatite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(TricalciumPhosphate);
 
-        //prop = Niter.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(Saltpeter);
+        oreProp = TricalciumPhosphate.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Apatite, Phosphate);
 
-        prop = Apatite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(TricalciumPhosphate);
+        oreProp = GarnetRed.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Spessartine, Pyrope, Almandine);
 
-        prop = TricalciumPhosphate.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Apatite, Phosphate);
+        oreProp = GarnetYellow.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Andradite, Grossular, Uvarovite);
 
-        prop = GarnetRed.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Spessartine, Pyrope, Almandine);
+        //oreProp = Marble.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(Calcite);
 
-        prop = GarnetYellow.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Andradite, Grossular, Uvarovite);
+        //oreProp = GraniteBlack.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(Biotite);
 
-        //prop = Marble.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(Calcite);
+        //oreProp = GraniteRed.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(PotassiumFeldspar);
 
-        //prop = GraniteBlack.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(Biotite);
+        //oreProp = Chrysotile.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(Asbestos, Silicon, Magnesium);
 
-        //prop = GraniteRed.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(PotassiumFeldspar);
+        oreProp = VanadiumMagnetite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Magnetite, Vanadium);
+        oreProp.setSeparatedInto(Gold);
 
-        //prop = Chrysotile.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(Asbestos, Silicon, Magnesium);
+        //oreProp = QuartzSand.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(CertusQuartz, Quartzite, Barite);
 
-        prop = VanadiumMagnetite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Magnetite, Vanadium);
-        prop.setSeparatedInto(Gold);
+        //oreProp = Pollucite.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(Caesium, Aluminium, Rubidium);
 
-        //prop = QuartzSand.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(CertusQuartz, Quartzite, Barite);
+        //oreProp = Vermiculite.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(Iron, Aluminium, Magnesium);
+        //oreProp.setSeparatedInto(Iron);
 
-        //prop = Pollucite.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(Caesium, Aluminium, Rubidium);
+        oreProp = Bentonite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Aluminium, Calcium, Magnesium);
 
-        //prop = Vermiculite.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(Iron, Aluminium, Magnesium);
-        //prop.setSeparatedInto(Iron);
+        oreProp = FullersEarth.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Aluminium, Silicon, Magnesium);
 
-        prop = Bentonite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Aluminium, Calcium, Magnesium);
+        oreProp = Pitchblende.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Thorium, Uranium238, Lead);
 
-        prop = FullersEarth.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Aluminium, Silicon, Magnesium);
+        oreProp = Monazite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Thorium, Neodymium, RareEarth);
+        oreProp.setSeparatedInto(Neodymium);
 
-        prop = Pitchblende.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Thorium, Uranium238, Lead);
+        oreProp = Vinteum.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Vinteum);
 
-        prop = Monazite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Thorium, Neodymium, RareEarth);
-        prop.setSeparatedInto(Neodymium);
+        oreProp = Redstone.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Cinnabar, RareEarth, Glowstone);
 
-        prop = Vinteum.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Vinteum);
+        oreProp = Diatomite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(BandedIron, Sapphire);
 
-        prop = Redstone.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Cinnabar, RareEarth, Glowstone);
+        //oreProp = Basalt.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(Olivine, DarkAsh);
 
-        prop = Diatomite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(BandedIron, Sapphire);
+        oreProp = GraniticMineralSand.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(GraniteBlack, Magnetite);
+        oreProp.setSeparatedInto(Gold);
+        oreProp.setDirectSmeltResult(Iron);
 
-        //prop = Basalt.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(Olivine, DarkAsh);
+        //oreProp = Redrock.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(Clay);
 
-        prop = GraniticMineralSand.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(GraniteBlack, Magnetite);
-        prop.setSeparatedInto(Gold);
-        prop.setDirectSmeltResult(Iron);
+        //oreProp = GarnetSand.getProperty(PropertyKey.ORE);
+        //oreProp.setOreByProducts(GarnetRed, GarnetYellow);
 
-        //prop = Redrock.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(Clay);
+        oreProp = BasalticMineralSand.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Basalt, Magnetite);
+        oreProp.setSeparatedInto(Gold);
+        oreProp.setDirectSmeltResult(Iron);
 
-        //prop = GarnetSand.getProperty(PropertyKey.ORE);
-        //prop.setOreByProducts(GarnetRed, GarnetYellow);
+        oreProp = BandedIron.getProperty(PropertyKey.ORE);
+        oreProp.setSeparatedInto(Iron);
+        oreProp.setDirectSmeltResult(Iron);
+        oreProp.setOreByProducts(Magnetite, Calcium, Magnesium, SiliconDioxide);
 
-        prop = BasalticMineralSand.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Basalt, Magnetite);
-        prop.setSeparatedInto(Gold);
-        prop.setDirectSmeltResult(Iron);
+        oreProp = Wulfenite.getProperty(PropertyKey.ORE);
+        oreProp.setSeparatedInto(Trinium);
+        oreProp.setOreByProducts(Iron, Manganese, Manganese, Lead);
 
-        prop = BandedIron.getProperty(PropertyKey.ORE);
-        prop.setSeparatedInto(Iron);
-        prop.setDirectSmeltResult(Iron);
-        prop.setOreByProducts(Magnetite, Calcium, Magnesium, SiliconDioxide);
+        oreProp = Soapstone.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(SiliconDioxide, Magnesium, Calcite, Talc);
 
-        prop = Wulfenite.getProperty(PropertyKey.ORE);
-        prop.setSeparatedInto(Trinium);
-        prop.setOreByProducts(Iron, Manganese, Manganese, Lead);
+        oreProp = Dolomite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Dolomite, Calcium, Magnesium);
 
-        prop = Soapstone.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(SiliconDioxide, Magnesium, Calcite, Talc);
+        oreProp = Wollastonite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Calcite, SiliconDioxide, Calcite, SiliconDioxide);
 
-        prop = Dolomite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Dolomite, Calcium, Magnesium);
+        oreProp = Kyanite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Talc, Aluminium, Silicon);
 
-        prop = Wollastonite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Calcite, SiliconDioxide, Calcite, SiliconDioxide);
+        oreProp = Kaolinite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Clay, Clay, SiliconDioxide, Kaolinite);
 
-        prop = Kyanite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Talc, Aluminium, Silicon);
+        oreProp = Gypsum.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Sulfur, Calcium, Salt);
 
-        prop = Kaolinite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Clay, Clay, SiliconDioxide, Kaolinite);
+        oreProp = Talc.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Clay, Clay, Carbon);
 
-        prop = Gypsum.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Sulfur, Calcium, Salt);
+        oreProp = Powellite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Iron, Molybdenite, Potassium);
 
-        prop = Talc.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Clay, Clay, Carbon);
+        oreProp = Trona.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Sodium, SodaAsh, SodaAsh);
 
-        prop = Powellite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Iron, Molybdenite, Potassium);
+        oreProp = Mica.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Potassium, Aluminium);
 
-        prop = Trona.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Sodium, SodaAsh, SodaAsh);
+        oreProp = Zeolite.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Calcium, Silicon, Aluminium);
 
-        prop = Mica.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Potassium, Aluminium);
+        FluidProperty fluidProp = LiquidAir.getProperty(PropertyKey.FLUID);
+        fluidProp.setFluidTemperature(77);
 
-        prop = Zeolite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Calcium, Silicon, Aluminium);
+        fluidProp = LiquidNetherAir.getProperty(PropertyKey.FLUID);
+        fluidProp.setFluidTemperature(67);
+
+        fluidProp = LiquidEnderAir.getProperty(PropertyKey.FLUID);
+        fluidProp.setFluidTemperature(57);
     }
 }

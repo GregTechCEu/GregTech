@@ -6,7 +6,9 @@ import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
@@ -29,7 +31,7 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
         super(tileEntity, recipeMap);
         this.steamFluidTank = steamFluidTank;
         this.conversionRate = conversionRate;
-        allowOverclocking = false;
+        setAllowOverclocking(false);
         combineSteamTanks();
     }
 
@@ -81,6 +83,11 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
+    protected long getEnergyInputPerSecond() {
+        return 0;
+    }
+
+    @Override
     protected long getEnergyStored() {
         combineSteamTanks();
         return (long) Math.ceil(steamFluidTankCombined.getFluidAmount() * conversionRate);
@@ -127,17 +134,26 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
         BlockPos ventingBlockPos = machinePos.offset(ventingSide);
         IBlockState blockOnPos = metaTileEntity.getWorld().getBlockState(ventingBlockPos);
         if (blockOnPos.getCollisionBoundingBox(metaTileEntity.getWorld(), ventingBlockPos) == Block.NULL_AABB) {
-            WorldServer world = (WorldServer) metaTileEntity.getWorld();
-            double posX = machinePos.getX() + 0.5 + ventingSide.getXOffset() * 0.6;
-            double posY = machinePos.getY() + 0.5 + ventingSide.getYOffset() * 0.6;
-            double posZ = machinePos.getZ() + 0.5 + ventingSide.getZOffset() * 0.6;
-
-            world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY, posZ,
-                    7 + world.rand.nextInt(3),
-                    ventingSide.getXOffset() / 2.0,
-                    ventingSide.getYOffset() / 2.0,
-                    ventingSide.getZOffset() / 2.0, 0.1);
-            world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            performVentingAnimation(machinePos, ventingSide);
         }
+        else if(blockOnPos.getBlock() == Blocks.SNOW_LAYER && blockOnPos.getValue(BlockSnow.LAYERS) == 1) {
+            performVentingAnimation(machinePos, ventingSide);
+            metaTileEntity.getWorld().destroyBlock(ventingBlockPos, false);
+        }
+    }
+
+    private void performVentingAnimation(BlockPos machinePos, EnumFacing ventingSide) {
+        WorldServer world = (WorldServer) metaTileEntity.getWorld();
+        double posX = machinePos.getX() + 0.5 + ventingSide.getXOffset() * 0.6;
+        double posY = machinePos.getY() + 0.5 + ventingSide.getYOffset() * 0.6;
+        double posZ = machinePos.getZ() + 0.5 + ventingSide.getZOffset() * 0.6;
+
+        world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY, posZ,
+                7 + world.rand.nextInt(3),
+                ventingSide.getXOffset() / 2.0,
+                ventingSide.getYOffset() / 2.0,
+                ventingSide.getZOffset() / 2.0, 0.1);
+        world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+
     }
 }

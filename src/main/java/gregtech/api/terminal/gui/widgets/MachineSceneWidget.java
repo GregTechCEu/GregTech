@@ -8,11 +8,12 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.multiblock.PatternMatchContext;
-import gregtech.api.render.scene.FBOWorldSceneRenderer;
-import gregtech.api.render.scene.WorldSceneRenderer;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.client.renderer.scene.FBOWorldSceneRenderer;
+import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.api.terminal.os.TerminalTheme;
-import gregtech.api.util.RenderUtil;
+import gregtech.api.util.BlockPosFace;
+import gregtech.client.utils.RenderUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -20,7 +21,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -28,11 +32,11 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
 import javax.vecmath.Vector3f;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA.
@@ -52,13 +56,12 @@ public class MachineSceneWidget extends WidgetGroup {
     private float rotationYaw = 45;
     private float rotationPitch;
     private float zoom = 5;
-    private float maxZoom = 10;
     private float alpha = 1f;
     private boolean blendColor = true;
     private Set<BlockPos> cores;
     private Set<BlockPos> around;
-    private WorldSceneRenderer.BlockPosFace hoverPosFace;
-    private WorldSceneRenderer.BlockPosFace selectedPosFace;
+    private BlockPosFace hoverPosFace;
+    private BlockPosFace selectedPosFace;
     private BiConsumer<BlockPos, EnumFacing> onSelected;
 
     protected MetaTileEntity mte;
@@ -84,10 +87,6 @@ public class MachineSceneWidget extends WidgetGroup {
             worldSceneRenderer.releaseFBO();
             worldSceneRenderer = null;
         }
-    }
-
-    public void setMaxZoom(float maxZoom) {
-        this.maxZoom = maxZoom;
     }
 
     public Set<BlockPos> getCores() {
@@ -135,7 +134,7 @@ public class MachineSceneWidget extends WidgetGroup {
                     double dist = eyePos.distanceTo(new Vec3d(hit.getBlockPos()));
                     if (dist < min) {
                         min = dist;
-                        hoverPosFace = new WorldSceneRenderer.BlockPosFace(hit.getBlockPos(), hit.sideHit);
+                        hoverPosFace = new BlockPosFace(hit.getBlockPos(), hit.sideHit);
                     }
                 }
             }
@@ -158,9 +157,9 @@ public class MachineSceneWidget extends WidgetGroup {
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
     }
 
-    private void drawFacingBorder(WorldSceneRenderer.BlockPosFace posFace, int color) {
+    private void drawFacingBorder(BlockPosFace posFace, int color) {
         GlStateManager.pushMatrix();
-        RenderUtil.moveToFace(posFace.getX(), posFace.getY(), posFace.getZ(), posFace.facing);
+        RenderUtil.moveToFace(posFace.pos.getX(), posFace.pos.getY(), posFace.pos.getZ(), posFace.facing);
         RenderUtil.rotateToFace(posFace.facing, null);
         GlStateManager.scale(1f / 16, 1f / 16, 0);
         GlStateManager.translate(-8, -8, 0);
@@ -197,10 +196,9 @@ public class MachineSceneWidget extends WidgetGroup {
         around = new HashSet<>();
         cores.add(pos);
         if (mte instanceof MultiblockControllerBase) {
-            List<BlockPos> validPos = new ArrayList<>();
-            PatternMatchContext context = ((MultiblockControllerBase) mte).structurePattern
-                    .checkPatternAt(world, pos, mte.getFrontFacing().getOpposite(), validPos);
+            PatternMatchContext context = ((MultiblockControllerBase) mte).structurePattern.checkPatternFastAt(world, pos, mte.getFrontFacing().getOpposite());
             if (context != null) {
+                List<BlockPos> validPos = ((MultiblockControllerBase) mte).structurePattern.cache.keySet().stream().map(BlockPos::fromLong).collect(Collectors.toList());
                 Set<IMultiblockPart> parts = context.getOrCreate("MultiblockParts", HashSet::new);
                 for (IMultiblockPart part : parts) {
                     if (part instanceof MetaTileEntity) {
@@ -270,7 +268,7 @@ public class MachineSceneWidget extends WidgetGroup {
             if (hoverPosFace != null && !hoverPosFace.equals(selectedPosFace)) {
                 selectedPosFace = hoverPosFace;
                 if (onSelected != null) {
-                    onSelected.accept(selectedPosFace, selectedPosFace.facing);
+                    onSelected.accept(selectedPosFace.pos, selectedPosFace.facing);
                 }
             }
             return true;
@@ -282,7 +280,7 @@ public class MachineSceneWidget extends WidgetGroup {
     @Override
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
         if (isMouseOverElement(mouseX, mouseY)) {
-            zoom = (float) MathHelper.clamp(zoom + (wheelDelta < 0 ? 0.5 : -0.5), 3, maxZoom);
+            zoom = (float) MathHelper.clamp(zoom + (wheelDelta < 0 ? 0.5 : -0.5), 3, 999);
             if (worldSceneRenderer != null) {
                 worldSceneRenderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
             }

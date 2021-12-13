@@ -17,28 +17,20 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.SimpleOverlayRenderer;
-import gregtech.api.render.Textures;
-import gregtech.api.util.GTFluidUtils;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -48,6 +40,8 @@ import java.util.List;
 public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
 
     private static final int INVENTORY_SIZE = 64000;
+    private static final boolean IS_STEEL = ConfigHolder.machines.steelSteamMultiblocks;
+
     private final ItemStackHandler containerInventory;
     private final FluidTank steamFluidTank;
 
@@ -94,37 +88,6 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
     }
 
     @Override
-    public boolean fillInternalTankFromFluidContainer(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, int inputSlot, int outputSlot) {
-        ItemStack inputContainerStack = importItems.extractItem(inputSlot, 1, true);
-        IFluidHandlerItem fluidHandlerItem = FluidUtil.getFluidHandler(inputContainerStack);
-        if (fluidHandlerItem != null && ModHandler.isSteam(fluidHandlerItem.drain(1, false)))
-            return false;
-        return super.fillInternalTankFromFluidContainer(importItems, exportItems, inputSlot, outputSlot);
-    }
-
-    @Override
-    public void pullFluidsFromNearbyHandlers(EnumFacing... allowedFaces) {
-        BlockPos.PooledMutableBlockPos blockPos = BlockPos.PooledMutableBlockPos.retain();
-        EnumFacing[] AllowedFaces = allowedFaces;
-        int length = allowedFaces.length;
-
-        for (int i = 0; i < length; ++i) {
-            EnumFacing nearbyFacing = AllowedFaces[i];
-            blockPos.setPos(this.getPos()).move(nearbyFacing);
-            TileEntity tileEntity = this.getWorld().getTileEntity(blockPos);
-            if (tileEntity != null) {
-                IFluidHandler fluidHandler = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing.getOpposite());
-                IFluidHandler myFluidHandler = this.getCoverCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing);
-                if (fluidHandler != null && myFluidHandler != null && ModHandler.isSteam(fluidHandler.drain(1, false))) {
-                    GTFluidUtils.transferFluids(fluidHandler, myFluidHandler, 2147483647);
-                }
-            }
-        }
-        blockPos.release();
-    }
-
-
-    @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
@@ -137,7 +100,7 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
     public ICubeRenderer getBaseTexture() {
         MultiblockControllerBase controller = getController();
         if (controller == null)
-            return ConfigHolder.U.steelSteamMultiblocks ? Textures.SOLID_STEEL_CASING : Textures.BRONZE_PLATED_BRICKS;
+            return IS_STEEL ? Textures.STEAM_CASING_STEEL : Textures.STEAM_CASING_BRONZE;
         return controller.getBaseTexture(this);
     }
 
@@ -174,8 +137,8 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
     }
 
     public ModularUI.Builder createTankUI(IFluidTank fluidTank, IItemHandlerModifiable containerInventory, String title, EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.defaultBuilder();
-        builder.image(7, 16, 81, 55, GuiTextures.DISPLAY);
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(IS_STEEL), 176, 166);
+        builder.image(7, 16, 81, 55, GuiTextures.DISPLAY_STEAM.get(IS_STEEL));
         TankWidget tankWidget = new TankWidget(fluidTank, 69, 52, 18, 18)
                 .setHideTooltip(true).setAlwaysShowFull(true);
         builder.widget(tankWidget);
@@ -184,11 +147,11 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
         builder.dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF);
         return builder.label(6, 6, title)
                 .widget(new FluidContainerSlotWidget(containerInventory, 0, 90, 17, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
-                .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON))
+                        .setBackgroundTexture(GuiTextures.SLOT_STEAM.get(IS_STEEL), GuiTextures.IN_SLOT_OVERLAY_STEAM.get(IS_STEEL)))
+                .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON)) // todo tank icon
                 .widget(new SlotWidget(containerInventory, 1, 90, 54, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
-                .bindPlayerInventory(entityPlayer.inventory);
+                        .setBackgroundTexture(GuiTextures.SLOT_STEAM.get(IS_STEEL), GuiTextures.OUT_SLOT_OVERLAY_STEAM.get(IS_STEEL)))
+                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT_STEAM.get(IS_STEEL), 7, 83);
     }
 
     @Override

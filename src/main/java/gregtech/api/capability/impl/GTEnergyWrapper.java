@@ -136,7 +136,7 @@ public class GTEnergyWrapper implements IEnergyContainer {
             }
         }
 
-        long maxPacket = (long) (voltage * ConfigHolder.U.energyOptions.rfRatio);
+        long maxPacket = (long) (voltage * ConfigHolder.compat.energy.rfRatio);
         long maximalValue = maxPacket * amperage;
 
         // Try to consume our remainder buffer plus a fresh packet
@@ -145,7 +145,6 @@ public class GTEnergyWrapper implements IEnergyContainer {
             int consumable = container.receiveEnergy(safeCastLongToInt(maximalValue + receive), true);
 
             // Machine unable to consume any power
-            // Probably unnecessary in this case, but just to be safe
             if (consumable == 0)
                 return 0;
 
@@ -210,7 +209,7 @@ public class GTEnergyWrapper implements IEnergyContainer {
         if (container == null || delta == 0)
             return 0;
 
-        long energyValue = (long) (delta * ConfigHolder.U.energyOptions.rfRatio);
+        long energyValue = (long) (delta * ConfigHolder.compat.energy.rfRatio);
         if (energyValue > Integer.MAX_VALUE)
             energyValue = Integer.MAX_VALUE;
 
@@ -218,19 +217,19 @@ public class GTEnergyWrapper implements IEnergyContainer {
 
             int extract = container.extractEnergy(safeCastLongToInt(energyValue), true);
 
-            if (extract != ConfigHolder.U.energyOptions.rfRatio)
-                extract -= extract % ConfigHolder.U.energyOptions.rfRatio;
+            if (extract != ConfigHolder.compat.energy.rfRatio)
+                extract -= extract % ConfigHolder.compat.energy.rfRatio;
 
-            return (long) (container.extractEnergy(extract, false) / ConfigHolder.U.energyOptions.rfRatio);
+            return (long) (container.extractEnergy(extract, false) / ConfigHolder.compat.energy.rfRatio);
 
         } else {
 
             int receive = container.receiveEnergy((int) energyValue, true);
 
-            if (receive != ConfigHolder.U.energyOptions.rfRatio)
-                receive -= receive % ConfigHolder.U.energyOptions.rfRatio;
+            if (receive != ConfigHolder.compat.energy.rfRatio)
+                receive -= receive % ConfigHolder.compat.energy.rfRatio;
 
-            return (long) (container.receiveEnergy(receive, false) / ConfigHolder.U.energyOptions.rfRatio);
+            return (long) (container.receiveEnergy(receive, false) / ConfigHolder.compat.energy.rfRatio);
         }
     }
 
@@ -250,7 +249,7 @@ public class GTEnergyWrapper implements IEnergyContainer {
         if (cap == null)
             return 0L;
 
-        return (long) (cap.getMaxEnergyStored() / ConfigHolder.U.energyOptions.rfRatio);
+        return (long) (cap.getMaxEnergyStored() / ConfigHolder.compat.energy.rfRatio);
     }
 
     @Override
@@ -260,7 +259,15 @@ public class GTEnergyWrapper implements IEnergyContainer {
         if (cap == null)
             return 0L;
 
-        return (long) (cap.getEnergyStored() / ConfigHolder.U.energyOptions.rfRatio);
+        return (long) (cap.getEnergyStored() / ConfigHolder.compat.energy.rfRatio);
+    }
+
+    @Override
+    public long getEnergyCanBeInserted() {
+        // most RF/FE cables blindly try to insert energy without checking if there is space, since the recieving IEnergyStorage should handle it
+        // this simulates that behavior in most places by allowing our "is there space" checks to pass and letting the cable attempt to insert energy
+        // if the wrapped TE actually cannot accept any more energy, the energy transfer will return 0 before any changes to our internal rf buffer
+        return Math.max(1, getEnergyCapacity() - getEnergyStored());
     }
 
     @Override
@@ -287,7 +294,7 @@ public class GTEnergyWrapper implements IEnergyContainer {
         if (maxInput == 0)
             return 0;
 
-        maxInput = (long) (maxInput / ConfigHolder.U.energyOptions.rfRatio);
+        maxInput = (long) (maxInput / ConfigHolder.compat.energy.rfRatio);
         return GTValues.V[GTUtility.getTierByVoltage(maxInput)];
     }
 

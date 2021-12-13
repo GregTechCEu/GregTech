@@ -5,6 +5,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
@@ -16,7 +17,7 @@ import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +29,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.List;
 import java.util.function.Function;
 
 public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEnergyContainer {
@@ -37,6 +39,11 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
 
     private int setTier = 0;
     private boolean active = false;
+
+    private long lastEnergyOutputPerSec = 0;
+    private long energyOutputPerSec = 0;
+
+    private final List<Character> ALLOWED_CHARS = Lists.newArrayList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
 
     public MetaTileEntityCreativeEnergy() {
         super(new ResourceLocation(GTValues.MODID, "infinite_energy"));
@@ -100,8 +107,17 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     }
 
     @Override
+    public long getOutputPerSec() {
+        return lastEnergyOutputPerSec;
+    }
+
+    @Override
     public void update() {
         super.update();
+        if (getOffsetTimer() % 20 == 0) {
+            lastEnergyOutputPerSec = energyOutputPerSec;
+            energyOutputPerSec = 0;
+        }
         if (getWorld().isRemote || !active || voltage <= 0 || amps <= 0) return;
         int ampsUsed = 0;
         for (EnumFacing facing : EnumFacing.values()) {
@@ -116,6 +132,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
                     break;
             }
         }
+        energyOutputPerSec += ampsUsed * voltage;
     }
 
     @Override

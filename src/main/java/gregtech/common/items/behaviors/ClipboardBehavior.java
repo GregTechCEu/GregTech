@@ -31,12 +31,13 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
 
     @Override
     public ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
-        initNBT(holder.getCurrentItem());
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 170, 238);
+        initNBT(holder.getCurrentItem());
 
         builder.widget(new ImageTextFieldWidget(20, 10, 130, 12, GuiTextures.CLIPBOARD_TEXT_BOX,
                 () -> getTitle(holder), (x) -> setTitle(holder, x), 23, 0xFFFFFF)
-                .setValidator((x) -> true));
+                .setValidator((x) -> true)
+                .doesClientCallback(true));
 
         for (int i = 0; i < 8; i++) {
             int finalI = i;
@@ -44,7 +45,8 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
                     () -> getButtonState(holder, finalI), (x) -> setButton(holder, finalI, x)));
             builder.widget(new ImageTextFieldWidget(24, 40 + 20 * i, 140, 12, GuiTextures.CLIPBOARD_TEXT_BOX,
                     () -> getString(holder, finalI), (x) -> setString(holder, finalI, x), 23, 0xFFFFFF)
-                    .setValidator((x) -> true));
+                    .setValidator((x) -> true)
+                    .doesClientCallback(true));
         }
 
         builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, -1))
@@ -52,7 +54,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
         builder.widget(new ClickButtonWidget(124, 200, 16, 16, "", (x) -> incrPageNum(holder, 1))
                 .setButtonTexture(GuiTextures.BUTTON_RIGHT).setShouldClientCallback(true));
         builder.widget(new SimpleTextWidget(85, 208, "", 0xFFFFFF,
-                () -> (getPageNum(holder) + 1) + " / " + MAX_PAGES));
+                () -> (getPageNum(holder) + 1) + " / " + MAX_PAGES, true));
 
         return builder.build(holder, entityPlayer);
     }
@@ -62,7 +64,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 170, 238);
 
         builder.image(18, 8, 130, 14, GuiTextures.CLIPBOARD_TEXT_BOX);
-        builder.widget(new SimpleTextWidget(20, 10, "", 0xFFFFFF, () -> getTitle(holder), true).setCenter(false));
+        builder.widget(new SimpleTextWidget(20, 10, "", 0xFFFFFF, () -> getTitle(holder), false).setCenter(false));
 
 
         for (int i = 0; i < 8; i++) {
@@ -70,7 +72,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
             builder.widget(new ImageCycleButtonWidget(6, 37 + 20 * i, 15, 15, GuiTextures.CLIPBOARD_BUTTON, 4,
                     () -> getButtonState(holder, finalI), (x) -> setButton(holder, finalI, x)));
             builder.image(22, 38 + 20 * i, 140, 12, GuiTextures.CLIPBOARD_TEXT_BOX);
-            builder.widget(new SimpleTextWidget(24, 40 + 20 * i, "", 0xFFFFFF, () -> getString(holder, finalI), true).setCenter(false));
+            builder.widget(new SimpleTextWidget(24, 40 + 20 * i, "", 0xFFFFFF, () -> getString(holder, finalI), false).setCenter(false));
         }
 
         builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, -1))
@@ -86,7 +88,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
 
     private static NBTTagCompound getPageCompound(ItemStack stack) {
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
-            throw new IllegalArgumentException("Given item stack is not a clipboard!");
+            return null;
         assert stack.getTagCompound() != null;
         short pageNum = stack.getTagCompound().getShort("PageIndex");
         return stack.getTagCompound().getCompoundTag("Page" + pageNum);
@@ -94,7 +96,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
 
     private static void setPageCompound(ItemStack stack, NBTTagCompound pageCompound) {
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
-            throw new IllegalArgumentException("Given item stack is not a clipboard!");
+            return;
         assert stack.getTagCompound() != null;
         short pageNum = stack.getTagCompound().getShort("PageIndex");
         stack.getTagCompound().setTag("Page" + pageNum, pageCompound);
@@ -102,7 +104,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
 
     private static void initNBT(ItemStack stack) {
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
-            throw new IllegalArgumentException("Given item stack is not a clipboard!");
+            return;
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
@@ -127,7 +129,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
     private static void setButton(PlayerInventoryHolder holder, int pos, int newState) {
         ItemStack stack = holder.getCurrentItem();
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
-            throw new IllegalArgumentException("Given item stack is not a clipboard!");
+           return;
         NBTTagCompound tagCompound = getPageCompound(stack);
         short buttonState;
         buttonState = tagCompound.getShort("ButStat");
@@ -142,7 +144,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
     private static int getButtonState(PlayerInventoryHolder holder, int pos) {
         ItemStack stack = holder.getCurrentItem();
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
-            throw new IllegalArgumentException("Given item stack is not a clipboard!");
+            return 0;
         NBTTagCompound tagCompound = getPageCompound(stack);
         short buttonState;
         buttonState = tagCompound.getShort("ButStat");
@@ -152,7 +154,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
     private static void setString(PlayerInventoryHolder holder, int pos, String newString) {
         ItemStack stack = holder.getCurrentItem();
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
-            throw new IllegalArgumentException("Given item stack is not a clipboard!");
+            return;
         NBTTagCompound tagCompound = getPageCompound(stack);
         tagCompound.setString("Task" + pos, newString);
         setPageCompound(stack, tagCompound);
@@ -161,7 +163,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
     private static String getString(PlayerInventoryHolder holder, int pos) {
         ItemStack stack = holder.getCurrentItem();
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
-            throw new IllegalArgumentException("Given item stack is not a clipboard!");
+            return "";
         NBTTagCompound tagCompound = getPageCompound(stack);
         return tagCompound.getString("Task" + pos);
     }
@@ -169,7 +171,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
     private static void setTitle(PlayerInventoryHolder holder, String newString) {
         ItemStack stack = holder.getCurrentItem();
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
-            throw new IllegalArgumentException("Given item stack is not a clipboard!");
+            return;
         NBTTagCompound tagCompound = getPageCompound(stack);
         assert tagCompound != null;
         tagCompound.setString("Title", newString);
@@ -179,7 +181,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
     private static String getTitle(PlayerInventoryHolder holder) {
         ItemStack stack = holder.getCurrentItem();
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
-            throw new IllegalArgumentException("Given item stack is not a clipboard!");
+            return "";
         NBTTagCompound tagCompound = getPageCompound(stack);
         return tagCompound.getString("Title");
     }
@@ -187,7 +189,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
     private static int getPageNum(PlayerInventoryHolder holder) {
         ItemStack stack = holder.getCurrentItem();
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
-            throw new IllegalArgumentException("Given item stack is not a clipboard!");
+            return 1;
         NBTTagCompound tagCompound = stack.getTagCompound();
         return tagCompound.getInteger("PageIndex");
     }
@@ -195,7 +197,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
     private static void incrPageNum(PlayerInventoryHolder holder, int increment) {
         ItemStack stack = holder.getCurrentItem();
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
-            throw new IllegalArgumentException("Given item stack is not a clipboard!");
+            return;
         NBTTagCompound tagCompound = stack.getTagCompound();
         assert tagCompound != null;
 

@@ -7,10 +7,12 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.ToolMetaItem;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
+import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.common.items.armor.MetaArmor;
-import gregtech.common.render.FacadeItemModel;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.EnumDyeColor;
@@ -21,9 +23,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public final class MetaItems {
 
@@ -141,7 +141,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem BATTERY_HV_CADMIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_HV_LITHIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_HV_SODIUM;
-    public static MetaItem<?>.MetaValueItem ENERGY_CRYSTAL;
+    public static MetaItem<?>.MetaValueItem ENERGIUM_CRYSTAL;
     public static MetaItem<?>.MetaValueItem LAPOTRON_CRYSTAL;
 
     public static MetaItem<?>.MetaValueItem BATTERY_EV_VANADIUM;
@@ -151,7 +151,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem BATTERY_UV_NAQUADRIA;
 
     public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB;
-    public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB2;
+    public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB_CLUSTER;
     public static MetaItem<?>.MetaValueItem ZERO_POINT_MODULE;
     public static MetaItem<?>.MetaValueItem ULTIMATE_BATTERY;
 
@@ -246,6 +246,8 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem TOOL_DATA_STICK;
     public static MetaItem<?>.MetaValueItem TOOL_DATA_ORB;
+
+    public static final Map<MarkerMaterial, MetaValueItem> GLASS_LENSES = new HashMap<>();
 
     public static MetaItem<?>.MetaValueItem SILICON_BOULE;
     public static MetaItem<?>.MetaValueItem GLOWSTONE_BOULE;
@@ -371,8 +373,6 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem WETWARE_SUPER_COMPUTER_UV;
     public static MetaItem<?>.MetaValueItem WETWARE_MAINFRAME_UHV;
 
-    public static MetaItem<?>.MetaValueItem COMPONENT_SAW_BLADE_DIAMOND;
-    public static MetaItem<?>.MetaValueItem COMPONENT_SAW_BLADE_TUNGSTEN;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_DIAMOND;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_TUNGSTEN;
 
@@ -398,6 +398,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_DRAIN;
     public static MetaItem<?>.MetaValueItem COVER_INFINITE_WATER;
     public static MetaItem<?>.MetaValueItem COVER_ENDER_FLUID_LINK;
+    public static MetaItem<?>.MetaValueItem COVER_DIGITAL_INTERFACE;
+    public static MetaItem<?>.MetaValueItem COVER_DIGITAL_INTERFACE_WIRELESS;
 
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ULV;
@@ -409,6 +411,15 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_LUV;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ZPM;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_UV;
+
+
+    public static MetaItem<?>.MetaValueItem PLUGIN_TEXT;
+    public static MetaItem<?>.MetaValueItem PLUGIN_ONLINE_PIC;
+    public static MetaItem<?>.MetaValueItem PLUGIN_FAKE_GUI;
+    public static MetaItem<?>.MetaValueItem PLUGIN_ADVANCED_MONITOR;
+
+    public static MetaItem<?>.MetaValueItem COLOURED_LEDS;
+    public static MetaItem<?>.MetaValueItem DISPLAY;
 
     public static MetaItem<?>.MetaValueItem INTEGRATED_CIRCUIT;
 
@@ -429,7 +440,9 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem POWER_UNIT_IV;
 
     public static MetaItem<?>.MetaValueItem NANO_SABER;
-    public static MetaItem<?>.MetaValueItem SCANNER;
+    public static MetaItem<?>.MetaValueItem PROSPECTOR_LV;
+    public static MetaItem<?>.MetaValueItem PROSPECTOR_HV;
+    public static MetaItem<?>.MetaValueItem PROSPECTOR_LUV;
     public static MetaItem<?>.MetaValueItem WIRELESS;
     public static MetaItem<?>.MetaValueItem CAMERA;
     public static MetaItem<?>.MetaValueItem TERMINAL;
@@ -454,7 +467,6 @@ public final class MetaItems {
     public static ToolMetaItem<?>.MetaToolValueItem MORTAR;
     public static ToolMetaItem<?>.MetaToolValueItem WIRE_CUTTER;
     public static ToolMetaItem<?>.MetaToolValueItem BRANCH_CUTTER;
-    public static ToolMetaItem<?>.MetaToolValueItem UNIVERSAL_SPADE;
     public static ToolMetaItem<?>.MetaToolValueItem KNIFE;
     public static ToolMetaItem<?>.MetaToolValueItem BUTCHERY_KNIFE;
     public static ToolMetaItem<?>.MetaToolValueItem SENSE;
@@ -521,6 +533,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem IMPELLER_HV;
     public static MetaItem<?>.MetaValueItem GRAVITATION_ENGINE;
 
+    public static MetaItem<?>.MetaValueItem SUS_RECORD;
+
     private static final List<OrePrefix> orePrefixes = new ArrayList<OrePrefix>() {{
         add(OrePrefix.dust);
         add(OrePrefix.dustSmall);
@@ -567,7 +581,6 @@ public final class MetaItems {
         add(OrePrefix.toolHeadDrill);
         add(OrePrefix.toolHeadChainsaw);
         add(OrePrefix.toolHeadWrench);
-        add(OrePrefix.toolHeadUniversalSpade);
         add(OrePrefix.toolHeadSense);
         add(OrePrefix.toolHeadBuzzSaw);
         add(OrePrefix.toolHeadScrewdriver);
@@ -595,12 +608,11 @@ public final class MetaItems {
                 ((MetaPrefixItem) item).registerOreDict();
             }
         }
-    }
-
-    public static void registerRecipes() {
-        for (MetaItem<?> item : ITEMS) {
-            if (item instanceof MetaTool)
-                ((MetaTool) item).registerRecipes();
+        for (Map.Entry<MarkerMaterial, MetaValueItem> entry : GLASS_LENSES.entrySet()) {
+            // Register "craftingLensWhite" for example
+            OreDictUnifier.registerOre(entry.getValue().getStackForm(), OrePrefix.craftingLens, entry.getKey());
+            // Register "craftingLensGlass", intended only for recipes to dye lenses and not in the Engraver
+            OreDictUnifier.registerOre(entry.getValue().getStackForm(), String.format("%s%s", OrePrefix.craftingLens.name(), "Glass"));
         }
     }
 
@@ -623,7 +635,7 @@ public final class MetaItems {
     @SideOnly(Side.CLIENT)
     public static void registerBakedModels(ModelBakeEvent event) {
         GTLog.logger.info("Registering special item models");
-        registerSpecialItemModel(event, COVER_FACADE, new FacadeItemModel());
+        registerSpecialItemModel(event, COVER_FACADE, new FacadeRenderer());
     }
 
     @SideOnly(Side.CLIENT)

@@ -45,7 +45,7 @@ public class FuelRecipes {
         registerGasGeneratorFuel(Propane.getFluid(4), 29, LV);
         registerGasGeneratorFuel(Butene.getFluid(1), 8, LV);
         registerGasGeneratorFuel(Phenol.getFluid(1), 9, LV);
-        registerGasGeneratorFuel(Benzene.getFluid(1), 9, LV);
+        registerGasGeneratorFuel(Benzene.getFluid(1), 11, LV);
         registerGasGeneratorFuel(Butane.getFluid(4), 37, LV);
         registerGasGeneratorFuel(LPG.getFluid(1), 10, LV);
         registerGasGeneratorFuel(Naphtha.getFluid(1), 10, LV);

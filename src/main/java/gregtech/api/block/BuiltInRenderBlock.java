@@ -19,11 +19,13 @@ public abstract class BuiltInRenderBlock extends BlockCustomParticle {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean isOpaqueCube(@Nonnull IBlockState state) {
         return false;
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean isFullCube(@Nonnull IBlockState state) {
         return false;
     }

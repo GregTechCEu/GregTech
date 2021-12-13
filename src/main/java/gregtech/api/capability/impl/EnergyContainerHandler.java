@@ -26,6 +26,11 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
     private final long maxOutputVoltage;
     private final long maxOutputAmperage;
 
+    private long lastEnergyInputPerSec = 0;
+    private long lastEnergyOutputPerSec = 0;
+    private long energyInputPerSec = 0;
+    private long energyOutputPerSec = 0;
+
     private Predicate<EnumFacing> sideInputCondition;
     private Predicate<EnumFacing> sideOutputCondition;
 
@@ -54,6 +59,16 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
 
     public static EnergyContainerHandler receiverContainer(MetaTileEntity tileEntity, long maxCapacity, long maxInputVoltage, long maxInputAmperage) {
         return new EnergyContainerHandler(tileEntity, maxCapacity, maxInputVoltage, maxInputAmperage, 0L, 0L);
+    }
+
+    @Override
+    public long getInputPerSec() {
+        return lastEnergyInputPerSec;
+    }
+
+    @Override
+    public long getOutputPerSec() {
+        return lastEnergyOutputPerSec;
     }
 
     @Override
@@ -93,6 +108,11 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
     }
 
     public void setEnergyStored(long energyStored) {
+        if (energyStored > this.energyStored) {
+            energyInputPerSec += energyStored - this.energyStored;
+        } else {
+            energyOutputPerSec += this.energyStored - energyStored;
+        }
         this.energyStored = energyStored;
         if (!metaTileEntity.getWorld().isRemote) {
             metaTileEntity.markDirty();
@@ -138,6 +158,12 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         amps = 0;
         if (getMetaTileEntity().getWorld().isRemote)
             return;
+        if (metaTileEntity.getOffsetTimer() % 20 == 0) {
+            lastEnergyOutputPerSec = energyOutputPerSec;
+            lastEnergyInputPerSec = energyInputPerSec;
+            energyOutputPerSec = 0;
+            energyInputPerSec = 0;
+        }
         if (getEnergyStored() >= getOutputVoltage() && getOutputVoltage() > 0 && getOutputAmperage() > 0) {
             long outputVoltage = getOutputVoltage();
             long outputAmperes = Math.min(getEnergyStored() / outputVoltage, getOutputAmperage());

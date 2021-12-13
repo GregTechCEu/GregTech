@@ -1,16 +1,14 @@
 package gregtech.common.metatileentities.steam;
 
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.ProgressWidget;
-import gregtech.api.gui.widgets.RecipeProgressWidget;
-import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -39,16 +37,11 @@ public class SteamHammer extends SteamMetaTileEntity {
     @Override
     public ModularUI createUI(EntityPlayer player) {
         return createUITemplate(player)
-                .widget(new SlotWidget(this.importItems, 0, 53, 25)
-                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getFullGuiTexture("slot_%s_hammer_background")))
-                .widget(new RecipeProgressWidget(workableHandler::getProgressPercent, 79, 25, 20, 18, workableHandler.recipeMap)
-                        .setProgressBar(getFullGuiTexture("progress_bar_%s_hammer"),
-                                getFullGuiTexture("progress_bar_%s_hammer_filled"),
-                                ProgressWidget.MoveType.VERTICAL))
-                .widget(new ImageWidget(79, 41, 20, 18)
-                        .setImage(getFullGuiTexture("overlay_%s_hammer_base")))
-                .widget(new SlotWidget(this.exportItems, 0, 107, 25, true, false)
-                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE))
+                .slot(this.importItems, 0, 53, 25, GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.HAMMER_OVERLAY_STEAM.get(isHighPressure))
+                .progressBar(workableHandler::getProgressPercent, 79, 25, 20, 18,
+                        GuiTextures.PROGRESS_BAR_HAMMER_STEAM.get(isHighPressure), MoveType.VERTICAL, workableHandler.getRecipeMap())
+                .image(79, 41, 20, 18, GuiTextures.PROGRESS_BAR_HAMMER_BASE_STEAM.get(isHighPressure))
+                .slot(this.exportItems, 0, 107, 25, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure))
                 .build(getHolder(), player);
     }
 }

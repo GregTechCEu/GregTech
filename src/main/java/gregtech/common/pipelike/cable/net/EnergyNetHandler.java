@@ -27,6 +27,16 @@ public class EnergyNetHandler implements IEnergyContainer {
     }
 
     @Override
+    public long getInputPerSec() {
+        return net.getEnergyFluxPerSec();
+    }
+
+    @Override
+    public long getOutputPerSec() {
+        return net.getEnergyFluxPerSec();
+    }
+
+    @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
         if (side == null) {
             if (facing == null) return 0;
@@ -70,6 +80,7 @@ public class EnergyNetHandler implements IEnergyContainer {
             if (amperage == amperesUsed)
                 break;
         }
+        net.addEnergyFluxPerSec(amperesUsed * voltage);
         return amperesUsed;
     }
 

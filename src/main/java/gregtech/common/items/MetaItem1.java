@@ -1,15 +1,14 @@
 package gregtech.common.items;
 
 import gregtech.api.GTValues;
-import gregtech.api.items.OreDictNames;
-import gregtech.api.items.metaitem.ElectricStats;
-import gregtech.api.items.metaitem.FluidStats;
-import gregtech.api.items.metaitem.FoodStats;
-import gregtech.api.items.metaitem.StandardMetaItem;
+import gregtech.api.items.metaitem.*;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
+import gregtech.api.sound.GTSounds;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterial;
+import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Component;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Materials;
@@ -19,6 +18,10 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.RandomPotionEffect;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.*;
+import gregtech.common.items.behaviors.monitorplugin.AdvancedMonitorPluginBehavior;
+import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
+import gregtech.common.items.behaviors.monitorplugin.OnlinePicPluginBehavior;
+import gregtech.common.items.behaviors.monitorplugin.TextPluginBehavior;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
@@ -46,8 +49,8 @@ public class MetaItem1 extends StandardMetaItem {
         CREDIT_NAQUADAH = addItem(6, "credit.naquadah").setRarity(EnumRarity.EPIC);
         CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium") .setRarity(EnumRarity.EPIC);
 
-        COIN_GOLD_ANCIENT = addItem(8, "coin.gold.ancient").
-                setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, GTValues.M / 4))).setRarity(EnumRarity.RARE);
+        COIN_GOLD_ANCIENT = addItem(8, "coin.gold.ancient")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, GTValues.M / 4))).setRarity(EnumRarity.RARE);
         COIN_DOGE = addItem(9, "coin.doge")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Brass, GTValues.M / 4))).setRarity(EnumRarity.EPIC);
         COIN_CHOCOLATE = addItem(10, "coin.chocolate")
@@ -258,13 +261,9 @@ public class MetaItem1 extends StandardMetaItem {
         TOOL_DATA_ORB = addItem(262, "tool.dataorb");
 
         // Special Machine Components: ID 266-280
-        COMPONENT_SAW_BLADE_DIAMOND = addItem(266, "component.sawblade.diamond").addOreDict(OreDictNames.craftingSawBlade)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.CobaltBrass, GTValues.M * 4), new MaterialStack(Materials.Diamond, GTValues.M)));
-        COMPONENT_SAW_BLADE_TUNGSTEN = addItem(267, "component.sawblade.tungsten").addOreDict(OreDictNames.craftingSawBlade)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Ultimet, GTValues.M * 4), new MaterialStack(Materials.TungstenCarbide, GTValues.M * 4)));
-        COMPONENT_GRINDER_DIAMOND = addItem(268, "component.grinder.diamond").addOreDict(OreDictNames.craftingGrinder)
+        COMPONENT_GRINDER_DIAMOND = addItem(266, "component.grinder.diamond")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, GTValues.M * 8), new MaterialStack(Materials.Diamond, GTValues.M * 5)));
-        COMPONENT_GRINDER_TUNGSTEN = addItem(269, "component.grinder.tungsten").addOreDict(OreDictNames.craftingGrinder)
+        COMPONENT_GRINDER_TUNGSTEN = addItem(267, "component.grinder.tungsten")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tungsten, GTValues.M * 4), new MaterialStack(Materials.VanadiumSteel, GTValues.M * 8), new MaterialStack(Materials.Diamond, GTValues.M)));
 
         // Special Eyes/Stars: ID 281-289
@@ -290,6 +289,9 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_SHUTTER = addItem(309, "cover.shutter");
         COVER_INFINITE_WATER = addItem(310, "cover.infinite_water");
         COVER_ENDER_FLUID_LINK = addItem(311, "cover.ender_fluid_link");
+        COVER_DIGITAL_INTERFACE = addItem(312, "cover.digital");
+        COVER_DIGITAL_INTERFACE_WIRELESS = addItem(313, "cover.digital.wireless");
+
         COVER_FACADE = addItem(330, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 
         // Solar Panels: ID 331-346
@@ -305,7 +307,7 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_SOLAR_PANEL_UV = addItem(340, "cover.solar.panel.uv");
         // MAX-tier solar panel?
 
-        if (!ConfigHolder.U.GT5u.enableHighTierSolars) {
+        if (!ConfigHolder.machines.enableHighTierSolars) {
             COVER_SOLAR_PANEL_IV.setInvisible();
             COVER_SOLAR_PANEL_LUV.setInvisible();
             COVER_SOLAR_PANEL_ZPM.setInvisible();
@@ -322,7 +324,7 @@ public class MetaItem1 extends StandardMetaItem {
         FIRECLAY_BRICK = addItem(352, "brick.fireclay");
         COKE_OVEN_BRICK = addItem(353, "brick.coke");
 
-        if (!ConfigHolder.vanillaRecipes.hardMiscRecipes)
+        if (!ConfigHolder.recipes.hardMiscRecipes)
             COMPRESSED_CLAY.setInvisible();
 
         // Boules: ID 361-370
@@ -377,24 +379,25 @@ public class MetaItem1 extends StandardMetaItem {
         DYNAMITE = addItem(460, "dynamite").addComponents(new DynamiteBehaviour()).setMaxStackSize(16);
         INTEGRATED_CIRCUIT = addItem(461, "circuit.integrated").addComponents(new IntCircuitBehaviour()).setModelAmount(33);
         FOAM_SPRAYER = addItem(462, "foam_sprayer").addComponents(new FoamSprayerBehavior()).setMaxStackSize(1);
-        NANO_SABER = addItem(463, "nano_saber").addComponents(ElectricStats.createElectricItem(4000000L, GTValues.HV)).addComponents(new NanoSaberBehavior()).setMaxStackSize(1);
-        // Free ID 464
-        SCANNER = addItem(465, "scanner").addComponents(ElectricStats.createElectricItem(200_000L, GTValues.LV), new ScannerBehavior(50));
-        CLIPBOARD = addItem(466, "clipboard").addComponents(new ClipboardBehavior()).setMaxStackSize(1);
-        TERMINAL = addItem(467, "terminal").addComponents(new HardwareProvider(), new TerminalBehaviour()).setMaxStackSize(1);
-        WIRELESS = addItem(468, "wireless");
-        CAMERA = addItem(469, "camera");
+        NANO_SABER = addItem(463, "nano_saber").addComponents(ElectricStats.createElectricItem(4_000_000L, GTValues.HV)).addComponents(new NanoSaberBehavior()).setMaxStackSize(1);
+        CLIPBOARD = addItem(464, "clipboard").addComponents(new ClipboardBehavior()).setMaxStackSize(1);
+        TERMINAL = addItem(465, "terminal").addComponents(new HardwareProvider(), new TerminalBehaviour()).setMaxStackSize(1);
+        PROSPECTOR_LV = addItem(466, "prospector.lv").addComponents(ElectricStats.createElectricItem(100_000L, GTValues.LV), new ProspectorScannerBehavior(2, GTValues.LV));
+        PROSPECTOR_HV = addItem(467, "prospector.hv").addComponents(ElectricStats.createElectricItem(1_600_000L, GTValues.HV), new ProspectorScannerBehavior(3, GTValues.HV));
+        PROSPECTOR_LUV = addItem(468, "prospector.luv").addComponents(ElectricStats.createElectricItem(1_000_000_000L, GTValues.LuV), new ProspectorScannerBehavior(5, GTValues.LuV));
 
         // Misc Crafting Items: ID 491-515
-        //Free ID: 493, 494, 495, 496
         ENERGIUM_DUST = addItem(491, "energium_dust");
         ENGRAVED_LAPOTRON_CHIP = addItem(492, "engraved.lapotron_chip");
+        //Free ID: 493, 494, 495, 496
         NEUTRON_REFLECTOR = addItem(497, "neutron_reflector");
         GELLED_TOLUENE = addItem(498, "gelled_toluene");
         CARBON_FIBERS = addItem(499, "carbon.fibers");
         CARBON_MESH = addItem(500, "carbon.mesh");
         CARBON_PLATE = addItem(501, "carbon.plate");
         DUCT_TAPE = addItem(502, "duct_tape");
+        WIRELESS = addItem(503, "wireless");
+        CAMERA = addItem(504, "camera");
 
         // Circuit Components: ID 516-565
         VACUUM_TUBE = addItem(516, "circuit.vacuum_tube").setUnificationData(OrePrefix.circuit, Tier.Primitive);
@@ -546,7 +549,7 @@ public class MetaItem1 extends StandardMetaItem {
         BATTERY_MV_CADMIUM = addItem(739, "battery.re.mv.cadmium").addComponents(ElectricStats.createRechargeableBattery(420000, GTValues.MV)).setUnificationData(OrePrefix.battery, Tier.Good).setModelAmount(8);
         BATTERY_HV_CADMIUM = addItem(740, "battery.re.hv.cadmium").addComponents(ElectricStats.createRechargeableBattery(1800000, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8);
 
-        ENERGY_CRYSTAL = addItem(741, "energy_crystal").addComponents(ElectricStats.createRechargeableBattery(6400000L, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8).setMaxStackSize(1);
+        ENERGIUM_CRYSTAL = addItem(741, "energy_crystal").addComponents(ElectricStats.createRechargeableBattery(6400000L, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8).setMaxStackSize(1);
         LAPOTRON_CRYSTAL = addItem(742, "lapotron_crystal").addComponents(ElectricStats.createRechargeableBattery(16000000L, GTValues.EV)).setUnificationData(OrePrefix.battery, Tier.Extreme).setModelAmount(8).setMaxStackSize(1);
 
         BATTERY_EV_VANADIUM = addItem(743, "battery.ev.vanadium").addComponents(ElectricStats.createRechargeableBattery(10240000L, GTValues.EV)).setUnificationData(OrePrefix.battery, Tier.Extreme).setModelAmount(8);
@@ -556,8 +559,8 @@ public class MetaItem1 extends StandardMetaItem {
         BATTERY_ZPM_NAQUADRIA = addItem(746, "battery.zpm.naquadria").addComponents(ElectricStats.createRechargeableBattery(655360000L, GTValues.ZPM)).setUnificationData(OrePrefix.battery, Tier.Ultimate).setModelAmount(8);
         BATTERY_UV_NAQUADRIA = addItem(747, "battery.uv.naquadria").addComponents(ElectricStats.createRechargeableBattery(2621440000L, GTValues.UV)).setUnificationData(OrePrefix.battery, Tier.Super).setModelAmount(8);
 
-        ENERGY_LAPOTRONIC_ORB = addItem(748, "energy.lapotronicorb").addComponents(ElectricStats.createRechargeableBattery(100000000L, GTValues.IV)).setUnificationData(OrePrefix.battery, Tier.Elite).setModelAmount(8);
-        ENERGY_LAPOTRONIC_ORB2 = addItem(749, "energy.lapotronicorb2").addComponents(ElectricStats.createRechargeableBattery(1000000000L, GTValues.LuV)).setUnificationData(OrePrefix.battery, Tier.Master).setModelAmount(8);
+        ENERGY_LAPOTRONIC_ORB = addItem(748, "energy.lapotronic_orb").addComponents(ElectricStats.createRechargeableBattery(100000000L, GTValues.IV)).setUnificationData(OrePrefix.battery, Tier.Elite).setModelAmount(8);
+        ENERGY_LAPOTRONIC_ORB_CLUSTER = addItem(749, "energy.lapotronic_orb_cluster").addComponents(ElectricStats.createRechargeableBattery(1000000000L, GTValues.LuV)).setUnificationData(OrePrefix.battery, Tier.Master).setModelAmount(8);
 
         ENERGY_LAPOTRONIC_MODULE = addItem(750, "energy.module").addComponents(new IItemComponent[]{ElectricStats.createRechargeableBattery(10000000000L, GTValues.ZPM)}).setUnificationData(OrePrefix.battery, Tier.Ultimate).setModelAmount(8);
         ENERGY_LAPOTRONIC_CLUSTER = addItem(751, "energy.cluster").addComponents(new IItemComponent[]{ElectricStats.createRechargeableBattery(100000000000L, GTValues.UV)}).setUnificationData(OrePrefix.battery, Tier.Super).setModelAmount(8);
@@ -568,6 +571,25 @@ public class MetaItem1 extends StandardMetaItem {
         IMPELLER_MV = addItem(776, "impeller.mv").setRarity(EnumRarity.UNCOMMON);
         IMPELLER_HV = addItem(777, "impeller.hv").setRarity(EnumRarity.RARE);
         GRAVITATION_ENGINE = addItem(778, "gravitation_engine").setRarity(EnumRarity.EPIC);
-    }
 
+        // Plugins: 780-799
+        PLUGIN_ADVANCED_MONITOR = addItem(780, "plugin.advanced_monitor").addComponents(new AdvancedMonitorPluginBehavior());
+        PLUGIN_FAKE_GUI = addItem(781, "plugin.fake_gui").addComponents(new FakeGuiPluginBehavior());
+        PLUGIN_ONLINE_PIC = addItem(782, "plugin.online_pic").addComponents(new OnlinePicPluginBehavior());
+        PLUGIN_TEXT = addItem(783, "plugin.text").addComponents(new TextPluginBehavior());
+
+        COLOURED_LEDS = addItem(798, "coloured.leds");
+        DISPLAY = addItem(799, "display");
+
+        // Records: 800-819
+        SUS_RECORD = addItem(800, "record.sus").addComponents(new MusicDiscStats(GTSounds.RECORD_SOUND)).setRarity(EnumRarity.RARE).setMaxStackSize(1).setInvisible();
+
+        // Dyed Glass Lenses: 820-840
+        for (int i = 0; i < MarkerMaterials.Color.VALUES.length; i++) {
+            MarkerMaterial color = MarkerMaterials.Color.VALUES[i];
+            if (color != MarkerMaterials.Color.White) {
+                GLASS_LENSES.put(color, addItem(820 + i, String.format("glass_lens.%s", color.toString())));
+            }
+        }
+    }
 }

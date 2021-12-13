@@ -6,7 +6,7 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTLog;
 import gregtech.common.covers.detector.CoverDetectorEnergy;
 import gregtech.common.covers.detector.CoverDetectorFluid;
@@ -16,6 +16,7 @@ import gregtech.common.covers.filter.SimpleFluidFilter;
 import gregtech.common.covers.filter.SimpleItemFilter;
 import gregtech.common.covers.filter.SmartItemFilter;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.behaviors.CoverDigitalInterfaceWirelessPlaceBehaviour;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -74,6 +75,11 @@ public class CoverBehaviors {
         registerBehavior(53, new ResourceLocation(GTValues.MODID, "crafting_table"), MetaItems.COVER_CRAFTING, CoverCraftingTable::new);
         registerBehavior(54, new ResourceLocation(GTValues.MODID, "infinite_water"), MetaItems.COVER_INFINITE_WATER, CoverInfiniteWater::new);
         registerBehavior(55, new ResourceLocation(GTValues.MODID, "ender_fluid_link"), MetaItems.COVER_ENDER_FLUID_LINK, CoverEnderFluidLink::new);
+        registerBehavior(56, new ResourceLocation(GTValues.MODID, "cover.digital"), MetaItems.COVER_DIGITAL_INTERFACE, CoverDigitalInterface::new);
+
+        // Custom cover behaviour
+        MetaItems.COVER_DIGITAL_INTERFACE_WIRELESS.addComponents(new CoverDigitalInterfaceWirelessPlaceBehaviour(registerCover(57, new ResourceLocation(GTValues.MODID, "cover.digital.wireless"), MetaItems.COVER_DIGITAL_INTERFACE_WIRELESS, CoverDigitalInterfaceWireless::new)));
+
 
         for (int i = 0; i < COVERS_PER_ITEM; i++) {
             int throughput = (int) (Math.pow(4, i) * 1280);
@@ -89,8 +95,12 @@ public class CoverBehaviors {
     }
 
     public static void registerBehavior(int coverNetworkId, ResourceLocation coverId, MetaValueItem placerItem, BiFunction<ICoverable, EnumFacing, CoverBehavior> behaviorCreator) {
-        CoverDefinition coverDefinition = new CoverDefinition(coverId, behaviorCreator, placerItem.getStackForm());
+        placerItem.addComponents(new CoverPlaceBehavior(registerCover(coverNetworkId, coverId, placerItem, behaviorCreator)));
+    }
+
+    public static CoverDefinition registerCover(int coverNetworkId, ResourceLocation coverId, MetaValueItem itemStack, BiFunction<ICoverable, EnumFacing, CoverBehavior> behaviorCreator) {
+        CoverDefinition coverDefinition = new CoverDefinition(coverId, behaviorCreator, itemStack.getStackForm());
         GregTechAPI.COVER_REGISTRY.register(coverNetworkId, coverId, coverDefinition);
-        placerItem.addComponents(new CoverPlaceBehavior(coverDefinition));
+        return coverDefinition;
     }
 }

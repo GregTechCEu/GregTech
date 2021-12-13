@@ -12,8 +12,36 @@ public class BlastProperty implements IMaterialProperty<BlastProperty> {
      */
     private int blastTemperature;
 
+    /**
+     * The {@link GasTier} of this Material, representing which Gas EBF recipes will be generated.
+     *
+     * Default: null, meaning no Gas EBF recipes.
+     */
+    private GasTier gasTier = null;
+
+    /**
+     * The duration of the EBF recipe, overriding the stock behavior.
+     *
+     * Default: -1, meaning the duration will be: material.getAverageMass() * blastTemperature / 50
+     */
+    private int durationOverride = -1;
+
+    /**
+     * The EU/t of the EBF recipe, overriding the stock behavior.
+     *
+     * Default: -1, meaning the EU/t will be 120.
+     */
+    private int eutOverride = -1;
+
     public BlastProperty(int blastTemperature) {
         this.blastTemperature = blastTemperature;
+    }
+
+    public BlastProperty(int blastTemperature, GasTier gasTier, int eutOverride, int durationOverride) {
+        this.blastTemperature = blastTemperature;
+        this.gasTier = gasTier;
+        this.eutOverride = eutOverride;
+        this.durationOverride = durationOverride;
     }
 
     /**
@@ -32,6 +60,18 @@ public class BlastProperty implements IMaterialProperty<BlastProperty> {
         this.blastTemperature = blastTemp;
     }
 
+    public GasTier getGasTier() {
+        return gasTier;
+    }
+
+    public int getDurationOverride() {
+        return durationOverride;
+    }
+
+    public int getEUtOverride() {
+        return eutOverride;
+    }
+
     @Override
     public void verifyProperty(MaterialProperties properties) {
         properties.ensureSet(PropertyKey.INGOT, true);
@@ -39,5 +79,15 @@ public class BlastProperty implements IMaterialProperty<BlastProperty> {
         FluidProperty fluidProperty = properties.getProperty(PropertyKey.FLUID);
         if (fluidProperty != null && fluidProperty.getFluidTemperature() == FluidProperty.BASE_TEMP)
             fluidProperty.setFluidTemperature(blastTemperature);
+    }
+
+    public enum GasTier {
+        // Tiers used by GTCEu
+        LOW, MID, HIGH,
+
+        // Tiers reserved for addons
+        HIGHER, HIGHEST;
+
+        public static final GasTier[] VALUES = values();
     }
 }

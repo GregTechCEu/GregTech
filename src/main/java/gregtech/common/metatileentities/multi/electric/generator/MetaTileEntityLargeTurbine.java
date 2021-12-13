@@ -7,18 +7,19 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.machines.FuelRecipeMap;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -48,9 +49,9 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
         public final ICubeRenderer casingRenderer;
         public final boolean hasOutputHatch;
         public final boolean hasMufflerHatch;
-        public final OrientedOverlayRenderer frontOverlay;
+        public final ICubeRenderer frontOverlay;
 
-        TurbineType(FuelRecipeMap recipeMap, IBlockState casingState, IBlockState gearboxState, ICubeRenderer casingRenderer, boolean hasOutputHatch, boolean hasMufflerHatch, OrientedOverlayRenderer frontOverlay) {
+        TurbineType(FuelRecipeMap recipeMap, IBlockState casingState, IBlockState gearboxState, ICubeRenderer casingRenderer, boolean hasOutputHatch, boolean hasMufflerHatch, ICubeRenderer frontOverlay) {
             this.recipeMap = recipeMap;
             this.casingState = casingState;
             this.gearboxState = gearboxState;
@@ -67,7 +68,6 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
     public MetaTileEntityLargeTurbine(ResourceLocation metaTileEntityId, TurbineType turbineType) {
         super(metaTileEntityId, turbineType.recipeMap, GTValues.V[4]);
         this.turbineType = turbineType;
-        reinitializeStructurePattern();
     }
 
     @Override
@@ -136,29 +136,24 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
         if (turbineType == null)
             return null;
 
-        FactoryBlockPattern blockPattern = FactoryBlockPattern.start()
+        TraceabilityPredicate predicate = states(getCasingState()).or(autoAbilities(true, true, true, true, false));
+        return FactoryBlockPattern.start()
                 .aisle("CCCC", "CHHC", "CCCC")
-                .aisle("CHHC", "RGGD", "CHHC")
+                .aisle("CHHC", "RGGD", "CTTC")
                 .aisle("CCCC", "CSHC", "CCCC")
                 .where('S', selfPredicate())
-                .where('G', statePredicate(getGearBoxState()))
-                .where('C', statePredicate(getCasingState()))
-                .where('R', abilityPartPredicate(ABILITY_ROTOR_HOLDER))
-                .where('D', abilityPartPredicate(MultiblockAbility.OUTPUT_ENERGY));
-
-                if (turbineType.hasMufflerHatch)
-                    blockPattern.where('H', statePredicate(getCasingState()).or(abilityPartPredicate(getAllowedAbilities()))
-                            .or(abilityPartPredicate(MultiblockAbility.MUFFLER_HATCH)));
-                else
-                    blockPattern.where('H', statePredicate(getCasingState()).or(abilityPartPredicate(getAllowedAbilities())));
-
-                return blockPattern.build();
+                .where('G', states(getGearBoxState()))
+                .where('C', states(getCasingState()))
+                .where('R', abilities(ABILITY_ROTOR_HOLDER).addTooltips("gregtech.multiblock.pattern.clear_amount_3"))
+                .where('D', abilities(MultiblockAbility.OUTPUT_ENERGY))
+                .where('H', predicate)
+                .where('T', predicate.or(autoAbilities(false, false, false, false, true)))
+                .build();
     }
 
-    public MultiblockAbility<?>[] getAllowedAbilities() {
-        return turbineType.hasOutputHatch ?
-                new MultiblockAbility[]{MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.EXPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH} :
-                new MultiblockAbility[]{MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH};
+    @Override
+    public String[] getDescription() {
+        return new String[]{I18n.format("gregtech.multiblock.large_turbine.description")};
     }
 
     @Override
@@ -182,7 +177,7 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
 
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         return turbineType.frontOverlay;
     }
 

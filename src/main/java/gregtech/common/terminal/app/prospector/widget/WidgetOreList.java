@@ -105,6 +105,7 @@ public class WidgetOreList extends DraggableScrollableWidgetGroup {
         WidgetGroup widgetGroup = new WidgetGroup(0, 0, getSize().width - 5, 18);
         widgetGroup.addWidget(new TankWidget(fluidTank, 0, 0, 18, 18)
                 .setAlwaysShowFull(true)
+                .setClient()
                 .setHideTooltip(true)
                 .setContainerClicking(false, false));
         widgetGroup.addWidget(new LabelWidget(20, 5, fluidStack.getLocalizedName(), getFluidColor(fluidStack.getFluid())));
@@ -124,15 +125,15 @@ public class WidgetOreList extends DraggableScrollableWidgetGroup {
 
     @Override
     protected boolean hookDrawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        if (selected != null) {
+            drawSolidRect(selected.getPosition().x, selected.getPosition().y, selected.getSize().width, 18, 0x4BFFFFFF);
+        }
         for (Widget widget : widgets) {
             if (widget.isVisible()) {
                 widget.drawInBackground(mouseX, mouseY, partialTicks, context);
             }
         }
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
-        if (selected != null) {
-            drawSolidRect(selected.getPosition().x, selected.getPosition().y, selected.getSize().width, 18, 0x4BFFFFFF);
-        }
         return true;
     }
 

@@ -1,45 +1,132 @@
 package gregtech.common.blocks;
 
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.client.model.IModelSupplier;
+import gregtech.client.model.SimpleStateMapper;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
-import net.minecraft.block.Block;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.info.MaterialIconType;
+import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.model.ModelLoader;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-public final class BlockFrame extends Block {
+public final class BlockFrame extends DelayedStateBlock implements IModelSupplier {
 
+    public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "frame_block"), "normal");
     private static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);
-    public final Material frameMaterial;
 
-    public BlockFrame(Material material) {
-        super(ModHandler.isMaterialWood(material) ?
-                net.minecraft.block.material.Material.WOOD :
-                net.minecraft.block.material.Material.IRON);
-        this.frameMaterial = material;
+    public final PropertyMaterial variantProperty;
+
+    // todo wood?
+    public BlockFrame(Material[] materials) {
+        super(net.minecraft.block.material.Material.IRON);
         setTranslationKey("frame");
         setHardness(3.0f);
         setResistance(6.0f);
-        setHarvestLevel(ModHandler.isMaterialWood(material) ? "axe" : "pickaxe", 1);
-        setSoundType(ModHandler.isMaterialWood(material) ? SoundType.WOOD : SoundType.METAL);
         setCreativeTab(GregTechAPI.TAB_GREGTECH_MATERIALS);
+        this.variantProperty = PropertyMaterial.create("variant", materials);
+        initBlockState();
+    }
+
+    @Override
+    public int damageDropped(@Nonnull IBlockState state) {
+        return getMetaFromState(state);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public IBlockState getStateFromMeta(int meta) {
+        Material material = variantProperty.getAllowedValues().get(meta);
+        return getDefaultState().withProperty(variantProperty, material);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        Material material = state.getValue(variantProperty);
+        return variantProperty.getAllowedValues().indexOf(material);
+    }
+
+    @Override
+    public String getHarvestTool(IBlockState state) {
+        Material material = state.getValue(variantProperty);
+        if (ModHandler.isMaterialWood(material)) {
+            return "axe";
+        }
+        return "pickaxe";
+    }
+
+    @Nonnull
+    @Override
+    public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nullable Entity entity) {
+        Material material = state.getValue(variantProperty);
+        if (ModHandler.isMaterialWood(material)) {
+            return SoundType.WOOD;
+        }
+        return SoundType.METAL;
+    }
+
+    @Override
+    public int getHarvestLevel(@Nonnull IBlockState state) {
+        return 1;
+    }
+
+    @Override
+    protected BlockStateContainer createStateContainer() {
+        return new BlockStateContainer(this, variantProperty);
+    }
+
+    @Override
+    @Nonnull
+    @SuppressWarnings("deprecation")
+    public net.minecraft.block.material.Material getMaterial(IBlockState state) {
+        Material material = state.getValue(variantProperty);
+        if (ModHandler.isMaterialWood(material)) {
+            return net.minecraft.block.material.Material.WOOD;
+        }
+        return super.getMaterial(state);
+    }
+
+    @Override
+    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
+        blockState.getValidStates().stream()
+                .filter(blockState -> blockState.getValue(variantProperty) != Materials._NULL)
+                .forEach(blockState -> list.add(getItem(blockState)));
+    }
+
+    public ItemStack getItem(IBlockState blockState) {
+        return new ItemStack(this, 1, getMetaFromState(blockState));
+    }
+
+    public ItemStack getItem(Material material) {
+        return getItem(getDefaultState().withProperty(variantProperty, material));
+    }
+
+    public IBlockState getBlock(Material material) {
+        return getDefaultState().withProperty(variantProperty, material);
     }
 
     @Override
@@ -50,25 +137,21 @@ public final class BlockFrame extends Block {
     @Override
     public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stackInHand = playerIn.getHeldItem(hand);
-        if (stackInHand.isEmpty() || !(stackInHand.getItem() instanceof FrameItemBlock))
+        if (stackInHand.isEmpty() || !(stackInHand.getItem() instanceof FrameItemBlock)) {
             return false;
-        IBlockState blockState = ((FrameItemBlock) stackInHand.getItem()).getBlockState(stackInHand);
-        if (blockState != worldIn.getBlockState(pos))
-            return false;
+        }
         MutableBlockPos blockPos = new MutableBlockPos(pos);
         for (int i = 0; i < 32; i++) {
-            IBlockState stateHere = worldIn.getBlockState(blockPos);
-            if (stateHere == state) {
+            if (worldIn.getBlockState(blockPos).getBlock() instanceof BlockFrame) {
                 blockPos.move(EnumFacing.UP);
                 continue;
             }
             if (canPlaceBlockAt(worldIn, blockPos)) {
-                worldIn.setBlockState(blockPos, blockState);
-                if (!playerIn.capabilities.isCreativeMode)
+                worldIn.setBlockState(blockPos, ((FrameItemBlock) stackInHand.getItem()).getBlockState(stackInHand));
+                if (!playerIn.capabilities.isCreativeMode) {
                     stackInHand.shrink(1);
+                }
                 return true;
-            } else {
-                return false;
             }
         }
         return false;
@@ -92,11 +175,13 @@ public final class BlockFrame extends Block {
 
     @Nonnull
     @Override
+    @SuppressWarnings("deprecation")
     public EnumPushReaction getPushReaction(@Nonnull IBlockState state) {
         return EnumPushReaction.DESTROY;
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public AxisAlignedBB getCollisionBoundingBox(@Nonnull IBlockState blockState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
         return COLLISION_BOX;
     }
@@ -108,13 +193,31 @@ public final class BlockFrame extends Block {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean isOpaqueCube(@Nonnull IBlockState state) {
         return false;
     }
 
     @Nonnull
     @Override
+    @SuppressWarnings("deprecation")
     public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
         return BlockFaceShape.UNDEFINED;
+    }
+
+    @Override
+    public void onTextureStitch(TextureStitchEvent.Pre event) {
+        for (IBlockState state : this.getBlockState().getValidStates()) {
+            Material material = state.getValue(variantProperty);
+            event.getMap().registerSprite(MaterialIconType.frameGt.getBlockPath(material.getMaterialIconSet()));
+        }
+    }
+
+    @Override
+    public void onModelRegister() {
+        ModelLoader.setCustomStateMapper(this, new SimpleStateMapper(MODEL_LOCATION));
+        for (IBlockState state : this.getBlockState().getValidStates()) {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), MODEL_LOCATION);
+        }
     }
 }

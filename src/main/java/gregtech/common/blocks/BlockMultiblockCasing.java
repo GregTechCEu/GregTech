@@ -31,7 +31,7 @@ public class BlockMultiblockCasing extends VariantActiveBlock<BlockMultiblockCas
 
         ENGINE_INTAKE_CASING("engine_intake"),
         GRATE_CASING("grate"),
-        ASSEMBLER_CASING("assembler"),
+        ASSEMBLY_CONTROL("assembly_control"),
         ASSEMBLY_LINE_CASING("assembly_line");
 
         private final String name;

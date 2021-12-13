@@ -5,12 +5,16 @@ import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
+import gregtech.api.sound.GTSounds;
 import gregtech.api.recipes.builders.*;
 import gregtech.api.recipes.machines.*;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import net.minecraft.init.SoundEvents;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenProperty;
+
+import static gregtech.api.GTValues.*;
 
 @ZenClass("mods.gregtech.recipe.RecipeMaps")
 @ZenRegister
@@ -19,56 +23,65 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> COMPRESSOR_RECIPES = new RecipeMap<>("compressor", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(2), false)
             .setSlotOverlay(false, false, GuiTextures.COMPRESSOR_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_COMPRESS, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_COMPRESS, MoveType.HORIZONTAL)
+            .setSound(GTSounds.COMPRESSOR);
 
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> EXTRACTOR_RECIPES = new RecipeMap<>("extractor", 0, 1, 0, 1, 0, 0, 0, 1, new SimpleRecipeBuilder().duration(400).EUt(2), false)
             .setSlotOverlay(false, false, GuiTextures.EXTRACTOR_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL)
+            .setSound(GTSounds.COMPRESSOR);
 
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> MACERATOR_RECIPES = new RecipeMap<>("macerator", 1, 1, 1, 3, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(150).EUt(8), false)
+    public static final RecipeMap<SimpleRecipeBuilder> MACERATOR_RECIPES = new RecipeMap<>("macerator", 1, 1, 1, 4, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(150).EUt(2), false)
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_MACERATE, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_MACERATE, MoveType.HORIZONTAL)
+            .setSound(GTSounds.MACERATOR);
 
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> ORE_WASHER_RECIPES = new RecipeMap<>("ore_washer", 1, 1, 1, 3, 0, 1, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(16), false)
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.CIRCULAR)
+            .setSound(GTSounds.BATH);
 
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> THERMAL_CENTRIFUGE_RECIPES = new RecipeMap<>("thermal_centrifuge", 1, 1, 1, 3, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(60), false)
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
+            .setSound(GTSounds.CENTRIFUGE);
 
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> FURNACE_RECIPES = new RecipeMapFurnace("electric_furnace", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.FURNACE_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
+            .setSound(GTSounds.FURNACE);
 
 
     @ZenProperty
     public static final RecipeMap<IntCircuitRecipeBuilder> ASSEMBLER_RECIPES = new RecipeMap<>("assembler", 1, 9, 1, 1, 0, 1, 0, 0, new AssemblerRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.CIRCUIT_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_CIRCUIT, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_CIRCUIT, MoveType.HORIZONTAL)
+            .setSound(GTSounds.ASSEMBLER);
 
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> FORMING_PRESS_RECIPES = new RecipeMapFormingPress("forming_press", 2, 6, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_COMPRESS, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_COMPRESS, MoveType.HORIZONTAL)
+            .setSound(GTSounds.COMPRESSOR);
 
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> ARC_FURNACE_RECIPES = new RecipeMap<>("arc_furnace", 1, 1, 1, 4, 1, 1, 0, 1, new SimpleRecipeBuilder(), false)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE, MoveType.HORIZONTAL)
+            .setSound(GTSounds.ARC)
             .onRecipeBuild(recipeBuilder -> {
                 if (recipeBuilder.getFluidInputs().isEmpty()) {
                     recipeBuilder.fluidInputs(Materials.Oxygen.getFluid(recipeBuilder.duration));
@@ -104,7 +117,8 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> SIFTER_RECIPES = new RecipeMap<>("sifter", 1, 1, 0, 6, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_SIFT, MoveType.VERTICAL_INVERTED);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_SIFT, MoveType.VERTICAL_INVERTED)
+            .setSound(SoundEvents.BLOCK_SAND_PLACE);
 
     /**
      * Example:
@@ -121,7 +135,8 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> LASER_ENGRAVER_RECIPES = new RecipeMap<>("laser_engraver", 2, 2, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, true, GuiTextures.LENS_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
+            .setSound(GTSounds.ELECTROLYZER);
 
     /**
      * Example:
@@ -140,7 +155,8 @@ public class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> MIXER_RECIPES = new RecipeMap<>("mixer", 0, 6, 0, 1, 0, 2, 0, 1, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.DUST_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.CIRCULAR)
+            .setSound(GTSounds.MIXER);
 
     /**
      * Example:
@@ -159,7 +175,8 @@ public class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> AUTOCLAVE_RECIPES = new RecipeMap<>("autoclave", 1, 1, 1, 1, 1, 1, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.DUST_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.CRYSTAL_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_CRYSTALLIZATION, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_CRYSTALLIZATION, MoveType.HORIZONTAL)
+            .setSound(GTSounds.FURNACE);
 
     /**
      * Example:
@@ -178,7 +195,8 @@ public class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> ELECTROMAGNETIC_SEPARATOR_RECIPES = new RecipeMap<>("electromagnetic_separator", 1, 1, 1, 3, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_MAGNET, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_MAGNET, MoveType.HORIZONTAL)
+            .setSound(GTSounds.ARC);
 
     /**
      * Example:
@@ -194,7 +212,8 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> POLARIZER_RECIPES = new RecipeMap<>("polarizer", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_MAGNET, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_MAGNET, MoveType.HORIZONTAL)
+            .setSound(GTSounds.ARC);
 
     /**
      * Example:
@@ -211,7 +230,8 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_BATH_RECIPES = new RecipeMap<>("chemical_bath", 1, 1, 1, 3, 1, 1, 0, 0, new SimpleRecipeBuilder(), false)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.CIRCULAR)
+            .setSound(GTSounds.BATH);
 
     /**
      * Example:
@@ -227,7 +247,8 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> BREWING_RECIPES = new RecipeMap<>("brewery", 1, 1, 0, 0, 1, 1, 1, 1, new SimpleRecipeBuilder().duration(128).EUt(4), false)
             .setSlotOverlay(false, false, GuiTextures.BREWER_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
+            .setSound(GTSounds.CHEMICAL_REACTOR);
 
     /**
      * Example:
@@ -246,7 +267,8 @@ public class RecipeMaps {
     public static final RecipeMap<IntCircuitRecipeBuilder> FLUID_HEATER_RECIPES = new RecipeMap<>("fluid_heater", 1, 1, 0, 0, 1, 1, 1, 1, new IntCircuitRecipeBuilder(), false)
             .setSlotOverlay(false, true, GuiTextures.HEATING_OVERLAY_1)
             .setSlotOverlay(true, true, GuiTextures.HEATING_OVERLAY_2)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
+            .setSound(GTSounds.BOILER);
 
     /**
      * Example:
@@ -266,7 +288,8 @@ public class RecipeMaps {
             .setSlotOverlay(false, true, GuiTextures.BEAKER_OVERLAY_1)
             .setSlotOverlay(true, true, GuiTextures.BEAKER_OVERLAY_4)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
+            .setSound(GTSounds.BOILER);
 
     /**
      * Example:
@@ -281,7 +304,8 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> FERMENTING_RECIPES = new RecipeMap<>("fermenter", 0, 0, 0, 0, 1, 1, 1, 1, new SimpleRecipeBuilder().EUt(2), false)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
+            .setSound(GTSounds.CHEMICAL_REACTOR);
 
     /**
      * Example:
@@ -299,7 +323,8 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> FLUID_SOLIDFICATION_RECIPES = new RecipeMap<>("fluid_solidifier", 1, 1, 1, 1, 1, 1, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.SOLIDIFIER_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
+            .setSound(GTSounds.COOLING);
 
     /**
      * Example:
@@ -316,7 +341,8 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<FusionRecipeBuilder> FUSION_RECIPES = new RecipeMap<>("fusion_reactor", 0, 0, 0, 0, 2, 2, 1, 1, new FusionRecipeBuilder(), false)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_FUSION, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_FUSION, MoveType.HORIZONTAL)
+            .setSound(GTSounds.ARC);
 
     /**
      * Examples:
@@ -341,7 +367,8 @@ public class RecipeMaps {
             .setSlotOverlay(false, false, false, GuiTextures.EXTRACTOR_OVERLAY)
             .setSlotOverlay(false, false, true, GuiTextures.CANISTER_OVERLAY)
             .setSlotOverlay(false, true, true, GuiTextures.CENTRIFUGE_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL)
+            .setSound(GTSounds.CENTRIFUGE);
 
     /**
      * Examples:
@@ -371,7 +398,8 @@ public class RecipeMaps {
             .setSlotOverlay(false, false, false, GuiTextures.LIGHTNING_OVERLAY_1)
             .setSlotOverlay(false, false, true, GuiTextures.CANISTER_OVERLAY)
             .setSlotOverlay(false, true, true, GuiTextures.LIGHTNING_OVERLAY_2)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL)
+            .setSound(GTSounds.ELECTROLYZER);
 
     /**
      * Example:
@@ -388,7 +416,8 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<BlastRecipeBuilder> BLAST_RECIPES = new RecipeMap<>("electric_blast_furnace", 1, 3, 1, 2, 0, 1, 0, 1, new BlastRecipeBuilder(), false);
+    public static final RecipeMap<BlastRecipeBuilder> BLAST_RECIPES = new RecipeMap<>("electric_blast_furnace", 1, 3, 1, 2, 0, 1, 0, 1, new BlastRecipeBuilder(), false)
+            .setSound(GTSounds.FURNACE);
 
     /**
      * Example:
@@ -402,10 +431,11 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<ImplosionRecipeBuilder> IMPLOSION_RECIPES = new RecipeMap<>("implosion_compressor", 2, 3, 1, 2, 0, 0, 0, 0, new ImplosionRecipeBuilder().duration(20).EUt(30), false)
+    public static final RecipeMap<ImplosionRecipeBuilder> IMPLOSION_RECIPES = new RecipeMap<>("implosion_compressor", 2, 3, 1, 2, 0, 0, 0, 0, new ImplosionRecipeBuilder().duration(20).EUt(VA[LV]), false)
             .setSlotOverlay(false, false, true, GuiTextures.IMPLOSION_OVERLAY_1)
             .setSlotOverlay(false, false, false, GuiTextures.IMPLOSION_OVERLAY_2)
-            .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY);
+            .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
+            .setSound(GTSounds.EXPLOSION);
 
     /**
      * Example:
@@ -419,7 +449,8 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> VACUUM_RECIPES = new RecipeMap<>("vacuum_freezer", 0, 1, 0, 1, 0, 1, 0, 1, new SimpleRecipeBuilder().EUt(120), false);
+    public static final RecipeMap<SimpleRecipeBuilder> VACUUM_RECIPES = new RecipeMap<>("vacuum_freezer", 0, 1, 0, 1, 0, 1, 0, 1, new SimpleRecipeBuilder().EUt(VA[MV]), false)
+            .setSound(GTSounds.COOLING);
 
     /**
      * Example:
@@ -436,7 +467,7 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_RECIPES = new RecipeMap<>("chemical_reactor", 0, 2, 0, 2, 0, 3, 0, 2, new SimpleRecipeBuilder().EUt(30), false)
+    public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_RECIPES = new RecipeMap<>("chemical_reactor", 0, 2, 0, 2, 0, 3, 0, 2, new SimpleRecipeBuilder().EUt(VA[LV]), false)
             .setSlotOverlay(false, false, false, GuiTextures.MOLECULAR_OVERLAY_1)
             .setSlotOverlay(false, false, true, GuiTextures.MOLECULAR_OVERLAY_2)
             .setSlotOverlay(false, true, false, GuiTextures.MOLECULAR_OVERLAY_3)
@@ -444,6 +475,7 @@ public class RecipeMaps {
             .setSlotOverlay(true, false, GuiTextures.VIAL_OVERLAY_1)
             .setSlotOverlay(true, true, GuiTextures.VIAL_OVERLAY_2)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
+            .setSound(GTValues.FOOLS.get() ? GTSounds.SCIENCE : GTSounds.CHEMICAL_REACTOR)
             .onRecipeBuild(recipeBuilder -> {
                 RecipeMaps.LARGE_CHEMICAL_RECIPES.recipeBuilder()
                         .inputs(recipeBuilder.getInputs().toArray(new CountableIngredient[0]))
@@ -470,14 +502,16 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> LARGE_CHEMICAL_RECIPES = new RecipeMap<>("large_chemical_reactor", 0, 3, 0, 3, 0, 5, 0, 4, new SimpleRecipeBuilder().EUt(30), false)
+    public static final RecipeMap<SimpleRecipeBuilder> LARGE_CHEMICAL_RECIPES = new RecipeMap<>("large_chemical_reactor", 0, 3, 0, 3, 0, 5, 0, 4, new SimpleRecipeBuilder().EUt(VA[LV]), false)
             .setSlotOverlay(false, false, false, GuiTextures.MOLECULAR_OVERLAY_1)
             .setSlotOverlay(false, false, true, GuiTextures.MOLECULAR_OVERLAY_2)
             .setSlotOverlay(false, true, false, GuiTextures.MOLECULAR_OVERLAY_3)
             .setSlotOverlay(false, true, true, GuiTextures.MOLECULAR_OVERLAY_4)
             .setSlotOverlay(true, false, GuiTextures.VIAL_OVERLAY_1)
             .setSlotOverlay(true, true, GuiTextures.VIAL_OVERLAY_2)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
+            .setSound(GTSounds.CHEMICAL_REACTOR)
+            .setSmallRecipeMap(CHEMICAL_RECIPES);
 
     /**
      * If universal every Fluid also gets separate distillation recipes
@@ -494,7 +528,8 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<UniversalDistillationRecipeBuilder> DISTILLATION_RECIPES = new RecipeMapDistillationTower("distillation_tower", 0, 0, 0, 1, 1, 1, 1, 12, new UniversalDistillationRecipeBuilder(), false);
+    public static final RecipeMap<UniversalDistillationRecipeBuilder> DISTILLATION_RECIPES = new RecipeMapDistillationTower("distillation_tower", 0, 0, 0, 1, 1, 1, 1, 12, new UniversalDistillationRecipeBuilder(), false)
+            .setSound(GTSounds.CHEMICAL_REACTOR);
 
     /**
      * Example:
@@ -512,7 +547,8 @@ public class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> CRACKING_RECIPES = new RecipeMap<>("cracker", 0, 0, 0, 0, 2, 2, 1, 2, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, true, GuiTextures.CRACKING_OVERLAY_1)
             .setSlotOverlay(true, true, GuiTextures.CRACKING_OVERLAY_2)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_CRACKING, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_CRACKING, MoveType.HORIZONTAL)
+            .setSound(GTSounds.FIRE);
 
     /**
      * Example:
@@ -530,7 +566,8 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<IntCircuitRecipeBuilder> PYROLYSE_RECIPES = new RecipeMap<>("pyrolyse_oven", 2, 2, 0, 1, 0, 1, 1, 1, new IntCircuitRecipeBuilder(), false);
+    public static final RecipeMap<IntCircuitRecipeBuilder> PYROLYSE_RECIPES = new RecipeMap<>("pyrolyse_oven", 2, 2, 0, 1, 0, 1, 1, 1, new IntCircuitRecipeBuilder(), false)
+            .setSound(GTSounds.FIRE);
 
     /**
      * Example:
@@ -547,7 +584,8 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> WIREMILL_RECIPES = new RecipeMap<>("wiremill", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.WIREMILL_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_WIREMILL, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_WIREMILL, MoveType.HORIZONTAL)
+            .setSound(GTSounds.MOTOR);
 
     /**
      * Example:
@@ -564,13 +602,15 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<IntCircuitRecipeBuilder> BENDER_RECIPES = new RecipeMap<>("bender", 2, 2, 1, 1, 0, 0, 0, 0, new IntCircuitRecipeBuilder(), false)
             .setSlotOverlay(false, false, false, GuiTextures.BENDER_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_BENDING, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_BENDING, MoveType.HORIZONTAL)
+            .setSound(GTSounds.MOTOR);
 
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> ALLOY_SMELTER_RECIPES = new RecipeMap<>("alloy_smelter", 1, 2, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.FURNACE_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
+            .setSound(GTSounds.FURNACE);
 
     /**
      * Example:
@@ -591,7 +631,8 @@ public class RecipeMaps {
             .setSlotOverlay(true, false, GuiTextures.CANISTER_OVERLAY)
             .setSlotOverlay(false, true, GuiTextures.DARK_CANISTER_OVERLAY)
             .setSlotOverlay(true, true, GuiTextures.DARK_CANISTER_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_CANNER, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_CANNER, MoveType.HORIZONTAL)
+            .setSound(GTSounds.BATH);
 
     /**
      * Example:
@@ -611,7 +652,8 @@ public class RecipeMaps {
             .setSlotOverlay(true, false, false, GuiTextures.PIPE_OVERLAY_2)
             .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
             .setSpecialTexture(98, 24, 5, 18, GuiTextures.PROGRESS_BAR_LATHE_BASE)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_LATHE, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_LATHE, MoveType.HORIZONTAL)
+            .setSound(GTSounds.CUT);
 
     /**
      * Example:
@@ -632,6 +674,7 @@ public class RecipeMaps {
             .setSlotOverlay(true, false, false, GuiTextures.CUTTER_OVERLAY)
             .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_SLICE, MoveType.HORIZONTAL)
+            .setSound(GTSounds.CUT)
             .onRecipeBuild(recipeBuilder -> {
                 if (recipeBuilder.getFluidInputs().isEmpty()) {
                     recipeBuilder.copy()
@@ -666,7 +709,8 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> EXTRUDER_RECIPES = new RecipeMap<>("extruder", 2, 2, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, true, GuiTextures.MOLD_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRUDER, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRUDER, MoveType.HORIZONTAL)
+            .setSound(GTSounds.ARC);
 
     /**
      * Example:
@@ -684,31 +728,35 @@ public class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> FORGE_HAMMER_RECIPES = new RecipeMap<>("forge_hammer", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.HAMMER_OVERLAY)
             .setSpecialTexture(78, 42, 20, 6, GuiTextures.PROGRESS_BAR_HAMMER_BASE)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_HAMMER, MoveType.VERTICAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_HAMMER, MoveType.VERTICAL)
+            .setSound(GTSounds.FORGE_HAMMER);
 
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> PACKER_RECIPES = new RecipeMap<>("packer", 2, 2, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder().EUt(12).duration(10), false)
             .setSlotOverlay(false, false, true, GuiTextures.BOX_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.BOXED_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_PACKER, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_PACKER, MoveType.HORIZONTAL)
+            .setSound(GTSounds.ASSEMBLER);
 
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> UNPACKER_RECIPES = new RecipeMap<>("unpacker", 2, 2, 1, 2, 0, 0, 0, 0, new SimpleRecipeBuilder().EUt(12).duration(10), false)
             .setSlotOverlay(false, false, GuiTextures.BOXED_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_UNPACKER, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_UNPACKER, MoveType.HORIZONTAL)
+            .setSound(GTSounds.ASSEMBLER);
 
     @ZenProperty
-    public static final RecipeMapAssemblyLine<SimpleRecipeBuilder> ASSEMBLY_LINE_RECIPES = new RecipeMapAssemblyLine<>("assembly_line", 4, 16, 1, 1, 0, 4, 0, 0, new SimpleRecipeBuilder(), false)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
-    // ASSEMBLY_LINE_RECIPES.setSlotOverlay(false, false, GuiTextures.MOLD_OVERLAY); TODO Fix this (???)
+    public static final RecipeMapAssemblyLine<SimpleRecipeBuilder> ASSEMBLY_LINE_RECIPES = (RecipeMapAssemblyLine<SimpleRecipeBuilder>) new RecipeMapAssemblyLine<>("assembly_line", 4, 16, 1, 1, 0, 4, 0, 0, new SimpleRecipeBuilder(), false)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
+            .setSound(GTSounds.ASSEMBLER);
 
     @ZenProperty
     public static final RecipeMap<CircuitAssemblerRecipeBuilder> CIRCUIT_ASSEMBLER_RECIPES = new RecipeMap<>("circuit_assembler",
             1, 6, 1, 1, 0, 1, 0, 0, new CircuitAssemblerRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.CIRCUIT_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_CIRCUIT_ASSEMBLER, ProgressWidget.MoveType.HORIZONTAL)
+            .setSound(GTSounds.ASSEMBLER)
             .onRecipeBuild(recipeBuilder -> {
                 if (recipeBuilder.getFluidInputs().isEmpty()) {
                     recipeBuilder.copy()
@@ -726,7 +774,8 @@ public class RecipeMaps {
             .setSlotOverlay(false, true, GuiTextures.ATOMIC_OVERLAY_2)
             .setSlotOverlay(true, true, GuiTextures.POSITIVE_MATTER_OVERLAY)
             .setSlotOverlay(true, true, true, GuiTextures.NEUTRAL_MATTER_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_MASS_FAB, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_MASS_FAB, MoveType.HORIZONTAL)
+            .setSound(GTSounds.REPLICATOR);
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> REPLICATOR_RECIPES = new RecipeMap<>("replicator", 1, 1, 0, 1, 1, 2, 0, 1, new SimpleRecipeBuilder(), false)
@@ -735,52 +784,63 @@ public class RecipeMaps {
             .setSlotOverlay(true, true, GuiTextures.ATOMIC_OVERLAY_2)
             .setSlotOverlay(false, true, GuiTextures.NEUTRAL_MATTER_OVERLAY)
             .setSlotOverlay(false, true, true, GuiTextures.POSITIVE_MATTER_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_REPLICATOR, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_REPLICATOR, MoveType.HORIZONTAL)
+            .setSound(GTSounds.REPLICATOR);
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> SCANNER_RECIPES = new RecipeMap<>("scanner", 0, 2, 1, 1, 0, 1, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.DATA_ORB_OVERLAY)
             .setSlotOverlay(false, false, true, GuiTextures.SCANNER_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
+            .setSound(GTSounds.ELECTROLYZER);
 
     @ZenProperty
     public static final RecipeMap<GasCollectorRecipeBuilder> GAS_COLLECTOR_RECIPES = new RecipeMap<>("gas_collector", 1, 1, 0, 0, 0, 0, 1, 1, new GasCollectorRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.INT_CIRCUIT_OVERLAY)
             .setSlotOverlay(true, true, GuiTextures.CENTRIFUGE_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR, MoveType.HORIZONTAL)
+            .setSound(GTSounds.COOLING);
 
     public static final RecipeMap<SimpleRecipeBuilder> SIMPLE_WASHER_RECIPES = new RecipeMap<>("simple_washer", 1, 1, 1, 1, 1, 1, 0, 0, new SimpleRecipeBuilder(), true)
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.CIRCULAR)
+            .setSound(GTSounds.BATH);
 
     public static final RecipeMap<SimpleRecipeBuilder> ROCK_BREAKER_RECIPES = new RecipeMap<>("rock_breaker", 1, 1, 1, 4, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.DUST_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.CRUSHED_ORE_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_MACERATE, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_MACERATE, MoveType.HORIZONTAL)
+            .setSound(GTSounds.FIRE);
 
     @ZenProperty
-    public static final RecipeMap<PrimitiveRecipeBuilder> PRIMITIVE_BLAST_FURNACE_RECIPES = new RecipeMap<>("primitive_blast_furnace", 2, 3, 1, 3, 0, 0, 0, 0, new PrimitiveRecipeBuilder(), false);
+    public static final RecipeMap<PrimitiveRecipeBuilder> PRIMITIVE_BLAST_FURNACE_RECIPES = new RecipeMap<>("primitive_blast_furnace", 2, 3, 1, 3, 0, 0, 0, 0, new PrimitiveRecipeBuilder(), false)
+            .setSound(GTSounds.FIRE);
 
     @ZenProperty
-    public static final RecipeMap<PrimitiveRecipeBuilder> COKE_OVEN_RECIPES = new RecipeMap<>("coke_oven", 1, 1, 0, 1, 0, 0, 0, 1, new PrimitiveRecipeBuilder(), false);
+    public static final RecipeMap<PrimitiveRecipeBuilder> COKE_OVEN_RECIPES = new RecipeMapCokeOven<>("coke_oven", 1, 1, 0, 1, 0, 0, 0, 1, new PrimitiveRecipeBuilder(), false)
+            .setSound(GTSounds.FIRE);
 
     //////////////////////////////////////
     //         Fuel Recipe Maps         //
     //////////////////////////////////////
 
     @ZenProperty
-    public static final FuelRecipeMap COMBUSTION_GENERATOR_FUELS = new FuelRecipeMap("combustion_generator");
+    public static final FuelRecipeMap COMBUSTION_GENERATOR_FUELS = new FuelRecipeMap("combustion_generator")
+            .setSound(GTSounds.COMBUSTION);
 
     @ZenProperty
-    public static final FuelRecipeMap GAS_TURBINE_FUELS = new FuelRecipeMap("gas_turbine");
+    public static final FuelRecipeMap GAS_TURBINE_FUELS = new FuelRecipeMap("gas_turbine")
+            .setSound(GTSounds.TURBINE);
 
     @ZenProperty
-    public static final FuelRecipeMap STEAM_TURBINE_FUELS = new FuelRecipeMap("steam_turbine");
+    public static final FuelRecipeMap STEAM_TURBINE_FUELS = new FuelRecipeMap("steam_turbine")
+            .setSound(GTSounds.TURBINE);
 
     @ZenProperty
     public static final FuelRecipeMap SEMI_FLUID_GENERATOR_FUELS = new FuelRecipeMap("semi_fluid_generator");
 
     @ZenProperty
-    public static final FuelRecipeMap PLASMA_GENERATOR_FUELS = new FuelRecipeMap("plasma_generator");
+    public static final FuelRecipeMap PLASMA_GENERATOR_FUELS = new FuelRecipeMap("plasma_generator")
+            .setSound(GTSounds.TURBINE);
 }

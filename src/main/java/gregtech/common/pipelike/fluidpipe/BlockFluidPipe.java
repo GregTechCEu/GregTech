@@ -15,7 +15,7 @@ import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
-import gregtech.common.render.FluidPipeRenderer;
+import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -87,7 +87,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
+    public void getSubBlocks(@Nonnull CreativeTabs itemIn, @Nonnull NonNullList<ItemStack> items) {
         for (Material material : enabledMaterials.keySet()) {
             for (FluidPipeType fluidPipeType : FluidPipeType.values()) {
                 if (!fluidPipeType.getOrePrefix().isIgnored(material)) {
@@ -184,7 +184,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+    public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
         if (!worldIn.isRemote) {
             TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
@@ -240,21 +240,19 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
             if (temps.size() == 0)
                 return;
             float fluidTemperature = (float) temps.stream().mapToInt(i -> i).average().getAsDouble();
-            boolean wasDamaged = false;
             if (fluidTemperature >= 373) {
                 //100C, temperature of boiling water
                 float damageAmount = (fluidTemperature - 363) / 4.0f;
                 entityLiving.attackEntityFrom(DamageSources.getHeatDamage(), damageAmount);
-                wasDamaged = true;
+                if (entityLiving instanceof EntityPlayerMP)
+                    GTTriggers.FLUID_PIPE_DEATH_HEAT.trigger((EntityPlayerMP) entityLiving);
 
             } else if (fluidTemperature <= 183) {
                 //-90C, temperature of freezing of most gaseous elements
                 float damageAmount = fluidTemperature / 4.0f;
                 entityLiving.attackEntityFrom(DamageSources.getFrostDamage(), damageAmount);
-                wasDamaged = true;
-            }
-            if (wasDamaged && entityLiving instanceof EntityPlayerMP) {
-                GTTriggers.FLUID_PIPE_DEATH.trigger((EntityPlayerMP) entityLiving);
+                if (entityLiving instanceof EntityPlayerMP)
+                    GTTriggers.FLUID_PIPE_DEATH_COLD.trigger((EntityPlayerMP) entityLiving);
             }
         }
     }
@@ -281,7 +279,6 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         return supportsTicking ? new TileEntityFluidPipeTickable() : new TileEntityFluidPipe();
     }
 
-    @Nonnull
     @Override
     public int getVisualConnections(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile) {
         int connections = selfTile.getOpenConnections();
@@ -305,7 +302,9 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
+    @Nonnull
     @SideOnly(Side.CLIENT)
+    @SuppressWarnings("deprecation")
     public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
         return FluidPipeRenderer.BLOCK_RENDER_TYPE;
     }

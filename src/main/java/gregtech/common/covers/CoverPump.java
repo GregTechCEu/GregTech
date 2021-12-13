@@ -16,17 +16,17 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.render.SimpleSidedCubeRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.common.covers.filter.FluidFilterContainer;
-import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos.PooledMutableBlockPos;
@@ -42,7 +42,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Function;
 import java.util.function.IntSupplier;
-import java.util.function.Predicate;
 
 public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
@@ -84,6 +83,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
 
     public void setPumpMode(PumpMode pumpMode) {
         this.pumpMode = pumpMode;
+        writeUpdateData(1, buf -> buf.writeEnumValue(pumpMode));
         coverHolder.markDirty();
     }
 
@@ -247,6 +247,27 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     }
 
     @Override
+    public void readUpdateData(int id, PacketBuffer packetBuffer) {
+        super.readUpdateData(id, packetBuffer);
+        if (id == 1) {
+            this.pumpMode = packetBuffer.readEnumValue(PumpMode.class);
+            coverHolder.scheduleRenderUpdate();
+        }
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer packetBuffer) {
+        super.writeInitialSyncData(packetBuffer);
+        packetBuffer.writeEnumValue(pumpMode);
+    }
+
+    @Override
+    public void readInitialSyncData(PacketBuffer packetBuffer) {
+        super.readInitialSyncData(packetBuffer);
+        this.pumpMode = packetBuffer.readEnumValue(PumpMode.class);
+    }
+
+    @Override
     public boolean canAttach() {
         return coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide) != null;
     }
@@ -267,7 +288,11 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.PUMP_OVERLAY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        if (pumpMode == PumpMode.EXPORT) {
+            Textures.PUMP_OVERLAY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        } else {
+            Textures.PUMP_OVERLAY_INVERTED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        }
     }
 
     @Override

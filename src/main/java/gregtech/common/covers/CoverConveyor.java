@@ -18,8 +18,8 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.render.SimpleSidedCubeRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
@@ -29,6 +29,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
@@ -79,6 +80,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     protected void setConveyorMode(ConveyorMode conveyorMode) {
         this.conveyorMode = conveyorMode;
+        writeUpdateData(1, buf -> buf.writeEnumValue(conveyorMode));
         coverHolder.markDirty();
     }
 
@@ -404,7 +406,11 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.CONVEYOR_OVERLAY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        if (conveyorMode == ConveyorMode.EXPORT) {
+            Textures.CONVEYOR_OVERLAY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        } else {
+            Textures.CONVEYOR_OVERLAY_INVERTED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        }
     }
 
     @Override
@@ -493,6 +499,27 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     @Override
     public void setWorkingEnabled(boolean isActivationAllowed) {
         this.isWorkingAllowed = isActivationAllowed;
+    }
+
+    @Override
+    public void readUpdateData(int id, PacketBuffer packetBuffer) {
+        super.readUpdateData(id, packetBuffer);
+        if (id == 1) {
+            this.conveyorMode = packetBuffer.readEnumValue(ConveyorMode.class);
+            coverHolder.scheduleRenderUpdate();
+        }
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer packetBuffer) {
+        super.writeInitialSyncData(packetBuffer);
+        packetBuffer.writeEnumValue(conveyorMode);
+    }
+
+    @Override
+    public void readInitialSyncData(PacketBuffer packetBuffer) {
+        super.readInitialSyncData(packetBuffer);
+        this.conveyorMode = packetBuffer.readEnumValue(ConveyorMode.class);
     }
 
     @Override

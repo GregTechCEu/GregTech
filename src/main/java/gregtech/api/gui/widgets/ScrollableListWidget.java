@@ -3,7 +3,7 @@ package gregtech.api.gui.widgets;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
-import gregtech.api.util.RenderUtil;
+import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.client.renderer.GlStateManager;
@@ -142,7 +142,7 @@ public class ScrollableListWidget extends AbstractWidgetGroup {
 
     @Override
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
-        if (isMouseOverElement(mouseX, mouseY, true)) {
+        if (isMouseOverElement(mouseX, mouseY)) {
             int direction = -MathHelper.clamp(wheelDelta, -1, 1);
             int moveDelta = direction * (slotHeight / 2);
             addScrollOffset(moveDelta);

@@ -1,7 +1,7 @@
 package gregtech.common.metatileentities.multi.electric.generator;
 
 import gregtech.api.recipes.machines.FuelRecipeMap;
-import gregtech.api.render.OrientedOverlayRenderer;
+import gregtech.client.renderer.ICubeRenderer;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
 import net.minecraft.util.ResourceLocation;
 
@@ -61,7 +61,7 @@ public abstract class RotorHolderMultiblockController extends FueledMultiblockCo
 
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         return super.getFrontOverlay();
     }
 }

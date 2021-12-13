@@ -36,7 +36,7 @@ public class DeviceHardware extends Hardware {
 
     @Override
     public NBTTagCompound acceptItemStack(ItemStack itemStack) {
-        for (DEVICE device : DEVICE.VALUES) {
+        for (DEVICE device : DEVICE.values()) {
             if (device.itemStack.isItemEqual(itemStack)) {
                 NBTTagCompound nbt = new NBTTagCompound();
                 nbt.setInteger("d", device.ordinal());
@@ -52,7 +52,7 @@ public class DeviceHardware extends Hardware {
             return super.getIcon();
         }
         if (isCreative()) {
-            return new ItemStackTexture(DEVICE.VALUES[slot % DEVICE.VALUES.length].itemStack);
+            return new ItemStackTexture(DEVICE.values()[slot % DEVICE.values().length].itemStack);
         }
         return new ItemStackTexture(getDevice().itemStack);
     }
@@ -60,7 +60,7 @@ public class DeviceHardware extends Hardware {
     @Override
     public boolean isHardwareAdequate(Hardware demand) {
         if (demand instanceof DeviceHardware && isCreative()) {
-            return DEVICE.VALUES[slot % DEVICE.VALUES.length] == ((DeviceHardware) demand).getDevice();
+            return DEVICE.values()[slot % DEVICE.values().length] == ((DeviceHardware) demand).getDevice();
         }
         return demand instanceof DeviceHardware && ((DeviceHardware) demand).getDevice() == this.getDevice();
     }
@@ -68,36 +68,41 @@ public class DeviceHardware extends Hardware {
     @Override
     public String addInformation() {
         if (isCreative()) {
-            return DEVICE.VALUES[slot % DEVICE.VALUES.length].itemStack.getDisplayName();
+            return DEVICE.values()[slot % DEVICE.values().length].itemStack.getDisplayName();
         }
         return getDevice().itemStack.getDisplayName();
     }
 
     public DEVICE getDevice() {
-        return DEVICE.VALUES[getNBT().getInteger("d")];
+        return DEVICE.values()[getNBT().getInteger("d") % DEVICE.values().length];
     }
 
     public enum DEVICE{
-        SCANNER(MetaItems.SCANNER),
-        WIRELESS(MetaItems.WIRELESS),
-        CAMERA(MetaItems.CAMERA),
+        PROSPECTOR_LV(MetaItems.PROSPECTOR_LV, "scanner"),
+        WIRELESS(MetaItems.WIRELESS, "wireless"),
+        CAMERA(MetaItems.CAMERA, "camera"),
 
         // SOLAR
-        SOLAR_LV(MetaItems.COVER_SOLAR_PANEL_LV);
-
-        public static final DEVICE[] VALUES;
-
-        static {
-            VALUES = values();
-        }
+        SOLAR_LV(MetaItems.COVER_SOLAR_PANEL_LV, "solar_lv");
 
         ItemStack itemStack;
+        String name;
 
-        DEVICE(ItemStack itemStack){
+        DEVICE(ItemStack itemStack, String name){
             this.itemStack = itemStack;
+            this.name = name;
         }
-        DEVICE(MetaItem<?>.MetaValueItem metaItem){
+        DEVICE(MetaItem<?>.MetaValueItem metaItem, String name){
             this.itemStack = metaItem.getStackForm();
+            this.name = name;
+        }
+        public static DEVICE fromString(String name) {
+            for (DEVICE device : values()) {
+                if (device.name.equals(name.toLowerCase())) {
+                    return device;
+                }
+            }
+            return null;
         }
     }
 
@@ -107,6 +112,11 @@ public class DeviceHardware extends Hardware {
         public DeviceDemand(DEVICE device) {
             super(0);
             this.device = device;
+        }
+
+        public DeviceDemand(String device) {
+            super(0);
+            this.device = DEVICE.fromString(device);
         }
 
         @Override

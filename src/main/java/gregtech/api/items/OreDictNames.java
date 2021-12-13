@@ -11,9 +11,7 @@ public enum OreDictNames {
     craftingFurnace,
     craftingBook,
 
-    craftingSawBlade,
     craftingDuctTape,
-    craftingGrinder,
     craftingPiston,
 
     craftingIronFurnace,
@@ -32,5 +30,8 @@ public enum OreDictNames {
     craftingLensPurple,
     craftingLensRed,
     craftingLensWhite,
-    craftingLensYellow
+    craftingLensYellow,
+
+    // Represents all dyed Glass Lenses, and the undyed version
+    craftingLensGlass
 }

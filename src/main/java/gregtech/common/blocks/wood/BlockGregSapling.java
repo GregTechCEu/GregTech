@@ -51,6 +51,7 @@ public class BlockGregSapling extends BlockBush implements IGrowable, IPlantable
 
     @Nonnull
     @Override
+    @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState()
                 .withProperty(VARIANT, LogVariant.values()[meta % 4 % LogVariant.values().length])
@@ -76,6 +77,7 @@ public class BlockGregSapling extends BlockBush implements IGrowable, IPlantable
 
     @Nonnull
     @Override
+    @SuppressWarnings("deprecation")
     public AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
         return SAPLING_AABB;
     }

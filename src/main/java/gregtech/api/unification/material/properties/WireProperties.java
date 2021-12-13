@@ -1,6 +1,11 @@
 package gregtech.api.unification.material.properties;
 
+import gregtech.api.GTValues;
+import gregtech.api.unification.material.Material;
+
 import java.util.Objects;
+
+import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FOIL;
 
 public class WireProperties implements IMaterialProperty<WireProperties> {
 
@@ -31,6 +36,12 @@ public class WireProperties implements IMaterialProperty<WireProperties> {
     @Override
     public void verifyProperty(MaterialProperties properties) {
         properties.ensureSet(PropertyKey.INGOT, true);
+
+        // Ensure all Materials with Cables and voltage tier IV or above have a Foil for recipe generation
+        Material thisMaterial = properties.getMaterial();
+        if (!isSuperconductor && voltage >= GTValues.V[GTValues.IV] && !thisMaterial.hasFlag(GENERATE_FOIL)) {
+            thisMaterial.addFlags(GENERATE_FOIL);
+        }
     }
 
     @Override

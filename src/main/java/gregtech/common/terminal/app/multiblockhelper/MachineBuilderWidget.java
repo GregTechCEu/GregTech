@@ -1,26 +1,23 @@
 package gregtech.common.terminal.app.multiblockhelper;
 
-import gregtech.api.GregTechAPI;
-import gregtech.api.block.machines.BlockMachine;
-import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.render.scene.TrackedDummyWorld;
-import gregtech.api.render.scene.WorldSceneRenderer;
+import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.pattern.PatternError;
+import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.MachineSceneWidget;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
+import gregtech.api.terminal.os.TerminalDialogWidget;
+import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
-import gregtech.api.util.GTLog;
-import gregtech.api.util.RenderBufferHelper;
+import gregtech.api.util.BlockInfo;
+import gregtech.client.utils.RenderBufferHelper;
+import gregtech.common.inventory.handlers.CycleItemStackHandler;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -31,18 +28,16 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
-import javax.vecmath.Vector3f;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA.
@@ -55,15 +50,21 @@ public class MachineBuilderWidget extends WidgetGroup {
     private BlockPos pos;
     private EnumFacing facing;
     private SlotWidget[] slotWidgets;
+    TerminalOSWidget os;
     @SideOnly(Side.CLIENT)
     private MachineSceneWidget sceneWidget;
     @SideOnly(Side.CLIENT)
     private Set<BlockPos> highLightBlocks;
     private final MultiblockControllerBase controllerBase;
     private int selected = -1;
+    @SideOnly(Side.CLIENT)
+    private DraggableScrollableWidgetGroup candidates;
+    @SideOnly(Side.CLIENT)
+    private List<CycleItemStackHandler> handlers;
 
-    public MachineBuilderWidget(int x, int y, int width, int height, MultiblockControllerBase controllerBase) {
+    public MachineBuilderWidget(int x, int y, int width, int height, MultiblockControllerBase controllerBase, TerminalOSWidget os) {
         super(x, y, width, height);
+        this.os = os;
         this.controllerBase = controllerBase;
         addWidget(new ImageWidget(0, 0, width, height, GuiTextures.BACKGROUND));
         addWidget(new RectButtonWidget(12, 125, width - 24, 20, 1)
@@ -78,27 +79,21 @@ public class MachineBuilderWidget extends WidgetGroup {
                 .setClickListener(this::debugButton)
                 .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_B_2.getColor())
                 .setIcon(new TextTexture("terminal.multiblock_ar.builder.debug", -1)));
+        if (os.isRemote()) {
+            candidates = new DraggableScrollableWidgetGroup(-20, 0, 20, 180);
+            addWidget(candidates);
+        }
+    }
+
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+        if (handlers != null && gui.entityPlayer.ticksExisted % 20 == 0) handlers.forEach(CycleItemStackHandler::update);
     }
 
     @Override
     public void handleClientAction(int id, PacketBuffer buffer) {
-        if (id == -1) { // auto build
-            List<BlockInfo> blockInfos = new ArrayList<>();
-            List<ItemStack> map = new ArrayList<>();
-            int size = buffer.readVarInt();
-            try {
-                for (int i = 0; i < size; i++) {
-                    map.add(buffer.readItemStack());
-                }
-            } catch (Exception e) {
-                GTLog.logger.error("packets init error", e);
-            }
-            size = buffer.readVarInt();
-            for (int i = 0; i < size; i++) {
-                blockInfos.add(new BlockInfo(buffer));
-            }
-            autoBuild(blockInfos, map);
-        } else if (id == -2) { // select
+        if (id == -2) { // select
             this.selected = buffer.readVarInt();
         } else  if (id == -3) { // update pos facing
             this.pos = buffer.readBlockPos();
@@ -152,22 +147,23 @@ public class MachineBuilderWidget extends WidgetGroup {
     @SideOnly(Side.CLIENT)
     public void setSceneWidget(MachineSceneWidget sceneWidget) {
         this.sceneWidget = sceneWidget;
-        this.sceneWidget.setMaxZoom(15);
         this.highLightBlocks = new HashSet<>();
         sceneWidget.getWorldSceneRenderer().addRenderedBlocks(highLightBlocks, this::highLightRender);
         sceneWidget.setOnSelected(this::setFocus);
         sceneWidget.getAround().clear();
         Set<BlockPos> cores = sceneWidget.getCores();
-        int r = 10;
-        WorldSceneRenderer worldSceneRenderer = MultiBlockPreviewARApp.getWorldSceneRenderer(controllerBase);
-        if (worldSceneRenderer != null && worldSceneRenderer.world instanceof TrackedDummyWorld) {
-            Vector3f maxPos = ((TrackedDummyWorld) worldSceneRenderer.world).getMaxPos();
-            Vector3f minPos = ((TrackedDummyWorld) worldSceneRenderer.world).getMinPos();
-            r = (int) Math.max((maxPos.x - minPos.x), Math.max(maxPos.y- minPos.y, maxPos.z - minPos.y));
+        int rX = 5;
+        int rY = 5;
+        int rZ = 5;
+        for (MultiblockShapeInfo shapeInfo : controllerBase.getMatchingShapes()) {
+            BlockInfo[][][] blockInfos = shapeInfo.getBlocks();
+            rX = Math.max(blockInfos.length, rX);
+            rY = Math.max(blockInfos[0].length, rY);
+            rZ = Math.max(blockInfos[0][0].length, rZ);
         }
-        for (int x = -r; x <= r; x++) {
-            for (int y = -r; y <= r; y++) {
-                for (int z = -r; z <= r; z++) {
+        for (int x = -rX; x <= rX; x++) {
+            for (int y = -rY; y <= rY; y++) {
+                for (int z = -rZ; z <= rZ; z++) {
                     cores.add(controllerBase.getPos().add(x, y, z));
                 }
             }
@@ -233,148 +229,30 @@ public class MachineBuilderWidget extends WidgetGroup {
     private void debugButton(ClickData clickData) {
         if (clickData.isClient && controllerBase != null) {
             highLightBlocks.clear();
-            if (controllerBase.structurePattern.checkPatternAt(controllerBase.getWorld(), controllerBase.getPos(), controllerBase.getFrontFacing().getOpposite()) == null) {
-                highLightBlocks.add(new BlockPos(controllerBase.structurePattern.blockPos));
+            if (controllerBase.structurePattern.checkPatternFastAt(controllerBase.getWorld(), controllerBase.getPos(), controllerBase.getFrontFacing().getOpposite()) == null) {
+                PatternError error = controllerBase.structurePattern.getError();
+                highLightBlocks.add(new BlockPos(error.getPos()));
+                List<List<ItemStack>> candidatesItemStack = error.getCandidates();
+                candidates.clearAllWidgets();
+                int y = 1;
+                handlers = new ArrayList<>();
+                for (List<ItemStack> candidate : candidatesItemStack) {
+                    CycleItemStackHandler handler = new CycleItemStackHandler(NonNullList.from(ItemStack.EMPTY, candidate.toArray(new ItemStack[0])));
+                    handlers.add(handler);
+                    candidates.addWidget(new SlotWidget(handler, 0, 1, y, false, false).setBackgroundTexture(TerminalTheme.COLOR_B_2));
+                    y += 20;
+                }
+                TerminalDialogWidget.showInfoDialog(os, "terminal.component.error", error.getErrorInfo()).setClientSide().open();
             }
         }
     }
 
     private void autoBuildButton(ClickData clickData) {
         if (controllerBase != null) {
-            if (clickData.isClient) {
-                World world = gui.entityPlayer.world;
-                WorldSceneRenderer worldSceneRenderer = MultiBlockPreviewARApp.getWorldSceneRenderer(controllerBase);
-                if (worldSceneRenderer != null) {
-                    List<ItemStack> map = new ArrayList<>();
-                    Set<BlockPos> exist = new HashSet<>();
-                    List<BlockInfo> blockInfos = new ArrayList<>();
-                    List<BlockPos> renderedBlocks = worldSceneRenderer.renderedBlocksMap.keySet().stream().flatMap(Collection::stream).collect(Collectors.toList());
-                    EnumFacing refFacing = EnumFacing.EAST;
-                    BlockPos refPos = BlockPos.ORIGIN;
-                    for(BlockPos blockPos : renderedBlocks) {
-                        MetaTileEntity metaTE = BlockMachine.getMetaTileEntity(worldSceneRenderer.world, blockPos);
-                        if(metaTE instanceof MultiblockControllerBase && metaTE.metaTileEntityId.equals(controllerBase.metaTileEntityId)) {
-                            refPos = blockPos;
-                            refFacing = metaTE.getFrontFacing();
-                            break;
-                        }
-                    }
-                    for(BlockPos blockPos : renderedBlocks) {
-                        if (blockPos.equals(refPos)) continue;
-                        EnumFacing frontFacing = controllerBase.getFrontFacing();
-                        // TODO SIDEWAYS IN THE FUTURE
-//                                        EnumFacing spin = controllerBase.getSpin();
-                        EnumFacing spin = EnumFacing.NORTH;
-                        BlockPos realPos = BlockPattern.getActualPos(refFacing, frontFacing, spin
-                                , blockPos.getX() - refPos.getX()
-                                , blockPos.getY() - refPos.getY()
-                                , blockPos.getZ() - refPos.getZ()).add(controllerBase.getPos());
-                        if (!world.isAirBlock(realPos) || worldSceneRenderer.world.isAirBlock(blockPos)) continue;
-                        IBlockState blockState = worldSceneRenderer.world.getBlockState(blockPos);
-                        MetaTileEntity metaTileEntity = BlockMachine.getMetaTileEntity(worldSceneRenderer.world, blockPos);
-                        ItemStack stack = blockState.getBlock().getItem(worldSceneRenderer.world, blockPos, blockState);
-                        if (metaTileEntity != null) {
-                            stack = metaTileEntity.getStackForm();
-                        }
-                        if (map.stream().noneMatch(stack::isItemEqual)) {
-                            map.add(stack);
-                        }
-                        if(exist.contains(realPos)) continue;
-                        exist.add(realPos);
-                        blockInfos.add(new BlockInfo(realPos
-                                , map.indexOf(map.stream().filter(stack::isItemEqual).findFirst().orElse(stack))
-                                , metaTileEntity != null ? BlockPattern.getActualFrontFacing(refFacing, frontFacing, spin, metaTileEntity.getFrontFacing()): EnumFacing.SOUTH));
-                    }
-                    writeClientAction(-1, buf->{
-                        buf.writeVarInt(map.size());
-                        map.forEach(buf::writeItemStack);
-                        buf.writeVarInt(blockInfos.size());
-                        blockInfos.forEach(blockInfo -> blockInfo.writeBuf(buf));
-                    });
-                    for (BlockInfo succeed : autoBuild(blockInfos, map)) {
-                        sceneWidget.getCores().add(succeed.pos);
-                    }
-                }
+            if (!clickData.isClient && controllerBase.structurePattern != null) {
+                controllerBase.structurePattern.autoBuild(gui.entityPlayer, controllerBase);
             }
         }
     }
 
-    private List<BlockInfo> autoBuild(List<BlockInfo> blockInfos, List<ItemStack> map) {
-        World world = gui.entityPlayer.world;
-        List<BlockInfo> succeed = new ArrayList<>();
-        for (BlockInfo blockInfo : blockInfos) {
-            ItemStack stack = map.get(blockInfo.stack);
-            if (stack.getItem() instanceof ItemBlock && world.isAirBlock(blockInfo.pos)) {
-                if (!gui.entityPlayer.isCreative()) {
-                    boolean find = false;
-                    for (ItemStack itemStack :gui.entityPlayer.inventory.mainInventory) {
-                        if (itemStack.isItemEqual(stack) && !itemStack.isEmpty()) {
-                            itemStack.setCount(itemStack.getCount() - 1);
-                            find = true;
-                            break;
-                        }
-                    }
-                    if (!find) { // match AbilityPart
-                        for (ItemStack itemStack : gui.entityPlayer.inventory.mainInventory) {
-                            if(itemStack.getItem() instanceof MachineItemBlock && stack.getItem() instanceof MachineItemBlock && !itemStack.isEmpty()) {
-                                MetaTileEntity hold = MachineItemBlock.getMetaTileEntity(itemStack);
-                                MetaTileEntity expect = MachineItemBlock.getMetaTileEntity(stack);
-                                if (hold instanceof IMultiblockAbilityPart && expect instanceof IMultiblockAbilityPart){
-                                    if (((IMultiblockAbilityPart<?>) hold).getAbility() == ((IMultiblockAbilityPart<?>) expect).getAbility()) {
-                                        stack = itemStack.copy();
-                                        itemStack.setCount(itemStack.getCount() - 1);
-                                        find = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (!find) continue;
-                }
-                ItemBlock itemBlock = (ItemBlock) stack.getItem();
-                IBlockState state = itemBlock.getBlock().getStateFromMeta(itemBlock.getMetadata(stack.getMetadata()));
-                succeed.add(blockInfo);
-                world.setBlockState(blockInfo.pos, state);
-                TileEntity holder = world.getTileEntity(blockInfo.pos);
-                if (holder instanceof MetaTileEntityHolder) {
-                    MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
-                    if (sampleMetaTileEntity != null) {
-                        MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) holder).setMetaTileEntity(sampleMetaTileEntity);
-                        if (stack.hasTagCompound()) {
-                            metaTileEntity.initFromItemStackData(stack.getTagCompound());
-                        }
-                        if (metaTileEntity.isValidFrontFacing(blockInfo.facing)) {
-                            metaTileEntity.setFrontFacing(blockInfo.facing);
-                        }
-                    }
-                }
-            }
-        }
-        return succeed;
-    }
-
-    private static class BlockInfo {
-        public BlockPos pos;
-        public int stack;
-        public EnumFacing facing;
-
-        public BlockInfo(BlockPos pos, int stack, EnumFacing facing) {
-            this.pos = pos;
-            this.stack = stack;
-            this.facing = facing;
-        }
-
-        public BlockInfo(PacketBuffer buffer) {
-            this.pos = buffer.readBlockPos();
-            this.stack = buffer.readVarInt();
-            this.facing = EnumFacing.VALUES[buffer.readByte()];
-        }
-
-        public void writeBuf(PacketBuffer buffer) {
-            buffer.writeBlockPos(pos);
-            buffer.writeVarInt(stack);
-            buffer.writeByte(facing.getIndex());
-        }
-    }
 }

@@ -5,13 +5,13 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.render.OrientedOverlayRenderer;
+import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class MetaTileEntitySimpleOreWasher extends SimpleMachineMetaTileEntity {
 
-    public MetaTileEntitySimpleOreWasher(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier) {
+    public MetaTileEntitySimpleOreWasher(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier) {
         super(metaTileEntityId, recipeMap, renderer, tier, true);
         initializeInventory();
     }
@@ -23,6 +23,6 @@ public class MetaTileEntitySimpleOreWasher extends SimpleMachineMetaTileEntity {
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntitySimpleOreWasher(metaTileEntityId, workable.recipeMap, renderer, getTier());
+        return new MetaTileEntitySimpleOreWasher(metaTileEntityId, workable.getRecipeMap(), renderer, getTier());
     }
 }

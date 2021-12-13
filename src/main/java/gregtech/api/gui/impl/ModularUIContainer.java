@@ -5,8 +5,8 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.WidgetUIAccess;
 import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.PacketUIClientAction;
-import gregtech.api.net.PacketUIWidgetUpdate;
+import gregtech.api.net.packets.CPacketUIClientAction;
+import gregtech.api.net.packets.SPacketUIWidgetUpdate;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.PerTickIntCounter;
 import io.netty.buffer.Unpooled;
@@ -29,7 +29,7 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
     private final ModularUI modularUI;
 
     public boolean accumulateWidgetUpdateData = false;
-    public final List<PacketUIWidgetUpdate> accumulatedUpdates = new ArrayList<>();
+    public final List<SPacketUIWidgetUpdate> accumulatedUpdates = new ArrayList<>();
 
     public ModularUIContainer(ModularUI modularUI) {
         this.modularUI = modularUI;
@@ -148,7 +148,7 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
             }
             return result;
         }
-        return super.slotClick(slotId, dragType, clickTypeIn, player);
+        return ItemStack.EMPTY;
     }
 
     private final PerTickIntCounter transferredPerTick = new PerTickIntCounter(0);
@@ -236,8 +236,7 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
         packetBuffer.writeVarInt(updateId);
         payloadWriter.accept(packetBuffer);
         if (modularUI.entityPlayer instanceof EntityPlayerSP) {
-            PacketUIClientAction widgetUpdate = new PacketUIClientAction(windowId, widgetId, packetBuffer);
-            NetworkHandler.channel.sendToServer(NetworkHandler.packet2proxy(widgetUpdate));
+            NetworkHandler.channel.sendToServer(new CPacketUIClientAction(windowId, widgetId, packetBuffer).toFMLPacket());
         }
     }
 
@@ -248,9 +247,9 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
         packetBuffer.writeVarInt(updateId);
         payloadWriter.accept(packetBuffer);
         if (modularUI.entityPlayer instanceof EntityPlayerMP) {
-            PacketUIWidgetUpdate widgetUpdate = new PacketUIWidgetUpdate(windowId, widgetId, packetBuffer);
+            SPacketUIWidgetUpdate widgetUpdate = new SPacketUIWidgetUpdate(windowId, widgetId, packetBuffer);
             if (!accumulateWidgetUpdateData) {
-                NetworkHandler.channel.sendTo(NetworkHandler.packet2proxy(widgetUpdate), (EntityPlayerMP) modularUI.entityPlayer);
+                NetworkHandler.channel.sendTo(widgetUpdate.toFMLPacket(), (EntityPlayerMP) modularUI.entityPlayer);
             } else {
                 accumulatedUpdates.add(widgetUpdate);
             }

@@ -6,6 +6,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.tool.ICutterItem;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.damagesources.DamageSources;
+import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -18,7 +19,7 @@ import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
-import gregtech.common.render.CableRenderer;
+import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.common.tools.DamageValues;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -96,15 +97,17 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public int onPipeToolUsed(ItemStack stack, EnumFacing coverSide, IPipeTile<Insulation, WireProperties> pipeTile, EntityPlayer entityPlayer) {
+    public int onPipeToolUsed(World world, BlockPos pos, ItemStack stack, EnumFacing coverSide, IPipeTile<Insulation, WireProperties> pipeTile, EntityPlayer entityPlayer) {
         ICutterItem cutterItem = stack.getCapability(GregtechCapabilities.CAPABILITY_CUTTER, null);
         if (cutterItem != null) {
             if (cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, true)) {
                 if (!entityPlayer.world.isRemote) {
                     boolean isOpen = pipeTile.isConnectionOpen(AttachmentType.PIPE, coverSide);
-                    if (isOpen || canConnect(pipeTile, coverSide))
+                    if (isOpen || canConnect(pipeTile, coverSide)) {
                         pipeTile.setConnectionBlocked(AttachmentType.PIPE, coverSide, isOpen, false);
-                    cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, false);
+                        cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, false);
+                        IToolStats.onOtherUse(stack, world, pos);
+                    }
                 }
                 return 1;
             }

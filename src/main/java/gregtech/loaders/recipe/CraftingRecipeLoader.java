@@ -1,6 +1,5 @@
 package gregtech.loaders.recipe;
 
-import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
@@ -11,7 +10,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
-import gregtech.common.blocks.BlockTransparentCasing;
+import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockGregLog.LogVariant;
 import gregtech.common.blocks.wood.BlockGregPlank;
@@ -39,6 +38,7 @@ public class CraftingRecipeLoader {
         registerFacadeRecipe(Materials.Iron, 4);
 
         ToolRecipeHandler.registerPowerUnitRecipes();
+        ToolRecipeHandler.registerManualToolRecipes();
 
         ModHandler.addShapedRecipe("small_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeSmallFluid, Materials.Wood, 6), "WsW", "W W", "WrW", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
         ModHandler.addShapedRecipe("normal_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.Wood, 2), "WWW", "s r", "WWW", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
@@ -58,7 +58,7 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe("plank_to_wooden_shape", MetaItems.WOODEN_FORM_EMPTY.getStackForm(), "   ", " X ", "s  ", 'X', new UnificationEntry(OrePrefix.plank, Materials.Wood));
         ModHandler.addShapedRecipe("wooden_shape_brick", MetaItems.WOODEN_FORM_BRICK.getStackForm(), "k ", " X", 'X', MetaItems.WOODEN_FORM_EMPTY.getStackForm());
 
-        if (ConfigHolder.vanillaRecipes.hardMiscRecipes) {
+        if (ConfigHolder.recipes.hardMiscRecipes) {
             ModHandler.addShapelessRecipe("compressed_clay", MetaItems.COMPRESSED_CLAY.getStackForm(), MetaItems.WOODEN_FORM_BRICK.getStackForm(), new ItemStack(Items.CLAY_BALL));
             ModHandler.addSmeltingRecipe(MetaItems.COMPRESSED_CLAY.getStackForm(), new ItemStack(Items.BRICK));
         }
@@ -72,26 +72,15 @@ public class CraftingRecipeLoader {
 
         ModHandler.addShapedRecipe("clipboard", MetaItems.CLIPBOARD.getStackForm(), " Sd", "BWR", "PPP", 'P', Items.PAPER, 'R', new UnificationEntry(OrePrefix.springSmall, Iron), 'B', new UnificationEntry(OrePrefix.bolt, Iron), 'S', new UnificationEntry(OrePrefix.screw, Iron), 'W', new UnificationEntry(OrePrefix.plate, Wood));
 
-        for (MetaValueItem batteryItem : ToolRecipeHandler.batteryItems[0]) {
-            ModHandler.addShapedEnergyTransferRecipe("scanner_" + batteryItem.unlocalizedName, MetaItems.SCANNER.getStackForm(),
-                    batteryItem::isItemEqual, true,
-                    "DGD", "CGC", "SBS",
-                    'D', new UnificationEntry(OrePrefix.plate, Materials.Diamond),
-                    'G', new UnificationEntry(OrePrefix.paneGlass),
-                    'C', new UnificationEntry(OrePrefix.circuit, Tier.Basic),
-                    'S', new UnificationEntry(OrePrefix.plate, Materials.Steel),
-                    'B', batteryItem.getStackForm());
-        }
-
         for (Material material : new Material[]{Materials.Lapis, Materials.Lazurite, Materials.Sodalite}) {
             String recipeName = "lapotron_crystal_" + material.toString();
-            ModHandler.addShapedEnergyTransferRecipeWithOverride(recipeName, MetaItems.LAPOTRON_CRYSTAL.getStackForm(),
-                    Ingredient.fromStacks(MetaItems.ENERGY_CRYSTAL.getStackForm()), false, false,
+            ModHandler.addShapedEnergyTransferRecipe(recipeName, MetaItems.LAPOTRON_CRYSTAL.getStackForm(),
+                    Ingredient.fromStacks(MetaItems.ENERGIUM_CRYSTAL.getStackForm()), false, false,
                     "XCX", "RER", "XCX",
                     'X', new UnificationEntry(OrePrefix.plate, material),
                     'R', new UnificationEntry(OrePrefix.stick, material),
                     'C', new UnificationEntry(OrePrefix.circuit, Tier.Extreme),
-                    'E', MetaItems.ENERGY_CRYSTAL.getStackForm());
+                    'E', MetaItems.ENERGIUM_CRYSTAL.getStackForm());
 
             ModHandler.addShapelessRecipe(recipeName + "_alt", MetaItems.LAPOTRON_CRYSTAL.getStackForm(),
                     new UnificationEntry(OrePrefix.gemExquisite, Materials.Sapphire),
@@ -117,16 +106,13 @@ public class CraftingRecipeLoader {
 
         ModHandler.addShapedRecipe("component_grinder_diamond", MetaItems.COMPONENT_GRINDER_DIAMOND.getStackForm(), "XSX", "SDS", "XSX", 'X', new UnificationEntry(OrePrefix.dust, Materials.Diamond), 'S', new UnificationEntry(OrePrefix.plateDouble, Materials.Steel), 'D', new UnificationEntry(OrePrefix.gem, Materials.Diamond));
         ModHandler.addShapedRecipe("component_grinder_tungsten", MetaItems.COMPONENT_GRINDER_TUNGSTEN.getStackForm(), "WSW", "SDS", "WSW", 'W', new UnificationEntry(OrePrefix.plate, Materials.Tungsten), 'S', new UnificationEntry(OrePrefix.plateDouble, Materials.VanadiumSteel), 'D', new UnificationEntry(OrePrefix.gem, Materials.Diamond));
-        ModHandler.addShapedRecipe("component_sawblade_diamond", MetaItems.COMPONENT_SAW_BLADE_DIAMOND.getStackForm(), " D ", "DGD", " D ", 'D', new UnificationEntry(OrePrefix.dustSmall, Materials.Diamond), 'G', new UnificationEntry(OrePrefix.gear, Materials.CobaltBrass));
-        ModHandler.addShapedRecipe("component_sawblade_tungsten", MetaItems.COMPONENT_SAW_BLADE_TUNGSTEN.getStackForm(), " D ", "DGD", " D ", 'D', new UnificationEntry(OrePrefix.plate, Materials.TungstenCarbide), 'G', new UnificationEntry(OrePrefix.gear, Materials.Ultimet));
 
-        ModHandler.addShapedRecipe("nano_saber", MetaItems.NANO_SABER.getStackForm(), "PIC", "PIC", "XEX", 'P', new UnificationEntry(OrePrefix.plate, Materials.Platinum), 'I', new UnificationEntry(OrePrefix.plate, RuthenianIridium), 'C', MetaItems.CARBON_PLATE.getStackForm(), 'X', new UnificationEntry(OrePrefix.circuit, Tier.Extreme), 'E', MetaItems.ENERGY_CRYSTAL.getStackForm());
+        ModHandler.addShapedRecipe("nano_saber", MetaItems.NANO_SABER.getStackForm(), "PIC", "PIC", "XEX", 'P', new UnificationEntry(OrePrefix.plate, Materials.Platinum), 'I', new UnificationEntry(OrePrefix.plate, Ruridit), 'C', MetaItems.CARBON_PLATE.getStackForm(), 'X', new UnificationEntry(OrePrefix.circuit, Tier.Extreme), 'E', MetaItems.ENERGIUM_CRYSTAL.getStackForm());
 
         ModHandler.addShapedRecipe("solar_panel/solar_panel_basic", MetaItems.COVER_SOLAR_PANEL.getStackForm(), "WGW", "CPC", 'W', MetaItems.SILICON_WAFER.getStackForm(), 'G', "paneGlass", 'C', new UnificationEntry(OrePrefix.circuit, Tier.Basic), 'P', MetaItems.CARBON_PLATE.getStackForm());
         ModHandler.addShapedRecipe("solar_panel/solar_panel_ulv", MetaItems.COVER_SOLAR_PANEL_ULV.getStackForm(), "WGW", "CAC", "P P", 'W', MetaItems.GLOWSTONE_WAFER.getStackForm(), 'G', "paneGlass", 'C', new UnificationEntry(OrePrefix.circuit, Tier.Advanced), 'P', OreDictUnifier.get(OrePrefix.plate, GalliumArsenide), 'A', OreDictUnifier.get(OrePrefix.wireGtQuadruple, Graphene));
-        ModHandler.addShapedRecipe("solar_panel/solar_panel_lv", MetaItems.COVER_SOLAR_PANEL_LV.getStackForm(), "WGW", "CAC", "P P", 'W', MetaItems.NAQUADAH_WAFER.getStackForm(), 'G', MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS), 'C', new UnificationEntry(OrePrefix.circuit, Tier.Master), 'P', OreDictUnifier.get(OrePrefix.plate, IndiumGalliumPhosphide), 'A', OreDictUnifier.get(OrePrefix.wireGtHex, Graphene));
-
-        ModHandler.addShapedRecipe("plate_rubber", OreDictUnifier.get(OrePrefix.plate, Materials.Rubber), " h ", " I ", " I ", 'I', OreDictUnifier.get(OrePrefix.ingot, Materials.Rubber));
+        ModHandler.addShapedRecipe("solar_panel/solar_panel_lv", MetaItems.COVER_SOLAR_PANEL_LV.getStackForm(), "WGW", "CAC", "P P", 'W', MetaItems.NAQUADAH_WAFER.getStackForm(), 'G', MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                BlockGlassCasing.CasingType.TEMPERED_GLASS), 'C', new UnificationEntry(OrePrefix.circuit, Tier.Master), 'P', OreDictUnifier.get(OrePrefix.plate, IndiumGalliumPhosphide), 'A', OreDictUnifier.get(OrePrefix.wireGtHex, Graphene));
 
         ModHandler.addShapedRecipe("universal_fluid_cell", MetaItems.FLUID_CELL_UNIVERSAL.getStackForm(), "C", 'C', MetaItems.FLUID_CELL);
         ModHandler.addShapedRecipe("universal_fluid_cell_revert", MetaItems.FLUID_CELL.getStackForm(), "C", 'C', MetaItems.FLUID_CELL_UNIVERSAL);

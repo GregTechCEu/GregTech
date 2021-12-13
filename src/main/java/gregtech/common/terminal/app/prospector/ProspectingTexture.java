@@ -1,9 +1,9 @@
 package gregtech.common.terminal.app.prospector;
 
-import gregtech.api.gui.resources.RenderUtil;
-import gregtech.api.net.SProspectingPacket;
+import gregtech.api.net.packets.PacketProspecting;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.client.utils.RenderUtil;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.AbstractTexture;
@@ -43,7 +43,7 @@ public class ProspectingTexture extends AbstractTexture {
             map = new HashMap[(radius * 2 - 1) * 16][(radius * 2 - 1) * 16];
     }
 
-    public void updateTexture(SProspectingPacket packet) {
+    public void updateTexture(PacketProspecting packet) {
         int playerChunkX = packet.posX >> 4;
         int playerChunkZ = packet.posZ >> 4;
         playerI = packet.posX - (playerChunkX - this.radius + 1) * 16 - 1;

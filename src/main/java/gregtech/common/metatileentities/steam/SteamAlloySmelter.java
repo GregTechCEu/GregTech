@@ -1,17 +1,14 @@
 package gregtech.common.metatileentities.steam;
 
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
-import gregtech.api.gui.widgets.RecipeProgressWidget;
-import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -44,18 +41,12 @@ public class SteamAlloySmelter extends SteamMetaTileEntity {
 
     @Override
     public ModularUI createUI(EntityPlayer player) {
-        TextureArea slotBackground = getFullGuiTexture("slot_%s_furnace_background");
         return createUITemplate(player)
-                .widget(new SlotWidget(this.importItems, 0, 53, 25)
-                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, slotBackground))
-                .widget(new SlotWidget(this.importItems, 1, 35, 25)
-                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, slotBackground))
-                .widget(new RecipeProgressWidget(workableHandler::getProgressPercent, 79, 26, 20, 16, workableHandler.recipeMap)
-                        .setProgressBar(getFullGuiTexture("progress_bar_%s_furnace"),
-                                getFullGuiTexture("progress_bar_%s_furnace_filled"),
-                                MoveType.HORIZONTAL))
-                .widget(new SlotWidget(this.exportItems, 0, 107, 25, true, false)
-                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE))
+                .slot(this.importItems, 0, 53, 25, GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.FURNACE_OVERLAY_STEAM.get(isHighPressure))
+                .slot(this.importItems, 1, 35, 25, GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.FURNACE_OVERLAY_STEAM.get(isHighPressure))
+                .progressBar(workableHandler::getProgressPercent, 79, 26, 20, 16,
+                        GuiTextures.PROGRESS_BAR_ARROW_STEAM.get(isHighPressure), MoveType.HORIZONTAL, workableHandler.getRecipeMap())
+                .slot(this.exportItems, 0, 107, 25, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure))
                 .build(getHolder(), player);
     }
 }

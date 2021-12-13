@@ -21,7 +21,8 @@ public class ImageTextFieldWidget extends TextFieldWidget {
 
     public ImageTextFieldWidget(int xPosition, int yPosition, int width, int height, SizedTextureArea textureArea, Supplier<String> textSupplier, Consumer<String> textResponder, int maxStringLength, int color) {
         this(xPosition, yPosition, width, height, textureArea, textSupplier, textResponder, maxStringLength);
-        this.textField.setTextColor(color);
+        if(isClientSide())
+            this.textField.setTextColor(color);
     }
 
 

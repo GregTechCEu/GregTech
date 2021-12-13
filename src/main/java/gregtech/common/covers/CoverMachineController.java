@@ -13,7 +13,7 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -114,15 +114,16 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
     @Override
     public ModularUI createUI(EntityPlayer player) {
         updateDisplayInventory();
-        return ModularUI.defaultBuilder()
-                .label(10, 5, "cover.machine_controller.name")
-                .widget(new SliderWidget("cover.machine_controller.redstone", 10, 20, 156, 20, 1.0f, 15.0f,
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 95)
+                .image(4, 4, 16, 16, GuiTextures.COVER_MACHINE_CONTROLLER)
+                .label(24, 8, "cover.machine_controller.title")
+                .widget(new SliderWidget("cover.machine_controller.redstone", 10, 24, 156, 20, 1.0f, 15.0f,
                         minRedstoneStrength, it -> setMinRedstoneStrength((int) it)))
-                .widget(new ClickButtonWidget(10, 45, 126, 20, "", data -> cycleNextControllerMode()))
-                .widget(new SimpleTextWidget(68, 55, "", 0xFFFFFF, () -> getControllerMode().getName()))
-                .widget(new SlotWidget(displayInventory, 0, 141, 47, false, false)
+                .widget(new ClickButtonWidget(10, 48, 134, 18, "", data -> cycleNextControllerMode()))
+                .widget(new SimpleTextWidget(77, 58, "", 0xFFFFFF, () -> getControllerMode().getName()).setShadow(true))
+                .widget(new SlotWidget(displayInventory, 0, 148, 48, false, false)
                         .setBackgroundTexture(GuiTextures.SLOT))
-                .widget(new CycleButtonWidget(10, 70, 75, 20, this::isInverted, this::setInverted,
+                .widget(new CycleButtonWidget(48, 70, 80, 18, this::isInverted, this::setInverted,
                         "cover.machine_controller.normal", "cover.machine_controller.inverted")
                         .setTooltipHoverString("cover.machine_controller.inverted.description"))
                 .build(this, player);

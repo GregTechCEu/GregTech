@@ -58,7 +58,7 @@ public class OrePrefix {
 
     public static final OrePrefix crushedCentrifuged = new OrePrefix("crushedCentrifuged", -1, null, MaterialIconType.crushedCentrifuged, ENABLE_UNIFICATION, hasOreProperty);
     public static final OrePrefix crushedPurified = new OrePrefix("crushedPurified", -1, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, hasOreProperty);
-    public static final OrePrefix crushed = new OrePrefix("crushed", -1, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty, mat -> {return Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify"));});
+    public static final OrePrefix crushed = new OrePrefix("crushed", -1, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.crushed.tooltip.purify")));
 
     // Introduced by Mekanism
     public static final OrePrefix shard = new OrePrefix("shard", -1, null, null, ENABLE_UNIFICATION, null);
@@ -77,9 +77,9 @@ public class OrePrefix {
     // A regular Gem worth one Dust. Introduced by Eloraam
     public static final OrePrefix gem = new OrePrefix("gem", M, null, MaterialIconType.gem, ENABLE_UNIFICATION, hasGemProperty);
     // A regular Gem worth one small Dust. Introduced by TerraFirmaCraft
-    public static final OrePrefix gemChipped = new OrePrefix("gemChipped", M / 4, null, MaterialIconType.gemChipped, ENABLE_UNIFICATION, hasGemProperty.and(unused -> ConfigHolder.U.generateLowQualityGems));
+    public static final OrePrefix gemChipped = new OrePrefix("gemChipped", M / 4, null, MaterialIconType.gemChipped, ENABLE_UNIFICATION, hasGemProperty.and(unused -> ConfigHolder.recipes.generateLowQualityGems));
     // A regular Gem worth two small Dusts. Introduced by TerraFirmaCraft
-    public static final OrePrefix gemFlawed = new OrePrefix("gemFlawed", M / 2, null, MaterialIconType.gemFlawed, ENABLE_UNIFICATION, hasGemProperty.and(unused -> ConfigHolder.U.generateLowQualityGems));
+    public static final OrePrefix gemFlawed = new OrePrefix("gemFlawed", M / 2, null, MaterialIconType.gemFlawed, ENABLE_UNIFICATION, hasGemProperty.and(unused -> ConfigHolder.recipes.generateLowQualityGems));
     // A regular Gem worth two Dusts. Introduced by TerraFirmaCraft
     public static final OrePrefix gemFlawless = new OrePrefix("gemFlawless", M * 2, null, MaterialIconType.gemFlawless, ENABLE_UNIFICATION, hasGemProperty);
     // A regular Gem worth four Dusts. Introduced by TerraFirmaCraft
@@ -90,9 +90,9 @@ public class OrePrefix {
     // 1/9th of a Dust.
     public static final OrePrefix dustTiny = new OrePrefix("dustTiny", M / 9, null, MaterialIconType.dustTiny, ENABLE_UNIFICATION, hasDustProperty);
     // Dust with impurities. 1 Unit of Main Material and 1/9 - 1/4 Unit of secondary Material
-    public static final OrePrefix dustImpure = new OrePrefix("dustImpure", M, null, MaterialIconType.dustImpure, ENABLE_UNIFICATION, hasOreProperty, mat -> {return Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify"));});
+    public static final OrePrefix dustImpure = new OrePrefix("dustImpure", M, null, MaterialIconType.dustImpure, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify")));
     // Pure Dust worth of one Ingot or Gem. Introduced by Alblaka.
-    public static final OrePrefix dustPure = new OrePrefix("dustPure", M, null, MaterialIconType.dustPure, ENABLE_UNIFICATION, hasOreProperty, mat -> {return Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify"));});
+    public static final OrePrefix dustPure = new OrePrefix("dustPure", M, null, MaterialIconType.dustPure, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify")));
     public static final OrePrefix dust = new OrePrefix("dust", M, null, MaterialIconType.dust, ENABLE_UNIFICATION, hasDustProperty);
 
     // A Nugget. Introduced by Eloraam
@@ -141,8 +141,6 @@ public class OrePrefix {
     public static final OrePrefix toolHeadPickaxe = new OrePrefix("toolHeadPickaxe", M * 3, null, MaterialIconType.toolHeadPickaxe, ENABLE_UNIFICATION, hasToolProperty);
     // made of 1 Ingots.
     public static final OrePrefix toolHeadShovel = new OrePrefix("toolHeadShovel", M, null, MaterialIconType.toolHeadShovel, ENABLE_UNIFICATION, hasToolProperty);
-    // made of 1 Ingots.
-    public static final OrePrefix toolHeadUniversalSpade = new OrePrefix("toolHeadUniversalSpade", M * 6, null, MaterialIconType.toolHeadUniversalSpade, ENABLE_UNIFICATION, hasToolProperty);
     // made of 3 Ingots.
     public static final OrePrefix toolHeadAxe = new OrePrefix("toolHeadAxe", M * 3, null, MaterialIconType.toolHeadAxe, ENABLE_UNIFICATION, hasToolProperty);
     // made of 2 Ingots.
@@ -256,6 +254,7 @@ public class OrePrefix {
         gemFlawless.maxStackSize = 32;
         gemExquisite.maxStackSize = 16;
 
+        plateDouble.maxStackSize = 32;
         plateDense.maxStackSize = 7;
         rotor.maxStackSize = 16;
         gear.maxStackSize = 16;
@@ -263,7 +262,6 @@ public class OrePrefix {
         toolHeadSword.maxStackSize = 16;
         toolHeadPickaxe.maxStackSize = 16;
         toolHeadShovel.maxStackSize = 16;
-        toolHeadUniversalSpade.maxStackSize = 16;
         toolHeadAxe.maxStackSize = 16;
         toolHeadHoe.maxStackSize = 16;
         toolHeadSense.maxStackSize = 16;
@@ -369,6 +367,12 @@ public class OrePrefix {
         pipeSmallRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeNormalRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeLargeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
+
+        cableGtSingle.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount));
+        cableGtDouble.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount));
+        cableGtQuadruple.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount * 2));
+        cableGtOctal.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount * 3));
+        cableGtHex.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount * 5));
 
         plateDouble.setIgnored(Materials.BorosilicateGlass);
         plate.setIgnored(Materials.BorosilicateGlass);
@@ -555,7 +559,7 @@ public class OrePrefix {
     // todo clean this up
     public String getLocalNameForItem(Material material) {
         String specifiedUnlocalized = "item." + material.toString() + "." + this.name;
-        if (LocalizationUtils.hasKey(specifiedUnlocalized)) return I18n.format(specifiedUnlocalized);
+        if (LocalizationUtils.hasKey(specifiedUnlocalized)) return LocalizationUtils.format(specifiedUnlocalized);
         String unlocalized = "item.material.oreprefix." + this.name;
         String matLocalized = material.getLocalizedName();
         String formatted = LocalizationUtils.format(unlocalized, matLocalized);
@@ -583,5 +587,10 @@ public class OrePrefix {
 
     public static Collection<OrePrefix> values() {
         return PREFIXES.values();
+    }
+
+    @Override
+    public String toString() {
+        return name + "/" + id;
     }
 }
