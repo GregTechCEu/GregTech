@@ -38,7 +38,7 @@ public class DepthTextureHook {
     private static int lastWidth, lastHeight;
 
     private static boolean shouldRenderDepthTexture() {
-        return lastBind && !Shaders.isOptiFineShaderPackLoaded() && ConfigHolder.U.clientConfig.hookDepthTexture && OpenGlHelper.isFramebufferEnabled();
+        return lastBind && !Shaders.isOptiFineShaderPackLoaded() && ConfigHolder.client.hookDepthTexture && OpenGlHelper.isFramebufferEnabled();
     }
 
     public static void onPreWorldRender(TickEvent.RenderTickEvent event) {

@@ -125,7 +125,7 @@ public class Shaders {
     }
 
     public static boolean allowedShader() {
-        return OpenGlHelper.shadersSupported && ConfigHolder.U.clientConfig.shader.useShader;
+        return OpenGlHelper.shadersSupported && ConfigHolder.client.shader.useShader;
     }
 
     public static boolean isOptiFineShaderPackLoaded() {

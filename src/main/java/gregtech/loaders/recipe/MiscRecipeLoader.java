@@ -17,7 +17,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
-import static gregtech.api.GTValues.L;
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.MarkerMaterials.Tier.*;
 import static gregtech.api.unification.material.Materials.*;
@@ -36,14 +36,14 @@ public class MiscRecipeLoader {
                 new UnificationEntry(dust, Bronze),
                 new UnificationEntry(dust, Tin));
 
-        RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(100).EUt(8)
+        RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(100).EUt(VA[ULV])
                 .input(dust, Sugar)
                 .inputs(new ItemStack(Blocks.BROWN_MUSHROOM))
                 .inputs(new ItemStack(Items.SPIDER_EYE))
                 .outputs(new ItemStack(Items.FERMENTED_SPIDER_EYE))
                 .buildAndRegister();
 
-        RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(100).EUt(8)
+        RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(100).EUt(VA[ULV])
                 .input(dust, Sugar)
                 .inputs(new ItemStack(Blocks.RED_MUSHROOM))
                 .inputs(new ItemStack(Items.SPIDER_EYE))
@@ -67,75 +67,75 @@ public class MiscRecipeLoader {
                 .notConsumable(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.COBBLESTONE))
                 .duration(16)
-                .EUt(30)
+                .EUt(VA[LV])
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(new ItemStack(Blocks.STONE, 1, 0))
                 .outputs(new ItemStack(Blocks.STONE, 1, 0))
                 .duration(16)
-                .EUt(30)
+                .EUt(VA[LV])
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Andesite)
                 .output(stone, Andesite)
                 .duration(16)
-                .EUt(120)
+                .EUt(VA[MV])
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Granite)
                 .output(stone, Granite)
                 .duration(16)
-                .EUt(120)
+                .EUt(VA[MV])
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Diorite)
                 .output(stone, Diorite)
                 .duration(16)
-                .EUt(120)
+                .EUt(VA[MV])
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(dust, Redstone)
                 .outputs(new ItemStack(Blocks.OBSIDIAN, 1))
                 .duration(16)
-                .EUt(480)
+                .EUt(VA[HV])
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Marble)
                 .output(stone, Marble)
                 .duration(16)
-                .EUt(480)
+                .EUt(VA[HV])
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Basalt)
                 .output(stone, Basalt)
                 .duration(16)
-                .EUt(480)
+                .EUt(VA[HV])
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, GraniteRed)
                 .output(stone, GraniteRed)
                 .duration(16)
-                .EUt(1920)
+                .EUt(VA[EV])
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, GraniteBlack)
                 .output(stone, GraniteBlack)
                 .duration(16)
-                .EUt(1920)
+                .EUt(VA[EV])
                 .buildAndRegister();
 
         //armor
         // Nightvision Goggles
-        ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(128)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(VA[MV])
                 .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(
                         BlockGlassCasing.CasingType.TEMPERED_GLASS))
                 .inputs(EMITTER_MV.getStackForm(2))
@@ -146,7 +146,7 @@ public class MiscRecipeLoader {
                 .buildAndRegister();
 
         // NanoMuscle Suite
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(512)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(VA[HV])
                 .input(circuit, Advanced)
                 .inputs(CARBON_PLATE.getStackForm(7))
                 .inputs(BATTERY_HV_LITHIUM.getStackForm())
@@ -154,7 +154,7 @@ public class MiscRecipeLoader {
                 .outputs(NANO_MUSCLE_SUITE_CHESTPLATE.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(512)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(VA[HV])
                 .input(circuit, Advanced)
                 .inputs(CARBON_PLATE.getStackForm(6))
                 .inputs(BATTERY_HV_LITHIUM.getStackForm())
@@ -162,7 +162,7 @@ public class MiscRecipeLoader {
                 .outputs(NANO_MUSCLE_SUITE_LEGGINGS.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(512)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(VA[HV])
                 .input(circuit, Advanced)
                 .inputs(CARBON_PLATE.getStackForm(4))
                 .inputs(BATTERY_HV_LITHIUM.getStackForm())
@@ -170,7 +170,7 @@ public class MiscRecipeLoader {
                 .outputs(NANO_MUSCLE_SUITE_BOOTS.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(512)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(VA[HV])
                 .input(circuit, Advanced, 2)
                 .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(
                         BlockGlassCasing.CasingType.TEMPERED_GLASS))
@@ -313,7 +313,7 @@ public class MiscRecipeLoader {
                 .outputs(GRAVITATION_ENGINE.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(3600).EUt(8192)
+        ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(3600).EUt(VA[IV])
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(16))
                 .input(wireGtSingle, SamariumIronArsenicOxide, 8)
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
@@ -324,7 +324,7 @@ public class MiscRecipeLoader {
                 .outputs(ADVANCED_QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(3600).EUt(8192)
+        ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(3600).EUt(VA[IV])
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(8))
                 .input(wireGtSingle, SamariumIronArsenicOxide, 8)
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
@@ -362,7 +362,7 @@ public class MiscRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(144))
                 .outputs(DISPLAY.getStackForm())
                 .buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(480)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(VA[HV])
                 .inputs(DISPLAY.getStackForm())
                 .inputs((ItemStack) CraftingComponent.HULL.getIngredient(3))
                 .input(wireFine, AnnealedCopper, 8)
@@ -376,7 +376,7 @@ public class MiscRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(432))
                 .outputs(MetaTileEntities.CENTRAL_MONITOR.getStackForm())
                 .buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(120)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
                 .inputs(DISPLAY.getStackForm())
                 .input(plate, Aluminium)
                 .input(circuit, MarkerMaterials.Tier.Good)
@@ -420,7 +420,7 @@ public class MiscRecipeLoader {
                 .buildAndRegister();
 
         // terminal
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(120)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
                 .input(circuit, Good, 4)
                 .input(ELECTRIC_MOTOR_MV, 2)
                 .input(ELECTRIC_PISTON_MV, 2)
@@ -428,7 +428,7 @@ public class MiscRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(144))
                 .outputs(WIRELESS.getStackForm())
                 .buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(30)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
                 .input(ELECTRIC_PISTON_MV, 2)
                 .input(ELECTRIC_PISTON_MV)
                 .input(lens, Glass)
@@ -439,7 +439,7 @@ public class MiscRecipeLoader {
                 .buildAndRegister();
 
         // Tempered Glass in Arc Furnace
-        ARC_FURNACE_RECIPES.recipeBuilder().duration(60).EUt(30)
+        ARC_FURNACE_RECIPES.recipeBuilder().duration(60).EUt(VA[LV])
                 .input(block, Glass)
                 .outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(
                         BlockGlassCasing.CasingType.TEMPERED_GLASS))
@@ -447,19 +447,19 @@ public class MiscRecipeLoader {
 
         // Dyed Lens Decomposition
         for (MetaValueItem item : GLASS_LENSES.values()) {
-            EXTRACTOR_RECIPES.recipeBuilder().EUt(32).duration(60)
+            EXTRACTOR_RECIPES.recipeBuilder().EUt(VA[LV]).duration(60)
                     .input(item)
                     .fluidOutputs(Glass.getFluid(108))
                     .buildAndRegister();
 
-            MACERATOR_RECIPES.recipeBuilder().EUt(8).duration(22)
+            MACERATOR_RECIPES.recipeBuilder().duration(22)
                     .input(item)
                     .output(dustSmall, Glass, 3)
                     .buildAndRegister();
         }
 
         // Dyed Lens Recipes
-        RecipeBuilder<?> builder = CHEMICAL_BATH_RECIPES.recipeBuilder().EUt(480).duration(200).input(craftingLens, Glass);
+        RecipeBuilder<?> builder = CHEMICAL_BATH_RECIPES.recipeBuilder().EUt(VA[HV]).duration(200).input(craftingLens, Glass);
         final int dyeAmount = 288;
 
         builder.copy().fluidInputs(DyeWhite.getFluid(dyeAmount))    .output(lens, Glass)                      .buildAndRegister();

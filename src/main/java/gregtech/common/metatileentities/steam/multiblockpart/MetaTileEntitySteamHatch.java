@@ -40,7 +40,7 @@ import java.util.List;
 public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
 
     private static final int INVENTORY_SIZE = 64000;
-    private static final boolean IS_STEEL = ConfigHolder.U.steelSteamMultiblocks;
+    private static final boolean IS_STEEL = ConfigHolder.machines.steelSteamMultiblocks;
 
     private final ItemStackHandler containerInventory;
     private final FluidTank steamFluidTank;

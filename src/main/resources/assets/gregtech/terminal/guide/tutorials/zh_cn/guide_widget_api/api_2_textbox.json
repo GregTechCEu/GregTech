@@ -1,0 +1,256 @@
+{
+  "section": "指南页控件API",
+  "title": "1. 文本控件",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "我们将学习指南中最常用的控件 §4§l文本控件§r。 因此，您应该仔细阅读API文档。",
+        "-------------------------------",
+        "§l控件类型标识§r: §ntextbox§r",
+        "-------------------------------",
+        "§lJSON§r:",
+        "{",
+        "  \"type\": \"textbox\",",
+        "  \"space\": 1,",
+        "  \"fontSize\": 9,",
+        "  \"fontColor\": 4278190080,",
+        "  \"isCenter\": false,",
+        "  \"isShadow\": false,",
+        "  \"content\": [\"content here!\"]",
+        "}",
+        "-------------------------------",
+        "§l目录§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "content",
+      "content": [
+        "    1.§ncontent§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "space",
+      "content": [
+        "    2.§nspace§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "fontSize",
+      "content": [
+        "    3.§nfontSize§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "fontColor",
+      "content": [
+        "    4.§nfontColor§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "isCenter",
+      "content": [
+        "    5.§nisCenter§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "isShadow",
+      "content": [
+        "    6.§nisShadow§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "content",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §ncontent§r (§4必须§r)",
+        "§l类型§r: Array",
+        "§l说明§r: 文本内容数组，每一项都会换行。 文本太长会自动换行。 (支持Minecraft格式代码)  "
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "stroke": 4294901760,
+      "content": [
+        "§l示例§r: [...]",
+        "§nMinecraft Formatting",
+        "§r§00 §11 §22 §33",
+        "§44 §55 §66 §77",
+        "§88 §99 §aa §bb",
+        "§cc §dd §ee §ff",
+        "§r§0k §kMinecraft",
+        "§rl §lMinecraft",
+        "§rm §mMinecraft",
+        "§rn §nMinecraft",
+        "§ro §oMinecraft",
+        "§rr §rMinecraft"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "space",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nspace§r (§6可选§r)",
+        "§l类型§r: Number",
+        "§l缺省值§r: 1",
+        "§l说明§r: 文本行之间的间隔。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "stroke": 4294901760,
+      "space": 5,
+      "content": [
+        "§l示例§r: 5",
+        "§nMinecraft Formatting",
+        "§r§00 §11 §22 §33",
+        "§44 §55 §66 §77",
+        "§88 §99 §aa §bb",
+        "§cc §dd §ee §ff",
+        "§r§0k §kMinecraft",
+        "§rl §lMinecraft",
+        "§rm §mMinecraft",
+        "§rn §nMinecraft",
+        "§ro §oMinecraft",
+        "§rr §rMinecraft"
+      ]
+    },{
+      "type": "textbox",
+      "ref": "fontSize",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nfontSize§r (§6可选§r)",
+        "§l类型§r: Number",
+        "§l缺省值§r: 9",
+        "§l说明§r: 字体大小。(实际上是字体的高度)"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "stroke": 4294901760,
+      "fontSize": 5,
+      "content": [
+        "§l示例§r: 5",
+        "§nMinecraft Formatting",
+        "§r§00 §11 §22 §33",
+        "§44 §55 §66 §77",
+        "§88 §99 §aa §bb",
+        "§cc §dd §ee §ff",
+        "§r§0k §kMinecraft",
+        "§rl §lMinecraft",
+        "§rm §mMinecraft",
+        "§rn §nMinecraft",
+        "§ro §oMinecraft",
+        "§rr §rMinecraft"
+      ]
+    },{
+      "type": "textbox",
+      "ref": "fontColor",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nfontColor§r (§6可选§r)",
+        "§l类型§r: Number",
+        "§l缺省值§r: 4278190080",
+        "§l说明§r: 文本的默认颜色。你也可以用特殊的符号设置颜色(Minecraft提供的)。但也许有时候你需要它。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "stroke": 4294901760,
+      "fontColor": 5,
+      "content": [
+        "§l示例§r: 4294901760 (0xFFFF0000)",
+        "§nMinecraft Formatting",
+        "§r§00 §11 §22 §33",
+        "§44 §55 §66 §77",
+        "§88 §99 §aa §bb",
+        "§cc §dd §ee §ff",
+        "§r§0k §kMinecraft",
+        "§rl §lMinecraft",
+        "§rm §mMinecraft",
+        "§rn §nMinecraft",
+        "§ro §oMinecraft",
+        "§rr §rMinecraft"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "isCenter",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nisCenter§r (§6可选§r)",
+        "§l类型§r: Boolean",
+        "§l缺省值§r: false",
+        "§l说明§r: 文本水平居中。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": false,
+      "stroke": 4294901760,
+      "content": [
+        "§l示例§r: false",
+        "§nMinecraft Formatting",
+        "§r§00 §11 §22 §33",
+        "§44 §55 §66 §77",
+        "§88 §99 §aa §bb",
+        "§cc §dd §ee §ff",
+        "§r§0k §kMinecraft",
+        "§rl §lMinecraft",
+        "§rm §mMinecraft",
+        "§rn §nMinecraft",
+        "§ro §oMinecraft",
+        "§rr §rMinecraft"
+      ]
+    },{
+      "type": "textbox",
+      "ref": "isShadow",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nisShadow§r (§6可选§r)",
+        "§l类型§r: Boolean",
+        "§l缺省值§r: false",
+        "§l说明§r: 渲染文本阴影。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "stroke": 4294901760,
+      "isShadow": true,
+      "content": [
+        "§l示例§r: true",
+        "§nMinecraft Formatting",
+        "§r§00 §11 §22 §33",
+        "§44 §55 §66 §77",
+        "§88 §99 §aa §bb",
+        "§cc §dd §ee §ff",
+        "§r§0k §kMinecraft",
+        "§rl §lMinecraft",
+        "§rm §mMinecraft",
+        "§rn §nMinecraft",
+        "§ro §oMinecraft",
+        "§rr §rMinecraft"
+      ]
+    }
+  ],
+  "fixed": []
+}

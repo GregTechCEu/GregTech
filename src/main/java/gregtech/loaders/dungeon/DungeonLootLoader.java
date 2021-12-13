@@ -13,11 +13,11 @@ import net.minecraft.world.storage.loot.LootTableList;
 public class DungeonLootLoader {
 
     public static void init() {
-        if (ConfigHolder.addLoot || ConfigHolder.increaseDungeonLoot) {
+        if (ConfigHolder.worldgen.addLoot || ConfigHolder.worldgen.increaseDungeonLoot) {
             GTLog.logger.info("Registering dungeon loot...");
             ChestGenHooks.init();
         }
-        if (ConfigHolder.addLoot) {
+        if (ConfigHolder.worldgen.addLoot) {
             ChestGenHooks.addItem(LootTableList.CHESTS_SPAWN_BONUS_CHEST, MetaItems.BOTTLE_PURPLE_DRINK.getStackForm(), 8, 16, 2);
 
             ChestGenHooks.addItem(LootTableList.CHESTS_SIMPLE_DUNGEON, MetaItems.BOTTLE_PURPLE_DRINK.getStackForm(), 8, 16, 40);
@@ -90,7 +90,7 @@ public class DungeonLootLoader {
             ChestGenHooks.addItem(LootTableList.CHESTS_STRONGHOLD_CORRIDOR, OreDictUnifier.get(OrePrefix.toolHeadPickaxe, Materials.Vinteum, 1), 1, 2, 3);
             ChestGenHooks.addItem(LootTableList.CHESTS_STRONGHOLD_CORRIDOR, OreDictUnifier.get(OrePrefix.toolHeadShovel, Materials.Vinteum, 1), 1, 2, 3);
         }
-        if (ConfigHolder.increaseDungeonLoot) {
+        if (ConfigHolder.worldgen.increaseDungeonLoot) {
             ChestGenHooks.addRolls(LootTableList.CHESTS_SPAWN_BONUS_CHEST, 2, 4);
             ChestGenHooks.addRolls(LootTableList.CHESTS_SIMPLE_DUNGEON, 1, 3);
             ChestGenHooks.addRolls(LootTableList.CHESTS_DESERT_PYRAMID, 2, 4);

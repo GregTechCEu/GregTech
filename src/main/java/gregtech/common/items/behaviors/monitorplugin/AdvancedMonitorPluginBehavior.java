@@ -14,7 +14,7 @@ import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.render.scene.FBOWorldSceneRenderer;
 import gregtech.api.render.scene.TrackedDummyWorld;
 import gregtech.api.render.scene.WorldSceneRenderer;
@@ -24,7 +24,6 @@ import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -51,6 +50,7 @@ import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector3f;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
     @SideOnly(Side.CLIENT)
@@ -238,9 +238,9 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                     MultiblockControllerBase entity = (MultiblockControllerBase) holder.getMetaTileEntity();
                     if (entity.isStructureFormed()) {
                         if (!isValid) {
-                            validPos = new HashSet<>();
-                            PatternMatchContext result = entity.structurePattern.checkPatternAt(entity.getWorld(), entity.getPos(), entity.getFrontFacing().getOpposite(), validPos);
+                            PatternMatchContext result = entity.structurePattern.checkPatternFastAt(entity.getWorld(), entity.getPos(), entity.getFrontFacing().getOpposite());
                             if (result != null) {
+                                validPos = entity.structurePattern.cache.keySet().stream().map(BlockPos::fromLong).collect(Collectors.toSet());
                                 writePluginData(GregtechDataCodes.UPDATE_ADVANCED_VALID_POS, buf -> {
                                     buf.writeVarInt(validPos.size());
                                     for (BlockPos pos : validPos) {
@@ -249,7 +249,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                                 });
                                 isValid = true;
                             } else {
-                                validPos.clear();
+                                validPos = Collections.emptySet();
                             }
                         }
                     } else if (isValid) {

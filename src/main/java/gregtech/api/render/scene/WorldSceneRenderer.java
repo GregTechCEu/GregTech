@@ -200,7 +200,8 @@ public abstract class WorldSceneRenderer {
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.popMatrix();
 
-        Minecraft.getMinecraft().entityRenderer.enableLightmap();
+        GlStateManager.disableBlend();
+        GlStateManager.disableDepth();
 
         //reset attributes
         GlStateManager.popAttrib();

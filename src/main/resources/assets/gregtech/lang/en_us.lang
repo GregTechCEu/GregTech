@@ -43,22 +43,22 @@ gregtech.top.valid_structure=§aStructure Formed
 gregtech.top.obstructed_structure=§cStructure Obstructed
 
 gregtech.multiblock.title=Multiblock Pattern
-gregtech.multiblock.primitive_blast_furnace.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
+gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
 gregtech.multiblock.coke_oven.description=The Coke Oven is a multiblock structure used for getting coke and creosote in the early game. It doesn't require fuel and has an internal tank of 32 buckets for creosote. Its inventory can be accessed via its Coke Oven Hatch.
 gregtech.multiblock.vacuum_freezer.description=The Vacuum Freezer is a multiblock structure mainly used for freezing Hot Ingots into regular Ingots. However, it can also freeze other substances, such as Water.
 gregtech.multiblock.implosion_compressor.description=The Implosion Compressor is a multiblock structure that uses explosives to turn gem dusts into their corresponding gems.
-gregtech.multiblock.pyrolyze_oven.description=The Pyrolyze Oven is a multiblock structure used for turning Logs into Charcoal and Creosote Oil, or Ash and Heavy Oil.
+gregtech.multiblock.pyrolyse_oven.description=The Pyrolyze Oven is a multiblock structure used for turning Logs into Charcoal and Creosote Oil, or Ash and Heavy Oil.
 gregtech.multiblock.cracker.description=The Cracker Unit is a multiblock structure used for turning Light and Heavy Fuel into their Cracked variants.
 gregtech.multiblock.large_combustion_engine.description=The Large Combustion Engine is a multiblock structure that acts as a Combustion Generator for EV power.
 gregtech.multiblock.distillation_tower.description=The Distillation Tower is a multiblock structure used for distilling the various types of Oil and some of their byproducts. Each layer must have exactly one output hatch, starting from the second one. The bottom layer can output items and insert fluids in any position.
 gregtech.multiblock.electric_blast_furnace.description=The Electric Blast Furnace (EBF) is a multiblock structure used for smelting alloys, cooking metals and refining ores. It is required for obtaining high-tier alloys and metals, such as aluminium, stainless steel, titanium, and naquadah alloy.
-gregtech.multiblock.multi_smelter.description=The Multi Smelter is a multiblock structure used for smelting massive amounts of items at once. Different tiers of coils provide a speed boost and energy efficiency gain. 16 is the base value of items smelted per operation, and can be multiplied by using higher level coils.
+gregtech.multiblock.multi_furnace.description=The Multi Smelter is a multiblock structure used for smelting massive amounts of items at once. Different tiers of coils provide a speed boost and energy efficiency gain. 16 is the base value of items smelted per operation, and can be multiplied by using higher level coils.
 gregtech.multiblock.large_boiler.description=Large Boilers are multiblocks that generate steam from an energy source and water. Said energy source is usually a solid fuel or some high-density fluid. Tiers differ only by amount of steam outputted.
 gregtech.multiblock.large_turbine.description=Large Turbines are multiblocks that generate power from steam, gases, and plasma by having them spin the turbine's rotor. Energy output is based on rotor efficiency and current speed of turbine. Gearbox casings are used in the center of the structure.
 gregtech.multiblock.assembly_line.description=The Assembly Line is a large multiblock structure consisting of 5 to 16 "slices". In theory, it's large Assembling Machine, used for creating advanced crafting components.
-gregtech.multiblock.fusion_reactor_mk1.description=The Fusion Reactor Mark 1 is a large multiblock structure used for fusing elements into heavier ones. It can only use LuV, ZPM, and UV Energy Hatches. For every Hatch it has, its buffer increases by 10M EU, and has a maximum of 160M.
-gregtech.multiblock.fusion_reactor_mk2.description=The Fusion Reactor Mark 2 is a large multiblock structure used for fusing elements into heavier ones. It can only use ZPM and UV Energy Hatches. For every Hatch it has, its buffer increases by 20M EU, and has a maximum of 320M.
-gregtech.multiblock.fusion_reactor_mk3.description=The Fusion Reactor Mark 3 is a large multiblock structure used for fusing elements into heavier ones. It can only use UV Energy Hatches. For every Hatch it has, its buffer increases by 40M EU, and has a maximum of 640M.
+gregtech.multiblock.fusion_reactor.luv.description=The Fusion Reactor Mark 1 is a large multiblock structure used for fusing elements into heavier ones. It can only use LuV, ZPM, and UV Energy Hatches. For every Hatch it has, its buffer increases by 10M EU, and has a maximum of 160M.
+gregtech.multiblock.fusion_reactor.zpm.description=The Fusion Reactor Mark 2 is a large multiblock structure used for fusing elements into heavier ones. It can only use ZPM and UV Energy Hatches. For every Hatch it has, its buffer increases by 20M EU, and has a maximum of 320M.
+gregtech.multiblock.fusion_reactor.uv.description=The Fusion Reactor Mark 3 is a large multiblock structure used for fusing elements into heavier ones. It can only use UV Energy Hatches. For every Hatch it has, its buffer increases by 40M EU, and has a maximum of 640M.
 gregtech.multiblock.fusion_reactor.heat=Heat: %d
 gregtech.multiblock.large_chemical_reactor.description=The Large Chemical Reactor performs chemical reactions at 100% energy efficiency. Overclocks multiply both speed and energy by 4. The multiblock requires exactly 1 Cupronickel Coil Block, which must be placed adjacent to the PTFE Pipe casing located in the center.
 gregtech.multiblock.primitive_water_pump.description=The Primitive Water Pump is a pre-Steam Era multiblock that collects water once per second, depending on the Biome it is in. It can use a Pump, ULV, or LV Output Hatch, increasing the amount of water per tier. Follows the formula: Biome Coefficient * Hatch Multiplier.
@@ -312,10 +312,10 @@ metaitem.energy_crystal.name=Energium Crystal
 metaitem.energy_crystal.tooltip=Reusable Battery
 metaitem.lapotron_crystal.name=Lapotron Crystal
 metaitem.lapotron_crystal.tooltip=Reusable Battery
-metaitem.energy.lapotronicorb.name=Lapotronic Energy Orb
-metaitem.energy.lapotronicorb.tooltip=Reusable Battery
-metaitem.energy.lapotronicorb2.name=Lapotronic Energy Orb Cluster
-metaitem.energy.lapotronicorb2.tooltip=Reusable Battery
+metaitem.energy.lapotronic_orb.name=Lapotronic Energy Orb
+metaitem.energy.lapotronic_orb.tooltip=Reusable Battery
+metaitem.energy.lapotronic_orb_cluster.name=Lapotronic Energy Orb Cluster
+metaitem.energy.lapotronic_orb_cluster.tooltip=Reusable Battery
 metaitem.zpm.name=Zero Point Module
 metaitem.energy.module.name=Energy Module
 metaitem.energy.module.tooltip=Reusable Battery
@@ -2154,7 +2154,15 @@ metaitem.scanner.tooltip=Hold right mouse button on surface rocks/nto discover u
 behavior.scanner.analyzing=Analyzing...
 behavior.scanner.analyzing_failed=Analyzing failed!
 behavior.scanner.analyzing_complete=Analyzing complete!
-behavior.scanner.not_enough_energy=Analyzing failed: Not Enough Energy!
+behavior.scanner.not_enough_energy=Not Enough Energy!
+
+metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
+metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
+metaitem.prospector.luv.name=Electric Prospector's Scanner (LuV)
+metaitem.prospector.mode.ores=Ore Prospection Mode
+metaitem.prospector.mode.fluid=Fluid Prospection Mode
+metaitem.prospector.tooltip.ores=Scans Ores in a %s Chunk Radius
+metaitem.prospector.tooltip.fluids=Scans Ores and Fluids in a %s Chunk Radius
 
 metaitem.terminal.name=Terminal
 metaitem.terminal.tooltip=Sharp tools make good work
@@ -3356,7 +3364,7 @@ tile.hermetic_casing.hermetic_casing_iv.name=Hermetic Casing V
 tile.hermetic_casing.hermetic_casing_luv.name=Hermetic Casing VI
 tile.hermetic_casing.hermetic_casing_zpm.name=Hermetic Casing VII
 tile.hermetic_casing.hermetic_casing_uv.name=Hermetic Casing VIII
-tile.hermetic_casing.hermetic_casing_max.name=Hermetic Casing IX
+tile.hermetic_casing.hermetic_casing_uhv.name=Hermetic Casing IX
 
 #Gas Collectors
 gregtech.machine.gas_collector.lv.name=Basic Gas Collector
@@ -3701,7 +3709,7 @@ gregtech.multiblock.central_monitor.low_power=Low Power
 gregtech.multiblock.central_monitor.height=Screen Height:
 gregtech.multiblock.central_monitor.width=Screen Width: %d
 gregtech.multiblock.central_monitor.height_modify=Modify Height: %d
-gregtech.multiblock.central_monitor.tooltip.1=This is a screen that monitors machines proxied by the Digital Interface Cover. You can easily monitor the Fluids, Items, Energy, and States of machines proxied in Energy Network.
+gregtech.multiblock.central_monitor.tooltip.1=This is a machine that monitors machines proxied by the Digital Interface Cover. You can easily monitor the Fluids, Items, Energy, and States of machines proxied in Energy Network.
 gregtech.multiblock.central_monitor.tooltip.2=You can build the central monitor screen from 3X2 to %dX%d (width X height).
 gregtech.multiblock.central_monitor.tooltip.3=The default height is 3. You can adjust the screen height in the GUI before the structure is formed.
 gregtech.multiblock.central_monitor.tooltip.4=Energy consumption: %d EU/s for each screen.
@@ -3731,7 +3739,7 @@ gregtech.machine.item_bus.import.iv.name=IV Input Bus
 gregtech.machine.item_bus.import.luv.name=LuV Input Bus
 gregtech.machine.item_bus.import.zpm.name=ZPM Input Bus
 gregtech.machine.item_bus.import.uv.name=UV Input Bus
-gregtech.machine.item_bus.import.max.name=MAX Input Bus
+gregtech.machine.item_bus.import.uhv.name=UHV Input Bus
 
 gregtech.machine.item_bus.export.tooltip=Item Output for Multiblocks
 
@@ -3744,7 +3752,7 @@ gregtech.machine.item_bus.export.iv.name=IV Output Bus
 gregtech.machine.item_bus.export.luv.name=LuV Output Bus
 gregtech.machine.item_bus.export.zpm.name=ZPM Output Bus
 gregtech.machine.item_bus.export.uv.name=UV Output Bus
-gregtech.machine.item_bus.export.max.name=MAX Output Bus
+gregtech.machine.item_bus.export.uhv.name=UHV Output Bus
 
 gregtech.machine.fluid_hatch.import.tooltip=Fluid Input for Multiblocks
 
@@ -3757,7 +3765,7 @@ gregtech.machine.fluid_hatch.import.iv.name=IV Input Hatch
 gregtech.machine.fluid_hatch.import.luv.name=LuV Input Hatch
 gregtech.machine.fluid_hatch.import.zpm.name=ZPM Input Hatch
 gregtech.machine.fluid_hatch.import.uv.name=UV Input Hatch
-gregtech.machine.fluid_hatch.import.max.name=MAX Input Hatch
+gregtech.machine.fluid_hatch.import.uhv.name=UHV Input Hatch
 
 gregtech.machine.fluid_hatch.export.tooltip=Fluid Output for Multiblocks
 
@@ -3777,7 +3785,7 @@ gregtech.machine.fluid_hatch.export.iv.name=IV Output Hatch
 gregtech.machine.fluid_hatch.export.luv.name=LuV Output Hatch
 gregtech.machine.fluid_hatch.export.zpm.name=ZPM Output Hatch
 gregtech.machine.fluid_hatch.export.uv.name=UV Output Hatch
-gregtech.machine.fluid_hatch.export.max.name=MAX Output Hatch
+gregtech.machine.fluid_hatch.export.uhv.name=UHV Output Hatch
 
 gregtech.machine.energy_hatch.input.tooltip=Energy Input for Multiblocks
 
@@ -3954,6 +3962,12 @@ gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
+gregtech.gui.fluid_lock.tooltip.enabled=Fluid Locking Enabled
+gregtech.gui.fluid_lock.tooltip.disabled=Fluid Locking Disabled
+gregtech.gui.fluid_voiding_partial.tooltip.enabled=Fluid Voiding (Above %d%%) Enabled
+gregtech.gui.fluid_voiding_partial.tooltip.disabled=Fluid Voiding (Above %d%%) Disabled
+gregtech.gui.fluid_voiding_all.tooltip.enabled=Fluid Voiding (All) Enabled
+gregtech.gui.fluid_voiding_all.tooltip.disabled=Fluid Voiding (All) Disabled
 gregtech.gui.silktouch.enabled=Silk Touch Enabled: Click to Disable./n§7Switching requires an idle machine.
 gregtech.gui.silktouch.disabled=Silk Touch Disabled: Click to Enable./n§7Switching requires an idle machine.
 gregtech.gui.chunkmode.enabled=Chunk Mode Enabled: Click to Disable./n§7Switching requires an idle machine.
@@ -4021,21 +4035,20 @@ gregtech.multiblock.multiple_recipemaps.tooltip=Screwdriver the controller to ch
 gregtech.multiblock.multiple_recipemaps_recipes.tooltip=Machine Modes: §e%s§r
 gregtech.multiblock.multiple_recipemaps.switch_message=The machine must be off to switch modes!
 
-gregtech.multiblock.preview.zoom=Use mousewheel or right-click+Drag to zoom
+gregtech.multiblock.preview.zoom=Use mousewheel or right-click + drag to zoom
 gregtech.multiblock.preview.rotate=Click and drag to rotate
-gregtech.multiblock.preview.any_hatch=Any tier hatch can be used to form the structure
-gregtech.multiblock.preview.any_hatch_maintenance=Any type of maintenance hatch can be used to form the structure
-gregtech.multiblock.preview.limit=Minimum Limit: %d
-gregtech.multiblock.preview.limit_per_layer=Only %d per layer
-gregtech.multiblock.preview.only=Only %s allowed
-gregtech.multiblock.preview.only_location=Only allowed at %s
-gregtech.multiblock.preview.location.b_c=Bottom Center
-gregtech.multiblock.preview.location.b_l=Bottom Layer
-gregtech.multiblock.preview.location.t_c=Top Center
-gregtech.multiblock.preview.primitive_pump.hatch=Only Pump Hatch, ULV Hatch, or LV Hatch allowed
-gregtech.multiblock.preview.location_end=Very End
-gregtech.multiblock.preview.distillation_multi_fluid=Quadruple/Nonuple Output Hatches not allowed
-gregtech.multiblock.preview.clear_amount=Must have a clear %dx%dx%d space in front
+gregtech.multiblock.preview.select=Right-click to check candidates
+
+gregtech.multiblock.pattern.error=Expect components (%s) at (%s).
+gregtech.multiblock.pattern.error.limited.0=§cThe number of components should <= %d.§r
+gregtech.multiblock.pattern.error.limited.1=§cThe number of components should >= %d.§r
+gregtech.multiblock.pattern.error.limited.2=§cThe number of components should <= %d in each layer.§r
+gregtech.multiblock.pattern.error.limited.3=§cThe number of components should >= %d in each layer.§r
+gregtech.multiblock.pattern.error.coils=§cAll heating coils shall be of the same type.§r
+gregtech.multiblock.pattern.clear_amount_1=§6Must have a clear 1x1x1 space in front.§r
+gregtech.multiblock.pattern.clear_amount_3=§6Must have a clear 3x3x1 space in front.§r
+gregtech.multiblock.pattern.single=§6Only this block can be used.§r
+gregtech.multiblock.pattern.location_end=§cVery End.§r
 
 gregtech.multiblock.blast_furnace.max_temperature=Max Temperature: %sK
 gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s
@@ -4133,6 +4146,7 @@ gregtech.terminal.app_name.settings=System Settings
 gregtech.terminal.app_name.guide_editor=Guide Editor
 gregtech.terminal.app_name.recipe_chart=Recipe Chart
 gregtech.terminal.app_name.ore_prospector=Ore Prospector
+gregtech.terminal.app_name.fluid_prospector=Fluid Prospector
 gregtech.terminal.app_name.pong=Pong
 gregtech.terminal.app_name.minesweeper=Minesweeper
 gregtech.terminal.app_name.maze=Theseus's Escape
@@ -4207,6 +4221,7 @@ terminal.guide_editor.default=Default Value
 terminal.guide_editor.page_config=Page Config
 terminal.guide_editor.widgets_box=Widgets Box
 terminal.guide_editor.widget_config=Widget Config
+terminal.guide_editor.error_type=Item types do not match and will still be saved, but will not be seen in app.
 
 terminal.settings.description=The system settings for GTOS.
 terminal.settings.theme=Theme
@@ -4244,8 +4259,8 @@ terminal.recipe_chart.tier.3=cache of 8 pages
 
 terminal.prospector.vis_mode=switching color mode
 terminal.prospector.list=All Resources
-terminal.prospector.ore=Ore statistics
-terminal.prospector.fluid=Fluid statistics
+terminal.prospector.ore=Ore Data
+terminal.prospector.fluid=Fluid Data
 
 terminal.ore_prospector.description=Hate the scanner toy? Don't want to run around looking for ores? Come and look at it.
 terminal.ore_prospector.tier.0=radius size 1
@@ -4256,8 +4271,17 @@ terminal.ore_prospector.tier.4=radius size 5
 terminal.ore_prospector.tier.5=radius size 6
 terminal.ore_prospector.tier.6=radius size 7
 
+terminal.fluid_prospector.description=You know, there's gold in bedrocks.
+terminal.fluid_prospector.tier.0=radius size 1
+terminal.fluid_prospector.tier.1=radius size 2
+terminal.fluid_prospector.tier.2=radius size 3
+terminal.fluid_prospector.tier.3=radius size 4
+terminal.fluid_prospector.tier.4=radius size 5
+terminal.fluid_prospector.tier.5=radius size 6
+terminal.fluid_prospector.tier.6=radius size 7
+
 terminal.console.description=A tool to help you free your inventory, it's time to say goodbye to wrench, screwdriver, hammer, and crowbar.
-terminal.console.notice=Please right click the machine when opening the terminal.
+terminal.console.notice=Please shift-right-click a machine when opening the terminal.
 terminal.console.front=Set as front
 terminal.console.items=set as items output
 terminal.console.fluids=set as fluids output

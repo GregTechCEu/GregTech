@@ -69,7 +69,7 @@ public class SimpleOrientedCubeRenderer implements IIconRegister {
         Textures.renderFace(renderState, translation, ops, frontFacing.rotateY(), bounds, sprites.get(CubeSide.LEFT));
         Textures.renderFace(renderState, translation, ops, frontFacing.rotateYCCW(), bounds, sprites.get(CubeSide.RIGHT));
 
-        IVertexOperation[] lightPipeline = ConfigHolder.U.clientConfig.machinesEmissiveTextures ?
+        IVertexOperation[] lightPipeline = ConfigHolder.client.machinesEmissiveTextures ?
                 ArrayUtils.add(ops, new LightMapOperation(240, 240)) : ops;
 
         if (spritesEmissive.containsKey(CubeSide.TOP)) Textures.renderFaceBloom(renderState, translation, lightPipeline, EnumFacing.UP, bounds, sprites.get(CubeSide.TOP));

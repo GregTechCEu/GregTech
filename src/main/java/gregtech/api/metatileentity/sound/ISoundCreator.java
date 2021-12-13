@@ -24,7 +24,7 @@ public interface ISoundCreator {
 
     @SideOnly(Side.CLIENT)
     default void setupSound(SoundEvent sound, BlockPos pos) {
-        if (sound != null && ConfigHolder.machineSounds) {
+        if (sound != null && ConfigHolder.machines.machineSounds) {
             PositionedSoundMTE machineSound = new PositionedSoundMTE(sound.getSoundName(), SoundCategory.BLOCKS, this, pos);
             Minecraft.getMinecraft().getSoundHandler().playSound(machineSound);
             Minecraft.getMinecraft().getSoundHandler().update();

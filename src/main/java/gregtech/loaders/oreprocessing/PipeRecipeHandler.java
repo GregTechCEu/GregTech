@@ -16,6 +16,8 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
 
+import static gregtech.api.GTValues.*;
+
 public class PipeRecipeHandler {
 
     public static void register() {
@@ -51,7 +53,7 @@ public class PipeRecipeHandler {
                 .input(OrePrefix.ring, Materials.Iron, 2)
                 .output(pipePrefix, material)
                 .duration(20)
-                .EUt(8)
+                .EUt(VA[ULV])
                 .buildAndRegister();
 
         ModHandler.addShapedRecipe(CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pipePrefix.toString()) + "_" + material.toCamelCaseString(),
@@ -146,7 +148,7 @@ public class PipeRecipeHandler {
                 .circuitMeta(1)
                 .outputs(quadPipe)
                 .duration(30)
-                .EUt(8)
+                .EUt(VA[ULV])
                 .buildAndRegister();
     }
 
@@ -162,11 +164,11 @@ public class PipeRecipeHandler {
                 .circuitMeta(2)
                 .outputs(nonuplePipe)
                 .duration(40)
-                .EUt(8)
+                .EUt(VA[ULV])
                 .buildAndRegister();
     }
 
     private static int getVoltageMultiplier(Material material) {
-        return material.getBlastTemperature() >= 2800 ? 32 : 8;
+        return material.getBlastTemperature() >= 2800 ? VA[LV] : VA[ULV];
     }
 }

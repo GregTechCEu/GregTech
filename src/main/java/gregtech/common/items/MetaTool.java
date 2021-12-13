@@ -157,7 +157,7 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
                 .addComponents(ElectricStats.createElectricItem(25600000L, 5L))
                 .setSound(GTSounds.DRILL_TOOL);
 
-        if (!ConfigHolder.U.GT5u.enableHighTierDrills) {
+        if (!ConfigHolder.tools.enableHighTierDrills) {
             DRILL_EV.setInvisible();
             DRILL_IV.setInvisible();
         }

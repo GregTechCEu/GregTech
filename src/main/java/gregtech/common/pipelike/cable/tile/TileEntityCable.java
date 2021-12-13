@@ -19,7 +19,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
 
     public TileEntityCable() {
         super();
-        this.insulationColor = ConfigHolder.U.GT5u.defaultInsulationColor;
+        this.insulationColor = ConfigHolder.machines.defaultInsulationColor;
     }
 
     private WeakReference<EnergyNet> currentEnergyNet = new WeakReference<>(null);

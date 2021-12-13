@@ -2099,7 +2099,7 @@ gregtech.machine.item_bus.import.iv.name=输入总线(IV)
 gregtech.machine.item_bus.import.luv.name=输入总线(LuV)
 gregtech.machine.item_bus.import.zpm.name=输入总线(ZPM)
 gregtech.machine.item_bus.import.uv.name=输入总线(UV)
-gregtech.machine.item_bus.import.max.name=输入总线(MAX)
+gregtech.machine.item_bus.import.uhv.name=输入总线(UHV)
 
 gregtech.machine.item_bus.export.tooltip=从多方块结构输出物品
 
@@ -2112,7 +2112,7 @@ gregtech.machine.item_bus.export.iv.name=输出总线(IV)
 gregtech.machine.item_bus.export.luv.name=输出总线(LuV)
 gregtech.machine.item_bus.export.zpm.name=输出总线(ZPM)
 gregtech.machine.item_bus.export.uv.name=输出总线(UV)
-gregtech.machine.item_bus.export.max.name=输出总线(MAX)
+gregtech.machine.item_bus.export.uhv.name=输出总线(UHV)
 
 gregtech.machine.fluid_hatch.import.tooltip=为多方块结构输入流体
 
@@ -2125,7 +2125,7 @@ gregtech.machine.fluid_hatch.import.iv.name=输入仓(IV)
 gregtech.machine.fluid_hatch.import.luv.name=输入仓(LuV)
 gregtech.machine.fluid_hatch.import.zpm.name=输入仓(ZPM)
 gregtech.machine.fluid_hatch.import.uv.name=输入仓(UV)
-gregtech.machine.fluid_hatch.import.max.name=输入仓(MAX)
+gregtech.machine.fluid_hatch.import.uhv.name=输入仓(UHV)
 
 gregtech.machine.fluid_hatch.export.tooltip=从多方块结构输出流体
 
@@ -2138,7 +2138,7 @@ gregtech.machine.fluid_hatch.export.iv.name=输出仓(IV)
 gregtech.machine.fluid_hatch.export.luv.name=输出仓(LuV)
 gregtech.machine.fluid_hatch.export.zpm.name=输出仓(ZPM)
 gregtech.machine.fluid_hatch.export.uv.name=输出仓(UV)
-gregtech.machine.fluid_hatch.export.max.name=输出仓(MAX)
+gregtech.machine.fluid_hatch.export.uhv.name=输出仓(UHV)
 
 gregtech.machine.energy_hatch.input.tooltip=为多方块结构提供能量
 

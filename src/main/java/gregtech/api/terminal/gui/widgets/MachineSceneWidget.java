@@ -8,7 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.render.scene.FBOWorldSceneRenderer;
 import gregtech.api.render.scene.WorldSceneRenderer;
 import gregtech.api.terminal.os.TerminalTheme;
@@ -33,8 +33,10 @@ import org.lwjgl.opengl.GL14;
 
 import javax.vecmath.Vector3f;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA.
@@ -54,7 +56,6 @@ public class MachineSceneWidget extends WidgetGroup {
     private float rotationYaw = 45;
     private float rotationPitch;
     private float zoom = 5;
-    private float maxZoom = 10;
     private float alpha = 1f;
     private boolean blendColor = true;
     private Set<BlockPos> cores;
@@ -86,10 +87,6 @@ public class MachineSceneWidget extends WidgetGroup {
             worldSceneRenderer.releaseFBO();
             worldSceneRenderer = null;
         }
-    }
-
-    public void setMaxZoom(float maxZoom) {
-        this.maxZoom = maxZoom;
     }
 
     public Set<BlockPos> getCores() {
@@ -199,10 +196,9 @@ public class MachineSceneWidget extends WidgetGroup {
         around = new HashSet<>();
         cores.add(pos);
         if (mte instanceof MultiblockControllerBase) {
-            Set<BlockPos> validPos = new HashSet<>();
-            PatternMatchContext context = ((MultiblockControllerBase) mte).structurePattern
-                    .checkPatternAt(world, pos, mte.getFrontFacing().getOpposite(), validPos);
+            PatternMatchContext context = ((MultiblockControllerBase) mte).structurePattern.checkPatternFastAt(world, pos, mte.getFrontFacing().getOpposite());
             if (context != null) {
+                List<BlockPos> validPos = ((MultiblockControllerBase) mte).structurePattern.cache.keySet().stream().map(BlockPos::fromLong).collect(Collectors.toList());
                 Set<IMultiblockPart> parts = context.getOrCreate("MultiblockParts", HashSet::new);
                 for (IMultiblockPart part : parts) {
                     if (part instanceof MetaTileEntity) {
@@ -284,7 +280,7 @@ public class MachineSceneWidget extends WidgetGroup {
     @Override
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
         if (isMouseOverElement(mouseX, mouseY)) {
-            zoom = (float) MathHelper.clamp(zoom + (wheelDelta < 0 ? 0.5 : -0.5), 3, maxZoom);
+            zoom = (float) MathHelper.clamp(zoom + (wheelDelta < 0 ? 0.5 : -0.5), 3, 999);
             if (worldSceneRenderer != null) {
                 worldSceneRenderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
             }

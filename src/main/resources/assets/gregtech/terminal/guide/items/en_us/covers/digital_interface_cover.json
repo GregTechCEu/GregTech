@@ -1,0 +1,253 @@
+{
+  "metaitem": "cover.digital",
+  "section": "Covers",
+  "title": "Digital Interface Cover",
+  "stream": [
+    {
+      "type": "textbox",
+      "isCenter": false,
+      "content": [
+        "§cDigital Interface Cover §ris a new cover, hereinafter referred to as the §lDIC§r.\n"
+      ]
+    },
+    {
+      "type": "slots",
+      "item_list": [
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 312,
+          "count": 1
+        },
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 313,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§lContents:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "introduction",
+      "content": [
+        "1. §9Introduction"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "fluid",
+      "content": [
+        "2. §9Fluid Mode"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "item",
+      "content": [
+        "3. §r§9Item Mode"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "energy",
+      "content": [
+        "4. §9Energy Mode"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "machine",
+      "content": [
+        "5. §9Machine Mode"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "proxy",
+      "content": [
+        "6. §9Proxy Mode"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "wireless",
+      "content": [
+        "7. §9Wireless Cover"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "introduction",
+      "content": [
+        "§lIntroduction:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "You can place it at any side of machines, including the front side. It will automatically detect the machine and display the information of the machine.\n\nUsing the Screwdriver right click the §4DIC§r to open GUI.\n\nThere are five modes supported: §lFluid, Item, Energy, Machine, and Proxy§r.\n\nIn addition to the GUI, you can interact with DIC directly by hand.Try exploring on your own."
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "fluid",
+      "content": [
+        "§lFluid Mode:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "monitor and interact(fill or drain) with fluids."
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/107397364-8d212680-6b39-11eb-9152-b91f8f559ed6.png",
+      "width": 190,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "item",
+      "content": [
+        "§lItem Mode:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "monitor and interact(fill or extract) with items."
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/107397608-c8235a00-6b39-11eb-95ad-77e4e5bc5d8b.png",
+      "width": 190,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "energy",
+      "content": [
+        "§lEnergy Mode:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "monitor the Energy usage. (monitoring energy stored, input and output per second)."
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/107397946-1a647b00-6b3a-11eb-8680-52d13dd56e59.png",
+      "width": 190,
+      "height": 110
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "machine",
+      "content": [
+        "§lMachine Mode:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "monitor and interact (stop or active) with workable machines. (low power, is working, working progress, isActive)."
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/107398096-42ec7500-6b3a-11eb-8c26-b708ae183c3d.png",
+      "width": 190,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "proxy",
+      "content": [
+        "§lProxy Mode:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "should be used with the §1§lCentral Monitor§r."
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/107856228-c1f6eb80-6e61-11eb-8098-454ea7133ca1.png",
+      "width": 190,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "wireless",
+      "content": [
+        "§lWireless:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "The wireless cover only has §4proxy Mode§r, allowing the §1§lCentral Monitor§r to access the cover remotely. Bind it remotely by right-clicking on a Central Monitor, and clear the binding by shift-right-clicking on Air."
+      ]
+    }
+  ],
+  "fixed": []
+}

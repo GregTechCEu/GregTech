@@ -9,30 +9,25 @@ import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.SteamMultiblockRecipeLogic;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.sound.ISoundCreator;
-import gregtech.api.metatileentity.sound.PositionedSoundMTE;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.common.ConfigHolder;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public abstract class RecipeMapSteamMultiblockController extends MultiblockWithDisplayBase implements ISoundCreator {
 
-    protected static final double CONVERSION_RATE = ConfigHolder.U.multiblockSteamToEU;
+    protected static final double CONVERSION_RATE = ConfigHolder.machines.multiblockSteamToEU;
 
     public final RecipeMap<?> recipeMap;
     protected SteamMultiblockRecipeLogic recipeMapWorkable;
@@ -128,12 +123,34 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     }
 
     @Override
-    protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
-        //basically check minimal requirements for inputs count
-        int itemInputsCount = abilities.getOrDefault(MultiblockAbility.STEAM_IMPORT_ITEMS, Collections.emptyList())
-                .stream().map(it -> (IItemHandler) it).mapToInt(IItemHandler::getSlots).sum();
-        return itemInputsCount >= recipeMap.getMinInputs() &&
-                abilities.containsKey(MultiblockAbility.STEAM);
+    public TraceabilityPredicate autoAbilities() {
+        return autoAbilities(true, true, true, true, true);
+    }
+
+    public TraceabilityPredicate autoAbilities(boolean checkSteam,
+                                               boolean checkMaintainer,
+                                               boolean checkItemIn,
+                                               boolean checkItemOut,
+                                               boolean checkMuffler) {
+        TraceabilityPredicate predicate = super.autoAbilities(checkMaintainer, checkMuffler)
+                .or(checkSteam ? abilities(MultiblockAbility.STEAM).setMinGlobalLimited(1).setPreviewCount(1) : new TraceabilityPredicate());
+        if (checkItemIn) {
+            if (recipeMap.getMinInputs() > 0) {
+                predicate = predicate.or(abilities(MultiblockAbility.STEAM_IMPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
+            }
+            else if (recipeMap.getMaxInputs() > 0) {
+                predicate = predicate.or(abilities(MultiblockAbility.STEAM_IMPORT_ITEMS).setPreviewCount(1));
+            }
+        }
+        if (checkItemOut) {
+            if (recipeMap.getMinOutputs() > 0) {
+                predicate = predicate.or(abilities(MultiblockAbility.STEAM_EXPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
+            }
+            else if (recipeMap.getMaxOutputs() > 0) {
+                predicate =  predicate.or(abilities(MultiblockAbility.STEAM_EXPORT_ITEMS).setPreviewCount(1));
+            }
+        }
+        return predicate;
     }
 
     @Override
@@ -148,8 +165,8 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     }
 
     @Override
-    public void onAttached() {
-        super.onAttached();
+    public void onAttached(Object... data) {
+        super.onAttached(data);
         if (getWorld() != null && getWorld().isRemote) {
             this.setupSound(recipeMap.getSound(), this.getPos());
         }

@@ -1,6 +1,5 @@
 package gregtech.common.terminal.app.multiblockhelper;
 
-import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.ColorRectTexture;
@@ -12,8 +11,8 @@ import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.render.scene.WorldSceneRenderer;
+import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.render.scene.TrackedDummyWorld;
 import gregtech.api.render.shader.Shaders;
 import gregtech.api.terminal.app.ARApplication;
 import gregtech.api.terminal.app.AbstractApplication;
@@ -21,15 +20,9 @@ import gregtech.api.terminal.gui.widgets.MachineSceneWidget;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalTheme;
-import gregtech.api.util.RelativeDirection;
+import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RenderUtil;
 import gregtech.common.ConfigHolder;
-import gregtech.integration.jei.GTJeiPlugin;
-import gregtech.integration.jei.multiblock.MultiblockInfoRecipeWrapper;
-import mezz.jei.api.IRecipeRegistry;
-import mezz.jei.api.recipe.IFocus;
-import mezz.jei.api.recipe.IRecipeCategory;
-import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -41,7 +34,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -60,7 +52,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class MultiBlockPreviewARApp extends ARApplication {
     @SideOnly(Side.CLIENT)
@@ -121,8 +112,8 @@ public class MultiBlockPreviewARApp extends ARApplication {
                 uniformCache.glUniformBoolean("block", controllerBase != null);
                 if (isMouseOver((int)x, (int)y, width, height, lastMouseX, lastMouseY)) {
                     uniformCache.glUniform2F("u_mouse",
-                            (float) (((lastMouseX - x) / 2 + width / 3)  * ConfigHolder.U.clientConfig.resolution),
-                            (float) (height / 2 * ConfigHolder.U.clientConfig.resolution));
+                            (float) (((lastMouseX - x) / 2 + width / 3)  * ConfigHolder.client.resolution),
+                            (float) (height / 2 * ConfigHolder.client.resolution));
                 }
             });
 
@@ -158,7 +149,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
         } else if (getController() != null){
             widgets.forEach(this::waitToRemoved);
             MultiblockControllerBase controllerBase = getController();
-            MachineBuilderWidget builderWidget = new MachineBuilderWidget(200, 16, 133, 200, controllerBase);
+            MachineBuilderWidget builderWidget = new MachineBuilderWidget(200, 16, 133, 200, controllerBase, getOs());
             this.addWidget(builderWidget);
             builderWidget.addPlayerInventory();
             if (isClient) {
@@ -188,7 +179,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
     //////////////////////////////////////AR/////////////////////////////////////////
 
     @SideOnly(Side.CLIENT)
-    private static Map<MultiblockControllerBase, WorldSceneRenderer> controllerList;
+    private static Map<MultiblockControllerBase, MultiblockShapeInfo> controllerList;
     @SideOnly(Side.CLIENT)
     private static Set<MultiblockControllerBase> found;
     @SideOnly(Side.CLIENT)
@@ -222,9 +213,9 @@ public class MultiBlockPreviewARApp extends ARApplication {
             }
             for (MultiblockControllerBase controllerBase : found) {
                 if (!controllerList.containsKey(controllerBase)) {
-                    WorldSceneRenderer worldSceneRenderer = getWorldSceneRenderer(controllerBase);
-                    if (worldSceneRenderer != null) {
-                        controllerList.put(controllerBase, worldSceneRenderer);
+                    List<MultiblockShapeInfo> shapeInfos = controllerBase.getMatchingShapes();
+                    if (!shapeInfos.isEmpty()) {
+                        controllerList.put(controllerBase, shapeInfos.get(0));
                     }
                 }
             }
@@ -278,32 +269,36 @@ public class MultiBlockPreviewARApp extends ARApplication {
     }
 
     @SideOnly(Side.CLIENT)
-    private static void renderControllerInList(MultiblockControllerBase controllerBase, WorldSceneRenderer worldSceneRenderer) {
+    private static void renderControllerInList(MultiblockControllerBase controllerBase, MultiblockShapeInfo shapeInfo) {
         BlockPos mbpPos = controllerBase.getPos();
         EnumFacing frontFacing, previewFacing;
         previewFacing = controllerBase.getFrontFacing();
-        List<BlockPos> renderedBlocks = worldSceneRenderer.renderedBlocksMap.keySet().stream().flatMap(Collection::stream).collect(Collectors.toList());
         BlockPos controllerPos = BlockPos.ORIGIN;
         MultiblockControllerBase mte = null;
-
-        for (BlockPos blockPos : renderedBlocks) {
-            MetaTileEntity metaTE = BlockMachine.getMetaTileEntity(worldSceneRenderer.world, blockPos);
-            if (metaTE instanceof MultiblockControllerBase && metaTE.metaTileEntityId.equals(controllerBase.metaTileEntityId)) {
-                controllerPos = blockPos;
-                previewFacing = metaTE.getFrontFacing();
-                mte = (MultiblockControllerBase) metaTE;
-                break;
+        BlockInfo[][][] blocks = shapeInfo.getBlocks();
+        Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
+        for (int x = 0; x < blocks.length; x++) {
+            BlockInfo[][] aisle = blocks[x];
+            for (int y = 0; y < aisle.length; y++) {
+                BlockInfo[] column = aisle[y];
+                for (int z = 0; z < column.length; z++) {
+                    blockMap.put(new BlockPos(x, y, z), column[z]);
+                    MetaTileEntity metaTE = column[z].getTileEntity() instanceof MetaTileEntityHolder ? ((MetaTileEntityHolder) column[z].getTileEntity()).getMetaTileEntity() : null;
+                    if (metaTE instanceof MultiblockControllerBase && metaTE.metaTileEntityId.equals(controllerBase.metaTileEntityId)) {
+                        controllerPos = new BlockPos(x, y, z);
+                        previewFacing = metaTE.getFrontFacing();
+                        mte = (MultiblockControllerBase) metaTE;
+                        break;
+                    }
+                }
             }
         }
+        TrackedDummyWorld world = new TrackedDummyWorld();
+        world.addBlocks(blockMap);
 
         EnumFacing facing = controllerBase.getFrontFacing();
         EnumFacing spin = EnumFacing.NORTH;
-        BlockPattern pattern = controllerBase.structurePattern;
-        RelativeDirection[] structureDir = pattern.structureDir;
 
-        if (structureDir == null) {
-            return;
-        }
 
         // TODO SIDEWAYS ONE DAY
         //  spin = controllerBase.getSpin();
@@ -313,7 +308,6 @@ public class MultiBlockPreviewARApp extends ARApplication {
 
         Minecraft mc = Minecraft.getMinecraft();
         BlockRendererDispatcher brd = mc.getBlockRendererDispatcher();
-        World world = worldSceneRenderer.world;
         Tessellator tes = Tessellator.getInstance();
         BufferBuilder buff = tes.getBuffer();
         GlStateManager.pushMatrix();
@@ -338,7 +332,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
         }
 
         TargetBlockAccess targetBA = new TargetBlockAccess(world, BlockPos.ORIGIN);
-        for (BlockPos pos : renderedBlocks) {
+        for (BlockPos pos : blockMap.keySet()) {
             targetBA.setPos(pos);
             GlStateManager.pushMatrix();
             BlockPos.MutableBlockPos tPos = new BlockPos.MutableBlockPos(pos.subtract(controllerPos));
@@ -362,22 +356,6 @@ public class MultiBlockPreviewARApp extends ARApplication {
         if (mte != null) {
             mte.checkStructurePattern();
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static WorldSceneRenderer getWorldSceneRenderer(MultiblockControllerBase controllerBase) {
-        IRecipeRegistry rr = GTJeiPlugin.jeiRuntime.getRecipeRegistry();
-        IFocus<ItemStack> focus = rr.createFocus(IFocus.Mode.INPUT, controllerBase.getStackForm());
-        return rr.getRecipeCategories(focus)
-                .stream()
-                .map(c -> (IRecipeCategory<IRecipeWrapper>) c)
-                .map(c -> rr.getRecipeWrappers(c, focus))
-                .flatMap(List::stream)
-                .filter(MultiblockInfoRecipeWrapper.class::isInstance)
-                .findFirst()
-                .map(MultiblockInfoRecipeWrapper.class::cast)
-                .map(MultiblockInfoRecipeWrapper::getCurrentRenderer)
-                .orElse(null);
     }
 
     @SideOnly(Side.CLIENT)

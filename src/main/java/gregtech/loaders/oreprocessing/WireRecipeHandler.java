@@ -14,6 +14,7 @@ import gregtech.api.util.GTUtility;
 
 import java.util.Map;
 
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.NO_WORKING;
@@ -102,7 +103,7 @@ public class WireRecipeHandler {
 
         // Rubber Recipe (ULV-EV cables)
         if (voltageTier <= GTValues.EV) {
-            IntCircuitRecipeBuilder builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(7).duration(100)
+            IntCircuitRecipeBuilder builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
                     .input(wirePrefix, material)
                     .output(cablePrefix, material);
 
@@ -120,7 +121,7 @@ public class WireRecipeHandler {
         }
 
         // Silicone Rubber Recipe (all cables)
-        IntCircuitRecipeBuilder builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(7).duration(100)
+        IntCircuitRecipeBuilder builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
                 .input(wirePrefix, material)
                 .output(cablePrefix, material);
 
@@ -148,7 +149,7 @@ public class WireRecipeHandler {
                 .buildAndRegister();
 
         // Styrene Butadiene Rubber Recipe (all cables)
-        builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(7).duration(100)
+        builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
                 .input(wirePrefix, material)
                 .output(cablePrefix, material);
 
@@ -187,11 +188,11 @@ public class WireRecipeHandler {
                 .input(wirePrefix, material)
                 .input(plate, Rubber, insulationAmount)
                 .output(cablePrefix, material)
-                .duration(100).EUt(8)
+                .duration(100).EUt(VA[ULV])
                 .buildAndRegister();
     }
 
     private static int getVoltageMultiplier(Material material) {
-        return material.getBlastTemperature() >= 2800 ? 32 : 8;
+        return material.getBlastTemperature() >= 2800 ? VA[LV] : VA[ULV];
     }
 }

@@ -27,7 +27,7 @@ public class WorldGeneratorImpl implements IWorldGenerator {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onOreGenerate(OreGenEvent.GenerateMinable event) {
         EventType eventType = event.getType();
-        if (ConfigHolder.disableVanillaOres &&
+        if (ConfigHolder.worldgen.disableVanillaOres &&
                 ORE_EVENT_TYPES.contains(eventType)) {
             event.setResult(Result.DENY);
         }

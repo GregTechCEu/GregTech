@@ -68,7 +68,7 @@ public class WidgetCoverList extends ScrollableListWidget {
 
     @Override
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
-        if (this.isMouseOverElement(mouseX - this.getPosition().x + this.gui.getGuiLeft(), mouseY, true)) {
+        if (this.isMouseOverElement(mouseX - this.getPosition().x + this.gui.getGuiLeft(), mouseY)) {
             int direction = -MathHelper.clamp(wheelDelta, -2, 2);
             int moveDelta = direction * (this.slotHeight / 2);
             addScrollOffset(moveDelta);

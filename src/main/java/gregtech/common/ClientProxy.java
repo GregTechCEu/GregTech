@@ -131,7 +131,7 @@ public class ClientProxy extends CommonProxy {
     public void onLoad() {
         KeyBinds.registerClient();
         super.onLoad();
-        if (ConfigHolder.debug) {
+        if (ConfigHolder.misc.debug) {
             ClientCommandHandler.instance.registerCommand(new Shaders.ShaderCommand());
         }
         registerColors();

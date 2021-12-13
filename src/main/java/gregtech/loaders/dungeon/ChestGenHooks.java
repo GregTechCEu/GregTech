@@ -44,7 +44,7 @@ public class ChestGenHooks {
             ArrayList<LootEntryItem> entryItems = lootEntryItems.get(event.getName());
             for (LootEntryItem entry : entryItems) {
                 try {
-                    if(ConfigHolder.debug) {
+                    if(ConfigHolder.misc.debug) {
                         GTLog.logger.info("adding " + entry.getEntryName() + " to lootTable");
                     }
                     mainPool.addEntry(entry);

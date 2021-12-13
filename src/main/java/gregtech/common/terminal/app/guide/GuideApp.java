@@ -3,25 +3,29 @@ package gregtech.common.terminal.app.guide;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.TreeListWidget;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.menu.IMenuComponent;
-import gregtech.api.terminal.util.GuideJsonLoader;
 import gregtech.api.terminal.util.TreeNode;
 import gregtech.api.util.FileUtility;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.terminal.app.guide.widget.GuidePageWidget;
-import gregtech.common.terminal.component.ClickComponent;
 import gregtech.common.terminal.component.SearchComponent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -33,11 +37,10 @@ public abstract class GuideApp<T> extends AbstractApplication implements
     private TreeNode<String, T> ROOT;
     private Map<T, JsonObject> jsonObjectMap;
     private final IGuiTexture icon;
+    private float scale = 1;
     public GuideApp(String name, IGuiTexture icon) {
         super(name);
         this.icon = icon;
-        ROOT = new TreeNode<>(0, "root");
-        jsonObjectMap = new HashMap<>();
     }
 
     @Override
@@ -46,19 +49,11 @@ public abstract class GuideApp<T> extends AbstractApplication implements
     }
 
     @Override
-    public AbstractApplication createAppInstance(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
-        AbstractApplication app = super.createAppInstance(os, isClient, nbt);
-        if (app instanceof GuideApp) {
-            ((GuideApp) app).ROOT = ROOT;
-            ((GuideApp) app).jsonObjectMap = jsonObjectMap;
-            return app;
-        }
-        return null;
-    }
-
-    @Override
     public AbstractApplication initApp() {
-        if (isClient && getTree() != null) {
+        if (isClient) {
+            ROOT = new TreeNode<>(0, "root");
+            jsonObjectMap = new HashMap<>();
+            loadJsonFiles();
             buildTree();
         }
         return this;
@@ -79,6 +74,7 @@ public abstract class GuideApp<T> extends AbstractApplication implements
             }
         }
         this.addWidget(this.pageWidget);
+        this.onOSSizeUpdate(getOs().getSize().width, getOs().getSize().height);
     }
 
     @Override
@@ -103,7 +99,25 @@ public abstract class GuideApp<T> extends AbstractApplication implements
         return ROOT;
     }
 
-    public final void loadJsonFiles(List<JsonObject> jsons) {
+    public final void loadJsonFiles() {
+        List<JsonObject> jsons = new ArrayList<>();
+        String lang = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
+        try {
+            Path guidePath = TerminalRegistry.TERMINAL_PATH.toPath().resolve("guide/" + this.getRegistryName());
+            Path en_us = guidePath.resolve("en_us");
+            Files.walk(en_us).filter(Files::isRegularFile).filter(f -> f.toString().endsWith(".json")).forEach(file -> {
+                File langFile = guidePath.resolve(lang + "/" + en_us.relativize(file).toString()).toFile();
+                JsonObject json = this.getConfig(langFile);
+                if (json == null) {
+                    json = this.getConfig(file.toFile());
+                }
+                if (json != null) {
+                    jsons.add(json);
+                }
+            });
+        } catch (IOException e) {
+            GTLog.logger.error("Failed to load file on path {}", "terminal", e);
+        }
         ROOT = new TreeNode<>(0, "root");
         jsonObjectMap = new HashMap<>();
         for (JsonObject json : jsons) {
@@ -115,9 +129,9 @@ public abstract class GuideApp<T> extends AbstractApplication implements
         }
     }
 
-    protected abstract T ofJson(JsonObject json);
+    public abstract T ofJson(JsonObject json);
 
-    public JsonObject getConfig(File file) {
+    private JsonObject getConfig(File file) {
         JsonElement je = FileUtility.loadJson(file);
         return je == null ? null : je.isJsonObject() ? je.getAsJsonObject() : null;
     }
@@ -166,8 +180,10 @@ public abstract class GuideApp<T> extends AbstractApplication implements
         if (FMLCommonHandler.instance().getSide().isClient()) {
             String[] parts = path.split("/");
             TreeNode<String, T> child = ROOT;
-            for(String sub : parts) {
-                child = child.getOrCreateChild(sub);
+            if (!parts[0].isEmpty()) {
+                for(String sub : parts) {
+                    child = child.getOrCreateChild(sub);
+                }
             }
             child.addContent(rawItemName(item), item);
         }
@@ -199,20 +215,7 @@ public abstract class GuideApp<T> extends AbstractApplication implements
 
     @Override
     public List<IMenuComponent> getMenuComponents() {
-        ClickComponent reloadResource = new ClickComponent().setIcon(GuiTextures.ICON_NEW_PAGE).setHoverText("terminal.component.reload").setClickConsumer(cd->{
-            if (cd.isClient) {
-                new GuideJsonLoader().onResourceManagerReload(null);
-                AbstractApplication app = TerminalRegistry.getApplication(getRegistryName());
-                if (app != null && app.getClass() == this.getClass()) {
-                    this.ROOT = ((GuideApp<T>) app).ROOT;
-                    this.jsonObjectMap = ((GuideApp<T>) app).jsonObjectMap;
-                    this.clearAllWidgets();
-                    this.pageWidget = null;
-                    buildTree();
-                }
-            }
-        });
-        return Arrays.asList(new SearchComponent<>(this), reloadResource);
+        return Collections.singletonList(new SearchComponent<>(this));
     }
 
     private void buildTree() {
@@ -225,14 +228,95 @@ public abstract class GuideApp<T> extends AbstractApplication implements
     }
 
     @Override
+    protected void hookDrawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        if (this.tree != null) this.tree.drawInBackground(mouseX, mouseY, partialTicks, context);
+        if (this.pageWidget != null) {
+            Position position = this.pageWidget.getPosition();
+            mouseX = (int) ((mouseX - position.x * (1 - scale)) / scale);
+            mouseY = (int) (mouseY / scale);
+            GlStateManager.translate(position.x * (1- scale), 0, 0);
+            GlStateManager.scale(scale, scale, 1);
+            this.pageWidget.drawInBackground(mouseX, mouseY, partialTicks, context);
+            GlStateManager.scale(1 / scale, 1 / scale, 1);
+            GlStateManager.translate(position.x * (scale - 1), 0, 0);
+        }
+
+    }
+
+    @Override
+    protected void hookDrawInForeground(int mouseX, int mouseY) {
+        if (this.tree != null) this.tree.drawInForeground(mouseX, mouseY);
+        if (this.pageWidget != null) {
+            Position position = this.pageWidget.getPosition();
+            mouseX = (int) ((mouseX - position.x * (1 - scale)) / scale);
+            mouseY = (int) (mouseY / scale);
+            GlStateManager.translate(position.x * (1- scale), 0, 0);
+            GlStateManager.scale(scale, scale, 1);
+            this.pageWidget.drawInForeground(mouseX, mouseY);
+            GlStateManager.scale(1 / scale, 1 / scale, 1);
+            GlStateManager.translate(position.x * (scale - 1) , 0, 0);
+        }
+    }
+
+    @Override
+    public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
+        if (this.tree != null && this.tree.mouseWheelMove(mouseX, mouseY, wheelDelta)) return true;
+        if (this.pageWidget != null) {
+            Position position = this.pageWidget.getPosition();
+            mouseX = (int) ((mouseX - position.x * (1 - scale)) / scale);
+            mouseY = (int) (mouseY / scale);
+            return this.pageWidget.mouseWheelMove(mouseX, mouseY, wheelDelta);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseClicked(int mouseX, int mouseY, int button) {
+        if (this.tree != null && this.tree.mouseClicked(mouseX, mouseY, button)) return true;
+        if (this.pageWidget != null) {
+            Position position = this.pageWidget.getPosition();
+            mouseX = (int) ((mouseX - position.x * (1 - scale)) / scale);
+            mouseY = (int) (mouseY / scale);
+            return this.pageWidget.mouseClicked(mouseX, mouseY, button);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
+        if (this.tree != null && this.tree.mouseDragged(mouseX, mouseY, button, timeDragged)) return true;
+        if (this.pageWidget != null) {
+            Position position = this.pageWidget.getPosition();
+            mouseX = (int) ((mouseX - position.x * (1 - scale)) / scale);
+            mouseY = (int) (mouseY / scale);
+            return this.pageWidget.mouseDragged(mouseX, mouseY, button, timeDragged);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseReleased(int mouseX, int mouseY, int button) {
+        if (this.tree != null && this.tree.mouseReleased(mouseX, mouseY, button)) return true;
+        if (this.pageWidget != null) {
+            Position position = this.pageWidget.getPosition();
+            mouseX = (int) ((mouseX - position.x * (1 - scale)) / scale);
+            mouseY = (int) (mouseY / scale);
+            return this.pageWidget.mouseReleased(mouseX, mouseY, button);
+        }
+        return false;
+    }
+
+    @Override
     public void onOSSizeUpdate(int width, int height) {
         this.setSize(new Size(width, height));
+        int treeWidth = Math.max(TerminalOSWidget.DEFAULT_WIDTH - 200, getOs().getSize().width / 3);
         if (this.tree != null) {
-            this.tree.setSize(new Size(getOs().getSize().width - 200, height));
+            this.tree.setSize(new Size(treeWidth, height));
         }
         if (this.pageWidget != null) {
-            this.pageWidget.setSize(new Size(200, height));
-            this.pageWidget.setSelfPosition(new Position(width - 200, 0));
+            this.scale = (width - treeWidth) / 200f;
+            this.pageWidget.setSize(new Size(200, (int) (height / scale)));
+            this.pageWidget.setSelfPosition(new Position(treeWidth, 0));
         }
     }
 }

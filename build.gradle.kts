@@ -77,6 +77,7 @@ dependencies {
     "compile"(files("etc/CTM-MC1.12.2-1.0.2.31.jar"))
 
     "testImplementation"("junit:junit:4.13.1")
+    "implementation"("org.projectlombok:lombok:1.18.16")
 }
 
 configure<JavaPluginConvention> {
@@ -109,7 +110,7 @@ val jar: Jar by tasks
 jar.apply {
     manifest {
         attributes(mapOf("FMLAT" to "gregtech_at.cfg",
-            "FMLCorePlugin" to "gregtech.core.GTCELoadingPlugin",
+            "FMLCorePlugin" to "gregtech.core.GregTechLoadingPlugin",
             "FMLCorePluginContainsFMLMod" to "true"))
     }
 }

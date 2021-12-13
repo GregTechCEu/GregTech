@@ -20,7 +20,7 @@ public class ShaderTexture implements IGuiTexture{
     private ShaderProgram program;
     @SideOnly(Side.CLIENT)
     private ShaderObject object;
-    private float resolution = (float)ConfigHolder.U.clientConfig.resolution;
+    private float resolution = (float)ConfigHolder.client.resolution;
 
     public static void clear(){
         PROGRAMS.values().forEach(ShaderTexture::dispose);

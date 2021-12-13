@@ -1,0 +1,148 @@
+{
+  "section": "指南页控件API",
+  "title": "指南页",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "这一页我们将学习如何编写指南页。",
+        "-------------------------------",
+        "先看一看一个简单里指南页示例。",
+        "§lJSON§r:",
+        "{",
+        "  \"section\": \"section name here\",",
+        "  \"title\": \"title here\",",
+        "  \"stream\": [",
+        "    {",
+        "      \"type\": \"textbox\",",
+        "      \"content\": [\"TextBox widget\"]",
+        "    }",
+        "  ],",
+        "  \"fixed\": [",
+        "    {",
+        "      \"x\": 50,",
+        "      \"y\": 100,",
+        "      \"width\": 150,",
+        "      \"height\": 40,",
+        "      \"type\": 0,",
+        "      \"content\": [\"TextBox widget\"]",
+        "    }",
+        "  ]",
+        "}",
+        "-------------------------------",
+        "§l目录§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "section",
+      "content": [
+        "    1.§nsection§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "title",
+      "content": [
+        "    2.§ntitle§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "stream",
+      "content": [
+        "    3.§nstream§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "fixed",
+      "content": [
+        "    4.§nfixed§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "section",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nsection§r (§4必须§r)",
+        "§l类型§r: String",
+        "§l说明§r: 指定页面属于哪个章节。",
+        "指南App会自动合并具有相同节名的页面并构建目录树。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "title",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §ntitle§r (§4必须§r)",
+        "§l类型§r: String",
+        "§l说明§r: 页标题。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "stream",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nstream§r (§4必须§r)",
+        "§l类型§r: Array",
+        "§l说明§r: 属于流布局的控件。 你不需要关心控件在流中的位置和大小，所有的排版都会自动完成。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "fixed",
+      "content": [
+        "-------------------------------",
+        "",
+        "§l属性§r: §nfixed§r (§4必须§r)",
+        "§l类型§r: Array",
+        "§l说明§r: 属于固定布局的控件。 您需要指定每个控件的位置和大小。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§l示例§r: 固定布局和流布局"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "hover_text": ["流布局"],
+      "content": [
+        "§nMinecraft Formatting",
+        "§r§00 §11 §22 §33",
+        "§44 §55 §66 §77",
+        "§88 §99 §aa §bb",
+        "§cc §dd §ee §ff",
+        "§r§0k §kMinecraft",
+        "§rl §lMinecraft",
+        "§rm §mMinecraft",
+        "§rn §nMinecraft",
+        "§ro §oMinecraft",
+        "§rr §rMinecraft"
+      ]
+    }
+  ],
+  "fixed": [
+    {
+      "type": "image",
+      "x": 30,
+      "y": 800,
+      "stroke": 4278190335,
+      "hover_text": ["固定布局", "\"x\": 30","\"y\": 800","\"width\": 100","\"width\": 100"],
+      "form": "item",
+      "source": "minecraft:ender_pearl",
+      "width": 100,
+      "height": 100
+    }
+  ]
+}

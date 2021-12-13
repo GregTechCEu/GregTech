@@ -74,7 +74,7 @@ public class DeviceHardware extends Hardware {
     }
 
     public DEVICE getDevice() {
-        return DEVICE.values()[getNBT().getInteger("d")];
+        return DEVICE.values()[getNBT().getInteger("d") % DEVICE.values().length];
     }
 
     public enum DEVICE{

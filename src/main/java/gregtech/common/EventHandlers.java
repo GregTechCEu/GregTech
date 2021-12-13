@@ -7,14 +7,16 @@ import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.net.KeysPacket;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.net.NetworkHandler;
+import gregtech.api.net.packets.PacketKeysPressed;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.Key;
 import gregtech.api.util.input.KeyBinds;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.armor.PowerlessJetpack;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.tools.ToolUtility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -26,6 +28,7 @@ import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -34,6 +37,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -57,7 +61,7 @@ public class EventHandlers {
         EntityLivingBase entity = event.getEntityLiving();
         EnumDifficulty difficulty = entity.world.getDifficulty();
         if (difficulty == EnumDifficulty.HARD && entity.getRNG().nextFloat() <= 0.03f) {
-            if (entity instanceof EntityZombie && ConfigHolder.nanoSaberConfiguration.zombieSpawnWithSabers) {
+            if (entity instanceof EntityZombie && ConfigHolder.tools.nanoSaber.zombieSpawnWithSabers) {
                 ItemStack itemStack = MetaItems.NANO_SABER.getInfiniteChargedStack();
                 ToggleEnergyConsumerBehavior.setItemActive(itemStack, true);
                 entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, itemStack);
@@ -67,12 +71,15 @@ public class EventHandlers {
     }
 
     @SubscribeEvent
-    public static void onPlayerInteraction(PlayerInteractEvent.RightClickBlock event) {
+    public static void onPlayerInteractionRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getWorld().getTileEntity(event.getPos()) instanceof MetaTileEntityHolder) {
+            event.setUseBlock(Event.Result.ALLOW);
+        }
         ItemStack stack = event.getItemStack();
         if (!stack.isEmpty() && stack.getItem() == Items.FLINT_AND_STEEL) {
             if (!event.getWorld().isRemote
                     && !event.getEntityPlayer().capabilities.isCreativeMode
-                    && GTValues.RNG.nextInt(100) >= ConfigHolder.flintChanceToCreateFire) {
+                    && GTValues.RNG.nextInt(100) >= ConfigHolder.misc.flintChanceToCreateFire) {
                 stack.damageItem(1, event.getEntityPlayer());
                 if (stack.getItemDamage() >= stack.getMaxDamage()) {
                     stack.shrink(1);
@@ -81,6 +88,17 @@ public class EventHandlers {
             }
         }
     }
+
+    @SubscribeEvent
+    public static void onPlayerInteractionLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+        if (event.getEntityPlayer().isCreative()) {
+            TileEntity holder = event.getWorld().getTileEntity(event.getPos());
+            if (holder instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) holder).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
+                ((MetaTileEntityCentralMonitor) ((MetaTileEntityHolder) holder).getMetaTileEntity()).invalidateStructure();
+            }
+        }
+    }
+
     @SubscribeEvent
     public static void hammer(BlockEvent.HarvestDropsEvent event) {
         if (!event.getWorld().isRemote && event.getHarvester() != null && !event.isSilkTouching()) {
@@ -127,7 +145,9 @@ public class EventHandlers {
                     needNewPacket = true;
                 }
             }
-            if (needNewPacket) NetworkHandler.INSTANCE.sendToServer(new KeysPacket(KeyBinds.REGISTRY));
+            if (needNewPacket) {
+                NetworkHandler.channel.sendToServer(new PacketKeysPressed(KeyBinds.REGISTRY).toFMLPacket());
+            }
         }
     }
 

@@ -20,8 +20,8 @@ public class PaddleWidget extends Widget {
     }
 
     @Override
-    public void updateScreen() {
-        super.updateScreen();
+    public void updateScreenOnFrame() {
+        super.updateScreenOnFrame();
         if (this.getSelfPosition().getY() < 30) {
             this.setSelfPosition(new Position(this.getSelfPosition().getX(), 30));
         }
@@ -31,10 +31,10 @@ public class PaddleWidget extends Widget {
         int speed;
         switch (controlSupplier.apply(this)) {
             case 0:
-                speed = 6;
+                speed = 2;
                 break;
             case 1:
-                speed = -6;
+                speed = -2;
                 break;
             default:
                 speed = 0;
@@ -44,7 +44,7 @@ public class PaddleWidget extends Widget {
     }
 
     public Rectangle toSelfRectangleBox() {
-        return new Rectangle(this.getSelfPosition().x - this.toRectangleBox().width / 2, this.getSelfPosition().y - this.toRectangleBox().height / 2,
+        return new Rectangle(this.getSelfPosition().x - this.toRectangleBox().width / 2 - 2, this.getSelfPosition().y - this.toRectangleBox().height / 2,
                 this.toRectangleBox().width, this.toRectangleBox().height);
     }
 

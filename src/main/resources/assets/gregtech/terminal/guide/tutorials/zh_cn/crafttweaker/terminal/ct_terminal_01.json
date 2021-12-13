@@ -1,0 +1,107 @@
+{
+  "section": "CraftTweaker/终端",
+  "title": "终端的CT教程",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "目录："
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§1§lURL:§r§n https://github.com/Gregicality/GregTech/wiki/CraftTweaker-of-Terminal"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "api",
+      "isShadow": false,
+      "content": [
+        "§4§lAPI:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "fontSize": 9,
+      "content": [
+        "1. §1registerDevice(deviceItemStack, deviceName)§0:\n注册自定义设备。\n\n2. §1createAppRegistryBuilder(appName):\n§0根据应用名称（可从商店获取）获得构造器。\n\n3. §1isDefaultApp(default):\n§0设置为默认应用。\n\n4. §1battery(euTier, cost):\n§0为所有层级设置相同的电池要求。\n\n5. §1battery(appTier, euTier, cost):\n§0为特定等级设置电池要求。\n\n6. §1device(deviceName...):\n§0为所有等级设置设备要求。 (默认可用设备: \"scanner\", \"wireless\", \"camera\", \"solar_lv\").\n\n7. §1device(appTier, device...):\n§0为特定等级设置设备要求。\n\n8. §1upgrade(upgradeItemStack...):\n§0设置所有等级的升级要求。\n\n9. §1upgrade(appTier, upgradeItemStack...):\n§0设置特定等级的升级和要求。\n\n10. §1build():\n§0完成并注册。"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "demo",
+      "space": 1,
+      "content": [
+        "\n§4§lZS Demo:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "fill": -912478525,
+      "fontSize": 9,
+      "content": [
+        "import mods.gregtech.TerminalRegistry;\n\nTerminalRegistry.registerDevice(\u003core:ingotIron\u003e.firstItem, \"ingot_iron\");\n\nTerminalRegistry.createAppRegistryBuilder(\"ore_prospector\")\n    .isDefaultApp(true)\n    .battery(1, 500)\n    .battery(3, 3, 1000)\n    .device(\"camera\", \"wireless\")\n    .device(4, \"ingot_iron\")\n    .upgrade(\u003cminecraft:apple\u003e * 9)\n    .upgrade(2, \u003cminecraft:apple\u003e * 9, \u003cminecraft:grass\u003e * 12)\n    .build();"
+      ]
+    },
+    {
+      "type": "textbox",
+      "fontSize": 9,
+      "content": [
+        "§4§l结果:\n§r自定义设备"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/140280593-37922838-4a20-4e1b-9be9-73935c4c8c13.png",
+      "width": 190,
+      "height": 120
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "注册电池、设备、升级"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/140280587-84dc8f67-6dde-472f-9ed8-6a4c5e71abc4.png",
+      "width": 190,
+      "height": 120
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/140280590-d4700a88-5780-4e0f-95f8-130e82f4634a.png",
+      "width": 190,
+      "height": 120
+    }
+  ],
+  "fixed": [
+    {
+      "type": "textbox",
+      "x": 27,
+      "y": 24,
+      "width": 16,
+      "height": 10,
+      "link": "api",
+      "content": [
+        "§9§napi"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 41,
+      "y": 24,
+      "width": 25,
+      "height": 10,
+      "link": "demo",
+      "content": [
+        "§9§ndemo"
+      ]
+    }
+  ]
+}

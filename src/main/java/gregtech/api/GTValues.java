@@ -53,9 +53,9 @@ public class GTValues {
 
 
     /**
-     * The Voltage Tiers adjusted for cable loss.
+     * The Voltage Tiers adjusted for cable loss. Use this for recipe EU/t to avoid full-amp recipes
      */
-    public static final long[] VA = new long[]{7, 30, 120, 480, 1920, 7680, 30720, 122880, 491520, 1966080, 7864320, 31457280, 125829120, 503316480, 2013265920};
+    public static final int[] VA = new int[]{7, 30, 120, 480, 1920, 7680, 30720, 122880, 491520, 1966080, 7864320, 31457280, 125829120, 503316480, 2013265920};
 
     public static final int ULV = 0;
     public static final int LV = 1;
@@ -120,7 +120,7 @@ public class GTValues {
                 Class.forName(modid);
                 isLoaded = true;
             } catch (ClassNotFoundException ignored) {
-            } catch (NoClassDefFoundError ignored) {
+            } catch (NoClassDefFoundError noClassDefFoundError) {
                 isLoaded = true;
             }
         }

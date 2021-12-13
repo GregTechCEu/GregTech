@@ -242,7 +242,7 @@ public class UnknownCompositionMaterials {
         Stone = new Material.Builder(1599, "stone")
                 .dust(1)
                 .color(0xCDCDCD).iconSet(ROUGH)
-                .flags(MORTAR_GRINDABLE, GENERATE_GEAR, NO_SMASHING)
+                .flags(MORTAR_GRINDABLE, GENERATE_GEAR, NO_SMASHING, NO_SMELTING)
                 .build();
 
         Lava = new Material.Builder(1600, "lava")

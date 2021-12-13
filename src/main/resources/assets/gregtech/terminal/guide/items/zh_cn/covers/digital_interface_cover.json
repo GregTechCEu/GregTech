@@ -1,0 +1,253 @@
+{
+  "metaitem": "cover.digital",
+  "section": "覆盖版",
+  "title": "数字化接口覆盖版",
+  "stream": [
+    {
+      "type": "textbox",
+      "isCenter": false,
+      "content": [
+        "§c数字化接口覆盖版 §r是一个新覆盖版, 一下简称 §lDIC§r.\n"
+      ]
+    },
+    {
+      "type": "slots",
+      "item_list": [
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 312,
+          "count": 1
+        },
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 313,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§l目录:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "introduction",
+      "content": [
+        "1. §9介绍"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "fluid",
+      "content": [
+        "2. §9流体模式"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "item",
+      "content": [
+        "3. §r§9物品模式"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "energy",
+      "content": [
+        "4. §9能源模式"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "machine",
+      "content": [
+        "5. §9机器模式"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "proxy",
+      "content": [
+        "6. §9代理模式"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "wireless",
+      "content": [
+        "7. §9无线覆盖板"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "introduction",
+      "content": [
+        "§l介绍:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "你可以将DIC放在任机器何面（包括正面）。它会自动检测机器并可视化信息。\n\n用扳手右键§4DIC§r 可以打开GUI。\n\n有五种模式： §l流体, 物品, 能源, 机器, 以及代理§r.\n\n此外，你也能直接用手和覆盖版进行交互。尝试着自己探索吧！"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "fluid",
+      "content": [
+        "§l流体模式:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "监控并交互（填充或抽取）流体."
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/107397364-8d212680-6b39-11eb-9152-b91f8f559ed6.png",
+      "width": 190,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "item",
+      "content": [
+        "§l物品模式:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "监控并交互（提取或存放）物品。"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/107397608-c8235a00-6b39-11eb-95ad-77e4e5bc5d8b.png",
+      "width": 190,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "energy",
+      "content": [
+        "§l能源模式:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "监控能源情况。 （监控能源储量，输入/输出的每秒流量）"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/107397946-1a647b00-6b3a-11eb-8680-52d13dd56e59.png",
+      "width": 190,
+      "height": 110
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "machine",
+      "content": [
+        "§l机器模式:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "监控并交互（暂停或启动）机器（是否低电量，是否工作，当前配方进度，是否启动）。"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/107398096-42ec7500-6b3a-11eb-8c26-b708ae183c3d.png",
+      "width": 190,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "proxy",
+      "content": [
+        "§l代理模式:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "应该配合§1§l中央监控器§r使用。"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/107856228-c1f6eb80-6e61-11eb-8098-454ea7133ca1.png",
+      "width": 190,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "wireless",
+      "content": [
+        "§l无线覆盖版:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "无线覆盖版只有 §4代理模式§r, 允许§1§l中央监控器§r 远程访问改覆盖版. 通过右键点击中央监控器来绑定，通过对空气shfit右键点击来取消绑定。"
+      ]
+    }
+  ],
+  "fixed": []
+}

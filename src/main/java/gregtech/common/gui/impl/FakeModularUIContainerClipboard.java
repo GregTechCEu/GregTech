@@ -5,8 +5,9 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.FakeModularGuiContainer;
 import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.PacketClipboardUIWidgetUpdate;
+import gregtech.api.net.packets.PacketClipboardUIWidgetUpdate;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
+import io.netty.buffer.Unpooled;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -85,12 +86,17 @@ public class FakeModularUIContainerClipboard extends FakeModularGuiContainer {
 
     @Override
     public void writeClientAction(Widget widget, int updateId, Consumer<PacketBuffer> payloadWriter) {
-        NetworkHandler.channel.sendToServer(new PacketClipboardUIWidgetUpdate(this.clipboard, updateId, buffer -> {
-            buffer.writeVarInt(windowId);
-            buffer.writeVarInt(modularUI.guiWidgets.inverse().get(widget));
-            buffer.writeVarInt(updateId);
-            payloadWriter.accept(buffer);
-        }).toFMLPacket());
+        int widgetId = modularUI.guiWidgets.inverse().get(widget);
+        PacketBuffer packetBuffer = new PacketBuffer(Unpooled.buffer());
+        packetBuffer.writeVarInt(windowId);
+        packetBuffer.writeVarInt(widgetId);
+        packetBuffer.writeVarInt(updateId);
+        payloadWriter.accept(packetBuffer);
+        NetworkHandler.channel.sendToServer(new PacketClipboardUIWidgetUpdate(
+                this.clipboard.getWorld().provider.getDimension(),
+                this.clipboard.getPos(),
+                updateId, packetBuffer
+        ).toFMLPacket());
     }
 
     @Override

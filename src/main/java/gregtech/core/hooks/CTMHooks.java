@@ -1,6 +1,5 @@
 package gregtech.core.hooks;
 
-
 import gregtech.api.render.shader.Shaders;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -13,12 +12,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class CTMHooks {
-    public static ThreadLocal<Boolean> ENABLE = new ThreadLocal<>();
 
-    public static boolean canRenderInLayer(boolean flag, byte layers, BlockRenderLayer layer) {
-        return checkLayerWithOptiFine(flag, layers, layer);
-    }
+    public static ThreadLocal<Boolean> ENABLE = new ThreadLocal<>();
 
     public static boolean checkLayerWithOptiFine(boolean flag, byte layers, BlockRenderLayer layer) {
         if (Shaders.isOptiFineShaderPackLoaded()) {

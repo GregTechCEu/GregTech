@@ -1,7 +1,7 @@
 package gregtech.api.util;
 
 import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.PacketClipboard;
+import gregtech.api.net.packets.PacketClipboard;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 import java.awt.*;
