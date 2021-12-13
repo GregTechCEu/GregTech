@@ -29,7 +29,6 @@ import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.common.terminal.hardware.DeviceHardware;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -42,7 +41,7 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TerminalRegistry implements IResourceManagerReloadListener {
+public class TerminalRegistry {
     protected static final Map<String, AbstractApplication> APP_REGISTER = new LinkedHashMap<>();
     protected static final Map<String, Hardware> HW_REGISTER = new LinkedHashMap<>();
     protected static final Map<String, List<Hardware>[]> APP_HW_DEMAND = new HashMap<>();
@@ -133,12 +132,12 @@ public class TerminalRegistry implements IResourceManagerReloadListener {
 
     @SideOnly(Side.CLIENT)
     public static void initTerminalFiles() {
-        ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new TerminalRegistry());
+        ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(TerminalRegistry::onResourceManagerReload);
     }
 
 
-    @Override
-    public void onResourceManagerReload(IResourceManager resourceManager) {
+    @SideOnly(Side.CLIENT)
+    public static void onResourceManagerReload(IResourceManager resourceManager) {
         FileUtility.extractJarFiles(String.format("/assets/%s/%s", GTValues.MODID, "terminal"), TERMINAL_PATH, false);
     }
 

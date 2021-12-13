@@ -136,7 +136,7 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
             }
 
             ICoverable coverable = tileEntityCable.getCoverableImplementation();
-            coverable.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), new GTBlockOperation(renderLayer, GTBlockOperation.PASS_MASK));
+            coverable.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), new GTBlockOperation(renderLayer, GTBlockOperation.PASS_MASK, world));
         }
         return true;
     }

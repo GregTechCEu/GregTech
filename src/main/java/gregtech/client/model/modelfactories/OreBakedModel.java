@@ -1,5 +1,8 @@
 package gregtech.client.model.modelfactories;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
+import com.google.common.collect.Tables;
 import gregtech.client.model.ModelFactory;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
@@ -21,73 +24,72 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.util.vector.Vector3f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import java.util.*;
 
+@SideOnly(Side.CLIENT)
 public class OreBakedModel implements IBakedModel {
 
     public static final OreBakedModel INSTANCE = new OreBakedModel();
 
-    private final Map<StoneType, IBakedModel> stoneTypeModels;
-    private final Map<MaterialIconSet, Map<EnumFacing, BakedQuad>> materialFaces;
+    private final Map<StoneType, TextureAtlasSprite> stoneTypeModels;
+    private final Table<StoneType, EnumFacing, BakedQuad> cacheBottom;
+    private final Table<MaterialIconSet, EnumFacing, BakedQuad[]> cacheTop;
     private final ThreadLocal<TextureAtlasSprite> particle;
+    private static IBakedModel model;
 
    private OreBakedModel() {
        this.stoneTypeModels = new Object2ObjectOpenHashMap<>();
-       this.materialFaces = new Object2ObjectOpenHashMap<>();
+       this.cacheBottom = Tables.newCustomTable(Maps.newHashMap(), () -> Maps.newEnumMap(EnumFacing.class));
+       this.cacheTop = Tables.newCustomTable(Maps.newHashMap(), () -> Maps.newEnumMap(EnumFacing.class));
        this.particle = ThreadLocal.withInitial(() -> Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite());
    }
 
     @Override
     @Nonnull
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        List<BakedQuad> quads = new ArrayList<>();
         if (state != null) {
             BlockOre ore = (BlockOre) state.getBlock();
             StoneType stoneType = state.getValue(ore.STONE_TYPE);
-            IBakedModel stoneTypeModel = stoneTypeModels.get(stoneType);
-            if (stoneTypeModel == null) {
-                stoneTypeModels.put(stoneType, stoneTypeModel = Minecraft.getMinecraft().blockRenderDispatcher.getModelForState(stoneType.stone.get()));
+            MaterialIconSet materialIconSet = ore.material.getMaterialIconSet();
+            TextureAtlasSprite textureAtlasSprite = stoneTypeModels.computeIfAbsent(stoneType, type-> Minecraft.getMinecraft().blockRenderDispatcher.getModelForState(type.stone.get()).getParticleTexture());
+            particle.set(textureAtlasSprite);
+            if (model == null) {
+                model = new ModelFactory(ModelFactory.ModelTemplate.CUBE_2_LAYER_ALL_TINIT_INDEX).bake();
             }
-            particle.set(stoneTypeModel.getParticleTexture());
+            BakedQuad bakedQuad = cacheBottom.get(stoneType, side);
+            if (side == null) return Collections.emptyList();
+            if (bakedQuad == null) {
+                cacheBottom.put(stoneType, side, bakedQuad = new BakedQuadRetextured(model.getQuads(state, side, rand).get(0), textureAtlasSprite));
+            }
+            BakedQuad[] bakedQuads =  cacheTop.get(materialIconSet, side);
+            if (bakedQuads == null) {
+                bakedQuads = new BakedQuad[2];
+                bakedQuads[0] = new BakedQuadRetextured(model.getQuads(state, side, rand).get(1), ModelLoader.defaultTextureGetter().apply(MaterialIconType.ore.getBlockPath(materialIconSet)));
+                bakedQuads[1] = CustomTexture.rebake(15, 15, bakedQuads[0]);
+                cacheTop.put(materialIconSet, side, bakedQuads);
+            }
             BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
             boolean hasEmissive = ore.material.getProperty(PropertyKey.ORE).isEmissive();
             boolean isEmissiveLayer = hasEmissive && (layer == BloomEffectUtil.getRealBloomLayer() || layer == null);
+            List<BakedQuad> quads = new ArrayList<>();
             if (!hasEmissive || !isEmissiveLayer || layer == null) {
-                quads.addAll(stoneTypeModel.getQuads(stoneType.stone.get(), side, rand));
+                quads.add(bakedQuad);
             }
-            if (hasEmissive && !isEmissiveLayer) {
-                return quads;
+            if (hasEmissive && isEmissiveLayer) {
+                quads.add(bakedQuads[1]);
+            } else {
+                quads.add(bakedQuads[0]);
             }
-            Map<EnumFacing, BakedQuad> materialFace =  materialFaces.get(ore.material.getMaterialIconSet());
-            if (materialFace == null) {
-                materialFaces.put(ore.material.getMaterialIconSet(), materialFace = new Object2ObjectOpenHashMap<>());
-            }
-            side = side == null ? EnumFacing.NORTH : side;
-            BakedQuad materialFaceQuad = materialFace.get(side);
-            if (materialFaceQuad == null) {
-                materialFaceQuad = ModelFactory.getBakery().makeBakedQuad(
-                        new Vector3f(0, 0, 0),
-                        new Vector3f(16, 16, 16),
-                        new BlockPartFace(side, 1, "", new BlockFaceUV(new float[] { 0.0F, 0.0F, 16.0F, 16.0F, 0.0F, 0.0F, 16.0F, 16.0F }, 0)),
-                        ModelLoader.defaultTextureGetter().apply(MaterialIconType.ore.getBlockPath(ore.material.getMaterialIconSet())),
-                        side,
-                        ModelRotation.X0_Y0,
-                        null,
-                        true,
-                        true);
-                if (isEmissiveLayer) {
-                    materialFaceQuad = CustomTexture.rebake(15, 15, materialFaceQuad);
-                }
-                materialFace.put(side, materialFaceQuad);
-            }
-            quads.add(materialFaceQuad);
+            return quads;
         } else {
+            List<BakedQuad> quads = new ArrayList<>();
             ItemStack stack = OreItemOverride.INSTANCE.stack.get();
             if (!stack.isEmpty()) {
                 BlockOre ore = (BlockOre) ((ItemBlock) stack.getItem()).getBlock();
@@ -96,8 +98,8 @@ public class OreBakedModel implements IBakedModel {
                     quads.addAll(getQuads(oreState, face, rand));
                 }
             }
+            return quads;
         }
-        return quads;
     }
 
     @Override

@@ -26,6 +26,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -145,6 +147,7 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void onTextureStitch(TextureStitchEvent.Pre event) {
         for (IBlockState state : this.getBlockState().getValidStates()) {
             Material m = state.getValue(variantProperty);
@@ -153,6 +156,7 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void onModelRegister() {
         ModelLoader.setCustomStateMapper(this, new SimpleStateMapper(MODEL_LOCATION));
         for (IBlockState state : this.getBlockState().getValidStates()) {

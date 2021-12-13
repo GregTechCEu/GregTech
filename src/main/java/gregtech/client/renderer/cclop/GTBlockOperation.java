@@ -5,6 +5,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -15,15 +16,17 @@ public class GTBlockOperation implements IVertexOperation {
     public static final int operationIndex = CCRenderState.registerOperation();
     public final BlockRenderLayer layer;
     public final boolean[] sideMask;
+    public final IBlockAccess world;
     public static boolean[] PASS_MASK = new boolean[EnumFacing.VALUES.length];
 
     static {
         Arrays.fill(PASS_MASK, true);
     }
 
-    public GTBlockOperation(BlockRenderLayer layer, boolean[] sideMask) {
+    public GTBlockOperation(BlockRenderLayer layer, boolean[] sideMask, IBlockAccess world) {
         this.layer = layer;
         this.sideMask = sideMask;
+        this.world = world;
     }
 
     public boolean shouldSideBeRendered(EnumFacing face, Cuboid6 bounds) {

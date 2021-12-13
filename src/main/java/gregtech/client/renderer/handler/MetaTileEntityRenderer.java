@@ -113,7 +113,7 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
         for (EnumFacing side : EnumFacing.VALUES) {
             sideMask[side.getIndex()] = state.shouldSideBeRendered(world, pos, side);
         }
-        GTBlockOperation mteOp = new GTBlockOperation(renderLayer, sideMask);
+        GTBlockOperation mteOp = new GTBlockOperation(renderLayer, sideMask, world);
         if (metaTileEntity.canRenderInLayer(renderLayer)) {
             renderState.lightMatrix.locate(world, pos);
             IVertexOperation[] pipeline = new IVertexOperation[]{mteOp, renderState.lightMatrix};
