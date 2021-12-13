@@ -3,7 +3,9 @@ package gregtech.common.items.armor;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
+import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
+import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
 import net.minecraft.client.resources.I18n;
@@ -22,8 +24,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
-public class Jetpack extends ArmorLogicSuite {
+public class Jetpack extends ArmorLogicSuite implements IJetpack {
 
     public Jetpack(int energyPerUse, long capacity, int tier) {
         super(energyPerUse, capacity, tier, EntityEquipmentSlot.CHEST);
@@ -31,10 +34,6 @@ public class Jetpack extends ArmorLogicSuite {
 
     @Override
     public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack stack) {
-        IElectricItem container = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (container == null)
-            return;
-
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(stack);
         byte toggleTimer = 0;
         boolean hover = false;
@@ -53,58 +52,40 @@ public class Jetpack extends ArmorLogicSuite {
             }
         }
 
-        if (!player.isInWater() && !player.isInLava() && container.canUse(energyPerUse)) {
-            if (!hover) {
-                if (ArmorUtils.isKeyDown(player, EnumKey.JUMP)) { //todo prevent holding space + e from flying upwards
-                    if (player.motionY < 0.6D) player.motionY += 0.2D;
-                    if (ArmorUtils.isKeyDown(player, EnumKey.FORWARD)) {
-                        player.moveRelative(0.0F, 0.0F, 1.0F, 0.1F);
-                    }
-                    ArmorUtils.spawnParticle(world, player, EnumParticleTypes.CLOUD, -0.6D);
-                    ArmorUtils.playJetpackSound(player);
-                }
-            } else {
-                if (!player.onGround) {
-                    ArmorUtils.spawnParticle(world, player, EnumParticleTypes.CLOUD, -0.3D);
-                    ArmorUtils.playJetpackSound(player);
-                }
+        performFlying(player, hover, stack);
 
-                if (ArmorUtils.isKeyDown(player, EnumKey.FORWARD) && player.motionX < 0.5D && player.motionZ < 0.5D) {
-                    player.moveRelative(0.0F, 0.0F, 1.0F, 0.025F);
-                }
+        if (toggleTimer > 0) toggleTimer--;
 
-                if (ArmorUtils.isKeyDown(player, EnumKey.JUMP)) { //todo prevent holding space + e from flying upwards
-                    if (player.motionY < 0.5D) {
-                        player.motionY += 0.125D;
-                    }
-                } else if (ArmorUtils.isKeyDown(player, EnumKey.SHIFT)) {
-                    if (player.motionY < -0.5D) player.motionY += 0.1D;
-                } else if (!ArmorUtils.isKeyDown(player, EnumKey.JUMP) && !ArmorUtils.isKeyDown(player, EnumKey.SHIFT) && !player.onGround) {
-                    if (player.motionY < 0 && player.motionY >= -0.03D) player.motionY = -0.025D;
-                    if (player.motionY < -0.025D) {
-                        if (player.motionY + 0.2D > -0.025D) {
-                            player.motionY = -0.025D;
-                        } else {
-                            player.motionY += 0.2D;
-                        }
-                    }
-                }
-                player.fallDistance = 0.0F;
-            }
+        data.setByte("toggleTimer", toggleTimer);
+        player.inventoryContainer.detectAndSendChanges();
+    }
 
-            if (!player.onGround && (hover || ArmorUtils.isKeyDown(player, EnumKey.JUMP))) {
-                container.discharge(energyPerUse, container.getTier(), false, false, false);
-            }
+    @Override
+    public boolean canUseEnergy(@Nonnull ItemStack stack, int amount) {
+        IElectricItem container = getIElectricItem(stack);
+        if (container == null)
+            return false;
+        return container.canUse(amount);
+    }
 
-            if (world.getWorldTime() % 40 == 0 && !player.onGround) {
-                ArmorUtils.resetPlayerFloatingTime(player);
-            }
+    @Override
+    public void drainEnergy(@Nonnull ItemStack stack, int amount) {
+        IElectricItem container = getIElectricItem(stack);
+        if (container == null)
+            return;
+        container.discharge(amount, 2, true, false, false);
+    }
 
-            if (toggleTimer > 0) toggleTimer--;
+    @Override
+    public boolean hasEnergy(@Nonnull ItemStack stack) {
+        IElectricItem container = getIElectricItem(stack);
+        if (container == null)
+            return false;
+        return container.getCharge() > 0;
+    }
 
-            data.setByte("toggleTimer", toggleTimer);
-            player.inventoryContainer.detectAndSendChanges();
-        }
+    private IElectricItem getIElectricItem(@Nonnull ItemStack stack) {
+        return stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
     }
 
     @Override
@@ -137,5 +118,59 @@ public class Jetpack extends ArmorLogicSuite {
         }
         this.HUD.draw();
         this.HUD.reset();
+    }
+
+    @Override
+    public void addToolComponents(ArmorMetaItem.ArmorMetaValueItem mvi) {
+        super.addToolComponents(mvi);
+        mvi.addComponents(new Behaviour());
+    }
+
+    public static class Behaviour implements IItemBehaviour {
+
+        public Behaviour() {
+        }
+
+        @Override
+        public void addInformation(ItemStack itemStack, List<String> lines) {
+            IItemBehaviour.super.addInformation(itemStack, lines);
+            NBTTagCompound data = itemStack.getTagCompound();
+            if (data != null) {
+                if (data.hasKey("hover")) {
+                    String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled"));
+                    lines.add(I18n.format("metaarmor.hud.hover_mode", status));
+                }
+            }
+        }
+    }
+
+    @Override
+    public double getVerticalHoverSpeed() {
+        return 0.18D;
+    }
+
+    @Override
+    public double getVerticalHoverSlowSpeed() {
+        return 0.1D;
+    }
+
+    @Override
+    public double getVerticalAcceleration() {
+        return 0.12D;
+    }
+
+    @Override
+    public double getVerticalSpeed() {
+        return 0.3D;
+    }
+
+    @Override
+    public double getSidewaysSpeed() {
+        return 0.08D;
+    }
+
+    @Override
+    public EnumParticleTypes getParticle() {
+        return EnumParticleTypes.SMOKE_NORMAL;
     }
 }

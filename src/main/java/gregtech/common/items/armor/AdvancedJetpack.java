@@ -3,7 +3,9 @@ package gregtech.common.items.armor;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
+import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
 import net.minecraft.client.resources.I18n;
@@ -62,74 +64,7 @@ public class AdvancedJetpack extends Jetpack {
             }
         }
 
-        // Fly mechanics
-        if (!player.isInWater() && !player.isInLava() && cont.canUse(energyPerUse)) {
-            if (flyEnabled) {
-                if (hoverMode) {
-                    if (!ArmorUtils.isKeyDown(player, EnumKey.JUMP) || !ArmorUtils.isKeyDown(player, EnumKey.SHIFT)) {
-                        if (player.motionY > 0.1D) {
-                            player.motionY -= 0.1D;
-                        }
-
-                        if (player.motionY < -0.1D) {
-                            player.motionY += 0.1D;
-                        }
-
-                        if (player.motionY <= 0.1D && player.motionY >= -0.1D) {
-                            player.motionY = 0.0D;
-                        }
-
-                        if (player.motionY > 0.1D || player.motionY < -0.1D) {
-                            if (player.motionY < 0) {
-                                player.motionY += 0.05D;
-                            } else {
-                                player.motionY -= 0.0025D;
-                            }
-                        } else {
-                            player.motionY = 0.0D;
-                        }
-                        ArmorUtils.spawnParticle(world, player, EnumParticleTypes.CLOUD, -0.6D);
-                        ArmorUtils.playJetpackSound(player);
-                    }
-
-                    if (ArmorUtils.isKeyDown(player, EnumKey.FORWARD)) {
-                        player.moveRelative(0.0F, 0.0F, 0.25F, 0.2F);
-                    }
-
-                    if (ArmorUtils.isKeyDown(player, EnumKey.JUMP)) {
-                        player.motionY = 0.35D;
-                    }
-
-                    if (ArmorUtils.isKeyDown(player, EnumKey.SHIFT)) {
-                        player.motionY = -0.35D;
-                    }
-
-                    if (ArmorUtils.isKeyDown(player, EnumKey.JUMP) && ArmorUtils.isKeyDown(player, EnumKey.SHIFT)) {
-                        player.motionY = 0.0D;
-                    }
-
-                } else {
-                    if (ArmorUtils.isKeyDown(player, EnumKey.JUMP)) {
-                        if (player.motionY <= 0.8D) player.motionY += 0.2D;
-                        if (ArmorUtils.isKeyDown(player, EnumKey.FORWARD)) {
-                            player.moveRelative(0.0F, 0.0F, 0.85F, 0.1F);
-                        }
-                        ArmorUtils.spawnParticle(world, player, EnumParticleTypes.CLOUD, -0.6D);
-                        ArmorUtils.playJetpackSound(player);
-                    }
-                }
-            }
-            player.fallDistance = 0.0F;
-        }
-
-        // Fly discharge
-        if (!player.onGround && (hoverMode || ArmorUtils.isKeyDown(player, EnumKey.JUMP))) {
-            cont.discharge(energyPerUse, cont.getTier(), true, false, false);
-        }
-
-        if (world.getWorldTime() % 40 == 0 && !player.onGround) {
-            ArmorUtils.resetPlayerFloatingTime(player);
-        }
+        performFlying(player, hoverMode, item);
 
         if (toggleTimer > 0) toggleTimer--;
 
@@ -140,8 +75,56 @@ public class AdvancedJetpack extends Jetpack {
     }
 
     @Override
-    public void addInfo(ItemStack itemStack, List<String> lines) {
-        super.addInfo(itemStack, lines);
+    public boolean canFly(@Nonnull ItemStack stack) {
+        NBTTagCompound data = stack.getTagCompound();
+        if (data == null)
+            return false;
+        return data.hasKey("flyMode") && data.getBoolean("flyMode");
+    }
+
+    @Override
+    public double getSprintEnergyModifier() {
+        return 2.5D;
+    }
+
+    @Override
+    public double getSprintSpeedModifier() {
+        return 1.3D;
+    }
+
+    @Override
+    public double getVerticalHoverSpeed() {
+        return 0.34D;
+    }
+
+    @Override
+    public double getVerticalHoverSlowSpeed() {
+        return 0.03D;
+    }
+
+    @Override
+    public double getVerticalAcceleration() {
+        return 0.13D;
+    }
+
+    @Override
+    public double getVerticalSpeed() {
+        return 0.48D;
+    }
+
+    @Override
+    public double getSidewaysSpeed() {
+        return 0.14D;
+    }
+
+    @Override
+    public EnumParticleTypes getParticle() {
+        return EnumParticleTypes.CLOUD;
+    }
+
+    @Override
+    public float getFallDamageReduction() {
+        return 3.5f;
     }
 
     @SideOnly(Side.CLIENT)
@@ -157,11 +140,6 @@ public class AdvancedJetpack extends Jetpack {
         if (!cont.canUse(energyPerUse)) return;
         NBTTagCompound data = item.getTagCompound();
         if (data != null) {
-            if (data.hasKey("CanShare")) {
-                String status = data.getBoolean("CanShare") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
-                this.HUD.newString(I18n.format("mataarmor.hud.supply_mode", I18n.format(status)));
-            }
-
             if (data.hasKey("flyMode")) {
                 String status = data.getBoolean("flyMode") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
                 this.HUD.newString(I18n.format("metaarmor.hud.fly_mode", I18n.format(status)));
@@ -179,6 +157,31 @@ public class AdvancedJetpack extends Jetpack {
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
         return "gregtech:textures/armor/advanced_jetpack.png";
+    }
+
+
+    @Override
+    public void addToolComponents(ArmorMetaItem.ArmorMetaValueItem mvi) {
+        super.addToolComponents(mvi);
+        mvi.addComponents(new Behaviour());
+    }
+
+    public static class Behaviour implements IItemBehaviour {
+
+        public Behaviour() {
+        }
+
+        @Override
+        public void addInformation(ItemStack itemStack, List<String> lines) {
+            IItemBehaviour.super.addInformation(itemStack, lines);
+            NBTTagCompound data = itemStack.getTagCompound();
+            if (data != null) {
+                if (data.hasKey("flyMode")) {
+                    String status = data.getBoolean("flyMode") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
+                    lines.add(I18n.format("metaarmor.hud.fly_mode", I18n.format(status)));
+                }
+            }
+        }
     }
 }
 

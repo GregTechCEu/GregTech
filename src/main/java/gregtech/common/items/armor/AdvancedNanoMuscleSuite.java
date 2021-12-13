@@ -129,7 +129,7 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite {
         if (!player.isInWater() && !player.isInLava() && cont.canUse(120)) {
             if (flyEnabled) {
                 if (hoverMode) {
-                    if (!ArmorUtils.isKeyDown(player, EnumKey.JUMP) || !ArmorUtils.isKeyDown(player, EnumKey.SHIFT)) {
+                    if (!ArmorUtils.isKeyDown(player, EnumKey.JUMP) || !ArmorUtils.isKeyDown(player, EnumKey.CROUCH)) {
                         if (player.motionY > 0.1D) {
                             player.motionY -= 0.1D;
                         }
@@ -163,11 +163,11 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite {
                         player.motionY = 0.35D;
                     }
 
-                    if (ArmorUtils.isKeyDown(player, EnumKey.SHIFT)) {
+                    if (ArmorUtils.isKeyDown(player, EnumKey.CROUCH)) {
                         player.motionY = -0.35D;
                     }
 
-                    if (ArmorUtils.isKeyDown(player, EnumKey.JUMP) && ArmorUtils.isKeyDown(player, EnumKey.SHIFT)) {
+                    if (ArmorUtils.isKeyDown(player, EnumKey.JUMP) && ArmorUtils.isKeyDown(player, EnumKey.CROUCH)) {
                         player.motionY = 0.0D;
                     }
 

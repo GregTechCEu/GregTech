@@ -28,7 +28,7 @@ public class MetaArmor extends ArmorMetaItem<ArmorMetaItem<?>.ArmorMetaValueItem
 
         energyPerUse = 10000;
         tier = ConfigHolder.U.equipment.voltageTierQuarkTech;
-        maxCapacity = 8000000L * (long) Math.max(1, Math.pow(4, tier - 5));
+        maxCapacity = 6_400_000L * (long) Math.max(1, Math.pow(4, tier - 5));
         MetaItems.QUARK_TECH_SUITE_HELMET = addItem(40, "qts.helmet").setArmorLogic(new QuarkTechSuite(EntityEquipmentSlot.HEAD, energyPerUse, maxCapacity, tier)).setRarity(EnumRarity.RARE);
         MetaItems.QUARK_TECH_SUITE_CHESTPLATE = addItem(41, "qts.chestplate").setArmorLogic(new QuarkTechSuite(EntityEquipmentSlot.CHEST, energyPerUse, maxCapacity, tier)).setRarity(EnumRarity.RARE);
         MetaItems.QUARK_TECH_SUITE_LEGGINGS = addItem(42, "qts.leggings").setArmorLogic(new QuarkTechSuite(EntityEquipmentSlot.LEGS, energyPerUse, maxCapacity, tier)).setRarity(EnumRarity.RARE);

@@ -17,7 +17,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -36,14 +35,17 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-public class PowerlessJetpack implements IArmorLogic {
+public class PowerlessJetpack implements IArmorLogic, IJetpack {
 
-    public static final List<FuelRecipe> FUELS = RecipeMaps.COMBUSTION_GENERATOR_FUELS.getRecipeList();
+    private static final List<FuelRecipe> FUELS = RecipeMaps.COMBUSTION_GENERATOR_FUELS.getRecipeList();
+
     public static final List<Fluid> FUELS_FORBIDDEN = Arrays.asList(Materials.Oil.getFluid(), Materials.SulfuricLightFuel.getFluid());
 
     public final int tankCapacity = 16000;
 
     private FuelRecipe previousRecipe = null;
+    private FuelRecipe currentRecipe = null;
+    private int burnTimer = 0;
 
     @SideOnly(Side.CLIENT)
     private ArmorUtils.ModularHUD HUD;
@@ -57,15 +59,14 @@ public class PowerlessJetpack implements IArmorLogic {
     @Override
     public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack stack) {
         IFluidHandlerItem internalTank = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        if (internalTank == null)
+            return;
 
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(stack);
-        int burnTime = 0;
         byte toggleTimer = 0;
         boolean hover = false;
 
-        FuelRecipe currentRecipe = null;
-        FluidStack fuel = currentRecipe.getRecipeFluid();
-        if (data.hasKey("burnTimer")) burnTime = data.getShort("burnTimer");
+        if (data.hasKey("burnTimer")) burnTimer = data.getShort("burnTimer");
         if (data.hasKey("toggleTimer")) toggleTimer = data.getByte("toggleTimer");
         if (data.hasKey("hover")) hover = data.getBoolean("hover");
 
@@ -81,88 +82,18 @@ public class PowerlessJetpack implements IArmorLogic {
             }
         }
 
-        if (internalTank != null && !player.isInWater() && !player.isInLava()) {
-            FluidStack fluidStack = internalTank.drain(1, false);
-            if (previousRecipe != null && fluidStack != null && fluidStack.isFluidEqual(previousRecipe.getRecipeFluid()) && fluidStack.amount > 0) {
-                currentRecipe = previousRecipe;
-            } else if (fluidStack != null) {
-                for (FuelRecipe recipe : FUELS) {
-                    if (recipe.getRecipeFluid().isFluidEqual(fluidStack)) {
-                        currentRecipe = recipe;
-                        previousRecipe = currentRecipe;
-                        break;
-                    }
-                }
-            } else {
-                return;
-            }
+        if (currentRecipe == null)
+            findNewRecipe(stack);
 
-            if (currentRecipe == null)
-                return;
+        performFlying(player, hover, stack);
 
-            if (burnTime > 0 || internalTank.drain(fuel, false).amount >= fuel.amount) {
-                if (!hover) {
-                    if (ArmorUtils.isKeyDown(player, EnumKey.JUMP)) { //todo prevent holding space + e from flying upwards
-                        if (player.motionY < 0.6D) player.motionY += 0.2D;
-                        if (ArmorUtils.isKeyDown(player, EnumKey.FORWARD)) {
-                            player.moveRelative(0.0F, 0.0F, 1.0F, 0.1F);
-                        }
-                        ArmorUtils.spawnParticle(world, player, EnumParticleTypes.SMOKE_LARGE, -0.6D);
-                        ArmorUtils.spawnParticle(world, player, EnumParticleTypes.CLOUD, -0.6D);
-                        ArmorUtils.playJetpackSound(player);
-                    }
-                } else {
-                    if (!player.onGround) {
-                        ArmorUtils.spawnParticle(world, player, EnumParticleTypes.CLOUD, -0.3D);
-                        ArmorUtils.playJetpackSound(player);
-                    }
+        if (toggleTimer > 0)
+            toggleTimer--;
 
-                    if (ArmorUtils.isKeyDown(player, EnumKey.FORWARD) && player.motionX < 0.5D && player.motionZ < 0.5D) {
-                        player.moveRelative(0.0F, 0.0F, 1.0F, 0.025F);
-                    }
+        data.setShort("burnTimer", (short) burnTimer);
+        data.setByte("toggleTimer", toggleTimer);
+        player.inventoryContainer.detectAndSendChanges();
 
-                    if (ArmorUtils.isKeyDown(player, EnumKey.JUMP)) { //todo prevent holding space + e from flying upwards
-                        if (player.motionY < 0.5D) {
-                            player.motionY += 0.125D;
-                            ArmorUtils.spawnParticle(world, player, EnumParticleTypes.SMOKE_LARGE, -0.6D);
-                        }
-                    } else if (ArmorUtils.isKeyDown(player, EnumKey.SHIFT)) {
-                        if (player.motionY < -0.5D) player.motionY += 0.1D;
-                    } else if (!ArmorUtils.isKeyDown(player, EnumKey.JUMP) && !ArmorUtils.isKeyDown(player, EnumKey.SHIFT) && !player.onGround) {
-                        if (player.motionY < 0 && player.motionY >= -0.03D) player.motionY = -0.025D;
-                        if (player.motionY < -0.025D) {
-                            if (player.motionY + 0.2D > -0.025D) {
-                                player.motionY = -0.025D;
-                            } else {
-                                player.motionY += 0.2D;
-                            }
-                        }
-                    }
-                    player.fallDistance = 0.0F;
-                }
-
-                if (!player.onGround) {
-                    if (burnTime <= 0) {
-                        player.fallDistance = 0.0F;
-                        burnTime = (int) (currentRecipe.getDuration() * currentRecipe.getMinVoltage());
-                        internalTank.drain(fuel.amount, true);
-                    } else {
-                        burnTime -= 1;
-                    }
-                }
-            }
-            if (world.getWorldTime() % 40 == 0 && !player.onGround) {
-                ArmorUtils.resetPlayerFloatingTime(player);
-            }
-
-            if (toggleTimer > 0)
-                toggleTimer--;
-
-            data.setShort("burnTimer", (short) burnTime);
-            data.setByte("toggleTimer", toggleTimer);
-            player.inventoryContainer.detectAndSendChanges();
-
-        }
     }
 
     @Override
@@ -191,6 +122,7 @@ public class PowerlessJetpack implements IArmorLogic {
                     String formated = String.format("%.1f", (prop[0].getContents().amount * 100.0F / prop[0].getCapacity()));
                     this.HUD.newString(I18n.format("metaarmor.hud.fuel_lvl", formated + "%"));
                     NBTTagCompound data = item.getTagCompound();
+
                     if (data != null) {
                         if (data.hasKey("hover")) {
                             String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled"));
@@ -210,6 +142,74 @@ public class PowerlessJetpack implements IArmorLogic {
         return true;
     }
 
+    @Override
+    public int getEnergyPerUse() {
+        return 1;
+    }
+
+    @Override
+    public boolean canUseEnergy(ItemStack stack, int amount) {
+        FluidStack fuel = getFuel();
+        if (fuel == null)
+            return false;
+
+        IFluidHandlerItem fluidHandlerItem = getIFluidHandlerItem(stack);
+        if (fluidHandlerItem == null)
+            return false;
+
+        FluidStack fluidStack = fluidHandlerItem.drain(fuel, false);
+        if (fluidStack == null)
+            return false;
+
+        return fluidStack.amount >= fuel.amount;
+    }
+
+    @Override
+    public void drainEnergy(ItemStack stack, int amount) {
+        if (this.burnTimer == 0) {
+            FluidStack fuel = getFuel();
+            if (fuel == null) return;
+            getIFluidHandlerItem(stack).drain(fuel, true);
+            burnTimer = fuel.amount * currentRecipe.getDuration();
+        }
+        this.burnTimer--;
+    }
+
+    @Override
+    public boolean hasEnergy(ItemStack stack) {
+        return burnTimer > 0 || currentRecipe != null;
+    }
+
+    private IFluidHandlerItem getIFluidHandlerItem(@Nonnull ItemStack stack) {
+        return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+    }
+
+    public void findNewRecipe(@Nonnull ItemStack stack) {
+        IFluidHandlerItem internalTank = getIFluidHandlerItem(stack);
+        if (internalTank != null) {
+            FluidStack fluidStack = internalTank.drain(1, false);
+            if (previousRecipe != null && fluidStack != null && fluidStack.isFluidEqual(previousRecipe.getRecipeFluid()) && fluidStack.amount > 0) {
+                currentRecipe = previousRecipe;
+                return;
+            } else if (fluidStack != null) {
+                for (FuelRecipe recipe : FUELS) {
+                    if (recipe.getRecipeFluid().isFluidEqual(fluidStack)) {
+                        previousRecipe = recipe;
+                        currentRecipe = previousRecipe;
+                        return;
+                    }
+                }
+            }
+        }
+        currentRecipe = null;
+    }
+
+    public FluidStack getFuel() {
+        if (currentRecipe != null)
+            return currentRecipe.getRecipeFluid();
+
+        return null;
+    }
 
     public static class Behaviour implements IItemDurabilityManager, IItemCapabilityProvider, IItemBehaviour {
 
@@ -256,6 +256,18 @@ public class PowerlessJetpack implements IArmorLogic {
                     return new FluidTankProperties[]{new FluidTankProperties(getFluid(), capacity, true, false)};
                 }
             };
+        }
+
+        @Override
+        public void addInformation(ItemStack itemStack, List<String> lines) {
+            IItemBehaviour.super.addInformation(itemStack, lines);
+            NBTTagCompound data = itemStack.getTagCompound();
+            if (data != null) {
+                if (data.hasKey("hover")) {
+                    String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled"));
+                    lines.add(I18n.format("metaarmor.hud.hover_mode", status));
+                }
+            }
         }
     }
 }

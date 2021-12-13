@@ -8,6 +8,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
 import gregtech.common.items.MetaItems;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,8 +21,11 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class NanoMuscleSuite extends ArmorLogicSuite {
 
@@ -87,7 +91,7 @@ public class NanoMuscleSuite extends ArmorLogicSuite {
         int damageLimit = Integer.MAX_VALUE;
         if (source == DamageSource.FALL && this.getEquipmentSlot(armor) == EntityEquipmentSlot.FEET) {
             if (energyPerUse > 0 && container != null) {
-                damageLimit = (int) Math.min(damageLimit, 25.0 * container.getCharge() / energyPerUse);
+                damageLimit = (int) Math.min(damageLimit, 25.0 * container.getCharge() / (energyPerUse * 10.0D));
             }
             return new ArmorProperties(10, (damage < 8.0) ? 1.0 : 0.875, damageLimit);
         }
@@ -103,7 +107,7 @@ public class NanoMuscleSuite extends ArmorLogicSuite {
     public void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage, EntityEquipmentSlot equipmentSlot) {
         IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (item != null) {
-            item.discharge((long) energyPerUse * damage, item.getTier(), true, false, false);
+            item.discharge((long) energyPerUse / 10 * damage, item.getTier(), true, false, false);
         }
     }
 
@@ -121,5 +125,31 @@ public class NanoMuscleSuite extends ArmorLogicSuite {
     @Override
     public double getDamageAbsorption() {
         return 0.9D;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean isNeedDrawHUD() {
+        return true;
+    }
+
+    @Override
+    public void drawHUD(ItemStack item) {
+        super.addCapacityHUD(item);
+        this.HUD.draw();
+        this.HUD.reset();
+    }
+
+    @Override
+    public void addInfo(ItemStack itemStack, List<String> lines) {
+        super.addInfo(itemStack, lines);
+        if (SLOT == EntityEquipmentSlot.HEAD) {
+            NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);
+            boolean nv = nbtData.getBoolean("Nightvision");
+            if (nv) {
+                lines.add(I18n.format("metaarmor.message.nightvision.enabled"));
+            } else {
+                lines.add(I18n.format("metaarmor.message.nightvision.disabled"));
+            }
+        }
     }
 }
