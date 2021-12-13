@@ -23,10 +23,9 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipes.FuelRecipe;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.SimpleCubeRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.cube.SimpleCubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.blocks.BlockBoilerCasing.BoilerCasingType;
@@ -108,9 +107,9 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         public final ICubeRenderer solidCasingRenderer;
         public final SimpleCubeRenderer fireboxIdleRenderer;
         public final SimpleCubeRenderer firefoxActiveRenderer;
-        public final OrientedOverlayRenderer frontOverlay;
+        public final ICubeRenderer frontOverlay;
 
-        BoilerType(int baseSteamOutput, float fuelConsumptionMultiplier, int temperatureEffBuff, int maxTemperature, IBlockState casingState, IBlockState fireboxState, IBlockState pipeState, ICubeRenderer solidCasingRenderer, SimpleCubeRenderer fireboxIdleRenderer, SimpleCubeRenderer firefoxActiveRenderer, OrientedOverlayRenderer frontOverlay) {
+        BoilerType(int baseSteamOutput, float fuelConsumptionMultiplier, int temperatureEffBuff, int maxTemperature, IBlockState casingState, IBlockState fireboxState, IBlockState pipeState, ICubeRenderer solidCasingRenderer, SimpleCubeRenderer fireboxIdleRenderer, SimpleCubeRenderer firefoxActiveRenderer, ICubeRenderer frontOverlay) {
             this.baseSteamOutput = baseSteamOutput;
             this.fuelConsumptionMultiplier = fuelConsumptionMultiplier;
             this.temperatureEffBuff = temperatureEffBuff;
@@ -427,12 +426,12 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), isActive, true);
+        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive, true);
     }
 
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         return boilerType.frontOverlay;
     }
 

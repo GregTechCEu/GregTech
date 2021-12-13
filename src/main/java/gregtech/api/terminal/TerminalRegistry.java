@@ -86,13 +86,13 @@ public class TerminalRegistry implements IResourceManagerReloadListener {
                 .battery(GTValues.MV, 1000)
                 .upgrade(MetaItems.COIN_DOGE.getStackForm(10))
                 .upgrade(6, MetaItems.COIN_GOLD_ANCIENT.getStackForm())
-                .device(DeviceHardware.DEVICE.SCANNER)
+                .device(DeviceHardware.DEVICE.PROSPECTOR_LV)
                 .build();
         AppRegistryBuilder.create(new ProspectorApp(1))
                 .battery(GTValues.MV, 1000)
                 .upgrade(MetaItems.COIN_DOGE.getStackForm(10))
                 .upgrade(6, MetaItems.COIN_GOLD_ANCIENT.getStackForm())
-                .device(DeviceHardware.DEVICE.SCANNER)
+                .device(DeviceHardware.DEVICE.PROSPECTOR_LV)
                 .build();
         AppRegistryBuilder.create(new MultiBlockPreviewARApp())
                 .battery(GTValues.LV, 512)

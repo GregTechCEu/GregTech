@@ -56,7 +56,7 @@ public class ResourceHelper {
     }
 
     public static boolean isTextureExist(ResourceLocation textureResource) {
-        InputStream inputstream = ResourceHelper.class.getResourceAsStream(String.format("/assets/%s/textures/%s.png", GTValues.MODID, textureResource.getPath()));
+        InputStream inputstream = ResourceHelper.class.getResourceAsStream(String.format("/assets/%s/textures/%s.png", textureResource.getNamespace(), textureResource.getPath()));
         if(inputstream == null) {
             return false;
         }

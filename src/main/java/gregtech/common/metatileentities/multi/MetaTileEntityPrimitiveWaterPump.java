@@ -6,23 +6,18 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.pattern.TraceabilityPredicate;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.blocks.BlockSteamCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
@@ -33,7 +28,6 @@ import net.minecraftforge.fluids.IFluidTank;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
 
@@ -132,7 +126,7 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
                 .aisle("SXXX", "**F*", "**F*")
                 .where('S', selfPredicate())
                 .where('X', states(MetaBlocks.STEAM_CASING.getState(BlockSteamCasing.SteamCasingType.PUMP_DECK)))
-                .where('F', states(MetaBlocks.FRAMES.get(Materials.Wood).getBlockState().getBaseState()))
+                .where('F', states(MetaBlocks.FRAMES.get(Materials.Wood).getBlock(Materials.Wood)))
                 .where('H', abilities(MultiblockAbility.PUMP_FLUID_HATCH).or(metaTileEntities(MetaTileEntities.FLUID_EXPORT_HATCH[0], MetaTileEntities.FLUID_EXPORT_HATCH[1])))
                 .where('*', any())
                 .build();
@@ -145,13 +139,13 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
 
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         return Textures.PRIMITIVE_PUMP_OVERLAY;
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), true, true);
+        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), true, true);
     }
 }

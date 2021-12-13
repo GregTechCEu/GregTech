@@ -9,6 +9,7 @@ import gregtech.api.worldgen.populator.FluidSpringPopulator;
 import gregtech.api.worldgen.populator.IVeinPopulator;
 import gregtech.api.worldgen.populator.SurfaceBlockPopulator;
 import gregtech.api.worldgen.populator.SurfaceRockPopulator;
+import gregtech.common.blocks.BlockOre;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
@@ -105,7 +106,15 @@ public class GTOreInfo implements IRecipeWrapper {
         //Needed because one generation option returns all possible blockStates
         List<FillerEntry> possibleStates = blockFiller.getAllPossibleStates();
         for (FillerEntry entry : possibleStates) {
-            containedStates.addAll(entry.getPossibleResults());
+            Collection<IBlockState> possibleResults = entry.getPossibleResults();
+            for (IBlockState state : possibleResults) {
+                if (state.getBlock() instanceof BlockOre) {
+                    if (!state.getValue(((BlockOre) state.getBlock()).STONE_TYPE).shouldBeDroppedAsItem) {
+                        continue;
+                    }
+                }
+                containedStates.add(state);
+            }
         }
 
         //Check to see if we are dealing with a fluid generation case, before transforming states

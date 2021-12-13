@@ -16,7 +16,7 @@ import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.BlockInfo;
-import gregtech.api.util.RenderBufferHelper;
+import gregtech.client.utils.RenderBufferHelper;
 import gregtech.common.inventory.handlers.CycleItemStackHandler;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -35,7 +35,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.ItemStackHandler;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;

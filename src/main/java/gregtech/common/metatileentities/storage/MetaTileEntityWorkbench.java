@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.storage;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.base.Preconditions;
 import gregtech.api.gui.GuiTextures;
@@ -16,7 +15,7 @@ import gregtech.api.gui.widgets.TabGroup.TabLocation;
 import gregtech.api.gui.widgets.tab.ItemTabInfo;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
@@ -115,7 +114,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         int paintingColor = getPaintingColorForRendering();
         pipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(paintingColor)));
-        Textures.CRAFTING_TABLE.render(renderState, translation, pipeline, Cuboid6.full, getFrontFacing());
+        Textures.CRAFTING_TABLE.renderOriented(renderState, translation, pipeline, getFrontFacing());
     }
 
     @Override

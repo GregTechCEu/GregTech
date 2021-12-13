@@ -1,9 +1,11 @@
 package gregtech.api.worldgen.bedrockFluids;
 
-import gregtech.api.net.packets.PacketFluidVeinList;
+import gregtech.api.GTValues;
+import gregtech.api.net.packets.SPacketFluidVeinList;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.XSTR;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -17,6 +19,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class BedrockFluidVeinHandler {
 
@@ -37,6 +40,8 @@ public class BedrockFluidVeinHandler {
     public static FluidVeinWorldEntry getFluidVeinWorldEntry(World world, int chunkX, int chunkZ) {
         if (world.isRemote)
             return null;
+
+        Random random = new XSTR(31 * 31 * chunkX + chunkZ * 31 + Long.hashCode(world.getSeed()));
 
         ChunkPosDimension coords = new ChunkPosDimension(world.provider.getDimension(), chunkX / veinChunkSize, chunkZ / veinChunkSize);
 
@@ -65,7 +70,7 @@ public class BedrockFluidVeinHandler {
             int capacity = 0;
             if (definition != null) //todo scale capacity to be not 100% random
                 capacity = Math.min(definition.getMaximumProductionRate(),
-                        GTUtility.getRandomIntXSTR(definition.getMaximumProductionRate()) + definition.getMinimumProductionRate());
+                        random.nextInt(definition.getMaximumProductionRate()) + definition.getMinimumProductionRate());
 
             worldEntry = new FluidVeinWorldEntry(definition, capacity, capacity);
             veinCache.put(coords, worldEntry);
@@ -152,7 +157,7 @@ public class BedrockFluidVeinHandler {
 //        if (GTUtility.getRandomIntXSTR(100) < chanceToDecrease)
 
         // alternative depletion algorithm: 1 in vein's chance to deplete by vein's depletion amount
-        if (GTUtility.getRandomIntXSTR(definition.getDepletionChance()) == 1)
+        if (GTValues.RNG.nextInt(definition.getDepletionChance()) == 1)
             info.currentFluidAmount = Math.max(0, info.currentFluidAmount - definition.getDepletionAmount());
 
         BedrockFluidVeinSaveData.setDirty();
@@ -211,7 +216,7 @@ public class BedrockFluidVeinHandler {
                 if (entry.getKey() != null && entry.getValue() != null)
                     packetMap.put(entry.getValue(), entry.getValue().getVein().getWeight());
             }
-            NetworkHandler.channel.sendToAll(new PacketFluidVeinList(packetMap).toFMLPacket());
+            NetworkHandler.channel.sendToAll(new SPacketFluidVeinList(packetMap).toFMLPacket());
         }
     }
 

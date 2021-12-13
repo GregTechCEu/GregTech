@@ -25,8 +25,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -51,8 +49,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -73,8 +69,6 @@ import java.util.stream.Stream;
 import static gregtech.api.GTValues.V;
 
 public class GTUtility {
-
-    private static final XSTR random = new XSTR();
 
     private static TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
 
@@ -746,10 +740,6 @@ public class GTUtility {
                 .thenComparing(ItemStack::hasTagCompound)
                 .thenComparing(it -> -Objects.hashCode(it.getTagCompound()))
                 .thenComparing(it -> -it.getCount());
-    }
-
-    public static int getRandomIntXSTR(int bound) {
-        return random.nextInt(bound);
     }
 
     public static RayTraceResult getBlockLookingAt(EntityPlayer player) {

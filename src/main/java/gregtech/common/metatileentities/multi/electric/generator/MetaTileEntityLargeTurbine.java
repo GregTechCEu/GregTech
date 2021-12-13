@@ -13,9 +13,8 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.machines.FuelRecipeMap;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
@@ -50,9 +49,9 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
         public final ICubeRenderer casingRenderer;
         public final boolean hasOutputHatch;
         public final boolean hasMufflerHatch;
-        public final OrientedOverlayRenderer frontOverlay;
+        public final ICubeRenderer frontOverlay;
 
-        TurbineType(FuelRecipeMap recipeMap, IBlockState casingState, IBlockState gearboxState, ICubeRenderer casingRenderer, boolean hasOutputHatch, boolean hasMufflerHatch, OrientedOverlayRenderer frontOverlay) {
+        TurbineType(FuelRecipeMap recipeMap, IBlockState casingState, IBlockState gearboxState, ICubeRenderer casingRenderer, boolean hasOutputHatch, boolean hasMufflerHatch, ICubeRenderer frontOverlay) {
             this.recipeMap = recipeMap;
             this.casingState = casingState;
             this.gearboxState = gearboxState;
@@ -178,7 +177,7 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
 
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         return turbineType.frontOverlay;
     }
 

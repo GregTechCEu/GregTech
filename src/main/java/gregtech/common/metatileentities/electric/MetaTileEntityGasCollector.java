@@ -9,8 +9,8 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.GasCollectorDimensionProperty;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 
 public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
 
-    public MetaTileEntityGasCollector(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier, boolean hasFrontFacing,
+    public MetaTileEntityGasCollector(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean hasFrontFacing,
                                       Function<Integer, Integer> tankScalingFunction) {
         super(metaTileEntityId, recipeMap, renderer, tier, hasFrontFacing, tankScalingFunction);
     }

@@ -18,7 +18,7 @@ public class EntityRendererVisitor extends MethodVisitor implements Opcodes {
             "(Lnet/minecraft/util/BlockRenderLayer;DILnet/minecraft/entity/Entity;)I").toRuntime();
 
     private static final ObfMapping METHOD_BLOOM_HOOKS = new ObfMapping(
-            "gregtech/core/hooks/BloomRenderLayerHooks",
+            "gregtech/client/utils/BloomEffectUtil",
             "renderBloomBlockLayer",
             "(Lnet/minecraft/client/renderer/RenderGlobal;Lnet/minecraft/util/BlockRenderLayer;DILnet/minecraft/entity/Entity;)I");
 

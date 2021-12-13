@@ -3,6 +3,7 @@ package gregtech.core.hooks;
 import com.creativemd.creativecore.client.mods.optifine.OptifineHelper;
 import com.creativemd.littletiles.client.render.cache.LayeredRenderBoxCache;
 import com.creativemd.littletiles.client.render.tile.LittleRenderBox;
+import gregtech.client.utils.BloomEffectUtil;
 import net.minecraft.util.BlockRenderLayer;
 
 import java.util.Iterator;
@@ -23,7 +24,7 @@ public class LittleTilesHooks {
         private List<LittleRenderBox> translucent = null;
 
         public List<LittleRenderBox> get(BlockRenderLayer layer) {
-            if (layer == BloomRenderLayerHooks.BLOOM) {
+            if (layer == BloomEffectUtil.BLOOM) {
                 return bloom;
             }
             switch (layer) {
@@ -40,7 +41,7 @@ public class LittleTilesHooks {
         }
 
         public void set(List<LittleRenderBox> cubes, BlockRenderLayer layer) {
-            if (layer == BloomRenderLayerHooks.BLOOM) {
+            if (layer == BloomEffectUtil.BLOOM) {
                 bloom = cubes;
             }
             switch (layer) {

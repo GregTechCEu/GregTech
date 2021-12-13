@@ -14,9 +14,9 @@ import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.SimpleSidedCubeRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,11 +32,11 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ISou
     protected static final int STEAM_CAPACITY = 16000;
 
     protected final boolean isHighPressure;
-    protected final OrientedOverlayRenderer renderer;
+    protected final ICubeRenderer renderer;
     protected RecipeLogicSteam workableHandler;
     protected FluidTank steamFluidTank;
 
-    public SteamMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, boolean isHighPressure) {
+    public SteamMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, boolean isHighPressure) {
         super(metaTileEntityId);
         this.workableHandler = new RecipeLogicSteam(this,
                 recipeMap, isHighPressure, steamFluidTank, 1.0);
@@ -89,7 +89,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ISou
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         getBaseRenderer().render(renderState, translation, colouredPipeline);
-        renderer.render(renderState, translation, pipeline, getFrontFacing(), workableHandler.isActive(), workableHandler.isWorkingEnabled());
+        renderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), workableHandler.isActive(), workableHandler.isWorkingEnabled());
         Textures.STEAM_VENT_OVERLAY.renderSided(workableHandler.getVentingSide(), renderState, translation, pipeline);
     }
 

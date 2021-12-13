@@ -9,7 +9,7 @@ import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.packets.PacketKeysPressed;
+import gregtech.api.net.packets.CPacketKeysPressed;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.Key;
 import gregtech.api.util.input.KeyBinds;
@@ -146,7 +146,7 @@ public class EventHandlers {
                 }
             }
             if (needNewPacket) {
-                NetworkHandler.channel.sendToServer(new PacketKeysPressed(KeyBinds.REGISTRY).toFMLPacket());
+                NetworkHandler.channel.sendToServer(new CPacketKeysPressed(KeyBinds.REGISTRY).toFMLPacket());
             }
         }
     }

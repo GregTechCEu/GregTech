@@ -44,7 +44,7 @@ import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.items.MetaItems.*;
-import static gregtech.common.metatileentities.MetaTileEntities.WORKBENCH;
+import static gregtech.common.metatileentities.MetaTileEntities.*;
 
 public class MachineRecipeLoader {
 
@@ -585,6 +585,21 @@ public class MachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(2).inputs(new ItemStack(Blocks.CHEST, 1, GTValues.W)).input(plate, Iron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(2).inputs(new ItemStack(Blocks.TRAPPED_CHEST, 1, GTValues.W)).input(plate, WroughtIron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plank, Wood, 4).input(screw, Iron, 4).outputs(WOODEN_CRATE.getStackForm()).duration(100).circuitMeta(1).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Bronze, 4).input(plate, Bronze, 4).outputs(BRONZE_CRATE.getStackForm()).duration(200).circuitMeta(1).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Steel, 4).input(plate, Steel, 4).outputs(STEEL_CRATE.getStackForm()).duration(200).circuitMeta(1).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Aluminium, 4).input(plate, Aluminium, 4).outputs(ALUMINIUM_CRATE.getStackForm()).duration(200).circuitMeta(1).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, StainlessSteel, 4).input(plate, StainlessSteel, 4).outputs(STAINLESS_STEEL_CRATE.getStackForm()).circuitMeta(1).duration(200).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, Titanium, 4).input(plate, Titanium, 4).outputs(TITANIUM_CRATE.getStackForm()).duration(200).circuitMeta(1).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(stickLong, TungstenSteel, 4).input(plate, TungstenSteel, 4).outputs(TUNGSTENSTEEL_CRATE.getStackForm()).duration(200).circuitMeta(1).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(stickLong, Bronze, 2).input(plate, Bronze, 4).outputs(BRONZE_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(stickLong, Steel, 2).input(plate, Steel, 4).outputs(STEEL_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(stickLong, Aluminium, 2).input(plate, Aluminium, 4).outputs(ALUMINIUM_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(stickLong, StainlessSteel, 2).input(plate, StainlessSteel, 4).outputs(STAINLESS_STEEL_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(stickLong, Titanium, 2).input(plate, Titanium, 4).outputs(TITANIUM_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(stickLong, TungstenSteel, 2).input(plate, TungstenSteel, 4).outputs(TUNGSTENSTEEL_DRUM.getStackForm()).duration(200).circuitMeta(2).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(foil, Polycaprolactam, 4).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(288)).output(DUCT_TAPE).duration(100).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(foil, SiliconeRubber, 4).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(288)).output(DUCT_TAPE, 2).duration(100).buildAndRegister();

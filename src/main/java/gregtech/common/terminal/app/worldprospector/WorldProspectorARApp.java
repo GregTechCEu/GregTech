@@ -7,15 +7,15 @@ import gregtech.api.gui.resources.ShaderTexture;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
-import gregtech.api.render.DepthTextureHook;
-import gregtech.api.render.shader.Shaders;
+import gregtech.client.utils.DepthTextureUtil;
+import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.app.ARApplication;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalTheme;
-import gregtech.api.util.RenderBufferHelper;
+import gregtech.client.utils.RenderBufferHelper;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.items.MetaItems;
 import gregtech.common.terminal.app.worldprospector.matcher.BlockStateMatcher;
@@ -419,7 +419,7 @@ public class WorldProspectorARApp extends ARApplication {
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
 
-            DepthTextureHook.bindDepthTexture();
+            DepthTextureUtil.bindDepthTexture();
 
             float time = (viewer.ticksExisted + getPartialTicks) / 20;
 
@@ -430,7 +430,7 @@ public class WorldProspectorARApp extends ARApplication {
                 uniformCache.glUniform1F("u_FOV", mc.gameSettings.fovSetting);
             });
 
-            DepthTextureHook.unBindDepthTexture();
+            DepthTextureUtil.unBindDepthTexture();
 
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GlStateManager.disableBlend();

@@ -16,18 +16,17 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.ICustomRenderFast;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
-import gregtech.api.util.RenderBufferHelper;
-import gregtech.api.util.RenderUtil;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.ICustomRenderFast;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.RenderBufferHelper;
+import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.common.blocks.BlockFusionCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
-import gregtech.core.hooks.BloomRenderLayerHooks;
+import gregtech.client.utils.BloomEffectUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -237,7 +236,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         return Textures.FUSION_REACTOR_OVERLAY;
     }
 
@@ -305,7 +304,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         if (color != null && MinecraftForgeClient.getRenderPass() == 0) {
             final int c = color;
-            BloomRenderLayerHooks.requestRenderFast(RENDER_HANDLER, (buffer)->{
+            BloomEffectUtil.requestRenderFast(RENDER_HANDLER, (buffer)->{
                 int color = RenderUtil.colorInterpolator(c, -1).apply(Eases.EaseQuadIn.getInterpolation(Math.abs((Math.abs(getOffsetTimer() % 50) + partialTicks) - 25) / 25));
                 float a = (float)(color >> 24 & 255) / 255.0F;
                 float r = (float)(color >> 16 & 255) / 255.0F;

@@ -27,16 +27,16 @@ public class NetworkHandler {
         channel = NetworkRegistry.INSTANCE.newEventDrivenChannel(GTValues.MODID);
         channel.register(new NetworkHandler());
 
-        registerPacket(PacketUIOpen.class);
-        registerPacket(PacketUIWidgetUpdate.class);
-        registerPacket(PacketUIClientAction.class);
-        registerPacket(PacketBlockParticle.class);
-        registerPacket(PacketClipboard.class);
-        registerPacket(PacketClipboardUIWidgetUpdate.class);
-        registerPacket(PacketPluginSynced.class);
-        registerPacket(PacketRecoverMTE.class);
-        registerPacket(PacketKeysPressed.class);
-        registerPacket(PacketFluidVeinList.class);
+        registerPacket(SPacketUIOpen.class);
+        registerPacket(SPacketUIWidgetUpdate.class);
+        registerPacket(CPacketUIClientAction.class);
+        registerPacket(SPacketBlockParticle.class);
+        registerPacket(SPacketClipboard.class);
+        registerPacket(CPacketClipboardUIWidgetUpdate.class);
+        registerPacket(CPacketPluginSynced.class);
+        registerPacket(CPacketRecoverMTE.class);
+        registerPacket(CPacketKeysPressed.class);
+        registerPacket(SPacketFluidVeinList.class);
 
         initServer();
         if (FMLCommonHandler.instance().getSide().isClient()) {
@@ -46,21 +46,21 @@ public class NetworkHandler {
 
     // Register packets as "received on server" here
     protected static void initServer() {
-        registerServerExecutor(PacketUIClientAction.class);
-        registerServerExecutor(PacketClipboardUIWidgetUpdate.class);
-        registerServerExecutor(PacketPluginSynced.class);
-        registerServerExecutor(PacketRecoverMTE.class);
-        registerServerExecutor(PacketKeysPressed.class);
+        registerServerExecutor(CPacketUIClientAction.class);
+        registerServerExecutor(CPacketClipboardUIWidgetUpdate.class);
+        registerServerExecutor(CPacketPluginSynced.class);
+        registerServerExecutor(CPacketRecoverMTE.class);
+        registerServerExecutor(CPacketKeysPressed.class);
     }
 
     // Register packets as "received on client" here
     @SideOnly(Side.CLIENT)
     protected static void initClient() {
-        registerClientExecutor(PacketUIOpen.class);
-        registerClientExecutor(PacketUIWidgetUpdate.class);
-        registerClientExecutor(PacketBlockParticle.class);
-        registerClientExecutor(PacketClipboard.class);
-        registerClientExecutor(PacketFluidVeinList.class);
+        registerClientExecutor(SPacketUIOpen.class);
+        registerClientExecutor(SPacketUIWidgetUpdate.class);
+        registerClientExecutor(SPacketBlockParticle.class);
+        registerClientExecutor(SPacketClipboard.class);
+        registerClientExecutor(SPacketFluidVeinList.class);
     }
 
 

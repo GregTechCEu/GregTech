@@ -11,7 +11,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.WatchedFluidTank;

@@ -29,7 +29,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.function.LongSupplier;
 
 public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic {
 
@@ -46,7 +45,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private boolean allowOverclocking = true;
     protected int parallelRecipesPerformed;
     private long overclockVoltage = 0;
-    private LongSupplier overclockPolicy = this::getMaxVoltage;
 
     protected int progressTime;
     protected int maxProgressTime;
@@ -544,7 +542,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         setMaxProgress(resultOverclock[1]);
         this.recipeEUt = resultOverclock[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
-        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), random, GTUtility.getTierByVoltage(recipeEUt)));
+        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt)));
         if (this.wasActiveAndNeedsUpdate) {
             this.wasActiveAndNeedsUpdate = false;
         } else {
@@ -647,7 +645,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     public void setOverclockVoltage(final long overclockVoltage) {
-        this.overclockPolicy = this::getOverclockVoltage;
         this.overclockVoltage = overclockVoltage;
         this.allowOverclocking = (overclockVoltage != 0);
         metaTileEntity.markDirty();

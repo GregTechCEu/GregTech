@@ -15,7 +15,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.api.util.VirtualTankRegistry;
