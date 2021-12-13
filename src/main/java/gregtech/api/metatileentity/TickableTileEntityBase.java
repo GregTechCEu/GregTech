@@ -1,6 +1,6 @@
 package gregtech.api.metatileentity;
 
-import gregtech.api.util.GTUtility;
+import gregtech.api.GTValues;
 import net.minecraft.util.ITickable;
 
 public abstract class TickableTileEntityBase extends SyncedTileEntityBase implements ITickable {
@@ -8,7 +8,7 @@ public abstract class TickableTileEntityBase extends SyncedTileEntityBase implem
     private long timer = 0L;
 
     // Create an offset [0,20) to distribute ticks more evenly
-    private final int offset = GTUtility.getRandomIntXSTR(20);
+    private final int offset = GTValues.RNG.nextInt(20);
 
     public boolean isFirstTick() {
         return timer == 0;

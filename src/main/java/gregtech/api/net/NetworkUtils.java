@@ -3,6 +3,7 @@ package gregtech.api.net;
 import gregtech.api.GTValues;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -27,6 +28,10 @@ public class NetworkUtils {
 
     public static TileEntity getTileEntityServer(int dimension, BlockPos pos) {
         return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension).getTileEntity(pos);
+    }
+
+    public static IBlockState getIBlockStateServer(int dimension, BlockPos pos) {
+        return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension).getBlockState(pos);
     }
 
     public static FMLProxyPacket packet2proxy(IPacket packet) {

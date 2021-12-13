@@ -233,11 +233,17 @@ public class TraceabilityPredicate {
             if (toolTips != null) {
                 toolTips.forEach(tip->result.add(I18n.format(tip)));
             }
-            if (minGlobalCount != -1) {
-                result.add(I18n.format("gregtech.multiblock.pattern.error.limited.1", minGlobalCount));
-            }
-            if (maxGlobalCount != -1) {
-                result.add(I18n.format("gregtech.multiblock.pattern.error.limited.0", maxGlobalCount));
+            if (minGlobalCount == maxGlobalCount && maxGlobalCount != -1) {
+                result.add(I18n.format("gregtech.multiblock.pattern.error.limited_exact", minGlobalCount));
+            } else if (minGlobalCount != maxGlobalCount && minGlobalCount != -1 && maxGlobalCount != -1) {
+                result.add(I18n.format("gregtech.multiblock.pattern.error.limited_within", minGlobalCount, maxGlobalCount));
+            } else {
+                if (minGlobalCount != -1) {
+                    result.add(I18n.format("gregtech.multiblock.pattern.error.limited.1", minGlobalCount));
+                }
+                if (maxGlobalCount != -1) {
+                    result.add(I18n.format("gregtech.multiblock.pattern.error.limited.0", maxGlobalCount));
+                }
             }
             if (minLayerCount != -1) {
                 result.add(I18n.format("gregtech.multiblock.pattern.error.limited.3", minLayerCount));

@@ -23,11 +23,11 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.FluidKey;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
-import gregtech.core.hooks.BloomRenderLayerHooks;
+import gregtech.client.utils.BloomEffectUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -206,7 +206,7 @@ public abstract class MetaTileEntity implements ICoverable {
 
     @SideOnly(Side.CLIENT)
     public boolean canRenderInLayer(BlockRenderLayer renderLayer) {
-        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED || renderLayer == BloomRenderLayerHooks.getRealBloomLayer();
+        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED || renderLayer == BloomEffectUtil.getRealBloomLayer();
     }
 
     @SideOnly(Side.CLIENT)

@@ -16,11 +16,10 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.render.SimpleSidedCubeRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.common.covers.filter.FluidFilterContainer;
-import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -43,7 +42,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Function;
 import java.util.function.IntSupplier;
-import java.util.function.Predicate;
 
 public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 

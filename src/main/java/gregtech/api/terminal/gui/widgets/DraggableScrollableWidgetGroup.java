@@ -6,7 +6,7 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.IDraggable;
 import gregtech.api.util.Position;
-import gregtech.api.util.RenderUtil;
+import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
 import gregtech.common.ConfigHolder;
 import net.minecraft.util.math.MathHelper;

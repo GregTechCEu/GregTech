@@ -6,6 +6,7 @@ import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.mc1120.item.MCItemStack;
 import crafttweaker.mc1120.liquid.MCLiquidStack;
+import gregtech.api.GTValues;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import stanhebben.zenscript.annotations.Optional;
@@ -45,8 +46,8 @@ public class CTRecipe {
     }
 
     @ZenMethod
-    public List<IItemStack> getResultItemOutputs(@Optional(valueLong = -1) long randomSeed, @Optional(valueLong = 1) int tier) {
-        return this.backingRecipe.getResultItemOutputs(Integer.MAX_VALUE, randomSeed == -1L ? new Random() : new Random(randomSeed), tier).stream()
+    public List<IItemStack> getResultItemOutputs(@Optional(valueLong = 1) int tier) {
+        return this.backingRecipe.getResultItemOutputs(Integer.MAX_VALUE, tier).stream()
                 .map(MCItemStack::new)
                 .collect(Collectors.toList());
     }

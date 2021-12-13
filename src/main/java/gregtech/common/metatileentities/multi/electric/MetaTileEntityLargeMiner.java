@@ -26,9 +26,8 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
@@ -149,7 +148,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), this.minerLogic.isWorking(), this.isWorkingEnabled());
+        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.minerLogic.isWorking(), this.isWorkingEnabled());
         minerLogic.renderPipe(renderState, translation, pipeline);
     }
 
@@ -173,7 +172,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                         .or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1))
                         .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(1))
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setPreviewCount(1)))
-                .where('F', states(MetaBlocks.FRAMES.get(getMaterial()).getDefaultState()))
+                .where('F', states(MetaBlocks.FRAMES.get(getMaterial()).getBlock(getMaterial())))
                 .where('#', any())
                 .build();
     }
@@ -287,7 +286,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         if (this.tier == 5)
             return Textures.LARGE_MINER_OVERLAY_ADVANCED;
         if (this.tier == 6)

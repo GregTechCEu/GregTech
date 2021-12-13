@@ -149,9 +149,6 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     protected int getModelIndex(ItemStack itemStack) {
         T metaValueItem = getItem(itemStack);
-        if (metaValueItem != null && metaValueItem.getModelIndexProvider() != null) {
-            return metaValueItem.getModelIndexProvider().getModelIndex(itemStack);
-        }
 
         // Electric Items
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
@@ -654,7 +651,6 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         private final List<IItemBehaviour> behaviours = new ArrayList<>();
         private IItemUseManager useManager;
         private ItemUIFactory uiManager;
-        private IItemModelIndexProvider modelIndexProvider;
         private IItemColorProvider colorProvider;
         private IItemDurabilityManager durabilityManager;
         private IEnchantabilityHelper enchantabilityHelper;
@@ -775,9 +771,6 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                 if (itemComponent instanceof IItemColorProvider) {
                     this.colorProvider = (IItemColorProvider) itemComponent;
                 }
-                if (itemComponent instanceof IItemModelIndexProvider) {
-                    this.modelIndexProvider = (IItemModelIndexProvider) itemComponent;
-                }
                 if (itemComponent instanceof IItemBehaviour) {
                     this.behaviours.add((IItemBehaviour) itemComponent);
                     ((IItemBehaviour) itemComponent).onAddedToItem(this);
@@ -828,11 +821,6 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         @Nullable
         public IItemNameProvider getNameProvider() {
             return nameProvider;
-        }
-
-        @Nullable
-        public IItemModelIndexProvider getModelIndexProvider() {
-            return modelIndexProvider;
         }
 
         @Nullable

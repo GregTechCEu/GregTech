@@ -313,21 +313,25 @@ public class ConfigHolder {
             public int bloomStyle = 2;
 
             @Config.Comment({"The brightness after bloom should not exceed this value. It can be used to limit the brightness of highlights " +
-                    "(e.g., daytime).", "This value should be greater than lowBrightnessThreshold.", "Default: 0.7"})
+                    "(e.g., daytime).", "OUTPUT = BACKGROUND + BLOOM * strength * (base + LT + (1 - BACKGROUND_BRIGHTNESS)*({HT}-LT)))", "This value should be greater than lowBrightnessThreshold.", "Default: 1.3"})
             @Config.RangeDouble(min = 0)
-            public double highBrightnessThreshold = 0.7;
+            public double highBrightnessThreshold = 1.3;
 
             @Config.Comment({"The brightness after bloom should not smaller than this value. It can be used to limit the brightness of dusky parts " +
-                    "(e.g., night/caves).", "This value should be smaller than highBrightnessThreshold.", "Default: 0.3"})
+                    "(e.g., night/caves).", "OUTPUT = BACKGROUND + BLOOM * strength * (base + {LT} + (1 - BACKGROUND_BRIGHTNESS)*(HT-{LT})))", "This value should be smaller than highBrightnessThreshold.", "Default: 0.3"})
             @Config.RangeDouble(min = 0)
             public double lowBrightnessThreshold = 0.3;
+
+            @Config.Comment({"The base brightness of the bloom.", "It is similar to strength", "This value should be smaller than highBrightnessThreshold.", "OUTPUT = BACKGROUND + BLOOM * strength * ({base} + LT + (1 - BACKGROUND_BRIGHTNESS)*(HT-LT)))", "Default: 0.3"})
+            @Config.RangeDouble(min = 0)
+            public double baseBrightness = 0;
 
             @Config.Comment({"Mipmap Size.", "Higher values increase quality, but are slower to render.", "Default: 5"})
             @Config.RangeInt(min = 2, max = 5)
             @Config.SlidingOption
             public int nMips = 5;
 
-            @Config.Comment({"Bloom Strength", "Default: 2"})
+            @Config.Comment({"Bloom Strength", "OUTPUT = BACKGROUND + BLOOM * {strength} * (base + LT + (1 - BACKGROUND_BRIGHTNESS)*(HT-LT)))", "Default: 2"})
             @Config.RangeDouble(min = 0)
             public double strength = 2;
 

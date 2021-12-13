@@ -8,18 +8,13 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.pattern.BlockPattern;
-import gregtech.api.pattern.BlockWorldState;
-import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.pattern.TraceabilityPredicate;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.api.pattern.*;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.VariantActiveBlock;
-import gregtech.api.pattern.MultiblockShapeInfo;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -104,13 +99,13 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      * @return The overlay to render on the Multiblock Controller
      */
     @Nonnull
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         return Textures.MULTIBLOCK_WORKABLE_OVERLAY;
     }
 
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getFrontDefaultTexture() {
-        return getFrontOverlay().sprites.get(OrientedOverlayRenderer.OverlayFace.FRONT).getSprite(false, false);
+        return getFrontOverlay().getParticleSprite();
     }
 
     public int getLightValueForPart(IMultiblockPart sourcePart) {

@@ -10,8 +10,8 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -721,7 +721,7 @@ public class MetaTileEntities {
                                                     int startId,
                                                     String name,
                                                     RecipeMap<?> map,
-                                                    OrientedOverlayRenderer texture,
+                                                     ICubeRenderer texture,
                                                     boolean hasFrontFacing,
                                                     Function<Integer, Integer> tankScalingFunction) {
         registerSimpleMetaTileEntity(machines, startId, name, map, texture, hasFrontFacing, MetaTileEntities::gregtechId, tankScalingFunction);
@@ -731,7 +731,7 @@ public class MetaTileEntities {
                                                     int startId,
                                                     String name,
                                                     RecipeMap<?> map,
-                                                    OrientedOverlayRenderer texture,
+                                                     ICubeRenderer texture,
                                                     boolean hasFrontFacing) {
         registerSimpleMetaTileEntity(machines, startId, name, map, texture, hasFrontFacing, GTUtility.defaultTankSizeFunction);
     }
@@ -740,7 +740,7 @@ public class MetaTileEntities {
                                                     int startId,
                                                     String name,
                                                     RecipeMap<?> map,
-                                                    OrientedOverlayRenderer texture,
+                                                    ICubeRenderer texture,
                                                     boolean hasFrontFacing,
                                                     Function<String, ResourceLocation> resourceId,
                                                     Function<Integer, Integer> tankScalingFunction) {

@@ -18,7 +18,7 @@ import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
 import gregtech.api.gui.widgets.PhantomTankWidget;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

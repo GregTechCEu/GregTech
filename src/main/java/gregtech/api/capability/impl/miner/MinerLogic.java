@@ -1,17 +1,17 @@
 package gregtech.api.capability.impl.miner;
 
-
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IMiner;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
@@ -31,7 +31,6 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MinerLogic {
@@ -362,12 +361,12 @@ public class MinerLogic {
      * @param map the recipemap from which to get the drops
      * @param tier the tier at which the operation is performed, used for calculating the chanced output boost
      */
-    protected static void applyTieredHammerNoRandomDrops(Random random, @Nonnull IBlockState blockState, List<ItemStack> drops, int fortuneLevel, @Nonnull RecipeMap<?> map, int tier) {
+    protected static void applyTieredHammerNoRandomDrops(@Nonnull IBlockState blockState, List<ItemStack> drops, int fortuneLevel, @Nonnull RecipeMap<?> map, int tier) {
         ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
         Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0, MatchingMode.IGNORE_FLUIDS);
         if (recipe != null && !recipe.getOutputs().isEmpty()) {
             drops.clear();
-            for (ItemStack outputStack : recipe.getResultItemOutputs(Integer.MAX_VALUE, random, tier)) {
+            for (ItemStack outputStack : recipe.getResultItemOutputs(Integer.MAX_VALUE, tier)) {
                 outputStack = outputStack.copy();
                 if (OreDictUnifier.getPrefix(outputStack) == OrePrefix.crushed) {
                     if (fortuneLevel > 0) {

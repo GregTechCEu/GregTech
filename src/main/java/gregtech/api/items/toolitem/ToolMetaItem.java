@@ -368,7 +368,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             }
             capability.discharge(energyAmount, capability.getTier(), true, false, simulate);
         }
-        if (capability == null || (capability.getCharge() <= 0 || GTUtility.getRandomIntXSTR(100) <= 4)) {
+        if (capability == null || (capability.getCharge() <= 0 || GTValues.RNG.nextInt(100) <= 4)) {
             T toolMetaItem = getItem(stack);
             if (toolMetaItem == null) {
                 return 0;

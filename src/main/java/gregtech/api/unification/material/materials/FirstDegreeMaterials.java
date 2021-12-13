@@ -650,7 +650,7 @@ public class FirstDegreeMaterials {
         WroughtIron = new Material.Builder(335, "wrought_iron")
                 .ingot().fluid()
                 .color(0xC8B4B4).iconSet(METALLIC)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_RING, GENERATE_LONG_ROD, DISABLE_DECOMPOSITION, BLAST_FURNACE_CALCITE_TRIPLE)
+                .flags(EXT_METAL, GENERATE_GEAR, GENERATE_FOIL, GENERATE_ROUND, MORTAR_GRINDABLE, GENERATE_RING, GENERATE_LONG_ROD, DISABLE_DECOMPOSITION, BLAST_FURNACE_CALCITE_TRIPLE)
                 .components(Iron, 1)
                 .toolStats(6.0f, 3.5f, 384, 21)
                 .fluidPipeProperties(2387, 30, true)
@@ -732,17 +732,9 @@ public class FirstDegreeMaterials {
                 .blastTemp(4500, GasTier.HIGH, VA[LuV], 900)
                 .build();
 
-        Tenorite = new Material.Builder(345, "tenorite")
-                .dust(1).ore()
-                .color(0x606060)
-                .components(Copper, 1, Oxygen, 1)
-                .build();
+        // Free ID 345
 
-        Cuprite = new Material.Builder(346, "cuprite")
-                .dust().ore()
-                .color(0x770000).iconSet(RUBY)
-                .components(Copper, 2, Oxygen, 1)
-                .build();
+        // Free ID 346
 
         Bornite = new Material.Builder(347, "bornite")
                 .dust(1).ore()

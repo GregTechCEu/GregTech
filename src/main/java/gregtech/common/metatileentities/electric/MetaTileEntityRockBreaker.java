@@ -7,8 +7,8 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 
 public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
 
-    public MetaTileEntityRockBreaker(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier) {
+    public MetaTileEntityRockBreaker(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier) {
         super(metaTileEntityId, recipeMap, renderer, tier, true);
     }
 

@@ -1,10 +1,12 @@
 package gregtech.api;
 
 import gregtech.api.util.XSTR;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.time.LocalDate;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
@@ -44,7 +46,7 @@ public class GTValues {
      */
     public static final short W = OreDictionary.WILDCARD_VALUE;
 
-    public static final XSTR RNG = new XSTR();
+    public static final Random RNG = new XSTR();
 
     /**
      * The Voltage Tiers. Use this Array instead of the old named Voltage Variables
@@ -105,6 +107,13 @@ public class GTValues {
             MODID_COFH = "cofhcore",
             MODID_APPENG = "appliedenergistics2",
             MODID_JEI = "jei";
+
+    private static Boolean isClient;
+
+    public static boolean isClientSide() {
+        if (isClient == null) isClient = FMLCommonHandler.instance().getSide().isClient();
+        return isClient;
+    }
 
     //because forge is too fucking retarded to cache results or at least do not create fucking
     //immutable collections every time you retrieve indexed mod list

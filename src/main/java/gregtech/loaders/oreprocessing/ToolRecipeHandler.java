@@ -492,15 +492,6 @@ public class ToolRecipeHandler {
 
     private static void registerProspectorRecipes() {
         for (MetaValueItem batteryItem : batteryItems[GTValues.LV]) {
-            ModHandler.addShapedEnergyTransferRecipe("scanner_" + batteryItem.unlocalizedName, MetaItems.SCANNER.getStackForm(),
-                    batteryItem::isItemEqual, true, true,
-                    "DGD", "CGC", "SBS",
-                    'D', new UnificationEntry(OrePrefix.plate, Materials.Diamond),
-                    'G', new UnificationEntry(OrePrefix.paneGlass),
-                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic),
-                    'S', new UnificationEntry(OrePrefix.plate, Materials.Steel),
-                    'B', batteryItem.getStackForm());
-
             ModHandler.addShapedEnergyTransferRecipe("prospector_lv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_LV.getStackForm(),
                     batteryItem::isItemEqual, true, true,
                     "EPS", "CDC", "PBP",

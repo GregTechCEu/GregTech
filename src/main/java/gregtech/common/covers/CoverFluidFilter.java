@@ -14,7 +14,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.render.SimpleOverlayRenderer;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.api.util.GTUtility;
 import gregtech.common.covers.filter.FluidFilter;
 import gregtech.common.covers.filter.FluidFilterWrapper;

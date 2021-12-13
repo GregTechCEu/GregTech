@@ -2,7 +2,7 @@ package gregtech.api.capability.impl.miner;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.render.ICubeRenderer;
+import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -54,7 +54,7 @@ public class MultiblockMinerLogic extends MinerLogic {
     @Override
     protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, @Nonnull IBlockState blockState) {
         if (!isSilkTouchMode) // 3X the ore compared to the single blocks
-            applyTieredHammerNoRandomDrops(world.rand, blockState, blockDrops, 3, this.blockDropRecipeMap, this.voltageTier);
+            applyTieredHammerNoRandomDrops(blockState, blockDrops, 3, this.blockDropRecipeMap, this.voltageTier);
         else
             super.getRegularBlockDrops(blockDrops, world, blockToMine, blockState);
     }

@@ -3,7 +3,7 @@ package gregtech.common;
 import gregtech.GregTechMod;
 import gregtech.api.GTValues;
 import gregtech.common.entities.DynamiteEntity;
-import gregtech.common.render.entity.DynamiteRenderer;
+import gregtech.client.renderer.handler.DynamiteRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
