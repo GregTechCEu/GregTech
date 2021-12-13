@@ -123,6 +123,7 @@ public class WorldGenRegistry {
     public void reinitializeRegisteredVeins() throws IOException {
         GTLog.logger.info("Reloading ore generation files from config...");
         registeredVeinDefinitions.clear();
+        registeredBedrockVeinDefinitions.clear();
         oreVeinCache.clear();
         Path configPath = Loader.instance().getConfigDir().toPath().resolve(GTValues.MODID);
         // The Path for the file used to name dimensions for the JEI ore gen page
