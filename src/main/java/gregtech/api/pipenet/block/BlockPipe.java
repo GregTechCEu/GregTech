@@ -162,8 +162,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
     @Override
     public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
+        if (worldIn.isRemote || ConfigHolder.machines.gt6StylePipesCables) return;
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
-        if (pipeTile != null && !worldIn.isRemote) {
+        if (pipeTile != null) {
             EnumFacing facing = null;
             for (EnumFacing facing1 : EnumFacing.values()) {
                 if (GTUtility.arePosEqual(fromPos, pos.offset(facing1))) {
@@ -174,7 +175,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             if (facing == null) throw new NullPointerException("Facing is null");
             boolean open = pipeTile.isConnectionOpenAny(facing);
             boolean canConnect = canConnect(pipeTile, facing);
-            if (!open && canConnect && !ConfigHolder.machines.gt6StylePipesCables && state.getBlock() != blockIn)
+            if (!open && canConnect && state.getBlock() != blockIn)
                 pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, false, false);
             if (open && !canConnect)
                 pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, true, false);
@@ -305,11 +306,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true)) {
                 if (!entityPlayer.world.isRemote) {
                     boolean isOpen = pipeTile.isConnectionOpen(AttachmentType.PIPE, coverSide);
-                    if (isOpen || canConnect(pipeTile, coverSide)) {
-                        pipeTile.setConnectionBlocked(AttachmentType.PIPE, coverSide, isOpen, false);
-                        wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
-                        IToolStats.onOtherUse(stack, world, pos);
-                    }
+                    pipeTile.setConnectionBlocked(AttachmentType.PIPE, coverSide, isOpen, false);
+                    wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
+                    IToolStats.onOtherUse(stack, world, pos);
                 }
                 return 1;
             }
