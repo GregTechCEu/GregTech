@@ -3130,80 +3130,65 @@ gregtech.machine.hull.uxv.name=UXV Machine Hull
 gregtech.machine.hull.max.name=MAX Machine Hull
 
 # Battery buffers
-gregtech.machine.battery_buffer.ulv.1.name=Ultra Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.ulv.4.name=Ultra Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.ulv.8.name=Ultra Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.ulv.16.name=Ultra Low Voltage Battery Buffer
+gregtech.machine.battery_buffer.ulv.4.name=Ultra Low Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.ulv.8.name=Ultra Low Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.ulv.16.name=Ultra Low Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.lv.1.name=Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.lv.4.name=Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.lv.8.name=Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.lv.16.name=Low Voltage Battery Buffer
+gregtech.machine.battery_buffer.lv.4.name=Low Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.lv.8.name=Low Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.lv.16.name=Low Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.mv.1.name=Medium Voltage Battery Buffer
-gregtech.machine.battery_buffer.mv.4.name=Medium Voltage Battery Buffer
-gregtech.machine.battery_buffer.mv.8.name=Medium Voltage Battery Buffer
-gregtech.machine.battery_buffer.mv.16.name=Medium Voltage Battery Buffer
+gregtech.machine.battery_buffer.mv.4.name=Medium Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.mv.8.name=Medium Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.mv.16.name=Medium Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.hv.1.name=High Voltage Battery Buffer
-gregtech.machine.battery_buffer.hv.4.name=High Voltage Battery Buffer
-gregtech.machine.battery_buffer.hv.8.name=High Voltage Battery Buffer
-gregtech.machine.battery_buffer.hv.16.name=High Voltage Battery Buffer
+gregtech.machine.battery_buffer.hv.4.name=High Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.hv.8.name=High Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.hv.16.name=High Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.ev.1.name=Extreme Voltage Battery Buffer
-gregtech.machine.battery_buffer.ev.4.name=Extreme Voltage Battery Buffer
-gregtech.machine.battery_buffer.ev.8.name=Extreme Voltage Battery Buffer
-gregtech.machine.battery_buffer.ev.16.name=Extreme Voltage Battery Buffer
+gregtech.machine.battery_buffer.ev.4.name=Extreme Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.ev.8.name=Extreme Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.ev.16.name=Extreme Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.iv.1.name=Insane Voltage Battery Buffer
-gregtech.machine.battery_buffer.iv.4.name=Insane Voltage Battery Buffer
-gregtech.machine.battery_buffer.iv.8.name=Insane Voltage Battery Buffer
-gregtech.machine.battery_buffer.iv.16.name=Insane Voltage Battery Buffer
+gregtech.machine.battery_buffer.iv.4.name=Insane Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.iv.8.name=Insane Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.iv.16.name=Insane Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.luv.1.name=Ludicrous Voltage Battery Buffer
-gregtech.machine.battery_buffer.luv.4.name=Ludicrous Voltage Battery Buffer
-gregtech.machine.battery_buffer.luv.8.name=Ludicrous Voltage Battery Buffer
-gregtech.machine.battery_buffer.luv.16.name=Ludicrous Voltage Battery Buffer
+gregtech.machine.battery_buffer.luv.4.name=Ludicrous Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.luv.8.name=Ludicrous Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.luv.16.name=Ludicrous Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.zpm.1.name=ZPM Voltage Battery Buffer
-gregtech.machine.battery_buffer.zpm.4.name=ZPM Voltage Battery Buffer
-gregtech.machine.battery_buffer.zpm.8.name=ZPM Voltage Battery Buffer
-gregtech.machine.battery_buffer.zpm.16.name=ZPM Voltage Battery Buffer
+gregtech.machine.battery_buffer.zpm.4.name=ZPM Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.zpm.8.name=ZPM Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.zpm.16.name=ZPM Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uv.1.name=Ultimate Voltage Battery Buffer
-gregtech.machine.battery_buffer.uv.4.name=Ultimate Voltage Battery Buffer
-gregtech.machine.battery_buffer.uv.8.name=Ultimate Voltage Battery Buffer
-gregtech.machine.battery_buffer.uv.16.name=Ultimate Voltage Battery Buffer
+gregtech.machine.battery_buffer.uv.4.name=Ultimate Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uv.8.name=Ultimate Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uv.16.name=Ultimate Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uhv.1.name=UHV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uhv.4.name=UHV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uhv.8.name=UHV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uhv.16.name=UHV Voltage Battery Buffer
+gregtech.machine.battery_buffer.uhv.4.name=UHV Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uhv.8.name=UHV Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uhv.16.name=UHV Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uev.1.name=UEV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uev.4.name=UEV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uev.8.name=UEV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uev.16.name=UEV Voltage Battery Buffer
+gregtech.machine.battery_buffer.uev.4.name=UEV Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uev.8.name=UEV Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uev.16.name=UEV Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uiv.1.name=UIV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uiv.4.name=UIV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uiv.8.name=UIV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uiv.16.name=UIV Voltage Battery Buffer
+gregtech.machine.battery_buffer.uiv.4.name=UIV Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uiv.8.name=UIV Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uiv.16.name=UIV Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.umv.1.name=UMV Voltage Battery Buffer
-gregtech.machine.battery_buffer.umv.4.name=UMV Voltage Battery Buffer
-gregtech.machine.battery_buffer.umv.8.name=UMV Voltage Battery Buffer
-gregtech.machine.battery_buffer.umv.16.name=UMV Voltage Battery Buffer
+gregtech.machine.battery_buffer.umv.4.name=UMV Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.umv.8.name=UMV Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.umv.16.name=UMV Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uxv.1.name=UXV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uxv.4.name=UXV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uxv.8.name=UXV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uxv.16.name=UXV Voltage Battery Buffer
+gregtech.machine.battery_buffer.uxv.4.name=UXV Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uxv.8.name=UXV Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uxv.16.name=UXV Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.max.1.name=MAX Voltage Battery Buffer
-gregtech.machine.battery_buffer.max.4.name=MAX Voltage Battery Buffer
-gregtech.machine.battery_buffer.max.8.name=MAX Voltage Battery Buffer
-gregtech.machine.battery_buffer.max.16.name=MAX Voltage Battery Buffer
+gregtech.machine.battery_buffer.max.4.name=MAX Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.max.8.name=MAX Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.max.16.name=MAX Voltage 16x Battery Buffer
 
 # Transformers
 gregtech.machine.transformer.tooltip_tool_usage=Use Soft Hammer to invert (Starts as Transform Down)
@@ -3266,21 +3251,21 @@ gregtech.machine.diode.uxv.name=UXV Voltage Diode
 gregtech.machine.diode.max.name=MAX Voltage Diode
 
 # Chargers
-gregtech.machine.charger.ulv.name=Ultra Low Voltage Battery Charger
-gregtech.machine.charger.lv.name=Low Voltage Battery Charger
-gregtech.machine.charger.mv.name=Medium Voltage Battery Charger
-gregtech.machine.charger.hv.name=High Voltage Battery Charger
-gregtech.machine.charger.ev.name=Extreme Voltage Battery Charger
-gregtech.machine.charger.iv.name=Insane Voltage Battery Charger
-gregtech.machine.charger.luv.name=Ludicrous Voltage Battery Charger
-gregtech.machine.charger.zpm.name=ZPM Voltage Battery Charger
-gregtech.machine.charger.uv.name=Ultimate Voltage Battery Charger
-gregtech.machine.charger.uhv.name=UHV Voltage Battery Charger
-gregtech.machine.charger.uev.name=UEV Voltage Battery Charger
-gregtech.machine.charger.uiv.name=UIV Voltage Battery Charger
-gregtech.machine.charger.umv.name=UMV Voltage Battery Charger
-gregtech.machine.charger.uxv.name=UXV Voltage Battery Charger
-gregtech.machine.charger.max.name=MAX Voltage Battery Charger
+gregtech.machine.charger.ulv.name=Ultra Low Voltage Turbo Charger
+gregtech.machine.charger.lv.name=Low Voltage Turbo Charger
+gregtech.machine.charger.mv.name=Medium Voltage Turbo Charger
+gregtech.machine.charger.hv.name=High Voltage Turbo Charger
+gregtech.machine.charger.ev.name=Extreme Voltage Turbo Charger
+gregtech.machine.charger.iv.name=Insane Voltage Turbo Charger
+gregtech.machine.charger.luv.name=Ludicrous Voltage Turbo Charger
+gregtech.machine.charger.zpm.name=ZPM Voltage Turbo Charger
+gregtech.machine.charger.uv.name=Ultimate Voltage Turbo Charger
+gregtech.machine.charger.uhv.name=UHV Voltage Turbo Charger
+gregtech.machine.charger.uev.name=UEV Voltage Turbo Charger
+gregtech.machine.charger.uiv.name=UIV Voltage Turbo Charger
+gregtech.machine.charger.umv.name=UMV Voltage Turbo Charger
+gregtech.machine.charger.uxv.name=UXV Voltage Turbo Charger
+gregtech.machine.charger.max.name=MAX Voltage Turbo Charger
 
 # Pumps
 gregtech.machine.pump.tooltip_range=Pumping Area: %,dx%,d

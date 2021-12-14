@@ -5,6 +5,7 @@ import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.recipes.DummyRecipe;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
@@ -427,13 +428,15 @@ public class ModHandler {
             // First try to get ItemMaterialInfo
             ItemMaterialInfo info = OreDictUnifier.getMaterialInfo(stack);
             if (info != null) {
-                for (MaterialStack ms : info.getMaterials()) func.accept(ms, lastChar);
+                for (MaterialStack ms : info.getMaterials()) {
+                    if (!(ms.material instanceof MarkerMaterial)) func.accept(ms, lastChar);
+                }
                 continue;
             }
 
             // Then try to get a single Material (UnificationEntry needs this, for example)
             MaterialStack materialStack = OreDictUnifier.getMaterial(stack);
-            if (materialStack != null) func.accept(materialStack, lastChar);
+            if (materialStack != null && !(materialStack.material instanceof MarkerMaterial)) func.accept(materialStack, lastChar);
 
             // Gather any secondary materials if this item has an OrePrefix
             OrePrefix prefix = OreDictUnifier.getPrefix(stack);
