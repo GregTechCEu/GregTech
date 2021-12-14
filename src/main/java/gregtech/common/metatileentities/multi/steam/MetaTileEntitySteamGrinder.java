@@ -36,6 +36,13 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
                 super.applyParallelBonus(builder);
                 if (builder.getOutputs().size() > 0) {
                     ItemStack output = builder.getOutputs().get(0).copy();
+                    for(int i = 1; i < builder.getOutputs().size(); i++) {
+                        ItemStack tempOutput = builder.getOutputs().get(i).copy();
+                        if(tempOutput.isItemEqual(output)) {
+                            int newSize = output.getCount() + tempOutput.getCount();
+                            output.setCount(newSize);
+                        }
+                    }
                     builder.clearOutputs();
                     builder.clearChancedOutput();
                     builder.outputs(output);
