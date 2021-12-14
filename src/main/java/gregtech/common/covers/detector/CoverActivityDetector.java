@@ -18,7 +18,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 
 public class CoverActivityDetector extends CoverBehavior implements ITickable {
 
-    private boolean isInverted;
+    protected boolean isInverted;
 
     public CoverActivityDetector(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
@@ -51,7 +51,7 @@ public class CoverActivityDetector extends CoverBehavior implements ITickable {
         return EnumActionResult.SUCCESS;
     }
 
-    private void setInverted() {
+    protected void setInverted() {
         this.isInverted = !this.isInverted;
         if (!this.coverHolder.getWorld().isRemote) {
             this.coverHolder.writeCoverData(this, 100, b -> b.writeBoolean(this.isInverted));

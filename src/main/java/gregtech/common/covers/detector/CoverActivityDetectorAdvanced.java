@@ -7,27 +7,19 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IWorkable;
-import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
 
-public class CoverActivityDetectorAdvanced extends CoverBehavior implements ITickable {
-
-    private boolean isInverted;
+public class CoverActivityDetectorAdvanced extends CoverActivityDetector {
 
     public CoverActivityDetectorAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
-        this.isInverted = false;
-    }
-
-    @Override
-    public boolean canAttach() {
-        return coverHolder.getCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, attachedSide) != null;
     }
 
     @Override
@@ -51,15 +43,6 @@ public class CoverActivityDetectorAdvanced extends CoverBehavior implements ITic
         return EnumActionResult.SUCCESS;
     }
 
-    private void setInverted() {
-        this.isInverted = !this.isInverted;
-        if (!this.coverHolder.getWorld().isRemote) {
-            this.coverHolder.writeCoverData(this, 100, b -> b.writeBoolean(this.isInverted));
-            this.coverHolder.notifyBlockUpdate();
-            this.coverHolder.markDirty();
-        }
-    }
-
     @Override
     public void update() {
         if (this.coverHolder.getOffsetTimer() % 20 != 0)
@@ -77,32 +60,5 @@ public class CoverActivityDetectorAdvanced extends CoverBehavior implements ITic
             outputAmount = 15 - outputAmount;
 
         setRedstoneSignalOutput(outputAmount);
-    }
-
-    @Override
-    public boolean canConnectRedstone() {
-        return true;
-    }
-
-    @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("isInverted", this.isInverted);
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
-        this.isInverted = tagCompound.getBoolean("isInverted");
-    }
-
-    @Override
-    public void writeInitialSyncData(PacketBuffer packetBuffer) {
-        packetBuffer.writeBoolean(this.isInverted);
-    }
-
-    @Override
-    public void readInitialSyncData(PacketBuffer packetBuffer) {
-        this.isInverted = packetBuffer.readBoolean();
     }
 }
