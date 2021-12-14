@@ -26,7 +26,7 @@ public class FuelRecipeBuilder extends RecipeBuilder<FuelRecipeBuilder> {
 
     @Override
     public FuelRecipeBuilder EUt(int EUt) {
-        return super.EUt(EUt * -1);
+        return super.EUt(Math.abs(EUt) * -1);
     }
 
     public ValidationResult<Recipe> build() {
