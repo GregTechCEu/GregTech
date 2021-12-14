@@ -65,7 +65,7 @@ public class MaterialFlags {
             new MaterialFlag.Builder(3, "decomposition_by_centrifuging").build();
 
     /**
-     * Disables decomposition recipe generation for this material and all materials that has it as component
+     * Disables decomposition recipe generation for this material
      */
     public static final MaterialFlag DISABLE_DECOMPOSITION =
             new MaterialFlag.Builder(4, "disable_decomposition").build();

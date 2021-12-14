@@ -25,6 +25,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -125,9 +126,40 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
     }
 
     @Override
+    public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
+        StoneType stoneType = state.getValue(STONE_TYPE);
+        if (stoneType.shouldBeDroppedAsItem) {
+            super.getDrops(drops, world, pos, state, fortune);
+        } else {
+            super.getDrops(drops, world, pos, this.getDefaultState(), fortune);
+        }
+    }
+
+    @Override
+    @Nonnull
+    @SuppressWarnings("deprecation")
+    public ItemStack getItem(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+        StoneType stoneType = state.getValue(STONE_TYPE);
+        if (stoneType.shouldBeDroppedAsItem) {
+            return super.getItem(worldIn, pos, state);
+        }
+        return new ItemStack(this, 1, 0);
+    }
+
+    @Override
+    @Nonnull
+    protected ItemStack getSilkTouchDrop(IBlockState state) {
+        StoneType stoneType = state.getValue(STONE_TYPE);
+        if (stoneType.shouldBeDroppedAsItem) {
+            return super.getSilkTouchDrop(state);
+        }
+        return super.getSilkTouchDrop(this.getDefaultState());
+    }
+
+    @Override
     public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
         if (tab == CreativeTabs.SEARCH) {
-            blockState.getValidStates().forEach(blockState -> list.add(getItem(blockState)));
+            blockState.getValidStates().stream().filter(state -> state.getValue(STONE_TYPE).shouldBeDroppedAsItem).forEach(blockState -> list.add(getItem(blockState)));
         } else if (tab == GregTechAPI.TAB_GREGTECH_ORES) {
             list.add(getItem(getDefaultState()));
         }

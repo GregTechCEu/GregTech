@@ -148,21 +148,21 @@ public class OrePrefix {
     // made of 3 Ingots.
     public static final OrePrefix toolHeadSense = new OrePrefix("toolHeadSense", M * 3, null, MaterialIconType.toolHeadSense, ENABLE_UNIFICATION, hasToolProperty);
     // made of 2 Ingots.
-    public static final OrePrefix toolHeadFile = new OrePrefix("toolHeadFile", M * 2, null, MaterialIconType.toolHeadFile, ENABLE_UNIFICATION, hasToolProperty);
+    public static final OrePrefix toolHeadFile = new OrePrefix("toolHeadFile", M * 2, null, MaterialIconType.toolHeadFile, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
     // made of 6 Ingots.
-    public static final OrePrefix toolHeadHammer = new OrePrefix("toolHeadHammer", M * 6, null, MaterialIconType.toolHeadHammer, ENABLE_UNIFICATION, hasToolProperty);
+    public static final OrePrefix toolHeadHammer = new OrePrefix("toolHeadHammer", M * 6, null, MaterialIconType.toolHeadHammer, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
     // made of 2 Ingots.
-    public static final OrePrefix toolHeadSaw = new OrePrefix("toolHeadSaw", M * 2, null, MaterialIconType.toolHeadSaw, ENABLE_UNIFICATION, hasToolProperty);
+    public static final OrePrefix toolHeadSaw = new OrePrefix("toolHeadSaw", M * 2, null, MaterialIconType.toolHeadSaw, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
     // made of 4 Ingots.
-    public static final OrePrefix toolHeadBuzzSaw = new OrePrefix("toolHeadBuzzSaw", M * 4, null, MaterialIconType.toolHeadBuzzSaw, ENABLE_UNIFICATION, hasToolProperty);
+    public static final OrePrefix toolHeadBuzzSaw = new OrePrefix("toolHeadBuzzSaw", M * 4, null, MaterialIconType.toolHeadBuzzSaw, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
     // made of 1 Ingots.
-    public static final OrePrefix toolHeadScrewdriver = new OrePrefix("toolHeadScrewdriver", M, null, MaterialIconType.toolHeadScrewdriver, ENABLE_UNIFICATION, hasToolProperty);
+    public static final OrePrefix toolHeadScrewdriver = new OrePrefix("toolHeadScrewdriver", M, null, MaterialIconType.toolHeadScrewdriver, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
     // made of 4 Ingots.
     public static final OrePrefix toolHeadDrill = new OrePrefix("toolHeadDrill", M * 4, null, MaterialIconType.toolHeadDrill, ENABLE_UNIFICATION, hasToolProperty);
     // made of 2 Ingots.
-    public static final OrePrefix toolHeadChainsaw = new OrePrefix("toolHeadChainsaw", M * 2, null, MaterialIconType.toolHeadChainsaw, ENABLE_UNIFICATION, hasToolProperty);
+    public static final OrePrefix toolHeadChainsaw = new OrePrefix("toolHeadChainsaw", M * 2, null, MaterialIconType.toolHeadChainsaw, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
     // made of 4 Ingots.
-    public static final OrePrefix toolHeadWrench = new OrePrefix("toolHeadWrench", M * 4, null, MaterialIconType.toolHeadWrench, ENABLE_UNIFICATION, hasToolProperty);
+    public static final OrePrefix toolHeadWrench = new OrePrefix("toolHeadWrench", M * 4, null, MaterialIconType.toolHeadWrench, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
     // made of 5 Ingots.
     public static final OrePrefix turbineBlade = new OrePrefix("turbineBlade", M * 10, null, MaterialIconType.turbineBlade, ENABLE_UNIFICATION, hasToolProperty.and(m -> m.hasFlags(GENERATE_BOLT_SCREW, GENERATE_PLATE)));
 
@@ -241,6 +241,7 @@ public class OrePrefix {
 
     public static class Conditions {
         public static final Predicate<Material> hasToolProperty = mat -> mat.hasProperty(PropertyKey.TOOL);
+        public static final Predicate<Material> hasNoCraftingToolProperty = mat -> mat.hasProperty(PropertyKey.TOOL) && !mat.getProperty(PropertyKey.TOOL).getShouldIgnoreCraftingTools();
         public static final Predicate<Material> hasOreProperty = mat -> mat.hasProperty(PropertyKey.ORE);
         public static final Predicate<Material> hasGemProperty = mat -> mat.hasProperty(PropertyKey.GEM);
         public static final Predicate<Material> hasDustProperty = mat -> mat.hasProperty(PropertyKey.DUST);

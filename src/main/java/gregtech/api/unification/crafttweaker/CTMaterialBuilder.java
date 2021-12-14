@@ -8,6 +8,7 @@ import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialIconSet;
+import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.stack.MaterialStack;
 import net.minecraft.enchantment.Enchantment;
 import stanhebben.zenscript.annotations.Optional;
@@ -15,7 +16,8 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenConstructor;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.*;
+import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateComponentList;
+import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidType;
 
 @ZenClass("mods.gregtech.material.MaterialBuilder")
 @ZenRegister
@@ -124,8 +126,11 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder blastTemp(int temp) {
-        backingBuilder.blastTemp(temp);
+    public CTMaterialBuilder blastTemp(int temp, @Optional String gasTier, @Optional int eutOverride, @Optional int durationOverride) {
+        BlastProperty.GasTier tier = BlastProperty.validateGasTier(gasTier);
+        if (eutOverride == 0) eutOverride = -1;
+        if (durationOverride == 0) durationOverride = -1;
+        backingBuilder.blastTemp(temp, tier, eutOverride, durationOverride);
         return this;
     }
 
@@ -138,20 +143,10 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder washedIn(String name, @Optional int washedAmount) {
-        return washedIn(validateMaterialName(name), washedAmount);
-    }
-
-    @ZenMethod
     public CTMaterialBuilder washedIn(Material m, @Optional int washedAmount) {
         if (washedAmount == 0) washedAmount = 100;
         if (m != null) backingBuilder.washedIn(m, washedAmount);
         return this;
-    }
-
-    @ZenMethod
-    public CTMaterialBuilder separatedInto(String... names) {
-        return separatedInto(validateMaterialNames("separatedInto", names));
     }
 
     @ZenMethod
@@ -161,19 +156,9 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder addOreByproducts(String... names) {
-        return addOreByproducts(validateMaterialNames("addOreByproducts", names));
-    }
-
-    @ZenMethod
     public CTMaterialBuilder addOreByproducts(Material... materials) {
         if (materials != null) backingBuilder.addOreByproducts(materials);
         return this;
-    }
-
-    @ZenMethod
-    public CTMaterialBuilder oreSmeltInto(String name) {
-        return oreSmeltInto(validateMaterialName(name));
     }
 
     @ZenMethod
@@ -183,19 +168,9 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder polarizesInto(String name) {
-        return polarizesInto(validateMaterialName(name));
-    }
-
-    @ZenMethod
     public CTMaterialBuilder polarizesInto(Material m) {
         if (m != null) backingBuilder.polarizesInto(m);
         return this;
-    }
-
-    @ZenMethod
-    public CTMaterialBuilder arcSmeltInto(String name) {
-        return arcSmeltInto(validateMaterialName(name));
     }
 
     @ZenMethod
@@ -205,19 +180,9 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder macerateInto(String name) {
-        return macerateInto(validateMaterialName(name));
-    }
-
-    @ZenMethod
     public CTMaterialBuilder macerateInto(Material m) {
         if (m != null) backingBuilder.macerateInto(m);
         return this;
-    }
-
-    @ZenMethod
-    public CTMaterialBuilder ingotSmeltInto(String name) {
-        return ingotSmeltInto(validateMaterialName(name));
     }
 
     @ZenMethod

@@ -1,25 +1,24 @@
 package gregtech.api.capability.impl;
 
-import java.util.List;
-import java.util.ArrayList;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
+import java.util.ArrayList;
+import java.util.List;
+
+public class EnergyContainerBatteryCharger extends EnergyContainerHandler {
 
     private final int tier;
 
-    public EnergyContainerBatteryBuffer(MetaTileEntity metaTileEntity, int tier, int inventorySize) {
-        super(metaTileEntity, GTValues.V[tier] * inventorySize * 32L, GTValues.V[tier], inventorySize * 2L, GTValues.V[tier], inventorySize);
-        this.tier = tier;
+    public EnergyContainerBatteryCharger(MetaTileEntity metaTileEntity, int tier, int inventorySize) {
+        super(metaTileEntity, GTValues.V[tier] * 128L, GTValues.V[tier], inventorySize * 4L, 0L, 0L);
+        this. tier = tier;
     }
 
     @Override
@@ -28,7 +27,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
             return 0;
 
         List<IElectricItem> batteries = getNonFullBatteries();
-        long maxAmps = batteries.size() * 2L - amps;
+        long maxAmps = batteries.size() * 4L - amps;
         long usedAmps = Math.min(maxAmps, amperage);
         if (maxAmps <= 0)
             return 0;
@@ -50,7 +49,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
             long distributed = energy / batteries.size();
 
             for (IElectricItem electricItem : batteries) {
-                energy -= electricItem.charge(Math.min(distributed, GTValues.V[electricItem.getTier()] * 2L), getTier(), true, false);
+                energy -= electricItem.charge(Math.min(distributed, GTValues.V[electricItem.getTier()] * 4L), getTier(), true, false);
             }
 
             //Remove energy used and then transfer overflow energy into the internal buffer
@@ -68,45 +67,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
         }
         if (metaTileEntity.getOffsetTimer() % 20 == 0) {
             lastEnergyInputPerSec = energyInputPerSec;
-            lastEnergyOutputPerSec = energyOutputPerSec;
             energyInputPerSec = 0;
-            energyOutputPerSec = 0;
-        }
-
-        EnumFacing outFacing = metaTileEntity.getFrontFacing();
-        TileEntity tileEntity = metaTileEntity.getWorld().getTileEntity(metaTileEntity.getPos().offset(outFacing));
-        if (tileEntity == null) {
-            return;
-        }
-        IEnergyContainer energyContainer = tileEntity.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, outFacing.getOpposite());
-        if (energyContainer == null) {
-            return;
-        }
-
-        long voltage = getOutputVoltage();
-        List<IElectricItem> batteries = getNonEmptyBatteries();
-        if (batteries.size() > 0) {
-            //Prioritize as many packets as available of energy created
-            long internalAmps = Math.abs(Math.min(0, getInternalStorage() / voltage));
-            long genAmps = Math.max(0, batteries.size() - internalAmps);
-            long outAmps = 0L;
-
-            if (genAmps > 0) {
-                outAmps = energyContainer.acceptEnergyFromNetwork(outFacing.getOpposite(), voltage, genAmps);
-                if (outAmps == 0 && internalAmps == 0)
-                    return;
-                energyOutputPerSec += outAmps * voltage;
-            }
-
-            long energy = (outAmps + internalAmps) * voltage;
-            long distributed = energy / batteries.size();
-
-            for (IElectricItem electricItem : batteries) {
-                energy -= electricItem.discharge(distributed, getTier(), false, true, false);
-            }
-
-            //Subtract energy created out of thin air from the buffer
-            setEnergyStored(getInternalStorage() + internalAmps * voltage - energy);
         }
     }
 
@@ -122,20 +83,6 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
             IElectricItem electricItem = getBatteryContainer(batteryStack);
             if (electricItem == null) continue;
             if (electricItem.getCharge() < electricItem.getMaxCharge()) {
-                batteries.add(electricItem);
-            }
-        }
-        return batteries;
-    }
-
-    private List<IElectricItem> getNonEmptyBatteries() {
-        IItemHandlerModifiable inventory = getInventory();
-        List<IElectricItem> batteries = new ArrayList<>();
-        for (int i = 0; i < inventory.getSlots(); i++) {
-            ItemStack batteryStack = inventory.getStackInSlot(i);
-            IElectricItem electricItem = getBatteryContainer(batteryStack);
-            if (electricItem == null) continue;
-            if (electricItem.canProvideChargeExternally() && electricItem.getCharge() > 0) {
                 batteries.add(electricItem);
             }
         }
@@ -188,21 +135,6 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
         if (metaTileEntity instanceof IEnergyChangeListener) {
             ((IEnergyChangeListener) metaTileEntity).onEnergyChanged(this, isInitialChange);
         }
-    }
-
-    @Override
-    public boolean inputsEnergy(EnumFacing side) {
-        return getMetaTileEntity().getFrontFacing() != side;
-    }
-
-    @Override
-    public boolean outputsEnergy(EnumFacing side) {
-        return !inputsEnergy(side);
-    }
-
-    @Override
-    public String getName() {
-        return "BatteryEnergyContainer";
     }
 
     protected IItemHandlerModifiable getInventory() {

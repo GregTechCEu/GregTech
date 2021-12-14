@@ -10,11 +10,11 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.client.renderer.ICubeRenderer;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.electric.*;
 import gregtech.common.metatileentities.electric.multiblockpart.*;
@@ -34,16 +34,8 @@ import gregtech.common.metatileentities.steam.boiler.SteamLavaBoiler;
 import gregtech.common.metatileentities.steam.boiler.SteamSolarBoiler;
 import gregtech.common.metatileentities.steam.multiblockpart.MetaTileEntitySteamHatch;
 import gregtech.common.metatileentities.steam.multiblockpart.MetaTileEntitySteamItemBus;
+import gregtech.common.metatileentities.storage.*;
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
-import gregtech.common.metatileentities.storage.MetaTileEntityBuffer;
-import gregtech.common.metatileentities.storage.MetaTileEntityCrate;
-import gregtech.common.metatileentities.storage.MetaTileEntityCreativeEnergy;
-import gregtech.common.metatileentities.storage.MetaTileEntityDrum;
-import gregtech.common.metatileentities.storage.MetaTileEntityLockedSafe;
-import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
-import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
-import gregtech.common.metatileentities.storage.MetaTileEntityTank;
-import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.HashMap;
@@ -546,9 +538,9 @@ public class MetaTileEntities {
             DIODES[i] = registerMetaTileEntity(1300 + i, diode);
         }
 
-        // Battery Buffer, IDs 1315-1374
-        endPos = GTValues.HT ? BATTERY_BUFFER.length - 1 : Math.min(BATTERY_BUFFER.length - 1, GTValues.UV + 2);
-        int[] batteryBufferSlots = new int[]{1, 4, 9, 16};
+        // Battery Buffer, IDs 1315-1360
+        endPos = GTValues.HT ? BATTERY_BUFFER.length - 1 : Math.min(BATTERY_BUFFER.length - 1, GTValues.UV + 1);
+        int[] batteryBufferSlots = new int[]{4, 8, 16};
         for (int i = 0; i < endPos; i++) {
             BATTERY_BUFFER[i] = new MetaTileEntityBatteryBuffer[batteryBufferSlots.length];
             for (int slot = 0; slot < batteryBufferSlots.length; slot++) {
@@ -559,7 +551,7 @@ public class MetaTileEntities {
         }
 
         // Charger, IDs 1375-1389
-        endPos = GTValues.HT ? CHARGER.length - 1 : Math.min(CHARGER.length - 1, GTValues.UV + 2);
+        endPos = GTValues.HT ? CHARGER.length - 1 : Math.min(CHARGER.length - 1, GTValues.UV + 1);
         for (int i = 0; i < endPos; i++) {
             String chargerId = "charger." + GTValues.VN[i].toLowerCase();
             MetaTileEntityCharger charger = new MetaTileEntityCharger(gregtechId(chargerId), i, 4);

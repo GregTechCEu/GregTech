@@ -369,7 +369,7 @@ public class SecondDegreeMaterials {
                 .gem(1)
                 .color(0x002040).iconSet(FLINT)
                 .flags(NO_SMASHING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING)
-                .toolStats(6, 4, 80, 10)
+                .toolStats(6, 4, 80, 10, true)
                 .build();
 
         Air = new Material.Builder(2050, "air")

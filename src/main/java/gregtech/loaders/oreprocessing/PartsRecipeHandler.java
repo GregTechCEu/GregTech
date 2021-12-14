@@ -340,17 +340,17 @@ public class PartsRecipeHandler {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_ROTOR)
                     .fluidInputs(material.getFluid(L * 4))
-                    .outputs(OreDictUnifier.get(rotorPrefix, material))
+                    .outputs(GTUtility.copy(stack))
                     .duration(120)
                     .EUt(20)
                     .buildAndRegister();
         }
 
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(ingot, material, 5)
+                .input(ingot, material, 4)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_ROTOR)
-                .output(rotor, material)
-                .duration((int) material.getAverageMass() * 5)
+                .outputs(GTUtility.copy(stack))
+                .duration((int) material.getAverageMass() * 4)
                 .EUt(material.getBlastTemperature() >= 2800 ? 256 : 64)
                 .buildAndRegister();
     }
