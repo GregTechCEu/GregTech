@@ -142,7 +142,7 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
-    public static void addTools(Material m, float toolSpeed, float toolAttackDamage, int toolDurability, @Optional int toolEnchantability) {
+    public static void addTools(Material m, float toolSpeed, float toolAttackDamage, int toolDurability, @Optional int toolEnchantability, @Optional boolean shouldIgnoreCraftingTools) {
         if (checkFrozen("add Tools to a material")) return;
         if (toolEnchantability == 0) toolEnchantability = 10;
         if (m.hasProperty(PropertyKey.TOOL)) {
@@ -150,7 +150,8 @@ public class MaterialPropertyExpansion {
             m.getProperty(PropertyKey.TOOL).setToolAttackDamage(toolAttackDamage);
             m.getProperty(PropertyKey.TOOL).setToolDurability(toolDurability);
             m.getProperty(PropertyKey.TOOL).setToolEnchantability(toolEnchantability);
-        } else m.setProperty(PropertyKey.TOOL, new ToolProperty(toolSpeed, toolAttackDamage, toolDurability, toolEnchantability));
+            m.getProperty(PropertyKey.TOOL).setShouldIgnoreCraftingTools(shouldIgnoreCraftingTools);
+        } else m.setProperty(PropertyKey.TOOL, new ToolProperty(toolSpeed, toolAttackDamage, toolDurability, toolEnchantability, shouldIgnoreCraftingTools));
     }
 
     @ZenMethod
