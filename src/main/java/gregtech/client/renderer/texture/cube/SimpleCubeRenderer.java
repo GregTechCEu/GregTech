@@ -21,7 +21,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
 
-public class SimpleCubeRenderer implements ICubeRenderer, IIconRegister {
+public class SimpleCubeRenderer implements ICubeRenderer {
 
     private final String basePath;
 

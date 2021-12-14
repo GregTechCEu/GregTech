@@ -22,7 +22,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class OrientedOverlayRenderer implements ICubeRenderer, IIconRegister {
+public class OrientedOverlayRenderer implements ICubeRenderer {
 
     public enum OverlayFace {
         FRONT, BACK, TOP, BOTTOM, SIDE;

@@ -22,7 +22,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class SimpleOrientedCubeRenderer implements ICubeRenderer, IIconRegister {
+public class SimpleOrientedCubeRenderer implements ICubeRenderer {
 
     private final String basePath;
 

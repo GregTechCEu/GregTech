@@ -2,6 +2,7 @@ package gregtech.client.renderer;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.texture.TextureUtils.IIconRegister;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -9,7 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public interface ICubeRenderer {
+public interface ICubeRenderer extends IIconRegister {
 
     @SideOnly(Side.CLIENT)
     default void render(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {

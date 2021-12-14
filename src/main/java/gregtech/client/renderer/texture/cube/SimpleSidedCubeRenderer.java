@@ -22,7 +22,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class SimpleSidedCubeRenderer implements ICubeRenderer, IIconRegister {
+public class SimpleSidedCubeRenderer implements ICubeRenderer {
 
     public enum RenderSide {
         TOP, BOTTOM, SIDE;
