@@ -751,7 +751,7 @@ public class MetaTileEntities {
             IMultiblockAbilityPart<?> abilityPart = (IMultiblockAbilityPart<?>) sampleMetaTileEntity;
             MultiblockAbility.registerMultiblockAbility(abilityPart.getAbility(), sampleMetaTileEntity);
         }
-        if (sampleMetaTileEntity instanceof MultiblockControllerBase) {
+        if (sampleMetaTileEntity instanceof MultiblockControllerBase && GTValues.isModLoaded(GTValues.MODID_JEI)) {
             MultiblockInfoCategory.registerMultiblock((MultiblockControllerBase) sampleMetaTileEntity);
         }
         GregTechAPI.MTE_REGISTRY.register(id, sampleMetaTileEntity.metaTileEntityId, sampleMetaTileEntity);
