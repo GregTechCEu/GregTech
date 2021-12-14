@@ -87,7 +87,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
 
     public static NBTTagCompound generateResearchNBT(Recipe recipe) {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setString("asslineOutput", recipe.getOutputs().get(0).toString());
+        compound.setTag("asslineOutput", recipe.getOutputs().get(0).serializeNBT());
         return compound;
     }
 }
