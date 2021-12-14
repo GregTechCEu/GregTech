@@ -11,7 +11,7 @@ import codechicken.lib.vec.uv.IconTransformation;
 import codechicken.lib.vec.uv.UVTransformationList;
 import gregtech.api.GTValues;
 import gregtech.client.renderer.ICubeRenderer;
-import gregtech.client.renderer.cclop.GTBlockOperation;
+import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.cclop.UVMirror;
 import gregtech.client.renderer.texture.cube.*;
 import gregtech.client.renderer.texture.custom.ClipboardRenderer;
@@ -21,9 +21,9 @@ import gregtech.client.renderer.texture.custom.TankRenderer;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.custom.CrateRenderer;
 import gregtech.client.renderer.texture.custom.DrumRenderer;
-import gregtech.client.utils.BloomEffectUtil;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -237,11 +237,16 @@ public class Textures {
     public static final SimpleOverlayRenderer COVER_INTERFACE_PROXY = new SimpleOverlayRenderer("cover/cover_interface_proxy");
     public static final SimpleOverlayRenderer COVER_INTERFACE_WIRELESS = new SimpleOverlayRenderer("cover/cover_interface_wireless");
 
+    @SideOnly(Side.CLIENT)
+    public static ThreadLocal<CubeRendererState> RENDER_STATE;
 
     static {
         for (int i = 0; i < VOLTAGE_CASINGS.length; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
             VOLTAGE_CASINGS[i] = new SimpleSidedCubeRenderer("casings/voltage/" + voltageName);
+        }
+        if (GTValues.isClientSide()) {
+            RENDER_STATE = new ThreadLocal<>();
         }
     }
 
@@ -254,18 +259,11 @@ public class Textures {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void renderFace(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite) {
-        if (ops.length > 0 && ops[0] instanceof GTBlockOperation) {
-            GTBlockOperation op = (GTBlockOperation) ops[0];
-            if (op.layer == BloomEffectUtil.BLOOM || !op.shouldSideBeRendered(face, bounds)) {
-                return;
-            }
+    public static void renderFace(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite, BlockRenderLayer layer) {
+        CubeRendererState op =RENDER_STATE.get();
+        if (layer != null && op != null && op.layer != null && (op.layer != layer || !op.shouldSideBeRendered(face, bounds))) {
+            return;
         }
-        renderFaceRaw(renderState, translation, ops, face, bounds, sprite);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static void renderFaceRaw(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite) {
         BlockFace blockFace = blockFaces.get();
         blockFace.loadCuboidFace(bounds, face.getIndex());
         UVTransformationList uvList = new UVTransformationList(new IconTransformation(sprite));
@@ -277,14 +275,4 @@ public class Textures {
         renderState.render();
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void renderFaceBloom(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite) {
-        if (ops.length > 0 && ops[0] instanceof GTBlockOperation) {
-            GTBlockOperation op = (GTBlockOperation) ops[0];
-            if (op.layer != BloomEffectUtil.getRealBloomLayer() || !op.shouldSideBeRendered(face, bounds)) {
-                return;
-            }
-        }
-        renderFaceRaw(renderState, translation, ops, face, bounds, sprite);
-    }
 }

@@ -69,7 +69,7 @@ public class ClipboardRenderer implements IIconRegister {
 
         // Render Clipboard
         for (EnumFacing renderSide : EnumFacing.VALUES) {
-            boxTextureMap.forEach((box, sprite) -> Textures.renderFace(renderState, translation, pipeline, renderSide, box, sprite));
+            boxTextureMap.forEach((box, sprite) -> Textures.renderFace(renderState, translation, pipeline, renderSide, box, sprite, null));
         }
     }
 

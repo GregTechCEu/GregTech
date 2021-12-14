@@ -19,7 +19,7 @@ import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.client.renderer.cclop.GTBlockOperation;
+import gregtech.client.renderer.CubeRendererState;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ModCompatibility;
 import net.minecraft.block.state.IBlockState;
@@ -113,14 +113,14 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
         for (EnumFacing side : EnumFacing.VALUES) {
             sideMask[side.getIndex()] = state.shouldSideBeRendered(world, pos, side);
         }
-        GTBlockOperation mteOp = new GTBlockOperation(renderLayer, sideMask, world);
+        Textures.RENDER_STATE.set(new CubeRendererState(renderLayer, sideMask, world));
         if (metaTileEntity.canRenderInLayer(renderLayer)) {
             renderState.lightMatrix.locate(world, pos);
-            IVertexOperation[] pipeline = new IVertexOperation[]{mteOp, renderState.lightMatrix};
+            IVertexOperation[] pipeline = new IVertexOperation[]{renderState.lightMatrix};
             metaTileEntity.renderMetaTileEntity(renderState, translation.copy(), pipeline);
         }
 
-        metaTileEntity.renderCovers(renderState, translation.copy(), mteOp);
+        metaTileEntity.renderCovers(renderState, translation.copy(), renderLayer);
 
         if (metaTileEntity.isFragile() && renderLayer == BlockRenderLayer.CUTOUT) {
             TextureMap textureMap = Minecraft.getMinecraft().getTextureMapBlocks();
@@ -128,9 +128,10 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
             int destroyStage = posRand.nextInt(10);
             TextureAtlasSprite atlasSprite = textureMap.getAtlasSprite("minecraft:blocks/destroy_stage_" + destroyStage);
             for (EnumFacing face : EnumFacing.VALUES) {
-                Textures.renderFace(renderState, translation, new IVertexOperation[0], face, Cuboid6.full, atlasSprite);
+                Textures.renderFace(renderState, translation, new IVertexOperation[0], face, Cuboid6.full, atlasSprite, null);
             }
         }
+        Textures.RENDER_STATE.set(null);
         return true;
     }
 

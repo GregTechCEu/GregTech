@@ -9,9 +9,11 @@ import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.cclop.LightMapOperation;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -146,16 +148,16 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
             if (predicate != null) {
 
                 TextureAtlasSprite renderSprite = predicate.getSprite(isActive, isWorkingEnabled);
-                Textures.renderFace(renderState, translation, pipeline, renderSide, bounds, renderSprite);
+                Textures.renderFace(renderState, translation, pipeline, renderSide, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
 
                 TextureAtlasSprite emissiveSprite = predicate.getEmissiveSprite(isActive, isWorkingEnabled);
                 if (emissiveSprite != null) {
                     if (ConfigHolder.client.machinesEmissiveTextures) {
                         IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
-                        Textures.renderFaceBloom(renderState, translation, lightPipeline, renderSide, bounds, emissiveSprite);
+                        Textures.renderFace(renderState, translation, lightPipeline, renderSide, bounds, emissiveSprite, BloomEffectUtil.getRealBloomLayer());
                     } else {
                         // have to still render both overlays or else textures will be broken
-                        Textures.renderFace(renderState, translation, pipeline, renderSide, bounds, emissiveSprite);
+                        Textures.renderFace(renderState, translation, pipeline, renderSide, bounds, emissiveSprite, BlockRenderLayer.CUTOUT_MIPPED);
                     }
                 }
             }

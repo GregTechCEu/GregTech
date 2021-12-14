@@ -200,7 +200,7 @@ public abstract class MetaTileEntity implements ICoverable {
         TextureAtlasSprite atlasSprite = TextureUtils.getMissingSprite();
         IVertexOperation[] renderPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         for (EnumFacing face : EnumFacing.VALUES) {
-            Textures.renderFace(renderState, translation, renderPipeline, face, Cuboid6.full, atlasSprite);
+            Textures.renderFace(renderState, translation, renderPipeline, face, Cuboid6.full, atlasSprite, BlockRenderLayer.CUTOUT_MIPPED);
         }
     }
 

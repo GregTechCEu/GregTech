@@ -18,12 +18,13 @@ import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.client.renderer.cclop.GTBlockOperation;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ModCompatibility;
+import gregtech.client.renderer.CubeRendererState;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
@@ -149,7 +150,11 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
         if (fluidPipeType != null && pipeMaterial != null) {
             BlockRenderLayer renderLayer = MinecraftForgeClient.getRenderLayer();
-
+            boolean[] sideMask = new boolean[EnumFacing.VALUES.length];
+            for (EnumFacing side : EnumFacing.VALUES) {
+                sideMask[side.getIndex()] = state.shouldSideBeRendered(world, pos, side);
+            }
+            Textures.RENDER_STATE.set(new CubeRendererState(renderLayer, sideMask, world));
             if (renderLayer == BlockRenderLayer.CUTOUT) {
                 renderState.lightMatrix.locate(world, pos);
                 IVertexOperation[] pipeline = new IVertexOperation[]{new Translation(pos), renderState.lightMatrix};
@@ -157,7 +162,8 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
             }
 
             ICoverable coverable = tileEntityPipe.getCoverableImplementation();
-            coverable.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), new GTBlockOperation(renderLayer, GTBlockOperation.PASS_MASK, world));
+            coverable.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), renderLayer);
+            Textures.RENDER_STATE.set(null);
         }
         return true;
     }

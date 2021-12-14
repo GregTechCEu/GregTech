@@ -12,6 +12,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.ResourceLocation;
@@ -67,7 +68,7 @@ public class TankRenderer implements IIconRegister {
                 if (hasFaceBit(connectionMask, EnumFacing.EAST)) resultTextureMask &= ~TextureDirection.RIGHT;
             }
             TextureAtlasSprite sideSprite = ctSprites[resultTextureMask];
-            Textures.renderFace(renderState, translation, pipeline, renderSide, Cuboid6.full, sideSprite);
+            Textures.renderFace(renderState, translation, pipeline, renderSide, Cuboid6.full, sideSprite, BlockRenderLayer.CUTOUT_MIPPED);
             Matrix4 backTranslation = translation.copy();
             backTranslation.translate(renderSide.getXOffset(), renderSide.getYOffset() * 0.999, renderSide.getZOffset());
             int backFaceTextureMask;
@@ -81,7 +82,7 @@ public class TankRenderer implements IIconRegister {
                 backFaceTextureMask = resultTextureMask;
             }
             TextureAtlasSprite backSideSprite = ctSprites[backFaceTextureMask];
-            Textures.renderFace(renderState, backTranslation, pipeline, renderSide.getOpposite(), Cuboid6.full, backSideSprite);
+            Textures.renderFace(renderState, backTranslation, pipeline, renderSide.getOpposite(), Cuboid6.full, backSideSprite, BlockRenderLayer.CUTOUT_MIPPED);
         }
     }
 
@@ -121,7 +122,7 @@ public class TankRenderer implements IIconRegister {
 
             for (EnumFacing renderSide : EnumFacing.VALUES) {
                 if (hasFaceBit(connectionMask, renderSide)) continue;
-                Textures.renderFace(renderState, translation, fluidPipeline, renderSide, resultFluidCuboid, fluidSprite);
+                Textures.renderFace(renderState, translation, fluidPipeline, renderSide, resultFluidCuboid, fluidSprite, null);
             }
         }
     }

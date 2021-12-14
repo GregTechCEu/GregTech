@@ -9,9 +9,11 @@ import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.cclop.LightMapOperation;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -71,25 +73,25 @@ public class SimpleOrientedCubeRenderer implements ICubeRenderer {
     @Override
     @SideOnly(Side.CLIENT)
     public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
-        Textures.renderFace(renderState, translation, pipeline, EnumFacing.UP, bounds, sprites.get(CubeSide.TOP));
-        Textures.renderFace(renderState, translation, pipeline, EnumFacing.DOWN, bounds, sprites.get(CubeSide.BOTTOM));
+        Textures.renderFace(renderState, translation, pipeline, EnumFacing.UP, bounds, sprites.get(CubeSide.TOP), BlockRenderLayer.CUTOUT_MIPPED);
+        Textures.renderFace(renderState, translation, pipeline, EnumFacing.DOWN, bounds, sprites.get(CubeSide.BOTTOM), BlockRenderLayer.CUTOUT_MIPPED);
 
-        Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, sprites.get(CubeSide.FRONT));
-        Textures.renderFace(renderState, translation, pipeline, frontFacing.getOpposite(), bounds, sprites.get(CubeSide.BACK));
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, sprites.get(CubeSide.FRONT), BlockRenderLayer.CUTOUT_MIPPED);
+        Textures.renderFace(renderState, translation, pipeline, frontFacing.getOpposite(), bounds, sprites.get(CubeSide.BACK), BlockRenderLayer.CUTOUT_MIPPED);
 
-        Textures.renderFace(renderState, translation, pipeline, frontFacing.rotateY(), bounds, sprites.get(CubeSide.LEFT));
-        Textures.renderFace(renderState, translation, pipeline, frontFacing.rotateYCCW(), bounds, sprites.get(CubeSide.RIGHT));
+        Textures.renderFace(renderState, translation, pipeline, frontFacing.rotateY(), bounds, sprites.get(CubeSide.LEFT), BlockRenderLayer.CUTOUT_MIPPED);
+        Textures.renderFace(renderState, translation, pipeline, frontFacing.rotateYCCW(), bounds, sprites.get(CubeSide.RIGHT), BlockRenderLayer.CUTOUT_MIPPED);
 
         IVertexOperation[] lightPipeline = ConfigHolder.client.machinesEmissiveTextures ?
                 ArrayUtils.add(pipeline, new LightMapOperation(240, 240)) : pipeline;
 
-        if (spritesEmissive.containsKey(CubeSide.TOP)) Textures.renderFaceBloom(renderState, translation, lightPipeline, EnumFacing.UP, bounds, sprites.get(CubeSide.TOP));
-        if (spritesEmissive.containsKey(CubeSide.BOTTOM)) Textures.renderFaceBloom(renderState, translation, lightPipeline, EnumFacing.DOWN, bounds, sprites.get(CubeSide.BOTTOM));
+        if (spritesEmissive.containsKey(CubeSide.TOP)) Textures.renderFace(renderState, translation, lightPipeline, EnumFacing.UP, bounds, sprites.get(CubeSide.TOP), BloomEffectUtil.getRealBloomLayer());
+        if (spritesEmissive.containsKey(CubeSide.BOTTOM)) Textures.renderFace(renderState, translation, lightPipeline, EnumFacing.DOWN, bounds, sprites.get(CubeSide.BOTTOM), BloomEffectUtil.getRealBloomLayer());
 
-        if (spritesEmissive.containsKey(CubeSide.FRONT)) Textures.renderFaceBloom(renderState, translation, lightPipeline, frontFacing, bounds, sprites.get(CubeSide.FRONT));
-        if (spritesEmissive.containsKey(CubeSide.BACK)) Textures.renderFaceBloom(renderState, translation, lightPipeline, frontFacing.getOpposite(), bounds, sprites.get(CubeSide.BACK));
+        if (spritesEmissive.containsKey(CubeSide.FRONT)) Textures.renderFace(renderState, translation, lightPipeline, frontFacing, bounds, sprites.get(CubeSide.FRONT), BloomEffectUtil.getRealBloomLayer());
+        if (spritesEmissive.containsKey(CubeSide.BACK)) Textures.renderFace(renderState, translation, lightPipeline, frontFacing.getOpposite(), bounds, sprites.get(CubeSide.BACK), BloomEffectUtil.getRealBloomLayer());
 
-        if (spritesEmissive.containsKey(CubeSide.LEFT)) Textures.renderFaceBloom(renderState, translation, lightPipeline, frontFacing.rotateY(), bounds, sprites.get(CubeSide.LEFT));
-        if (spritesEmissive.containsKey(CubeSide.RIGHT)) Textures.renderFaceBloom(renderState, translation, lightPipeline, frontFacing.rotateYCCW(), bounds, sprites.get(CubeSide.RIGHT));
+        if (spritesEmissive.containsKey(CubeSide.LEFT)) Textures.renderFace(renderState, translation, lightPipeline, frontFacing.rotateY(), bounds, sprites.get(CubeSide.LEFT), BloomEffectUtil.getRealBloomLayer());
+        if (spritesEmissive.containsKey(CubeSide.RIGHT)) Textures.renderFace(renderState, translation, lightPipeline, frontFacing.rotateYCCW(), bounds, sprites.get(CubeSide.RIGHT), BloomEffectUtil.getRealBloomLayer());
     }
 }

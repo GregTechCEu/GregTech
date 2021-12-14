@@ -10,6 +10,7 @@ import gregtech.api.GTValues;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
@@ -66,9 +67,9 @@ public class SafeRenderer implements IIconRegister {
             TextureAtlasSprite baseSprite = renderSide.getAxis() == Axis.Y ?
                     textures[renderSide.getIndex()] :
                     renderSide == EnumFacing.NORTH ? textures[3] : textures[2];
-            Textures.renderFace(renderState, translation, pipeline, renderSide, mainBoxOuter, baseSprite);
+            Textures.renderFace(renderState, translation, pipeline, renderSide, mainBoxOuter, baseSprite, BlockRenderLayer.CUTOUT_MIPPED);
             if (renderSide == EnumFacing.NORTH) continue;
-            Textures.renderFace(renderState, translation, pipeline, renderSide, mainBoxInner, baseSprite);
+            Textures.renderFace(renderState, translation, pipeline, renderSide, mainBoxInner, baseSprite, BlockRenderLayer.CUTOUT_MIPPED);
         }
 
         translation.translate(4 / 16.0, 7 / 16.0, 3 / 16.0);
@@ -79,7 +80,7 @@ public class SafeRenderer implements IIconRegister {
             TextureAtlasSprite doorSprite =
                     renderSide == EnumFacing.NORTH ? textures[6] :
                             renderSide == EnumFacing.SOUTH ? textures[5] : textures[4];
-            Textures.renderFace(renderState, translation, pipeline, renderSide, doorBox, doorSprite);
+            Textures.renderFace(renderState, translation, pipeline, renderSide, doorBox, doorSprite, BlockRenderLayer.CUTOUT_MIPPED);
         }
     }
 }

@@ -191,9 +191,9 @@ public abstract class CoverBehavior implements IUIHolder {
         for (EnumFacing coverPlateSide : EnumFacing.VALUES) {
             boolean isAttachedSide = attachedSide.getAxis() == coverPlateSide.getAxis();
             if (isAttachedSide) {
-                Textures.renderFace(renderState, translation, pipeline, coverPlateSide, plateBox, casingSide);
+                Textures.renderFace(renderState, translation, pipeline, coverPlateSide, plateBox, casingSide, BlockRenderLayer.CUTOUT_MIPPED);
             } else if (coverHolder.getCoverAtSide(coverPlateSide) == null) {
-                Textures.renderFace(renderState, translation, pipeline, coverPlateSide, plateBox, casingSide);
+                Textures.renderFace(renderState, translation, pipeline, coverPlateSide, plateBox, casingSide, BlockRenderLayer.CUTOUT_MIPPED);
             }
         }
     }

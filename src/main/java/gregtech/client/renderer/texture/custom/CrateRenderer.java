@@ -10,6 +10,7 @@ import gregtech.api.GTValues;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -38,7 +39,7 @@ public class CrateRenderer implements IIconRegister {
         IVertexOperation[] basePipeline = ArrayUtils.add(pipeline, new ColourMultiplier(baseColor));
 
         for (EnumFacing renderSide : EnumFacing.VALUES) {
-            Textures.renderFace(renderState, translation, basePipeline, renderSide, Cuboid6.full, sideSprite);
+            Textures.renderFace(renderState, translation, basePipeline, renderSide, Cuboid6.full, sideSprite, BlockRenderLayer.CUTOUT_MIPPED);
         }
     }
 

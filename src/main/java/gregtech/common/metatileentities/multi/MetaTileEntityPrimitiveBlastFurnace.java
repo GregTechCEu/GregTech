@@ -16,10 +16,12 @@ import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockContro
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.cclop.ColourOperation;
 import gregtech.client.renderer.cclop.LightMapOperation;
 import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.entity.player.EntityPlayer;
@@ -97,9 +99,12 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
         if (recipeMapWorkable.isActive() && isStructureFormed()) {
             EnumFacing back = getFrontFacing().getOpposite();
             Matrix4 offset = translation.copy().translate(back.getXOffset(), -0.3, back.getZOffset());
+            CubeRendererState op =Textures.RENDER_STATE.get();
+            Textures.RENDER_STATE.set(new CubeRendererState(op.layer, CubeRendererState.PASS_MASK, op.world));
             Textures.renderFace(renderState, offset,
                     ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240), new ColourOperation(0xFFFFFFFF)),
-                    EnumFacing.UP, Cuboid6.full, TextureUtils.getBlockTexture("lava_still"));
+                    EnumFacing.UP, Cuboid6.full, TextureUtils.getBlockTexture("lava_still"), BloomEffectUtil.getRealBloomLayer());
+            Textures.RENDER_STATE.set(op);
         }
     }
 

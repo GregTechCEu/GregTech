@@ -9,6 +9,7 @@ import gregtech.api.GTValues;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -40,7 +41,7 @@ public class DrumRenderer implements IIconRegister {
 
         for (EnumFacing renderSide : EnumFacing.VALUES) {
             TextureAtlasSprite baseSprite = renderSide == EnumFacing.UP ? textures[0] : renderSide == EnumFacing.DOWN ? textures[2] : textures[1];
-            Textures.renderFace(renderState, translation, pipeline, renderSide, Cuboid6.full, baseSprite);
+            Textures.renderFace(renderState, translation, pipeline, renderSide, Cuboid6.full, baseSprite, BlockRenderLayer.CUTOUT_MIPPED);
         }
     }
 
