@@ -389,6 +389,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_FACADE;
 
     public static MetaItem<?>.MetaValueItem COVER_ACTIVITY_DETECTOR;
+    public static MetaItem<?>.MetaValueItem COVER_ACTIVITY_DETECTOR_ADVANCED;
     public static MetaItem<?>.MetaValueItem COVER_FLUID_DETECTOR;
     public static MetaItem<?>.MetaValueItem COVER_ITEM_DETECTOR;
     public static MetaItem<?>.MetaValueItem COVER_ENERGY_DETECTOR;
