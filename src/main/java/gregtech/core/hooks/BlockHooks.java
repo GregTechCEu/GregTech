@@ -1,6 +1,6 @@
 package gregtech.core.hooks;
 
-import gregtech.api.model.customtexture.CustomTextureBakedModel;
+import gregtech.client.model.customtexture.CustomTextureBakedModel;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -9,8 +9,11 @@ import net.minecraft.util.BlockRenderLayer;
 
 import javax.annotation.Nonnull;
 
+@SuppressWarnings("unused")
 public class BlockHooks {
+
     public static boolean ENABLE = true;
+
     public static Boolean canRenderInLayer(@Nonnull IBlockState state, @Nonnull BlockRenderLayer layer) {
         if (ENABLE) {
             IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(state);

@@ -25,7 +25,6 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
-import gregtech.integration.jei.multiblock.MultiblockInfoPage;
 import gregtech.integration.jei.recipe.*;
 import gregtech.integration.jei.recipe.fuel.FuelRecipeMapCategory;
 import gregtech.integration.jei.recipe.fuel.GTFuelRecipeWrapper;
@@ -213,7 +212,9 @@ public class GTJeiPlugin implements IModPlugin {
 
         String oreSpawnID = GTValues.MODID + ":" + "ore_spawn_location";
         registry.addRecipes(oreInfoList, oreSpawnID);
-        registry.addRecipeCatalyst(MetaItems.SCANNER.getStackForm(), oreSpawnID);
+        registry.addRecipeCatalyst(MetaItems.PROSPECTOR_LV.getStackForm(), oreSpawnID);
+        registry.addRecipeCatalyst(MetaItems.PROSPECTOR_HV.getStackForm(), oreSpawnID);
+        registry.addRecipeCatalyst(MetaItems.PROSPECTOR_LUV.getStackForm(), oreSpawnID);
         //Ore Veins End
 
 
@@ -232,11 +233,11 @@ public class GTJeiPlugin implements IModPlugin {
         }
 
         //Multiblock info page registration
-        MultiblockInfoCategory.multiblockRecipes.values().forEach(v -> {
-            MultiblockInfoPage infoPage = v.getInfoPage();
-            registry.addIngredientInfo(infoPage.getController().getStackForm(),
-                    VanillaTypes.ITEM,
-                    infoPage.getDescription());
+        MultiblockInfoCategory.REGISTER.forEach(mte->{
+            String[] desc = mte.getDescription();
+            if (desc.length > 0) {
+                registry.addIngredientInfo(mte.getStackForm(), VanillaTypes.ITEM, mte.getDescription());
+            }
         });
     }
 

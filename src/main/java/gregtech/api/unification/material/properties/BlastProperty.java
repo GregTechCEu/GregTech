@@ -1,5 +1,7 @@
 package gregtech.api.unification.material.properties;
 
+import crafttweaker.CraftTweakerAPI;
+
 public class BlastProperty implements IMaterialProperty<BlastProperty> {
 
     /**
@@ -79,6 +81,19 @@ public class BlastProperty implements IMaterialProperty<BlastProperty> {
         FluidProperty fluidProperty = properties.getProperty(PropertyKey.FLUID);
         if (fluidProperty != null && fluidProperty.getFluidTemperature() == FluidProperty.BASE_TEMP)
             fluidProperty.setFluidTemperature(blastTemperature);
+    }
+
+    public static GasTier validateGasTier(String gasTierName) {
+        if (gasTierName == null) return null;
+        else if (gasTierName.equalsIgnoreCase("LOW")) return GasTier.LOW;
+        else if (gasTierName.equalsIgnoreCase("MID")) return GasTier.MID;
+        else if (gasTierName.equalsIgnoreCase("HIGH")) return GasTier.HIGH;
+        else if (gasTierName.equalsIgnoreCase("HIGHER")) return GasTier.HIGHER;
+        else if (gasTierName.equalsIgnoreCase("HIGHEST")) return GasTier.HIGHEST;
+        else {
+            CraftTweakerAPI.logError("Gas Tier must be either \"LOW\", \"MID\", \"HIGH\", \"HIGHER\", or \"HIGHEST\"");
+            throw new IllegalArgumentException();
+        }
     }
 
     public enum GasTier {

@@ -75,7 +75,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                     }
 
                     @Override
-                    protected void reinitializeStructurePattern() {
+                    public void reinitializeStructurePattern() {
 
                     }
 

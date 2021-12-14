@@ -22,13 +22,12 @@ import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
@@ -54,15 +53,11 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static gregtech.api.unification.material.Materials.DrillingFluid;
 
 public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implements IMiner, IControllable {
-
-    private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.INPUT_ENERGY};
 
     private static final int CHUNK_LENGTH = 16;
 
@@ -90,7 +85,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         this.drillingFluidConsumePerTick = drillingFluidConsumePerTick;
         this.romanNumeralString = GTUtility.romanNumeralString(fortune);
         this.minerLogic = new MultiblockMinerLogic(this, fortune, speed, maximumChunkRadius * CHUNK_LENGTH, getBaseTexture(null), RecipeMaps.MACERATOR_RECIPES);
-        reinitializeStructurePattern();
     }
 
     @Override
@@ -154,7 +148,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), this.minerLogic.isWorking(), this.isWorkingEnabled());
+        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.minerLogic.isWorking(), this.isWorkingEnabled());
         minerLogic.renderPipe(renderState, translation, pipeline);
     }
 
@@ -173,20 +167,19 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 .aisle("CCC", "#F#", "#F#", "#F#", "###", "###", "###")
                 .aisle("CCC", "FCF", "FCF", "FCF", "#F#", "#F#", "#F#")
                 .aisle("CSC", "#F#", "#F#", "#F#", "###", "###", "###")
-                .setAmountAtLeast('L', 3)
                 .where('S', selfPredicate())
-                .where('L', statePredicate(getCasingState()))
-                .where('C', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
-                .where('F', statePredicate(MetaBlocks.FRAMES.get(getMaterial()).getDefaultState()))
-                .where('#', blockWorldState -> true)
+                .where('C', states(getCasingState()).setMinGlobalLimited(3)
+                        .or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1))
+                        .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(1))
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setPreviewCount(1)))
+                .where('F', states(MetaBlocks.FRAMES.get(getMaterial()).getBlock(getMaterial())))
+                .where('#', any())
                 .build();
     }
 
     @Override
-    protected boolean checkStructureComponents(List<IMultiblockPart> parts, @Nonnull Map<MultiblockAbility<Object>, List<Object>> abilities) {
-        int itemOutputsCount = abilities.getOrDefault(MultiblockAbility.EXPORT_ITEMS, Collections.emptyList()).size();
-        int fluidInputsCount = abilities.getOrDefault(MultiblockAbility.IMPORT_FLUIDS, Collections.emptyList()).size();
-        return itemOutputsCount >= 1 && fluidInputsCount >= 1 && abilities.containsKey(MultiblockAbility.INPUT_ENERGY);
+    public String[] getDescription() {
+        return new String[]{I18n.format("gregtech.machine.miner.multi.description")};
     }
 
     @Override
@@ -293,7 +286,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         if (this.tier == 5)
             return Textures.LARGE_MINER_OVERLAY_ADVANCED;
         if (this.tier == 6)

@@ -11,6 +11,8 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import net.minecraft.item.ItemStack;
 
+import static gregtech.api.GTValues.*;
+
 public class PolarizingRecipeHandler {
 
     private static final OrePrefix[] POLARIZING_PREFIXES = new OrePrefix[]{
@@ -41,7 +43,7 @@ public class PolarizingRecipeHandler {
     }
 
     private static int getVoltageMultiplier(Material material) {
-        return material.getBlastTemperature() >= 1200 ? 32 : 2;
+        return material.getBlastTemperature() >= 1200 ? VA[LV] : 2;
     }
 
 }

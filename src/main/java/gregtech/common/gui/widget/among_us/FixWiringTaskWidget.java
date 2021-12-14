@@ -1,5 +1,6 @@
 package gregtech.common.gui.widget.among_us;
 
+import gregtech.api.GTValues;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.TextureArea;
@@ -29,9 +30,8 @@ public class FixWiringTaskWidget extends Widget {
 
     public FixWiringTaskWidget(int x, int y, int width, int height) {
         super(x, y, width, height);
-        Random random = new Random();
         for (int i = 0; i < 4; i++) {
-            colors[i] = (random.nextInt() & 0x00ffffff) | 0xff000000;
+            colors[i] = (GTValues.RNG.nextInt() & 0x00ffffff) | 0xff000000;
         }
         List<Integer> list = new ArrayList<>(Arrays.asList(0, 1, 2, 3));
         Collections.shuffle(list);

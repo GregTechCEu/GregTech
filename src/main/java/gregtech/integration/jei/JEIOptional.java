@@ -1,7 +1,7 @@
 package gregtech.integration.jei;
 
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.render.scene.WorldSceneRenderer;
+import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.integration.jei.multiblock.MultiblockInfoRecipeWrapper;
 import mezz.jei.api.IRecipeRegistry;
 import mezz.jei.api.recipe.IFocus;

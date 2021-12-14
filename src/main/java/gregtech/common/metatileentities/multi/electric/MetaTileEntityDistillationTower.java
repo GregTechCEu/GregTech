@@ -2,18 +2,14 @@ package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.BlockWorldState;
-import gregtech.api.multiblock.FactoryBlockPattern;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiFluidHatch;
@@ -27,16 +23,10 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityDistillationTower extends RecipeMapMultiblockController {
-
-    public static MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-            MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.INPUT_ENERGY,
-            MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH
-    };
 
     public MetaTileEntityDistillationTower(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.DISTILLATION_RECIPES);
@@ -66,28 +56,23 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
 
     @Override
     protected BlockPattern createStructurePattern() {
-        Predicate<PatternMatchContext> exactlyOneHatch = context -> context.getInt("HatchesAmount") == 1;
         return FactoryBlockPattern.start(RIGHT, FRONT, UP)
-                .aisle("YSY", "YYY", "YYY")
-                .aisle("XXX", "X#X", "XXX").setRepeatable(0, 11)
+                .aisle("YSY", "YFY", "YYY")
+                .aisle("XXX", "X#X", "XXX").setRepeatable(1, 11)
                 .aisle("XXX", "XXX", "XXX")
                 .where('S', selfPredicate())
-                .where('Y', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
-                .where('X', dtAbilityPartPredicate().or(maintenancePredicate(getCasingState())))
-                .where('#', isAirPredicate())
-                .validateLayer(1, exactlyOneHatch)
-                .validateLayer(2, exactlyOneHatch)
+                .where('F', abilities(MultiblockAbility.IMPORT_FLUIDS))
+                .where('Y', states(getCasingState())
+                        .or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1))
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1)))
+                .where('X', states(getCasingState())
+                        .or(metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.EXPORT_FLUIDS).stream()
+                                .filter(mte->!(mte instanceof MetaTileEntityMultiFluidHatch))
+                                .toArray(MetaTileEntity[]::new))
+                                .setMinLayerLimited(1).setMaxLayerLimited(1))
+                        .or(hasMaintenanceMechanics() ? abilities(MultiblockAbility.MAINTENANCE_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1) : null))
+                .where('#', air())
                 .build();
-    }
-
-    private Predicate<BlockWorldState> dtAbilityPartPredicate() {
-        return countMatch("HatchesAmount", abilityPartPredicate(MultiblockAbility.EXPORT_FLUIDS)).and(tilePredicate((state, tile) -> {
-            if (tile instanceof IMultiblockAbilityPart<?>) {
-                MultiblockAbility<?> ability = ((IMultiblockAbilityPart<?>) tile).getAbility();
-                return ability == MultiblockAbility.EXPORT_FLUIDS && !(tile instanceof MetaTileEntityMultiFluidHatch);
-            }
-            return false;
-        }));
     }
 
     @Override
@@ -106,7 +91,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
 
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         return Textures.DISTILLATION_TOWER_OVERLAY;
     }
 }

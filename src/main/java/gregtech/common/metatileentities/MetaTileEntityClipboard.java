@@ -46,7 +46,7 @@ import java.util.Optional;
 
 import static codechicken.lib.raytracer.RayTracer.*;
 import static gregtech.api.capability.GregtechDataCodes.*;
-import static gregtech.api.render.Textures.CLIPBOARD_RENDERER;
+import static gregtech.client.renderer.texture.Textures.CLIPBOARD_RENDERER;
 import static gregtech.common.items.MetaItems.CLIPBOARD;
 
 public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRenderMetaTileEntity {
@@ -356,7 +356,8 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
-    public void preInit(Object... data) {
+    public void onAttached(Object... data) {
+        super.onAttached(data);
         if (data.length != 0 && data[0] instanceof ItemStack)
             this.setClipboard((ItemStack) data[0]);
     }

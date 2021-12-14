@@ -25,8 +25,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -51,8 +49,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -73,8 +69,6 @@ import java.util.stream.Stream;
 import static gregtech.api.GTValues.V;
 
 public class GTUtility {
-
-    private static final XSTR random = new XSTR();
 
     private static TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
 
@@ -339,19 +333,6 @@ public class GTUtility {
         return wasRemovedByPlayer;
     }
 
-
-    @SideOnly(Side.CLIENT)
-    public static void drawCenteredSizedText(int x, int y, String string, int color, double sizeMultiplier) {
-        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-        int textWidth = fontRenderer.getStringWidth(string);
-        int textHeight = fontRenderer.FONT_HEIGHT;
-        GlStateManager.pushMatrix();
-        GlStateManager.scale(sizeMultiplier, sizeMultiplier, 0.0);
-        GlStateManager.translate(-textWidth * sizeMultiplier / 2.0, -textHeight * sizeMultiplier / 2.0, 0);
-        fontRenderer.drawString(string, x, y, color);
-        GlStateManager.popMatrix();
-    }
-
     /**
      * Applies specific amount of damage to item, either to durable items (which implement IDamagableItem)
      * or to electric items, which have capability IElectricItem
@@ -370,7 +351,7 @@ public class GTUtility {
         } else if (itemStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null)) {
             //if we're using electric item, use default energy multiplier for textures
             IElectricItem capability = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-            int energyNeeded = vanillaDamage * ConfigHolder.energyUsageMultiplier;
+            int energyNeeded = vanillaDamage * ConfigHolder.machines.energyUsageMultiplier;
             //noinspection ConstantConditions
             return capability.discharge(energyNeeded, Integer.MAX_VALUE, true, false, simulate) == energyNeeded;
 
@@ -681,6 +662,7 @@ public class GTUtility {
     }
 
     public static FluidStack copyAmount(int amount, FluidStack fluidStack) {
+        if (fluidStack == null) return null;
         FluidStack stack = fluidStack.copy();
         stack.amount = amount;
         return stack;
@@ -735,7 +717,7 @@ public class GTUtility {
             double posZ = pos.getZ() + 0.5;
             ((WorldServer) metaTileEntity.getWorld()).spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY, posZ,
                     10, 0.2, 0.2, 0.2, 0.0);
-            metaTileEntity.getWorld().createExplosion(null, posX, posY, posZ, getTierByVoltage(voltage), ConfigHolder.doExplosions);
+            metaTileEntity.getWorld().createExplosion(null, posX, posY, posZ, getTierByVoltage(voltage), ConfigHolder.machines.doExplosions);
         }
     }
 
@@ -758,10 +740,6 @@ public class GTUtility {
                 .thenComparing(ItemStack::hasTagCompound)
                 .thenComparing(it -> -Objects.hashCode(it.getTagCompound()))
                 .thenComparing(it -> -it.getCount());
-    }
-
-    public static int getRandomIntXSTR(int bound) {
-        return random.nextInt(bound);
     }
 
     public static RayTraceResult getBlockLookingAt(EntityPlayer player) {
@@ -1048,5 +1026,4 @@ public class GTUtility {
     public static double getMeanTickTime(@Nonnull World world) {
         return mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
     }
-
 }

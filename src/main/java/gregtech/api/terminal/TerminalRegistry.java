@@ -3,7 +3,6 @@ package gregtech.api.terminal;
 import gregtech.api.GTValues;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.hardware.Hardware;
-import gregtech.api.terminal.util.GuideJsonLoader;
 import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
@@ -22,13 +21,15 @@ import gregtech.common.terminal.app.guide.TutorialGuideApp;
 import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
 import gregtech.common.terminal.app.hardwaremanager.HardwareManagerApp;
 import gregtech.common.terminal.app.multiblockhelper.MultiBlockPreviewARApp;
-import gregtech.common.terminal.app.prospector.OreProspectorApp;
+import gregtech.common.terminal.app.prospector.ProspectorApp;
 import gregtech.common.terminal.app.recipechart.RecipeChartApp;
 import gregtech.common.terminal.app.settings.SettingsApp;
 import gregtech.common.terminal.app.worldprospector.WorldProspectorARApp;
 import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.common.terminal.hardware.DeviceHardware;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -41,7 +42,7 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TerminalRegistry {
+public class TerminalRegistry implements IResourceManagerReloadListener {
     protected static final Map<String, AbstractApplication> APP_REGISTER = new LinkedHashMap<>();
     protected static final Map<String, Hardware> HW_REGISTER = new LinkedHashMap<>();
     protected static final Map<String, List<Hardware>[]> APP_HW_DEMAND = new HashMap<>();
@@ -52,7 +53,7 @@ public class TerminalRegistry {
 
     static {
         if (FMLCommonHandler.instance().getSide().isClient()) {
-            TERMINAL_PATH = new File(Loader.instance().getConfigDir(), ConfigHolder.U.clientConfig.terminalRootPath);
+            TERMINAL_PATH = new File(Loader.instance().getConfigDir(), ConfigHolder.client.terminalRootPath);
         }
     }
 
@@ -81,19 +82,25 @@ public class TerminalRegistry {
                 .battery(GTValues.LV, 150)
                 .build();
 
-        AppRegistryBuilder.create(new OreProspectorApp())
+        AppRegistryBuilder.create(new ProspectorApp(0))
                 .battery(GTValues.MV, 1000)
                 .upgrade(MetaItems.COIN_DOGE.getStackForm(10))
                 .upgrade(6, MetaItems.COIN_GOLD_ANCIENT.getStackForm())
-                .device(DeviceHardware.DEVICE.SCANNER)
+                .device(DeviceHardware.DEVICE.PROSPECTOR_LV)
+                .build();
+        AppRegistryBuilder.create(new ProspectorApp(1))
+                .battery(GTValues.MV, 1000)
+                .upgrade(MetaItems.COIN_DOGE.getStackForm(10))
+                .upgrade(6, MetaItems.COIN_GOLD_ANCIENT.getStackForm())
+                .device(DeviceHardware.DEVICE.PROSPECTOR_LV)
+                .build();
+        AppRegistryBuilder.create(new MultiBlockPreviewARApp())
+                .battery(GTValues.LV, 512)
+                .device(DeviceHardware.DEVICE.CAMERA)
+                .upgrade(0, MetaItems.COIN_DOGE.getStackForm(10))
+                .upgrade(1, MetaItems.COIN_DOGE.getStackForm(30), MetaItems.COIN_CHOCOLATE.getStackForm(10))
                 .build();
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
-            AppRegistryBuilder.create(new MultiBlockPreviewARApp())
-                    .battery(GTValues.LV, 512)
-                    .device(DeviceHardware.DEVICE.CAMERA)
-                    .upgrade(0, MetaItems.COIN_DOGE.getStackForm(10))
-                    .upgrade(1, MetaItems.COIN_DOGE.getStackForm(30), MetaItems.COIN_CHOCOLATE.getStackForm(10))
-                    .build();
             AppRegistryBuilder.create(new RecipeChartApp())
                     .battery(GTValues.LV, 100)
                     .upgrade(0, MetaItems.COIN_DOGE.getStackForm(10))
@@ -126,8 +133,13 @@ public class TerminalRegistry {
 
     @SideOnly(Side.CLIENT)
     public static void initTerminalFiles() {
+        ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new TerminalRegistry());
+    }
+
+
+    @Override
+    public void onResourceManagerReload(IResourceManager resourceManager) {
         FileUtility.extractJarFiles(String.format("/assets/%s/%s", GTValues.MODID, "terminal"), TERMINAL_PATH, false);
-        ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new GuideJsonLoader());
     }
 
     public static void registerApp(AbstractApplication application) {

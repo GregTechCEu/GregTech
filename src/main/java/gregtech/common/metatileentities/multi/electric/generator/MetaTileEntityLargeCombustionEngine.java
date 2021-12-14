@@ -6,12 +6,12 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType;
@@ -29,11 +29,6 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockController {
-
-    public static MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-            MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH,
-            MultiblockAbility.MUFFLER_HATCH
-    };
 
     public MetaTileEntityLargeCombustionEngine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.COMBUSTION_GENERATOR_FUELS, GTValues.V[GTValues.EV]);
@@ -75,16 +70,18 @@ public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockControl
 
     @Override
     protected BlockPattern createStructurePattern() {
+        TraceabilityPredicate predicate = states(getCasingState()).or(autoAbilities(true, true, true, true, false));
         return FactoryBlockPattern.start()
                 .aisle("XXX", "XDX", "XXX")
-                .aisle("XCX", "CGC", "XCX")
-                .aisle("XCX", "CGC", "XCX")
+                .aisle("XCX", "CGC", "XTX")
+                .aisle("XCX", "CGC", "XTX")
                 .aisle("AAA", "AYA", "AAA")
-                .where('X', statePredicate(getCasingState()))
-                .where('G', statePredicate(MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.TITANIUM_GEARBOX)))
-                .where('C', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
-                .where('D', abilityPartPredicate(MultiblockAbility.OUTPUT_ENERGY))
-                .where('A', statePredicate(MetaBlocks.MULTIBLOCK_CASING.getState(MultiblockCasingType.ENGINE_INTAKE_CASING)))
+                .where('X', states(getCasingState()))
+                .where('G', states(MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.TITANIUM_GEARBOX)))
+                .where('C', predicate)
+                .where('T', predicate.or(autoAbilities(false, false, false, false, true)))
+                .where('D', abilities(MultiblockAbility.OUTPUT_ENERGY))
+                .where('A', states(MetaBlocks.MULTIBLOCK_CASING.getState(MultiblockCasingType.ENGINE_INTAKE_CASING)).addTooltips("gregtech.multiblock.pattern.clear_amount_1"))
                 .where('Y', selfPredicate())
                 .build();
     }
@@ -100,7 +97,7 @@ public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockControl
 
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         return Textures.DIESEL_ENGINE_OVERLAY;
     }
 

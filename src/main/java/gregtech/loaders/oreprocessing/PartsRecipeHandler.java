@@ -21,7 +21,7 @@ import gregtech.common.items.behaviors.TurbineRotorBehavior;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 
-import static gregtech.api.GTValues.L;
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.BENDER_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.LATHE_RECIPES;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
@@ -77,7 +77,7 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_BOLT)
                     .outputs(GTUtility.copyAmount(8, boltStack))
                     .duration(15)
-                    .EUt(120)
+                    .EUt(VA[MV])
                     .buildAndRegister();
         }
     }
@@ -133,14 +133,14 @@ public class PartsRecipeHandler {
                     .input(OrePrefix.wireGtSingle, material)
                     .outputs(OreDictUnifier.get(OrePrefix.wireFine, material, 4))
                     .duration(200)
-                    .EUt(8)
+                    .EUt(VA[ULV])
                     .buildAndRegister();
         } else {
             RecipeMaps.WIREMILL_RECIPES.recipeBuilder()
                     .input(OrePrefix.ingot, material)
                     .outputs(OreDictUnifier.get(OrePrefix.wireFine, material, 8))
                     .duration(400)
-                    .EUt(8)
+                    .EUt(VA[ULV])
                     .buildAndRegister();
         }
     }
@@ -173,7 +173,7 @@ public class PartsRecipeHandler {
                     .fluidInputs(material.getFluid(L * (isSmall ? 1 : 4)))
                     .outputs(stack)
                     .duration(isSmall ? 20 : 100)
-                    .EUt(8)
+                    .EUt(VA[ULV])
                     .buildAndRegister();
         }
 
@@ -190,7 +190,7 @@ public class PartsRecipeHandler {
                         .EUt(material.getBlastTemperature() >= 2800 ? 256 : 64)
                         .buildAndRegister();
 
-                RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder().duration((int) material.getAverageMass()).EUt(30)
+                RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder().duration((int) material.getAverageMass()).EUt(VA[LV])
                         .input(ingot, material, 2)
                         .notConsumable(MetaItems.SHAPE_MOLD_GEAR_SMALL.getStackForm())
                         .output(gearSmall, material)
@@ -239,7 +239,7 @@ public class PartsRecipeHandler {
                     .fluidInputs(material.getFluid(L))
                     .outputs(OreDictUnifier.get(platePrefix, material))
                     .duration(40)
-                    .EUt(8)
+                    .EUt(VA[ULV])
                     .buildAndRegister();
         }
 
@@ -259,7 +259,7 @@ public class PartsRecipeHandler {
                         "h", "P", "P", 'P', new UnificationEntry(plate, material));
             }
 
-            BENDER_RECIPES.recipeBuilder().EUt(30).duration((int) material.getAverageMass() * 2)
+            BENDER_RECIPES.recipeBuilder().EUt(VA[LV]).duration((int) material.getAverageMass() * 2)
                     .input(plate, material, 2)
                     .output(doublePrefix, material)
                     .circuitMeta(2)
@@ -307,7 +307,7 @@ public class PartsRecipeHandler {
                 OreDictUnifier.get(springSmall, material),
                 " s ", "fRx", 'R', new UnificationEntry(stick, material));
 
-        BENDER_RECIPES.recipeBuilder().duration((int) (material.getAverageMass() / 2)).EUt(8)
+        BENDER_RECIPES.recipeBuilder().duration((int) (material.getAverageMass() / 2)).EUt(VA[ULV])
                 .input(stick, material)
                 .output(springSmall, material, 2)
                 .circuitMeta(1)
@@ -340,17 +340,17 @@ public class PartsRecipeHandler {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_ROTOR)
                     .fluidInputs(material.getFluid(L * 4))
-                    .outputs(OreDictUnifier.get(rotorPrefix, material))
+                    .outputs(GTUtility.copy(stack))
                     .duration(120)
                     .EUt(20)
                     .buildAndRegister();
         }
 
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(ingot, material, 5)
+                .input(ingot, material, 4)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_ROTOR)
-                .output(rotor, material)
-                .duration((int) material.getAverageMass() * 5)
+                .outputs(GTUtility.copy(stack))
+                .duration((int) material.getAverageMass() * 4)
                 .EUt(material.getBlastTemperature() >= 2800 ? 256 : 64)
                 .buildAndRegister();
     }
@@ -362,7 +362,7 @@ public class PartsRecipeHandler {
                     .duration((int) Math.max(material.getAverageMass() * 2, 1))
                     .EUt(16);
 
-            if (ConfigHolder.U.GT5u.harderRods) {
+            if (ConfigHolder.recipes.harderRods) {
                 builder.output(OrePrefix.stick, material);
                 builder.output(OrePrefix.dustSmall, material, 2);
             } else {
@@ -473,13 +473,13 @@ public class PartsRecipeHandler {
                     "fIh", 'I', new UnificationEntry(ingot, material));
         }
 
-        LATHE_RECIPES.recipeBuilder().EUt(8).duration(100)
+        LATHE_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
                 .input(nugget, material)
                 .output(round, material)
                 .buildAndRegister();
     }
 
     private static int getVoltageMultiplier(Material material) {
-        return material.getBlastTemperature() > 2800 ? 32 : 8;
+        return material.getBlastTemperature() > 2800 ? VA[LV] : VA[ULV];
     }
 }

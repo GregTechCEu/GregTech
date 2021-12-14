@@ -4,8 +4,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.net.PacketUIWidgetUpdate;
-import gregtech.common.ConfigHolder;
+import gregtech.api.net.packets.SPacketUIWidgetUpdate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -28,6 +27,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
     public static final float rColorForOverlay = 1;
     public static final float gColorForOverlay = 1;
     public static final float bColorForOverlay = 1;
+    private float lastUpdate;
 
     public ModularUI getModularUI() {
         return modularUI;
@@ -60,7 +60,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
         modularUI.guiWidgets.values().forEach(Widget::updateScreen);
     }
 
-    public void handleWidgetUpdate(PacketUIWidgetUpdate packet) {
+    public void handleWidgetUpdate(SPacketUIWidgetUpdate packet) {
         if (packet.windowId == inventorySlots.windowId) {
             Widget widget = modularUI.guiWidgets.get(packet.widgetId);
             int updateId = packet.updateData.readVarInt();
@@ -72,6 +72,12 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        float now = getModularUI().entityPlayer.ticksExisted + partialTicks;
+        int times = (int) ((now - lastUpdate) / 0.333f);
+        for (int i = 0; i < times; i++) {
+            modularUI.guiWidgets.values().forEach(Widget::updateScreenOnFrame);
+            lastUpdate += 0.333f;
+        }
         this.hoveredSlot = null;
         drawDefaultBackground();
 
@@ -215,7 +221,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
         if (wheelMovement != 0) {
             int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
             int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-            mouseWheelMove(mouseX - guiLeft, mouseY, wheelMovement);
+            mouseWheelMove(mouseX, mouseY, wheelMovement);
         }
     }
 

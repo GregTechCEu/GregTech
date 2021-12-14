@@ -29,7 +29,7 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
 
     @Override
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
-        if (mode == ProbeMode.DEBUG && ConfigHolder.debug) {
+        if (mode == ProbeMode.DEBUG && ConfigHolder.misc.debug) {
             TileEntity tileEntity = world.getTileEntity(data.getPos());
             if (tileEntity instanceof MetaTileEntityHolder) {
                 MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();

@@ -3,7 +3,7 @@ package gregtech.common.terminal.app.hardwaremanager;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.*;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.render.shader.Shaders;
+import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;

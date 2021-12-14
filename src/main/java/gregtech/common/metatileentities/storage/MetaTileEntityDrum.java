@@ -6,13 +6,13 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.impl.ThermalFluidHandlerItemStack;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Material;
-import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.WatchedFluidTank;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -26,7 +26,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
@@ -125,38 +124,8 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public ICapabilityProvider initItemStackCapabilities(ItemStack itemStack) {
-        return new FluidHandlerItemStack(itemStack, tankSize) {
-            @Override
-            public FluidStack drain(FluidStack resource, boolean doDrain) {
-                FluidStack drained = super.drain(resource, doDrain);
-                this.removeTagWhenEmptied(doDrain);
-                return drained;
-            }
-
-            @Override
-            public FluidStack drain(int maxDrain, boolean doDrain) {
-                FluidStack drained = super.drain(maxDrain, doDrain);
-                this.removeTagWhenEmptied(doDrain);
-                return drained;
-            }
-
-            private void removeTagWhenEmptied(boolean doDrain) {
-                if (doDrain && this.getFluid() == null) {
-                    this.container.setTagCompound(null);
-                }
-            }
-
-            @Override
-            public boolean canFillFluidType(FluidStack fluid) {
-                return MetaTileEntityDrum.this.canFillFluidType(fluid);
-            }
-        };
-    }
-
-    protected boolean canFillFluidType(FluidStack fluid) {
-        return !ModHandler.isMaterialWood(material) &&
-                !material.hasFlag(FLAMMABLE) ||
-                fluid.getFluid().getTemperature(fluid) <= 325;
+        int maxTemperature = (ModHandler.isMaterialWood(material) || material.hasFlag(FLAMMABLE)) ? 325 : Integer.MAX_VALUE;
+        return new ThermalFluidHandlerItemStack(itemStack, tankSize, Integer.MIN_VALUE, maxTemperature);
     }
 
     @Override

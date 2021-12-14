@@ -82,6 +82,8 @@ public class SlotWidget extends Widget implements INativeWidget {
             }
         }
         GlStateManager.disableRescaleNormal();
+        GlStateManager.disableLighting();
+        RenderHelper.disableStandardItemLighting();
         RenderHelper.enableStandardItemLighting();
         RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.pushMatrix();

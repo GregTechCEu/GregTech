@@ -157,9 +157,9 @@ public class TerminalMenuWidget extends WidgetGroup {
     }
 
     @Override
-    public void updateScreen() {
+    public void updateScreenOnFrame() {
         if(interpolator != null) interpolator.update();
-        super.updateScreen();
+        super.updateScreenOnFrame();
     }
 
     @Override

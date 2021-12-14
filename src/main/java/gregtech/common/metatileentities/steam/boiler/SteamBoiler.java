@@ -14,9 +14,9 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.SimpleSidedCubeRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -27,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
@@ -51,7 +52,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     public final TextureArea SLOT_FURNACE_BACKGROUND;
 
     protected final boolean isHighPressure;
-    private final OrientedOverlayRenderer renderer;
+    private final ICubeRenderer renderer;
 
     protected FluidTank waterFluidTank;
     protected FluidTank steamFluidTank;
@@ -66,7 +67,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     private boolean wasBurningAndNeedsUpdate;
     private final ItemStackHandler containerInventory;
 
-    public SteamBoiler(ResourceLocation metaTileEntityId, boolean isHighPressure, OrientedOverlayRenderer renderer) {
+    public SteamBoiler(ResourceLocation metaTileEntityId, boolean isHighPressure, ICubeRenderer renderer) {
         super(metaTileEntityId);
         this.renderer = renderer;
         this.isHighPressure = isHighPressure;
@@ -100,7 +101,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         getBaseRenderer().render(renderState, translation, colouredPipeline);
-        renderer.render(renderState, translation, pipeline, getFrontFacing(), isBurning(), true);
+        renderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isBurning(), true);
     }
 
     @Override
@@ -304,10 +305,16 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     }
 
     @Override
-    public void onAttached() {
-        super.onAttached();
+    public void onAttached(Object... data) {
+        super.onAttached(data);
         if (getWorld() != null && getWorld().isRemote) {
             this.setupSound(GTSounds.BOILER, this.getPos());
         }
+    }
+
+    @Override
+    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+        super.clearMachineInventory(itemBuffer);
+        clearInventory(itemBuffer, containerInventory);
     }
 }

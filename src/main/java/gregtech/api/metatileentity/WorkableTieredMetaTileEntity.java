@@ -6,18 +6,12 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.*;
 import gregtech.api.metatileentity.sound.ISoundCreator;
-import gregtech.api.metatileentity.sound.PositionedSoundMTE;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.sound.GTSounds;
-import gregtech.common.ConfigHolder;
-import net.minecraft.client.Minecraft;
+import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -34,11 +28,11 @@ import java.util.function.Function;
 public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity implements ISoundCreator {
 
     protected final RecipeLogicEnergy workable;
-    protected final OrientedOverlayRenderer renderer;
+    protected final ICubeRenderer renderer;
 
     private final Function<Integer, Integer> tankScalingFunction;
 
-    public WorkableTieredMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier,
+    public WorkableTieredMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
                                         Function<Integer, Integer> tankScalingFunction) {
         super(metaTileEntityId, tier);
         this.renderer = renderer;
@@ -81,7 +75,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        renderer.render(renderState, translation, pipeline, getFrontFacing(), workable.isActive(), workable.isWorkingEnabled());
+        renderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), workable.isActive(), workable.isWorkingEnabled());
     }
 
     @Override
@@ -149,7 +143,8 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VN[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", this.tankScalingFunction.apply(getTier())));
+        if (workable.getRecipeMap().getMaxFluidInputs() != 0)
+            tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", this.tankScalingFunction.apply(getTier())));
     }
 
     public Function<Integer, Integer> getTankScalingFunction() {
@@ -161,8 +156,8 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     }
 
     @Override
-    public void onAttached() {
-        super.onAttached();
+    public void onAttached(Object... data) {
+        super.onAttached(data);
         if (getWorld() != null && getWorld().isRemote) {
             this.setupSound(this.workable.getRecipeMap().getSound(), this.getPos());
         }

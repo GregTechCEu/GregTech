@@ -10,24 +10,23 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.ICustomRenderFast;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
-import gregtech.api.util.RenderBufferHelper;
-import gregtech.api.util.RenderUtil;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.ICustomRenderFast;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.RenderBufferHelper;
+import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.common.blocks.BlockFusionCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
-import gregtech.core.hooks.BloomRenderLayerHooks;
+import gregtech.client.utils.BloomEffectUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -53,7 +52,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -68,7 +69,6 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         super(metaTileEntityId, RecipeMaps.FUSION_RECIPES);
         this.recipeMapWorkable = new FusionRecipeLogic(this);
         this.tier = tier;
-        this.reinitializeStructurePattern();
         this.energyContainer = new EnergyContainerHandler(this, Integer.MAX_VALUE, 0, 0, 0, 0) {
             @Override
             public String getName() {
@@ -102,20 +102,17 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                 .aisle("######ICI######", "####GGAAAGG####", "######ICI######")
                 .aisle("###############", "######OSO######", "###############")
                 .where('S', selfPredicate())
-                .where('G', statePredicate(MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.FUSION_GLASS)).or(statePredicate(getCasingState())))
-                .where('C', statePredicate(getCasingState()))
-                .where('O', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.EXPORT_FLUIDS)))
-                .where('E', statePredicate(getCasingState()).or(tilePredicate((state, tile) -> {
-                    for (int i = tier; i <= GTValues.UV; i++) {
-                        if (tile.metaTileEntityId.equals(MetaTileEntities.ENERGY_INPUT_HATCH[i].metaTileEntityId))
-                            return true;
-                    }
-                    return false;
-                })))
-                .where('I', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS)))
-                .where('K', statePredicate(getCoilState()))
-                .where('A', isAirPredicate())
-                .where('#', (tile) -> true)
+                .where('G', states(MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.FUSION_GLASS)).or(states(getCasingState())))
+                .where('E', states(getCasingState()).or(metaTileEntities(Arrays.stream(MetaTileEntities.ENERGY_INPUT_HATCH)
+                        .filter(mte-> mte != null && tier <= mte.getTier() &&  mte.getTier() <= GTValues.UV)
+                        .toArray(MetaTileEntity[]::new))
+                        .setMinGlobalLimited(1).setPreviewCount(16)))
+                .where('C', states(getCasingState()))
+                .where('K', states(getCoilState()))
+                .where('O', states(getCasingState()).or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(recipeMap.getMinFluidOutputs())))
+                .where('A', air())
+                .where('I', states(getCasingState()).or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(recipeMap.getMinFluidInputs())))
+                .where('#', any())
                 .build();
     }
 
@@ -239,7 +236,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         return Textures.FUSION_REACTOR_OVERLAY;
     }
 
@@ -307,7 +304,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         if (color != null && MinecraftForgeClient.getRenderPass() == 0) {
             final int c = color;
-            BloomRenderLayerHooks.requestRenderFast(RENDER_HANDLER, (buffer)->{
+            BloomEffectUtil.requestRenderFast(RENDER_HANDLER, (buffer)->{
                 int color = RenderUtil.colorInterpolator(c, -1).apply(Eases.EaseQuadIn.getInterpolation(Math.abs((Math.abs(getOffsetTimer() % 50) + partialTicks) - 25) / 25));
                 float a = (float)(color >> 24 & 255) / 255.0F;
                 float r = (float)(color >> 16 & 255) / 255.0F;

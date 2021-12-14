@@ -5,7 +5,7 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.ShaderTexture;
-import gregtech.api.render.shader.Shaders;
+import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import net.minecraftforge.fml.relauncher.Side;

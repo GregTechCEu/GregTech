@@ -11,7 +11,7 @@ public class MetaArmor extends ArmorMetaItem<ArmorMetaItem<?>.ArmorMetaValueItem
 
     @Override
     public void registerSubItems() {
-        ConfigHolder.UnofficialOptions.Equipment e = ConfigHolder.U.equipment;
+        ConfigHolder.ToolOptions e = ConfigHolder.tools;
 
         MetaItems.NIGHTVISION_GOGGLES = addItem(1, "nightvision_goggles").setArmorLogic(new NightvisionGoggles()).setRarity(EnumRarity.UNCOMMON);
 

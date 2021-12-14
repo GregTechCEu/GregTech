@@ -128,7 +128,7 @@ public class CraftingComponent {
                 {6, new UnificationEntry(OrePrefix.cableGtSingle, Materials.NiobiumTitanium)},
                 {7, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Naquadah)},
                 {8, new UnificationEntry(OrePrefix.cableGtSingle, Materials.NaquadahAlloy)},
-                {9, new UnificationEntry(OrePrefix.wireGtSingle, Materials.RutheniumTriniumAmericiumNeutronate)},
+                {9, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Europium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
@@ -155,8 +155,9 @@ public class CraftingComponent {
                 {4, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Aluminium)},
                 {5, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Platinum)},
                 {6, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.NiobiumTitanium)},
-                {7, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.NaquadahAlloy)},
-                {8, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.RutheniumTriniumAmericiumNeutronate)},
+                {7, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Naquadah)},
+                {8, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.NaquadahAlloy)},
+                {9, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Europium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
@@ -171,12 +172,12 @@ public class CraftingComponent {
                 {6, MetaTileEntities.HULL[6].getStackForm()},
                 {7, MetaTileEntities.HULL[7].getStackForm()},
                 {8, MetaTileEntities.HULL[8].getStackForm()},
+                {9, MetaTileEntities.HULL[9].getStackForm()},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         if (GTValues.HT) {
             HULL.appendIngredients(Stream.of(new Object[][]{
-                    {9, MetaTileEntities.HULL[9].getStackForm()},
                     {10, MetaTileEntities.HULL[10].getStackForm()},
                     {11, MetaTileEntities.HULL[11].getStackForm()},
                     {12, MetaTileEntities.HULL[12].getStackForm()},

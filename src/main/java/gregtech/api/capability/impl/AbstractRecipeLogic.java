@@ -29,7 +29,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.function.LongSupplier;
 
 public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic {
 
@@ -37,7 +36,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
 
     public static final double STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER = 4.0;
-    public static final double STANDARD_OVERCLOCK_DURATION_DIVISOR = ConfigHolder.U.overclockDivisor;
+    public static final double STANDARD_OVERCLOCK_DURATION_DIVISOR = ConfigHolder.machines.overclockDivisor;
     public static final double PERFECT_OVERCLOCK_DURATION_DIVISOR = 4.0;
 
     private final RecipeMap<?> recipeMap;
@@ -46,7 +45,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private boolean allowOverclocking = true;
     protected int parallelRecipesPerformed;
     private long overclockVoltage = 0;
-    private LongSupplier overclockPolicy = this::getMaxVoltage;
 
     protected int progressTime;
     protected int maxProgressTime;
@@ -223,7 +221,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             this.hasNotEnoughEnergy = true;
             //if current progress value is greater than 2, decrement it by 2
             if (progressTime >= 2) {
-                if (ConfigHolder.insufficientEnergySupplyWipesRecipeProgress) {
+                if (ConfigHolder.machines.recipeProgressLowEnergy) {
                     this.progressTime = 1;
                 } else {
                     this.progressTime = Math.max(1, progressTime - 2);
@@ -544,7 +542,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         setMaxProgress(resultOverclock[1]);
         this.recipeEUt = resultOverclock[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
-        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), random, GTUtility.getTierByVoltage(recipeEUt)));
+        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt)));
         if (this.wasActiveAndNeedsUpdate) {
             this.wasActiveAndNeedsUpdate = false;
         } else {
@@ -647,7 +645,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     public void setOverclockVoltage(final long overclockVoltage) {
-        this.overclockPolicy = this::getOverclockVoltage;
         this.overclockVoltage = overclockVoltage;
         this.allowOverclocking = (overclockVoltage != 0);
         metaTileEntity.markDirty();

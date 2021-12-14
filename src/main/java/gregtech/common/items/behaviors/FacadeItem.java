@@ -30,7 +30,7 @@ public class FacadeItem implements IItemNameProvider, ISubItemHandler {
     @Override
     public void getSubItems(ItemStack itemStack, CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
         List<ItemStack> validFacades;
-        if (creativeTab == CreativeTabs.SEARCH && !ConfigHolder.hideFacadesInJEI) {
+        if (creativeTab == CreativeTabs.SEARCH && !ConfigHolder.compat.hideFacadesInJEI) {
             validFacades = FacadeHelper.getValidFacadeItems();
         } else {
             validFacades = ImmutableList.of(new ItemStack(Blocks.STONE));

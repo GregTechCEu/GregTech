@@ -17,7 +17,8 @@ import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.metatileentity.sound.ISoundCreator;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
@@ -44,12 +45,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements ISoundCreator, IMultipleRecipeMaps {
@@ -152,7 +154,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected void updateFormedValid() {
         if (!hasMufflerMechanics() || isMufflerFaceFree())
             this.recipeMapWorkable.updateWorkable();
-        boolean state = this.recipeMapWorkable.isWorking() && ConfigHolder.U.clientConfig.casingsActiveEmissiveTextures;
+        boolean state = this.recipeMapWorkable.isWorking() && ConfigHolder.client.casingsActiveEmissiveTextures;
         if (lastActive != state) {
             lastActive = state;
             replaceVariantBlocksActive(lastActive);
@@ -251,24 +253,70 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     @Override
-    protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
-        boolean canForm = super.checkStructureComponents(parts, abilities);
-        if (!canForm)
-            return false;
+    public TraceabilityPredicate autoAbilities() {
+        return autoAbilities(true, true, true, true, true, true, true);
+    }
 
-        //basically check minimal requirements for inputs count
-        int itemInputsCount = abilities.getOrDefault(MultiblockAbility.IMPORT_ITEMS, Collections.emptyList())
-                .stream().map(it -> (IItemHandler) it).mapToInt(IItemHandler::getSlots).sum();
-        int fluidInputsCount = abilities.getOrDefault(MultiblockAbility.IMPORT_FLUIDS, Collections.emptyList()).size();
-        return itemInputsCount >= recipeMap.getMinInputs() &&
-                fluidInputsCount >= recipeMap.getMinFluidInputs() &&
-                abilities.containsKey(MultiblockAbility.INPUT_ENERGY);
+    public TraceabilityPredicate autoAbilities(boolean checkEnergyIn,
+                                               boolean checkMaintainer,
+                                               boolean checkItemIn,
+                                               boolean checkItemOut,
+                                               boolean checkFluidIn,
+                                               boolean checkFluidOut,
+                                               boolean checkMuffler) {
+        TraceabilityPredicate predicate = super.autoAbilities(checkMaintainer, checkMuffler)
+                .or(checkEnergyIn ? abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3).setPreviewCount(1) : new TraceabilityPredicate());
+
+        boolean checkedItemsIn = false;
+        boolean checkedItemsOut = false;
+        boolean checkedFluidsIn = false;
+        boolean checkedFluidsOut = false;
+
+        for (RecipeMap<?> recipeMap : getAvailableRecipeMaps()) {
+            if (!checkedItemsIn && checkItemIn) {
+                if (recipeMap.getMinInputs() > 0) {
+                    checkedItemsIn = true;
+                    predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
+                } else if (recipeMap.getMaxInputs() > 0) {
+                    checkedItemsIn = true;
+                    predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setPreviewCount(1));
+                }
+            }
+            if (!checkedItemsOut && checkItemOut) {
+                if (recipeMap.getMinOutputs() > 0) {
+                    checkedItemsOut = true;
+                    predicate = predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
+                } else if (recipeMap.getMaxOutputs() > 0) {
+                    checkedItemsOut = true;
+                    predicate = predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS).setPreviewCount(1));
+                }
+            }
+            if (!checkedFluidsIn && checkFluidIn) {
+                if (recipeMap.getMinFluidInputs() > 0) {
+                    checkedFluidsIn = true;
+                    predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(recipeMap.getMinFluidInputs()));
+                } else if (recipeMap.getMaxFluidInputs() > 0) {
+                    checkedFluidsIn = true;
+                    predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setPreviewCount(1));
+                }
+            }
+            if (!checkedFluidsOut && checkFluidOut) {
+                if (recipeMap.getMinFluidOutputs() > 0) {
+                    checkedFluidsOut = true;
+                    predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(recipeMap.getMinFluidOutputs()));
+                } else if (recipeMap.getMaxFluidOutputs() > 0) {
+                    checkedFluidsOut = true;
+                    predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setPreviewCount(1));
+                }
+            }
+        }
+        return predicate;
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
+        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
     }
 
     @Override
@@ -339,8 +387,8 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
 
     @Override
-    public void onAttached() {
-        super.onAttached();
+    public void onAttached(Object... data) {
+        super.onAttached(data);
         if (getWorld() != null && getWorld().isRemote) {
             this.setupSound(recipeMap.getSound(), this.getPos());
         }
@@ -353,7 +401,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     @Override
     public RecipeMap<?>[] getAvailableRecipeMaps() {
-        return hasMultipleRecipeMaps() ? this.recipeMaps : null;
+        return hasMultipleRecipeMaps() ? this.recipeMaps : new RecipeMap<?>[]{this.recipeMap};
     }
 
     @Override

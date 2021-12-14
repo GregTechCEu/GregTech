@@ -41,12 +41,12 @@ public class CardWidget extends GuideWidget{
 
     @Override
     public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
-        super.loadConfigurator(group, config, isFixed, needUpdate);
+        group.addWidget(new BooleanConfigurator(group, config, "isShadow", true).setOnUpdated(needUpdate));
         if (!isFixed) {
             group.addWidget(new NumberConfigurator(group, config, "width").setOnUpdated(needUpdate));
             group.addWidget(new NumberConfigurator(group, config, "height").setOnUpdated(needUpdate));
         }
-        group.addWidget(new BooleanConfigurator(group, config, "isShadow", true).setOnUpdated(needUpdate));
+        super.loadConfigurator(group, config, isFixed, needUpdate);
     }
 
     @Override

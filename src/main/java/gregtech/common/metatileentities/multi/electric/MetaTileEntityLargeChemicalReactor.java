@@ -4,35 +4,33 @@ import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockBoilerCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockController {
-
-    public static final MultiblockAbility<?>[] ALLOWED_ABILITIES = new MultiblockAbility[]{
-            MultiblockAbility.INPUT_ENERGY, MultiblockAbility.IMPORT_ITEMS,
-            MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS,
-            MultiblockAbility.EXPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH
-    };
 
     public MetaTileEntityLargeChemicalReactor(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.LARGE_CHEMICAL_RECIPES);
@@ -46,20 +44,68 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
 
     @Override
     protected BlockPattern createStructurePattern() {
+        TraceabilityPredicate casing = states(getCasingState()).setMinGlobalLimited(10);
+        TraceabilityPredicate abilities = autoAbilities();
         return FactoryBlockPattern.start()
                 .aisle("XXX", "XCX", "XXX")
                 .aisle("XCX", "CPC", "XCX")
                 .aisle("XXX", "XSX", "XXX")
-                .setAmountLimit('K', 1, 1)
-                .setAmountAtLeast('x', 10)
                 .where('S', selfPredicate())
-                .where('x', statePredicate(getCasingState()))
-                .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
-                .where('P', statePredicate(getPipeCasingState()))
-                .where('K', statePredicate(MetaBlocks.WIRE_COIL.getState(BlockWireCoil.CoilType.CUPRONICKEL)))
-                .where('C', statePredicate(MetaBlocks.WIRE_COIL.getState(BlockWireCoil.CoilType.CUPRONICKEL)).or(statePredicate(getCasingState())).or(abilityPartPredicate(ALLOWED_ABILITIES)))
+                .where('X', casing.or(abilities))
+                .where('P', states(getPipeCasingState()))
+                .where('C', states(MetaBlocks.WIRE_COIL.getState(BlockWireCoil.CoilType.CUPRONICKEL)).setMinGlobalLimited(1).setMaxGlobalLimited(1)
+                        .or(abilities)
+                        .or(casing))
                 .build();
     }
+
+    @Override
+    public List<MultiblockShapeInfo> getMatchingShapes() {
+        ArrayList<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
+        MultiblockShapeInfo.Builder baseBuilder = MultiblockShapeInfo.builder()
+                .where('S', MetaTileEntities.LARGE_CHEMICAL_REACTOR, EnumFacing.SOUTH)
+                .where('X', MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING))
+                .where('P', MetaBlocks.BOILER_CASING.getState(BlockBoilerCasing.BoilerCasingType.POLYTETRAFLUOROETHYLENE_PIPE))
+                .where('C', MetaBlocks.WIRE_COIL.getState(BlockWireCoil.CoilType.CUPRONICKEL))
+                .where('I', MetaTileEntities.ITEM_IMPORT_BUS[3], EnumFacing.SOUTH)
+                .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[3], EnumFacing.NORTH)
+                .where('O', MetaTileEntities.ITEM_EXPORT_BUS[3], EnumFacing.SOUTH)
+                .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[3], EnumFacing.SOUTH)
+                .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[3], EnumFacing.SOUTH)
+                .where('M', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING), EnumFacing.SOUTH);
+        shapeInfo.add(baseBuilder.shallowCopy()
+                .aisle("XEX", "XCX", "XXX")
+                .aisle("XXX", "XPX", "XXX")
+                .aisle("IMO", "FSH", "XXX")
+                .build()
+        );
+        shapeInfo.add(baseBuilder.shallowCopy()
+                .aisle("XEX", "XXX", "XXX")
+                .aisle("XXX", "XPX", "XCX")
+                .aisle("IMO", "FSH", "XXX")
+                .build()
+        );
+        shapeInfo.add(baseBuilder.shallowCopy()
+                .aisle("XEX", "XXX", "XXX")
+                .aisle("XCX", "XPX", "XXX")
+                .aisle("IMO", "FSH", "XXX")
+                .build()
+        );
+        shapeInfo.add(baseBuilder.shallowCopy()
+                .aisle("XEX", "XXX", "XXX")
+                .aisle("XXX", "CPX", "XXX")
+                .aisle("IMO", "FSH", "XXX")
+                .build()
+        );
+        shapeInfo.add(baseBuilder.shallowCopy()
+                .aisle("XEX", "XXX", "XXX")
+                .aisle("XXX", "XPC", "XXX")
+                .aisle("IMO", "FSH", "XXX")
+                .build()
+        );
+        return shapeInfo;
+    }
+
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
@@ -82,7 +128,7 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
 
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         return Textures.LARGE_CHEMICAL_REACTOR_OVERLAY;
     }
 

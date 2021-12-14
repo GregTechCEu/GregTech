@@ -9,7 +9,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -91,5 +91,10 @@ public class MetaTileEntityAutoMaintenanceHatch extends MetaTileEntityMultiblock
     @Override
     public void registerAbilities(List<IMaintenanceHatch> abilityList) {
         abilityList.add(this);
+    }
+
+    @Override
+    public boolean canPartShare() {
+        return false;
     }
 }

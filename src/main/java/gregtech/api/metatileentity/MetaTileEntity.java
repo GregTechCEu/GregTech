@@ -23,11 +23,11 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.FluidKey;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
-import gregtech.core.hooks.BloomRenderLayerHooks;
+import gregtech.client.utils.BloomEffectUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -70,7 +70,7 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 
 public abstract class MetaTileEntity implements ICoverable {
 
-    public static final int DEFAULT_PAINTING_COLOR = ConfigHolder.U.GT5u.defaultPaintingColor;
+    public static final int DEFAULT_PAINTING_COLOR = ConfigHolder.machines.defaultPaintingColor;
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
     public static final String TAG_KEY_FRAGILE = "Fragile";
@@ -206,7 +206,7 @@ public abstract class MetaTileEntity implements ICoverable {
 
     @SideOnly(Side.CLIENT)
     public boolean canRenderInLayer(BlockRenderLayer renderLayer) {
-        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED || renderLayer == BloomRenderLayerHooks.getRealBloomLayer();
+        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED || renderLayer == BloomEffectUtil.getRealBloomLayer();
     }
 
     @SideOnly(Side.CLIENT)
@@ -1258,7 +1258,7 @@ public abstract class MetaTileEntity implements ICoverable {
         }
     }
 
-    public void onAttached() {
+    public void onAttached(Object... data) {
     }
 
     /**
@@ -1347,9 +1347,6 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public boolean getWitherProof() {
         return false;
-    }
-
-    public void preInit(Object... data) {
     }
 
     public final void toggleMuffled() {

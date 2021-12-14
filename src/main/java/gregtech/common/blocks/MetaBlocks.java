@@ -5,8 +5,9 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.render.MetaTileEntityRenderer;
-import gregtech.api.render.MetaTileEntityTESR;
+import gregtech.client.renderer.handler.MetaTileEntityRenderer;
+import gregtech.client.renderer.handler.MetaTileEntityTESR;
+import gregtech.client.model.IModelSupplier;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -16,9 +17,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
-import gregtech.common.blocks.modelfactories.BakedModelHandler;
-import gregtech.common.blocks.surfacerock.BlockSurfaceRock;
-import gregtech.common.blocks.surfacerock.TileEntitySurfaceRock;
+import gregtech.client.model.modelfactories.BakedModelHandler;
 import gregtech.common.blocks.wood.BlockGregLeaves;
 import gregtech.common.blocks.wood.BlockGregLog;
 import gregtech.common.blocks.wood.BlockGregPlank;
@@ -35,9 +34,10 @@ import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
-import gregtech.common.render.CableRenderer;
-import gregtech.common.render.FluidPipeRenderer;
-import gregtech.common.render.ItemPipeRenderer;
+import gregtech.client.renderer.pipe.CableRenderer;
+import gregtech.client.renderer.pipe.FluidPipeRenderer;
+import gregtech.client.renderer.pipe.ItemPipeRenderer;
+import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog.EnumAxis;
 import net.minecraft.block.properties.IProperty;
@@ -69,7 +69,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FRAME;
-import static gregtech.common.ClientProxy.*;
+import static gregtech.client.ClientProxy.*;
 
 public class MetaBlocks {
 
@@ -113,8 +113,8 @@ public class MetaBlocks {
 
     public static final Map<Material, BlockCompressed> COMPRESSED = new HashMap<>();
     public static final Map<Material, BlockFrame> FRAMES = new HashMap<>();
-    public static final Collection<BlockOre> ORES = new HashSet<>();
-    public static final Collection<BlockFluidBase> FLUID_BLOCKS = new HashSet<>();
+    public static final Collection<BlockOre> ORES = new ReferenceArrayList<>();
+    public static final Collection<BlockFluidBase> FLUID_BLOCKS = new ReferenceArrayList<>();
 
     public static void init() {
         GregTechAPI.MACHINE = MACHINE = new BlockMachine();
@@ -190,6 +190,9 @@ public class MetaBlocks {
 
         StoneType.init();
 
+        createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && (m.hasProperty(PropertyKey.INGOT) || m.hasProperty(PropertyKey.GEM)) && !OrePrefix.block.isIgnored(m), MetaBlocks::createCompressedBlock);
+        createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME), MetaBlocks::createFrameBlock);
+
         createGeneratedBlock(
                 material -> (material.hasProperty(PropertyKey.INGOT) || material.hasProperty(PropertyKey.GEM))
                         && !OrePrefix.block.isIgnored(material),
@@ -198,13 +201,8 @@ public class MetaBlocks {
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
             if (material.isHidden()) continue;
 
-            if (material.hasProperty(PropertyKey.ORE))
+            if (material.hasProperty(PropertyKey.ORE)) {
                 createOreBlock(material);
-
-            if (material.hasProperty(PropertyKey.DUST) && material.hasFlag(GENERATE_FRAME)) {
-                BlockFrame blockFrame = new BlockFrame(material);
-                blockFrame.setRegistryName("frame_" + material.toString());
-                FRAMES.put(material, blockFrame);
             }
 
             if (material.hasProperty(PropertyKey.WIRE)) {
@@ -224,9 +222,6 @@ public class MetaBlocks {
         }
         for (BlockFluidPipe pipe : FLUID_PIPES) {
             pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(310, 5, false));
-        }
-        for (BlockCable cable : CABLES) {
-//            cable.addCableMaterial(MarkerMaterials.Tier.Superconductor, new WireProperty(Integer.MAX_VALUE, 4, 0)); todo fix
         }
         registerTileEntity();
 
@@ -273,9 +268,15 @@ public class MetaBlocks {
         BlockCompressed block = new BlockCompressed(materials);
         block.setRegistryName("meta_block_compressed_" + index);
         for (Material material : materials) {
-            if (material.hasProperty(PropertyKey.DUST)) {
-                COMPRESSED.put(material, block);
-            }
+            COMPRESSED.put(material, block);
+        }
+    }
+
+    private static void createFrameBlock(Material[] materials, int index) {
+        BlockFrame block = new BlockFrame(materials);
+        block.setRegistryName("meta_block_frame_" + index);
+        for (Material m : materials) {
+            FRAMES.put(m, block);
         }
     }
 
@@ -316,7 +317,6 @@ public class MetaBlocks {
         GameRegistry.registerTileEntity(TileEntityItemPipe.class, new ResourceLocation(GTValues.MODID, "item_pipe"));
         GameRegistry.registerTileEntity(TileEntityFluidPipeTickable.class, new ResourceLocation(GTValues.MODID, "fluid_pipe_active"));
         GameRegistry.registerTileEntity(TileEntityItemPipeTickable.class, new ResourceLocation(GTValues.MODID, "item_pipe_active"));
-        GameRegistry.registerTileEntity(TileEntitySurfaceRock.class, new ResourceLocation(GTValues.MODID, "surface_rock"));
     }
 
     @SideOnly(Side.CLIENT)
@@ -349,9 +349,9 @@ public class MetaBlocks {
         registerItemModel(SAPLING);
         registerItemModel(PLANKS);
 
-        COMPRESSED.values().stream().distinct().forEach(MetaBlocks::registerItemModel);
-        FRAMES.values().forEach(MetaBlocks::registerItemModelWithFilteredProperties);
-        ORES.stream().distinct().forEach(MetaBlocks::registerItemModel);
+        COMPRESSED.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
+        FRAMES.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
+        ORES.forEach(IModelSupplier::onModelRegister);
     }
 
     @SideOnly(Side.CLIENT)
@@ -442,7 +442,6 @@ public class MetaBlocks {
         ModelLoader.setCustomStateMapper(REINFORCED_FOAM, normalStateMapper);
         ModelLoader.setCustomStateMapper(PETRIFIED_FOAM, normalStateMapper);
         ModelLoader.setCustomStateMapper(REINFORCED_PETRIFIED_FOAM, normalStateMapper);
-        FRAMES.values().forEach(it -> ModelLoader.setCustomStateMapper(it, normalStateMapper));
 
         BakedModelHandler modelHandler = new BakedModelHandler();
         MinecraftForge.EVENT_BUS.register(modelHandler);
@@ -491,14 +490,14 @@ public class MetaBlocks {
         for (Entry<Material, BlockFrame> entry : FRAMES.entrySet()) {
             Material material = entry.getKey();
             BlockFrame block = entry.getValue();
-            ItemStack itemStack = new ItemStack(block, 1);
+            ItemStack itemStack = block.getItem(material);
             OreDictUnifier.registerOre(itemStack, OrePrefix.frameGt, material);
         }
 
         for (BlockOre blockOre : ORES) {
             Material material = blockOre.material;
             for (StoneType stoneType : blockOre.STONE_TYPE.getAllowedValues()) {
-                if (stoneType == null) continue;
+                if (stoneType == null || !stoneType.shouldBeDroppedAsItem) continue;
                 ItemStack normalStack = blockOre.getItem(blockOre.getDefaultState()
                         .withProperty(blockOre.STONE_TYPE, stoneType));
                 OreDictUnifier.registerOre(normalStack, stoneType.processingPrefix, material);
@@ -524,7 +523,7 @@ public class MetaBlocks {
         }
     }
 
-    private static String statePropertiesToString(Map<IProperty<?>, Comparable<?>> properties) {
+    public static String statePropertiesToString(Map<IProperty<?>, Comparable<?>> properties) {
         StringBuilder stringbuilder = new StringBuilder();
 
         List<Entry<IProperty<?>, Comparable<?>>> entries = properties.entrySet().stream()

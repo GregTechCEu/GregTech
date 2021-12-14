@@ -32,7 +32,7 @@ public class SimpleMachineGuideApp extends GuideApp<MetaTileEntity> {
     }
 
     @Override
-    protected MetaTileEntity ofJson(JsonObject json) {
+    public MetaTileEntity ofJson(JsonObject json) {
         String[] valids = {"machine", "generator", "metatileentity"};
         if (json.isJsonObject()) {
             for (String valid : valids) {

@@ -17,9 +17,9 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.SimpleOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
 import net.minecraft.client.resources.I18n;
@@ -40,7 +40,7 @@ import java.util.List;
 public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
 
     private static final int INVENTORY_SIZE = 64000;
-    private static final boolean IS_STEEL = ConfigHolder.U.steelSteamMultiblocks;
+    private static final boolean IS_STEEL = ConfigHolder.machines.steelSteamMultiblocks;
 
     private final ItemStackHandler containerInventory;
     private final FluidTank steamFluidTank;

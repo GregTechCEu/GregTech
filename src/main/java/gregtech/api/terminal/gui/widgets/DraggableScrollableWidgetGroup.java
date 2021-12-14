@@ -6,8 +6,9 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.IDraggable;
 import gregtech.api.util.Position;
-import gregtech.api.util.RenderUtil;
+import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
+import gregtech.common.ConfigHolder;
 import net.minecraft.util.math.MathHelper;
 
 public class DraggableScrollableWidgetGroup extends WidgetGroup {
@@ -25,6 +26,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
     protected IGuiTexture yBarF;
     protected boolean focus;
     protected Widget draggedWidget;
+    protected boolean useScissor;
 
     private int lastMouseX;
     private int lastMouseY;
@@ -37,6 +39,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         super(new Position(x, y), new Size(width, height));
         maxHeight = height;
         maxWidth = width;
+        useScissor = true;
     }
 
     public DraggableScrollableWidgetGroup setXScrollBarHeight(int xBar) {
@@ -69,6 +72,10 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         this.yBarB = background;
         this.yBarF = bar;
         return this;
+    }
+
+    public void setUseScissor(boolean useScissor) {
+        this.useScissor = useScissor;
     }
 
     public int getScrollYOffset() {
@@ -117,7 +124,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         }
     }
 
-    protected void computeMax() {
+    public void computeMax() {
         int mh = 0;
         int mw = 0;
         for (Widget widget : widgets) {
@@ -227,11 +234,18 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         if (background != null) {
             background.draw(x, y, width, height);
         }
-        RenderUtil.useScissor(x, y, width - yBarWidth, height - xBarHeight, ()->{
+        if (useScissor) {
+            RenderUtil.useScissor(x, y, width - yBarWidth, height - xBarHeight, ()->{
+                if(!hookDrawInBackground(mouseX, mouseY, partialTicks, context)) {
+                    super.drawInBackground(mouseX, mouseY, partialTicks, context);
+                }
+            });
+        } else {
             if(!hookDrawInBackground(mouseX, mouseY, partialTicks, context)) {
                 super.drawInBackground(mouseX, mouseY, partialTicks, context);
             }
-        });
+        }
+
         if (xBarHeight > 0) {
             if (xBarB != null) {
                 xBarB.draw(x, y - xBarHeight, width, xBarHeight);
@@ -301,11 +315,11 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
 
     @Override
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
-        if (this.isMouseOverElement(mouseX, mouseY, true)) {
+        if (this.isMouseOverElement(mouseX, mouseY)) {
             if (super.mouseWheelMove(mouseX, mouseY, wheelDelta)) {
                 return true;
             }
-            int moveDelta = -MathHelper.clamp(wheelDelta, -1, 1) * 5;
+            int moveDelta = -MathHelper.clamp(wheelDelta, -1, 1) * ConfigHolder.client.guiConfig.scrollSpeed;
             if (getMaxHeight() - getSize().height > 0 || scrollYOffset > getMaxHeight() - getSize().height) {
                 setScrollYOffset(MathHelper.clamp(scrollYOffset + moveDelta, 0, getMaxHeight() - getSize().height));
             }

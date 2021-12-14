@@ -3,7 +3,7 @@ package gregtech.common.items.behaviors;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
-import gregtech.common.render.WorldRenderEventRenderer;
+import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,7 +40,7 @@ public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverPlaceBehav
             if (held == itemStack) {
                 BlockPos pos = getRemotePos(itemStack);
                 if (pos != null) {
-                    WorldRenderEventRenderer.renderBlockBoxHighLight(pos, 1500);
+                    BlockPosHighlightRenderer.renderBlockBoxHighLight(pos, 1500);
                 }
             }
         }

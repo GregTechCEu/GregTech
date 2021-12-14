@@ -33,14 +33,14 @@ public class EUToFEProvider implements ICapabilitySerializable<NBTTagLong> {
 
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
-        if (!ConfigHolder.U.energyOptions.nativeEUToFE || capability != GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
+        if (!ConfigHolder.compat.energy.nativeEUToFE || capability != GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
             return false;
         return tileEntity.hasCapability(capability, facing);
     }
 
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
-        if (!ConfigHolder.U.energyOptions.nativeEUToFE || capability != GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
+        if (!ConfigHolder.compat.energy.nativeEUToFE || capability != GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
             return null;
 
         IEnergyStorage energyStorage = tileEntity.getCapability(CapabilityEnergy.ENERGY, facing);

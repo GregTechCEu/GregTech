@@ -9,22 +9,17 @@ import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.FuelRecipeLogic;
 import gregtech.api.metatileentity.MTETrait;
-import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.sound.ISoundCreator;
-import gregtech.api.metatileentity.sound.PositionedSoundMTE;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.machines.FuelRecipeMap;
-import gregtech.common.ConfigHolder;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.List;
-import java.util.Map;
 
 public abstract class FueledMultiblockController extends MultiblockWithDisplayBase implements ISoundCreator {
 
@@ -98,22 +93,36 @@ public abstract class FueledMultiblockController extends MultiblockWithDisplayBa
     }
 
     @Override
-    protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
-        //noinspection SuspiciousMethodCalls
-        return abilities.containsKey(MultiblockAbility.IMPORT_FLUIDS) &&
-                abilities.containsKey(MultiblockAbility.OUTPUT_ENERGY);
+    public TraceabilityPredicate autoAbilities() {
+        return autoAbilities(true, true, true, true, true);
+    }
+
+    public TraceabilityPredicate autoAbilities(boolean checkEnergyOut,
+                                               boolean checkMaintainer,
+                                               boolean checkFluidIn,
+                                               boolean checkFluidOutput,
+                                               boolean checkMuffler) {
+        TraceabilityPredicate predicate = super.autoAbilities(checkMaintainer, checkMuffler)
+                .or(checkEnergyOut ? abilities(MultiblockAbility.OUTPUT_ENERGY) : new TraceabilityPredicate());
+        if (checkFluidIn) {
+            predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(1));
+        }
+        if (checkFluidOutput) {
+            predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(1));
+        }
+        return predicate;
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(),
+        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(),
                 isStructureFormed() && workableHandler.isActive(), workableHandler.isWorkingEnabled());
     }
 
     @Override
-    public void onAttached() {
-        super.onAttached();
+    public void onAttached(Object... data) {
+        super.onAttached(data);
         if (getWorld() != null && getWorld().isRemote) {
             this.setupSound(workableHandler.recipeMap.getSound(), this.getPos());
         }

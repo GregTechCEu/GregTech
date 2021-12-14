@@ -6,6 +6,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.util.*;
+import gregtech.client.utils.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -36,6 +37,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
     public int fluidRenderOffset = 1;
     private boolean hideTooltip;
     private boolean alwaysShowFull;
+    private boolean drawHoveringText;
 
     private boolean allowClickFilling;
     private boolean allowClickEmptying;
@@ -43,13 +45,14 @@ public class TankWidget extends Widget implements IIngredientSlot {
     private IGuiTexture[] backgroundTexture;
     private IGuiTexture overlayTexture;
 
-    private FluidStack lastFluidInTank;
+    protected FluidStack lastFluidInTank;
     private int lastTankCapacity;
-    private boolean isClient;
+    protected boolean isClient;
 
     public TankWidget(IFluidTank fluidTank, int x, int y, int width, int height) {
         super(new Position(x, y), new Size(width, height));
         this.fluidTank = fluidTank;
+        this.drawHoveringText = true;
     }
 
     public TankWidget setClient() {
@@ -61,6 +64,11 @@ public class TankWidget extends Widget implements IIngredientSlot {
 
     public TankWidget setHideTooltip(boolean hideTooltip) {
         this.hideTooltip = hideTooltip;
+        return this;
+    }
+
+    public TankWidget setDrawHoveringText(boolean drawHoveringText) {
+        this.drawHoveringText = drawHoveringText;
         return this;
     }
 
@@ -109,7 +117,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
     }
 
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         Position pos = getPosition();
         Size size = getSize();
         if (backgroundTexture != null) {
@@ -118,13 +126,20 @@ public class TankWidget extends Widget implements IIngredientSlot {
             }
         }
         //do not draw fluids if they are handled by JEI - it draws them itself
-        if (lastFluidInTank != null && lastFluidInTank.amount > 0 && !gui.isJEIHandled) {
+        if (lastFluidInTank != null && !gui.isJEIHandled) {
             GlStateManager.disableBlend();
-            RenderUtil.drawFluidForGui(lastFluidInTank, alwaysShowFull ? lastFluidInTank.amount : lastTankCapacity,
+            FluidStack stackToDraw = lastFluidInTank;
+            int drawAmount = alwaysShowFull ? lastFluidInTank.amount : lastTankCapacity;
+            if (alwaysShowFull && lastFluidInTank.amount == 0) {
+                stackToDraw = lastFluidInTank.copy();
+                stackToDraw.amount = 1;
+                drawAmount = 1;
+            }
+            RenderUtil.drawFluidForGui(stackToDraw, drawAmount,
                     pos.x + fluidRenderOffset, pos.y + fluidRenderOffset,
                     size.width - fluidRenderOffset, size.height - fluidRenderOffset);
 
-            if (alwaysShowFull && !hideTooltip) {
+            if (alwaysShowFull && !hideTooltip && drawHoveringText) {
                 GlStateManager.pushMatrix();
                 GlStateManager.scale(0.5, 0.5, 1);
 

@@ -142,11 +142,6 @@ public abstract class Widget {
     protected void onSizeUpdate() {
     }
 
-    public boolean isMouseOverElement(int mouseX, int mouseY, boolean correctPositionOnMouseWheelMoveEvent) {
-        mouseX = correctPositionOnMouseWheelMoveEvent ? mouseX + this.gui.getGuiLeft() : mouseX;
-        return isMouseOverElement(mouseX, mouseY);
-    }
-
     public boolean isMouseOverElement(int mouseX, int mouseY) {
         Position position = getPosition();
         Size size = getSize();
@@ -173,6 +168,12 @@ public abstract class Widget {
      * Called clientside every tick with this modular UI open
      */
     public void updateScreen() {
+    }
+
+    /**
+     * Called clientside approximately every 1/60th of a second with this modular UI open
+     */
+    public void updateScreenOnFrame() {
     }
 
     /**

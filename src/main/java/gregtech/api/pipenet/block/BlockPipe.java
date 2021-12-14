@@ -20,7 +20,7 @@ import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.api.render.IBlockAppearance;
+import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
@@ -128,7 +128,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
         if (pipeTile != null) {
             setTileEntityData((TileEntityPipeBase<PipeType, NodeDataType>) pipeTile, stack);
-            if (ConfigHolder.U.GT6.gt6StylePipesCables && placer instanceof EntityPlayer) {
+            if (ConfigHolder.machines.gt6StylePipesCables && placer instanceof EntityPlayer) {
                 RayTraceResult rt2 = GTUtility.getBlockLookingAt((EntityPlayer) placer, pos);
                 if (rt2 != null) {
                     for (EnumFacing facing : EnumFacing.VALUES) {
@@ -168,7 +168,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             if (facing == null) throw new NullPointerException("Facing is null");
             boolean open = pipeTile.isConnectionOpenAny(facing);
             boolean canConnect = canConnect(pipeTile, facing);
-            if (!open && canConnect && !ConfigHolder.U.GT6.gt6StylePipesCables)
+            if (!open && canConnect && !ConfigHolder.machines.gt6StylePipesCables)
                 pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, false, false);
             if (open && !canConnect)
                 pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, true, false);
