@@ -11,7 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 
-public class FullBrightnessSimpleCubeRenderer extends SimpleCubeRenderer {
+public class FullBrightnessSimpleCubeRenderer extends SimpleOverlayRenderer {
     public FullBrightnessSimpleCubeRenderer(String basePath) {
         super(basePath);
     }

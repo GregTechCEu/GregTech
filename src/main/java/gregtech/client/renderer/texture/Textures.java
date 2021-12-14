@@ -55,26 +55,26 @@ public class Textures {
     public static final LargeTurbineRenderer LARGE_TURBINE_ROTOR_RENDERER = new LargeTurbineRenderer();
 
     // Simple Cube Renderers
-    public static final SimpleCubeRenderer BRONZE_PLATED_BRICKS = new SimpleCubeRenderer("casings/solid/machine_bronze_plated_bricks");
-    public static final SimpleCubeRenderer PRIMITIVE_BRICKS = new SimpleCubeRenderer("casings/solid/machine_primitive_bricks");
-    public static final SimpleCubeRenderer COKE_BRICKS = new SimpleCubeRenderer("casings/solid/machine_coke_bricks");
-    public static final SimpleCubeRenderer HEAT_PROOF_CASING = new SimpleCubeRenderer("casings/solid/machine_casing_heatproof");
-    public static final SimpleCubeRenderer FROST_PROOF_CASING = new SimpleCubeRenderer("casings/solid/machine_casing_frost_proof");
-    public static final SimpleCubeRenderer SOLID_STEEL_CASING = new SimpleCubeRenderer("casings/solid/machine_casing_solid_steel");
-    public static final SimpleCubeRenderer CLEAN_STAINLESS_STEEL_CASING = new SimpleCubeRenderer("casings/solid/machine_casing_clean_stainless_steel");
-    public static final SimpleCubeRenderer STABLE_TITANIUM_CASING = new SimpleCubeRenderer("casings/solid/machine_casing_stable_titanium");
-    public static final SimpleCubeRenderer ROBUST_TUNGSTENSTEEL_CASING = new SimpleCubeRenderer("casings/solid/machine_casing_robust_tungstensteel");
-    public static final SimpleCubeRenderer INERT_PTFE_CASING = new SimpleCubeRenderer("casings/solid/machine_casing_inert_ptfe");
-    public static final SimpleCubeRenderer BRONZE_FIREBOX = new SimpleCubeRenderer("casings/firebox/machine_casing_firebox_bronze");
-    public static final SimpleCubeRenderer BRONZE_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_bronze_active");
-    public static final SimpleCubeRenderer STEEL_FIREBOX = new SimpleCubeRenderer("casings/firebox/machine_casing_firebox_steel");
-    public static final SimpleCubeRenderer STEEL_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_steel_active");
-    public static final SimpleCubeRenderer TITANIUM_FIREBOX = new SimpleCubeRenderer("casings/firebox/machine_casing_firebox_titanium");
-    public static final SimpleCubeRenderer TITANIUM_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_titanium_active");
-    public static final SimpleCubeRenderer TUNGSTENSTEEL_FIREBOX = new SimpleCubeRenderer("casings/firebox/machine_casing_firebox_tungstensteel");
-    public static final SimpleCubeRenderer TUNGSTENSTEEL_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_tungstensteel_active");
-    public static final SimpleCubeRenderer FUSION_TEXTURE = new SimpleCubeRenderer("casings/fusion/machine_casing_fusion_hatch");
-    public static final SimpleCubeRenderer ACTIVE_FUSION_TEXTURE = new SimpleCubeRenderer("casings/fusion/machine_casing_fusion_hatch_yellow");
+    public static final SimpleOverlayRenderer BRONZE_PLATED_BRICKS = new SimpleOverlayRenderer("casings/solid/machine_bronze_plated_bricks");
+    public static final SimpleOverlayRenderer PRIMITIVE_BRICKS = new SimpleOverlayRenderer("casings/solid/machine_primitive_bricks");
+    public static final SimpleOverlayRenderer COKE_BRICKS = new SimpleOverlayRenderer("casings/solid/machine_coke_bricks");
+    public static final SimpleOverlayRenderer HEAT_PROOF_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_heatproof");
+    public static final SimpleOverlayRenderer FROST_PROOF_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_frost_proof");
+    public static final SimpleOverlayRenderer SOLID_STEEL_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_solid_steel");
+    public static final SimpleOverlayRenderer CLEAN_STAINLESS_STEEL_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_clean_stainless_steel");
+    public static final SimpleOverlayRenderer STABLE_TITANIUM_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_stable_titanium");
+    public static final SimpleOverlayRenderer ROBUST_TUNGSTENSTEEL_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_robust_tungstensteel");
+    public static final SimpleOverlayRenderer INERT_PTFE_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_inert_ptfe");
+    public static final SimpleOverlayRenderer BRONZE_FIREBOX = new SimpleOverlayRenderer("casings/firebox/machine_casing_firebox_bronze");
+    public static final SimpleOverlayRenderer BRONZE_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_bronze_active");
+    public static final SimpleOverlayRenderer STEEL_FIREBOX = new SimpleOverlayRenderer("casings/firebox/machine_casing_firebox_steel");
+    public static final SimpleOverlayRenderer STEEL_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_steel_active");
+    public static final SimpleOverlayRenderer TITANIUM_FIREBOX = new SimpleOverlayRenderer("casings/firebox/machine_casing_firebox_titanium");
+    public static final SimpleOverlayRenderer TITANIUM_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_titanium_active");
+    public static final SimpleOverlayRenderer TUNGSTENSTEEL_FIREBOX = new SimpleOverlayRenderer("casings/firebox/machine_casing_firebox_tungstensteel");
+    public static final SimpleOverlayRenderer TUNGSTENSTEEL_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_tungstensteel_active");
+    public static final SimpleOverlayRenderer FUSION_TEXTURE = new SimpleOverlayRenderer("casings/fusion/machine_casing_fusion_hatch");
+    public static final SimpleOverlayRenderer ACTIVE_FUSION_TEXTURE = new SimpleOverlayRenderer("casings/fusion/machine_casing_fusion_hatch_yellow");
 
     // Simple Sided Cube Renderers
     public static final SimpleSidedCubeRenderer STEAM_CASING_BRONZE = new SimpleSidedCubeRenderer("casings/steam/bronze");
