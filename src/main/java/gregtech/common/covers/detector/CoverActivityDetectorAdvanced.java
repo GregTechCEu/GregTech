@@ -71,7 +71,9 @@ public class CoverActivityDetectorAdvanced extends CoverBehavior implements ITic
 
         int outputAmount = (int) (15.0 * workable.getProgress() / workable.getMaxProgress());
 
-        if (this.isInverted)
+        if (!workable.isWorkingEnabled())
+            outputAmount = 0;
+        else if (this.isInverted)
             outputAmount = 15 - outputAmount;
 
         setRedstoneSignalOutput(outputAmount);
