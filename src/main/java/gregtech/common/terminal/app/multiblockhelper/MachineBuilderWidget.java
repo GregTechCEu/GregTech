@@ -131,8 +131,8 @@ public class MachineBuilderWidget extends WidgetGroup {
 
 
                     @Override
-                    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
-                        super.drawInBackground(mouseX, mouseY, context);
+                    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+                        super.drawInBackground(mouseX, mouseY, partialTicks, context);
                         if (selected == index) {
                             drawSolidRect(getPosition().x, getPosition().y, getSize().width, getSize().height, 0x4f00ff00);
                         }

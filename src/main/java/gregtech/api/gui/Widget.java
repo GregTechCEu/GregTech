@@ -184,19 +184,10 @@ public abstract class Widget {
     }
 
     /**
-     * Called each draw tick to draw this widget in GUI (@Deprecated)
-     */
-    @Deprecated
-    @SideOnly(Side.CLIENT)
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
-    }
-
-    /**
      * Called each draw tick to draw this widget in GUI
      */
     @SideOnly(Side.CLIENT)
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-        drawInBackground(mouseX, mouseY, context);
     }
 
     /**

@@ -27,8 +27,8 @@ public class CraftingStationInputWidgetGroup extends AbstractWidgetGroup {
     }
 
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
-        super.drawInBackground(mouseX, mouseY, context);
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        super.drawInBackground(mouseX, mouseY, partialTicks, context);
         if(this.widgets.size() == 9) { // In case someone added more...
             for (int i = 0; i < 9; i++) {
                 Widget widget = widgets.get(i);

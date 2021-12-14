@@ -65,13 +65,13 @@ public class WidgetPluginConfig extends WidgetGroup {
     }
 
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         if (widgets.size() > 0 && textureArea != null) {
             Position pos = this.getPosition();
             Size size = this.getSize();
             textureArea.draw(pos.x, pos.y, size.width, size.height);
         }
-        super.drawInBackground(mouseX, mouseY, context);
+        super.drawInBackground(mouseX, mouseY, partialTicks, context);
     }
 
 }
