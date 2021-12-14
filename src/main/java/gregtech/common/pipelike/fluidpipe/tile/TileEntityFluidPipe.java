@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
+import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.covers.CoverFluidFilter;
@@ -116,7 +117,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     public void checkNeighbours() {
         openConnections.clear();
         for (EnumFacing facing : EnumFacing.values()) {
-            if (isConnectionOpenAny(facing)) {
+            if (isConnectionOpen(AttachmentType.PIPE, facing)) {
                 TileEntity tile = world.getTileEntity(pos.offset(facing));
                 if (tile == null || tile instanceof TileEntityFluidPipe) continue;
                 IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite());
@@ -129,6 +130,15 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void setConnectionBlocked(AttachmentType attachmentType, EnumFacing side, boolean blocked, boolean fromNeighbor) {
+        int oldConnections = getOpenConnections();
+        super.setConnectionBlocked(attachmentType, side, blocked, fromNeighbor);
+        if(oldConnections != getOpenConnections()) {
+            checkNeighbours();
         }
     }
 
