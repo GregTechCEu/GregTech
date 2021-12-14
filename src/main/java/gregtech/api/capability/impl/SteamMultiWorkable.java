@@ -2,7 +2,9 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
+import net.minecraft.item.ItemStack;
 
 
 /**
@@ -20,6 +22,29 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
     @Override
     public ParallelLogicType getParallelLogicType() {
         return ParallelLogicType.APPEND_ITEMS;
+    }
+
+    @Override
+    protected boolean prepareRecipe(Recipe recipe) {
+        RecipeBuilder<?> newRecipe = getRecipeMap().recipeBuilder();
+        if(!recipe.getOutputs().isEmpty()) {
+            ItemStack firstOutput = recipe.getOutputs().get(0).copy();
+            newRecipe.append(recipe, 1, false);
+            newRecipe.clearOutputs();
+            newRecipe.outputs(firstOutput);
+        }
+        else if(!recipe.getChancedOutputs().isEmpty()) {
+            Recipe.ChanceEntry chanced = recipe.getChancedOutputs().get(0).copy();
+            newRecipe.append(recipe, 1, false);
+            newRecipe.clearChancedOutput();
+            newRecipe.chancedOutput(chanced.getItemStack(), chanced.getChance(), chanced.getBoostPerTier());
+        }
+
+        if(newRecipe == null) {
+            return false;
+        }
+
+        return super.prepareRecipe(newRecipe.build().getResult());
     }
 
     @Override
