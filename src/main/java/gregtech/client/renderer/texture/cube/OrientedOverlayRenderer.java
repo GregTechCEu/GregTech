@@ -163,4 +163,9 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
             }
         }
     }
+
+    @Override
+    public boolean canRenderInLayer(BlockRenderLayer layer) {
+        return layer == BlockRenderLayer.CUTOUT_MIPPED || layer == BloomEffectUtil.getRealBloomLayer();
+    }
 }

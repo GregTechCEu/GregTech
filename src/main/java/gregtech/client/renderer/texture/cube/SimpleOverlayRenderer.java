@@ -73,4 +73,9 @@ public class SimpleOverlayRenderer implements ICubeRenderer {
     public TextureAtlasSprite getParticleSprite() {
         return sprite;
     }
+
+    @Override
+    public boolean canRenderInLayer(BlockRenderLayer layer) {
+        return layer == BlockRenderLayer.CUTOUT_MIPPED || layer == BloomEffectUtil.getRealBloomLayer();
+    }
 }

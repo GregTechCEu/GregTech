@@ -99,4 +99,9 @@ public class SimpleSidedCubeRenderer implements ICubeRenderer {
             } else Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, spriteEmissive, BlockRenderLayer.CUTOUT_MIPPED);
         }
     }
+
+    @Override
+    public boolean canRenderInLayer(BlockRenderLayer layer) {
+        return layer == BlockRenderLayer.CUTOUT_MIPPED || layer == BloomEffectUtil.getRealBloomLayer();
+    }
 }
