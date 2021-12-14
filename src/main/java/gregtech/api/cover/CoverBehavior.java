@@ -182,7 +182,7 @@ public abstract class CoverBehavior implements IUIHolder {
 
     @SideOnly(Side.CLIENT)
     public boolean canRenderInLayer(BlockRenderLayer renderLayer) {
-        return renderLayer == BlockRenderLayer.CUTOUT || renderLayer == BloomEffectUtil.getRealBloomLayer();
+        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED || renderLayer == BloomEffectUtil.getRealBloomLayer();
     }
 
     @SideOnly(Side.CLIENT)

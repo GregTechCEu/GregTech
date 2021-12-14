@@ -72,7 +72,7 @@ public interface ICoverable {
     default void renderCovers(CCRenderState renderState, Matrix4 translation, BlockRenderLayer layer) {
         renderState.lightMatrix.locate(getWorld(), getPos());
         double coverPlateThickness = getCoverPlateThickness();
-        IVertexOperation[] platePipeline = new IVertexOperation[]{new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColor()))};
+        IVertexOperation[] platePipeline = new IVertexOperation[]{renderState.lightMatrix, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColor()))};
         IVertexOperation[] coverPipeline = new IVertexOperation[]{renderState.lightMatrix};
 
         for (EnumFacing sideFacing : EnumFacing.values()) {
