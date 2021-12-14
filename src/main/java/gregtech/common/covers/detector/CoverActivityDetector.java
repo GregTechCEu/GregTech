@@ -27,7 +27,7 @@ public class CoverActivityDetector extends CoverBehavior implements ITickable {
 
     @Override
     public boolean canAttach() {
-        return coverHolder.getCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, attachedSide) != null;
+        return coverHolder.getCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, null) != null;
     }
 
     @Override
