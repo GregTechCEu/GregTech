@@ -10,7 +10,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public interface ICCLBlockRenderer {
+    @SideOnly(Side.CLIENT)
     void renderItem(ItemStack rawStack, ItemCameraTransforms.TransformType transformType);
 
+    @SideOnly(Side.CLIENT)
     void renderBlock(IBlockAccess world, BlockPos pos, IBlockState state, BufferBuilder buffer);
 }
