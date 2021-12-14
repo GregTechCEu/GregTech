@@ -14,6 +14,7 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.render.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.PipelineUtil;
 import gregtech.common.tools.DamageValues;
@@ -71,11 +72,11 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
             if (converterTrait.isFeToEu()) {
                 setFeToEu(false);
                 playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_eu",
-                        converterTrait.getBaseAmps(), converterTrait.getVoltage(), FeCompat.converterToEu(converterTrait.getVoltage() * converterTrait.getBaseAmps(), false)));
+                        converterTrait.getBaseAmps(), converterTrait.getVoltage(), FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps(), false)));
             } else {
                 setFeToEu(true);
                 playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_fe",
-                        FeCompat.converterToEu(converterTrait.getVoltage() * converterTrait.getBaseAmps(), true), converterTrait.getBaseAmps(), converterTrait.getVoltage()));
+                        FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps(), true), converterTrait.getBaseAmps(), converterTrait.getVoltage()));
             }
             return true;
         }
@@ -94,7 +95,7 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
-        if(dataId == SYNC_TILE_MODE) {
+        if (dataId == SYNC_TILE_MODE) {
             converterTrait.setFeToEu(buf.readBoolean());
             getHolder().scheduleChunkForRenderUpdate();
         }
@@ -124,7 +125,7 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
         if (converterTrait.isFeToEu()) {
             for (EnumFacing facing : EnumFacing.values()) {
                 if (facing == frontFacing)
-                    Textures.ENERGY_OUT.renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+                    getEUOutputTexture().renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
                 else
                     Textures.CONVERTER_FE_IN.renderSided(facing, renderState, translation, pipeline);
             }
@@ -133,8 +134,34 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
                 if (facing == frontFacing)
                     Textures.CONVERTER_FE_OUT.renderSided(facing, renderState, translation, pipeline);
                 else
-                    Textures.ENERGY_IN.renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+                    getEUInputTexture().renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
             }
+        }
+    }
+
+    private SimpleOverlayRenderer getEUOutputTexture() {
+        switch(slots){
+            case 16:
+                return Textures.ENERGY_OUT_ULTRA;
+            case 9:
+                return Textures.ENERGY_OUT_HI;
+            case 4:
+                return Textures.ENERGY_OUT_MULTI;
+            default:
+                return Textures.ENERGY_OUT;
+        }
+    }
+
+    private SimpleOverlayRenderer getEUInputTexture() {
+        switch(slots){
+            case 16:
+                return Textures.ENERGY_IN_ULTRA;
+            case 9:
+                return Textures.ENERGY_IN_HI;
+            case 4:
+                return Textures.ENERGY_IN_MULTI;
+            default:
+                return Textures.ENERGY_IN;
         }
     }
 
@@ -147,7 +174,7 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int rowSize = (int) Math.sqrt(converterTrait.getBaseAmps());
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-                18 + 18 * rowSize + 94)
+                        18 + 18 * rowSize + 94)
                 .label(10, 5, getMetaFullName());
 
         for (int y = 0; y < rowSize; y++) {
@@ -163,20 +190,13 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        boolean feToEu = converterTrait.isFeToEu();
         if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
-            if (!feToEu && (side != frontFacing || side == null))
-                return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(converterTrait.getEnergyEUContainer());
-            else if (feToEu && side == frontFacing)
-                return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(converterTrait.getEnergyEUContainer());
-            return null;
+            return converterTrait.isFeToEu() == (side == frontFacing) ?
+                    GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(converterTrait.getEnergyEUContainer()) : null;
         }
         if (capability == CapabilityEnergy.ENERGY) {
-            if (feToEu && (side != frontFacing || side == null))
-                return CapabilityEnergy.ENERGY.cast(converterTrait.getEnergyFEContainer());
-            else if (!feToEu && side == frontFacing)
-                return CapabilityEnergy.ENERGY.cast(converterTrait.getEnergyFEContainer());
-            return null;
+            return side != (converterTrait.isFeToEu() ? frontFacing : null) ?
+                    CapabilityEnergy.ENERGY.cast(converterTrait.getEnergyFEContainer()) : null;
         }
         return super.getCapability(capability, side);
     }
@@ -205,13 +225,18 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
     }
 
     @Override
+    public boolean isValidFrontFacing(EnumFacing facing) {
+        return true;
+    }
+
+    @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         long voltage = converterTrait.getVoltage();
         long amps = converterTrait.getBaseAmps();
         tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_tool_usage"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", converterTrait.getEnergyEUContainer().getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", FeCompat.converterToFe(voltage * amps, true), amps, voltage, GTValues.VN[tier]));
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VN[tier], FeCompat.converterToFe(voltage * amps, false)));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", FeCompat.toFe(voltage * amps, true), amps, voltage, GTValues.VN[tier]));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VN[tier], FeCompat.toFe(voltage * amps, false)));
     }
 
 

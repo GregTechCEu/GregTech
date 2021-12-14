@@ -208,7 +208,7 @@ public class MetaTileEntities {
     public static MetaTileEntityMonitorScreen MONITOR_SCREEN;
     public static MetaTileEntityCentralMonitor CENTRAL_MONITOR;
 
-    public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[GTValues.V.length - 1][4];
+    public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[GTValues.V.length][4];
 
     public static void init() {
         GTLog.logger.info("Registering MetaTileEntities");
@@ -724,16 +724,23 @@ public class MetaTileEntities {
 
         MONITOR_SCREEN = registerMetaTileEntity(1667, new MetaTileEntityMonitorScreen(gregtechId("monitor_screen")));
 
-        // ENERGY CONVERTER, IDs 1668-1719
-        endPos = GTValues.HT ? ENERGY_CONVERTER.length - 1 : Math.min(ENERGY_CONVERTER.length - 1, GTValues.UV);
+        // Energy Converter, IDs 1668-1728
+        endPos = GTValues.HT ? ENERGY_CONVERTER.length - 1 : Math.min(ENERGY_CONVERTER.length - 1, GTValues.UV + 1);
         for(int i = 0; i < endPos; i++) {
-            String vn = GTValues.VN[i + 1].toLowerCase();
-            int tiers = ENERGY_CONVERTER[i].length;
-            for(int j = 0; j < tiers; j++) {
-                int amps = (int) Math.pow(j+1, 2);
-                String id = "energy_converter." + vn + "." + amps;
-                ENERGY_CONVERTER[i][j] = registerMetaTileEntity(1668 + j + i * tiers, new MetaTileEntityConverter(gregtechId(id), i+1, amps));
+            for(int j = 0; j < 4; j++) {
+                int amps = (j+1)*(j+1);
+                String id = "energy_converter." + GTValues.VN[i].toLowerCase() + "." + amps;
+                MetaTileEntityConverter converter = new MetaTileEntityConverter(gregtechId(id), i, amps);
+                ENERGY_CONVERTER[i][j] = registerMetaTileEntity(1668 + j + i * 4, converter);
             }
+        }
+
+        // MAX Converter
+        for(int j = 0; j < 4; j++) {
+            int amps = (j+1)*(j+1);
+            String id = "energy_converter.max." + amps;
+            MetaTileEntityConverter converter = new MetaTileEntityConverter(gregtechId(id), ENERGY_CONVERTER.length-1, amps);
+            ENERGY_CONVERTER[ENERGY_CONVERTER.length-1][j] = registerMetaTileEntity(1668 + j + (ENERGY_CONVERTER.length-1) * 4, converter);
         }
 
         /*

@@ -3283,6 +3283,10 @@ gregtech.machine.charger.umv.name=UMV Voltage Battery Charger
 gregtech.machine.charger.uxv.name=UXV Voltage Battery Charger
 gregtech.machine.charger.max.name=MAX Voltage Battery Charger
 
+gregtech.machine.energy_converter.ulv.1.name=ULV Energy Converter (1A)
+gregtech.machine.energy_converter.ulv.4.name=ULV Energy Converter (4A)
+gregtech.machine.energy_converter.ulv.9.name=ULV Energy Converter (9A)
+gregtech.machine.energy_converter.ulv.16.name=ULV Energy Converter (16A)
 gregtech.machine.energy_converter.lv.1.name=LV Energy Converter (1A)
 gregtech.machine.energy_converter.lv.4.name=LV Energy Converter (4A)
 gregtech.machine.energy_converter.lv.9.name=LV Energy Converter (9A)
@@ -3335,11 +3339,15 @@ gregtech.machine.energy_converter.uxv.1.name=UXV Energy Converter (1A)
 gregtech.machine.energy_converter.uxv.4.name=UXV Energy Converter (4A)
 gregtech.machine.energy_converter.uxv.9.name=UXV Energy Converter (9A)
 gregtech.machine.energy_converter.uxv.16.name=UXV Energy Converter (16A)
+gregtech.machine.energy_converter.max.1.name=MAX Energy Converter (1A)
+gregtech.machine.energy_converter.max.4.name=MAX Energy Converter (4A)
+gregtech.machine.energy_converter.max.9.name=MAX Energy Converter (9A)
+gregtech.machine.energy_converter.max.16.name=MAX Energy Converter (16A)
 
 gregtech.machine.energy_converter.tooltip_tool_usage=Use Soft Hammer to invert (Starts as FE Converter)
-gregtech.machine.energy_converter.tooltip_conversion_fe=Forge Conversion: §a%dFE§7 -> §a%dA %dEU (%d)
+gregtech.machine.energy_converter.tooltip_conversion_fe=Forge Conversion: §a%,dFE§7 -> §a%,dA %,dEU (%d)
 gregtech.machine.energy_converter.message_conversion_fe=Converting Forge Energy, In: %dFE, Out: %dA %dEU
-gregtech.machine.energy_converter.tooltip_conversion_eu=EU Conversion: §a%dA %dEU (%d)§7 -> §a%dFE
+gregtech.machine.energy_converter.tooltip_conversion_eu=EU Conversion: §a%,dA %,dEU (%d)§7 -> §a%,dFE
 gregtech.machine.energy_converter.message_conversion_eu=Converting EU, In: %dA %dEU, Out: %dFE
 
 # Pumps
