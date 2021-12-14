@@ -61,7 +61,7 @@ public class OreBakedModel implements IBakedModel {
             TextureAtlasSprite textureAtlasSprite = stoneTypeModels.computeIfAbsent(stoneType, type-> Minecraft.getMinecraft().blockRenderDispatcher.getModelForState(type.stone.get()).getParticleTexture());
             particle.set(textureAtlasSprite);
             if (model == null) {
-                model = new ModelFactory(ModelFactory.ModelTemplate.CUBE_2_LAYER_ALL_TINIT_INDEX).bake();
+                model = new ModelFactory(ModelFactory.ModelTemplate.CUBE_2_LAYER_ALL_TINT_INDEX).bake();
             }
             BakedQuad bakedQuad = cacheBottom.get(stoneType, side);
             if (side == null) return Collections.emptyList();
