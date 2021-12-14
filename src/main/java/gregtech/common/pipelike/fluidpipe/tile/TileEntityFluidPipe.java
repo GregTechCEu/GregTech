@@ -223,8 +223,13 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
 
     public boolean areTanksEmpty() {
         for (FluidStack fluidStack : getContainedFluids())
-            if (fluidStack != null)
+            if (fluidStack != null) {
+                if(fluidStack.amount <= 0) {
+                    setContainingFluid(null, findChannel(fluidStack), false);
+                    continue;
+                }
                 return false;
+            }
         return true;
     }
 

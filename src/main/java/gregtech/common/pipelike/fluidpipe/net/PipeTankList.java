@@ -8,9 +8,12 @@ import net.minecraftforge.fluids.capability.FluidTankPropertiesWrapper;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Iterator;
 
-public class PipeTankList implements IFluidHandler {
+public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
 
     private final EnumFacing facing;
     private final TileEntityFluidPipe pipe;
@@ -55,15 +58,17 @@ public class PipeTankList implements IFluidHandler {
             return 0;
         FluidTank tank = tanks[channel];
         int space = tank.getCapacity() - (tank.getFluid() == null ? 0 : tank.getFluid().amount);
-        int max = Math.min(resource.amount, space);
-        if (max < tank.getCapacity() / 2) {
-            max = (int) FluidNetWalker.getSpaceFor(pipe.getWorld(), pipe.getPos(), resource, resource.amount);
-            if (max <= 0)
-                return 0;
-        }
-
         FluidStack copy = resource.copy();
-        copy.amount = max;
+        if (resource.amount <= space) {
+            copy.amount = resource.amount;
+        } else if (space < tank.getCapacity() / 2) {
+            space = (int) FluidNetWalker.getSpaceFor(pipe.getWorld(), pipe.getPos(), resource, resource.amount);
+            if (space <= 0)
+                return 0;
+            copy.amount = space;
+        } else {
+            copy.amount = space;
+        }
         return pipe.getFluidPipeNet().fill(copy, pipe.getPos(), doFill);
     }
 
@@ -86,5 +91,11 @@ public class PipeTankList implements IFluidHandler {
     @Override
     public FluidStack drain(FluidStack fluidStack, boolean b) {
         return null;
+    }
+
+    @Override
+    @Nonnull
+    public Iterator<FluidTank> iterator() {
+        return Arrays.stream(tanks).iterator();
     }
 }

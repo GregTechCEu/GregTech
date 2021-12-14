@@ -101,7 +101,14 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         super.updateTick(worldIn, pos, state, rand);
         TileEntityFluidPipe pipeTile = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
         if (pipeTile != null && !worldIn.isRemote) {
-            pipeTile.getFluidPipeNet().markDirty(pos);
+            FluidPipeNet net = pipeTile.getFluidPipeNet();
+            net.invalidateNetCapacity();
+            for(FluidTank tank : pipeTile.getTankList()) {
+                FluidStack fluid = tank.getFluid();
+                if(fluid == null || fluid.amount <= 0)
+                    continue;
+                net.markDirty(tank.getFluid(), pos);
+            }
         }
     }
 
@@ -267,8 +274,15 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         boolean r = super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
         if (!worldIn.isRemote && oldConnections != pipe.getOpenConnections()) {
             FluidPipeNet net = getWorldPipeNet(worldIn).getNetFromPos(pos);
-            if (net != null)
-                net.markDirty(pos);
+            if (net != null) {
+                net.invalidateNetCapacity();
+                for(FluidTank tank : pipe.getTankList()) {
+                    FluidStack fluid = tank.getFluid();
+                    if(fluid == null || fluid.amount <= 0)
+                        continue;
+                    net.markDirty(tank.getFluid(), pos);
+                }
+            }
         }
         return r;
     }
