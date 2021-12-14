@@ -14,15 +14,19 @@ import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.client.renderer.texture.Textures;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 import java.util.function.Function;
@@ -84,7 +88,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntity {
     public void update() {
         super.update();
         if (getOffsetTimer() % ticksPerCycle != 0) return;
-        ItemStack stack = handler.getStackInSlot(0);
+        ItemStack stack = handler.getStackInSlot(0).copy();
         if (getWorld().isRemote || !active || stack.isEmpty()) return;
 
         TileEntity tile = getWorld().getTileEntity(getPos().offset(this.getFrontFacing()));
@@ -104,20 +108,21 @@ public class MetaTileEntityCreativeChest extends MetaTileEntity {
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
         data.setTag("ItemStackHandler", handler.serializeNBT());
         data.setInteger("ItemsPerCycle", itemsPerCycle);
         data.setInteger("TicksPerCycle", ticksPerCycle);
         data.setBoolean("Active", active);
-        return super.writeToNBT(data);
+        return data;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
         handler.deserializeNBT(data.getCompoundTag("ItemStackHandler"));
         itemsPerCycle = data.getInteger("ItemsPerCycle");
         ticksPerCycle = data.getInteger("TicksPerCycle");
         active = data.getBoolean("Active");
-        super.readFromNBT(data);
     }
 
     public Function<String, String> getTextFieldValidator() {
@@ -136,5 +141,32 @@ public class MetaTileEntityCreativeChest extends MetaTileEntity {
             }
             return val;
         };
+    }
+
+    @Override
+    public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
+        return Pair.of(Textures.VOLTAGE_CASINGS[14].getParticleSprite(), this.getPaintingColor());
+    }
+
+    @Override
+    public void initFromItemStackData(NBTTagCompound itemStack) {
+        super.initFromItemStackData(itemStack);
+        if (itemStack.hasKey("id", 8)) { // Check if ItemStack wrote to this
+            this.handler.setStackInSlot(0, new ItemStack(itemStack));
+        }
+        itemsPerCycle = itemStack.getInteger("mBPerCycle");
+        ticksPerCycle = itemStack.getInteger("ticksPerCycle");
+    }
+
+    @Override
+    public void writeItemStackData(NBTTagCompound itemStack) {
+        super.writeItemStackData(itemStack);
+        ItemStack stack = this.handler.getStackInSlot(0);
+        if (stack != null && stack.getCount() > 0) {
+            this.handler.getStackInSlot(0).writeToNBT(itemStack);
+        }
+        itemStack.setInteger("mBPerCycle", itemsPerCycle);
+        itemStack.setInteger("ticksPerCycle", ticksPerCycle);
+
     }
 }
