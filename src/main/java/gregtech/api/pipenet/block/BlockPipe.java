@@ -411,9 +411,16 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public boolean canConnect(IPipeTile<PipeType, NodeDataType> selfTile, EnumFacing facing) {
         if (selfTile.getPipeWorld().getBlockState(selfTile.getPipePos().offset(facing)).getBlock() == Blocks.AIR)
             return false;
+        CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
+        if(cover != null && !cover.canPipePassThrough())
+            return false;
         TileEntity other = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
-        if (other instanceof IPipeTile)
+        if (other instanceof IPipeTile) {
+            cover = ((IPipeTile<?, ?>) other).getCoverableImplementation().getCoverAtSide(facing.getOpposite());
+            if(cover != null && !cover.canPipePassThrough())
+                return false;
             return canPipesConnect(selfTile, facing, (IPipeTile<PipeType, NodeDataType>) other);
+        }
         return canPipeConnectToBlock(selfTile, facing, other);
     }
 
@@ -430,13 +437,22 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
      */
     public int getVisualConnections(IPipeTile<PipeType, NodeDataType> selfTile) {
         int connections = selfTile.getOpenConnections();
+        float selfThickness = selfTile.getPipeType().getThickness();
         for (EnumFacing facing : EnumFacing.values()) {
-            // continue if connection is already open
-            if (selfTile.isConnectionOpenAny(facing)) continue;
-            CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
-            if (cover == null) continue;
-            // adds side to open connections of it isn't already open & has a cover
-            connections |= 1 << facing.getIndex();
+            if(selfTile.isConnectionOpenAny(facing)) {
+                TileEntity neighbourTile = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
+                if (neighbourTile instanceof IPipeTile) {
+                    IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) neighbourTile;
+                    if(pipeTile.isConnectionOpenAny(facing.getOpposite()) && pipeTile.getPipeType().getThickness() < selfThickness) {
+                        connections |= 1 << (facing.getIndex() + 6);
+                    }
+                }
+            } else {
+                CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
+                if (cover != null && cover.shouldRenderConnected()) {
+                    connections |= 1 << facing.getIndex();
+                }
+            }
         }
         return connections;
     }

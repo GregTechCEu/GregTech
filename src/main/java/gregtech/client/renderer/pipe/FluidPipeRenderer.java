@@ -119,9 +119,7 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         FluidPipeType pipeType = blockFluidPipe.getItemPipeType(stack);
         Material material = blockFluidPipe.getItemMaterial(stack);
         if (pipeType != null && material != null) {
-            int connections = 1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
-                    1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex());
-            connections |= 1 << 12;
+            int connections = 1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex();
             renderPipeBlock(material, pipeType, IPipeTile.DEFAULT_COVER_COLOR, renderState, new IVertexOperation[0], connections);
         }
         renderState.draw();
@@ -204,11 +202,11 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
                 renderPipeSide(renderState, pipeline, renderedSide, cuboid6);
             }
         }
-        if ((connections & 1 << 12) > 0) {
-            renderPipeSide(renderState, pipeConnectSide, side, cuboid6);
-        } else if ((connections & 1 << (6 + side.getIndex())) > 0) {
+        if ((connections & 1 << (6 + side.getIndex())) > 0) {
             // if neighbour pipe is smaller, render closed texture
             renderPipeSide(renderState, pipeline, side, cuboid6);
+        } else {
+            renderPipeSide(renderState, pipeConnectSide, side, cuboid6);
         }
     }
 

@@ -67,6 +67,11 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         return this.coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.attachedSide) != null;
     }
 
+    @Override
+    public boolean canPipePassThrough() {
+        return true;
+    }
+
     public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         if (!playerIn.world.isRemote) {
             this.openUI((EntityPlayerMP) playerIn);
