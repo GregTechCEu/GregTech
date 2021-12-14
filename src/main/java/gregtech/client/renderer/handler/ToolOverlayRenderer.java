@@ -8,7 +8,6 @@ import gregtech.api.cover.ICoverable.PrimaryBoxData;
 import gregtech.api.items.toolitem.IAOEItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
@@ -40,6 +39,10 @@ import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class ToolOverlayRenderer {
+
+    private static float rColor;
+    private static float gColor;
+    private static float bColor;
 
     public static void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
         EntityPlayer player = event.getPlayer();
@@ -95,7 +98,8 @@ public class ToolOverlayRenderer {
                 double d4 = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double) event.getPartialTicks();
                 double d5 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) event.getPartialTicks();
                 AxisAlignedBB box = blockState.getSelectedBoundingBox(world, pos).grow(0.002D).offset(-d3, -d4, -d5);
-                RenderGlobal.drawSelectionBoundingBox(box, 0.0F, 0.0F, 0.0F, 0.4F);
+                RenderGlobal.drawSelectionBoundingBox(box, 1, 1, 1, 0.4F);
+                rColor = gColor = bColor = 0.2f + (float) Math.sin((float) (System.currentTimeMillis() % (Math.PI * 800)) / 800) / 2;
                 drawOverlayLines(facing, box);
                 if (tileEntity instanceof TileEntityPipeBase)
                     drawPipeOverlayLines(facing, box, (TileEntityPipeBase) tileEntity);
@@ -305,6 +309,93 @@ public class ToolOverlayRenderer {
         tessellator.draw();
     }
 
+    private static void drawCrossedOverlayLines(EnumFacing facing, AxisAlignedBB box, MetaTileEntityHolder tileEntity) {
+        if(tileEntity.getMetaTileEntity().canRenderFrontFaceX())
+            return;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(3, DefaultVertexFormats.POSITION_COLOR);
+
+        Vector3 topRight = new Vector3(box.maxX, box.maxY, box.maxZ);
+        Vector3 bottomRight = new Vector3(box.maxX, box.minY, box.maxZ);
+        Vector3 bottomLeft = new Vector3(box.minX, box.minY, box.maxZ);
+        Vector3 topLeft = new Vector3(box.minX, box.maxY, box.maxZ);
+        Vector3 shift = new Vector3(0.25, 0, 0);
+        Vector3 shiftVert = new Vector3(0, 0.25, 0);
+
+        Vector3 cubeCenter = new Vector3(box.getCenter());
+
+
+        topRight.subtract(cubeCenter);
+        bottomRight.subtract(cubeCenter);
+        bottomLeft.subtract(cubeCenter);
+        topLeft.subtract(cubeCenter);
+
+        switch (facing) {
+            case WEST: {
+                topRight.rotate(Math.PI / 2, Vector3.down);
+                bottomRight.rotate(Math.PI / 2, Vector3.down);
+                bottomLeft.rotate(Math.PI / 2, Vector3.down);
+                topLeft.rotate(Math.PI / 2, Vector3.down);
+                shift.rotate(Math.PI / 2, Vector3.down);
+                shiftVert.rotate(Math.PI / 2, Vector3.down);
+                break;
+            }
+            case EAST: {
+                topRight.rotate(-Math.PI / 2, Vector3.down);
+                bottomRight.rotate(-Math.PI / 2, Vector3.down);
+                bottomLeft.rotate(-Math.PI / 2, Vector3.down);
+                topLeft.rotate(-Math.PI / 2, Vector3.down);
+                shift.rotate(-Math.PI / 2, Vector3.down);
+                shiftVert.rotate(-Math.PI / 2, Vector3.down);
+                break;
+            }
+            case NORTH: {
+                topRight.rotate(Math.PI, Vector3.down);
+                bottomRight.rotate(Math.PI, Vector3.down);
+                bottomLeft.rotate(Math.PI, Vector3.down);
+                topLeft.rotate(Math.PI, Vector3.down);
+                shift.rotate(Math.PI, Vector3.down);
+                shiftVert.rotate(Math.PI, Vector3.down);
+                break;
+            }
+            case UP: {
+                Vector3 side = new Vector3(1, 0, 0);
+                topRight.rotate(-Math.PI / 2, side);
+                bottomRight.rotate(-Math.PI / 2, side);
+                bottomLeft.rotate(-Math.PI / 2, side);
+                topLeft.rotate(-Math.PI / 2, side);
+                shift.rotate(-Math.PI / 2, side);
+                shiftVert.rotate(-Math.PI / 2, side);
+                break;
+            }
+            case DOWN: {
+                Vector3 side = new Vector3(1, 0, 0);
+                topRight.rotate(Math.PI / 2, side);
+                bottomRight.rotate(Math.PI / 2, side);
+                bottomLeft.rotate(Math.PI / 2, side);
+                topLeft.rotate(Math.PI / 2, side);
+                shift.rotate(Math.PI / 2, side);
+                shiftVert.rotate(Math.PI / 2, side);
+                break;
+            }
+        }
+
+        topRight.add(cubeCenter);
+        bottomRight.add(cubeCenter);
+        bottomLeft.add(cubeCenter);
+        topLeft.add(cubeCenter);
+
+        // internal X
+        startLine(buffer, topLeft.copy().add(shift).add(shiftVert.copy().negate()));
+        endLine(buffer, bottomRight.copy().add(shift.copy().negate()).add(shiftVert));
+
+        startLine(buffer, topRight.copy().add(shift.copy().negate()).add(shiftVert.copy().negate()));
+        endLine(buffer, bottomLeft.copy().add(shift).add(shiftVert));
+
+        tessellator.draw();
+    }
+
     private static void drawPipeOverlayLines(EnumFacing facing, AxisAlignedBB box, TileEntityPipeBase pipe) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
@@ -323,11 +414,16 @@ public class ToolOverlayRenderer {
         boolean topBlocked;
         boolean rightBlocked;
         boolean bottomBlocked;
+        boolean frontBlocked;
+        boolean backBlocked;
 
         topRight.subtract(cubeCenter);
         bottomRight.subtract(cubeCenter);
         bottomLeft.subtract(cubeCenter);
         topLeft.subtract(cubeCenter);
+
+        frontBlocked = pipe.isConnectionOpenAny(facing);
+        backBlocked = pipe.isConnectionOpenAny(facing.getOpposite());
 
         switch (facing) {
             case WEST: {
@@ -338,10 +434,10 @@ public class ToolOverlayRenderer {
                 shift.rotate(Math.PI / 2, Vector3.down);
                 shiftVert.rotate(Math.PI / 2, Vector3.down);
 
-                leftBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.NORTH);
-                topBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.UP);
-                rightBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.SOUTH);
-                bottomBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.DOWN);
+                leftBlocked = pipe.isConnectionOpenAny(EnumFacing.NORTH);
+                topBlocked = pipe.isConnectionOpenAny(EnumFacing.UP);
+                rightBlocked = pipe.isConnectionOpenAny(EnumFacing.SOUTH);
+                bottomBlocked = pipe.isConnectionOpenAny(EnumFacing.DOWN);
                 break;
             }
             case EAST: {
@@ -352,10 +448,10 @@ public class ToolOverlayRenderer {
                 shift.rotate(-Math.PI / 2, Vector3.down);
                 shiftVert.rotate(-Math.PI / 2, Vector3.down);
 
-                leftBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.SOUTH);
-                topBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.UP);
-                rightBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.NORTH);
-                bottomBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.DOWN);
+                leftBlocked = pipe.isConnectionOpenAny(EnumFacing.SOUTH);
+                topBlocked = pipe.isConnectionOpenAny(EnumFacing.UP);
+                rightBlocked = pipe.isConnectionOpenAny(EnumFacing.NORTH);
+                bottomBlocked = pipe.isConnectionOpenAny(EnumFacing.DOWN);
                 break;
             }
             case NORTH: {
@@ -366,10 +462,10 @@ public class ToolOverlayRenderer {
                 shift.rotate(Math.PI, Vector3.down);
                 shiftVert.rotate(Math.PI, Vector3.down);
 
-                leftBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.EAST);
-                topBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.UP);
-                rightBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.WEST);
-                bottomBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.DOWN);
+                leftBlocked = pipe.isConnectionOpenAny(EnumFacing.EAST);
+                topBlocked = pipe.isConnectionOpenAny(EnumFacing.UP);
+                rightBlocked = pipe.isConnectionOpenAny(EnumFacing.WEST);
+                bottomBlocked = pipe.isConnectionOpenAny(EnumFacing.DOWN);
                 break;
             }
             case UP: {
@@ -381,10 +477,10 @@ public class ToolOverlayRenderer {
                 shift.rotate(-Math.PI / 2, side);
                 shiftVert.rotate(-Math.PI / 2, side);
 
-                leftBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.WEST);
-                topBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.NORTH);
-                rightBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.EAST);
-                bottomBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.SOUTH);
+                leftBlocked = pipe.isConnectionOpenAny(EnumFacing.WEST);
+                topBlocked = pipe.isConnectionOpenAny(EnumFacing.NORTH);
+                rightBlocked = pipe.isConnectionOpenAny(EnumFacing.EAST);
+                bottomBlocked = pipe.isConnectionOpenAny(EnumFacing.SOUTH);
                 break;
             }
             case DOWN: {
@@ -396,17 +492,17 @@ public class ToolOverlayRenderer {
                 shift.rotate(Math.PI / 2, side);
                 shiftVert.rotate(Math.PI / 2, side);
 
-                leftBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.WEST);
-                topBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.SOUTH);
-                rightBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.EAST);
-                bottomBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.NORTH);
+                leftBlocked = pipe.isConnectionOpenAny(EnumFacing.WEST);
+                topBlocked = pipe.isConnectionOpenAny(EnumFacing.SOUTH);
+                rightBlocked = pipe.isConnectionOpenAny(EnumFacing.EAST);
+                bottomBlocked = pipe.isConnectionOpenAny(EnumFacing.NORTH);
                 break;
             }
             default: {
-                leftBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.WEST);
-                topBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.UP);
-                rightBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.EAST);
-                bottomBlocked = pipe.isConnectionOpen(AttachmentType.PIPE, EnumFacing.DOWN);
+                leftBlocked = pipe.isConnectionOpenAny(EnumFacing.WEST);
+                topBlocked = pipe.isConnectionOpenAny(EnumFacing.UP);
+                rightBlocked = pipe.isConnectionOpenAny(EnumFacing.EAST);
+                bottomBlocked = pipe.isConnectionOpenAny(EnumFacing.DOWN);
             }
         }
 
@@ -443,17 +539,39 @@ public class ToolOverlayRenderer {
             startLine(buffer, bottomLeft.copy().add(shift).add(shiftVert));
             endLine(buffer, bottomRight.copy().add(shift.copy().negate()));
         }
+        if (frontBlocked) {
+            startLine(buffer, topLeft.copy().add(shift).add(shiftVert.copy().negate()));
+            endLine(buffer, bottomRight.copy().add(shift.copy().negate()).add(shiftVert));
 
+            startLine(buffer, topRight.copy().add(shift.copy().negate()).add(shiftVert.copy().negate()));
+            endLine(buffer, bottomLeft.copy().add(shift).add(shiftVert));
+        }
+        if (backBlocked) {
+            Vector3 localXShift = new Vector3(0, 0, 0); // Set up translations for the current X.
+            for(int i = 0; i < 2; i++) {
+                Vector3 localXShiftVert = new Vector3(0, 0, 0);
+                for(int j = 0; j < 2; j++) {
+                    startLine(buffer, topLeft.copy().add(localXShift).add(localXShiftVert));
+                    endLine(buffer, topLeft.copy().add(localXShift).add(localXShiftVert).add(shift).subtract(shiftVert));
+
+                    startLine(buffer, topLeft.copy().add(localXShift).add(localXShiftVert).add(shift));
+                    endLine(buffer, topLeft.copy().add(localXShift).add(localXShiftVert).subtract(shiftVert));
+
+                    localXShiftVert.add(bottomLeft.copy().subtract(topLeft).add(shiftVert)); // Move by the vector from the top to the bottom, minus the shift from the edge.
+                }
+                localXShift.add(topRight.copy().subtract(topLeft).subtract(shift)); // Move by the vector from the left to the right, minus the shift from the edge.
+            }
+        }
 
         tessellator.draw();
     }
 
     private static void startLine(BufferBuilder buffer, Vector3 vec) {
-        buffer.pos(vec.x, vec.y, vec.z).color(0, 0, 0, 0.0F).endVertex();
+        buffer.pos(vec.x, vec.y, vec.z).color(rColor, gColor, bColor, 0.0F).endVertex();
     }
 
     private static void endLine(BufferBuilder buffer, Vector3 vec) {
-        buffer.pos(vec.x, vec.y, vec.z).color(0, 0, 0, 0.5F).endVertex();
+        buffer.pos(vec.x, vec.y, vec.z).color(rColor, gColor, bColor, 1F).endVertex();
     }
 
 }
