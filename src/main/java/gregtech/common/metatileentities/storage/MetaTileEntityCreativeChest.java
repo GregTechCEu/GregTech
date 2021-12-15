@@ -161,13 +161,13 @@ public class MetaTileEntityCreativeChest extends MetaTileEntity {
 
     @Override
     public void writeItemStackData(NBTTagCompound tag) {
-        super.writeItemStackData(itemStack);
+        super.writeItemStackData(tag);
         ItemStack stack = this.handler.getStackInSlot(0);
         if (!stack.isEmpty()) {
-            stack.writeToNBT(itemStack);
+            stack.writeToNBT(tag);
         }
-        itemStack.setInteger("mBPerCycle", itemsPerCycle);
-        itemStack.setInteger("ticksPerCycle", ticksPerCycle);
+        tag.setInteger("mBPerCycle", itemsPerCycle);
+        tag.setInteger("ticksPerCycle", ticksPerCycle);
 
     }
 }
