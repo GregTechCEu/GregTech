@@ -22,6 +22,16 @@ public interface IParallelableRecipeLogic {
     }
 
     /**
+     * Whether the parallel logic should trim recipe outputs when creating the new parallel recipe.
+     * Useful for Steam Multiblocks, which only output one item even though they could output multiple.
+     *
+     * @return {@code true} if the parallel recipe should be limited to its first recipe output/chanced output
+     */
+    default boolean shouldTrimOutputs() {
+        return false;
+    }
+
+    /**
      * Method which finds a recipe which can be parallelized, works by multiplying the recipe by the parallelization factor,
      * and shrinking the recipe till its outputs can fit
      *
@@ -34,7 +44,7 @@ public interface IParallelableRecipeLogic {
      * @param parallelLimit the maximum number of parallel recipes to be performed
      * @return the recipe builder with the parallelized recipe. returns null the recipe cant fit
      */
-    default RecipeBuilder<?> findMultipliedParallelRecipe(RecipeMap<?> recipeMap, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelLimit, long maxVoltage) {
+    default RecipeBuilder<?> findMultipliedParallelRecipe(RecipeMap<?> recipeMap, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelLimit, long maxVoltage, boolean shouldTrimOutputs) {
         return ParallelLogic.doParallelRecipes(
                 currentRecipe,
                 recipeMap,
@@ -43,7 +53,8 @@ public interface IParallelableRecipeLogic {
                 outputs,
                 fluidOutputs,
                 parallelLimit,
-                maxVoltage);
+                maxVoltage,
+                shouldTrimOutputs);
     }
 
     /**
@@ -56,22 +67,23 @@ public interface IParallelableRecipeLogic {
      * @param parallelLimit the maximum number of parallel recipes to be performed
      * @return the recipe builder with the parallelized recipe. returns null the recipe cant fit
      */
-    default RecipeBuilder<?> findAppendedParallelItemRecipe(RecipeMap<?> recipeMap, IItemHandlerModifiable inputs, IItemHandlerModifiable outputs, int parallelLimit, long maxVoltage) {
+    default RecipeBuilder<?> findAppendedParallelItemRecipe(RecipeMap<?> recipeMap, IItemHandlerModifiable inputs, IItemHandlerModifiable outputs, int parallelLimit, long maxVoltage, boolean shouldTrimOutputs) {
         return ParallelLogic.appendItemRecipes(
                 recipeMap,
                 inputs,
                 outputs,
                 parallelLimit,
-                maxVoltage);
+                maxVoltage,
+                shouldTrimOutputs);
     }
 
     default Recipe findParallelRecipe(AbstractRecipeLogic logic, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, long maxVoltage, int parallelLimit) {
         if (parallelLimit > 1) {
             RecipeBuilder<?> parallelBuilder = null;
             if (logic.getParallelLogicType() == ParallelLogicType.MULTIPLY) {
-                parallelBuilder = findMultipliedParallelRecipe(logic.getRecipeMap(), currentRecipe, inputs, fluidInputs, outputs, fluidOutputs, parallelLimit, maxVoltage);
+                parallelBuilder = findMultipliedParallelRecipe(logic.getRecipeMap(), currentRecipe, inputs, fluidInputs, outputs, fluidOutputs, parallelLimit, maxVoltage, shouldTrimOutputs());
             } else if (logic.getParallelLogicType() == ParallelLogicType.APPEND_ITEMS) {
-                parallelBuilder = findAppendedParallelItemRecipe(logic.getRecipeMap(), inputs, outputs, parallelLimit, maxVoltage);
+                parallelBuilder = findAppendedParallelItemRecipe(logic.getRecipeMap(), inputs, outputs, parallelLimit, maxVoltage, shouldTrimOutputs());
             }
             // if the builder returned is null, no recipe was found.
             if (parallelBuilder == null) {
