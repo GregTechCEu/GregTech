@@ -58,24 +58,6 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                         continue;
 
                     net.requestFluidForPipe(stack, this);
-
-
-                    /*int amountToDistribute = Math.min(stack.amount, getCapacityPerTank() / 2);
-                    int c = amountToDistribute / handlers.size();
-                    int m = c == 0 ? amountToDistribute % handlers.size() : 0;
-                    int inserted = 0;
-                    for (Pair<IFluidHandler, Predicate<FluidStack>> pair : handlers) {
-                        FluidStack stackToFill = stack.copy();
-                        stackToFill.amount = c;
-                        if (m > 0) {
-                            stackToFill.amount++;
-                            m--;
-                        }
-                        inserted += pair.getKey().fill(stackToFill, true);
-                    }
-                    FluidStack toDrain = stack.copy();
-                    toDrain.amount = inserted;
-                    net.drain(toDrain, getPos(), false, true);*/
                 }
             }
         }
