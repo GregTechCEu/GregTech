@@ -85,14 +85,15 @@ public class GTRecipeWrapper implements IRecipeWrapper {
             if (recipe.getOutputs().get(0).hasTagCompound() && recipe.getOutputs().get(0).isItemEqual(MetaItems.TOOL_DATA_STICK.getStackForm(1))) {
                 ItemStack dataStick = recipe.getOutputs().get(0);
                 NBTTagCompound researchItemNBT = dataStick.getSubCompound("asslineOutput");
-                try {
-                    ItemStack researchItem = new ItemStack(researchItemNBT);
+                ItemStack researchItem = new ItemStack(researchItemNBT);
+                if (researchItem != null) {
                     recipeOutputs = Collections.singletonList(researchItem);
-                } catch (NullPointerException e) {
+                } else {
                     recipeOutputs = recipe.getOutputs()
                             .stream().map(ItemStack::copy).collect(Collectors.toList());
                     currentItemSlot += recipeOutputs.size();
                 }
+
             } else {
                 recipeOutputs = recipe.getOutputs()
                         .stream().map(ItemStack::copy).collect(Collectors.toList());
@@ -127,7 +128,7 @@ public class GTRecipeWrapper implements IRecipeWrapper {
         } else if (notConsumed) {
             tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
         } else if (recipe.getOutputs().get(0).hasTagCompound() && ((ItemStack) ingredient).isItemEqual(new ItemStack(recipe.getOutputs().get(0).getSubCompound("asslineOutput")))) {
-            tooltip.addAll(Arrays.asList(I18n.format("gregtech.recipe.assline_scanner").split("\\\\n")));
+            tooltip.add(I18n.format("gregtech.recipe.assline_scanner"));
         }
     }
 

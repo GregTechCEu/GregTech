@@ -25,9 +25,4 @@ public class ResearchItemProperty extends RecipeProperty<ItemStack>{
         minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.explosive",
                 ((ItemStack) value).getDisplayName()), x, y, color);
     }
-
-    @Override
-    public boolean isHidden() {
-        return false;
-    }
 }
