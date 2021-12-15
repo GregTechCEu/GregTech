@@ -4,6 +4,7 @@ import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.util.GTUtility;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 import net.minecraft.nbt.NBTTagCompound;
@@ -181,7 +182,8 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                             continue;
                         }
                         for(TileEntityFluidPipe pipe : pipes) {
-                            subMap.remove(pipe.getPos());
+                            if(!GTUtility.arePosEqual(pipe.getPos(), entry2.getKey()))
+                                subMap.remove(pipe.getPos());
                         }
                         long amount = walker.getCount();
                         amount += entry2.getValue();
@@ -201,7 +203,15 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                                 FluidStack stack = dirtyStack.copy();
                                 stack.amount = count;
                                 int channel = pipe.findChannel(stack);
-                                pipe.setContainingFluid(null, channel, false);
+                                if(channel < 0) {
+                                    pipeIterator.remove();
+                                    continue;
+                                }
+                                FluidStack currentStack = pipe.getContainedFluid(channel);
+                                if(currentStack != null && !currentStack.isFluidEqual(dirtyStack)) {
+                                    pipeIterator.remove();
+                                    continue;
+                                }
                                 int set = pipe.setContainingFluid(stack, channel, round > 0);
                                 if (count > set)
                                     pipeIterator.remove();

@@ -103,12 +103,6 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         if (pipeTile != null && !worldIn.isRemote) {
             FluidPipeNet net = pipeTile.getFluidPipeNet();
             net.invalidateNetCapacity();
-            for(FluidTank tank : pipeTile.getTankList()) {
-                FluidStack fluid = tank.getFluid();
-                if(fluid == null || fluid.amount <= 0)
-                    continue;
-                net.markDirty(tank.getFluid(), pos);
-            }
         }
     }
 

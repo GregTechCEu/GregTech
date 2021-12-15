@@ -136,6 +136,9 @@ public class FluidNetWalker extends PipeNetWalker {
             return false;
         if (ignoreFilter)
             return true;
+        if(((TileEntityFluidPipe) neighbourPipe).findChannel(fluid) < 0) {
+            return false;
+        }
         ICoverable coverable = currentPipe.getCoverableImplementation();
         CoverBehavior cover = coverable.getCoverAtSide(faceToNeighbour);
         if (cover instanceof CoverFluidFilter) {
