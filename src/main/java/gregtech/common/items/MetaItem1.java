@@ -280,17 +280,18 @@ public class MetaItem1 extends StandardMetaItem {
         // Functional Covers: ID 301-330
         COVER_MACHINE_CONTROLLER = addItem(301, "cover.controller");
         COVER_ACTIVITY_DETECTOR = addItem(302, "cover.activity.detector");
-        COVER_FLUID_DETECTOR = addItem(303, "cover.fluid.detector");
-        COVER_ITEM_DETECTOR = addItem(304, "cover.item.detector");
-        COVER_ENERGY_DETECTOR = addItem(305, "cover.energy.detector");
-        COVER_SCREEN = addItem(306, "cover.screen");
-        COVER_CRAFTING = addItem(307, "cover.crafting");
-        COVER_DRAIN = addItem(308, "cover.drain");
-        COVER_SHUTTER = addItem(309, "cover.shutter");
-        COVER_INFINITE_WATER = addItem(310, "cover.infinite_water");
-        COVER_ENDER_FLUID_LINK = addItem(311, "cover.ender_fluid_link");
-        COVER_DIGITAL_INTERFACE = addItem(312, "cover.digital");
-        COVER_DIGITAL_INTERFACE_WIRELESS = addItem(313, "cover.digital.wireless");
+        COVER_ACTIVITY_DETECTOR_ADVANCED = addItem(303, "cover.activity.detector_advanced");
+        COVER_FLUID_DETECTOR = addItem(304, "cover.fluid.detector");
+        COVER_ITEM_DETECTOR = addItem(305, "cover.item.detector");
+        COVER_ENERGY_DETECTOR = addItem(306, "cover.energy.detector");
+        COVER_SCREEN = addItem(307, "cover.screen");
+        COVER_CRAFTING = addItem(308, "cover.crafting");
+        COVER_DRAIN = addItem(309, "cover.drain");
+        COVER_SHUTTER = addItem(310, "cover.shutter");
+        COVER_INFINITE_WATER = addItem(311, "cover.infinite_water");
+        COVER_ENDER_FLUID_LINK = addItem(312, "cover.ender_fluid_link");
+        COVER_DIGITAL_INTERFACE = addItem(313, "cover.digital");
+        COVER_DIGITAL_INTERFACE_WIRELESS = addItem(314, "cover.digital.wireless");
 
         COVER_FACADE = addItem(330, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 

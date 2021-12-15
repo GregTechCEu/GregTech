@@ -34,7 +34,7 @@ public class WidgetScreenGrid extends Widget {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         int x = this.getPosition().x;
         int y = this.getPosition().y;
         int width = this.getSize().width;

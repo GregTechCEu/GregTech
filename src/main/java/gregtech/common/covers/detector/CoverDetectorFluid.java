@@ -29,7 +29,7 @@ public class CoverDetectorFluid extends CoverBehavior implements ITickable {
 
     @Override
     public boolean canAttach() {
-        return coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide) != null;
+        return coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null) != null;
     }
 
     @Override

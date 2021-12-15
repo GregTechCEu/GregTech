@@ -48,8 +48,8 @@ public class ClickButtonWidget extends Widget {
     }
 
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
-        super.drawInBackground(mouseX, mouseY, context);
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        super.drawInBackground(mouseX, mouseY, partialTicks, context);
         Position position = getPosition();
         Size size = getSize();
         if (buttonTexture instanceof SizedTextureArea) {

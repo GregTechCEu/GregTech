@@ -722,7 +722,9 @@ metaitem.smart_item_filter.tooltip=Filters items basing on specific machine's re
 metaitem.cover.controller.name=Machine Controller
 metaitem.cover.controller.tooltip=Turns Machines ON/OFF (as Cover)
 metaitem.cover.activity.detector.name=Activity Detector
-metaitem.cover.activity.detector.tooltip=Gives out Activity as Redstone (as Cover)
+metaitem.cover.activity.detector.tooltip=Gives out Activity Status as Redstone (as Cover)
+metaitem.cover.activity.detector_advanced.name=Advanced Activity Detector
+metaitem.cover.activity.detector_advanced.tooltip=Gives out Progress Status as Redstone (as Cover)
 metaitem.cover.fluid.detector.name=Fluid Detector
 metaitem.cover.fluid.detector.tooltip=Gives out Fluid Amount as Redstone (as Cover)
 metaitem.cover.item.detector.name=Item Detector
@@ -3109,6 +3111,11 @@ gregtech.machine.scanner.uxv.name=Ultimate Scanner
 
 gregtech.machine.infinite_energy.name=Infinite GT Energy Unit Emitter
 gregtech.machine.infinite_energy.tooltip=§8You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§8 to use this
+gregtech.machine.creative_chest.name=Creative Quantum Chest
+gregtech.machine.creative_chest.tooltip=§8You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§8 to use this
+gregtech.machine.creative_tank.name=Creative Quantum Tank
+gregtech.machine.creative_tank.tooltip=§8You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§8 to use this
+
 
 # Machine hulls
 gregtech.machine.hull.tooltip=§fYou just need §5I§dm§4a§cg§ei§an§ba§3t§7i§1o§5n§f to use this
@@ -4115,6 +4122,12 @@ gregtech.cover.fluid_detector.message_fluid_storage_inverted=Monitoring Inverted
 
 gregtech.cover.item_detector.message_item_storage_normal=Monitoring Normal Item Storage
 gregtech.cover.item_detector.message_item_storage_inverted=Monitoring Inverted Item Storage
+
+gregtech.cover.activity_detector.message_activity_normal=Monitoring Normal Activity Status
+gregtech.cover.activity_detector.message_activity_inverted=Monitoring Inverted Activity Status
+
+gregtech.cover.activity_detector_advanced.message_activity_normal=Monitoring Normal Progress Status
+gregtech.cover.activity_detector_advanced.message_activity_inverted=Monitoring Inverted Progress Status
 
 gregtech.terminal.app_name.items=Item Guides
 gregtech.terminal.app_name.machines=Machine Guides

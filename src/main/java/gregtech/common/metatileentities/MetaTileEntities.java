@@ -206,6 +206,8 @@ public class MetaTileEntities {
     //MISC MACHINES SECTION
     public static MetaTileEntityWorkbench WORKBENCH;
     public static MetaTileEntityCreativeEnergy CREATIVE_ENERGY;
+    public static MetaTileEntityCreativeTank CREATIVE_TANK;
+    public static MetaTileEntityCreativeChest CREATIVE_CHEST;
     public static MetaTileEntityClipboard CLIPBOARD_TILE;
     public static MetaTileEntityMonitorScreen MONITOR_SCREEN;
     public static MetaTileEntityCentralMonitor CENTRAL_MONITOR;
@@ -688,6 +690,12 @@ public class MetaTileEntities {
 
         MONITOR_SCREEN = registerMetaTileEntity(1667, new MetaTileEntityMonitorScreen(gregtechId("monitor_screen")));
 
+        // Creative Chest and Tank, IDs 1668-1669
+        CREATIVE_CHEST = registerMetaTileEntity(1668, new MetaTileEntityCreativeChest(gregtechId("creative_chest")));
+        CREATIVE_TANK = registerMetaTileEntity(1669, new MetaTileEntityCreativeTank(gregtechId("creative_tank")));
+
+
+
         /*
          * FOR ADDON DEVELOPERS:
          *
@@ -752,7 +760,7 @@ public class MetaTileEntities {
             IMultiblockAbilityPart<?> abilityPart = (IMultiblockAbilityPart<?>) sampleMetaTileEntity;
             MultiblockAbility.registerMultiblockAbility(abilityPart.getAbility(), sampleMetaTileEntity);
         }
-        if (sampleMetaTileEntity instanceof MultiblockControllerBase) {
+        if (sampleMetaTileEntity instanceof MultiblockControllerBase && GTValues.isModLoaded(GTValues.MODID_JEI)) {
             MultiblockInfoCategory.registerMultiblock((MultiblockControllerBase) sampleMetaTileEntity);
         }
         GregTechAPI.MTE_REGISTRY.register(id, sampleMetaTileEntity.metaTileEntityId, sampleMetaTileEntity);

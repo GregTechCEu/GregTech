@@ -301,7 +301,7 @@ public class MetaFluids {
             if (material.hasFluidColor())
                 fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
             else
-                fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(0xFFFFFF));
+                fluid.setColor(0xFFFFFFFF);
 
             // set properties and register
             setStateProperties(fluid, fluidState);

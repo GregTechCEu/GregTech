@@ -92,7 +92,7 @@ public class LabelWidget extends Widget {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         Position pos = getPosition();
         int height = fontRenderer.FONT_HEIGHT * texts.size();

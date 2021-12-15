@@ -17,12 +17,8 @@ import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.pipenet.block.BlockPipe;
-import gregtech.api.pipenet.tile.AttachmentType;
-import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
-import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.tools.DamageValues;
 import gregtech.integration.ctm.IFacadeWrapper;
@@ -251,28 +247,6 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 metaTileEntity.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
             } else {
                 metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
-            }
-            if (ConfigHolder.machines.gt6StylePipesCables) {
-                if (placer instanceof EntityPlayer) {
-                    EntityPlayer player = (EntityPlayer) placer;
-                    RayTraceResult rt2 = GTUtility.getBlockLookingAt(player, pos);
-                    for (EnumFacing facing : EnumFacing.VALUES) {
-                        BlockPos pipePos = null;
-
-                        if (rt2 != null)
-                            if (GTUtility.arePosEqual(rt2.getBlockPos(), pos.offset(facing, 1)))
-                                pipePos = rt2.getBlockPos();
-                        if (pipePos != null) {
-                            Block block = worldIn.getBlockState(pipePos).getBlock();
-                            if (block instanceof BlockPipe) {
-                                IPipeTile pipeTile = ((BlockPipe<?, ?, ?>) block).getPipeTileEntity(worldIn, pipePos);
-                                if (((BlockPipe<?, ?, ?>) block).canPipeConnectToBlock(pipeTile, facing.getOpposite(), worldIn.getTileEntity(pos))) {
-                                    pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing.getOpposite(), false, false);
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     }

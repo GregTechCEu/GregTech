@@ -846,7 +846,7 @@ public class ElementMaterials {
                 .build();
 
         Tin = new Material.Builder(112, "tin")
-                .ingot(1).fluid().ore()
+                .ingot(1).fluid(FluidType.FLUID, true).ore()
                 .color(0xDCDCDC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SPRING, GENERATE_SPRING_SMALL)
                 .element(Elements.Sn)

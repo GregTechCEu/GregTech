@@ -5,6 +5,8 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IWorkable;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.client.renderer.texture.Textures;
@@ -13,26 +15,24 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
-public class CoverDetectorItem extends CoverBehavior implements ITickable {
+public class CoverActivityDetector extends CoverBehavior implements ITickable {
 
-    private boolean isInverted;
+    protected boolean isInverted;
 
-    public CoverDetectorItem(ICoverable coverHolder, EnumFacing attachedSide) {
+    public CoverActivityDetector(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
         this.isInverted = false;
     }
 
     @Override
     public boolean canAttach() {
-        return coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null) != null;
+        return coverHolder.getCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, null) != null;
     }
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.DETECTOR_ITEM.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        Textures.DETECTOR_ACTIVITY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
 
     @Override
@@ -43,15 +43,15 @@ public class CoverDetectorItem extends CoverBehavior implements ITickable {
 
         if (this.isInverted) {
             this.setInverted();
-            playerIn.sendMessage(new TextComponentTranslation("gregtech.cover.item_detector.message_item_storage_normal"));
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.cover.activity_detector.message_activity_normal"));
         } else {
             this.setInverted();
-            playerIn.sendMessage(new TextComponentTranslation("gregtech.cover.item_detector.message_item_storage_inverted"));
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.cover.activity_detector.message_activity_inverted"));
         }
         return EnumActionResult.SUCCESS;
     }
 
-    private void setInverted() {
+    protected void setInverted() {
         this.isInverted = !this.isInverted;
         if (!this.coverHolder.getWorld().isRemote) {
             this.coverHolder.writeCoverData(this, 100, b -> b.writeBoolean(this.isInverted));
@@ -65,26 +65,12 @@ public class CoverDetectorItem extends CoverBehavior implements ITickable {
         if (this.coverHolder.getOffsetTimer() % 20 != 0)
             return;
 
-        IItemHandler itemHandler = coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        if (itemHandler == null)
+        IWorkable workable = coverHolder.getCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, null);
+        if (workable == null)
             return;
 
-        int storedItems = 0;
-        int itemCapacity = itemHandler.getSlots() * itemHandler.getSlotLimit(0);
-
-        if (itemCapacity == 0)
-            return;
-
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            storedItems += itemHandler.getStackInSlot(i).getCount();
-        }
-
-        int outputAmount = (int) (15.0 * storedItems / itemCapacity);
-
-        if (this.isInverted)
-            outputAmount = 15 - outputAmount;
-
-        setRedstoneSignalOutput(outputAmount);
+        if (isInverted) setRedstoneSignalOutput(workable.isActive() && workable.isWorkingEnabled() ? 0 : 15);
+        else setRedstoneSignalOutput(workable.isActive() && workable.isWorkingEnabled() ? 15 : 0);
     }
 
     @Override

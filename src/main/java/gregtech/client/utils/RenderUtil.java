@@ -522,7 +522,8 @@ public class RenderUtil {
         }
         GlStateManager.enableBlend();
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        setGlColorFromInt(fluidColor, 200);
+        // fluid is RGBA for GT guis, despite MC's fluids being ARGB
+        setGlColorFromInt(fluidColor, fluidColor & 0x000000FF);
 
         final int xTileCount = widthT / 16;
         final int xRemainder = widthT - xTileCount * 16;
@@ -553,16 +554,16 @@ public class RenderUtil {
     }
 
     public static void setGlColorFromInt(int colorValue, int opacity) {
-        int i = (colorValue & 16711680) >> 16;
-        int j = (colorValue & 65280) >> 8;
-        int k = (colorValue & 255);
+        int i = (colorValue & 0xFF0000) >> 16;
+        int j = (colorValue & 0xFF00) >> 8;
+        int k = (colorValue & 0xFF);
         GlStateManager.color(i / 255.0f, j / 255.0f, k / 255.0f, opacity / 255.0f);
     }
 
     public static void setGlClearColorFromInt(int colorValue, int opacity) {
-        int i = (colorValue & 16711680) >> 16;
-        int j = (colorValue & 65280) >> 8;
-        int k = (colorValue & 255);
+        int i = (colorValue & 0xFF0000) >> 16;
+        int j = (colorValue & 0xFF00) >> 8;
+        int k = (colorValue & 0xFF);
         GlStateManager.clearColor(i / 255.0f, j / 255.0f, k / 255.0f, opacity / 255.0f);
     }
 

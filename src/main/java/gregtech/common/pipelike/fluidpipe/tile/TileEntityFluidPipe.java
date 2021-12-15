@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
+import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.covers.CoverFluidFilter;
@@ -42,9 +43,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     private static final Random random = new Random();
     private final EnumMap<EnumFacing, PipeTankList> tanks = new EnumMap<>(EnumFacing.class);
     private FluidTank[] fluidTanks;
-    private final EnumMap<EnumFacing, Integer> lastInserted = new EnumMap<>(EnumFacing.class);
     private List<Pair<IFluidHandler, Predicate<FluidStack>>> neighbourCache = new ArrayList<>();
-    protected static final int FREQUENCY = 5;
+    public static final int FREQUENCY = 5;
 
     private final EnumSet<EnumFacing> openConnections = EnumSet.noneOf(EnumFacing.class);
 
@@ -70,14 +70,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         return super.getCapabilityInternal(capability, facing);
     }
 
-    public void didInsertFrom(EnumFacing facing) {
-        lastInserted.put(facing, 20);
-    }
-
-    public EnumMap<EnumFacing, Integer> getLastInserted() {
-        return lastInserted;
-    }
-
     protected EnumSet<EnumFacing> getOpenFaces() {
         return openConnections;
     }
@@ -89,8 +81,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     public List<Pair<IFluidHandler, Predicate<FluidStack>>> getNeighbourHandlers() {
         List<Pair<IFluidHandler, Predicate<FluidStack>>> handlers = new ArrayList<>();
         for (EnumFacing facing : getOpenFaces()) {
-            if (getLastInserted().containsKey(facing))
-                continue;
+            if (!isConnectionOpenAny(facing)) continue;
             TileEntity tile = getWorld().getTileEntity(pos.offset(facing));
             if (tile == null) continue;
             IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite());
@@ -126,7 +117,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     public void checkNeighbours() {
         openConnections.clear();
         for (EnumFacing facing : EnumFacing.values()) {
-            if (isConnectionOpenAny(facing)) {
+            if (isConnectionOpen(AttachmentType.PIPE, facing)) {
                 TileEntity tile = world.getTileEntity(pos.offset(facing));
                 if (tile == null || tile instanceof TileEntityFluidPipe) continue;
                 IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite());
@@ -139,6 +130,15 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void setConnectionBlocked(AttachmentType attachmentType, EnumFacing side, boolean blocked, boolean fromNeighbor) {
+        int oldConnections = getOpenConnections();
+        super.setConnectionBlocked(attachmentType, side, blocked, fromNeighbor);
+        if(oldConnections != getOpenConnections()) {
+            checkNeighbours();
         }
     }
 
@@ -233,8 +233,13 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
 
     public boolean areTanksEmpty() {
         for (FluidStack fluidStack : getContainedFluids())
-            if (fluidStack != null)
+            if (fluidStack != null) {
+                if(fluidStack.amount <= 0) {
+                    setContainingFluid(null, findChannel(fluidStack), false);
+                    continue;
+                }
                 return false;
+            }
         return true;
     }
 

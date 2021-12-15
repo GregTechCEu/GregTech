@@ -104,9 +104,7 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
         Insulation insulation = blockCable.getItemPipeType(stack);
         Material material = blockCable.getItemMaterial(stack);
         if (insulation != null && material != null) {
-            int connections = 1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
-                    1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex());
-            connections |= 1 << 12;
+            int connections = 1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex();
             renderCableBlock(material, insulation, IPipeTile.DEFAULT_INSULATION_COLOR, renderState, new IVertexOperation[0], connections);
         }
         renderState.draw();
@@ -186,11 +184,11 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
                 renderCableSide(renderState, pipeline, renderedSide, cuboid6);
             }
         }
-        if ((connections & 1 << 12) > 0) {
+        if ((connections & 1 << (6 + side.getIndex())) > 0) {
+            renderCableSide(renderState, pipeline, side, cuboid6);
+        } else {
             renderCableSide(renderState, wire, side, cuboid6);
             renderCableSide(renderState, overlays, side, cuboid6);
-        } else if ((connections & 1 << (6 + side.getIndex())) > 0) {
-            renderCableSide(renderState, pipeline, side, cuboid6);
         }
     }
 

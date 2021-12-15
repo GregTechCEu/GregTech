@@ -291,8 +291,8 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                 boolean pass = filter == null || filter.test(inventoryPlayer.getStackInSlot(col + row * 9));
                 SlotWidget slotWidget = new SlotWidget(inventoryPlayer, col + row * 9, x + col * 18, (int) (y + (row == 0 ? -1.2 : (row - 1)) * 18), false, false) {
                     @Override
-                    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
-                        super.drawInBackground(mouseX, mouseY, context);
+                    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+                        super.drawInBackground(mouseX, mouseY, partialTicks, context);
                         if (selected[0] == this) {
                             drawBorder(getPosition().x, getPosition().y, getSize().width, getSize().height, -1, 1);
                         }
