@@ -231,6 +231,9 @@ public class MaterialFlagAddition {
         oreProp = Pyrope.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(GarnetRed, Magnesium);
 
+        oreProp = Realgar.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Sulfur);
+
         oreProp = RockSalt.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Salt, Borax);
 

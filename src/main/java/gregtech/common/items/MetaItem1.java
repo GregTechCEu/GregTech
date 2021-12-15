@@ -84,7 +84,7 @@ public class MetaItem1 extends StandardMetaItem {
         SHAPE_EXTRUDERS[6] = SHAPE_EXTRUDER_WIRE = addItem(37, "shape.extruder.wire").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, GTValues.M * 4)));
         SHAPE_EXTRUDERS[7] = SHAPE_EXTRUDER_PIPE_TINY = addItem(38, "shape.extruder.pipe.tiny").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, GTValues.M * 4)));
         SHAPE_EXTRUDERS[8] = SHAPE_EXTRUDER_PIPE_SMALL = addItem(39, "shape.extruder.pipe.small").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, GTValues.M * 4)));
-        SHAPE_EXTRUDERS[9] = SHAPE_EXTRUDER_PIPE_MEDIUM = addItem(40, "shape.extruder.pipe.medium").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, GTValues.M * 4)));
+        SHAPE_EXTRUDERS[9] = SHAPE_EXTRUDER_PIPE_NORMAL = addItem(40, "shape.extruder.pipe.normal").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, GTValues.M * 4)));
         SHAPE_EXTRUDERS[10] = SHAPE_EXTRUDER_PIPE_LARGE = addItem(41, "shape.extruder.pipe.large").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, GTValues.M * 4)));
         SHAPE_EXTRUDERS[11] = SHAPE_EXTRUDER_PIPE_HUGE = addItem(42, "shape.extruder.pipe.huge").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, GTValues.M * 4)));
         SHAPE_EXTRUDERS[12] = SHAPE_EXTRUDER_BLOCK = addItem(43, "shape.extruder.block").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, GTValues.M * 4)));
@@ -286,12 +286,11 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_ENERGY_DETECTOR = addItem(306, "cover.energy.detector");
         COVER_SCREEN = addItem(307, "cover.screen");
         COVER_CRAFTING = addItem(308, "cover.crafting");
-        COVER_DRAIN = addItem(309, "cover.drain");
-        COVER_SHUTTER = addItem(310, "cover.shutter");
-        COVER_INFINITE_WATER = addItem(311, "cover.infinite_water");
-        COVER_ENDER_FLUID_LINK = addItem(312, "cover.ender_fluid_link");
-        COVER_DIGITAL_INTERFACE = addItem(313, "cover.digital");
-        COVER_DIGITAL_INTERFACE_WIRELESS = addItem(314, "cover.digital.wireless");
+        COVER_SHUTTER = addItem(309, "cover.shutter");
+        COVER_INFINITE_WATER = addItem(310, "cover.infinite_water");
+        COVER_ENDER_FLUID_LINK = addItem(311, "cover.ender_fluid_link");
+        COVER_DIGITAL_INTERFACE = addItem(312, "cover.digital");
+        COVER_DIGITAL_INTERFACE_WIRELESS = addItem(313, "cover.digital.wireless");
 
         COVER_FACADE = addItem(330, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 

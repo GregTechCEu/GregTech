@@ -135,7 +135,7 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe("shape/extruder/shape_extruder_block", MetaItems.SHAPE_EXTRUDER_BLOCK.getStackForm(), "x  ", " S ", "   ", 'S', MetaItems.SHAPE_EXTRUDER_INGOT.getStackForm());
         ModHandler.addShapedRecipe("shape/extruder/shape_extruder_pipe_huge", MetaItems.SHAPE_EXTRUDER_PIPE_HUGE.getStackForm(), "   ", " S ", "  x", 'S', MetaItems.SHAPE_EXTRUDER_BOLT.getStackForm());
         ModHandler.addShapedRecipe("shape/extruder/shape_extruder_pipe_large", MetaItems.SHAPE_EXTRUDER_PIPE_LARGE.getStackForm(), "   ", " Sx", "   ", 'S', MetaItems.SHAPE_EXTRUDER_BOLT.getStackForm());
-        ModHandler.addShapedRecipe("shape/extruder/shape_extruder_pipe_medium", MetaItems.SHAPE_EXTRUDER_PIPE_MEDIUM.getStackForm(), "  x", " S ", "   ", 'S', MetaItems.SHAPE_EXTRUDER_BOLT.getStackForm());
+        ModHandler.addShapedRecipe("shape/extruder/shape_extruder_pipe_normal", MetaItems.SHAPE_EXTRUDER_PIPE_NORMAL.getStackForm(), "  x", " S ", "   ", 'S', MetaItems.SHAPE_EXTRUDER_BOLT.getStackForm());
         ModHandler.addShapedRecipe("shape/extruder/shape_extruder_pipe_small", MetaItems.SHAPE_EXTRUDER_PIPE_SMALL.getStackForm(), " x ", " S ", "   ", 'S', MetaItems.SHAPE_EXTRUDER_BOLT.getStackForm());
         ModHandler.addShapedRecipe("shape/extruder/shape_extruder_pipe_tiny", MetaItems.SHAPE_EXTRUDER_PIPE_TINY.getStackForm(), "x  ", " S ", "   ", 'S', MetaItems.SHAPE_EXTRUDER_BOLT.getStackForm());
         ModHandler.addShapedRecipe("shape/extruder/shape_extruder_wire", MetaItems.SHAPE_EXTRUDER_WIRE.getStackForm(), " x ", " S ", "   ", 'S', MetaItems.SHAPE_EXTRUDER_ROD.getStackForm());

@@ -81,7 +81,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_WIRE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_TINY;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_SMALL;
-    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_MEDIUM;
+    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_NORMAL;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_LARGE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_HUGE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BLOCK;
@@ -396,7 +396,6 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem COVER_SCREEN;
     public static MetaItem<?>.MetaValueItem COVER_CRAFTING;
-    public static MetaItem<?>.MetaValueItem COVER_DRAIN;
     public static MetaItem<?>.MetaValueItem COVER_INFINITE_WATER;
     public static MetaItem<?>.MetaValueItem COVER_ENDER_FLUID_LINK;
     public static MetaItem<?>.MetaValueItem COVER_DIGITAL_INTERFACE;

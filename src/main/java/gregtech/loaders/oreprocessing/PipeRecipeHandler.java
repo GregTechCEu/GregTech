@@ -95,7 +95,7 @@ public class PipeRecipeHandler {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.ingot, material, 3)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_MEDIUM)
+                .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_NORMAL)
                 .outputs(pipeStack)
                 .duration((int) material.getAverageMass() * 3)
                 .EUt(6 * getVoltageMultiplier(material))

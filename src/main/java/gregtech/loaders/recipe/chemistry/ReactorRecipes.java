@@ -1088,5 +1088,12 @@ public class ReactorRecipes {
                     .fluidOutputs(Materials.CHEMICAL_DYES[i].getFluid(288))
                     .duration(600).EUt(24).buildAndRegister();
         }
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, Carbon)
+                .input(dust, Sulfur)
+                .output(dust, Blaze)
+                .duration(200).EUt(VA[HV]).buildAndRegister();
+
     }
 }

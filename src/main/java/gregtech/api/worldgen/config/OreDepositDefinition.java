@@ -22,12 +22,13 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
 import stanhebben.zenscript.annotations.ZenMethod;
 
+import javax.annotation.Nonnull;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 @ZenClass("mods.gregtech.ore.OreDepositDefinition")
 @ZenRegister
-public class OreDepositDefinition {
+public class OreDepositDefinition implements IWorldgenDefinition {
 
     public static final Function<Biome, Integer> NO_BIOME_INFLUENCE = biome -> 0;
     public static final Predicate<WorldProvider> PREDICATE_SURFACE_WORLD = WorldProvider::isSurfaceWorld;
@@ -55,7 +56,8 @@ public class OreDepositDefinition {
         this.depositName = depositName;
     }
 
-    public void initializeFromConfig(JsonObject configRoot) {
+    @Override
+    public boolean initializeFromConfig(@Nonnull JsonObject configRoot) {
         this.weight = configRoot.get("weight").getAsInt();
         this.density = configRoot.get("density").getAsFloat();
         if (configRoot.has("name")) {
@@ -95,9 +97,11 @@ public class OreDepositDefinition {
         if (veinPopulator != null) {
             veinPopulator.initializeForVein(this);
         }
+        return true;
     }
 
     //This is the file name
+    @Override
     @ZenGetter("depositName")
     public String getDepositName() {
         return depositName;
@@ -199,5 +203,51 @@ public class OreDepositDefinition {
     @ZenGetter("shape")
     public ShapeGenerator getShapeGenerator() {
         return shapeGenerator;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof OreDepositDefinition))
+            return false;
+
+        OreDepositDefinition objDeposit = (OreDepositDefinition) obj;
+        if (this.weight != objDeposit.getWeight())
+            return false;
+        if (this.density != objDeposit.getDensity())
+            return false;
+        if (this.priority != objDeposit.getPriority())
+            return false;
+        if (this.countAsVein != objDeposit.isVein())
+            return false;
+        if (this.getMinimumHeight() != objDeposit.getMinimumHeight())
+            return false;
+        if (this.getMaximumHeight() != objDeposit.getMaximumHeight())
+            return false;
+        if ((this.assignedName == null && objDeposit.getAssignedName() != null) ||
+                (this.assignedName != null && objDeposit.getAssignedName() == null) ||
+                (this.assignedName != null && objDeposit.getAssignedName() != null && !this.assignedName.equals(objDeposit.getAssignedName())))
+            return false;
+        if ((this.description == null && objDeposit.getDescription() != null) ||
+                (this.description != null && objDeposit.getDescription() == null) ||
+                (this.description != null && objDeposit.getDescription() != null && !this.description.equals(objDeposit.getDescription())))
+            return false;
+        if ((this.biomeWeightModifier == null && objDeposit.getBiomeWeightModifier() != null) ||
+                (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() == null) ||
+                (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() != null && !this.biomeWeightModifier.equals(objDeposit.getBiomeWeightModifier())))
+            return false;
+        if ((this.dimensionFilter == null && objDeposit.getDimensionFilter() != null) ||
+                (this.dimensionFilter != null && objDeposit.getDimensionFilter() == null) ||
+                (this.dimensionFilter != null && objDeposit.getDimensionFilter() != null && !this.dimensionFilter.equals(objDeposit.getDimensionFilter())))
+            return false;
+        if ((this.generationPredicate == null && objDeposit.getGenerationPredicate() != null) ||
+                (this.generationPredicate != null && objDeposit.getGenerationPredicate() == null) ||
+                (this.generationPredicate != null && objDeposit.getGenerationPredicate() != null && !this.generationPredicate.equals(objDeposit.getGenerationPredicate())))
+            return false;
+        if ((this.veinPopulator == null && objDeposit.getVeinPopulator() != null) ||
+                (this.veinPopulator != null && objDeposit.getVeinPopulator() == null) ||
+                (this.veinPopulator != null && objDeposit.getVeinPopulator() != null && !this.veinPopulator.equals(objDeposit.getVeinPopulator())))
+            return false;
+
+        return super.equals(obj);
     }
 }
