@@ -8,6 +8,7 @@ import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.*;
+import gregtech.api.capability.impl.fecompat.ForgeEnergyCompat;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
@@ -22,7 +23,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.Position;
 import gregtech.client.utils.RenderUtil;
-import gregtech.common.ConfigHolder;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -743,10 +743,10 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                         return 0;
                     }
                     public long getEnergyStored() {
-                        return (long) (fe.getEnergyStored() / ConfigHolder.compat.energy.rfRatio);
+                        return ForgeEnergyCompat.convertToEU(fe.getEnergyStored());
                     }
                     public long getEnergyCapacity() {
-                        return (long) (fe.getMaxEnergyStored() / ConfigHolder.compat.energy.rfRatio);
+                        return ForgeEnergyCompat.convertToEU(fe.getMaxEnergyStored());
                     }
                     public long getInputAmperage() {
                         return 0;

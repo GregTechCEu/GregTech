@@ -1,9 +1,8 @@
-package gregtech.api.capability.impl;
+package gregtech.api.capability.impl.fecompat;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.util.GTUtility;
-import gregtech.common.ConfigHolder;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -136,7 +135,7 @@ public class GTEnergyWrapper implements IEnergyContainer {
             }
         }
 
-        long maxPacket = (long) (voltage * ConfigHolder.compat.energy.rfRatio);
+        long maxPacket = ForgeEnergyCompat.convertToFE(voltage);
         long maximalValue = maxPacket * amperage;
 
         // Try to consume our remainder buffer plus a fresh packet
@@ -209,7 +208,7 @@ public class GTEnergyWrapper implements IEnergyContainer {
         if (container == null || delta == 0)
             return 0;
 
-        long energyValue = (long) (delta * ConfigHolder.compat.energy.rfRatio);
+        long energyValue = (long) (delta * ForgeEnergyCompat.ratioEUToFE());
         if (energyValue > Integer.MAX_VALUE)
             energyValue = Integer.MAX_VALUE;
 
@@ -217,19 +216,19 @@ public class GTEnergyWrapper implements IEnergyContainer {
 
             int extract = container.extractEnergy(safeCastLongToInt(energyValue), true);
 
-            if (extract != ConfigHolder.compat.energy.rfRatio)
-                extract -= extract % ConfigHolder.compat.energy.rfRatio;
+            if (extract != ForgeEnergyCompat.ratioEUToFE())
+                extract -= extract % ForgeEnergyCompat.ratioEUToFE();
 
-            return (long) (container.extractEnergy(extract, false) / ConfigHolder.compat.energy.rfRatio);
+            return ForgeEnergyCompat.convertToEU(container.extractEnergy(extract, false));
 
         } else {
 
             int receive = container.receiveEnergy((int) energyValue, true);
 
-            if (receive != ConfigHolder.compat.energy.rfRatio)
-                receive -= receive % ConfigHolder.compat.energy.rfRatio;
+            if (receive != ForgeEnergyCompat.ratioEUToFE())
+                receive -= receive % ForgeEnergyCompat.ratioEUToFE();
 
-            return (long) (container.receiveEnergy(receive, false) / ConfigHolder.compat.energy.rfRatio);
+            return ForgeEnergyCompat.convertToEU(container.receiveEnergy(receive, false));
         }
     }
 
@@ -249,7 +248,7 @@ public class GTEnergyWrapper implements IEnergyContainer {
         if (cap == null)
             return 0L;
 
-        return (long) (cap.getMaxEnergyStored() / ConfigHolder.compat.energy.rfRatio);
+        return ForgeEnergyCompat.convertToEU(cap.getMaxEnergyStored());
     }
 
     @Override
@@ -259,7 +258,7 @@ public class GTEnergyWrapper implements IEnergyContainer {
         if (cap == null)
             return 0L;
 
-        return (long) (cap.getEnergyStored() / ConfigHolder.compat.energy.rfRatio);
+        return ForgeEnergyCompat.convertToEU(cap.getEnergyStored());
     }
 
     @Override
@@ -294,7 +293,7 @@ public class GTEnergyWrapper implements IEnergyContainer {
         if (maxInput == 0)
             return 0;
 
-        maxInput = (long) (maxInput / ConfigHolder.compat.energy.rfRatio);
+        maxInput = ForgeEnergyCompat.convertToEU(maxInput);
         return GTValues.V[GTUtility.getTierByVoltage(maxInput)];
     }
 

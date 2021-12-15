@@ -212,9 +212,14 @@ public class ConfigHolder {
             @Config.Comment({"Enable Native GTEU to Forge Energy (RF and alike) on GT Cables and Wires.", "Default: true"})
             public boolean nativeEUToFE = true;
 
-            @Config.Comment({"GTEU to Forge Energy (RF and alike) ratio.", "Default: 4 FE to 1 EU"})
+            // TODO Energy Converters
+            //@Config.Comment({"Forge Energy to GTEU ratio for converting FE to EU.", "Default: 4 FE == 1 EU"})
+            //@Config.RangeDouble() // to ensure positive number
+            //public double ratioFEToEU = 4;
+
+            @Config.Comment({"GTEU to Forge Energy ratio for converting EU to FE. Affects Native Conversion.", "Default: 4 FE == 1 EU"})
             @Config.RangeDouble() // to ensure positive number
-            public double rfRatio = 4;
+            public double ratioEUToFE = 4;
         }
     }
 

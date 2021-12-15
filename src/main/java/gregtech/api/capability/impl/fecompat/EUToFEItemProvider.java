@@ -1,40 +1,40 @@
-package gregtech.api.capability.impl;
+package gregtech.api.capability.impl.fecompat;
 
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.common.ConfigHolder;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.energy.CapabilityEnergy;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class EUToFEProvider implements ICapabilityProvider {
+public class EUToFEItemProvider implements ICapabilityProvider {
 
-    private final TileEntity tileEntity;
-    private GTEnergyWrapper wrapper;
+    private final ItemStack itemStack;
+    private GTEnergyItemWrapper wrapper;
 
     /**
      * Lock used for concurrency protection between hasCapability and getCapability.
      */
     ReentrantLock lock = new ReentrantLock();
 
-    public EUToFEProvider(TileEntity tileEntity) {
-        this.tileEntity = tileEntity;
+    public EUToFEItemProvider(ItemStack itemStack) {
+        this.itemStack = itemStack;
     }
 
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
 
-        if (!ConfigHolder.compat.energy.nativeEUToFE)
+        if (!ForgeEnergyCompat.nativeEUtoFE())
             return false;
 
-        if (lock.isLocked() || capability != GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
+        if (lock.isLocked() || (capability != CapabilityEnergy.ENERGY && capability != GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM))
             return false;
 
-        // Wrap FE Machines with a GTEU EnergyContainer
-        if (wrapper == null) wrapper = new GTEnergyWrapper(tileEntity);
+        // Wrap FE Items with a GTEU EnergyContainer
+        if (wrapper == null) wrapper = new GTEnergyItemWrapper(itemStack);
 
         lock.lock();
         try {
@@ -48,13 +48,13 @@ public class EUToFEProvider implements ICapabilityProvider {
     @SuppressWarnings("unchecked")
     public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
 
-        if (!ConfigHolder.compat.energy.nativeEUToFE)
+        if (!ForgeEnergyCompat.nativeEUtoFE())
             return null;
 
-        if (lock.isLocked() || capability != GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
+        if (lock.isLocked() || !hasCapability(capability, facing))
             return null;
 
-        if (wrapper == null) wrapper = new GTEnergyWrapper(tileEntity);
+        if (wrapper == null) wrapper = new GTEnergyItemWrapper(itemStack);
 
         lock.lock();
         try {
