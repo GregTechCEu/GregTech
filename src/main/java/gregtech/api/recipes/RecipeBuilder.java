@@ -7,10 +7,7 @@ import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.EnumValidationResult;
-import gregtech.api.util.GTLog;
-import gregtech.api.util.GTUtility;
-import gregtech.api.util.ValidationResult;
+import gregtech.api.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -22,6 +19,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -391,7 +389,11 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.inputsIngredients(newRecipeInputs);
         this.fluidInputs(newFluidInputs);
         if (trimOutputs && !outputItems.isEmpty()) {
-            this.outputs(outputItems.subList(0, 1));
+            this.outputs(outputItems.stream()
+                    .filter(is ->
+                            ItemStackHashStrategy.comparingAllButCount()
+                                    .equals(is, recipe.getOutputs().get(0)))
+                    .collect(Collectors.toList()));
         } else {
             this.outputs(outputItems);
         }
@@ -406,7 +408,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         } else if (this.outputs.size() == 0) {
             ItemStack firstChancedOutput = recipe.getChancedOutputs().get(0).getItemStack().copy();
             firstChancedOutput.setCount(firstChancedOutput.getCount() * multiplier);
-            this.outputs(recipe.getChancedOutputs().get(0).getItemStack());
+            this.outputs(firstChancedOutput);
         }
 
         return (R) this;

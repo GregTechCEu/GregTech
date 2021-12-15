@@ -12,6 +12,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,6 +30,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic {
 
@@ -241,6 +243,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * should limit the recipe output only to the first output
+     *
      * @return true if only the first output should be considered
      */
     public boolean trimOutputs() {
@@ -550,7 +553,17 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         setMaxProgress(resultOverclock[1]);
         this.recipeEUt = resultOverclock[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
-        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt)));
+        if (trimOutputs() && recipe.getOutputs().isEmpty() && !recipe.getChancedOutputs().isEmpty()) {
+            this.itemOutputs = GTUtility.copyStackList(recipe.getAllChancedItemOutputs(getOutputInventory().getSlots())
+                    .stream()
+                    .filter(is ->
+                            ItemStackHashStrategy.comparingAllButCount()
+                                    .equals(is, recipe.getChancedOutputs().get(0).getItemStack()))
+                    .collect(Collectors.toList()));
+        } else {
+            this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt)));
+        }
+
         if (this.wasActiveAndNeedsUpdate) {
             this.wasActiveAndNeedsUpdate = false;
         } else {
