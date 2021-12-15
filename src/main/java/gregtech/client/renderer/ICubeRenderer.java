@@ -52,7 +52,7 @@ public interface ICubeRenderer extends IIconRegister {
 
     @SideOnly(Side.CLIENT)
     default void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
-        renderOrientedState(renderState, translation, pipeline, Cuboid6.full, frontFacing, false, false);
+        renderOrientedState(renderState, translation, pipeline, Cuboid6.full, frontFacing, isActive, isWorkingEnabled);
     }
 
 }
