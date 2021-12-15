@@ -148,7 +148,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (!getWorld().isRemote) {
             TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
             // block connections if Pipe Types do not match
-            if (!blocked && tile instanceof IPipeTile && ((IPipeTile<?, ?>) tile).getPipeType() != this.getPipeType()) {
+            if (!blocked && tile instanceof IPipeTile && ((IPipeTile<?, ?>) tile).getPipeType().getClass() != this.getPipeType().getClass()) {
                 return;
             }
             int at = attachmentType.ordinal();
