@@ -4,13 +4,12 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import com.google.common.collect.Lists;
-import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.CycleButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.PhantomSlotWidget;
+import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.client.renderer.texture.Textures;
@@ -20,22 +19,24 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.List;
 import java.util.function.Function;
 
 public class MetaTileEntityCreativeChest extends MetaTileEntity {
 
     private int itemsPerCycle = 1;
     private int ticksPerCycle = 1;
-    private final ItemStackHandler handler = new ItemStackHandler(1);
+    private final ItemStackHandler handler = new ItemStackHandler(1) {
+        @Override
+        protected int getStackLimit(int slot, ItemStack stack) {
+            return 1;
+        }
+    };
 
     private boolean active = false;
 
@@ -159,11 +160,11 @@ public class MetaTileEntityCreativeChest extends MetaTileEntity {
     }
 
     @Override
-    public void writeItemStackData(NBTTagCompound itemStack) {
+    public void writeItemStackData(NBTTagCompound tag) {
         super.writeItemStackData(itemStack);
         ItemStack stack = this.handler.getStackInSlot(0);
-        if (stack != null && stack.getCount() > 0) {
-            this.handler.getStackInSlot(0).writeToNBT(itemStack);
+        if (!stack.isEmpty()) {
+            stack.writeToNBT(itemStack);
         }
         itemStack.setInteger("mBPerCycle", itemsPerCycle);
         itemStack.setInteger("ticksPerCycle", ticksPerCycle);
