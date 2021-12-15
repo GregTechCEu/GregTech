@@ -36,7 +36,7 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
     }
 
     private int findChannel(FluidStack stack) {
-        if (stack == null)
+        if (stack == null || tanks == null)
             return -1;
         int empty = -1;
         for (int i = tanks.length - 1; i >= 0; i--) {
