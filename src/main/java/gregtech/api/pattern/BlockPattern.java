@@ -300,7 +300,7 @@ public class BlockPattern {
                             ItemStack found = null;
                             if (!player.isCreative()) {
                                 for (ItemStack itemStack : player.inventory.mainInventory) {
-                                    if (candidates.stream().anyMatch(candidate -> candidate.isItemEqual(itemStack)) && !itemStack.isEmpty()) {
+                                    if (candidates.stream().anyMatch(candidate -> candidate.isItemEqual(itemStack)) && !itemStack.isEmpty() && itemStack.getItem() instanceof ItemBlock) {
                                         found = itemStack.copy();
                                         itemStack.setCount(itemStack.getCount() - 1);
                                         break;
@@ -308,7 +308,14 @@ public class BlockPattern {
                                 }
                                 if (found == null) continue;
                             } else {
-                                found = candidates.get(candidates.size() - 1).copy();
+                                for (int i = candidates.size() - 1; i >= 0; i--) {
+                                    found = candidates.get(i).copy();
+                                    if (!found.isEmpty() && found.getItem() instanceof ItemBlock) {
+                                        break;
+                                    }
+                                    found = null;
+                                }
+                                if (found == null) continue;
                             }
                             ItemBlock itemBlock = (ItemBlock) found.getItem();
                             IBlockState state = itemBlock.getBlock().getStateFromMeta(itemBlock.getMetadata(found.getMetadata()));
