@@ -240,27 +240,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * should simulation of output insertion be skipped completely.
-     * will always run if there is a valid recipe
-     * @return true if output insertion should be skipped
-     */
-    public boolean canVoidRecipeOutputs() {
-        return false;
-    }
-
-    /**
-     * should chanced outputs be considered when completing a recipe
-     * @return true if chanced outputs should be considered
-     */
-    public boolean canDoChancedOutputs() {
-        return true;
-    }
-
-    /**
      * should limit the recipe output only to the first output
      * @return true if only the first output should be considered
      */
-    public boolean clampOutputs() {
+    public boolean trimOutputs() {
         return false;
     }
 
@@ -420,11 +403,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             return false;
         }
 
-        if (!canVoidRecipeOutputs() && !MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs(exportInventory.getSlots()))) {
+        if (!MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs(exportInventory.getSlots()))) {
             this.isOutputsFull = true;
             return false;
         }
-        if (!canVoidRecipeOutputs() && !MetaTileEntity.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
+        if (!MetaTileEntity.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
@@ -567,13 +550,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         setMaxProgress(resultOverclock[1]);
         this.recipeEUt = resultOverclock[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
-        if (canDoChancedOutputs()) {
-            this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt)));
-        } else {
-            this.itemOutputs = GTUtility.copyStackList((recipe.getOutputs()).subList(0, Math.min(recipe.getOutputs().size(), getOutputInventory().getSlots())));
-        } if (clampOutputs()) {
-            this.itemOutputs = GTUtility.copyStackList(itemOutputs.subList(0, 1));
-        }
+        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt)));
         if (this.wasActiveAndNeedsUpdate) {
             this.wasActiveAndNeedsUpdate = false;
         } else {

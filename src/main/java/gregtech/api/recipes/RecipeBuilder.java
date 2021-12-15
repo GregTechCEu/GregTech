@@ -373,7 +373,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
      * @return the builder holding the multiplied recipe
      */
 
-    public R append(Recipe recipe, int multiplier, boolean multiplyDuration, boolean clampOutputs, boolean canDoChanced) {
+    public R append(Recipe recipe, int multiplier, boolean multiplyDuration, boolean trimOutputs) {
         for (Map.Entry<RecipeProperty<?>, Object> property : recipe.getPropertyValues()) {
             this.applyProperty(property.getKey().getKey(), property.getValue());
         }
@@ -390,7 +390,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         // Build the new Recipe with multiplied components
         this.inputsIngredients(newRecipeInputs);
         this.fluidInputs(newFluidInputs);
-        if (clampOutputs && !outputItems.isEmpty()) {
+        if (trimOutputs && !outputItems.isEmpty()) {
             this.outputs(outputItems.subList(0, 1));
         } else {
             this.outputs(outputItems);
@@ -401,8 +401,12 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.duration(multiplyDuration ? this.duration + recipe.getDuration() * multiplier : recipe.getDuration());
         this.parallel += multiplier;
 
-        if (canDoChanced) {
+        if (!trimOutputs) {
             chancedOutputsMultiply(recipe, multiplier);
+        } else if (this.outputs.size() == 0) {
+            ItemStack firstChancedOutput = recipe.getChancedOutputs().get(0).getItemStack().copy();
+            firstChancedOutput.setCount(firstChancedOutput.getCount() * multiplier);
+            this.outputs(recipe.getChancedOutputs().get(0).getItemStack());
         }
 
         return (R) this;

@@ -23,20 +23,9 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
     }
 
     @Override
-    public boolean canVoidRecipeOutputs() {
+    public boolean trimOutputs() {
         return true;
     }
-
-    @Override
-    public boolean canDoChancedOutputs() {
-        return false;
-    }
-
-    @Override
-    public boolean clampOutputs() {
-        return true;
-    }
-
 
     @Override
     public void applyParallelBonus(RecipeBuilder<?> builder) {

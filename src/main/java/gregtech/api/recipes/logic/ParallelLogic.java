@@ -362,7 +362,7 @@ public class ParallelLogic {
         return minMultiplier;
     }
 
-    public static RecipeBuilder<?> doParallelRecipes(Recipe currentRecipe, RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids, IItemHandlerModifiable exportInventory, IMultipleTankHandler exportFluids, int parallelAmount, long maxVoltage, boolean clampOutputs, boolean canDoChanced, boolean canVoidOutputs) {
+    public static RecipeBuilder<?> doParallelRecipes(Recipe currentRecipe, RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids, IItemHandlerModifiable exportInventory, IMultipleTankHandler exportFluids, int parallelAmount, long maxVoltage, boolean trimOutputs) {
         int multiplierByInputs = getMaxRecipeMultiplier(currentRecipe, importInventory, importFluids, parallelAmount);
         if (multiplierByInputs == 0) {
             return null;
@@ -371,15 +371,12 @@ public class ParallelLogic {
 
         // Simulate the merging of the maximum amount of recipes
         // and limit by the amount we can successfully merge
-        int limitByOutput = Integer.MAX_VALUE;
-        if (!canVoidOutputs) {
-            limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
-        }
+        int limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
         int limitByVoltage = (int) (maxVoltage / currentRecipe.getEUt());
         int parallelizable = Math.min(limitByVoltage, Math.min(multiplierByInputs, limitByOutput));
 
         if (parallelizable > 0) {
-            recipeBuilder.append(currentRecipe, parallelizable, false, clampOutputs, canDoChanced);
+            recipeBuilder.append(currentRecipe, parallelizable, false, trimOutputs);
         }
 
         return recipeBuilder;
@@ -396,7 +393,7 @@ public class ParallelLogic {
      * @param maxVoltage      The maximum voltage of the machine
      * @return A {@link RecipeBuilder} containing the recipes that can be performed in parallel, limited by the ingredients available, and the output space available.
      */
-    public static RecipeBuilder<?> appendItemRecipes(RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IItemHandlerModifiable exportInventory, int parallelAmount, long maxVoltage, boolean clampOutputs, boolean canDoChanced, boolean canVoidOutputs) {
+    public static RecipeBuilder<?> appendItemRecipes(RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IItemHandlerModifiable exportInventory, int parallelAmount, long maxVoltage, boolean trimOutputs) {
         RecipeBuilder<?> recipeBuilder = null;
 
         OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(exportInventory);
@@ -434,16 +431,13 @@ public class ParallelLogic {
             int ingredientRatio = Math.min(parallelAmount - engagedItems, currentInputItem.getCount() / Math.max(matchingRecipe.getInputs().get(0).getCount(), 1));
 
             //how much we can add to the output inventory
-            int limitByOutput = Integer.MAX_VALUE;
-            if (!canVoidOutputs) {
-                limitByOutput = limitParallelByItemsIncremental(recipeBuilder.getOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, ingredientRatio);
-            }
+            int limitByOutput = limitParallelByItemsIncremental(recipeBuilder.getOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, ingredientRatio);
 
             //amount to actually multiply the recipe by
             int multiplierRecipeAmount = Math.min(ingredientRatio, limitByOutput);
 
             if (multiplierRecipeAmount > 0) {
-                recipeBuilder.append(matchingRecipe, multiplierRecipeAmount, true, clampOutputs, canDoChanced);
+                recipeBuilder.append(matchingRecipe, multiplierRecipeAmount, true, trimOutputs);
                 engagedItems += multiplierRecipeAmount;
             }
 
