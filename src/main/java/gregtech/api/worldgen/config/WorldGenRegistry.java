@@ -235,8 +235,8 @@ public class WorldGenRegistry {
             }
         }
 
-        addAddonFiles(veinPath, addonRegisteredDefinitions, registeredVeinDefinitions);
-        addAddonFiles(bedrockVeinPath, addonRegisteredBedrockVeinDefinitions, registeredBedrockVeinDefinitions);
+        addAddonFiles(worldgenRootPath, addonRegisteredDefinitions, registeredVeinDefinitions);
+        addAddonFiles(worldgenRootPath, addonRegisteredBedrockVeinDefinitions, registeredBedrockVeinDefinitions);
 
         GTLog.logger.info("Loaded {} bedrock worldgen definitions", registeredBedrockVeinDefinitions.size());
         GTLog.logger.info("Loaded {} worldgen definitions from addon mods", addonRegisteredDefinitions.size());
