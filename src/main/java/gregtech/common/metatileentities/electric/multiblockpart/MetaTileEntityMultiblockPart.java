@@ -154,11 +154,6 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
     }
 
     @Override
-    public boolean canRenderInLayer(BlockRenderLayer renderLayer) {
-        return getBaseTexture().canRenderInLayer(renderLayer);
-    }
-
-    @Override
     public void addToMultiBlock(MultiblockControllerBase controllerBase) {
         setController(controllerBase);
     }

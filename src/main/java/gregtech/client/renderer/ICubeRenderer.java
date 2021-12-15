@@ -6,7 +6,6 @@ import codechicken.lib.texture.TextureUtils.IIconRegister;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -56,8 +55,4 @@ public interface ICubeRenderer extends IIconRegister {
         renderOrientedState(renderState, translation, pipeline, Cuboid6.full, frontFacing, false, false);
     }
 
-    @SideOnly(Side.CLIENT)
-    default boolean canRenderInLayer(BlockRenderLayer layer) {
-        return true;
-    }
 }

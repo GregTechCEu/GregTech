@@ -94,9 +94,5 @@ public class SimpleOrientedCubeRenderer implements ICubeRenderer {
         if (spritesEmissive.containsKey(CubeSide.LEFT)) Textures.renderFace(renderState, translation, lightPipeline, frontFacing.rotateY(), bounds, sprites.get(CubeSide.LEFT), BloomEffectUtil.getRealBloomLayer());
         if (spritesEmissive.containsKey(CubeSide.RIGHT)) Textures.renderFace(renderState, translation, lightPipeline, frontFacing.rotateYCCW(), bounds, sprites.get(CubeSide.RIGHT), BloomEffectUtil.getRealBloomLayer());
     }
-
-    @Override
-    public boolean canRenderInLayer(BlockRenderLayer layer) {
-        return layer == BlockRenderLayer.CUTOUT_MIPPED || layer == BloomEffectUtil.getRealBloomLayer();
-    }
+    
 }
