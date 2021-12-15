@@ -362,43 +362,24 @@ public class ParallelLogic {
         return minMultiplier;
     }
 
-    public static RecipeBuilder<?> doParallelRecipes(Recipe currentRecipe, RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids, IItemHandlerModifiable exportInventory, IMultipleTankHandler exportFluids, int parallelAmount, long maxVoltage, boolean shouldTrimOutputs) {
+    public static RecipeBuilder<?> doParallelRecipes(Recipe currentRecipe, RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids, IItemHandlerModifiable exportInventory, IMultipleTankHandler exportFluids, int parallelAmount, long maxVoltage, boolean clampOutputs, boolean canDoChanced, boolean canVoidOutputs) {
         int multiplierByInputs = getMaxRecipeMultiplier(currentRecipe, importInventory, importFluids, parallelAmount);
         if (multiplierByInputs == 0) {
             return null;
         }
         RecipeBuilder<?> recipeBuilder = recipeMap.recipeBuilder();
 
-        //Trim the recipe outputs if required
-        if((currentRecipe.getOutputs().size() > 1 || (currentRecipe.getOutputs().size() + currentRecipe.getChancedOutputs().size()) > 1) && shouldTrimOutputs) {
-            RecipeBuilder<?> builder = recipeMap.recipeBuilder();
-            builder.append(currentRecipe, 1, false);
-            ItemStack output = builder.getOutputs().get(0).copy();
-            builder.clearChancedOutput();
-            builder.clearOutputs();
-            builder.outputs(output);
-
-            currentRecipe = builder.build().getResult();
-        }
-        else if(currentRecipe.getChancedOutputs().size() > 1 && shouldTrimOutputs) {
-            RecipeBuilder<?> builder = recipeMap.recipeBuilder();
-            builder.append(currentRecipe, 1, false);
-            Recipe.ChanceEntry chanced = currentRecipe.getChancedOutputs().get(0).copy();
-            builder.clearChancedOutput();
-            builder.chancedOutput(chanced.getItemStack(), chanced.getChance(), chanced.getBoostPerTier());
-
-            currentRecipe = builder.build().getResult();
-        }
-
-
         // Simulate the merging of the maximum amount of recipes
         // and limit by the amount we can successfully merge
-        int limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
+        int limitByOutput = Integer.MAX_VALUE;
+        if (!canVoidOutputs) {
+            limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
+        }
         int limitByVoltage = (int) (maxVoltage / currentRecipe.getEUt());
         int parallelizable = Math.min(limitByVoltage, Math.min(multiplierByInputs, limitByOutput));
 
         if (parallelizable > 0) {
-            recipeBuilder.append(currentRecipe, parallelizable, false);
+            recipeBuilder.append(currentRecipe, parallelizable, false, clampOutputs, canDoChanced);
         }
 
         return recipeBuilder;
@@ -415,7 +396,7 @@ public class ParallelLogic {
      * @param maxVoltage      The maximum voltage of the machine
      * @return A {@link RecipeBuilder} containing the recipes that can be performed in parallel, limited by the ingredients available, and the output space available.
      */
-    public static RecipeBuilder<?> appendItemRecipes(RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IItemHandlerModifiable exportInventory, int parallelAmount, long maxVoltage, boolean shouldTrimOutputs) {
+    public static RecipeBuilder<?> appendItemRecipes(RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IItemHandlerModifiable exportInventory, int parallelAmount, long maxVoltage, boolean clampOutputs, boolean canDoChanced, boolean canVoidOutputs) {
         RecipeBuilder<?> recipeBuilder = null;
 
         OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(exportInventory);
@@ -452,35 +433,17 @@ public class ParallelLogic {
             //equivalent of getting the max ratio from the inputs from Parallel logic
             int ingredientRatio = Math.min(parallelAmount - engagedItems, currentInputItem.getCount() / Math.max(matchingRecipe.getInputs().get(0).getCount(), 1));
 
-            //Trim the recipe outputs if required
-            if((matchingRecipe.getOutputs().size() > 1 || (matchingRecipe.getOutputs().size() + matchingRecipe.getChancedOutputs().size()) > 1) && shouldTrimOutputs) {
-                RecipeBuilder<?> builder = recipeMap.recipeBuilder();
-                builder.append(matchingRecipe, 1, false);
-                ItemStack output = builder.getOutputs().get(0).copy();
-                builder.clearChancedOutput();
-                builder.clearOutputs();
-                builder.outputs(output);
-
-                matchingRecipe = builder.build().getResult();
-            }
-            else if(matchingRecipe.getChancedOutputs().size() > 1 && shouldTrimOutputs) {
-                RecipeBuilder<?> builder = recipeMap.recipeBuilder();
-                builder.append(matchingRecipe, 1, false);
-                Recipe.ChanceEntry chanced = matchingRecipe.getChancedOutputs().get(0).copy();
-                builder.clearChancedOutput();
-                builder.chancedOutput(chanced.getItemStack(), chanced.getChance(), chanced.getBoostPerTier());
-
-                matchingRecipe = builder.build().getResult();
-            }
-
             //how much we can add to the output inventory
-            int limitByOutput = limitParallelByItemsIncremental(recipeBuilder.getOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, ingredientRatio);
+            int limitByOutput = Integer.MAX_VALUE;
+            if (!canVoidOutputs) {
+                limitByOutput = limitParallelByItemsIncremental(recipeBuilder.getOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, ingredientRatio);
+            }
 
             //amount to actually multiply the recipe by
             int multiplierRecipeAmount = Math.min(ingredientRatio, limitByOutput);
 
             if (multiplierRecipeAmount > 0) {
-                recipeBuilder.append(matchingRecipe, multiplierRecipeAmount, true);
+                recipeBuilder.append(matchingRecipe, multiplierRecipeAmount, true, clampOutputs, canDoChanced);
                 engagedItems += multiplierRecipeAmount;
             }
 

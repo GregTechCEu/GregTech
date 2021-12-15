@@ -23,15 +23,26 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
     }
 
     @Override
-    public boolean shouldTrimOutputs() {
+    public boolean canVoidRecipeOutputs() {
         return true;
     }
+
+    @Override
+    public boolean canDoChancedOutputs() {
+        return false;
+    }
+
+    @Override
+    public boolean clampOutputs() {
+        return true;
+    }
+
 
     @Override
     public void applyParallelBonus(RecipeBuilder<?> builder) {
         int currentRecipeEU = builder.getEUt();
         int currentRecipeDuration = builder.getDuration() / getParallelLimit();
         builder.EUt((int) Math.min(32.0, Math.ceil(currentRecipeEU) * 1.33))
-           .duration((int) (currentRecipeDuration * 1.5));
+                .duration((int) (currentRecipeDuration * 1.5));
     }
 }

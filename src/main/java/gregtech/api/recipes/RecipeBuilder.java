@@ -367,13 +367,13 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
      * Appends the passed {@link Recipe} onto the inputs and outputs, multiplied by the amount specified by multiplier
      * The duration of the multiplied {@link Recipe} is also added to the current duration
      *
-     * @param recipe            The Recipe to be multiplied
-     * @param multiplier        Amount to multiply the recipe by
-     * @param multiplyDuration  Whether duration should be multiplied instead of EUt
+     * @param recipe           The Recipe to be multiplied
+     * @param multiplier       Amount to multiply the recipe by
+     * @param multiplyDuration Whether duration should be multiplied instead of EUt
      * @return the builder holding the multiplied recipe
      */
 
-    public R append(Recipe recipe, int multiplier, boolean multiplyDuration) {
+    public R append(Recipe recipe, int multiplier, boolean multiplyDuration, boolean clampOutputs, boolean canDoChanced) {
         for (Map.Entry<RecipeProperty<?>, Object> property : recipe.getPropertyValues()) {
             this.applyProperty(property.getKey().getKey(), property.getValue());
         }
@@ -390,14 +390,20 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         // Build the new Recipe with multiplied components
         this.inputsIngredients(newRecipeInputs);
         this.fluidInputs(newFluidInputs);
-        this.outputs(outputItems);
+        if (clampOutputs && !outputItems.isEmpty()) {
+            this.outputs(outputItems.subList(0, 1));
+        } else {
+            this.outputs(outputItems);
+        }
         this.fluidOutputs(outputFluids);
 
         this.EUt(multiplyDuration ? recipe.getEUt() : this.EUt + recipe.getEUt() * multiplier);
         this.duration(multiplyDuration ? this.duration + recipe.getDuration() * multiplier : recipe.getDuration());
         this.parallel += multiplier;
 
-        chancedOutputsMultiply(recipe, multiplier);
+        if (canDoChanced) {
+            chancedOutputsMultiply(recipe, multiplier);
+        }
 
         return (R) this;
     }
