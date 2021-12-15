@@ -853,7 +853,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Realgar = new Material.Builder(365, "realgar")
-                .gem()
+                .gem().ore()
                 .color(0x9D2123).iconSet(EMERALD)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Arsenic, 4, Sulfur, 4)
