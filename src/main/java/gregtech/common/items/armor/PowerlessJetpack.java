@@ -72,7 +72,7 @@ public class PowerlessJetpack implements IArmorLogic, IJetpack {
 
         if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.HOVER_KEY)) {
             hover = !hover;
-            toggleTimer = 10;
+            toggleTimer = 5;
             data.setBoolean("hover", hover);
             if (!world.isRemote) {
                 if (hover)

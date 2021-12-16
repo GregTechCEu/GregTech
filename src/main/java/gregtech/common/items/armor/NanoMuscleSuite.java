@@ -41,7 +41,7 @@ public class NanoMuscleSuite extends ArmorLogicSuite {
         if (SLOT == EntityEquipmentSlot.HEAD) {
             boolean nightvision = nbtData.getBoolean("Nightvision");
             if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.MODE_SWITCH)) {
-                toggleTimer = 10;
+                toggleTimer = 5;
                 if (!nightvision && item.getCharge() >= 4) {
                     nightvision = true;
                     if (!world.isRemote)

@@ -100,7 +100,7 @@ public class QuarkTechSuite extends ArmorLogicSuite {
 
             boolean nightvision = data.getBoolean("Nightvision");
             if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.MODE_SWITCH)) {
-                toggleTimer = 10;
+                toggleTimer = 5;
                 if (!nightvision && item.getCharge() >= 4) {
                     nightvision = true;
                     if (!world.isRemote)

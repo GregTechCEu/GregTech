@@ -42,7 +42,7 @@ public class AdvancedJetpack extends Jetpack {
 
         if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.HOVER_KEY)) {
             hoverMode = !hoverMode;
-            toggleTimer = 10;
+            toggleTimer = 5;
             data.setBoolean("hover", hoverMode);
             if (!world.isRemote) {
                 if (hoverMode)
@@ -54,7 +54,7 @@ public class AdvancedJetpack extends Jetpack {
 
         if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.FLY_KEY)) {
             flyEnabled = !flyEnabled;
-            toggleTimer = 10;
+            toggleTimer = 5;
             data.setBoolean("flyMode", flyEnabled);
             if (!world.isRemote) {
                 if (flyEnabled)

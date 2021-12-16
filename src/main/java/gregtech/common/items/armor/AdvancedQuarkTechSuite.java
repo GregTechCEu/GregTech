@@ -50,7 +50,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
 
         if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.HOVER_KEY)) {
             hoverMode = !hoverMode;
-            toggleTimer = 10;
+            toggleTimer = 5;
             data.setBoolean("hover", hoverMode);
             if (!world.isRemote) {
                 if (hoverMode)
@@ -62,7 +62,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
 
         if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.FLY_KEY)) {
             flyEnabled = !flyEnabled;
-            toggleTimer = 10;
+            toggleTimer = 5;
             data.setBoolean("flyMode", flyEnabled);
             if (!world.isRemote) {
                 if (flyEnabled)
@@ -74,7 +74,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
 
         if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.SHARE_KEY)) {
             canShare = !canShare;
-            toggleTimer = 10;
+            toggleTimer = 5;
             data.setBoolean("canShare", canShare);
             if (!world.isRemote) {
                 if (canShare)
