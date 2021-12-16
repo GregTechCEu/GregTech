@@ -484,7 +484,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         ICoverable coverable = pipeTile.getCoverableImplementation();
 
         // Check if the machine grid is being rendered
-        if (hasPipeCollisionChangingItem(entityIn)) {
+        if (hasPipeCollisionChangingItem(world, pos, entityIn)) {
             result.add(FULL_CUBE_COLLISION);
         }
 
