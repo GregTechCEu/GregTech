@@ -21,7 +21,7 @@ public class MemorizedRecipeWidget extends SlotWidget {
     private final IItemHandlerModifiable craftingGrid;
 
     public MemorizedRecipeWidget(CraftingRecipeMemory recipeMemory, int index, IItemHandlerModifiable craftingGrid, int xPosition, int yPosition) {
-        super(new ItemStackHandler(1), 0, xPosition, yPosition, false, false);
+        super(new ItemStackHandler(1), 0, xPosition, yPosition, true, false);
         this.recipeMemory = recipeMemory;
         this.recipeIndex = index;
         this.craftingGrid = craftingGrid;
@@ -74,5 +74,10 @@ public class MemorizedRecipeWidget extends SlotWidget {
             }
         }
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean mouseClicked(int mouseX, int mouseY, int button) {
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 }
