@@ -1,5 +1,6 @@
 package gregtech.common.blocks;
 
+import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import net.minecraft.block.SoundType;
@@ -14,6 +15,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,16 +38,31 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
     public void addInformation(@Nonnull ItemStack itemStack, @Nullable World worldIn, List<String> lines, @Nonnull ITooltipFlag tooltipFlag) {
         super.addInformation(itemStack, worldIn, lines, tooltipFlag);
 
+        // noinspection rawtypes, unchecked
         VariantItemBlock itemBlock = (VariantItemBlock<CoilType, BlockWireCoil>) itemStack.getItem();
         IBlockState stackState = itemBlock.getBlockState(itemStack);
         CoilType coilType = getState(stackState);
 
-        lines.add(I18n.format("tile.wire_coil.tooltip_ebf"));
         lines.add(I18n.format("tile.wire_coil.tooltip_heat", coilType.coilTemperature));
-        lines.add("");
-        lines.add(I18n.format("tile.wire_coil.tooltip_smelter"));
-        lines.add(I18n.format("tile.wire_coil.tooltip_level", coilType.level));
-        lines.add(I18n.format("tile.wire_coil.tooltip_discount", coilType.energyDiscount));
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+            int coilTier = coilType.ordinal();
+            lines.add(I18n.format("tile.wire_coil.tooltip_smelter"));
+            lines.add(I18n.format("tile.wire_coil.tooltip_parallel_smelter", coilType.level * 32));
+            lines.add(I18n.format("tile.wire_coil.tooltip_energy_smelter", Math.max(1, 16 / coilType.energyDiscount)));
+            lines.add(I18n.format("tile.wire_coil.tooltip_pyro"));
+            lines.add(I18n.format("tile.wire_coil.tooltip_speed_pyro", coilTier == 0 ? 75 : 50 * (coilTier + 1)));
+            lines.add(I18n.format("tile.wire_coil.tooltip_cracking"));
+            lines.add(I18n.format("tile.wire_coil.tooltip_energy_cracking", 100 - 5 * coilTier));
+            lines.add(I18n.format("tile.wire_coil.tooltip_reactor"));
+            if (GTValues.HT && coilType == CoilType.TRITANIUM) {
+                lines.add(I18n.format("tile.wire_coil.tooltip_energy_reactor_any"));
+            } else {
+                lines.add(I18n.format("tile.wire_coil.tooltip_energy_reactor", GTValues.VN[coilTier + 1]));
+            }
+        } else {
+            lines.add(I18n.format("gregtech.tooltip.hold_shift"));
+        }
     }
 
     @Override
