@@ -61,8 +61,8 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         TUNGSTENSTEEL("tungstensteel", 4500, 4, 2, Materials.TungstenSteel),
         HSS_G("hss_g", 5400, 4, 4, Materials.HSSG),
         NAQUADAH("naquadah", 7200, 8, 4, Materials.Naquadah),
-        NAQUADAH_ALLOY("naquadah_alloy", 9001, 8, 8, Materials.NaquadahAlloy),
-        FLUXED_ELECTRUM("fluxed_electrum", 10800, 16, 8, Materials.FluxedElectrum);
+        TRINIUM("trinium", 9001, 8, 8, Materials.Trinium),
+        TRITANIUM("tritanium", 10800, 16, 8, Materials.Tritanium);
 
         private final String name;
         //electric blast furnace properties

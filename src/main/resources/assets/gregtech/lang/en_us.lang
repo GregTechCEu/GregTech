@@ -2196,9 +2196,8 @@ tile.wire_coil.nichrome.name=Nichrome Coil Block
 tile.wire_coil.tungstensteel.name=Tungstensteel Coil Block
 tile.wire_coil.hss_g.name=HSS-G Coil Block
 tile.wire_coil.naquadah.name=Naquadah Coil Block
-tile.wire_coil.naquadah_alloy.name=Naquadah Alloy Coil Block
-tile.wire_coil.fluxed_electrum.name=Fluxed Electrum Coil Block
-tile.wire_coil.diamericium_titanium.name=Diamericium Titanium Coil Block
+tile.wire_coil.trinium.name=Trinium Coil Block
+tile.wire_coil.tritanium.name=Tritanium Coil Block
 
 # General casing block tooltip
 tile.machine_casing.tooltip1=Mobs cannot Spawn on this Block

@@ -13,7 +13,8 @@ import gregtech.common.items.MetaItems;
 import java.util.HashMap;
 import java.util.Map;
 
-import static gregtech.api.GTValues.*;
+import static gregtech.api.GTValues.LV;
+import static gregtech.api.GTValues.VA;
 import static gregtech.common.items.MetaItems.FLUID_REGULATORS;
 import static gregtech.common.items.MetaItems.PUMPS;
 
@@ -385,10 +386,10 @@ public class ComponentRecipes {
                 .input(OrePrefix.stickLong, Materials.Naquadria)
                 .inputs(MetaItems.QUANTUM_EYE.getStackForm())
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Super)
-                .input(OrePrefix.foil, Materials.FluxedElectrum, 8)
-                .input(OrePrefix.foil, Materials.FluxedElectrum, 8)
-                .input(OrePrefix.foil, Materials.FluxedElectrum, 8)
-                .input(OrePrefix.foil, Materials.FluxedElectrum, 8)
+                .input(OrePrefix.foil, Materials.Europium, 8)
+                .input(OrePrefix.foil, Materials.Europium, 8)
+                .input(OrePrefix.foil, Materials.Europium, 8)
+                .input(OrePrefix.foil, Materials.Europium, 8)
                 .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .outputs(MetaItems.SENSOR_UV.getStackForm())
@@ -480,10 +481,10 @@ public class ComponentRecipes {
                 .input(OrePrefix.plate, Materials.Naquadria)
                 .inputs(MetaItems.QUANTUM_STAR.getStackForm())
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Super, 2)
-                .input(OrePrefix.foil, Materials.FluxedElectrum, 8)
-                .input(OrePrefix.foil, Materials.FluxedElectrum, 8)
-                .input(OrePrefix.foil, Materials.FluxedElectrum, 8)
-                .input(OrePrefix.foil, Materials.FluxedElectrum, 8)
+                .input(OrePrefix.foil, Materials.Europium, 8)
+                .input(OrePrefix.foil, Materials.Europium, 8)
+                .input(OrePrefix.foil, Materials.Europium, 8)
+                .input(OrePrefix.foil, Materials.Europium, 8)
                 .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .outputs(MetaItems.EMITTER_UV.getStackForm())

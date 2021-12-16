@@ -985,6 +985,7 @@ public class ElementMaterials {
                 .color(0x600000).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FRAME, GENERATE_RING, GENERATE_SPRING, GENERATE_SMALL_GEAR, GENERATE_ROTOR)
                 .element(Elements.Tr)
+                .cableProperties(GTValues.V[8], 1, 8)
                 .toolStats(20.0f, 6.0f, 10240, 21)
                 .build();
 
@@ -994,7 +995,6 @@ public class ElementMaterials {
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
                 .element(Elements.Dr)
                 .toolStats(16.0f, 5.0f, 5120, 21)
-                .cableProperties(GTValues.V[8], 1, 8)
                 .fluidPipeProperties(100000, 2000, true)
                 .build();
 
@@ -1003,7 +1003,8 @@ public class ElementMaterials {
                 .color(0x9973BD).iconSet(SHINY)
                 .flags(GENERATE_FOIL)
                 .element(Elements.Ke)
-                .blastTemp(8600, GasTier.HIGH, VA[LuV], 1500)
+                .cableProperties(GTValues.V[7], 6, 4)
+                .blastTemp(7500, GasTier.HIGH, VA[LuV], 1500)
                 .build();
 
         Adamantium = new Material.Builder(131, "adamantium")

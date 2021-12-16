@@ -134,7 +134,7 @@ public class NaquadahRecipes {
 
         // TRINIUM
 
-        BLAST_RECIPES.recipeBuilder().duration(750).EUt(VA[LuV]).blastFurnaceTemp(8600)
+        BLAST_RECIPES.recipeBuilder().duration(750).EUt(VA[LuV]).blastFurnaceTemp(Trinium.getBlastTemperature())
                 .input(dust, TriniumSulfide, 2)
                 .input(dust, Zinc)
                 .output(ingotHot, Trinium)

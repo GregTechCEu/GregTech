@@ -16,7 +16,6 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
-import gregtech.common.blocks.BlockWireCoil2.CoilType2;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
@@ -57,9 +56,6 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         if (coilType instanceof CoilType) {
             this.heatingCoilLevel = ((CoilType) coilType).getLevel();
             this.heatingCoilDiscount = ((CoilType) coilType).getEnergyDiscount();
-        } else if (coilType instanceof CoilType2) {
-            this.heatingCoilLevel = ((CoilType2) coilType).getLevel();
-            this.heatingCoilDiscount = ((CoilType2) coilType).getEnergyDiscount();
         } else {
             this.heatingCoilLevel = CoilType.CUPRONICKEL.getLevel();
             this.heatingCoilDiscount = CoilType.CUPRONICKEL.getEnergyDiscount();

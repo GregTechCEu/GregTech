@@ -186,7 +186,7 @@ public class AssemblerRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[UV])
                 .input(stick, SamariumMagnetic)
-                .input(wireFine, FluxedElectrum, 16)
+                .input(wireFine, Tritanium, 16)
                 .circuitMeta(1)
                 .outputs(VOLTAGE_COIL_UV.getStackForm())
                 .buildAndRegister();

@@ -281,22 +281,6 @@ public class MixerRecipes {
                 .output(dust, Gunpowder, 6)
                 .buildAndRegister();
 
-        MIXER_RECIPES.recipeBuilder().duration(200).EUt(900)
-                .input(dust, Electrum)
-                .input(dust, NaquadahAlloy)
-                .input(dust, BlueSteel)
-                .input(dust, RedSteel)
-                .notConsumable(new IntCircuitIngredient(2))
-                .output(dust, FluxedElectrum, 4)
-                .buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder().duration(200).EUt(900)
-                .input(dust, Americium, 2)
-                .input(dust, Titanium)
-                .notConsumable(new IntCircuitIngredient(1))
-                .output(dust, DiamericiumTitanium, 3)
-                .buildAndRegister();
-
         MIXER_RECIPES.recipeBuilder().duration(100).EUt(VA[ULV])
                 .input(dust, Tin)
                 .input(dust, Iron)

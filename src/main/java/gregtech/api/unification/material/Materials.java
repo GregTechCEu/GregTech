@@ -342,7 +342,6 @@ public class Materials {
     public static Material Sapphire;
     public static Material Scheelite;
     public static Material Sodalite;
-    public static Material DiamericiumTitanium;
     public static Material Tantalite;
     public static Material Coke;
 
@@ -759,5 +758,4 @@ public class Materials {
     public static Material BasalticMineralSand;
     public static Material HSSE;
     public static Material HSSS;
-    public static Material FluxedElectrum;
 }

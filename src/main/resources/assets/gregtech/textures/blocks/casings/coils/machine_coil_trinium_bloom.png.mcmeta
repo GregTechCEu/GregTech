@@ -5,7 +5,7 @@
         "layer": "BLOOM",
         "gregtech": true,
         "textures": [
-            "gregtech:blocks/casings/coils/machine_coil_fluxed_electrum_bloom_ctm"
+            "gregtech:blocks/casings/coils/machine_coil_trinium_bloom_ctm"
         ],
         "extra": {
             "connect_inside": true,
