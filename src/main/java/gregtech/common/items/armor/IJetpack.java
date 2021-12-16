@@ -112,15 +112,15 @@ public interface IJetpack {
                 ArmorUtils.spawnParticle(player.getEntityWorld(), player, getParticle(), -0.6D);
             }
         }
-        if (!player.world.isRemote && hasEmergencyHover()) {
+        if (hasEmergencyHover()) {
             if (hasEnergy(stack) && (!hover || !canFly(stack))) {
                 if (player.posY < -5) {
                     this.performEmergencyHover(stack, player);
                 } else {
                     if (!player.isCreative() && player.fallDistance - 1.2f >= player.getHealth()) {
-                        for (int j = 0; j <= 16; j++) {
+                        for (int i = 0; i <= 16; i++) {
                             int x = Math.round((float) player.posX - 0.5f);
-                            int y = Math.round((float) player.posY) - j;
+                            int y = Math.round((float) player.posY) - i;
                             int z = Math.round((float) player.posZ - 0.5f);
                             if (!player.world.isAirBlock(new BlockPos(x, y, z))) {
                                 performEmergencyHover(stack, player);
@@ -133,12 +133,13 @@ public interface IJetpack {
         }
     }
 
-    //todo this doesn't work
     default void performEmergencyHover(@Nonnull ItemStack stack, @Nonnull EntityPlayer player) {
-        NBTTagCompound data =  GTUtility.getOrCreateNbtCompound(stack);
+        NBTTagCompound data = GTUtility.getOrCreateNbtCompound(stack);
 
         data.setBoolean("flyMode", true);
         data.setBoolean("hover", true);
+
+        player.fallDistance = 0;
 
         player.inventoryContainer.detectAndSendChanges();
         player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.emergency_hover_mode")

@@ -129,8 +129,11 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
         if (toggleTimer > 0) toggleTimer--;
 
         data.setBoolean("canShare", canShare);
-        data.setBoolean("flyMode", flyEnabled);
-        data.setBoolean("hover", hoverMode);
+        // used to ensure emergency hover mode is not overridden
+        if (data.hasKey("flyMode") && data.getBoolean("flyMode") == flyEnabled)
+            data.setBoolean("flyMode", flyEnabled);
+        if (data.hasKey("hover") && data.getBoolean("hover") == hoverMode)
+            data.setBoolean("hover", hoverMode);
         data.setByte("toggleTimer", toggleTimer);
         player.inventoryContainer.detectAndSendChanges();
 

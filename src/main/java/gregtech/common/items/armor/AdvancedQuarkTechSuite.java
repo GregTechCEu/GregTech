@@ -38,7 +38,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     @Override
     public void onArmorTick(World world, EntityPlayer player, ItemStack item) {
         IElectricItem cont = item.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if(cont == null) {
+        if (cont == null) {
             return;
         }
 
@@ -133,8 +133,11 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
         if (toggleTimer > 0) toggleTimer--;
 
         data.setBoolean("canShare", canShare);
-        data.setBoolean("flyMode", flyEnabled);
-        data.setBoolean("hover", hoverMode);
+        // used to ensure emergency hover mode is not overridden
+        if (data.hasKey("flyMode") && data.getBoolean("flyMode") == flyEnabled)
+            data.setBoolean("flyMode", flyEnabled);
+        if (data.hasKey("hover") && data.getBoolean("hover") == hoverMode)
+            data.setBoolean("hover", hoverMode);
         data.setByte("toggleTimer", toggleTimer);
         player.inventoryContainer.detectAndSendChanges();
 
@@ -340,10 +343,6 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
                 if (data.hasKey("flyMode")) {
                     String status = data.getBoolean("flyMode") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
                     lines.add(I18n.format("metaarmor.hud.fly_mode", I18n.format(status)));
-                }
-                if (data.hasKey("canShare")) {
-                    String status = data.getBoolean("canShare") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
-                    lines.add(I18n.format("mataarmor.hud.supply_mode", I18n.format(status)));
                 }
             }
         }
