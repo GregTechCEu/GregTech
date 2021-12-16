@@ -13,6 +13,7 @@ import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.items.IToolItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
@@ -87,10 +88,19 @@ public class GTUtility {
         return Arrays.stream(array).flatMap(o -> o instanceof Object[] ? flatten((Object[]) o) : Stream.of(o));
     }
 
-    public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest) {
+    public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest, boolean fixTools) {
         for (int i = 0; i < src.getSlots(); i++) {
             ItemStack itemStack = src.getStackInSlot(i);
-            dest.setStackInSlot(i, itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy());
+            if (itemStack.getItem() instanceof ToolMetaItem) {
+                ItemStack toolStack = itemStack.copy();
+                NBTTagCompound toolStats = toolStack.getTagCompound().getCompoundTag("GT.ToolStats");
+                toolStats.setInteger("Dmg", 0);
+                NBTTagCompound itemTag = new NBTTagCompound();
+                itemTag.setTag("GT.ToolStats", toolStats);
+                toolStack.setTagCompound(itemTag);
+                dest.setStackInSlot(i, toolStack);
+            } else
+                dest.setStackInSlot(i, itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy());
         }
     }
 
@@ -891,7 +901,7 @@ public class GTUtility {
      * @return the mean value
      */
     public static long mean(@Nonnull long[] values) {
-        if(values.length == 0L)
+        if (values.length == 0L)
             return 0L;
 
         long sum = 0L;
@@ -901,7 +911,6 @@ public class GTUtility {
     }
 
     /**
-     *
      * @param world the {@link World} to get the average tick time of
      * @return the mean tick time
      */
