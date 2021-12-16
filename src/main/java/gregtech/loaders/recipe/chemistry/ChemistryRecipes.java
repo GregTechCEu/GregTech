@@ -80,20 +80,6 @@ public class ChemistryRecipes {
                 .output(Items.STRING, 32)
                 .duration(80).EUt(48).buildAndRegister();
 
-        BLAST_RECIPES.recipeBuilder()
-                .input(Items.REDSTONE)
-                .input(ingot, Copper)
-                .output(ingot, RedAlloy, 2)
-                .blastFurnaceTemp(1200)
-                .duration(884).EUt(VA[MV]).buildAndRegister();
-
-        BLAST_RECIPES.recipeBuilder()
-                .input(Items.REDSTONE)
-                .input(dust, Copper)
-                .output(ingot, RedAlloy, 2)
-                .blastFurnaceTemp(1200)
-                .duration(884).EUt(VA[MV]).buildAndRegister();
-
         GAS_COLLECTOR_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(Air.getFluid(10000))

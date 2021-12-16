@@ -470,5 +470,12 @@ public class SecondDegreeMaterials {
                 .flags(MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Sodium, 2, Lithium, 1, Aluminium, 2, Silicon, 2, Water, 6)
                 .build();
+
+        Redstone = new Material.Builder(2064, "redstone")
+                .dust().ore(5, 1).fluid()
+                .color(0xC80000).iconSet(ROUGH)
+                .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3)
+                .build();
     }
 }

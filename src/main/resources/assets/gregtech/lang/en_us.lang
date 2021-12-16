@@ -1828,6 +1828,9 @@ material.impure_naquadria_solution=Impure Naquadria Solution
 material.naquadria_solution=Naquadria Solution
 material.acidic_naquadria_solution=Acidic Naquadria Solution
 material.naquadria_waste=Naquadria Waste
+material.pyrochlore=Pyrochlore
+material.electrotine=Electrotine
+material.blue_alloy=Blue Alloy
 
 
 item.nether_quartz.oreNetherrack=Nether Quartz Ore

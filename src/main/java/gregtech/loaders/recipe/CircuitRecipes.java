@@ -981,7 +981,7 @@ public class CircuitRecipes {
                 .input(component, Component.Diode, 4)
                 .input(RANDOM_ACCESS_MEMORY, 4)
                 .input(wireFine, Electrum, 16)
-                .input(bolt, Platinum, 16)
+                .input(bolt, BlueAlloy, 16)
                 .output(WORKSTATION_EV)
                 .solderMultiplier(2)
                 .buildAndRegister();

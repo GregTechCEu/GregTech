@@ -1,0 +1,44 @@
+{
+  "weight": 80,
+  "density": 0.4,
+  "max_height": 30,
+  "min_height": 10,
+  "dimension_filter": [
+    "is_nether"
+  ],
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "electrotine"
+  },
+  "generator": {
+    "type": "ellipsoid",
+    "radius": [
+      10,
+      12
+    ]
+  },
+  "filler": {
+    "type": "simple",
+    "value": {
+      "type": "weight_random",
+      "values": [
+        {
+          "weight": 40,
+          "value": "ore:saltpeter"
+        },
+        {
+          "weight": 25,
+          "value": "ore:diatomite"
+        },
+        {
+          "weight": 25,
+          "value": "ore:electrotine"
+        },
+        {
+          "weight": 10,
+          "value": "ore:alunite"
+        }
+      ]
+    }
+  }
+}

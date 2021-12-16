@@ -310,6 +310,23 @@ public class SeparationRecipes {
                 .chancedOutput(dust, CertusQuartz, 2000, 200)
                 .buildAndRegister();
 
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(900).EUt(VA[LV])
+                .input(dust, RedAlloy)
+                .output(dust, Redstone, 4)
+                .output(dust, Copper)
+                .buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(1200).EUt(VA[LV])
+                .input(dust, BlueAlloy)
+                .output(dust, Electrotine, 4)
+                .output(dust, Silver)
+                .buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(VA[LV])
+                .input(dust, Electrotine, 8)
+                .output(dust, Redstone)
+                .output(dust, Electrum)
+                .buildAndRegister();
 
         // Electrolyzer
         ELECTROLYZER_RECIPES.recipeBuilder()

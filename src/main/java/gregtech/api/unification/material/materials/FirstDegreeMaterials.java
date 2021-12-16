@@ -205,7 +205,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL, MORTAR_GRINDABLE)
                 .components(Silver, 1, Gold, 1)
                 .itemPipeProperties(1024, 2)
-                .cableProperties(GTValues.V[3], 3, 2)
+                .cableProperties(GTValues.V[3], 2, 2)
                 .build();
 
         Emerald = new Material.Builder(278, "emerald")
@@ -359,7 +359,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Phosphate = new Material.Builder(298, "phosphate")
-                .dust(1).ore()
+                .dust(1)
                 .color(0xFFFF00)
                 .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE)
                 .components(Phosphorus, 1, Oxygen, 4)
@@ -982,7 +982,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Alunite = new Material.Builder(388, "alunite")
-                .dust()
+                .dust().ore()
                 .color(0xE1B441).iconSet(METALLIC)
                 .components(Potassium, 1, Aluminium, 3, Silicon, 2, Hydrogen, 6, Oxygen, 14)
                 .build();
@@ -1415,6 +1415,13 @@ public class FirstDegreeMaterials {
                 .color(0x006633).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Naquadria, 1, Sulfur, 1, Oxygen, 4)
+                .build();
+
+        Pyrochlore = new Material.Builder(449, "pyrochlore")
+                .dust().ore()
+                .color(0x2B1100).iconSet(METALLIC)
+                .flags()
+                .components(Calcium, 2, Niobium, 2, Oxygen, 7)
                 .build();
     }
 }

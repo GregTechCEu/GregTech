@@ -387,7 +387,8 @@ public class MachineRecipeLoader {
             {new MaterialStack(Materials.Tin, 9L), new MaterialStack(Materials.Antimony, 1), new MaterialStack(Materials.SolderingAlloy, 10L)},
             {new MaterialStack(Materials.Lead, 4L), new MaterialStack(Materials.Antimony, 1), new MaterialStack(Materials.BatteryAlloy, 5L)},
             {new MaterialStack(Materials.Gold, 1), new MaterialStack(Materials.Silver, 1), new MaterialStack(Materials.Electrum, 2L)},
-            {new MaterialStack(Materials.Magnesium, 1), new MaterialStack(Materials.Aluminium, 2L), new MaterialStack(Materials.Magnalium, 3L)}};
+            {new MaterialStack(Materials.Magnesium, 1), new MaterialStack(Materials.Aluminium, 2L), new MaterialStack(Materials.Magnalium, 3L)},
+            {new MaterialStack(Materials.Silver, 1), new MaterialStack(Materials.Electrotine, 4), new MaterialStack(Materials.BlueAlloy, 1)}};
 
     private static void registerAlloyRecipes() {
         for (MaterialStack[] stack : alloySmelterList) {

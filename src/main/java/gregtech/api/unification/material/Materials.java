@@ -459,14 +459,12 @@ public class Materials {
     public static Material UraniumRhodiumDinaquadide;
     public static Material EnrichedNaquadahTriniumEuropiumDuranide;
     public static Material RutheniumTriniumAmericiumNeutronate;
-
     public static Material PlatinumRaw;
     public static Material InertMetalMixture;
     public static Material RhodiumSulfate;
     public static Material RutheniumTetroxide;
     public static Material OsmiumTetroxide;
     public static Material IridiumChloride;
-
     public static Material FluoroantimonicAcid;
     public static Material TitaniumTrifluoride;
     public static Material CalciumPhosphide;
@@ -478,6 +476,7 @@ public class Materials {
     public static Material AntimonyTrifluoride;
     public static Material EnrichedNaquadahSulfate;
     public static Material NaquadriaSulfate;
+    public static Material Pyrochlore;
 
     /**
      * Organic chemistry
@@ -731,11 +730,12 @@ public class Materials {
     public static Material AquaRegia;
     public static Material SaltWater;
     public static Material Clay;
+    public static Material Redstone;
 
     /**
      * Third Degree Materials
      */
-    public static Material Redstone;
+    public static Material Electrotine;
     public static Material EnderEye;
     public static Material Diatomite;
     public static Material RedSteel;
@@ -755,6 +755,7 @@ public class Materials {
      * Fourth Degree Materials
      */
     public static Material RedAlloy;
+    public static Material BlueAlloy;
     public static Material BasalticMineralSand;
     public static Material HSSE;
     public static Material HSSS;
