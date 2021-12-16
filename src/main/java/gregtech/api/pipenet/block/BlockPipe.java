@@ -380,6 +380,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
     @SideOnly(Side.CLIENT)
     public RayTraceResult getClientCollisionRayTrace(World worldIn, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
+        if (hasPipeCollisionChangingItem(worldIn, pos, Minecraft.getMinecraft().player)) {
+            return RayTracer.rayTraceCuboidsClosest(start, end, pos, FULL_CUBE_COLLISION);
+        }
         return RayTracer.rayTraceCuboidsClosest(start, end, pos, getCollisionBox(worldIn, pos, Minecraft.getMinecraft().player));
     }
 
@@ -482,11 +485,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         float thickness = pipeType.getThickness();
         ArrayList<IndexedCuboid6> result = new ArrayList<>();
         ICoverable coverable = pipeTile.getCoverableImplementation();
-
-        // Check if the machine grid is being rendered
-        if (hasPipeCollisionChangingItem(world, pos, entityIn)) {
-            result.add(FULL_CUBE_COLLISION);
-        }
 
         // Always add normal collision so player doesn't "fall through" the cable/pipe when
         // a tool is put in hand, and will still be standing where they were before.

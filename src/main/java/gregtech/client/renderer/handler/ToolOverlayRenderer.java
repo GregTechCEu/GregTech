@@ -13,9 +13,7 @@ import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
-import gregtech.common.pipelike.cable.Insulation;
-import gregtech.common.pipelike.fluidpipe.FluidPipeType;
-import gregtech.common.pipelike.itempipe.ItemPipeType;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
@@ -100,7 +98,12 @@ public class ToolOverlayRenderer {
                 double d3 = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double) event.getPartialTicks();
                 double d4 = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double) event.getPartialTicks();
                 double d5 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) event.getPartialTicks();
-                AxisAlignedBB box = blockState.getSelectedBoundingBox(world, pos).grow(0.002D).offset(-d3, -d4, -d5);
+                AxisAlignedBB box;
+                if(blockState.getBlock() instanceof BlockPipe)
+                    box = Block.FULL_BLOCK_AABB.offset(pos);
+                else
+                    box = blockState.getSelectedBoundingBox(world, pos);
+                box = box.grow(0.002D).offset(-d3, -d4, -d5);
                 RenderGlobal.drawSelectionBoundingBox(box, 1, 1, 1, 0.4F);
                 rColor = gColor = bColor = 0.2f + (float) Math.sin((float) (System.currentTimeMillis() % (Math.PI * 800)) / 800) / 2;
 
