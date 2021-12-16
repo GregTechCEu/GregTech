@@ -553,13 +553,18 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         setMaxProgress(resultOverclock[1]);
         this.recipeEUt = resultOverclock[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
-        if (trimOutputs() && recipe.getOutputs().isEmpty() && !recipe.getChancedOutputs().isEmpty()) {
-            this.itemOutputs = GTUtility.copyStackList(recipe.getAllChancedItemOutputs(getOutputInventory().getSlots())
-                    .stream()
-                    .filter(is ->
-                            ItemStackHashStrategy.comparingAllButCount()
-                                    .equals(is, recipe.getChancedOutputs().get(0).getItemStack()))
-                    .collect(Collectors.toList()));
+        if (trimOutputs() && parallelRecipesPerformed == 0) {
+            // if it's a paralelled recipe, the output is already trimmed
+            if (recipe.getOutputs().size() > 0) {
+                this.itemOutputs = GTUtility.copyStackList(recipe.getOutputs().subList(0, 1));
+            } else {
+                this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt))
+                        .stream()
+                        .filter(is ->
+                                ItemStackHashStrategy.comparingAllButCount()
+                                        .equals(is, recipe.getChancedOutputs().get(0).getItemStack()))
+                        .collect(Collectors.toList()));
+            }
         } else {
             this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt)));
         }

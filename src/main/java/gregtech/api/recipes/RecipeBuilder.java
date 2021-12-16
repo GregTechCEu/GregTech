@@ -7,7 +7,10 @@ import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.*;
+import gregtech.api.util.EnumValidationResult;
+import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
+import gregtech.api.util.ValidationResult;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -19,7 +22,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -362,6 +364,27 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     /**
+     * Copies the first chanced outputs of a Recipe numberOfOperations times, so every chanced output
+     * gets an individual roll, instead of an all or nothing situation
+     *
+     * @param chancedOutputsFrom The original recipe before any parallel multiplication
+     * @param numberOfOperations The number of parallel operations that have been performed
+     */
+
+    public void trimmedChancedOutputsMultiply(Recipe chancedOutputsFrom, int numberOfOperations) {
+        Recipe.ChanceEntry entry = chancedOutputsFrom.getChancedOutputs().get(0);
+
+        int chance = entry.getChance();
+        int boost = entry.getBoostPerTier();
+
+        // Add individual chanced outputs per number of parallel operations performed, to mimic regular recipes.
+        // This is done instead of simply batching the chanced outputs by the number of parallel operations performed
+        IntStream.range(0, numberOfOperations).forEach(value -> {
+            this.chancedOutput(entry.getItemStack(), chance, boost);
+        });
+    }
+
+    /**
      * Appends the passed {@link Recipe} onto the inputs and outputs, multiplied by the amount specified by multiplier
      * The duration of the multiplied {@link Recipe} is also added to the current duration
      *
@@ -388,28 +411,23 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         // Build the new Recipe with multiplied components
         this.inputsIngredients(newRecipeInputs);
         this.fluidInputs(newFluidInputs);
-        if (trimOutputs && !outputItems.isEmpty()) {
-            this.outputs(outputItems.stream()
-                    .filter(is ->
-                            ItemStackHashStrategy.comparingAllButCount()
-                                    .equals(is, recipe.getOutputs().get(0)))
-                    .collect(Collectors.toList()));
+
+        if (trimOutputs) {
+            if (!outputItems.isEmpty()) {
+                this.outputs(outputItems.subList(0, 1));
+            } else {
+                trimmedChancedOutputsMultiply(recipe, multiplier);
+            }
         } else {
             this.outputs(outputItems);
+            chancedOutputsMultiply(recipe, multiplier);
         }
+
         this.fluidOutputs(outputFluids);
 
         this.EUt(multiplyDuration ? recipe.getEUt() : this.EUt + recipe.getEUt() * multiplier);
         this.duration(multiplyDuration ? this.duration + recipe.getDuration() * multiplier : recipe.getDuration());
         this.parallel += multiplier;
-
-        if (!trimOutputs) {
-            chancedOutputsMultiply(recipe, multiplier);
-        } else if (this.outputs.size() == 0) {
-            ItemStack firstChancedOutput = recipe.getChancedOutputs().get(0).getItemStack().copy();
-            firstChancedOutput.setCount(firstChancedOutput.getCount() * multiplier);
-            this.outputs(firstChancedOutput);
-        }
 
         return (R) this;
     }

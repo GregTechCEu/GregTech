@@ -399,26 +399,6 @@ public class Recipe {
         return outputs;
     }
 
-    /**
-     * @return a list of all chancedOutputs products as if they had 100% chance
-     */
-    public List<ItemStack> getAllChancedItemOutputs(int maxOutputSlots) {
-        ArrayList<ItemStack> outputs = new ArrayList<>(GTUtility.copyStackList(getOutputs()));
-        List<ChanceEntry> chancedOutputsList = getChancedOutputs();
-        List<ItemStack> resultChanced = new ArrayList<>();
-        int maxChancedSlots = maxOutputSlots - outputs.size();
-        for (ChanceEntry chancedOutput : chancedOutputsList) {
-            ItemStack stackToAdd = chancedOutput.getItemStack();
-            GTUtility.addStackToItemStackList(stackToAdd, resultChanced);
-        }
-        if (resultChanced.size() > maxChancedSlots) {
-            outputs.addAll(resultChanced.subList(0, Math.max(0, maxChancedSlots)));
-        } else {
-            outputs.addAll(resultChanced);
-        }
-        return outputs;
-    }
-
     public List<ItemStack> getAllItemOutputs(int maxOutputSlots) {
         List<ItemStack> outputs = new ArrayList<>();
         outputs.addAll(GTUtility.copyStackList(getOutputs()));
