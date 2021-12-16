@@ -499,7 +499,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param maxOverclocks the maximum amount of overclocks allowed
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    protected static int[] standardOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, double durationDivisor, double voltageMultiplier, int maxOverclocks) {
+    public static int[] standardOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, double durationDivisor, double voltageMultiplier, int maxOverclocks) {
         int overclockedEUt = recipeEUt;
         double overclockedDuration = recipeDuration;
 
