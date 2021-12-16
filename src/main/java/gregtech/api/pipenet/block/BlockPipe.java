@@ -15,12 +15,12 @@ import gregtech.api.cover.ICoverable.CoverSideData;
 import gregtech.api.cover.ICoverable.PrimaryBoxData;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.IToolStats;
+import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
@@ -424,12 +424,12 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (selfTile.getPipeWorld().getBlockState(selfTile.getPipePos().offset(facing)).getBlock() == Blocks.AIR)
             return false;
         CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
-        if(cover != null && !cover.canPipePassThrough())
+        if (cover != null && !cover.canPipePassThrough())
             return false;
         TileEntity other = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
         if (other instanceof IPipeTile) {
             cover = ((IPipeTile<?, ?>) other).getCoverableImplementation().getCoverAtSide(facing.getOpposite());
-            if(cover != null && !cover.canPipePassThrough())
+            if (cover != null && !cover.canPipePassThrough())
                 return false;
             return canPipesConnect(selfTile, facing, (IPipeTile<PipeType, NodeDataType>) other);
         }
@@ -451,11 +451,11 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         int connections = selfTile.getOpenConnections();
         float selfThickness = selfTile.getPipeType().getThickness();
         for (EnumFacing facing : EnumFacing.values()) {
-            if(selfTile.isConnectionOpenAny(facing)) {
+            if (selfTile.isConnectionOpenAny(facing)) {
                 TileEntity neighbourTile = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
                 if (neighbourTile instanceof IPipeTile) {
                     IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) neighbourTile;
-                    if(pipeTile.isConnectionOpenAny(facing.getOpposite()) && pipeTile.getPipeType().getThickness() < selfThickness) {
+                    if (pipeTile.isConnectionOpenAny(facing.getOpposite()) && pipeTile.getPipeType().getThickness() < selfThickness) {
                         connections |= 1 << (facing.getIndex() + 6);
                     }
                 }
@@ -500,16 +500,28 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         return result;
     }
 
-    private boolean hasPipeCollisionChangingItem(Entity entity) {
-        if (entity instanceof EntityPlayer) {
-            ItemStack itemStack = ((EntityPlayer) entity).getHeldItemMainhand();
-
-            return itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null) ||
-                    itemStack.hasCapability(GregtechCapabilities.CAPABILITY_CUTTER, null) ||
-                    itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null) ||
-                    GTUtility.isCoverBehaviorItem(itemStack);
+    public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, Entity entity) {
+        if(entity instanceof EntityPlayer) {
+            return hasPipeCollisionChangingItem(world, pos, ((EntityPlayer) entity).getHeldItem(EnumHand.MAIN_HAND)) ||
+                    hasPipeCollisionChangingItem(world, pos, ((EntityPlayer) entity).getHeldItem(EnumHand.OFF_HAND));
         }
         return false;
+    }
+
+    public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
+        return doDrawGrid(stack) ||
+                stack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null) ||
+                GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)));
+    }
+
+    protected boolean doDrawGrid(ItemStack stack) {
+        return stack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
+    }
+
+    protected boolean hasCover(IPipeTile<PipeType, NodeDataType> pipeTile) {
+        if (pipeTile == null)
+            return false;
+        return pipeTile.getCoverableImplementation().hasAnyCover();
     }
 
     @Override

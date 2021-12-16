@@ -69,6 +69,13 @@ public interface ICoverable {
 
     void scheduleRenderUpdate();
 
+    default boolean hasAnyCover() {
+        for(EnumFacing facing : EnumFacing.VALUES)
+            if(getCoverAtSide(facing) != null)
+                return true;
+        return false;
+    }
+
     @SideOnly(Side.CLIENT)
     default void renderCovers(CCRenderState renderState, Matrix4 translation, GTBlockOperation mteOp) {
         BlockRenderLayer layer = mteOp.layer;

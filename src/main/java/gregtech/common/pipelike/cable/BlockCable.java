@@ -156,6 +156,11 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         }
     }
 
+    @Override
+    protected boolean doDrawGrid(ItemStack stack) {
+        return stack.hasCapability(GregtechCapabilities.CAPABILITY_CUTTER, null);
+    }
+
     @Nonnull
     @Override
     @SideOnly(Side.CLIENT)

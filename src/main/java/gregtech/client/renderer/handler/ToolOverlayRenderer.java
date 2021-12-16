@@ -4,13 +4,14 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.vec.Vector3;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.ICoverable.PrimaryBoxData;
 import gregtech.api.items.toolitem.IAOEItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.function.BooleanConsumer;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
@@ -37,7 +38,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 @SideOnly(Side.CLIENT)
@@ -88,7 +88,7 @@ public class ToolOverlayRenderer {
             }
         }
 
-        if (tileEntity != null && shouldDrawOverlayForItem(heldItem, tileEntity)) {
+        if (tileEntity != null && (shouldDrawOverlayForItem(blockState, tileEntity, heldItem) || shouldDrawOverlayForItem(blockState, tileEntity, player.getHeldItem(EnumHand.OFF_HAND)))) {
             EnumFacing facing = target.sideHit;
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -135,37 +135,23 @@ public class ToolOverlayRenderer {
         return true;
     }
 
-    public static boolean shouldDrawOverlayForItem(ItemStack itemStack, TileEntity tileEntity) {
+    public static boolean shouldDrawOverlayForItem(IBlockState state, TileEntity tileEntity, ItemStack itemStack) {
+        // MetaTileEntity
         if (tileEntity instanceof MetaTileEntityHolder) {
             MetaTileEntity mte = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
-            if (mte == null || !mte.canRenderMachineGrid()) return false;
+            return mte != null && mte.canRenderMachineGrid() && itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
         }
 
-        if (tileEntity instanceof TileEntityPipeBase) {
-            TileEntityPipeBase<?, ?> pipeTE = (TileEntityPipeBase<?, ?>) tileEntity;
-            Class<?> pipeClass = pipeTE.getPipeBlock().getPipeTypeClass();
-
-            // Cables/wires. Add screwdriver here if cover for wires that can use screwdriver is added.
-            if (pipeClass == Insulation.class) {
-                return itemStack.hasCapability(GregtechCapabilities.CAPABILITY_CUTTER, null) || GTUtility.isCoverBehaviorItem(itemStack);
-            }
-
-            // Pipes
-            if (pipeClass == FluidPipeType.class || pipeClass == ItemPipeType.class) {
-                return itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null) ||
-                        itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null)
-                        || GTUtility.isCoverBehaviorItem(itemStack);
-            }
+        // Pipes
+        if(state.getBlock() instanceof BlockPipe) {
+            return ((BlockPipe<?, ?, ?>) state.getBlock()).hasPipeCollisionChangingItem(tileEntity.getWorld(), tileEntity.getPos(), itemStack);
         }
-
-        // MetaTileEntities
-        if (tileEntity instanceof MetaTileEntityHolder &&
-                itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null))
-            return true;
 
         // ICoverable
-        if (tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null))
-            return itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null) || GTUtility.isCoverBehaviorItem(itemStack);
+        ICoverable coverable;
+        if ((coverable = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null)) != null) {
+            return itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null) || GTUtility.isCoverBehaviorItem(itemStack, coverable::hasAnyCover);
+        }
 
         return false;
     }
