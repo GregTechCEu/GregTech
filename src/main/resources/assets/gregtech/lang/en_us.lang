@@ -47,7 +47,7 @@ gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Bla
 gregtech.multiblock.coke_oven.description=The Coke Oven is a multiblock structure used for getting coke and creosote in the early game. It doesn't require fuel and has an internal tank of 32 buckets for creosote. Its inventory can be accessed via its Coke Oven Hatch.
 gregtech.multiblock.vacuum_freezer.description=The Vacuum Freezer is a multiblock structure mainly used for freezing Hot Ingots into regular Ingots. However, it can also freeze other substances, such as Water.
 gregtech.multiblock.implosion_compressor.description=The Implosion Compressor is a multiblock structure that uses explosives to turn gem dusts into their corresponding gems.
-gregtech.multiblock.pyrolyse_oven.description=The Pyrolyze Oven is a multiblock structure used for turning Logs into Charcoal and Creosote Oil, or Ash and Heavy Oil.
+gregtech.multiblock.pyrolyse_oven.description=The Pyrolyse Oven is a multiblock structure used for turning Logs into Charcoal and Creosote Oil, or Ash and Heavy Oil.
 gregtech.multiblock.cracker.description=The Cracker Unit is a multiblock structure used for turning Light and Heavy Fuel into their Cracked variants.
 gregtech.multiblock.large_combustion_engine.description=The Large Combustion Engine is a multiblock structure that acts as a Combustion Generator for EV power.
 gregtech.multiblock.distillation_tower.description=The Distillation Tower is a multiblock structure used for distilling the various types of Oil and some of their byproducts. Each layer must have exactly one output hatch, starting from the second one. The bottom layer can output items and insert fluids in any position.
@@ -3654,6 +3654,7 @@ gregtech.machine.electric_blast_furnace.tooltip.3=For every voltage tier above �
 gregtech.machine.vacuum_freezer.name=Vacuum Freezer
 gregtech.machine.implosion_compressor.name=Implosion Compressor
 gregtech.machine.pyrolyse_oven.name=Pyrolyse Oven
+gregtech.machine.pyrolyse_oven.tooltip.1=§aCupronickel Coils§7 are §a25%%§7 slower. Every coil after §aKanthal§7 increases speed by §a50%%§7.
 gregtech.machine.distillation_tower.name=Distillation Tower
 gregtech.machine.multi_furnace.name=Multi Smelter
 gregtech.machine.cracker.name=Cracker Unit
@@ -4084,6 +4085,8 @@ gregtech.multiblock.large_miner.steam=Needs Steam!
 gregtech.multiblock.large_miner.radius=Radius: %d Blocks
 gregtech.multiblock.large_miner.errorradius=Cannot change radius while working!
 gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
+
+gregtech.multiblock.pyrolyse_oven.speed=Current Speed: §a%s%%
 
 gregtech.command.usage=Usage: /gregtech <worldgen/util>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
