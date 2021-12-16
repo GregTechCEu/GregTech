@@ -1,9 +1,11 @@
 package gregtech.common.metatileentities.storage;
 
 import com.google.common.collect.Lists;
+import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.util.DummyContainer;
 import gregtech.common.inventory.itemsource.ItemSourceList;
 import gregtech.common.inventory.itemsource.sources.TileItemSource;
+import gregtech.common.items.MetaTool;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
@@ -100,8 +102,17 @@ public class CraftingRecipeResolver {
         itemStack.onCrafting(world, player, 1);
         itemStack.getItem().onCreated(itemStack, world, player);
         if (!simulate) {
-            //if we're not simulated, fire the event, unlock recipe and add crafted items
+            //if we're not simulated, fire the event, unlock recipe and add crafted items, and play sounds
             FMLCommonHandler.instance().firePlayerCraftingEvent(player, itemStack, inventoryCrafting);
+
+            for (int i = 0; i < inventoryCrafting.getSizeInventory(); i++) {
+                if (inventoryCrafting.getStackInSlot(i).getItem() instanceof ToolMetaItem) {
+                    ToolMetaItem.MetaToolValueItem toolStack = ((ToolMetaItem<?>) inventoryCrafting.getStackInSlot(i).getItem()).getItem(inventoryCrafting.getStackInSlot(i));
+                    if (toolStack.getToolStats() != null)
+                        toolStack.getToolStats().onCraftingUse(inventoryCrafting.getStackInSlot(i), player);
+                }
+            }
+
             if (cachedRecipe != null && !cachedRecipe.isDynamic()) {
                 player.unlockRecipes(Lists.newArrayList(cachedRecipe));
             }

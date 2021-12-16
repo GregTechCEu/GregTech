@@ -188,7 +188,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             if (metaToolValueItem.toolStats != null) {
                 IToolStats toolStats = metaToolValueItem.toolStats;
                 int toolDamagePerCraft = toolStats.getToolDamagePerContainerCraft(stack);
-                toolStats.onCraftingUse(stack);
+                toolStats.onCraftingUse(stack, ForgeHooks.getCraftingPlayer());
                 boolean canApplyDamage = damageItem(stack, ForgeHooks.getCraftingPlayer(), toolDamagePerCraft, false);
                 if (!canApplyDamage) return stack;
             }
