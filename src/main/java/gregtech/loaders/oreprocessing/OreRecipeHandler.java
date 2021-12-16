@@ -100,7 +100,6 @@ public class OreRecipeHandler {
 
     public static void processCrushedOre(OrePrefix crushedPrefix, Material material, OreProperty property) {
         ItemStack impureDustStack = OreDictUnifier.get(OrePrefix.dustImpure, material);
-        // TODO RIGHT HERE. JEI Page will need to be updated for this
         Material byproductMaterial = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
 
         //fallback for dirtyGravel, shard & clump
@@ -159,7 +158,7 @@ public class OreRecipeHandler {
                 .input(crushedPrefix, material)
                 .duration((int) material.getMass() * 20)
                 .outputs(crushedCentrifugedOre,
-                        OreDictUnifier.get(OrePrefix.dustTiny, byproductMaterial, property.getByProductMultiplier() * 3),
+                        OreDictUnifier.get(OrePrefix.dustTiny, GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class), property.getByProductMultiplier() * 3),
                         OreDictUnifier.get(OrePrefix.dust, Materials.Stone))
                 .buildAndRegister();
 
@@ -291,7 +290,7 @@ public class OreRecipeHandler {
         ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, material);
 
         Material byproduct = GTUtility.selectItemInList(
-                2, material, property.getOreByProducts(), Material.class);
+                0, material, property.getOreByProducts(), Material.class);
 
         RecipeBuilder<?> builder = RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
                 .input(dustPrefix, material)
