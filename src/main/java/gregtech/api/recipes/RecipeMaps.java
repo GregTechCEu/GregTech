@@ -60,7 +60,23 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMapAssemblyLine ASSEMBLY_LINE_RECIPES = (RecipeMapAssemblyLine) new RecipeMapAssemblyLine("assembly_line", 4, 16, 1, 1, 0, 4, 0, 0, new AssemblyLineRecipeBuilder(), false)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
-            .setSound(GTSounds.ASSEMBLER);
+            .setSound(GTSounds.ASSEMBLER)            .
+            onRecipeBuild(recipeBuilder -> {
+                ItemStack researchItem = ((AssemblyLineRecipeBuilder) recipeBuilder).getResearchItem();
+                if (researchItem != null && !researchItem.isEmpty()) {
+                    NBTTagCompound compound = AssemblyLineRecipeBuilder.generateResearchNBT(recipeBuilder);
+                    ItemStack stickStack = MetaItems.TOOL_DATA_STICK.getStackForm(1);
+                    stickStack.setTagCompound(compound);
+
+                    RecipeMaps.SCANNER_RECIPES.recipeBuilder()
+                            .inputs(researchItem)
+                            .input(MetaItems.TOOL_DATA_STICK)
+                            .outputs(stickStack)
+                            .EUt(1920)
+                            .duration(40)
+                            .buildAndRegister();
+                }
+            });
 
     /**
      * Example:
@@ -558,9 +574,6 @@ public class RecipeMaps {
      *         		.buildAndRegister();
      * </pre>
      */
-
-    @ZenProperty
-    public static final RecipeMapAssemblyLine ASSEMBLY_LINE_RECIPES = (RecipeMapAssemblyLine) new RecipeMapAssemblyLine("assembly_line", 4, 16, 1, 1, 0, 4, 0, 0, new AssemblyLineRecipeBuilder(), false)
 
     public static final RecipeMap<ImplosionRecipeBuilder> IMPLOSION_RECIPES = new RecipeMap<>("implosion_compressor", 2, 3, 1, 2, 0, 0, 0, 0, new ImplosionRecipeBuilder().duration(20).EUt(VA[LV]), false)
             .setSlotOverlay(false, false, true, GuiTextures.IMPLOSION_OVERLAY_1)
