@@ -238,6 +238,7 @@ public class ArmorUtils {
             }
         }
 
+        @Nonnull
         private Pair<Integer, Integer> getStringCoord(int index) {
             int posX;
             int posY;
@@ -245,25 +246,19 @@ public class ArmorUtils {
             int windowHeight = new ScaledResolution(mc).getScaledHeight();
             int windowWidth = new ScaledResolution(mc).getScaledWidth();
             int stringWidth = mc.fontRenderer.getStringWidth(stringList.get(index));
-            ConfigHolder.ClientOptions.ArmorHud configs = ConfigHolder.client.armorHud;
-            switch (configs.hudLocation) {
-                case 1:
-                    posX = 1 + configs.hudOffsetX;
-                    posY = 1 + configs.hudOffsetY + (fontHeight * index);
-                    break;
-                case 2:
-                    posX = windowWidth - (1 + configs.hudOffsetX) - stringWidth;
-                    posY = 1 + configs.hudOffsetY + (fontHeight * index);
-                    break;
-                case 3:
-                    posX = 1 + configs.hudOffsetX;
-                    posY = windowHeight - fontHeight * (stringAmount - index) - 1 - configs.hudOffsetY;
-                    break;
-                case 4:
-                    posX = windowWidth - (1 + configs.hudOffsetX) - stringWidth;
-                    posY = windowHeight - fontHeight * (stringAmount - index) - 1 - configs.hudOffsetY;
-                    break;
-                default:
+            if (ConfigHolder.client.armorHud.hudLocation == 1) {
+                posX = 1 + ConfigHolder.client.armorHud.hudOffsetX;
+                posY = 1 + ConfigHolder.client.armorHud.hudOffsetY + (fontHeight * index);
+            } else if (ConfigHolder.client.armorHud.hudLocation == 2) {
+                posX = windowWidth - (1 + ConfigHolder.client.armorHud.hudOffsetX) - stringWidth;
+                posY = 1 + ConfigHolder.client.armorHud.hudOffsetY + (fontHeight * index);
+            } else if (ConfigHolder.client.armorHud.hudLocation == 3) {
+                posX = 1 + ConfigHolder.client.armorHud.hudOffsetX;
+                posY = windowHeight - fontHeight * (stringAmount - index) - 1 - ConfigHolder.client.armorHud.hudOffsetY;
+            } else if (ConfigHolder.client.armorHud.hudLocation == 4){
+                posX = windowWidth - (1 + ConfigHolder.client.armorHud.hudOffsetX) - stringWidth;
+                posY = windowHeight - fontHeight * (stringAmount - index) - 1 - ConfigHolder.client.armorHud.hudOffsetY;
+            } else {
                     throw new IllegalArgumentException();
             }
             return Pair.of(posX, posY);
