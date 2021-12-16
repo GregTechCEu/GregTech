@@ -22,7 +22,6 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.recipes.FluidKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.*;
@@ -1364,9 +1363,6 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public boolean isSideUsed(EnumFacing face) {
         if (getCoverAtSide(face) != null) return true;
-        if (face == this.getFrontFacing() && this.canRenderFrontFaceX()) return true;
-        TileEntity tileEntity = this.getWorld().getTileEntity(this.getPos().add(face.getOpposite().getDirectionVec()));
-        if (!(tileEntity instanceof TileEntityPipeBase)) return false;
-        return ((TileEntityPipeBase) tileEntity).isConnectionOpenAny(face);
+        return face == this.getFrontFacing() && this.canRenderFrontFaceX();
     }
 }
