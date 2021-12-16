@@ -60,20 +60,6 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs,
                 duration, EUt, hidden);
 
-        if (researchItem != null && !researchItem.isEmpty()) {
-            NBTTagCompound compound = generateResearchNBT(recipe);
-            ItemStack stickStack = MetaItems.TOOL_DATA_STICK.getStackForm(1);
-            stickStack.setTagCompound(compound);
-
-            RecipeMaps.SCANNER_RECIPES.recipeBuilder()
-                    .inputs(researchItem)
-                    .input(MetaItems.TOOL_DATA_STICK)
-                    .outputs(stickStack)
-                    .EUt(1920)
-                    .duration(40)
-                    .buildAndRegister();
-        }
-
         return ValidationResult.newResult(finalizeAndValidate(), recipe);
     }
 
@@ -85,11 +71,15 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
                 .toString();
     }
 
-    public static NBTTagCompound generateResearchNBT(Recipe recipe) {
+    public static NBTTagCompound generateResearchNBT(RecipeBuilder<?> recipeBuilder) {
         NBTTagCompound compound = new NBTTagCompound();
-        if (!recipe.getOutputs().isEmpty()) {
-            compound.setTag("asslineOutput", recipe.getOutputs().get(0).serializeNBT());
+        if (!recipeBuilder.getOutputs().isEmpty()) {
+            compound.setTag("asslineOutput", recipeBuilder.getOutputs().get(0).serializeNBT());
         }
         return compound;
+    }
+
+    public ItemStack getResearchItem() {
+        return researchItem;
     }
 }
