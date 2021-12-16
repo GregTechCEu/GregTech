@@ -30,6 +30,7 @@ import gregtech.common.terminal.hardware.DeviceHardware;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -83,31 +84,39 @@ public class TerminalRegistry {
 
         AppRegistryBuilder.create(new ProspectorApp(0))
                 .battery(GTValues.MV, 1000)
-                .upgrade(MetaItems.COIN_DOGE.getStackForm(10))
-                .upgrade(6, MetaItems.COIN_GOLD_ANCIENT.getStackForm())
+                .upgrade(0, MetaItems.SENSOR_LV.getStackForm(1))
+                .upgrade(1, MetaItems.SENSOR_LV.getStackForm(2))
+                .upgrade(2, MetaItems.SENSOR_MV.getStackForm(1))
+                .upgrade(3, MetaItems.SENSOR_MV.getStackForm(3))
+                .upgrade(4, MetaItems.SENSOR_HV.getStackForm(1))
+                .upgrade(5, MetaItems.SENSOR_HV.getStackForm(3))
+                .upgrade(6, MetaItems.SENSOR_IV.getStackForm(1))
                 .device(DeviceHardware.DEVICE.PROSPECTOR_LV)
                 .build();
-
-        // TODO Reimplement this when Fluid Rigs are added
-        //AppRegistryBuilder.create(new ProspectorApp(1))
-        //        .battery(GTValues.MV, 1000)
-        //        .upgrade(MetaItems.COIN_DOGE.getStackForm(10))
-        //        .upgrade(6, MetaItems.COIN_GOLD_ANCIENT.getStackForm())
-        //        .device(DeviceHardware.DEVICE.PROSPECTOR_LV)
-        //        .build();
+        /*AppRegistryBuilder.create(new ProspectorApp(1))
+                .battery(GTValues.MV, 1000)
+                .upgrade(0, MetaItems.SENSOR_LV.getStackForm(1))
+                .upgrade(1, MetaItems.SENSOR_LV.getStackForm(2))
+                .upgrade(2, MetaItems.SENSOR_MV.getStackForm(1))
+                .upgrade(3, MetaItems.SENSOR_MV.getStackForm(3))
+                .upgrade(4, MetaItems.SENSOR_HV.getStackForm(1))
+                .upgrade(5, MetaItems.SENSOR_HV.getStackForm(3))
+                .upgrade(6, MetaItems.SENSOR_IV.getStackForm(1))
+                .device(DeviceHardware.DEVICE.PROSPECTOR_LV)
+                .build(); */
         AppRegistryBuilder.create(new MultiBlockPreviewARApp())
                 .battery(GTValues.LV, 512)
                 .device(DeviceHardware.DEVICE.CAMERA)
-                .upgrade(0, MetaItems.COIN_DOGE.getStackForm(10))
-                .upgrade(1, MetaItems.COIN_DOGE.getStackForm(30), MetaItems.COIN_CHOCOLATE.getStackForm(10))
+                .upgrade(0, MetaItems.EMITTER_MV.getStackForm(2))
+                .upgrade(1, MetaItems.EMITTER_EV.getStackForm(4), MetaItems.WORKSTATION_EV.getStackForm(4))
                 .build();
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
             AppRegistryBuilder.create(new RecipeChartApp())
                     .battery(GTValues.LV, 100)
-                    .upgrade(0, MetaItems.COIN_DOGE.getStackForm(10))
-                    .upgrade(1, MetaItems.COIN_DOGE.getStackForm(20))
-                    .upgrade(2, MetaItems.COIN_DOGE.getStackForm(30), MetaItems.COIN_CHOCOLATE.getStackForm(10))
-                    .upgrade(3, MetaItems.COIN_DOGE.getStackForm(40), MetaItems.COIN_CHOCOLATE.getStackForm(10), MetaItems.COIN_GOLD_ANCIENT.getStackForm())
+                    .upgrade(0, new ItemStack(Items.PAPER, 32))
+                    .upgrade(1, new ItemStack(Items.PAPER, 64))
+                    .upgrade(2, MetaItems.RANDOM_ACCESS_MEMORY.getStackForm(16))
+                    .upgrade(3, MetaItems.RANDOM_ACCESS_MEMORY.getStackForm(32))
                     .build();
         }
         AppRegistryBuilder.create(new ConsoleApp())
@@ -121,6 +130,9 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new AppStoreApp()).defaultApp().build();
         AppRegistryBuilder.create(new WorldProspectorARApp())
                 .battery(GTValues.LV, 233)
+                .upgrade(0, MetaItems.EMITTER_LV.getStackForm(2))
+                .upgrade(1, MetaItems.EMITTER_MV.getStackForm(2))
+                .upgrade(2, MetaItems.EMITTER_HV.getStackForm(2))
                 .device(DeviceHardware.DEVICE.CAMERA)
                 .build();
         AppRegistryBuilder.create(new VirtualTankApp())
