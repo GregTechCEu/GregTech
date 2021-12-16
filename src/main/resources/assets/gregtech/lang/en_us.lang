@@ -3657,7 +3657,8 @@ gregtech.machine.pyrolyse_oven.name=Pyrolyse Oven
 gregtech.machine.pyrolyse_oven.tooltip.1=§aCupronickel Coils§7 are §a25%%§7 slower. Every coil after §aKanthal§7 increases speed by §a50%%§7.
 gregtech.machine.distillation_tower.name=Distillation Tower
 gregtech.machine.multi_furnace.name=Multi Smelter
-gregtech.machine.cracker.name=Cracker Unit
+gregtech.machine.cracker.name=Crackering Unit
+gregtech.machine.cracker.tooltip.1=Every coil after §aCupronickel§7 reduces energy usage by §a5%%§7.
 gregtech.machine.coke_oven.name=Coke Oven
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
 gregtech.machine.coke_oven_hatch.tooltip=Allows automation access to coke oven. Must be centered on coke oven side.
@@ -4086,7 +4087,9 @@ gregtech.multiblock.large_miner.radius=Radius: %d Blocks
 gregtech.multiblock.large_miner.errorradius=Cannot change radius while working!
 gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
 
-gregtech.multiblock.pyrolyse_oven.speed=Current Speed: §a%s%%
+gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
+
+gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
 
 gregtech.command.usage=Usage: /gregtech <worldgen/util>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
