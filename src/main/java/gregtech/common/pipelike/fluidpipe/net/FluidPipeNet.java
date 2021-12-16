@@ -1,5 +1,6 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
+import gnu.trove.set.TLongSet;
 import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
@@ -172,18 +173,21 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                     if (dirtyStack.amount <= 0) {
                         continue;
                     }
-                    Map<BlockPos, Integer> subMap = entry.getValue();
-                    Iterator<Map.Entry<BlockPos, Integer>> iterator = subMap.entrySet().iterator();
+                    Set<Long> didHandle = new HashSet<>();
+                    Iterator<Map.Entry<BlockPos, Integer>> iterator = entry.getValue().entrySet().iterator();
                     while (iterator.hasNext()) {
                         Map.Entry<BlockPos, Integer> entry2 = iterator.next();
+                        if(didHandle.contains(entry2.getKey().toLong())) {
+                            iterator.remove();
+                            continue;
+                        }
                         FluidNetWalker walker = FluidNetWalker.getPipesForFluid(getWorldData(), entry2.getKey(), dirtyStack, true);
                         List<TileEntityFluidPipe> pipes = walker.getPipes();
                         if (pipes.size() == 0) {
                             continue;
                         }
                         for(TileEntityFluidPipe pipe : pipes) {
-                            if(!GTUtility.arePosEqual(pipe.getPos(), entry2.getKey()))
-                                subMap.remove(pipe.getPos());
+                            didHandle.add(pipe.getPos().toLong());
                         }
                         long amount = walker.getCount();
                         amount += entry2.getValue();
