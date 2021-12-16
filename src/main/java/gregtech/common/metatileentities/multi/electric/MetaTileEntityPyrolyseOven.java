@@ -114,7 +114,7 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
     }
 
     @SuppressWarnings("InnerClassMayBeStatic")
-    public class PyrolyseOvenWorkableHandler extends MultiblockRecipeLogic {
+    private class PyrolyseOvenWorkableHandler extends MultiblockRecipeLogic {
 
         public PyrolyseOvenWorkableHandler(RecipeMapMultiblockController tileEntity) {
             super(tileEntity);
@@ -125,6 +125,9 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
             int[] overclock = super.performOverclocking(recipe, negativeEU);
 
             int coilTier = ((MetaTileEntityPyrolyseOven) metaTileEntity).getCoilTier();
+            if (coilTier == -1)
+                return overclock;
+
             if (coilTier == 0) overclock[1] *= 5.0 / 4; // 25% slower with cupronickel (coilTier = 0)
             else overclock[1] *= 2.0f / (coilTier + 1); // each coil above kanthal (coilTier = 1) is 50% faster
 

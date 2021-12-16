@@ -2220,7 +2220,7 @@ tile.boiler_casing.bronze_pipe.name=Bronze Pipe Casing
 tile.boiler_casing.steel_pipe.name=Steel Pipe Casing
 tile.boiler_casing.titanium_pipe.name=Titanium Pipe Casing
 tile.boiler_casing.tungstensteel_pipe.name=Tungstensteel Pipe Casing
-tile.boiler_casing.polytetrafluoroethylene_pipe.name=Polytetrafluoroethylene (PTFE) Pipe Casing
+tile.boiler_casing.polytetrafluoroethylene_pipe.name=PTFE Pipe Casing
 
 #Firebox casing blocks
 tile.boiler_casing.bronze_firebox.name=Bronze Firebox Casing
@@ -2238,7 +2238,7 @@ tile.metal_casing.steel_solid.name=Solid Steel Machine Casing
 tile.metal_casing.stainless_clean.name=Clean Stainless Steel Casing
 tile.metal_casing.titanium_stable.name=Stable Titanium Machine Casing
 tile.metal_casing.tungstensteel_robust.name=Robust Tungstensteel Machine Casing
-tile.metal_casing.ptfe_inert.name=Chemically Inert Polytetrafluoroethylene (PTFE) Machine Casing
+tile.metal_casing.ptfe_inert.name=Chemically Inert PTFE Machine Casing
 
 # Machine casing blocks
 tile.machine_casing.ultra_low_voltage.name=ULV Machine Casing
@@ -3662,6 +3662,9 @@ gregtech.machine.cracker.tooltip.1=Every coil after §aCupronickel§7 reduces en
 gregtech.machine.coke_oven.name=Coke Oven
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
 gregtech.machine.coke_oven_hatch.tooltip=Allows automation access to coke oven. Must be centered on coke oven side.
+gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
+gregtech.machine.large_chemical_reactor.tooltip.1=§aMaximum voltage§7 is equal to the multiblock's coil tier.
+gregtech.machine.large_chemical_reactor.tooltip.ht=§Tritanium Coils§7 coils allow any voltage.
 
 
 
@@ -3697,8 +3700,6 @@ gregtech.machine.miner.multi.description=A multiblock mining machine that covers
 #Small ores lang: gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator. Small ore Fortune §b%d§7.
 gregtech.machine.miner.fluid_usage=Consumes §b%dmb§7 of §e%s§7 per tick. Each overclock doubles the fluid consumption.
 gregtech.machine.miner.overclock=Requires §e%s§7 power. Overclocks up to §e%s§7.
-
-gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
@@ -4090,6 +4091,8 @@ gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
+
+gregtech.multiblock.large_chemical_reactor.voltage_tier=Energy Limit: %s EU/t (%s)
 
 gregtech.command.usage=Usage: /gregtech <worldgen/util>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>

@@ -103,7 +103,7 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
     }
 
     @SuppressWarnings("InnerClassMayBeStatic")
-    public class CrackingUnitWorkableHandler extends MultiblockRecipeLogic {
+    private class CrackingUnitWorkableHandler extends MultiblockRecipeLogic {
 
         public CrackingUnitWorkableHandler(RecipeMapMultiblockController tileEntity) {
             super(tileEntity);
@@ -114,8 +114,10 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
             int[] overclock = super.performOverclocking(recipe, negativeEU);
 
             int coilTier = ((MetaTileEntityCrackingUnit) metaTileEntity).getCoilTier();
-            overclock[0] *= 1.0f - coilTier / 20; // each coil above cupronickel (coilTier = 0) uses 5% less energy
+            if (coilTier == -1)
+                return overclock;
 
+            overclock[0] *= 1.0f - coilTier / 20; // each coil above cupronickel (coilTier = 0) uses 5% less energy
             overclock[0] = Math.max(1, overclock[0]);
 
             return overclock;
