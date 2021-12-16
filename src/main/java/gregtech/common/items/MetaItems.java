@@ -529,8 +529,8 @@ public final class MetaItems {
     public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_CHESTPLATE_ADVANCED;
     public static ArmorMetaItem<?>.ArmorMetaValueItem QUANTUM_CHESTPLATE_ADVANCED;
 
-    public static MetaItem<?>.MetaValueItem IMPELLER_MV;
-    public static MetaItem<?>.MetaValueItem IMPELLER_HV;
+    public static MetaItem<?>.MetaValueItem POWER_THRUSTER;
+    public static MetaItem<?>.MetaValueItem POWER_THRUSTER_ADVANCED;
     public static MetaItem<?>.MetaValueItem GRAVITATION_ENGINE;
 
     public static MetaItem<?>.MetaValueItem SUS_RECORD;

@@ -54,9 +54,9 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
             data.setBoolean("hover", hoverMode);
             if (!world.isRemote) {
                 if (hoverMode)
-                    player.sendMessage(new TextComponentTranslation("metaarmor.jetpack.hover.enable"));
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.hover.enable"), true);
                 else
-                    player.sendMessage(new TextComponentTranslation("metaarmor.jetpack.hover.disable"));
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.hover.disable"), true);
             }
         }
 
@@ -66,9 +66,9 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
             data.setBoolean("flyMode", flyEnabled);
             if (!world.isRemote) {
                 if (flyEnabled)
-                    player.sendMessage(new TextComponentTranslation("metaarmor.jetpack.flight.enable"));
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.flight.enable"), true);
                 else
-                    player.sendMessage(new TextComponentTranslation("metaarmor.jetpack.flight.disable"));
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.flight.disable"), true);
             }
         }
 
@@ -78,9 +78,9 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
             data.setBoolean("canShare", canShare);
             if (!world.isRemote) {
                 if (canShare)
-                    player.sendMessage(new TextComponentTranslation("metaarmor.qts.share.enable"));
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.qts.share.enable"), true);
                 else
-                    player.sendMessage(new TextComponentTranslation("metaarmor.qts.share.disable"));
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.qts.share.disable"), true);
             }
         }
 

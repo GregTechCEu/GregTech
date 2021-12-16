@@ -46,9 +46,9 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
             data.setBoolean("hover", hover);
             if (!world.isRemote) {
                 if (hover)
-                    player.sendMessage(new TextComponentTranslation("metaarmor.jetpack.hover.enable"));
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.hover.enable"), true);
                 else
-                    player.sendMessage(new TextComponentTranslation("metaarmor.jetpack.hover.disable"));
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.hover.disable"), true);
             }
         }
 

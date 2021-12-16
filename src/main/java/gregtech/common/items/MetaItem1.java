@@ -572,8 +572,8 @@ public class MetaItem1 extends StandardMetaItem {
         ZERO_POINT_MODULE = addItem(752, "zpm").addComponents(ElectricStats.createBattery(2000000000000L, GTValues.ZPM, true)).setModelAmount(8);
         ULTIMATE_BATTERY = addItem(753, "max.battery").addComponents(ElectricStats.createRechargeableBattery(Long.MAX_VALUE, GTValues.UHV)).setUnificationData(OrePrefix.battery, Tier.Infinite).setModelAmount(8);
 
-        IMPELLER_MV = addItem(776, "impeller.mv").setRarity(EnumRarity.UNCOMMON);
-        IMPELLER_HV = addItem(777, "impeller.hv").setRarity(EnumRarity.RARE);
+        POWER_THRUSTER = addItem(776, "impeller.mv").setRarity(EnumRarity.UNCOMMON);
+        POWER_THRUSTER_ADVANCED = addItem(777, "impeller.hv").setRarity(EnumRarity.RARE);
         GRAVITATION_ENGINE = addItem(778, "gravitation_engine").setRarity(EnumRarity.EPIC);
 
         // Plugins: 780-799

@@ -144,23 +144,22 @@ public class MiscRecipeLoader {
                 .buildAndRegister();
 
         // Jetpacks
-        ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(100)
-                .input(circuit, Good, 6)
-                .inputs(BATTERY_MV_CADMIUM.getStackForm(6))
-                .inputs(IMPELLER_MV.getStackForm(4))
-                .input(plate, Aluminium)
-                .input(screw, Aluminium, 4)
-                .input(stick, Aluminium, 2)
-                .outputs(ELECTRIC_JETPACK.getStackForm())
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30)
+                .inputs(ELECTRIC_MOTOR_MV.getStackForm())
+                .input(ring, Aluminium, 2)
+                .input(stick, Aluminium)
+                .input(rotor, Steel)
+                .input(cableGtSingle, Copper, 2)
+                .outputs(POWER_THRUSTER.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(60)
-                .input(cableGtSingle, Gold)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30)
                 .inputs(ELECTRIC_MOTOR_HV.getStackForm())
+                .input(ring, StainlessSteel, 2)
                 .input(stick, StainlessSteel)
-                .input(rotor, Polyethylene, 2)
-                .input(pipeNormalFluid, Polyethylene)
-                .outputs(IMPELLER_HV.getStackForm())
+                .input(rotor, Chrome)
+                .input(cableGtSingle, Gold, 2)
+                .outputs(POWER_THRUSTER_ADVANCED.getStackForm())
                 .buildAndRegister();
 
         // QuarkTech Suite

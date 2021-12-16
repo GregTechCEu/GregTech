@@ -41,13 +41,13 @@ public class NightvisionGoggles extends ArmorLogicSuite {
                 if (!nightvision && item.getCharge() >= energyPerUse) {
                     nightvision = true;
                     if (!world.isRemote)
-                        player.sendMessage(new TextComponentTranslation("metaarmor.message.nightvision.enabled"));
+                        player.sendStatusMessage(new TextComponentTranslation("metaarmor.message.nightvision.enabled"), true);
                 } else if (nightvision) {
                     nightvision = false;
                     disableNightVision(world, player, true);
                 } else {
                     if (!world.isRemote) {
-                        player.sendMessage(new TextComponentTranslation("metaarmor.message.nightvision.error"));
+                        player.sendStatusMessage(new TextComponentTranslation("metaarmor.message.nightvision.error"), true);
                     }
                 }
 
@@ -72,7 +72,7 @@ public class NightvisionGoggles extends ArmorLogicSuite {
     public void disableNightVision(@Nonnull World world, EntityPlayer player, boolean sendMsg) {
         if (!world.isRemote) {
             player.removePotionEffect(MobEffects.NIGHT_VISION);
-            if (sendMsg) player.sendMessage(new TextComponentTranslation("metaarmor.message.nightvision.disabled"));
+            if (sendMsg) player.sendStatusMessage(new TextComponentTranslation("metaarmor.message.nightvision.disabled"), true);
         }
     }
 

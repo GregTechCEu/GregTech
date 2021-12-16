@@ -957,9 +957,11 @@ metaitem.gravitation_engine.name=Gravitation Engine Unit
 
 metaarmor.nms.nightvision.enabled=NanoMuscle™ Suite: NightVision Enabled
 metaarmor.nms.nightvision.disabled=NanoMuscle™ Suite: NightVision Disabled
+metaarmor.nms.nightvision.error=NanoMuscle™ Suite: §cNot enough power!
 
 metaarmor.qts.nightvision.enabled=QuarkTech™ Suite: NightVision Enabled
 metaarmor.qts.nightvision.disabled=QuarkTech™ Suite: NightVision Disabled
+metaarmor.qts.nightvision.error=QuarkTech™ Suite: §cNot enough power!
 
 metaarmor.jetpack.hover.enable=Jetpack: Hover Mode Enabled
 metaarmor.jetpack.hover.disable=Jetpack: Hover Mode Disabled
