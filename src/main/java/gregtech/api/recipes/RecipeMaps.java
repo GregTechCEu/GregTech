@@ -624,18 +624,6 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
             .setSound(GTSounds.ELECTROLYZER);
 
-    /**
-     * Example:
-     * <pre>
-     * 	     RecipeMap.LATHE_RECIPES.recipeBuilder()
-     * 				.inputs(OreDictUnifier.get(OrePrefix.gemExquisite, Materials.Ruby, 1L))
-     * 				.outputs(OreDictUnifier.get(OrePrefix.lens, Materials.Ruby, 1L), OreDictUnifier.get(OrePrefix.dust, Materials.Ruby, 2L))
-     * 				.duration(Materials.Ruby.getMass())
-     * 				.EUt(24)
-     * 				.buildAndRegister();
-     * </pre>
-     */
-
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> LATHE_RECIPES = new RecipeMap<>("lathe", 1, 1, 1, 2, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.PIPE_OVERLAY_1)
