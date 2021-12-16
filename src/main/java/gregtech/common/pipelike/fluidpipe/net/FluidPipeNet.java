@@ -171,8 +171,9 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                     if (dirtyStack.amount <= 0) {
                         continue;
                     }
+                    Map<BlockPos, Integer> subMap = entry.getValue();
                     Set<BlockPos> didHandle = new HashSet<>();
-                    Iterator<Map.Entry<BlockPos, Integer>> iterator = entry.getValue().entrySet().iterator();
+                    Iterator<Map.Entry<BlockPos, Integer>> iterator = subMap.entrySet().iterator();
                     while (iterator.hasNext()) {
                         Map.Entry<BlockPos, Integer> entry2 = iterator.next();
                         if (didHandle.contains(entry2.getKey())) {
@@ -184,11 +185,14 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                         if (pipes.size() == 0) {
                             continue;
                         }
+                        long amount = walker.getCount();
                         for (TileEntityFluidPipe pipe : pipes) {
                             didHandle.add(pipe.getPos());
+                            Integer a = subMap.get(pipe.getPos());
+                            if (a != null)
+                                amount += a;
                         }
-                        long amount = walker.getCount();
-                        amount += entry2.getValue();
+
                         int round = 0;
                         while (amount > 0 && pipes.size() > 0) {
                             int c = (int) (amount / pipes.size());
