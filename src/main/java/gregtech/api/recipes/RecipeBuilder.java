@@ -415,7 +415,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         if (trimOutputs) {
             if (!outputItems.isEmpty()) {
                 this.outputs(outputItems.subList(0, 1));
-            } else {
+            } else if (recipe.getChancedOutputs().size() > 0) {
                 trimmedChancedOutputsMultiply(recipe, multiplier);
             }
         } else {
