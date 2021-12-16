@@ -1,11 +1,9 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
-import gnu.trove.set.TLongSet;
 import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
-import gregtech.api.util.GTUtility;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 import net.minecraft.nbt.NBTTagCompound;
@@ -168,7 +166,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                 fluidsToRemove.clear();
             }
             if (dirtyStacks.size() > 0) {
-                for(Map.Entry<FluidStack, Map<BlockPos, Integer>> entry : dirtyStacks.entrySet()) {
+                for (Map.Entry<FluidStack, Map<BlockPos, Integer>> entry : dirtyStacks.entrySet()) {
                     FluidStack dirtyStack = entry.getKey();
                     if (dirtyStack.amount <= 0) {
                         continue;
@@ -177,7 +175,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                     Iterator<Map.Entry<BlockPos, Integer>> iterator = entry.getValue().entrySet().iterator();
                     while (iterator.hasNext()) {
                         Map.Entry<BlockPos, Integer> entry2 = iterator.next();
-                        if(didHandle.contains(entry2.getKey().toLong())) {
+                        if (didHandle.contains(entry2.getKey().toLong())) {
                             iterator.remove();
                             continue;
                         }
@@ -186,7 +184,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                         if (pipes.size() == 0) {
                             continue;
                         }
-                        for(TileEntityFluidPipe pipe : pipes) {
+                        for (TileEntityFluidPipe pipe : pipes) {
                             didHandle.add(pipe.getPos().toLong());
                         }
                         long amount = walker.getCount();
@@ -207,12 +205,12 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                                 FluidStack stack = dirtyStack.copy();
                                 stack.amount = count;
                                 int channel = pipe.findChannel(stack);
-                                if(channel < 0) {
+                                if (channel < 0) {
                                     pipeIterator.remove();
                                     continue;
                                 }
                                 FluidStack currentStack = pipe.getContainedFluid(channel);
-                                if(currentStack != null && !currentStack.isFluidEqual(dirtyStack)) {
+                                if (currentStack != null && !currentStack.isFluidEqual(dirtyStack)) {
                                     pipeIterator.remove();
                                     continue;
                                 }
