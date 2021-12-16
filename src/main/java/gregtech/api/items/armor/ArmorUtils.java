@@ -52,8 +52,8 @@ public class ArmorUtils {
      * @param tier of charger
      * @return Map of the inventory and a list of the index of a chargable item
      */
-    public static Map<NonNullList<ItemStack>, List<Integer>> getChargeableItem(EntityPlayer player, int tier) {
-        Map<NonNullList<ItemStack>, List<Integer>> inventorySlotMap = new HashMap<>();
+    public static List<Pair<NonNullList<ItemStack>, List<Integer>>> getChargeableItem(EntityPlayer player, int tier) {
+        List<Pair<NonNullList<ItemStack>, List<Integer>>> inventorySlotMap = new ArrayList<>();
 
         List<Integer> openMainSlots = new ArrayList<>();
         for (int i = 0; i < player.inventory.mainInventory.size(); i++) {
@@ -67,7 +67,7 @@ public class ArmorUtils {
         }
 
         if(!openMainSlots.isEmpty()) {
-            inventorySlotMap.put(player.inventory.mainInventory, openMainSlots);
+            inventorySlotMap.add(Pair.of(player.inventory.mainInventory, openMainSlots));
         }
 
 
@@ -85,7 +85,7 @@ public class ArmorUtils {
         }
 
         if(!openArmorSlots.isEmpty()) {
-            inventorySlotMap.put(player.inventory.armorInventory, openArmorSlots);
+            inventorySlotMap.add(Pair.of(player.inventory.armorInventory, openArmorSlots));
         }
 
         ItemStack offHand = player.inventory.offHandInventory.get(0);
@@ -95,7 +95,7 @@ public class ArmorUtils {
         }
 
         if(isPossibleToCharge(offHand) && offHandItem.getTier() <= tier) {
-            inventorySlotMap.put(player.inventory.offHandInventory, Collections.singletonList(0));
+            inventorySlotMap.add(Pair.of(player.inventory.offHandInventory, Collections.singletonList(0)));
         }
 
         return inventorySlotMap;

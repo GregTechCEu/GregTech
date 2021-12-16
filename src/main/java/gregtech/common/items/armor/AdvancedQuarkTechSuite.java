@@ -20,16 +20,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     //A replacement for checking the current world time, to get around the gamerule that stops it
     private long timer = 0L;
-    private Map<NonNullList<ItemStack>, List<Integer>> inventoryIndexMap;
+    private List<Pair<NonNullList<ItemStack>, List<Integer>>> inventoryIndexMap;
 
     public AdvancedQuarkTechSuite(int energyPerUse, long capacity, int tier) {
         super(EntityEquipmentSlot.CHEST, energyPerUse, capacity, tier);
@@ -97,7 +97,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
 
             if (inventoryIndexMap != null && !inventoryIndexMap.isEmpty()) {
                 // Charge all inventory slots
-                for (Map.Entry<NonNullList<ItemStack>, List<Integer>> inventoryMap : inventoryIndexMap.entrySet()) {
+                for (Pair<NonNullList<ItemStack>, List<Integer>> inventoryMap : inventoryIndexMap) {
                     Iterator<Integer> inventoryIterator = inventoryMap.getValue().iterator();
                     while (inventoryIterator.hasNext()) {
                         int slot = inventoryIterator.next();
@@ -125,7 +125,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
                     }
 
                     if (inventoryMap.getValue().isEmpty())
-                        inventoryIndexMap.remove(inventoryMap.getKey());
+                        inventoryIndexMap.remove(inventoryMap);
                 }
             }
         }
