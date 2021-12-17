@@ -146,7 +146,8 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
             //if all tanks are empty, generally fluid can be inserted if there are recipes for it
             return !recipeMap.getRecipesForFluid(inputFluid).isEmpty();
         } else {
-            return true;
+            matchingRecipes.retainAll(recipeMap.getRecipesForFluid(inputFluid));
+            return !matchingRecipes.isEmpty();
         }
     }
 
