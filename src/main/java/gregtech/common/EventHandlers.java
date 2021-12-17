@@ -168,12 +168,14 @@ public class EventHandlers {
                 return;
 
             ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) armorPiece.getItem()).getItem(armorPiece);
-            ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
-            IElectricItem item = armorPiece.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-            if (item == null) return;
-            int energyCost = (armorLogic.getEnergyPerUse() * Math.round(event.getDistance()));
-            if (item.getCharge() >= energyCost)
-                item.discharge(energyCost, item.getTier(), true, false, false);
+            if (armorMetaValue.getArmorLogic() instanceof ArmorLogicSuite) {
+                ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
+                IElectricItem item = armorPiece.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                if (item == null) return;
+                int energyCost = (armorLogic.getEnergyPerUse() * Math.round(event.getDistance()));
+                if (item.getCharge() >= energyCost)
+                    item.discharge(energyCost, item.getTier(), true, false, false);
+            }
         }
     }
 

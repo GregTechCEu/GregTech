@@ -4,6 +4,7 @@ import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorMetaItem.ArmorMetaValueItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.items.armor.IArmorLogic;
+import gregtech.api.items.armor.ISpecialArmorLogic;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
@@ -14,6 +15,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -22,6 +24,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -37,7 +40,7 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-public class PowerlessJetpack implements IArmorLogic, IJetpack {
+public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpack {
 
     private static final List<FuelRecipe> FUELS = RecipeMaps.COMBUSTION_GENERATOR_FUELS.getRecipeList();
 
@@ -172,7 +175,7 @@ public class PowerlessJetpack implements IArmorLogic, IJetpack {
             FluidStack fuel = getFuel();
             if (fuel == null) return;
             getIFluidHandlerItem(stack).drain(fuel, true);
-            burnTimer = fuel.amount * currentRecipe.getDuration();
+            burnTimer = currentRecipe.getDuration();
         }
         this.burnTimer--;
     }
@@ -225,6 +228,18 @@ public class PowerlessJetpack implements IArmorLogic, IJetpack {
         }
 
         return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
+    }
+
+    @Override
+    public ISpecialArmor.ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, @Nonnull DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
+        int damageLimit = (int) Math.min(Integer.MAX_VALUE, burnTimer * 1.0 / 32 * 25.0);
+        if (source.isUnblockable()) return new ISpecialArmor.ArmorProperties(0, 0.0, 0);
+        return new ISpecialArmor.ArmorProperties(0, 0, damageLimit);
+    }
+
+    @Override
+    public int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot) {
+        return 0;
     }
 
     public class Behaviour implements IItemDurabilityManager, IItemCapabilityProvider, IItemBehaviour {
