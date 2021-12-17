@@ -83,6 +83,34 @@ public class AdvancedJetpack extends Jetpack {
     }
 
     @Override
+    public boolean canUseEnergy(@Nonnull ItemStack stack, int amount) {
+        IElectricItem container = getIElectricItem(stack);
+        if (container == null)
+            return false;
+        return container.canUse(amount);
+    }
+
+    @Override
+    public void drainEnergy(@Nonnull ItemStack stack, int amount) {
+        IElectricItem container = getIElectricItem(stack);
+        if (container == null)
+            return;
+        container.discharge(amount, 2, true, false, false);
+    }
+
+    @Override
+    public boolean hasEnergy(@Nonnull ItemStack stack) {
+        IElectricItem container = getIElectricItem(stack);
+        if (container == null)
+            return false;
+        return container.getCharge() > 0;
+    }
+
+    private IElectricItem getIElectricItem(@Nonnull ItemStack stack) {
+        return stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+    }
+
+    @Override
     public double getSprintEnergyModifier() {
         return 2.5D;
     }
