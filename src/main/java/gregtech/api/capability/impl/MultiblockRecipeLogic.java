@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
@@ -223,21 +224,38 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     @Override
     protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
         // apply maintenance penalties
-        MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ? (MultiblockWithDisplayBase) metaTileEntity : null;
-        int numMaintenanceProblems = displayBase == null ? 0 : displayBase.getNumMaintenanceProblems();
+        Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
         int[] overclock = null;
-        if (displayBase != null && displayBase.hasMaintenanceMechanics()) {
-            IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
-            double durationMultiplier = hatch.getDurationMultiplier();
-            if (durationMultiplier != 1.0) {
-                overclock = standardOverclockingLogic(recipe.getEUt() * (negativeEU ? -1 : 1), getMaxVoltage(), (int) Math.round(recipe.getDuration() * durationMultiplier), getOverclockingDurationDivisor(), getOverclockingVoltageMultiplier(), maxOverclocks);
-            }
-        }
-        if (overclock == null) overclock = super.runOverclockingLogic(recipe, negativeEU, maxOverclocks);
-        overclock[1] = (int) (overclock[1] * (1 + 0.1 * numMaintenanceProblems));
+        if (maintenanceValues.getSecond() != 1.0)
+            overclock = overclockRecipe(recipe.getRecipePropertyStorage(), recipe.getEUt(), negativeEU, getMaxVoltage(),
+                    (int) Math.round(recipe.getDuration() * maintenanceValues.getSecond()), maxOverclocks);
+
+        if (overclock == null)
+            overclock = overclockRecipe(recipe.getRecipePropertyStorage(), recipe.getEUt(), negativeEU, getMaxVoltage(), recipe.getDuration(), maxOverclocks);
+
+        if (maintenanceValues.getFirst() > 0)
+            overclock[1] = (int) (overclock[1] * (1 + 0.1 * maintenanceValues.getFirst()));
 
         return overclock;
+    }
+
+    @Override
+    protected int[] performOverclocking(Recipe recipe, boolean negativeEU) {
+        int maxOverclocks = getOverclockingTier(getMaxVoltage()) - 1; // exclude ULV overclocking
+
+        return runOverclockingLogic(recipe, negativeEU, maxOverclocks);
+    }
+
+    protected Tuple<Integer, Double> getMaintenanceValues() {
+        MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ? (MultiblockWithDisplayBase) metaTileEntity : null;
+        int numMaintenanceProblems = displayBase == null ? 0 : displayBase.getNumMaintenanceProblems();
+        double durationMultiplier = 1.0D;
+        if (displayBase != null && displayBase.hasMaintenanceMechanics()) {
+            IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
+            durationMultiplier = hatch.getDurationMultiplier();
+        }
+        return new Tuple<>(numMaintenanceProblems, durationMultiplier);
     }
 
     @Override
@@ -298,7 +316,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public long getMaxVoltage() {
+    protected long getMaxVoltage() {
         return Math.max(getEnergyContainer().getInputVoltage(), getEnergyContainer().getOutputVoltage());
     }
 

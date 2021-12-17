@@ -55,11 +55,10 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
             lines.add(I18n.format("tile.wire_coil.tooltip_cracking"));
             lines.add(I18n.format("tile.wire_coil.tooltip_energy_cracking", 100 - 5 * coilTier));
             lines.add(I18n.format("tile.wire_coil.tooltip_reactor"));
-            if (GTValues.HT && coilType == CoilType.TRITANIUM) {
-                lines.add(I18n.format("tile.wire_coil.tooltip_energy_reactor_any"));
-            } else {
+            if (coilType == CoilType.TRITANIUM)
+                lines.add(I18n.format("tile.wire_coil.tooltip_energy_reactor", GTValues.VN[GTValues.MAX]));
+            else
                 lines.add(I18n.format("tile.wire_coil.tooltip_energy_reactor", GTValues.VN[coilTier + 1]));
-            }
         } else {
             lines.add(I18n.format("gregtech.tooltip.hold_shift"));
         }

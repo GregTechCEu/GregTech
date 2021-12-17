@@ -2196,7 +2196,6 @@ tile.wire_coil.tooltip_cracking=§aCracking Unit§7:
 tile.wire_coil.tooltip_energy_cracking=  Energy Usage: §e%s%%§7
 tile.wire_coil.tooltip_reactor=§aLarge Chemical Reactor§7:
 tile.wire_coil.tooltip_energy_reactor=  Max Perfect Overclock Tier: §e%s§7
-tile.wire_coil.tooltip_energy_reactor_any=  All Voltages Allowed
 
 tile.wire_coil.cupronickel.name=Cupronickel Coil Block
 tile.wire_coil.kanthal.name=Kanthal Coil Block
@@ -3665,14 +3664,13 @@ gregtech.machine.pyrolyse_oven.name=Pyrolyse Oven
 gregtech.machine.pyrolyse_oven.tooltip.1=§aCupronickel Coils§7 are §a25%%§7 slower. Every coil after §aKanthal§7 increases speed by §a50%%§7.
 gregtech.machine.distillation_tower.name=Distillation Tower
 gregtech.machine.multi_furnace.name=Multi Smelter
-gregtech.machine.cracker.name=Crackering Unit
+gregtech.machine.cracker.name=Cracking Unit
 gregtech.machine.cracker.tooltip.1=Every coil after §aCupronickel§7 reduces energy usage by §a5%%§7.
 gregtech.machine.coke_oven.name=Coke Oven
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
 gregtech.machine.coke_oven_hatch.tooltip=Allows automation access to coke oven. Must be centered on coke oven side.
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
-gregtech.machine.large_chemical_reactor.tooltip.1=§aMaximum voltage§7 is equal to the multiblock's coil tier.
-gregtech.machine.large_chemical_reactor.tooltip.ht=§Tritanium Coils§7 coils allow any voltage.
+gregtech.machine.large_chemical_reactor.tooltip.1=§aMaximum lossless OC tier§7 is equal to the coil tier.
 
 
 
@@ -4100,7 +4098,7 @@ gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
 
-gregtech.multiblock.large_chemical_reactor.voltage_tier=Energy Limit: %s EU/t (%s)
+gregtech.multiblock.large_chemical_reactor.voltage_tier=Perfect OC Limit: %s
 
 gregtech.command.usage=Usage: /gregtech <worldgen/util>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>

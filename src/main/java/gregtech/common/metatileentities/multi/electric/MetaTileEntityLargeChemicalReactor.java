@@ -8,7 +8,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.*;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.util.GTUtility;
+import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
@@ -153,10 +153,8 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
         if (isStructureFormed() && coilTier != -1) {
-            long maxVoltage = this.recipeMapWorkable.getMaxVoltage();
-            textList.add(new TextComponentTranslation("gregtech.multiblock.large_chemical_reactor.voltage_tier", maxVoltage, GTValues.VN[GTUtility.getTierByVoltage(maxVoltage)]));
-            if (GTValues.HT)
-                textList.add(new TextComponentTranslation("gregtech.machine.large_chemical_reactor.tooltip.ht"));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.large_chemical_reactor.voltage_tier",
+                    GTValues.VN[coilTier == BlockWireCoil.CoilType.TRITANIUM.ordinal() ? GTValues.MAX : coilTier + 1]));
         }
     }
 
@@ -170,7 +168,6 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
         return this.coilTier;
     }
 
-    @SuppressWarnings("InnerClassMayBeStatic")
     private static class LargeChemicalReactorWorkableHandler extends MultiblockRecipeLogic {
 
         public LargeChemicalReactorWorkableHandler(RecipeMapMultiblockController tileEntity) {
@@ -178,18 +175,32 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
         }
 
         @Override
-        public long getMaxVoltage() {
+        protected int[] overclockRecipe(RecipePropertyStorage propertyStorage, int recipeEUt, boolean negativeEU, long maxVoltage, int duration, int maxOverclocks) {
             int coilTier = ((MetaTileEntityLargeChemicalReactor) metaTileEntity).getCoilTier();
             if (coilTier == -1)
-                return 0;
+                return super.overclockRecipe(propertyStorage, recipeEUt, negativeEU, maxVoltage, duration, maxOverclocks);
 
-            // for GTValues.HT = true, allow any voltage with the best coil
-            long maxVoltage = super.getMaxVoltage();
-            if (GTValues.HT && coilTier == BlockWireCoil.CoilType.TRITANIUM.ordinal())
-                return maxVoltage;
+            return lcrOverclockingLogic(recipeEUt * (negativeEU ? -1 : 1),
+                    maxVoltage,
+                    duration,
+                    maxOverclocks,
+                    coilTier
+            );
+        }
 
-            // coil tier is equal to the maximum allowed voltage, + 1 to avoid ULV
-            return Math.min(maxVoltage, GTValues.V[coilTier + 1]);
+        @Nonnull
+        public static int[] lcrOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, int maxOverclocks, int coilTier) {
+            // perfect overclock until the voltage reaches the coil limit, skip cupronickel since LV cannot OC
+            if (coilTier > 0) {
+                // use the normal overclock logic to do perfect OCs up to the coil tier voltage, +1 to avoid ULV
+                int[] overclock = standardOverclockingLogic(recipeEUt, GTValues.V[coilTier + 1], recipeDuration, PERFECT_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER, maxOverclocks);
+
+                // overclock normally as much as possible after perfects are exhausted
+                return standardOverclockingLogic(overclock[0], maximumVoltage, overclock[1], STANDARD_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER, maxOverclocks);
+            }
+
+            // no perfects are performed, do normal overclocking
+            return standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, STANDARD_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER, maxOverclocks);
         }
     }
 }

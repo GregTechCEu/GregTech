@@ -11,6 +11,7 @@ import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
+import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
@@ -445,7 +446,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * performs the actual overclocking of voltage and duration
+     * determines the maximum amount of overclocks for the recipe
      *
      * @param recipe the recipe to overclock
      * @return an int array of {OverclockedEUt, OverclockedDuration}
@@ -457,15 +458,35 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * actually runs the overclocking logic
+     * converts the recipe's values into ones used for overclocking
      * @param recipe the recipe to overclock
      * @param maxOverclocks the maximum amount of overclocks to perform
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
     protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
-        return standardOverclockingLogic(recipe.getEUt() * (negativeEU ? -1 : 1),
+        return overclockRecipe(recipe.getRecipePropertyStorage(),
+                recipe.getEUt(),
+                negativeEU,
                 getMaxVoltage(),
                 recipe.getDuration(),
+                maxOverclocks
+        );
+    }
+
+    /**
+     * actually runs the overclocking logic
+     * @param propertyStorage the recipe's property storage
+     * @param recipeEUt the EUt of the recipe
+     * @param negativeEU whether the EU is negative or not
+     * @param maxVoltage the maximum voltage the recipe is allowed to be run at
+     * @param duration the duration of the recipe
+     * @param maxOverclocks the maximum amount of overclocks to perform
+     * @return an int array of {OverclockedEUt, OverclockedDuration}
+     */
+    protected int[] overclockRecipe(RecipePropertyStorage propertyStorage, int recipeEUt, boolean negativeEU, long maxVoltage, int duration, int maxOverclocks) {
+        return standardOverclockingLogic(recipeEUt * (negativeEU ? -1 : 1),
+                maxVoltage,
+                duration,
                 getOverclockingDurationDivisor(),
                 getOverclockingVoltageMultiplier(),
                 maxOverclocks
