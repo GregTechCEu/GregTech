@@ -15,42 +15,42 @@ public class PlatGroupMetalsRecipes {
         // Platinum Group Sludge Production
         CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
                 .input(crushedPurified, Chalcopyrite)
-                .fluidInputs(NitricAcid.getFluid(1000))
+                .fluidInputs(NitricAcid.getFluid(100))
                 .output(dust, PlatinumGroupSludge, 2)
                 .fluidOutputs(SulfuricCopperSolution.getFluid(1000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
                 .input(crushedPurified, Chalcocite)
-                .fluidInputs(NitricAcid.getFluid(1000))
+                .fluidInputs(NitricAcid.getFluid(100))
                 .output(dust, PlatinumGroupSludge, 2)
                 .fluidOutputs(SulfuricCopperSolution.getFluid(1000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
                 .input(crushedPurified, Bornite)
-                .fluidInputs(NitricAcid.getFluid(1000))
+                .fluidInputs(NitricAcid.getFluid(100))
                 .output(dust, PlatinumGroupSludge, 2)
                 .fluidOutputs(SulfuricCopperSolution.getFluid(1000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
                 .input(crushedPurified, Tetrahedrite)
-                .fluidInputs(NitricAcid.getFluid(1000))
+                .fluidInputs(NitricAcid.getFluid(100))
                 .output(dust, PlatinumGroupSludge, 2)
                 .fluidOutputs(SulfuricCopperSolution.getFluid(1000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
                 .input(crushedPurified, Pentlandite)
-                .fluidInputs(NitricAcid.getFluid(1000))
+                .fluidInputs(NitricAcid.getFluid(100))
                 .output(dust, PlatinumGroupSludge, 2)
                 .fluidOutputs(SulfuricNickelSolution.getFluid(1000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
                 .input(crushedPurified, Cooperite)
-                .fluidInputs(NitricAcid.getFluid(1000))
+                .fluidInputs(NitricAcid.getFluid(100))
                 .output(dust, PlatinumGroupSludge, 4)
                 .fluidOutputs(SulfuricNickelSolution.getFluid(1000))
                 .buildAndRegister();
