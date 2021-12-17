@@ -2191,8 +2191,6 @@ tile.wire_coil.tooltip_pyro=§aPyrolyse Oven§7:
 tile.wire_coil.tooltip_speed_pyro=  Processing Speed: §e%s%%§7
 tile.wire_coil.tooltip_cracking=§aCracking Unit§7:
 tile.wire_coil.tooltip_energy_cracking=  Energy Usage: §e%s%%§7
-tile.wire_coil.tooltip_reactor=§aLarge Chemical Reactor§7:
-tile.wire_coil.tooltip_energy_reactor=  Max Perfect Overclock Tier: §e%s§7
 
 tile.wire_coil.cupronickel.name=Cupronickel Coil Block
 tile.wire_coil.kanthal.name=Kanthal Coil Block
@@ -3665,7 +3663,6 @@ gregtech.machine.coke_oven.name=Coke Oven
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
 gregtech.machine.coke_oven_hatch.tooltip=Allows automation access to coke oven. Must be centered on coke oven side.
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
-gregtech.machine.large_chemical_reactor.tooltip.1=§aMaximum lossless OC tier§7 is equal to the coil tier.
 
 
 
@@ -4092,8 +4089,6 @@ gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
-
-gregtech.multiblock.large_chemical_reactor.voltage_tier=Perfect OC Limit: %s
 
 gregtech.command.usage=Usage: /gregtech <worldgen/util>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
