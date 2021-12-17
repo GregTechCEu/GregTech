@@ -38,6 +38,7 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
         this.tier = tier;
         this.SLOT = slot;
         if (ArmorUtils.SIDE.isClient() && this.isNeedDrawHUD()) {
+            //noinspection NewExpressionSideOnly
             HUD = new ArmorUtils.ModularHUD();
         }
     }

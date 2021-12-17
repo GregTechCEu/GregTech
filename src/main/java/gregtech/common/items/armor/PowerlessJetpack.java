@@ -1,5 +1,6 @@
 package gregtech.common.items.armor;
 
+import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorMetaItem.ArmorMetaValueItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.items.armor.IArmorLogic;
@@ -17,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -211,7 +213,21 @@ public class PowerlessJetpack implements IArmorLogic, IJetpack {
         return null;
     }
 
-    public static class Behaviour implements IItemDurabilityManager, IItemCapabilityProvider, IItemBehaviour {
+    public ActionResult<ItemStack> onRightClick(World world, EntityPlayer player, EnumHand hand) {
+        if (player.getHeldItem(hand).getItem() instanceof ArmorMetaItem) {
+            ItemStack armor = player.getHeldItem(hand);
+            if (armor.getItem() instanceof ArmorMetaItem && player.inventory.armorInventory.get(getEquipmentSlot(player.getHeldItem(hand)).getIndex()).isEmpty() && !player.isSneaking()) {
+                player.inventory.armorInventory.set(getEquipmentSlot(player.getHeldItem(hand)).getIndex(), armor.copy());
+                player.setHeldItem(hand, ItemStack.EMPTY);
+                player.playSound(new SoundEvent(new ResourceLocation("item.armor.equip_generic")), 1.0F, 1.0F);
+                return ActionResult.newResult(EnumActionResult.SUCCESS, armor);
+            }
+        }
+
+        return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
+    }
+
+    public class Behaviour implements IItemDurabilityManager, IItemCapabilityProvider, IItemBehaviour {
 
         public final int maxCapacity;
 
@@ -268,6 +284,11 @@ public class PowerlessJetpack implements IArmorLogic, IJetpack {
                     lines.add(I18n.format("metaarmor.hud.hover_mode", status));
                 }
             }
+        }
+
+        @Override
+        public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+            return onRightClick(world, player, hand);
         }
     }
 }
