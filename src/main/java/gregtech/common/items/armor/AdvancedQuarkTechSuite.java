@@ -97,7 +97,8 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
 
             if (inventoryIndexMap != null && !inventoryIndexMap.isEmpty()) {
                 // Charge all inventory slots
-                for (Pair<NonNullList<ItemStack>, List<Integer>> inventoryMap : inventoryIndexMap) {
+                for (int i = 0; i < inventoryIndexMap.size(); i++) {
+                    Pair<NonNullList<ItemStack>, List<Integer>> inventoryMap = inventoryIndexMap.get(i);
                     Iterator<Integer> inventoryIterator = inventoryMap.getValue().iterator();
                     while (inventoryIterator.hasNext()) {
                         int slot = inventoryIterator.next();
