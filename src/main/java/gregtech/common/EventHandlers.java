@@ -162,19 +162,21 @@ public class EventHandlers {
             if (!jet.isEmpty() && jet.getItem() instanceof IJetpack) {
                 event.setDamageMultiplier(1 / Math.max(0.00001f, ((IJetpack) jet.getItem()).getFallDamageReduction()));
             }
-            ItemStack armorPiece = jet.isEmpty() ? armor : jet;
+            ItemStack armorPiece = armor.isEmpty() ? jet : armor;
 
             if (armorPiece.isEmpty())
                 return;
 
             ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) armorPiece.getItem()).getItem(armorPiece);
             if (armorMetaValue.getArmorLogic() instanceof ArmorLogicSuite) {
-                ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
-                IElectricItem item = armorPiece.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                if (item == null) return;
-                int energyCost = (armorLogic.getEnergyPerUse() * Math.round(event.getDistance()));
-                if (item.getCharge() >= energyCost)
-                    item.discharge(energyCost, item.getTier(), true, false, false);
+                if (entity.fallDistance >= 3.2f) {
+                    ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
+                    IElectricItem item = armorPiece.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                    if (item == null) return;
+                    int energyCost = armorLogic.getEnergyPerUse();
+                    if (item.getCharge() >= energyCost)
+                        item.discharge(energyCost, item.getTier(), true, false, false);
+                }
             }
         }
     }

@@ -127,17 +127,6 @@ public class NanoMuscleSuite extends ArmorLogicSuite {
         return 1.0D;
     }
 
-//    @Override
-//    public int getArmorDisplay(EntityPlayer player, @Nonnull ItemStack armor, int slot) {
-//        if (slot == EntityEquipmentSlot.HEAD.getSlotIndex())
-//            return 3;
-//        if (slot == EntityEquipmentSlot.CHEST.getSlotIndex())
-//            return 7;
-//        if (slot == EntityEquipmentSlot.LEGS.getSlotIndex())
-//            return 5;
-//        return 3;
-//    }
-
     @SideOnly(Side.CLIENT)
     public boolean isNeedDrawHUD() {
         return true;

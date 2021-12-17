@@ -213,11 +213,6 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
     }
 
     @Override
-    public double getDamageAbsorption() {
-        return 1.0D;
-    }
-
-    @Override
     public boolean canFly(@Nonnull ItemStack stack) {
         NBTTagCompound data = stack.getTagCompound();
         if (data == null)
