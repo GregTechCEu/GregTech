@@ -37,16 +37,22 @@ import java.util.List;
 
 public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController implements IMachineHatchMultiblock {
 
+    private final int tier;
     private boolean machineChanged;
 
-    public MetaTileEntityProcessingArray(ResourceLocation metaTileEntityId) {
+    public MetaTileEntityProcessingArray(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, null);
+        this.tier = tier;
         this.recipeMapWorkable = new ProcessingArrayWorkable(this);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityProcessingArray(metaTileEntityId);
+        return new MetaTileEntityProcessingArray(metaTileEntityId, tier);
+    }
+
+    public int getMachineLimit() {
+        return tier == 0 ? 16 : 64;
     }
 
     @Override
@@ -57,19 +63,23 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 .aisle("XXX", "XSX", "XXX")
                 .where('L', states(getCasingState()))
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()).setMinGlobalLimited(11).or(autoAbilities())
+                .where('X', states(getCasingState()).setMinGlobalLimited(tier == 0 ? 11 : 4).or(autoAbilities())
                         .or(abilities(MultiblockAbility.MACHINE_HATCH).setExactLimit(1)))
                 .where('#', air())
                 .build();
     }
 
     public IBlockState getCasingState() {
-        return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.TUNGSTENSTEEL_ROBUST);
+        return tier == 0
+                ? MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.TUNGSTENSTEEL_ROBUST)
+                : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSG_ROBUST);
     }
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        return Textures.ROBUST_TUNGSTENSTEEL_CASING;
+        return tier == 0
+                ? Textures.ROBUST_TUNGSTENSTEEL_CASING
+                : Textures.ROBUST_HSSG_CASING;
     }
 
     @Override
@@ -216,7 +226,10 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
             this.machineVoltage = GTValues.V[this.machineTier];
 
-            this.currentMachineStack = machine;
+            this.currentMachineStack = machine.copy();
+            if (currentMachineStack.getCount() > getMachineLimit()) {
+                currentMachineStack.setCount(getMachineLimit());
+            }
         }
 
         @Override
@@ -226,7 +239,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
         @Override
         public int getParallelLimit() {
-            return (currentMachineStack == null || currentMachineStack.isEmpty()) ? 64 : Math.min(currentMachineStack.getCount(), 64);
+            return (currentMachineStack == null || currentMachineStack.isEmpty()) ? getMachineLimit() : Math.min(currentMachineStack.getCount(), getMachineLimit());
         }
 
         @Override

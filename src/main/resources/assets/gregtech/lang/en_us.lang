@@ -64,7 +64,8 @@ gregtech.multiblock.large_chemical_reactor.description=The Large Chemical Reacto
 gregtech.multiblock.primitive_water_pump.description=The Primitive Water Pump is a pre-Steam Era multiblock that collects water once per second, depending on the Biome it is in. It can use a Pump, ULV, or LV Output Hatch, increasing the amount of water per tier. Follows the formula: Biome Coefficient * Hatch Multiplier.
 gregtech.multiblock.primitive_water_pump.extra1=Biome Coefficient:/n  Ocean, River: 1000 L/s/n  Swamp: 800 L/s/n  Jungle: 350 L/s/n  Snowy: 300 L/s/n  Plains, Forest: 250 L/s/n  Taiga: 175 L/s/n  Beach: 170 L/s/n  Other: 100 L/s
 gregtech.multiblock.primitive_water_pump.extra2=Hatch Multipliers:/n  Pump Hatch: 1x/n  ULV Output Hatch: 2x/n  LV Output Hatch: 4x
-gregtech.multiblock.processing_array.description=The Processing Array combines up to 64 single block machine(s) in a single multiblock, effectively easing automation.
+gregtech.multiblock.processing_array.description=The Processing Array combines up to 16 single block machine(s) in a single multiblock, effectively easing automation.
+gregtech.multiblock.advanced_processing_array.description=The Processing Array combines up to 64 single block machine(s) in a single multiblock, effectively easing automation.
 
 item.invalid.name=Invalid item
 fluid.empty=Empty
@@ -2242,6 +2243,7 @@ tile.metal_casing.stainless_clean.name=Clean Stainless Steel Casing
 tile.metal_casing.titanium_stable.name=Stable Titanium Machine Casing
 tile.metal_casing.tungstensteel_robust.name=Robust Tungstensteel Machine Casing
 tile.metal_casing.ptfe_inert.name=Chemically Inert PTFE Machine Casing
+tile.metal_casing.hssg_robust.name=Robust HSS-G Machine Casing
 
 # Machine casing blocks
 tile.machine_casing.ultra_low_voltage.name=ULV Machine Casing
@@ -3662,6 +3664,7 @@ gregtech.machine.cracker.name=Cracking Unit
 gregtech.machine.cracker.tooltip.1=Every coil after §aCupronickel§7 reduces energy usage by §a5%%§7.
 gregtech.machine.coke_oven.name=Coke Oven
 gregtech.machine.processing_array.name=Processing Array
+gregtech.machine.advanced_processing_array.name=Advanced Processing Array
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
 gregtech.machine.coke_oven_hatch.tooltip=Allows automation access to coke oven. Must be centered on coke oven side.
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor

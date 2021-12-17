@@ -185,6 +185,7 @@ public class MetaTileEntities {
     public static MetaTileEntityLargeMiner LARGE_MINER;
     public static MetaTileEntityLargeMiner ADVANCED_LARGE_MINER;
     public static MetaTileEntityProcessingArray PROCESSING_ARRAY;
+    public static MetaTileEntityProcessingArray ADVANCED_PROCESSING_ARRAY;
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
     public static MetaTileEntityTank WOODEN_TANK;
@@ -493,7 +494,8 @@ public class MetaTileEntities {
 
         CENTRAL_MONITOR = registerMetaTileEntity(1028, new MetaTileEntityCentralMonitor(gregtechId("central_monitor")));
 
-        PROCESSING_ARRAY = registerMetaTileEntity(1029, new MetaTileEntityProcessingArray(gregtechId("processing_array")));
+        PROCESSING_ARRAY = registerMetaTileEntity(1029, new MetaTileEntityProcessingArray(gregtechId("processing_array"), 0));
+        ADVANCED_PROCESSING_ARRAY = registerMetaTileEntity(1030, new MetaTileEntityProcessingArray(gregtechId("advanced_processing_array"), 1));
 
         // MISC MTE's START: IDs 1150-2000
 

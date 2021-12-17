@@ -16,6 +16,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityProcessingArray;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -86,6 +87,13 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
         return false;
     }
 
+    private int getMachineLimit() {
+        if (getController() instanceof MetaTileEntityProcessingArray) {
+            return ((MetaTileEntityProcessingArray) getController()).getMachineLimit();
+        }
+        return 64;
+    }
+
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
@@ -141,6 +149,11 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
             if (metaTileEntity instanceof IMachineHatchMultiblock && metaTileEntity.isValid()) {
                 ((IMachineHatchMultiblock) metaTileEntity).notifyMachineChanged();
             }
+        }
+
+        @Override
+        protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
+            return MetaTileEntityMachineHatch.this.getMachineLimit();
         }
     }
 }
