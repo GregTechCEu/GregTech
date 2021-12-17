@@ -35,7 +35,7 @@ public class RecipeMaps {
                 if (recipeBuilder.getFluidInputs().isEmpty()) {
                     recipeBuilder.fluidInputs(Materials.Oxygen.getFluid(recipeBuilder.duration));
                     for (Material material : new Material[]{Materials.Argon, Materials.Nitrogen}) {
-                        int plasmaAmount = (int) Math.max(1L, recipeBuilder.duration / (material.getAverageMass() * 16L));
+                        int plasmaAmount = (int) Math.max(1L, recipeBuilder.duration / (material.getMass() * 16L));
                         RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
                                 .inputsIngredients(recipeBuilder.getInputs())
                                 .outputs(recipeBuilder.getOutputs())

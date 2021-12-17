@@ -502,6 +502,10 @@ public class Recipe {
         return recipePropertyStorage.getSize();
     }
 
+    public RecipePropertyStorage getRecipePropertyStorage() {
+        return recipePropertyStorage;
+    }
+
     ///////////////////////////////////////////////////////////
     //                   Chanced Output                      //
     ///////////////////////////////////////////////////////////

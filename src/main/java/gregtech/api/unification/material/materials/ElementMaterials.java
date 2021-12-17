@@ -105,7 +105,6 @@ public class ElementMaterials {
                 .dust()
                 .color(0xD2FAD2)
                 .element(Elements.B)
-                .flags(GENERATE_ROD)
                 .build();
 
         Bromine = new Material.Builder(14, "bromine")
@@ -717,7 +716,7 @@ public class ElementMaterials {
         Samarium = new Material.Builder(95, "samarium")
                 .ingot().fluid()
                 .color(0xFFFFCC).iconSet(METALLIC)
-                .flags(STD_METAL)
+                .flags(STD_METAL, GENERATE_LONG_ROD)
                 .element(Elements.Sm)
                 .blastTemp(5400, GasTier.HIGH, VA[EV], 1500)
                 .build();
