@@ -62,21 +62,6 @@ public class CTRecipeBuilder {
     }
 
     @ZenMethod
-    public CTRecipeBuilder input(String oredict, int count) {
-        return inputs(CountableIngredient.from(oredict, count));
-    }
-
-    @ZenMethod
-    public CTRecipeBuilder input(OrePrefix orePrefix, Material material) {
-        return inputs(CountableIngredient.from(orePrefix, material, 1));
-    }
-
-    @ZenMethod
-    public CTRecipeBuilder input(OrePrefix orePrefix, Material material, int count) {
-        return inputs(CountableIngredient.from(orePrefix, material, count));
-    }
-
-    @ZenMethod
     public CTRecipeBuilder notConsumable(IIngredient... ingredients) {
         this.backingBuilder.inputsIngredients(Arrays.stream(ingredients)
                 .map(s -> new CountableIngredient(new CraftTweakerIngredientWrapper(s), 0))
