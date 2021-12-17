@@ -8,8 +8,6 @@ import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.ore.OrePrefix;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -53,27 +51,6 @@ public class CTRecipeBuilder {
                 .map(s -> new CountableIngredient(new CraftTweakerIngredientWrapper(s), s.getAmount()))
                 .collect(Collectors.toList()));
         return this;
-    }
-
-    @ZenMethod
-    public CTRecipeBuilder inputs(CountableIngredient... inputs) {
-        this.backingBuilder.inputs(inputs);
-        return this;
-    }
-
-    @ZenMethod
-    public CTRecipeBuilder input(String oredict, int count) {
-        return inputs(CountableIngredient.from(oredict, count));
-    }
-
-    @ZenMethod
-    public CTRecipeBuilder input(OrePrefix orePrefix, Material material) {
-        return inputs(CountableIngredient.from(orePrefix, material, 1));
-    }
-
-    @ZenMethod
-    public CTRecipeBuilder input(OrePrefix orePrefix, Material material, int count) {
-        return inputs(CountableIngredient.from(orePrefix, material, count));
     }
 
     @ZenMethod
