@@ -34,6 +34,10 @@ public class ParallelLogic {
         // Find the maximum number of recipes that can be performed from the fluids in the fluid input inventories
         int fluidMultiplier = getMaxRatioFluid(fluidStacks, recipe, parallelAmount);
 
+        if (itemMultiplier == Integer.MAX_VALUE && fluidMultiplier == Integer.MAX_VALUE) {
+            return 0;
+        }
+
         // Find the maximum number of recipes that can be performed from all available inputs
         return Math.min(itemMultiplier, fluidMultiplier);
     }
