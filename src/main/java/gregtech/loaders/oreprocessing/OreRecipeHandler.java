@@ -298,7 +298,7 @@ public class OreRecipeHandler {
                 .duration((int) (material.getMass() * 4)).EUt(24);
 
         if (byproduct.hasProperty(PropertyKey.DUST)) {
-            builder.outputs(OreDictUnifier.get(OrePrefix.dustTiny, byproduct, 3));
+            builder.outputs(OreDictUnifier.get(OrePrefix.dustTiny, byproduct));
         } else {
             builder.fluidOutputs(byproduct.getFluid(GTValues.L / 9));
         }
@@ -346,7 +346,7 @@ public class OreRecipeHandler {
 
         RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
                 .input(purePrefix, material)
-                .outputs(dustStack, OreDictUnifier.get(OrePrefix.dustTiny, byproductMaterial, 3))
+                .outputs(dustStack, OreDictUnifier.get(OrePrefix.dustTiny, byproductMaterial))
                 .duration((int) (material.getMass() * 4))
                 .EUt(5)
                 .buildAndRegister();
