@@ -87,6 +87,9 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
     }
 
     public void addInfo(ItemStack itemStack, List<String> lines) {
+        int armor = (int) Math.round(20.0F * this.getAbsorption(itemStack) * this.getDamageAbsorption());
+        if (armor > 0)
+            lines.add(I18n.format("attribute.modifier.plus.0", armor, I18n.format("attribute.name.generic.armor")));
     }
 
     public ActionResult<ItemStack> onRightClick(World world, EntityPlayer player, EnumHand hand) {
