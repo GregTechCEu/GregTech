@@ -188,11 +188,6 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
         if (!cont.canUse(energyPerUse)) return;
         NBTTagCompound data = item.getTagCompound();
         if (data != null) {
-            if (data.hasKey("canShare")) {
-                String status = data.getBoolean("canShare") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
-                this.HUD.newString(I18n.format("mataarmor.hud.supply_mode", I18n.format(status)));
-            }
-
             if (data.hasKey("flyMode")) {
                 String status = data.getBoolean("flyMode") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
                 this.HUD.newString(I18n.format("metaarmor.hud.fly_mode", I18n.format(status)));
