@@ -228,7 +228,7 @@ public class MiscRecipeLoader {
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
                 .input(circuit, Ultimate)
                 .input(plateDense, RhodiumPlatedPalladium, 2)
-                .inputs(ENERGY_LAPOTRONIC_CLUSTER.getStackForm())
+                .inputs(ENERGY_LAPOTRONIC_ORB_CLUSTER.getStackForm())
                 .inputs(FIELD_GENERATOR_LUV.getStackForm(2))
                 .inputs(ELECTRIC_MOTOR_LUV.getStackForm(2))
                 .input(screw, HSSS, 8)
