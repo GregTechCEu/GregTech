@@ -16,7 +16,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
-import gregtech.common.metatileentities.multi.electric.MetaTileEntityProcessingArray;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -88,8 +87,8 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
     }
 
     private int getMachineLimit() {
-        if (getController() instanceof MetaTileEntityProcessingArray) {
-            return ((MetaTileEntityProcessingArray) getController()).getMachineLimit();
+        if (getController() instanceof IMachineHatchMultiblock) {
+            return ((IMachineHatchMultiblock) getController()).getMachineLimit();
         }
         return 64;
     }

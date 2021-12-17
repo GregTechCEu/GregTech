@@ -51,6 +51,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         return new MetaTileEntityProcessingArray(metaTileEntityId, tier);
     }
 
+    @Override
     public int getMachineLimit() {
         return tier == 0 ? 16 : 64;
     }

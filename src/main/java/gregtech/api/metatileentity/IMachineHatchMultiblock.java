@@ -9,5 +9,9 @@ public interface IMachineHatchMultiblock {
         return new String[0];
     }
 
+    default int getMachineLimit() {
+        return 64;
+    }
+
     void notifyMachineChanged();
 }
