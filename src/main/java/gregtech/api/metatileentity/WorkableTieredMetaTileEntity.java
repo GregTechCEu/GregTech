@@ -137,7 +137,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
                     //if we didn't have a list of recipes with any fluids, obtain it from first tank with fluid
                     matchingRecipes = new HashSet<>(recipeMap.getRecipesForFluid(fluidInTank));
                 } else {
-                    //else, remove recipes that don't contain fluid in this tank from list
+                    //retain recipes which use the fluid in this tank
                     matchingRecipes.retainAll(recipeMap.getRecipesForFluid(fluidInTank));
                 }
             }

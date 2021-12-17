@@ -250,7 +250,7 @@ public class ParallelLogic {
                     available = inventoryEntry.getValue();
                     if (available > needed) {
                         inventoryEntry.setValue(available - needed);
-                        available -= needed;
+                        needed -= available;
                         break;
                     } else {
                         inventoryEntry.setValue(0);
@@ -321,7 +321,7 @@ public class ParallelLogic {
                     available = inputFluid.getValue();
                     if (available > needed) {
                         inputFluid.setValue(available - needed);
-                        available -= needed;
+                        needed -= available;
                         break;
                     } else {
                         inputFluid.setValue(0);
