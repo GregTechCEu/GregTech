@@ -135,14 +135,16 @@ public class BlockPattern {
                         BlockPos pos = setActualRelativeOffset(x, y, z, facing).add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
                         worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
                         TileEntity tileEntity = worldState.getTileEntity();
-                        if (tileEntity instanceof MetaTileEntityHolder) {
-                            if (((MetaTileEntityHolder) tileEntity).isValid()) {
-                                cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), tileEntity, predicate));
+                        if (predicate != TraceabilityPredicate.ANY) {
+                            if (tileEntity instanceof MetaTileEntityHolder) {
+                                if (((MetaTileEntityHolder) tileEntity).isValid()) {
+                                    cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), tileEntity, predicate));
+                                } else {
+                                    cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), null, predicate));
+                                }
                             } else {
-                                cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), null, predicate));
+                                cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), tileEntity, predicate));
                             }
-                        } else {
-                            cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), tileEntity, predicate));
                         }
                         if (!predicate.test(worldState)) {
                             if (findFirstAisle) {

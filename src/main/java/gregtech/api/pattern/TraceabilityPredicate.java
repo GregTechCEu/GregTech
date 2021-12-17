@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 public class TraceabilityPredicate {
 
     // Allow any block.
-    public static Supplier<TraceabilityPredicate> ANY = () -> new TraceabilityPredicate((state)->true);
+    public static TraceabilityPredicate ANY =new TraceabilityPredicate((state)->true);
     // Allow the air block.
-    public static Supplier<TraceabilityPredicate> AIR = () -> new TraceabilityPredicate(blockWorldState -> blockWorldState.getBlockState().getBlock().isAir(blockWorldState.getBlockState(), blockWorldState.getWorld(), blockWorldState.getPos()));
+    public static TraceabilityPredicate AIR = new TraceabilityPredicate(blockWorldState -> blockWorldState.getBlockState().getBlock().isAir(blockWorldState.getBlockState(), blockWorldState.getWorld(), blockWorldState.getPos()));
     // Allow all heating coils, and require them to have the same type.
     public static Supplier<TraceabilityPredicate> HEATING_COILS = () -> new TraceabilityPredicate(blockWorldState -> {
         IBlockState blockState = blockWorldState.getBlockState();
@@ -75,9 +75,7 @@ public class TraceabilityPredicate {
     }
 
     public TraceabilityPredicate sort() {
-        limited.sort((a, b)->{
-            return ((a.minLayerCount + 1) * 100 + a.minGlobalCount) - ((b.minLayerCount + 1) * 100 + b.minGlobalCount);
-        });
+        limited.sort(Comparator.comparingInt(a -> ((a.minLayerCount + 1) * 100 + a.minGlobalCount)));
         return this;
     }
 
