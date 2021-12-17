@@ -166,25 +166,33 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                 fluidsToRemove.clear();
             }
             if (dirtyStacks.size() > 0) {
-                for(Map.Entry<FluidStack, Map<BlockPos, Integer>> entry : dirtyStacks.entrySet()) {
+                for (Map.Entry<FluidStack, Map<BlockPos, Integer>> entry : dirtyStacks.entrySet()) {
                     FluidStack dirtyStack = entry.getKey();
                     if (dirtyStack.amount <= 0) {
                         continue;
                     }
                     Map<BlockPos, Integer> subMap = entry.getValue();
+                    Set<BlockPos> didHandle = new HashSet<>();
                     Iterator<Map.Entry<BlockPos, Integer>> iterator = subMap.entrySet().iterator();
                     while (iterator.hasNext()) {
                         Map.Entry<BlockPos, Integer> entry2 = iterator.next();
+                        if (didHandle.contains(entry2.getKey())) {
+                            iterator.remove();
+                            continue;
+                        }
                         FluidNetWalker walker = FluidNetWalker.getPipesForFluid(getWorldData(), entry2.getKey(), dirtyStack, true);
                         List<TileEntityFluidPipe> pipes = walker.getPipes();
                         if (pipes.size() == 0) {
                             continue;
                         }
-                        for(TileEntityFluidPipe pipe : pipes) {
-                            subMap.remove(pipe.getPos());
-                        }
                         long amount = walker.getCount();
-                        amount += entry2.getValue();
+                        for (TileEntityFluidPipe pipe : pipes) {
+                            didHandle.add(pipe.getPos());
+                            Integer a = subMap.get(pipe.getPos());
+                            if (a != null)
+                                amount += a;
+                        }
+
                         int round = 0;
                         while (amount > 0 && pipes.size() > 0) {
                             int c = (int) (amount / pipes.size());
@@ -201,7 +209,15 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                                 FluidStack stack = dirtyStack.copy();
                                 stack.amount = count;
                                 int channel = pipe.findChannel(stack);
-                                pipe.setContainingFluid(null, channel, false);
+                                if (channel < 0) {
+                                    pipeIterator.remove();
+                                    continue;
+                                }
+                                FluidStack currentStack = pipe.getContainedFluid(channel);
+                                if (currentStack != null && !currentStack.isFluidEqual(dirtyStack)) {
+                                    pipeIterator.remove();
+                                    continue;
+                                }
                                 int set = pipe.setContainingFluid(stack, channel, round > 0);
                                 if (count > set)
                                     pipeIterator.remove();

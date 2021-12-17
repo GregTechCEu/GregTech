@@ -201,7 +201,7 @@ public class MultiblockRecipeLogicTest {
             }
 
             @Override
-            protected long getMaxVoltage() {
+            public long getMaxVoltage() {
                 return 32;
             }
 
@@ -457,7 +457,7 @@ public class MultiblockRecipeLogicTest {
             }
 
             @Override
-            protected long getMaxVoltage() {
+            public long getMaxVoltage() {
                 return 32;
             }
 

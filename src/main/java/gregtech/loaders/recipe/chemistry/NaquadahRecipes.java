@@ -60,7 +60,7 @@ public class NaquadahRecipes {
 
         CENTRIFUGE_RECIPES.recipeBuilder().EUt(VA[EV]).duration(400)
                 .fluidInputs(ImpureEnrichedNaquadahSolution.getFluid(2000))
-                .output(dust, IndiumPhosphide)
+                .output(dust, TriniumSulfide)
                 .output(dust, AntimonyTrifluoride, 2)
                 .fluidOutputs(EnrichedNaquadahSolution.getFluid(1000))
                 .buildAndRegister();
@@ -98,7 +98,7 @@ public class NaquadahRecipes {
 
         CENTRIFUGE_RECIPES.recipeBuilder().EUt(VA[EV]).duration(400)
                 .fluidInputs(ImpureNaquadriaSolution.getFluid(2000))
-                .output(dust, TriniumSulfide)
+                .output(dust, IndiumPhosphide)
                 .output(dust, AntimonyTrifluoride, 2)
                 .fluidOutputs(NaquadriaSolution.getFluid(1000))
                 .buildAndRegister();
@@ -134,7 +134,7 @@ public class NaquadahRecipes {
 
         // TRINIUM
 
-        BLAST_RECIPES.recipeBuilder().duration(750).EUt(VA[LuV]).blastFurnaceTemp(8600)
+        BLAST_RECIPES.recipeBuilder().duration(750).EUt(VA[LuV]).blastFurnaceTemp(Trinium.getBlastTemperature())
                 .input(dust, TriniumSulfide, 2)
                 .input(dust, Zinc)
                 .output(ingotHot, Trinium)

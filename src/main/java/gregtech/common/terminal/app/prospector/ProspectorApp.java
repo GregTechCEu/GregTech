@@ -38,7 +38,7 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
 
     @Override
     public AbstractApplication initApp() {
-        int chunkRadius = getAppTier() + 1;
+        int chunkRadius = getAppTier() + 2;
         int offset = (232 - 32 * 7 + 16) / 2;
         background = new ColorRectTexture(0xA0000000);
         this.addWidget(new ImageWidget(0, 0, 333, 232, background));

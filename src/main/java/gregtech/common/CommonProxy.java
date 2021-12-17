@@ -91,7 +91,6 @@ public class CommonProxy {
         registry.register(MULTIBLOCK_CASING);
         registry.register(TRANSPARENT_CASING);
         registry.register(WIRE_COIL);
-        registry.register(WIRE_COIL2);
         registry.register(FUSION_CASING);
         registry.register(WARNING_SIGN);
         registry.register(GRANITE);
@@ -141,7 +140,6 @@ public class CommonProxy {
         registry.register(createItemBlock(MULTIBLOCK_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(TRANSPARENT_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(WIRE_COIL, VariantItemBlock::new));
-        registry.register(createItemBlock(WIRE_COIL2, VariantItemBlock::new));
         registry.register(createItemBlock(FUSION_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(WARNING_SIGN, VariantItemBlock::new));
         registry.register(createItemBlock(GRANITE, StoneItemBlock::new));
@@ -179,10 +177,6 @@ public class CommonProxy {
         for (BlockWireCoil.CoilType values : BlockWireCoil.CoilType.values()) {
             TemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
                     String.format("tile.wire_coil.%s.name", values.getName()));
-        }
-        for (BlockWireCoil2.CoilType2 values : BlockWireCoil2.CoilType2.values()) {
-            TemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
-                    String.format("tile.wire_coil2.%s.name", values.getName()));
         }
 
         //Registers Fusion tiers for the FusionEUToStartProperty

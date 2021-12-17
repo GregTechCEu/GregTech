@@ -15,14 +15,12 @@ import java.util.Iterator;
 
 public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
 
-    private final EnumFacing facing;
     private final TileEntityFluidPipe pipe;
     private final FluidTank[] tanks;
     private IFluidTankProperties[] properties;
 
-    public PipeTankList(TileEntityFluidPipe pipe, EnumFacing facing, FluidTank... fluidTanks) {
+    public PipeTankList(TileEntityFluidPipe pipe, FluidTank... fluidTanks) {
         this.tanks = fluidTanks;
-        this.facing = facing;
         this.pipe = pipe;
     }
 
@@ -38,7 +36,7 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
     }
 
     private int findChannel(FluidStack stack) {
-        if (stack == null)
+        if (stack == null || tanks == null)
             return -1;
         int empty = -1;
         for (int i = tanks.length - 1; i >= 0; i--) {

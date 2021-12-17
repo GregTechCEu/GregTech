@@ -4,10 +4,12 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.vec.Vector3;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.ICoverable.PrimaryBoxData;
 import gregtech.api.items.toolitem.IAOEItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
@@ -36,9 +38,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
+import java.util.function.Function;
 
 @SideOnly(Side.CLIENT)
 public class ToolOverlayRenderer {
+
+    private static float rColor;
+    private static float gColor;
+    private static float bColor;
 
     public static void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
         EntityPlayer player = event.getPlayer();
@@ -81,7 +88,7 @@ public class ToolOverlayRenderer {
             }
         }
 
-        if (tileEntity != null && shouldDrawOverlayForItem(heldItem, tileEntity)) {
+        if (tileEntity != null && (shouldDrawOverlayForItem(blockState, tileEntity, heldItem) || shouldDrawOverlayForItem(blockState, tileEntity, player.getHeldItem(EnumHand.OFF_HAND)))) {
             EnumFacing facing = target.sideHit;
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -94,8 +101,15 @@ public class ToolOverlayRenderer {
                 double d4 = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double) event.getPartialTicks();
                 double d5 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) event.getPartialTicks();
                 AxisAlignedBB box = blockState.getSelectedBoundingBox(world, pos).grow(0.002D).offset(-d3, -d4, -d5);
-                RenderGlobal.drawSelectionBoundingBox(box, 0.0F, 0.0F, 0.0F, 0.4F);
-                drawOverlayLines(facing, box);
+                RenderGlobal.drawSelectionBoundingBox(box, 1, 1, 1, 0.4F);
+                rColor = gColor = bColor = 0.2f + (float) Math.sin((float) (System.currentTimeMillis() % (Math.PI * 800)) / 800) / 2;
+
+                if (tileEntity instanceof TileEntityPipeBase)
+                    drawOverlayLines(facing, box, ((TileEntityPipeBase) tileEntity)::isConnectionOpenAny);
+                else if (tileEntity instanceof MetaTileEntityHolder)
+                    drawOverlayLines(facing, box, face -> ((MetaTileEntityHolder) tileEntity).getMetaTileEntity().isSideUsed(face));
+                else
+                    drawOverlayLines(facing, box, ignored -> false);
             }
 
             GlStateManager.depthMask(true);
@@ -121,37 +135,23 @@ public class ToolOverlayRenderer {
         return true;
     }
 
-    public static boolean shouldDrawOverlayForItem(ItemStack itemStack, TileEntity tileEntity) {
+    public static boolean shouldDrawOverlayForItem(IBlockState state, TileEntity tileEntity, ItemStack itemStack) {
+        // MetaTileEntity
         if (tileEntity instanceof MetaTileEntityHolder) {
             MetaTileEntity mte = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
-            if (mte == null || !mte.canRenderMachineGrid()) return false;
+            return mte != null && mte.canRenderMachineGrid() && itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
         }
 
-        if (tileEntity instanceof TileEntityPipeBase) {
-            TileEntityPipeBase<?, ?> pipeTE = (TileEntityPipeBase<?, ?>) tileEntity;
-            Class<?> pipeClass = pipeTE.getPipeBlock().getPipeTypeClass();
-
-            // Cables/wires. Add screwdriver here if cover for wires that can use screwdriver is added.
-            if (pipeClass == Insulation.class) {
-                return itemStack.hasCapability(GregtechCapabilities.CAPABILITY_CUTTER, null) || GTUtility.isCoverBehaviorItem(itemStack);
-            }
-
-            // Pipes
-            if (pipeClass == FluidPipeType.class || pipeClass == ItemPipeType.class) {
-                return itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null) ||
-                        itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null)
-                        || GTUtility.isCoverBehaviorItem(itemStack);
-            }
+        // Pipes
+        if(state.getBlock() instanceof BlockPipe) {
+            return ((BlockPipe<?, ?, ?>) state.getBlock()).hasPipeCollisionChangingItem(tileEntity.getWorld(), tileEntity.getPos(), itemStack);
         }
-
-        // MetaTileEntities
-        if (tileEntity instanceof MetaTileEntityHolder &&
-                itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null))
-            return true;
 
         // ICoverable
-        if (tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null))
-            return itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null) || GTUtility.isCoverBehaviorItem(itemStack);
+        ICoverable coverable;
+        if ((coverable = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null)) != null) {
+            return itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null) || GTUtility.isCoverBehaviorItem(itemStack, coverable::hasAnyCover);
+        }
 
         return false;
     }
@@ -210,7 +210,7 @@ public class ToolOverlayRenderer {
         postRenderDamagedBlocks();
     }
 
-    private static void drawOverlayLines(EnumFacing facing, AxisAlignedBB box) {
+    private static void drawOverlayLines(EnumFacing facing, AxisAlignedBB box, Function<EnumFacing, Boolean> test) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(3, DefaultVertexFormats.POSITION_COLOR);
@@ -223,12 +223,18 @@ public class ToolOverlayRenderer {
         Vector3 shiftVert = new Vector3(0, 0.25, 0);
 
         Vector3 cubeCenter = new Vector3(box.getCenter());
-
-
+        
         topRight.subtract(cubeCenter);
         bottomRight.subtract(cubeCenter);
         bottomLeft.subtract(cubeCenter);
         topLeft.subtract(cubeCenter);
+
+        boolean leftBlocked;
+        boolean topBlocked;
+        boolean rightBlocked;
+        boolean bottomBlocked;
+        boolean frontBlocked = test.apply(facing);
+        boolean backBlocked = test.apply(facing.getOpposite());
 
         switch (facing) {
             case WEST: {
@@ -238,6 +244,11 @@ public class ToolOverlayRenderer {
                 topLeft.rotate(Math.PI / 2, Vector3.down);
                 shift.rotate(Math.PI / 2, Vector3.down);
                 shiftVert.rotate(Math.PI / 2, Vector3.down);
+
+                leftBlocked = test.apply(EnumFacing.NORTH);
+                topBlocked = test.apply(EnumFacing.UP);
+                rightBlocked = test.apply(EnumFacing.SOUTH);
+                bottomBlocked = test.apply(EnumFacing.DOWN);
                 break;
             }
             case EAST: {
@@ -247,6 +258,11 @@ public class ToolOverlayRenderer {
                 topLeft.rotate(-Math.PI / 2, Vector3.down);
                 shift.rotate(-Math.PI / 2, Vector3.down);
                 shiftVert.rotate(-Math.PI / 2, Vector3.down);
+
+                leftBlocked = test.apply(EnumFacing.SOUTH);
+                topBlocked = test.apply(EnumFacing.UP);
+                rightBlocked = test.apply(EnumFacing.NORTH);
+                bottomBlocked = test.apply(EnumFacing.DOWN);
                 break;
             }
             case NORTH: {
@@ -256,6 +272,11 @@ public class ToolOverlayRenderer {
                 topLeft.rotate(Math.PI, Vector3.down);
                 shift.rotate(Math.PI, Vector3.down);
                 shiftVert.rotate(Math.PI, Vector3.down);
+
+                leftBlocked = test.apply(EnumFacing.EAST);
+                topBlocked = test.apply(EnumFacing.UP);
+                rightBlocked = test.apply(EnumFacing.WEST);
+                bottomBlocked = test.apply(EnumFacing.DOWN);
                 break;
             }
             case UP: {
@@ -266,6 +287,11 @@ public class ToolOverlayRenderer {
                 topLeft.rotate(-Math.PI / 2, side);
                 shift.rotate(-Math.PI / 2, side);
                 shiftVert.rotate(-Math.PI / 2, side);
+
+                leftBlocked = test.apply(EnumFacing.WEST);
+                topBlocked = test.apply(EnumFacing.NORTH);
+                rightBlocked = test.apply(EnumFacing.EAST);
+                bottomBlocked = test.apply(EnumFacing.SOUTH);
                 break;
             }
             case DOWN: {
@@ -276,7 +302,18 @@ public class ToolOverlayRenderer {
                 topLeft.rotate(Math.PI / 2, side);
                 shift.rotate(Math.PI / 2, side);
                 shiftVert.rotate(Math.PI / 2, side);
+
+                leftBlocked = test.apply(EnumFacing.WEST);
+                topBlocked = test.apply(EnumFacing.SOUTH);
+                rightBlocked = test.apply(EnumFacing.EAST);
+                bottomBlocked = test.apply(EnumFacing.NORTH);
                 break;
+            }
+            default: {
+                leftBlocked = test.apply(EnumFacing.WEST);
+                topBlocked = test.apply(EnumFacing.UP);
+                rightBlocked = test.apply(EnumFacing.EAST);
+                bottomBlocked = test.apply(EnumFacing.DOWN);
             }
         }
 
@@ -299,15 +336,67 @@ public class ToolOverlayRenderer {
         startLine(buffer, bottomLeft.copy().add(shiftVert));
         endLine(buffer, bottomRight.copy().add(shiftVert));
 
+        if (leftBlocked) {
+            startLine(buffer, topLeft.copy().add(shiftVert.copy().negate()));
+            endLine(buffer, bottomLeft.copy().add(shiftVert.copy()).add(shift));
+
+            startLine(buffer, topLeft.copy().add(shiftVert.copy().negate()).add(shift));
+            endLine(buffer, bottomLeft.copy().add(shiftVert));
+        }
+        if (topBlocked) {
+            startLine(buffer, topLeft.copy().add(shift));
+            endLine(buffer, topRight.copy().add(shift.copy().negate()).add(shiftVert.copy().negate()));
+
+            startLine(buffer, topLeft.copy().add(shift).add(shiftVert.copy().negate()));
+            endLine(buffer, topRight.copy().add(shift.copy().negate()));
+        }
+        if (rightBlocked) {
+            startLine(buffer, topRight.copy().add(shiftVert.copy().negate()));
+            endLine(buffer, bottomRight.copy().add(shiftVert.copy()).add(shift.copy().negate()));
+
+            startLine(buffer, topRight.copy().add(shiftVert.copy().negate()).add(shift.copy().negate()));
+            endLine(buffer, bottomRight.copy().add(shiftVert));
+        }
+        if (bottomBlocked) {
+            startLine(buffer, bottomLeft.copy().add(shift));
+            endLine(buffer, bottomRight.copy().add(shift.copy().negate()).add(shiftVert));
+
+            startLine(buffer, bottomLeft.copy().add(shift).add(shiftVert));
+            endLine(buffer, bottomRight.copy().add(shift.copy().negate()));
+        }
+        if (frontBlocked) {
+            startLine(buffer, topLeft.copy().add(shift).add(shiftVert.copy().negate()));
+            endLine(buffer, bottomRight.copy().add(shift.copy().negate()).add(shiftVert));
+
+            startLine(buffer, topRight.copy().add(shift.copy().negate()).add(shiftVert.copy().negate()));
+            endLine(buffer, bottomLeft.copy().add(shift).add(shiftVert));
+        }
+        if (backBlocked) {
+            Vector3 localXShift = new Vector3(0, 0, 0); // Set up translations for the current X.
+            for (int i = 0; i < 2; i++) {
+                Vector3 localXShiftVert = new Vector3(0, 0, 0);
+                for (int j = 0; j < 2; j++) {
+                    startLine(buffer, topLeft.copy().add(localXShift).add(localXShiftVert));
+                    endLine(buffer, topLeft.copy().add(localXShift).add(localXShiftVert).add(shift).subtract(shiftVert));
+
+                    startLine(buffer, topLeft.copy().add(localXShift).add(localXShiftVert).add(shift));
+                    endLine(buffer, topLeft.copy().add(localXShift).add(localXShiftVert).subtract(shiftVert));
+
+                    localXShiftVert.add(bottomLeft.copy().subtract(topLeft).add(shiftVert)); // Move by the vector from the top to the bottom, minus the shift from the edge.
+                }
+                localXShift.add(topRight.copy().subtract(topLeft).subtract(shift)); // Move by the vector from the left to the right, minus the shift from the edge.
+            }
+        }
+
         tessellator.draw();
     }
 
     private static void startLine(BufferBuilder buffer, Vector3 vec) {
-        buffer.pos(vec.x, vec.y, vec.z).color(0, 0, 0, 0.0F).endVertex();
+        buffer.pos(vec.x, vec.y, vec.z).color(rColor, gColor, bColor, 0.0F).endVertex();
     }
 
     private static void endLine(BufferBuilder buffer, Vector3 vec) {
-        buffer.pos(vec.x, vec.y, vec.z).color(0, 0, 0, 0.5F).endVertex();
+        buffer.pos(vec.x, vec.y, vec.z).color(rColor, gColor, bColor, 1F).endVertex();
     }
 
 }

@@ -391,8 +391,9 @@ public class MetaTileEntityLoader {
         registerMachineRecipe(MetaTileEntities.SIFTER, "WFW", "PMP", "CFC", 'M', HULL, 'P', PISTON, 'F', MetaItems.ITEM_FILTER, 'C', CIRCUIT, 'W', CABLE);
         registerMachineRecipe(MetaTileEntities.ARC_FURNACE, "WGW", "CMC", "PPP", 'M', HULL, 'P', PLATE, 'C', CIRCUIT, 'W', CABLE_QUAD, 'G', new UnificationEntry(OrePrefix.ingot, Materials.Graphite));
         registerMachineRecipe(MetaTileEntities.CIRCUIT_ASSEMBLER, "RIE", "CHC", "WIW", 'R', ROBOT_ARM, 'I', BETTER_CIRCUIT, 'E', EMITTER, 'C', CONVEYOR, 'H', HULL, 'W', CABLE);
-        registerMachineRecipe(MetaTileEntities.MASS_FABRICATOR, "CFC", "QMQ", "CFC", 'M', HULL, 'Q', CABLE_QUAD, 'C', BETTER_CIRCUIT, 'F', FIELD_GENERATOR);
-        registerMachineRecipe(MetaTileEntities.REPLICATOR, "EFE", "CMC", "EQE", 'M', HULL, 'Q', CABLE_QUAD, 'C', BETTER_CIRCUIT, 'F', FIELD_GENERATOR, 'E', EMITTER);
+        // TODO Replication system
+        //registerMachineRecipe(MetaTileEntities.MASS_FABRICATOR, "CFC", "QMQ", "CFC", 'M', HULL, 'Q', CABLE_QUAD, 'C', BETTER_CIRCUIT, 'F', FIELD_GENERATOR);
+        //registerMachineRecipe(MetaTileEntities.REPLICATOR, "EFE", "CMC", "EQE", 'M', HULL, 'Q', CABLE_QUAD, 'C', BETTER_CIRCUIT, 'F', FIELD_GENERATOR, 'E', EMITTER);
         registerMachineRecipe(MetaTileEntities.SCANNER, "CEC", "WHW", "CSC", 'C', BETTER_CIRCUIT, 'E', EMITTER, 'W', CABLE, 'H', HULL, 'S', SENSOR);
         registerMachineRecipe(MetaTileEntities.GAS_COLLECTOR, "WFW", "PHP", "WCW", 'W', Blocks.IRON_BARS, 'F', MetaItems.FLUID_FILTER, 'P', PUMP, 'H', HULL, 'C', CIRCUIT);
         registerMachineRecipe(MetaTileEntities.ROCK_BREAKER, "PMW", "CHC", "GGG", 'P', PISTON, 'M', MOTOR, 'W', GRINDER, 'C', CABLE, 'H', HULL, 'G', GLASS);
@@ -406,7 +407,7 @@ public class MetaTileEntityLoader {
 
         registerMachineRecipe(MetaTileEntities.MUFFLER_HATCH, "HM", "PR", 'H', HULL, 'M', MOTOR, 'P', PIPE_NORMAL, 'R', ROTOR);
 
-        ModHandler.addShapedRecipe(true, "gregtech.machine.simple_washer.lv", MetaTileEntities.SIMPLE_ORE_WASHER.getStackForm(), "WPW", "WBW", "WHW", 'W', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'P', MetaItems.ELECTRIC_PUMP_LV.getStackForm(), 'B', new UnificationEntry(OrePrefix.pipeNormalFluid, Materials. Bronze), 'H', MetaTileEntities.HULL[GTValues.ULV].getStackForm());
+        registerMachineRecipe(MetaTileEntities.SIMPLE_ORE_WASHER, "WPW", "WBW", "WHW", 'W', PLATE, 'P', PUMP, 'B', PIPE_NORMAL, 'H', HULL);
 
         ModHandler.addShapedRecipe(true, "wooden_crate", MetaTileEntities.WOODEN_CRATE.getStackForm(), "RPR", "PsP", "RPR", 'P', "plankWood", 'R', new UnificationEntry(OrePrefix.screw, Materials.Iron));
         ModHandler.addShapedRecipe(true, "bronze_crate", MetaTileEntities.BRONZE_CRATE.getStackForm(), "RPR", "PhP", "RPR", 'P', new UnificationEntry(OrePrefix.plate, Materials.Bronze), 'R', new UnificationEntry(OrePrefix.stickLong, Materials.Bronze));

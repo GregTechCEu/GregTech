@@ -10,20 +10,19 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
-import gregtech.common.blocks.BlockWireCoil2.CoilType2;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
-import gregtech.api.pattern.MultiblockShapeInfo;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
@@ -70,13 +69,10 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         Object type = context.get("CoilType");
-        if (type instanceof CoilType) {
+        if (type instanceof CoilType)
             this.blastFurnaceTemperature = ((CoilType) type).getCoilTemperature();
-        } else if(type instanceof CoilType2) {
-            this.blastFurnaceTemperature = ((CoilType2) type).getCoilTemperature();
-        } else {
+        else
             this.blastFurnaceTemperature = CoilType.CUPRONICKEL.getCoilTemperature();
-        }
 
         this.blastFurnaceTemperature += 100 * Math.max(0, GTUtility.getTierByVoltage(getEnergyContainer().getInputVoltage()) - GTValues.MV);
     }
@@ -165,9 +161,6 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         Arrays.stream(CoilType.values())
                 .sorted(Comparator.comparingInt(CoilType::getLevel))
                 .forEach(coilType -> shapeInfo.add(builder.where('C', MetaBlocks.WIRE_COIL.getState(coilType)).build()));
-        Arrays.stream(CoilType2.values())
-                .sorted(Comparator.comparingInt(CoilType2::getLevel))
-                .forEach(coilType -> shapeInfo.add(builder.where('C', MetaBlocks.WIRE_COIL2.getState(coilType)).build()));
         return shapeInfo;
     }
 }

@@ -504,16 +504,7 @@ public class FirstDegreeMaterials {
                 .components(Aluminium, 3, Silicon, 3, Sodium, 4, Chlorine, 1)
                 .build();
 
-        DiamericiumTitanium = new Material.Builder(317, "diamericium_titanium")
-                .ingot(4).fluid()
-                .color(0x755280).iconSet(METALLIC)
-                .flags(GENERATE_FOIL)
-                .components(Americium, 2, Titanium, 1)
-                .toolStats(6.0f, 6.0f, 2200, 21)
-                .itemPipeProperties(32, 128)
-                .cableProperties(GTValues.V[10], 8, 16)
-                .blastTemp(10400, GasTier.HIGHER, VA[UV], 1600)
-                .build();
+        // FREE ID 317
 
         Tantalite = new Material.Builder(318, "tantalite")
                 .dust(3).ore(2, 1)
@@ -1228,7 +1219,7 @@ public class FirstDegreeMaterials {
         SamariumMagnetic = new Material.Builder(423, "samarium_magnetic")
                 .ingot()
                 .color(0xFFFFCD).iconSet(MAGNETIC)
-                .flags(GENERATE_LONG_ROD)
+                .flags(STD_METAL, GENERATE_LONG_ROD)
                 .components(Samarium, 1)
                 .ingotSmeltInto(Samarium)
                 .arcSmeltInto(Samarium)

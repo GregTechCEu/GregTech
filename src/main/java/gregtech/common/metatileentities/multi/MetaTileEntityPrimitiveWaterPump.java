@@ -18,6 +18,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.common.blocks.BlockSteamCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
@@ -28,6 +29,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
 
@@ -147,5 +149,14 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), true, true);
+    }
+
+    @Override
+    public String[] getDescription() {
+        return Stream.of(
+                new String[]{I18n.format("gregtech.multiblock.primitive_water_pump.description")},
+                I18n.format("gregtech.multiblock.primitive_water_pump.extra1").split("/n"),
+                I18n.format("gregtech.multiblock.primitive_water_pump.extra2").split("/n")
+        ).flatMap(Stream::of).toArray(String[]::new);
     }
 }

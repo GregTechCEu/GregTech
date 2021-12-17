@@ -157,7 +157,7 @@ public class OreRecipeHandler {
 
         RecipeMaps.THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
                 .input(crushedPrefix, material)
-                .duration((int) material.getAverageMass() * 20)
+                .duration((int) material.getMass() * 20)
                 .outputs(crushedCentrifugedOre,
                         OreDictUnifier.get(OrePrefix.dustTiny, byproductMaterial, property.getByProductMultiplier() * 3),
                         OreDictUnifier.get(OrePrefix.dust, Materials.Stone))
@@ -240,7 +240,7 @@ public class OreRecipeHandler {
             RecipeMaps.THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
                     .input(purifiedPrefix, material)
                     .outputs(crushedCentrifugedStack, OreDictUnifier.get(OrePrefix.dustTiny, byproductMaterial, 3))
-                    .duration((int) (material.getAverageMass() * 20))
+                    .duration((int) (material.getMass() * 20))
                     .EUt(60)
                     .buildAndRegister();
         }
@@ -296,7 +296,7 @@ public class OreRecipeHandler {
         RecipeBuilder<?> builder = RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
                 .input(dustPrefix, material)
                 .outputs(dustStack)
-                .duration((int) (material.getAverageMass() * 4)).EUt(24);
+                .duration((int) (material.getMass() * 4)).EUt(24);
 
         if (byproduct.hasProperty(PropertyKey.DUST)) {
             builder.outputs(OreDictUnifier.get(OrePrefix.dustTiny, byproduct, 3));
@@ -334,7 +334,7 @@ public class OreRecipeHandler {
                     .outputs(dustStack)
                     .chancedOutput(separatedStack1, 4000, 850)
                     .chancedOutput(separatedStack2, 2000, 600)
-                    .duration((int) property.getSeparatedInto().get(0).getAverageMass()).EUt(24)
+                    .duration((int) property.getSeparatedInto().get(0).getMass()).EUt(24)
                     .buildAndRegister();
         }
 
@@ -348,7 +348,7 @@ public class OreRecipeHandler {
         RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
                 .input(purePrefix, material)
                 .outputs(dustStack, OreDictUnifier.get(OrePrefix.dustTiny, byproductMaterial, 3))
-                .duration((int) (material.getAverageMass() * 4))
+                .duration((int) (material.getMass() * 4))
                 .EUt(5)
                 .buildAndRegister();
 

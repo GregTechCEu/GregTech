@@ -67,7 +67,7 @@ public class PipeRecipeHandler {
                 .input(OrePrefix.ingot, material, 1)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_TINY)
                 .outputs(GTUtility.copyAmount(2, pipeStack))
-                .duration((int) (material.getAverageMass()))
+                .duration((int) (material.getMass()))
                 .EUt(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
 
@@ -82,7 +82,7 @@ public class PipeRecipeHandler {
                 .input(OrePrefix.ingot, material, 1)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_SMALL)
                 .outputs(pipeStack)
-                .duration((int) (material.getAverageMass()))
+                .duration((int) (material.getMass()))
                 .EUt(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
 
@@ -97,7 +97,7 @@ public class PipeRecipeHandler {
                 .input(OrePrefix.ingot, material, 3)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_NORMAL)
                 .outputs(pipeStack)
-                .duration((int) material.getAverageMass() * 3)
+                .duration((int) material.getMass() * 3)
                 .EUt(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
 
@@ -112,7 +112,7 @@ public class PipeRecipeHandler {
                 .input(OrePrefix.ingot, material, 6)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_LARGE)
                 .outputs(pipeStack)
-                .duration((int) material.getAverageMass() * 6)
+                .duration((int) material.getMass() * 6)
                 .EUt(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
 
@@ -127,7 +127,7 @@ public class PipeRecipeHandler {
                 .input(OrePrefix.ingot, material, 12)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_HUGE)
                 .outputs(pipeStack)
-                .duration((int) material.getAverageMass() * 24)
+                .duration((int) material.getMass() * 24)
                 .EUt(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
 

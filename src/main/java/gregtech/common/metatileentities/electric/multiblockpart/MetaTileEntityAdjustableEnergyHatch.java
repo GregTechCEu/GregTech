@@ -187,4 +187,9 @@ public class MetaTileEntityAdjustableEnergyHatch extends MetaTileEntityMultibloc
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
+
+    @Override
+    public boolean canRenderFrontFaceX() {
+        return isExportHatch;
+    }
 }

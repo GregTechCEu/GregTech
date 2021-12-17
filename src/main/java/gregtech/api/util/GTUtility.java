@@ -59,6 +59,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -746,13 +747,21 @@ public class GTUtility {
     }
 
     public static boolean isCoverBehaviorItem(ItemStack itemStack) {
+        return isCoverBehaviorItem(itemStack, null);
+    }
+
+    public static boolean isCoverBehaviorItem(ItemStack itemStack, BooleanSupplier hasCoverSupplier) {
         if (itemStack.getItem() instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) itemStack.getItem();
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
             if (valueItem != null) {
                 List<IItemBehaviour> behaviourList = valueItem.getBehaviours();
-                return behaviourList.stream().anyMatch(it ->
-                        it instanceof CoverPlaceBehavior || it instanceof CrowbarBehaviour);
+                for(IItemBehaviour behaviour : behaviourList) {
+                    if(behaviour instanceof CoverPlaceBehavior)
+                        return true;
+                    if(behaviour instanceof CrowbarBehaviour)
+                        return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
+                }
             }
         }
         return false;

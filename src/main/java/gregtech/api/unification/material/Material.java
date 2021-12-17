@@ -206,12 +206,13 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null)
             return materialInfo.element.getProtons();
         if (materialInfo.componentList.isEmpty())
-            return Elements.get("Technetium").getProtons();
-        long totalProtons = 0;
+            return Math.max(1, Elements.get("Technetium").getProtons());
+        long totalProtons = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {
+            totalAmount += material.amount;
             totalProtons += material.amount * material.material.getProtons();
         }
-        return totalProtons;
+        return totalProtons / totalAmount;
     }
 
     @ZenGetter("neutrons")
@@ -220,57 +221,17 @@ public class Material implements Comparable<Material> {
             return materialInfo.element.getNeutrons();
         if (materialInfo.componentList.isEmpty())
             return Elements.get("Technetium").getNeutrons();
-        long totalNeutrons = 0;
-        for (MaterialStack material : materialInfo.componentList) {
-            totalNeutrons += material.amount * material.material.getNeutrons();
-        }
-        return totalNeutrons;
-    }
-
-    @ZenGetter("mass")
-    public long getMass() {
-        if (materialInfo.element != null)
-            return materialInfo.element.getMass();
-        if (materialInfo.componentList.isEmpty())
-            return Elements.get("Technetium").getMass();
-        long totalMass = 0;
-        for (MaterialStack material : materialInfo.componentList) {
-            totalMass += material.amount * material.material.getMass();
-        }
-        return totalMass;
-    }
-
-    @ZenGetter("averageProtons")
-    public long getAverageProtons() {
-        if (materialInfo.element != null)
-            return materialInfo.element.getProtons();
-        if (materialInfo.componentList.isEmpty())
-            return Math.max(1, Elements.get("Technetium").getProtons());
-        long totalProtons = 0, totalAmount = 0;
-        for (MaterialStack material : materialInfo.componentList) {
-            totalAmount += material.amount;
-            totalProtons += material.amount * material.material.getAverageProtons();
-        }
-        return totalProtons / totalAmount;
-    }
-
-    @ZenGetter("averageNeutrons")
-    public long getAverageNeutrons() {
-        if (materialInfo.element != null)
-            return materialInfo.element.getNeutrons();
-        if (materialInfo.componentList.isEmpty())
-            return Elements.get("Technetium").getNeutrons();
         long totalNeutrons = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {
             totalAmount += material.amount;
-            totalNeutrons += material.amount * material.material.getAverageNeutrons();
+            totalNeutrons += material.amount * material.material.getNeutrons();
         }
         return totalNeutrons / totalAmount;
     }
 
 
-    @ZenGetter("averageMass")
-    public long getAverageMass() {
+    @ZenGetter("mass")
+    public long getMass() {
         if (materialInfo.element != null)
             return materialInfo.element.getMass();
         if (materialInfo.componentList.size() <= 0)
@@ -278,7 +239,7 @@ public class Material implements Comparable<Material> {
         long totalMass = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {
             totalAmount += material.amount;
-            totalMass += material.amount * material.material.getAverageMass();
+            totalMass += material.amount * material.material.getMass();
         }
         return totalMass / totalAmount;
     }

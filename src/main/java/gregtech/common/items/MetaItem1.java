@@ -162,7 +162,7 @@ public class MetaItem1 extends StandardMetaItem {
         VOLTAGE_COIL_IV = addItem(101, "voltage_coil.iv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Iridium, GTValues.M * 2), new MaterialStack(Materials.NeodymiumMagnetic, GTValues.M / 2)));
         VOLTAGE_COIL_LUV = addItem(102, "voltage_coil.luv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Osmiridium, GTValues.M * 2), new MaterialStack(Materials.SamariumMagnetic, GTValues.M / 2)));
         VOLTAGE_COIL_ZPM = addItem(103, "voltage_coil.zpm").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Europium, GTValues.M * 2), new MaterialStack(Materials.SamariumMagnetic, GTValues.M / 2)));
-        VOLTAGE_COIL_UV = addItem(104, "voltage_coil.uv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.FluxedElectrum, GTValues.M * 2), new MaterialStack(Materials.SamariumMagnetic, GTValues.M / 2)));
+        VOLTAGE_COIL_UV = addItem(104, "voltage_coil.uv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tritanium, GTValues.M * 2), new MaterialStack(Materials.SamariumMagnetic, GTValues.M / 2)));
 
         // ???: ID 111-125
 
@@ -376,15 +376,15 @@ public class MetaItem1 extends StandardMetaItem {
         POWER_UNIT_IV = addItem(450, "power_unit.iv").addComponents(ElectricStats.createElectricItem(25600000L, GTValues.IV)).setMaxStackSize(8);
 
         // Usable Items: ID 460-490
-        DYNAMITE = addItem(460, "dynamite").addComponents(new DynamiteBehaviour()).setMaxStackSize(16);
+        DYNAMITE = addItem(460, "dynamite").addComponents(new DynamiteBehaviour());
         INTEGRATED_CIRCUIT = addItem(461, "circuit.integrated").addComponents(new IntCircuitBehaviour()).setModelAmount(33);
         FOAM_SPRAYER = addItem(462, "foam_sprayer").addComponents(new FoamSprayerBehavior()).setMaxStackSize(1);
         NANO_SABER = addItem(463, "nano_saber").addComponents(ElectricStats.createElectricItem(4_000_000L, GTValues.HV)).addComponents(new NanoSaberBehavior()).setMaxStackSize(1);
         CLIPBOARD = addItem(464, "clipboard").addComponents(new ClipboardBehavior()).setMaxStackSize(1);
         TERMINAL = addItem(465, "terminal").addComponents(new HardwareProvider(), new TerminalBehaviour()).setMaxStackSize(1);
-        PROSPECTOR_LV = addItem(466, "prospector.lv").addComponents(ElectricStats.createElectricItem(100_000L, GTValues.LV), new ProspectorScannerBehavior(2, GTValues.LV));
-        PROSPECTOR_HV = addItem(467, "prospector.hv").addComponents(ElectricStats.createElectricItem(1_600_000L, GTValues.HV), new ProspectorScannerBehavior(3, GTValues.HV));
-        PROSPECTOR_LUV = addItem(468, "prospector.luv").addComponents(ElectricStats.createElectricItem(1_000_000_000L, GTValues.LuV), new ProspectorScannerBehavior(5, GTValues.LuV));
+        PROSPECTOR_LV = addItem(466, "prospector.lv").addComponents(ElectricStats.createElectricItem(100_000L, GTValues.LV), new ProspectorScannerBehavior(2, GTValues.LV)).setMaxStackSize(1);
+        PROSPECTOR_HV = addItem(467, "prospector.hv").addComponents(ElectricStats.createElectricItem(1_600_000L, GTValues.HV), new ProspectorScannerBehavior(3, GTValues.HV)).setMaxStackSize(1);
+        PROSPECTOR_LUV = addItem(468, "prospector.luv").addComponents(ElectricStats.createElectricItem(1_000_000_000L, GTValues.LuV), new ProspectorScannerBehavior(5, GTValues.LuV)).setMaxStackSize(1);
 
         // Misc Crafting Items: ID 491-515
         ENERGIUM_DUST = addItem(491, "energium_dust");
@@ -549,8 +549,8 @@ public class MetaItem1 extends StandardMetaItem {
         BATTERY_MV_CADMIUM = addItem(739, "battery.re.mv.cadmium").addComponents(ElectricStats.createRechargeableBattery(420000, GTValues.MV)).setUnificationData(OrePrefix.battery, Tier.Good).setModelAmount(8);
         BATTERY_HV_CADMIUM = addItem(740, "battery.re.hv.cadmium").addComponents(ElectricStats.createRechargeableBattery(1800000, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8);
 
-        ENERGIUM_CRYSTAL = addItem(741, "energy_crystal").addComponents(ElectricStats.createRechargeableBattery(6400000L, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8).setMaxStackSize(1);
-        LAPOTRON_CRYSTAL = addItem(742, "lapotron_crystal").addComponents(ElectricStats.createRechargeableBattery(16000000L, GTValues.EV)).setUnificationData(OrePrefix.battery, Tier.Extreme).setModelAmount(8).setMaxStackSize(1);
+        ENERGIUM_CRYSTAL = addItem(741, "energy_crystal").addComponents(ElectricStats.createRechargeableBattery(6400000L, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8);
+        LAPOTRON_CRYSTAL = addItem(742, "lapotron_crystal").addComponents(ElectricStats.createRechargeableBattery(16000000L, GTValues.EV)).setUnificationData(OrePrefix.battery, Tier.Extreme).setModelAmount(8);
 
         BATTERY_EV_VANADIUM = addItem(743, "battery.ev.vanadium").addComponents(ElectricStats.createRechargeableBattery(10240000L, GTValues.EV)).setUnificationData(OrePrefix.battery, Tier.Extreme).setModelAmount(8);
         BATTERY_IV_VANADIUM = addItem(744, "battery.iv.vanadium").addComponents(ElectricStats.createRechargeableBattery(40960000L, GTValues.IV)).setUnificationData(OrePrefix.battery, Tier.Elite).setModelAmount(8);

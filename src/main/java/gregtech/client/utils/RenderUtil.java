@@ -523,7 +523,7 @@ public class RenderUtil {
         GlStateManager.enableBlend();
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         // fluid is RGBA for GT guis, despite MC's fluids being ARGB
-        setGlColorFromInt(fluidColor, fluidColor & 0x000000FF);
+        setGlColorFromInt(fluidColor, 0xFF);
 
         final int xTileCount = widthT / 16;
         final int xRemainder = widthT - xTileCount * 16;
