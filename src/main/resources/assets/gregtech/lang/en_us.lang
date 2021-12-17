@@ -1719,9 +1719,6 @@ material.naquadria=Naquadria
 material.tritanium=Tritanium
 material.duranium=Duranium
 
-material.diamericium_titanium=Diamericium Titanium
-material.fluxed_electrum=Fluxed Electrum
-
 material.milk=Milk
 material.cocoa=Cocoa
 material.wheat=Wheat
@@ -3608,8 +3605,8 @@ gregtech.advancement.zero_point_module.71_neuro_processing_unit.name=Neuro Proce
 gregtech.advancement.zero_point_module.71_neuro_processing_unit.desc=Produce a Neuro Processing Unit.
 gregtech.advancement.zero_point_module.72_wetware_processor.name=Wetware Processor
 gregtech.advancement.zero_point_module.72_wetware_processor.desc=Get Wetware Processors.
-gregtech.advancement.zero_point_module.73_naquadah_alloy_coil.name=Over 9000!
-gregtech.advancement.zero_point_module.73_naquadah_alloy_coil.desc=Craft a Naquadah Alloy Heating Coil.
+gregtech.advancement.zero_point_module.73_trinium_coil.name=Over 9000!
+gregtech.advancement.zero_point_module.73_trinium_coil.desc=Craft a Trinium Heating Coil.
 gregtech.advancement.root_uv.name=Ultimate Voltage
 gregtech.advancement.root_uv.desc=Produce Tritanium.
 gregtech.advancement.ultimate_voltage.74_wetware_mainframe.name=Wetware Mainframe
@@ -3622,10 +3619,8 @@ gregtech.advancement.ultimate_voltage.77_ultimate_battery.name=What Now?
 gregtech.advancement.ultimate_voltage.77_ultimate_battery.desc=Craft an Ultimate Battery.
 gregtech.advancement.ultimate_voltage.78_hasoc_wafer.name=HASoC Wafer
 gregtech.advancement.ultimate_voltage.78_hasoc_wafer.desc=Produce an HASoC Wafer to make cheaper Master Circuits.
-gregtech.advancement.ultimate_voltage.79_fluxed_electrum_coil.name=The Formula is Too Long
-gregtech.advancement.ultimate_voltage.79_fluxed_electrum_coil.desc=Craft a Fluxed Electrum Heating Coil.
-gregtech.advancement.ultimate_voltage.80_diamericium_titanium_coil.name=The Final Coil
-gregtech.advancement.ultimate_voltage.80_diamericium_titanium_coil.desc=Craft a Diamericium Titanium Heating Coil.
+gregtech.advancement.ultimate_voltage.79_tritanium_coil.name=The Final Coil
+gregtech.advancement.ultimate_voltage.79_tritanium_coil.desc=Craft a Tritanium Heating Coil.
 
 
 behaviour.softhammer=Activates and Deactivates Machines
