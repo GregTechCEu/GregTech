@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -33,6 +34,7 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
 
     public MetaTileEntityLargeChemicalReactor(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.LARGE_CHEMICAL_RECIPES);
+        this.recipeMapWorkable = new MultiblockRecipeLogic(this, true);
     }
 
     @Override
@@ -71,7 +73,6 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
                 .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[3], EnumFacing.SOUTH)
                 .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[3], EnumFacing.SOUTH)
                 .where('M', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING), EnumFacing.SOUTH);
-
         shapeInfo.add(baseBuilder.shallowCopy()
                 .aisle("XEX", "XCX", "XXX")
                 .aisle("XXX", "XPX", "XXX")
@@ -130,4 +131,5 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     protected ICubeRenderer getFrontOverlay() {
         return Textures.LARGE_CHEMICAL_REACTOR_OVERLAY;
     }
+
 }
