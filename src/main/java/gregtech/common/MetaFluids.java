@@ -172,7 +172,7 @@ public class MetaFluids {
 
         setMaterialFluidTexture(Materials.Air, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Deuterium, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.DistilledWater, FluidType.NORMAL, new ResourceLocation("blocks/water_still"));
+//        setMaterialFluidTexture(Materials.DistilledWater, FluidType.NORMAL, new ResourceLocation("blocks/water_still"));
         setMaterialFluidTexture(Materials.Tritium, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Helium, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Helium, FluidType.PLASMA);

@@ -53,6 +53,11 @@ public class MiscRecipeLoader {
         RecipeMaps.SIFTER_RECIPES.recipeBuilder().duration(100).EUt(16)
                 .inputs(new ItemStack(Blocks.GRAVEL))
                 .output(gem, Flint)
+                .chancedOutput(gem, Flint, 9000, 0)
+                .chancedOutput(gem, Flint, 8000, 0)
+                .chancedOutput(gem, Flint, 6000, 0)
+                .chancedOutput(gem, Flint, 3300, 0)
+                .chancedOutput(gem, Flint, 2500, 0)
                 .buildAndRegister();
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder()
@@ -447,12 +452,12 @@ public class MiscRecipeLoader {
 
         // Dyed Lens Decomposition
         for (MetaValueItem item : GLASS_LENSES.values()) {
-            EXTRACTOR_RECIPES.recipeBuilder().EUt(VA[LV]).duration(60)
+            EXTRACTOR_RECIPES.recipeBuilder().EUt(VA[LV]).duration(15)
                     .input(item)
                     .fluidOutputs(Glass.getFluid(108))
                     .buildAndRegister();
 
-            MACERATOR_RECIPES.recipeBuilder().duration(22)
+            MACERATOR_RECIPES.recipeBuilder().duration(15)
                     .input(item)
                     .output(dustSmall, Glass, 3)
                     .buildAndRegister();

@@ -2,6 +2,7 @@ package gregtech.api.recipes;
 
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
@@ -166,6 +167,14 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return input(item, 1);
     }
 
+    public R input(MetaTileEntity mte) {
+        return input(mte, 1);
+    }
+
+    public R input(MetaTileEntity mte, int amount) {
+        return inputs(mte.getStackForm(amount));
+    }
+
     public R inputs(CountableIngredient... inputs) {
         List<CountableIngredient> ingredients = new ArrayList<>();
         for (CountableIngredient input : inputs) {
@@ -248,6 +257,14 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R output(MetaItem<?>.MetaValueItem item) {
         return output(item, 1);
+    }
+
+    public R output(MetaTileEntity mte) {
+        return output(mte, 1);
+    }
+
+    public R output(MetaTileEntity mte, int amount) {
+        return outputs(mte.getStackForm(amount));
     }
 
     public R outputs(ItemStack... outputs) {

@@ -31,7 +31,7 @@ public class RecyclingRecipeHandler {
     );
 
     private static final List<OrePrefix> IGNORE_ARC_SMELTING = Arrays.asList(
-            OrePrefix.ingot, OrePrefix.gem, OrePrefix.nugget, OrePrefix.block);
+            OrePrefix.ingot, OrePrefix.gem, OrePrefix.nugget);
 
     public static void register() {
         //registers universal maceration recipes for specified ore prefixes

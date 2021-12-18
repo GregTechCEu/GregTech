@@ -222,6 +222,11 @@ public class MachineRecipeLoader {
                 .input(OrePrefix.dust, Materials.Quartzite)
                 .output(OrePrefix.plate, Materials.Quartzite)
                 .duration(400).EUt(2).buildAndRegister();
+
+        COMPRESSOR_RECIPES.recipeBuilder()
+                .input(COKE_OVEN_BRICK, 4)
+                .outputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.COKE_BRICKS))
+                .duration(300).EUt(2).buildAndRegister();
     }
 
     // todo this should be done better but will work for now

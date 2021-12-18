@@ -249,7 +249,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     protected Tuple<Integer, Double> getMaintenanceValues() {
         MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ? (MultiblockWithDisplayBase) metaTileEntity : null;
-        int numMaintenanceProblems = displayBase == null ? 0 : displayBase.getNumMaintenanceProblems();
+        int numMaintenanceProblems = displayBase == null || !displayBase.hasMaintenanceMechanics() ? 0 : displayBase.getNumMaintenanceProblems();
         double durationMultiplier = 1.0D;
         if (displayBase != null && displayBase.hasMaintenanceMechanics()) {
             IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);

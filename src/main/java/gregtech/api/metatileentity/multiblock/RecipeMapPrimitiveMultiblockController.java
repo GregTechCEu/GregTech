@@ -3,13 +3,8 @@ package gregtech.api.metatileentity.multiblock;
 import gregtech.api.capability.impl.*;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.sound.ISoundCreator;
-import gregtech.api.metatileentity.sound.PositionedSoundMTE;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.util.world.DummyWorld;
-import gregtech.common.ConfigHolder;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fluids.FluidTank;
 
 import java.util.ArrayList;
@@ -47,6 +42,11 @@ public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockW
     @Override
     protected void updateFormedValid() {
         recipeMapWorkable.update();
+    }
+
+    @Override
+    public boolean isActive() {
+        return super.isActive() && this.recipeMapWorkable.isWorkingEnabled() && this.recipeMapWorkable.isActive();
     }
 
     @Override

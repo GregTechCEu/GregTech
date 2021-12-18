@@ -3800,23 +3800,19 @@ gregtech.machine.energy_hatch.input.umv.name=UMV Energy Hatch
 gregtech.machine.energy_hatch.input.uxv.name=UXV Energy Hatch
 gregtech.machine.energy_hatch.input.max.name=MAX Energy Hatch
 
-gregtech.machine.energy_hatch.adjustable.input.tooltip=Adjustable Ampere Energy Input for Multiblocks
+gregtech.machine.energy_hatch.input_hi_amp.tooltip=Multiple Ampere Energy Input for Multiblocks
 
-gregtech.machine.energy_hatch.adjustable.input.ulv.name=ULV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.lv.name=LV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.mv.name=MV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.hv.name=HV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.ev.name=EV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.iv.name=IV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.luv.name=LuV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.zpm.name=ZPM Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.uv.name=UV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.uhv.name=UHV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.uev.name=UEV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.uiv.name=UIV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.umv.name=UMV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.uxv.name=UXV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.max.name=MAX Adjustable Energy Hatch
+gregtech.machine.energy_hatch.input_4a.iv.name=IV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.luv.name=LuV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.zpm.name=ZPM 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.uv.name=UV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.uhv.name=UHV 4A Energy Hatch
+
+gregtech.machine.energy_hatch.input_16a.iv.name=IV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.luv.name=LuV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.zpm.name=ZPM 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.uv.name=UV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.uhv.name=UHV 16A Energy Hatch
 
 gregtech.machine.energy_hatch.output.tooltip=Energy Output for Multiblocks
 
@@ -3836,25 +3832,19 @@ gregtech.machine.energy_hatch.output.umv.name=UMV Dynamo Hatch
 gregtech.machine.energy_hatch.output.uxv.name=UXV Dynamo Hatch
 gregtech.machine.energy_hatch.output.max.name=MAX Dynamo Hatch
 
-gregtech.machine.energy_hatch.adjustable.output.tooltip=Adjustable Ampere Energy Output for Multiblocks
+gregtech.machine.energy_hatch.output_hi_amp.tooltip=Multiple Ampere Energy Output for Multiblocks
 
-gregtech.machine.energy_hatch.adjustable.output.ulv.name=ULV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.lv.name=LV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.mv.name=MV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.hv.name=HV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.ev.name=EV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.iv.name=IV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.luv.name=LuV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.zpm.name=ZPM Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.uv.name=UV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.uhv.name=UHV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.uev.name=UEV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.uiv.name=UIV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.umv.name=UMV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.uxv.name=UXV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.max.name=MAX Adjustable Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.iv.name=IV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.luv.name=LuV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.zpm.name=ZPM 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.uv.name=UV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.uhv.name=UHV 4A Dynamo Hatch
 
-gregtech.machine.energy_hatch_adjustable.message_adjust=Adjusted Amperage to %dA
+gregtech.machine.energy_hatch.output_16a.iv.name=IV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.luv.name=LuV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.zpm.name=ZPM 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.uv.name=UV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.uhv.name=UHV 16A Dynamo Hatch
 
 gregtech.machine.rotor_holder.tooltip1=Rotor Holder for Multiblocks
 gregtech.machine.rotor_holder.tooltip2=Holds Rotor in place so it will not fly away

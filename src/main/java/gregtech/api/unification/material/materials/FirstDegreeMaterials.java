@@ -1204,7 +1204,7 @@ public class FirstDegreeMaterials {
 
         DistilledWater = new Material.Builder(421, "distilled_water")
                 .fluid()
-                .color(0xEEEEFF)
+                .color(0x4A94FF)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();

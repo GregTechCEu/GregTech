@@ -14,8 +14,8 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -97,7 +97,6 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
 
     @SideOnly(Side.CLIENT)
     public void pollutionParticles() {
-
         BlockPos pos = this.getPos();
         EnumFacing facing = this.getFrontFacing();
         float xPos = facing.getXOffset() * 0.76F + pos.getX() + 0.5F;

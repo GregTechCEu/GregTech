@@ -60,10 +60,6 @@ public class PartsRecipeHandler {
         ItemStack boltStack = OreDictUnifier.get(boltPrefix, material);
         ItemStack ingotStack = OreDictUnifier.get(OrePrefix.ingot, material);
 
-        ModHandler.addShapedRecipe(String.format("bolt_file_%s", material.toString()),
-                boltStack, "fS", "S ",
-                'S', new UnificationEntry(OrePrefix.screw, material));
-
         RecipeMaps.CUTTER_RECIPES.recipeBuilder()
                 .input(OrePrefix.screw, material)
                 .outputs(boltStack)

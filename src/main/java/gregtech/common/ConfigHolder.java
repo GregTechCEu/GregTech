@@ -183,6 +183,9 @@ public class ConfigHolder {
         @Config.Comment({"Whether to generate Flawed and Chipped Gems for materials and recipes involving them.",
                 "Useful for mods like TerraFirmaCraft.", "Default: false"})
         public boolean generateLowQualityGems = false;
+
+        @Config.Comment({"Whether to remove Block/Ingot compression and decompression in the Crafting Table.", "Default: false"})
+        public boolean disableManualCompression = false;
     }
 
     public static class CompatibilityOptions {
