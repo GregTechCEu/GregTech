@@ -95,6 +95,7 @@ public class SlotWidget extends Widget implements INativeWidget {
         }
         if (!itemStack.isEmpty()) {
             GlStateManager.enableBlend();
+            GlStateManager.enableDepth();
             GlStateManager.disableRescaleNormal();
             GlStateManager.disableLighting();
             RenderHelper.disableStandardItemLighting();
