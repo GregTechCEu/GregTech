@@ -129,7 +129,6 @@ public class FactoryBlockPattern {
         return new BlockPattern(makePredicateArray(), structureDir, aisleRepetitions.toArray(new int[aisleRepetitions.size()][]));
     }
 
-    @SuppressWarnings("unchecked")
     private TraceabilityPredicate[][][] makePredicateArray() {
         this.checkMissingPredicates();
         TraceabilityPredicate[][][] predicate = (TraceabilityPredicate[][][]) Array.newInstance(TraceabilityPredicate.class, this.depth.size(), this.aisleHeight, this.rowWidth);

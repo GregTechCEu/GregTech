@@ -208,7 +208,12 @@ public class ModHandler {
      * <li>'x' -  ToolDictNames.craftingToolWireCutter</li>
      * </ul>
      */
+
     public static void addMirroredShapedRecipe(String regName, ItemStack result, Object... recipe) {
+        addMirroredShapedRecipe(false, regName, result, recipe);
+    }
+
+    public static void addMirroredShapedRecipe(boolean withUnificationData, String regName, ItemStack result, Object... recipe) {
         result = OreDictUnifier.getUnificated(result);
         boolean skip = false;
         if (result.isEmpty()) {
@@ -509,8 +514,8 @@ public class ModHandler {
         ForgeRegistries.RECIPES.register(shapelessRecipe);
     }
 
-    private @Nullable
-    static String getToolNameByCharacter(char character) {
+    @Nullable
+    private static String getToolNameByCharacter(char character) {
         switch (character) {
             case 'b':
                 return ToolDictNames.craftingToolBlade.name();

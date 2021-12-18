@@ -98,7 +98,7 @@ public class MaterialPropertyExpansion {
     public static void addFluidPipes(Material m, int maxFluidTemperature, int throughput, boolean gasProof) {
         if (checkFrozen("add fluid pipes to a material")) return;
         if (m.hasProperty(PropertyKey.FLUID_PIPE)) {
-            m.getProperty(PropertyKey.FLUID_PIPE).setMaxFluidTemperature(maxFluidTemperature);;
+            m.getProperty(PropertyKey.FLUID_PIPE).setMaxFluidTemperature(maxFluidTemperature);
             m.getProperty(PropertyKey.FLUID_PIPE).setThroughput(throughput);
             m.getProperty(PropertyKey.FLUID_PIPE).setGasProof(gasProof);
         } else m.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxFluidTemperature, throughput, gasProof));

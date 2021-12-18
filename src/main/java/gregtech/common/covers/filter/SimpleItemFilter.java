@@ -89,7 +89,7 @@ public class SimpleItemFilter extends ItemFilter {
     @Override
     public void initUI(Consumer<Widget> widgetGroup) {
         for (int i = 0; i < 9; i++) {
-            widgetGroup.accept(new PhantomSlotWidget(itemFilterSlots, i, 10 + 18 * (i % 3), 0 + 18 * (i / 3)).setBackgroundTexture(GuiTextures.SLOT));
+            widgetGroup.accept(new PhantomSlotWidget(itemFilterSlots, i, 10 + 18 * (i % 3), 18 * (i / 3)).setBackgroundTexture(GuiTextures.SLOT));
         }
         widgetGroup.accept(new ToggleButtonWidget(74, 0, 20, 20, GuiTextures.BUTTON_FILTER_DAMAGE,
                 () -> ignoreDamage, this::setIgnoreDamage).setTooltipText("cover.item_filter.ignore_damage"));

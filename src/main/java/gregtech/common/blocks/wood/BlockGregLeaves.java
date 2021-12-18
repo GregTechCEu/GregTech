@@ -49,6 +49,7 @@ public class BlockGregLeaves extends BlockLeaves {
 
     @Nonnull
     @Override
+    @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState()
                 .withProperty(CHECK_DECAY, meta / 8 >= 1)

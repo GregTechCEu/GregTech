@@ -665,7 +665,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
 
     @Override
-    public void applyParallelBonus(RecipeBuilder<?> builder) {
+    public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
         if (enableBonusOverride) {
             builder.EUt(1).duration(50);
         }

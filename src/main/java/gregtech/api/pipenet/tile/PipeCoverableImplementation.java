@@ -83,7 +83,6 @@ public class PipeCoverableImplementation implements ICoverable {
         return true;
     }
 
-    @SuppressWarnings("unchecked")
     public final boolean removeCover(EnumFacing side) {
         Preconditions.checkNotNull(side, "side");
         CoverBehavior coverBehavior = getCoverAtSide(side);

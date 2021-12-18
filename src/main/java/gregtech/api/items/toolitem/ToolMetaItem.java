@@ -289,16 +289,14 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         return -1;
     }
 
+    @Nonnull
     @Override
-    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
+    public Multimap<String, AttributeModifier> getAttributeModifiers(@Nonnull EntityEquipmentSlot slot, @Nonnull ItemStack stack) {
         T metaValueItem = getItem(stack);
         HashMultimap<String, AttributeModifier> modifiers = HashMultimap.create();
         modifiers.putAll(super.getAttributeModifiers(slot, stack));
         if (metaValueItem != null && slot == EntityEquipmentSlot.MAINHAND) {
             IToolStats toolStats = metaValueItem.getToolStats();
-            if (toolStats == null) {
-                return HashMultimap.create();
-            }
             float attackDamage = getToolAttackDamage(stack);
             float attackSpeed = toolStats.getAttackSpeed(stack);
 

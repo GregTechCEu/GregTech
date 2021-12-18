@@ -43,8 +43,6 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     private long lastEnergyOutputPerSec = 0;
     private long energyOutputPerSec = 0;
 
-    private final List<Character> ALLOWED_CHARS = Lists.newArrayList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-
     public MetaTileEntityCreativeEnergy() {
         super(new ResourceLocation(GTValues.MODID, "infinite_energy"));
     }
