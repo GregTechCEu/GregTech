@@ -57,9 +57,9 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         Textures.VOLTAGE_CASINGS[14].render(renderState, translation, pipeline, Cuboid6.full);
-        Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(this.getFrontFacing().getOpposite(), renderState, translation, pipeline);
-        Textures.PIPE_OUT_OVERLAY.renderSided(this.getFrontFacing(), renderState, translation, pipeline);
-        Textures.ITEM_OUTPUT_OVERLAY.renderSided(this.getFrontFacing(), renderState, translation, pipeline);
+        Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(this.getOutputFacing().getOpposite(), renderState, translation, pipeline);
+        Textures.PIPE_OUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
+        Textures.ITEM_OUTPUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
     }
 
     @Override
@@ -102,9 +102,9 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         ItemStack stack = handler.getStackInSlot(0).copy();
         if (getWorld().isRemote || !active || stack.isEmpty()) return;
 
-        TileEntity tile = getWorld().getTileEntity(getPos().offset(this.getFrontFacing()));
+        TileEntity tile = getWorld().getTileEntity(getPos().offset(this.getOutputFacing()));
         if (tile != null) {
-            IItemHandler container = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, frontFacing.getOpposite());
+            IItemHandler container = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.getOutputFacing().getOpposite());
             if (container == null || container.getSlots() == 0)
                 return;
             stack.setCount(itemsPerCycle);
