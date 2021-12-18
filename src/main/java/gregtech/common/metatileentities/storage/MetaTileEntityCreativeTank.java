@@ -102,9 +102,9 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
         FluidStack stack = fluidTank.getFluid().copy();
 
-        TileEntity tile = getWorld().getTileEntity(getPos().offset(this.getFrontFacing()));
+        TileEntity tile = getWorld().getTileEntity(getPos().offset(this.getOutputFacing()));
         if (tile != null) {
-            IFluidHandler fluidHandler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, frontFacing.getOpposite());
+            IFluidHandler fluidHandler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getOutputFacing().getOpposite());
             if (fluidHandler == null || fluidHandler.getTankProperties().length == 0)
                 return;
 
