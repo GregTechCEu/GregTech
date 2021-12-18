@@ -42,7 +42,6 @@ public final class ModularUI implements ISizeProvider {
     private ModularUIGui modularUIGui;
 
     public boolean isJEIHandled;
-    public boolean needNativeClick;
 
     /**
      * UIHolder of this modular UI

@@ -27,7 +27,7 @@ public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTar
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY) && gui != null) {
-            gui.needNativeClick = true;
+            gui.getModularUIGui().superMouseClicked(mouseX, mouseY, button);
             return true;
         }
         return false;

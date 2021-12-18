@@ -20,6 +20,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class ModularUIGui extends GuiContainer implements IRenderContext {
 
@@ -28,6 +29,8 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
     public static final float gColorForOverlay = 1;
     public static final float bColorForOverlay = 1;
     private float lastUpdate;
+    public int dragSplittingLimit;
+    public int dragSplittingButton;
 
     public ModularUI getModularUI() {
         return modularUI;
@@ -234,19 +237,28 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
         }
     }
 
+    public Set<Slot> getDragSplittingSlots() {
+        return dragSplittingSlots;
+    }
+
+    public boolean getDragSplitting() {
+        return dragSplitting;
+    }
+
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
             Widget widget = modularUI.guiWidgets.get(i);
             if(widget.isVisible() && widget.isActive() && widget.mouseClicked(mouseX, mouseY, mouseButton)) {
-                if (getModularUI().needNativeClick) {
-                    super.mouseClicked(mouseX, mouseY, mouseButton);
-                    getModularUI().needNativeClick = false;
-                }
                 return;
             }
         }
-//        super.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
+    public void superMouseClicked(int mouseX, int mouseY, int mouseButton) {
+        try {
+            super.mouseClicked(mouseX, mouseY, mouseButton);
+        } catch (Exception ignored) { }
     }
 
     @Override
@@ -254,13 +266,12 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
         for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
             Widget widget = modularUI.guiWidgets.get(i);
             if(widget.isVisible() && widget.isActive() && widget.mouseDragged(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)) {
-                if (getModularUI().needNativeClick) {
-                    super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-                    getModularUI().needNativeClick = false;
-                }
                 return;
             }
         }
+    }
+
+    public void superMouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
     }
 
@@ -269,14 +280,13 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
         for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
             Widget widget = modularUI.guiWidgets.get(i);
             if(widget.isVisible() && widget.isActive() && widget.mouseReleased(mouseX, mouseY, state)) {
-                if (getModularUI().needNativeClick) {
-                    super.mouseReleased(mouseX, mouseY, state);
-                    getModularUI().needNativeClick = false;
-                }
                 return;
             }
         }
-//        super.mouseReleased(mouseX, mouseY, state);
+    }
+
+    public void superMouseReleased(int mouseX, int mouseY, int state) {
+        super.mouseReleased(mouseX, mouseY, state);
     }
 
     @Override
