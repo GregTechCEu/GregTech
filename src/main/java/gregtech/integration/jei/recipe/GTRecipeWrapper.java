@@ -69,7 +69,18 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (!recipe.getFluidInputs().isEmpty()) {
             List<FluidStack> matchingFluidInputs = new ArrayList<>(recipe.getFluidInputs().size());
 
-            matchingFluidInputs.addAll(recipe.getFluidInputs());
+            for (FluidStack fs : recipe.getFluidInputs()) {
+                if (fs.tag != null && fs.tag.hasKey("nonConsumable")) {
+                    FluidStack fluidCopy = GTUtility.copyAmount(fs.amount, fs);
+                    fluidCopy.tag.removeTag("nonConsumable");
+                    if (fluidCopy.tag.isEmpty()) {
+                        fluidCopy.tag = null;
+                    }
+                    matchingFluidInputs.add(fluidCopy);
+                } else {
+                    matchingFluidInputs.add(fs);
+                }
+            }
             ingredients.setInputs(VanillaTypes.FLUID, matchingFluidInputs);
         }
 
