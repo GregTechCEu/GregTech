@@ -292,13 +292,13 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
         @Override
         public void addInformation(ItemStack itemStack, List<String> lines) {
             IItemBehaviour.super.addInformation(itemStack, lines);
-            NBTTagCompound data = itemStack.getTagCompound();
-            if (data != null) {
-                if (data.hasKey("hover")) {
-                    String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled"));
-                    lines.add(I18n.format("metaarmor.hud.hover_mode", status));
-                }
+            NBTTagCompound data = GTUtility.getOrCreateNbtCompound(itemStack);
+            String status = I18n.format("metaarmor.hud.status.disabled");
+            if (data.hasKey("hover")) {
+                if (data.getBoolean("hover"))
+                    status = I18n.format("metaarmor.hud.status.enabled");
             }
+            lines.add(I18n.format("metaarmor.hud.hover_mode", status));
         }
 
         @Override

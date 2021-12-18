@@ -3,9 +3,7 @@ package gregtech.common.items.armor;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
 import net.minecraft.client.resources.I18n;
@@ -160,27 +158,15 @@ public class AdvancedJetpack extends Jetpack {
     }
 
     @Override
-    public void addToolComponents(ArmorMetaItem.ArmorMetaValueItem mvi) {
-        super.addToolComponents(mvi);
-        mvi.addComponents(new Behaviour());
-    }
-
-    public static class Behaviour implements IItemBehaviour {
-
-        public Behaviour() {
+    public void addInfo(ItemStack itemStack, List<String> lines) {
+        super.addInfo(itemStack, lines);
+        NBTTagCompound data = GTUtility.getOrCreateNbtCompound(itemStack);
+        String flyMode = I18n.format("metaarmor.hud.status.disabled");
+        if (data.hasKey("hover")) {
+            if (data.getBoolean("hover"))
+                flyMode = I18n.format("metaarmor.hud.status.enabled");
         }
-
-        @Override
-        public void addInformation(ItemStack itemStack, List<String> lines) {
-            IItemBehaviour.super.addInformation(itemStack, lines);
-            NBTTagCompound data = itemStack.getTagCompound();
-            if (data != null) {
-                if (data.hasKey("flyMode")) {
-                    String status = data.getBoolean("flyMode") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
-                    lines.add(I18n.format("metaarmor.hud.fly_mode", I18n.format(status)));
-                }
-            }
-        }
+        lines.add(I18n.format("metaarmor.hud.fly_mode", flyMode));
     }
 }
 

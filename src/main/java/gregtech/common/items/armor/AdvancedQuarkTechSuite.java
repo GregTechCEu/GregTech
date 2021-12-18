@@ -4,7 +4,6 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
 import net.minecraft.client.resources.I18n;
@@ -158,6 +157,14 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
         }
         lines.add(I18n.format("metaarmor.energy_share.tooltip", state));
         lines.add(I18n.format("metaarmor.energy_share.tooltip.guide"));
+        if (data.hasKey("hover")) {
+            String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled"));
+            lines.add(I18n.format("metaarmor.hud.hover_mode", status));
+        }
+        if (data.hasKey("flyMode")) {
+            String status = data.getBoolean("flyMode") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
+            lines.add(I18n.format("metaarmor.hud.fly_mode", I18n.format(status)));
+        }
         super.addInfo(itemStack, lines);
     }
 
@@ -318,34 +325,5 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     @Override
     public boolean hasEmergencyHover() {
         return true;
-    }
-
-
-    @Override
-    public void addToolComponents(ArmorMetaItem.ArmorMetaValueItem mvi) {
-        super.addToolComponents(mvi);
-        mvi.addComponents(new Behaviour());
-    }
-
-    public static class Behaviour implements IItemBehaviour {
-
-        public Behaviour() {
-        }
-
-        @Override
-        public void addInformation(ItemStack itemStack, List<String> lines) {
-            IItemBehaviour.super.addInformation(itemStack, lines);
-            NBTTagCompound data = itemStack.getTagCompound();
-            if (data != null) {
-                if (data.hasKey("hover")) {
-                    String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled"));
-                    lines.add(I18n.format("metaarmor.hud.hover_mode", status));
-                }
-                if (data.hasKey("flyMode")) {
-                    String status = data.getBoolean("flyMode") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
-                    lines.add(I18n.format("metaarmor.hud.fly_mode", I18n.format(status)));
-                }
-            }
-        }
     }
 }

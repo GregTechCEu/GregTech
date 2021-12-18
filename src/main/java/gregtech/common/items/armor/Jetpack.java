@@ -3,9 +3,7 @@ package gregtech.common.items.armor;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
-import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
 import net.minecraft.client.resources.I18n;
@@ -121,26 +119,16 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
     }
 
     @Override
-    public void addToolComponents(ArmorMetaItem.ArmorMetaValueItem mvi) {
-        super.addToolComponents(mvi);
-        mvi.addComponents(new Behaviour());
-    }
-
-    public static class Behaviour implements IItemBehaviour {
-
-        public Behaviour() {
-        }
-
-        @Override
-        public void addInformation(ItemStack itemStack, List<String> lines) {
-            IItemBehaviour.super.addInformation(itemStack, lines);
-            NBTTagCompound data = itemStack.getTagCompound();
-            if (data != null) {
-                if (data.hasKey("hover")) {
-                    String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled"));
-                    lines.add(I18n.format("metaarmor.hud.hover_mode", status));
-                }
+    public void addInfo(ItemStack itemStack, List<String> lines) {
+        super.addInfo(itemStack, lines);
+        NBTTagCompound data = itemStack.getTagCompound();
+        if (data != null) {
+            String status = I18n.format("metaarmor.hud.status.disabled");
+            if (data.hasKey("hover")) {
+                if (data.getBoolean("hover"))
+                    status = I18n.format("metaarmor.hud.status.enabled");
             }
+            lines.add(I18n.format("metaarmor.hud.hover_mode", status));
         }
     }
 
