@@ -627,7 +627,6 @@ public class Materials {
     public static Material Gelatin;
     public static Material Agar;
     public static Material Andesite;
-    public static Material Vinteum;
     public static Material Milk;
     public static Material Cocoa;
     public static Material Wheat;

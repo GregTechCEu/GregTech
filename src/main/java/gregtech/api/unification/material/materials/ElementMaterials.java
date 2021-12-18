@@ -41,7 +41,7 @@ public class ElementMaterials {
                 .build();
 
         Antimony = new Material.Builder(4, "antimony")
-                .ingot().fluid().ore()
+                .ingot().fluid()
                 .color(0xDCDCF0).iconSet(SHINY)
                 .flags(EXT_METAL, MORTAR_GRINDABLE)
                 .element(Elements.Sb)
@@ -89,7 +89,7 @@ public class ElementMaterials {
                 .build();
 
         Bismuth = new Material.Builder(11, "bismuth")
-                .ingot(1).fluid().ore()
+                .ingot(1).fluid()
                 .color(0x64A0A0).iconSet(METALLIC)
                 .element(Elements.Bi)
                 .build();
@@ -161,7 +161,7 @@ public class ElementMaterials {
                 .build();
 
         Chrome = new Material.Builder(22, "chrome")
-                .ingot(3).fluid().ore()
+                .ingot(3).fluid()
                 .color(0xEAC4D8).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
                 .element(Elements.Cr)
@@ -171,7 +171,7 @@ public class ElementMaterials {
                 .build();
 
         Cobalt = new Material.Builder(23, "cobalt")
-                .ingot().fluid().ore()
+                .ingot().fluid().ore() // leave for TiCon ore processing
                 .color(0x5050FA).iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_GEAR, GENERATE_BOLT_SCREW)
                 .element(Elements.Co)
@@ -371,7 +371,7 @@ public class ElementMaterials {
                 .build();
 
         Iridium = new Material.Builder(50, "iridium")
-                .ingot(3).fluid().ore()
+                .ingot(3).fluid()
                 .color(0xA1E4E4).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
                 .element(Elements.Ir)
@@ -530,7 +530,7 @@ public class ElementMaterials {
                 .build();
 
         Niobium = new Material.Builder(71, "niobium")
-                .ingot().fluid().ore()
+                .ingot().fluid()
                 .color(0xBEB4C8).iconSet(METALLIC)
                 .flags(STD_METAL)
                 .element(Elements.Nb)
@@ -559,7 +559,7 @@ public class ElementMaterials {
                 .build();
 
         Osmium = new Material.Builder(75, "osmium")
-                .ingot(4).fluid().ore()
+                .ingot(4).fluid()
                 .color(0x3232FF).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
                 .element(Elements.Os)
@@ -928,7 +928,7 @@ public class ElementMaterials {
                 .build();
 
         Zinc = new Material.Builder(122, "zinc")
-                .ingot(1).fluid().ore()
+                .ingot(1).fluid()
                 .color(0xEBEBFA).iconSet(METALLIC)
                 .flags(STD_METAL, MORTAR_GRINDABLE, GENERATE_FOIL, GENERATE_RING, GENERATE_FINE_WIRE)
                 .element(Elements.Zn)
@@ -954,7 +954,7 @@ public class ElementMaterials {
                 .build();
 
         NaquadahEnriched = new Material.Builder(125, "naquadah_enriched")
-                .ingot(4).fluid().ore()
+                .ingot(4).fluid()
                 .color(0x3C3C3C, false).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .element(Elements.Nq1)

@@ -299,13 +299,7 @@ public class UnknownCompositionMaterials {
 
         // FREE ID 1611
 
-        Vinteum = new Material.Builder(1612, "vinteum")
-                .gem(3).ore()
-                .color(0x64C8FF).iconSet(EMERALD)
-                .flags(STD_GEM, NO_SMASHING, NO_SMELTING)
-                .toolStats(12.0f, 3.0f, 128, 15)
-                .addDefaultEnchant(Enchantments.FORTUNE, 2)
-                .build();
+        // Free ID 1612
 
         Milk = new Material.Builder(1613, "milk")
                 .fluid()

@@ -22,7 +22,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Andradite = new Material.Builder(251, "andradite")
-                .gem(1).ore(3, 1)
+                .gem(1)
                 .color(0x967800).iconSet(RUBY)
                 .components(Calcium, 3, Iron, 2, Silicon, 3, Oxygen, 12)
                 .build();
@@ -258,7 +258,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Rutile = new Material.Builder(285, "rutile")
-                .gem().ore()
+                .gem()
                 .color(0xD40D5C).iconSet(GEM_HORIZONTAL)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Titanium, 1, Oxygen, 2)
