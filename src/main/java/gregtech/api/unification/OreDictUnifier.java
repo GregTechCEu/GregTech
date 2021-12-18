@@ -309,6 +309,15 @@ public class OreDictUnifier {
         return getIngotOrDust(materialStack.material, materialStack.amount);
     }
 
+    public static ItemStack getGem(MaterialStack materialStack) {
+        if (materialStack.material.hasProperty(PropertyKey.GEM)
+                && !OrePrefix.gem.isIgnored(materialStack.material)
+                && materialStack.amount == OrePrefix.gem.materialAmount) {
+            return get(OrePrefix.gem, materialStack.material, (int) (materialStack.amount / M));
+        }
+        return getDust(materialStack);
+    }
+
     synchronized private static <T> void addAndSort(List<T> list, T itemToAdd, Comparator<T> comparator) {
         list.add(itemToAdd);
 

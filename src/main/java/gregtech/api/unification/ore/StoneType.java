@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTControlledRegistry;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
@@ -49,7 +50,7 @@ public class StoneType implements Comparable<StoneType> {
         this.harvestTool = harvestTool;
         this.stone = stone;
         this.predicate = predicate::test;
-        this.shouldBeDroppedAsItem = shouldBeDroppedAsItem;
+        this.shouldBeDroppedAsItem = shouldBeDroppedAsItem || ConfigHolder.worldgen.allUniqueStoneTypes;
         STONE_TYPE_REGISTRY.register(id, name, this);
     }
 

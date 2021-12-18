@@ -8,6 +8,7 @@ import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
@@ -19,12 +20,26 @@ import java.util.List;
 
 public class OreByProduct implements IRecipeWrapper {
 
-    private final static ImmutableList<OrePrefix> ORES = ImmutableList.of(
-            OrePrefix.ore,
-            OrePrefix.oreEndstone,
-            OrePrefix.oreNetherrack
-            /* OrePrefix.oreSand, */
-            /* OrePrefix.oreRedSand */);
+    private static final ImmutableList<OrePrefix> ORES;
+
+    static {
+        List<OrePrefix> prefixes = new ArrayList<>();
+        prefixes.add(OrePrefix.ore);
+        prefixes.add(OrePrefix.oreNetherrack);
+        prefixes.add(OrePrefix.oreEndstone);
+        if (ConfigHolder.worldgen.allUniqueStoneTypes) {
+            prefixes.add(OrePrefix.oreGranite);
+            prefixes.add(OrePrefix.oreDiorite);
+            prefixes.add(OrePrefix.oreAndesite);
+            prefixes.add(OrePrefix.oreBasalt);
+            prefixes.add(OrePrefix.oreBlackgranite);
+            prefixes.add(OrePrefix.oreMarble);
+            prefixes.add(OrePrefix.oreRedgranite);
+            prefixes.add(OrePrefix.oreSand);
+            prefixes.add(OrePrefix.oreRedSand);
+        }
+        ORES = ImmutableList.copyOf(prefixes);
+    }
 
     private final List<List<ItemStack>> matchingInputs = new ArrayList<>();
     private final List<ItemStack> oreProcessingSteps = new ArrayList<>();

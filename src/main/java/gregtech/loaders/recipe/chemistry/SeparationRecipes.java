@@ -426,6 +426,21 @@ public class SeparationRecipes {
                 .fluidOutputs(Water.getFluid(2000))
                 .duration(784).EUt(60).buildAndRegister();
 
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .input(dust, Bauxite, 5)
+                .output(dust, Aluminium, 2)
+                .output(dustTiny, Rutile, 3)
+                .fluidOutputs(Oxygen.getFluid(3000))
+                .duration(100).EUt(60).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .input(dust, Zeolite, 41)
+                .output(dust, Sodium)
+                .output(dust, Calcium, 4)
+                .output(dust, Silicon, 27)
+                .output(dust, Aluminium, 9)
+                .duration(656).EUt(120).buildAndRegister();
+
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 1, GTValues.W))

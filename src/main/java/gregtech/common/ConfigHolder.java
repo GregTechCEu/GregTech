@@ -136,6 +136,9 @@ public class ConfigHolder {
 
         @Config.Comment({"Allow GregTech to add additional GregTech Items as loot in various structures.", "Default: true"})
         public boolean addLoot = true;
+
+        @Config.Comment({"Should all Stone Types drop unique Ore Item Blocks?", "Default: false (meaning only Stone, Netherrack, and Endstone"})
+        public boolean allUniqueStoneTypes = false;
     }
 
     public static class RecipeOptions {
