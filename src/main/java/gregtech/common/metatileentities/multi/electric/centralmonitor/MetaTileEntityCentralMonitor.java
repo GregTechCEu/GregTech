@@ -92,7 +92,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     private EnergyNet getEnergyNet() {
         if (!this.getWorld().isRemote) {
             TileEntity te = this.getWorld().getTileEntity(this.getPos().offset(frontFacing.getOpposite()));
-            if (te instanceof TileEntityPipeBase) {
+            if (te instanceof TileEntityPipeBase && ((TileEntityPipeBase<?, ?>) te).getPipeTypeClass() == TileEntityCable.class) {
                 TileEntityPipeBase<?, ?> tileEntityCable = (TileEntityCable) te;
                 EnergyNet currentEnergyNet = this.currentEnergyNet.get();
                 if (currentEnergyNet != null && currentEnergyNet.isValid() && currentEnergyNet.containsNode(tileEntityCable.getPipePos())) {
