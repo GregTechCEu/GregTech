@@ -37,9 +37,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     private static final int LINE_HEIGHT = 10;
 
-    private final Map<Object, ChanceEntry> chanceOutput = new HashMap<>();
-    private final Set<ItemStack> notConsumedItemInput = new HashSet<>();
-    private final Set<FluidStack> notConsumedFluidInput = new HashSet<>();
     private final RecipeMap<?> recipeMap;
     private final Recipe recipe;
     private String lastCopiedRemoval;
@@ -59,16 +56,11 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         // Inputs
         if (!recipe.getInputs().isEmpty()) {
             List<List<ItemStack>> matchingInputs = new ArrayList<>(recipe.getInputs().size());
-            int currentItemSlot = 0;
             for (CountableIngredient ci : recipe.getInputs()) {
                 matchingInputs.add(Arrays.stream(ci.getIngredient().getMatchingStacks())
                         .sorted(OreDictUnifier.getItemStackComparator())
                         .map(is -> GTUtility.copyAmount(ci.getCount(), is))
                         .collect(Collectors.toList()));
-                if (ci.isNonConsumable()) {
-                    notConsumedItemInput.addAll(matchingInputs.get(currentItemSlot));
-                }
-                currentItemSlot++;
             }
             ingredients.setInputLists(VanillaTypes.ITEM, matchingInputs);
         }
@@ -77,19 +69,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (!recipe.getFluidInputs().isEmpty()) {
             List<FluidStack> matchingFluidInputs = new ArrayList<>(recipe.getFluidInputs().size());
 
-            for (FluidStack fs : recipe.getFluidInputs()) {
-                if (fs.tag != null && fs.tag.hasKey("nonConsumable")) {
-                    FluidStack fluidCopy = GTUtility.copyAmount(fs.amount, fs);
-                    fluidCopy.tag.removeTag("nonConsumable");
-                    if (fluidCopy.tag.isEmpty()) {
-                        fluidCopy.tag = null;
-                    }
-                    notConsumedFluidInput.add(fluidCopy);
-                    matchingFluidInputs.add(fluidCopy);
-                } else {
-                    matchingFluidInputs.add(fs);
-                }
-            }
+            matchingFluidInputs.addAll(recipe.getFluidInputs());
             ingredients.setInputs(VanillaTypes.FLUID, matchingFluidInputs);
         }
 
@@ -101,7 +81,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             List<ChanceEntry> chancedOutputs = recipe.getChancedOutputs();
             chancedOutputs.sort(Comparator.comparingInt(entry -> entry == null ? 0 : entry.getChance()));
             for (ChanceEntry chancedEntry : chancedOutputs) {
-                chanceOutput.put(chancedEntry.getItemStackRaw(), chancedEntry);
                 recipeOutputs.add(chancedEntry.getItemStackRaw());
             }
             ingredients.setOutputs(VanillaTypes.ITEM, recipeOutputs);
@@ -116,9 +95,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     }
 
     public void addItemTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
-        boolean notConsumed = input && isNotConsumedInput(ingredient);
+        boolean notConsumed = input && isNotConsumedItem(slotIndex);
 
-        ChanceEntry entry = input ? null : chanceOutput.get(ingredient);
+        ChanceEntry entry = input ? null : recipe.getChancedOutputs().get(slotIndex - recipe.getInputs().size());
 
         if (entry != null) {
             double chance = entry.getChance() / 100.0;
@@ -130,7 +109,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     }
 
     public void addFluidTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
-        boolean notConsumed = input && isNotConsumedInput(ingredient);
+        boolean notConsumed = input && isNotConsumedFluid(slotIndex);
 
         if (notConsumed) {
             tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
@@ -174,17 +153,19 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                 .setActiveSupplier(creativePlayerCtPredicate));
     }
 
-    public boolean hasChancedOutput(ItemStack itemStack) {
-        return chanceOutput.get(itemStack) != null && !chanceOutput.get(itemStack).getItemStack().isEmpty();
+    public ChanceEntry getOutputChance(int slot) {
+        if (slot >= recipe.getChancedOutputs().size()) return null;
+        return recipe.getChancedOutputs().get(slot);
     }
 
-    public boolean isNotConsumedInput(Object stack) {
-        if (stack instanceof ItemStack) {
-            return notConsumedItemInput.contains(stack);
-        } else if (stack instanceof FluidStack) {
-            return notConsumedFluidInput.contains(stack);
-        }
-        return false;
+    public boolean isNotConsumedItem(int slot) {
+        if (slot >= recipe.getInputs().size()) return false;
+        return recipe.getInputs().get(slot).isNonConsumable();
+    }
+
+    public boolean isNotConsumedFluid(int slot) {
+        if (slot >= recipe.getFluidInputs().size()) return false;
+        return recipe.getFluidInputs().get(slot).tag != null && recipe.getFluidInputs().get(slot).tag.hasKey("nonConsumable");
     }
 
     private int getPropertyListHeight() {

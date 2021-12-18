@@ -123,7 +123,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 if (handle.getItemHandler() == importItems) {
                     //this is input item stack slot widget, so add it to item group
                     itemStackGroup.init(handle.getSlotIndex(), true,
-                            new ItemStackTextRenderer(recipeWrapper.isNotConsumedInput(handle.getStack())),
+                            new ItemStackTextRenderer(recipeWrapper.isNotConsumedItem(handle.getSlotIndex())),
                             slotWidget.getPosition().x + 1,
                             slotWidget.getPosition().y + 1,
                             slotWidget.getSize().width - 2,
@@ -131,7 +131,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 } else if (handle.getItemHandler() == exportItems) {
                     //this is output item stack slot widget, so add it to item group
                     itemStackGroup.init(importItems.getSlots() + handle.getSlotIndex(), false,
-                            new ItemStackTextRenderer(recipeWrapper.hasChancedOutput(handle.getStack())),
+                            new ItemStackTextRenderer(recipeWrapper.getOutputChance(handle.getSlotIndex() )),
                             slotWidget.getPosition().x + 1,
                             slotWidget.getPosition().y + 1,
                             slotWidget.getSize().width - 2,
@@ -150,7 +150,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                             new FluidStackTextRenderer(fluidAmount, false,
                                     tankWidget.getSize().width - (2 * tankWidget.fluidRenderOffset),
                                     tankWidget.getSize().height - (2 * tankWidget.fluidRenderOffset), null)
-                                    .setNotConsumed(recipeWrapper.isNotConsumedInput(importFluids.getFluidTanks().get(importIndex))),
+                                    .setNotConsumed(recipeWrapper.isNotConsumedFluid(importIndex)),
                             tankWidget.getPosition().x + tankWidget.fluidRenderOffset,
                             tankWidget.getPosition().y + tankWidget.fluidRenderOffset,
                             tankWidget.getSize().width - (2 * tankWidget.fluidRenderOffset),
