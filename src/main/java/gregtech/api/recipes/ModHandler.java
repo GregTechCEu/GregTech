@@ -231,6 +231,9 @@ public class ModHandler {
                 .setMirrored(true)
                 .setRegistryName(regName);
         ForgeRegistries.RECIPES.register(shapedOreRecipe);
+
+        if (withUnificationData) OreDictUnifier.registerOre(result, getRecyclingIngredients(recipe));
+
     }
 
     /**
