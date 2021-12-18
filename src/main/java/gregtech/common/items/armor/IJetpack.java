@@ -1,16 +1,10 @@
 package gregtech.common.items.armor;
 
 import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nonnull;
 
@@ -58,10 +52,6 @@ public interface IJetpack {
 
     default float getFallDamageReduction() {
         return 0.0f;
-    }
-
-    default boolean hasEmergencyHover() {
-        return false;
     }
 
     int getEnergyPerUse();
@@ -112,37 +102,5 @@ public interface IJetpack {
                 ArmorUtils.spawnParticle(player.getEntityWorld(), player, getParticle(), -0.6D);
             }
         }
-        if (hasEmergencyHover()) {
-            if (hasEnergy(stack) && (!hover || !canFly(stack))) {
-                if (player.posY < -5) {
-                    this.performEmergencyHover(stack, player);
-                } else {
-                    if (!player.isCreative() && player.fallDistance - 1.2f >= player.getHealth()) {
-                        for (int i = 0; i <= 16; i++) {
-                            int x = Math.round((float) player.posX - 0.5f);
-                            int y = Math.round((float) player.posY) - i;
-                            int z = Math.round((float) player.posZ - 0.5f);
-                            if (!player.world.isAirBlock(new BlockPos(x, y, z))) {
-                                performEmergencyHover(stack, player);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    default void performEmergencyHover(@Nonnull ItemStack stack, @Nonnull EntityPlayer player) {
-        NBTTagCompound data = GTUtility.getOrCreateNbtCompound(stack);
-
-        data.setBoolean("flyMode", true);
-        data.setBoolean("hover", true);
-
-        player.fallDistance = 0;
-
-        player.inventoryContainer.detectAndSendChanges();
-        player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.emergency_hover_mode")
-                .setStyle(new Style().setColor(TextFormatting.RED)), true);
     }
 }
