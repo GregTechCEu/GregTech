@@ -34,7 +34,7 @@ import java.util.function.Function;
 
 import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
 
-public class MetaTileEntityCreativeTank extends MetaTileEntity {
+public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     private int mBPerCycle = 1;
     private int ticksPerCycle = 1;
@@ -45,7 +45,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntity {
     private final List<Character> ALLOWED_CHARS = Lists.newArrayList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
 
     public MetaTileEntityCreativeTank(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId);
+        super(metaTileEntityId, 15, -1);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntity {
 
         TileEntity tile = getWorld().getTileEntity(getPos().offset(this.getFrontFacing()));
         if (tile != null) {
-            IFluidHandler fluidHandler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, frontFacing);
+            IFluidHandler fluidHandler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, frontFacing.getOpposite());
             if (fluidHandler == null || fluidHandler.getTankProperties().length == 0)
                 return;
 

@@ -18,7 +18,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -27,7 +29,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.function.Function;
 
-public class MetaTileEntityCreativeChest extends MetaTileEntity {
+public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     private int itemsPerCycle = 1;
     private int ticksPerCycle = 1;
@@ -36,12 +38,20 @@ public class MetaTileEntityCreativeChest extends MetaTileEntity {
         protected int getStackLimit(int slot, ItemStack stack) {
             return 1;
         }
+
+        @Override
+        public void setStackInSlot(int slot, ItemStack stack) {
+            this.validateSlotIndex(slot);
+            stack.setCount(1);
+            this.stacks.set(slot, stack);
+            this.onContentsChanged(slot);
+        }
     };
 
     private boolean active = false;
 
     public MetaTileEntityCreativeChest(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId);
+        super(metaTileEntityId, 15, 0);
     }
 
     @Override
@@ -94,7 +104,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntity {
 
         TileEntity tile = getWorld().getTileEntity(getPos().offset(this.getFrontFacing()));
         if (tile != null) {
-            IItemHandler container = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, frontFacing);
+            IItemHandler container = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, frontFacing.getOpposite());
             if (container == null || container.getSlots() == 0)
                 return;
             stack.setCount(itemsPerCycle);
@@ -168,6 +178,5 @@ public class MetaTileEntityCreativeChest extends MetaTileEntity {
         }
         tag.setInteger("mBPerCycle", itemsPerCycle);
         tag.setInteger("ticksPerCycle", ticksPerCycle);
-
     }
 }
