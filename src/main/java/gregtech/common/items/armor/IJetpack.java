@@ -77,10 +77,11 @@ public interface IJetpack {
                         if (!hover) {
                             player.motionY = Math.min(player.motionY + currentAccel, currentSpeedVertical);
                         } else {
-                            if (descendKeyDown)
-                                player.motionY = Math.min(player.motionY + currentAccel, -getVerticalHoverSlowSpeed());
+                            if (descendKeyDown) player.motionY = Math.min(player.motionY + currentAccel, getVerticalHoverSlowSpeed());
                             else player.motionY = Math.min(player.motionY + currentAccel, getVerticalHoverSpeed());
                         }
+                    } else if (descendKeyDown) {
+                        player.motionY = Math.min(player.motionY + currentAccel, -getVerticalHoverSpeed());
                     } else {
                         player.motionY = Math.min(player.motionY + currentAccel, -getVerticalHoverSlowSpeed());
                     }

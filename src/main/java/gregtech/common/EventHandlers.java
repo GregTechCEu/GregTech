@@ -1,8 +1,6 @@
 package gregtech.common;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IElectricItem;
 import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorMetaItem;
@@ -10,11 +8,11 @@ import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.packets.CPacketKeysPressed;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.Key;
 import gregtech.api.util.input.KeyBinds;
 import gregtech.common.items.MetaItems;
-import gregtech.common.items.armor.IJetpack;
 import gregtech.common.items.armor.PowerlessJetpack;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
@@ -24,12 +22,14 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -154,30 +154,22 @@ public class EventHandlers {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onEntityLivingFallEvent(LivingFallEvent event) {
-        if (!event.getEntity().getEntityWorld().isRemote && event.getEntity() instanceof EntityLivingBase) {
-            EntityLivingBase entity = (EntityLivingBase) event.getEntity();
-            ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-            ItemStack jet = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+        if (event.getEntity() instanceof EntityPlayerMP) {
+            EntityPlayerMP player = (EntityPlayerMP) event.getEntity();
+            ItemStack armor = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+            ItemStack jet = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 
-            if (!jet.isEmpty() && jet.getItem() instanceof IJetpack) {
-                event.setDamageMultiplier(1 / Math.max(0.00001f, ((IJetpack) jet.getItem()).getFallDamageReduction()));
-            }
-
-            if (armor.isEmpty())
+            if (player.fallDistance < 3.2f)
                 return;
 
-            ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) armor.getItem()).getItem(armor);
-            if (armorMetaValue.getArmorLogic() instanceof ArmorLogicSuite) {
-                if (entity.fallDistance >= 3.2f) {
-                    ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
-                    IElectricItem item = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                    if (item == null) return;
-                    int energyCost = (int) (armorLogic.getEnergyPerUse() * Math.sqrt(entity.fallDistance));
-                    if (item.getCharge() >= energyCost) {
-                        item.discharge(energyCost, item.getTier(), true, false, false);
-                        entity.fallDistance = 0;
-                    }
-                }
+            if (!armor.isEmpty() && armor.getItem() instanceof ArmorMetaItem<?>) {
+                ((ArmorMetaItem<?>) armor.getItem()).getItem(armor).getArmorLogic().damageArmor(player, armor, DamageSource.FALL, (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);
+                player.fallDistance = 0;
+                event.setCanceled(true);
+            } else if (!jet.isEmpty() && jet.getItem() instanceof ArmorMetaItem<?> && GTUtility.getOrCreateNbtCompound(jet).hasKey("flyMode")) {
+                ((ArmorMetaItem<?>) jet.getItem()).getItem(jet).getArmorLogic().damageArmor(player, jet, DamageSource.FALL, (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);
+                player.fallDistance = 0;
+                event.setCanceled(true);
             }
         }
     }

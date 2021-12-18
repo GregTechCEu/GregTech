@@ -32,6 +32,6 @@ public class MetaArmor extends ArmorMetaItem<ArmorMetaItem<?>.ArmorMetaValueItem
         MetaItems.QUANTUM_CHESTPLATE = addItem(41, "qts.chestplate").setArmorLogic(new QuarkTechSuite(EntityEquipmentSlot.CHEST, energyPerUse, maxCapacity, tier)).setRarity(EnumRarity.RARE);
         MetaItems.QUANTUM_LEGGINGS = addItem(42, "qts.leggings").setArmorLogic(new QuarkTechSuite(EntityEquipmentSlot.LEGS, energyPerUse, maxCapacity, tier)).setRarity(EnumRarity.RARE);
         MetaItems.QUANTUM_BOOTS = addItem(43, "qts.boots").setArmorLogic(new QuarkTechSuite(EntityEquipmentSlot.FEET, energyPerUse, maxCapacity, tier)).setRarity(EnumRarity.RARE);
-        MetaItems.QUANTUM_CHESTPLATE_ADVANCED = addItem(50, "qts.advanced_chestplate").setArmorLogic(new AdvancedQuarkTechSuite(32768, 1_000_000_000L * (long) Math.max(1, Math.pow(4, ConfigHolder.tools.voltageTierAdvQuarkTech - 6)), ConfigHolder.tools.voltageTierAdvQuarkTech)).setRarity(EnumRarity.EPIC);
+        MetaItems.QUANTUM_CHESTPLATE_ADVANCED = addItem(50, "qts.advanced_chestplate").setArmorLogic(new AdvancedQuarkTechSuite(energyPerUse, 1_000_000_000L * (long) Math.max(1, Math.pow(4, ConfigHolder.tools.voltageTierAdvQuarkTech - 6)), ConfigHolder.tools.voltageTierAdvQuarkTech)).setRarity(EnumRarity.EPIC);
     }
 }
