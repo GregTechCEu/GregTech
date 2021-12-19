@@ -607,7 +607,7 @@ public class ElementMaterials {
                 .build();
 
         Plutonium239 = new Material.Builder(81, "plutonium")
-                .ingot(3).fluid()
+                .ingot(3).fluid().ore()
                 .color(0xF03232).iconSet(METALLIC)
                 .flags(EXT_METAL)
                 .element(Elements.Pu239)
