@@ -83,7 +83,7 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart {
     @Override
     public void addToMultiBlock(MultiblockControllerBase controllerBase) {
         super.addToMultiBlock(controllerBase);
-        this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false), controllerBase.getImportFluids());
+        this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false, controllerBase.getImportFluids()), controllerBase.getImportFluids());
     }
 
     @Override
