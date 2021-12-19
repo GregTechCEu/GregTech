@@ -49,7 +49,6 @@ public class OrePrefix {
     // In case of an Sand-Ores Mod. Ore -> Material is a Oneway Operation!
     public static final OrePrefix oreSand = new OrePrefix("oreSand", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, null);
     public static final OrePrefix oreRedSand = new OrePrefix("oreRedSand", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, null);
-    public static final OrePrefix oreGravel = new OrePrefix("oreGravel", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, null);
 
     // Prefix of the Nether-Ores Mod. Causes Ores to double. Ore -> Material is a Oneway Operation!
     public static final OrePrefix oreNetherrack = new OrePrefix("oreNetherrack", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
@@ -341,18 +340,20 @@ public class OrePrefix {
         block.setIgnored(Materials.Blaze);
 
         ore.addSecondaryMaterial(new MaterialStack(Materials.Stone, dust.materialAmount));
-        oreGranite.addSecondaryMaterial(new MaterialStack(Materials.Granite, dust.materialAmount));
-        oreDiorite.addSecondaryMaterial(new MaterialStack(Materials.Diorite, dust.materialAmount));
-        oreAndesite.addSecondaryMaterial(new MaterialStack(Materials.Andesite, dust.materialAmount));
-        oreRedgranite.addSecondaryMaterial(new MaterialStack(Materials.GraniteRed, dust.materialAmount));
-        oreBlackgranite.addSecondaryMaterial(new MaterialStack(Materials.GraniteBlack, dust.materialAmount));
-        oreBasalt.addSecondaryMaterial(new MaterialStack(Materials.Basalt, dust.materialAmount));
-        oreMarble.addSecondaryMaterial(new MaterialStack(Materials.Marble, dust.materialAmount));
-        oreSand.addSecondaryMaterial(new MaterialStack(Materials.SiliconDioxide, dustTiny.materialAmount));
-        oreRedSand.addSecondaryMaterial(new MaterialStack(Materials.SiliconDioxide, dustTiny.materialAmount));
-        oreGravel.addSecondaryMaterial(new MaterialStack(Materials.Flint, dustTiny.materialAmount));
         oreNetherrack.addSecondaryMaterial(new MaterialStack(Materials.Netherrack, dust.materialAmount));
         oreEndstone.addSecondaryMaterial(new MaterialStack(Materials.Endstone, dust.materialAmount));
+
+        if (ConfigHolder.worldgen.allUniqueStoneTypes) {
+            oreGranite.addSecondaryMaterial(new MaterialStack(Materials.Granite, dust.materialAmount));
+            oreDiorite.addSecondaryMaterial(new MaterialStack(Materials.Diorite, dust.materialAmount));
+            oreAndesite.addSecondaryMaterial(new MaterialStack(Materials.Andesite, dust.materialAmount));
+            oreRedgranite.addSecondaryMaterial(new MaterialStack(Materials.GraniteRed, dust.materialAmount));
+            oreBlackgranite.addSecondaryMaterial(new MaterialStack(Materials.GraniteBlack, dust.materialAmount));
+            oreBasalt.addSecondaryMaterial(new MaterialStack(Materials.Basalt, dust.materialAmount));
+            oreMarble.addSecondaryMaterial(new MaterialStack(Materials.Marble, dust.materialAmount));
+            oreSand.addSecondaryMaterial(new MaterialStack(Materials.SiliconDioxide, dustTiny.materialAmount));
+            oreRedSand.addSecondaryMaterial(new MaterialStack(Materials.SiliconDioxide, dustTiny.materialAmount));
+        }
 
         crushed.addSecondaryMaterial(new MaterialStack(Materials.Stone, dust.materialAmount));
 
