@@ -315,7 +315,7 @@ public class ElementMaterials {
                 .color(0xFFE650).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_RING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_SPRING, GENERATE_SPRING_SMALL)
                 .element(Elements.Au)
-                .cableProperties(GTValues.V[3], 2, 2)
+                .cableProperties(GTValues.V[3], 3, 2)
                 .fluidPipeProperties(1671, 35, true)
                 .build();
 
