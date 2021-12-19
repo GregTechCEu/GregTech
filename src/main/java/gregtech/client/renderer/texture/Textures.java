@@ -64,7 +64,7 @@ public class Textures {
     public static final SimpleOverlayRenderer CLEAN_STAINLESS_STEEL_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_clean_stainless_steel");
     public static final SimpleOverlayRenderer STABLE_TITANIUM_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_stable_titanium");
     public static final SimpleOverlayRenderer ROBUST_TUNGSTENSTEEL_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_robust_tungstensteel");
-    public static final SimpleCubeRenderer ROBUST_HSSG_CASING = new SimpleCubeRenderer("casings/solid/machine_casing_robust_hssg");
+    public static final SimpleOverlayRenderer ROBUST_HSSG_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_robust_hssg");
     public static final SimpleOverlayRenderer INERT_PTFE_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_inert_ptfe");
     public static final SimpleOverlayRenderer BRONZE_FIREBOX = new SimpleOverlayRenderer("casings/firebox/machine_casing_firebox_bronze");
     public static final SimpleOverlayRenderer BRONZE_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_bronze_active");
