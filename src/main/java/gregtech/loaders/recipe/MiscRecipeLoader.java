@@ -197,7 +197,7 @@ public class MiscRecipeLoader {
         // Jetpacks
         ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(100)
                 .input(circuit, Good, 6)
-                .inputs(MetaTileEntities.STEEL_TANK.getStackForm())
+//                .inputs(MetaTileEntities.STEEL_TANK.getStackForm())
                 .inputs(ELECTRIC_PUMP_MV.getStackForm(2))
                 .input(pipeSmallFluid, Polyethylene, 2)
                 .input(pipeNormalFluid, Steel, 2)
