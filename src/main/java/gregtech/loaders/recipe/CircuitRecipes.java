@@ -1268,6 +1268,7 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_CAPACITOR, 16)
                 .input(ADVANCED_SMD_DIODE, 8)
                 .fluidInputs(SolderingAlloy.getFluid(L * 10))
+                .researchItem(CRYSTAL_COMPUTER_ZPM.getStackForm())
                 .output(CRYSTAL_MAINFRAME_UV)
                 .buildAndRegister();
 
@@ -1328,6 +1329,7 @@ public class CircuitRecipes {
                 .input(foil, SiliconeRubber, 32)
                 .input(plate, Europium, 4)
                 .fluidInputs(SolderingAlloy.getFluid(1152))
+                .researchItem(WETWARE_PROCESSOR_ASSEMBLY_ZPM.getStackForm())
                 .output(WETWARE_SUPER_COMPUTER_UV)
                 .buildAndRegister();
 
@@ -1345,6 +1347,7 @@ public class CircuitRecipes {
                 .input(plate, Europium, 8)
                 .fluidInputs(SolderingAlloy.getFluid(L * 20))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 8))
+                .researchItem(WETWARE_SUPER_COMPUTER_UV.getStackForm())
                 .output(WETWARE_MAINFRAME_UHV)
                 .buildAndRegister();
 
@@ -1400,6 +1403,7 @@ public class CircuitRecipes {
                 .input(SMD_TRANSISTOR, 32)
                 .input(wireFine, Platinum, 64)
                 .fluidInputs(SolderingAlloy.getFluid(L * 5))
+                .researchItem(ENERGY_LAPOTRONIC_ORB.getStackForm())
                 .output(ENERGY_LAPOTRONIC_ORB_CLUSTER)
                 .buildAndRegister();
 
@@ -1416,6 +1420,7 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_TRANSISTOR, 8)
                 .input(wireFine, Platinum, 64)
                 .fluidInputs(SolderingAlloy.getFluid(L * 5))
+                .researchItem(ENERGY_LAPOTRONIC_ORB.getStackForm())
                 .output(ENERGY_LAPOTRONIC_ORB_CLUSTER)
                 .buildAndRegister();
     }

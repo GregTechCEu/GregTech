@@ -80,6 +80,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.wireFine, Materials.IndiumTinBariumTitaniumCuprate, 32)
                 .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .researchItem(MetaItems.FIELD_GENERATOR_IV.getStackForm())
                 .outputs(MetaItems.FIELD_GENERATOR_LUV.getStackForm())
                 .duration(600).EUt(5760).buildAndRegister();
 
@@ -94,6 +95,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.wireFine, Materials.UraniumRhodiumDinaquadide, 32)
                 .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .researchItem(MetaItems.FIELD_GENERATOR_LUV.getStackForm())
                 .outputs(MetaItems.FIELD_GENERATOR_ZPM.getStackForm())
                 .duration(600).EUt(23040).buildAndRegister();
 
@@ -108,6 +110,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.wireFine, Materials.EnrichedNaquadahTriniumEuropiumDuranide, 32)
                 .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .researchItem(MetaItems.FIELD_GENERATOR_ZPM.getStackForm())
                 .outputs(MetaItems.FIELD_GENERATOR_UV.getStackForm())
                 .duration(600).EUt(92160).buildAndRegister();
 
@@ -174,6 +177,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 4)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(250))
+                .researchItem(MetaItems.ROBOT_ARM_IV.getStackForm())
                 .outputs(MetaItems.ROBOT_ARM_LUV.getStackForm())
                 .duration(600).EUt(5760).buildAndRegister();
 
@@ -187,6 +191,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 4)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(500))
+                .researchItem(MetaItems.ROBOT_ARM_LUV.getStackForm())
                 .outputs(MetaItems.ROBOT_ARM_ZPM.getStackForm())
                 .duration(600).EUt(23040).buildAndRegister();
 
@@ -200,6 +205,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 4)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(1000))
+                .researchItem(MetaItems.ROBOT_ARM_ZPM.getStackForm())
                 .outputs(MetaItems.ROBOT_ARM_UV.getStackForm())
                 .duration(600).EUt(92160).buildAndRegister();
 
@@ -272,6 +278,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(250))
+                .researchItem(MetaItems.ELECTRIC_MOTOR_IV.getStackForm())
                 .outputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm())
                 .duration(600).EUt(5760).buildAndRegister();
 
@@ -287,6 +294,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(500))
+                .researchItem(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm())
                 .outputs(MetaItems.ELECTRIC_MOTOR_ZPM.getStackForm())
                 .duration(600).EUt(23040).buildAndRegister();
 
@@ -302,6 +310,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(1000))
+                .researchItem(MetaItems.ELECTRIC_MOTOR_ZPM.getStackForm())
                 .outputs(MetaItems.ELECTRIC_MOTOR_UV.getStackForm())
                 .duration(600).EUt(92160).buildAndRegister();
 
@@ -364,6 +373,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.foil, Materials.Palladium, 8)
                 .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .researchItem(MetaItems.SENSOR_IV.getStackForm())
                 .outputs(MetaItems.SENSOR_LUV.getStackForm())
                 .duration(600).EUt(5760).buildAndRegister();
 
@@ -378,6 +388,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.foil, Materials.Trinium, 8)
                 .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .researchItem(MetaItems.SENSOR_LUV.getStackForm())
                 .outputs(MetaItems.SENSOR_ZPM.getStackForm())
                 .duration(600).EUt(23040).buildAndRegister();
 
@@ -392,6 +403,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.foil, Materials.Europium, 8)
                 .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .researchItem(MetaItems.SENSOR_ZPM.getStackForm())
                 .outputs(MetaItems.SENSOR_UV.getStackForm())
                 .duration(600).EUt(92160).buildAndRegister();
 
@@ -459,6 +471,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.foil, Materials.Palladium, 8)
                 .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .researchItem(MetaItems.EMITTER_IV.getStackForm())
                 .outputs(MetaItems.EMITTER_LUV.getStackForm())
                 .duration(600).EUt(5760).buildAndRegister();
 
@@ -473,6 +486,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.foil, Materials.Trinium, 8)
                 .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .researchItem(MetaItems.EMITTER_LUV.getStackForm())
                 .outputs(MetaItems.EMITTER_ZPM.getStackForm())
                 .duration(600).EUt(23040).buildAndRegister();
 
@@ -487,6 +501,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.foil, Materials.Europium, 8)
                 .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
+                .researchItem(MetaItems.EMITTER_ZPM.getStackForm())
                 .outputs(MetaItems.EMITTER_UV.getStackForm())
                 .duration(600).EUt(92160).buildAndRegister();
 
@@ -553,6 +568,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(250))
+                .researchItem(MetaItems.ELECTRIC_PISTON_IV.getStackForm())
                 .outputs(MetaItems.ELECTRIC_PISTON_LUV.getStackForm())
                 .duration(600).EUt(5760).buildAndRegister();
 
@@ -565,6 +581,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(500))
+                .researchItem(MetaItems.ELECTRIC_PISTON_LUV.getStackForm())
                 .outputs(MetaItems.ELECTRIC_PISTON_ZPM.getStackForm())
                 .duration(600).EUt(23040).buildAndRegister();
 
@@ -577,6 +594,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(1000))
+                .researchItem(MetaItems.ELECTRIC_PISTON_ZPM.getStackForm())
                 .outputs(MetaItems.ELECTRIC_PISTON_UV.getStackForm())
                 .duration(600).EUt(92160).buildAndRegister();
 
@@ -646,6 +664,7 @@ public class ComponentRecipes {
                     .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
                     .fluidInputs(Materials.StyreneButadieneRubber.getFluid(GTValues.L * 8))
                     .fluidInputs(Materials.Lubricant.getFluid(250))
+                    .researchItem(MetaItems.CONVEYOR_MODULE_IV.getStackForm())
                     .outputs(MetaItems.CONVEYOR_MODULE_LUV.getStackForm())
                     .duration(600).EUt(5760).buildAndRegister();
 
@@ -658,6 +677,7 @@ public class ComponentRecipes {
                     .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 2)
                     .fluidInputs(Materials.Polybenzimidazole.getFluid(GTValues.L * 8))
                     .fluidInputs(Materials.Lubricant.getFluid(500))
+                    .researchItem(MetaItems.CONVEYOR_MODULE_LUV.getStackForm())
                     .outputs(MetaItems.CONVEYOR_MODULE_ZPM.getStackForm())
                     .duration(600).EUt(23040).buildAndRegister();
 
@@ -670,6 +690,7 @@ public class ComponentRecipes {
                     .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 2)
                     .fluidInputs(Materials.Polybenzimidazole.getFluid(GTValues.L * 8))
                     .fluidInputs(Materials.Lubricant.getFluid(1000))
+                    .researchItem(MetaItems.CONVEYOR_MODULE_ZPM.getStackForm())
                     .outputs(MetaItems.CONVEYOR_MODULE_UV.getStackForm())
                     .duration(600).EUt(92160).buildAndRegister();
 
@@ -743,6 +764,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
                 .fluidInputs(Materials.SiliconeRubber.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(250))
+                .researchItem(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
                 .outputs(MetaItems.ELECTRIC_PUMP_LUV.getStackForm())
                 .duration(600).EUt(5760).buildAndRegister();
 
@@ -755,6 +777,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 2)
                 .fluidInputs(Materials.SiliconeRubber.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(500))
+                .researchItem(MetaItems.ELECTRIC_PUMP_LUV.getStackForm())
                 .outputs(MetaItems.ELECTRIC_PUMP_ZPM.getStackForm())
                 .duration(600).EUt(23040).buildAndRegister();
 
@@ -767,6 +790,7 @@ public class ComponentRecipes {
                 .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 2)
                 .fluidInputs(Materials.SiliconeRubber.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(1000))
+                .researchItem(MetaItems.ELECTRIC_PUMP_ZPM.getStackForm())
                 .outputs(MetaItems.ELECTRIC_PUMP_UV.getStackForm())
                 .duration(600).EUt(92160).buildAndRegister();
 

@@ -310,6 +310,7 @@ public class MiscRecipeLoader {
                 .input(wireGtSingle, SamariumIronArsenicOxide, 4)
                 .inputs(POWER_INTEGRATED_CIRCUIT.getStackForm(4))
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
+                .researchItem(IMPELLER_HV.getStackForm())
                 .outputs(GRAVITATION_ENGINE.getStackForm())
                 .buildAndRegister();
 
@@ -321,6 +322,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Elite, 4)
                 .inputs(QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
+                .researchItem(OreDictUnifier.get(plateDense, Iridium))
                 .outputs(ADVANCED_QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
                 .buildAndRegister();
 
@@ -332,6 +334,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Elite, 2)
                 .inputs(ADVANCED_NANO_MUSCLE_CHESTPLATE.getStackForm())
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
+//                .researchItem(OreDictUnifier.get(plateDense, Iridium)) todo
                 .outputs(ADVANCED_QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
                 .buildAndRegister();
 
