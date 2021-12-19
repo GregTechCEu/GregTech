@@ -86,17 +86,15 @@ public class GTRecipeWrapper implements IRecipeWrapper {
                 ItemStack dataStick = recipe.getOutputs().get(0);
                 NBTTagCompound researchItemNBT = dataStick.getSubCompound("asslineOutput");
                 ItemStack researchItem = new ItemStack(researchItemNBT);
-                if (researchItem != null) {
+                if (!researchItem.isEmpty()) {
                     recipeOutputs = Collections.singletonList(researchItem);
                 } else {
-                    recipeOutputs = recipe.getOutputs()
-                            .stream().map(ItemStack::copy).collect(Collectors.toList());
+                    recipeOutputs = getOutputListFromRecipe(recipe);
                     currentItemSlot += recipeOutputs.size();
                 }
 
             } else {
-                recipeOutputs = recipe.getOutputs()
-                        .stream().map(ItemStack::copy).collect(Collectors.toList());
+                recipeOutputs = getOutputListFromRecipe(recipe);
                 currentItemSlot += recipeOutputs.size();
             }
 
@@ -138,6 +136,11 @@ public class GTRecipeWrapper implements IRecipeWrapper {
         if (notConsumed) {
             tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
         }
+    }
+
+    private List<ItemStack> getOutputListFromRecipe(Recipe recipe) {
+        return recipe.getOutputs()
+                .stream().map(ItemStack::copy).collect(Collectors.toList());
     }
 
     @Override

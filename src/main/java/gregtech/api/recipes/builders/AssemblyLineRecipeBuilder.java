@@ -39,7 +39,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         return false;
     }
 
-    public AssemblyLineRecipeBuilder researchItem (ItemStack researchItem) {
+    public AssemblyLineRecipeBuilder researchItem(ItemStack researchItem) {
         this.researchItem = researchItem;
         return this;
     }

@@ -60,12 +60,12 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMapAssemblyLine ASSEMBLY_LINE_RECIPES = (RecipeMapAssemblyLine) new RecipeMapAssemblyLine("assembly_line", 4, 16, 1, 1, 0, 4, 0, 0, new AssemblyLineRecipeBuilder(), false)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
-            .setSound(GTSounds.ASSEMBLER)            .
-            onRecipeBuild(recipeBuilder -> {
+            .setSound(GTSounds.ASSEMBLER)
+            .onRecipeBuild(recipeBuilder -> {
                 ItemStack researchItem = ((AssemblyLineRecipeBuilder) recipeBuilder).getResearchItem();
                 if (researchItem != null && !researchItem.isEmpty()) {
                     NBTTagCompound compound = AssemblyLineRecipeBuilder.generateResearchNBT(recipeBuilder);
-                    ItemStack stickStack = MetaItems.TOOL_DATA_STICK.getStackForm(1);
+                    ItemStack stickStack = MetaItems.TOOL_DATA_STICK.getStackForm();
                     stickStack.setTagCompound(compound);
 
                     RecipeMaps.SCANNER_RECIPES.recipeBuilder()
