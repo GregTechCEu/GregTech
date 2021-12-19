@@ -1,19 +1,24 @@
 package gregtech.integration.jei.recipe.primitive;
 
 import com.google.common.collect.ImmutableList;
-import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+import gregtech.common.metatileentities.MetaTileEntities;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.oredict.OreDictionary;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,125 +46,240 @@ public class OreByProduct implements IRecipeWrapper {
         ORES = ImmutableList.copyOf(prefixes);
     }
 
-    private final List<List<ItemStack>> matchingInputs = new ArrayList<>();
-    private final List<ItemStack> oreProcessingSteps = new ArrayList<>();
-    private final List<ItemStack> outputs = new ArrayList<>();
-    private final Material material;
-    private final OreProperty property;
-    private final List<ItemStack> oreIngredients;
+    private final static ImmutableList<OrePrefix> IN_PROCESSING_STEPS = ImmutableList.of(
+            OrePrefix.crushed,
+            OrePrefix.crushedPurified,
+            OrePrefix.dustImpure,
+            OrePrefix.dustPure,
+            OrePrefix.crushedCentrifuged
+    );
+
+    private final static ImmutableList<ItemStack> ALWAYS_MACHINES = ImmutableList.of(
+            new ItemStack(Blocks.FURNACE),
+            MetaTileEntities.MACERATOR[0].getStackForm(),
+            MetaTileEntities.MACERATOR[0].getStackForm(),
+            MetaTileEntities.CENTRIFUGE[0].getStackForm(),
+            MetaTileEntities.ORE_WASHER[0].getStackForm(),
+            MetaTileEntities.THERMAL_CENTRIFUGE[0].getStackForm(),
+            MetaTileEntities.MACERATOR[0].getStackForm(),
+            MetaTileEntities.MACERATOR[0].getStackForm(),
+            MetaTileEntities.CENTRIFUGE[0].getStackForm()
+    );
+
+    private final List<List<ItemStack>> inputs = new ArrayList<>();
+    private final List<List<ItemStack>> outputs = new ArrayList<>();
+    private final List<List<FluidStack>> fluidInputs = new ArrayList<>();
+    private boolean hasChemBath = false;
+    private boolean hasSeparator = false;
+    private boolean hasSifter = false;
 
     public OreByProduct(Material material) {
-        this.material = material;
-        this.property = material.getProperty(PropertyKey.ORE);
-        this.oreIngredients = new ArrayList<>();
-        for (OrePrefix ore : ORES)
-            this.oreIngredients.add(OreDictUnifier.get(ore, material));
-        List<ItemStack> byProductIngredients = new ArrayList<>();
+        OreProperty property = material.getProperty(PropertyKey.ORE);
+        int oreMultiplier = property.getOreMultiplier();
+        int byproductMultiplier = property.getByProductMultiplier();
+        Material[] byproducts = new Material[]{
+                GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class),
+                GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class),
+                GTUtility.selectItemInList(2, material, property.getOreByProducts(), Material.class),
+                GTUtility.selectItemInList(3, material, property.getOreByProducts(), Material.class)
+        };
 
-        for (Material mat : property.getOreByProducts())
-            byProductIngredients.add(OreDictUnifier.get(OrePrefix.dust, mat));
+        // BASIC PROCESSING - always present
 
-        this.oreProcessingSteps.add(OreDictUnifier.get(OrePrefix.crushed, material));
-        this.oreProcessingSteps.add(OreDictUnifier.get(OrePrefix.crushedPurified, material));
-        this.oreProcessingSteps.add(OreDictUnifier.get(OrePrefix.crushedCentrifuged, material));
-        this.oreProcessingSteps.add(OreDictUnifier.get(OrePrefix.dustImpure, material));
-        this.oreProcessingSteps.add(OreDictUnifier.get(OrePrefix.dustPure, material));
-        this.oreProcessingSteps.add(OreDictUnifier.get(OrePrefix.dust, material));
-
-        List<ItemStack> inputOres = new ArrayList<>(oreIngredients);
-        matchingInputs.add(inputOres);
-        for (ItemStack stack : oreProcessingSteps) {
-            List<ItemStack> stepStack = new ArrayList<>();
-            stepStack.add(stack);
-            matchingInputs.add(stepStack);
+        List<ItemStack> oreStacks = new ArrayList<>();
+        for (OrePrefix prefix : ORES) {
+            // get all ores with the relevant oredicts instead of just the first unified ore
+            oreStacks.addAll(OreDictionary.getOres(prefix.name() + material.toCamelCaseString()));
         }
-        outputs.addAll(byProductIngredients);
+        inputs.add(oreStacks);
+
+        // set up machines as inputs
+        List<ItemStack> simpleWashers = new ArrayList<>();
+        simpleWashers.add(new ItemStack(Items.CAULDRON));
+        //todo arrayify before merge
+        simpleWashers.add(MetaTileEntities.SIMPLE_ORE_WASHER.getStackForm());
+
+        for (ItemStack stack : ALWAYS_MACHINES) {
+            addToInputs(stack);
+        }
+        // same amount of lines as a for loop :trol:
+        inputs.add(simpleWashers);
+        inputs.add(simpleWashers);
+        inputs.add(simpleWashers);
+
+        // begin lots of logic duplication from OreRecipeHandler
+        // direct smelt
+        ItemStack smeltingResult;
+        Material smeltingMaterial = property.getDirectSmeltResult() == null ? material : property.getDirectSmeltResult();
+        if (smeltingMaterial.hasProperty(PropertyKey.INGOT)) {
+            smeltingResult = OreDictUnifier.get(OrePrefix.ingot, smeltingMaterial);
+        } else if (smeltingMaterial.hasProperty(PropertyKey.GEM)) {
+            smeltingResult = OreDictUnifier.get(OrePrefix.gem, smeltingMaterial);
+        } else {
+            smeltingResult = OreDictUnifier.get(OrePrefix.dust, smeltingMaterial);
+        }
+        smeltingResult.setCount(smeltingResult.getCount() * oreMultiplier);
+        addToOutputs(smeltingResult);
+
+        // macerate ore -> crushed
+        addToOutputs(material, OrePrefix.crushed, 2 * oreMultiplier);
+        addToOutputs(byproducts[0], OrePrefix.dust, 1); // 1400 850
+
+        // macerate crushed -> impure
+        addToOutputs(material, OrePrefix.dustImpure, 1);
+        addToOutputs(byproducts[0], OrePrefix.dust, byproductMultiplier); // 1400 850
+
+        // centrifuge impure -> dust
+        addToOutputs(material, OrePrefix.dust, 1);
+        addToOutputs(byproducts[0], OrePrefix.dustTiny, 1);
+
+        // ore wash crushed -> crushed purified
+        addToOutputs(material, OrePrefix.crushedPurified, 1);
+        addToOutputs(byproducts[0], OrePrefix.dustTiny, 3);
+        List<FluidStack> fluidStacks = new ArrayList<>();
+        fluidStacks.add(Materials.Water.getFluid(1000));
+        fluidStacks.add(Materials.DistilledWater.getFluid(100));
+        fluidInputs.add(fluidStacks);
+
+        // TC crushed/crushed purified -> centrifuged
+        addToOutputs(material, OrePrefix.crushedCentrifuged, 1);
+        addToOutputs(byproducts[1], OrePrefix.dustTiny, byproductMultiplier * 3);
+
+        // macerate centrifuged -> dust
+        addToOutputs(material, OrePrefix.dust, 1);
+        addToOutputs(byproducts[2], OrePrefix.dust, 1); //1400 850
+
+        // macerate crushed purified -> purified
+        addToOutputs(material, OrePrefix.dustPure, 1);
+        addToOutputs(byproducts[1], OrePrefix.dust, 1); //1400 850
+
+        // centrifuge purified -> dust
+        addToOutputs(material, OrePrefix.dust, 1);
+        addToOutputs(byproducts[1], OrePrefix.dustTiny, 1);
+
+        // cauldron/simple washer
+        addToOutputs(material, OrePrefix.crushed, 1);
+        addToOutputs(material, OrePrefix.crushedPurified, 1);
+        addToOutputs(material, OrePrefix.dustImpure, 1);
+        addToOutputs(material, OrePrefix.dust, 1);
+        addToOutputs(material, OrePrefix.dustPure, 1);
+        addToOutputs(material, OrePrefix.dust, 1);
+
+        // ADVANCED PROCESSING - only on some materials
+
+        Pair<Material, Integer> washedIn = property.getWashedIn();
+        List<Material> separatedInto = property.getSeparatedInto();
+
+        // chem bath
+        if (washedIn != null && washedIn.getKey() != null) {
+            hasChemBath = true;
+            addToOutputs(material, OrePrefix.crushedPurified, 1);
+            addToOutputs(byproducts[3], OrePrefix.dust, byproductMultiplier);
+            List<FluidStack> washedFluid = new ArrayList<>();
+            washedFluid.add(washedIn.getKey().getFluid(washedIn.getValue()));
+            fluidInputs.add(washedFluid);
+            addToInputs(MetaTileEntities.CHEMICAL_BATH[0].getStackForm());
+        } else {
+            addEmptyOutputs(2);
+            List<FluidStack> washedFluid = new ArrayList<>();
+            fluidInputs.add(washedFluid);
+            addToInputs(ItemStack.EMPTY);
+        }
+
+        // electromagnetic separator
+        if (separatedInto != null && !separatedInto.isEmpty()) {
+            hasSeparator = true;
+            ItemStack separatedStack1 = OreDictUnifier.get(OrePrefix.dustSmall, separatedInto.get(0));
+            OrePrefix prefix = (separatedInto.get(separatedInto.size() - 1).getBlastTemperature() == 0 && separatedInto.get(separatedInto.size() - 1).hasProperty(PropertyKey.INGOT))
+                    ? OrePrefix.nugget : OrePrefix.dustSmall;
+            ItemStack separatedStack2 = OreDictUnifier.get(prefix, separatedInto.get(separatedInto.size() - 1), prefix == OrePrefix.nugget ? 2 : 1);
+
+            addToOutputs(material, OrePrefix.dust, 1);
+            addToOutputs(separatedStack1); //4000 850
+            addToOutputs(separatedStack2); //2000 600
+
+            addToInputs(MetaTileEntities.ELECTROMAGNETIC_SEPARATOR[0].getStackForm());
+        } else {
+            addEmptyOutputs(3);
+            addToInputs(ItemStack.EMPTY);
+        }
+
+        // sifter
+        if (material.hasProperty(PropertyKey.GEM)) {
+            hasSifter = true;
+            ItemStack flawedStack = OreDictUnifier.get(OrePrefix.gemFlawed, material);
+            ItemStack chippedStack = OreDictUnifier.get(OrePrefix.gemChipped, material);
+
+            addToOutputs(material, OrePrefix.gemExquisite, 1); //300 100 / 500 150
+            addToOutputs(material, OrePrefix.gemFlawless, 1); //1000 150 / 1500 200
+            addToOutputs(material, OrePrefix.gem, 1); //3500 500 / 5000 1000
+            addToOutputs(material, OrePrefix.dustPure, 1); //5000 750 / 2500 500
+
+            if (!flawedStack.isEmpty()) {
+                addToOutputs(flawedStack); //2500 300 / 2000 500
+            } else {
+                addEmptyOutputs(1);
+            }
+            if (!chippedStack.isEmpty()) {
+                addToOutputs(chippedStack); //3500 400 / 3000 350
+            } else {
+                addEmptyOutputs(1);
+            }
+            addToInputs(MetaTileEntities.SIFTER[0].getStackForm());
+        } else {
+            addEmptyOutputs(6);
+            addToInputs(ItemStack.EMPTY);
+        }
+
+        // CLEANUP
+
+        // add prefixes that should count as inputs to input lists (they will not be displayed in actual page)
+        for (OrePrefix prefix : IN_PROCESSING_STEPS) {
+            List<ItemStack> tempList = new ArrayList<>();
+            tempList.add(OreDictUnifier.get(prefix, material));
+            inputs.add(tempList);
+        }
+
     }
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        ingredients.setInputLists(VanillaTypes.ITEM, this.matchingInputs);
-        ingredients.setOutputs(VanillaTypes.ITEM, this.outputs);
+        ingredients.setInputLists(VanillaTypes.ITEM, inputs);
+        ingredients.setInputLists(VanillaTypes.FLUID, fluidInputs);
+        ingredients.setOutputLists(VanillaTypes.ITEM, outputs);
     }
 
-    public boolean hasByProducts() {
-        return !outputs.isEmpty();
+    public boolean hasSifter() {
+        return hasSifter;
     }
 
-    public void addTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
-        switch (slotIndex) {
-            case 0: // Ore
-                addOreTooltip(tooltip, 0, RecipeMaps.MACERATOR_RECIPES.getLocalizedName(), false);
-                break;
-            case 1: // Crushed
-                addOreTooltip(tooltip, 0, RecipeMaps.ORE_WASHER_RECIPES.getLocalizedName(), false);
-                addOreTooltip(tooltip, 0, RecipeMaps.MACERATOR_RECIPES.getLocalizedName(), false);
-                if (property.getWashedIn() != null)
-                    addOreTooltip(tooltip, 3, RecipeMaps.CHEMICAL_BATH_RECIPES.getLocalizedName(), false);
-                addOreTooltip(tooltip, 0, RecipeMaps.THERMAL_CENTRIFUGE_RECIPES.getLocalizedName(), false);
-                break;
-            case 2: // Crushed Purified
-                addOreTooltip(tooltip, 1, RecipeMaps.MACERATOR_RECIPES.getLocalizedName(), false);
-                addOreTooltip(tooltip, 1, RecipeMaps.THERMAL_CENTRIFUGE_RECIPES.getLocalizedName(), false);
-                break;
-            case 3: // Crushed Centrifuged
-                addOreTooltip(tooltip, 2, RecipeMaps.MACERATOR_RECIPES.getLocalizedName(), false);
-                break;
-            case 4: // Dust impure
-                addOreTooltip(tooltip, 2, RecipeMaps.CENTRIFUGE_RECIPES.getLocalizedName(), false);
-                break;
-            case 5: // Dust Pure
-                addOreTooltip(tooltip, 1, RecipeMaps.CENTRIFUGE_RECIPES.getLocalizedName(), false);
-                break;
-            case 7: // 1st Byproduct
-                addOreTooltip(tooltip, 0, RecipeMaps.MACERATOR_RECIPES.getLocalizedName(), true);
-                addOreTooltip(tooltip, 1, RecipeMaps.ORE_WASHER_RECIPES.getLocalizedName(), true);
-                addOreTooltip(tooltip, 1, RecipeMaps.THERMAL_CENTRIFUGE_RECIPES.getLocalizedName(), true);
-                if (property.getWashedIn() != null && property.getOreByProducts().size() == 1)
-                    addOreTooltip(tooltip, 1, RecipeMaps.CHEMICAL_BATH_RECIPES.getLocalizedName(), true);
-                break;
-            case 8: // 2nd Byproduct
-                addOreTooltip(tooltip, 2, RecipeMaps.MACERATOR_RECIPES.getLocalizedName(), true);
-                addOreTooltip(tooltip, 2, RecipeMaps.THERMAL_CENTRIFUGE_RECIPES.getLocalizedName(), true);
-                addOreTooltip(tooltip, 5, RecipeMaps.CENTRIFUGE_RECIPES.getLocalizedName(), true);
-                if (property.getWashedIn() != null && property.getOreByProducts().size() == 2)
-                    addOreTooltip(tooltip, 1, RecipeMaps.CHEMICAL_BATH_RECIPES.getLocalizedName(), true);
-                break;
-            case 9: // 3rd Byproduct
-                addOreTooltip(tooltip, 3, RecipeMaps.MACERATOR_RECIPES.getLocalizedName(), true);
-                addOreTooltip(tooltip, 4, RecipeMaps.CENTRIFUGE_RECIPES.getLocalizedName(), true);
-                if (property.getWashedIn() != null && property.getOreByProducts().size() == 3)
-                    addOreTooltip(tooltip, 1, RecipeMaps.CHEMICAL_BATH_RECIPES.getLocalizedName(), true);
-                break;
-            case 10: // 4th Byproduct
-                if (property.getWashedIn() != null)
-                    addOreTooltip(tooltip, 1, RecipeMaps.CHEMICAL_BATH_RECIPES.getLocalizedName(), true);
-                else
-                    tooltip.add(I18n.format("gregtech.jei.ore_by_product_not_obtainable"));
-                break;
-            default:
-                break;
+    public boolean hasSeparator() {
+        return hasSeparator;
+    }
+
+    public boolean hasChemBath() {
+        return hasChemBath;
+    }
+
+    private void addToOutputs(Material material, OrePrefix prefix, int size) {
+        addToOutputs(OreDictUnifier.get(prefix, material, size));
+    }
+
+    private void addToOutputs(ItemStack stack) {
+        List<ItemStack> tempList = new ArrayList<>();
+        tempList.add(stack);
+        outputs.add(tempList);
+    }
+
+    private void addEmptyOutputs(int amount) {
+        for (int i = 0; i < amount; i++) {
+            addToOutputs(ItemStack.EMPTY);
         }
     }
 
-    public int getOutputCount() {
-        return outputs.size();
+    private void addToInputs(ItemStack stack) {
+        List<ItemStack> tempList = new ArrayList<>();
+        tempList.add(stack);
+        inputs.add(tempList);
     }
-
-    public int getProcessingStepCount() {
-        return oreProcessingSteps.size();
-    }
-
-    public void addOreTooltip(List<String> tooltip, int byproduct, String machine, boolean result) {
-        Material byProductMaterial = GTUtility.selectItemInList(byproduct, material, property.getOreByProducts(),
-                Material.class);
-        if (!result)
-            tooltip.add(I18n.format("gregtech.jei.ore_by_product_from_ore", machine, byProductMaterial.getLocalizedName()));
-        else {
-            String oreType = byproduct == 0 ? oreIngredients.get(0).getDisplayName()
-                    : oreProcessingSteps.get(byproduct - 1).getDisplayName();
-            tooltip.add(I18n.format("gregtech.jei.ore_by_product_from_machine", oreType, machine));
-        }
-    }
-
 }
