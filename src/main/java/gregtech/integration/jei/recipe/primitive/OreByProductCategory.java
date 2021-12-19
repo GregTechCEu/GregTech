@@ -3,6 +3,9 @@ package gregtech.integration.jei.recipe.primitive;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.integration.jei.utils.render.FluidStackTextRenderer;
 import gregtech.integration.jei.utils.render.ItemStackTextRenderer;
 import mezz.jei.api.IGuiHelper;
@@ -19,6 +22,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +34,7 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
     protected final IDrawable arrowsChemBath;
     protected final IDrawable arrowsSeparator;
     protected final IDrawable arrowsSifter;
+    protected final IDrawable icon;
     protected final List<Boolean> itemOutputExists = new ArrayList<>();
     protected final List<Boolean> fluidInputExists = new ArrayList<>();
     protected boolean hasChemBath;
@@ -116,6 +121,8 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
                 .setTextureSize(176, 166).build();
         this.arrowsSifter = guiHelper.drawableBuilder(new ResourceLocation(baseloc + "oreby-sift.png"), 0, 0, 176, 166)
                 .setTextureSize(176, 166).build();
+
+        this.icon = guiHelper.createDrawableIngredient(OreDictUnifier.get(OrePrefix.ore, Materials.Iron));
     }
 
     @Override
@@ -157,6 +164,12 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
     @Override
     public IRecipeWrapper getRecipeWrapper(@Nonnull OreByProduct recipe) {
         return recipe;
+    }
+
+    @Nullable
+    @Override
+    public IDrawable getIcon() {
+        return icon;
     }
 
     @Override

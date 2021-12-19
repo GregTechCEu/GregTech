@@ -107,8 +107,7 @@ public class OreByProduct implements IRecipeWrapper {
         // set up machines as inputs
         List<ItemStack> simpleWashers = new ArrayList<>();
         simpleWashers.add(new ItemStack(Items.CAULDRON));
-        //todo arrayify before merge
-        simpleWashers.add(MetaTileEntities.SIMPLE_ORE_WASHER.getStackForm());
+        simpleWashers.add(MetaTileEntities.SIMPLE_ORE_WASHER[0].getStackForm());
 
         for (ItemStack stack : ALWAYS_MACHINES) {
             addToInputs(stack);
@@ -144,6 +143,7 @@ public class OreByProduct implements IRecipeWrapper {
             inputs.add(tempList);
         }
 
+        // total number of inputs added
         currentSlot += 21;
 
         // BASIC PROCESSING - always present

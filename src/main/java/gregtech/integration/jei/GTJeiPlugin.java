@@ -171,25 +171,19 @@ public class GTJeiPlugin implements IModPlugin {
         }
         String oreByProductId = GTValues.MODID + ":" + "ore_by_product";
         registry.addRecipes(oreByproductList, oreByProductId);
-        for (MetaTileEntity machine : MetaTileEntities.MACERATOR) {
-            if (machine == null) continue;
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
-        }
-        for (MetaTileEntity machine : MetaTileEntities.ORE_WASHER) {
-            if (machine == null) continue;
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
-        }
-        for (MetaTileEntity machine : MetaTileEntities.CENTRIFUGE) {
-            if (machine == null) continue;
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
-        }
-        for (MetaTileEntity machine : MetaTileEntities.THERMAL_CENTRIFUGE) {
-            if (machine == null) continue;
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
-        }
-        for (MetaTileEntity machine : MetaTileEntities.CHEMICAL_BATH) {
-            if (machine == null) continue;
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
+        MetaTileEntity[][] machineLists = new MetaTileEntity[][]{
+                MetaTileEntities.MACERATOR,
+                MetaTileEntities.ORE_WASHER,
+                MetaTileEntities.CENTRIFUGE,
+                MetaTileEntities.THERMAL_CENTRIFUGE,
+                MetaTileEntities.CHEMICAL_BATH,
+                MetaTileEntities.ELECTROMAGNETIC_SEPARATOR,
+                MetaTileEntities.SIFTER,
+                MetaTileEntities.SIMPLE_ORE_WASHER
+        };
+        for (MetaTileEntity[] machine : machineLists) {
+            if (machine.length < 1 || machine[0] == null) continue;
+            registry.addRecipeCatalyst(machine[0].getStackForm(), oreByProductId);
         }
 
         //Material Tree
