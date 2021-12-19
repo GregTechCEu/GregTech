@@ -247,23 +247,23 @@ public class OreByProduct implements IRecipeWrapper {
             ItemStack flawedStack = OreDictUnifier.get(OrePrefix.gemFlawed, material);
             ItemStack chippedStack = OreDictUnifier.get(OrePrefix.gemChipped, material);
 
-            addToOutputs(material, OrePrefix.gemExquisite, 1); //300 100 / 500 150
+            addToOutputs(material, OrePrefix.gemExquisite, 1);
             addGemChance(300, 100, 500, 150, highOutput);
-            addToOutputs(material, OrePrefix.gemFlawless, 1); //1000 150 / 1500 200
+            addToOutputs(material, OrePrefix.gemFlawless, 1);
             addGemChance(1000, 150, 1500, 200, highOutput);
-            addToOutputs(material, OrePrefix.gem, 1); //3500 500 / 5000 1000
+            addToOutputs(material, OrePrefix.gem, 1);
             addGemChance(3500, 500, 5000, 1000, highOutput);
-            addToOutputs(material, OrePrefix.dustPure, 1); //5000 750 / 2500 500
+            addToOutputs(material, OrePrefix.dustPure, 1);
             addGemChance(5000, 750, 2500, 500, highOutput);
 
             if (!flawedStack.isEmpty()) {
-                addToOutputs(flawedStack); //2500 300 / 2000 500
+                addToOutputs(flawedStack);
                 addGemChance(2500, 300, 2000, 500, highOutput);
             } else {
                 addEmptyOutputs(1);
             }
             if (!chippedStack.isEmpty()) {
-                addToOutputs(chippedStack); //3500 400 / 3000 350
+                addToOutputs(chippedStack);
                 addGemChance(3500, 400, 3000, 350, highOutput);
             } else {
                 addEmptyOutputs(1);
