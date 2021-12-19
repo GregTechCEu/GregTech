@@ -1383,7 +1383,7 @@ public class CircuitRecipes {
 
         // Data Stick
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(90)
-                .input(PLASTIC_BOARD)
+                .input(PLASTIC_CIRCUIT_BOARD)
                 .input(CENTRAL_PROCESSING_UNIT, 2)
                 .input(NAND_MEMORY_CHIP, 32)
                 .input(RANDOM_ACCESS_MEMORY, 4)
@@ -1395,7 +1395,7 @@ public class CircuitRecipes {
 
         // Data Orb
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(1200)
-                .input(EPOXY_BOARD)
+                .input(ADVANCED_CIRCUIT_BOARD)
                 .input(circuit, Tier.Advanced, 2)
                 .input(RANDOM_ACCESS_MEMORY, 4)
                 .input(NOR_MEMORY_CHIP, 32)
