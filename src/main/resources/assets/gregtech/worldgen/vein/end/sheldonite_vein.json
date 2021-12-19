@@ -21,16 +21,16 @@
     "type": "layered",
     "values": [
       {
-        "primary": "ore:cooperite"
+        "primary": "ore:bornite"
       },
       {
-        "secondary": "ore:palladium"
+        "secondary": "ore:cooperite"
       },
       {
         "between": "ore:platinum"
       },
       {
-        "sporadic": "ore:bornite"
+        "sporadic": "ore:palladium"
       }
     ]
   }

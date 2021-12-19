@@ -220,7 +220,7 @@ public class FirstDegreeMaterials {
                 .dust(3).ore()
                 .color(0x643C64)
                 .flags(NO_SMELTING)
-                .components(Lead, 3, Silver, 3, Sulfur, 2)
+                .components(Lead, 1, Sulfur, 1)
                 .build();
 
         Garnierite = new Material.Builder(280, "garnierite")

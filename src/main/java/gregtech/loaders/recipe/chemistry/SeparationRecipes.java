@@ -179,7 +179,7 @@ public class SeparationRecipes {
         CENTRIFUGE_RECIPES.recipeBuilder().duration(1600).EUt(320)
                 .input(dust, Plutonium239)
                 .chancedOutput(dustTiny, Uranium238, 3000, 450)
-                .chancedOutput(dustTiny, Plutonium241, 2000, 300)
+                .chancedOutput(dust, Plutonium241, 2000, 300)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(3200).EUt(320)
