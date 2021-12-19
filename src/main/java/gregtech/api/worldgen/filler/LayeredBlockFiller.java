@@ -25,7 +25,7 @@ public class LayeredBlockFiller extends BlockFiller {
 
     @Override
     public IBlockState apply(IBlockState currentState, IBlockAccess blockAccess, BlockPos blockPos, int relativeX, int relativeY, int relativeZ, double density, Random gridRandom, int layer) {
-        return fillerEntry.apply(currentState, blockAccess, blockPos, density, gridRandom, layer); // todo need to pass more through here
+        return fillerEntry.apply(currentState, blockAccess, blockPos, density, gridRandom, layer);
     }
 
     @Override
