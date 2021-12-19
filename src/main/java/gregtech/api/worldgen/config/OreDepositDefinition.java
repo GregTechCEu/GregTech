@@ -1,33 +1,18 @@
 package gregtech.api.worldgen.config;
 
 import com.google.gson.JsonObject;
-import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.minecraft.CraftTweakerMC;
-import crafttweaker.api.world.IBiome;
-import gregtech.api.GTValues;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.WorldBlockPredicate;
 import gregtech.api.worldgen.filler.BlockFiller;
 import gregtech.api.worldgen.populator.IVeinPopulator;
 import gregtech.api.worldgen.shape.ShapeGenerator;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.Optional.Method;
-import org.apache.commons.lang3.ArrayUtils;
-import stanhebben.zenscript.annotations.ZenClass;
-import stanhebben.zenscript.annotations.ZenGetter;
-import stanhebben.zenscript.annotations.ZenMethod;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-@ZenClass("mods.gregtech.ore.OreDepositDefinition")
-@ZenRegister
 public class OreDepositDefinition implements IWorldgenDefinition {
 
     public static final Function<Biome, Integer> NO_BIOME_INFLUENCE = biome -> 0;
@@ -102,57 +87,46 @@ public class OreDepositDefinition implements IWorldgenDefinition {
 
     //This is the file name
     @Override
-    @ZenGetter("depositName")
     public String getDepositName() {
         return depositName;
     }
 
-    @ZenGetter("assignedName")
     public String getAssignedName() {
         return assignedName;
     }
 
-    @ZenGetter("description")
     public String getDescription() {
         return description;
     }
 
-    @ZenGetter("weight")
     public int getWeight() {
         return weight;
     }
 
-    @ZenGetter("density")
     public float getDensity() {
         return density;
     }
 
-    @ZenGetter("priority")
     public int getPriority() {
         return priority;
     }
 
-    @ZenGetter("isVein")
     public boolean isVein() {
         return countAsVein;
     }
 
-    @ZenMethod
     public boolean checkInHeightLimit(int yLevel) {
         return yLevel >= heightLimit[0] && yLevel <= heightLimit[1];
     }
 
-    @ZenMethod
     public int[] getHeightLimit() {
         return heightLimit;
     }
 
-    @ZenGetter("minimumHeight")
     public int getMinimumHeight() {
         return heightLimit[0];
     }
 
-    @ZenGetter("maximumHeight")
     public int getMaximumHeight() {
         return heightLimit[1];
     }
@@ -173,34 +147,10 @@ public class OreDepositDefinition implements IWorldgenDefinition {
         return veinPopulator;
     }
 
-    @ZenMethod("getBiomeWeightModifier")
-    @Method(modid = GTValues.MODID_CT)
-    public int ctGetBiomeWeightModifier(IBiome biome) {
-        int biomeIndex = ArrayUtils.indexOf(CraftTweakerMC.biomes, biome);
-        Biome mcBiome = Biome.REGISTRY.getObjectById(biomeIndex);
-        return mcBiome == null ? 0 : getBiomeWeightModifier().apply(mcBiome);
-    }
-
-    @ZenMethod("checkDimension")
-    @Method(modid = GTValues.MODID_CT)
-    public boolean ctCheckDimension(int dimensionId) {
-        WorldProvider worldProvider = DimensionManager.getProvider(dimensionId);
-        return worldProvider != null && getDimensionFilter().test(worldProvider);
-    }
-
-    @ZenMethod("canGenerateIn")
-    @Method(modid = GTValues.MODID_CT)
-    public boolean ctCanGenerateIn(crafttweaker.api.block.IBlockState blockState, crafttweaker.api.world.IBlockAccess blockAccess, crafttweaker.api.world.IBlockPos blockPos) {
-        IBlockState mcBlockState = CraftTweakerMC.getBlockState(blockState);
-        return getGenerationPredicate().test(mcBlockState, (IBlockAccess) blockAccess.getInternal(), (BlockPos) blockPos.getInternal());
-    }
-
-    @ZenGetter("filter")
     public BlockFiller getBlockFiller() {
         return blockFiller;
     }
 
-    @ZenGetter("shape")
     public ShapeGenerator getShapeGenerator() {
         return shapeGenerator;
     }

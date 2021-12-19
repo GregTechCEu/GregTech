@@ -1,29 +1,17 @@
 package gregtech.api.worldgen.config;
 
 import com.google.gson.JsonObject;
-import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.minecraft.CraftTweakerMC;
-import crafttweaker.api.world.IBiome;
-import gregtech.api.GTValues;
 import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.Optional;
-import org.apache.commons.lang3.ArrayUtils;
-import stanhebben.zenscript.annotations.ZenClass;
-import stanhebben.zenscript.annotations.ZenGetter;
-import stanhebben.zenscript.annotations.ZenMethod;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-@ZenClass("mods.gregtech.ore.BedrockFluidDepositDefinition")
-@ZenRegister
 public class BedrockFluidDepositDefinition implements IWorldgenDefinition { //todo re-balance depletion rates of default veins
 
     private final String depositName;
@@ -91,57 +79,46 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition { //to
 
     //This is the file name
     @Override
-    @ZenGetter("depositName")
     public String getDepositName() {
         return depositName;
     }
 
-    @ZenGetter("assignedName")
     public String getAssignedName() {
         return assignedName;
     }
 
-    @ZenGetter("description")
     public String getDescription() {
         return description;
     }
 
-    @ZenGetter("weight")
     public int getWeight() {
         return weight;
     }
 
-    @ZenMethod
     public int[] getProductionRates() {
         return productionRates;
     }
 
-    @ZenGetter("minimumProduction")
     public int getMinimumProductionRate() {
         return productionRates[0];
     }
 
-    @ZenGetter("maximumProduction")
     public int getMaximumProductionRate() {
         return productionRates[1];
     }
 
-    @ZenGetter
     public int getDepletionAmount() {
         return depletionAmount;
     }
 
-    @ZenGetter
     public int getDepletionChance() {
         return depletionChance;
     }
 
-    @ZenGetter
     public int getDepletedProductionRate() {
         return depletedProductionRate;
     }
 
-    @ZenGetter
     public Fluid getStoredFluid() {
         return storedFluid;
     }
@@ -152,21 +129,6 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition { //to
 
     public Predicate<WorldProvider> getDimensionFilter() {
         return dimensionFilter;
-    }
-
-    @ZenMethod("getBiomeWeightModifier")
-    @Optional.Method(modid = GTValues.MODID_CT)
-    public int ctGetBiomeWeightModifier(IBiome biome) {
-        int biomeIndex = ArrayUtils.indexOf(CraftTweakerMC.biomes, biome);
-        Biome mcBiome = Biome.REGISTRY.getObjectById(biomeIndex);
-        return mcBiome == null ? 0 : getBiomeWeightModifier().apply(mcBiome);
-    }
-
-    @ZenMethod("checkDimension")
-    @Optional.Method(modid = GTValues.MODID_CT)
-    public boolean ctCheckDimension(int dimensionId) {
-        WorldProvider worldProvider = DimensionManager.getProvider(dimensionId);
-        return worldProvider != null && getDimensionFilter().test(worldProvider);
     }
 
     @Override

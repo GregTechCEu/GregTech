@@ -5,14 +5,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import org.apache.commons.lang3.tuple.Pair;
-import stanhebben.zenscript.annotations.ZenClass;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-@ZenClass("mods.gregtech.ore.filler.")
 public interface FillerEntry {
 
     IBlockState apply(IBlockState source, IBlockAccess blockAccess, BlockPos blockPos);

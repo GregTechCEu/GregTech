@@ -1,16 +1,11 @@
 package gregtech.api.worldgen.shape;
 
 import com.google.gson.JsonObject;
-import crafttweaker.annotations.ZenRegister;
 import gregtech.api.worldgen.config.OreConfigUtils;
 import net.minecraft.util.math.Vec3i;
-import stanhebben.zenscript.annotations.ZenClass;
-import stanhebben.zenscript.annotations.ZenGetter;
 
 import java.util.Random;
 
-@ZenClass("mods.gregtech.ore.generator.PlateGenerator")
-@ZenRegister
 public class PlateGenerator extends ShapeGenerator {
 
     private int minLength;
@@ -23,46 +18,6 @@ public class PlateGenerator extends ShapeGenerator {
     private float roofSharpness;
 
     public PlateGenerator() {
-    }
-
-    @ZenGetter("minLength")
-    public int getMinLength() {
-        return minLength;
-    }
-
-    @ZenGetter("maxLength")
-    public int getMaxLength() {
-        return maxLength;
-    }
-
-    @ZenGetter("minDepth")
-    public int getMinDepth() {
-        return minDepth;
-    }
-
-    @ZenGetter("maxDepth")
-    public int getMaxDepth() {
-        return maxDepth;
-    }
-
-    @ZenGetter("minHeight")
-    public int getMinHeight() {
-        return minHeight;
-    }
-
-    @ZenGetter("maxHeight")
-    public int getMaxHeight() {
-        return maxHeight;
-    }
-
-    @ZenGetter("floorSharpness")
-    public float getFloorSharpness() {
-        return floorSharpness;
-    }
-
-    @ZenGetter("rootSharpness")
-    public float getRoofSharpness() {
-        return roofSharpness;
     }
 
     @Override
@@ -110,7 +65,5 @@ public class PlateGenerator extends ShapeGenerator {
                 }
             }
         }
-
-
     }
 }

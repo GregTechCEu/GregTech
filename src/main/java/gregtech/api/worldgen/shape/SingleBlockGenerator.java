@@ -1,19 +1,14 @@
 package gregtech.api.worldgen.shape;
 
 import com.google.gson.JsonObject;
-import crafttweaker.annotations.ZenRegister;
 import gregtech.api.worldgen.config.OreConfigUtils;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.Vec3i;
 import org.apache.commons.lang3.ArrayUtils;
-import stanhebben.zenscript.annotations.ZenClass;
-import stanhebben.zenscript.annotations.ZenGetter;
 
 import java.util.Random;
 
-@ZenClass("mods.gregtech.ore.generator.SingleBlockGenerator")
-@ZenRegister
 public class SingleBlockGenerator extends ShapeGenerator {
 
     private int minBlocksCount;
@@ -22,20 +17,9 @@ public class SingleBlockGenerator extends ShapeGenerator {
     public SingleBlockGenerator() {
     }
 
-
     public SingleBlockGenerator(int minBlocksCount, int maxBlocksCount) {
         this.minBlocksCount = minBlocksCount;
         this.maxBlocksCount = maxBlocksCount;
-    }
-
-    @ZenGetter("minBlocksCount")
-    public int getMinBlocksCount() {
-        return minBlocksCount;
-    }
-
-    @ZenGetter("maxBlocksCount")
-    public int getMaxBlocksCount() {
-        return maxBlocksCount;
     }
 
     @Override

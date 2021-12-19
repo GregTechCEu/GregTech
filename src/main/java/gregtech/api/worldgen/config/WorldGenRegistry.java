@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GTValues;
 import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
@@ -25,8 +24,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.commons.io.IOUtils;
-import stanhebben.zenscript.annotations.ZenClass;
-import stanhebben.zenscript.annotations.ZenGetter;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -39,8 +36,6 @@ import java.util.Map.Entry;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-@ZenClass("mods.gregtech.ore.WorldGenRegistry")
-@ZenRegister
 public class WorldGenRegistry {
 
     public static final WorldGenRegistry INSTANCE = new WorldGenRegistry();
@@ -526,12 +521,10 @@ public class WorldGenRegistry {
         return veinPopulator;
     }
 
-    @ZenGetter("oreDeposits")
     public static List<OreDepositDefinition> getOreDeposits() {
         return Collections.unmodifiableList(INSTANCE.registeredVeinDefinitions);
     }
 
-    @ZenGetter("bedrockVeinDeposits")
     public static List<BedrockFluidDepositDefinition> getBedrockVeinDeposits() {
         return Collections.unmodifiableList(INSTANCE.registeredBedrockVeinDefinitions);
     }
@@ -539,5 +532,4 @@ public class WorldGenRegistry {
     public static Map<Integer, String> getNamedDimensions() {
         return INSTANCE.namedDimensions;
     }
-
 }
