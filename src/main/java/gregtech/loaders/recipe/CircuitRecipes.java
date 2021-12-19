@@ -942,12 +942,20 @@ public class CircuitRecipes {
         // T2.5: Misc ==================================================================================================
 
         // NAND Chip ULV
-        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).duration(300)
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[MV]).duration(300)
                 .input(GOOD_CIRCUIT_BOARD)
                 .input(SIMPLE_SYSTEM_ON_CHIP)
                 .input(bolt, RedAlloy, 2)
                 .input(wireFine, Tin, 2)
                 .output(NAND_CHIP_ULV, 8)
+                .buildAndRegister();
+
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[MV]).duration(300)
+                .input(PLASTIC_CIRCUIT_BOARD)
+                .input(SIMPLE_SYSTEM_ON_CHIP)
+                .input(bolt, RedAlloy, 2)
+                .input(wireFine, Tin, 2)
+                .output(NAND_CHIP_ULV, 12)
                 .buildAndRegister();
 
         // Microprocessor LV
