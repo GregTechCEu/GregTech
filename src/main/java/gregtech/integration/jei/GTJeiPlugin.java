@@ -84,6 +84,7 @@ public class GTJeiPlugin implements IModPlugin {
         for (FuelRecipeMap fuelRecipeMap : FuelRecipeMap.getRecipeMaps()) {
             registry.addRecipeCategories(new FuelRecipeMapCategory(fuelRecipeMap, registry.getJeiHelpers().getGuiHelper()));
         }
+        registry.addRecipeCategories(new RecipeMapCategory(RecipeMaps.SCANNER_RECIPES, registry.getJeiHelpers().getGuiHelper())); // Really jank solution to put scanner jei after assline
         registry.addRecipeCategories(new OreByProductCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new GTOreCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new MaterialTreeCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -104,7 +105,7 @@ public class GTJeiPlugin implements IModPlugin {
         registry.getRecipeTransferRegistry().addRecipeTransferHandler(modularUIGuiHandler, Constants.UNIVERSAL_RECIPE_TRANSFER_UID);
 
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            if(!recipeMap.isHidden) {
+            if(!recipeMap.isHidden || recipeMap == RecipeMaps.SCANNER_RECIPES) { // did I mention how jank this is
                 Stream<Recipe> recipeStream = recipeMap.getRecipeList().stream()
                         .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay());
 
