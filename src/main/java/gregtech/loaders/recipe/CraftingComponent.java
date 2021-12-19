@@ -250,6 +250,7 @@ public class CraftingComponent {
                 {6, new UnificationEntry(OrePrefix.plate, Materials.RhodiumPlatedPalladium)},
                 {7, new UnificationEntry(OrePrefix.plate, Materials.NaquadahAlloy)},
                 {8, new UnificationEntry(OrePrefix.plate, Materials.Livermorium)},
+                {9, new UnificationEntry(OrePrefix.plate, Materials.Neutronium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 

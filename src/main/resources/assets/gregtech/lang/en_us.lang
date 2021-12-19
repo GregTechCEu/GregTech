@@ -3252,7 +3252,7 @@ gregtech.machine.transformer.adjustable.uxv.name=UXV Voltage Adjustable Transfor
 # Diodes
 gregtech.machine.diode.message=Max Amperage throughput: %s
 gregtech.machine.diode.tooltip_general=A simple Diode that will allow Energy Flow in only one direction.
-gregtech.machine.diode.tooltip_tool_usage=Hit with a Soft Hammer to toggle Amperage flow.
+gregtech.machine.diode.tooltip_tool_usage=Hit with a Soft Hammer to change Amperage flow.
 
 gregtech.machine.diode.ulv.name=Ultra Low Voltage Diode
 gregtech.machine.diode.lv.name=Low Voltage Diode
