@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.integration.jei.utils.render.FluidStackTextRenderer;
+import gregtech.integration.jei.utils.render.ItemStackTextRenderer;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiFluidStackGroup;
@@ -130,7 +131,8 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
         List<List<ItemStack>> itemOutputs = ingredients.getOutputs(VanillaTypes.ITEM);
         itemOutputExists.clear();
         for (int i = 0; i < ITEM_OUTPUT_LOCATIONS.size(); i += 2) {
-            itemStackGroup.init(i / 2 + itemInputs.size(), false, ITEM_OUTPUT_LOCATIONS.get(i), ITEM_OUTPUT_LOCATIONS.get(i + 1));
+            itemStackGroup.init(i / 2 + itemInputs.size(), false, new ItemStackTextRenderer(recipeWrapper.getChance(i / 2 + itemInputs.size())),
+                    ITEM_OUTPUT_LOCATIONS.get(i) + 1, ITEM_OUTPUT_LOCATIONS.get(i + 1) + 1, 18, 18, 0, 0);
             itemOutputExists.add(itemOutputs.get(i / 2).size() > 0);
         }
 
@@ -142,6 +144,7 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
             fluidInputExists.add(fluidInputs.get(i / 2).size() > 0);
         }
 
+        itemStackGroup.addTooltipCallback(recipeWrapper::addTooltip);
         itemStackGroup.set(ingredients);
         fluidStackGroup.set(ingredients);
 
