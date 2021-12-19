@@ -139,7 +139,10 @@ public class ToolOverlayRenderer {
         // MetaTileEntity
         if (tileEntity instanceof MetaTileEntityHolder) {
             MetaTileEntity mte = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
-            return mte != null && mte.canRenderMachineGrid() && itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
+            if(mte == null || !mte.canRenderMachineGrid())
+                return false;
+            if(itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null))
+                return true;
         }
 
         // Pipes
