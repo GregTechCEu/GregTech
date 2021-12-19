@@ -92,7 +92,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     private EnergyNet getEnergyNet() {
         if (!this.getWorld().isRemote) {
             TileEntity te = this.getWorld().getTileEntity(this.getPos().offset(frontFacing.getOpposite()));
-            if (te instanceof TileEntityPipeBase && ((TileEntityPipeBase<?, ?>) te).getPipeTypeClass() == TileEntityCable.class) {
+            if (te instanceof TileEntityCable) {
                 TileEntityPipeBase<?, ?> tileEntityCable = (TileEntityCable) te;
                 EnergyNet currentEnergyNet = this.currentEnergyNet.get();
                 if (currentEnergyNet != null && currentEnergyNet.isValid() && currentEnergyNet.containsNode(tileEntityCable.getPipePos())) {
@@ -277,7 +277,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         super.addDisplayText(textList);
         textList.add(new TextComponentTranslation("gregtech.multiblock.central_monitor.height", this.height));
         if (!isStructureFormed()) {
-            ITextComponent buttonText = new TextComponentTranslation("gregtech.multiblock.central_monitor.height_modify");
+            ITextComponent buttonText = new TextComponentTranslation("gregtech.multiblock.central_monitor.height_modify", height);
             buttonText.appendText(" ");
             buttonText.appendSibling(AdvancedTextWidget.withButton(new TextComponentString("[-]"), "sub"));
             buttonText.appendText(" ");
