@@ -10,6 +10,7 @@ import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.filler.BlacklistedBlockFiller;
 import gregtech.api.worldgen.filler.BlockFiller;
+import gregtech.api.worldgen.filler.LayeredBlockFiller;
 import gregtech.api.worldgen.filler.SimpleBlockFiller;
 import gregtech.api.worldgen.generator.WorldGeneratorImpl;
 import gregtech.api.worldgen.populator.FluidSpringPopulator;
@@ -96,7 +97,9 @@ public class WorldGenRegistry {
         registerShapeGenerator("sphere", SphereGenerator::new);
         registerShapeGenerator("plate", PlateGenerator::new);
         registerShapeGenerator("single", SingleBlockGenerator::new);
+        registerShapeGenerator("layered", LayeredGenerator::new);
         registerBlockFiller("simple", SimpleBlockFiller::new);
+        registerBlockFiller("layered", LayeredBlockFiller::new);
         registerBlockFiller("ignore_bedrock", () -> new BlacklistedBlockFiller(Lists.newArrayList(Blocks.BEDROCK.getDefaultState())));
         registerVeinPopulator("surface_rock", SurfaceRockPopulator::new);
         registerVeinPopulator("fluid_spring", FluidSpringPopulator::new);
