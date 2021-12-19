@@ -273,7 +273,7 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
 
         if (withRandom && currentOreVein.getDensity() < randomDensityValue)
             return false; //only place blocks in positions matching density
-        setBlock(globalBlockX, globalBlockY, globalBlockZ, currentOreVein, 0, !withRandom);
+        setBlock(globalBlockX, globalBlockY, globalBlockZ, currentOreVein, 0);
         return true;
     }
 
@@ -284,11 +284,11 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
         int globalBlockX = veinCenterX + x;
         int globalBlockY = veinCenterY + y;
         int globalBlockZ = veinCenterZ + z;
-        setBlock(globalBlockX, globalBlockY, globalBlockZ, currentOreVein, index + 1, false);
+        setBlock(globalBlockX, globalBlockY, globalBlockZ, currentOreVein, index + 1);
         return true;
     }
 
-    private void setBlock(int worldX, int worldY, int worldZ, OreDepositDefinition definition, int index, boolean withRandom) {
+    private void setBlock(int worldX, int worldY, int worldZ, OreDepositDefinition definition, int index) {
         int chunkX = worldX >> 4;
         int chunkZ = worldZ >> 4;
         int localX = worldX - chunkX * 16;
