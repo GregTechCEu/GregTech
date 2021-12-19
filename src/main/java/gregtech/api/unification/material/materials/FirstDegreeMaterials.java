@@ -447,7 +447,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         RockSalt = new Material.Builder(309, "rock_salt")
-                .dust(1).ore(2, 1)
+                .gem(1).ore(2, 1)
                 .color(0xF0C8C8).iconSet(FINE)
                 .flags(NO_SMASHING)
                 .components(Potassium, 1, Chlorine, 1)

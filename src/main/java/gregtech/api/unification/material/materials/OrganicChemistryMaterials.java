@@ -130,7 +130,7 @@ public class OrganicChemistryMaterials {
                 .build();
 
         Sugar = new Material.Builder(1017, "sugar")
-                .dust(1)
+                .gem(1)
                 .color(0xFAFAFA).iconSet(FINE)
                 .components(Carbon, 2, Water, 5, Oxygen, 25)
                 .build();

@@ -278,6 +278,10 @@ public class OrePrefix {
         battery.setMarkerPrefix(true);
         circuit.setMarkerPrefix(true);
 
+        gemExquisite.setIgnored(Materials.Sugar);
+
+        gemFlawless.setIgnored(Materials.Sugar);
+
         gem.setIgnored(Materials.Diamond);
         gem.setIgnored(Materials.Emerald);
         gem.setIgnored(Materials.Lapis);
