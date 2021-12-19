@@ -199,8 +199,6 @@ public class MetaTileEntities {
     public static MetaTileEntityDrum ALUMINIUM_DRUM;
     public static MetaTileEntityDrum STEEL_DRUM;
     public static MetaTileEntityDrum STAINLESS_STEEL_DRUM;
-    public static MetaTileEntityDrum TITANIUM_DRUM;
-    public static MetaTileEntityDrum TUNGSTENSTEEL_DRUM;
     public static MetaTileEntityCrate WOODEN_CRATE;
     public static MetaTileEntityCrate BRONZE_CRATE;
     public static MetaTileEntityCrate ALUMINIUM_CRATE;
@@ -638,22 +636,20 @@ public class MetaTileEntities {
         }
 
         // Tanks, IDs 1595-1609
-        WOODEN_TANK = registerMetaTileEntity(1595, new MetaTileEntityTank(gregtechId("wooden_tank"), Materials.Wood, 4000, 1, 3));
-        BRONZE_TANK = registerMetaTileEntity(1596, new MetaTileEntityTank(gregtechId("bronze_tank"), Materials.Bronze, 8000, 4, 3));
-        STEEL_TANK = registerMetaTileEntity(1597, new MetaTileEntityTank(gregtechId("steel_tank"), Materials.Steel, 16000, 7, 5));
-        ALUMINIUM_TANK = registerMetaTileEntity(1598, new MetaTileEntityTank(gregtechId("aluminium_tank"), Materials.Aluminium, 32000, 8, 5));
-        STAINLESS_STEEL_TANK = registerMetaTileEntity(1599, new MetaTileEntityTank(gregtechId("stainless_steel_tank"), Materials.StainlessSteel, 64000, 9, 7));
-        TITANIUM_TANK = registerMetaTileEntity(1600, new MetaTileEntityTank(gregtechId("titanium_tank"), Materials.Titanium, 128000, 12, 9));
-        TUNGSTENSTEEL_TANK = registerMetaTileEntity(1601, new MetaTileEntityTank(gregtechId("tungstensteel_tank"), Materials.TungstenSteel, 512000, 16, 9));
+//        WOODEN_TANK = registerMetaTileEntity(1595, new MetaTileEntityTank(gregtechId("wooden_tank"), Materials.Wood, 4000, 1, 3));
+//        BRONZE_TANK = registerMetaTileEntity(1596, new MetaTileEntityTank(gregtechId("bronze_tank"), Materials.Bronze, 8000, 4, 3));
+//        STEEL_TANK = registerMetaTileEntity(1597, new MetaTileEntityTank(gregtechId("steel_tank"), Materials.Steel, 16000, 7, 5));
+//        ALUMINIUM_TANK = registerMetaTileEntity(1598, new MetaTileEntityTank(gregtechId("aluminium_tank"), Materials.Aluminium, 32000, 8, 5));
+//        STAINLESS_STEEL_TANK = registerMetaTileEntity(1599, new MetaTileEntityTank(gregtechId("stainless_steel_tank"), Materials.StainlessSteel, 64000, 9, 7));
+//        TITANIUM_TANK = registerMetaTileEntity(1600, new MetaTileEntityTank(gregtechId("titanium_tank"), Materials.Titanium, 128000, 12, 9));
+//        TUNGSTENSTEEL_TANK = registerMetaTileEntity(1601, new MetaTileEntityTank(gregtechId("tungstensteel_tank"), Materials.TungstenSteel, 512000, 16, 9));
 
         // Drums, IDs 1610-1624
-        WOODEN_DRUM = registerMetaTileEntity(1610, new MetaTileEntityDrum(gregtechId("drum.wood"), Materials.Wood, 4000));
-        BRONZE_DRUM = registerMetaTileEntity(1611, new MetaTileEntityDrum(gregtechId("drum.bronze"), Materials.Bronze, 8000));
-        STEEL_DRUM = registerMetaTileEntity(1612, new MetaTileEntityDrum(gregtechId("drum.steel"), Materials.Steel, 16000));
-        ALUMINIUM_DRUM = registerMetaTileEntity(1613, new MetaTileEntityDrum(gregtechId("drum.aluminium"), Materials.Aluminium, 32000));
-        STAINLESS_STEEL_DRUM = registerMetaTileEntity(1614, new MetaTileEntityDrum(gregtechId("drum.stainless_steel"), Materials.StainlessSteel, 64000));
-        TITANIUM_DRUM = registerMetaTileEntity(1615, new MetaTileEntityDrum(gregtechId("drum.titanium"), Materials.Titanium, 128000));
-        TUNGSTENSTEEL_DRUM = registerMetaTileEntity(1616, new MetaTileEntityDrum(gregtechId("drum.tungstensteel"), Materials.TungstenSteel, 512000));
+        WOODEN_DRUM = registerMetaTileEntity(1610, new MetaTileEntityDrum(gregtechId("drum.wood"), Materials.Wood, 16000));
+        BRONZE_DRUM = registerMetaTileEntity(1611, new MetaTileEntityDrum(gregtechId("drum.bronze"), Materials.Bronze, 32000));
+        STEEL_DRUM = registerMetaTileEntity(1612, new MetaTileEntityDrum(gregtechId("drum.steel"), Materials.Steel, 64000));
+        ALUMINIUM_DRUM = registerMetaTileEntity(1613, new MetaTileEntityDrum(gregtechId("drum.aluminium"), Materials.Aluminium, 128000));
+        STAINLESS_STEEL_DRUM = registerMetaTileEntity(1614, new MetaTileEntityDrum(gregtechId("drum.stainless_steel"), Materials.StainlessSteel, 256000));
 
         // Crates, IDs 1625-1639
         WOODEN_CRATE = registerMetaTileEntity(1625, new MetaTileEntityCrate(gregtechId("crate.wood"), Materials.Wood, 27));

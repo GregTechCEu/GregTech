@@ -323,8 +323,6 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe(true, "steel_drum", MetaTileEntities.STEEL_DRUM.getStackForm(), " h ", "PRP", "PRP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'R', new UnificationEntry(OrePrefix.stickLong, Materials.Steel));
         ModHandler.addShapedRecipe(true, "aluminium_drum", MetaTileEntities.ALUMINIUM_DRUM.getStackForm(), " h ", "PRP", "PRP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium), 'R', new UnificationEntry(OrePrefix.stickLong, Materials.Aluminium));
         ModHandler.addShapedRecipe(true, "stainless_steel_drum", MetaTileEntities.STAINLESS_STEEL_DRUM.getStackForm(), " h ", "PRP", "PRP", 'P', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel), 'R', new UnificationEntry(OrePrefix.stickLong, Materials.StainlessSteel));
-        ModHandler.addShapedRecipe(true, "titanium_drum", MetaTileEntities.TITANIUM_DRUM.getStackForm(), " h ", "PRP", "PRP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Titanium), 'R', new UnificationEntry(OrePrefix.stickLong, Materials.Titanium));
-        ModHandler.addShapedRecipe(true, "tungstensteel_drum", MetaTileEntities.TUNGSTENSTEEL_DRUM.getStackForm(), " h ", "PRP", "PRP", 'P', new UnificationEntry(OrePrefix.plate, Materials.TungstenSteel), 'R', new UnificationEntry(OrePrefix.stickLong, Materials.TungstenSteel));
 
         // Hermetic Casings
         ModHandler.addShapedRecipe(true, "hermetic_casing_lv", MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_LV), "PPP", "PFP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'F', new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Polyethylene));
