@@ -1,0 +1,34 @@
+{
+  "weight": 80,
+  "density": 0.15,
+  "max_height": 60,
+  "min_height": 30,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "magnetite"
+  },
+  "generator": {
+    "type": "layered",
+    "radius": [
+      20,
+      32
+    ]
+  },
+  "filler": {
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:magnetite"
+      },
+      {
+        "secondary": "ore:magnetite"
+      },
+      {
+        "between": "ore:vanadium_magnetite"
+      },
+      {
+        "sporadic": "ore:gold"
+      }
+    ]
+  }
+}

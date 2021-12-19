@@ -1,0 +1,34 @@
+{
+  "weight": 20,
+  "density": 0.25,
+  "max_height": 40,
+  "min_height": 20,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "mica"
+  },
+  "generator": {
+    "type": "layered",
+    "radius": [
+      14,
+      16
+    ]
+  },
+  "filler": {
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:kyanite"
+      },
+      {
+        "secondary": "ore:mica"
+      },
+      {
+        "between": "ore:bauxite"
+      },
+      {
+        "sporadic": "ore:pollucite"
+      }
+    ]
+  }
+}

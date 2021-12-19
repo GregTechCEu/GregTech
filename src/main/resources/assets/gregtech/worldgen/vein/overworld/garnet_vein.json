@@ -1,0 +1,34 @@
+{
+  "weight": 40,
+  "density": 0.25,
+  "max_height": 30,
+  "min_height": 10,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "garnet_red"
+  },
+  "generator": {
+    "type": "layered",
+    "radius": [
+      14,
+      16
+    ]
+  },
+  "filler": {
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:garnet_red"
+      },
+      {
+        "secondary": "ore:garnet_yellow"
+      },
+      {
+        "between": "ore:amethyst"
+      },
+      {
+        "sporadic": "ore:opal"
+      }
+    ]
+  }
+}
