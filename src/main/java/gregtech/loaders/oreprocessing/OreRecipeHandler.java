@@ -24,6 +24,7 @@ import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.info.MaterialFlags.HIGH_SIFTER_OUTPUT;
 
 public class OreRecipeHandler {
+    // Make sure to update OreByProduct jei page with any byproduct changes made here!
 
     public static void register() {
         OrePrefix.ore.addProcessingHandler(PropertyKey.ORE, OreRecipeHandler::processOre);
