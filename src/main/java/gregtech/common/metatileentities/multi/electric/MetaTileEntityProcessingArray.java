@@ -253,12 +253,17 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
         @Override
         protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode mode) {
-            return super.findRecipe(getOverclockVoltage(), inputs, fluidInputs, mode);
+            return super.findRecipe(Math.min(super.getMaxVoltage(), this.machineVoltage), inputs, fluidInputs, mode);
         }
 
         @Override
-        public long getOverclockVoltage() {
-            return Math.min(super.getMaxVoltage(), this.machineVoltage);
+        protected boolean checkCanOverclock(int recipeEUt) {
+            if (!isAllowOverclocking()) {
+                return false;
+            }
+
+            int originalTier = GTUtility.getTierByVoltage(recipeEUt / this.parallelRecipesPerformed);
+            return machineTier > originalTier;
         }
 
         @Override
