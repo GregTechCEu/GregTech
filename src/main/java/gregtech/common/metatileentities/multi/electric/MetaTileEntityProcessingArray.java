@@ -242,11 +242,6 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
 
         @Override
-        protected int getOverclockingTier(long voltage) {
-            return this.machineTier;
-        }
-
-        @Override
         public int getParallelLimit() {
             return (currentMachineStack == null || currentMachineStack.isEmpty()) ? getMachineLimit() : Math.min(currentMachineStack.getCount(), getMachineLimit());
         }
@@ -257,13 +252,21 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
 
         @Override
-        protected boolean checkCanOverclock(int recipeEUt) {
+        protected int[] calculateOverclock(@Nonnull Recipe recipe) {
+            int recipeEUt = recipe.getEUt();
+            int recipeDuration = recipe.getDuration();
             if (!isAllowOverclocking()) {
-                return false;
+                return new int[]{recipeEUt, recipeDuration};
             }
 
             int originalTier = GTUtility.getTierByVoltage(recipeEUt / this.parallelRecipesPerformed);
-            return machineTier > originalTier;
+            int numOverclocks = Math.min(this.machineTier, GTUtility.getTierByVoltage(getMaxVoltage())) - originalTier;
+            return unlockedVoltageOverclockingLogic(
+                    recipeEUt, getMaxVoltage(), recipeDuration,
+                    getOverclockingDurationDivisor(),
+                    getOverclockingVoltageMultiplier(),
+                    numOverclocks
+            );
         }
 
         @Override

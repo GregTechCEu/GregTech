@@ -542,6 +542,30 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
+     * Identical to {@link AbstractRecipeLogic#standardOverclockingLogic(int, long, int, double, double, int)}, except
+     * it does not enforce "maximumVoltage" being in-line with a voltage-tier.
+     *
+     * @param recipeEUt the EU/t of the recipe to overclock
+     * @param maximumVoltage the maximum voltage the recipe is allowed to be run at
+     * @param recipeDuration the duration of the recipe to overclock
+     * @param durationDivisor the value to divide the duration by for each overclock
+     * @param voltageMultiplier the value to multiply the voltage by for each overclock
+     * @param maxOverclocks the maximum amount of overclocks allowed
+     * @return an int array of {OverclockedEUt, OverclockedDuration}
+     */
+    public static int[] unlockedVoltageOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, double durationDivisor, double voltageMultiplier, int maxOverclocks) {
+        int overclockedEUt = recipeEUt;
+        double overclockedDuration = recipeDuration;
+
+        while (overclockedEUt * voltageMultiplier <= maximumVoltage && overclockedDuration / durationDivisor > 0 && maxOverclocks > 0) {
+            overclockedEUt *= voltageMultiplier;
+            overclockedDuration /= durationDivisor;
+            maxOverclocks--;
+        }
+        return new int[]{overclockedEUt, (int) Math.ceil(overclockedDuration)};
+    }
+
+    /**
      *
      * @param voltage the maximum voltage the recipe is allowed to run at
      * @return the highest voltage tier the machine should use to overclock with
