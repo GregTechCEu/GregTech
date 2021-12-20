@@ -111,7 +111,7 @@ public class BatteryRecipes {
 
         // UV
         ASSEMBLER_RECIPES.recipeBuilder().duration(300).EUt(VA[ZPM])
-                .input(cableGtSingle, NaquadahAlloy, 2)
+                .input(cableGtSingle, YttriumBariumCuprate, 2)
                 .input(plate, Americium, 18)
                 .fluidInputs(Polybenzimidazole.getFluid(576))
                 .output(BATTERY_HULL_LARGE_NAQUADRIA)
@@ -304,7 +304,7 @@ public class BatteryRecipes {
                 .input(HIGH_POWER_INTEGRATED_CIRCUIT, 64)
                 .input(HIGH_POWER_INTEGRATED_CIRCUIT, 64)
                 .input(SMD_DIODE, 16)
-                .input(cableGtSingle, NaquadahAlloy, 32)
+                .input(cableGtSingle, YttriumBariumCuprate, 32)
                 .fluidInputs(SolderingAlloy.getFluid(L * 20))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .output(ENERGY_CLUSTER)

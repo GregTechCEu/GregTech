@@ -92,17 +92,17 @@ public class MaterialInfoLoader {
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[6].getStackForm(), new ItemMaterialInfo(
                 new MaterialStack(Materials.RhodiumPlatedPalladium, OrePrefix.plate.materialAmount * 8),
-                new MaterialStack(Materials.VanadiumGallium, OrePrefix.cableGtSingle.materialAmount * 2),
+                new MaterialStack(Materials.NiobiumTitanium, OrePrefix.cableGtSingle.materialAmount * 2),
                 new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[7].getStackForm(), new ItemMaterialInfo(
                 new MaterialStack(Materials.NaquadahAlloy, OrePrefix.plate.materialAmount * 8),
-                new MaterialStack(Materials.Naquadah, OrePrefix.cableGtSingle.materialAmount * 2),
+                new MaterialStack(Materials.VanadiumGallium, OrePrefix.cableGtSingle.materialAmount * 2),
                 new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[8].getStackForm(), new ItemMaterialInfo(
                 new MaterialStack(Materials.Livermorium, OrePrefix.plate.materialAmount * 8),
-                new MaterialStack(Materials.NaquadahAlloy, OrePrefix.cableGtSingle.materialAmount * 2),
+                new MaterialStack(Materials.YttriumBariumCuprate, OrePrefix.cableGtSingle.materialAmount * 2),
                 new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[9].getStackForm(), new ItemMaterialInfo(

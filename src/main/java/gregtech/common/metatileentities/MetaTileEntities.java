@@ -49,7 +49,7 @@ public class MetaTileEntities {
     public static final MetaTileEntityTransformer[] TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length - 1]; // no ULV, no MAX
     public static final MetaTileEntityAdjustableTransformer[] ADJUSTABLE_TRANSFORMER = new MetaTileEntityAdjustableTransformer[GTValues.V.length - 1]; // no ULV, no MAX
     public static final MetaTileEntityDiode[] DIODES = new MetaTileEntityDiode[GTValues.V.length];
-    public static final MetaTileEntityBatteryBuffer[][] BATTERY_BUFFER = new MetaTileEntityBatteryBuffer[GTValues.V.length][];
+    public static final MetaTileEntityBatteryBuffer[][] BATTERY_BUFFER = new MetaTileEntityBatteryBuffer[3][GTValues.V.length];
     public static final MetaTileEntityCharger[] CHARGER = new MetaTileEntityCharger[GTValues.V.length];
     //SIMPLE MACHINES SECTION
     public static final SimpleMachineMetaTileEntity[] ELECTRIC_FURNACE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
@@ -546,14 +546,15 @@ public class MetaTileEntities {
         }
 
         // Battery Buffer, IDs 1315-1360
-        endPos = GTValues.HT ? BATTERY_BUFFER.length - 1 : Math.min(BATTERY_BUFFER.length - 1, GTValues.UV + 1);
+        endPos = GTValues.HT ? BATTERY_BUFFER[0].length - 1 : Math.min(BATTERY_BUFFER[0].length - 1, GTValues.UV);
         int[] batteryBufferSlots = new int[]{4, 8, 16};
-        for (int i = 0; i < endPos; i++) {
-            BATTERY_BUFFER[i] = new MetaTileEntityBatteryBuffer[batteryBufferSlots.length];
-            for (int slot = 0; slot < batteryBufferSlots.length; slot++) {
+        for (int slot = 0; slot < batteryBufferSlots.length; slot++) {
+            BATTERY_BUFFER[slot] = new MetaTileEntityBatteryBuffer[endPos];
+            for (int i = 0; i < endPos; i++) {
                 String bufferId = "battery_buffer." + GTValues.VN[i].toLowerCase() + "." + batteryBufferSlots[slot];
                 MetaTileEntityBatteryBuffer batteryBuffer = new MetaTileEntityBatteryBuffer(gregtechId(bufferId), i, batteryBufferSlots[slot]);
-                BATTERY_BUFFER[i][slot] = registerMetaTileEntity(1315 + batteryBufferSlots.length * i + slot, batteryBuffer);
+                System.out.println(slot + " " + i);
+                BATTERY_BUFFER[slot][i] = registerMetaTileEntity(1315 + BATTERY_BUFFER[slot].length * slot + i, batteryBuffer);
             }
         }
 
