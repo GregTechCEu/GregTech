@@ -4195,6 +4195,7 @@ gregtech.recipe.eu_inverted=Generation: %,d EU/t
 gregtech.recipe.duration=Duration: %,.2f secs
 gregtech.recipe.amperage=Amperage: %,d
 gregtech.recipe.not_consumed=§bDoes not get consumed in the process
+gregtech.recipe.assline_scanner=§bProduces Data for the Assembly Line instead of Items
 gregtech.recipe.chance=Chance: %s%% +%s%%/tier
 gregtech.recipe.temperature=Temperature: %,dK (%s)
 gregtech.recipe.explosive=Explosive: %s
