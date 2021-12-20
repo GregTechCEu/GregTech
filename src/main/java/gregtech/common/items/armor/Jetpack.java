@@ -54,6 +54,7 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
 
         if (toggleTimer > 0) toggleTimer--;
 
+        data.setBoolean("hover", hover);
         data.setByte("toggleTimer", toggleTimer);
         player.inventoryContainer.detectAndSendChanges();
     }

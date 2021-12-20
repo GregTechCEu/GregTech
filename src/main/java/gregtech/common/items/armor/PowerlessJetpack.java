@@ -95,6 +95,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
         if (toggleTimer > 0)
             toggleTimer--;
 
+        data.setBoolean("hover", hover);
         data.setShort("burnTimer", (short) burnTimer);
         data.setByte("toggleTimer", toggleTimer);
         player.inventoryContainer.detectAndSendChanges();

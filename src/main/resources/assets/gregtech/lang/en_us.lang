@@ -951,8 +951,8 @@ metaitem.qts.boots.name=QuarkTech™ Suite Boots
 metaitem.qts.helmet.name=QuarkTech™ Suite Helmet
 metaitem.qts.advanced_chestplate.name=Advanced QuarkTech™ Suite Chestplate
 
-metaitem.impeller.mv.name=Power Thruster
-metaitem.impeller.hv.name=Advanced Power Thruster
+metaitem.power_thruster.name=Power Thruster
+metaitem.power_thruster_advanced.name=Advanced Power Thruster
 metaitem.gravitation_engine.name=Gravitation Engine Unit
 
 metaarmor.nms.nightvision.enabled=NanoMuscle™ Suite: NightVision Enabled
