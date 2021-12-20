@@ -2243,7 +2243,7 @@ tile.metal_casing.stainless_clean.name=Clean Stainless Steel Casing
 tile.metal_casing.titanium_stable.name=Stable Titanium Machine Casing
 tile.metal_casing.tungstensteel_robust.name=Robust Tungstensteel Machine Casing
 tile.metal_casing.ptfe_inert.name=Chemically Inert PTFE Machine Casing
-tile.metal_casing.hssg_robust.name=Robust HSS-G Machine Casing
+tile.metal_casing.hsse_robust.name=Sturdy HSS-E Machine Casing
 
 # Machine casing blocks
 tile.machine_casing.ultra_low_voltage.name=ULV Machine Casing

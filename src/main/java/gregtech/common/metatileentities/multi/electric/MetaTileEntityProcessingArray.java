@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
 import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.IMachineHatchMultiblock;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
@@ -12,7 +13,10 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.recipes.MatchingMode;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.sound.GTSounds;
@@ -31,6 +35,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -49,6 +54,12 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
         return new MetaTileEntityProcessingArray(metaTileEntityId, tier);
+    }
+
+    @Override
+    protected void formStructure(PatternMatchContext context) {
+        super.formStructure(context);
+        ((ProcessingArrayWorkable) this.recipeMapWorkable).findMachineStack();
     }
 
     @Override
@@ -73,14 +84,14 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     public IBlockState getCasingState() {
         return tier == 0
                 ? MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.TUNGSTENSTEEL_ROBUST)
-                : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSG_ROBUST);
+                : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSE_ROBUST);
     }
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return tier == 0
                 ? Textures.ROBUST_TUNGSTENSTEEL_CASING
-                : Textures.ROBUST_HSSG_CASING;
+                : Textures.ROBUST_HSSE_CASING;
     }
 
     @Override
@@ -227,10 +238,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
             this.machineVoltage = GTValues.V[this.machineTier];
 
-            this.currentMachineStack = machine.copy();
-            if (currentMachineStack.getCount() > getMachineLimit()) {
-                currentMachineStack.setCount(getMachineLimit());
-            }
+            this.currentMachineStack = machine;
         }
 
         @Override
@@ -244,7 +252,12 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
 
         @Override
-        protected long getMaxVoltage() {
+        protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode mode) {
+            return super.findRecipe(getOverclockVoltage(), inputs, fluidInputs, mode);
+        }
+
+        @Override
+        public long getOverclockVoltage() {
             return Math.min(super.getMaxVoltage(), this.machineVoltage);
         }
 

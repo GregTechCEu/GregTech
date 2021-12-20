@@ -252,7 +252,7 @@ public class ElementMaterials {
         Europium = new Material.Builder(33, "europium")
                 .ingot().fluid()
                 .color(0x20FFFF).iconSet(METALLIC)
-                .flags(STD_METAL, GENERATE_LONG_ROD, GENERATE_FINE_WIRE, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FOIL)
+                .flags(STD_METAL, GENERATE_LONG_ROD, GENERATE_FINE_WIRE, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FOIL, GENERATE_FRAME)
                 .element(Elements.Eu)
                 .cableProperties(GTValues.V[GTValues.UHV], 2, 32)
                 .fluidPipeProperties(7780, 1200, true)
