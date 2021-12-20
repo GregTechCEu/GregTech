@@ -105,7 +105,9 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     @Nonnull
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
-        return Textures.PROCESSING_ARRAY_OVERLAY;
+        return tier == 0
+                ? Textures.PROCESSING_ARRAY_OVERLAY
+                : Textures.ADVANCED_PROCESSING_ARRAY_OVERLAY;
     }
 
     @Override
