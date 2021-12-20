@@ -41,7 +41,6 @@ public class MaterialFlags {
 
     /**
      * Add to material to disable it's unification fully
-     * todo implement
      */
     public static final MaterialFlag NO_UNIFICATION =
             new MaterialFlag.Builder(0, "no_unification").build();

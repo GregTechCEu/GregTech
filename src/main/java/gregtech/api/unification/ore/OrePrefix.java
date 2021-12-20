@@ -502,7 +502,7 @@ public class OrePrefix {
 
     public <T extends IMaterialProperty<T>> void addProcessingHandler(PropertyKey<T> propertyKey, TriConsumer<OrePrefix, Material, T> handler) {
         addProcessingHandler((orePrefix, material) -> {
-            if (material.hasProperty(propertyKey)) {
+            if (material.hasProperty(propertyKey) && !material.hasFlag(NO_UNIFICATION)) {
                 handler.accept(orePrefix, material, material.getProperty(propertyKey));
             }
         });

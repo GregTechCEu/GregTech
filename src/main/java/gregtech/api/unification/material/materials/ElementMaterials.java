@@ -847,7 +847,7 @@ public class ElementMaterials {
         Tin = new Material.Builder(112, "tin")
                 .ingot(1).fluid(FluidType.FLUID, true).ore()
                 .color(0xDCDCDC)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SPRING, GENERATE_SPRING_SMALL)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SPRING, GENERATE_SPRING_SMALL, NO_UNIFICATION)
                 .element(Elements.Sn)
                 .cableProperties(GTValues.V[1], 1, 1)
                 .itemPipeProperties(4096, 0.5f)
