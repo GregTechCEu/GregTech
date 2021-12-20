@@ -186,7 +186,7 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     public ItemStack insert(ItemPipeNet.Inventory handler, ItemStack stack, boolean simulate) {
-        int allowed = checkTransferable(pipe, handler.getProperties().transferRate, stack.getCount(), simulate);
+        int allowed = checkTransferable(pipe, handler.getProperties().getTransferRate(), stack.getCount(), simulate);
         if (allowed == 0) return stack;
         CoverBehavior pipeCover = getCoverOnPipe(handler.getPipePos(), handler.getFaceToHandler());
         CoverBehavior tileCover = getCoverOnNeighbour(handler.getPipePos(), handler.getFaceToHandler());

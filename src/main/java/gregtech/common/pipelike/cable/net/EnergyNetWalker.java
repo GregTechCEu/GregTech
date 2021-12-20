@@ -2,7 +2,6 @@ package gregtech.common.pipelike.cable.net;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.PipeNetWalker;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
@@ -45,7 +44,7 @@ public class EnergyNetWalker extends PipeNetWalker {
     @Override
     protected void checkPipe(IPipeTile<?, ?> pipeTile, BlockPos pos) {
         pipes.add((TileEntityCable) pipeTile);
-        loss += ((TileEntityCable) pipeTile).getNodeData().lossPerBlock;
+        loss += ((TileEntityCable) pipeTile).getNodeData().getLossPerBlock();
     }
 
     @Override

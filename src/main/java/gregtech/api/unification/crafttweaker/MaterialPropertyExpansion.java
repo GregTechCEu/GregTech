@@ -130,8 +130,8 @@ public class MaterialPropertyExpansion {
     public static void addItemPipes(Material m, int priority, float transferRate) {
         if (checkFrozen("add Item Pipes to a material")) return;
         if (m.hasProperty(PropertyKey.ITEM_PIPE)) {
-            m.getProperty(PropertyKey.ITEM_PIPE).priority = priority;
-            m.getProperty(PropertyKey.ITEM_PIPE).transferRate = transferRate;
+            m.getProperty(PropertyKey.ITEM_PIPE).setPriority(priority);
+            m.getProperty(PropertyKey.ITEM_PIPE).setTransferRate(transferRate);
         } else m.setProperty(PropertyKey.ITEM_PIPE, new ItemPipeProperties(priority, transferRate));
     }
 
@@ -158,10 +158,10 @@ public class MaterialPropertyExpansion {
     public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock, @Optional boolean isSuperCon) {
         if (checkFrozen("add Wires to a material")) return;
         if (m.hasProperty(PropertyKey.WIRE)) {
-            m.getProperty(PropertyKey.WIRE).voltage = voltage;
-            m.getProperty(PropertyKey.WIRE).amperage = baseAmperage;
-            m.getProperty(PropertyKey.WIRE).lossPerBlock = lossPerBlock;
-            m.getProperty(PropertyKey.WIRE).isSuperconductor = isSuperCon;
+            m.getProperty(PropertyKey.WIRE).setVoltage(voltage);
+            m.getProperty(PropertyKey.WIRE).setAmperage(baseAmperage);
+            m.getProperty(PropertyKey.WIRE).setLossPerBlock(lossPerBlock);
+            m.getProperty(PropertyKey.WIRE).setSuperconductor(isSuperCon);
         } else m.setProperty(PropertyKey.WIRE, new WireProperties(voltage, baseAmperage, lossPerBlock, isSuperCon));
     }
 }

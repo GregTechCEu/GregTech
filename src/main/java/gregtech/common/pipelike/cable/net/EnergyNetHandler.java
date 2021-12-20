@@ -79,7 +79,7 @@ public class EnergyNetHandler implements IEnergyContainer {
             if (didBurn) break;
             long voltageTraveled = voltage;
             for (TileEntityCable cable : path.getPath()) {
-                voltageTraveled -= cable.getNodeData().lossPerBlock;
+                voltageTraveled -= cable.getNodeData().getLossPerBlock();
                 if(voltageTraveled <= 0)
                     break;
                 cable.incrementAmperage(amps, voltageTraveled);
@@ -103,12 +103,12 @@ public class EnergyNetHandler implements IEnergyContainer {
 
     @Override
     public long getInputAmperage() {
-        return cable.getNodeData().amperage;
+        return cable.getNodeData().getAmperage();
     }
 
     @Override
     public long getInputVoltage() {
-        return cable.getNodeData().voltage;
+        return cable.getNodeData().getVoltage();
     }
 
     @Override

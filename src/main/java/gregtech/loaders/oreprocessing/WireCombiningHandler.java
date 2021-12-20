@@ -66,7 +66,7 @@ public class WireCombiningHandler {
     }
 
     private static void generateCableCombiningRecipe(OrePrefix cablePrefix, Material material, WireProperties property) {
-        if (property.isSuperconductor) return;
+        if (property.isSuperconductor()) return;
         int cableIndex = ArrayUtils.indexOf(CABLE_DOUBLING_ORDER, cablePrefix);
 
         if (cableIndex < CABLE_DOUBLING_ORDER.length - 1) {

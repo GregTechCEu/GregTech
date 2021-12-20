@@ -142,7 +142,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         if (insulation.insulationLevel == -1 && entityIn instanceof EntityLivingBase) {
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
             TileEntityCable cable = (TileEntityCable) getPipeTileEntity(worldIn, pos);
-            if (cable != null && cable.getNodeData().lossPerBlock > 0) {
+            if (cable != null && cable.getNodeData().getLossPerBlock() > 0) {
                 long voltage = cable.getCurrentMaxVoltage();
                 double amperage = cable.getAverageAmperage();
                 if (voltage > 0L && amperage > 0L) {

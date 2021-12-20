@@ -65,11 +65,11 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     }
 
     public long getMaxAmperage() {
-        return getNodeData().amperage;
+        return getNodeData().getAmperage();
     }
 
     public long getMaxVoltage() {
-        return getNodeData().voltage;
+        return getNodeData().getVoltage();
     }
 
     @Nullable
