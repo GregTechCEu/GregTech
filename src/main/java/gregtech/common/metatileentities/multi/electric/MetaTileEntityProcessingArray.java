@@ -17,7 +17,6 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.sound.GTSounds;
 import gregtech.client.renderer.ICubeRenderer;
@@ -272,14 +271,11 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
 
         @Override
-        public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
-
+        public boolean trimOutputs() {
             MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(currentMachineStack);
 
             //Clear the chanced outputs of LV and MV macerators, as they do not have the slots to get byproducts
-            if (mte instanceof MetaTileEntityMacerator && machineTier < GTValues.HV) {
-                builder.clearChancedOutput();
-            }
+            return mte instanceof MetaTileEntityMacerator && machineTier < GTValues.HV;
         }
     }
 }
