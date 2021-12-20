@@ -134,6 +134,8 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             tooltip.add(I18n.format("gregtech.recipe.chance", chance, boost));
         } else if (notConsumed) {
             tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
+        } else if (recipe.getOutputs().get(0).hasTagCompound() && ((ItemStack) ingredient).isItemEqual(new ItemStack(recipe.getOutputs().get(0).getSubCompound("asslineOutput")))) {
+            tooltip.add(I18n.format("gregtech.recipe.assline_scanner"));
         }
     }
 

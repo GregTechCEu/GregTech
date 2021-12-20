@@ -9,7 +9,10 @@ import gregtech.api.recipes.builders.*;
 import gregtech.api.recipes.machines.*;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.material.Materials;
+import gregtech.common.items.MetaItems;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenProperty;
 
@@ -44,9 +47,25 @@ public class RecipeMaps {
             .setSound(GTSounds.ASSEMBLER);
 
     @ZenProperty
-    public static final RecipeMapAssemblyLine<SimpleRecipeBuilder> ASSEMBLY_LINE_RECIPES = (RecipeMapAssemblyLine<SimpleRecipeBuilder>) new RecipeMapAssemblyLine<>("assembly_line", 4, 16, 1, 1, 0, 4, 0, 0, new SimpleRecipeBuilder(), false)
+    public static final RecipeMapAssemblyLine ASSEMBLY_LINE_RECIPES = (RecipeMapAssemblyLine) new RecipeMapAssemblyLine("assembly_line", 4, 16, 1, 1, 0, 4, 0, 0, new AssemblyLineRecipeBuilder(), false)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
-            .setSound(GTSounds.ASSEMBLER);
+            .setSound(GTSounds.ASSEMBLER)
+            .onRecipeBuild(recipeBuilder -> {
+                ItemStack researchItem = ((AssemblyLineRecipeBuilder) recipeBuilder).getResearchItem();
+                if (researchItem != null && !researchItem.isEmpty()) {
+                    NBTTagCompound compound = AssemblyLineRecipeBuilder.generateResearchNBT(recipeBuilder);
+                    ItemStack stickStack = MetaItems.TOOL_DATA_STICK.getStackForm();
+                    stickStack.setTagCompound(compound);
+
+                    RecipeMaps.SCANNER_RECIPES.recipeBuilder()
+                            .inputs(researchItem)
+                            .input(MetaItems.TOOL_DATA_STICK)
+                            .outputs(stickStack)
+                            .EUt(1920)
+                            .duration(40)
+                            .buildAndRegister();
+                }
+            });
 
     /**
      * Example:
