@@ -784,7 +784,7 @@ public class RecipeMaps {
             .setSound(GTSounds.FIRE);
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> SCANNER_RECIPES = new RecipeMap<>("scanner", 0, 2, 1, 1, 0, 1, 0, 0, new SimpleRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> SCANNER_RECIPES = new RecipeMap<>("scanner", 0, 2, 1, 1, 0, 1, 0, 0, new SimpleRecipeBuilder(), true)
             .setSlotOverlay(false, false, GuiTextures.DATA_ORB_OVERLAY)
             .setSlotOverlay(false, false, true, GuiTextures.SCANNER_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)

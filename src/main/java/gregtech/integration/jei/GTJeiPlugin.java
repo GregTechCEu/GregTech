@@ -14,6 +14,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -24,6 +25,7 @@ import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
 import gregtech.integration.jei.recipe.*;
+import gregtech.integration.jei.recipe.fuel.FuelRecipeMapCategory;
 import gregtech.integration.jei.recipe.primitive.MaterialTree;
 import gregtech.integration.jei.recipe.primitive.MaterialTreeCategory;
 import gregtech.integration.jei.recipe.primitive.OreByProduct;
@@ -31,7 +33,6 @@ import gregtech.integration.jei.recipe.primitive.OreByProductCategory;
 import gregtech.integration.jei.utils.CustomItemReturnRecipeWrapper;
 import gregtech.integration.jei.utils.MachineSubtypeHandler;
 import gregtech.integration.jei.utils.MetaItemSubtypeHandler;
-import gregtech.integration.jei.utils.MultiblockInfoRecipeFocusShower;
 import gregtech.loaders.recipe.CustomItemReturnShapedOreRecipeRecipe;
 import mezz.jei.Internal;
 import mezz.jei.api.*;
@@ -83,6 +84,10 @@ public class GTJeiPlugin implements IModPlugin {
                 registry.addRecipeCategories(new RecipeMapCategory(recipeMap, registry.getJeiHelpers().getGuiHelper()));
             }
         }
+        for (FuelRecipeMap fuelRecipeMap : FuelRecipeMap.getRecipeMaps()) {
+            registry.addRecipeCategories(new FuelRecipeMapCategory(fuelRecipeMap, registry.getJeiHelpers().getGuiHelper()));
+        }
+        registry.addRecipeCategories(new RecipeMapCategory(RecipeMaps.SCANNER_RECIPES, registry.getJeiHelpers().getGuiHelper())); // Really jank solution to put scanner jei after assline
         registry.addRecipeCategories(new OreByProductCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new GTOreCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new MaterialTreeCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -103,7 +108,7 @@ public class GTJeiPlugin implements IModPlugin {
         registry.getRecipeTransferRegistry().addRecipeTransferHandler(modularUIGuiHandler, VanillaRecipeCategoryUid.CRAFTING);
 
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            if(!recipeMap.isHidden) {
+            if(!recipeMap.isHidden || recipeMap == RecipeMaps.SCANNER_RECIPES) { // did I mention how jank this is
                 Stream<Recipe> recipeStream = recipeMap.getRecipeList().stream()
                         .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay());
 
