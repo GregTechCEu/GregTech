@@ -28,7 +28,7 @@ import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
 public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIHolder {
 
-    private MetaTileEntity metaTileEntity;
+    protected MetaTileEntity metaTileEntity;
     private boolean needToUpdateLightning = false;
 
     public MetaTileEntity getMetaTileEntity() {
@@ -86,8 +86,8 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
             NBTTagCompound metaTileEntityData = compound.getCompoundTag("MetaTileEntity");
             if (sampleMetaTileEntity != null) {
                 this.metaTileEntity = sampleMetaTileEntity.createMetaTileEntity(this);
-                this.metaTileEntity.onAttached();
                 this.metaTileEntity.holder = this;
+                this.metaTileEntity.onAttached();
                 this.metaTileEntity.readFromNBT(metaTileEntityData);
             } else {
                 GTLog.logger.error("Failed to load MetaTileEntity with invalid ID " + metaTileEntityIdRaw);
