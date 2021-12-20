@@ -553,7 +553,6 @@ public class MetaTileEntities {
             for (int i = 0; i < endPos; i++) {
                 String bufferId = "battery_buffer." + GTValues.VN[i].toLowerCase() + "." + batteryBufferSlots[slot];
                 MetaTileEntityBatteryBuffer batteryBuffer = new MetaTileEntityBatteryBuffer(gregtechId(bufferId), i, batteryBufferSlots[slot]);
-                System.out.println(slot + " " + i);
                 BATTERY_BUFFER[slot][i] = registerMetaTileEntity(1315 + BATTERY_BUFFER[slot].length * slot + i, batteryBuffer);
             }
         }
