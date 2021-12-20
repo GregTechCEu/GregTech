@@ -108,8 +108,7 @@ public class CraftingRecipeResolver {
             for (int i = 0; i < inventoryCrafting.getSizeInventory(); i++) {
                 if (inventoryCrafting.getStackInSlot(i).getItem() instanceof ToolMetaItem) {
                     ToolMetaItem.MetaToolValueItem toolStack = ((ToolMetaItem<?>) inventoryCrafting.getStackInSlot(i).getItem()).getItem(inventoryCrafting.getStackInSlot(i));
-                    if (toolStack.getToolStats() != null)
-                        toolStack.getToolStats().onCraftingUse(inventoryCrafting.getStackInSlot(i), player);
+                    toolStack.getToolStats().onCraftingUse(inventoryCrafting.getStackInSlot(i), player);
                 }
             }
 

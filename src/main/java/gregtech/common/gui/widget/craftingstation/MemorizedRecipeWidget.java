@@ -75,9 +75,4 @@ public class MemorizedRecipeWidget extends SlotWidget {
         }
         return ItemStack.EMPTY;
     }
-
-    @Override
-    public boolean mouseClicked(int mouseX, int mouseY, int button) {
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
 }
