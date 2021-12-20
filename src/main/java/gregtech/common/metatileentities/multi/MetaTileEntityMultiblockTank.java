@@ -14,6 +14,7 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -23,7 +24,6 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
@@ -76,10 +76,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
                 .aisle("XXX", "XSX", "XXX")
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()).setMinGlobalLimited(23)
-                        .or(metaTileEntities(MetaTileEntities.BRONZE_TANK_VALVE)
-                                .setMinGlobalLimited(1)
-                                .setMaxGlobalLimited(2)
-                        ))
+                        .or(abilities(MultiblockAbility.TANK_VALVE).setMaxGlobalLimited(2)))
                 .where(' ', air())
                 .build();
     }
@@ -127,13 +124,12 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
 
     @Override
     protected ModularUI.Builder createUITemplate(@Nonnull EntityPlayer entityPlayer) {
-        return ModularUI.builder(GuiTextures.PRIMITIVE_BACKGROUND, 176, 166)
-                .widget(new LabelWidget(5, 5, getMetaFullName()))
-                .widget(new TankWidget(importFluids.getTankAt(0), 134, 13, 20, 58)
-                        .setBackgroundTexture(GuiTextures.PRIMITIVE_LARGE_FLUID_TANK)
-                        .setOverlayTexture(GuiTextures.PRIMITIVE_LARGE_FLUID_TANK_OVERLAY)
+        return ModularUI.defaultBuilder()
+                .widget(new LabelWidget(6, 6, getMetaFullName()))
+                .widget(new TankWidget(importFluids.getTankAt(0), 52, 18, 72, 61)
+                        .setBackgroundTexture(GuiTextures.SLOT)
                         .setContainerClicking(true, true))
-                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.PRIMITIVE_SLOT, 0);
+                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 0);
     }
 
     @Override

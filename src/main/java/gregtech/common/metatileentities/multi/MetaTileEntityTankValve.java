@@ -8,6 +8,8 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -22,7 +24,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart {
+import javax.annotation.Nonnull;
+import java.util.List;
+
+public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidHandler> {
 
     private final Material material;
 
@@ -99,6 +104,21 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart {
 
     @Override
     protected boolean openGUIOnRightClick() {
+        return false;
+    }
+
+    @Override
+    public MultiblockAbility<IFluidHandler> getAbility() {
+        return MultiblockAbility.TANK_VALVE;
+    }
+
+    @Override
+    public void registerAbilities(@Nonnull List<IFluidHandler> abilityList) {
+        abilityList.add(this.getImportFluids());
+    }
+
+    @Override
+    protected boolean shouldSerializeInventories() {
         return false;
     }
 }
