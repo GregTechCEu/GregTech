@@ -22,6 +22,7 @@ import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.handler.ToolOverlayRenderer;
 import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
 import gregtech.common.tools.DamageValues;
@@ -508,7 +509,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
         return doDrawGrid(stack) ||
                 stack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null) ||
-                GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)));
+                GTUtility.isCoverBehaviorItem(stack,
+                        () -> hasCover(getPipeTileEntity(world, pos)),
+                        coverDef -> ToolOverlayRenderer.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
     }
 
     protected boolean doDrawGrid(ItemStack stack) {

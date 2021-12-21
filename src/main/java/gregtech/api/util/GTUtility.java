@@ -8,6 +8,7 @@ import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.cover.CoverDefinition;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.items.IToolItem;
@@ -749,10 +750,10 @@ public class GTUtility {
     }
 
     public static boolean isCoverBehaviorItem(ItemStack itemStack) {
-        return isCoverBehaviorItem(itemStack, null);
+        return isCoverBehaviorItem(itemStack, null, null);
     }
 
-    public static boolean isCoverBehaviorItem(ItemStack itemStack, BooleanSupplier hasCoverSupplier) {
+    public static boolean isCoverBehaviorItem(ItemStack itemStack, BooleanSupplier hasCoverSupplier, Function<CoverDefinition, Boolean> canPlaceCover) {
         if (itemStack.getItem() instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) itemStack.getItem();
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
@@ -760,7 +761,7 @@ public class GTUtility {
                 List<IItemBehaviour> behaviourList = valueItem.getBehaviours();
                 for(IItemBehaviour behaviour : behaviourList) {
                     if(behaviour instanceof CoverPlaceBehavior)
-                        return true;
+                        return canPlaceCover == null || canPlaceCover.apply(((CoverPlaceBehavior) behaviour).coverDefinition);
                     if(behaviour instanceof CrowbarBehaviour)
                         return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
                 }
