@@ -59,10 +59,10 @@ public class MemorizedRecipeWidget extends SlotWidget {
         }
         if (isMouseOverElement(mouseX, mouseY)) {
             ((ISlotWidget) slotReference).setHover(false);
-            List<String> tooltip = getItemToolTip(slotReference.inventory.getStackInSlot(0));
+            List<String> tooltip = getItemToolTip(slotReference.getStack());
             tooltip.add(I18n.format("gregtech.recipe_memory_widget.tooltip.1"));
             tooltip.add(I18n.format("gregtech.recipe_memory_widget.tooltip.2"));
-            drawHoveringText(slotReference.inventory.getStackInSlot(0), tooltip, -1, mouseX, mouseY);
+            drawHoveringText(slotReference.getStack(), tooltip, -1, mouseX, mouseY);
         }
     }
 
