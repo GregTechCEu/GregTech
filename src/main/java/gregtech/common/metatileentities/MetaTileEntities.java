@@ -490,8 +490,8 @@ public class MetaTileEntities {
 
         CENTRAL_MONITOR = registerMetaTileEntity(1029, new MetaTileEntityCentralMonitor(gregtechId("central_monitor")));
 
-        PROCESSING_ARRAY = registerMetaTileEntity(1029, new MetaTileEntityProcessingArray(gregtechId("processing_array"), 0));
-        ADVANCED_PROCESSING_ARRAY = registerMetaTileEntity(1030, new MetaTileEntityProcessingArray(gregtechId("advanced_processing_array"), 1));
+        PROCESSING_ARRAY = registerMetaTileEntity(1030, new MetaTileEntityProcessingArray(gregtechId("processing_array"), 0));
+        ADVANCED_PROCESSING_ARRAY = registerMetaTileEntity(1031, new MetaTileEntityProcessingArray(gregtechId("advanced_processing_array"), 1));
 
         // MISC MTE's START: IDs 1150-2000
 
@@ -698,10 +698,6 @@ public class MetaTileEntities {
         CREATIVE_TANK = registerMetaTileEntity(1669, new MetaTileEntityCreativeTank(gregtechId("creative_tank")));
 
 
-
-        COMBUSTION_GENERATOR2[0] = registerMetaTileEntity(1668, new SimpleGeneratorMetaTileEntity2(gregtechId("combustion_generator2.lv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS_2, Textures.COMBUSTION_GENERATOR_OVERLAY, 1, true));
-        COMBUSTION_GENERATOR2[1] = registerMetaTileEntity(1669, new SimpleGeneratorMetaTileEntity2(gregtechId("combustion_generator2.mv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS_2, Textures.COMBUSTION_GENERATOR_OVERLAY, 2, true));
-        COMBUSTION_GENERATOR2[2] = registerMetaTileEntity(1670, new SimpleGeneratorMetaTileEntity2(gregtechId("combustion_generator2.hv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS_2, Textures.COMBUSTION_GENERATOR_OVERLAY, 3, true));
 
         /*
          * FOR ADDON DEVELOPERS:
