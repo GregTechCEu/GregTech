@@ -28,6 +28,7 @@ public class OreDictionaryLoader {
 
         OreDictionary.registerOre("fuelCoke", OreDictUnifier.get(OrePrefix.gem, Materials.Coke));
         OreDictionary.registerOre("blockFuelCoke", OreDictUnifier.get(OrePrefix.block, Materials.Coke));
+        OreDictionary.registerOre("crystalCertusQuartz", OreDictUnifier.get(OrePrefix.gem, Materials.CertusQuartz));
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.CLAY), OrePrefix.block, Materials.Clay);
         OreDictUnifier.registerOre(new ItemStack(Blocks.BRICK_BLOCK), OrePrefix.block, Materials.Brick);

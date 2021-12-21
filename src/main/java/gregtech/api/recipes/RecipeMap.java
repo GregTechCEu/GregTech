@@ -374,9 +374,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             p = 0;
         }
         promotedTimes.put(recipe, p + 1);
-        if (priorityRecipeMap.get(p) == null) {
-            priorityRecipeMap.put(p, new LinkedList<>());
-        }
+        priorityRecipeMap.computeIfAbsent(p, k -> new LinkedList<>());
         priorityRecipeMap.get(p).add(recipe);
     }
 

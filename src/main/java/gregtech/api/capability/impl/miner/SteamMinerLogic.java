@@ -2,7 +2,7 @@ package gregtech.api.capability.impl.miner;
 
 import gregtech.api.capability.IVentable;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.client.renderer.texture.cube.SimpleCubeRenderer;
+import gregtech.client.renderer.ICubeRenderer;
 
 public class SteamMinerLogic extends MinerLogic {
 
@@ -14,7 +14,7 @@ public class SteamMinerLogic extends MinerLogic {
      * @param speed          the speed in ticks per block mined
      * @param maximumRadius  the maximum radius (square shaped) the miner can mine in
      */
-    public SteamMinerLogic(MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, SimpleCubeRenderer pipeTexture) {
+    public SteamMinerLogic(MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, ICubeRenderer pipeTexture) {
         super(metaTileEntity, fortune, speed, maximumRadius, pipeTexture);
     }
 

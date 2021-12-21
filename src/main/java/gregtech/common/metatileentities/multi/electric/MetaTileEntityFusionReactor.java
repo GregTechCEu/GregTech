@@ -12,21 +12,22 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
+import gregtech.api.util.interpolate.Eases;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.ICustomRenderFast;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.RenderBufferHelper;
 import gregtech.client.utils.RenderUtil;
-import gregtech.api.util.interpolate.Eases;
 import gregtech.common.blocks.BlockFusionCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
-import gregtech.client.utils.BloomEffectUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -36,6 +37,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -52,8 +54,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
-
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -84,7 +86,6 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
     @Override
     protected BlockPattern createStructurePattern() {
-        FactoryBlockPattern.start();
         return FactoryBlockPattern.start()
                 .aisle("###############", "######OGO######", "###############")
                 .aisle("######ICI######", "####GGAAAGG####", "######ICI######")
@@ -114,6 +115,51 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                 .where('I', states(getCasingState()).or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(recipeMap.getMinFluidInputs())))
                 .where('#', any())
                 .build();
+    }
+
+    @Override
+    public List<MultiblockShapeInfo> getMatchingShapes() {
+        List<MultiblockShapeInfo> shapeInfos = new ArrayList<>();
+
+        MultiblockShapeInfo.Builder baseBuilder = MultiblockShapeInfo.builder()
+                .aisle("###############", "######WGW######", "###############")
+                .aisle("######DCD######", "####GG###GG####", "######UCU######")
+                .aisle("####CC###CC####", "###w##EGE##s###", "####CC###CC####")
+                .aisle("###C#######C###", "##nKeG###GeKn##", "###C#######C###")
+                .aisle("##C#########C##", "#G#s#######w#G#", "##C#########C##")
+                .aisle("##C#########C##", "#G#G#######G#G#", "##C#########C##")
+                .aisle("#D###########D#", "N#S#########N#S", "#U###########U#")
+                .aisle("#C###########C#", "G#G#########G#G", "#C###########C#")
+                .aisle("#D###########D#", "N#S#########N#S", "#U###########U#")
+                .aisle("##C#########C##", "#G#G#######G#G#", "##C#########C##")
+                .aisle("##C#########C##", "#G#s#######w#G#", "##C#########C##")
+                .aisle("###C#######C###", "##eKnG###GnKe##", "###C#######C###")
+                .aisle("####CC###CC####", "###w##WGW##s###", "####CC###CC####")
+                .aisle("######DCD######", "####GG###GG####", "######UCU######")
+                .aisle("###############", "######EME######", "###############")
+                .where('M', MetaTileEntities.FUSION_REACTOR[tier - GTValues.LuV], EnumFacing.SOUTH)
+                .where('C', getCasingState())
+                .where('G', MetaBlocks.TRANSPARENT_CASING.getState(
+                        BlockGlassCasing.CasingType.FUSION_GLASS))
+                .where('K', getCoilState())
+                .where('W', MetaTileEntities.FLUID_EXPORT_HATCH[tier], EnumFacing.NORTH)
+                .where('E', MetaTileEntities.FLUID_EXPORT_HATCH[tier], EnumFacing.SOUTH)
+                .where('S', MetaTileEntities.FLUID_EXPORT_HATCH[tier], EnumFacing.EAST)
+                .where('N', MetaTileEntities.FLUID_EXPORT_HATCH[tier], EnumFacing.WEST)
+                .where('w', MetaTileEntities.ENERGY_INPUT_HATCH[tier], EnumFacing.WEST)
+                .where('e', MetaTileEntities.ENERGY_INPUT_HATCH[tier], EnumFacing.SOUTH)
+                .where('s', MetaTileEntities.ENERGY_INPUT_HATCH[tier], EnumFacing.EAST)
+                .where('n', MetaTileEntities.ENERGY_INPUT_HATCH[tier], EnumFacing.NORTH)
+                .where('U', MetaTileEntities.FLUID_IMPORT_HATCH[tier], EnumFacing.UP)
+                .where('D', MetaTileEntities.FLUID_IMPORT_HATCH[tier], EnumFacing.DOWN)
+                .where('#', Blocks.AIR.getDefaultState());
+
+        shapeInfos.add(baseBuilder.shallowCopy()
+                .where('G', getCasingState())
+                .build()
+        );
+        shapeInfos.add(baseBuilder.build());
+        return shapeInfos;
     }
 
     @Override
@@ -253,7 +299,11 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
         public FusionRecipeLogic(MetaTileEntityFusionReactor tileEntity) {
             super(tileEntity);
-            this.setAllowOverclocking(false);
+        }
+
+        @Override
+        protected long getMaxVoltage() {
+            return Math.min(GTValues.V[tier], super.getMaxVoltage());
         }
 
         @Override
@@ -265,7 +315,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         }
 
         @Override
-        protected boolean checkRecipe(Recipe recipe) {
+        protected boolean checkRecipe(@Nonnull Recipe recipe) {
             // if the reactor is not able to hold enough energy for it, do not run the recipe
             if (recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L) > energyContainer.getEnergyCapacity())
                  return false;

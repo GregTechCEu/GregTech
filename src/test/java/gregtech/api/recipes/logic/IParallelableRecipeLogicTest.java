@@ -216,7 +216,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
         RecipeBuilder<?> parallelRecipe = findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(),
-                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE);
+                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, false);
 
         //Check if the correct number of parallels were done
         assertEquals(4, parallelRecipe.getParallel());
@@ -270,7 +270,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 2), false);
 
         RecipeBuilder<?> parallelRecipe = findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(),
-                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE);
+                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, false);
 
         //Check if the correct number of parallels were done
         assertEquals(2, parallelRecipe.getParallel());
@@ -324,7 +324,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
         RecipeBuilder<?> parallelRecipe = findAppendedParallelItemRecipe(map, importItemBus.getImportItems(),
-                exportItemBus.getExportItems(), parallelLimit, 120);
+                exportItemBus.getExportItems(), parallelLimit, 120, false);
 
         //Check if the correct number of parallels were done
         assertEquals(4, parallelRecipe.getParallel());
@@ -375,7 +375,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 2), false);
 
         RecipeBuilder<?> parallelRecipe = findAppendedParallelItemRecipe(map, importItemBus.getImportItems(),
-                exportItemBus.getExportItems(), parallelLimit, 120);
+                exportItemBus.getExportItems(), parallelLimit, 120, false);
 
         //Check if the correct number of parallels were done
         assertEquals(2, parallelRecipe.getParallel());
@@ -417,7 +417,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
             }
 
             @Override
-            protected long getMaxVoltage() {
+            public long getMaxVoltage() {
                 return 32;
             }
         };
@@ -489,7 +489,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
             }
 
             @Override
-            protected long getMaxVoltage() {
+            public long getMaxVoltage() {
                 return 32;
             }
         };
@@ -550,7 +550,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
             }
 
             @Override
-            protected long getMaxVoltage() {
+            public long getMaxVoltage() {
                 return 32;
             }
         };
@@ -614,7 +614,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
             }
 
             @Override
-            protected long getMaxVoltage() {
+            public long getMaxVoltage() {
                 return 32;
             }
         };
@@ -665,7 +665,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
 
     @Override
-    public void applyParallelBonus(RecipeBuilder<?> builder) {
+    public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
         if (enableBonusOverride) {
             builder.EUt(1).duration(50);
         }

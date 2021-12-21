@@ -23,10 +23,10 @@ public class ItemBlockItemPipe extends ItemBlockMaterialPipe<ItemPipeType, ItemP
     @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         ItemPipeProperties pipeProperties = blockPipe.createItemProperties(stack);
-        if (pipeProperties.transferRate % 1 != 0)
-            tooltip.add(I18n.format("gregtech.item_pipe.rate_items", (int) ((pipeProperties.transferRate * 64) + 0.5)));
+        if (pipeProperties.getTransferRate() % 1 != 0)
+            tooltip.add(I18n.format("gregtech.item_pipe.rate_items", (int) ((pipeProperties.getTransferRate() * 64) + 0.5)));
         else
-            tooltip.add(I18n.format("gregtech.item_pipe.rate_stacks", (int) pipeProperties.transferRate));
-        tooltip.add(I18n.format("gregtech.item_pipe.priority", pipeProperties.priority));
+            tooltip.add(I18n.format("gregtech.item_pipe.rate_stacks", (int) pipeProperties.getTransferRate()));
+        tooltip.add(I18n.format("gregtech.item_pipe.priority", pipeProperties.getPriority()));
     }
 }

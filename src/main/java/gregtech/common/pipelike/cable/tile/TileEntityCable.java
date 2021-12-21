@@ -24,8 +24,9 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
 
     private WeakReference<EnergyNet> currentEnergyNet = new WeakReference<>(null);
 
-    private final PerTickLongCounter amperageCounter = new PerTickLongCounter(0);
-    private final PerTickLongCounter voltageCounter = new PerTickLongCounter(0);
+    private final PerTickLongCounter maxVoltageCounter = new PerTickLongCounter(0);
+    private final AveragingPerTickCounter averageVoltageCounter = new AveragingPerTickCounter(0, 20);
+    private final AveragingPerTickCounter averageAmperageCounter = new AveragingPerTickCounter(0, 20);
 
     @Override
     public Class<Insulation> getPipeTypeClass() {
@@ -38,30 +39,37 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     }
 
     public boolean checkAmperage(long amps) {
-        return getMaxAmperage() >= amperageCounter.get(getWorld()) + amps;
+        return getMaxAmperage() >= averageAmperageCounter.getLast(getWorld()) + amps;
     }
 
+    /**
+     * Should only be called internally
+     */
     public void incrementAmperage(long amps, long voltage) {
-        if(voltage > voltageCounter.get(getWorld())) {
-            voltageCounter.set(getWorld(), voltage);
+        if(voltage > maxVoltageCounter.get(world)) {
+            maxVoltageCounter.set(world, voltage);
         }
-        amperageCounter.increment(getWorld(), amps);
+        averageVoltageCounter.increment(world, voltage);
+        averageAmperageCounter.increment(world, amps);
     }
 
-    public long getCurrentAmperage() {
-        return amperageCounter.get(getWorld());
+    public double getAverageAmperage() {
+        return averageAmperageCounter.getAverage(getWorld());
     }
 
-    public long getCurrentVoltage() {
-        return voltageCounter.get(getWorld());
+    public long getCurrentMaxVoltage() {
+        return maxVoltageCounter.get(getWorld());
+    }
+    public double getAverageVoltage() {
+        return averageVoltageCounter.getAverage(getWorld());
     }
 
     public long getMaxAmperage() {
-        return getNodeData().amperage;
+        return getNodeData().getAmperage();
     }
 
     public long getMaxVoltage() {
-        return getNodeData().voltage;
+        return getNodeData().getVoltage();
     }
 
     @Nullable

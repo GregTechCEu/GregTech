@@ -112,8 +112,8 @@ public class RecyclingRecipes {
         // Calculate the duration based off of those two possible outputs.
         // - Sum the two Material amounts together (if both exist)
         // - Divide the sum by M
-        long duration = fluidMs.amount * fluidMs.material.getAverageMass();
-        if (itemMs != null) duration += (itemMs.amount * itemMs.material.getAverageMass());
+        long duration = fluidMs.amount * fluidMs.material.getMass();
+        if (itemMs != null) duration += (itemMs.amount * itemMs.material.getMass());
         duration = Math.max(1L, duration / M);
 
         // Build the final Recipe.
@@ -254,7 +254,7 @@ public class RecyclingRecipes {
      */
     private static int calculateDuration(List<MaterialStack> materials) {
         long duration = 0;
-        for (MaterialStack ms : materials) duration += (ms.amount * ms.material.getAverageMass());
+        for (MaterialStack ms : materials) duration += (ms.amount * ms.material.getMass());
         return (int) Math.max(1L, duration / M);
     }
 

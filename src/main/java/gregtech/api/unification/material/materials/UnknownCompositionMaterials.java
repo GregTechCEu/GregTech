@@ -262,12 +262,13 @@ public class UnknownCompositionMaterials {
 
         Endstone = new Material.Builder(1603, "endstone")
                 .dust(1)
+                .color(0xD9DE9E)
                 .flags(NO_SMASHING)
                 .build();
 
         Netherrack = new Material.Builder(1604, "netherrack")
                 .dust(1)
-                .color(0xC80000).iconSet(METALLIC)
+                .color(0xC80000)
                 .flags(NO_SMASHING, FLAMMABLE)
                 .build();
 
@@ -336,7 +337,7 @@ public class UnknownCompositionMaterials {
                 .dust(0)
                 .color(0xFAFAFA).iconSet(PAPER)
                 .flags(GENERATE_PLATE, FLAMMABLE, NO_SMELTING, NO_SMASHING,
-                        MORTAR_GRINDABLE, GENERATE_RING, EXCLUDE_PLATE_COMPRESSOR_RECIPE)
+                        MORTAR_GRINDABLE, EXCLUDE_PLATE_COMPRESSOR_RECIPE)
                 .build();
 
         FishOil = new Material.Builder(1619, "fish_oil")

@@ -96,8 +96,15 @@ public class VanillaStandardRecipes {
 
         PACKER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.WHEAT, 9))
-                .inputs(new CountableIngredient(new IntCircuitIngredient(9), 0))
+                .notConsumable(new IntCircuitIngredient(9))
                 .outputs(new ItemStack(Blocks.HAY_BLOCK))
+                .duration(200).EUt(2)
+                .buildAndRegister();
+
+        PACKER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Items.MELON, 9))
+                .notConsumable(new IntCircuitIngredient(9))
+                .outputs(new ItemStack(Blocks.MELON_BLOCK))
                 .duration(200).EUt(2)
                 .buildAndRegister();
     }
@@ -235,7 +242,9 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Blocks.STONEBRICK, 1, 2))
                 .EUt(2).duration(400).buildAndRegister();
 
-        ModHandler.addShapelessRecipe("nether_quartz_block_to_nether_quartz", new ItemStack(Items.QUARTZ, 4), Blocks.QUARTZ_BLOCK);
+        if (!ConfigHolder.recipes.disableManualCompression) {
+            ModHandler.addShapelessRecipe("nether_quartz_block_to_nether_quartz", new ItemStack(Items.QUARTZ, 4), Blocks.QUARTZ_BLOCK);
+        }
         ModHandler.addShapelessRecipe("clay_block_to_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Clay, 4), 'm', Blocks.CLAY);
         ModHandler.addShapelessRecipe("clay_ball_to_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Clay), 'm', Items.CLAY_BALL);
         ModHandler.addShapelessRecipe("brick_block_to_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Brick, 4), 'm', Blocks.BRICK_BLOCK);
@@ -894,10 +903,10 @@ public class VanillaStandardRecipes {
         ModHandler.addShapelessRecipe("powder_charcoal", new ItemStack(Items.GUNPOWDER, 6), new UnificationEntry(OrePrefix.dust, Materials.Charcoal), new UnificationEntry(OrePrefix.dust, Materials.Charcoal), new UnificationEntry(OrePrefix.dust, Materials.Charcoal), new UnificationEntry(OrePrefix.dust, Materials.Sulfur), new UnificationEntry(OrePrefix.dust, Materials.Saltpeter), new UnificationEntry(OrePrefix.dust, Materials.Saltpeter));
         ModHandler.addShapelessRecipe("powder_carbon", new ItemStack(Items.GUNPOWDER, 6), new UnificationEntry(OrePrefix.dust, Materials.Carbon), new UnificationEntry(OrePrefix.dust, Materials.Carbon), new UnificationEntry(OrePrefix.dust, Materials.Carbon), new UnificationEntry(OrePrefix.dust, Materials.Sulfur), new UnificationEntry(OrePrefix.dust, Materials.Saltpeter), new UnificationEntry(OrePrefix.dust, Materials.Saltpeter));
 
-        WIREMILL_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Items.STRING, 4))
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Items.STRING, 3))
                 .outputs(new ItemStack(Blocks.WOOL, 1, 0))
-                .duration(80).EUt(4).buildAndRegister();
+                .duration(100).EUt(4).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(cobblestone, Stone)
@@ -920,7 +929,7 @@ public class VanillaStandardRecipes {
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(6).inputs(new ItemStack(Blocks.PURPUR_BLOCK, 6)).outputs(new ItemStack(Blocks.PURPUR_STAIRS, 4)).buildAndRegister();
 
 
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(2).inputs(new ItemStack(Blocks.QUARTZ_BLOCK, 1, 0)).outputs(new ItemStack(Blocks.QUARTZ_BLOCK, 1, 0)).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(2).inputs(new ItemStack(Blocks.QUARTZ_BLOCK, 1, 0)).outputs(new ItemStack(Blocks.QUARTZ_BLOCK, 1, 2)).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(4).inputs(new ItemStack(Blocks.STONE)).outputs(new ItemStack(Blocks.STONEBRICK, 1, 0)).circuitMeta(4).duration(50).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(4).inputs(new ItemStack(Blocks.END_STONE)).outputs(new ItemStack(Blocks.END_BRICKS, 1, 0)).circuitMeta(4).duration(50).buildAndRegister();
@@ -1025,6 +1034,49 @@ public class VanillaStandardRecipes {
                 .fluidInputs(Materials.Water.getFluid(250))
                 .outputs(new ItemStack(Items.CLAY_BALL))
                 .duration(600).EUt(24).buildAndRegister();
+
+        COMPRESSOR_RECIPES.recipeBuilder()
+                .input(dust, Redstone, 9)
+                .output(block, Redstone)
+                .duration(300).EUt(2).buildAndRegister();
+
+        COMPRESSOR_RECIPES.recipeBuilder()
+                .input(dust, Bone, 9)
+                .output(block, Bone)
+                .duration(300).EUt(2).buildAndRegister();
+
+        COMPRESSOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Items.CHORUS_FRUIT_POPPED, 4))
+                .outputs(new ItemStack(Blocks.PURPUR_BLOCK, 4))
+                .duration(300).EUt(2).buildAndRegister();
+
+        COMPRESSOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Items.MAGMA_CREAM, 4))
+                .outputs(new ItemStack(Blocks.MAGMA))
+                .duration(300).EUt(2).buildAndRegister();
+
+        COMPRESSOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Items.SLIME_BALL, 9))
+                .outputs(new ItemStack(Blocks.SLIME_BLOCK))
+                .duration(300).EUt(2).buildAndRegister();
+
+        PACKER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Items.NETHER_WART, 9))
+                .notConsumable(new IntCircuitIngredient(9))
+                .outputs(new ItemStack(Blocks.NETHER_WART_BLOCK))
+                .duration(200).EUt(2).buildAndRegister();
+
+        PACKER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Items.PRISMARINE_SHARD, 4))
+                .notConsumable(new IntCircuitIngredient(4))
+                .outputs(new ItemStack(Blocks.PRISMARINE))
+                .duration(100).EUt(2).buildAndRegister();
+
+        PACKER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Items.PRISMARINE_SHARD, 9))
+                .notConsumable(new IntCircuitIngredient(9))
+                .outputs(new ItemStack(Blocks.PRISMARINE, 1, 1))
+                .duration(200).EUt(2).buildAndRegister();
     }
 
     /**
@@ -1121,5 +1173,11 @@ public class VanillaStandardRecipes {
                 .inputs(new ItemStack(Items.BEETROOT, 1))
                 .outputs(new ItemStack(Items.DYE, 2, 1))
                 .buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Items.PRISMARINE_SHARD, 8))
+                .fluidInputs(DyeBlack.getFluid(144))
+                .outputs(new ItemStack(Blocks.PRISMARINE, 1, 2))
+                .duration(20).EUt(VA[ULV]).buildAndRegister();
     }
 }

@@ -22,7 +22,7 @@ public class GrowthMediumRecipes {
                 .output(BIO_CHAFF)
                 .output(BIO_CHAFF)
                 .chancedOutput(BIO_CHAFF, 5000, 0)
-                //.chancedOutput(BIO_CHAFF, 2500, 0) TODO Enable once macerator gets 4th slot
+                .chancedOutput(BIO_CHAFF, 2500, 0)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder().duration(300)

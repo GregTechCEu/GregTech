@@ -65,7 +65,7 @@ public class GTSounds {
         CUT = registerSound("tick.cut");
         TURBINE = registerSound("tick.turbine");
         COMBUSTION = registerSound("tick.combustion");
-        MINER = registerSound("tick.miner"); // TODO: When miners are released, please make them implement ISoundCreator and use the GTSounds.MINER sound effect.
+        MINER = registerSound("tick.miner");
         EXPLOSION = registerSound("tick.explosion");
         SCIENCE = registerSound("tick.science");
         WRENCH_TOOL = registerSound("use.wrench");

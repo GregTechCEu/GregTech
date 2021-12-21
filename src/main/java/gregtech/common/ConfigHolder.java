@@ -40,6 +40,7 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static WorldGenOptions worldgen = new WorldGenOptions();
 
+
     public static class MachineOptions {
 
         @Config.Comment({"Sets the bonus EU output of Steam Turbines.", "Default: 6144"})
@@ -109,6 +110,11 @@ public class ConfigHolder {
         @Config.Comment({"Additional Fluids to allow in GT Boilers in place of Water or Distilled Water.",
                 "Useful for mods like TerraFirmaCraft with different Fluids for Water", "Default: none"})
         public String[] boilerFluids = new String[0];
+
+        @Config.Comment({"Blacklist of machines for the Processing Array.",
+                "Add the unlocalized Recipe Map name to blacklist the machine.",
+                "Default: All machines allowed"})
+        public String[] processingArrayBlacklist = new String[0];
     }
 
     public static class WorldGenOptions {
@@ -183,6 +189,9 @@ public class ConfigHolder {
         @Config.Comment({"Whether to generate Flawed and Chipped Gems for materials and recipes involving them.",
                 "Useful for mods like TerraFirmaCraft.", "Default: false"})
         public boolean generateLowQualityGems = false;
+
+        @Config.Comment({"Whether to remove Block/Ingot compression and decompression in the Crafting Table.", "Default: false"})
+        public boolean disableManualCompression = false;
     }
 
     public static class CompatibilityOptions {

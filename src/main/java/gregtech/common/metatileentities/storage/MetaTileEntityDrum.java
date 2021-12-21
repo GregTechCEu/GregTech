@@ -191,7 +191,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
-    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking()) {
             if (getWorld().isRemote) {
                 scheduleRenderUpdate();
@@ -201,7 +201,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
             toggleOutput();
             return true;
         }
-        return super.onWrenchClick(playerIn, hand, wrenchSide, hitResult);
+        return super.onScrewdriverClick(playerIn, hand, wrenchSide, hitResult);
     }
 
     private void toggleOutput() {

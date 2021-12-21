@@ -1,7 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "gregtech:items/material_sets/diamond/bolt",
-    "layer1": "gregtech:items/material_sets/diamond/bolt_overlay"
+    "layer0": "gregtech:items/material_sets/bright/bolt",
+    "layer1": "gregtech:items/material_sets/bright/bolt_overlay"
   }
 }

@@ -86,7 +86,7 @@ public class ImageWidget extends Widget {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         if (!this.isVisible || area == null) return;
         Position position = getPosition();
         Size size = getSize();

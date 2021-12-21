@@ -1,16 +1,11 @@
 package gregtech.api.worldgen.shape;
 
 import com.google.gson.JsonObject;
-import crafttweaker.annotations.ZenRegister;
 import gregtech.api.worldgen.config.OreConfigUtils;
 import net.minecraft.util.math.Vec3i;
-import stanhebben.zenscript.annotations.ZenClass;
-import stanhebben.zenscript.annotations.ZenGetter;
 
 import java.util.Random;
 
-@ZenClass("mods.gregtech.ore.generator.SphereGenerator")
-@ZenRegister
 public class SphereGenerator extends ShapeGenerator {
 
     private int radiusMin;
@@ -22,16 +17,6 @@ public class SphereGenerator extends ShapeGenerator {
     public SphereGenerator(int radiusMin, int radiusMax) {
         this.radiusMin = radiusMin;
         this.radiusMax = radiusMax;
-    }
-
-    @ZenGetter("minRadius")
-    public int getRadiusMin() {
-        return radiusMin;
-    }
-
-    @ZenGetter("maxRadius")
-    public int getRadiusMax() {
-        return radiusMax;
     }
 
     @Override
@@ -58,6 +43,5 @@ public class SphereGenerator extends ShapeGenerator {
                 }
             }
         }
-
     }
 }

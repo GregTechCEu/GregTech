@@ -22,10 +22,12 @@ import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.sound.GTSounds;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Material;
@@ -57,7 +59,7 @@ import java.util.List;
 
 import static gregtech.api.unification.material.Materials.DrillingFluid;
 
-public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implements IMiner, IControllable {
+public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implements IMiner, IControllable, ISoundCreator {
 
     private static final int CHUNK_LENGTH = 16;
 
@@ -408,5 +410,18 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     public IItemHandlerModifiable getExportItems() {
         return this.outputInventory;
+    }
+
+    @Override
+    public void onAttached(Object... data) {
+        super.onAttached(data);
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(GTSounds.MINER, this.getPos());
+        }
+    }
+
+    @Override
+    public boolean canCreateSound() {
+        return this.minerLogic.isActive();
     }
 }

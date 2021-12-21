@@ -1,6 +1,8 @@
 package gregtech.api.recipes.recipeproperties;
 
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Objects;
 
@@ -13,6 +15,7 @@ public abstract class RecipeProperty<T> {
         this.type = type;
     }
 
+    @SideOnly(Side.CLIENT)
     public abstract void drawInfo(Minecraft minecraft, int x, int y, int color, Object value);
 
     public boolean isOfType(Class<?> otherType) {

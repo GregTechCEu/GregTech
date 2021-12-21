@@ -83,9 +83,6 @@ public class MetaPrefixItem extends StandardMetaItem {
             OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString() + "239");
         } else if (material == Materials.Uranium238) {
             OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString() + "238");
-        } else if (material == Materials.CertusQuartz && prefix == OrePrefix.gem) {
-            // register OreDict compatible with AE2
-            OreDictUnifier.registerOre(item, "crystalCertusQuartz");
         }
     }
 

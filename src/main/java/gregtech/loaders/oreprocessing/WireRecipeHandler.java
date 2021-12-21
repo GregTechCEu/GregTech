@@ -68,14 +68,14 @@ public class WireRecipeHandler {
                 .input(ingot, material)
                 .notConsumable(SHAPE_EXTRUDER_WIRE)
                 .output(wireGtSingle, material, 2)
-                .duration((int) material.getAverageMass() * 2)
+                .duration((int) material.getMass() * 2)
                 .EUt(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
 
         WIREMILL_RECIPES.recipeBuilder()
                 .input(ingot, material)
                 .output(wireGtSingle, material, 2)
-                .duration((int) material.getAverageMass())
+                .duration((int) material.getMass())
                 .EUt(getVoltageMultiplier(material))
                 .buildAndRegister();
 
@@ -89,11 +89,11 @@ public class WireRecipeHandler {
     public static void generateCableCovering(OrePrefix wirePrefix, Material material, WireProperties property) {
 
         // Superconductors have no Cables, so exit early
-        if (property.isSuperconductor) return;
+        if (property.isSuperconductor()) return;
 
         int cableAmount = (int) (wirePrefix.materialAmount * 2 / GTValues.M);
         OrePrefix cablePrefix = OrePrefix.getPrefix("cable" + wirePrefix.name().substring(4));
-        int voltageTier = GTUtility.getTierByVoltage(property.voltage);
+        int voltageTier = GTUtility.getTierByVoltage(property.getVoltage());
         int insulationAmount = INSULATION_AMOUNT.get(cablePrefix);
 
         // Generate hand-crafting recipes for ULV and LV cables

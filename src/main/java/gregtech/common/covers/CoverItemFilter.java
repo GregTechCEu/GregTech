@@ -64,6 +64,11 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
     }
 
     @Override
+    public boolean canPipePassThrough() {
+        return true;
+    }
+
+    @Override
     public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         if (!playerIn.world.isRemote) {
             openUI((EntityPlayerMP) playerIn);

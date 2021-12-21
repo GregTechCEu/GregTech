@@ -2,7 +2,6 @@ package gregtech.client.renderer.texture.cube;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils.IIconRegister;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
@@ -10,9 +9,11 @@ import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.cclop.LightMapOperation;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -22,7 +23,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class SimpleSidedCubeRenderer implements ICubeRenderer, IIconRegister {
+public class SimpleSidedCubeRenderer implements ICubeRenderer {
 
     public enum RenderSide {
         TOP, BOTTOM, SIDE;
@@ -89,13 +90,14 @@ public class SimpleSidedCubeRenderer implements ICubeRenderer, IIconRegister {
     public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
         RenderSide overlayFace = RenderSide.bySide(frontFacing);
         TextureAtlasSprite renderSprite = sprites.get(overlayFace);
-        Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, renderSprite);
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
         TextureAtlasSprite spriteEmissive = spritesEmissive.get(overlayFace);
         if (spriteEmissive != null) {
             if (ConfigHolder.client.machinesEmissiveTextures) {
                 IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
-                Textures.renderFaceBloom(renderState, translation, lightPipeline, frontFacing, bounds, spriteEmissive);
-            } else Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, spriteEmissive);
+                Textures.renderFace(renderState, translation, lightPipeline, frontFacing, bounds, spriteEmissive, BloomEffectUtil.getRealBloomLayer());
+            } else Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, spriteEmissive, BlockRenderLayer.CUTOUT_MIPPED);
         }
     }
+    
 }

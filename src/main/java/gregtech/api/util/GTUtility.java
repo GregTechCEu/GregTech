@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
+import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IMultipleTankHandler;
@@ -12,8 +13,10 @@ import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.items.IToolItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
@@ -21,7 +24,6 @@ import gregtech.common.items.behaviors.CoverPlaceBehavior;
 import gregtech.common.items.behaviors.CrowbarBehaviour;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -60,6 +62,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -85,10 +88,19 @@ public class GTUtility {
         return Arrays.stream(array).flatMap(o -> o instanceof Object[] ? flatten((Object[]) o) : Stream.of(o));
     }
 
-    public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest) {
+    public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest, boolean fixTools) {
         for (int i = 0; i < src.getSlots(); i++) {
             ItemStack itemStack = src.getStackInSlot(i);
-            dest.setStackInSlot(i, itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy());
+            if (itemStack.getItem() instanceof ToolMetaItem) {
+                ItemStack toolStack = itemStack.copy();
+                NBTTagCompound toolStats = toolStack.getTagCompound().getCompoundTag("GT.ToolStats");
+                toolStats.setInteger("Dmg", 0);
+                NBTTagCompound itemTag = new NBTTagCompound();
+                itemTag.setTag("GT.ToolStats", toolStats);
+                toolStack.setTagCompound(itemTag);
+                dest.setStackInSlot(i, toolStack);
+            } else
+                dest.setStackInSlot(i, itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy());
         }
     }
 
@@ -742,146 +754,26 @@ public class GTUtility {
                 .thenComparing(it -> -it.getCount());
     }
 
-    public static RayTraceResult getBlockLookingAt(EntityPlayer player) {
-        Vec3d pos2 = player.getPositionVector().add(0, player.getEyeHeight(), 0);
-        RayTraceResult result = player.world.rayTraceBlocks(pos2, pos2.add(player.getLookVec().scale(12)), false, true, true);
-        if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK)
-            return result;
-        return null;
-    }
-
-    public static RayTraceResult getBlockLookingAt(EntityPlayer player, BlockPos exclude) {
-        Vec3d pos2 = player.getPositionVector().add(0, player.getEyeHeight(), 0);
-        RayTraceResult result = rayTraceBlocks(pos2, pos2.add(player.getLookVec().scale(12)), false, true, true, player.world, exclude);
-        if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK)
-            return result;
-        return null;
-    }
-
-    public static RayTraceResult rayTraceBlocks(Vec3d vec31, Vec3d vec32, boolean stopOnLiquid, boolean ignoreBlockWithoutBoundingBox, boolean returnLastUncollidableBlock, World world, BlockPos ignore) {
-        if (!Double.isNaN(vec31.x) && !Double.isNaN(vec31.y) && !Double.isNaN(vec31.z)) {
-            if (!Double.isNaN(vec32.x) && !Double.isNaN(vec32.y) && !Double.isNaN(vec32.z)) {
-                int i = MathHelper.floor(vec32.x);
-                int j = MathHelper.floor(vec32.y);
-                int k = MathHelper.floor(vec32.z);
-                int l = MathHelper.floor(vec31.x);
-                int i1 = MathHelper.floor(vec31.y);
-                int j1 = MathHelper.floor(vec31.z);
-                BlockPos blockpos = new BlockPos(l, i1, j1);
-                IBlockState iblockstate = world.getBlockState(blockpos);
-                Block block = iblockstate.getBlock();
-
-                if ((!ignoreBlockWithoutBoundingBox || iblockstate.getCollisionBoundingBox(world, blockpos) != Block.NULL_AABB) && block.canCollideCheck(iblockstate, stopOnLiquid) && !arePosEqual(ignore, blockpos))
-                    return iblockstate.collisionRayTrace(world, blockpos, vec31, vec32);
-
-                RayTraceResult raytraceresult2 = null;
-                int k1 = 200;
-
-                while (k1-- >= 0) {
-                    if (Double.isNaN(vec31.x) || Double.isNaN(vec31.y) || Double.isNaN(vec31.z))
-                        return null;
-
-                    if (l == i && i1 == j && j1 == k)
-                        return returnLastUncollidableBlock ? raytraceresult2 : null;
-
-                    boolean flag2 = true;
-                    boolean flag = true;
-                    boolean flag1 = true;
-                    double d0 = 999.0D;
-                    double d1 = 999.0D;
-                    double d2 = 999.0D;
-
-                    if (i > l)
-                        d0 = (double) l + 1.0D;
-                    else if (i < l)
-                        d0 = (double) l + 0.0D;
-                    else
-                        flag2 = false;
-
-                    if (j > i1)
-                        d1 = (double) i1 + 1.0D;
-                    else if (j < i1)
-                        d1 = (double) i1 + 0.0D;
-                    else
-                        flag = false;
-
-                    if (k > j1)
-                        d2 = (double) j1 + 1.0D;
-                    else if (k < j1)
-                        d2 = (double) j1 + 0.0D;
-                    else
-                        flag1 = false;
-
-                    double d3 = 999.0D;
-                    double d4 = 999.0D;
-                    double d5 = 999.0D;
-                    double d6 = vec32.x - vec31.x;
-                    double d7 = vec32.y - vec31.y;
-                    double d8 = vec32.z - vec31.z;
-
-                    if (flag2)
-                        d3 = (d0 - vec31.x) / d6;
-
-                    if (flag)
-                        d4 = (d1 - vec31.y) / d7;
-
-                    if (flag1)
-                        d5 = (d2 - vec31.z) / d8;
-
-                    if (d3 == -0.0D)
-                        d3 = -1.0E-4D;
-
-                    if (d4 == -0.0D)
-                        d4 = -1.0E-4D;
-
-                    if (d5 == -0.0D)
-                        d5 = -1.0E-4D;
-
-                    EnumFacing enumfacing;
-
-                    if (d3 < d4 && d3 < d5) {
-                        enumfacing = i > l ? EnumFacing.WEST : EnumFacing.EAST;
-                        vec31 = new Vec3d(d0, vec31.y + d7 * d3, vec31.z + d8 * d3);
-                    } else if (d4 < d5) {
-                        enumfacing = j > i1 ? EnumFacing.DOWN : EnumFacing.UP;
-                        vec31 = new Vec3d(vec31.x + d6 * d4, d1, vec31.z + d8 * d4);
-                    } else {
-                        enumfacing = k > j1 ? EnumFacing.NORTH : EnumFacing.SOUTH;
-                        vec31 = new Vec3d(vec31.x + d6 * d5, vec31.y + d7 * d5, d2);
-                    }
-
-                    l = MathHelper.floor(vec31.x) - (enumfacing == EnumFacing.EAST ? 1 : 0);
-                    i1 = MathHelper.floor(vec31.y) - (enumfacing == EnumFacing.UP ? 1 : 0);
-                    j1 = MathHelper.floor(vec31.z) - (enumfacing == EnumFacing.SOUTH ? 1 : 0);
-                    blockpos = new BlockPos(l, i1, j1);
-                    IBlockState iblockstate1 = world.getBlockState(blockpos);
-                    Block block1 = iblockstate1.getBlock();
-
-                    if (!ignoreBlockWithoutBoundingBox || iblockstate1.getMaterial() == Material.PORTAL || iblockstate1.getCollisionBoundingBox(world, blockpos) != Block.NULL_AABB && !arePosEqual(blockpos, ignore)) {
-                        if (block1.canCollideCheck(iblockstate1, stopOnLiquid)) {
-                            return iblockstate1.collisionRayTrace(world, blockpos, vec31, vec32);
-                        } else {
-                            raytraceresult2 = new RayTraceResult(RayTraceResult.Type.MISS, vec31, enumfacing, blockpos);
-                        }
-                    }
-                }
-                return returnLastUncollidableBlock ? raytraceresult2 : null;
-            } else return null;
-        } else return null;
-    }
-
     public static boolean arePosEqual(BlockPos pos1, BlockPos pos2) {
         return pos1.getX() == pos2.getX() & pos1.getY() == pos2.getY() & pos1.getZ() == pos2.getZ();
     }
 
     public static boolean isCoverBehaviorItem(ItemStack itemStack) {
+        return isCoverBehaviorItem(itemStack, null);
+    }
+
+    public static boolean isCoverBehaviorItem(ItemStack itemStack, BooleanSupplier hasCoverSupplier) {
         if (itemStack.getItem() instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) itemStack.getItem();
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
             if (valueItem != null) {
                 List<IItemBehaviour> behaviourList = valueItem.getBehaviours();
-                return behaviourList.stream().anyMatch(it ->
-                        it instanceof CoverPlaceBehavior || it instanceof CrowbarBehaviour);
+                for(IItemBehaviour behaviour : behaviourList) {
+                    if(behaviour instanceof CoverPlaceBehavior)
+                        return true;
+                    if(behaviour instanceof CrowbarBehaviour)
+                        return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
+                }
             }
         }
         return false;
@@ -1009,7 +901,7 @@ public class GTUtility {
      * @return the mean value
      */
     public static long mean(@Nonnull long[] values) {
-        if(values.length == 0L)
+        if (values.length == 0L)
             return 0L;
 
         long sum = 0L;
@@ -1019,11 +911,40 @@ public class GTUtility {
     }
 
     /**
-     *
      * @param world the {@link World} to get the average tick time of
      * @return the mean tick time
      */
     public static double getMeanTickTime(@Nonnull World world) {
         return mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
     }
+
+    /**
+     * Checks whether a machine is not a multiblock and has a recipemap not present in a blacklist
+     *
+     *
+     * @param machineStack the ItemStack containing the machine to check the validity of
+     * @return whether the machine is valid or not
+     */
+    public static boolean isMachineValidForMachineHatch(ItemStack machineStack, String[] recipeMapBlacklist) {
+
+        if(machineStack == null || machineStack.isEmpty()) {
+            return false;
+        }
+
+        MetaTileEntity machine = MachineItemBlock.getMetaTileEntity(machineStack);
+        if (machine instanceof WorkableTieredMetaTileEntity)
+            return !findMachineInBlacklist(machine.getRecipeMap().getUnlocalizedName(), recipeMapBlacklist);
+
+        return false;
+    }
+
+    /**
+     * Attempts to find a passed in RecipeMap unlocalized name in a list of names
+     * @param unlocalizedName The unlocalized name of a RecipeMap
+     * @return {@code true} If the RecipeMap is in the config blacklist
+     */
+    public static boolean findMachineInBlacklist(String unlocalizedName, String[] recipeMapBlacklist) {
+        return Arrays.asList(recipeMapBlacklist).contains(unlocalizedName);
+    }
+
 }

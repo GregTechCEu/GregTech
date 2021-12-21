@@ -4,6 +4,7 @@ import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ISizeProvider;
 import gregtech.api.gui.Widget;
+import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -64,16 +66,12 @@ public class SlotWidget extends Widget implements INativeWidget {
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
-        if (isMouseOverElement(mouseX, mouseY) && isActive()) {
-            ((ISlotWidget) slotReference).setHover(true);
-        } else {
-            ((ISlotWidget) slotReference).setHover(false);
-        }
+        ((ISlotWidget) slotReference).setHover(isMouseOverElement(mouseX, mouseY) && isActive());
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         Position pos = getPosition();
         Size size = getSize();
         if (backgroundTexture != null) {
@@ -81,18 +79,36 @@ public class SlotWidget extends Widget implements INativeWidget {
                 backgroundTexture.draw(pos.x, pos.y, size.width, size.height);
             }
         }
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.disableLighting();
-        RenderHelper.disableStandardItemLighting();
-        RenderHelper.enableStandardItemLighting();
-        RenderHelper.enableGUIStandardItemLighting();
-        GlStateManager.pushMatrix();
-        RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
-        itemRender.renderItemAndEffectIntoGUI(slotReference.getStack(), pos.x + 1, pos.y + 1);
-        itemRender.renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, slotReference.getStack(), pos.x + 1, pos.y + 1, null);
-        GlStateManager.enableAlpha();
-        GlStateManager.popMatrix();
-        RenderHelper.disableStandardItemLighting();
+        ItemStack itemStack = slotReference.getStack();
+        ModularUIGui modularUIGui = gui == null ? null : gui.getModularUIGui();
+        if (itemStack.isEmpty() && modularUIGui!= null && modularUIGui.getDragSplitting() && modularUIGui.getDragSplittingSlots().contains(slotReference)) { // draw split
+            int splitSize = modularUIGui.getDragSplittingSlots().size();
+            itemStack = gui.entityPlayer.inventory.getItemStack();
+            if (!itemStack.isEmpty() && splitSize > 1 && Container.canAddItemToSlot(slotReference, itemStack, true)) {
+                itemStack = itemStack.copy();
+                Container.computeStackSize(modularUIGui.getDragSplittingSlots(), modularUIGui.dragSplittingLimit, itemStack, slotReference.getStack().isEmpty() ? 0 : slotReference.getStack().getCount());
+                int k = Math.min(itemStack.getMaxStackSize(), slotReference.getItemStackLimit(itemStack));
+                if (itemStack.getCount() > k) {
+                    itemStack.setCount(k);
+                }
+            }
+        }
+        if (!itemStack.isEmpty()) {
+            GlStateManager.enableBlend();
+            GlStateManager.enableDepth();
+            GlStateManager.disableRescaleNormal();
+            GlStateManager.disableLighting();
+            RenderHelper.disableStandardItemLighting();
+            RenderHelper.enableStandardItemLighting();
+            RenderHelper.enableGUIStandardItemLighting();
+            GlStateManager.pushMatrix();
+            RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
+            itemRender.renderItemAndEffectIntoGUI(itemStack, pos.x + 1, pos.y + 1);
+            itemRender.renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, itemStack, pos.x + 1, pos.y + 1, null);
+            GlStateManager.enableAlpha();
+            GlStateManager.popMatrix();
+            RenderHelper.disableStandardItemLighting();
+        }
         if (isActive()) {
             if (slotReference instanceof ISlotWidget) {
                 if (isMouseOverElement(mouseX, mouseY)) {
@@ -116,8 +132,22 @@ public class SlotWidget extends Widget implements INativeWidget {
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
-        if (canTakeItems && isMouseOverElement(mouseX, mouseY) && gui != null) {
-            gui.needNativeClick = true;
+        if (isMouseOverElement(mouseX, mouseY) && gui != null) {
+            ModularUIGui modularUIGui = gui.getModularUIGui();
+            boolean last = modularUIGui.getDragSplitting();
+            gui.getModularUIGui().superMouseClicked(mouseX, mouseY, button);
+            if (last != modularUIGui.getDragSplitting()) {
+                modularUIGui.dragSplittingButton = button;
+                if (button == 0) {
+                    modularUIGui.dragSplittingLimit = 0;
+                }
+                else if (button == 1) {
+                    modularUIGui.dragSplittingLimit = 1;
+                }
+                else if (Minecraft.getMinecraft().gameSettings.keyBindPickBlock.isActiveAndMatches(button - 100)) {
+                    modularUIGui.dragSplittingLimit = 2;
+                }
+            }
             return true;
         }
         return false;
@@ -126,15 +156,19 @@ public class SlotWidget extends Widget implements INativeWidget {
     @Override
     public boolean mouseReleased(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY) && gui != null) {
-            gui.needNativeClick = true;
+            gui.getModularUIGui().superMouseReleased(mouseX, mouseY, button);
             return true;
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+        return false;
     }
 
     @Override
     public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
-        return super.mouseDragged(mouseX, mouseY, button, timeDragged);
+        if (isMouseOverElement(mouseX, mouseY) && gui != null) {
+            gui.getModularUIGui().superMouseClickMove(mouseX, mouseY, button, timeDragged);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -201,7 +235,7 @@ public class SlotWidget extends Widget implements INativeWidget {
 
     @Override
     public ItemStack slotClick(int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        return INativeWidget.VANILLA_LOGIC;
+        return null;
     }
 
     @Override

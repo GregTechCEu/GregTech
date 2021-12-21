@@ -79,8 +79,8 @@ public class ToolElectricWrench extends ToolWrench {
     public float getDigSpeedMultiplier(ItemStack stack) {
         switch (tier) {
             case GTValues.LV: return 2.0F;
-            case GTValues.MV: return 3.0F;
-            case GTValues.HV: return 4.0F;
+            case GTValues.MV: return 4.0F;
+            case GTValues.HV: return 8.0F;
         }
         return super.getDigSpeedMultiplier(stack);
     }

@@ -138,10 +138,16 @@ public abstract class CoverBehavior implements IUIHolder {
     public void onRemoved() {
     }
 
+    /**
+     * @return If the pipe this is placed on should render a connection to the cover
+     */
     public boolean shouldRenderConnected() {
         return true;
     }
 
+    /**
+     * @return If the pipe this is placed on and a pipe on the other side should be able to connect
+     */
     public boolean canPipePassThrough() {
         return false;
     }
@@ -182,7 +188,7 @@ public abstract class CoverBehavior implements IUIHolder {
 
     @SideOnly(Side.CLIENT)
     public boolean canRenderInLayer(BlockRenderLayer renderLayer) {
-        return renderLayer == BlockRenderLayer.CUTOUT || renderLayer == BloomEffectUtil.getRealBloomLayer();
+        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED || renderLayer == BloomEffectUtil.getRealBloomLayer();
     }
 
     @SideOnly(Side.CLIENT)
@@ -191,9 +197,9 @@ public abstract class CoverBehavior implements IUIHolder {
         for (EnumFacing coverPlateSide : EnumFacing.VALUES) {
             boolean isAttachedSide = attachedSide.getAxis() == coverPlateSide.getAxis();
             if (isAttachedSide) {
-                Textures.renderFace(renderState, translation, pipeline, coverPlateSide, plateBox, casingSide);
+                Textures.renderFace(renderState, translation, pipeline, coverPlateSide, plateBox, casingSide, BlockRenderLayer.CUTOUT_MIPPED);
             } else if (coverHolder.getCoverAtSide(coverPlateSide) == null) {
-                Textures.renderFace(renderState, translation, pipeline, coverPlateSide, plateBox, casingSide);
+                Textures.renderFace(renderState, translation, pipeline, coverPlateSide, plateBox, casingSide, BlockRenderLayer.CUTOUT_MIPPED);
             }
         }
     }

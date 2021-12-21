@@ -143,10 +143,13 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
         if (slotId >= 0 && slotId < inventorySlots.size()) {
             Slot slot = getSlot(slotId);
             ItemStack result = slotMap.get(slot).slotClick(dragType, clickTypeIn, player);
-            if (result == INativeWidget.VANILLA_LOGIC) {
+            if (result == null) {
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
             }
             return result;
+        }
+        if (slotId == -999) {
+            super.slotClick(slotId, dragType, clickTypeIn, player);
         }
         return ItemStack.EMPTY;
     }

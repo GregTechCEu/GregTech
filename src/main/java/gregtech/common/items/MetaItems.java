@@ -81,7 +81,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_WIRE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_TINY;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_SMALL;
-    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_MEDIUM;
+    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_NORMAL;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_LARGE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_HUGE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BLOCK;
@@ -320,15 +320,17 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem DIODE;
     public static MetaItem<?>.MetaValueItem CAPACITOR;
     public static MetaItem<?>.MetaValueItem TRANSISTOR;
-    public static MetaItem<?>.MetaValueItem SMALL_COIL;
+    public static MetaItem<?>.MetaValueItem INDUCTOR;
     public static MetaItem<?>.MetaValueItem SMD_CAPACITOR;
     public static MetaItem<?>.MetaValueItem SMD_DIODE;
     public static MetaItem<?>.MetaValueItem SMD_RESISTOR;
     public static MetaItem<?>.MetaValueItem SMD_TRANSISTOR;
+    public static MetaItem<?>.MetaValueItem SMD_INDUCTOR;
     public static MetaItem<?>.MetaValueItem ADVANCED_SMD_CAPACITOR;
     public static MetaItem<?>.MetaValueItem ADVANCED_SMD_DIODE;
     public static MetaItem<?>.MetaValueItem ADVANCED_SMD_RESISTOR;
     public static MetaItem<?>.MetaValueItem ADVANCED_SMD_TRANSISTOR;
+    public static MetaItem<?>.MetaValueItem ADVANCED_SMD_INDUCTOR;
 
     // T1: Electronic
     public static MetaItem<?>.MetaValueItem ELECTRONIC_CIRCUIT_LV;
@@ -389,13 +391,13 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_FACADE;
 
     public static MetaItem<?>.MetaValueItem COVER_ACTIVITY_DETECTOR;
+    public static MetaItem<?>.MetaValueItem COVER_ACTIVITY_DETECTOR_ADVANCED;
     public static MetaItem<?>.MetaValueItem COVER_FLUID_DETECTOR;
     public static MetaItem<?>.MetaValueItem COVER_ITEM_DETECTOR;
     public static MetaItem<?>.MetaValueItem COVER_ENERGY_DETECTOR;
 
     public static MetaItem<?>.MetaValueItem COVER_SCREEN;
     public static MetaItem<?>.MetaValueItem COVER_CRAFTING;
-    public static MetaItem<?>.MetaValueItem COVER_DRAIN;
     public static MetaItem<?>.MetaValueItem COVER_INFINITE_WATER;
     public static MetaItem<?>.MetaValueItem COVER_ENDER_FLUID_LINK;
     public static MetaItem<?>.MetaValueItem COVER_DIGITAL_INTERFACE;
@@ -486,8 +488,8 @@ public final class MetaItems {
     public static ToolMetaItem<?>.MetaToolValueItem BUZZSAW;
     public static ToolMetaItem<?>.MetaToolValueItem SCREWDRIVER_LV;
 
-    public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_MODULE;
-    public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_CLUSTER;
+    public static MetaItem<?>.MetaValueItem ENERGY_MODULE;
+    public static MetaItem<?>.MetaValueItem ENERGY_CLUSTER;
     public static MetaItem<?>.MetaValueItem NEURO_PROCESSOR;
     public static MetaItem<?>.MetaValueItem STEM_CELLS;
     public static MetaItem<?>.MetaValueItem PETRI_DISH;

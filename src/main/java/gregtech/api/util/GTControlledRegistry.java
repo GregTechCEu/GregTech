@@ -57,9 +57,6 @@ public class GTControlledRegistry<K, V> extends RegistrySimple<K, V> {
         if (id < 0 || id >= maxId) {
             throw new IndexOutOfBoundsException("Id is out of range: " + id);
         }
-        if (key instanceof ResourceLocation) {
-            key = (K) GameData.checkPrefix(key.toString(), false);
-        }
 
         super.putObject(key, value);
 

@@ -34,7 +34,7 @@ public interface IParallelableRecipeLogic {
      * @param parallelLimit the maximum number of parallel recipes to be performed
      * @return the recipe builder with the parallelized recipe. returns null the recipe cant fit
      */
-    default RecipeBuilder<?> findMultipliedParallelRecipe(RecipeMap<?> recipeMap, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelLimit, long maxVoltage) {
+    default RecipeBuilder<?> findMultipliedParallelRecipe(RecipeMap<?> recipeMap, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelLimit, long maxVoltage, boolean trimOutputs) {
         return ParallelLogic.doParallelRecipes(
                 currentRecipe,
                 recipeMap,
@@ -43,7 +43,8 @@ public interface IParallelableRecipeLogic {
                 outputs,
                 fluidOutputs,
                 parallelLimit,
-                maxVoltage);
+                maxVoltage,
+                trimOutputs);
     }
 
     /**
@@ -56,22 +57,23 @@ public interface IParallelableRecipeLogic {
      * @param parallelLimit the maximum number of parallel recipes to be performed
      * @return the recipe builder with the parallelized recipe. returns null the recipe cant fit
      */
-    default RecipeBuilder<?> findAppendedParallelItemRecipe(RecipeMap<?> recipeMap, IItemHandlerModifiable inputs, IItemHandlerModifiable outputs, int parallelLimit, long maxVoltage) {
+    default RecipeBuilder<?> findAppendedParallelItemRecipe(RecipeMap<?> recipeMap, IItemHandlerModifiable inputs, IItemHandlerModifiable outputs, int parallelLimit, long maxVoltage, boolean trimOutputs) {
         return ParallelLogic.appendItemRecipes(
                 recipeMap,
                 inputs,
                 outputs,
                 parallelLimit,
-                maxVoltage);
+                maxVoltage,
+                trimOutputs);
     }
 
     default Recipe findParallelRecipe(AbstractRecipeLogic logic, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, long maxVoltage, int parallelLimit) {
         if (parallelLimit > 1) {
             RecipeBuilder<?> parallelBuilder = null;
             if (logic.getParallelLogicType() == ParallelLogicType.MULTIPLY) {
-                parallelBuilder = findMultipliedParallelRecipe(logic.getRecipeMap(), currentRecipe, inputs, fluidInputs, outputs, fluidOutputs, parallelLimit, maxVoltage);
+                parallelBuilder = findMultipliedParallelRecipe(logic.getRecipeMap(), currentRecipe, inputs, fluidInputs, outputs, fluidOutputs, parallelLimit, maxVoltage, logic.trimOutputs());
             } else if (logic.getParallelLogicType() == ParallelLogicType.APPEND_ITEMS) {
-                parallelBuilder = findAppendedParallelItemRecipe(logic.getRecipeMap(), inputs, outputs, parallelLimit, maxVoltage);
+                parallelBuilder = findAppendedParallelItemRecipe(logic.getRecipeMap(), inputs, outputs, parallelLimit, maxVoltage, logic.trimOutputs());
             }
             // if the builder returned is null, no recipe was found.
             if (parallelBuilder == null) {

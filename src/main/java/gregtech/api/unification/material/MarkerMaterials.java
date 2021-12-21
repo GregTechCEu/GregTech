@@ -106,6 +106,7 @@ public class MarkerMaterials {
         public static final Material Transistor = new MarkerMaterial("transistor");
         public static final Material Capacitor = new MarkerMaterial("capacitor");
         public static final Material Diode = new MarkerMaterial("diode");
+        public static final Material Inductor = new MarkerMaterial("inductor");
     }
 
 }

@@ -47,7 +47,7 @@ gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Bla
 gregtech.multiblock.coke_oven.description=The Coke Oven is a multiblock structure used for getting coke and creosote in the early game. It doesn't require fuel and has an internal tank of 32 buckets for creosote. Its inventory can be accessed via its Coke Oven Hatch.
 gregtech.multiblock.vacuum_freezer.description=The Vacuum Freezer is a multiblock structure mainly used for freezing Hot Ingots into regular Ingots. However, it can also freeze other substances, such as Water.
 gregtech.multiblock.implosion_compressor.description=The Implosion Compressor is a multiblock structure that uses explosives to turn gem dusts into their corresponding gems.
-gregtech.multiblock.pyrolyse_oven.description=The Pyrolyze Oven is a multiblock structure used for turning Logs into Charcoal and Creosote Oil, or Ash and Heavy Oil.
+gregtech.multiblock.pyrolyse_oven.description=The Pyrolyse Oven is a multiblock structure used for turning Logs into Charcoal and Creosote Oil, or Ash and Heavy Oil.
 gregtech.multiblock.cracker.description=The Cracker Unit is a multiblock structure used for turning Light and Heavy Fuel into their Cracked variants.
 gregtech.multiblock.large_combustion_engine.description=The Large Combustion Engine is a multiblock structure that acts as a Combustion Generator for EV power.
 gregtech.multiblock.distillation_tower.description=The Distillation Tower is a multiblock structure used for distilling the various types of Oil and some of their byproducts. Each layer must have exactly one output hatch, starting from the second one. The bottom layer can output items and insert fluids in any position.
@@ -64,9 +64,13 @@ gregtech.multiblock.large_chemical_reactor.description=The Large Chemical Reacto
 gregtech.multiblock.primitive_water_pump.description=The Primitive Water Pump is a pre-Steam Era multiblock that collects water once per second, depending on the Biome it is in. It can use a Pump, ULV, or LV Output Hatch, increasing the amount of water per tier. Follows the formula: Biome Coefficient * Hatch Multiplier.
 gregtech.multiblock.primitive_water_pump.extra1=Biome Coefficient:/n  Ocean, River: 1000 L/s/n  Swamp: 800 L/s/n  Jungle: 350 L/s/n  Snowy: 300 L/s/n  Plains, Forest: 250 L/s/n  Taiga: 175 L/s/n  Beach: 170 L/s/n  Other: 100 L/s
 gregtech.multiblock.primitive_water_pump.extra2=Hatch Multipliers:/n  Pump Hatch: 1x/n  ULV Output Hatch: 2x/n  LV Output Hatch: 4x
+gregtech.multiblock.processing_array.description=The Processing Array combines up to 16 single block machine(s) in a single multiblock, effectively easing automation.
+gregtech.multiblock.advanced_processing_array.description=The Processing Array combines up to 64 single block machine(s) in a single multiblock, effectively easing automation.
 
 item.invalid.name=Invalid item
 fluid.empty=Empty
+
+gregtech.tooltip.hold_shift=Hold §aShift§7 for more info
 
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.fluid_container.tooltip_empty=§9No Fluids Contained
@@ -172,8 +176,8 @@ metaitem.shape.extruder.pipe.tiny.name=Extruder Shape (Tiny Pipe)
 metaitem.shape.extruder.pipe.tiny.tooltip=Extruder Shape for making tiny Pipes
 metaitem.shape.extruder.pipe.small.name=Extruder Shape (Small Pipe)
 metaitem.shape.extruder.pipe.small.tooltip=Extruder Shape for making small Pipes
-metaitem.shape.extruder.pipe.medium.name=Extruder Shape (Normal Pipe)
-metaitem.shape.extruder.pipe.medium.tooltip=Extruder Shape for making Pipes
+metaitem.shape.extruder.pipe.normal.name=Extruder Shape (Pipe)
+metaitem.shape.extruder.pipe.normal.tooltip=Extruder Shape for making Pipes
 metaitem.shape.extruder.pipe.large.name=Extruder Shape (Large Pipe)
 metaitem.shape.extruder.pipe.large.tooltip=Extruder Shape for making large Pipes
 metaitem.shape.extruder.pipe.huge.name=Extruder Shape (Huge Pipe)
@@ -522,8 +526,8 @@ metaitem.component.transistor.tooltip=Basic Electronic Component
 metaitem.component.capacitor.name=Capacitor
 metaitem.component.capacitor.tooltip=Basic Electronic Component
 metaitem.component.glass.tube.name=Glass Tube
-metaitem.component.small_coil.name=Small Coil
-metaitem.component.small_coil.tooltip=Basic Electronic Component
+metaitem.component.inductor.name=Inductor
+metaitem.component.inductor.tooltip=A Small Coil
 metaitem.component.smd.diode.name=SMD Diode
 metaitem.component.smd.diode.tooltip=Electronic Component
 metaitem.component.smd.capacitor.name=SMD Capacitor
@@ -532,6 +536,8 @@ metaitem.component.smd.transistor.name=SMD Transistor
 metaitem.component.smd.transistor.tooltip=Electronic Component
 metaitem.component.smd.resistor.name=SMD Resistor
 metaitem.component.smd.resistor.tooltip=Electronic Component
+metaitem.component.smd.inductor.name=SMD Inductor
+metaitem.component.smd.inductor.tooltip=Electronic Component
 metaitem.component.advanced_smd.diode.name=Advanced SMD Diode
 metaitem.component.advanced_smd.diode.tooltip=Advanced Electronic Component
 metaitem.component.advanced_smd.capacitor.name=Advanced SMD Capacitor
@@ -540,6 +546,8 @@ metaitem.component.advanced_smd.transistor.name=Advanced SMD Transistor
 metaitem.component.advanced_smd.transistor.tooltip=Advanced Electronic Component
 metaitem.component.advanced_smd.resistor.name=Advanced SMD Resistor
 metaitem.component.advanced_smd.resistor.tooltip=Advanced Electronic Component
+metaitem.component.advanced_smd.inductor.name=Advanced SMD Inductor
+metaitem.component.advanced_smd.inductor.tooltip=Advanced Electronic Component
 
 metaitem.wafer.highly_advanced_system_on_chip.name=HASoC Wafer
 metaitem.wafer.highly_advanced_system_on_chip.tooltip=Raw Highly Advanced Circuit
@@ -722,7 +730,9 @@ metaitem.smart_item_filter.tooltip=Filters items basing on specific machine's re
 metaitem.cover.controller.name=Machine Controller
 metaitem.cover.controller.tooltip=Turns Machines ON/OFF (as Cover)
 metaitem.cover.activity.detector.name=Activity Detector
-metaitem.cover.activity.detector.tooltip=Gives out Activity as Redstone (as Cover)
+metaitem.cover.activity.detector.tooltip=Gives out Activity Status as Redstone (as Cover)
+metaitem.cover.activity.detector_advanced.name=Advanced Activity Detector
+metaitem.cover.activity.detector_advanced.tooltip=Gives out Progress Status as Redstone (as Cover)
 metaitem.cover.fluid.detector.name=Fluid Detector
 metaitem.cover.fluid.detector.tooltip=Gives out Fluid Amount as Redstone (as Cover)
 metaitem.cover.item.detector.name=Item Detector
@@ -976,6 +986,9 @@ metaitem.record.sus.tooltip=§7Leonz - Among Us Drip
 
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 
+gregtech.recipe_memory_widget.tooltip.1=§7Left click to automatically input this recipe into the crafting grid
+gregtech.recipe_memory_widget.tooltip.2=§7Shift click to lock/unlock this recipe
+
 cover.filter.blacklist.disabled=Whitelist
 cover.filter.blacklist.enabled=Blacklist
 
@@ -1157,19 +1170,19 @@ item.material.oreprefix.block=Block of %s
 item.material.oreprefix.frameGt=%s Frame Box
 item.material.oreprefix.pipeTinyFluid=Tiny %s Fluid Pipe
 item.material.oreprefix.pipeSmallFluid=Small %s Fluid Pipe
-item.material.oreprefix.pipeNormalFluid=Normal %s Fluid Pipe
+item.material.oreprefix.pipeNormalFluid=%s Fluid Pipe
 item.material.oreprefix.pipeLargeFluid=Large %s Fluid Pipe
 item.material.oreprefix.pipeHugeFluid=Huge %s Fluid Pipe
 item.material.oreprefix.pipeQuadrupleFluid=Quadruple %s Fluid Pipe
 item.material.oreprefix.pipeNonupleFluid=Nonuple %s Fluid Pipe
 item.material.oreprefix.pipeTinyItem=Tiny %s Item Pipe
 item.material.oreprefix.pipeSmallItem=Small %s Item Pipe
-item.material.oreprefix.pipeNormalItem=Normal %s Item Pipe
+item.material.oreprefix.pipeNormalItem=%s Item Pipe
 item.material.oreprefix.pipeLargeItem=Large %s Item Pipe
 item.material.oreprefix.pipeHugeItem=Huge %s Item Pipe
 item.material.oreprefix.pipeTinyRestrictive=Tiny Restrictive %s Item Pipe
 item.material.oreprefix.pipeSmallRestrictive=Small Restrictive %s Item Pipe
-item.material.oreprefix.pipeNormalRestrictive=Normal Restrictive %s Item Pipe
+item.material.oreprefix.pipeNormalRestrictive=Restrictive %s Item Pipe
 item.material.oreprefix.pipeLargeRestrictive=Large Restrictive %s Item Pipe
 item.material.oreprefix.pipeHugeRestrictive=Huge Restrictive %s Item Pipe
 item.material.oreprefix.pipe=%s Pipe
@@ -1715,9 +1728,6 @@ material.naquadria=Naquadria
 material.tritanium=Tritanium
 material.duranium=Duranium
 
-material.diamericium_titanium=Diamericium Titanium
-material.fluxed_electrum=Fluxed Electrum
-
 material.milk=Milk
 material.cocoa=Cocoa
 material.wheat=Wheat
@@ -2182,11 +2192,14 @@ tile.casing.ev=EV Machine Casing
 tile.casing.iv=IV Machine Casing
 
 # Wire coil blocks
-tile.wire_coil.tooltip_ebf=When used in §aElectric Blast Furnace§7:
-tile.wire_coil.tooltip_heat=  Base Heating Capacity: §e%,dK
-tile.wire_coil.tooltip_smelter=When used in §aMulti Smelter§7:
-tile.wire_coil.tooltip_level=  Level: §e%,d
-tile.wire_coil.tooltip_discount=  Energy Discount: §a%,dx
+tile.wire_coil.tooltip_heat=Base Heat Capacity: §e%,dK
+tile.wire_coil.tooltip_smelter=§aMulti Smelter§7:
+tile.wire_coil.tooltip_parallel_smelter=  Max Parallel: §e%s§7
+tile.wire_coil.tooltip_energy_smelter=  Energy Usage: §e%s EU/t per recipe§7
+tile.wire_coil.tooltip_pyro=§aPyrolyse Oven§7:
+tile.wire_coil.tooltip_speed_pyro=  Processing Speed: §e%s%%§7
+tile.wire_coil.tooltip_cracking=§aCracking Unit§7:
+tile.wire_coil.tooltip_energy_cracking=  Energy Usage: §e%s%%§7
 
 tile.wire_coil.cupronickel.name=Cupronickel Coil Block
 tile.wire_coil.kanthal.name=Kanthal Coil Block
@@ -2194,9 +2207,8 @@ tile.wire_coil.nichrome.name=Nichrome Coil Block
 tile.wire_coil.tungstensteel.name=Tungstensteel Coil Block
 tile.wire_coil.hss_g.name=HSS-G Coil Block
 tile.wire_coil.naquadah.name=Naquadah Coil Block
-tile.wire_coil.naquadah_alloy.name=Naquadah Alloy Coil Block
-tile.wire_coil.fluxed_electrum.name=Fluxed Electrum Coil Block
-tile.wire_coil.diamericium_titanium.name=Diamericium Titanium Coil Block
+tile.wire_coil.trinium.name=Trinium Coil Block
+tile.wire_coil.tritanium.name=Tritanium Coil Block
 
 # General casing block tooltip
 tile.machine_casing.tooltip1=Mobs cannot Spawn on this Block
@@ -2219,7 +2231,7 @@ tile.boiler_casing.bronze_pipe.name=Bronze Pipe Casing
 tile.boiler_casing.steel_pipe.name=Steel Pipe Casing
 tile.boiler_casing.titanium_pipe.name=Titanium Pipe Casing
 tile.boiler_casing.tungstensteel_pipe.name=Tungstensteel Pipe Casing
-tile.boiler_casing.polytetrafluoroethylene_pipe.name=Polytetrafluoroethylene (PTFE) Pipe Casing
+tile.boiler_casing.polytetrafluoroethylene_pipe.name=PTFE Pipe Casing
 
 #Firebox casing blocks
 tile.boiler_casing.bronze_firebox.name=Bronze Firebox Casing
@@ -2237,7 +2249,8 @@ tile.metal_casing.steel_solid.name=Solid Steel Machine Casing
 tile.metal_casing.stainless_clean.name=Clean Stainless Steel Casing
 tile.metal_casing.titanium_stable.name=Stable Titanium Machine Casing
 tile.metal_casing.tungstensteel_robust.name=Robust Tungstensteel Machine Casing
-tile.metal_casing.ptfe_inert.name=Chemically Inert Polytetrafluoroethylene (PTFE) Machine Casing
+tile.metal_casing.ptfe_inert.name=Chemically Inert PTFE Machine Casing
+tile.metal_casing.hsse_robust.name=Sturdy HSS-E Machine Casing
 
 # Machine casing blocks
 tile.machine_casing.ultra_low_voltage.name=ULV Machine Casing
@@ -2928,8 +2941,20 @@ gregtech.machine.ore_washer.uiv.name=High-Tech Ore Washing Plant III
 gregtech.machine.ore_washer.umv.name=High-Tech Ore Washing Plant IV
 gregtech.machine.ore_washer.uxv.name=Ultimate Ore Washing Plant
 
-gregtech.machine.ore_washer.simple.name=Simple Ore Washing Plant
-gregtech.machine.ore_washer.simple.tooltip=It's like an automatic Cauldron for Washing. Grants no Byproducts, but it is fast.
+gregtech.machine.simple_ore_washer.lv.name=Basic Simple Ore Washing Plant
+gregtech.machine.simple_ore_washer.mv.name=Advanced Simple Ore Washing Plant
+gregtech.machine.simple_ore_washer.hv.name=Advanced Simple Ore Washing Plant II
+gregtech.machine.simple_ore_washer.ev.name=Advanced Simple Ore Washing Plant III
+gregtech.machine.simple_ore_washer.iv.name=Elite Simple Ore Washing Plant
+gregtech.machine.simple_ore_washer.luv.name=Elite Simple Ore Washing Plant II
+gregtech.machine.simple_ore_washer.zpm.name=Elite Simple Ore Washing Plant III
+gregtech.machine.simple_ore_washer.uv.name=Elite Simple Ore Washing Plant IV
+gregtech.machine.simple_ore_washer.uhv.name=High-Tech Simple Ore Washing Plant
+gregtech.machine.simple_ore_washer.uev.name=High-Tech Simple Ore Washing Plant II
+gregtech.machine.simple_ore_washer.uiv.name=High-Tech Simple Ore Washing Plant III
+gregtech.machine.simple_ore_washer.umv.name=High-Tech Simple Ore Washing Plant IV
+gregtech.machine.simple_ore_washer.uxv.name=Ultimate Simple Ore Washing Plant
+gregtech.machine.simple_ore_washer.tooltip=It's like an automatic Cauldron for Washing. Grants no Byproducts, but it is fast.
 
 gregtech.machine.packer.tooltip=Puts things into Boxes
 
@@ -3109,6 +3134,11 @@ gregtech.machine.scanner.uxv.name=Ultimate Scanner
 
 gregtech.machine.infinite_energy.name=Infinite GT Energy Unit Emitter
 gregtech.machine.infinite_energy.tooltip=§8You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§8 to use this
+gregtech.machine.creative_chest.name=Creative Quantum Chest
+gregtech.machine.creative_chest.tooltip=§8You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§8 to use this
+gregtech.machine.creative_tank.name=Creative Quantum Tank
+gregtech.machine.creative_tank.tooltip=§8You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§8 to use this
+
 
 # Machine hulls
 gregtech.machine.hull.tooltip=§fYou just need §5I§dm§4a§cg§ei§an§ba§3t§7i§1o§5n§f to use this
@@ -3130,80 +3160,65 @@ gregtech.machine.hull.uxv.name=UXV Machine Hull
 gregtech.machine.hull.max.name=MAX Machine Hull
 
 # Battery buffers
-gregtech.machine.battery_buffer.ulv.1.name=Ultra Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.ulv.4.name=Ultra Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.ulv.9.name=Ultra Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.ulv.16.name=Ultra Low Voltage Battery Buffer
+gregtech.machine.battery_buffer.ulv.4.name=Ultra Low Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.ulv.8.name=Ultra Low Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.ulv.16.name=Ultra Low Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.lv.1.name=Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.lv.4.name=Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.lv.9.name=Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.lv.16.name=Low Voltage Battery Buffer
+gregtech.machine.battery_buffer.lv.4.name=Low Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.lv.8.name=Low Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.lv.16.name=Low Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.mv.1.name=Medium Voltage Battery Buffer
-gregtech.machine.battery_buffer.mv.4.name=Medium Voltage Battery Buffer
-gregtech.machine.battery_buffer.mv.9.name=Medium Voltage Battery Buffer
-gregtech.machine.battery_buffer.mv.16.name=Medium Voltage Battery Buffer
+gregtech.machine.battery_buffer.mv.4.name=Medium Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.mv.8.name=Medium Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.mv.16.name=Medium Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.hv.1.name=High Voltage Battery Buffer
-gregtech.machine.battery_buffer.hv.4.name=High Voltage Battery Buffer
-gregtech.machine.battery_buffer.hv.9.name=High Voltage Battery Buffer
-gregtech.machine.battery_buffer.hv.16.name=High Voltage Battery Buffer
+gregtech.machine.battery_buffer.hv.4.name=High Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.hv.8.name=High Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.hv.16.name=High Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.ev.1.name=Extreme Voltage Battery Buffer
-gregtech.machine.battery_buffer.ev.4.name=Extreme Voltage Battery Buffer
-gregtech.machine.battery_buffer.ev.9.name=Extreme Voltage Battery Buffer
-gregtech.machine.battery_buffer.ev.16.name=Extreme Voltage Battery Buffer
+gregtech.machine.battery_buffer.ev.4.name=Extreme Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.ev.8.name=Extreme Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.ev.16.name=Extreme Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.iv.1.name=Insane Voltage Battery Buffer
-gregtech.machine.battery_buffer.iv.4.name=Insane Voltage Battery Buffer
-gregtech.machine.battery_buffer.iv.9.name=Insane Voltage Battery Buffer
-gregtech.machine.battery_buffer.iv.16.name=Insane Voltage Battery Buffer
+gregtech.machine.battery_buffer.iv.4.name=Insane Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.iv.8.name=Insane Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.iv.16.name=Insane Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.luv.1.name=Ludicrous Voltage Battery Buffer
-gregtech.machine.battery_buffer.luv.4.name=Ludicrous Voltage Battery Buffer
-gregtech.machine.battery_buffer.luv.9.name=Ludicrous Voltage Battery Buffer
-gregtech.machine.battery_buffer.luv.16.name=Ludicrous Voltage Battery Buffer
+gregtech.machine.battery_buffer.luv.4.name=Ludicrous Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.luv.8.name=Ludicrous Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.luv.16.name=Ludicrous Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.zpm.1.name=ZPM Voltage Battery Buffer
-gregtech.machine.battery_buffer.zpm.4.name=ZPM Voltage Battery Buffer
-gregtech.machine.battery_buffer.zpm.9.name=ZPM Voltage Battery Buffer
-gregtech.machine.battery_buffer.zpm.16.name=ZPM Voltage Battery Buffer
+gregtech.machine.battery_buffer.zpm.4.name=ZPM Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.zpm.8.name=ZPM Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.zpm.16.name=ZPM Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uv.1.name=Ultimate Voltage Battery Buffer
-gregtech.machine.battery_buffer.uv.4.name=Ultimate Voltage Battery Buffer
-gregtech.machine.battery_buffer.uv.9.name=Ultimate Voltage Battery Buffer
-gregtech.machine.battery_buffer.uv.16.name=Ultimate Voltage Battery Buffer
+gregtech.machine.battery_buffer.uv.4.name=Ultimate Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uv.8.name=Ultimate Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uv.16.name=Ultimate Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uhv.1.name=UHV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uhv.4.name=UHV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uhv.9.name=UHV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uhv.16.name=UHV Voltage Battery Buffer
+gregtech.machine.battery_buffer.uhv.4.name=UHV Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uhv.8.name=UHV Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uhv.16.name=UHV Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uev.1.name=UEV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uev.4.name=UEV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uev.9.name=UEV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uev.16.name=UEV Voltage Battery Buffer
+gregtech.machine.battery_buffer.uev.4.name=UEV Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uev.8.name=UEV Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uev.16.name=UEV Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uiv.1.name=UIV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uiv.4.name=UIV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uiv.9.name=UIV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uiv.16.name=UIV Voltage Battery Buffer
+gregtech.machine.battery_buffer.uiv.4.name=UIV Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uiv.8.name=UIV Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uiv.16.name=UIV Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.umv.1.name=UMV Voltage Battery Buffer
-gregtech.machine.battery_buffer.umv.4.name=UMV Voltage Battery Buffer
-gregtech.machine.battery_buffer.umv.9.name=UMV Voltage Battery Buffer
-gregtech.machine.battery_buffer.umv.16.name=UMV Voltage Battery Buffer
+gregtech.machine.battery_buffer.umv.4.name=UMV Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.umv.8.name=UMV Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.umv.16.name=UMV Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uxv.1.name=UXV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uxv.4.name=UXV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uxv.9.name=UXV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uxv.16.name=UXV Voltage Battery Buffer
+gregtech.machine.battery_buffer.uxv.4.name=UXV Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uxv.8.name=UXV Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uxv.16.name=UXV Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.max.1.name=MAX Voltage Battery Buffer
-gregtech.machine.battery_buffer.max.4.name=MAX Voltage Battery Buffer
-gregtech.machine.battery_buffer.max.9.name=MAX Voltage Battery Buffer
-gregtech.machine.battery_buffer.max.16.name=MAX Voltage Battery Buffer
+gregtech.machine.battery_buffer.max.4.name=MAX Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.max.8.name=MAX Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.max.16.name=MAX Voltage 16x Battery Buffer
 
 # Transformers
 gregtech.machine.transformer.tooltip_tool_usage=Use Soft Hammer to invert (Starts as Transform Down)
@@ -3247,7 +3262,7 @@ gregtech.machine.transformer.adjustable.uxv.name=UXV Voltage Adjustable Transfor
 # Diodes
 gregtech.machine.diode.message=Max Amperage throughput: %s
 gregtech.machine.diode.tooltip_general=A simple Diode that will allow Energy Flow in only one direction.
-gregtech.machine.diode.tooltip_tool_usage=Hit with a Soft Hammer to toggle Amperage flow.
+gregtech.machine.diode.tooltip_tool_usage=Hit with a Soft Hammer to change Amperage flow.
 
 gregtech.machine.diode.ulv.name=Ultra Low Voltage Diode
 gregtech.machine.diode.lv.name=Low Voltage Diode
@@ -3266,21 +3281,21 @@ gregtech.machine.diode.uxv.name=UXV Voltage Diode
 gregtech.machine.diode.max.name=MAX Voltage Diode
 
 # Chargers
-gregtech.machine.charger.ulv.name=Ultra Low Voltage Battery Charger
-gregtech.machine.charger.lv.name=Low Voltage Battery Charger
-gregtech.machine.charger.mv.name=Medium Voltage Battery Charger
-gregtech.machine.charger.hv.name=High Voltage Battery Charger
-gregtech.machine.charger.ev.name=Extreme Voltage Battery Charger
-gregtech.machine.charger.iv.name=Insane Voltage Battery Charger
-gregtech.machine.charger.luv.name=Ludicrous Voltage Battery Charger
-gregtech.machine.charger.zpm.name=ZPM Voltage Battery Charger
-gregtech.machine.charger.uv.name=Ultimate Voltage Battery Charger
-gregtech.machine.charger.uhv.name=UHV Voltage Battery Charger
-gregtech.machine.charger.uev.name=UEV Voltage Battery Charger
-gregtech.machine.charger.uiv.name=UIV Voltage Battery Charger
-gregtech.machine.charger.umv.name=UMV Voltage Battery Charger
-gregtech.machine.charger.uxv.name=UXV Voltage Battery Charger
-gregtech.machine.charger.max.name=MAX Voltage Battery Charger
+gregtech.machine.charger.ulv.name=Ultra Low Voltage Turbo Charger
+gregtech.machine.charger.lv.name=Low Voltage Turbo Charger
+gregtech.machine.charger.mv.name=Medium Voltage Turbo Charger
+gregtech.machine.charger.hv.name=High Voltage Turbo Charger
+gregtech.machine.charger.ev.name=Extreme Voltage Turbo Charger
+gregtech.machine.charger.iv.name=Insane Voltage Turbo Charger
+gregtech.machine.charger.luv.name=Ludicrous Voltage Turbo Charger
+gregtech.machine.charger.zpm.name=ZPM Voltage Turbo Charger
+gregtech.machine.charger.uv.name=Ultimate Voltage Turbo Charger
+gregtech.machine.charger.uhv.name=UHV Voltage Turbo Charger
+gregtech.machine.charger.uev.name=UEV Voltage Turbo Charger
+gregtech.machine.charger.uiv.name=UIV Voltage Turbo Charger
+gregtech.machine.charger.umv.name=UMV Voltage Turbo Charger
+gregtech.machine.charger.uxv.name=UXV Voltage Turbo Charger
+gregtech.machine.charger.max.name=MAX Voltage Turbo Charger
 
 gregtech.machine.energy_converter.ulv.1.name=ULV Energy Converter (1A)
 gregtech.machine.energy_converter.ulv.4.name=ULV Energy Converter (4A)
@@ -3485,6 +3500,7 @@ gregtech.machine.basic.input_from_output_side.disallow=Disallow Input from Outpu
 gregtech.machine.muffle.on=Sound Muffling: Enabled
 gregtech.machine.muffle.off=Sound Muffling: Disabled
 gregtech.machine.perfect_oc=Does not lose energy efficiency when overclocked.
+gregtech.machine.parallel_limit=Can run up to §b%d§r§7 Recipes at once.
 
 # Advancements
 gregtech.advancement.root_steam.name=Steam Age
@@ -3665,8 +3681,8 @@ gregtech.advancement.zero_point_module.71_neuro_processing_unit.name=Neuro Proce
 gregtech.advancement.zero_point_module.71_neuro_processing_unit.desc=Produce a Neuro Processing Unit.
 gregtech.advancement.zero_point_module.72_wetware_processor.name=Wetware Processor
 gregtech.advancement.zero_point_module.72_wetware_processor.desc=Get Wetware Processors.
-gregtech.advancement.zero_point_module.73_naquadah_alloy_coil.name=Over 9000!
-gregtech.advancement.zero_point_module.73_naquadah_alloy_coil.desc=Craft a Naquadah Alloy Heating Coil.
+gregtech.advancement.zero_point_module.73_trinium_coil.name=Over 9000!
+gregtech.advancement.zero_point_module.73_trinium_coil.desc=Craft a Trinium Heating Coil.
 gregtech.advancement.root_uv.name=Ultimate Voltage
 gregtech.advancement.root_uv.desc=Produce Tritanium.
 gregtech.advancement.ultimate_voltage.74_wetware_mainframe.name=Wetware Mainframe
@@ -3679,10 +3695,8 @@ gregtech.advancement.ultimate_voltage.77_ultimate_battery.name=What Now?
 gregtech.advancement.ultimate_voltage.77_ultimate_battery.desc=Craft an Ultimate Battery.
 gregtech.advancement.ultimate_voltage.78_hasoc_wafer.name=HASoC Wafer
 gregtech.advancement.ultimate_voltage.78_hasoc_wafer.desc=Produce an HASoC Wafer to make cheaper Master Circuits.
-gregtech.advancement.ultimate_voltage.79_fluxed_electrum_coil.name=The Formula is Too Long
-gregtech.advancement.ultimate_voltage.79_fluxed_electrum_coil.desc=Craft a Fluxed Electrum Heating Coil.
-gregtech.advancement.ultimate_voltage.80_diamericium_titanium_coil.name=The Final Coil
-gregtech.advancement.ultimate_voltage.80_diamericium_titanium_coil.desc=Craft a Diamericium Titanium Heating Coil.
+gregtech.advancement.ultimate_voltage.79_tritanium_coil.name=The Final Coil
+gregtech.advancement.ultimate_voltage.79_tritanium_coil.desc=Craft a Tritanium Heating Coil.
 
 
 behaviour.softhammer=Activates and Deactivates Machines
@@ -3718,12 +3732,17 @@ gregtech.machine.electric_blast_furnace.tooltip.3=For every voltage tier above �
 gregtech.machine.vacuum_freezer.name=Vacuum Freezer
 gregtech.machine.implosion_compressor.name=Implosion Compressor
 gregtech.machine.pyrolyse_oven.name=Pyrolyse Oven
+gregtech.machine.pyrolyse_oven.tooltip.1=§aCupronickel Coils§7 are §a25%%§7 slower. Every coil after §aKanthal§7 increases speed by §a50%%§7.
 gregtech.machine.distillation_tower.name=Distillation Tower
 gregtech.machine.multi_furnace.name=Multi Smelter
-gregtech.machine.cracker.name=Cracker Unit
+gregtech.machine.cracker.name=Cracking Unit
+gregtech.machine.cracker.tooltip.1=Every coil after §aCupronickel§7 reduces energy usage by §a5%%§7.
 gregtech.machine.coke_oven.name=Coke Oven
+gregtech.machine.processing_array.name=Processing Array
+gregtech.machine.advanced_processing_array.name=Advanced Processing Array
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
 gregtech.machine.coke_oven_hatch.tooltip=Allows automation access to coke oven. Must be centered on coke oven side.
+gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 
 
 
@@ -3759,8 +3778,6 @@ gregtech.machine.miner.multi.description=A multiblock mining machine that covers
 #Small ores lang: gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator. Small ore Fortune §b%d§7.
 gregtech.machine.miner.fluid_usage=Consumes §b%dmb§7 of §e%s§7 per tick. Each overclock doubles the fluid consumption.
 gregtech.machine.miner.overclock=Requires §e%s§7 power. Overclocks up to §e%s§7.
-
-gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
@@ -3863,23 +3880,19 @@ gregtech.machine.energy_hatch.input.umv.name=UMV Energy Hatch
 gregtech.machine.energy_hatch.input.uxv.name=UXV Energy Hatch
 gregtech.machine.energy_hatch.input.max.name=MAX Energy Hatch
 
-gregtech.machine.energy_hatch.adjustable.input.tooltip=Adjustable Ampere Energy Input for Multiblocks
+gregtech.machine.energy_hatch.input_hi_amp.tooltip=Multiple Ampere Energy Input for Multiblocks
 
-gregtech.machine.energy_hatch.adjustable.input.ulv.name=ULV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.lv.name=LV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.mv.name=MV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.hv.name=HV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.ev.name=EV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.iv.name=IV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.luv.name=LuV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.zpm.name=ZPM Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.uv.name=UV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.uhv.name=UHV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.uev.name=UEV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.uiv.name=UIV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.umv.name=UMV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.uxv.name=UXV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.max.name=MAX Adjustable Energy Hatch
+gregtech.machine.energy_hatch.input_4a.iv.name=IV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.luv.name=LuV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.zpm.name=ZPM 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.uv.name=UV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.uhv.name=UHV 4A Energy Hatch
+
+gregtech.machine.energy_hatch.input_16a.iv.name=IV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.luv.name=LuV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.zpm.name=ZPM 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.uv.name=UV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.uhv.name=UHV 16A Energy Hatch
 
 gregtech.machine.energy_hatch.output.tooltip=Energy Output for Multiblocks
 
@@ -3899,25 +3912,19 @@ gregtech.machine.energy_hatch.output.umv.name=UMV Dynamo Hatch
 gregtech.machine.energy_hatch.output.uxv.name=UXV Dynamo Hatch
 gregtech.machine.energy_hatch.output.max.name=MAX Dynamo Hatch
 
-gregtech.machine.energy_hatch.adjustable.output.tooltip=Adjustable Ampere Energy Output for Multiblocks
+gregtech.machine.energy_hatch.output_hi_amp.tooltip=Multiple Ampere Energy Output for Multiblocks
 
-gregtech.machine.energy_hatch.adjustable.output.ulv.name=ULV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.lv.name=LV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.mv.name=MV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.hv.name=HV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.ev.name=EV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.iv.name=IV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.luv.name=LuV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.zpm.name=ZPM Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.uv.name=UV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.uhv.name=UHV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.uev.name=UEV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.uiv.name=UIV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.umv.name=UMV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.uxv.name=UXV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.max.name=MAX Adjustable Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.iv.name=IV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.luv.name=LuV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.zpm.name=ZPM 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.uv.name=UV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.uhv.name=UHV 4A Dynamo Hatch
 
-gregtech.machine.energy_hatch_adjustable.message_adjust=Adjusted Amperage to %dA
+gregtech.machine.energy_hatch.output_16a.iv.name=IV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.luv.name=LuV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.zpm.name=ZPM 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.uv.name=UV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.uhv.name=UHV 16A Dynamo Hatch
 
 gregtech.machine.rotor_holder.tooltip1=Rotor Holder for Multiblocks
 gregtech.machine.rotor_holder.tooltip2=Holds Rotor in place so it will not fly away
@@ -3964,6 +3971,12 @@ gregtech.muffler.recovery_tooltip=Recovers Items §b%d%%§7 of the time!
 
 gregtech.machine.pump_hatch.name=Pump Output Hatch
 gregtech.machine.pump_hatch.tooltip=Primitive Fluid Output for Water Pump
+
+gregtech.machine.machine_hatch.name=Machine Access Interface
+gregtech.machine.machine_hatch.locked=Machine Interface Locked
+gregtech.machine.machine_hatch.tooltip=Specialized Access Bus that only holds valid items
+gregtech.machine.machine_hatch.processing_array=When in the §eProcessing Array§7, only holds machines that work in the §eProcessing Array
+
 
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
@@ -4149,6 +4162,10 @@ gregtech.multiblock.large_miner.radius=Radius: %d Blocks
 gregtech.multiblock.large_miner.errorradius=Cannot change radius while working!
 gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
 
+gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
+
+gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
+
 gregtech.command.usage=Usage: /gregtech <worldgen/util>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload
@@ -4197,6 +4214,12 @@ gregtech.cover.fluid_detector.message_fluid_storage_inverted=Monitoring Inverted
 
 gregtech.cover.item_detector.message_item_storage_normal=Monitoring Normal Item Storage
 gregtech.cover.item_detector.message_item_storage_inverted=Monitoring Inverted Item Storage
+
+gregtech.cover.activity_detector.message_activity_normal=Monitoring Normal Activity Status
+gregtech.cover.activity_detector.message_activity_inverted=Monitoring Inverted Activity Status
+
+gregtech.cover.activity_detector_advanced.message_activity_normal=Monitoring Normal Progress Status
+gregtech.cover.activity_detector_advanced.message_activity_inverted=Monitoring Inverted Progress Status
 
 gregtech.terminal.app_name.items=Item Guides
 gregtech.terminal.app_name.machines=Machine Guides

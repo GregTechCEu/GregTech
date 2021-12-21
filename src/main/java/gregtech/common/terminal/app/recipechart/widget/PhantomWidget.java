@@ -43,7 +43,12 @@ public class PhantomWidget extends WidgetGroup implements IGhostIngredientTarget
             }
         }, true).setBackgroundTexture(TerminalTheme.COLOR_B_2).showTip(true)
         .setFluidStackSupplier(() -> fluidStack,true);
-        slotWidget = new PhantomSlotWidget(itemHandler, 0, 0, 0);
+        slotWidget = new PhantomSlotWidget(itemHandler, 0, 0, 0) {
+            @Override
+            public boolean isEnabled() {
+                return isActive();
+            }
+        };
         slotWidget.setChangeListener(()-> {
             if (!itemHandler.getStackInSlot(0).isEmpty()) {
                 fluidStack = null;

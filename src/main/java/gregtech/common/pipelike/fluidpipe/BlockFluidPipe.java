@@ -2,7 +2,6 @@ package gregtech.common.pipelike.fluidpipe;
 
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
-import gregtech.api.cover.CoverBehavior;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tickable.TickableWorldPipeNetEventHandler;
@@ -102,7 +101,8 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         super.updateTick(worldIn, pos, state, rand);
         TileEntityFluidPipe pipeTile = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
         if (pipeTile != null && !worldIn.isRemote) {
-            pipeTile.getFluidPipeNet().markDirty(pos);
+            FluidPipeNet net = pipeTile.getFluidPipeNet();
+            net.invalidateNetCapacity();
         }
     }
 
@@ -179,7 +179,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
                 }
             }
         }
-        net.invalidateNetCapacity();
+        if (net != null) net.invalidateNetCapacity();
         nets.forEach(FluidPipeNet::invalidateNetCapacity);
     }
 
@@ -268,8 +268,15 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         boolean r = super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
         if (!worldIn.isRemote && oldConnections != pipe.getOpenConnections()) {
             FluidPipeNet net = getWorldPipeNet(worldIn).getNetFromPos(pos);
-            if (net != null)
-                net.markDirty(pos);
+            if (net != null) {
+                net.invalidateNetCapacity();
+                for(FluidTank tank : pipe.getTankList()) {
+                    FluidStack fluid = tank.getFluid();
+                    if(fluid == null || fluid.amount <= 0)
+                        continue;
+                    net.markDirty(tank.getFluid(), pos);
+                }
+            }
         }
         return r;
     }
@@ -277,28 +284,6 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     @Override
     public TileEntityPipeBase<FluidPipeType, FluidPipeProperties> createNewTileEntity(boolean supportsTicking) {
         return supportsTicking ? new TileEntityFluidPipeTickable() : new TileEntityFluidPipe();
-    }
-
-    @Override
-    public int getVisualConnections(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile) {
-        int connections = selfTile.getOpenConnections();
-        float selfTHICCness = selfTile.getPipeType().getThickness();
-        for (EnumFacing facing : EnumFacing.values()) {
-            CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
-            if (cover != null) {
-                // adds side to open connections of it isn't already open & has a cover
-                connections |= 1 << facing.getIndex();
-                continue;
-            }
-            // check if neighbour is a smaller item pipe
-            TileEntity neighbourTile = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
-            if (neighbourTile instanceof TileEntityFluidPipe &&
-                    ((TileEntityFluidPipe) neighbourTile).isConnectionOpenAny(facing.getOpposite()) &&
-                    ((TileEntityFluidPipe) neighbourTile).getPipeType().getThickness() < selfTHICCness) {
-                connections |= 1 << (facing.getIndex() + 6);
-            }
-        }
-        return connections;
     }
 
     @Override

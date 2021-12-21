@@ -12,7 +12,7 @@ public interface IFastRenderMetaTileEntity {
     int RENDER_PASS_TRANSLUCENT = 1;
 
     @SideOnly(Side.CLIENT)
-    default void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {};
+    default void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {}
 
     @SideOnly(Side.CLIENT)
     default void renderMetaTileEntity(double x, double y, double z, float partialTicks) {

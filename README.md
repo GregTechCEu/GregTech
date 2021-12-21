@@ -47,3 +47,5 @@ Anything else? Sure come to [Discord](https://discord.gg/7FJM6fVjR5).
 
 ## Credited Works
 Heating Coil Textures are from the **[GregTech: New Horizons Modpack](https://www.curseforge.com/minecraft/modpacks/gt-new-horizons)**.
+
+Primitive Water Pump is from the **[Impact: GregTech Edition Modpack](https://gtimpact.space/)**.

@@ -1,6 +1,8 @@
 package gregtech.api.unification.material.info;
 
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.util.GTLog;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,31 +10,37 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-// TODO Make this not take an explicit ID and Name
 public class MaterialFlag {
 
     private static final Set<MaterialFlag> FLAG_REGISTRY = new HashSet<>();
 
-    private final int id;
     private final String name;
 
     private final Set<MaterialFlag> requiredFlags;
+    private final Set<PropertyKey<?>> requiredProperties;
 
-    private MaterialFlag(int id, String name, Set<MaterialFlag> requiredFlags) {
-        this.id = id;
+    private MaterialFlag(String name, Set<MaterialFlag> requiredFlags, Set<PropertyKey<?>> requiredProperties) {
         this.name = name;
         this.requiredFlags = requiredFlags;
+        this.requiredProperties = requiredProperties;
         FLAG_REGISTRY.add(this);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof MaterialFlag)
-            return ((MaterialFlag) o).id == this.id;
+        if (o instanceof MaterialFlag) {
+            return ((MaterialFlag) o).name.equals(this.name);
+        }
         return false;
     }
 
     protected Set<MaterialFlag> verifyFlag(Material material) {
+        requiredProperties.forEach(key -> {
+            if (!material.hasProperty(key)) {
+                GTLog.logger.warn("Material {} does not have required property {} for flag {}!", material.getUnlocalizedName(), key.toString(), this.name);
+            }
+        });
+
         Set<MaterialFlag> thisAndDependencies = new HashSet<>(requiredFlags);
         thisAndDependencies.addAll(requiredFlags.stream()
                 .map(f -> f.verifyFlag(material))
@@ -53,13 +61,12 @@ public class MaterialFlag {
 
     public static class Builder {
 
-        final int id;
         final String name;
 
         final Set<MaterialFlag> requiredFlags = new HashSet<>();
+        final Set<PropertyKey<?>> requiredProperties = new HashSet<>();
 
-        public Builder(int id, String name) {
-            this.id = id;
+        public Builder(String name) {
             this.name = name;
         }
 
@@ -68,8 +75,13 @@ public class MaterialFlag {
             return this;
         }
 
+        public Builder requireProps(PropertyKey<?>... propertyKeys) {
+            requiredProperties.addAll(Arrays.asList(propertyKeys));
+            return this;
+        }
+
         public MaterialFlag build() {
-            return new MaterialFlag(id, name, requiredFlags);
+            return new MaterialFlag(name, requiredFlags, requiredProperties);
         }
     }
 }

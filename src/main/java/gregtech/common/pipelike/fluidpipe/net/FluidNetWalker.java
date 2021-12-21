@@ -29,10 +29,10 @@ public class FluidNetWalker extends PipeNetWalker {
         return walker.fluids;
     }
 
-    public static List<TileEntityFluidPipe> getPipesForFluid(World world, BlockPos pos, FluidStack fluid) {
-        FluidNetWalker walker = new FluidNetWalker(Mode.GET_PIPES, world, pos, 1, fluid);
+    public static FluidNetWalker getPipesForFluid(World world, BlockPos pos, FluidStack fluid, boolean countFluid) {
+        FluidNetWalker walker = new FluidNetWalker(countFluid ? Mode.GET_PIPES_AND_COUNT : Mode.GET_PIPES, world, pos, 1, fluid);
         walker.traversePipeNet();
-        return walker.pipes;
+        return walker;
     }
 
     public static long getTotalCapacity(World world, BlockPos pos) {
@@ -97,21 +97,31 @@ public class FluidNetWalker extends PipeNetWalker {
             case GET_PIPES:
                 pipes.add(pipe);
                 break;
+            case GET_PIPES_AND_COUNT:
+                pipes.add(pipe);
+                FluidStack stack = pipe.getContainedFluid(pipe.findChannel(fluid));
+                if (stack != null)
+                    count += stack.amount;
+                break;
             default: { // Mode.COUNT
-                main:
-                for (FluidTank tank : pipe.getFluidTanks()) {
-                    FluidStack stack = tank.getFluid();
-                    if (stack != null && stack.amount > 0) {
-                        for (FluidStack stack1 : fluids) {
-                            if (stack1.isFluidEqual(stack)) {
-                                stack1.amount += stack.amount;
-                                continue main;
-                            }
-                        }
-                        fluids.add(stack.copy());
+                countFluids(pipe);
+                break;
+            }
+        }
+    }
+
+    private void countFluids(TileEntityFluidPipe pipe) {
+        main:
+        for (FluidTank tank : pipe.getFluidTanks()) {
+            FluidStack stack = tank.getFluid();
+            if (stack != null && stack.amount > 0) {
+                for (FluidStack stack1 : fluids) {
+                    if (stack1.isFluidEqual(stack)) {
+                        stack1.amount += stack.amount;
+                        continue main;
                     }
                 }
-                break;
+                fluids.add(stack.copy());
             }
         }
     }
@@ -126,6 +136,9 @@ public class FluidNetWalker extends PipeNetWalker {
             return false;
         if (ignoreFilter)
             return true;
+        if(((TileEntityFluidPipe) neighbourPipe).findChannel(fluid) < 0) {
+            return false;
+        }
         ICoverable coverable = currentPipe.getCoverableImplementation();
         CoverBehavior cover = coverable.getCoverAtSide(faceToNeighbour);
         if (cover instanceof CoverFluidFilter) {
@@ -148,7 +161,11 @@ public class FluidNetWalker extends PipeNetWalker {
         return pipes;
     }
 
+    public FluidStack getFluid() {
+        return fluid;
+    }
+
     enum Mode {
-        COUNT, GET_PIPES, COUNT_CAPACITY, SPACE
+        COUNT, GET_PIPES, COUNT_CAPACITY, SPACE, GET_PIPES_AND_COUNT
     }
 }

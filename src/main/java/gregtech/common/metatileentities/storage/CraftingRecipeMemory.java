@@ -31,7 +31,7 @@ public class CraftingRecipeMemory {
     public void loadRecipe(int index, IItemHandlerModifiable craftingGrid) {
         MemorizedRecipe recipe = memorizedRecipes[index];
         if (recipe != null) {
-            copyInventoryItems(recipe.craftingMatrix, craftingGrid);
+            copyInventoryItems(recipe.craftingMatrix, craftingGrid, true);
         }
     }
 
@@ -138,7 +138,7 @@ public class CraftingRecipeMemory {
         private void updateCraftingMatrix(IItemHandler craftingGrid) {
             //do not modify crafting grid for locked recipes
             if (!recipeLocked) {
-                copyInventoryItems(craftingGrid, craftingMatrix);
+                copyInventoryItems(craftingGrid, craftingMatrix, true);
             }
         }
 

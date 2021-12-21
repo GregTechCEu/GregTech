@@ -20,7 +20,7 @@
       "type": "weight_random",
       "values": [
         {
-          "weight": 50,
+          "weight": 45,
           "value": "ore:galena"
         },
         {
@@ -30,6 +30,10 @@
         {
           "weight": 25,
           "value": "ore:lead"
+        },
+        {
+          "weight": 5,
+          "value": "ore:realgar"
         }
       ]
     }

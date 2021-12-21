@@ -2,7 +2,7 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IHeatingCoil;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 
 import javax.annotation.Nonnull;
@@ -18,10 +18,14 @@ public class HeatingCoilRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
-        return heatingCoilOverclockingLogic(recipe.getEUt(), getMaxVoltage(), recipe.getDuration(), maxOverclocks,
+    protected int[] overclockRecipe(@Nonnull RecipePropertyStorage propertyStorage, int recipeEUt, boolean negativeEU, long maxVoltage, int duration, int maxOverclocks) {
+        return heatingCoilOverclockingLogic(recipeEUt * (negativeEU ? -1 : 1),
+                maxVoltage,
+                duration,
+                maxOverclocks,
                 ((IHeatingCoil) metaTileEntity).getCurrentTemperature(),
-                recipe.getProperty(TemperatureProperty.getInstance(), 0));
+                propertyStorage.getRecipePropertyValue(TemperatureProperty.getInstance(), 0)
+        );
     }
 
     @Nonnull

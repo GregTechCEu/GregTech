@@ -2,13 +2,11 @@ package gregtech.loaders;
 
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
-import gregtech.common.blocks.BlockWireCoil2.CoilType2;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
@@ -51,20 +49,15 @@ public class MaterialInfoLoader {
                         new MaterialStack(Materials.Osmium, OrePrefix.foil.materialAmount * 8),
                         new MaterialStack(Materials.TungstenSteel, OrePrefix.ingot.materialAmount))
         );
-        OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.NAQUADAH_ALLOY),
-                new ItemMaterialInfo(new MaterialStack(Materials.NaquadahAlloy, OrePrefix.wireGtDouble.materialAmount * 8),
-                        new MaterialStack(Materials.Osmiridium, OrePrefix.foil.materialAmount * 8),
+        OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.TRINIUM),
+                new ItemMaterialInfo(new MaterialStack(Materials.Trinium, OrePrefix.wireGtDouble.materialAmount * 8),
+                        new MaterialStack(Materials.NaquadahEnriched, OrePrefix.foil.materialAmount * 8),
                         new MaterialStack(Materials.Naquadah, OrePrefix.ingot.materialAmount))
         );
-        OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.FLUXED_ELECTRUM),
-                new ItemMaterialInfo(new MaterialStack(Materials.FluxedElectrum, OrePrefix.wireGtDouble.materialAmount * 8),
+        OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.TRITANIUM),
+                new ItemMaterialInfo(new MaterialStack(Materials.Tritanium, OrePrefix.wireGtDouble.materialAmount * 8),
                         new MaterialStack(Materials.Naquadria, OrePrefix.foil.materialAmount * 8),
-                        new MaterialStack(Materials.NaquadahAlloy, OrePrefix.ingot.materialAmount))
-        );
-        OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL2.getItemVariant(CoilType2.DIAMERICIUM_TITANIUM),
-                new ItemMaterialInfo(new MaterialStack(Materials.DiamericiumTitanium, OrePrefix.wireGtDouble.materialAmount * 8),
-                        new MaterialStack(Materials.Trinium, OrePrefix.foil.materialAmount * 8),
-                        new MaterialStack(Materials.Neutronium, OrePrefix.ingot.materialAmount))
+                        new MaterialStack(Materials.Trinium, OrePrefix.ingot.materialAmount))
         );
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[0].getStackForm(), new ItemMaterialInfo(
@@ -99,17 +92,17 @@ public class MaterialInfoLoader {
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[6].getStackForm(), new ItemMaterialInfo(
                 new MaterialStack(Materials.RhodiumPlatedPalladium, OrePrefix.plate.materialAmount * 8),
-                new MaterialStack(Materials.VanadiumGallium, OrePrefix.cableGtSingle.materialAmount * 2),
+                new MaterialStack(Materials.NiobiumTitanium, OrePrefix.cableGtSingle.materialAmount * 2),
                 new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[7].getStackForm(), new ItemMaterialInfo(
                 new MaterialStack(Materials.NaquadahAlloy, OrePrefix.plate.materialAmount * 8),
-                new MaterialStack(Materials.Naquadah, OrePrefix.cableGtSingle.materialAmount * 2),
+                new MaterialStack(Materials.VanadiumGallium, OrePrefix.cableGtSingle.materialAmount * 2),
                 new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[8].getStackForm(), new ItemMaterialInfo(
                 new MaterialStack(Materials.Livermorium, OrePrefix.plate.materialAmount * 8),
-                new MaterialStack(Materials.NaquadahAlloy, OrePrefix.cableGtSingle.materialAmount * 2),
+                new MaterialStack(Materials.YttriumBariumCuprate, OrePrefix.cableGtSingle.materialAmount * 2),
                 new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[9].getStackForm(), new ItemMaterialInfo(

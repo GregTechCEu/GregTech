@@ -178,7 +178,7 @@ public class FakeModularGui implements IRenderContext {
             GlStateManager.pushMatrix();
             GlStateManager.color(1.0f, 1.0f, 1.0f);
             GlStateManager.enableBlend();
-            widget.drawInBackground(mouseX, mouseY, this);
+            widget.drawInBackground(mouseX, mouseY, partialTicks, this);
             GlStateManager.popMatrix();
         }
     }

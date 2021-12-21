@@ -455,7 +455,7 @@ public class FirstDegreeMaterials {
         Ruridit = new Material.Builder(310, "ruridit")
                 .ingot(3)
                 .colorAverage().iconSet(BRIGHT)
-                .flags(GENERATE_FINE_WIRE, GENERATE_GEAR)
+                .flags(GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_LONG_ROD)
                 .components(Ruthenium, 2, Iridium, 1)
                 .blastTemp(4500, GasTier.HIGH, VA[EV], 1600)
                 .build();
@@ -504,16 +504,7 @@ public class FirstDegreeMaterials {
                 .components(Aluminium, 3, Silicon, 3, Sodium, 4, Chlorine, 1)
                 .build();
 
-        DiamericiumTitanium = new Material.Builder(317, "diamericium_titanium")
-                .ingot(4).fluid()
-                .color(0x755280).iconSet(METALLIC)
-                .flags(GENERATE_FOIL)
-                .components(Americium, 2, Titanium, 1)
-                .toolStats(6.0f, 6.0f, 2200, 21)
-                .itemPipeProperties(32, 128)
-                .cableProperties(GTValues.V[10], 8, 16)
-                .blastTemp(10400, GasTier.HIGHER, VA[UV], 1600)
-                .build();
+        // FREE ID 317
 
         Tantalite = new Material.Builder(318, "tantalite")
                 .dust(3).ore(2, 1)
@@ -725,7 +716,7 @@ public class FirstDegreeMaterials {
         Osmiridium = new Material.Builder(344, "osmiridium")
                 .ingot(3).fluid()
                 .color(0x6464FF).iconSet(METALLIC)
-                .flags(EXT2_METAL)
+                .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_ROTOR)
                 .components(Iridium, 3, Osmium, 1)
                 .toolStats(9.0f, 3.0f, 3152, 21)
                 .itemPipeProperties(64, 32)
@@ -797,7 +788,7 @@ public class FirstDegreeMaterials {
         SiliconDioxide = new Material.Builder(356, "silicon_dioxide")
                 .dust(1)
                 .color(0xC8C8C8).iconSet(QUARTZ)
-                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE)
+                .flags(NO_SMASHING, NO_SMELTING)
                 .components(Silicon, 1, Oxygen, 2)
                 .build();
 
@@ -853,7 +844,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Realgar = new Material.Builder(365, "realgar")
-                .gem()
+                .gem().ore()
                 .color(0x9D2123).iconSet(EMERALD)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Arsenic, 4, Sulfur, 4)
@@ -1074,7 +1065,6 @@ public class FirstDegreeMaterials {
 
         HydrogenSulfide = new Material.Builder(400, "hydrogen_sulfide")
                 .fluid(Material.FluidType.GAS)
-                .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Sulfur, 1)
                 .build();
 
@@ -1213,7 +1203,7 @@ public class FirstDegreeMaterials {
 
         DistilledWater = new Material.Builder(421, "distilled_water")
                 .fluid()
-                .color(0xEEEEFF)
+                .color(0x4A94FF)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();
@@ -1228,7 +1218,7 @@ public class FirstDegreeMaterials {
         SamariumMagnetic = new Material.Builder(423, "samarium_magnetic")
                 .ingot()
                 .color(0xFFFFCD).iconSet(MAGNETIC)
-                .flags(GENERATE_LONG_ROD)
+                .flags(STD_METAL, GENERATE_LONG_ROD)
                 .components(Samarium, 1)
                 .ingotSmeltInto(Samarium)
                 .arcSmeltInto(Samarium)

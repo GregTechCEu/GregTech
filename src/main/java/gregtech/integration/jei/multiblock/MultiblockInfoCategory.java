@@ -70,7 +70,7 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, MultiblockInfoRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
+    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, MultiblockInfoRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
         recipeWrapper.setRecipeLayout((RecipeLayout) recipeLayout, this.guiHelper);
     }
 }

@@ -1,29 +1,18 @@
 package gregtech.api.worldgen.config;
 
 import com.google.gson.JsonObject;
-import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.minecraft.CraftTweakerMC;
-import crafttweaker.api.world.IBiome;
-import gregtech.api.GTValues;
 import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.Optional;
-import org.apache.commons.lang3.ArrayUtils;
-import stanhebben.zenscript.annotations.ZenClass;
-import stanhebben.zenscript.annotations.ZenGetter;
-import stanhebben.zenscript.annotations.ZenMethod;
 
+import javax.annotation.Nonnull;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-@ZenClass("mods.gregtech.ore.BedrockFluidDepositDefinition")
-@ZenRegister
-public class BedrockFluidDepositDefinition { //todo re-balance depletion rates of default veins
+public class BedrockFluidDepositDefinition implements IWorldgenDefinition { //todo re-balance depletion rates of default veins
 
     private final String depositName;
 
@@ -44,7 +33,8 @@ public class BedrockFluidDepositDefinition { //todo re-balance depletion rates o
         this.depositName = depositName;
     }
 
-    public boolean initializeFromConfig(JsonObject configRoot) {
+    @Override
+    public boolean initializeFromConfig(@Nonnull JsonObject configRoot) {
         // the weight value for determining which vein will appear
         this.weight = configRoot.get("weight").getAsInt();
         // the [minimum, maximum) production rate of the vein
@@ -88,57 +78,47 @@ public class BedrockFluidDepositDefinition { //todo re-balance depletion rates o
     }
 
     //This is the file name
-    @ZenGetter("depositName")
+    @Override
     public String getDepositName() {
         return depositName;
     }
 
-    @ZenGetter("assignedName")
     public String getAssignedName() {
         return assignedName;
     }
 
-    @ZenGetter("description")
     public String getDescription() {
         return description;
     }
 
-    @ZenGetter("weight")
     public int getWeight() {
         return weight;
     }
 
-    @ZenMethod
     public int[] getProductionRates() {
         return productionRates;
     }
 
-    @ZenGetter("minimumProduction")
     public int getMinimumProductionRate() {
         return productionRates[0];
     }
 
-    @ZenGetter("maximumProduction")
     public int getMaximumProductionRate() {
         return productionRates[1];
     }
 
-    @ZenGetter
     public int getDepletionAmount() {
         return depletionAmount;
     }
 
-    @ZenGetter
     public int getDepletionChance() {
         return depletionChance;
     }
 
-    @ZenGetter
     public int getDepletedProductionRate() {
         return depletedProductionRate;
     }
 
-    @ZenGetter
     public Fluid getStoredFluid() {
         return storedFluid;
     }
@@ -149,21 +129,6 @@ public class BedrockFluidDepositDefinition { //todo re-balance depletion rates o
 
     public Predicate<WorldProvider> getDimensionFilter() {
         return dimensionFilter;
-    }
-
-    @ZenMethod("getBiomeWeightModifier")
-    @Optional.Method(modid = GTValues.MODID_CT)
-    public int ctGetBiomeWeightModifier(IBiome biome) {
-        int biomeIndex = ArrayUtils.indexOf(CraftTweakerMC.biomes, biome);
-        Biome mcBiome = Biome.REGISTRY.getObjectById(biomeIndex);
-        return mcBiome == null ? 0 : getBiomeWeightModifier().apply(mcBiome);
-    }
-
-    @ZenMethod("checkDimension")
-    @Optional.Method(modid = GTValues.MODID_CT)
-    public boolean ctCheckDimension(int dimensionId) {
-        WorldProvider worldProvider = DimensionManager.getProvider(dimensionId);
-        return worldProvider != null && getDimensionFilter().test(worldProvider);
     }
 
     @Override
@@ -184,15 +149,23 @@ public class BedrockFluidDepositDefinition { //todo re-balance depletion rates o
             return false;
         if (!this.storedFluid.equals(objDeposit.getStoredFluid()))
             return false;
-        if (!this.assignedName.equals(objDeposit.getAssignedName()))
+        if ((this.assignedName == null && objDeposit.getAssignedName() != null) ||
+                (this.assignedName != null && objDeposit.getAssignedName() == null) ||
+                (this.assignedName != null && objDeposit.getAssignedName() != null && !this.assignedName.equals(objDeposit.getAssignedName())))
             return false;
-        if (!this.description.equals(objDeposit.getDescription()))
+        if ((this.description == null && objDeposit.getDescription() != null) ||
+                (this.description != null && objDeposit.getDescription() == null) ||
+                (this.description != null && objDeposit.getDescription() != null && !this.description.equals(objDeposit.getDescription())))
             return false;
         if (this.depletedProductionRate != objDeposit.getDepletedProductionRate())
             return false;
-        if (!this.biomeWeightModifier.equals(objDeposit.getBiomeWeightModifier()))
+        if ((this.biomeWeightModifier == null && objDeposit.getBiomeWeightModifier() != null) ||
+                (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() == null) ||
+                (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() != null && !this.biomeWeightModifier.equals(objDeposit.getBiomeWeightModifier())))
             return false;
-        if (!this.dimensionFilter.equals(objDeposit.getDimensionFilter()))
+        if ((this.dimensionFilter == null && objDeposit.getDimensionFilter() != null) ||
+                (this.dimensionFilter != null && objDeposit.getDimensionFilter() == null) ||
+                (this.dimensionFilter != null && objDeposit.getDimensionFilter() != null && !this.dimensionFilter.equals(objDeposit.getDimensionFilter())))
             return false;
 
         return super.equals(obj);

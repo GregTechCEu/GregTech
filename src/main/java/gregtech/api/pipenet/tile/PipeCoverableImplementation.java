@@ -72,8 +72,10 @@ public class PipeCoverableImplementation implements ICoverable {
             buffer.writeVarInt(CoverDefinition.getNetworkIdForCover(coverDefinition));
             coverBehavior.writeInitialSyncData(buffer);
         });
-        holder.setConnectionBlocked(AttachmentType.COVER, side, false, false);
-        if (!coverBehavior.canPipePassThrough()) {
+        if(coverBehavior.shouldRenderConnected()) {
+            holder.setConnectionBlocked(AttachmentType.COVER, side, false, false);
+        }
+        if (!coverBehavior.canPipePassThrough() && holder.isConnectionOpen(AttachmentType.PIPE, side)) {
             holder.setConnectionBlocked(AttachmentType.PIPE, side, true, false);
         }
         holder.notifyBlockUpdate();
@@ -81,7 +83,6 @@ public class PipeCoverableImplementation implements ICoverable {
         return true;
     }
 
-    @SuppressWarnings("unchecked")
     public final boolean removeCover(EnumFacing side) {
         Preconditions.checkNotNull(side, "side");
         CoverBehavior coverBehavior = getCoverAtSide(side);
@@ -95,9 +96,9 @@ public class PipeCoverableImplementation implements ICoverable {
             Block.spawnAsEntity(getWorld(), getPos(), dropStack);
         }
         writeCustomData(COVER_REMOVED_PIPE, buffer -> buffer.writeByte(side.getIndex()));
-        BlockPipe blockPipe = holder.getPipeBlock();
-        holder.setConnectionBlocked(AttachmentType.COVER, side, true, false);
-        holder.setConnectionBlocked(AttachmentType.PIPE, side, !blockPipe.canConnect(holder, side), false);
+        if(coverBehavior.shouldRenderConnected()) {
+            holder.setConnectionBlocked(AttachmentType.COVER, side, true, false);
+        }
         holder.notifyBlockUpdate();
         holder.markAsDirty();
         return true;

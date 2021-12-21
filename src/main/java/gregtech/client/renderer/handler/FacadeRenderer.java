@@ -61,8 +61,8 @@ public class FacadeRenderer implements IItemRenderer {
     private final static float FACADE_RENDER_OFFSET = 2.0f / 512.0f;
     private final static float FACADE_RENDER_OFFSET2 = 1 - FACADE_RENDER_OFFSET;
 
-    private static final ThreadLocal<VertexLighterFlat> lighterFlat = ThreadLocal.withInitial(() -> new VertexLighterFlat(Minecraft.getMinecraft().getBlockColors()));
-    private static final ThreadLocal<VertexLighterFlat> lighterSmooth = ThreadLocal.withInitial(() -> new VertexLighterSmoothAo(Minecraft.getMinecraft().getBlockColors()));
+    public static final ThreadLocal<VertexLighterFlat> lighterFlat = ThreadLocal.withInitial(() -> new VertexLighterFlat(Minecraft.getMinecraft().getBlockColors()));
+    public static final ThreadLocal<VertexLighterFlat> lighterSmooth = ThreadLocal.withInitial(() -> new VertexLighterSmoothAo(Minecraft.getMinecraft().getBlockColors()));
 
     public static final Cache<String, List<CCQuad>> itemQuadCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
 
@@ -195,7 +195,7 @@ public class FacadeRenderer implements IItemRenderer {
     }
 
 
-    private static VertexLighterFlat setupLighter(CCRenderState ccrs, Matrix4 translation, IBlockState state, IBlockAccess access, BlockPos pos, IBakedModel model) {
+    public static VertexLighterFlat setupLighter(CCRenderState ccrs, Matrix4 translation, IBlockState state, IBlockAccess access, BlockPos pos, IBakedModel model) {
         boolean renderAO = Minecraft.isAmbientOcclusionEnabled() && state.getLightValue(access, pos) == 0 && model.isAmbientOcclusion();
         VertexLighterFlat lighter = renderAO ? lighterSmooth.get() : lighterFlat.get();
 

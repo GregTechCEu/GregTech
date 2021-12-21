@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
-import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
@@ -9,18 +8,19 @@ import net.minecraftforge.fluids.capability.FluidTankPropertiesWrapper;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Iterator;
 
-public class PipeTankList implements IFluidHandler {
+public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
 
-    private final EnumFacing facing;
     private final TileEntityFluidPipe pipe;
     private final FluidTank[] tanks;
     private IFluidTankProperties[] properties;
 
-    public PipeTankList(TileEntityFluidPipe pipe, EnumFacing facing, FluidTank... fluidTanks) {
+    public PipeTankList(TileEntityFluidPipe pipe, FluidTank... fluidTanks) {
         this.tanks = fluidTanks;
-        this.facing = facing;
         this.pipe = pipe;
     }
 
@@ -36,7 +36,7 @@ public class PipeTankList implements IFluidHandler {
     }
 
     private int findChannel(FluidStack stack) {
-        if (stack == null)
+        if (stack == null || tanks == null)
             return -1;
         int empty = -1;
         for (int i = tanks.length - 1; i >= 0; i--) {
@@ -56,33 +56,44 @@ public class PipeTankList implements IFluidHandler {
             return 0;
         FluidTank tank = tanks[channel];
         int space = tank.getCapacity() - (tank.getFluid() == null ? 0 : tank.getFluid().amount);
-        int max = Math.min(resource.amount, space);
-        if (max < tank.getCapacity() / 2) {
-            max = (int) FluidNetWalker.getSpaceFor(pipe.getWorld(), pipe.getPos(), resource, resource.amount);
-            if (max <= 0)
-                return 0;
-        }
-
         FluidStack copy = resource.copy();
-        copy.amount = max;
-        pipe.didInsertFrom(facing);
+        if (resource.amount <= space) {
+            copy.amount = resource.amount;
+        } else if (space < tank.getCapacity() / 2) {
+            space = (int) FluidNetWalker.getSpaceFor(pipe.getWorld(), pipe.getPos(), resource, resource.amount);
+            if (space <= 0)
+                return 0;
+            copy.amount = space;
+        } else {
+            copy.amount = space;
+        }
         return pipe.getFluidPipeNet().fill(copy, pipe.getPos(), doFill);
     }
 
     @Nullable
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain) {
-        GTLog.logger.warn("Don't use drain(int, bool) on Fluid pipes");
         return null;
     }
 
     @Nullable
-    @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain) {
+    public FluidStack drainInternal(FluidStack resource, boolean doDrain) {
         if (resource == null || resource.amount <= 0)
             return null;
         FluidStack drained = resource.copy();
         drained.amount = pipe.getFluidPipeNet().drain(resource, pipe.getPos(), false, doDrain);
         return drained;
+    }
+
+    @Nullable
+    @Override
+    public FluidStack drain(FluidStack fluidStack, boolean b) {
+        return null;
+    }
+
+    @Override
+    @Nonnull
+    public Iterator<FluidTank> iterator() {
+        return Arrays.stream(tanks).iterator();
     }
 }

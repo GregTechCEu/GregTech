@@ -251,7 +251,6 @@ public class OrePrefix {
 
     static {
         ingotHot.heatDamage = 3.0F;
-        ingotHot.maxStackSize = 16;
         gemFlawless.maxStackSize = 32;
         gemExquisite.maxStackSize = 16;
 
@@ -503,7 +502,7 @@ public class OrePrefix {
 
     public <T extends IMaterialProperty<T>> void addProcessingHandler(PropertyKey<T> propertyKey, TriConsumer<OrePrefix, Material, T> handler) {
         addProcessingHandler((orePrefix, material) -> {
-            if (material.hasProperty(propertyKey)) {
+            if (material.hasProperty(propertyKey) && !material.hasFlag(NO_UNIFICATION)) {
                 handler.accept(orePrefix, material, material.getProperty(propertyKey));
             }
         });

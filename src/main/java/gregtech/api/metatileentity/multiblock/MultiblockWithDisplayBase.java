@@ -228,10 +228,9 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     @Override
     public void invalidateStructure() {
         if (hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) { // nothing extra if no maintenance
-            if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
-                return;
-            getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0)
-                    .storeMaintenanceData(maintenance_problems, timeActive);
+            if (!getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
+                getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0)
+                        .storeMaintenanceData(maintenance_problems, timeActive);
         }
         super.invalidateStructure();
     }

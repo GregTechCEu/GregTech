@@ -56,7 +56,11 @@ public class EnergyNetHandler implements IEnergyContainer {
             IEnergyContainer dest = path.getHandler(cable.getWorld());
             EnumFacing facing = path.getFaceToHandler().getOpposite();
             if (dest == null || !dest.inputsEnergy(facing) || dest.getEnergyCanBeInserted() <= 0) continue;
-            long amps = dest.acceptEnergyFromNetwork(facing, voltage - path.getMaxLoss(), amperage - amperesUsed);
+            long v = voltage - path.getMaxLoss();
+            long amps = 0;
+            if (v > 0) {
+                amps = dest.acceptEnergyFromNetwork(facing, v, amperage - amperesUsed);
+            }
             amperesUsed += amps;
             boolean didBurn = false;
 
@@ -72,9 +76,13 @@ public class EnergyNetHandler implements IEnergyContainer {
                     burnCable(cable.getWorld(), cable.getPos());
                 }
             }
-            if(didBurn) break;
-            for(TileEntityCable cable : path.getPath()) {
-                cable.incrementAmperage(amps, voltage);
+            if (didBurn) break;
+            long voltageTraveled = voltage;
+            for (TileEntityCable cable : path.getPath()) {
+                voltageTraveled -= cable.getNodeData().getLossPerBlock();
+                if(voltageTraveled <= 0)
+                    break;
+                cable.incrementAmperage(amps, voltageTraveled);
             }
 
             if (amperage == amperesUsed)
@@ -95,12 +103,12 @@ public class EnergyNetHandler implements IEnergyContainer {
 
     @Override
     public long getInputAmperage() {
-        return cable.getNodeData().amperage;
+        return cable.getNodeData().getAmperage();
     }
 
     @Override
     public long getInputVoltage() {
-        return cable.getNodeData().voltage;
+        return cable.getNodeData().getVoltage();
     }
 
     @Override

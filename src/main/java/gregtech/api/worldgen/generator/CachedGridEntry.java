@@ -18,6 +18,7 @@ import gregtech.api.worldgen.populator.IVeinPopulator;
 import gregtech.api.worldgen.populator.VeinBufferPopulator;
 import gregtech.api.worldgen.populator.VeinChunkPopulator;
 import gregtech.api.worldgen.shape.IBlockGeneratorAccess;
+import gregtech.api.worldgen.shape.LayeredGenerator;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -261,7 +262,7 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
     }
 
     @Override
-    public boolean generateBlock(int x, int y, int z) {
+    public boolean generateBlock(int x, int y, int z, boolean withRandom) {
         if (currentOreVein == null)
             throw new IllegalStateException("Attempted to call generateBlock without current ore vein!");
         int globalBlockX = veinCenterX + x;
@@ -270,7 +271,7 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
         //we should do all random-related things here, otherwise it gets corrupted by current chunk information
         float randomDensityValue = gridRandom.nextFloat();
 
-        if (currentOreVein.getDensity() < randomDensityValue)
+        if (withRandom && currentOreVein.getDensity() < randomDensityValue)
             return false; //only place blocks in positions matching density
         setBlock(globalBlockX, globalBlockY, globalBlockZ, currentOreVein, 0);
         return true;
@@ -296,7 +297,15 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
             long chunkKey = (long) chunkX << 32 | chunkZ & 0xFFFFFFFFL;
             ChunkDataEntry dataEntry = dataByChunkPos.get(chunkKey);
             if (dataEntry == null) {
-                dataEntry = new ChunkDataEntry(chunkX, chunkZ);
+                if (currentOreVein.getShapeGenerator() instanceof LayeredGenerator) {
+                    dataEntry = new ChunkDataEntry(
+                            chunkX, chunkZ,
+                            currentOreVein.getDensity(), gridRandom,
+                            veinCenterY - ((LayeredGenerator) currentOreVein.getShapeGenerator()).getYRadius()
+                    );
+                } else {
+                    dataEntry = new ChunkDataEntry(chunkX, chunkZ, gridRandom);
+                }
                 dataByChunkPos.put(chunkKey, dataEntry);
             }
             dataEntry.setBlock(localX, worldY, localZ, definition, index);
@@ -311,10 +320,21 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
         private final List<OreDepositDefinition> generatedOres = new ArrayList<>();
         private final int chunkX;
         private final int chunkZ;
+        private final double density;
+        private final Random gridRandom;
 
-        public ChunkDataEntry(int chunkX, int chunkZ) {
+        private final int lowestY;
+
+        public ChunkDataEntry(int chunkX, int chunkZ, Random gridRandom) {
+            this(chunkX, chunkZ, 1.0, gridRandom, 0);
+        }
+
+        public ChunkDataEntry(int chunkX, int chunkZ, double density, Random gridRandom, int lowestY) {
             this.chunkX = chunkX;
             this.chunkZ = chunkZ;
+            this.density = density;
+            this.gridRandom = gridRandom;
+            this.lowestY = lowestY;
         }
 
         public void setBlock(int x, int y, int z, OreDepositDefinition definition, int index) {
@@ -349,7 +369,7 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
                         //it's primary ore block
                         if (!definition.getGenerationPredicate().test(currentState, world, blockPos))
                             continue; //do not generate if predicate didn't match
-                        newState = definition.getBlockFiller().apply(currentState, world, blockPos, blockX, blockY, blockZ);
+                        newState = definition.getBlockFiller().apply(currentState, world, blockPos, blockX, blockY, blockZ, density, gridRandom, blockY - lowestY);
                     } else {
                         //it's populator-generated block with index
                         VeinBufferPopulator populator = (VeinBufferPopulator) definition.getVeinPopulator();

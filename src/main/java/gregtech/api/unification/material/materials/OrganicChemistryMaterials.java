@@ -78,7 +78,7 @@ public class OrganicChemistryMaterials {
 
         GlycerylTrinitrate = new Material.Builder(1009, "glyceryl_trinitrate")
                 .fluid()
-                .flags(FLAMMABLE, EXPLOSIVE, NO_SMELTING, NO_SMASHING)
+                .flags(FLAMMABLE, EXPLOSIVE)
                 .components(Carbon, 3, Hydrogen, 5, Nitrogen, 3, Oxygen, 9)
                 .build();
 

@@ -66,5 +66,16 @@ public class LCRCombined {
                 .EUt(VA[HV])
                 .duration(320)
                 .buildAndRegister();
+
+        LARGE_CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(24))
+                .fluidInputs(Nitrogen.getFluid(1000))
+                .fluidInputs(Hydrogen.getFluid(3000))
+                .fluidInputs(Oxygen.getFluid(4000))
+                .fluidOutputs(NitricAcid.getFluid(1000))
+                .fluidOutputs(Water.getFluid(1000))
+                .EUt(VA[HV])
+                .duration(320)
+                .buildAndRegister();
     }
 }

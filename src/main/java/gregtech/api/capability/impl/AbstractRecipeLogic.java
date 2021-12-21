@@ -11,7 +11,9 @@ import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
+import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,6 +31,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic {
 
@@ -51,7 +54,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected int recipeEUt;
     protected List<FluidStack> fluidOutputs;
     protected NonNullList<ItemStack> itemOutputs;
-    protected final Random random = new Random();
 
     protected boolean isActive;
     protected boolean workingEnabled = true;
@@ -149,6 +151,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * DO NOT use the recipeMap field directly, EVER
+     *
      * @return the current RecipeMap of the logic
      */
     public RecipeMap<?> getRecipeMap() {
@@ -238,6 +241,15 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         trySearchNewRecipe();
     }
 
+    /**
+     * should limit the recipe output only to the first output
+     *
+     * @return true if only the first output should be considered
+     */
+    public boolean trimOutputs() {
+        return false;
+    }
+
     protected void trySearchNewRecipe() {
         long maxVoltage = getMaxVoltage();
         Recipe currentRecipe;
@@ -267,7 +279,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     *
      * @return true if the previous recipe is valid and can be run again
      */
     protected boolean checkPreviousRecipe() {
@@ -276,6 +287,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * checks the recipe before preparing it
+     *
      * @param recipe the recipe to check
      * @return true if the recipe is allowed to be used, else false
      */
@@ -285,15 +297,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * prepares the recipe to be run
-     *
+     * <p>
      * the recipe is attempted to be run in parallel
      * the potentially parallel recipe is then checked to exist
      * if it exists, it is checked whether the recipe is able to be run with the current inputs
-     *
+     * <p>
      * if the above conditions are met, the recipe is engaged to be run
      *
      * @param recipe the recipe to prepare
-     *
      * @return true if the recipe was successfully prepared, else false
      */
     protected boolean prepareRecipe(Recipe recipe) {
@@ -304,7 +315,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                 getInputTank(),
                 getOutputInventory(),
                 getOutputTank(),
-                getMaxVoltage(), getParallelLimit());
+                getMaxVoltage(),
+                getParallelLimit());
 
         if (recipe != null && setupAndConsumeRecipeInputs(recipe, getInputInventory())) {
             setupRecipe(recipe);
@@ -316,6 +328,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * DO NOT use the parallelLimit field directly, EVER
+     *
      * @return the current parallel limit of the logic
      */
     public int getParallelLimit() {
@@ -342,7 +355,16 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode mode) {
+
+        if(!isRecipeMapValid(getRecipeMap())) {
+            return null;
+        }
+
         return getRecipeMap().findRecipe(maxVoltage, inputs, fluidInputs, getMinTankCapacity(getOutputTank()), mode);
+    }
+
+    public boolean isRecipeMapValid(RecipeMap<?> recipeMap) {
+        return true;
     }
 
     protected static boolean areItemStacksEqual(ItemStack stackA, ItemStack stackB) {
@@ -407,6 +429,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * calculates the overclocked EUt and duration
+     *
      * @param recipe the recipe to run
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
@@ -431,7 +454,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     *
      * @param recipeEUt the EU/t of the recipe attempted to be run
      * @return true if the recipe is able to overclock, else false
      */
@@ -441,11 +463,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         // check if the voltage to run at is higher than the recipe, and that it is not ULV tier
         int tier = getOverclockingTier(getMaxVoltage());
-        return  tier != 0 && tier > GTUtility.getTierByVoltage(recipeEUt);
+        return tier != 0 && tier > GTUtility.getTierByVoltage(recipeEUt);
     }
 
     /**
-     * performs the actual overclocking of voltage and duration
+     * determines the maximum amount of overclocks for the recipe
      *
      * @param recipe the recipe to overclock
      * @return an int array of {OverclockedEUt, OverclockedDuration}
@@ -457,15 +479,35 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * actually runs the overclocking logic
+     * converts the recipe's values into ones used for overclocking
      * @param recipe the recipe to overclock
      * @param maxOverclocks the maximum amount of overclocks to perform
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
     protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
-        return standardOverclockingLogic(recipe.getEUt() * (negativeEU ? -1 : 1),
+        return overclockRecipe(recipe.getRecipePropertyStorage(),
+                recipe.getEUt(),
+                negativeEU,
                 getMaxVoltage(),
                 recipe.getDuration(),
+                maxOverclocks
+        );
+    }
+
+    /**
+     * actually runs the overclocking logic
+     * @param propertyStorage the recipe's property storage
+     * @param recipeEUt the EUt of the recipe
+     * @param negativeEU whether the EU is negative or not
+     * @param maxVoltage the maximum voltage the recipe is allowed to be run at
+     * @param duration the duration of the recipe
+     * @param maxOverclocks the maximum amount of overclocks to perform
+     * @return an int array of {OverclockedEUt, OverclockedDuration}
+     */
+    protected int[] overclockRecipe(RecipePropertyStorage propertyStorage, int recipeEUt, boolean negativeEU, long maxVoltage, int duration, int maxOverclocks) {
+        return standardOverclockingLogic(recipeEUt * (negativeEU ? -1 : 1),
+                maxVoltage,
+                duration,
                 getOverclockingDurationDivisor(),
                 getOverclockingVoltageMultiplier(),
                 maxOverclocks
@@ -473,7 +515,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     *
      * @return the divisor to use for reducing duration upon overclocking
      */
     protected double getOverclockingDurationDivisor() {
@@ -481,7 +522,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     *
      * @return the multiplier to use for increasing voltage upon overclocking
      */
     protected double getOverclockingVoltageMultiplier() {
@@ -491,15 +531,15 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * applies standard logic for overclocking, where each overclock modifies energy and duration
      *
-     * @param recipeEUt the EU/t of the recipe to overclock
-     * @param maximumVoltage the maximum voltage the recipe is allowed to be run at
-     * @param recipeDuration the duration of the recipe to overclock
-     * @param durationDivisor the value to divide the duration by for each overclock
+     * @param recipeEUt         the EU/t of the recipe to overclock
+     * @param maximumVoltage    the maximum voltage the recipe is allowed to be run at
+     * @param recipeDuration    the duration of the recipe to overclock
+     * @param durationDivisor   the value to divide the duration by for each overclock
      * @param voltageMultiplier the value to multiply the voltage by for each overclock
-     * @param maxOverclocks the maximum amount of overclocks allowed
+     * @param maxOverclocks     the maximum amount of overclocks allowed
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    protected static int[] standardOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, double durationDivisor, double voltageMultiplier, int maxOverclocks) {
+    public static int[] standardOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, double durationDivisor, double voltageMultiplier, int maxOverclocks) {
         int overclockedEUt = recipeEUt;
         double overclockedDuration = recipeDuration;
 
@@ -512,7 +552,30 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
+     * Identical to {@link AbstractRecipeLogic#standardOverclockingLogic(int, long, int, double, double, int)}, except
+     * it does not enforce "maximumVoltage" being in-line with a voltage-tier.
      *
+     * @param recipeEUt the EU/t of the recipe to overclock
+     * @param maximumVoltage the maximum voltage the recipe is allowed to be run at
+     * @param recipeDuration the duration of the recipe to overclock
+     * @param durationDivisor the value to divide the duration by for each overclock
+     * @param voltageMultiplier the value to multiply the voltage by for each overclock
+     * @param maxOverclocks the maximum amount of overclocks allowed
+     * @return an int array of {OverclockedEUt, OverclockedDuration}
+     */
+    public static int[] unlockedVoltageOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, double durationDivisor, double voltageMultiplier, int maxOverclocks) {
+        int overclockedEUt = recipeEUt;
+        double overclockedDuration = recipeDuration;
+
+        while (overclockedEUt * voltageMultiplier <= maximumVoltage && overclockedDuration / durationDivisor > 0 && maxOverclocks > 0) {
+            overclockedEUt *= voltageMultiplier;
+            overclockedDuration /= durationDivisor;
+            maxOverclocks--;
+        }
+        return new int[]{overclockedEUt, (int) Math.ceil(overclockedDuration)};
+    }
+
+    /**
      * @param voltage the maximum voltage the recipe is allowed to run at
      * @return the highest voltage tier the machine should use to overclock with
      */
@@ -521,7 +584,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     *
      * @return a String array of the voltage names allowed to be used for overclocking
      */
     public String[] getAvailableOverclockingTiers() {
@@ -534,6 +596,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * sets up the recipe to be run
+     *
      * @param recipe the recipe to run
      */
     protected void setupRecipe(Recipe recipe) {
@@ -542,7 +605,22 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         setMaxProgress(resultOverclock[1]);
         this.recipeEUt = resultOverclock[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
-        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt)));
+        if (trimOutputs() && parallelRecipesPerformed == 0) {
+            // if it's a paralelled recipe, the output is already trimmed
+            if (recipe.getOutputs().size() > 0) {
+                this.itemOutputs = GTUtility.copyStackList(recipe.getOutputs().subList(0, 1));
+            } else {
+                this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt))
+                        .stream()
+                        .filter(is ->
+                                ItemStackHashStrategy.comparingAllButCount()
+                                        .equals(is, recipe.getChancedOutputs().get(0).getItemStack()))
+                        .collect(Collectors.toList()));
+            }
+        } else {
+            this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt)));
+        }
+
         if (this.wasActiveAndNeedsUpdate) {
             this.wasActiveAndNeedsUpdate = false;
         } else {
@@ -586,6 +664,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * sets the amount of ticks of running time to finish the recipe
+     *
      * @param maxProgress the amount of ticks to set
      */
     public void setMaxProgress(int maxProgress) {

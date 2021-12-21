@@ -36,6 +36,8 @@ public class VanillaOverrideRecipes {
             miscRecipes();
         if (ConfigHolder.recipes.hardDyeRecipes)
             dyeRecipes();
+        if (ConfigHolder.recipes.disableManualCompression)
+            removeCompressionRecipes();
         toolArmorRecipes();
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:tnt"));
@@ -725,6 +727,67 @@ public class VanillaOverrideRecipes {
             ModHandler.removeRecipeByName(new ResourceLocation(String.format("minecraft:%s_stained_glass", colorMaterial)));
             ModHandler.removeRecipeByName(new ResourceLocation(String.format("minecraft:%s_wool", colorMaterial)));
         }
+        ModHandler.removeRecipeByName("minecraft:dark_prismarine");
+    }
+
+    /**
+     * - Removes block compression/decompression recipes if configured
+     */
+    private static void removeCompressionRecipes() {
+        ModHandler.removeRecipeByName("minecraft:gold_block");
+        ModHandler.removeRecipeByName("minecraft:gold_nugget");
+        ModHandler.removeRecipeByName("minecraft:gold_ingot_from_block");
+        ModHandler.removeRecipeByName("minecraft:gold_ingot_from_nuggets");
+        ModHandler.removeRecipeByName("minecraft:coal_block");
+        ModHandler.removeRecipeByName("minecraft:coal");
+        ModHandler.removeRecipeByName("minecraft:melon_block");
+        ModHandler.removeRecipeByName("minecraft:hay_block");
+        ModHandler.removeRecipeByName("minecraft:wheat");
+        ModHandler.removeRecipeByName("minecraft:magma");
+        ModHandler.removeRecipeByName("minecraft:redstone_block");
+        ModHandler.removeRecipeByName("minecraft:redstone");
+        ModHandler.removeRecipeByName("minecraft:slime");
+        ModHandler.removeRecipeByName("minecraft:slime_ball");
+        ModHandler.removeRecipeByName("minecraft:nether_wart_block");
+        ModHandler.removeRecipeByName("minecraft:bone_block");
+        ModHandler.removeRecipeByName("minecraft:bone_meal_from_block");
+        ModHandler.removeRecipeByName("minecraft:purpur_block");
+        ModHandler.removeRecipeByName("minecraft:prismarine_bricks");
+        ModHandler.removeRecipeByName("minecraft:prismarine");
+        ModHandler.removeRecipeByName("minecraft:quartz_block");
+        ModHandler.removeRecipeByName("minecraft:emerald_block");
+        ModHandler.removeRecipeByName("minecraft:emerald");
+        ModHandler.removeRecipeByName("minecraft:brick_block");
+        ModHandler.removeRecipeByName("minecraft:lapis_block");
+        ModHandler.removeRecipeByName("minecraft:lapis_lazuli");
+        ModHandler.removeRecipeByName("minecraft:clay");
+        ModHandler.removeRecipeByName("minecraft:diamond_block");
+        ModHandler.removeRecipeByName("minecraft:diamond");
+        ModHandler.removeRecipeByName("minecraft:iron_block");
+        ModHandler.removeRecipeByName("minecraft:iron_nugget");
+        ModHandler.removeRecipeByName("minecraft:iron_ingot_from_block");
+        ModHandler.removeRecipeByName("minecraft:iron_ingot_from_nuggets");
+        ModHandler.removeRecipeByName("minecraft:snow");
+        ModHandler.removeRecipeByName("minecraft:sandstone");
+        ModHandler.removeRecipeByName("minecraft:polished_andesite");
+        ModHandler.removeRecipeByName("minecraft:polished_diorite");
+        ModHandler.removeRecipeByName("minecraft:polished_granite");
+        ModHandler.removeRecipeByName("minecraft:coarse_dirt");
+        ModHandler.removeRecipeByName("minecraft:smooth_sandstone");
+        ModHandler.removeRecipeByName("minecraft_chiseled_sandstone");
+        ModHandler.removeRecipeByName("minecraft:chiseled_quartz_block");
+        ModHandler.removeRecipeByName("minecraft:glowstone");
+        ModHandler.removeRecipeByName("minecraft:stonebrick");
+        ModHandler.removeRecipeByName("minecraft:chiseled_stonebrick");
+        ModHandler.removeRecipeByName("minecraft:nether_brick");
+        ModHandler.removeRecipeByName("minecraft:purpur_pillar");
+        ModHandler.removeRecipeByName("minecraft:end_bricks");
+        ModHandler.removeRecipeByName("minecraft:red_nether_brick");
+        ModHandler.removeRecipeByName("minecraft:red_sandstone");
+        ModHandler.removeRecipeByName("minecraft:chiseled_red_sandstone");
+        ModHandler.removeRecipeByName("minecraft:smooth_red_sandstone");
+        ModHandler.removeRecipeByName("minecraft:bookshelf");
+        ModHandler.removeRecipeByName("minecraft:pillar_quartz_block");
     }
 
     /**

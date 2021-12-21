@@ -10,19 +10,18 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
+import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.impl.FluidHandlerProxy;
-import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.ItemHandlerProxy;
-import gregtech.api.capability.impl.NotifiableFluidTank;
+import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.FluidKey;
+import gregtech.api.recipes.RecipeMap;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
@@ -200,13 +199,15 @@ public abstract class MetaTileEntity implements ICoverable {
         TextureAtlasSprite atlasSprite = TextureUtils.getMissingSprite();
         IVertexOperation[] renderPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         for (EnumFacing face : EnumFacing.VALUES) {
-            Textures.renderFace(renderState, translation, renderPipeline, face, Cuboid6.full, atlasSprite);
+            Textures.renderFace(renderState, translation, renderPipeline, face, Cuboid6.full, atlasSprite, BlockRenderLayer.CUTOUT_MIPPED);
         }
     }
 
     @SideOnly(Side.CLIENT)
     public boolean canRenderInLayer(BlockRenderLayer renderLayer) {
-        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED || renderLayer == BloomEffectUtil.getRealBloomLayer();
+        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED ||
+                renderLayer == BloomEffectUtil.getRealBloomLayer() ||
+                (renderLayer == BlockRenderLayer.TRANSLUCENT && !getWorld().getBlockState(getPos()).getValue(BlockMachine.OPAQUE));
     }
 
     @SideOnly(Side.CLIENT)
@@ -392,7 +393,7 @@ public abstract class MetaTileEntity implements ICoverable {
                 MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
             }
             return true;
-        } else if (playerIn.isSneaking()) {
+        } else if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
             EnumFacing hitFacing = hitResult.sideHit;
 
             CoverBehavior coverBehavior = hitFacing == null ? null : getCoverAtSide(hitFacing);
@@ -736,14 +737,14 @@ public abstract class MetaTileEntity implements ICoverable {
     public void writeInitialSyncData(PacketBuffer buf) {
         buf.writeByte(this.frontFacing.getIndex());
         boolean isPainted = false;
-        if(this.paintingColor != DEFAULT_PAINTING_COLOR && !(this instanceof MultiblockControllerBase)) {
-            for(EnumDyeColor color : EnumDyeColor.values()) {
-                if(this.paintingColor == color.colorValue) {
+        if (this.paintingColor != DEFAULT_PAINTING_COLOR && !(this instanceof MultiblockControllerBase)) {
+            for (EnumDyeColor color : EnumDyeColor.values()) {
+                if (this.paintingColor == color.colorValue) {
                     isPainted = true;
                     break;
                 }
             }
-            if(!isPainted) {
+            if (!isPainted) {
                 setPaintingColor(DEFAULT_PAINTING_COLOR);
             }
         }
@@ -1355,5 +1356,24 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public boolean isMuffled() {
         return muffled;
+    }
+
+    public boolean canRenderFrontFaceX() {
+        return false;
+    }
+
+    public boolean isSideUsed(EnumFacing face) {
+        if (getCoverAtSide(face) != null) return true;
+        return face == this.getFrontFacing() && this.canRenderFrontFaceX();
+    }
+
+    public RecipeMap<?> getRecipeMap() {
+
+        for(int i = 0; i < mteTraits.size(); i++) {
+            if(mteTraits.get(i).getName().equals("RecipeMapWorkable")) {
+                return ((AbstractRecipeLogic) mteTraits.get(i)).getRecipeMap();
+            }
+        }
+        return null;
     }
 }

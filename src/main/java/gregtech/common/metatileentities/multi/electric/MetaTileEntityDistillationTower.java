@@ -63,7 +63,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
                 .where('S', selfPredicate())
                 .where('F', abilities(MultiblockAbility.IMPORT_FLUIDS))
                 .where('Y', states(getCasingState())
-                        .or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1))
+                        .or(abilities(MultiblockAbility.EXPORT_ITEMS).setMaxGlobalLimited(1))
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1)))
                 .where('X', states(getCasingState())
                         .or(metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.EXPORT_FLUIDS).stream()

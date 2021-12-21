@@ -5,7 +5,6 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.BlockInfo;
 import gregtech.common.blocks.BlockWireCoil;
-import gregtech.common.blocks.BlockWireCoil2;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -24,9 +23,9 @@ import java.util.stream.Collectors;
 public class TraceabilityPredicate {
 
     // Allow any block.
-    public static Supplier<TraceabilityPredicate> ANY = () -> new TraceabilityPredicate((state)->true);
+    public static TraceabilityPredicate ANY =new TraceabilityPredicate((state)->true);
     // Allow the air block.
-    public static Supplier<TraceabilityPredicate> AIR = () -> new TraceabilityPredicate(blockWorldState -> blockWorldState.getBlockState().getBlock().isAir(blockWorldState.getBlockState(), blockWorldState.getWorld(), blockWorldState.getPos()));
+    public static TraceabilityPredicate AIR = new TraceabilityPredicate(blockWorldState -> blockWorldState.getBlockState().getBlock().isAir(blockWorldState.getBlockState(), blockWorldState.getWorld(), blockWorldState.getPos()));
     // Allow all heating coils, and require them to have the same type.
     public static Supplier<TraceabilityPredicate> HEATING_COILS = () -> new TraceabilityPredicate(blockWorldState -> {
         IBlockState blockState = blockWorldState.getBlockState();
@@ -40,21 +39,10 @@ public class TraceabilityPredicate {
             }
             blockWorldState.getMatchContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
             return true;
-        } else if ((blockState.getBlock() instanceof BlockWireCoil2)) {
-            BlockWireCoil2 blockWireCoil = (BlockWireCoil2) blockState.getBlock();
-            BlockWireCoil2.CoilType2 coilType = blockWireCoil.getState(blockState);
-            Object currentCoilType = blockWorldState.getMatchContext().getOrPut("CoilType", coilType);
-            if (!currentCoilType.toString().equals(coilType.getName())) {
-                blockWorldState.setError(new PatternStringError("gregtech.multiblock.pattern.error.coils"));
-                return false;
-            }
-            blockWorldState.getMatchContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
-            return true;
         }
         return false;
     }, ()-> ArrayUtils.addAll(
-            Arrays.stream(BlockWireCoil.CoilType.values()).map(type->new BlockInfo(MetaBlocks.WIRE_COIL.getState(type), null)).toArray(BlockInfo[]::new),
-            Arrays.stream(BlockWireCoil2.CoilType2.values()).map(type->new BlockInfo(MetaBlocks.WIRE_COIL2.getState(type), null)).toArray(BlockInfo[]::new)))
+            Arrays.stream(BlockWireCoil.CoilType.values()).map(type->new BlockInfo(MetaBlocks.WIRE_COIL.getState(type), null)).toArray(BlockInfo[]::new)))
             .addTooltips("gregtech.multiblock.pattern.error.coils");
 
 
@@ -87,9 +75,7 @@ public class TraceabilityPredicate {
     }
 
     public TraceabilityPredicate sort() {
-        limited.sort((a, b)->{
-            return ((a.minLayerCount + 1) * 100 + a.minGlobalCount) - ((b.minLayerCount + 1) * 100 + b.minGlobalCount);
-        });
+        limited.sort(Comparator.comparingInt(a -> ((a.minLayerCount + 1) * 100 + a.minGlobalCount)));
         return this;
     }
 
@@ -177,6 +163,14 @@ public class TraceabilityPredicate {
 
     public TraceabilityPredicate setMaxLayerLimited(int max, int previewCount) {
         return this.setMaxLayerLimited(max).setPreviewCount(previewCount);
+    }
+
+    /**
+     * Sets the Minimum and Maximum limit to the passed value
+     * @param limit The Maximum and Minimum limit
+     */
+    public TraceabilityPredicate setExactLimit(int limit) {
+        return this.setMinGlobalLimited(limit).setMaxGlobalLimited(limit);
     }
 
     /**

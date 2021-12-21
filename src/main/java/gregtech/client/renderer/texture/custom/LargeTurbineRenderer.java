@@ -11,8 +11,10 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.cclop.ColourOperation;
 import gregtech.client.renderer.cclop.LightMapOperation;
 import gregtech.api.util.GTUtility;
+import gregtech.client.utils.BloomEffectUtil;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -61,13 +63,13 @@ public class LargeTurbineRenderer implements IIconRegister {
                 break;
         }
         if (hasBase) {
-            Textures.renderFace(renderState, cornerOffset, pipeline, side, Cuboid6.full, baseRingSprite);
-            Textures.renderFace(renderState, cornerOffset, ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240), new ColourOperation(0xFFFFFFFF)), side, Cuboid6.full, baseBackgroundSprite);
+            Textures.renderFace(renderState, cornerOffset, ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240)), side, Cuboid6.full, baseRingSprite, BloomEffectUtil.getRealBloomLayer());
+            Textures.renderFace(renderState, cornerOffset, ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240), new ColourOperation(0xFFFFFFFF)), side, Cuboid6.full, baseBackgroundSprite, BlockRenderLayer.CUTOUT_MIPPED);
         }
         if (hasRotor) {
             TextureAtlasSprite sprite = isActive ? activeBladeSprite : idleBladeSprite;
             IVertexOperation[] color = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(rotorRGB)));
-            Textures.renderFace(renderState, cornerOffset, color, side, Cuboid6.full, sprite);
+            Textures.renderFace(renderState, cornerOffset, color, side, Cuboid6.full, sprite, BlockRenderLayer.CUTOUT_MIPPED);
         }
     }
 

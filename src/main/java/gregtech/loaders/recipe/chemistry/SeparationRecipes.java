@@ -220,12 +220,12 @@ public class SeparationRecipes {
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(80).EUt(80)
                 .fluidInputs(Lava.getFluid(100))
-                .chancedOutput(nugget, Tantalum, 250, 90)
+                .chancedOutput(dustSmall, SiliconDioxide, 5000, 320)
+                .chancedOutput(dustSmall, Magnesia, 1000, 270)
+                .chancedOutput(dustSmall, Quicklime, 1000, 270)
                 .chancedOutput(nugget, Gold, 250, 80)
-                .chancedOutput(nugget, Tin, 1000, 270)
-                .chancedOutput(dustSmall, Tungstate, 250, 70)
-                .chancedOutput(nugget, Copper, 2000, 320)
-                .chancedOutput(nugget, Silver, 250, 80)
+                .chancedOutput(dustSmall, Sapphire, 1250, 270)
+                .chancedOutput(dustSmall, Tantalite, 500, 130)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(64).EUt(20)

@@ -10,11 +10,11 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.client.renderer.ICubeRenderer;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.converter.MetaTileEntityConverter;
 import gregtech.common.metatileentities.electric.*;
@@ -35,16 +35,8 @@ import gregtech.common.metatileentities.steam.boiler.SteamLavaBoiler;
 import gregtech.common.metatileentities.steam.boiler.SteamSolarBoiler;
 import gregtech.common.metatileentities.steam.multiblockpart.MetaTileEntitySteamHatch;
 import gregtech.common.metatileentities.steam.multiblockpart.MetaTileEntitySteamItemBus;
+import gregtech.common.metatileentities.storage.*;
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
-import gregtech.common.metatileentities.storage.MetaTileEntityBuffer;
-import gregtech.common.metatileentities.storage.MetaTileEntityCrate;
-import gregtech.common.metatileentities.storage.MetaTileEntityCreativeEnergy;
-import gregtech.common.metatileentities.storage.MetaTileEntityDrum;
-import gregtech.common.metatileentities.storage.MetaTileEntityLockedSafe;
-import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
-import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
-import gregtech.common.metatileentities.storage.MetaTileEntityTank;
-import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.HashMap;
@@ -58,7 +50,7 @@ public class MetaTileEntities {
     public static final MetaTileEntityTransformer[] TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length - 1]; // no ULV, no MAX
     public static final MetaTileEntityAdjustableTransformer[] ADJUSTABLE_TRANSFORMER = new MetaTileEntityAdjustableTransformer[GTValues.V.length - 1]; // no ULV, no MAX
     public static final MetaTileEntityDiode[] DIODES = new MetaTileEntityDiode[GTValues.V.length];
-    public static final MetaTileEntityBatteryBuffer[][] BATTERY_BUFFER = new MetaTileEntityBatteryBuffer[GTValues.V.length][];
+    public static final MetaTileEntityBatteryBuffer[][] BATTERY_BUFFER = new MetaTileEntityBatteryBuffer[3][GTValues.V.length];
     public static final MetaTileEntityCharger[] CHARGER = new MetaTileEntityCharger[GTValues.V.length];
     //SIMPLE MACHINES SECTION
     public static final SimpleMachineMetaTileEntity[] ELECTRIC_FURNACE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
@@ -96,12 +88,14 @@ public class MetaTileEntities {
     public static final SimpleMachineMetaTileEntity[] THERMAL_CENTRIFUGE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] WIREMILL = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] CIRCUIT_ASSEMBLER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] MASS_FABRICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] REPLICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    // TODO Replication system
+    //public static final SimpleMachineMetaTileEntity[] MASS_FABRICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    //public static final SimpleMachineMetaTileEntity[] REPLICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] GAS_COLLECTOR = new MetaTileEntityGasCollector[GTValues.V.length - 1];
     public static final MetaTileEntityRockBreaker[] ROCK_BREAKER = new MetaTileEntityRockBreaker[GTValues.V.length - 1];
     public static final MetaTileEntityMiner[] MINER = new MetaTileEntityMiner[GTValues.V.length - 1];
+    public static SimpleMachineMetaTileEntity[] SIMPLE_ORE_WASHER = new SimpleMachineMetaTileEntity[GTValues.V.length -1];
     //GENERATORS SECTION
     public static final SimpleGeneratorMetaTileEntity[] COMBUSTION_GENERATOR = new SimpleGeneratorMetaTileEntity[4];
     public static final SimpleGeneratorMetaTileEntity[] STEAM_TURBINE = new SimpleGeneratorMetaTileEntity[4];
@@ -114,9 +108,11 @@ public class MetaTileEntities {
     public static final MetaTileEntityMultiFluidHatch[] MULTI_FLUID_IMPORT_HATCH = new MetaTileEntityMultiFluidHatch[2];
     public static final MetaTileEntityMultiFluidHatch[] MULTI_FLUID_EXPORT_HATCH = new MetaTileEntityMultiFluidHatch[2];
     public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
-    public static final MetaTileEntityAdjustableEnergyHatch[] ENERGY_INPUT_HATCH_ADJUSTABLE = new MetaTileEntityAdjustableEnergyHatch[GTValues.V.length];
+    public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH_4A = new MetaTileEntityEnergyHatch[5]; // IV, LuV, ZPM, UV, UHV
+    public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH_16A = new MetaTileEntityEnergyHatch[5]; // IV, LuV, ZPM, UV, UHV
     public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
-    public static final MetaTileEntityAdjustableEnergyHatch[] ENERGY_OUTPUT_HATCH_ADJUSTABLE = new MetaTileEntityAdjustableEnergyHatch[GTValues.V.length];
+    public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_4A = new MetaTileEntityEnergyHatch[5]; // IV, LuV, ZPM, UV, UHV
+    public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_16A = new MetaTileEntityEnergyHatch[5]; // IV, LuV, ZPM, UV, UHV
     public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[3]; //HV, LuV, MAX
     public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UV]; // LV-UV
     public static final MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
@@ -128,6 +124,7 @@ public class MetaTileEntities {
     public static final MetaTileEntityItemCollector[] ITEM_COLLECTOR = new MetaTileEntityItemCollector[4];
     public static final MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[4];
     public static final MetaTileEntityWorldAccelerator[] WORLD_ACCELERATOR = new MetaTileEntityWorldAccelerator[8]; // no ULV, no MAX
+    public static MetaTileEntityMachineHatch MACHINE_HATCH;
     // Used for addons if they wish to disable certain tiers of machines
     private static final Map<String, Boolean> MID_TIER = new HashMap<>();
     private static final Map<String, Boolean> HIGH_TIER = new HashMap<>();
@@ -155,7 +152,6 @@ public class MetaTileEntities {
     public static SteamMiner STEAM_MINER;
     public static MetaTileEntityPumpHatch PUMP_OUTPUT_HATCH;
     public static MetaTileEntityPrimitiveWaterPump PRIMITIVE_WATER_PUMP;
-    public static MetaTileEntitySimpleOreWasher SIMPLE_ORE_WASHER;
     public static MetaTileEntityMagicEnergyAbsorber MAGIC_ENERGY_ABSORBER;
     public static MetaTileEntityCokeOvenHatch COKE_OVEN_HATCH;
     public static MetaTileEntitySteamItemBus STEAM_EXPORT_BUS;
@@ -189,6 +185,8 @@ public class MetaTileEntities {
     public static MetaTileEntityLargeMiner BASIC_LARGE_MINER;
     public static MetaTileEntityLargeMiner LARGE_MINER;
     public static MetaTileEntityLargeMiner ADVANCED_LARGE_MINER;
+    public static MetaTileEntityProcessingArray PROCESSING_ARRAY;
+    public static MetaTileEntityProcessingArray ADVANCED_PROCESSING_ARRAY;
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
     public static MetaTileEntityTank WOODEN_TANK;
@@ -215,7 +213,8 @@ public class MetaTileEntities {
     //MISC MACHINES SECTION
     public static MetaTileEntityWorkbench WORKBENCH;
     public static MetaTileEntityCreativeEnergy CREATIVE_ENERGY;
-
+    public static MetaTileEntityCreativeTank CREATIVE_TANK;
+    public static MetaTileEntityCreativeChest CREATIVE_CHEST;
     public static MetaTileEntityClipboard CLIPBOARD_TILE;
     public static MetaTileEntityMonitorScreen MONITOR_SCREEN;
     public static MetaTileEntityCentralMonitor CENTRAL_MONITOR;
@@ -282,112 +281,114 @@ public class MetaTileEntities {
         // Alloy Smelter, IDs 80-94
         registerSimpleMetaTileEntity(ALLOY_SMELTER, 80, "alloy_smelter", RecipeMaps.ALLOY_SMELTER_RECIPES, Textures.ALLOY_SMELTER_OVERLAY, true);
 
-        // Free Range, IDs 95-109
+        // Arc Furnace, IDs 95-109
+        registerSimpleMetaTileEntity(ARC_FURNACE, 95, "arc_furnace", RecipeMaps.ARC_FURNACE_RECIPES, Textures.ARC_FURNACE_OVERLAY, false, GTUtility.hvCappedTankSizeFunction);
 
-        // Arc Furnace, IDs 110-124
-        registerSimpleMetaTileEntity(ARC_FURNACE, 110, "arc_furnace", RecipeMaps.ARC_FURNACE_RECIPES, Textures.ARC_FURNACE_OVERLAY, false, GTUtility.hvCappedTankSizeFunction);
+        // Assembler, IDs 110-124
+        registerSimpleMetaTileEntity(ASSEMBLER, 110, "assembler", RecipeMaps.ASSEMBLER_RECIPES, Textures.ASSEMBLER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
 
-        // Assembler, IDs 125-139
-        registerSimpleMetaTileEntity(ASSEMBLER, 125, "assembler", RecipeMaps.ASSEMBLER_RECIPES, Textures.ASSEMBLER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
+        // Autoclave, IDs 125-139
+        registerSimpleMetaTileEntity(AUTOCLAVE, 125, "autoclave", RecipeMaps.AUTOCLAVE_RECIPES, Textures.AUTOCLAVE_OVERLAY, false, GTUtility.hvCappedTankSizeFunction);
 
-        // Autoclave, IDs 140-154
-        registerSimpleMetaTileEntity(AUTOCLAVE, 140, "autoclave", RecipeMaps.AUTOCLAVE_RECIPES, Textures.AUTOCLAVE_OVERLAY, false, GTUtility.hvCappedTankSizeFunction);
+        // Bender, IDs 140-154
+        registerSimpleMetaTileEntity(BENDER, 140, "bender", RecipeMaps.BENDER_RECIPES, Textures.BENDER_OVERLAY, true);
 
-        // Bender, IDs 155-169
-        registerSimpleMetaTileEntity(BENDER, 155, "bender", RecipeMaps.BENDER_RECIPES, Textures.BENDER_OVERLAY, true);
+        // Brewery, IDs 155-169
+        registerSimpleMetaTileEntity(BREWERY, 155, "brewery", RecipeMaps.BREWING_RECIPES, Textures.BREWERY_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
 
-        // Brewery, IDs 170-184
-        registerSimpleMetaTileEntity(BREWERY, 170, "brewery", RecipeMaps.BREWING_RECIPES, Textures.BREWERY_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
+        // Canner, IDs 170-184
+        registerSimpleMetaTileEntity(CANNER, 170, "canner", RecipeMaps.CANNER_RECIPES, Textures.CANNER_OVERLAY, true);
 
-        // Canner, IDs 185-199
-        registerSimpleMetaTileEntity(CANNER, 185, "canner", RecipeMaps.CANNER_RECIPES, Textures.CANNER_OVERLAY, true);
+        // Centrifuge, IDs 185-199
+        registerSimpleMetaTileEntity(CENTRIFUGE, 185, "centrifuge", RecipeMaps.CENTRIFUGE_RECIPES, Textures.CENTRIFUGE_OVERLAY, false, GTUtility.largeTankSizeFunction);
 
-        // Centrifuge, IDs 200-214
-        registerSimpleMetaTileEntity(CENTRIFUGE, 200, "centrifuge", RecipeMaps.CENTRIFUGE_RECIPES, Textures.CENTRIFUGE_OVERLAY, false, GTUtility.largeTankSizeFunction);
+        // Chemical Bath, IDs 200-214
+        registerSimpleMetaTileEntity(CHEMICAL_BATH, 200, "chemical_bath", RecipeMaps.CHEMICAL_BATH_RECIPES, Textures.CHEMICAL_BATH_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
 
-        // Chemical Bath, IDs 215-229
-        registerSimpleMetaTileEntity(CHEMICAL_BATH, 215, "chemical_bath", RecipeMaps.CHEMICAL_BATH_RECIPES, Textures.CHEMICAL_BATH_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
+        // Chemical Reactor, IDs 215-229
+        registerSimpleMetaTileEntity(CHEMICAL_REACTOR, 215, "chemical_reactor", RecipeMaps.CHEMICAL_RECIPES, Textures.CHEMICAL_REACTOR_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
 
-        // Chemical Reactor, IDs 230-244
-        registerSimpleMetaTileEntity(CHEMICAL_REACTOR, 230, "chemical_reactor", RecipeMaps.CHEMICAL_RECIPES, Textures.CHEMICAL_REACTOR_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
+        // Compressor, IDs 230-244
+        registerSimpleMetaTileEntity(COMPRESSOR, 230, "compressor", RecipeMaps.COMPRESSOR_RECIPES, Textures.COMPRESSOR_OVERLAY, true);
 
-        // Compressor, IDs 245-259
-        registerSimpleMetaTileEntity(COMPRESSOR, 245, "compressor", RecipeMaps.COMPRESSOR_RECIPES, Textures.COMPRESSOR_OVERLAY, true);
+        // Cutter, IDs 245-259
+        registerSimpleMetaTileEntity(CUTTER, 245, "cutter", RecipeMaps.CUTTER_RECIPES, Textures.CUTTER_OVERLAY, true);
 
-        // Cutter, IDs 260-274
-        registerSimpleMetaTileEntity(CUTTER, 260, "cutter", RecipeMaps.CUTTER_RECIPES, Textures.CUTTER_OVERLAY, true);
+        // Distillery, IDs 260-274
+        registerSimpleMetaTileEntity(DISTILLERY, 260, "distillery", RecipeMaps.DISTILLERY_RECIPES, Textures.DISTILLERY_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
 
-        // Distillery, IDs 275-289
-        registerSimpleMetaTileEntity(DISTILLERY, 275, "distillery", RecipeMaps.DISTILLERY_RECIPES, Textures.DISTILLERY_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
+        // Electrolyzer, IDs 275-289
+        registerSimpleMetaTileEntity(ELECTROLYZER, 275, "electrolyzer", RecipeMaps.ELECTROLYZER_RECIPES, Textures.ELECTROLYZER_OVERLAY, false, GTUtility.largeTankSizeFunction);
 
-        // Electrolyzer, IDs 290-304
-        registerSimpleMetaTileEntity(ELECTROLYZER, 290, "electrolyzer", RecipeMaps.ELECTROLYZER_RECIPES, Textures.ELECTROLYZER_OVERLAY, false, GTUtility.largeTankSizeFunction);
+        // Electromagnetic Separator, IDs 290-304
+        registerSimpleMetaTileEntity(ELECTROMAGNETIC_SEPARATOR, 290, "electromagnetic_separator", RecipeMaps.ELECTROMAGNETIC_SEPARATOR_RECIPES, Textures.ELECTROMAGNETIC_SEPARATOR_OVERLAY, true);
 
-        // Electromagnetic Separator, IDs 305-319
-        registerSimpleMetaTileEntity(ELECTROMAGNETIC_SEPARATOR, 305, "electromagnetic_separator", RecipeMaps.ELECTROMAGNETIC_SEPARATOR_RECIPES, Textures.ELECTROMAGNETIC_SEPARATOR_OVERLAY, true);
+        // Extractor, IDs 305-319
+        registerSimpleMetaTileEntity(EXTRACTOR, 305, "extractor", RecipeMaps.EXTRACTOR_RECIPES, Textures.EXTRACTOR_OVERLAY, true);
 
-        // Extractor, IDs 320-334
-        registerSimpleMetaTileEntity(EXTRACTOR, 320, "extractor", RecipeMaps.EXTRACTOR_RECIPES, Textures.EXTRACTOR_OVERLAY, true);
+        // Extruder, IDs 320-334
+        registerSimpleMetaTileEntity(EXTRUDER, 320, "extruder", RecipeMaps.EXTRUDER_RECIPES, Textures.EXTRUDER_OVERLAY, true);
 
-        // Extruder, IDs 335-349
-        registerSimpleMetaTileEntity(EXTRUDER, 335, "extruder", RecipeMaps.EXTRUDER_RECIPES, Textures.EXTRUDER_OVERLAY, true);
+        // Fermenter, IDs 335-349
+        registerSimpleMetaTileEntity(FERMENTER, 335, "fermenter", RecipeMaps.FERMENTING_RECIPES, Textures.FERMENTER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
 
-        // Fermenter, IDs 350-364
-        registerSimpleMetaTileEntity(FERMENTER, 350, "fermenter", RecipeMaps.FERMENTING_RECIPES, Textures.FERMENTER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
+        // TODO Replication system
+        // Mass Fabricator, IDs 350-364
+        //registerSimpleMetaTileEntity(MASS_FABRICATOR, 350, "mass_fabricator", RecipeMaps.MASS_FABRICATOR_RECIPES, Textures.MASS_FABRICATOR_OVERLAY, true);
 
-        // Mass Fabricator, IDs 365-379
-        registerSimpleMetaTileEntity(MASS_FABRICATOR, 365, "mass_fabricator", RecipeMaps.MASS_FABRICATOR_RECIPES, Textures.MASS_FABRICATOR_OVERLAY, true);
+        // Replicator, IDs 365-379
+        //registerSimpleMetaTileEntity(REPLICATOR, 365, "replicator", RecipeMaps.REPLICATOR_RECIPES, Textures.REPLICATOR_OVERLAY, true);
 
-        // Replicator, IDs 380-394
-        registerSimpleMetaTileEntity(REPLICATOR, 380, "replicator", RecipeMaps.REPLICATOR_RECIPES, Textures.REPLICATOR_OVERLAY, true);
+        // Fluid Heater, IDs 380-394
+        registerSimpleMetaTileEntity(FLUID_HEATER, 380, "fluid_heater", RecipeMaps.FLUID_HEATER_RECIPES, Textures.FLUID_HEATER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
 
-        // Fluid Heater, IDs 395-409
-        registerSimpleMetaTileEntity(FLUID_HEATER, 395, "fluid_heater", RecipeMaps.FLUID_HEATER_RECIPES, Textures.FLUID_HEATER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
+        // Fluid Solidifier, IDs 395-409
+        registerSimpleMetaTileEntity(FLUID_SOLIDIFIER, 395, "fluid_solidifier", RecipeMaps.FLUID_SOLIDFICATION_RECIPES, Textures.FLUID_SOLIDIFIER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
 
-        // Fluid Solidifier, IDs 410-424
-        registerSimpleMetaTileEntity(FLUID_SOLIDIFIER, 410, "fluid_solidifier", RecipeMaps.FLUID_SOLIDFICATION_RECIPES, Textures.FLUID_SOLIDIFIER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
+        // Forge Hammer, IDs 410-424
+        registerSimpleMetaTileEntity(FORGE_HAMMER, 410, "forge_hammer", RecipeMaps.FORGE_HAMMER_RECIPES, Textures.FORGE_HAMMER_OVERLAY, true);
 
-        // Forge Hammer, IDs 425-439
-        registerSimpleMetaTileEntity(FORGE_HAMMER, 425, "forge_hammer", RecipeMaps.FORGE_HAMMER_RECIPES, Textures.FORGE_HAMMER_OVERLAY, true);
+        // Forming Press, IDs 425-439
+        registerSimpleMetaTileEntity(FORMING_PRESS, 425, "forming_press", RecipeMaps.FORMING_PRESS_RECIPES, Textures.FORMING_PRESS_OVERLAY, true);
 
-        // Forming Press, IDs 440-454
-        registerSimpleMetaTileEntity(FORMING_PRESS, 440, "forming_press", RecipeMaps.FORMING_PRESS_RECIPES, Textures.FORMING_PRESS_OVERLAY, true);
+        // Lathe, IDs 440-454
+        registerSimpleMetaTileEntity(LATHE, 440, "lathe", RecipeMaps.LATHE_RECIPES, Textures.LATHE_OVERLAY, true);
 
-        // Lathe, IDs 455-469
-        registerSimpleMetaTileEntity(LATHE, 455, "lathe", RecipeMaps.LATHE_RECIPES, Textures.LATHE_OVERLAY, true);
+        // Scanner, IDs 455-469
+        registerSimpleMetaTileEntity(SCANNER, 455, "scanner", RecipeMaps.SCANNER_RECIPES, Textures.SCANNER_OVERLAY, true);
 
-        // Scanner, IDs 470-484
-        registerSimpleMetaTileEntity(SCANNER, 470, "scanner", RecipeMaps.SCANNER_RECIPES, Textures.SCANNER_OVERLAY, true);
+        // Mixer, IDs 470-484
+        registerSimpleMetaTileEntity(MIXER, 470, "mixer", RecipeMaps.MIXER_RECIPES, Textures.MIXER_OVERLAY, false, GTUtility.hvCappedTankSizeFunction);
 
-        // Mixer, IDs 485-499
-        registerSimpleMetaTileEntity(MIXER, 485, "mixer", RecipeMaps.MIXER_RECIPES, Textures.MIXER_OVERLAY, false, GTUtility.hvCappedTankSizeFunction);
+        // Ore Washer, IDs 485-499
+        registerSimpleMetaTileEntity(ORE_WASHER, 485, "ore_washer", RecipeMaps.ORE_WASHER_RECIPES, Textures.ORE_WASHER_OVERLAY, true);
 
-        // Ore Washer, IDs 500-514
-        registerSimpleMetaTileEntity(ORE_WASHER, 500, "ore_washer", RecipeMaps.ORE_WASHER_RECIPES, Textures.ORE_WASHER_OVERLAY, true);
+        // Packer, IDs 500-514
+        registerSimpleMetaTileEntity(PACKER, 500, "packer", RecipeMaps.PACKER_RECIPES, Textures.PACKER_OVERLAY, true);
 
-        // Packer, IDs 515-529
-        registerSimpleMetaTileEntity(PACKER, 515, "packer", RecipeMaps.PACKER_RECIPES, Textures.PACKER_OVERLAY, true);
+        // Unpacker, IDs 515-529
+        registerSimpleMetaTileEntity(UNPACKER, 515, "unpacker", RecipeMaps.UNPACKER_RECIPES, Textures.UNPACKER_OVERLAY, true);
 
-        // Unpacker, IDs 530-544
-        registerSimpleMetaTileEntity(UNPACKER, 530, "unpacker", RecipeMaps.UNPACKER_RECIPES, Textures.UNPACKER_OVERLAY, true);
-
-        // Gas Collectors, IDs 545-559
+        // Gas Collectors, IDs 530-544
         for (int i = 0; i < GAS_COLLECTOR.length - 1; i++) {
             if (i > 4 && !getMidTier("gas_collector")) continue;
             if (i > 7 && !getHighTier("gas_collector")) break;
 
             String voltageName = GTValues.VN[i + 1].toLowerCase();
-            GAS_COLLECTOR[i] = registerMetaTileEntity(545 + i,
+            GAS_COLLECTOR[i] = registerMetaTileEntity(530 + i,
                     new MetaTileEntityGasCollector(gregtechId(String.format("%s.%s", "gas_collector", voltageName)), RecipeMaps.GAS_COLLECTOR_RECIPES, Textures.GAS_COLLECTOR_OVERLAY, i + 1, false, GTUtility.largeTankSizeFunction));
         }
-        // Polarizer, IDs 560-574
-        registerSimpleMetaTileEntity(POLARIZER, 560, "polarizer", RecipeMaps.POLARIZER_RECIPES, Textures.POLARIZER_OVERLAY, true);
+        // Polarizer, IDs 545-559
+        registerSimpleMetaTileEntity(POLARIZER, 545, "polarizer", RecipeMaps.POLARIZER_RECIPES, Textures.POLARIZER_OVERLAY, true);
 
-        // Laser Engraver, IDs 575-589
-        registerSimpleMetaTileEntity(LASER_ENGRAVER, 575, "laser_engraver", RecipeMaps.LASER_ENGRAVER_RECIPES, Textures.LASER_ENGRAVER_OVERLAY, true);
+        // Laser Engraver, IDs 560-574
+        registerSimpleMetaTileEntity(LASER_ENGRAVER, 560, "laser_engraver", RecipeMaps.LASER_ENGRAVER_RECIPES, Textures.LASER_ENGRAVER_OVERLAY, true);
 
-        // Sifter, IDs 590-604
-        registerSimpleMetaTileEntity(SIFTER, 590, "sifter", RecipeMaps.SIFTER_RECIPES, Textures.SIFTER_OVERLAY, true);
+        // Sifter, IDs 575-589
+        registerSimpleMetaTileEntity(SIFTER, 575, "sifter", RecipeMaps.SIFTER_RECIPES, Textures.SIFTER_OVERLAY, true);
+
+        // Simple Ore Washer, IDs 590-604
+        registerSimpleMetaTileEntity(SIMPLE_ORE_WASHER, 590, "simple_ore_washer", RecipeMaps.SIMPLE_WASHER_RECIPES, Textures.ORE_WASHER_OVERLAY, true);
 
         // Thermal Centrifuge, IDs 605-619
         registerSimpleMetaTileEntity(THERMAL_CENTRIFUGE, 605, "thermal_centrifuge", RecipeMaps.THERMAL_CENTRIFUGE_RECIPES, Textures.THERMAL_CENTRIFUGE_OVERLAY, true);
@@ -496,6 +497,9 @@ public class MetaTileEntities {
 
         CENTRAL_MONITOR = registerMetaTileEntity(1028, new MetaTileEntityCentralMonitor(gregtechId("central_monitor")));
 
+        PROCESSING_ARRAY = registerMetaTileEntity(1029, new MetaTileEntityProcessingArray(gregtechId("processing_array"), 0));
+        ADVANCED_PROCESSING_ARRAY = registerMetaTileEntity(1030, new MetaTileEntityProcessingArray(gregtechId("advanced_processing_array"), 1));
+
         // MISC MTE's START: IDs 1150-2000
 
         // Import/Export Buses/Hatches, IDs 1150-1209
@@ -522,15 +526,15 @@ public class MetaTileEntities {
         endPos = GTValues.HT ? ENERGY_INPUT_HATCH.length - 1 : Math.min(ENERGY_INPUT_HATCH.length - 1, GTValues.UV + 2);
         for (int i = 0; i < endPos; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
-            ENERGY_INPUT_HATCH[i] = new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input." + voltageName), i, false);
-            ENERGY_INPUT_HATCH_ADJUSTABLE[i] = new MetaTileEntityAdjustableEnergyHatch(gregtechId("energy_hatch.adjustable.input." + voltageName), i, false);
-            ENERGY_OUTPUT_HATCH[i] = new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output." + voltageName), i, true);
-            ENERGY_OUTPUT_HATCH_ADJUSTABLE[i] = new MetaTileEntityAdjustableEnergyHatch(gregtechId("energy_hatch.adjustable.output." + voltageName), i, true);
+            ENERGY_INPUT_HATCH[i] = registerMetaTileEntity(1210 + i, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input." + voltageName), i, 2, false));
+            ENERGY_OUTPUT_HATCH[i] = registerMetaTileEntity(1225 + i, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output." + voltageName), i, 1, true));
 
-            registerMetaTileEntity(1210 + i, ENERGY_INPUT_HATCH[i]);
-            registerMetaTileEntity(1225 + i, ENERGY_OUTPUT_HATCH[i]);
-            registerMetaTileEntity(1240 + i, ENERGY_INPUT_HATCH_ADJUSTABLE[i]);
-            registerMetaTileEntity(1255 + i, ENERGY_OUTPUT_HATCH_ADJUSTABLE[i]);
+            if (i >= GTValues.IV && i <= GTValues.UHV) {
+                ENERGY_INPUT_HATCH_4A[i - GTValues.IV]   = registerMetaTileEntity(1240 + i - GTValues.IV, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a." + voltageName), i, 4, false));
+                ENERGY_INPUT_HATCH_16A[i - GTValues.IV]  = registerMetaTileEntity(1245 + i - GTValues.IV, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_16a." + voltageName), i, 16, false));
+                ENERGY_OUTPUT_HATCH_4A[i - GTValues.IV]  = registerMetaTileEntity(1250 + i - GTValues.IV, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a." + voltageName), i, 4, true));
+                ENERGY_OUTPUT_HATCH_16A[i - GTValues.IV] = registerMetaTileEntity(1255 + i - GTValues.IV, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_16a." + voltageName), i, 16, true));
+            }
         }
 
         // Transformer, IDs 1270-1299
@@ -550,20 +554,20 @@ public class MetaTileEntities {
             DIODES[i] = registerMetaTileEntity(1300 + i, diode);
         }
 
-        // Battery Buffer, IDs 1315-1374
-        endPos = GTValues.HT ? BATTERY_BUFFER.length - 1 : Math.min(BATTERY_BUFFER.length - 1, GTValues.UV + 2);
-        int[] batteryBufferSlots = new int[]{1, 4, 9, 16};
-        for (int i = 0; i < endPos; i++) {
-            BATTERY_BUFFER[i] = new MetaTileEntityBatteryBuffer[batteryBufferSlots.length];
-            for (int slot = 0; slot < batteryBufferSlots.length; slot++) {
+        // Battery Buffer, IDs 1315-1360
+        endPos = GTValues.HT ? BATTERY_BUFFER[0].length - 1 : Math.min(BATTERY_BUFFER[0].length - 1, GTValues.UV);
+        int[] batteryBufferSlots = new int[]{4, 8, 16};
+        for (int slot = 0; slot < batteryBufferSlots.length; slot++) {
+            BATTERY_BUFFER[slot] = new MetaTileEntityBatteryBuffer[endPos];
+            for (int i = 0; i < endPos; i++) {
                 String bufferId = "battery_buffer." + GTValues.VN[i].toLowerCase() + "." + batteryBufferSlots[slot];
                 MetaTileEntityBatteryBuffer batteryBuffer = new MetaTileEntityBatteryBuffer(gregtechId(bufferId), i, batteryBufferSlots[slot]);
-                BATTERY_BUFFER[i][slot] = registerMetaTileEntity(1315 + batteryBufferSlots.length * i + slot, batteryBuffer);
+                BATTERY_BUFFER[slot][i] = registerMetaTileEntity(1315 + BATTERY_BUFFER[slot].length * slot + i, batteryBuffer);
             }
         }
 
         // Charger, IDs 1375-1389
-        endPos = GTValues.HT ? CHARGER.length - 1 : Math.min(CHARGER.length - 1, GTValues.UV + 2);
+        endPos = GTValues.HT ? CHARGER.length - 1 : Math.min(CHARGER.length - 1, GTValues.UV + 1);
         for (int i = 0; i < endPos; i++) {
             String chargerId = "charger." + GTValues.VN[i].toLowerCase();
             MetaTileEntityCharger charger = new MetaTileEntityCharger(gregtechId(chargerId), i, 4);
@@ -582,6 +586,7 @@ public class MetaTileEntities {
             WORLD_ACCELERATOR[7] = registerMetaTileEntity(1397, new MetaTileEntityWorldAccelerator(gregtechId("world_accelerator.uv"), 8));
         }
 
+        MACHINE_HATCH = registerMetaTileEntity(1398, new MetaTileEntityMachineHatch(gregtechId("machine_hatch"), 5));
         // Free Range: 1405-1509
 
         // Buffers, IDs 1510-1512
@@ -681,7 +686,6 @@ public class MetaTileEntities {
         STEAM_EXPORT_BUS = registerMetaTileEntity(1650, new MetaTileEntitySteamItemBus(gregtechId("steam_export_bus"), true));
         STEAM_IMPORT_BUS = registerMetaTileEntity(1651, new MetaTileEntitySteamItemBus(gregtechId("steam_import_bus"), false));
         STEAM_HATCH = registerMetaTileEntity(1652, new MetaTileEntitySteamHatch(gregtechId("steam_hatch")));
-        SIMPLE_ORE_WASHER = registerMetaTileEntity(1653, new MetaTileEntitySimpleOreWasher(gregtechId("ore_washer.simple"), RecipeMaps.SIMPLE_WASHER_RECIPES, Textures.ORE_WASHER_OVERLAY, 0));
 
         // Maintenance Hatches, IDs 1654-1656
         MAINTENANCE_HATCH = registerMetaTileEntity(1654, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch"), false));
@@ -699,6 +703,10 @@ public class MetaTileEntities {
         CLIPBOARD_TILE = registerMetaTileEntity(1666, new MetaTileEntityClipboard(gregtechId("clipboard")));
 
         MONITOR_SCREEN = registerMetaTileEntity(1667, new MetaTileEntityMonitorScreen(gregtechId("monitor_screen")));
+
+        // Creative Chest and Tank, IDs 1668-1669
+        CREATIVE_CHEST = registerMetaTileEntity(1668, new MetaTileEntityCreativeChest(gregtechId("creative_chest")));
+        CREATIVE_TANK = registerMetaTileEntity(1669, new MetaTileEntityCreativeTank(gregtechId("creative_tank")));
 
         // Energy Converter, IDs 1668-1728
         endPos = GTValues.HT ? ENERGY_CONVERTER.length - 1 : Math.min(ENERGY_CONVERTER.length - 1, GTValues.UV + 1);
@@ -736,7 +744,8 @@ public class MetaTileEntities {
          * - PCM's Ore Addon: 9500-9999
          * - GCM: 10000-10099
          * - MechTech: 10100-10499
-         * - FREE RANGE 10500-32767
+         * - CT(MBT) 32000 - ~
+         * - FREE RANGE 11000-32767
          */
     }
 
@@ -782,7 +791,7 @@ public class MetaTileEntities {
             IMultiblockAbilityPart<?> abilityPart = (IMultiblockAbilityPart<?>) sampleMetaTileEntity;
             MultiblockAbility.registerMultiblockAbility(abilityPart.getAbility(), sampleMetaTileEntity);
         }
-        if (sampleMetaTileEntity instanceof MultiblockControllerBase) {
+        if (sampleMetaTileEntity instanceof MultiblockControllerBase && GTValues.isModLoaded(GTValues.MODID_JEI)) {
             MultiblockInfoCategory.registerMultiblock((MultiblockControllerBase) sampleMetaTileEntity);
         }
         GregTechAPI.MTE_REGISTRY.register(id, sampleMetaTileEntity.metaTileEntityId, sampleMetaTileEntity);

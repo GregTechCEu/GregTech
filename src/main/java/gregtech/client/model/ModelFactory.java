@@ -1,6 +1,7 @@
 package gregtech.client.model;
 
 import com.google.common.collect.ImmutableMap;
+import gregtech.api.GTValues;
 import gregtech.api.util.GTLog;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.renderer.block.model.FaceBakery;
@@ -14,6 +15,8 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.vecmath.Vector3f;
 import java.util.EnumMap;
@@ -23,6 +26,7 @@ import java.util.function.UnaryOperator;
 /**
  * Revamped from https://github.com/LoliKingdom/Zairyou/blob/main/src/main/java/zone/rong/zairyou/api/client/Bakery.java
  */
+@SideOnly(Side.CLIENT)
 public class ModelFactory {
 
     private static final Map<ItemCameraTransforms.TransformType, TRSRTransformation> blockTransformationMap = new EnumMap<>(ItemCameraTransforms.TransformType.class);
@@ -117,9 +121,6 @@ public class ModelFactory {
     }
 
     public IBakedModel bake() {
-        if (!sprites.containsKey("particle")) {
-            GTLog.logger.error("ModelFactory is baking a model without a valid particle sprite!");
-        }
         IModel mapped = template.model.retexture(ImmutableMap.copyOf(sprites));
         if (mutation != null) {
             mutation.apply(mapped);
@@ -129,6 +130,7 @@ public class ModelFactory {
 
     public static class ModelTemplate {
 
+        public static final ModelTemplate CUBE_2_LAYER_ALL_TINT_INDEX = new ModelTemplate(GTValues.MODID, "block/cube_2_layer_all_tintindex");
         public static final ModelTemplate BLOCK = new ModelTemplate("minecraft", "block/block");
         public static final ModelTemplate NORMAL_ITEM = new ModelTemplate("minecraft", "item/generated");
         public static final ModelTemplate HANDHELD_ITEM = new ModelTemplate("minecraft", "item/handheld");

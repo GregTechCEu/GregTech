@@ -35,21 +35,18 @@ public class PolymerRecipes {
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(200)
                 .input(dustTiny, Copper)
                 .fluidInputs(Nitrochlorobenzene.getFluid(1000))
-                .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(Dichlorobenzidine.getFluid(1000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(1800)
                 .input(dust, Copper)
                 .fluidInputs(Nitrochlorobenzene.getFluid(9000))
-                .notConsumable(new IntCircuitIngredient(9))
                 .fluidOutputs(Dichlorobenzidine.getFluid(9000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(100)
                 .fluidInputs(NitrationMixture.getFluid(2000))
                 .fluidInputs(Chlorobenzene.getFluid(1000))
-                .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(Nitrochlorobenzene.getFluid(1000))
                 .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
                 .buildAndRegister();

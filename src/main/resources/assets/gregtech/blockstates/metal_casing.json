@@ -54,6 +54,11 @@
         "textures": {
           "all": "gregtech:blocks/casings/solid/machine_casing_inert_ptfe"
         }
+      },
+      "hsse_robust": {
+        "textures": {
+          "all": "gregtech:blocks/casings/solid/machine_casing_robust_hsse"
+        }
       }
     }
   }

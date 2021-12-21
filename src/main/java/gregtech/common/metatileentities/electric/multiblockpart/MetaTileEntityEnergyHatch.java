@@ -20,36 +20,59 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
 public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IEnergyContainer> {
 
     private final boolean isExportHatch;
+    private final int amperage;
     private final IEnergyContainer energyContainer;
 
-    public MetaTileEntityEnergyHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
+    public MetaTileEntityEnergyHatch(ResourceLocation metaTileEntityId, int tier, int amperage, boolean isExportHatch) {
         super(metaTileEntityId, tier);
         this.isExportHatch = isExportHatch;
+        this.amperage = amperage;
         if (isExportHatch) {
-            this.energyContainer = EnergyContainerHandler.emitterContainer(this, GTValues.V[tier] * 128L, GTValues.V[tier], 1);
+            this.energyContainer = EnergyContainerHandler.emitterContainer(this, GTValues.V[tier] * 64L * amperage, GTValues.V[tier], amperage);
             ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s == getFrontFacing());
         } else {
-            this.energyContainer = EnergyContainerHandler.receiverContainer(this, GTValues.V[tier] * 16L, GTValues.V[tier], 2);
+            this.energyContainer = EnergyContainerHandler.receiverContainer(this, GTValues.V[tier] * 16L * amperage, GTValues.V[tier], amperage);
         }
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityEnergyHatch(metaTileEntityId, getTier(), isExportHatch);
+        return new MetaTileEntityEnergyHatch(metaTileEntityId, getTier(), amperage, isExportHatch);
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
-            SimpleOverlayRenderer renderer = isExportHatch ? Textures.ENERGY_OUT_MULTI : Textures.ENERGY_IN_MULTI;
-            renderer.renderSided(getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+            getOverlay().renderSided(getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+        }
+    }
+
+    @Nonnull
+    private SimpleOverlayRenderer getOverlay() {
+        if (isExportHatch) {
+            if (amperage <= 2) {
+                return Textures.ENERGY_OUT_MULTI;
+            } else if (amperage <= 4) {
+                return Textures.ENERGY_OUT_HI;
+            } else {
+                return Textures.ENERGY_OUT_ULTRA;
+            }
+        } else {
+            if (amperage <= 2) {
+                return Textures.ENERGY_IN_MULTI;
+            } else if (amperage <= 4) {
+                return Textures.ENERGY_IN_HI;
+            } else {
+                return Textures.ENERGY_IN_ULTRA;
+            }
         }
     }
 
@@ -78,15 +101,28 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
         String tierName = GTValues.VN[getTier()];
 
         if (isExportHatch) {
-            tooltip.add(I18n.format("gregtech.machine.energy_hatch.output.tooltip"));
+            if (amperage > 2) {
+                tooltip.add(I18n.format("gregtech.machine.energy_hatch.output_hi_amp.tooltip"));
+            } else {
+                tooltip.add(I18n.format("gregtech.machine.energy_hatch.output.tooltip"));
+            }
             tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), tierName));
             tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", energyContainer.getOutputAmperage()));
         } else {
-            tooltip.add(I18n.format("gregtech.machine.energy_hatch.input.tooltip"));
+            if (amperage > 2) {
+                tooltip.add(I18n.format("gregtech.machine.energy_hatch.input_hi_amp.tooltip"));
+            } else {
+                tooltip.add(I18n.format("gregtech.machine.energy_hatch.input.tooltip"));
+            }
             tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), tierName));
             tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", energyContainer.getInputAmperage()));
         }
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
+    }
+
+    @Override
+    public boolean canRenderFrontFaceX() {
+        return isExportHatch;
     }
 }

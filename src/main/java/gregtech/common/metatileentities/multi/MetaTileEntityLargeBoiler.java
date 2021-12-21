@@ -24,10 +24,8 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipes.FuelRecipe;
 import gregtech.client.renderer.ICubeRenderer;
-import gregtech.client.renderer.texture.cube.SimpleCubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.sound.GTSounds;
-import gregtech.api.unification.material.Materials;
 import gregtech.common.blocks.BlockBoilerCasing.BoilerCasingType;
 import gregtech.common.blocks.BlockFireboxCasing;
 import gregtech.common.blocks.BlockFireboxCasing.FireboxCasingType;
@@ -105,11 +103,11 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         public final IBlockState fireboxState;
         public final IBlockState pipeState;
         public final ICubeRenderer solidCasingRenderer;
-        public final SimpleCubeRenderer fireboxIdleRenderer;
-        public final SimpleCubeRenderer firefoxActiveRenderer;
+        public final ICubeRenderer fireboxIdleRenderer;
+        public final ICubeRenderer firefoxActiveRenderer;
         public final ICubeRenderer frontOverlay;
 
-        BoilerType(int baseSteamOutput, float fuelConsumptionMultiplier, int temperatureEffBuff, int maxTemperature, IBlockState casingState, IBlockState fireboxState, IBlockState pipeState, ICubeRenderer solidCasingRenderer, SimpleCubeRenderer fireboxIdleRenderer, SimpleCubeRenderer firefoxActiveRenderer, ICubeRenderer frontOverlay) {
+        BoilerType(int baseSteamOutput, float fuelConsumptionMultiplier, int temperatureEffBuff, int maxTemperature, IBlockState casingState, IBlockState fireboxState, IBlockState pipeState, ICubeRenderer solidCasingRenderer, ICubeRenderer fireboxIdleRenderer, ICubeRenderer firefoxActiveRenderer, ICubeRenderer frontOverlay) {
             this.baseSteamOutput = baseSteamOutput;
             this.fuelConsumptionMultiplier = fuelConsumptionMultiplier;
             this.temperatureEffBuff = temperatureEffBuff;

@@ -121,16 +121,7 @@ public class HigherDegreeMaterials {
                 .blastTemp(5000, GasTier.HIGH, VA[EV], 1500)
                 .build();
 
-        FluxedElectrum = new Material.Builder(2521, "fluxed_electrum")
-                .ingot(5).fluid()
-                .color(0xf2ef27).iconSet(METALLIC)
-                .flags(EXT2_METAL)
-                .components(Electrum, 1, NaquadahAlloy, 1, BlueSteel, 1, RedSteel, 1)
-                .toolStats(11.0f, 6.0f, 2100, 21)
-                .cableProperties(GTValues.V[8], 3, 2)
-                .itemPipeProperties(128, 16)
-                .blastTemp(9000, GasTier.HIGHER, VA[ZPM], 1000)
-                .build();
+        // FREE ID: 2521
 
         IridiumMetalResidue = new Material.Builder(2522, "iridium_metal_residue")
                 .dust()

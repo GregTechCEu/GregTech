@@ -18,6 +18,8 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
+import gregtech.api.metatileentity.sound.ISoundCreator;
+import gregtech.api.sound.GTSounds;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,7 +42,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner, IControllable {
+public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner, IControllable, ISoundCreator {
 
     private final ItemStackHandler chargerInventory;
 
@@ -275,5 +277,18 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     @Override
     public void setWorkingEnabled(boolean isActivationAllowed) {
         this.minerLogic.setWorkingEnabled(isActivationAllowed);
+    }
+
+    @Override
+    public void onAttached(Object... data) {
+        super.onAttached(data);
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(GTSounds.MINER, this.getPos());
+        }
+    }
+
+    @Override
+    public boolean canCreateSound() {
+        return this.minerLogic.isActive();
     }
 }

@@ -16,6 +16,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@SideOnly(Side.CLIENT)
 public class CompressedBlockBakedModel implements IBakedModel {
 
     public static final CompressedBlockBakedModel INSTANCE = new CompressedBlockBakedModel();
@@ -42,6 +45,7 @@ public class CompressedBlockBakedModel implements IBakedModel {
     @Nonnull
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         List<BakedQuad> quads = new ArrayList<>();
+        if (side == null) return quads;
         if (state != null) {
             Material material = state.getValue(((BlockCompressed) state.getBlock()).variantProperty);
             Map<EnumFacing, BakedQuad> materialFace = materialFaces.get(material.getMaterialIconSet());
@@ -50,7 +54,6 @@ public class CompressedBlockBakedModel implements IBakedModel {
             }
             BakedQuad materialFaceQuad = materialFace.get(side);
             if (materialFaceQuad == null) {
-                side = side == null ? EnumFacing.NORTH : side;
                 materialFace.put(side, materialFaceQuad = ModelFactory.getBakery().makeBakedQuad(
                         new Vector3f(0F, 0F, 0F),
                         new Vector3f(16F, 16F, 16F),

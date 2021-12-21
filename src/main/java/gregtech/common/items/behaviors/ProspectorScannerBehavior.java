@@ -50,6 +50,7 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         ItemStack heldItem = player.getHeldItem(hand);
         if (!world.isRemote) {
             if (player.isSneaking()) {
+                /* TODO reimplement when Fluid Rigs are added
                 if (getNextMode() == WidgetProspectingMap.ORE_PROSPECTING_MODE) {
                     if (this.tier >= FLUID_PROSPECTION_THRESHOLD)
                         incrementMode();
@@ -58,6 +59,7 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
                     incrementMode();
                     player.sendMessage(new TextComponentTranslation("metaitem.prospector.mode.fluid"));
                 }
+                */
             } else if (checkCanUseScanner(heldItem, player, true)) {
                 PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
                 holder.openUI();
@@ -104,8 +106,13 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
         IItemBehaviour.super.addInformation(itemStack, lines);
-        if (tier >= GTValues.HV) lines.add(I18n.format("metaitem.prospector.tooltip.fluids", radius));
-        else lines.add(I18n.format("metaitem.prospector.tooltip.ores", radius));
+
+        // TODO Reimplement when Fluid Rigs are added
+        //if (tier >= GTValues.HV) {
+        //    lines.add(I18n.format("metaitem.prospector.tooltip.fluids", radius));
+        //} else {
+            lines.add(I18n.format("metaitem.prospector.tooltip.ores", radius));
+        //}
     }
 
     @Override

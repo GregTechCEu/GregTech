@@ -17,7 +17,7 @@ public class WidgetMonitorScreen extends Widget {
     }
 
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         Position position = this.getPosition();
         Size size = this.getSize();
         RenderUtil.renderRect(position.x, position.y, size.width, size.height, 0, 0XFF7B7A7C);

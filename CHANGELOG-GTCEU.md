@@ -1,281 +1,437 @@
-## Changes made by GregTech: CE Unofficial
+<h1 align="center">Changes made by GregTech: CE Unofficial</h1>
 
-### Features
-- Shadows of Greg content was almost entirely merged in, including:
-    - Assembly Line
-    - Fusion Reactors (MK 1-3)
-    - Replicators, Mass Fabricators
-    - Crates, Drums (now with an Aluminium variant)
-    - Higher Tier Machines
-    - Cluster Mill NOT moved over
-- Russian Localization updated
-- Machine Tank Sizes are now configurable (default unchanged)
-- Pipes now have proper models
-- GT6-Style Pipe and Cable connections config option (default false)
-- Pipes and Cables now have the "Machine Grid" when holding a tool or Cover
-- Cables now require Wire Cutters to connect and disconnect
-- Machines can require a Wrench to break with a config option (default false)
-- New Programmed Circuit texture (credit IMPACT)
-- Added Huge Pipes
-- Frame texture reworked, Colored Frames removed to reduce clutter
-- TheOneProbe now displays if a multiblock is formed or not
-- Many fluid textures were updated to be more unique
-- Added the Large Chemical Reactor (LCR), a multiblock Chemical Reactor with some custom recipes and perfect overclocking (4x the power, /4 the duration)
-- EBF coils have new textures, and have connected textures
-- Fusion and Superconductor coils for EBF replaced with Diamericium Titanium and Fluxed Electrum (tentative replacements)
-- Tanks in Machines now display their total fluid amount without needing the tooltip
-- Circuits have been entirely overhauled, with an inspiration from Omnifactory and IMPACT
-- New Boule, Neutronium Boule, as well as new SMD components, circuit boards, silicon chips, etc.
-- Fusion Reactor now illuminates its "rings" with a bright yellow texture
-- Multiblock Parts can now be placed facing directly up or down (instead of only towards the side)
-- Machines and Cables have a configurable color tint (default none, like GTCE)
-- Shadows of Greg Bundler recipes added to Packer and Unpacker
-- New tiers of Cells to hold much larger quantities of fluids
-- EBF now has coil bonuses:
-    - Every 900K above the recipe temperature applies a multiplicative 5% energy discount
-    - Every 1800K above the recipe temperature applies a "perfect overclock" (/4 duration instead of /2)
-    - Every voltage tier above MV increases the total temperature by 100K
-- Transformers now have the "lower voltage side" on 5 sides, with higher voltage on one side
-- Infinite Energy Emitter for debug and Creative (or expert-pack endgame)
-- Added 3x3 Hammers (like Tinker's Hammers)
-- Added Electric Drills up to IV, can be as large as 9x9x9 (can be set in the tool with shift-right-click)
-- Added Super Tanks and Super Chests, starting at MV. Quantum Tanks and Chests are now later and much, much larger
-- Fluids can now be manually removed from Singleblock Generators
-- Advancements (achievements) were added all the way from Bronze to MK3 Fusion Reactor and Wetware Mainframe
-- TheOneProbe now displays recipe time in ticks when duration is short, to be more accurate
-- Progress Bars in JEI now are active (like Vanilla Furnace progress bar in JEI)
-- "Allow Input from Output Side" now defaults to True
-- Energy Output Hatches (now called Dynamo Hatches) now only output energy on one side (Energy Input unchanged)
-- Scanner from GT5U added, for Matter Replication among other things
-- Overclocking logic was changed:
-    - Default logic is a flat /2 (from 2/2.8 split previously)
-    - Config option is available, allowing a range from 2.0 to 3.0
-    - ULV -> LV no longer overclocks, keeping ULV recipes much more energy efficient
-- Primitive Water Pump was added (credit IMPACT)
-    - Craftable before Steam-Era, requiring only Iron, Wood, and Stone
-    - Outputs up to 3B/s of water, or as low as 150mB depending on the Hatch used and the Biome it is placed in
-    - Look at JEI Info Tab for more details
-- Steam Machines now have a more distinct texture on their Venting Output
-- Drums and Tanks can now be cleared via a crafting recipe (like EIO Tanks), similar to Quantum/Super Tanks
-- Some Steam-Era Multiblock Machines were added:
-    - Steam Grinder:
-        - Multiblock Macerator at Steam-Age
-        - Consumes 2x the base rate of Steam, at 1.5x the base duration, but up to 8 items at a time
-    - Steam Oven:
-        - Multiblock Furnace at Steam-Age
-        - Consumes 2x the base rate of Steam, at 1.5x the base duration, but up to 8 items at a time
-- Tools can now be enchanted with Unbreaking, and Wrenches can have Efficiency as well
-- Item Pipes have been added
-    - Much larger throughput compared to options from other Mods
-    - More efficient (TPS) than EnderIO Conduits
-    - Two Modes with a Conveyor or Robot Arm cover:
-        - Priority:
-            - Each Pipe has a "priority" value
-            - Items will go to the lowest priority value first
-            - Restrictive Pipes can be used to drastically increase priority value (lower priority)
-        - Round Robin
-            - Items will be evenly distributed to each destination
-            - Unlike EnderIO, a single "group" of items extracted will be split across destinations
-            - If an uneven amount of items to destinations, priority will break the tie
-        - Enhanced Round Robin
-            - will exactly split items equally to all destinations, similar to EnderIO's Round Robin
-- Many more materials now have Fluid Pipes and Item Pipes
-- Multiblocks can now share ALL hatches (energy, item in/out, fluid in/out) excluding Rotor Holders
-- Mixer now has 2 more Item Input slots
-- Chemical Reactor now has 1 more Item Output Slot
-- Distillery now has an Item Output Slot
-- GT Wrenches will now work for: BuildCraft, EnderIO, Thermal Expansion, Applied Energistics
-- New Covers:
-    - Computer Monitor: a decorative cover
-    - Energy Detector Cover: outputs redstone signal based on energy stored (has a few modes)
-    - Fluid Detector Cover: outputs redstone signal based on fluid stored (has a few modes)
-    - Item Detector Cover: outputs redstone signal based on items stored (has a few modes)
-    - Crafting Station Cover: a GT Crafting Station, as a Cover!
-    - Infinite Water Cover: creates 16 Buckets of water every second
-- Air Collectors reworked to Gas Collectors:
-    - Have different Gases in each dimension
-    - Use a Programmed Circuit, so can collect different gases in each dimension
-    - Can be added to by CraftTweaker
-- Steam Era reworked:
-    - Steam Machines:
-        - Bronze Steam Machines now have double the duration of LV/Steel Steam Machines
-        - Steel Steam Machines have normal LV duration but 2x the Steam Consumption
-        - In total, Bronze/Steel/LV machines all have equivalent Steam Consumption (if using Steam Turbine for LV)
-        - Many early game recipes tweaked to make the Bronze Machine nerf not as bad
-        - Steel Steam Machine recipes are much more reasonable, requiring at most 1 Steel per machine, and being "direct upgrade" recipes for Bronze Machines
-    - Steam Boilers:
-        - Added Steel Solar Boiler
-        - Boilers have a more clear steam production, now per second instead of 25/10 ticks
-        - Lava generators buffed by 3x
-        - Bronze Solar Steam Boiler buffed by 2x
-- Many JEI pages reworked (distillation tower, coke oven, assembly line) to be fancier
-- Cable Loss reworked:
-    - Lossless wires will now no longer damage you
-    - Cables will always have lossy wires, unless they are "Superconductors"
-    - Superconductors are available at every tier, and are available only wires to reduce clutter (also are different from 5u, should be more reasonable to make)
-- High-Amp Energy Hatches added (can be configured with a Screwdriver, with amperages: 2, 4, 8, 16)
-- High-Amp Transformers added (can be configured with a Screwdriver, with ranges: 1->4, 2->8, 4->16, 16->64)
-- Diodes Added, which allow energy flow in one direction and restrict amperage (can be configured with a Screwdriver, with amperages: 1, 2, 4, 8, 16)
-- GT Cables and wires can now natively power RF-consuming machines (with config, default true)
-- Simple Ore Washer added
-    - Ore Washer, but only at ULV
-    - Consumes 100mB of Water per recipe
-    - Is much faster than an Ore Washer, but grants no byproducts
-    - Can do: crushed -> crushedPurified, impureDust -> dust, pureDust -> dust
-    - Effectively an Electric Cauldron
-- Fluid Pipe Algorithm fully reworked (still not perfect):
-    - Pipes will behave similar to GT5, but without sloshing and more performant
-- Added Quadruple (4) and Nonuple (9) Pipes, which can move multiple fluid types through them at once
-- Distillation Tower Fluid Input Hatch can be placed on any block on the bottom layer. Energy Input Hatch can be placed on any block in the structure
-- Added Buffers, which can hold both a small amount of a few types of each Items and Fluids, meant for use in machine automation
-- Crafting Station now highlights missing items in saved recipes in red
-- New batteries added for EV-UV tiers, in addition to the GTCE and SoG batteries
-- Batteries overall were buffed in terms of their energy capacity
-- Batteries now have tooltips indicating their total charge time, and their time remaining based on current charge
-- New JEI Page for Materials, showing all their possible "types" (gear, plate, ingot, dust, etc.) in a pretty graph
-- Clipboard added, functionally identical to Bibliocraft's version
-    - Can be kept as an Item, and updated with right-click
-    - Can be placed as a Block, and can read the notes and click various buttons (checkboxes, scroll to new pages)
-- Covers can now be accessed by Shift-Right-Click on the face where the cover is located. Screwdriver still needed to use the Machine Grid
-- Rubber Wood now has a new Texture, and makes its own Plank type. Hopefully it is good for building!
-- Concrete now provides the player with a Speed Boost when walked on
-- Added Rock Breakers
-    - Available at all tiers, including Steam and Steel Steam
-    - Must have a Water source block and a Lava source block horizontally adjacent to the machine to run
-    - Can be used to infinitely create Cobblestone, Stone, Granite, Andesite, and Diorite for free
-    - Can create Obsidian from Redstone
-- Chanced output items now display their chance as a hovered text in JEI
-- Added Emissive Textures
-    - Can be disabled with a config (but why would you want to?)
-    - Most machines "emit light" when active, and some when inactive
-    - The light "emitted" is not real light, but instead a glow that can be seen in complete darkness, so no lighting updates caused
-    - Some covers and other things also are emissive
-- Added Jetpacks, Nano Armor, QuarkTech Armor (Quantum), and BatPacks
-- Add Solar Panel covers to all tiers
-    - By default, only up to EV are enabled, rest can be added with a config (but no recipes will be generated)
-- Drums can now be hit with a Wrench to automatically drain their fluids downwards to adjacent tanks
-- Add new enchantment, "Hammering"
-    - Can be applied to Pickaxes, and will automatically crush ores when mined
-    - Will output their "normal" amount by default (1 crushed ore for most, but more for some, like Redstone)
-    - When combined with Fortune, can output up to their Macerated amount
-- Quadruple and Nonuple Input/Output Hatches added, holding either 4 or 9 fluids each, and 16B per fluid
-    - Fluids in them are forced to be "unique," for example Water cannot occupy 2 slots of either an Input or Output version
-    - Can be used in any multiblock, EXCEPT the Output hatches cannot be used in the Distillation Tower
-- TODO Maintenance/Muffler
+<br>TODO "Merged Content" should mostly redirect into the "New Content" section (especially multiblocks)
+<br>TODO Link Replication changes to sec. 1.1
+<br>TODO Link Multiblock in-world preview changes to sec. 1.3
+<br>TODO
+<br>TODO
+<br>TODO
+<br>TODO
+<br>TODO
 
-### Major Recipe Changes
-- Many, many new recipes for Vanilla items and blocks, with various configs to toggle
-- Casings now only make 2 per craft (instead of 3), Frames are cheaper to craft
-- Polybenzimidazole (PBI) has been added as a late-game polymer
-- Some processes have been rebalanced to be better to play with (Sulfuric and Nitric Acids, among others)
-- Singleblock Distilleries are now much faster, but do less fluid at a time
-- LCR has many recipes to "short-cut" processes (Epoxy, Polyethylene, etc.)
-- Uraninite processing is now slightly more complex (2 recipes total)
-- Electrolysis recipes are now on average 4x less duration
-- Ores that can be "directly smelted" into their materials have been reworked, so that dusts, crushed ore, etc will also direct smelt to the material
-- Decomposition Recipes (electrolysis, centrifuging) will now divide down to as few inputs as possible, still retaining full dusts and full buckets of outputs
-- Double Plates and Rounds were added, used in specific recipes
-- Many, many, many progression-related recipes were fixed (mostly from SoG) to allow full progression in the base mod
-- EBF coils now have slightly more complex recipes (configurable, default true)
-- Coal Gas and Coal Tar were added as another optional but very beneficial source of resources
-- Singleblock Distilleries will now always output the Item in the Distillation Recipe
-- Alloys can no longer be handcrafted past Stainless Steel, and require an on-tier Mixer to make
-- Harder recipes for Energy Hatches (configurable, default false)
-- Config to disable in-world Concrete Powder -> Concrete conversion
-- Indium now outputs 1 Small Dust each recipe instead of 1 Tiny Dust
-- High Octane Gasoline (HOG) and Nitrobenzene were added as more power options (as well as normal Gasoline)
-- Energium recipe was changed to be the 5u-style (previously was 9 Ruby + 9 Redstone -> 9 Energium, now is 4 + 5 -> 9)
-- Some gem dusts can now be processed with an Acid to get additional output over direct electrolysis
-- Forge Hammer recipes across the board are now 2x faster
-- Bricks/Coke Bricks/Fireclay Bricks reworked
-- Foil, Small Gear, Long Rod, and Rotor Extruder Shapes added
-- Text fields in (some) GUI's (like Conveyor, Robot Arm, Pump, etc...) are now editable 
+## Table of Contents
 
-### Bug Fixes
-- Electric Tools now properly use power over durability
-- Many textures were fixed to be more consistent (z-fighting, improper coloration, etc.)
-- Drums and Tanks now respect sneaking and will not fill a bucket when sneaking
-- Steam Machines are no longer the Icon in JEI for machine categories
-- All tiers of wood pipes can now be crafted by hand
-- Fix Transformers not updating textures, and not properly sending a chat message
-- Machines with lots of slots causing the "Title" to overlap now have a larger GUI (no overlap)
-- Fix rare world corruption bug with Redstone cache
-- Fix Rubber Trees spawning in a perfect grid pattern
-- Drums now properly display their Tank contents in TheOneProbe
-- Tools now properly override `getToolClasses()`, leading to better mod compatibility
-- Fix Distillation Tower not respecting the output order in some arrangements of output hatches
-- Fix GT items being improperly sorted in JEI
-- Fix recipes being improperly sorted in each category
-    - Sorted in groups of voltage-tier, with duration increasing within each tier
-- Fix recipes in JEI taking an odd number of ticks rounding up
-    - 1 tick recipes properly display as 0.05s (instead of 0.1s)
-    - Example: 19 ticks will show as 0.95s (before would have been 1s)
-- Cables and Wires now properly respect amperage on the line
-- Machines (and other Energy-acceptors) now no longer accept their maximum amount of amps per side, instead its per container
-- Cables will no longer burn improper parts of the network, and now is only the overamped/overvolted portion
-- Ore config JSONs should now work better with dimensions added by other mods
-- Fix JEI recipes showing some items as a chanced output when they are not chanced
-- Fix Large Turbine blade texture missing a blade in one frame
-- Fix Wood Drums accepting hot fluids like Lava
-- Fix lag caused by GT Lighters
-- Fix Solar covers not properly outputting power to GT cables
-- Fix Crowbar action on Powered Rails throwing errors in the log
-- Fix Fluid Regulator "Keep Exact" mode not working
-- Fix worldgen JSONs only using the first dimension listed in `dimension_filter`
+- [Overview](#overview)
 
-### CraftTweaker
-- Materials can now automatically generate IDs
-    - Be careful, as changing the order of this will cause items in-world to disappear
-- Coke Oven and PBF have normal RecipeMaps now, instead of using custom ones
+- [Table of Contents](#table-of-contents)
 
-### Removals
-- Potion Fluids placeable in-world were removed
-- Fluid Extractor and Extractor were combined into one machine (now Extractor)
-- Both Arc Furnaces were combined into one machine (now Arc Furnace)
-- Canning Machine and Fluid Canning Machine were combined (now Canning Machine)
-- Microwave, Amplifabricator, and Tesla Coil were removed
-- Dust-only Materials no longer generate blocks
-- GT Chests were removed (in favor of Crates, Super Chests, Quantum Chests)
-- Single-Use Batteries were removed (Except the ZPM)
-- Energy Field Projector was removed
-- Re-breather was removed
+- [1 - Merged Content](#1---merged-content)
+    - [1.1 - From Shadows of Greg](#11---from-shadows-of-greg)
+    - [1.2 - From Gregicality](#12---from-gregicality)
+    - [1.3 - From other CE Addons](#13---from-other-ce-addons)
 
-### Performance Improvements
-- GT Machines will now cause no lag when idling, full inventory or not. Detailed info:
-    - Previously GT machines would scan their item/fluid inventories each tick to attempt to run. Now they will only try to run when the inventory actually changes
-    - Rough performance test by Spark, using 20 Multi-Smelters with a full input bus and full output buses:
-        - OLD: ~4% TPS used
-        - NEW: 0% TPS used
-- Recipe lookup times were drastically improved. Detailed info:
-    - Previously, recipe lookup was done by iterating over a List until a match was found. Now it does it by hashed keys based on inputs
-    - Rough performance test by Spark, using 128 UV Macerators macerating Cobblestone:
-        - OLD: ~22.5% TPS used
-        - NEW: ~2.7% TPS used
+- [2 - New Content](#2---new-content)
+    - [2.1 - Pipes and Cables](#21---pipes-and-cables)
+    - [2.2 - Circuits](#22---circuits)
+    - [2.3 - Multiblocks](#23---multiblocks)
+        - [2.3.1 - New Multiblocks](#231---new-multiblocks)
+        - [2.3.2 - Multiblock Parts](232---multiblock-parts)
+    - [2.4 - Covers](#24---covers)
+    - [2.5 - Tools and Armor](#25---tools-and-armor)
+    - [2.6 - Machines](#26---machines)
+        - [2.6.1 - Standard Machines](#261---standard-machines)
+        - [2.6.2 - Misc Singleblocks](#262---misc-singleblocks)
 
-### Misc Changes
-- Many Material colors and IconSets (their overall appearance) have been updated
-- Machine UIs were updated to be much cleaner, new progress bars, slot icons, better layouts
-- Electrolyzer and Centrifuge now show all 12 slots at once
-- "Primitive" multiblocks now behave a bit better, and look nicer in the GUIs
-- New config to disable GTCE loot generation in MC loot tables
+- [3 - Behavior Changes](#3---behavior-changes)
+    - [3.1 - Steam Era Changes](#31---steam-era-changes)
+    - [3.2 - EBF Changes](#32---ebf-changes)
 
-### Internal Changes
-- UHV - UXV Tiers are supported natively by GTCEu for addons to take advantage of
-- `Elements` is no longer an Enum
-- Machines can now be indestructible and Wither Proof, if properly set in the Class
-- Material ID limit was raised from 1,000 to 32,767
-    - GTCEu uses 1-2,999
-    - Gregicality/SoG uses 3,000-19,999
-    - 20,000-32,767 available for modpacks or other addons, not yet claimed
-- Material API was rewritten from scratch:
-    - TODO
-- OrePrefix is no longer an Enum, and can easily be added to by addons
-- Shaped and Shapeless Recipe methods in `ModHandler` can now accept more types
-- `debug` config will now log failed recipe removals and additions
-- There is now a "PrimitiveMultiblockController" base class, which uses a normal RecipeMap. When paired with the `PrimitiveRecipeBuilder`, it will:
-    - Allow recipes to be run without power
-    - (by default) Initialize inventory for items and fluids to the Controller instead of Multiblock Parts (overridable)
-    - Hide the EU/t and Total EU info from the JEI page
-- Recipe removal methods for Vanilla will now log failures if `ConfigHolder.debug` is enabled
-- Recipe removal methods for GT added, located in `GTRecipeHandler`
-- `MetaTileEntityMultiFurnace` was renamed to `MetaTileEntityMultiSmelter`
+- [4 - Visual Changes](#4---visual-changes)
+    - [4.1 - Emissive Textures](#41---emissive-textures)
+    - [4.2 - Texture Changes](#42---texture-changes)
+
+- [5 - Recipes](#5---recipes)
+    - [5.1 - PBI Process](#51---pbi-process)
+    - [5.2 - HOG and Nitrobenzene](#52---hog-and-nitrobenzene)
+    - [5.3 - Platinum Group Metals](#53---platinum-group-metals)
+    - [5.4 - Enriched Naquadah and Naquadria](54---enriched-naquadah-and-naquadria)
+    - [5.5 - Circuits](#55---circuits)
+    - [5.6 - Autogenerated Recipes](#56---autogenerated-recipes)
+        - [5.6.1 - Ore Processing](#561---ore-processing)
+        - [5.6.2 - Material Parts](#562---material-parts)
+        - [5.6.3 - Decomposition](#563---decomposition)
+    - [5.7 - Misc Recipes](#57---misc-recipes)
+
+- [6 - Bug Fixes](#6---bug-fixes)
+
+- [7 - CraftTweaker Changes](#7---crafttweaker-changes)
+
+- [8 - Removals from GTCE](#8---removals-from-gtce)
+
+- [9 - Performance Improvements](#9---performance-improvements)
+
+- [10 - Misc Changes](#10---misc-changes)
+
+- [11 - Internal Changes](#10---internal-changes)
+
+- [#335](https://github.com/GregTechCEu/GregTech/pull/335): Added Config to make Stone Types other than Stone, Netherrack, and Endstone not drop unique ores (cleans up Inventory/JEI clutter)
+- [#369](https://github.com/GregTechCEu/GregTech/pull/369): Added new Vein Generator to create layered veins similar to GT5u
+
+- [#234](https://github.com/GregTechCEu/GregTech/pull/234): Added Sounds to GT Tools, Machines (with configs)
+
+- [#46](https://github.com/GregTechCEu/GregTech/pull/46): Added the Terminal, a centralized place for Applications. Applications:
+    - [#46](https://github.com/GregTechCEu/GregTech/pull/46): GuideBook App, which contains useful information and documentation of the Mod
+    - [#104](https://github.com/GregTechCEu/GregTech/pull/104): Prospector App, for finding Ores in-world
+    - [#115](https://github.com/GregTechCEu/GregTech/pull/115): GT Console app, providing an EnderIO-like system for configuring GT machines
+    - [#133](https://github.com/GregTechCEu/GregTech/pull/133): A few games, for passing the time while your EBF is cooking
+    - [#178](https://github.com/GregTechCEu/GregTech/pull/178): Virtual Tank App, for checking your Ender Fluid Link Cover stored fluids
+
+- [#44](https://github.com/GregTechCEu/GregTech/pull/44): Added the Clipboard, functionally similar to the Bibliocraft Clipboard
+
+## Overview
+
+## [1 - Merged Content](#table-of-contents)
+
+### [1.1 - From Shadows of Greg](#table-of-contents)
+
+**[Shadows of Greg](https://github.com/Shadows-of-Fire/Shadows-of-Greg)**, an addon for GTCE, was merged almost in its entirety into GTCEu.
+
+**Multiblocks**:
+- [0c43ded](https://github.com/GregTechCEu/GregTech/commit/0c43dedb8f237f9d47d91ed5f9eb0ebef1cef912): Added the Assembly Line
+- [9e537dc](https://github.com/GregTechCEu/GregTech/commit/9e537dca63ac95ad21e97b28b60ab31f3a01fc93): Added the Fusion Reactor
+
+**Single-blocks**:
+- [20cc5c3](https://github.com/GregTechCEu/GregTech/commit/20cc5c3c88f41b1d86241a1564cb022be17c1891): Added High-Tier Air Collectors and Pumps
+
+**Misc additions**:
+- [a5cf551](https://github.com/GregTechCEu/GregTech/commit/a5cf551113e5b3aa779b6416bd8b82737059ff95): All SoG Materials added to GTCEu (Growth Medium, Neutronium, etc)
+- [733a540](https://github.com/GregTechCEu/GregTech/commit/733a5405a94e303bad665e6ce330970124fac9a0): Added Crates and Drums
+
+
+### [1.2 - From Gregicality](#table-of-contents)
+
+**[Gregicality](https://github.com/Gregicality/gregicality)**, an expanded version of Shadows of Greg, had some features merged into CEu.
+- [#10](https://github.com/GregTechCEu/GregTech/pull/10): Added the Large Chemical Reactor
+
+
+### [1.3 - From other CE Addons](#table-of-contents)
+
+**[Multiblock Tweaker](https://github.com/eutro/MultiblockTweaker)**
+
+**[CEU](https://github.com/Tictim/CEU)**
+
+## [2 - New Content](#table-of-contents)
+
+### [2.1 - Pipes and Cables](#table-of-contents)
+- [c09c319](https://github.com/GregTechCEu/GregTech/commit/c09c319b2a6f827d44e7d801320cf5f60833d23b): Use GT5u-style Pipe models
+- [5e38ba1](https://github.com/GregTechCEu/GregTech/commit/5e38ba1316d45ad6447e7b59112200a1fc89cc1f): Wire Cutters used to connect/disconnect Cables/Wires instead of Wrench
+- [53d040a](https://github.com/GregTechCEu/GregTech/commit/53d040a2a99b6e874b48ee8d8bdcfff35bc13f8d): Added Config to enable GT6-style Pipe/Cable connections
+- [6124c9f](https://github.com/GregTechCEu/GregTech/commit/6124c9f5697727640df44d1b036d8bf98487df4c): Added Huge Fluid Pipes
+- [7f6fab9](https://github.com/GregTechCEu/GregTech/commit/7f6fab9e840e1639b452faac3a08c19491d1f8c7): Added Item Pipes
+- [4da3dbc](https://github.com/GregTechCEu/GregTech/commit/4da3dbc83351e5c05f43218415a2b5b3df3685c1): Added many more Materials of Pipes
+- [eb03b82](https://github.com/GregTechCEu/GregTech/commit/eb03b825cf6dff659614abc91be2f29be7301997): Added Native EU to FE from GT Cables. This means you can plug in RF machines into GT cables, and they will receive power normally
+- [859bcb9](https://github.com/GregTechCEu/GregTech/commit/859bcb99a432bed96d0402f6c70287e12fdedf29): Reworked Fluid Pipes, added Quadruple and Nonuple Fluid Pipes
+- [#78](https://github.com/GregTechCEu/GregTech/pull/78): Reworked Cables and Wires to properly respect Amperage
+- [b59f0dc](https://github.com/GregTechCEu/GregTech/commit/b59f0dc859f2d1121d85886732b722b76b243587): Cables with zero loss will still have loss as wires, unless marked as "Superconductors"
+- [78e37f7](https://github.com/GregTechCEu/GregTech/commit/78e37f755b8c452e3c18ccd81c871697fb9354cb): Added Superconductors for all tiers
+
+### [2.2 - Circuits](#table-of-contents)
+
+### [2.3 - Multiblocks](#table-of-contents)
+- [562b7b9](https://github.com/GregTechCEu/GregTech/commit/562b7b9714d585ea4741eb2db402c8e08e4d2c4c): Added EBF Coil Bonuses
+- [4cd59ba](https://github.com/GregTechCEu/GregTech/commit/4cd59bad3b736db25a1b3b6e9db9644788a95805): Added information to TheOneProbe, displaying if a Multiblock is formed or not
+- [11f2260](https://github.com/GregTechCEu/GregTech/commit/11f22603880f02c121fd01581ef7d605291f8b1e): Allow Fluid Input Hatch on any block of the bottom layer of the Distillation Tower
+- [11f2260](https://github.com/GregTechCEu/GregTech/commit/11f22603880f02c121fd01581ef7d605291f8b1e): Renamed "Diesel Generator" to "Large Combustion Engine"
+- [826556a](https://github.com/GregTechCEu/GregTech/commit/826556ad1fadf19ed721fe2ce74365b947b5aa60): Large Turbines now provide a warning when the Rotor is obstructed
+- [#124](https://github.com/GregTechCEu/GregTech/pull/124): Added the Distinct Buses feature (seen in Gregicality, and SoG's Processing Array) for use in more GT Multiblocks
+- [#144](https://github.com/GregTechCEu/GregTech/pull/144): Adjust Multi-Smelter rates to make coil upgrades a smoother curve
+- [#169](https://github.com/GregTechCEu/GregTech/pull/169): Rewrite the JEI Multiblock page, fix many issues and make its controls much more intuitive
+- [#194](https://github.com/GregTechCEu/GregTech/pull/194): Added a generalized Parallel Logic, for use by the Multi-Smelter, Steam Grinder, Steam Oven, and Processing Array (as well as addons or MBT Multiblocks)
+- [1382f97](https://github.com/GregTechCEu/GregTech/commit/1382f97016e12c19bc473c164caca6d31981edd8): Add Config for Boilers to use different fluids in place of Water (useful for mods like TFC)
+
+#### [2.3.1 - New Multiblocks](#table-of-contents)
+- [#34](https://github.com/GregTechCEu/GregTech/pull/34): Added the Primitive Water Pump (from IMPACT) for collecting Water in the Steam Era
+- [#42](https://github.com/GregTechCEu/GregTech/pull/42): Added the Steam Grinder and Steam Oven
+
+- [#241](https://github.com/GregTechCEu/GregTech/pull/241): Fusion Reactor now has a slightly modified structure, new recipes
+- [#185](https://github.com/GregTechCEu/GregTech/pull/185): Added Large Miners, for mining ores in-world
+- [#196](https://github.com/GregTechCEu/GregTech/pull/196): Added the Central Monitor (think, ComputerCraft), with features from monitoring machines, proxying machine GUIs, displaying images and GIFs, among other things
+- [#318](https://github.com/GregTechCEu/GregTech/pull/318): Added the Processing Array, capable of running 16 machines at once, available at late EV/early IV
+- [#318](https://github.com/GregTechCEu/GregTech/pull/318): Added the Advanced Processing Array, capable of running 64 machines at once, available at late LuV/early ZPM
+
+#### [2.3.2 - Multiblock Parts](#table-of-contents)
+- [#12](https://github.com/GregTechCEu/GregTech/pull/12): Allow Multiblock Parts to be shared across Multiblocks
+- [#114](https://github.com/GregTechCEu/GregTech/pull/114): Added Maintenance and Muffler Multiblock parts
+    - [#137](https://github.com/GregTechCEu/GregTech/pull/137): Maintenance is reworked heavily from GT5u, having more beneficial mechanics rather than punishing ones
+    - Maintenance can be disabled fully via a Config
+    - Mufflers will undergo a rework in the future, but currently output Ash (at a % chance) for each recipe run (will NOT jam machines if full, will just void the Ash)
+- [#141](https://github.com/GregTechCEu/GregTech/pull/141): Add Multi-Fluid Hatches, which allow a single hatch to hold several fluids
+- [#246](https://github.com/GregTechCEu/GregTech/pull/246): Reinforced Glass re-textured and renamed to Tempered Glass
+- [#357](https://github.com/GregTechCEu/GregTech/pull/357): Reworked Coils
+    - Removed Superconductor Coil/Fusion Coil from being allowed in EBF (only Fusion now)
+    - Removed Naquadah Alloy Coil
+    - Added Trinium Coil and Tritanium Coil
+- [#360](https://github.com/GregTechCEu/GregTech/pull/360): Added more coil bonuses for other multiblocks, like Pyrolyse Oven and Cracker Unit
+- [42e4e95](https://github.com/GregTechCEu/GregTech/commit/42e4e95388c19e12dfd1fe8b314a3e6887711815): Added 4A and 16A Energy Input/Dynamo Hatches, for IV+
+- [8c4f8b9](https://github.com/GregTechCEu/GregTech/commit/8c4f8b9c853c880f0a7e32963a5b6f4465bebab3): Allow the Fusion Reactor to overclock, consuming 2x the power and taking 1/2 the time per overclock
+
+### [2.4 - Covers](#table-of-contents)
+- [#65](https://github.com/GregTechCEu/GregTech/pull/65): Added Computer Monitor, Crafting Station, and Item/Fluid Detector Covers
+- [d4b0dfa](https://github.com/GregTechCEu/GregTech/commit/d4b0dfa3e3166a81caf913f51d8956cdfbb298af): Added the Infinite Water Cover
+- [7804265](https://github.com/GregTechCEu/GregTech/commit/780426517bf8b08f8923ccfe926ef1162d171b83): Cover GUIs can now be opened when Shift-Right-Clicking with an empty hand
+- [#111](https://github.com/GregTechCEu/GregTech/pull/111): Added Solar Panel Covers for MV-UV, with a config to enable them
+- [#178](https://github.com/GregTechCEu/GregTech/pull/178): Added the Ender Fluid Link Cover, acting like an Ender Tank as a Cover
+
+### [2.5 - Tools and Armor](#table-of-contents)
+- [#23](https://github.com/GregTechCEu/GregTech/pull/23): Added Mining Hammers (like Tinkers Hammers) and Electric Drills
+- [#49](https://github.com/GregTechCEu/GregTech/pull/49): Allow Tools to be enchanted with Unbreaking
+- [e6d8481](https://github.com/GregTechCEu/GregTech/commit/e6d8481d8ace214cfd3dba1be8928dd1313f47e7): Add Compat to the GT Wrench for BuildCraft, EnderIO, Applied Energistics, and Thermal Expansion tools
+- [#70](https://github.com/GregTechCEu/GregTech/pull/70): Allow Wrenches to be enchanted with Efficiency
+- [#96](https://github.com/GregTechCEu/GregTech/pull/96): Added NanoSuit Armor, QuarkTech Suit Armor, and Jetpacks (mimicking Simply Jetpacks behavior)
+- [#113](https://github.com/GregTechCEu/GregTech/pull/113): Added the Hammering Enchant, which can be given to Pickaxes to act like a GT Hard Hammer
+- [#314](https://github.com/GregTechCEu/GregTech/pull/314): Added Prospectors, for prospecting Ores
+
+### [2.6 - Machines](#table-of-contents)
+
+#### [2.6.1 - Standard Machines](#table-of-contents)
+- [87f0feb](https://github.com/GregTechCEu/GregTech/commit/87f0feb02f6d1e0196f825b9468af27c4e8891fc): Added 2 more Input Slots to the Mixer (for a total of 6)
+- [#68](https://github.com/GregTechCEu/GregTech/pull/68): Added Gas Collectors (in place of Air Collectors), which are Dimension-based
+- [664bd32](https://github.com/GregTechCEu/GregTech/commit/664bd32ab946b96a90ed419a4ef86f743522f629): Added the Simple Ore Washer, useful for quickly doing Ore Washer recipes without caring about byproducts
+- [#118](https://github.com/GregTechCEu/GregTech/pull/118): Added the Rock Breaker, used to create Stone, Cobblestone, Andesite, etc
+- [a20d8c9](https://github.com/GregTechCEu/GregTech/commit/a20d8c9334c2045fa03e22b91b6f1d9ebcf1c8f8): Added World Accelerators, which accelerate ticks of adjacent Tile Entities
+    - Config Option to completely remove them
+    - Another Config Option for whether they should affect machines
+    - By default, they will affect things like crops for example
+- [#167](https://github.com/GregTechCEu/GregTech/pull/167): Machines now have differing Fluid Tank sizes, depending on Machine and Tier
+- [#203](https://github.com/GregTechCEu/GregTech/pull/203): You can now click on the progress bar of a GT machine to go to its JEI page
+
+#### [2.6.2 - Misc Singleblocks](#table-of-contents)
+- [#21](https://github.com/GregTechCEu/GregTech/pull/21): Added the Infinite Energy Emitter, for creating infinite power in Creative
+- [#334](https://github.com/GregTechCEu/GregTech/pull/334): Added Creative Tank and Chest
+- [#24](https://github.com/GregTechCEu/GregTech/pull/24): Added Super Tanks and Super Chests
+- [#29](https://github.com/GregTechCEu/GregTech/pull/29): Added Aluminium Drum/Crate
+- [#45](https://github.com/GregTechCEu/GregTech/pull/45): Added recipes to clear the contents of Tanks/Drums
+- [3c4a9cf](https://github.com/GregTechCEu/GregTech/commit/3c4a9cf2d6094ce8484817eb12ceb6d816888c12): Added Adjustable Transformers, ranging from 2A->8A to 16A->64A
+- [d1bceee](https://github.com/GregTechCEu/GregTech/commit/d1bceee12d78073c24601e9cf9f4701ab30ec05b): Added Diodes, used to restrict amperage flow
+- [dc81fa8](https://github.com/GregTechCEu/GregTech/commit/dc81fa8947860508ab8f5b905e7cebc634f80dc6): Added the Buffer, used to Buffer Items and Fluids for easier automation
+- [#278](https://github.com/GregTechCEu/GregTech/pull/278): Add ability for Super/Quantum Tanks to lock fluids, void all, and void overflow
+
+## [3 - Behavior Changes](#table-of-contents)
+- [d7dee67](https://github.com/GregTechCEu/GregTech/commit/d7dee67d03a63d056a37e793ba1ed84a49583f39): Some Prefix types have different maximum stack sizes
+- [fa73732](https://github.com/GregTechCEu/GregTech/commit/fa737321503dfce8a6b714e2c59283f02e14003f): Added Config to require a Wrench to break Machines
+- [0201b71](https://github.com/GregTechCEu/GregTech/commit/0201b7189a0f6726f032a51f24866a160750641e): Allow Multiblock Parts to be facing upwards or downwards on place, instead of requiring a Wrench
+- [#18](https://github.com/GregTechCEu/GregTech/pull/18): Charger slot in machines can now hold any item (like Extruder Shapes!)
+- [#13](https://github.com/GregTechCEu/GregTech/pull/13): Change Transformers to use 5 sides for one voltage, and 1 side for the other, instead of 1 and 1
+- [c7dcf5c](https://github.com/GregTechCEu/GregTech/commit/c7dcf5cb5a413ed125e6ebb39489a63da2bd56e3): Allow Fluids to be taken out of Singleblock Generators
+- [#30](https://github.com/GregTechCEu/GregTech/pull/30): Allow Super/Quantum Tanks and Chests to Auto-Output
+- [#39](https://github.com/GregTechCEu/GregTech/pull/39): Energy Output Hatches (now called Dynamo Hatches) will only output on their output face (Energy Input is unchanged)
+- [1107f1a](https://github.com/GregTechCEu/GregTech/commit/1107f1abec5008380b55815fac2c088f420b5f8b): Removed ULV Overclocking, remove 2.0/2.8 Overclocking Split
+- [764e084](https://github.com/GregTechCEu/GregTech/commit/764e084854c6d556567da97c8fabc4c4c49a1498): Added Config for Overclock Duration Divisor, defaulting to 2.0
+- [2fa27ff](https://github.com/GregTechCEu/GregTech/commit/2fa27ff977620802ad6f14fc3493da7621f62b6f): Rebalanced Energy capacity of Energy/Dynamo Hatches
+- [#51](https://github.com/GregTechCEu/GregTech/pull/51): Multiblocks now lose their working progress when deformed
+- [8f5ad1d](https://github.com/GregTechCEu/GregTech/commit/8f5ad1df8e1cab3f21666afb6ec8dff841b66302): Reworked Steam Machine and Steam Boiler mechanics
+- [3b90ff3](https://github.com/GregTechCEu/GregTech/commit/3b90ff35893ccbe3c5b22548dfc20276e287c051): Drums can now drain automatically downwards when hit with a Wrench
+- [5622122](https://github.com/GregTechCEu/GregTech/commit/5622122b549110c96be5b1c4efb11f3d6616744b): Change some max stack sizes (like Hot Ingots)
+
+## [4 - Visual Changes](#table-of-contents)
+- [e8202dc](https://github.com/GregTechCEu/GregTech/commit/e8202dcbf80ce514ad8eedbfa59f44a1ff7812a0): Show Fluid Amount as hovering text over Fluid Slots in machines and JEI
+- [32da592](https://github.com/GregTechCEu/GregTech/commit/32da5927cf4e3ac15d753194a51d6caa87c8b7a4): Update Chemical Composition, Not Consumed, and Chanced Output tooltips to new colors
+- [#16](https://github.com/GregTechCEu/GregTech/pull/16): Fusion Reactor now shows the Tier to Start (like MK1, MK2, MK3) similar to EBF temperature
+- [23f9c5d](https://github.com/GregTechCEu/GregTech/commit/23f9c5dbbdfdae6f768b7f02c3a36a705d3fd204): Add Configs to change default colors of Machines and Cables (like GT5u)
+- [2f8d00f](https://github.com/GregTechCEu/GregTech/commit/2f8d00faf288ba17b8ea6905c3773ae93e25b06e): Sort Not-Consumed Recipe inputs to the end of the list (for visibility)
+- [cc84deb](https://github.com/GregTechCEu/GregTech/commit/cc84deb08b07b6f9c56123de5f470a32724b6d52): Changed TheOneProbe to display recipe progress in ticks/seconds instead of a percent completion
+- [0a3929f](https://github.com/GregTechCEu/GregTech/commit/0a3929fa009076e412f04000e9e32d40a372f450): Progress bars now "fill" in JEI, like Vanilla Furnace page
+- [#37](https://github.com/GregTechCEu/GregTech/pull/37): Remove the button on Centrifuge and Electrolyzer GUIs to swap between Item and Fluid outputs, instead always show all 12
+- [de76ec0](https://github.com/GregTechCEu/GregTech/commit/de76ec012bea36746526619d699d70bcea8a21bf), [#38](https://github.com/GregTechCEu/GregTech/pull/38): Cleaned up and fixed many UI issues, added many new UI textures
+- [254ea67](https://github.com/GregTechCEu/GregTech/commit/254ea67091920f0223e1e707b055f2c6e73b50aa): New Coke Oven JEI Page
+- [#75](https://github.com/GregTechCEu/GregTech/pull/75): Crafting Station now highlights missing items in Red
+- [#66](https://github.com/GregTechCEu/GregTech/pull/66): Added the Material Tree JEI Page, which shows a Material and all of its possible "types" (rods, gears, etc)
+- [#122](https://github.com/GregTechCEu/GregTech/pull/122): Render hovering text over chanced output in JEI, indicating their chance at a glance
+- [#189](https://github.com/GregTechCEu/GregTech/pull/189): Render hovering text over Not-Consumed inputs in JEI
+- [fa21549](https://github.com/GregTechCEu/GregTech/commit/fa2154908d62fc2927f8bf33b63a63a2e62f4376): Add textures for the "paused" state of machines (think, yellow light instead of green or red for multiblocks)
+- [3846c2b](https://github.com/GregTechCEu/GregTech/commit/3846c2b2098a37dccbefe5244e7324a6cbc3d162): Redo UI for Machine Controller Cover (more reworks like this to come)
+- [acfeb9b](https://github.com/GregTechCEu/GregTech/commit/acfeb9bf288c5a2450ad4098ba429b0ca2dd7ef7): Reverse animations of some covers when Import/Export is toggled
+- [6bee57e](https://github.com/GregTechCEu/GregTech/commit/6bee57e72b4a256bb6d40356dffb96c52ddce678): Redo most button textures (further reworks to come)
+
+### [4.1 - Emissive Textures](#table-of-contents)
+- [#127](https://github.com/GregTechCEu/GregTech/pull/127): Add Emissive Textures to GT machines, with a config
+- [#179](https://github.com/GregTechCEu/GregTech/pull/179): Add Bloom effects (with many, many configuration options) to GT machines
+
+### [4.2 - Texture Changes](#table-of-contents)
+- [8dcbf49](https://github.com/GregTechCEu/GregTech/commit/8dcbf494eadd5e4f92f67b2048351ce085b469af), [93a296d](https://github.com/GregTechCEu/GregTech/commit/93a296db10a23d9a6a3efe06a52de28478b6cfa4): Many Material IconSets, Colors, and Textures were adjusted
+- [448c99f](https://github.com/GregTechCEu/GregTech/commit/448c99f1755bab93cb335029bda05c2432abc2b6): Energy Input/Output overlays have better voltage colors
+- [663c2da](https://github.com/GregTechCEu/GregTech/commit/663c2da1dca4d876112aade2b6ce46f63f22d7c9): Adjust Glass Tube texture to be easier to see in some machines
+- [06340f1](https://github.com/GregTechCEu/GregTech/commit/06340f1bfb7931164a0d2976ade12784658daf2c): Added new textures for Programmed Circuits to display their configuration on the texture
+- [fea0891](https://github.com/GregTechCEu/GregTech/commit/fea08914bdd7823afcbb82b91f6ad75ed5789d13): Added Connected Textures to many blocks (coils, glass, fusion coils, etc)
+- [e9faf7c](https://github.com/GregTechCEu/GregTech/commit/e9faf7c1882102c0864f56238e9e8159ba4f00a8): Steam Machine "venting side" now has a custom texture to distinguish from normal Output Side texture
+- [ce29652](https://github.com/GregTechCEu/GregTech/commit/ce2965202220792935c98b4eef12bbac523e2c66): New Coil Textures (from GTNH)
+- [ba98780](https://github.com/GregTechCEu/GregTech/commit/ba9878053393420702887f5bcedfd02e3e5fd3f2): New Super/Quantum Tank/Chest textures
+- [#61](https://github.com/GregTechCEu/GregTech/pull/61): Allow Fluids to have separate textures based on the IconSet, and update many Fluid Textures
+
+## [5 - Recipes](#table-of-contents)
+- [#7](https://github.com/GregTechCEu/GregTech/pull/7), [#8](https://github.com/GregTechCEu/GregTech/pull/8): Adjusted many, many miscellaneous recipes
+- [#19](https://github.com/GregTechCEu/GregTech/pull/19): Redo GT Circuits and their recipes entirely
+- [#14](https://github.com/GregTechCEu/GregTech/pull/14): Redo Singleblock Distillery recipes to be more useful
+- [026e786](https://github.com/GregTechCEu/GregTech/commit/026e786917ff8316c1fd93de13710cafe390540e): Adjusted Frames to use the GT5u recipe
+- [b865be1](https://github.com/GregTechCEu/GregTech/commit/b865be17245a0ef54d0f321bd80f55d84acc8738): Added Polybenzimidazole (PBI) Process
+- [a807d22](https://github.com/GregTechCEu/GregTech/commit/a807d222cd4e2144053bb4a3b29aeef70cd0f847): Rebalance Nitric Acid production
+- [2a920e2](https://github.com/GregTechCEu/GregTech/commit/2a920e2aa98dbbf75a54d2f7136d7d838b665e14): Remove all usages of Programmed Circuit 0
+- [ea13d45](https://github.com/GregTechCEu/GregTech/commit/ea13d45dfd0e602e12dd1d8b87edaa1aedd609cc): Rework Pyrolyse Oven recipes
+- [#20](https://github.com/GregTechCEu/GregTech/pull/20): Add EBF Pyrometallurgy Recipes
+- [#17](https://github.com/GregTechCEu/GregTech/pull/17): Add many "shortcut" recipes to the LCR for early game processes
+- [114ede2](https://github.com/GregTechCEu/GregTech/commit/114ede22e8a9f47ca7364191c8cf61cde998fe44): Add Wire compacting and uncompacting recipes (like SoG Bundler)
+- [87f54cb](https://github.com/GregTechCEu/GregTech/commit/87f54cb32fae20b944995495ed9a63859529066f): Added new (small) process for making Uranium238/235 from Uraninite
+- [148fc30](https://github.com/GregTechCEu/GregTech/commit/148fc3060aace7a0188f96cf189caa8dfcc34f73): Buff Electrolysis durations significantly
+- [9edeed7](https://github.com/GregTechCEu/GregTech/commit/9edeed7894c5f587e811e115ac82942e236ee954): Fix issues with Direct Smelting and Ore crushed amounts
+- [#26](https://github.com/GregTechCEu/GregTech/pull/26): Adjusted Crafting Station to be cheaper, no longer requiring Bronze (and updated texture)
+- [#33](https://github.com/GregTechCEu/GregTech/pull/33): Perform a "greatest common denominator" function on electrolysis recipes (to minimize required input amount)
+- [e6fd107](https://github.com/GregTechCEu/GregTech/commit/e6fd107edf2a665736639787c0c49ddc21efd1a8): Added Gasoline, High-Octane Gasoline (HOG), and Nitrobenzene
+- [0e98b6a](https://github.com/GregTechCEu/GregTech/commit/0e98b6a53ef849d6b3355942b337acaed662d966): Reworked Coil Recipes
+- [e09f13d](https://github.com/GregTechCEu/GregTech/commit/e09f13d65f0fd21a6f87839af5e5997d14dee37d): Added Coal Tar and Coal Gas processing to accompany Charcoal Byproducts
+- [#56](https://github.com/GregTechCEu/GregTech/pull/56): Add GT Recipes for nearly all Vanilla Items
+- [60404d5](https://github.com/GregTechCEu/GregTech/commit/60404d589984b49bc8081d291d537016f13dc86d): Add Config for Harder Energy Hatches (inspired by GT5u), default false
+- [fed56cd](https://github.com/GregTechCEu/GregTech/commit/fed56cdf0740d9ce379b23a87295fc010ede5f5c): Rework Dust Alloy Mixer recipes
+- [9b7923a](https://github.com/GregTechCEu/GregTech/commit/9b7923a78482e5fa5763b25b127889d28edb8270): Add new Extruder Shapes for Long Rod, Rotor, Foil, Small Gear
+- [#74](https://github.com/GregTechCEu/GregTech/pull/74): Added Cryogenic Air recipes, tying in with the new Gas Collectors
+- [59fb179](https://github.com/GregTechCEu/GregTech/commit/59fb179b13309f1d7da251c349e3f1a542811116): Buff Indium Processing
+- [4eb9133](https://github.com/GregTechCEu/GregTech/commit/4eb9133e25eeb2b1b86bbef410cf374a6353d05d): Added new EV-UV Batteries
+- [1cb5d49](https://github.com/GregTechCEu/GregTech/commit/1cb5d49f1994507ac5387904d75ff4f61f5a8091): Many "unification" recipe tweaks (such as the recipe for Rotors, Gears, etc)
+- [ab748d0](https://github.com/GregTechCEu/GregTech/commit/ab748d066a012e1a333fe0c31633b5e9157ad9cc): Added new Gem Slurry recipes for some Ores
+- [#223](https://github.com/GregTechCEu/GregTech/pull/223): Rework Gem processing, and add config to remove Chipped/Flawed Gems (more work to come in the future)
+- [#247](https://github.com/GregTechCEu/GregTech/pull/247): Added Chemical Dyes and Recipes
+- [#257](https://github.com/GregTechCEu/GregTech/pull/257): Added EBF Gas-Boosting Recipes
+- [bc1426a](https://github.com/GregTechCEu/GregTech/commit/bc1426a3628b0d95caf84f82ddd9be03a5db2f23): Add new process for obtaining Platinum Group Metals (Pt, Pd, Rh, Ru, Ir, Os), simplified from processes that have been seen in the past
+- [3de2b46](https://github.com/GregTechCEu/GregTech/commit/3de2b46b2148a75d05237cf6218a7960447b9216), [785ad6d](https://github.com/GregTechCEu/GregTech/commit/785ad6d2b6e076860ba234dfe69f8ad5d5922586): Change LuV, ZPM, and UV primary materials
+- [#285](https://github.com/GregTechCEu/GregTech/pull/285): Rework Lenses (slightly)
+- [#283](https://github.com/GregTechCEu/GregTech/pull/283): Add process for Enriched Naquadah and Naquadria
+- [1609815](https://github.com/GregTechCEu/GregTech/commit/1609815475c9d9a4c1fef2362a149c6ef2e247ba): Rework Cable Covering recipes
+- [#313](https://github.com/GregTechCEu/GregTech/pull/313): Change some recipes (primarily tools) to be mirrored
+- [#292](https://github.com/GregTechCEu/GregTech/pull/292): Added Arc Furnace recycling for Machines
+
+## [6 - Bug Fixes](#table-of-contents)
+- [#1](https://github.com/GregTechCEu/GregTech/pull/1): Fix Electric Tool damage behavior
+- [#3](https://github.com/GregTechCEu/GregTech/pull/3): CraftTweaker `notConsumable()` call can now accept an IItemStack
+- [09e30d7](https://github.com/GregTechCEu/GregTech/commit/09e30d7dc72d142381e603fdc91b97d9590bd9db): Fix inconsistencies in GT Tool textures
+- [c07dab1](https://github.com/GregTechCEu/GregTech/commit/c07dab12a90a6d5c34b23ad9ed2201228e7ea835): Fix recipes in JEI being rounded to the nearest 2 ticks (instead of nearest tick)
+- [db874a6](https://github.com/GregTechCEu/GregTech/commit/db874a619da81196bd60daed8e29361f42beeb37): Fix Covers not properly using the texture of their tier when placed
+- [0043f63](https://github.com/GregTechCEu/GregTech/commit/0043f6342b8f191110cd1297a4f5fc01eec870d3): Fix Foam Sprayer having a stack size greater than 1
+- [af8296e](https://github.com/GregTechCEu/GregTech/commit/af8296e141c61f37ee71035b57215f8facb376b9): Fix issues regarding PipeNets across different dimensions
+- [#32](https://github.com/GregTechCEu/GregTech/pull/32): Fix issues with Right-Clicking Drums and Tanks
+- [f2ae391](https://github.com/GregTechCEu/GregTech/commit/f2ae391c69b22e46e962952f35f863d1f27c8db0): Fix Steam Machines displaying as the icons in GT JEI pages
+- [1529aae](https://github.com/GregTechCEu/GregTech/commit/1529aae54a891a2d2dc61acad27600be18982db2): Fix Transformers not updating their textures when Soft Hammered
+- [e661d3c](https://github.com/GregTechCEu/GregTech/commit/e661d3c5b9efcd856614f188c7f799ec68848699): Fix issue with Shapeless recipe validation
+- [#60](https://github.com/GregTechCEu/GregTech/pull/60): Fix Machine Titles overlapping with Slots in some cases
+- [72efb0a](https://github.com/GregTechCEu/GregTech/commit/72efb0a2f6baf8ac5b1eeab6bbf79c854d19330a): Fix Annealed Copper Cable tier
+- [0f34681](https://github.com/GregTechCEu/GregTech/commit/0f346812ee2026d63fd661d940e0d837f83f79db): Fix issues with NBT-clearing recipes
+- [2667846](https://github.com/GregTechCEu/GregTech/commit/26678468042521f8365eeceb09f21f5cedbd9d17): Fix GT Tools being incompatible with many mods
+- [0dafbf2](https://github.com/GregTechCEu/GregTech/commit/0dafbf278e065de1ed7913eb8a4424aea2297a28): Fix GT Rubber Trees generating in a grid pattern
+- [a4634bd](https://github.com/GregTechCEu/GregTech/commit/a4634bd877020371dfdea795d99d1d4a8420db11): Fixed Drums not displaying their Fluids in TheOneProbe
+- [18c4373](https://github.com/GregTechCEu/GregTech/commit/18c4373aa4e8e7329c536e07ea7e0aa32ba89641): Fix issues with the Distillation Tower JEI page
+- [fa1b388](https://github.com/GregTechCEu/GregTech/commit/fa1b388a4e15f85357db84e236cab00804376de4): Fix GT Item Localization on servers
+- [#109](https://github.com/GregTechCEu/GregTech/pull/109): Fixed Chanced Output being displayed improperly in some cases
+- [f911f00](https://github.com/GregTechCEu/GregTech/commit/f911f00297e0155a4a7ba16272ba5a1eaf710d7b): Fix Wood Drums accepting Gases, despite Wood being marked as "not gasproof"
+- [4fedb50](https://github.com/GregTechCEu/GregTech/commit/4fedb5087dd5d049cf69fa5586daf995b6e6387a): Fixed crash relating to a MTE becoming null
+- [f23b6e0](https://github.com/GregTechCEu/GregTech/commit/f23b6e0186da6474f7e0031d2b03cb6300de6e68): Fix PBF and Coke Oven GUIs appearing when unformed
+- [#130](https://github.com/GregTechCEu/GregTech/pull/130): Fix Redstone level issue with Machine Controller Cover
+- [605ed5e](https://github.com/GregTechCEu/GregTech/commit/605ed5e240e8cbb4425eb850135bb0aa7b8ed3de): Fix lag when using GT Lighters
+- [c3cdf2e](https://github.com/GregTechCEu/GregTech/commit/c3cdf2e5673e9697bc878f669dde332c81243c36): Fix Disjunction Enchant not affecting Endermites
+- [#138](https://github.com/GregTechCEu/GregTech/pull/138): Fixed Fluid Regulator Keep-Exact Mode
+- [#110](https://github.com/GregTechCEu/GregTech/pull/110): Fix issues with multiple dimensions in GT worldgen JSON's
+- [#143](https://github.com/GregTechCEu/GregTech/pull/143): Fix some NBT issues
+- [#152](https://github.com/GregTechCEu/GregTech/pull/152): Fix issue with Furnace recipe removals
+- [#159](https://github.com/GregTechCEu/GregTech/pull/159): Fix Fusion Reactor crash when using certain energy inputs
+- [#175](https://github.com/GregTechCEu/GregTech/pull/175): Fix Chanced output issue when output slots are not full
+- [#195](https://github.com/GregTechCEu/GregTech/pull/195): Fix UI Slot grid when the number of slots is a prime number
+- [bae5d4a](https://github.com/GregTechCEu/GregTech/commit/bae5d4a2d4621b4067cbfd66a33f2ba25987535a): Fix issues with GT tool `onItemUse`
+- [#208](https://github.com/GregTechCEu/GregTech/pull/208): Fix issues with autogenerated Implosion Compressor recipes
+- [#210](https://github.com/GregTechCEu/GregTech/pull/210): Fix issues with the `/gt util hand` command
+- [#214](https://github.com/GregTechCEu/GregTech/pull/214): Fix Singleblock Generators outputting power only once per second
+- [#226](https://github.com/GregTechCEu/GregTech/pull/226): Fix LCE JEI page not showing all fluids
+- [efd9d57](https://github.com/GregTechCEu/GregTech/commit/efd9d57e6064c6959e6c04d73167759b5ec245bf): Fix issues with GT Axe and Chainsaw
+- [#266](https://github.com/GregTechCEu/GregTech/pull/266): Fix recipe property information overlapping in JEI
+- [#281](https://github.com/GregTechCEu/GregTech/pull/281): Fix issues with breaking MTEs in certain lag conditions
+    - This fixes the notorious bug of all GT Machines going invisible after breaking a machine, among other problems
+- [5cfce5a](https://github.com/GregTechCEu/GregTech/commit/5cfce5a99c2bd6edadfd61e71d37513822077db2): Fix some GT chat messages sending multiple times
+- [5ebe207](https://github.com/GregTechCEu/GregTech/commit/5ebe207e20a612f9ceea15e914996ed423f92608): Fix Cauldron tooltips saying the wrong material names
+- [4e982cd](https://github.com/GregTechCEu/GregTech/commit/4e982cdc1dce4f153985aba3aa5491f9e86a9452): Fix HarvestLevel of Steel being lower than Iron
+- [905ebba](https://github.com/GregTechCEu/GregTech/commit/905ebbacbac54e8c54da3d404fd7dbf0d0f96fd5): Fix Netherrack, Endstone Ores not having a 2x crushed multiplier
+- [d15d791](https://github.com/GregTechCEu/GregTech/commit/d15d7913f198761c168da7081b6a64b1131eb7ad): Fix Steam Machines not venting Steam quickly, causing machine flickering
+- [#289](https://github.com/GregTechCEu/GregTech/pull/289): Fix Lava and Water not being localized properly in some machines
+- [11b78ff](https://github.com/GregTechCEu/GregTech/commit/11b78ff1c8ab5cc77f285d2ead4b9cbc4daf4880): Fix GT Certus Quartz not matching the AE2 OreDict
+- [69454cc](https://github.com/GregTechCEu/GregTech/commit/69454cc63b389c99a36d1ac1bd045b33973bde0a): Fix Steam Boilers losing heat significantly faster than they should
+- [a08e228](https://github.com/GregTechCEu/GregTech/commit/a08e22890a601336acf1de03ba21f2e064ee83b6): Fix Drum tooltips being applied twice
+- [681a9d1](https://github.com/GregTechCEu/GregTech/commit/681a9d15266a8345f19033fa3e89b36b7ff22b6b): Fix rendering issues with GT Facades
+- [fa21549](https://github.com/GregTechCEu/GregTech/commit/fa2154908d62fc2927f8bf33b63a63a2e62f4376): Fix GT machines rendering as "active" when paused by a Soft Hammer
+- [213efd5](https://github.com/GregTechCEu/GregTech/commit/213efd5e28eea6a0b6ad38097d1f45691c696186): Fix covers rendering under certain textures
+- [5a65647](https://github.com/GregTechCEu/GregTech/commit/5a656474d341c5fe607049781ef94058549618c7): Fix minor optifine incompatibilities
+- [73ec83d](https://github.com/GregTechCEu/GregTech/commit/73ec83d2a236c183d9cf0424a745e40e88e6ecb1): Fix GUI framerate issues
+- [#323](https://github.com/GregTechCEu/GregTech/pull/323): Fix many issues related to Battery Buffers
+- [#340](https://github.com/GregTechCEu/GregTech/pull/340): Fix Electric Tools not being faster than normal tools
+- [013926b](https://github.com/GregTechCEu/GregTech/commit/013926b6020124bbbcd6c676637b2539310d52bc): Fix Fluids in GT slots being darker than in JEI and other mod slots
+- [#356](https://github.com/GregTechCEu/GregTech/pull/356): Fix Cover Grid not showing X's where connections or covers are
+- [e3b4e18](https://github.com/GregTechCEu/GregTech/commit/e3b4e18804357fcff43cd3254658698238fa2b69): Fix PBF not emitting Smoke Particles when running
+- [#366](https://github.com/GregTechCEu/GregTech/pull/366): Fix many issues with slots not respecting normal behavior in GT inventories
+
+## [7 - CraftTweaker Changes](#table-of-contents)
+- [fb69975](https://github.com/GregTechCEu/GregTech/commit/fb69975253b023e0911a5223f968df06fe52c8d1): Many new Material-related fields exposed to CraftTweaker
+- [0b9a43f](https://github.com/GregTechCEu/GregTech/commit/0b9a43fefabbdb1bf9344aaef82c794dfa2d9233): Allow Material IDs in CraftTweaker to be auto-generated
+- [#47](https://github.com/GregTechCEu/GregTech/pull/47): Added new Bracket Handler for RecipeMaps, like `<recipemap:compressor>`
+- [e58500b](https://github.com/GregTechCEu/GregTech/commit/e58500b85f54f444761988034f952cefe28a7bfb): Created new CraftTweaker Material API to function with the new internal API
+- [#150](https://github.com/GregTechCEu/GregTech/pull/150): Allow CraftTweaker to modify flags and properties of existing Materials
+- [51d7474](https://github.com/GregTechCEu/GregTech/commit/51d7474ab9e8ae5698e92e2105026ae639adb880): Add `removeRecipeByOutput` method for CraftTweaker
+- [#213](https://github.com/GregTechCEu/GregTech/pull/213): Added ability to create and register Terminal apps in CraftTweaker
+
+## [8 - Removals from GTCE](#table-of-contents)
+- [058db4e](https://github.com/GregTechCEu/GregTech/commit/058db4e01607ecc042ea79a9e17233d3d4b40420): Lignite has been removed
+- [6612008](https://github.com/GregTechCEu/GregTech/commit/661200889df0a64e622634406abaf239e80337f1): Removed Colored Frames
+- [c416e5e](https://github.com/GregTechCEu/GregTech/commit/c416e5eee2d57436e902067e22b4bbffc8e18007): Removed the Crusher Blade
+- [6669b99](https://github.com/GregTechCEu/GregTech/commit/6669b9974032a1415753ba608e0313322004c244): Removed GTCE Potion Brewing
+- [c7fb654](https://github.com/GregTechCEu/GregTech/commit/c7fb65466e78ff9cea4ced16dd51e75daaf390d4): Removed GTCE Chests, in favor of Crates
+- [90b8e04](https://github.com/GregTechCEu/GregTech/commit/90b8e041f5483a91d008aacdada61c55626017dd): Removed several Cable-related configs
+- [e53885d](https://github.com/GregTechCEu/GregTech/commit/e53885d870706dd03d72af29db2d11de7cdf9b3c): Removed Material Blocks for Materials that are just Dusts (Ingot and Gem blocks are unchanged)
+- [cde0631](https://github.com/GregTechCEu/GregTech/commit/cde0631e469d8266ffef1898ed977875c379aa3f): Removed Facade recipes from anything other than Iron Plates
+- [11ecde2](https://github.com/GregTechCEu/GregTech/commit/11ecde267d5b66eeac199fce931c42d4b05e70a3): Removed the Energy Field Projector and Rebreather
+- [c3cdf2e](https://github.com/GregTechCEu/GregTech/commit/c3cdf2e5673e9697bc878f669dde332c81243c36): Remove Methane from Food config (recipes are always added)
+- [c25044f](https://github.com/GregTechCEu/GregTech/commit/c25044f523122eebe55346dfcaf91c5dccb54556): Removed Polystyrene, Polysiloxane, among other unused Materials
+- [#328](https://github.com/GregTechCEu/GregTech/pull/328): Removed the Scanner (used on Surface Rocks)
+
+## [9 - Performance Improvements](#table-of-contents)
+- [#91](https://github.com/GregTechCEu/GregTech/pull/91): Fixed lag for "Idling" machines
+    - Machines no longer do any work when "idling," whether full of items or not
+    - Machines check recipes when inventories change, instead of each tick
+    - Additionally, improves performance of machines with no items in their inventories
+- [#116](https://github.com/GregTechCEu/GregTech/pull/116): Optimize Recipe Lookup
+    - Significantly improves general performance of GT Machines
+- [#245](https://github.com/GregTechCEu/GregTech/pull/245): Optimized MetaTileEntity rendering
+
+## [10 - Misc Changes](#table-of-contents)
+- [#2](https://github.com/GregTechCEu/GregTech/pull/2): Updated Russian Translation
+- [61c6c94](https://github.com/GregTechCEu/GregTech/commit/61c6c94ec77494ade304ca207b18e8b8e46d7b93): Sort Recipes in JEI by duration ascending
+- [#26](https://github.com/GregTechCEu/GregTech/pull/26): Added Advancements from Stone Age to UV
+- [7f557a9](https://github.com/GregTechCEu/GregTech/commit/7f557a9bf2b4efe571ca44cae46fa7879ef5405c): Added config to remove in-world Concrete Powder -> Concrete in Water mechanic
+- [d76afa3](https://github.com/GregTechCEu/GregTech/commit/d76afa3c4aa7a3bdac550ee7bac5905d13400d38): Added Config to disable GT Loot additions
+- [#105](https://github.com/GregTechCEu/GregTech/pull/105): Rubber Wood now creates custom Rubber Planks
+- [#106](https://github.com/GregTechCEu/GregTech/pull/106): GT Concrete now gives the player a slight speed-boost
+- [#119](https://github.com/GregTechCEu/GregTech/pull/119): Clean up mod priority related configs
+
+## [11 - Internal Changes](#table-of-contents)
+- [6155d82](https://github.com/GregTechCEu/GregTech/commit/6155d82b85b8f61e68c42376719826c0388b6a14): UHV, UEV, UIV, UMV, and UXV tiers were added
+- [1c072e5](https://github.com/GregTechCEu/GregTech/commit/1c072e52d211a6ad25634cc2f1a2e8503ace346d): Elements are no longer stored as an Enum
+- [0a0f9d5](https://github.com/GregTechCEu/GregTech/commit/0a0f9d593be0149f705ee8c83a5763e11f0b2b7b): `CraftingComponent` class rewritten
+- [8307eb1](https://github.com/GregTechCEu/GregTech/commit/8307eb1a3558b3e1f1cc22c0c1f057367c5cc951): Created a "reservation" system for MetaTileEntity and Material registry IDs
+- [#9](https://github.com/GregTechCEu/GregTech/pull/9): Allow MTE's to be created as Explosion-proof and Wither-proof
+- [#43](https://github.com/GregTechCEu/GregTech/pull/43), [#58](https://github.com/GregTechCEu/GregTech/pull/58): Restructured Material API:
+    - Can now support up to 32767 Materials instead of 1000
+    - Materials are created via Builders instead of Constructors
+    - `IngotMaterial`, `GemMaterial`, etc are removed, and instead Materials can have properties, such as `IngotProperty`
+    - Restructured how Flags are done internally, removing Flag limit and allowing Flags to specify "dependencies" (like GENERATE_BOLT_SCREW requiring GENERATE_ROD)
+- [bd584ab](https://github.com/GregTechCEu/GregTech/commit/bd584ab7eb2a942fb469cb5d7911a868d67d8569): OrePrefix is no longer an Enum, and Addons can register new prefixes easily
+- [932be0f](https://github.com/GregTechCEu/GregTech/commit/932be0f8786e574c49485f165bc7489c6e4ced0d): Added native Recipe removal methods in `GTRecipeHandler`, and added better debug logging
+- [b6cad8c](https://github.com/GregTechCEu/GregTech/commit/b6cad8cd54834ddd62692bea7e2495fe540d8b34): Added `MetaOreDictItem`, for creating a single Item as if it were from a Material, without making an entire new Material
+- [ba74b2f](https://github.com/GregTechCEu/GregTech/commit/ba74b2f71aebaf030784685c6f71c89d8f240c77): Separate Tool Enchantability from the tool iconset, letting it be explicitly set
+- [#85](https://github.com/GregTechCEu/GregTech/pull/85): "Primitive" multiblocks (PBF, Coke Oven) now use a shared and extensible API class
+- [d5c0f0a](https://github.com/GregTechCEu/GregTech/commit/d5c0f0a0845aef851a933041d3d27ec2fab0a7b4): Allow MetaItems to use EnumRarity
+- [ba511f0](https://github.com/GregTechCEu/GregTech/commit/ba511f0a64669c13775ba3a4bff219e5753f0352): All GT registries (Materials, MTEs, Covers, etc) are now located in `GregTechAPI`
+- [e154aa5](https://github.com/GregTechCEu/GregTech/commit/e154aa53449cd9206e01fbe95623e7c316f378fd): Moves most registration (Materials, MTEs, UI Factories, etc) to an Event-based system
+- [#166](https://github.com/GregTechCEu/GregTech/pull/166): Reworked `FuelRecipeLogic`
+- [#256](https://github.com/GregTechCEu/GregTech/pull/256): Reworked `AbstractRecipeLogic`
+- [#263](https://github.com/GregTechCEu/GregTech/pull/263): Added logic for Multiblocks to run with multiple valid RecipeMaps
+- [eb10f28](https://github.com/GregTechCEu/GregTech/commit/eb10f2864b591328450fd91a804845ed2ea72085): Rework Steam Machine texture organization and application
+- [#324](https://github.com/GregTechCEu/GregTech/pull/324): Add many more registries, allowing registry lookup over reflection for many more things
+- [#320](https://github.com/GregTechCEu/GregTech/pull/320): Rewrote `NetworkHandler` and associated packet classes to be much easier to use
+- [#173](https://github.com/GregTechCEu/GregTech/pull/173): Allow addons to more easily add and modify ore veins
+- [#379](https://github.com/GregTechCEu/GregTech/pull/379): Implemented the `NO_UNIFICATION` flag for creating materials with no recipes generated
+
+TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
+- Larger Cells? Yes
+- Add Transformer Lang bug to Bug Fixes if commit isnt found

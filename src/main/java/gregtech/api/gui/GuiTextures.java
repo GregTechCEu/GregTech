@@ -223,7 +223,7 @@ public class GuiTextures {
     public final static TextureArea ICON_SAVE = TextureArea.fullImage("textures/gui/terminal/icon/system/save_hover.png");
     public final static TextureArea ICON_LOCATION = TextureArea.fullImage("textures/gui/terminal/icon/guide_hover.png");
     public final static TextureArea ICON_VISIBLE = TextureArea.fullImage("textures/gui/terminal/icon/appearance_hover.png");
-    public final static TextureArea ICON_CALCULATOR = TextureArea.fullImage("textures/gui/terminal/icon/other/calculator_hover.png");
+    public final static TextureArea ICON_CALCULATOR = TextureArea.fullImage("textures/gui/terminal/icon/calculator_hover.png");
     public final static TextureArea UI_FRAME_SIDE_UP = TextureArea.fullImage("textures/gui/terminal/frame_side_up.png");
     public final static TextureArea UI_FRAME_SIDE_DOWN = TextureArea.fullImage("textures/gui/terminal/frame_side_down.png");
 
