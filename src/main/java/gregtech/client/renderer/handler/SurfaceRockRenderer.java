@@ -107,7 +107,7 @@ public class SurfaceRockRenderer implements ICCBlockRenderer {
         Matrix4 translation = new Matrix4();
         translation.translate(pos.getX(), pos.getY(), pos.getZ());
         TextureAtlasSprite stoneSprite = TextureUtils.getBlockTexture("stone");
-        Material material = ((BlockSurfaceRock) state.getBlock()).getStoneMaterial(world, pos, state);
+        Material material = state.getValue(((BlockSurfaceRock) state.getBlock()).variantProperty);
         int renderingColor = GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB());
         IVertexOperation[] operations = new IVertexOperation[]{
                 new IconTransformation(stoneSprite),

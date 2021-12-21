@@ -62,10 +62,6 @@ public class BlockSurfaceRock extends DelayedStateBlock implements IModelSupplie
         initBlockState();
     }
 
-    public Material getStoneMaterial(IBlockAccess blockAccess, BlockPos pos, IBlockState blockState) {
-        return Materials.Aluminium;
-    }
-
     @Nullable
     @Override
     public String getHarvestTool(IBlockState state) {
@@ -93,6 +89,10 @@ public class BlockSurfaceRock extends DelayedStateBlock implements IModelSupplie
     public int getMetaFromState(@Nonnull IBlockState state) {
         Material material = state.getValue(variantProperty);
         return variantProperty.getAllowedValues().indexOf(material);
+    }
+
+    public IBlockState getBlock(Material material) {
+        return getDefaultState().withProperty(variantProperty, material);
     }
 
     @Override
@@ -158,21 +158,21 @@ public class BlockSurfaceRock extends DelayedStateBlock implements IModelSupplie
         return STONE_AABB;
     }
 
-    private ItemStack getDropStack(IBlockAccess blockAccess, BlockPos pos, IBlockState blockState, int amount) {
-        Material material = getStoneMaterial(blockAccess, pos, blockState);
+    private ItemStack getDropStack(IBlockState blockState, int amount) {
+        Material material = blockState.getValue(variantProperty);
         return OreDictUnifier.get(OrePrefix.dustTiny, material, amount);
     }
 
     @Override
     @Nonnull
     public ItemStack getPickBlock(@Nonnull IBlockState state, @Nonnull RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
-        return getDropStack(world, pos, state, 1);
+        return getDropStack(state, 1);
     }
 
     @Override
     public void getDrops(NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
         int amount = 3 + GTValues.RNG.nextInt((int) (2 + fortune * 1.5));
-        drops.add(getDropStack(world, pos, state, amount));
+        drops.add(getDropStack(state, amount));
     }
 
     @Override
