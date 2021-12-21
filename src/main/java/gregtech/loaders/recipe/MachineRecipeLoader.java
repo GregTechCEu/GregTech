@@ -960,23 +960,23 @@ public class MachineRecipeLoader {
     }
     private static void ConvertHatchToHatch() {
         for (int i = 0; i < FLUID_IMPORT_HATCH.length; i++) {
-            if(FLUID_IMPORT_HATCH[i] != null) {
+            if(FLUID_IMPORT_HATCH[i] != null && FLUID_EXPORT_HATCH[i] != null ) {
 
-                ModHandler.addShapelessRecipe(FLUID_IMPORT_HATCH[i].getMetaName() + FLUID_IMPORT_HATCH[i].getTier(), FLUID_IMPORT_HATCH[i].getStackForm(), FLUID_EXPORT_HATCH[i].getStackForm());
-                ModHandler.addShapelessRecipe(FLUID_EXPORT_HATCH[i].getMetaName() + FLUID_EXPORT_HATCH[i].getTier(), FLUID_EXPORT_HATCH[i].getStackForm(), FLUID_IMPORT_HATCH[i].getStackForm());
+                ModHandler.addShapelessRecipe("fluid_hatch_output_to_input_" +FLUID_IMPORT_HATCH[i].getTier(), FLUID_IMPORT_HATCH[i].getStackForm(), FLUID_EXPORT_HATCH[i].getStackForm());
+                ModHandler.addShapelessRecipe("fluid_hatch_input_to_output_" + FLUID_EXPORT_HATCH[i].getTier(), FLUID_EXPORT_HATCH[i].getStackForm(), FLUID_IMPORT_HATCH[i].getStackForm());
             }
         }
         for (int i = 0; i < ITEM_IMPORT_BUS.length; i++) {
-            if(ITEM_IMPORT_BUS[i] != null) {
+            if(ITEM_IMPORT_BUS[i] != null && ITEM_EXPORT_BUS[i] != null) {
 
-                ModHandler.addShapelessRecipe(ITEM_IMPORT_BUS[i].getMetaName() + ITEM_IMPORT_BUS[i].getTier(), ITEM_IMPORT_BUS[i].getStackForm(), ITEM_EXPORT_BUS[i].getStackForm());
-                ModHandler.addShapelessRecipe(ITEM_EXPORT_BUS[i].getMetaName() + ITEM_EXPORT_BUS[i].getTier(), ITEM_EXPORT_BUS[i].getStackForm(), ITEM_IMPORT_BUS[i].getStackForm());
+                ModHandler.addShapelessRecipe("item_bus_output_to_input_" + ITEM_IMPORT_BUS[i].getTier(), ITEM_IMPORT_BUS[i].getStackForm(), ITEM_EXPORT_BUS[i].getStackForm());
+                ModHandler.addShapelessRecipe("item_bus_input_to_output_" + ITEM_EXPORT_BUS[i].getTier(), ITEM_EXPORT_BUS[i].getStackForm(), ITEM_IMPORT_BUS[i].getStackForm());
             }
         }
         if (STEAM_EXPORT_BUS != null && STEAM_IMPORT_BUS != null){
         //Steam
-        ModHandler.addShapelessRecipe( STEAM_EXPORT_BUS.getMetaName() + STEAM_EXPORT_BUS.getTier(), STEAM_EXPORT_BUS.getStackForm(), STEAM_IMPORT_BUS.getStackForm());
-        ModHandler.addShapelessRecipe( STEAM_IMPORT_BUS.getMetaName() + STEAM_IMPORT_BUS.getTier(), STEAM_IMPORT_BUS.getStackForm(), STEAM_EXPORT_BUS.getStackForm());
+        ModHandler.addShapelessRecipe( "steam_bus_output_to_input_"+ STEAM_EXPORT_BUS.getTier(), STEAM_EXPORT_BUS.getStackForm(), STEAM_IMPORT_BUS.getStackForm());
+        ModHandler.addShapelessRecipe( "steam_bus_input_to_output_" + STEAM_IMPORT_BUS.getTier(), STEAM_IMPORT_BUS.getStackForm(), STEAM_EXPORT_BUS.getStackForm());
         }
     }
 }
