@@ -112,7 +112,7 @@ public class MetaTileEntities {
     public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
     public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_4A = new MetaTileEntityEnergyHatch[5]; // IV, LuV, ZPM, UV, UHV
     public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH_16A = new MetaTileEntityEnergyHatch[5]; // IV, LuV, ZPM, UV, UHV
-    public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[3]; //HV, LuV, MAX
+    public static final MetaTileEntityRotorHolder2[] ROTOR_HOLDER = new MetaTileEntityRotorHolder2[6]; //HV, EV, IV, LuV, ZPM, UV
     public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UV]; // LV-UV
     public static final MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
     public static final MetaTileEntityQuantumChest[] QUANTUM_CHEST = new MetaTileEntityQuantumChest[10];
@@ -668,22 +668,25 @@ public class MetaTileEntities {
         TITANIUM_CRATE = registerMetaTileEntity(1630, new MetaTileEntityCrate(gregtechId("crate.titanium"), Materials.Titanium, 126));
         TUNGSTENSTEEL_CRATE = registerMetaTileEntity(1631, new MetaTileEntityCrate(gregtechId("crate.tungstensteel"), Materials.TungstenSteel, 144));
 
-        // Rotor Holder, IDs 1640-1644
-        ROTOR_HOLDER[0] = registerMetaTileEntity(1640, new MetaTileEntityRotorHolder(gregtechId("rotor_holder.hv"), GTValues.HV, 1.0f));
-        ROTOR_HOLDER[1] = registerMetaTileEntity(1641, new MetaTileEntityRotorHolder(gregtechId("rotor_holder.luv"), GTValues.LuV, 1.15f));
-        ROTOR_HOLDER[2] = registerMetaTileEntity(1642, new MetaTileEntityRotorHolder(gregtechId("rotor_holder.uhv"), GTValues.UHV, 1.25f));
+        // Rotor Holder, IDs 1640-1645
+        ROTOR_HOLDER[0] = registerMetaTileEntity(1640, new MetaTileEntityRotorHolder2(gregtechId("rotor_holder.hv"), GTValues.HV));
+        ROTOR_HOLDER[1] = registerMetaTileEntity(1641, new MetaTileEntityRotorHolder2(gregtechId("rotor_holder.ev"), GTValues.EV));
+        ROTOR_HOLDER[2] = registerMetaTileEntity(1642, new MetaTileEntityRotorHolder2(gregtechId("rotor_holder.iv"), GTValues.IV));
+        ROTOR_HOLDER[3] = registerMetaTileEntity(1643, new MetaTileEntityRotorHolder2(gregtechId("rotor_holder.luv"), GTValues.LuV));
+        ROTOR_HOLDER[4] = registerMetaTileEntity(1644, new MetaTileEntityRotorHolder2(gregtechId("rotor_holder.zpm"), GTValues.ZPM));
+        ROTOR_HOLDER[5] = registerMetaTileEntity(1645, new MetaTileEntityRotorHolder2(gregtechId("rotor_holder.uv"), GTValues.UV));
 
-        // Misc, IDs 1645-1999
-        LOCKED_SAFE = registerMetaTileEntity(1645, new MetaTileEntityLockedSafe(gregtechId("locked_safe")));
-        WORKBENCH = registerMetaTileEntity(1646, new MetaTileEntityWorkbench(gregtechId("workbench")));
-        PRIMITIVE_WATER_PUMP = registerMetaTileEntity(1647, new MetaTileEntityPrimitiveWaterPump(gregtechId("primitive_water_pump")));
-        PUMP_OUTPUT_HATCH = registerMetaTileEntity(1648, new MetaTileEntityPumpHatch(gregtechId("pump_hatch")));
+        // Misc, IDs 1646-1999
+        LOCKED_SAFE = registerMetaTileEntity(1646, new MetaTileEntityLockedSafe(gregtechId("locked_safe")));
+        WORKBENCH = registerMetaTileEntity(1647, new MetaTileEntityWorkbench(gregtechId("workbench")));
+        PRIMITIVE_WATER_PUMP = registerMetaTileEntity(1648, new MetaTileEntityPrimitiveWaterPump(gregtechId("primitive_water_pump")));
+        PUMP_OUTPUT_HATCH = registerMetaTileEntity(1649, new MetaTileEntityPumpHatch(gregtechId("pump_hatch")));
 
-        CREATIVE_ENERGY = registerMetaTileEntity(1649, new MetaTileEntityCreativeEnergy());
+        CREATIVE_ENERGY = registerMetaTileEntity(1650, new MetaTileEntityCreativeEnergy());
         // Steam Hatches/Buses
-        STEAM_EXPORT_BUS = registerMetaTileEntity(1650, new MetaTileEntitySteamItemBus(gregtechId("steam_export_bus"), true));
-        STEAM_IMPORT_BUS = registerMetaTileEntity(1651, new MetaTileEntitySteamItemBus(gregtechId("steam_import_bus"), false));
-        STEAM_HATCH = registerMetaTileEntity(1652, new MetaTileEntitySteamHatch(gregtechId("steam_hatch")));
+        STEAM_EXPORT_BUS = registerMetaTileEntity(1651, new MetaTileEntitySteamItemBus(gregtechId("steam_export_bus"), true));
+        STEAM_IMPORT_BUS = registerMetaTileEntity(1652, new MetaTileEntitySteamItemBus(gregtechId("steam_import_bus"), false));
+        STEAM_HATCH = registerMetaTileEntity(1653, new MetaTileEntitySteamHatch(gregtechId("steam_hatch")));
 
         // Maintenance Hatches, IDs 1654-1656
         MAINTENANCE_HATCH = registerMetaTileEntity(1654, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch"), false));

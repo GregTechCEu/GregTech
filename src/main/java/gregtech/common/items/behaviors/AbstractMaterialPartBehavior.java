@@ -58,9 +58,9 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
         return compound.getInteger("Damage");
     }
 
-    public void setPartDamage(ItemStack itemStack, int rotorDamage) {
+    public void setPartDamage(ItemStack itemStack, int damage) {
         NBTTagCompound compound = getOrCreatePartStatsTag(itemStack);
-        compound.setInteger("Damage", Math.min(getPartMaxDurability(itemStack), rotorDamage));
+        compound.setInteger("Damage", Math.min(getPartMaxDurability(itemStack), damage));
     }
 
     @Override
@@ -72,9 +72,9 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
     @Override
     public void addInformation(ItemStack stack, List<String> lines) {
         Material material = getPartMaterial(stack);
-        int maxRotorDurability = getPartMaxDurability(stack);
-        int rotorDamage = getPartDamage(stack);
-        lines.add(I18n.format("metaitem.tool.tooltip.durability", maxRotorDurability - rotorDamage, maxRotorDurability));
+        int maxDurability = getPartMaxDurability(stack);
+        int damage = getPartDamage(stack);
+        lines.add(I18n.format("metaitem.tool.tooltip.durability", maxDurability - damage, maxDurability));
         lines.add(I18n.format("metaitem.tool.tooltip.primary_material", material.getLocalizedName(), material.getHarvestLevel()));
     }
 
