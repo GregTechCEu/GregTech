@@ -1,4 +1,4 @@
-package gregtech.common.metatileentities.electric.multiblockpart;
+package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.capability.impl.FluidTankList;

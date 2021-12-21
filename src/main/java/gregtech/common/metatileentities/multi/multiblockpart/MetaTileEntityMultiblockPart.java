@@ -1,4 +1,4 @@
-package gregtech.common.metatileentities.electric.multiblockpart;
+package gregtech.common.metatileentities.multi.multiblockpart;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;

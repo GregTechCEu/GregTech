@@ -2,7 +2,7 @@ package gregtech.common.metatileentities.multi.electric.generator;
 
 import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.client.renderer.ICubeRenderer;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityRotorHolder;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
