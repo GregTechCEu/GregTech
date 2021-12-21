@@ -28,7 +28,7 @@ import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
 public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIHolder {
 
-    protected MetaTileEntity metaTileEntity;
+    MetaTileEntity metaTileEntity;
     private boolean needToUpdateLightning = false;
 
     public MetaTileEntity getMetaTileEntity() {
@@ -43,8 +43,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
      */
     public MetaTileEntity setMetaTileEntity(MetaTileEntity sampleMetaTileEntity, Object... data) {
         Preconditions.checkNotNull(sampleMetaTileEntity, "metaTileEntity");
-        this.metaTileEntity = sampleMetaTileEntity.createMetaTileEntity(this);
-        this.metaTileEntity.holder = this;
+        setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
         this.metaTileEntity.onAttached(data);
         if (hasWorld() && !getWorld().isRemote) {
             updateBlockOpacity();
@@ -55,6 +54,11 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
             markDirty();
         }
         return metaTileEntity;
+    }
+
+    protected void setRawMetaTileEntity(MetaTileEntity metaTileEntity){
+        this.metaTileEntity = metaTileEntity;
+        this.metaTileEntity.holder = this;
     }
 
     private void updateBlockOpacity() {
@@ -85,8 +89,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
             MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
             NBTTagCompound metaTileEntityData = compound.getCompoundTag("MetaTileEntity");
             if (sampleMetaTileEntity != null) {
-                this.metaTileEntity = sampleMetaTileEntity.createMetaTileEntity(this);
-                this.metaTileEntity.holder = this;
+                setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
                 this.metaTileEntity.onAttached();
                 this.metaTileEntity.readFromNBT(metaTileEntityData);
             } else {
