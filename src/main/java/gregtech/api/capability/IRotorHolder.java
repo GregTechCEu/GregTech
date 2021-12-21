@@ -3,15 +3,26 @@ package gregtech.api.capability;
 public interface IRotorHolder {
 
     /**
-     * @return the tier of the rotor holder
-     */
-    int getTier();
-
-    /**
      * @return the base efficiency of the rotor holder
      */
-    default int getBaseEfficiency() {
+    static int getBaseEfficiency() {
         return 10000;
+    }
+
+    /**
+     *
+     * @return the total efficiency the rotor holder and rotor provide
+     */
+    default int getTotalEfficiency() {
+        int rotorEfficiency = getRotorEfficiency();
+        if (rotorEfficiency == -1)
+            return -1;
+
+        int holderEfficiency = getHolderEfficiency();
+        if (holderEfficiency == -1)
+            return -1;
+
+        return getBaseEfficiency() + rotorEfficiency + holderEfficiency;
     }
 
     /**
