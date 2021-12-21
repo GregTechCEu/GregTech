@@ -13,6 +13,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -259,7 +260,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
             for (ItemStack itemStack : entityPlayer.inventory.mainInventory) {
                 if (itemStack.isItemEqualIgnoreDurability(tool.getStackForm())) {
                     ((IMaintenance) this.getController()).setMaintenanceFixed(problemIndex);
-                    tool.getToolStats().onBreakingUse(itemStack, getWorld(), getPos());
+                    IToolStats.onOtherUse(itemStack, getWorld(), getPos());
                     damageTool(itemStack);
                     this.setTaped(false);
                 }

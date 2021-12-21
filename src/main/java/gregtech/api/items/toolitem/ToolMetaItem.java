@@ -708,7 +708,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
 
     public boolean canPlaySound(ItemStack stack) {
         NBTTagCompound statsTag = getOrCreateToolStatsTag(stack);
-        return (int) System.currentTimeMillis() - statsTag.getInteger("lastCraftingUse") > 16;
+        return Math.abs((int) System.currentTimeMillis() - statsTag.getInteger("lastCraftingUse")) > 16;
     }
 
     @SideOnly(Side.CLIENT)

@@ -158,6 +158,10 @@ public interface IToolStats {
         return true;
     }
 
+    default boolean canPlayBreakingSound(ItemStack stack) {
+        return false;
+    }
+
     default ItemStack getBrokenStack(ItemStack stack) {
         return ItemStack.EMPTY;
     }
@@ -176,7 +180,7 @@ public interface IToolStats {
     }
 
     default void onCraftingUse(ItemStack stack, EntityPlayer player) {
-        if (ConfigHolder.client.toolCraftingSounds && ForgeHooks.getCraftingPlayer() != null && stack.getItem() instanceof ToolMetaItem<?>) {
+        if (ConfigHolder.client.toolCraftingSounds && stack.getItem() instanceof ToolMetaItem<?>) {
             if (((ToolMetaItem<?>) stack.getItem()).canPlaySound(stack)) {
                 ((ToolMetaItem<?>) stack.getItem()).setCraftingSoundTime(stack);
                 player.getEntityWorld().playSound(null, player.getPosition(), ((ToolMetaItem<?>) stack.getItem()).getItem(stack).getSound(), SoundCategory.PLAYERS, 1, 1);
@@ -185,14 +189,15 @@ public interface IToolStats {
     }
 
     default void onBreakingUse(ItemStack stack, World world, BlockPos pos) {
-        if (ConfigHolder.client.toolUseSounds && stack.getItem() instanceof ToolMetaItem<?>)
+        if (ConfigHolder.client.toolUseSounds && stack.getItem() instanceof ToolMetaItem<?> && this.canPlayBreakingSound(stack))
             world.playSound(null, pos, ((ToolMetaItem<?>) stack.getItem()).getItem(stack).getSound(), SoundCategory.PLAYERS, 1, 1);
     }
 
     static void onOtherUse(@Nonnull ItemStack stack, World world, BlockPos pos) {
         if (stack.getItem() instanceof ToolMetaItem<?>) {
             IToolStats stats = ((ToolMetaItem<?>) stack.getItem()).getItem(stack).getToolStats();
-            stats.onBreakingUse(stack, world, pos);
+            if (ConfigHolder.client.toolUseSounds && stack.getItem() instanceof ToolMetaItem<?>)
+                world.playSound(null, pos, ((ToolMetaItem<?>) stack.getItem()).getItem(stack).getSound(), SoundCategory.PLAYERS, 1, 1);
         }
     }
 }

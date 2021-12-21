@@ -105,13 +105,6 @@ public class CraftingRecipeResolver {
             //if we're not simulated, fire the event, unlock recipe and add crafted items, and play sounds
             FMLCommonHandler.instance().firePlayerCraftingEvent(player, itemStack, inventoryCrafting);
 
-            for (int i = 0; i < inventoryCrafting.getSizeInventory(); i++) {
-                if (inventoryCrafting.getStackInSlot(i).getItem() instanceof ToolMetaItem) {
-                    ToolMetaItem.MetaToolValueItem toolStack = ((ToolMetaItem<?>) inventoryCrafting.getStackInSlot(i).getItem()).getItem(inventoryCrafting.getStackInSlot(i));
-                    toolStack.getToolStats().onCraftingUse(inventoryCrafting.getStackInSlot(i), player);
-                }
-            }
-
             if (cachedRecipe != null && !cachedRecipe.isDynamic()) {
                 player.unlockRecipes(Lists.newArrayList(cachedRecipe));
             }
