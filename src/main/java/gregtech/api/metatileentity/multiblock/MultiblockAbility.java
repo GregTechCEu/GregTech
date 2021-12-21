@@ -3,6 +3,7 @@ package gregtech.api.metatileentity.multiblock;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.IMufflerHatch;
+import gregtech.api.capability.IRotorHolder;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityRotorHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -27,6 +28,8 @@ public class MultiblockAbility<T> {
     public static final MultiblockAbility<IEnergyContainer> OUTPUT_ENERGY = new MultiblockAbility<>("output_energy");
 
     public static final MultiblockAbility<MetaTileEntityRotorHolder> ABILITY_ROTOR_HOLDER = new MultiblockAbility<>("ability_rotor_holder");
+
+    public static final MultiblockAbility<IRotorHolder> ABILITY_ROTOR_HOLDER_2 = new MultiblockAbility<>("rotor_holder");
 
     public static final MultiblockAbility<IFluidTank> PUMP_FLUID_HATCH = new MultiblockAbility<>("pump_fluid_hatch");
 
