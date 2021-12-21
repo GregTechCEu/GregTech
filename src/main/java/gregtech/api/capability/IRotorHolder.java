@@ -1,5 +1,8 @@
 package gregtech.api.capability;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 public interface IRotorHolder {
 
     /**
@@ -26,9 +29,36 @@ public interface IRotorHolder {
     }
 
     /**
+     * returns true on both the Client and Server
+     *
+     * @return whether there is a rotor in the holder
+     */
+    boolean hasRotor();
+
+    /**
+     * returns true on only the Server
+     *
+     * @return whether there is a rotor in the holder
+     */
+    @SideOnly(Side.SERVER)
+    boolean hasRotorServer();
+
+    /**
+     *
+     * @return true if the rotor is spinning
+     */
+    boolean isRotorSpinning();
+
+    /**
      * @return the current speed of the holder
      */
-    int getSpeed();
+    int getRotorSpeed();
+
+    /**
+     *
+     * @return true if the rotor is at maximum speed
+     */
+    boolean isRotorMaxSpeed();
 
     /**
      * @return the rotor's efficiency
@@ -49,6 +79,12 @@ public interface IRotorHolder {
      * @return true if damage can be applied
      */
     boolean damageRotor(int amount, boolean simulate);
+
+    /**
+     *
+     * @return the maximum speed the holder can have
+     */
+    int getMaxRotorHolderSpeed();
 
     /**
      * @return the power multiplier provided by the rotor holder
