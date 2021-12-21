@@ -6,12 +6,17 @@ import gregtech.api.util.Position;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory.MemorizedRecipe;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+
+import java.util.Collections;
+import java.util.List;
 
 public class MemorizedRecipeWidget extends SlotWidget {
 
@@ -74,5 +79,12 @@ public class MemorizedRecipeWidget extends SlotWidget {
             }
         }
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public void drawHoveringText(ItemStack itemStack, List<String> tooltip, int maxTextWidth, int mouseX, int mouseY) {
+        tooltip.add(I18n.format("gregtech.recipe_memory_widget.tooltip.1"));
+        tooltip.add(I18n.format("gregtech.recipe_memory_widget.tooltip.2"));
+        super.drawHoveringText(itemStack, tooltip, maxTextWidth, mouseX, mouseY);
     }
 }

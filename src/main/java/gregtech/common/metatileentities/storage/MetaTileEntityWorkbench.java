@@ -184,13 +184,13 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         widgetGroup.addWidget(new LabelWidget(5, 30, "gregtech.machine.workbench.storage_note_2"));
         CraftingRecipeResolver recipeResolver = getRecipeResolver();
         IItemList itemList = recipeResolver == null ? null : recipeResolver.getItemSourceList();
-        widgetGroup.addWidget(new ItemListGridWidget(2, 45, 9, 5, itemList));
+        widgetGroup.addWidget(new ItemListGridWidget(11, 45, 8, 5, itemList));
         return widgetGroup;
     }
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        Builder builder = ModularUI.builder(GuiTextures.BORDERED_BACKGROUND, 176, 221)
+        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 221)
                 .bindPlayerInventory(entityPlayer.inventory, 138);
         builder.label(5, 5, getMetaFullName());
 
