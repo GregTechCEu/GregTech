@@ -3,6 +3,7 @@ package gregtech.api.worldgen.populator;
 import com.google.gson.JsonObject;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.config.OreConfigUtils;
@@ -58,7 +59,10 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
             } else {
                 ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().damageDropped(blockState));
                 UnificationEntry entry = OreDictUnifier.getUnificationEntry(itemStack);
-                resultMaterial = entry == null ? null : entry.material;
+                if (entry != null && entry.material != null && entry.material.hasProperty(PropertyKey.ORE))
+                    resultMaterial = entry.material;
+                else
+                    resultMaterial = null;
             }
             if (resultMaterial != null) {
                 result.add(resultMaterial);
@@ -68,9 +72,11 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
     }
 
     private void setStoneBlock(World world, BlockPos blockPos, Collection<Material> undergroundMaterials) {
-        boolean surfaceRockPlaced = world.setBlockState(blockPos, MetaBlocks.SURFACE_ROCK.getDefaultState());
-        if (!surfaceRockPlaced) {
-            failedGenerationCounter++;
+        for (Material material : undergroundMaterials) {
+            boolean surfaceRockPlaced = world.setBlockState(blockPos, MetaBlocks.SURFACE_ROCK.get(material).getDefaultState());
+            if (!surfaceRockPlaced) {
+                failedGenerationCounter++;
+            }
         }
     }
 

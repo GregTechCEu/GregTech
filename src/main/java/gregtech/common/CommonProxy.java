@@ -100,10 +100,10 @@ public class CommonProxy {
         registry.register(LEAVES);
         registry.register(SAPLING);
         registry.register(PLANKS);
-        registry.register(SURFACE_ROCK);
 
         COMPRESSED.values().stream().distinct().forEach(registry::register);
         FRAMES.values().stream().distinct().forEach(registry::register);
+        SURFACE_ROCK.values().stream().distinct().forEach(registry::register);
         ORES.forEach(registry::register);
     }
 

@@ -108,11 +108,10 @@ public class MetaBlocks {
     public static BlockGregSapling SAPLING;
     public static BlockGregPlank PLANKS;
 
-    public static BlockSurfaceRock SURFACE_ROCK;
-
     public static final Map<Material, BlockCompressed> COMPRESSED = new HashMap<>();
     public static final Map<Material, BlockFrame> FRAMES = new HashMap<>();
     public static final Collection<BlockOre> ORES = new ReferenceArrayList<>();
+    public static final Map<Material, BlockSurfaceRock> SURFACE_ROCK = new HashMap<>();
     public static final Collection<BlockFluidBase> FLUID_BLOCKS = new ReferenceArrayList<>();
 
     public static void init() {
@@ -182,13 +181,11 @@ public class MetaBlocks {
         PLANKS = new BlockGregPlank();
         PLANKS.setRegistryName("plank");
 
-        SURFACE_ROCK = new BlockSurfaceRock();
-        SURFACE_ROCK.setRegistryName("surface_rock_new");
-
         StoneType.init();
 
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && (m.hasProperty(PropertyKey.INGOT) || m.hasProperty(PropertyKey.GEM)) && !OrePrefix.block.isIgnored(m), MetaBlocks::createCompressedBlock);
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME), MetaBlocks::createFrameBlock);
+        createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.DUST), MetaBlocks::createSurfaceRockBlock);
 
         createGeneratedBlock(
                 material -> (material.hasProperty(PropertyKey.INGOT) || material.hasProperty(PropertyKey.GEM))
@@ -274,6 +271,14 @@ public class MetaBlocks {
         block.setRegistryName("meta_block_frame_" + index);
         for (Material m : materials) {
             FRAMES.put(m, block);
+        }
+    }
+
+    private static void createSurfaceRockBlock(Material[] materials, int index) {
+        BlockSurfaceRock block = new BlockSurfaceRock(materials);
+        block.setRegistryName("meta_block_surface_rock_" + index);
+        for (Material material : materials) {
+            SURFACE_ROCK.put(material, block);
         }
     }
 
@@ -443,8 +448,6 @@ public class MetaBlocks {
         MinecraftForge.EVENT_BUS.register(modelHandler);
         FLUID_BLOCKS.forEach(modelHandler::addFluidBlock);
 
-        modelHandler.addBuiltInBlock(SURFACE_ROCK, "stone_andesite");
-
         ClientRegistry.bindTileEntitySpecialRenderer(MetaTileEntityHolder.class, new MetaTileEntityTESR());
     }
 
@@ -461,6 +464,11 @@ public class MetaBlocks {
         MetaBlocks.FRAMES.values().forEach(block -> {
             Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(FRAME_BLOCK_COLOR, block);
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler(FRAME_ITEM_COLOR, block);
+        });
+
+        MetaBlocks.SURFACE_ROCK.values().stream().distinct().forEach(block -> {
+            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(SURFACE_ROCK_BLOCK_COLOR, block);
+            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(SURFACE_ROCK_ITEM_COLOR, block);
         });
 
         MetaBlocks.ORES.stream().distinct().forEach(block -> {

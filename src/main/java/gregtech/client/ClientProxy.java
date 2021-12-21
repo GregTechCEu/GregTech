@@ -109,6 +109,15 @@ public class ClientProxy extends CommonProxy {
     public static final IBlockColor FOAM_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
             state.getValue(BlockColored.COLOR).colorValue;
 
+    public static final IBlockColor SURFACE_ROCK_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
+            state.getValue(((BlockSurfaceRock) state.getBlock()).variantProperty).getMaterialRGB();
+
+    public static final IItemColor SURFACE_ROCK_ITEM_COLOR = (stack, tintIndex) -> {
+        BlockSurfaceRock block = (BlockSurfaceRock) ((ItemBlock) stack.getItem()).getBlock();
+        IBlockState state = block.getStateFromMeta(stack.getItemDamage());
+        return state.getValue(block.variantProperty).getMaterialRGB();
+    };
+
     public void onPreLoad() {
         super.onPreLoad();
 
