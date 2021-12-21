@@ -352,6 +352,7 @@ public class MetaBlocks {
 
         COMPRESSED.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
         FRAMES.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
+        SURFACE_ROCK.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
         ORES.forEach(IModelSupplier::onModelRegister);
     }
 
@@ -468,7 +469,6 @@ public class MetaBlocks {
 
         MetaBlocks.SURFACE_ROCK.values().stream().distinct().forEach(block -> {
             Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(SURFACE_ROCK_BLOCK_COLOR, block);
-            Minecraft.getMinecraft().getItemColors().registerItemColorHandler(SURFACE_ROCK_ITEM_COLOR, block);
         });
 
         MetaBlocks.ORES.stream().distinct().forEach(block -> {

@@ -146,10 +146,10 @@ public class BlockSurfaceRock extends DelayedStateBlock implements IModelSupplie
     @Override
     @SideOnly(Side.CLIENT)
     public void onModelRegister() {
-//        ModelLoader.setCustomStateMapper(this, new SimpleStateMapper(MODEL_LOCATION));
-//        for (IBlockState state : this.getBlockState().getValidStates()) {
-//            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), MODEL_LOCATION);
-//        }
+        ModelLoader.setCustomStateMapper(this, new SimpleStateMapper(MODEL_LOCATION));
+        for (IBlockState state : this.getBlockState().getValidStates()) {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), MODEL_LOCATION);
+        }
     }
 
     @Override
