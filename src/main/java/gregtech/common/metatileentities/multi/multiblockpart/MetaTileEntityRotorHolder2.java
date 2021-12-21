@@ -8,7 +8,6 @@ import gregtech.api.capability.IRotorHolder;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -40,13 +39,16 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
 
     private final InventoryRotorHolder inventory;
 
+    private final int maxSpeed;
+
     private boolean isRotorSpinning;
     private int currentSpeed;
     private int rotorColor = -1;
 
     public MetaTileEntityRotorHolder2(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
-        inventory = new InventoryRotorHolder();
+        this.inventory = new InventoryRotorHolder();
+        this.maxSpeed = 10 * tier;
     }
 
     @Override
@@ -104,6 +106,7 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
      *
      * @return whether there is a rotor in the holder
      */
+    @Override
     public boolean hasRotor() {
         return rotorColor != -1;
     }
@@ -114,6 +117,7 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
      * @return whether there is a rotor in the holder
      */
     @SideOnly(Side.SERVER)
+    @Override
     public boolean hasRotorServer() {
         return inventory.hasRotor();
     }
@@ -127,8 +131,18 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
     }
 
     @Override
-    public int getSpeed() {
+    public boolean isRotorSpinning() {
+        return isRotorSpinning;
+    }
+
+    @Override
+    public int getRotorSpeed() {
         return this.currentSpeed;
+    }
+
+    @Override
+    public boolean isRotorMaxSpeed() {
+        return this.maxSpeed - this.currentSpeed < 2;
     }
 
     @Override
@@ -144,6 +158,11 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
     @Override
     public boolean damageRotor(int amount, boolean simulate) {
         return inventory.damageRotor(amount, simulate);
+    }
+
+    @Override
+    public int getMaxRotorHolderSpeed() {
+        return this.maxSpeed;
     }
 
     /**
