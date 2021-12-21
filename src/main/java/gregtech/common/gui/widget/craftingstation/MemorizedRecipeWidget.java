@@ -57,6 +57,13 @@ public class MemorizedRecipeWidget extends SlotWidget {
             GuiTextures.LOCK.draw(pos.x, pos.y + 10, 8, 8);
             GlStateManager.enableDepth();
         }
+        if (isMouseOverElement(mouseX, mouseY)) {
+            ((ISlotWidget) slotReference).setHover(false);
+            List<String> tooltip = getItemToolTip(slotReference.inventory.getStackInSlot(0));
+            tooltip.add(I18n.format("gregtech.recipe_memory_widget.tooltip.1"));
+            tooltip.add(I18n.format("gregtech.recipe_memory_widget.tooltip.2"));
+            drawHoveringText(slotReference.inventory.getStackInSlot(0), tooltip, -1, mouseX, mouseY);
+        }
     }
 
     @Override
@@ -81,10 +88,4 @@ public class MemorizedRecipeWidget extends SlotWidget {
         return ItemStack.EMPTY;
     }
 
-    @Override
-    public void drawHoveringText(ItemStack itemStack, List<String> tooltip, int maxTextWidth, int mouseX, int mouseY) {
-        tooltip.add(I18n.format("gregtech.recipe_memory_widget.tooltip.1"));
-        tooltip.add(I18n.format("gregtech.recipe_memory_widget.tooltip.2"));
-        super.drawHoveringText(itemStack, tooltip, maxTextWidth, mouseX, mouseY);
-    }
 }

@@ -986,8 +986,8 @@ metaitem.record.sus.tooltip=§7Leonz - Among Us Drip
 
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 
-gregtech.recipe_memory_widget.tooltip.1=§8Left click to automatically input this recipe into the crafting grid
-gregtech.recipe_memory_widget.tooltip.2=§8Shift click to lock/unlock this recipe
+gregtech.recipe_memory_widget.tooltip.1=§7Left click to automatically input this recipe into the crafting grid
+gregtech.recipe_memory_widget.tooltip.2=§7Shift click to lock/unlock this recipe
 
 cover.filter.blacklist.disabled=Whitelist
 cover.filter.blacklist.enabled=Blacklist

@@ -96,8 +96,8 @@ public class ScrollableListWidget extends AbstractWidgetGroup {
         Size size = getSize();
         int paneSize = scrollPaneWidth;
         int scrollX = position.x + size.width - paneSize;
-        drawSolidRect(scrollX, position.y, paneSize, size.height - 1, 0xFF666666);
-        drawSolidRect(scrollX + 1, position.y + 1, paneSize - 2, size.height - 3, 0xFF888888);
+        drawSolidRect(scrollX, position.y, paneSize, size.height, 0xFF666666);
+        drawSolidRect(scrollX + 1, position.y + 1, paneSize - 2, size.height - 2, 0xFF888888);
 
         int maxScrollOffset = totalListHeight - getSize().height;
         float scrollPercent = maxScrollOffset == 0 ? 0 : scrollOffset / (maxScrollOffset * 1.0f);
