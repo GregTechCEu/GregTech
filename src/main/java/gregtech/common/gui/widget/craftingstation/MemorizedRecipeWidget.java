@@ -57,7 +57,7 @@ public class MemorizedRecipeWidget extends SlotWidget {
             GuiTextures.LOCK.draw(pos.x, pos.y + 10, 8, 8);
             GlStateManager.enableDepth();
         }
-        if (isMouseOverElement(mouseX, mouseY)) {
+        if (isMouseOverElement(mouseX, mouseY) && slotReference.getHasStack()) {
             ((ISlotWidget) slotReference).setHover(false);
             List<String> tooltip = getItemToolTip(slotReference.getStack());
             tooltip.add(I18n.format("gregtech.recipe_memory_widget.tooltip.1"));
