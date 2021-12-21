@@ -209,6 +209,7 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
         @Override
         protected void onContentsChanged(int slot) {
             setRotorColor(getRotorColor());
+            scheduleRenderUpdate();
         }
 
         public TurbineRotorBehavior2 getTurbineBehavior() {
@@ -252,6 +253,13 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
         @Override
         public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
             return TurbineRotorBehavior2.getInstanceFor(stack) != null && super.isItemValid(slot, stack);
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            setRotorColor(-1);
+            return super.extractItem(slot, amount, simulate);
         }
     }
 }
