@@ -49,7 +49,7 @@ public class CycleButtonWidget extends Widget {
     public <T extends Enum<T> & IStringSerializable> CycleButtonWidget(int xPosition, int yPosition, int width, int height, Class<T> enumClass, Supplier<T> supplier, Consumer<T> updater) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         T[] enumConstantPool = enumClass.getEnumConstants();
-        this.optionNames = GTUtility.mapToString(enumConstantPool, IStringSerializable::getName);
+        this.optionNames = GTUtility.mapToString(enumConstantPool, it -> ((IStringSerializable) it).getName());
         this.currentOptionSupplier = () -> supplier.get().ordinal();
         this.setOptionExecutor = (newIndex) -> updater.accept(enumConstantPool[newIndex]);
     }
