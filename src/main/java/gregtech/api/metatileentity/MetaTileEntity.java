@@ -393,7 +393,7 @@ public abstract class MetaTileEntity implements ICoverable {
                 MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
             }
             return true;
-        } else if (playerIn.isSneaking()) {
+        } else if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
             EnumFacing hitFacing = hitResult.sideHit;
 
             CoverBehavior coverBehavior = hitFacing == null ? null : getCoverAtSide(hitFacing);
