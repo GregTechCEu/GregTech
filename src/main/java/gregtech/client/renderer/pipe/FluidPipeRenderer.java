@@ -180,7 +180,7 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         IVertexOperation[] pipeConnectSide = ArrayUtils.addAll(pipeline, new IconTransformation(textureInfo.inTexture), multiplier);
         IVertexOperation[] pipeSide = ArrayUtils.addAll(pipeline, new IconTransformation(textureInfo.sideTexture), multiplier);
 
-        Cuboid6 cuboid6 = BlockFluidPipe.getSideBox(null, thickness);
+        Cuboid6 cuboid6 = BlockFluidPipe.getSideBox(null, false, thickness);
         if (connectMask == 0) {
             for (EnumFacing renderedSide : EnumFacing.VALUES) {
                 renderPipeSide(state, pipeConnectSide, renderedSide, cuboid6);
@@ -195,24 +195,24 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
                         renderPipeSide(state, pipeSide, renderedSide, cuboid6);
                     }
                 } else {
-                    renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, renderedSide, thickness);
+                    Cuboid6 sideCuboid = BlockFluidPipe.getSideBox(renderedSide, (connectMask & 1 << (12 + renderedSide.getIndex())) > 0, thickness);
+                    renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, renderedSide, sideCuboid);
                 }
             }
         }
     }
 
-    private static void renderPipeCube(int connections, CCRenderState renderState, IVertexOperation[] pipeline, IVertexOperation[] pipeConnectSide, EnumFacing side, float thickness) {
-        Cuboid6 cuboid6 = BlockFluidPipe.getSideBox(side, thickness);
+    private static void renderPipeCube(int connections, CCRenderState renderState, IVertexOperation[] pipeline, IVertexOperation[] pipeConnectSide, EnumFacing side, Cuboid6 cuboid) {
         for (EnumFacing renderedSide : EnumFacing.VALUES) {
             if (renderedSide.getAxis() != side.getAxis()) {
-                renderPipeSide(renderState, pipeline, renderedSide, cuboid6);
+                renderPipeSide(renderState, pipeline, renderedSide, cuboid);
             }
         }
         if ((connections & 1 << (6 + side.getIndex())) > 0) {
             // if neighbour pipe is smaller, render closed texture
-            renderPipeSide(renderState, pipeline, side, cuboid6);
+            renderPipeSide(renderState, pipeline, side, cuboid);
         } else {
-            renderPipeSide(renderState, pipeConnectSide, side, cuboid6);
+            renderPipeSide(renderState, pipeConnectSide, side, cuboid);
         }
     }
 
@@ -244,11 +244,11 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         }
         float thickness = fluidPipeType.getThickness();
         int connectedSidesMask = blockFluidPipe.getVisualConnections(tileEntityPipe);
-        Cuboid6 baseBox = BlockFluidPipe.getSideBox(null, thickness);
+        Cuboid6 baseBox = BlockFluidPipe.getSideBox(null, false, thickness);
         BlockRenderer.renderCuboid(renderState, baseBox, 0);
         for (EnumFacing renderSide : EnumFacing.VALUES) {
             if ((connectedSidesMask & (1 << renderSide.getIndex())) > 0) {
-                Cuboid6 sideBox = BlockFluidPipe.getSideBox(renderSide, thickness);
+                Cuboid6 sideBox = BlockFluidPipe.getSideBox(renderSide, false, thickness);
                 BlockRenderer.renderCuboid(renderState, sideBox, 0);
             }
         }

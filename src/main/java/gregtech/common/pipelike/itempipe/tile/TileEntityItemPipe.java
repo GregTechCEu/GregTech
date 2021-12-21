@@ -10,6 +10,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -22,6 +24,8 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
     private final EnumMap<EnumFacing, ItemNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     private final Map<String, String> transferred = new HashMap<>();
     private ItemNetHandler defaultHandler;
+    // the ItemNetHandler can only be created on the server so we have a empty placeholder for the client
+    private final IItemHandler clientCapability = new ItemStackHandler(0);
     private WeakReference<ItemPipeNet> currentPipeNet = new WeakReference<>(null);
 
     @Override
@@ -49,6 +53,8 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
     @Override
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if(world.isRemote)
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(clientCapability);
             if (handlers.size() == 0)
                 initHandlers();
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(handlers.getOrDefault(facing, defaultHandler));

@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.cable.tile;
 
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.PerTickLongCounter;
@@ -23,6 +24,8 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     private final AveragingPerTickCounter averageVoltageCounter = new AveragingPerTickCounter(0, 20);
     private final AveragingPerTickCounter averageAmperageCounter = new AveragingPerTickCounter(0, 20);
     private EnergyNetHandler defaultHandler;
+    // the EnergyNetHandler can only be created on the server so we have a empty placeholder for the client
+    private final IEnergyContainer clientCapability = IEnergyContainer.DEFAULT;
     private WeakReference<EnergyNet> currentEnergyNet = new WeakReference<>(null);
 
     public TileEntityCable() {
@@ -90,6 +93,8 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     @Override
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
+            if(world.isRemote)
+                return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(clientCapability);
             if (handlers.size() == 0)
                 initHandlers();
             return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(handlers.getOrDefault(facing, defaultHandler));

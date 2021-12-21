@@ -160,7 +160,7 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
             overlays = ArrayUtils.addAll(pipeline, new IconTransformation(insulationTextures[insulation1.insulationLevel]), multiplier);
         }
 
-        Cuboid6 cuboid6 = BlockCable.getSideBox(null, thickness);
+        Cuboid6 cuboid6 = BlockCable.getSideBox(null, false, thickness);
         for (EnumFacing renderedSide : EnumFacing.VALUES) {
             if ((connectMask & 1 << renderedSide.getIndex()) == 0) {
                 int oppositeIndex = renderedSide.getOpposite().getIndex();
@@ -172,23 +172,23 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
                     renderCableSide(state, insulation, renderedSide, cuboid6);
                 }
             } else {
-                renderCableCube(connectMask, state, insulation, wire, overlays, renderedSide, thickness);
+                Cuboid6 sideCuboid = BlockCable.getSideBox(renderedSide, (connectMask & 1 << (12 + renderedSide.getIndex())) > 0, thickness);
+                renderCableCube(connectMask, state, insulation, wire, overlays, renderedSide, sideCuboid);
             }
         }
     }
 
-    private static void renderCableCube(int connections, CCRenderState renderState, IVertexOperation[] pipeline, IVertexOperation[] wire, IVertexOperation[] overlays, EnumFacing side, float thickness) {
-        Cuboid6 cuboid6 = BlockCable.getSideBox(side, thickness);
+    private static void renderCableCube(int connections, CCRenderState renderState, IVertexOperation[] pipeline, IVertexOperation[] wire, IVertexOperation[] overlays, EnumFacing side, Cuboid6 cuboid) {
         for (EnumFacing renderedSide : EnumFacing.VALUES) {
             if (renderedSide.getAxis() != side.getAxis()) {
-                renderCableSide(renderState, pipeline, renderedSide, cuboid6);
+                renderCableSide(renderState, pipeline, renderedSide, cuboid);
             }
         }
         if ((connections & 1 << (6 + side.getIndex())) > 0) {
-            renderCableSide(renderState, pipeline, side, cuboid6);
+            renderCableSide(renderState, pipeline, side, cuboid);
         } else {
-            renderCableSide(renderState, wire, side, cuboid6);
-            renderCableSide(renderState, overlays, side, cuboid6);
+            renderCableSide(renderState, wire, side, cuboid);
+            renderCableSide(renderState, overlays, side, cuboid);
         }
     }
 
@@ -220,11 +220,11 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
         }
         float thickness = insulation.getThickness();
         int connectedSidesMask = blockCable.getVisualConnections(tileEntityCable);
-        Cuboid6 baseBox = BlockCable.getSideBox(null, thickness);
+        Cuboid6 baseBox = BlockCable.getSideBox(null, false, thickness);
         BlockRenderer.renderCuboid(renderState, baseBox, 0);
         for (EnumFacing renderSide : EnumFacing.VALUES) {
             if ((connectedSidesMask & (1 << renderSide.getIndex())) > 0) {
-                Cuboid6 sideBox = BlockCable.getSideBox(renderSide, thickness);
+                Cuboid6 sideBox = BlockCable.getSideBox(renderSide, false, thickness);
                 BlockRenderer.renderCuboid(renderState, sideBox, 0);
             }
         }

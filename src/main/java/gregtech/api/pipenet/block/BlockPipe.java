@@ -77,24 +77,35 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         disableStats();
     }
 
-    public static Cuboid6 getSideBox(EnumFacing side, float thickness) {
-        float min = (1.0f - thickness) / 2.0f;
-        float max = min + thickness;
-        if (side == null) {
+    public static Cuboid6 getSideBox(EnumFacing side, boolean hasCover, float thickness) {
+        float min = (1.0f - thickness) / 2.0f, max = min + thickness;
+        float faceMin = hasCover ? 0.001f : 0f, faceMax = hasCover ? 0.999f : 1f;
+
+        if(side == null)
             return new Cuboid6(min, min, min, max, max, max);
-        } else if (side == EnumFacing.DOWN) {
-            return new Cuboid6(min, 0.0f, min, max, min, max);
-        } else if (side == EnumFacing.UP) {
-            return new Cuboid6(min, max, min, max, 1.0f, max);
-        } else if (side == EnumFacing.WEST) {
-            return new Cuboid6(0.0f, min, min, min, max, max);
-        } else if (side == EnumFacing.EAST) {
-            return new Cuboid6(max, min, min, 1.0f, max, max);
-        } else if (side == EnumFacing.NORTH) {
-            return new Cuboid6(min, min, 0.0f, max, max, min);
-        } else if (side == EnumFacing.SOUTH) {
-            return new Cuboid6(min, min, max, max, max, 1.0f);
-        } else throw new IllegalArgumentException(side.toString());
+        Cuboid6 cuboid;
+        switch (side) {
+            case WEST:
+                cuboid = new Cuboid6(faceMin, min, min, min, max, max);
+                break;
+            case EAST:
+                cuboid = new Cuboid6(max, min, min, faceMax, max, max);
+                break;
+            case NORTH:
+                cuboid = new Cuboid6(min, min, faceMin, max, max, min);
+                break;
+            case SOUTH:
+                cuboid = new Cuboid6(min, min, max, max, max, faceMax);
+                break;
+            case UP:
+                cuboid = new Cuboid6(min, max, min, max, faceMax, max);
+                break;
+            case DOWN:
+                cuboid = new Cuboid6(min, faceMin, min, max, min, max);
+                break;
+            default: cuboid = new Cuboid6(min, min, min, max, max, max);
+        }
+        return cuboid;
     }
 
     public abstract Class<PipeType> getPipeTypeClass();
@@ -457,12 +468,13 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                         connections |= 1 << (facing.getIndex() + 6);
                     }
                 }
-            } else {
-                CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
-                if (cover != null && cover.shouldRenderConnected()) {
-                    connections |= 1 << facing.getIndex();
-                }
             }
+            CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
+            if (cover != null && cover.shouldRenderConnected()) {
+                connections |= 1 << facing.getIndex();
+                connections |= 1 << (facing.getIndex() + 12);
+            }
+
         }
         return connections;
     }
@@ -488,10 +500,10 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
         // Always add normal collision so player doesn't "fall through" the cable/pipe when
         // a tool is put in hand, and will still be standing where they were before.
-        result.add(new IndexedCuboid6(new PrimaryBoxData(true), getSideBox(null, thickness)));
+        result.add(new IndexedCuboid6(new PrimaryBoxData(true), getSideBox(null, false, thickness)));
         for (EnumFacing side : EnumFacing.VALUES) {
             if ((actualConnections & 1 << side.getIndex()) > 0) {
-                result.add(new IndexedCuboid6(new PipeConnectionData(side), getSideBox(side, thickness)));
+                result.add(new IndexedCuboid6(new PipeConnectionData(side), getSideBox(side, false, thickness)));
             }
         }
         coverable.addCoverCollisionBoundingBox(result);
@@ -499,7 +511,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     }
 
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, Entity entity) {
-        if(entity instanceof EntityPlayer) {
+        if (entity instanceof EntityPlayer) {
             return hasPipeCollisionChangingItem(world, pos, ((EntityPlayer) entity).getHeldItem(EnumHand.MAIN_HAND)) ||
                     hasPipeCollisionChangingItem(world, pos, ((EntityPlayer) entity).getHeldItem(EnumHand.OFF_HAND));
         }
