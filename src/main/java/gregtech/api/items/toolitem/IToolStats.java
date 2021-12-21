@@ -176,8 +176,11 @@ public interface IToolStats {
     }
 
     default void onCraftingUse(ItemStack stack, EntityPlayer player) {
-        if (ConfigHolder.client.toolCraftingSounds && player != null && stack.getItem() instanceof ToolMetaItem<?>) {
-            player.getEntityWorld().playSound(null, player.getPosition(), ((ToolMetaItem<?>) stack.getItem()).getItem(stack).getSound(), SoundCategory.PLAYERS, 1, 1);
+        if (ConfigHolder.client.toolCraftingSounds && ForgeHooks.getCraftingPlayer() != null && stack.getItem() instanceof ToolMetaItem<?>) {
+            if (((ToolMetaItem<?>) stack.getItem()).canPlaySound(stack)) {
+                ((ToolMetaItem<?>) stack.getItem()).setCraftingSoundTime(stack);
+                player.getEntityWorld().playSound(null, player.getPosition(), ((ToolMetaItem<?>) stack.getItem()).getItem(stack).getSound(), SoundCategory.PLAYERS, 1, 1);
+            }
         }
     }
 

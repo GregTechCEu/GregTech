@@ -701,6 +701,16 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         return false;
     }
 
+    public void setCraftingSoundTime(ItemStack stack) {
+        NBTTagCompound statsTag = getOrCreateToolStatsTag(stack);
+        statsTag.setInteger("lastCraftingUse", (int) System.currentTimeMillis());
+    }
+
+    public boolean canPlaySound(ItemStack stack) {
+        NBTTagCompound statsTag = getOrCreateToolStatsTag(stack);
+        return (int) System.currentTimeMillis() - statsTag.getInteger("lastCraftingUse") > 16;
+    }
+
     @SideOnly(Side.CLIENT)
     public boolean isFull3D() {
         return true;
