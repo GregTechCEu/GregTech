@@ -6,7 +6,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public interface IRotorHolder {
 
     /**
-     * @return the base efficiency of the rotor holder
+     * @return the base efficiency of the rotor holder in 100 * %
      */
     static int getBaseEfficiency() {
         return 10000;
@@ -14,7 +14,7 @@ public interface IRotorHolder {
 
     /**
      *
-     * @return the total efficiency the rotor holder and rotor provide
+     * @return the total efficiency the rotor holder and rotor provide in 100 * %
      */
     default int getTotalEfficiency() {
         int rotorEfficiency = getRotorEfficiency();
@@ -25,7 +25,7 @@ public interface IRotorHolder {
         if (holderEfficiency == -1)
             return -1;
 
-        return Math.max(getBaseEfficiency(), rotorEfficiency + holderEfficiency);
+        return Math.max(getBaseEfficiency(), rotorEfficiency * holderEfficiency);
     }
 
     /**
@@ -61,7 +61,7 @@ public interface IRotorHolder {
     boolean isRotorMaxSpeed();
 
     /**
-     * @return the rotor's efficiency
+     * @return the rotor's efficiency in %
      */
     int getRotorEfficiency();
 
@@ -92,7 +92,7 @@ public interface IRotorHolder {
     int getHolderPowerMultiplier();
 
     /**
-     * @return the efficiency provided by the rotor holder
+     * @return the efficiency provided by the rotor holder in %
      */
     int getHolderEfficiency();
 }

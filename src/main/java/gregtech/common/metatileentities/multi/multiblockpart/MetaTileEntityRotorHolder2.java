@@ -176,7 +176,7 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
         if (tierDifference == -1)
             return -1;
 
-        return (int) Math.pow(2, getTierDifference() + 1);
+        return (int) Math.pow(2, getTierDifference());
     }
 
     @Override
@@ -185,7 +185,7 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
         if (tierDifference == -1)
             return -1;
 
-        return 1000 * tierDifference;
+        return 100 + 10 * tierDifference;
     }
 
     private int getTierDifference() {
@@ -344,8 +344,10 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
         @Nonnull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            setRotorColor(-1);
-            return super.extractItem(slot, amount, simulate);
+            ItemStack itemStack = super.extractItem(slot, amount, simulate);
+            if (!simulate && itemStack != ItemStack.EMPTY)
+                setRotorColor(-1);
+            return itemStack;
         }
     }
 }

@@ -27,7 +27,7 @@ public class TurbineRotorBehavior2 extends AbstractMaterialPartBehavior implemen
     public int getRotorEfficiency(ItemStack stack) {
         Material material = getPartMaterial(stack);
         ToolProperty property = material.getProperty(PropertyKey.TOOL);
-        return property == null ? -1 : (int) (10000 + property.getToolSpeed() * 1000);
+        return property == null ? -1 : (int) (100 + property.getToolSpeed() * 10);
     }
 
     public void applyRotorDamage(ItemStack itemStack, int damageApplied) {
@@ -43,7 +43,7 @@ public class TurbineRotorBehavior2 extends AbstractMaterialPartBehavior implemen
     public int getRotorPower(ItemStack stack) {
         Material material = getPartMaterial(stack);
         ToolProperty property = material.getProperty(PropertyKey.TOOL);
-        return property == null ? -1 : (int) (10000 + property.getToolSpeed() * 100);
+        return property == null ? -1 : (int) (100 + property.getToolSpeed());
     }
 
     @Override
@@ -54,8 +54,8 @@ public class TurbineRotorBehavior2 extends AbstractMaterialPartBehavior implemen
     @Override
     public void addInformation(ItemStack stack, List<String> lines) {
         super.addInformation(stack, lines);
-        lines.add(I18n.format("metaitem.tool.tooltip.rotor.efficiency", getRotorEfficiency(stack) / 100));
-        lines.add(I18n.format("metaitem.tool.tooltip.rotor.power", getRotorPower(stack) / 100));
+        lines.add(I18n.format("metaitem.tool.tooltip.rotor.efficiency", getRotorEfficiency(stack)));
+        lines.add(I18n.format("metaitem.tool.tooltip.rotor.power", getRotorPower(stack)));
     }
 
     @Nullable
