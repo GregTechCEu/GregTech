@@ -166,7 +166,7 @@ public class PipeCoverableImplementation implements ICoverable {
 
     @Override
     public double getCoverPlateThickness() {
-        return 1.0 / 16.0;
+        return holder.getPipeType().getThickness() >= 1 ? 0 : 1.0 / 16.0;
     }
 
     @Override
