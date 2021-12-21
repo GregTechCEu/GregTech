@@ -77,9 +77,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         disableStats();
     }
 
-    public static Cuboid6 getSideBox(EnumFacing side, boolean hasCover, float thickness) {
+    public static Cuboid6 getSideBox(EnumFacing side, float thickness) {
         float min = (1.0f - thickness) / 2.0f, max = min + thickness;
-        float faceMin = hasCover ? 0.001f : 0f, faceMax = hasCover ? 0.999f : 1f;
+        float faceMin = 0f, faceMax = 1f;
 
         if(side == null)
             return new Cuboid6(min, min, min, max, max, max);
@@ -105,6 +105,16 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                 break;
             default: cuboid = new Cuboid6(min, min, min, max, max, max);
         }
+        return cuboid;
+    }
+
+    /**
+     * @return the pipe cuboid for that side but with a offset one the facing with the cover to prevent z fighting.
+     */
+    public static Cuboid6 getCoverSideBox(EnumFacing side, float thickness) {
+        Cuboid6 cuboid = getSideBox(side, thickness);
+        if(side != null)
+            cuboid.setSide(side, side.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE ? 0.001 : 0.999);
         return cuboid;
     }
 
@@ -500,10 +510,10 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
         // Always add normal collision so player doesn't "fall through" the cable/pipe when
         // a tool is put in hand, and will still be standing where they were before.
-        result.add(new IndexedCuboid6(new PrimaryBoxData(true), getSideBox(null, false, thickness)));
+        result.add(new IndexedCuboid6(new PrimaryBoxData(true), getSideBox(null, thickness)));
         for (EnumFacing side : EnumFacing.VALUES) {
             if ((actualConnections & 1 << side.getIndex()) > 0) {
-                result.add(new IndexedCuboid6(new PipeConnectionData(side), getSideBox(side, false, thickness)));
+                result.add(new IndexedCuboid6(new PipeConnectionData(side), getSideBox(side, thickness)));
             }
         }
         coverable.addCoverCollisionBoundingBox(result);

@@ -183,7 +183,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         IVertexOperation[] pipeSide = ArrayUtils.addAll(pipeline, new IconTransformation(textureInfo.sideTexture), multiplier);
         IVertexOperation[] pipeRestrictive = ArrayUtils.addAll(pipeline, new IconTransformation(restrictiveOverlay));
 
-        Cuboid6 cuboid6 = BlockItemPipe.getSideBox(null, false, thickness);
+        Cuboid6 cuboid6 = BlockItemPipe.getSideBox(null, thickness);
         if (connectMask == 0) {
             // base pipe without connections
             for (EnumFacing renderedSide : EnumFacing.VALUES) {
@@ -203,14 +203,14 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
                     }
                 } else {
                     // else render connection cuboid
-                    Cuboid6 sideCuboid = BlockItemPipe.getSideBox(renderedSide, (connectMask & 1 << (12 + renderedSide.getIndex())) > 0, thickness);
-                    renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, pipeRestrictive, renderedSide, sideCuboid, restrictive);
+                    renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, pipeRestrictive, renderedSide, thickness, restrictive);
                 }
             }
         }
     }
 
-    private void renderPipeCube(int connections, CCRenderState renderState, IVertexOperation[] pipeline, IVertexOperation[] pipeConnectSide, IVertexOperation[] pipeRestrictive, EnumFacing side, Cuboid6 cuboid, boolean isRestrictive) {
+    private void renderPipeCube(int connections, CCRenderState renderState, IVertexOperation[] pipeline, IVertexOperation[] pipeConnectSide, IVertexOperation[] pipeRestrictive, EnumFacing side, float thickness, boolean isRestrictive) {
+        Cuboid6 cuboid = BlockItemPipe.getSideBox(side, thickness);
         // render connection cuboid
         for (EnumFacing renderedSide : EnumFacing.VALUES) {
             if (renderedSide.getAxis() != side.getAxis()) {
@@ -225,6 +225,8 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
             // if neighbour pipe is smaller, render closed texture
             renderPipeSide(renderState, pipeline, side, cuboid);
         } else {
+            if((connections & 1 << (12 + side.getIndex())) > 0)
+                cuboid = BlockItemPipe.getCoverSideBox(side, thickness);
             renderPipeSide(renderState, pipeConnectSide, side, cuboid);
         }
     }
@@ -257,11 +259,11 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         }
         float thickness = fluidPipeType.getThickness();
         int connectedSidesMask = blockFluidPipe.getVisualConnections(tileEntityPipe);
-        Cuboid6 baseBox = BlockItemPipe.getSideBox(null, false, thickness);
+        Cuboid6 baseBox = BlockItemPipe.getSideBox(null, thickness);
         BlockRenderer.renderCuboid(renderState, baseBox, 0);
         for (EnumFacing renderSide : EnumFacing.VALUES) {
             if ((connectedSidesMask & (1 << renderSide.getIndex())) > 0) {
-                Cuboid6 sideBox = BlockItemPipe.getSideBox(renderSide, false, thickness);
+                Cuboid6 sideBox = BlockItemPipe.getSideBox(renderSide, thickness);
                 BlockRenderer.renderCuboid(renderState, sideBox, 0);
             }
         }
