@@ -8,6 +8,7 @@ import gregtech.api.capability.IRotorHolder;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -126,6 +127,14 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
         return this.currentSpeed;
     }
 
+    public int getRotorEfficiency() {
+        return inventory.getRotorEfficiency();
+    }
+
+    public int getRotorPower() {
+        return inventory.getRotorPower();
+    }
+
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         return onRotorHolderInteract(playerIn) || super.onRightClick(playerIn, hand, facing, hitResult);
@@ -212,7 +221,15 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
             scheduleRenderUpdate();
         }
 
-        public TurbineRotorBehavior2 getTurbineBehavior() {
+        @Nullable
+        private ItemStack getTurbineStack() {
+            if (!hasRotor())
+                return null;
+            return getStackInSlot(0);
+        }
+
+        @Nullable
+        private TurbineRotorBehavior2 getTurbineBehavior() {
             ItemStack stack = getStackInSlot(0);
             if (stack.isEmpty())
                 return null;
@@ -220,32 +237,42 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
             return TurbineRotorBehavior2.getInstanceFor(stack);
         }
 
-        public boolean hasRotor() {
+        private boolean hasRotor() {
             return getTurbineBehavior() != null;
         }
 
         private int getRotorColor() {
-            TurbineRotorBehavior2 behavior = getTurbineBehavior();
-            if (behavior == null)
+            if (!hasRotor())
                 return -1;
-            return behavior.getPartMaterial(getStackInSlot(0)).getMaterialRGB();
+            //noinspection ConstantConditions
+            return getTurbineBehavior().getPartMaterial(getStackInSlot(0)).getMaterialRGB();
 
         }
 
-        public double getRotorEfficiency() {
-            TurbineRotorBehavior2 behavior = getTurbineBehavior();
-            if (behavior == null)
-                return 0;
-            return behavior.getRotorEfficiency(getStackInSlot(0));
+        private int getRotorEfficiency() {
+            if (!hasRotor())
+                return -1;
+
+            //noinspection ConstantConditions
+            return getTurbineBehavior().getRotorEfficiency(getTurbineStack());
         }
 
-        public boolean applyDamageToRotor(int damageAmount, boolean simulate) {
-            TurbineRotorBehavior2 behavior = getTurbineBehavior();
-            if (behavior == null)
+        private int getRotorPower() {
+            if (!hasRotor())
+                return -1;
+
+            //noinspection ConstantConditions
+            return getTurbineBehavior().getRotorPower(getTurbineStack());
+        }
+
+        private boolean applyDamageToRotor(int damageAmount, boolean simulate) {
+            if (!hasRotor())
                 return false;
 
-            if (!simulate)
-                behavior.applyRotorDamage(getStackInSlot(0), damageAmount);
+            if (!simulate) {
+                //noinspection ConstantConditions
+                getTurbineBehavior().applyRotorDamage(getStackInSlot(0), damageAmount);
+            }
 
             return true;
         }
