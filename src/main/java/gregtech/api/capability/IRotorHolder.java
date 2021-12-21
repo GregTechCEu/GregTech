@@ -22,7 +22,7 @@ public interface IRotorHolder {
         if (holderEfficiency == -1)
             return -1;
 
-        return getBaseEfficiency() + rotorEfficiency + holderEfficiency;
+        return Math.max(getBaseEfficiency(), rotorEfficiency + holderEfficiency);
     }
 
     /**
