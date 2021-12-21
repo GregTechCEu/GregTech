@@ -13,14 +13,16 @@ import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
 public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType, ItemPipeProperties> {
 
-    private WeakReference<ItemPipeNet> currentPipeNet = new WeakReference<>(null);
-
+    private final EnumMap<EnumFacing, ItemNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     private final Map<String, String> transferred = new HashMap<>();
+    private ItemNetHandler defaultHandler;
+    private WeakReference<ItemPipeNet> currentPipeNet = new WeakReference<>(null);
 
     @Override
     public Class<ItemPipeType> getPipeTypeClass() {
@@ -32,16 +34,31 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
         return false;
     }
 
+    private void initHandlers() {
+        ItemPipeNet net = getItemPipeNet();
+        if (net == null) {
+            return;
+        }
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            handlers.put(facing, new ItemNetHandler(net, this, facing));
+        }
+        defaultHandler = new ItemNetHandler(net, this, null);
+    }
+
     @Nullable
     @Override
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new ItemNetHandler(getItemPipeNet(), this, facing));
+            if (handlers.size() == 0)
+                initHandlers();
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(handlers.getOrDefault(facing, defaultHandler));
         }
         return super.getCapabilityInternal(capability, facing);
     }
 
     public ItemPipeNet getItemPipeNet() {
+        if (world == null || world.isRemote)
+            return null;
         ItemPipeNet currentPipeNet = this.currentPipeNet.get();
         if (currentPipeNet != null && currentPipeNet.isValid() &&
                 currentPipeNet.containsNode(getPipePos()))

@@ -65,7 +65,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     @Override
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(getTankList());
+            PipeTankList tankList = getTankList();
+            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(tankList);
         }
         return super.getCapabilityInternal(capability, facing);
     }
@@ -139,7 +140,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         super.setConnectionBlocked(attachmentType, side, blocked, fromNeighbor);
         if (oldConnections != getOpenConnections()) {
             checkNeighbours();
-            if (!blocked && attachmentType == AttachmentType.PIPE && fromNeighbor) {
+            TileEntity te = world.getTileEntity(pos.offset(side));
+            if (!blocked && attachmentType == AttachmentType.PIPE && te instanceof TileEntityFluidPipe) {
                 FluidPipeNet net = getFluidPipeNet();
                 for (FluidTank tank : getFluidTanks()) {
                     FluidStack fluid = tank.getFluid();
@@ -176,14 +178,14 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     }
 
     public PipeTankList getTankList() {
-        if (pipeTankList == null) {
+        if (pipeTankList == null || fluidTanks == null) {
             createTanksList();
         }
         return pipeTankList;
     }
 
     public FluidTank[] getFluidTanks() {
-        if (fluidTanks == null) {
+        if (pipeTankList == null || fluidTanks == null) {
             createTanksList();
         }
         return fluidTanks;
@@ -324,6 +326,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     }
 
     public FluidPipeNet getFluidPipeNet() {
+        if(world == null || world.isRemote)
+            return null;
         FluidPipeNet currentPipeNet = this.currentPipeNet.get();
         if (currentPipeNet != null && currentPipeNet.isValid() &&
                 currentPipeNet.containsNode(getPipePos()))
