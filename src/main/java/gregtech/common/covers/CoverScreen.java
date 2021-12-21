@@ -25,4 +25,9 @@ public class CoverScreen extends CoverBehavior {
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
         Textures.DISPLAY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
+
+    @Override
+    public boolean shouldRenderConnected() {
+        return false;
+    }
 }

@@ -55,6 +55,11 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
     }
 
     @Override
+    public boolean shouldRenderConnected() {
+        return false;
+    }
+
+    @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
         Textures.CRAFTING.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
