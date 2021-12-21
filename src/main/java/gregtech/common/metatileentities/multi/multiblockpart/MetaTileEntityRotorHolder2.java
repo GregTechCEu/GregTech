@@ -9,6 +9,7 @@ import gregtech.api.damagesources.DamageSources;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -100,6 +101,7 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
 
     /**
      * returns true on both the Client and Server
+     *
      * @return whether there is a rotor in the holder
      */
     public boolean hasRotor() {
@@ -108,6 +110,7 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
 
     /**
      * returns true on only the Server
+     *
      * @return whether there is a rotor in the holder
      */
     @SideOnly(Side.SERVER)
@@ -115,24 +118,61 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
         return inventory.hasRotor();
     }
 
-    public void setRotorColor(int color) {
+    protected void setRotorColor(int color) {
         this.rotorColor = color;
     }
 
-    public int getRotorColor() {
+    protected int getRotorColor() {
         return rotorColor;
     }
 
+    @Override
     public int getSpeed() {
         return this.currentSpeed;
     }
 
+    @Override
     public int getRotorEfficiency() {
         return inventory.getRotorEfficiency();
     }
 
+    @Override
     public int getRotorPower() {
         return inventory.getRotorPower();
+    }
+
+    @Override
+    public boolean damageRotor(int amount, boolean simulate) {
+        return inventory.damageRotor(amount, simulate);
+    }
+
+    /**
+     * calculates the holder's power multiplier: 2x per tier above the multiblock controller
+     *
+     * @return the power multiplier provided by the rotor holder
+     */
+    @Override
+    public int getHolderPowerMultiplier() {
+        int tierDifference = getTierDifference();
+        if (tierDifference == -1)
+            return -1;
+
+        return (int) Math.pow(2, getTierDifference() + 1);
+    }
+
+    @Override
+    public int getHolderEfficiency() {
+        int tierDifference = getTierDifference();
+        if (tierDifference == -1)
+            return -1;
+
+        return 1000 * tierDifference;
+    }
+
+    private int getTierDifference() {
+        if (getController() instanceof ITieredMetaTileEntity)
+            return getTier() - ((ITieredMetaTileEntity) getController()).getTier();
+        return -1;
     }
 
     @Override
@@ -265,7 +305,7 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
             return getTurbineBehavior().getRotorPower(getTurbineStack());
         }
 
-        private boolean applyDamageToRotor(int damageAmount, boolean simulate) {
+        private boolean damageRotor(int damageAmount, boolean simulate) {
             if (!hasRotor())
                 return false;
 
