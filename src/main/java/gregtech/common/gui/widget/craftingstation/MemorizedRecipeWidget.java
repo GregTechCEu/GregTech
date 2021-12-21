@@ -64,8 +64,8 @@ public class MemorizedRecipeWidget extends SlotWidget {
     }
 
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
-        super.drawInBackground(mouseX, mouseY, context);
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        super.drawInBackground(mouseX, mouseY, partialTicks, context);
         if (recipeLocked) {
             GlStateManager.translate(0, 0, 160);
             Position pos = getPosition();
