@@ -1,17 +1,25 @@
 package gregtech.api.pipenet.tile;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import com.google.common.base.Preconditions;
+import gregtech.api.GTValues;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
@@ -321,6 +329,40 @@ public class PipeCoverableImplementation implements ICoverable {
                 coverBehavior.readFromNBT(tagCompound);
                 this.coverBehaviors[coverSide.getIndex()] = coverBehavior;
             }
+        }
+    }
+
+    @Override
+    public void renderCovers(CCRenderState renderState, Matrix4 translation, BlockRenderLayer layer) {
+        ICoverable.super.renderCovers(renderState, translation, layer);
+        if (layer == BlockRenderLayer.CUTOUT_MIPPED) {
+            IVertexOperation[] platePipeline = new IVertexOperation[]{renderState.lightMatrix, new ColourMultiplier(0x555555ff)};
+            for (EnumFacing sideFacing : EnumFacing.values()) {
+                CoverBehavior coverBehavior = getCoverAtSide(sideFacing);
+                if (coverBehavior != null && !holder.isConnectionOpenAny(sideFacing)) {
+                    Cuboid6 stand = getCoverStandBox(sideFacing, getCoverPlateThickness() - 0.001);
+                    Textures.VOLTAGE_CASINGS[GTValues.LV].render(renderState, translation, platePipeline, stand);
+                }
+            }
+        }
+    }
+
+    static Cuboid6 getCoverStandBox(EnumFacing side, double plateThickness) {
+        switch (side) {
+            case UP:
+                return new Cuboid6(0.45, 0.5, 0.45, 0.55, 1.0 - plateThickness, 0.55);
+            case DOWN:
+                return new Cuboid6(0.45, plateThickness, 0.45, 0.55, 0.5, 0.55);
+            case NORTH:
+                return new Cuboid6(0.45, 0.45, plateThickness, 0.55, 0.55, 0.5);
+            case SOUTH:
+                return new Cuboid6(0.45, 0.45, 0.5, 0.55, 0.55, 1.0 - plateThickness);
+            case WEST:
+                return new Cuboid6(plateThickness, 0.45, 0.45, 0.5, 0.55, 0.55);
+            case EAST:
+                return new Cuboid6(0.5, 0.45, 0.45, 1.0 - plateThickness, 0.55, 0.55);
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 
