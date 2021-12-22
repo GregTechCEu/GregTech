@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.GTUtility;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -238,13 +239,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             overclock[1] = (int) (overclock[1] * (1 + 0.1 * maintenanceValues.getFirst()));
 
         return overclock;
-    }
-
-    @Override
-    protected int[] performOverclocking(Recipe recipe, boolean negativeEU) {
-        int maxOverclocks = getOverclockingTier(getMaxVoltage()) - 1; // exclude ULV overclocking
-
-        return runOverclockingLogic(recipe, negativeEU, maxOverclocks);
     }
 
     protected Tuple<Integer, Double> getMaintenanceValues() {

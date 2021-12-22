@@ -278,6 +278,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.fusion_reactor.capacity", calculateEnergyStorageFactor(16) / 1000000L));
+        tooltip.add(I18n.format("gregtech.machine.fusion_reactor.overclocking"));
     }
 
     @Nonnull
@@ -299,6 +300,16 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
         public FusionRecipeLogic(MetaTileEntityFusionReactor tileEntity) {
             super(tileEntity);
+        }
+
+        @Override
+        protected double getOverclockingDurationDivisor() {
+            return 2.0D;
+        }
+
+        @Override
+        protected double getOverclockingVoltageMultiplier() {
+            return 2.0D;
         }
 
         @Override

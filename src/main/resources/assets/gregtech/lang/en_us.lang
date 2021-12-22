@@ -3698,6 +3698,7 @@ gregtech.machine.fusion_reactor.luv.name=Fusion Reactor Computer Mark 1
 gregtech.machine.fusion_reactor.zpm.name=Fusion Reactor Computer Mark 2
 gregtech.machine.fusion_reactor.uv.name=Fusion Reactor Computer Mark 3
 gregtech.machine.fusion_reactor.capacity=§7Maximum Energy Storage: §e%sM EU
+gregtech.machine.fusion_reactor.overclocking=Overclocks double energy and halve duration.
 
 gregtech.machine.miner.lv.name=Basic Miner
 gregtech.machine.miner.mv.name=Advanced Miner
