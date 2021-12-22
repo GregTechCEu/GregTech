@@ -981,6 +981,13 @@ metaarmor.message.nightvision.enabled=§bNightVision: §aOn
 metaarmor.message.nightvision.disabled=§bNightVision: §cOff
 metaarmor.message.nightvision.error=§cNot enough power!
 
+metaarmor.tooltip.stepassist=Provides Step-Assist
+metaarmor.tooltip.speed=Increases Running Speed
+metaarmor.tooltip.jump=Increases Jump Height and Distance
+metaarmor.tooltip.falldamage=Nullifies Fall Damage
+metaarmor.tooltip.poitons=Nullifies Harmful Effects
+metaarmor.tooltip.burning=Nullifies Burning
+
 metaarmor.hud.status.enabled=§aON
 metaarmor.hud.status.disabled=§cOFF
 metaarmor.hud.energy_lvl=Energy Level: %s

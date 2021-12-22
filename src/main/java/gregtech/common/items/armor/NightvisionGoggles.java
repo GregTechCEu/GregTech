@@ -31,7 +31,7 @@ public class NightvisionGoggles extends ArmorLogicSuite {
         IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);
         byte toggleTimer = nbtData.getByte("toggleTimer");
-        if (!player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem().equals(itemStack.getItem())) {
+        if (!player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isItemEqual(itemStack)) {
             disableNightVision(world, player, false);
         }
         if (SLOT == EntityEquipmentSlot.HEAD) {

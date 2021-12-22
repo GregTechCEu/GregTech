@@ -53,6 +53,10 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(itemStack);
         byte toggleTimer = data.hasKey("toggleTimer") ? data.getByte("toggleTimer") : 0;
 
+        if (!player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isItemEqual(itemStack)) {
+            disableNightVision(world, player, false);
+        }
+
         boolean ret = false;
         if (SLOT == EntityEquipmentSlot.HEAD) {
             int air = player.getAir();
@@ -280,6 +284,14 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
             } else {
                 lines.add(I18n.format("metaarmor.message.nightvision.disabled"));
             }
+            lines.add(I18n.format("metaarmor.tooltip.poitons"));
+        } else if (SLOT == EntityEquipmentSlot.CHEST) {
+            lines.add(I18n.format("metaarmor.tooltip.burning"));
+        } else if (SLOT == EntityEquipmentSlot.LEGS) {
+            lines.add(I18n.format("metaarmor.tooltip.speed"));
+        } else if (SLOT == EntityEquipmentSlot.FEET) {
+            lines.add(I18n.format("metaarmor.tooltip.stepassist"));
+            lines.add(I18n.format("metaarmor.tooltip.falldamage"));
         }
     }
 }
