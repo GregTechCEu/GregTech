@@ -122,7 +122,7 @@ public class ToolChainsaw extends ToolSaw {
     }
 
     @Override
-    public boolean canPlayBreakingSound(ItemStack stack) {
-        return true;
+    public boolean canPlayBreakingSound(ItemStack stack, IBlockState state) {
+        return canMineBlock(state, stack);
     }
 }

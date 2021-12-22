@@ -89,6 +89,11 @@ public class ToolSaw extends ToolBase {
         return SAW_TOOL_CLASSES;
     }
 
+    @Override
+    public boolean canPlayBreakingSound(ItemStack stack, IBlockState state) {
+        return canMineBlock(state, stack);
+    }
+
     /**
      * Added to the world event listeners to hopefully catch and revert the ice-to-water conversion.
      * <p>

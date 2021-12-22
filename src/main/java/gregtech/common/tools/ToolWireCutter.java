@@ -35,4 +35,9 @@ public class ToolWireCutter extends ToolBase {
     public Set<String> getToolClasses(ItemStack stack) {
         return CUTTER_TOOL_CLASSES;
     }
+
+    @Override
+    public boolean canPlayBreakingSound(ItemStack stack, IBlockState state) {
+        return canMineBlock(state, stack);
+    }
 }

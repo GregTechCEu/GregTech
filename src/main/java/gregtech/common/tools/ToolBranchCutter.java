@@ -33,4 +33,9 @@ public class ToolBranchCutter extends ToolBase {
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         return block.getMaterial() == Material.LEAVES;
     }
+
+    @Override
+    public boolean canPlayBreakingSound(ItemStack stack, IBlockState state) {
+        return canMineBlock(state, stack);
+    }
 }

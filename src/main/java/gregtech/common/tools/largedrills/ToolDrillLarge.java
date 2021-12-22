@@ -260,7 +260,7 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
     }
 
     @Override
-    public boolean canPlayBreakingSound(ItemStack stack) {
-        return true;
+    public boolean canPlayBreakingSound(ItemStack stack, IBlockState state) {
+        return canMineBlock(state, stack);
     }
 }
