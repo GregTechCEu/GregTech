@@ -83,7 +83,7 @@ public class TerminalRegistry {
                 .build();
 
         AppRegistryBuilder.create(new ProspectorApp(0))
-                .battery(GTValues.MV, 1000)
+                .battery(GTValues.LV, 1000)
                 .upgrade(0, MetaItems.SENSOR_LV.getStackForm(1))
                 .upgrade(1, MetaItems.SENSOR_LV.getStackForm(2))
                 .upgrade(2, MetaItems.SENSOR_MV.getStackForm(1))
@@ -112,7 +112,7 @@ public class TerminalRegistry {
                 .build();
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
             AppRegistryBuilder.create(new RecipeChartApp())
-                    .battery(GTValues.LV, 100)
+                    .battery(GTValues.LV, 160)
                     .upgrade(0, new ItemStack(Items.PAPER, 32))
                     .upgrade(1, new ItemStack(Items.PAPER, 64))
                     .upgrade(2, MetaItems.RANDOM_ACCESS_MEMORY.getStackForm(16))
@@ -129,7 +129,7 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new HardwareManagerApp()).defaultApp().build();
         AppRegistryBuilder.create(new AppStoreApp()).defaultApp().build();
         AppRegistryBuilder.create(new WorldProspectorARApp())
-                .battery(GTValues.LV, 233)
+                .battery(GTValues.LV, 320)
                 .upgrade(0, MetaItems.EMITTER_LV.getStackForm(2))
                 .upgrade(1, MetaItems.EMITTER_MV.getStackForm(2))
                 .upgrade(2, MetaItems.EMITTER_HV.getStackForm(2))
