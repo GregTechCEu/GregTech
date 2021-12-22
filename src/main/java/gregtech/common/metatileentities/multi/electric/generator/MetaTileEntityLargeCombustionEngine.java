@@ -246,10 +246,10 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
         @Override
         public void invalidate() {
-            super.invalidate();
             isOxygenBoosted = false;
             isLiquidOxygenBoosted = false;
             hasLubricant = false;
+            super.invalidate();
         }
     }
 }

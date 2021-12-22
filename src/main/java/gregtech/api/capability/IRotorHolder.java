@@ -6,15 +6,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public interface IRotorHolder {
 
     /**
-     * @return the base efficiency of the rotor holder in 100 * %
+     * @return the base efficiency of the rotor holder in %
      */
     static int getBaseEfficiency() {
-        return 10000;
+        return 100;
     }
 
     /**
      *
-     * @return the total efficiency the rotor holder and rotor provide in 100 * %
+     * @return the total efficiency the rotor holder and rotor provide in %
      */
     default int getTotalEfficiency() {
         int rotorEfficiency = getRotorEfficiency();
@@ -25,7 +25,15 @@ public interface IRotorHolder {
         if (holderEfficiency == -1)
             return -1;
 
-        return Math.max(getBaseEfficiency(), rotorEfficiency * holderEfficiency);
+        return Math.max(getBaseEfficiency(), rotorEfficiency * holderEfficiency / 100);
+    }
+
+    /**
+     *
+     * @return the total power boost to output and consumption the rotor holder and rotor provide in %
+     */
+    default int getTotalPower() {
+        return getHolderPowerMultiplier() * getRotorPower();
     }
 
     /**
@@ -65,20 +73,22 @@ public interface IRotorHolder {
      */
     int getRotorEfficiency();
 
-
     /**
-     * @return the rotor's power
+     * @return the rotor's power in %
      */
     int getRotorPower();
+
+    /**
+     * @return the rotor's durability as %
+     */
+    int getRotorDurabilityPercent();
 
     /**
      * damages the rotor
      *
      * @param amount   to damage
-     * @param simulate whether to actually apply the damage
-     * @return true if damage can be applied
      */
-    boolean damageRotor(int amount, boolean simulate);
+    void damageRotor(int amount);
 
     /**
      *

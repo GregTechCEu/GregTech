@@ -13,9 +13,12 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.unification.material.Material;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.advancement.GTTriggers;
 import gregtech.common.items.behaviors.TurbineRotorBehavior2;
+import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine2;
+import gregtech.common.metatileentities.multi.electric.generator.RotorHolderMultiblockController;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -48,7 +51,7 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
     public MetaTileEntityRotorHolder2(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
         this.inventory = new InventoryRotorHolder();
-        this.maxSpeed = 10 * tier;
+        this.maxSpeed = 1000 * tier;
     }
 
     @Override
@@ -76,6 +79,38 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
     @Override
     public MultiblockAbility<IRotorHolder> getAbility() {
         return MultiblockAbility.ABILITY_ROTOR_HOLDER_2;
+    }
+
+    @Override
+    public void update() {
+        super.update();
+
+        if (getWorld().isRemote) {
+            return;
+        }
+//        if (getOffsetTimer() % 10 == 0) {
+//            this.frontFaceFree = checkTurbineFaceFree();
+//        }
+
+        MetaTileEntityLargeTurbine2 controller = (MetaTileEntityLargeTurbine2) getController();
+
+        if (controller == null || (!hasRotor() && currentSpeed != 0)) {
+            currentSpeed = 0;
+            isRotorSpinning = false;
+            markDirty();
+        } else {
+            if (controller.isActive()) {
+                if (currentSpeed < maxSpeed) {
+                    currentSpeed++;
+                    markDirty();
+                }
+                if (getOffsetTimer() % 20 == 0)
+                    damageRotor(1 /*+ controller.getMaintenanceProblems()*/);
+            } else if (currentSpeed > 0) {
+                currentSpeed = Math.max(0, currentSpeed - 2);
+                markDirty();
+            }
+        }
     }
 
     @Override
@@ -156,8 +191,13 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
     }
 
     @Override
-    public boolean damageRotor(int amount, boolean simulate) {
-        return inventory.damageRotor(amount, simulate);
+    public int getRotorDurabilityPercent() {
+        return inventory.getRotorDurabilityPercent();
+    }
+
+    @Override
+    public void damageRotor(int amount) {
+        inventory.damageRotor(amount);
     }
 
     @Override
@@ -255,7 +295,7 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
         super.renderMetaTileEntity(renderState, translation, pipeline);
         Textures.ROTOR_HOLDER_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
         Textures.LARGE_TURBINE_ROTOR_RENDERER.renderSided(renderState, translation, pipeline, getFrontFacing(),
-                getController() != null, hasRotor(), isRotorSpinning, getRotorColor());
+                getController() != null, hasRotor(), currentSpeed > 0, getRotorColor());
     }
 
     private class InventoryRotorHolder extends ItemStackHandler {
@@ -308,6 +348,13 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
 
         }
 
+        private int getRotorDurabilityPercent() {
+            if (!hasRotor())
+                return 0;
+            //noinspection ConstantConditions
+            return getTurbineBehavior().getRotorDurabilityPercent(getStackInSlot(0));
+        }
+
         private int getRotorEfficiency() {
             if (!hasRotor())
                 return -1;
@@ -324,16 +371,11 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
             return getTurbineBehavior().getRotorPower(getTurbineStack());
         }
 
-        private boolean damageRotor(int damageAmount, boolean simulate) {
+        private void damageRotor(int damageAmount) {
             if (!hasRotor())
-                return false;
-
-            if (!simulate) {
-                //noinspection ConstantConditions
-                getTurbineBehavior().applyRotorDamage(getStackInSlot(0), damageAmount);
-            }
-
-            return true;
+                return;
+            //noinspection ConstantConditions
+            getTurbineBehavior().applyRotorDamage(getStackInSlot(0), damageAmount);
         }
 
         @Override
