@@ -17,52 +17,47 @@ import gregtech.api.util.GTFluidUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidHandler> {
 
-    private final Material material;
+    private final boolean isMetal;
 
-    public MetaTileEntityTankValve(ResourceLocation metaTileEntityId, Material material) {
+    public MetaTileEntityTankValve(ResourceLocation metaTileEntityId, boolean isMetal) {
         super(metaTileEntityId, 0);
-        this.material = material;
+        this.isMetal = isMetal;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityTankValve(metaTileEntityId, material);
+        return new MetaTileEntityTankValve(metaTileEntityId, isMetal);
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        Textures.HATCH_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+        Textures.PIPE_IN_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
     }
 
     @Override
     public ICubeRenderer getBaseTexture() {
         if (getController() == null) {
             this.setPaintingColor(DEFAULT_PAINTING_COLOR);
-            if (material.equals(Materials.Wood))
-                return Textures.PRIMITIVE_BRICKS;
-            if (material.equals(Materials.Bronze))
-                return Textures.BRONZE_PLATED_BRICKS;
-            if (material.equals(Materials.Steel))
+            if (isMetal)
                 return Textures.SOLID_STEEL_CASING;
-            if (material.equals(Materials.StainlessSteel))
-                return Textures.CLEAN_STAINLESS_STEEL_CASING;
-            if (material.equals(Materials.Titanium))
-                return Textures.STABLE_TITANIUM_CASING;
-            if (material.equals(Materials.TungstenSteel))
-                return Textures.ROBUST_TUNGSTENSTEEL_CASING;
+            return Textures.WOOD_WALL;
         }
         return super.getBaseTexture();
     }
@@ -120,5 +115,11 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
     @Override
     protected boolean shouldSerializeInventories() {
         return false;
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.tank_valve.tooltip"));
     }
 }

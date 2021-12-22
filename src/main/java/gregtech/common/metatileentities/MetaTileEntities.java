@@ -188,19 +188,9 @@ public class MetaTileEntities {
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
-    public static MetaTileEntityTankValve BRONZE_TANK_VALVE;
     public static MetaTileEntityTankValve STEEL_TANK_VALVE;
-    public static MetaTileEntityTankValve STAINLESS_STEEL_TANK_VALVE;
-    public static MetaTileEntityTankValve TITANIUM_TANK_VALVE;
-    public static MetaTileEntityTankValve TUNGSTENSTEEL_TANK_VALVE;
-    public static MetaTileEntityMultiblockTank BRONZE_TANK_MULTI;
-    public static MetaTileEntityTank WOODEN_TANK;
-    public static MetaTileEntityTank BRONZE_TANK;
-    public static MetaTileEntityTank ALUMINIUM_TANK;
-    public static MetaTileEntityTank STEEL_TANK;
-    public static MetaTileEntityTank STAINLESS_STEEL_TANK;
-    public static MetaTileEntityTank TITANIUM_TANK;
-    public static MetaTileEntityTank TUNGSTENSTEEL_TANK;
+    public static MetaTileEntityMultiblockTank WOODEN_TANK;
+    public static MetaTileEntityMultiblockTank STEEL_TANK;
     public static MetaTileEntityDrum WOODEN_DRUM;
     public static MetaTileEntityDrum BRONZE_DRUM;
     public static MetaTileEntityDrum ALUMINIUM_DRUM;
@@ -643,16 +633,11 @@ public class MetaTileEntities {
         }
 
         // Tanks, IDs 1595-1609
-        BRONZE_TANK_VALVE = registerMetaTileEntity(1596, new MetaTileEntityTankValve(gregtechId("tank_valve.bronze"), Materials.Bronze));
-//        WOODEN_TANK = registerMetaTileEntity(1595, new MetaTileEntityTank(gregtechId("wooden_tank"), Materials.Wood, 4000, 1, 3));
-//        BRONZE_TANK = registerMetaTileEntity(1596, new MetaTileEntityTank(gregtechId("bronze_tank"), Materials.Bronze, 8000, 4, 3));
-//        STEEL_TANK = registerMetaTileEntity(1597, new MetaTileEntityTank(gregtechId("steel_tank"), Materials.Steel, 16000, 7, 5));
-//        ALUMINIUM_TANK = registerMetaTileEntity(1598, new MetaTileEntityTank(gregtechId("aluminium_tank"), Materials.Aluminium, 32000, 8, 5));
-//        STAINLESS_STEEL_TANK = registerMetaTileEntity(1599, new MetaTileEntityTank(gregtechId("stainless_steel_tank"), Materials.StainlessSteel, 64000, 9, 7));
-//        TITANIUM_TANK = registerMetaTileEntity(1600, new MetaTileEntityTank(gregtechId("titanium_tank"), Materials.Titanium, 128000, 12, 9));
-//        TUNGSTENSTEEL_TANK = registerMetaTileEntity(1601, new MetaTileEntityTank(gregtechId("tungstensteel_tank"), Materials.TungstenSteel, 512000, 16, 9));
+        WOODEN_TANK_VALVE = registerMetaTileEntity(1596, new MetaTileEntityTankValve(gregtechId("tank_valve.wood"), false));
+        WOODEN_TANK = registerMetaTileEntity(1597, new MetaTileEntityMultiblockTank(gregtechId("tank.wood"), false, 250 * 1000));
 
-        BRONZE_TANK_MULTI = registerMetaTileEntity(1603, new MetaTileEntityMultiblockTank(gregtechId("tank.bronze"), Materials.Bronze));
+        STEEL_TANK_VALVE = registerMetaTileEntity(1598, new MetaTileEntityTankValve(gregtechId("tank_valve.steel"), true));
+        STEEL_TANK = registerMetaTileEntity(1599, new MetaTileEntityMultiblockTank(gregtechId("tank.steel"), true, 1000 * 1000));
 
         // Drums, IDs 1610-1624
         WOODEN_DRUM = registerMetaTileEntity(1610, new MetaTileEntityDrum(gregtechId("drum.wood"), Materials.Wood, 16000));

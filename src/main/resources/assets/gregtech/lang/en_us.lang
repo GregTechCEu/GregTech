@@ -2295,6 +2295,7 @@ tile.steam_casing.steel_bricks_hull.name=Bricked Wrought Iron Hull
 tile.steam_casing.bronze.tooltip=For your first Steam Machines
 tile.steam_casing.steel.tooltip=For improved Steam Machines
 tile.steam_casing.pump_deck.name=Pump Deck
+tile.steam_casing.wood_wall.name=Wooden Wall
 
 # Gearbox casing blocks
 tile.turbine_casing.bronze_gearbox.name=Bronze Gear Box Casing
@@ -2367,13 +2368,13 @@ gregtech.machine.workbench.tab.crafting=Crafting
 gregtech.machine.workbench.tab.container=Container
 
 # Tanks
-gregtech.machine.wooden_tank.name=Wooden Tank
-gregtech.machine.bronze_tank.name=Bronze Tank
-gregtech.machine.steel_tank.name=Steel Tank
-gregtech.machine.aluminium_tank.name=Aluminium Tank
-gregtech.machine.stainless_steel_tank.name=Stainless Steel Tank
-gregtech.machine.titanium_tank.name=Titanium Tank
-gregtech.machine.tungstensteel_tank.name=Tungstensteel Tank
+gregtech.machine.tank_valve.wood.name=Wooden Tank Valve
+gregtech.machine.tank.wood.name=Wooden Multiblock Tank
+gregtech.machine.tank_valve.steel.name=Steel Tank Valve
+gregtech.machine.tank.steel.name=Steel Multiblock Tank
+
+gregtech.multiblock.tank.tooltip=Fill and drain through the controller or tank valves.
+gregtech.tank_valve.tooltip=Use to fill and drain multiblock tanks. Auto outputs when facing down.
 
 gregtech.machine.clipboard.name=Clipboard
 

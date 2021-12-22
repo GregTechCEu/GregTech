@@ -224,6 +224,12 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe(true, "pump_deck", MetaBlocks.STEAM_CASING.getItemVariant(PUMP_DECK, 2), "SWS", "dCh", 'S', new UnificationEntry(OrePrefix.screw, Materials.Iron), 'W', new ItemStack(Blocks.PLANKS, 1, GTValues.W), 'C', new ItemStack(Blocks.STONE_SLAB, 1, 3));
         ModHandler.addShapedRecipe(true, "pump_hatch", MetaTileEntities.PUMP_OUTPUT_HATCH.getStackForm(), "SRd", "PLP", "CRC", 'S', new UnificationEntry(OrePrefix.screw, Materials.Iron), 'R', new UnificationEntry(OrePrefix.ring, Materials.Iron), 'P', new ItemStack(Blocks.PLANKS, 1, GTValues.W), 'L', new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Wood), 'C', new ItemStack(Blocks.STONE_SLAB, 1, 3));
 
+        ModHandler.addShapedRecipe(true, "wood_multiblock_tank", MetaTileEntities.WOODEN_TANK.getStackForm(), " R ", "rCs", " R ", 'R', new UnificationEntry(OrePrefix.ring, Materials.Lead), 'C', MetaBlocks.STEAM_CASING.getItemVariant(WOOD_WALL));
+        ModHandler.addShapedRecipe(true, "steel_multiblock_tank", MetaTileEntities.STEEL_TANK.getStackForm(), " R ", "hCw", " R ", 'R', new UnificationEntry(OrePrefix.ring, Materials.Steel), 'C', MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID));
+        ModHandler.addShapedRecipe(true, "wood_tank_valve", MetaTileEntities.WOODEN_TANK_VALVE.getStackForm(), " R ", "rCs", " O ", 'O', new UnificationEntry(OrePrefix.rotor, Materials.Lead), 'R', new UnificationEntry(OrePrefix.ring, Materials.Lead), 'C', MetaBlocks.STEAM_CASING.getItemVariant(WOOD_WALL));
+        ModHandler.addShapedRecipe(true, "steel_tank_valve", MetaTileEntities.STEEL_TANK_VALVE.getStackForm(), " R ", "hCw", " O ", 'O', new UnificationEntry(OrePrefix.rotor, Materials.Steel), 'R', new UnificationEntry(OrePrefix.ring, Materials.Steel), 'C', MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID));
+        ModHandler.addShapedRecipe(true, "wood_wall", MetaBlocks.STEAM_CASING.getItemVariant(WOOD_WALL), "W W", "sPh", "W W", 'W', new ItemStack(Blocks.PLANKS, 1, GTValues.W), 'P', new UnificationEntry(OrePrefix.plate, Materials.Lead));
+
         // MACHINES
         registerMachineRecipe(MetaTileEntities.ALLOY_SMELTER, "ECE", "CMC", "WCW", 'M', HULL, 'E', CIRCUIT, 'W', CABLE, 'C', COIL_HEATING_DOUBLE);
         registerMachineRecipe(MetaTileEntities.ASSEMBLER, "ACA", "VMV", "WCW", 'M', HULL, 'V', CONVEYOR, 'A', ROBOT_ARM, 'C', CIRCUIT, 'W', CABLE);

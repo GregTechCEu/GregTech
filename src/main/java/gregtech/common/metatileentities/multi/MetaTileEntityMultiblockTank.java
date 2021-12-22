@@ -4,9 +4,9 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.LabelWidget;
@@ -18,30 +18,37 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Materials;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
+import gregtech.common.blocks.BlockSteamCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
 
-    private final Material material;
+    private final boolean isMetal;
+    private final int capacity;
 
-    public MetaTileEntityMultiblockTank(ResourceLocation metaTileEntityId, Material material) {
+    public MetaTileEntityMultiblockTank(ResourceLocation metaTileEntityId, boolean isMetal, int capacity) {
         super(metaTileEntityId);
-        this.material = material;
+        this.isMetal = isMetal;
+        this.capacity = capacity;
         initializeAbilities();
     }
 
@@ -54,13 +61,15 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     @Nonnull
     private List<FluidTank> makeFluidTanks() {
         List<FluidTank> fluidTankList = new ArrayList<>(1);
-        fluidTankList.add(new NotifiableFluidTank(32000, this, false));
+        fluidTankList.add(new FilteredFluidHandler(capacity).setFillPredicate(
+                fluidStack -> isMetal || (!fluidStack.getFluid().isGaseous() && fluidStack.getFluid().getTemperature() <= 325)
+        ));
         return fluidTankList;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityMultiblockTank(metaTileEntityId, material);
+        return new MetaTileEntityMultiblockTank(metaTileEntityId, isMetal, capacity);
     }
 
     @Override
@@ -76,38 +85,28 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
                 .aisle("XXX", "XSX", "XXX")
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()).setMinGlobalLimited(23)
-                        .or(abilities(MultiblockAbility.TANK_VALVE).setMaxGlobalLimited(2)))
+                        .or(metaTileEntities(getValve()).setMaxGlobalLimited(2)))
                 .where(' ', air())
                 .build();
     }
 
     private IBlockState getCasingState() {
-        if (material.equals(Materials.Bronze))
-            return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.BRONZE_BRICKS);
-        if (material.equals(Materials.Steel))
+        if (isMetal)
             return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
-        if (material.equals(Materials.StainlessSteel))
-            return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STAINLESS_CLEAN);
-        if (material.equals(Materials.Titanium))
-            return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.TITANIUM_STABLE);
-        if (material.equals(Materials.TungstenSteel))
-            return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.TUNGSTENSTEEL_ROBUST);
-        return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PRIMITIVE_BRICKS);
+        return MetaBlocks.STEAM_CASING.getState(BlockSteamCasing.SteamCasingType.WOOD_WALL);
+    }
+
+    private MetaTileEntity getValve() {
+        if (isMetal)
+            return MetaTileEntities.STEEL_TANK_VALVE;
+        return MetaTileEntities.WOODEN_TANK_VALVE;
     }
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        if (material.equals(Materials.Bronze))
-            return Textures.BRONZE_PLATED_BRICKS;
-        if (material.equals(Materials.Steel))
+        if (isMetal)
             return Textures.SOLID_STEEL_CASING;
-        if (material.equals(Materials.StainlessSteel))
-            return Textures.CLEAN_STAINLESS_STEEL_CASING;
-        if (material.equals(Materials.Titanium))
-            return Textures.STABLE_TITANIUM_CASING;
-        if (material.equals(Materials.TungstenSteel))
-            return Textures.ROBUST_TUNGSTENSTEEL_CASING;
-        return Textures.PRIMITIVE_BRICKS;
+        return Textures.WOOD_WALL;
     }
 
     @Override
@@ -141,6 +140,13 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {
-        return Textures.PIPE_IN_OVERLAY;
+        return Textures.MULTIBLOCK_TANK_OVERLAY;
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.multiblock.tank.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.quantum_tank.capacity", capacity));
     }
 }
