@@ -216,6 +216,7 @@ public class OreByProduct implements IRecipeWrapper {
         if (hasChemBath) {
             addToOutputs(material, OrePrefix.crushedPurified, 1);
             addToOutputs(byproducts[3], OrePrefix.dust, byproductMultiplier);
+            addChance(7000, 580);
             List<FluidStack> washedFluid = new ArrayList<>();
             washedFluid.add(washedIn.getKey().getFluid(washedIn.getValue()));
             fluidInputs.add(washedFluid);

@@ -165,7 +165,7 @@ public class GTJeiPlugin implements IModPlugin {
         //TODO, add Electromagnetic Separator to the Ore Byproduct page
         List<OreByProduct> oreByproductList = new CopyOnWriteArrayList<>();
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-            if (material.hasProperty(PropertyKey.ORE) && material.getProperty(PropertyKey.ORE).getOreByProducts().size() > 0) {
+            if (material.hasProperty(PropertyKey.ORE)) {
                 oreByproductList.add(new OreByProduct(material));
             }
         }
