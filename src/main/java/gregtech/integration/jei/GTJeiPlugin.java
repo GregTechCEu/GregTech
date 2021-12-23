@@ -162,7 +162,6 @@ public class GTJeiPlugin implements IModPlugin {
         registry.addRecipeCatalyst(MetaTileEntities.LARGE_TITANIUM_BOILER.getStackForm(), semiFluidMapId);
         registry.addRecipeCatalyst(MetaTileEntities.LARGE_TUNGSTENSTEEL_BOILER.getStackForm(), semiFluidMapId);
 
-        //TODO, add Electromagnetic Separator to the Ore Byproduct page
         List<OreByProduct> oreByproductList = new CopyOnWriteArrayList<>();
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
             if (material.hasProperty(PropertyKey.ORE)) {
