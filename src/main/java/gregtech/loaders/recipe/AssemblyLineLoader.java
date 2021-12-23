@@ -58,7 +58,7 @@ public class AssemblyLineLoader {
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Infinite)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Infinite)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Infinite)
-                .input(OrePrefix.plate, Materials.NetherStar)
+                .inputs(MetaItems.QUANTUM_STAR.getStackForm())
                 .input(OrePrefix.plateDouble, Materials.Americium)
                 .inputs(MetaItems.FIELD_GENERATOR_ZPM.getStackForm(2))
                 .inputs(MetaItems.ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(64))
