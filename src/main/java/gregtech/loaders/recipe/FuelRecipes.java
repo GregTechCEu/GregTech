@@ -65,10 +65,10 @@ public class FuelRecipes {
 
         //plasma turbine
         registerPlasmaFuel(Helium.getPlasma(1), 2560, LV);
-        registerPlasmaFuel(Nitrogen.getPlasma(1), 4032, LV);
-        registerPlasmaFuel(Oxygen.getPlasma(1), 4096, LV);
-        registerPlasmaFuel(Iron.getPlasma(16), 103219, LV);
-        registerPlasmaFuel(Nickel.getPlasma(16), 106905, LV);
+        registerPlasmaFuel(Oxygen.getPlasma(1), 3072, LV);
+        registerPlasmaFuel(Nitrogen.getPlasma(1), 4096, LV);
+        registerPlasmaFuel(Iron.getPlasma(1), 6144, LV);
+        registerPlasmaFuel(Nickel.getPlasma(1), 12288, LV);
 
     }
 

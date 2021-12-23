@@ -101,7 +101,7 @@ public class MaterialInfoLoader {
                 new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
 
         OreDictUnifier.registerOre(MetaTileEntities.HULL[8].getStackForm(), new ItemMaterialInfo(
-                new MaterialStack(Materials.Livermorium, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.Darmstadtium, OrePrefix.plate.materialAmount * 8),
                 new MaterialStack(Materials.YttriumBariumCuprate, OrePrefix.cableGtSingle.materialAmount * 2),
                 new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
 

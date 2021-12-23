@@ -482,6 +482,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT)
                 .input(VOLTAGE_COIL_UV)
                 .input(wireGtQuadruple, YttriumBariumCuprate, 2)
+                .input(plate, Darmstadtium, 2)
                 .output(ENERGY_INPUT_HATCH_4A[3])
                 .duration(100).EUt(VA[ZPM]).buildAndRegister();
 
@@ -528,6 +529,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(VOLTAGE_COIL_UV)
                 .input(wireGtOctal, YttriumBariumCuprate, 2)
+                .input(plate, Darmstadtium, 4)
                 .output(ENERGY_INPUT_HATCH_16A[3])
                 .duration(200).EUt(VA[ZPM]).buildAndRegister();
 
@@ -574,6 +576,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT)
                 .input(VOLTAGE_COIL_UV)
                 .input(wireGtQuadruple, YttriumBariumCuprate, 2)
+                .input(plate, Darmstadtium, 2)
                 .output(ENERGY_OUTPUT_HATCH_4A[3])
                 .duration(100).EUt(VA[ZPM]).buildAndRegister();
 
@@ -620,6 +623,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(VOLTAGE_COIL_UV)
                 .input(wireGtOctal, YttriumBariumCuprate, 2)
+                .input(plate, Darmstadtium, 4)
                 .output(ENERGY_OUTPUT_HATCH_16A[3])
                 .duration(200).EUt(VA[ZPM]).buildAndRegister();
 
