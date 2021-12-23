@@ -963,8 +963,10 @@ metaarmor.qts.nightvision.enabled=QuarkTech™ Suite: NightVision Enabled
 metaarmor.qts.nightvision.disabled=QuarkTech™ Suite: NightVision Disabled
 metaarmor.qts.nightvision.error=QuarkTech™ Suite: §cNot enough power!
 
-metaarmor.jetpack.flight.enable=Jetpack: Flight Enabled
-metaarmor.jetpack.flight.disable=Jetpack: Flight Disabled
+metaarmor.jetpack.hover.enable=Jetpack: Hover Mode Enabled
+metaarmor.jetpack.hover.disable=Jetpack: Hover Mode Disabled
+
+metaarmor.jetpack.emergency_hover_mode=Emergency Hover Mode Enabled!
 
 metaarmor.nms.share.enable=NanoMuscle™ Suite: Charging Enabled
 metaarmor.nms.share.disable=NanoMuscle™ Suite: Charging Disabled
@@ -987,8 +989,8 @@ metaarmor.hud.status.enabled=§aON
 metaarmor.hud.status.disabled=§cOFF
 metaarmor.hud.energy_lvl=Energy Level: %s
 metaarmor.hud.fuel_lvl=Fuel Level: %s
+metaarmor.hud.hover_mode=Hover Mode: %s
 mataarmor.hud.supply_mode=Supply Mode: %s
-metaarmor.hud.fly_mode=Fly Mode: %s
 metaarmor.hud.gravi_engine=GraviEngine: %s
 
 metaarmor.energy_share.enable=Energy Supply: Gadgets charging enabled
