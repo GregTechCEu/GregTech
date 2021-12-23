@@ -81,8 +81,10 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
     @SideOnly(Side.CLIENT)
     protected void loadPacketLocalConfig() {
         new Thread(()-> { // thread for better QoL
-            int playerChunkX = gui.entityPlayer.getPosition().getX() >> 4;
-            int playerChunkZ = gui.entityPlayer.getPosition().getZ() >> 4;
+            int posX = gui.entityPlayer.getPosition().getX();
+            int posZ = gui.entityPlayer.getPosition().getZ();
+            int playerChunkX = posX >> 4;
+            int playerChunkZ = posZ >> 4;
             int chunkRadius = getAppTier() + 3 - 1;
             for (int i = playerChunkX - chunkRadius; i <= playerChunkX + chunkRadius; i++) {
                 for (int j = playerChunkZ - chunkRadius; j <= playerChunkZ + chunkRadius; j++) {
@@ -95,8 +97,10 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
                     if (nbt != null) {
                         PacketProspecting packet = PacketProspecting.readPacketData(nbt);
                         if (packet != null) {
+                            packet.posX = posX;
+                            packet.posZ = posZ;
                             persist.put(i, j, packet);
-                            widgetProspectingMap.updatePacket(packet);
+                            widgetProspectingMap.addPacketToQueue(packet);
                         }
                     }
                 }
