@@ -86,11 +86,6 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Blocks.GLOWSTONE))
                 .buildAndRegister();
 
-        COMPRESSOR_RECIPES.recipeBuilder().duration(300).EUt(2)
-                .inputs(new ItemStack(Items.QUARTZ, 4))
-                .outputs(new ItemStack(Blocks.QUARTZ_BLOCK))
-                .buildAndRegister();
-
         COMPRESSOR_RECIPES.recipeBuilder().inputs(new ItemStack(Blocks.ICE, 2, GTValues.W)).outputs(new ItemStack(Blocks.PACKED_ICE)).buildAndRegister();
         COMPRESSOR_RECIPES.recipeBuilder().input(OrePrefix.dust, Materials.Ice, 1).outputs(new ItemStack(Blocks.ICE)).buildAndRegister();
 

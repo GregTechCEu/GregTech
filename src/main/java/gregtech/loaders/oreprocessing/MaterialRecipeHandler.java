@@ -255,7 +255,7 @@ public class MaterialRecipeHandler {
                     .buildAndRegister();
 
             COMPRESSOR_RECIPES.recipeBuilder().EUt(2).duration(300)
-                    .input(ingot, material, 9)
+                    .input(ingot, material, (int) (block.getMaterialAmount(material) / M))
                     .output(block, material)
                     .buildAndRegister();
         }

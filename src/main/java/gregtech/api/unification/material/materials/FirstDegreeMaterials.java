@@ -611,7 +611,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Uraninite = new Material.Builder(332, "uraninite")
-                .dust(3).ore()
+                .dust(3).ore(true)
                 .color(0x232323).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium238, 1, Oxygen, 2)

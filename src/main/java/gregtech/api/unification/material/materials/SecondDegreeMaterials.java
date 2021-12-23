@@ -196,8 +196,9 @@ public class SecondDegreeMaterials {
         // Free ID 2025
 
         Bentonite = new Material.Builder(2026, "bentonite")
-                .dust().ore(7, 1)
+                .dust().ore(3, 1)
                 .color(0xF5D7D2).iconSet(ROUGH)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Sodium, 1, Magnesium, 6, Silicon, 12, Hydrogen, 4, Water, 5, Oxygen, 36)
                 .build();
 
@@ -208,7 +209,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         Pitchblende = new Material.Builder(2028, "pitchblende")
-                .dust(3).ore()
+                .dust(3).ore(true)
                 .color(0xC8D200)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Uraninite, 3, Thorium, 1, Lead, 1)

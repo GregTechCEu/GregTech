@@ -182,18 +182,6 @@ public class SeparationRecipes {
                 .chancedOutput(dust, Plutonium241, 2000, 300)
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(3200).EUt(320)
-                .input(dust, Naquadah)
-                .chancedOutput(dustTiny, Naquadria, 1000, 300)
-                .chancedOutput(dustTiny, NaquadahEnriched, 5000, 750)
-                .buildAndRegister();
-
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(6400).EUt(640)
-                .input(dust, NaquadahEnriched)
-                .chancedOutput(dustSmall, Naquadah, 3000, 400)
-                .chancedOutput(dustSmall, Naquadria, 2000, 450)
-                .buildAndRegister();
-
         CENTRIFUGE_RECIPES.recipeBuilder().duration(320).EUt(20)
                 .input(dust, Endstone)
                 .chancedOutput(new ItemStack(Blocks.SAND), 9000, 300)
@@ -424,14 +412,14 @@ public class SeparationRecipes {
                 .output(dust, SodaAsh, 6)
                 .output(dust, SodiumBicarbonate, 6)
                 .fluidOutputs(Water.getFluid(2000))
-                .duration(784).EUt(60).buildAndRegister();
+                .duration(784).EUt(VA[LV] * 2).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .input(dust, Bauxite, 5)
                 .output(dust, Aluminium, 2)
                 .output(dustTiny, Rutile, 3)
                 .fluidOutputs(Oxygen.getFluid(3000))
-                .duration(100).EUt(60).buildAndRegister();
+                .duration(100).EUt(VA[LV] * 2).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .input(dust, Zeolite, 41)
@@ -439,7 +427,16 @@ public class SeparationRecipes {
                 .output(dust, Calcium, 4)
                 .output(dust, Silicon, 27)
                 .output(dust, Aluminium, 9)
-                .duration(656).EUt(120).buildAndRegister();
+                .duration(656).EUt(VA[MV]).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .input(dust, Bentonite, 30)
+                .output(dust, Sodium)
+                .output(dust, Magnesium, 6)
+                .output(dust, Silicon, 12)
+                .fluidOutputs(Water.getFluid(5000))
+                .fluidOutputs(Hydrogen.getFluid(6000))
+                .duration(480).EUt(VA[MV]).buildAndRegister();
 
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
