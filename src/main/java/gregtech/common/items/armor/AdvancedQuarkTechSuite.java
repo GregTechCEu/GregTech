@@ -43,7 +43,6 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
 
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(item);
         boolean hoverMode = data.hasKey("hover") && data.getBoolean("hover");
-        boolean flyEnabled = data.hasKey("flyMode") && data.getBoolean("flyMode");
         byte toggleTimer = data.hasKey("toggleTimer") ? data.getByte("toggleTimer") : 0;
         boolean canShare = data.hasKey("canShare") && data.getBoolean("canShare");
 
@@ -56,18 +55,6 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
                     player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.hover.enable"), true);
                 else
                     player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.hover.disable"), true);
-            }
-        }
-
-        if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.FLY_KEY)) {
-            flyEnabled = !flyEnabled;
-            toggleTimer = 5;
-            data.setBoolean("flyMode", flyEnabled);
-            if (!world.isRemote) {
-                if (flyEnabled)
-                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.flight.enable"), true);
-                else
-                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.flight.disable"), true);
             }
         }
 
@@ -133,7 +120,6 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
         if (toggleTimer > 0) toggleTimer--;
 
         data.setBoolean("canShare", canShare);
-        data.setBoolean("flyMode", flyEnabled);
         data.setBoolean("hover", hoverMode);
         data.setByte("toggleTimer", toggleTimer);
         player.inventoryContainer.detectAndSendChanges();
@@ -157,10 +143,6 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
         if (data.hasKey("hover")) {
             String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled"));
             lines.add(I18n.format("metaarmor.hud.hover_mode", status));
-        }
-        if (data.hasKey("flyMode")) {
-            String status = data.getBoolean("flyMode") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
-            lines.add(I18n.format("metaarmor.hud.fly_mode", I18n.format(status)));
         }
         super.addInfo(itemStack, lines);
     }
@@ -199,11 +181,6 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
                 this.HUD.newString(I18n.format("mataarmor.hud.supply_mode", I18n.format(status)));
             }
 
-            if (data.hasKey("flyMode")) {
-                String status = data.getBoolean("flyMode") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
-                this.HUD.newString(I18n.format("metaarmor.hud.gravi_engine", I18n.format(status)));
-            }
-
             if (data.hasKey("hover")) {
                 String status = data.getBoolean("hover") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
                 this.HUD.newString(I18n.format("metaarmor.hud.hover_mode", I18n.format(status)));
@@ -236,14 +213,6 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     @Override
     public double getDamageAbsorption() {
         return 1.5D;
-    }
-
-    @Override
-    public boolean canFly(@Nonnull ItemStack stack) {
-        NBTTagCompound data = stack.getTagCompound();
-        if (data == null)
-            return false;
-        return data.hasKey("flyMode") && data.getBoolean("flyMode");
     }
 
     @Override

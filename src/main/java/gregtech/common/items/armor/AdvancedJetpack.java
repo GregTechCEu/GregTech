@@ -19,7 +19,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 public class AdvancedJetpack extends Jetpack {
 
@@ -35,7 +34,6 @@ public class AdvancedJetpack extends Jetpack {
         }
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(item);
         boolean hoverMode = data.hasKey("hover") && data.getBoolean("hover");
-        boolean flyEnabled = data.hasKey("flyMode") && data.getBoolean("flyMode");
         byte toggleTimer = data.hasKey("toggleTimer") ? data.getByte("toggleTimer") : 0;
 
         if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.HOVER_KEY)) {
@@ -50,34 +48,13 @@ public class AdvancedJetpack extends Jetpack {
             }
         }
 
-        if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.FLY_KEY)) {
-            flyEnabled = !flyEnabled;
-            toggleTimer = 5;
-            data.setBoolean("flyMode", flyEnabled);
-            if (!world.isRemote) {
-                if (flyEnabled)
-                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.flight.enable"), true);
-                else
-                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.flight.disable"), true);
-            }
-        }
-
         performFlying(player, hoverMode, item);
 
         if (toggleTimer > 0) toggleTimer--;
 
-        data.setBoolean("flyMode", flyEnabled);
         data.setBoolean("hover", hoverMode);
         data.setByte("toggleTimer", toggleTimer);
         player.inventoryContainer.detectAndSendChanges();
-    }
-
-    @Override
-    public boolean canFly(@Nonnull ItemStack stack) {
-        NBTTagCompound data = stack.getTagCompound();
-        if (data == null)
-            return false;
-        return data.hasKey("flyMode") && data.getBoolean("flyMode");
     }
 
     @Override
@@ -138,11 +115,6 @@ public class AdvancedJetpack extends Jetpack {
         if (!cont.canUse(energyPerUse)) return;
         NBTTagCompound data = item.getTagCompound();
         if (data != null) {
-            if (data.hasKey("flyMode")) {
-                String status = data.getBoolean("flyMode") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
-                this.HUD.newString(I18n.format("metaarmor.hud.fly_mode", I18n.format(status)));
-            }
-
             if (data.hasKey("hover")) {
                 String status = data.getBoolean("hover") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
                 this.HUD.newString(I18n.format("metaarmor.hud.hover_mode", I18n.format(status)));
@@ -155,18 +127,6 @@ public class AdvancedJetpack extends Jetpack {
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
         return "gregtech:textures/armor/advanced_jetpack.png";
-    }
-
-    @Override
-    public void addInfo(ItemStack itemStack, List<String> lines) {
-        super.addInfo(itemStack, lines);
-        NBTTagCompound data = GTUtility.getOrCreateNbtCompound(itemStack);
-        String flyMode = I18n.format("metaarmor.hud.status.disabled");
-        if (data.hasKey("hover")) {
-            if (data.getBoolean("hover"))
-                flyMode = I18n.format("metaarmor.hud.status.enabled");
-        }
-        lines.add(I18n.format("metaarmor.hud.fly_mode", flyMode));
     }
 }
 

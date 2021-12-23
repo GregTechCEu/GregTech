@@ -15,7 +15,6 @@ public enum EnumKey {
     JUMP(null, 0, null),
     CROUCH(null, 0, null),
     BOOST(null, 0, null),
-    FLY_KEY("Jetpack Flight", Keyboard.KEY_F, Key.KEYS_CATEGORY),
     HOVER_KEY("Jetpack Hover", Keyboard.KEY_H, Key.KEYS_CATEGORY),
     SHARE_KEY("Armor Charging", Keyboard.KEY_N, Key.KEYS_CATEGORY);
 

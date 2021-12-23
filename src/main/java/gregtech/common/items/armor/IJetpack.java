@@ -46,10 +46,6 @@ public interface IJetpack {
         return EnumParticleTypes.SMOKE_LARGE;
     }
 
-    default boolean canFly(ItemStack stack) {
-        return true;
-    }
-
     default float getFallDamageReduction() {
         return 0.0f;
     }
@@ -68,7 +64,7 @@ public interface IJetpack {
         boolean flyKeyDown = ArmorUtils.isKeyDown(player, EnumKey.JUMP);
         boolean descendKeyDown = ArmorUtils.isKeyDown(player, EnumKey.CROUCH);
 
-        if (canFly(stack) && !player.isInWater() && !player.isInLava() && canUseEnergy(stack, getEnergyPerUse())) {
+        if (!player.isInWater() && !player.isInLava() && canUseEnergy(stack, getEnergyPerUse())) {
             if (flyKeyDown || hover && !player.onGround) {
                 drainEnergy(stack, (int) (player.isSprinting() ? Math.round(getEnergyPerUse() * getSprintEnergyModifier()) : getEnergyPerUse()));
 
