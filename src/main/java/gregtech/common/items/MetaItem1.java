@@ -545,13 +545,13 @@ public class MetaItem1 extends StandardMetaItem {
         BATTERY_MV_SODIUM = addItem(733, "battery.re.mv.sodium").addComponents(ElectricStats.createRechargeableBattery(360000, GTValues.MV)).setUnificationData(OrePrefix.battery, Tier.Good).setModelAmount(8);
         BATTERY_HV_SODIUM = addItem(734, "battery.re.hv.sodium").addComponents(ElectricStats.createRechargeableBattery(1200000, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8);
 
-        BATTERY_LV_LITHIUM = addItem(735, "battery.re.lv.lithium").addComponents(ElectricStats.createRechargeableBattery(100000, GTValues.LV)).setUnificationData(OrePrefix.battery, Tier.Basic).setModelAmount(8);
-        BATTERY_MV_LITHIUM = addItem(736, "battery.re.mv.lithium").addComponents(ElectricStats.createRechargeableBattery(400000, GTValues.MV)).setUnificationData(OrePrefix.battery, Tier.Good).setModelAmount(8);
-        BATTERY_HV_LITHIUM = addItem(737, "battery.re.hv.lithium").addComponents(ElectricStats.createRechargeableBattery(1600000, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8);
+        BATTERY_LV_LITHIUM = addItem(735, "battery.re.lv.lithium").addComponents(ElectricStats.createRechargeableBattery(120000, GTValues.LV)).setUnificationData(OrePrefix.battery, Tier.Basic).setModelAmount(8);
+        BATTERY_MV_LITHIUM = addItem(736, "battery.re.mv.lithium").addComponents(ElectricStats.createRechargeableBattery(420000, GTValues.MV)).setUnificationData(OrePrefix.battery, Tier.Good).setModelAmount(8);
+        BATTERY_HV_LITHIUM = addItem(737, "battery.re.hv.lithium").addComponents(ElectricStats.createRechargeableBattery(1800000, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8);
 
-        BATTERY_LV_CADMIUM = addItem(738, "battery.re.lv.cadmium").addComponents(ElectricStats.createRechargeableBattery(120000, GTValues.LV)).setUnificationData(OrePrefix.battery, Tier.Basic).setModelAmount(8);
-        BATTERY_MV_CADMIUM = addItem(739, "battery.re.mv.cadmium").addComponents(ElectricStats.createRechargeableBattery(420000, GTValues.MV)).setUnificationData(OrePrefix.battery, Tier.Good).setModelAmount(8);
-        BATTERY_HV_CADMIUM = addItem(740, "battery.re.hv.cadmium").addComponents(ElectricStats.createRechargeableBattery(1800000, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8);
+        BATTERY_LV_CADMIUM = addItem(738, "battery.re.lv.cadmium").addComponents(ElectricStats.createRechargeableBattery(100000, GTValues.LV)).setUnificationData(OrePrefix.battery, Tier.Basic).setModelAmount(8);
+        BATTERY_MV_CADMIUM = addItem(739, "battery.re.mv.cadmium").addComponents(ElectricStats.createRechargeableBattery(400000, GTValues.MV)).setUnificationData(OrePrefix.battery, Tier.Good).setModelAmount(8);
+        BATTERY_HV_CADMIUM = addItem(740, "battery.re.hv.cadmium").addComponents(ElectricStats.createRechargeableBattery(1600000, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8);
 
         ENERGIUM_CRYSTAL = addItem(741, "energy_crystal").addComponents(ElectricStats.createRechargeableBattery(6400000L, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8);
         LAPOTRON_CRYSTAL = addItem(742, "lapotron_crystal").addComponents(ElectricStats.createRechargeableBattery(16000000L, GTValues.EV)).setUnificationData(OrePrefix.battery, Tier.Extreme).setModelAmount(8);
