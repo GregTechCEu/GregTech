@@ -1003,7 +1003,7 @@ public class ElementMaterials {
                 .flags(GENERATE_FOIL)
                 .element(Elements.Ke)
                 .cableProperties(GTValues.V[7], 6, 4)
-                .blastTemp(7500, GasTier.HIGH, VA[LuV], 1500)
+                .blastTemp(7200, GasTier.HIGH, VA[LuV], 1500)
                 .build();
 
         Adamantium = new Material.Builder(131, "adamantium")
