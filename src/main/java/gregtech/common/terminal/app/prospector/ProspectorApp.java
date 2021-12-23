@@ -1,17 +1,28 @@
 package gregtech.common.terminal.app.prospector;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
+import com.google.common.collect.Tables;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.net.packets.PacketProspecting;
+import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.menu.IMenuComponent;
+import gregtech.api.util.GTLog;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import gregtech.common.terminal.app.prospector.widget.WidgetProspectingMap;
 import gregtech.common.terminal.component.ClickComponent;
 import gregtech.common.terminal.component.SearchComponent;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +32,8 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
     WidgetOreList widgetOreList;
     WidgetProspectingMap widgetProspectingMap;
     ColorRectTexture background;
+    @SideOnly(Side.CLIENT)
+    Table<Integer, Integer, PacketProspecting> persist;
     final int mode;
 
     public ProspectorApp(int mode) {
@@ -49,17 +62,76 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
             this.addWidget(this.widgetOreList);
         }
         this.widgetProspectingMap = new WidgetProspectingMap(0, offset + (7 - chunkRadius) * 16, chunkRadius, this.widgetOreList, mode, 1);
+        if (isClient) {
+            persist = Tables.newCustomTable(Maps.newHashMap(), Maps::newHashMap);
+            widgetProspectingMap.setOnPacketReceived(packet -> persist.put(packet.chunkX, packet.chunkZ, packet));
+        }
+
         this.addWidget(1, this.widgetProspectingMap);
         loadLocalConfig(nbt -> {
             this.widgetProspectingMap.setDarkMode(nbt.getBoolean("dark"));
             background.setColor(this.widgetProspectingMap.getDarkMode() ? 0xA0000000 : 0xA0ffffff);
         });
+        if (isClient) {
+            loadPacketLocalConfig();
+        }
         return this;
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void loadPacketLocalConfig() {
+        new Thread(()-> { // thread for better QoL
+            int playerChunkX = gui.entityPlayer.getPosition().getX() >> 4;
+            int playerChunkZ = gui.entityPlayer.getPosition().getZ() >> 4;
+            int chunkRadius = getAppTier() + 3 - 1;
+            for (int i = playerChunkX - chunkRadius; i <= playerChunkX + chunkRadius; i++) {
+                for (int j = playerChunkZ - chunkRadius; j <= playerChunkZ + chunkRadius; j++) {
+                    NBTTagCompound nbt = null;
+                    try {
+                        nbt = CompressedStreamTools.read(new File(TerminalRegistry.TERMINAL_PATH, String.format("%s/%d/%d_%d.nbt", getRegistryName(), mode, i, j)));
+                    } catch (IOException e) {
+                        GTLog.logger.error("error while loading local nbt for {}", getRegistryName(), e);
+                    }
+                    if (nbt != null) {
+                        PacketProspecting packet = PacketProspecting.readPacketData(nbt);
+                        if (packet != null) {
+                            persist.put(i, j, packet);
+                            widgetProspectingMap.updatePacket(packet);
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void savePacketLocalConfig() {
+        new Thread(()->{ // thread for better QoL
+            File folder = new File(TerminalRegistry.TERMINAL_PATH, String.format("%s/%d", getRegistryName(), mode));
+            if (!folder.exists()) {
+                if (!folder.mkdirs()) return;
+            }
+            for (Table.Cell<Integer, Integer, PacketProspecting> cell : persist.cellSet()) {
+                if (cell.getValue() != null) {
+                    NBTTagCompound nbt = cell.getValue().writePacketData();
+                    try {
+                        if (!nbt.isEmpty()) {
+                            CompressedStreamTools.safeWrite(nbt, new File(folder, String.format("%d_%d.nbt", cell.getRowKey(), cell.getColumnKey())));
+                        }
+                    } catch (IOException e) {
+                        GTLog.logger.error("error while saving local nbt for {}", getRegistryName(), e);
+                    }
+                }
+            }
+        }).start();
     }
 
     @Override
     public NBTTagCompound closeApp() {
-        saveLocalConfig(nbt -> nbt.setBoolean("dark", this.widgetProspectingMap.getDarkMode()));
+        saveLocalConfig(nbt -> {
+            nbt.setBoolean("dark", this.widgetProspectingMap.getDarkMode());
+        });
+        if (isClient) savePacketLocalConfig();
         return super.closeApp();
     }
 

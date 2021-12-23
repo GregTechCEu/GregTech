@@ -27,6 +27,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class WidgetProspectingMap extends Widget {
     private final int chunkRadius;
@@ -37,6 +38,8 @@ public class WidgetProspectingMap extends Widget {
     private int chunkIndex = 0;
     @SideOnly(Side.CLIENT)
     private ProspectingTexture texture;
+    @SideOnly(Side.CLIENT)
+    private Consumer<PacketProspecting> onPacketReceived;
 
     public static final int ORE_PROSPECTING_MODE = 0;
     public static final int FLUID_PROSPECTING_MODE = 1;
@@ -54,6 +57,12 @@ public class WidgetProspectingMap extends Widget {
                 }
             };
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public WidgetProspectingMap setOnPacketReceived(Consumer<PacketProspecting> onPacketReceived) {
+        this.onPacketReceived = onPacketReceived;
+        return this;
     }
 
     @SideOnly(Side.CLIENT)
@@ -137,14 +146,22 @@ public class WidgetProspectingMap extends Widget {
         if (id == 2) {
             PacketProspecting packet = PacketProspecting.readPacketData(buffer);
             if (packet != null) {
-                if (texture == null) {
-                    texture = new ProspectingTexture(packet.mode, chunkRadius, darkMode);
+                if (onPacketReceived != null) {
+                    onPacketReceived.accept(packet);
                 }
-                texture.updateTexture(packet);
-                if (oreList != null) {
-                    oreList.addOres(packet.ores, packet.mode);
-                }
+                updatePacket(packet);
             }
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void updatePacket(PacketProspecting packet) {
+        if (texture == null) {
+            texture = new ProspectingTexture(packet.mode, chunkRadius, darkMode);
+        }
+        texture.updateTexture(packet);
+        if (oreList != null) {
+            oreList.addOres(packet.ores, packet.mode);
         }
     }
 
