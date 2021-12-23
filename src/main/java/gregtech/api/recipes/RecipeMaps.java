@@ -8,7 +8,6 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.recipes.builders.*;
 import gregtech.api.recipes.machines.*;
 import gregtech.api.sound.GTSounds;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import net.minecraft.init.SoundEvents;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -34,17 +33,15 @@ public class RecipeMaps {
             .onRecipeBuild(recipeBuilder -> {
                 if (recipeBuilder.getFluidInputs().isEmpty()) {
                     recipeBuilder.fluidInputs(Materials.Oxygen.getFluid(recipeBuilder.duration));
-                    for (Material material : new Material[]{Materials.Argon, Materials.Nitrogen}) {
-                        int plasmaAmount = (int) Math.max(1L, recipeBuilder.duration / (material.getMass() * 16L));
-                        RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
-                                .inputsIngredients(recipeBuilder.getInputs())
-                                .outputs(recipeBuilder.getOutputs())
-                                .duration(Math.max(1, recipeBuilder.duration / 16))
-                                .EUt(recipeBuilder.EUt / 3)
-                                .fluidInputs(material.getPlasma(plasmaAmount))
-                                .fluidOutputs(material.getFluid(plasmaAmount))
-                                .buildAndRegister();
-                    }
+                    int plasmaAmount = (int) Math.max(1L, recipeBuilder.duration / (Materials.Argon.getMass() * 16L));
+                    RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
+                            .inputsIngredients(recipeBuilder.getInputs())
+                            .outputs(recipeBuilder.getOutputs())
+                            .duration(Math.max(1, recipeBuilder.duration / 16))
+                            .EUt(recipeBuilder.EUt / 3)
+                            .fluidInputs(Materials.Argon.getPlasma(plasmaAmount))
+                            .fluidOutputs(Materials.Argon.getFluid(plasmaAmount))
+                            .buildAndRegister();
                 }
             });
 
