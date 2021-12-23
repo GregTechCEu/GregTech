@@ -180,6 +180,7 @@ public class OreByProduct implements IRecipeWrapper {
         addToOutputs(material, OrePrefix.crushedPurified, 1);
         addToOutputs(byproducts[0], OrePrefix.dustTiny, 3);
         List<FluidStack> fluidStacks = new ArrayList<>();
+        fluidStacks.add(Materials.Water.getFluid(1000));
         fluidStacks.add(Materials.DistilledWater.getFluid(100));
         fluidInputs.add(fluidStacks);
 
