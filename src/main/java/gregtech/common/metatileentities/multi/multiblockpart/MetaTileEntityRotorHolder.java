@@ -4,6 +4,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IRotorHolder;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.gui.GuiTextures;
@@ -122,7 +123,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     void setRotorSpinning(boolean spinning) {
         if (isRotorSpinning != spinning) {
             isRotorSpinning = spinning;
-            writeCustomData(42069, buf -> buf.writeBoolean(isRotorSpinning));
+            writeCustomData(GregtechDataCodes.IS_ROTOR_LOOPING, buf -> buf.writeBoolean(isRotorSpinning));
         }
     }
 
@@ -310,7 +311,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 42069) {
+        if (dataId == GregtechDataCodes.IS_ROTOR_LOOPING) {
             this.isRotorSpinning = buf.readBoolean();
             scheduleRenderUpdate();
         }
