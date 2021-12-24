@@ -42,7 +42,8 @@ import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.BiomeDictionary;
@@ -856,7 +857,7 @@ public class GTUtility {
     /**
      * Alternative function for tank sizes, takes a tier input and returns the corresponding size
      * <p>
-     * This function is meant for use with machine that need very large tanks, it stops scaling past HV
+     * This function is meant for use with machines that need very large tanks, it stops scaling past HV
      */
     public static final Function<Integer, Integer> largeTankSizeFunction = tier -> {
         if (tier <= GTValues.LV)
@@ -866,6 +867,13 @@ public class GTUtility {
         // HV+
         return 64000;
     };
+
+    /**
+     * Alternative function for tank sizes, takes a tier input and returns the corresponding size
+     * <p>
+     * This function is meant for use with generators, and always returns 16000
+     */
+    public static final Function<Integer, Integer> generatorTankSizeFunction = tier -> 16000;
 
     public static String romanNumeralString(int num) {
 

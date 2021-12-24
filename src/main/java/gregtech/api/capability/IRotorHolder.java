@@ -8,7 +8,6 @@ public interface IRotorHolder {
     /**
      * @return true if the front face is unobstructed
      */
-
     boolean isFrontFaceFree();
 
     /**
@@ -19,7 +18,6 @@ public interface IRotorHolder {
     }
 
     /**
-     *
      * @return the total efficiency the rotor holder and rotor provide in %
      */
     default int getTotalEfficiency() {
@@ -86,7 +84,7 @@ public interface IRotorHolder {
     /**
      * damages the rotor
      *
-     * @param amount   to damage
+     * @param amount to damage
      */
     void damageRotor(int amount);
 

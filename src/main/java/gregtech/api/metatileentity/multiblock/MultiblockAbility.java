@@ -30,6 +30,8 @@ public class MultiblockAbility<T> {
 
     public static final MultiblockAbility<IRotorHolder> ROTOR_HOLDER = new MultiblockAbility<>("rotor_holder");
 
+    public static final MultiblockAbility<IRotorHolder> ABILITY_ROTOR_HOLDER_2 = new MultiblockAbility<>("rotor_holder");
+
     public static final MultiblockAbility<IFluidTank> PUMP_FLUID_HATCH = new MultiblockAbility<>("pump_fluid_hatch");
 
     public static final MultiblockAbility<IFluidTank> STEAM = new MultiblockAbility<>("steam");
