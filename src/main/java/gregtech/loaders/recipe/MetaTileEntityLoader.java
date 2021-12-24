@@ -288,7 +288,7 @@ public class MetaTileEntityLoader {
         registerMachineRecipe(MetaTileEntities.BATTERY_BUFFER[2], "WTW", "WMW", 'M', HULL, 'W', WIRE_HEX, 'T', OreDictNames.chestWood);
 
         if (ConfigHolder.recipes.harderEnergyHatches) {
-            registerMachineRecipe(ArrayUtils.subarray(MetaTileEntities.ENERGY_INPUT_HATCH, GTValues.ULV, GTValues.HV), "CKL", "SHR", "CKL", 'C', CABLE, 'K', VOLTAGE_COIL, new FluidCellIngredient(Materials.Lubricant.getFluid()), 'S', CIRCUIT, 'H', HULL, 'R', ROTOR);
+            registerMachineRecipe(ArrayUtils.subarray(MetaTileEntities.ENERGY_INPUT_HATCH, GTValues.ULV, GTValues.HV), "CKL", "SHR", "CKL", 'C', CABLE, 'K', VOLTAGE_COIL, 'L', new FluidCellIngredient(Materials.Lubricant.getFluid()), 'S', CIRCUIT, 'H', HULL, 'R', ROTOR);
             registerMachineRecipe(ArrayUtils.subarray(MetaTileEntities.ENERGY_OUTPUT_HATCH, GTValues.ULV, GTValues.HV), "CKL", "SHR", "CKL", 'C', CIRCUIT, 'K', VOLTAGE_COIL, 'L', new FluidCellIngredient(Materials.Lubricant.getFluid()), 'S', SPRING, 'H', HULL, 'R', ROTOR);
         } else {
             registerMachineRecipe(MetaTileEntities.ENERGY_INPUT_HATCH, "CH", "  ", 'C', CABLE, 'H', HULL);
