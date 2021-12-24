@@ -526,7 +526,7 @@ public class MetaTileEntities {
         for (int i = 0; i < endPos; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
             ENERGY_INPUT_HATCH[i] = registerMetaTileEntity(1210 + i, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input." + voltageName), i, 2, false));
-            ENERGY_OUTPUT_HATCH[i] = registerMetaTileEntity(1225 + i, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output." + voltageName), i, 1, true));
+            ENERGY_OUTPUT_HATCH[i] = registerMetaTileEntity(1225 + i, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output." + voltageName), i, 2, true));
 
             if (i >= GTValues.IV && i <= GTValues.UHV) {
                 ENERGY_INPUT_HATCH_4A[i - GTValues.IV]   = registerMetaTileEntity(1240 + i - GTValues.IV, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a." + voltageName), i, 4, false));
