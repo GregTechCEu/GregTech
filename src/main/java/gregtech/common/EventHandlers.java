@@ -32,6 +32,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -172,6 +173,28 @@ public class EventHandlers {
                 event.setCanceled(true);
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void onLivingEquipmentChangeEvent(LivingEquipmentChangeEvent event) {
+        if (event.getFrom().isEmpty())
+            return;
+
+        ItemStack stack = event.getFrom();
+        if (!(stack.getItem() instanceof ArmorMetaItem))
+            return;
+
+        ArmorMetaItem<?> armorMetaItem = (ArmorMetaItem<?>) stack.getItem();
+        if (armorMetaItem.getItem(stack).isItemEqual(MetaItems.NIGHTVISION_GOGGLES.getStackForm()) ||
+            armorMetaItem.getItem(stack).isItemEqual(MetaItems.NANO_HELMET.getStackForm()) ||
+            armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_HELMET.getStackForm())) {
+            event.getEntityLiving().removePotionEffect(MobEffects.NIGHT_VISION);
+        }
+        if (armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_CHESTPLATE.getStackForm()) ||
+            armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_CHESTPLATE_ADVANCED.getStackForm())) {
+            event.getEntity().isImmuneToFire = false;
+        }
+
     }
 
     @SubscribeEvent

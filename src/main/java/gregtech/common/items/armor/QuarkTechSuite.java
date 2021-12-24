@@ -53,8 +53,11 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(itemStack);
         byte toggleTimer = data.hasKey("toggleTimer") ? data.getByte("toggleTimer") : 0;
 
-        if (!player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isItemEqual(itemStack)) {
+        if (!player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isItemEqual(MetaItems.QUANTUM_HELMET.getStackForm())) {
             disableNightVision(world, player, false);
+        } else if (!player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).isItemEqual(MetaItems.QUANTUM_CHESTPLATE.getStackForm()) &&
+                !player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).isItemEqual(MetaItems.QUANTUM_CHESTPLATE_ADVANCED.getStackForm())) {
+            if (!world.isRemote) player.isImmuneToFire = false;
         }
 
         boolean ret = false;
@@ -133,7 +136,8 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
                 --toggleTimer;
                 data.setByte("toggleTimer", toggleTimer);
             }
-        } else if (SLOT == EntityEquipmentSlot.CHEST) {
+        } else if (SLOT == EntityEquipmentSlot.CHEST && !player.isImmuneToFire) {
+            player.isImmuneToFire = true;
             if (player.isBurning())
                 player.extinguish();
         } else if (SLOT == EntityEquipmentSlot.LEGS) {

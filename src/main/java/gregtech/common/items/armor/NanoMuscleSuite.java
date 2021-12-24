@@ -38,9 +38,6 @@ public class NanoMuscleSuite extends ArmorLogicSuite implements IStepAssist {
         IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);
         byte toggleTimer = nbtData.getByte("toggleTimer");
-        if (!player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isItemEqual(itemStack)) {
-            disableNightVision(world, player, false);
-        }
         if (SLOT == EntityEquipmentSlot.HEAD) {
             boolean nightvision = nbtData.getBoolean("Nightvision");
             if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.MODE_SWITCH)) {
