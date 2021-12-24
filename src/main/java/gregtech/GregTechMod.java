@@ -189,6 +189,11 @@ public class GregTechMod {
     }
 
     @Mod.EventHandler
+    public void loadComplete(FMLLoadCompleteEvent event) {
+        proxy.onLoadComplete();
+    }
+
+    @Mod.EventHandler
     public void onServerLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new GregTechCommand());
     }

@@ -29,6 +29,7 @@ import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
+import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.recipe.CraftingComponent;
@@ -288,5 +289,10 @@ public class CommonProxy {
     public void onPostLoad() {
         GTRecipeManager.postLoad();
         TerminalRegistry.init();
+    }
+
+    public void onLoadComplete() {
+        if(GTValues.isModLoaded(GTValues.MODID_JEI))
+            GTJeiPlugin.setupInputHandler();
     }
 }
