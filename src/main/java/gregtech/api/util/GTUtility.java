@@ -873,9 +873,7 @@ public class GTUtility {
      * <p>
      * This function is meant for use with generators, and always returns 16000
      */
-    public static final Function<Integer, Integer> generatorTankSizeFunction = tier -> {
-        return 16000;
-    };
+    public static final Function<Integer, Integer> generatorTankSizeFunction = tier -> 16000;
 
     public static String romanNumeralString(int num) {
 
