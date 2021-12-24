@@ -1,4 +1,4 @@
-package gregtech.common.metatileentities.electric.multiblockpart;
+package gregtech.common.metatileentities.multi.multiblockpart;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
