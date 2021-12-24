@@ -155,18 +155,21 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
         CHAINSAW_LV = addItem(25, "tool.chainsaw.lv").setToolStats(new ToolChainsaw(GTValues.LV))
                 .setFullRepairCost(4)
                 .addOreDict(ToolDictNames.craftingToolSaw)
+                .addOreDict(ToolDictNames.craftingToolChainsaw)
                 .addComponents(ElectricStats.createElectricItem(100000L, GTValues.LV))
                 .setSound(GTSounds.CHAINSAW_TOOL);
 
         CHAINSAW_MV = addItem(26, "tool.chainsaw.mv").setToolStats(new ToolChainsaw(GTValues.MV))
                 .setFullRepairCost(4)
                 .addOreDict(ToolDictNames.craftingToolSaw)
+                .addOreDict(ToolDictNames.craftingToolChainsaw)
                 .addComponents(ElectricStats.createElectricItem(400000L, GTValues.MV))
                 .setSound(GTSounds.CHAINSAW_TOOL);
 
         CHAINSAW_HV = addItem(27, "tool.chainsaw.hv").setToolStats(new ToolChainsaw(GTValues.HV))
                 .setFullRepairCost(4)
                 .addOreDict(ToolDictNames.craftingToolSaw)
+                .addOreDict(ToolDictNames.craftingToolChainsaw)
                 .addComponents(ElectricStats.createElectricItem(1600000L, GTValues.HV))
                 .setSound(GTSounds.CHAINSAW_TOOL);
 

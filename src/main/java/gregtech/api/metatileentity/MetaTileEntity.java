@@ -358,7 +358,6 @@ public abstract class MetaTileEntity implements ICoverable {
                 coverBehavior.onRightClick(playerIn, hand, result);
         if (coverResult != EnumActionResult.PASS) {
             if (coverResult == EnumActionResult.SUCCESS) {
-                if (!getWorld().isRemote) GTTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) playerIn);
                 return true;
             }
             return false;
@@ -463,6 +462,7 @@ public abstract class MetaTileEntity implements ICoverable {
             getHolder().markDirty();
         }
         onCoverPlacementUpdate();
+        GTTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
         return true;
     }
 

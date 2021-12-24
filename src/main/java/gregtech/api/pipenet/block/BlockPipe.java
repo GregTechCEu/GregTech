@@ -321,9 +321,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         EnumActionResult result = coverBehavior.onRightClick(entityPlayer, hand, hit);
         if (result == EnumActionResult.PASS) {
             return entityPlayer.isSneaking() && entityPlayer.getHeldItemMainhand().isEmpty() && coverBehavior.onScrewdriverClick(entityPlayer, hand, hit) != EnumActionResult.PASS;
-        } else if (result == EnumActionResult.SUCCESS) {
-            if (!world.isRemote)
-                GTTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) entityPlayer);
         }
         return true;
     }
