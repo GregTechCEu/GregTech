@@ -33,9 +33,4 @@ public class ToolBuzzSaw extends ToolSaw {
         IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         return MetaItems.POWER_UNIT_LV.getChargedStackWithOverride(electricItem);
     }
-
-    @Override
-    public boolean canPlayBreakingSound(ItemStack stack, IBlockState state) {
-        return canMineBlock(state, stack);
-    }
 }
