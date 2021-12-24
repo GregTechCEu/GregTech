@@ -17,7 +17,7 @@ import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
-import gregtech.common.items.behaviors.TurbineRotorBehavior2;
+import gregtech.common.items.behaviors.TurbineRotorBehavior;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 
@@ -432,7 +432,7 @@ public class PartsRecipeHandler {
     public static void processTurbine(OrePrefix toolPrefix, Material material, IngotProperty property) {
         ItemStack rotorStack = MetaItems.TURBINE_ROTOR.getStackForm();
         //noinspection ConstantConditions
-        TurbineRotorBehavior2.getInstanceFor(rotorStack).setPartMaterial(rotorStack, material);
+        TurbineRotorBehavior.getInstanceFor(rotorStack).setPartMaterial(rotorStack, material);
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.turbineBlade, material, 8)

@@ -526,7 +526,7 @@ public class MetaItem1 extends StandardMetaItem {
         PETRI_DISH = addItem(710, "petri_dish");
 
         // Turbine Rotors: ID 711-715
-        TURBINE_ROTOR = addItem(711, "turbine_rotor").addComponents(new TurbineRotorBehavior2());
+        TURBINE_ROTOR = addItem(711, "turbine_rotor").addComponents(new TurbineRotorBehavior());
 
         // Battery Hulls: ID 716-730
         BATTERY_HULL_LV = addItem(717, "battery.hull.lv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, OrePrefix.plate.materialAmount)));

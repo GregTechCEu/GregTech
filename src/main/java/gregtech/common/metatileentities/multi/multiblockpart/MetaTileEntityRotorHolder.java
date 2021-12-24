@@ -392,6 +392,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         private int getRotorDurabilityPercent() {
             if (!hasRotor())
                 return 0;
+
             //noinspection ConstantConditions
             return getTurbineBehavior().getRotorDurabilityPercent(getStackInSlot(0));
         }
