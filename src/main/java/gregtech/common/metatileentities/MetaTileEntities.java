@@ -426,9 +426,9 @@ public class MetaTileEntities {
         MINER[2] = registerMetaTileEntity(922, new MetaTileEntityMiner(gregtechId("miner.hv"), 3, 40, 24, 3));
 
         // Diesel Generator, IDs 935-949
-        COMBUSTION_GENERATOR[0] = registerMetaTileEntity(935, new SimpleGeneratorMetaTileEntity(gregtechId("combustion_generator.lv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS_2, Textures.COMBUSTION_GENERATOR_OVERLAY, 1, true, GTUtility.generatorTankSizeFunction));
-        COMBUSTION_GENERATOR[1] = registerMetaTileEntity(936, new SimpleGeneratorMetaTileEntity(gregtechId("combustion_generator.mv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS_2, Textures.COMBUSTION_GENERATOR_OVERLAY, 2, true, GTUtility.generatorTankSizeFunction));
-        COMBUSTION_GENERATOR[2] = registerMetaTileEntity(937, new SimpleGeneratorMetaTileEntity(gregtechId("combustion_generator.hv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS_2, Textures.COMBUSTION_GENERATOR_OVERLAY, 3, true, GTUtility.generatorTankSizeFunction));
+        COMBUSTION_GENERATOR[0] = registerMetaTileEntity(935, new SimpleGeneratorMetaTileEntity(gregtechId("combustion_generator.lv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS, Textures.COMBUSTION_GENERATOR_OVERLAY, 1, true, GTUtility.generatorTankSizeFunction));
+        COMBUSTION_GENERATOR[1] = registerMetaTileEntity(936, new SimpleGeneratorMetaTileEntity(gregtechId("combustion_generator.mv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS, Textures.COMBUSTION_GENERATOR_OVERLAY, 2, true, GTUtility.generatorTankSizeFunction));
+        COMBUSTION_GENERATOR[2] = registerMetaTileEntity(937, new SimpleGeneratorMetaTileEntity(gregtechId("combustion_generator.hv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS, Textures.COMBUSTION_GENERATOR_OVERLAY, 3, true, GTUtility.generatorTankSizeFunction));
 
         // Steam Turbine, IDs 950-964
         STEAM_TURBINE[0] = registerMetaTileEntity(950, new SimpleGeneratorMetaTileEntity(gregtechId("steam_turbine.lv"), RecipeMaps.STEAM_TURBINE_FUELS_2, Textures.STEAM_TURBINE_OVERLAY, 1, true, GTUtility.generatorTankSizeFunction));

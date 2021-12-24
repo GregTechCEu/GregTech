@@ -11,9 +11,9 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.unification.material.Materials;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.api.unification.material.Materials;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType;
 import gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType;
@@ -41,7 +41,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     private final int tier;
 
     public MetaTileEntityLargeCombustionEngine(ResourceLocation metaTileEntityId, int tier) {
-        super(metaTileEntityId, RecipeMaps.COMBUSTION_GENERATOR_FUELS_2, tier);
+        super(metaTileEntityId, RecipeMaps.COMBUSTION_GENERATOR_FUELS, tier);
         this.recipeMapWorkable = new LargeCombustionEngineWorkableHandler(this, tier > GTValues.EV);
         this.recipeMapWorkable.enableOverclockVoltage();
         this.recipeMapWorkable.setOverclockTier(tier);
