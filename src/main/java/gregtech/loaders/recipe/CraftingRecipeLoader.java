@@ -15,6 +15,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockGregLog.LogVariant;
 import gregtech.common.blocks.wood.BlockGregPlank;
 import gregtech.common.crafting.FacadeRecipe;
+import gregtech.common.items.MetaItems;
 import gregtech.loaders.recipe.handlers.ToolRecipeHandler;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -101,11 +102,9 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe("component_grinder_diamond", COMPONENT_GRINDER_DIAMOND.getStackForm(), "XSX", "SDS", "XSX", 'X', new UnificationEntry(OrePrefix.dust, Materials.Diamond), 'S', new UnificationEntry(OrePrefix.plateDouble, Materials.Steel), 'D', new UnificationEntry(OrePrefix.gem, Materials.Diamond));
         ModHandler.addShapedRecipe("component_grinder_tungsten", COMPONENT_GRINDER_TUNGSTEN.getStackForm(), "WSW", "SDS", "WSW", 'W', new UnificationEntry(OrePrefix.plate, Materials.Tungsten), 'S', new UnificationEntry(OrePrefix.plateDouble, Materials.VanadiumSteel), 'D', new UnificationEntry(OrePrefix.gem, Materials.Diamond));
 
-        ModHandler.addShapedRecipe("nano_saber", NANO_SABER.getStackForm(), "PIC", "PIC", "XEX", 'P', new UnificationEntry(OrePrefix.plate, Materials.Platinum), 'I', new UnificationEntry(OrePrefix.plate, Ruridit), 'C', CARBON_PLATE.getStackForm(), 'X', new UnificationEntry(OrePrefix.circuit, Tier.Extreme), 'E', ENERGIUM_CRYSTAL.getStackForm());
+        ModHandler.addShapedRecipe("nano_saber", NANO_SABER.getStackForm(), "PIC", "PIC", "XEX", 'P', new UnificationEntry(OrePrefix.plate, Materials.Platinum), 'I', new UnificationEntry(OrePrefix.plate, Ruridit), 'C', CARBON_FIBER_PLATE.getStackForm(), 'X', new UnificationEntry(OrePrefix.circuit, Tier.Extreme), 'E', ENERGIUM_CRYSTAL.getStackForm());
 
-        ModHandler.addShapedRecipe("nano_saber", MetaItems.NANO_SABER.getStackForm(), "PIC", "PIC", "XEX", 'P', new UnificationEntry(OrePrefix.plate, Materials.Platinum), 'I', new UnificationEntry(OrePrefix.plate, Ruridit), 'C', MetaItems.CARBON_FIBER_PLATE.getStackForm(), 'X', new UnificationEntry(OrePrefix.circuit, Tier.Extreme), 'E', MetaItems.ENERGIUM_CRYSTAL.getStackForm());
-
-        ModHandler.addShapedRecipe("solar_panel_basic", COVER_SOLAR_PANEL.getStackForm(), "WGW", "CPC", 'W', SILICON_WAFER.getStackForm(), 'G', "paneGlass", 'C', new UnificationEntry(OrePrefix.circuit, Tier.Basic), 'P', CARBON_PLATE.getStackForm());
+        ModHandler.addShapedRecipe("solar_panel_basic", COVER_SOLAR_PANEL.getStackForm(), "WGW", "CPC", 'W', SILICON_WAFER.getStackForm(), 'G', "paneGlass", 'C', new UnificationEntry(OrePrefix.circuit, Tier.Basic), 'P', CARBON_FIBER_PLATE.getStackForm());
         ModHandler.addShapedRecipe("solar_panel_ulv", COVER_SOLAR_PANEL_ULV.getStackForm(), "WGW", "CAC", "P P", 'W', GLOWSTONE_WAFER.getStackForm(), 'G', "paneGlass", 'C', new UnificationEntry(OrePrefix.circuit, Tier.Advanced), 'P', OreDictUnifier.get(OrePrefix.plate, GalliumArsenide), 'A', OreDictUnifier.get(OrePrefix.wireGtQuadruple, Graphene));
         ModHandler.addShapedRecipe("solar_panel_lv", COVER_SOLAR_PANEL_LV.getStackForm(), "WGW", "CAC", "P P", 'W', NAQUADAH_WAFER.getStackForm(), 'G', MetaBlocks.TRANSPARENT_CASING.getItemVariant(
                 BlockGlassCasing.CasingType.TEMPERED_GLASS), 'C', new UnificationEntry(OrePrefix.circuit, Tier.Master), 'P', OreDictUnifier.get(OrePrefix.plate, IndiumGalliumPhosphide), 'A', OreDictUnifier.get(OrePrefix.wireGtHex, Graphene));
