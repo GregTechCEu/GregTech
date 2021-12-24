@@ -2501,32 +2501,23 @@ gregtech.machine.steam_miner.tooltip=Mines ores below the miner ONLY!
 gregtech.machine.steam_miner.description=Working Area: §b%dx%d§7 blocks. §b%ds§7 per block. Uses §b16mB/t§7 of steam.
 
 # Generators
+gregtech.machine.combustion_generator.tooltip=Requires flammable Liquids
+
 gregtech.machine.combustion_generator.lv.name=Basic Combustion Generator
-gregtech.machine.combustion_generator.lv.tooltip=Requires flammable Liquids
 gregtech.machine.combustion_generator.mv.name=Advanced Combustion Generator
-gregtech.machine.combustion_generator.mv.tooltip=Requires flammable Liquids
 gregtech.machine.combustion_generator.hv.name=Turbo Combustion Generator
-gregtech.machine.combustion_generator.hv.tooltip=Requires flammable Liquids
-gregtech.machine.combustion_generator.ev.name=Turbo Combustion Generator II
-gregtech.machine.combustion_generator.ev.tooltip=Requires flammable Liquids
+
+gregtech.machine.steam_turbine.tooltip=Converts Steam into EU
 
 gregtech.machine.steam_turbine.lv.name=Basic Steam Turbine
-gregtech.machine.steam_turbine.lv.tooltip=Converts Steam into EU
 gregtech.machine.steam_turbine.mv.name=Advanced Steam Turbine
-gregtech.machine.steam_turbine.mv.tooltip=Converts Steam into EU
 gregtech.machine.steam_turbine.hv.name=Turbo Steam Turbine
-gregtech.machine.steam_turbine.hv.tooltip=Converts Steam into EU
-gregtech.machine.steam_turbine.ev.name=Turbo Steam Turbine II
-gregtech.machine.steam_turbine.ev.tooltip=Converts Steam into EU
+
+gregtech.machine.gas_turbine.tooltip=Requires flammable Gases
 
 gregtech.machine.gas_turbine.lv.name=Basic Gas Turbine
-gregtech.machine.gas_turbine.lv.tooltip=Requires flammable Gasses
 gregtech.machine.gas_turbine.mv.name=Advanced Gas Turbine
-gregtech.machine.gas_turbine.mv.tooltip=Requires flammable Gasses
 gregtech.machine.gas_turbine.hv.name=Turbo Gas Turbine
-gregtech.machine.gas_turbine.hv.tooltip=Requires flammable Gasses
-gregtech.machine.gas_turbine.ev.name=Turbo Gas Turbine II
-gregtech.machine.gas_turbine.ev.tooltip=Requires flammable Gasses
 
 
 gregtech.machine.magic_energy_absorber.name=Magic Energy Absorber
