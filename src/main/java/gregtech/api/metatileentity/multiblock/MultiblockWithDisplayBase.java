@@ -12,7 +12,6 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.entity.player.EntityPlayer;
@@ -245,7 +244,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     public TraceabilityPredicate autoAbilities(boolean checkMaintainer, boolean checkMuffler) {
         TraceabilityPredicate predicate = new TraceabilityPredicate();
         if (checkMaintainer && hasMaintenanceMechanics()) {
-            GTLog.logger.info("HERE!");
             predicate = predicate.or(abilities(MultiblockAbility.MAINTENANCE_HATCH)
                     .setMinGlobalLimited(ConfigHolder.machines.enableMaintenance ? 1 : 0).setMaxGlobalLimited(1));
         }

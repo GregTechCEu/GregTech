@@ -4073,8 +4073,8 @@ gregtech.multiblock.turbine.fuel_amount=Fuel Amount: %sL (%s)
 gregtech.multiblock.turbine.rotor_speed=Rotor Speed: %s/%s RPM
 gregtech.multiblock.turbine.rotor_durability=Rotor Durability: %s%%
 gregtech.multiblock.turbine.efficiency=Turbine Efficiency: %s%%
-gregtech.multiblock.turbine.energy_per_tick=Turbine Output: %s/%s EU/t
-gregtech.multiblock.turbine.energy_per_tick_maxed=Turbine Output: %s EU/t
+gregtech.multiblock.turbine.energy_per_tick=Energy Output: %s/%s EU/t
+gregtech.multiblock.turbine.energy_per_tick_maxed=Energy Output: %s EU/t
 gregtech.multiblock.turbine.obstructed=Turbine Face Obstructed
 
 gregtech.multiblock.large_boiler.temperature=Temperature: %s / %s C
