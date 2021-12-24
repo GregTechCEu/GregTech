@@ -109,4 +109,8 @@ public class GregtechDataCodes {
     public static final int VOID_PHANTOM_FLUID = 12;
     public static final int LOAD_PHANTOM_FLUID_STACK_FROM_NBT = 13;
 
+    // Recipe Logic
+    public static final int WORKABLE_ACTIVE = 1;
+    public static final int WORKING_ENABLED = 5;
+
 }
