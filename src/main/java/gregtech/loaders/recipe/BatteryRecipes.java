@@ -1,11 +1,8 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.common.items.MetaItems;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
@@ -243,13 +240,13 @@ public class BatteryRecipes {
                 .input(ENERGIUM_DUST, 9)
                 .fluidInputs(Water.getFluid(1800))
                 .output(ENERGIUM_CRYSTAL)
-                .duration(2000).EUt(VA[MV]).buildAndRegister();
+                .duration(2000).EUt(VA[HV]).buildAndRegister();
 
         AUTOCLAVE_RECIPES.recipeBuilder()
                 .input(ENERGIUM_DUST, 9)
                 .fluidInputs(DistilledWater.getFluid(1800))
                 .output(ENERGIUM_CRYSTAL)
-                .duration(1500).EUt(VA[MV]).buildAndRegister();
+                .duration(1500).EUt(VA[HV]).buildAndRegister();
 
         // Lapotronic Energy Orb
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(512).EUt(1024)
