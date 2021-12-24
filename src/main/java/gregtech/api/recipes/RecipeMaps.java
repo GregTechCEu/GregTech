@@ -819,10 +819,6 @@ public class RecipeMaps {
             .setSound(GTSounds.TURBINE);
 
     @ZenProperty
-    public static final FuelRecipeMap SEMI_FLUID_GENERATOR_FUELS = new FuelRecipeMap("semi_fluid_generator")
-            .setSound(GTSounds.COMBUSTION);
-
-    @ZenProperty
     public static final FuelRecipeMap STEAM_TURBINE_FUELS = new FuelRecipeMap("steam_turbine")
             .setSound(GTSounds.TURBINE);
 
