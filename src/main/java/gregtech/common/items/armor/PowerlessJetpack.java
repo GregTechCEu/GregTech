@@ -8,8 +8,8 @@ import gregtech.api.items.armor.ISpecialArmorLogic;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.recipes.FuelRecipe;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
@@ -42,14 +42,14 @@ import java.util.List;
 
 public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpack {
 
-    private static final List<FuelRecipe> FUELS = RecipeMaps.COMBUSTION_GENERATOR_FUELS.getRecipeList();
+    private static final List<Recipe> FUELS = RecipeMaps.COMBUSTION_GENERATOR_FUELS.getRecipeList();
 
     public static final List<Fluid> FUELS_FORBIDDEN = Arrays.asList(Materials.Oil.getFluid(), Materials.SulfuricLightFuel.getFluid());
 
     public final int tankCapacity = 16000;
 
-    private FuelRecipe previousRecipe = null;
-    private FuelRecipe currentRecipe = null;
+    private Recipe previousRecipe = null;
+    private Recipe currentRecipe = null;
     private int burnTimer = 0;
 
     @SideOnly(Side.CLIENT)
@@ -194,12 +194,12 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
         IFluidHandlerItem internalTank = getIFluidHandlerItem(stack);
         if (internalTank != null) {
             FluidStack fluidStack = internalTank.drain(1, false);
-            if (previousRecipe != null && fluidStack != null && fluidStack.isFluidEqual(previousRecipe.getRecipeFluid()) && fluidStack.amount > 0) {
+            if (previousRecipe != null && fluidStack != null && fluidStack.isFluidEqual(previousRecipe.getFluidInputs().get(0)) && fluidStack.amount > 0) {
                 currentRecipe = previousRecipe;
                 return;
             } else if (fluidStack != null) {
-                for (FuelRecipe recipe : FUELS) {
-                    if (recipe.getRecipeFluid().isFluidEqual(fluidStack)) {
+                for (Recipe recipe : FUELS) {
+                    if (recipe.getFluidInputs().get(0).isFluidEqual(fluidStack)) {
                         previousRecipe = recipe;
                         currentRecipe = previousRecipe;
                         return;
@@ -212,7 +212,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
 
     public FluidStack getFuel() {
         if (currentRecipe != null)
-            return currentRecipe.getRecipeFluid();
+            return currentRecipe.getFluidInputs().get(0);
 
         return null;
     }
@@ -276,8 +276,8 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
             return new FluidHandlerItemStack(itemStack, maxCapacity) {
                 @Override
                 public boolean canFillFluidType(FluidStack fluidStack) {
-                    for (FuelRecipe recipe : FUELS) {
-                        if (fluidStack.isFluidEqual(recipe.getRecipeFluid()) && !FUELS_FORBIDDEN.contains(fluidStack.getFluid()))
+                    for (Recipe recipe : FUELS) {
+                        if (fluidStack.isFluidEqual(recipe.getFluidInputs().get(0)) && !FUELS_FORBIDDEN.contains(fluidStack.getFluid()))
                             return true;
                     }
                     return false;

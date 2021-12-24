@@ -77,7 +77,7 @@ public class FuelRecipes {
     }
 
     public static void registerCombustionGeneratorFuel(FluidStack fuelStack, int duration, int tier) {
-        RecipeMaps.COMBUSTION_GENERATOR_FUELS_2.recipeBuilder()
+        RecipeMaps.COMBUSTION_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(fuelStack)
                 .duration(duration)
                 .EUt((int) GTValues.V[tier])
