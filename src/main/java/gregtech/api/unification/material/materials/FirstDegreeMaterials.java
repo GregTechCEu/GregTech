@@ -494,9 +494,10 @@ public class FirstDegreeMaterials {
         Scheelite = new Material.Builder(315, "scheelite")
                 .dust(3).ore()
                 .color(0xC88C14)
-                .flags(DECOMPOSITION_REQUIRES_HYDROGEN)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Calcium, 1, Tungsten, 1, Oxygen, 4)
-                .build();
+                .build()
+                .setFormula("Ca(WO3)O", true);
 
         Sodalite = new Material.Builder(316, "sodalite")
                 .gem(1).ore(6, 4)
@@ -596,9 +597,10 @@ public class FirstDegreeMaterials {
         Tungstate = new Material.Builder(330, "tungstate")
                 .dust(3).ore()
                 .color(0x373223)
-                .flags(DECOMPOSITION_REQUIRES_HYDROGEN)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Tungsten, 1, Lithium, 2, Oxygen, 4)
-                .build();
+                .build()
+                .setFormula("Li2(WO3)O", true);
 
         Ultimet = new Material.Builder(331, "ultimet")
                 .ingot(4).fluid()
@@ -702,7 +704,11 @@ public class FirstDegreeMaterials {
                 .cableProperties(GTValues.V[5], 1, 1)
                 .build();
 
-        // Free ID 343
+        TungsticAcid = new Material.Builder(343, "tungstic_acid")
+                .dust()
+                .color(0xBCC800).iconSet(SHINY)
+                .components(Hydrogen, 2, Tungsten, 1, Oxygen, 4)
+                .build();
 
         Osmiridium = new Material.Builder(344, "osmiridium")
                 .ingot(3).fluid()
@@ -714,9 +720,17 @@ public class FirstDegreeMaterials {
                 .blastTemp(4500, GasTier.HIGH, VA[LuV], 900)
                 .build();
 
-        // Free ID 345
+        LithiumChloride = new Material.Builder(345, "lithium_chloride")
+                .dust()
+                .color(0xDEDEFA).iconSet(FINE)
+                .components(Lithium, 1, Chlorine, 1)
+                .build();
 
-        // Free ID 346
+        CalciumChloride = new Material.Builder(346, "calcium_chloride")
+                .dust()
+                .color(0xEBEBFA).iconSet(FINE)
+                .components(Calcium, 1, Chlorine, 2)
+                .build();
 
         Bornite = new Material.Builder(347, "bornite")
                 .dust(1).ore()

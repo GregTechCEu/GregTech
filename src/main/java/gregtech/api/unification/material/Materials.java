@@ -369,7 +369,10 @@ public class Materials {
     public static Material Quartzite;
     public static Material Graphite;
     public static Material Graphene;
+    public static Material TungsticAcid;
     public static Material Osmiridium;
+    public static Material LithiumChloride;
+    public static Material CalciumChloride;
     public static Material Bornite;
     public static Material Chalcocite;
 

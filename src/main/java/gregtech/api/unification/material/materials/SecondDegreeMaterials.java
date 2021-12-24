@@ -115,7 +115,7 @@ public class SecondDegreeMaterials {
                 .toolStats(8.0f, 4.0f, 2560, 21)
                 .fluidPipeProperties(7568, 100, true)
                 .cableProperties(GTValues.V[5], 3, 2)
-                .blastTemp(3000, GasTier.MID)
+                .blastTemp(3000, GasTier.MID, GTValues.VA[EV], 1000)
                 .build();
 
         CobaltBrass = new Material.Builder(2014, "cobalt_brass")

@@ -1630,8 +1630,10 @@ material.certus_quartz=Certus Quartz
 material.quartzite=Quartzite
 material.graphite=Graphite
 material.graphene=Graphene
-material.jasper=Jasper
+material.tungstic_acid=Tungstic Acid
 material.osmiridium=Osmiridium
+material.calcium_chloride=Calcium Chloride
+material.lithium_chloride=Lithium Chloride
 
 material.wood_sealed=Sealed Wood
 material.glass=Glass
