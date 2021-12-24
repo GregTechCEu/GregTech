@@ -74,6 +74,11 @@ public class FuelRecipes {
 
     public static void registerPlasmaFuel(FluidStack fuelStack, int duration, int tier) {
         RecipeMaps.PLASMA_GENERATOR_FUELS.addRecipe(new FuelRecipe(fuelStack, duration, GTValues.V[tier]));
+        RecipeMaps.PLASMA_GENERATOR_FUELS_2.recipeBuilder()
+                .fluidInputs(fuelStack)
+                .duration(duration)
+                .EUt((int) GTValues.V[tier])
+                .buildAndRegister();
     }
 
     public static void registerCombustionGeneratorFuel(FluidStack fuelStack, int duration, int tier) {

@@ -30,6 +30,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.MetaFluids;
 import gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -101,23 +102,22 @@ public class MetaTileEntityLargeTurbine2 extends FuelMultiblockController implem
         super.invalidateStructure();
     }
 
-//    /**
-//     * @return true if turbine is formed and it's face is free and contains
-//     * only air blocks in front of rotor holder
-//     */
-//    public boolean isRotorFaceFree() {
-//        if (getAbilities(ABILITY_ROTOR_HOLDER).size() == 0)
-//            return false;
-//
-//        return isStructureFormed() && getRotorHolder().isFrontFaceFree();
-//    }
+    /**
+     * @return true if turbine is formed and it's face is free and contains
+     * only air blocks in front of rotor holder
+     */
+    public boolean isRotorFaceFree() {
+        IRotorHolder rotorHolder = getRotorHolder();
+        if (rotorHolder != null)
+            return isStructureFormed() && getRotorHolder().isFrontFaceFree();
+        return false;
+    }
 
     /**
      * @return true if structure formed, workable is active and front face is free
      */
     public boolean isActive() {
-//        return isRotorFaceFree() && recipeMapWorkable.isActive() && recipeMapWorkable.isWorkingEnabled();
-        return recipeMapWorkable.isActive() && recipeMapWorkable.isWorkingEnabled();
+        return recipeMapWorkable.isWorkingEnabled() && recipeMapWorkable.isActive() && ((LargeTurbineWorkableHandler2) recipeMapWorkable).shouldRun();
     }
 
     @Override
@@ -130,43 +130,56 @@ public class MetaTileEntityLargeTurbine2 extends FuelMultiblockController implem
     protected void addDisplayText(List<ITextComponent> textList) {
         if (isStructureFormed()) {
             IRotorHolder rotorHolder = getRotorHolder();
-//            FluidStack fuelStack = ((LargeTurbineWorkableHandler2) recipeMapWorkable).getFuelStack();
-//            int fuelAmount = fuelStack == null ? 0 : fuelStack.amount;
+            FluidStack fuelStack = ((LargeTurbineWorkableHandler2) recipeMapWorkable).getInputFluidStack();
+            int fuelAmount = fuelStack == null ? 0 : fuelStack.amount;
 
-//            ITextComponent fuelName = new TextComponentTranslation(fuelAmount == 0 ? "gregtech.fluid.empty" : fuelStack.getUnlocalizedName());
-//            textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_amount", fuelAmount, fuelName));
+            ITextComponent fuelName = new TextComponentTranslation(fuelAmount == 0 ? "gregtech.fluid.empty" : fuelStack.getUnlocalizedName());
+            textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_amount", fuelAmount, fuelName));
 
             if (rotorHolder.getRotorEfficiency() > 0) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_speed", rotorHolder.getRotorSpeed(), rotorHolder.getMaxRotorHolderSpeed()));
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_efficiency", rotorHolder.getTotalPower()));
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_efficiency", rotorHolder.getTotalEfficiency()));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.efficiency", rotorHolder.getTotalEfficiency()));
+
+                long maxProduction = ((LargeTurbineWorkableHandler2) recipeMapWorkable).getMaxVoltage();
+                long currentProduction = isActive() ? ((LargeTurbineWorkableHandler2) recipeMapWorkable).boostProduction((int) maxProduction) : 0;
+                if (currentProduction >= maxProduction) {
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.energy_per_tick_maxed", maxProduction));
+                } else {
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.energy_per_tick", currentProduction, maxProduction));
+                }
+
                 int rotorDurability = rotorHolder.getRotorDurabilityPercent();
                 if (rotorDurability > MIN_DURABILITY_TO_WARN) {
                     textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_durability", rotorDurability));
                 } else {
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.low_rotor_durability",
-                            MIN_DURABILITY_TO_WARN, rotorDurability).setStyle(new Style().setColor(TextFormatting.RED)));
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_durability", rotorDurability).setStyle(new Style().setColor(TextFormatting.RED)));
                 }
             }
-//            if(!isRotorFaceFree()) {
-//                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.obstructed")
-//                        .setStyle(new Style().setColor(TextFormatting.RED)));
-//            }
+            if(!isRotorFaceFree()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.obstructed")
+                        .setStyle(new Style().setColor(TextFormatting.RED)));
+            }
         }
         super.addDisplayText(textList);
     }
 
     @Override
     protected BlockPattern createStructurePattern() {
+        TraceabilityPredicate holderPredicate = new TraceabilityPredicate();
         return FactoryBlockPattern.start()
                 .aisle("CCCC", "CHHC", "CCCC")
-                .aisle("CHHC", "RGGD", "CTTC")
+                .aisle("CHHC", "RGGR", "CTTC")
                 .aisle("CCCC", "CSHC", "CCCC")
                 .where('S', selfPredicate())
                 .where('G', states(getGearBoxState()))
                 .where('C', states(getCasingState()))
-                .where('R', abilities(MultiblockAbility.ABILITY_ROTOR_HOLDER_2).addTooltips("gregtech.multiblock.pattern.clear_amount_3"))
-                .where('D', abilities(MultiblockAbility.OUTPUT_ENERGY))
+                .where('R', metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.ABILITY_ROTOR_HOLDER_2).stream()
+                        .filter(mte -> (mte instanceof ITieredMetaTileEntity) && (((ITieredMetaTileEntity) mte).getTier() >= tier))
+                        .toArray(MetaTileEntity[]::new))
+                        .addTooltips("gregtech.multiblock.pattern.clear_amount_3")
+                        .addTooltips(I18n.format("gregtech.multiblock.pattern.tier_minimum", GTValues.VN[tier]))
+                        .setExactLimit(1)
+                        .or(abilities(MultiblockAbility.OUTPUT_ENERGY)).setExactLimit(1))
                 .where('H', states(getCasingState()).or(autoAbilities(false, true, false, false, true, true, false)))
                 .where('T', states(getCasingState()).or(autoAbilities(false, true)))
                 .build();
@@ -208,8 +221,7 @@ public class MetaTileEntityLargeTurbine2 extends FuelMultiblockController implem
 
     @Override
     public boolean isStructureObstructed() {
-//        return !isRotorFaceFree();
-        return false;
+        return !isRotorFaceFree();
     }
 
     @Override

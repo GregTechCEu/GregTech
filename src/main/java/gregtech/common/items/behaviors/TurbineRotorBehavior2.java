@@ -25,13 +25,13 @@ public class TurbineRotorBehavior2 extends AbstractMaterialPartBehavior implemen
     }
 
     public int getRotorDurabilityPercent(ItemStack itemStack) {
-        return 100 * getPartDamage(itemStack) / getPartMaxDurability(itemStack);
+        return 100 - 100 * getPartDamage(itemStack) / getPartMaxDurability(itemStack);
     }
 
     public int getRotorEfficiency(ItemStack stack) {
         Material material = getPartMaterial(stack);
         ToolProperty property = material.getProperty(PropertyKey.TOOL);
-        return property == null ? -1 : (int) (100 + property.getToolSpeed() * 10);
+        return property == null ? -1 : ((int) ((60 + property.getToolSpeed() * 8)) / 5 * 5);
     }
 
     public void applyRotorDamage(ItemStack itemStack, int damageApplied) {
@@ -47,7 +47,7 @@ public class TurbineRotorBehavior2 extends AbstractMaterialPartBehavior implemen
     public int getRotorPower(ItemStack stack) {
         Material material = getPartMaterial(stack);
         ToolProperty property = material.getProperty(PropertyKey.TOOL);
-        return property == null ? -1 : (int) (100 + property.getToolSpeed());
+        return property == null ? -1 : (int) (40 + property.getToolAttackDamage() * 30);
     }
 
     @Override

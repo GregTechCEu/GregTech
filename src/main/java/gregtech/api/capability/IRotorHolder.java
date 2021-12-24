@@ -6,6 +6,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public interface IRotorHolder {
 
     /**
+     * @return true if the front face is unobstructed
+     */
+
+    boolean isFrontFaceFree();
+
+    /**
      * @return the base efficiency of the rotor holder in %
      */
     static int getBaseEfficiency() {
@@ -61,12 +67,6 @@ public interface IRotorHolder {
      * @return the current speed of the holder
      */
     int getRotorSpeed();
-
-    /**
-     *
-     * @return true if the rotor is at maximum speed
-     */
-    boolean isRotorMaxSpeed();
 
     /**
      * @return the rotor's efficiency in %

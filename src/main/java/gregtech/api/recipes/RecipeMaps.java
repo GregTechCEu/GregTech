@@ -853,4 +853,10 @@ public class RecipeMaps {
             .setSlotOverlay(false, true, true, GuiTextures.FURNACE_OVERLAY_2)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
             .setSound(GTSounds.COMBUSTION);
+
+    @ZenProperty
+    public static final RecipeMap<FuelRecipeBuilder> PLASMA_GENERATOR_FUELS_2 = new RecipeMap<>("plasma_generator_2", 0, 0, 0, 0, 1, 1, 0, 0, new FuelRecipeBuilder(), false)
+            .setSlotOverlay(false, true, true, GuiTextures.FURNACE_OVERLAY_2)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
+            .setSound(GTSounds.COMBUSTION);
 }

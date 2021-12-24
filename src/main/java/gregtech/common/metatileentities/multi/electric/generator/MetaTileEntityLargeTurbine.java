@@ -104,30 +104,30 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        if (isStructureFormed()) {
-            MetaTileEntityRotorHolder rotorHolder = getRotorHolder();
-            FluidStack fuelStack = ((LargeTurbineWorkableHandler) workableHandler).getFuelStack();
-            int fuelAmount = fuelStack == null ? 0 : fuelStack.amount;
-
-            ITextComponent fuelName = new TextComponentTranslation(fuelAmount == 0 ? "gregtech.fluid.empty" : fuelStack.getUnlocalizedName());
-            textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_amount", fuelAmount, fuelName));
-
-            if (rotorHolder.getRotorEfficiency() > 0.0) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_speed", rotorHolder.getCurrentRotorSpeed(), rotorHolder.getMaxRotorSpeed()));
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_efficiency", (int) (rotorHolder.getRotorEfficiency() * 100)));
-                int rotorDurability = (int) (rotorHolder.getRotorDurability() * 100);
-                if (rotorDurability > MIN_DURABILITY_TO_WARN) {
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_durability", rotorDurability));
-                } else {
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.low_rotor_durability",
-                            MIN_DURABILITY_TO_WARN, rotorDurability).setStyle(new Style().setColor(TextFormatting.RED)));
-                }
-            }
-            if(!isRotorFaceFree()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.obstructed")
-                        .setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-        }
+//        if (isStructureFormed()) {
+//            MetaTileEntityRotorHolder rotorHolder = getRotorHolder();
+//            FluidStack fuelStack = ((LargeTurbineWorkableHandler) workableHandler).getFuelStack();
+//            int fuelAmount = fuelStack == null ? 0 : fuelStack.amount;
+//
+//            ITextComponent fuelName = new TextComponentTranslation(fuelAmount == 0 ? "gregtech.fluid.empty" : fuelStack.getUnlocalizedName());
+//            textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_amount", fuelAmount, fuelName));
+//
+//            if (rotorHolder.getRotorEfficiency() > 0.0) {
+//                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_speed", rotorHolder.getCurrentRotorSpeed(), rotorHolder.getMaxRotorSpeed()));
+//                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_efficiency", (int) (rotorHolder.getRotorEfficiency() * 100)));
+//                int rotorDurability = (int) (rotorHolder.getRotorDurability() * 100);
+//                if (rotorDurability > MIN_DURABILITY_TO_WARN) {
+//                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_durability", rotorDurability));
+//                } else {
+//                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.low_rotor_durability",
+//                            MIN_DURABILITY_TO_WARN, rotorDurability).setStyle(new Style().setColor(TextFormatting.RED)));
+//                }
+//            }
+//            if(!isRotorFaceFree()) {
+//                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.obstructed")
+//                        .setStyle(new Style().setColor(TextFormatting.RED)));
+//            }
+//        }
         super.addDisplayText(textList);
     }
 

@@ -19,6 +19,7 @@ import gregtech.common.advancement.GTTriggers;
 import gregtech.common.items.behaviors.TurbineRotorBehavior2;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine2;
 import gregtech.common.metatileentities.multi.electric.generator.RotorHolderMultiblockController;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -29,6 +30,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -40,18 +42,21 @@ import java.util.List;
 
 public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IRotorHolder>, IRotorHolder {
 
+    static final int SPEED_INCREMENT = 1;
+    static final int SPEED_DECREMENT = 3;
+
     private final InventoryRotorHolder inventory;
 
     private final int maxSpeed;
-
-    private boolean isRotorSpinning;
     private int currentSpeed;
     private int rotorColor = -1;
+    private boolean isRotorSpinning;
+    private boolean frontFaceFree;
 
     public MetaTileEntityRotorHolder2(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
         this.inventory = new InventoryRotorHolder();
-        this.maxSpeed = 1000 * tier;
+        this.maxSpeed = 2000 + 1000 * tier;
     }
 
     @Override
@@ -88,28 +93,38 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
         if (getWorld().isRemote) {
             return;
         }
-//        if (getOffsetTimer() % 10 == 0) {
-//            this.frontFaceFree = checkTurbineFaceFree();
-//        }
+        if (getOffsetTimer() % 10 == 0) {
+            this.frontFaceFree = checkTurbineFaceFree();
+            if (!frontFaceFree || !hasRotor()) {
+                setCurrentSpeed(0);
+            }
+        }
 
         MetaTileEntityLargeTurbine2 controller = (MetaTileEntityLargeTurbine2) getController();
 
-        if (controller == null || (!hasRotor() && currentSpeed != 0)) {
-            currentSpeed = 0;
-            isRotorSpinning = false;
-            markDirty();
-        } else {
-            if (controller.isActive()) {
-                if (currentSpeed < maxSpeed) {
-                    currentSpeed++;
-                    markDirty();
-                }
-                if (getOffsetTimer() % 20 == 0)
-                    damageRotor(1 /*+ controller.getMaintenanceProblems()*/);
-            } else if (currentSpeed > 0) {
-                currentSpeed = Math.max(0, currentSpeed - 2);
-                markDirty();
+        if (controller != null && controller.isActive()) {
+            if (currentSpeed < maxSpeed) {
+                setCurrentSpeed(currentSpeed + SPEED_INCREMENT);
             }
+            if (getOffsetTimer() % 20 == 0)
+                damageRotor(1 + controller.getNumMaintenanceProblems());
+        } else if (currentSpeed > 0) {
+            setCurrentSpeed(Math.max(0, currentSpeed - SPEED_DECREMENT));
+        }
+    }
+
+    void setCurrentSpeed(int speed) {
+        if (currentSpeed != speed) {
+            currentSpeed = speed;
+            setRotorSpinning(currentSpeed > 0);
+            markDirty();
+        }
+    }
+
+    void setRotorSpinning(boolean spinning) {
+        if (isRotorSpinning != spinning) {
+            isRotorSpinning = spinning;
+            writeCustomData(42069, buf -> buf.writeBoolean(isRotorSpinning));
         }
     }
 
@@ -121,6 +136,30 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
     @Override
     public boolean canPartShare() {
         return false;
+    }
+
+    /**
+     * @return true if front face is free and contains only air blocks in 3x3 area
+     */
+    public boolean isFrontFaceFree() {
+        return frontFaceFree;
+    }
+
+    private boolean checkTurbineFaceFree() {
+        EnumFacing facing = getFrontFacing();
+        //TODO, this also needs to check Y for freedom wrench implementation
+        boolean permuteXZ = facing.getAxis() == EnumFacing.Axis.Z;
+        BlockPos centerPos = getPos().offset(facing);
+        for (int x = -1; x < 2; x++) {
+            for (int y = -1; y < 2; y++) {
+                BlockPos blockPos = centerPos.add(permuteXZ ? x : 0, y, permuteXZ ? 0 : x);
+                IBlockState blockState = getWorld().getBlockState(blockPos);
+                if (!blockState.getBlock().isAir(blockState, getWorld(), blockPos)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private boolean onRotorHolderInteract(@Nonnull EntityPlayer player) {
@@ -173,11 +212,6 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
     @Override
     public int getRotorSpeed() {
         return this.currentSpeed;
-    }
-
-    @Override
-    public boolean isRotorMaxSpeed() {
-        return this.maxSpeed - this.currentSpeed < 2;
     }
 
     @Override
@@ -276,6 +310,15 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
     }
 
     @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == 42069) {
+            this.isRotorSpinning = buf.readBoolean();
+            scheduleRenderUpdate();
+        }
+    }
+
+    @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isRotorSpinning);
@@ -295,7 +338,7 @@ public class MetaTileEntityRotorHolder2 extends MetaTileEntityMultiblockPart imp
         super.renderMetaTileEntity(renderState, translation, pipeline);
         Textures.ROTOR_HOLDER_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
         Textures.LARGE_TURBINE_ROTOR_RENDERER.renderSided(renderState, translation, pipeline, getFrontFacing(),
-                getController() != null, hasRotor(), currentSpeed > 0, getRotorColor());
+                getController() != null, hasRotor(), isRotorSpinning, getRotorColor());
     }
 
     private class InventoryRotorHolder extends ItemStackHandler {

@@ -3873,9 +3873,11 @@ gregtech.machine.rotor_holder.tooltip1=Rotor Holder for Multiblocks
 gregtech.machine.rotor_holder.tooltip2=Holds Rotor in place so it will not fly away
 
 gregtech.machine.rotor_holder.hv.name=HV Rotor Holder
+gregtech.machine.rotor_holder.ev.name=EV Rotor Holder
+gregtech.machine.rotor_holder.iv.name=IV Rotor Holder
 gregtech.machine.rotor_holder.luv.name=LuV Rotor Holder
-gregtech.machine.rotor_holder.uhv.name=UHV Rotor Holder
-gregtech.machine.rotor_holder.max.name=MAX Rotor Holder
+gregtech.machine.rotor_holder.zpm.name=ZPM Rotor Holder
+gregtech.machine.rotor_holder.uv.name=UV Rotor Holder
 
 gregtech.machine.maintenance_hatch.name=Maintenance Hatch
 gregtech.machine.maintenance_hatch.tooltip=For maintaining Multiblocks
@@ -4061,6 +4063,7 @@ gregtech.multiblock.pattern.clear_amount_1=§6Must have a clear 1x1x1 space in f
 gregtech.multiblock.pattern.clear_amount_3=§6Must have a clear 3x3x1 space in front§r
 gregtech.multiblock.pattern.single=§6Only this block can be used§r
 gregtech.multiblock.pattern.location_end=§cVery End§r
+gregtech.multiblock.pattern.tier_minimum=§c%s tier or higher.§r
 
 gregtech.multiblock.blast_furnace.max_temperature=Max Temperature: %sK
 gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s
@@ -4077,10 +4080,11 @@ gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost=Supply
 gregtech.multiblock.large_combustion_engine.obstructed=Engine Intakes Obstructed.
 
 gregtech.multiblock.turbine.fuel_amount=Fuel Amount: %sL (%s)
-gregtech.multiblock.turbine.rotor_speed=Rotor Speed: %s / %s RPM
-gregtech.multiblock.turbine.rotor_efficiency=Rotor Efficiency: %s%%
+gregtech.multiblock.turbine.rotor_speed=Rotor Speed: %s/%s RPM
 gregtech.multiblock.turbine.rotor_durability=Rotor Durability: %s%%
-gregtech.multiblock.turbine.low_rotor_durability=WARNING: Rotor Durability below %s%% (%s%%)
+gregtech.multiblock.turbine.efficiency=Turbine Efficiency: %s%%
+gregtech.multiblock.turbine.energy_per_tick=Turbine Output: %s/%s EU/t
+gregtech.multiblock.turbine.energy_per_tick_maxed=Turbine Output: %s EU/t
 gregtech.multiblock.turbine.obstructed=Turbine Face Obstructed
 
 gregtech.multiblock.large_boiler.temperature=Temperature: %s / %s C

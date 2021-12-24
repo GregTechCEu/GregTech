@@ -175,7 +175,7 @@ public class MetaTileEntities {
     public static MetaTileEntityLargeCombustionEngine EXTREME_COMBUSTION_ENGINE;
     public static MetaTileEntityLargeTurbine2 LARGE_STEAM_TURBINE;
     public static MetaTileEntityLargeTurbine2 LARGE_GAS_TURBINE;
-    public static MetaTileEntityLargeTurbine LARGE_PLASMA_TURBINE;
+    public static MetaTileEntityLargeTurbine2 LARGE_PLASMA_TURBINE;
     public static MetaTileEntityLargeBoiler LARGE_BRONZE_BOILER;
     public static MetaTileEntityLargeBoiler LARGE_STEEL_BOILER;
     public static MetaTileEntityLargeBoiler LARGE_TITANIUM_BOILER;
@@ -475,7 +475,7 @@ public class MetaTileEntities {
 
         LARGE_STEAM_TURBINE = registerMetaTileEntity(1010, new MetaTileEntityLargeTurbine2(gregtechId("large_turbine.steam"), RecipeMaps.STEAM_TURBINE_FUELS_2, 3, MetaBlocks.TURBINE_CASING.getState(BlockTurbineCasing.TurbineCasingType.STEEL_TURBINE_CASING), MetaBlocks.TURBINE_CASING.getState(BlockTurbineCasing.TurbineCasingType.STEEL_GEARBOX), Textures.SOLID_STEEL_CASING, false, Textures.LARGE_STEAM_TURBINE_OVERLAY));
         LARGE_GAS_TURBINE = registerMetaTileEntity(1011, new MetaTileEntityLargeTurbine2(gregtechId("large_turbine.gas"), RecipeMaps.GAS_TURBINE_FUELS_2, 4, MetaBlocks.TURBINE_CASING.getState(BlockTurbineCasing.TurbineCasingType.STAINLESS_TURBINE_CASING), MetaBlocks.TURBINE_CASING.getState(BlockTurbineCasing.TurbineCasingType.STEEL_GEARBOX), Textures.CLEAN_STAINLESS_STEEL_CASING, true, Textures.LARGE_GAS_TURBINE_OVERLAY));
-        LARGE_PLASMA_TURBINE = registerMetaTileEntity(1012, new MetaTileEntityLargeTurbine(gregtechId("large_turbine.plasma"), TurbineType.PLASMA));
+        LARGE_PLASMA_TURBINE = registerMetaTileEntity(1012, new MetaTileEntityLargeTurbine2(gregtechId("large_turbine.plasma"), RecipeMaps.PLASMA_GENERATOR_FUELS_2, 5, MetaBlocks.TURBINE_CASING.getState(BlockTurbineCasing.TurbineCasingType.TUNGSTENSTEEL_TURBINE_CASING), MetaBlocks.TURBINE_CASING.getState(BlockTurbineCasing.TurbineCasingType.STEEL_GEARBOX), Textures.ROBUST_TUNGSTENSTEEL_CASING, true, Textures.LARGE_PLASMA_TURBINE_OVERLAY));
 
         LARGE_BRONZE_BOILER = registerMetaTileEntity(1013, new MetaTileEntityLargeBoiler(gregtechId("large_boiler.bronze"), BoilerType.BRONZE));
         LARGE_STEEL_BOILER = registerMetaTileEntity(1014, new MetaTileEntityLargeBoiler(gregtechId("large_boiler.steel"), BoilerType.STEEL));
