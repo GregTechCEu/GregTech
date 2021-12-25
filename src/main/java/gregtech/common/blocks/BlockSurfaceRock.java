@@ -10,6 +10,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
+import gregtech.client.renderer.handler.SurfaceRockRenderer;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -23,6 +24,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -42,17 +44,10 @@ import javax.annotation.Nullable;
 @SuppressWarnings("deprecation")
 public class BlockSurfaceRock extends DelayedStateBlock implements IModelSupplier {
 
-    private static final AxisAlignedBB STONE_AABB = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 8.0 / 16.0, 1.0);
+    private static final AxisAlignedBB STONE_AABB = new AxisAlignedBB(2.0 / 16.0, 0.0 / 16.0, 2.0 / 16.0, 14.0 / 16.0, 2.0 / 16.0, 14.0 / 16.0);
     public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "surface_rock"), "normal");
 
     public final PropertyMaterial variantProperty;
-
-    private int minX;
-    private int maxX;
-    private int minY;
-    private int maxY;
-    private int minZ;
-    private int maxZ;
 
     public BlockSurfaceRock(Material[] materials) {
         super(net.minecraft.block.material.Material.ROCK);
@@ -185,12 +180,12 @@ public class BlockSurfaceRock extends DelayedStateBlock implements IModelSupplie
         return false;
     }
 
-//    @Override
-//    @Nonnull
-//    @SideOnly(Side.CLIENT) TODO
-//    public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
-//        return SurfaceRockRenderer.BLOCK_RENDER_TYPE;
-//    }
+    @Override
+    @Nonnull
+    @SideOnly(Side.CLIENT)
+    public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
+        return SurfaceRockRenderer.BLOCK_RENDER_TYPE;
+    }
 
     @Override
     public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, BlockPos fromPos) {
