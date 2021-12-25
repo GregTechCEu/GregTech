@@ -2,7 +2,6 @@ package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.recipes.FuelRecipe;
 import net.minecraftforge.fluids.FluidStack;
 
 import static gregtech.api.GTValues.LV;
@@ -73,8 +72,7 @@ public class FuelRecipes {
     }
 
     public static void registerPlasmaFuel(FluidStack fuelStack, int duration, int tier) {
-        RecipeMaps.PLASMA_GENERATOR_FUELS.addRecipe(new FuelRecipe(fuelStack, duration, GTValues.V[tier]));
-        RecipeMaps.PLASMA_GENERATOR_FUELS_2.recipeBuilder()
+        RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(fuelStack)
                 .duration(duration)
                 .EUt((int) GTValues.V[tier])
@@ -90,8 +88,7 @@ public class FuelRecipes {
     }
 
     public static void registerSteamGeneratorFuel(FluidStack fuelStack, int duration, int tier) {
-        RecipeMaps.STEAM_TURBINE_FUELS.addRecipe(new FuelRecipe(fuelStack, duration, GTValues.V[tier]));
-        RecipeMaps.STEAM_TURBINE_FUELS_2.recipeBuilder()
+        RecipeMaps.STEAM_TURBINE_FUELS.recipeBuilder()
                 .fluidInputs(fuelStack)
                 .duration(duration)
                 .EUt((int) GTValues.V[tier])
@@ -99,8 +96,7 @@ public class FuelRecipes {
     }
 
     public static void registerGasGeneratorFuel(FluidStack fuelStack, int duration, int tier) {
-        RecipeMaps.GAS_TURBINE_FUELS.addRecipe(new FuelRecipe(fuelStack, duration, GTValues.V[tier]));
-        RecipeMaps.GAS_TURBINE_FUELS_2.recipeBuilder()
+        RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
                 .fluidInputs(fuelStack)
                 .duration(duration)
                 .EUt((int) GTValues.V[tier])
@@ -108,7 +104,7 @@ public class FuelRecipes {
     }
 
     public static void registerSemiFluidGeneratorFuel(FluidStack fuelStack, int duration, int tier) {
-        RecipeMaps.SEMI_FLUID_GENERATOR_FUELS_2.recipeBuilder()
+        RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(fuelStack)
                 .duration(duration)
                 .EUt((int) GTValues.V[tier])
