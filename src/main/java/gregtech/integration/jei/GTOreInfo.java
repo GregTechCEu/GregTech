@@ -49,6 +49,8 @@ public class GTOreInfo implements IRecipeWrapper {
     private final List<List<ItemStack>> groupedInputsAsItemStacks = new ArrayList<>();
     private final List<List<ItemStack>> groupedOutputsAsItemStacks;
     private final Function<Biome, Integer> biomeFunction;
+    private final List<Integer> oreWeights = new ArrayList<>();
+    private int totalWeight = 0;
 
     public GTOreInfo(OreDepositDefinition definition) {
         this.definition = definition;
@@ -95,6 +97,24 @@ public class GTOreInfo implements IRecipeWrapper {
         } else {
             //Group the output Ores
             groupedOutputsAsItemStacks = findUniqueBlocksAsItemStack(generatedBlocksAsItemStacks);
+        }
+
+        // Generate list of weights for overlay text
+        List<FillerEntry> fillerEntries = blockFiller.getAllPossibleStates();
+        for (FillerEntry entries : fillerEntries) {
+            if (entries != null && !entries.getEntries().isEmpty()) {
+                for (Pair<Integer, FillerEntry> entry : entries.getEntries()) {
+                    totalWeight += entry.getKey();
+                }
+            }
+        }
+
+        FillerEntry entry = fillerEntries.get(0);
+        if (entry.getEntries() != null && !entry.getEntries().isEmpty()) {
+            for (int i = 0; i < getOutputCount(); i++) {
+                Pair<Integer, FillerEntry> entryWithWeight = entry.getEntries().get(i);
+                oreWeights.add((int) Math.round((entryWithWeight.getKey() / (double) totalWeight) * 10000));
+            }
         }
     }
 
@@ -319,17 +339,9 @@ public class GTOreInfo implements IRecipeWrapper {
     public List<String> createOreWeightingTooltip(int slotIndex) {
 
         List<String> tooltip = new ArrayList<>();
-        int totalWeight = 0;
         double weight;
 
         List<FillerEntry> fillerEntries = blockFiller.getAllPossibleStates();
-        for (FillerEntry entries : fillerEntries) {
-            if (entries != null && !entries.getEntries().isEmpty()) {
-                for (Pair<Integer, FillerEntry> entry : entries.getEntries()) {
-                    totalWeight = totalWeight + entry.getKey();
-                }
-            }
-        }
 
         for (FillerEntry entry : fillerEntries) {
             if (entry.getEntries() != null && !entry.getEntries().isEmpty()) {
@@ -393,5 +405,9 @@ public class GTOreInfo implements IRecipeWrapper {
 
     public OreDepositDefinition getDefinition() {
         return definition;
+    }
+
+    public int getOreWeight(int index) {
+        return oreWeights.size() > index ? oreWeights.get(index) : -1;
     }
 }
