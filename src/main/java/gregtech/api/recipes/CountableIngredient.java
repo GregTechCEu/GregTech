@@ -1,10 +1,14 @@
 package gregtech.api.recipes;
 
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.GTLog;
+import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 
 import java.util.Arrays;
@@ -21,10 +25,14 @@ public class CountableIngredient {
     }
 
     public static CountableIngredient from(String oredict) {
+        if (ConfigHolder.misc.debug && OreDictionary.getOres(oredict).isEmpty())
+            GTLog.logger.error("Tried to access item with oredict " + oredict + ":", new IllegalArgumentException());
         return new CountableIngredient(new OreIngredient(oredict), 1);
     }
 
     public static CountableIngredient from(String oredict, int count) {
+        if (ConfigHolder.misc.debug && OreDictionary.getOres(oredict).isEmpty())
+            GTLog.logger.error("Tried to access item with oredict " + oredict + ":", new IllegalArgumentException());
         return new CountableIngredient(new OreIngredient(oredict), count);
     }
 
@@ -33,6 +41,8 @@ public class CountableIngredient {
     }
 
     public static CountableIngredient from(OrePrefix prefix, Material material, int count) {
+        if (ConfigHolder.misc.debug && OreDictionary.getOres(new UnificationEntry(prefix, material).toString()).isEmpty())
+            GTLog.logger.error("Tried to access item with oredict " + new UnificationEntry(prefix, material).toString() + ":", new IllegalArgumentException());
         return new CountableIngredient(new OreIngredient(new UnificationEntry(prefix, material).toString()), count);
     }
 

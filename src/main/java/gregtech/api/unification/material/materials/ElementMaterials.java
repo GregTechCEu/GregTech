@@ -383,7 +383,7 @@ public class ElementMaterials {
         Iron = new Material.Builder(51, "iron")
                 .ingot().fluid().plasma().ore()
                 .color(0xC8C8C8).iconSet(METALLIC)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_DENSE, GENERATE_FRAME, GENERATE_ROTOR, GENERATE_SMALL_GEAR,
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_DENSE, GENERATE_ROTOR, GENERATE_SMALL_GEAR,
                         GENERATE_SPRING, GENERATE_SPRING_SMALL, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, BLAST_FURNACE_CALCITE_TRIPLE)
                 .element(Elements.Fe)
                 .toolStats(7.0f, 2.5f, 256, 21)
@@ -982,7 +982,7 @@ public class ElementMaterials {
         Tritanium = new Material.Builder(128, "tritanium")
                 .ingot(6).fluid()
                 .color(0x600000).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_FRAME, GENERATE_RING, GENERATE_SPRING, GENERATE_SMALL_GEAR, GENERATE_ROTOR)
+                .flags(EXT2_METAL, GENERATE_FRAME, GENERATE_RING, GENERATE_SPRING, GENERATE_SMALL_GEAR, GENERATE_ROTOR, GENERATE_ROUND)
                 .element(Elements.Tr)
                 .cableProperties(GTValues.V[8], 1, 8)
                 .toolStats(20.0f, 6.0f, 10240, 21)

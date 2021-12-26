@@ -57,7 +57,7 @@ public class OrganicChemistryMaterials {
         ReinforcedEpoxyResin = new Material.Builder(1006, "reinforced_epoxy_resin")
                 .ingot().fluid()
                 .color(0xA07A10)
-                .flags(STD_METAL, DISABLE_DECOMPOSITION, NO_SMASHING, GENERATE_FINE_WIRE, GENERATE_ROD, FLAMMABLE)
+                .flags(STD_METAL, DISABLE_DECOMPOSITION, NO_SMASHING, FLAMMABLE)
                 .components(Carbon, 6, Hydrogen, 4, Oxygen, 1)
                 .build();
 
@@ -108,7 +108,7 @@ public class OrganicChemistryMaterials {
         Epoxy = new Material.Builder(1013, "epoxy")
                 .ingot(1).fluid()
                 .color(0xC88C14)
-                .flags(EXT2_METAL, DISABLE_DECOMPOSITION, NO_SMASHING, FLAMMABLE)
+                .flags(STD_METAL, DISABLE_DECOMPOSITION, NO_SMASHING, FLAMMABLE)
                 .components(Carbon, 21, Hydrogen, 25, Chlorine, 1, Oxygen, 5)
                 .build();
 
