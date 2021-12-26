@@ -5,7 +5,6 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
-import gregtech.api.capability.impl.FuelRecipeLogic;
 import gregtech.api.gui.impl.ModularUIGuiHandler;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -150,9 +149,6 @@ public class GTJeiPlugin implements IModPlugin {
                         }
                         registerRecipeMapCatalyst(registry, ((AbstractRecipeLogic) workableCapability).getRecipeMap(), metaTileEntity);
                     }
-                } else if (workableCapability instanceof FuelRecipeLogic) {
-                    FuelRecipeMap recipeMap = ((FuelRecipeLogic) workableCapability).recipeMap;
-                    registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
                 }
             }
         }

@@ -65,7 +65,7 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
 
     @Override
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
-        final FuelRecipeLogic2 result = new FuelRecipeLogic2(this, recipeMap, () -> energyContainer);
+        final FuelRecipeLogic result = new FuelRecipeLogic(this, recipeMap, () -> energyContainer);
         result.enableOverclockVoltage();
         return result;
     }
