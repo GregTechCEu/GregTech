@@ -835,7 +835,7 @@ public class RecipeMaps {
             .setSound(GTSounds.COMBUSTION);
 
     @ZenProperty
-    public static final RecipeMap<FuelRecipeBuilder> PLASMA_GENERATOR_FUELS = new RecipeMap<>("plasma_generator", 0, 0, 0, 0, 1, 1, 0, 0, new FuelRecipeBuilder(), false)
+    public static final RecipeMap<FuelRecipeBuilder> PLASMA_GENERATOR_FUELS = new RecipeMap<>("plasma_generator", 0, 0, 0, 0, 1, 1, 0, 1, new FuelRecipeBuilder(), false)
             .setSlotOverlay(false, true, true, GuiTextures.CENTRIFUGE_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR, MoveType.HORIZONTAL)
             .setSound(GTSounds.TURBINE);

@@ -67,17 +67,10 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
         return abilities.get(0);
     }
 
-//    @Override
-//    protected void updateFormedValid() {
-//        if (isRotorFaceFree()) {
-//            super.updateFormedValid();
-//        }
-//    }
-
     @Override
     public void invalidateStructure() {
-        this.exportFluidHandler = null;
         super.invalidateStructure();
+        this.exportFluidHandler = null;
     }
 
     /**
@@ -89,13 +82,6 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
         if (rotorHolder != null)
             return isStructureFormed() && getRotorHolder().isFrontFaceFree();
         return false;
-    }
-
-    /**
-     * @return true if structure formed, workable is active and front face is free
-     */
-    public boolean isActive() {
-        return recipeMapWorkable.isWorkingEnabled() && recipeMapWorkable.isActive() && ((LargeTurbineWorkableHandler) recipeMapWorkable).shouldRun();
     }
 
     @Override
@@ -143,7 +129,6 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
 
     @Override
     protected BlockPattern createStructurePattern() {
-        TraceabilityPredicate holderPredicate = new TraceabilityPredicate();
         return FactoryBlockPattern.start()
                 .aisle("CCCC", "CHHC", "CCCC")
                 .aisle("CHHC", "RGGR", "CTTC")

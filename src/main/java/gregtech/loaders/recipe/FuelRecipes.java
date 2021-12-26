@@ -63,17 +63,26 @@ public class FuelRecipes {
         registerSemiFluidGeneratorFuel(FishOil.getFluid(8), 1, LV);
 
         //plasma turbine
-        registerPlasmaFuel(Helium.getPlasma(1), 2560, LV);
-        registerPlasmaFuel(Oxygen.getPlasma(1), 3072, LV);
-        registerPlasmaFuel(Nitrogen.getPlasma(1), 4096, LV);
-        registerPlasmaFuel(Iron.getPlasma(1), 6144, LV);
-        registerPlasmaFuel(Nickel.getPlasma(1), 12288, LV);
+        registerPlasmaFuel(Helium.getPlasma(1), Helium.getFluid(1), 2560, LV);
+        registerPlasmaFuel(Oxygen.getPlasma(1),  Oxygen.getFluid(1),3072, LV);
+        registerPlasmaFuel(Nitrogen.getPlasma(1), Nitrogen.getFluid(1), 4096, LV);
+        registerPlasmaFuel(Iron.getPlasma(1), Iron.getFluid(1), 6144, LV);
+        registerPlasmaFuel(Nickel.getPlasma(1), Nickel.getFluid(1), 12288, LV);
 
     }
 
     public static void registerPlasmaFuel(FluidStack fuelStack, int duration, int tier) {
         RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(fuelStack)
+                .duration(duration)
+                .EUt((int) GTValues.V[tier])
+                .buildAndRegister();
+    }
+
+    public static void registerPlasmaFuel(FluidStack fuelStack, FluidStack fluidOutputStack, int duration, int tier) {
+        RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
+                .fluidInputs(fuelStack)
+                .fluidOutputs(fluidOutputStack)
                 .duration(duration)
                 .EUt((int) GTValues.V[tier])
                 .buildAndRegister();

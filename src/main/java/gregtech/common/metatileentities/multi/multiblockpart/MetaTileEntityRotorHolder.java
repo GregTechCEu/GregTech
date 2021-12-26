@@ -89,14 +89,11 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     public void update() {
         super.update();
 
-        if (getWorld().isRemote) {
+        if (getWorld().isRemote)
             return;
-        }
-        if (getOffsetTimer() % 10 == 0) {
+
+        if (getOffsetTimer() % 20 == 0) {
             this.frontFaceFree = checkTurbineFaceFree();
-            if (!frontFaceFree || !hasRotor()) {
-                setCurrentSpeed(0);
-            }
         }
 
         MetaTileEntityLargeTurbine controller = (MetaTileEntityLargeTurbine) getController();
@@ -115,7 +112,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     void setCurrentSpeed(int speed) {
         if (currentSpeed != speed) {
             currentSpeed = speed;
-            setRotorSpinning(currentSpeed > 0);
+            if (!isRotorSpinning())
+                setRotorSpinning(currentSpeed > 0);
             markDirty();
         }
     }
@@ -146,7 +144,6 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
 
     private boolean checkTurbineFaceFree() {
         EnumFacing facing = getFrontFacing();
-        //TODO, this also needs to check Y for freedom wrench implementation
         boolean permuteXZ = facing.getAxis() == EnumFacing.Axis.Z;
         BlockPos centerPos = getPos().offset(facing);
         for (int x = -1; x < 2; x++) {
@@ -189,7 +186,6 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
      *
      * @return whether there is a rotor in the holder
      */
-    @SideOnly(Side.SERVER)
     @Override
     public boolean hasRotorServer() {
         return inventory.hasRotor();

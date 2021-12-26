@@ -15,20 +15,9 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
 
     private int excessVoltage;
 
-    private boolean shouldRun = true;
-
     public LargeTurbineWorkableHandler(RecipeMapMultiblockController metaTileEntity, int tier) {
         super(metaTileEntity);
         this.BASE_EU_OUTPUT = (int) GTValues.V[tier] * 2;
-    }
-
-    @Override
-    public void update() {
-        super.update();
-        //update the status of the workable twice per second to reduce the density of checks
-        if (!metaTileEntity.getWorld().isRemote && metaTileEntity.getOffsetTimer() % 10 == 0) {
-            shouldRun = shouldRunUpdate();
-        }
     }
 
     public FluidStack getInputFluidStack() {
@@ -36,30 +25,6 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
             return null;
         FluidStack fuelStack = previousRecipe.getFluidInputs().get(0);
         return getInputTank().drain(new FluidStack(fuelStack.getFluid(), Integer.MAX_VALUE), false);
-    }
-
-    public boolean shouldRun() {
-        return shouldRun;
-    }
-
-    public boolean shouldRunUpdate() {
-        IRotorHolder rotorHolder = ((MetaTileEntityLargeTurbine) metaTileEntity).getRotorHolder();
-        return rotorHolder != null && rotorHolder.hasRotor() && rotorHolder.isFrontFaceFree();
-    }
-
-    @Override
-    public void updateRecipeProgress() {
-        //no safe void for turbines
-        drawEnergy(recipeEUt, false);
-        if (++progressTime > maxProgressTime) {
-            completeRecipe();
-        }
-    }
-
-    @Override
-    protected void trySearchNewRecipe() {
-        if (shouldRun())
-            super.trySearchNewRecipe();
     }
 
     @Override
@@ -128,8 +93,8 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
 
     @Override
     public void invalidate() {
-        excessVoltage = 0;
         super.invalidate();
+        excessVoltage = 0;
     }
 
     //TODO re-implement large turbine fluid output using recipe voiding
