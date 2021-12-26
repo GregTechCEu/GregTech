@@ -8,10 +8,10 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.pipenet.tile.PipeCoverableImplementation;
 import gregtech.api.util.Position;
+import gregtech.client.renderer.handler.WorldRenderEventRenderer;
 import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
 import gregtech.common.covers.CoverDigitalInterface;
-import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -89,7 +89,7 @@ public class WidgetCoverList extends ScrollableListWidget {
                     try {
                         String posString = ObfuscationReflectionHelper.getPrivateValue(LabelWidget.class, (LabelWidget) children.get(1), "text");
                         String[] posSplit = posString.split("[,() ]");
-                        BlockPosHighlightRenderer.renderBlockBoxHighLight(
+                        WorldRenderEventRenderer.renderBlockBoxHighLight(
                                 new BlockPos(Integer.parseInt(posSplit[1]), Integer.parseInt(posSplit[3])
                                         , Integer.parseInt(posSplit[5])), 5000);
                         Minecraft.getMinecraft().player.closeScreen();

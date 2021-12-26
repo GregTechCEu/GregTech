@@ -1,8 +1,8 @@
 package gregtech.client.event;
 
+import gregtech.client.renderer.handler.WorldRenderEventRenderer;
 import gregtech.client.utils.DepthTextureUtil;
 import gregtech.client.renderer.handler.TerminalARRenderer;
-import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.client.renderer.handler.ToolOverlayRenderer;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -43,7 +43,7 @@ public class ClientEventHandler {
     public static void onRenderWorldLast(RenderWorldLastEvent event) {
         DepthTextureUtil.renderWorld(event);
 //        GTParticleManager.renderWorld(event);
-        BlockPosHighlightRenderer.renderWorldLastEvent(event);
+        WorldRenderEventRenderer.renderWorldLastEvent(event);
         TerminalARRenderer.renderWorldLastEvent(event);
     }
 

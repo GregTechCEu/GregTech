@@ -32,11 +32,11 @@ public class BlockPattern {
 
     static EnumFacing[] FACINGS = {EnumFacing.SOUTH, EnumFacing.NORTH, EnumFacing.WEST, EnumFacing.EAST, EnumFacing.UP, EnumFacing.DOWN};
     public final int[][] aisleRepetitions;
+    public final RelativeDirection[] structureDir;
     protected final TraceabilityPredicate[][][] blockMatches; //[z][y][x]
     protected final int fingerLength; //z size
     protected final int thumbLength; //y size
     protected final int palmLength; //x size
-    protected final RelativeDirection[] structureDir;
     protected final BlockWorldState worldState = new BlockWorldState();
     protected final PatternMatchContext matchContext = new PatternMatchContext();
     protected final Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount;

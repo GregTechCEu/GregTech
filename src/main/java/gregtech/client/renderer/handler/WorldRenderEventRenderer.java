@@ -4,10 +4,10 @@ import gregtech.api.GTValues;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.render.scene.TrackedDummyWorld;
-import gregtech.api.render.scene.WorldSceneRenderer;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.client.utils.TrackedDummyWorld;
 import gregtech.api.util.RelativeDirection;
+import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderBufferHelper;
 import gregtech.integration.jei.JEIOptional;
 import net.minecraft.block.state.IBlockState;
@@ -31,14 +31,12 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @SideOnly(Side.CLIENT)
 public class WorldRenderEventRenderer {

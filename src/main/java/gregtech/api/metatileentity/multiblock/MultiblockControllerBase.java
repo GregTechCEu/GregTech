@@ -11,13 +11,12 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pattern.*;
 import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.handler.WorldRenderEventRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.VariantActiveBlock;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
-import gregtech.common.render.WorldRenderEventRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -330,7 +329,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         if (super.onRightClick(playerIn, hand, facing, hitResult))
             return true;
 
-        if (playerIn.isSneaking() && this.rightClickDelayTimer == 0 && this.getWorld().isRemote) {
+        if (!this.isStructureFormed() && playerIn.isSneaking() && this.rightClickDelayTimer == 0 && this.getWorld().isRemote) {
             this.rightClickDelayTimer = 4;
             WorldRenderEventRenderer.renderMultiBlockPreview(this, 60000);
             return true;
