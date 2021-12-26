@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -20,6 +21,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -75,19 +77,41 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.fluidInventory = new FluidTankList(false);
+        this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false), new FluidTankList(false));
+    }
+
+    @Override
+    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
+        boolean wasRotated = super.onWrenchClick(playerIn, hand, wrenchSide, hitResult);
+        if (wasRotated && !getWorld().isRemote) {
+            reinitializeFluidInventory(getFrontFacing());
+        }
+        return wasRotated;
     }
 
     @Override
     public void addToMultiBlock(MultiblockControllerBase controllerBase) {
         super.addToMultiBlock(controllerBase);
-        this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false, controllerBase.getImportFluids()), controllerBase.getImportFluids());
+        if (getFrontFacing() == EnumFacing.DOWN) {
+            this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false), controllerBase.getImportFluids());
+        } else {
+            this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false, controllerBase.getImportFluids()), controllerBase.getImportFluids());
+        }
+    }
+
+    private void reinitializeFluidInventory(EnumFacing facing) {
+        FluidHandlerProxy proxy = (FluidHandlerProxy) fluidInventory;
+        if (facing == EnumFacing.DOWN) {
+            proxy.reinitializeHandler(new FluidTankList(false), proxy.output);
+        } else {
+            proxy.reinitializeHandler(proxy.output, proxy.output);
+        }
     }
 
     @Override
     public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
         super.removeFromMultiBlock(controllerBase);
-        this.fluidInventory = new FluidTankList(false);
+        this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false) ,new FluidTankList(false));
     }
 
     @Override
