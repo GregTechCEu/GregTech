@@ -181,16 +181,6 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         return rotorColor != -1;
     }
 
-    /**
-     * returns true on only the Server
-     *
-     * @return whether there is a rotor in the holder
-     */
-    @Override
-    public boolean hasRotorServer() {
-        return inventory.hasRotor();
-    }
-
     protected void setRotorColor(int color) {
         this.rotorColor = color;
     }

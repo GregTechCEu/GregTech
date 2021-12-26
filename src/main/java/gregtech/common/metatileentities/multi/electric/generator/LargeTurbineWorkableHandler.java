@@ -112,22 +112,4 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
         super.invalidate();
         excessVoltage = 0;
     }
-
-
-
-    //TODO re-implement large turbine fluid output using recipe voiding
-//    private void addOutputFluids(FuelRecipe currentRecipe, int fuelAmountUsed) {
-//        if (largeTurbine.turbineType == TurbineType.STEAM) {
-//            int waterFluidAmount = fuelAmountUsed / 15;
-//            if (waterFluidAmount > 0) {
-//                FluidStack waterStack = Materials.Water.getFluid(waterFluidAmount);
-//                largeTurbine.exportFluidHandler.fill(waterStack, true);
-//            }
-//        } else if (largeTurbine.turbineType == TurbineType.PLASMA) {
-//            Material material = MetaFluids.getMaterialFromFluid(currentRecipe.getRecipeFluid().getFluid());
-//            if (material != null) {
-//                largeTurbine.exportFluidHandler.fill(material.getFluid(fuelAmountUsed), true);
-//            }
-//        }
-//    }
 }

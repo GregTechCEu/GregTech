@@ -15,7 +15,7 @@ import java.util.List;
 
 public class TurbineRotorBehavior extends AbstractMaterialPartBehavior implements IItemMaxStackSizeProvider {
 
-    private static final int TOOL_DURABILITY_MULTIPLIER = 100;
+    private static final int TOOL_DURABILITY_MULTIPLIER = 40;
 
     @Override
     public int getPartMaxDurability(ItemStack itemStack) {

@@ -1,8 +1,5 @@
 package gregtech.api.capability;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 public interface IRotorHolder {
 
     /**
@@ -46,14 +43,6 @@ public interface IRotorHolder {
      * @return whether there is a rotor in the holder
      */
     boolean hasRotor();
-
-    /**
-     * returns true on only the Server
-     *
-     * @return whether there is a rotor in the holder
-     */
-    @SideOnly(Side.SERVER)
-    boolean hasRotorServer();
 
     /**
      *
