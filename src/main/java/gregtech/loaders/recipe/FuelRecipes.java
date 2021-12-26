@@ -26,7 +26,7 @@ public class FuelRecipes {
         registerCombustionGeneratorFuel(HighOctaneGasoline.getFluid(1), 68, LV);
 
         //steam generator fuels
-        registerSteamGeneratorFuel(Steam.getFluid(640), 10, LV);
+        registerSteamGeneratorFuel(Steam.getFluid(640), DistilledWater.getFluid(4), 10, LV);
 
         //gas turbine fuels
         registerGasGeneratorFuel(NaturalGas.getFluid(8), 5, LV);
@@ -99,6 +99,15 @@ public class FuelRecipes {
     public static void registerSteamGeneratorFuel(FluidStack fuelStack, int duration, int tier) {
         RecipeMaps.STEAM_TURBINE_FUELS.recipeBuilder()
                 .fluidInputs(fuelStack)
+                .duration(duration)
+                .EUt((int) GTValues.V[tier])
+                .buildAndRegister();
+    }
+
+    public static void registerSteamGeneratorFuel(FluidStack fuelStack, FluidStack fluidOutputStack, int duration, int tier) {
+        RecipeMaps.STEAM_TURBINE_FUELS.recipeBuilder()
+                .fluidInputs(fuelStack)
+                .fluidOutputs(fluidOutputStack)
                 .duration(duration)
                 .EUt((int) GTValues.V[tier])
                 .buildAndRegister();

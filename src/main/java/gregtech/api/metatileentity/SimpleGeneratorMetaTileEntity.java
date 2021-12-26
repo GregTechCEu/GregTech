@@ -38,25 +38,32 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     protected IItemHandler outputItemInventory;
     protected IFluidHandler outputFluidInventory;
 
+    protected boolean ignoreOutputs;
+
     private static final int FONT_HEIGHT = 9; // Minecraft's FontRenderer FONT_HEIGHT value
 
     public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier) {
-        this(metaTileEntityId, recipeMap, renderer, tier, GTUtility.defaultTankSizeFunction);
+        this(metaTileEntityId, recipeMap, renderer, tier, false);
+    }
+
+    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean ignoreOutputs) {
+        this(metaTileEntityId, recipeMap, renderer, tier, GTUtility.generatorTankSizeFunction, ignoreOutputs);
     }
 
     public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
-                                         Function<Integer, Integer> tankScalingFunction) {
+                                         Function<Integer, Integer> tankScalingFunction, boolean ignoreOutputs) {
         super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction);
+        this.ignoreOutputs = ignoreOutputs;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new SimpleGeneratorMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), getTankScalingFunction());
+        return new SimpleGeneratorMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), getTankScalingFunction(), ignoreOutputs);
     }
 
     @Override
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
-        final FuelRecipeLogic result = new FuelRecipeLogic(this, recipeMap, () -> energyContainer);
+        final FuelRecipeLogic result = new FuelRecipeLogic(this, recipeMap, () -> energyContainer, ignoreOutputs);
         result.enableOverclockVoltage();
         return result;
     }
@@ -102,8 +109,12 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
                 workableRecipeMap.getMaxOutputs() >= 6 || workableRecipeMap.getMaxFluidOutputs() >= 6)
             yOffset = FONT_HEIGHT;
 
-        ModularUI.Builder builder = workableRecipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset)
-                .widget(new LabelWidget(6, 6, getMetaFullName()))
+
+        ModularUI.Builder builder;
+        if (ignoreOutputs) builder = workableRecipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
+        else builder = workableRecipeMap.createUITemplateNoOutputs(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
+
+        builder.widget(new LabelWidget(6, 6, getMetaFullName()))
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);
 
         builder.widget(new CycleButtonWidget(7, 62 + yOffset, 18, 18,
