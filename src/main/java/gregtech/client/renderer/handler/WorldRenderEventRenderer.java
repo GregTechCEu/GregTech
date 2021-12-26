@@ -171,7 +171,6 @@ public class WorldRenderEventRenderer {
             }
 
             EnumFacing facing = controllerBase.getFrontFacing();
-            EnumFacing spin = EnumFacing.NORTH;
             RelativeDirection[] structureDir = controllerBase.structurePattern.structureDir;
 
             if (structureDir == null) {
@@ -183,7 +182,7 @@ public class WorldRenderEventRenderer {
                 return;
             }
 
-            frontFacing = facing.getYOffset() == 0 ? facing : facing.getYOffset() < 0 ? spin : spin.getOpposite();
+            frontFacing = facing.getYOffset() == 0 ? facing : facing.getYOffset() < 0 ? EnumFacing.NORTH : EnumFacing.SOUTH;
 
             Rotation rotatePreviewBy = Rotation.values()[(4 + frontFacing.getHorizontalIndex() - previewFacing.getHorizontalIndex()) % 4];
 
@@ -214,9 +213,8 @@ public class WorldRenderEventRenderer {
                 GlStateManager.rotate(90, previewFacing.getZOffset(), 0, -previewFacing.getXOffset());
                 GlStateManager.translate(-0.5, -0.5, -0.5);
             } else {
-                int degree = 90 * (spin == EnumFacing.EAST ? -1 : spin == EnumFacing.SOUTH ? 2 : spin == EnumFacing.WEST ? 1 : 0);
                 GlStateManager.translate(0.5, 0.5, 0.5);
-                GlStateManager.rotate(degree, previewFacing.getXOffset(), 0, previewFacing.getZOffset());
+                GlStateManager.rotate(0, previewFacing.getXOffset(), 0, previewFacing.getZOffset());
                 GlStateManager.translate(-0.5, -0.5, -0.5);
             }
 
