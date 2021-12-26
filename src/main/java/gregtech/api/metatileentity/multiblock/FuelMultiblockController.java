@@ -64,9 +64,6 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
             } else {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
             }
-
-            if (recipeMapWorkable.isHasNotEnoughEnergy())
-                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
         }
     }
 }
