@@ -5,7 +5,6 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
-import gregtech.api.capability.impl.FuelRecipeLogic;
 import gregtech.api.gui.impl.ModularUIGuiHandler;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -158,9 +157,6 @@ public class GTJeiPlugin implements IModPlugin {
                         }
                         registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
                     }
-                } else if (workableCapability instanceof FuelRecipeLogic) {
-                    FuelRecipeMap recipeMap = ((FuelRecipeLogic) workableCapability).recipeMap;
-                    registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
                 }
             }
         }
@@ -170,7 +166,7 @@ public class GTJeiPlugin implements IModPlugin {
             }
         }
 
-        String semiFluidMapId = GTValues.MODID + ":" + RecipeMaps.SEMI_FLUID_GENERATOR_FUELS_2.getUnlocalizedName();
+        String semiFluidMapId = GTValues.MODID + ":" + RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.getUnlocalizedName();
         registry.addRecipeCatalyst(MetaTileEntities.LARGE_BRONZE_BOILER.getStackForm(), semiFluidMapId);
         registry.addRecipeCatalyst(MetaTileEntities.LARGE_STEEL_BOILER.getStackForm(), semiFluidMapId);
         registry.addRecipeCatalyst(MetaTileEntities.LARGE_TITANIUM_BOILER.getStackForm(), semiFluidMapId);

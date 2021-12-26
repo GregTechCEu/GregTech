@@ -3867,9 +3867,11 @@ gregtech.machine.rotor_holder.tooltip1=Rotor Holder for Multiblocks
 gregtech.machine.rotor_holder.tooltip2=Holds Rotor in place so it will not fly away
 
 gregtech.machine.rotor_holder.hv.name=HV Rotor Holder
+gregtech.machine.rotor_holder.ev.name=EV Rotor Holder
+gregtech.machine.rotor_holder.iv.name=IV Rotor Holder
 gregtech.machine.rotor_holder.luv.name=LuV Rotor Holder
-gregtech.machine.rotor_holder.uhv.name=UHV Rotor Holder
-gregtech.machine.rotor_holder.max.name=MAX Rotor Holder
+gregtech.machine.rotor_holder.zpm.name=ZPM Rotor Holder
+gregtech.machine.rotor_holder.uv.name=UV Rotor Holder
 
 gregtech.machine.maintenance_hatch.name=Maintenance Hatch
 gregtech.machine.maintenance_hatch.tooltip=For maintaining Multiblocks
@@ -4080,10 +4082,11 @@ gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost=Supply
 gregtech.multiblock.large_combustion_engine.obstructed=Engine Intakes Obstructed.
 
 gregtech.multiblock.turbine.fuel_amount=Fuel Amount: %sL (%s)
-gregtech.multiblock.turbine.rotor_speed=Rotor Speed: %s / %s RPM
-gregtech.multiblock.turbine.rotor_efficiency=Rotor Efficiency: %s%%
+gregtech.multiblock.turbine.rotor_speed=Rotor Speed: %s/%s RPM
 gregtech.multiblock.turbine.rotor_durability=Rotor Durability: %s%%
-gregtech.multiblock.turbine.low_rotor_durability=WARNING: Rotor Durability below %s%% (%s%%)
+gregtech.multiblock.turbine.efficiency=Turbine Efficiency: %s%%
+gregtech.multiblock.turbine.energy_per_tick=Energy Output: %s/%s EU/t
+gregtech.multiblock.turbine.energy_per_tick_maxed=Energy Output: %s EU/t
 gregtech.multiblock.turbine.obstructed=Turbine Face Obstructed
 
 gregtech.multiblock.large_boiler.temperature=Temperature: %s / %s C

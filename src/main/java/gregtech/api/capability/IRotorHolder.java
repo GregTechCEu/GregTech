@@ -6,15 +6,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public interface IRotorHolder {
 
     /**
-     * @return the base efficiency of the rotor holder
+     * @return true if the front face is unobstructed
+     */
+    boolean isFrontFaceFree();
+
+    /**
+     * @return the base efficiency of the rotor holder in %
      */
     static int getBaseEfficiency() {
-        return 10000;
+        return 100;
     }
 
     /**
-     *
-     * @return the total efficiency the rotor holder and rotor provide
+     * @return the total efficiency the rotor holder and rotor provide in %
      */
     default int getTotalEfficiency() {
         int rotorEfficiency = getRotorEfficiency();
@@ -25,7 +29,15 @@ public interface IRotorHolder {
         if (holderEfficiency == -1)
             return -1;
 
-        return Math.max(getBaseEfficiency(), rotorEfficiency + holderEfficiency);
+        return Math.max(getBaseEfficiency(), rotorEfficiency * holderEfficiency / 100);
+    }
+
+    /**
+     *
+     * @return the total power boost to output and consumption the rotor holder and rotor provide in %
+     */
+    default int getTotalPower() {
+        return getHolderPowerMultiplier() * getRotorPower();
     }
 
     /**
@@ -55,30 +67,26 @@ public interface IRotorHolder {
     int getRotorSpeed();
 
     /**
-     *
-     * @return true if the rotor is at maximum speed
-     */
-    boolean isRotorMaxSpeed();
-
-    /**
-     * @return the rotor's efficiency
+     * @return the rotor's efficiency in %
      */
     int getRotorEfficiency();
 
-
     /**
-     * @return the rotor's power
+     * @return the rotor's power in %
      */
     int getRotorPower();
 
     /**
+     * @return the rotor's durability as %
+     */
+    int getRotorDurabilityPercent();
+
+    /**
      * damages the rotor
      *
-     * @param amount   to damage
-     * @param simulate whether to actually apply the damage
-     * @return true if damage can be applied
+     * @param amount to damage
      */
-    boolean damageRotor(int amount, boolean simulate);
+    void damageRotor(int amount);
 
     /**
      *
@@ -92,7 +100,7 @@ public interface IRotorHolder {
     int getHolderPowerMultiplier();
 
     /**
-     * @return the efficiency provided by the rotor holder
+     * @return the efficiency provided by the rotor holder in %
      */
     int getHolderEfficiency();
 }

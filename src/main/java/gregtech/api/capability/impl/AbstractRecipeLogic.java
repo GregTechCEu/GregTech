@@ -136,9 +136,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         World world = getMetaTileEntity().getWorld();
         if (world != null && !world.isRemote) {
             if (workingEnabled) {
-                if (getMetaTileEntity().getOffsetTimer() % 20 == 0) {
+                if (getMetaTileEntity().getOffsetTimer() % 20 == 0)
                     this.canRecipeProgress = canProgressRecipe();
-                }
 
                 if (progressTime > 0) {
                     updateRecipeProgress();
