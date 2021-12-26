@@ -35,32 +35,23 @@ import java.util.function.Function;
 
 public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity implements IActiveOutputSide {
 
-    private final boolean hasFrontFacing;
-
     protected IItemHandler outputItemInventory;
     protected IFluidHandler outputFluidInventory;
-    private final RecipeLogicEnergy workableHandler;
-    private final ICubeRenderer overlayRenderer;
-    private final RecipeMap<?> recipeMap;
 
     private static final int FONT_HEIGHT = 9; // Minecraft's FontRenderer FONT_HEIGHT value
 
-    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean hasFrontFacing) {
-        this(metaTileEntityId, recipeMap, renderer, tier, hasFrontFacing, GTUtility.defaultTankSizeFunction);
+    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier) {
+        this(metaTileEntityId, recipeMap, renderer, tier, GTUtility.defaultTankSizeFunction);
     }
 
-    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean hasFrontFacing,
+    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
                                          Function<Integer, Integer> tankScalingFunction) {
         super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction);
-        this.hasFrontFacing = hasFrontFacing;
-        this.recipeMap = recipeMap;
-        this.overlayRenderer = renderer;
-        this.workableHandler = createWorkable(recipeMap);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new SimpleGeneratorMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), hasFrontFacing, getTankScalingFunction());
+        return new SimpleGeneratorMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), getTankScalingFunction());
     }
 
     @Override
@@ -126,7 +117,7 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.overlayRenderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), workableHandler.isActive(), workableHandler.isWorkingEnabled());
+        this.renderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), workable.isActive(), workable.isWorkingEnabled());
         Textures.ENERGY_OUT.renderSided(getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
     }
 
