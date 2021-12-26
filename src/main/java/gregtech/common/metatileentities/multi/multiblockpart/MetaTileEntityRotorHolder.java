@@ -31,8 +31,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
@@ -112,8 +110,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     void setCurrentSpeed(int speed) {
         if (currentSpeed != speed) {
             currentSpeed = speed;
-            if (!isRotorSpinning())
-                setRotorSpinning(currentSpeed > 0);
+            setRotorSpinning(currentSpeed > 0);
             markDirty();
         }
     }
@@ -364,6 +361,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
             return TurbineRotorBehavior.getInstanceFor(stack);
         }
 
+        @SuppressWarnings("BooleanMethodIsAlwaysInverted")
         private boolean hasRotor() {
             return getTurbineBehavior() != null;
         }
