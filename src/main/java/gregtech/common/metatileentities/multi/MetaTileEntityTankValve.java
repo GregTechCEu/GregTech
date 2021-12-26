@@ -125,6 +125,11 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
     }
 
     @Override
+    public boolean canPartShare() {
+        return false;
+    }
+
+    @Override
     public MultiblockAbility<IFluidHandler> getAbility() {
         return MultiblockAbility.TANK_VALVE;
     }
