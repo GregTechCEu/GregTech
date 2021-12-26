@@ -238,9 +238,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                     this.progressTime = Math.max(1, progressTime - 2);
                 }
             }
-        } else {
-            if (isActive)
-                setActive(false);
         }
     }
 

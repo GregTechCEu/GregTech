@@ -6,6 +6,7 @@ import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
+import gregtech.common.ConfigHolder;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -18,6 +19,21 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
     public LargeTurbineWorkableHandler(RecipeMapMultiblockController metaTileEntity, int tier) {
         super(metaTileEntity);
         this.BASE_EU_OUTPUT = (int) GTValues.V[tier] * 2;
+    }
+
+    @Override
+    protected void updateRecipeProgress() {
+        if (canRecipeProgress) {
+            if (!isActive)
+                setActive(true);
+
+            // turbines can void energy
+            drawEnergy(recipeEUt, false);
+            //as recipe starts with progress on 1 this has to be > only not => to compensate for it
+            if (++progressTime > maxProgressTime) {
+                completeRecipe();
+            }
+        }
     }
 
     public FluidStack getInputFluidStack() {
@@ -96,6 +112,8 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
         super.invalidate();
         excessVoltage = 0;
     }
+
+
 
     //TODO re-implement large turbine fluid output using recipe voiding
 //    private void addOutputFluids(FuelRecipe currentRecipe, int fuelAmountUsed) {
