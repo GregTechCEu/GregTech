@@ -232,7 +232,7 @@ public class MaterialFlagAddition {
         oreProp.setOreByProducts(GarnetRed, Manganese);
 
         oreProp = Sphalerite.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(GarnetYellow, Cadmium, Gallium, Zinc);
+        oreProp.setOreByProducts(GarnetYellow, Gallium, Cadmium, Zinc);
         oreProp.setWashedIn(SodiumPersulfate);
         oreProp.setDirectSmeltResult(Zinc);
 
