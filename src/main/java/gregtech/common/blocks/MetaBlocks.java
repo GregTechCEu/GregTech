@@ -206,16 +206,24 @@ public class MetaBlocks {
                 }
             }
             if (material.hasProperty(PropertyKey.FLUID_PIPE)) {
-                for (BlockFluidPipe pipe : FLUID_PIPES)
-                    pipe.addPipeMaterial(material, material.getProperty(PropertyKey.FLUID_PIPE));
+                for (BlockFluidPipe pipe : FLUID_PIPES) {
+                    if(!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
+                        pipe.addPipeMaterial(material, material.getProperty(PropertyKey.FLUID_PIPE));
+                    }
+                }
             }
             if (material.hasProperty(PropertyKey.ITEM_PIPE)) {
-                for (BlockItemPipe pipe : ITEM_PIPES)
-                    pipe.addPipeMaterial(material, material.getProperty(PropertyKey.ITEM_PIPE));
+                for (BlockItemPipe pipe : ITEM_PIPES) {
+                    if(!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
+                        pipe.addPipeMaterial(material, material.getProperty(PropertyKey.ITEM_PIPE));
+                    }
+                }
             }
         }
         for (BlockFluidPipe pipe : FLUID_PIPES) {
-            pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(310, 5, false));
+            if(!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood)) {
+                pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(310, 5, false));
+            }
         }
         registerTileEntity();
 
