@@ -370,4 +370,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         String key = String.format("gregtech.multiblock.%s.description", metaTileEntityId.getPath());
         return I18n.hasKey(key) ? new String[]{I18n.format(key)} : new String[0];
     }
+
+    public void explodeMultiblock() {
+        List<IMultiblockPart> parts = new ArrayList<>(getMultiblockParts());
+        parts.forEach(p -> ((MetaTileEntity) p).doExplosion(8));
+        doExplosion(8);
+    }
 }
