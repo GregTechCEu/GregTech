@@ -142,7 +142,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {
-        return Textures.EXTREME_COMBUSTION_ENGINE_OVERLAY;
+        return isExtreme ? Textures.EXTREME_COMBUSTION_ENGINE_OVERLAY : Textures.LARGE_COMBUSTION_ENGINE_OVERLAY;
     }
 
     @Override
