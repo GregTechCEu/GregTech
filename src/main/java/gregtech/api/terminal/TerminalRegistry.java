@@ -112,10 +112,10 @@ public class TerminalRegistry {
                 .device(DeviceHardware.DEVICE.PROSPECTOR_LV)
                 .build(); */
         AppRegistryBuilder.create(new MultiBlockPreviewARApp())
-                .battery(GTValues.LV, 512)
+                .battery(GTValues.LV, 128)
                 .device(DeviceHardware.DEVICE.CAMERA)
-                .upgrade(0, MetaItems.EMITTER_MV.getStackForm(2))
-                .upgrade(1, MetaItems.EMITTER_EV.getStackForm(4), MetaItems.WORKSTATION_EV.getStackForm(4))
+                .upgrade(1, MetaItems.EMITTER_HV.getStackForm(4), MetaItems.WORKSTATION_EV.getStackForm(2))
+                .defaultApp()
                 .build();
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
             AppRegistryBuilder.create(new RecipeChartApp())

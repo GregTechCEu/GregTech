@@ -439,8 +439,8 @@ public class MiscRecipeLoader {
                 .outputs(WIRELESS.getStackForm())
                 .buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
-                .input(ELECTRIC_PISTON_MV, 2)
-                .input(ELECTRIC_PISTON_MV)
+                .input(ELECTRIC_PISTON_LV, 2)
+                .input(EMITTER_LV)
                 .input(lens, Glass)
                 .input(lens, Diamond)
                 .input(circuit, Basic, 4)
