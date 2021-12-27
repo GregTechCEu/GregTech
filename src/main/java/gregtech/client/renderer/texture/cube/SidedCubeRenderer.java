@@ -9,6 +9,7 @@ import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.cclop.LightMapOperation;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.OrientedOverlayRenderer.OverlayFace;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -26,15 +27,15 @@ import java.util.Map;
 public class SidedCubeRenderer implements ICubeRenderer {
 
     protected final String basePath;
-    protected final OrientedOverlayRenderer.OverlayFace[] faces;
+    protected final OverlayFace[] faces;
 
     @SideOnly(Side.CLIENT)
-    protected Map<OrientedOverlayRenderer.OverlayFace, TextureAtlasSprite> sprites;
+    protected Map<OverlayFace, TextureAtlasSprite> sprites;
 
     @SideOnly(Side.CLIENT)
-    protected Map<OrientedOverlayRenderer.OverlayFace, TextureAtlasSprite> spritesEmissive;
+    protected Map<OverlayFace, TextureAtlasSprite> spritesEmissive;
 
-    public SidedCubeRenderer(String basePath, OrientedOverlayRenderer.OverlayFace... faces) {
+    public SidedCubeRenderer(String basePath, OverlayFace... faces) {
         this.basePath = basePath;
         this.faces = faces;
         Textures.CUBE_RENDERER_REGISTRY.put(basePath, this);
@@ -51,9 +52,9 @@ public class SidedCubeRenderer implements ICubeRenderer {
             modID = split[0];
             basePath = split[1];
         }
-        this.sprites = new EnumMap<>(OrientedOverlayRenderer.OverlayFace.class);
-        this.spritesEmissive = new EnumMap<>(OrientedOverlayRenderer.OverlayFace.class);
-        for (OrientedOverlayRenderer.OverlayFace overlayFace : faces) {
+        this.sprites = new EnumMap<>(OverlayFace.class);
+        this.spritesEmissive = new EnumMap<>(OverlayFace.class);
+        for (OverlayFace overlayFace : faces) {
             String faceName = overlayFace.name().toLowerCase();
             ResourceLocation resourceLocation = new ResourceLocation(modID, String.format("blocks/%s/%s", basePath, faceName));
             sprites.put(overlayFace, textureMap.registerSprite(resourceLocation));
@@ -64,26 +65,22 @@ public class SidedCubeRenderer implements ICubeRenderer {
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getSpriteOnSide(OrientedOverlayRenderer.OverlayFace renderSide) {
-        return sprites.get(renderSide);
-    }
-
     @Override
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getParticleSprite() {
-        return getSpriteOnSide(OrientedOverlayRenderer.OverlayFace.TOP);
+        return sprites.get(OverlayFace.TOP);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
         for (EnumFacing facing : EnumFacing.VALUES) {
-            TextureAtlasSprite renderSprite = sprites.get(OrientedOverlayRenderer.OverlayFace.bySide(facing, frontFacing));
+            OverlayFace overlayFace = OverlayFace.bySide(facing, frontFacing);
+            TextureAtlasSprite renderSprite = sprites.get(overlayFace);
             if (renderSprite != null) {
                 Textures.renderFace(renderState, translation, pipeline, facing, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
 
-                TextureAtlasSprite emissiveSprite = spritesEmissive.get(OrientedOverlayRenderer.OverlayFace.bySide(facing, frontFacing));
+                TextureAtlasSprite emissiveSprite = spritesEmissive.get(overlayFace);
                 if (emissiveSprite != null) {
                     if (ConfigHolder.client.machinesEmissiveTextures) {
                         IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));

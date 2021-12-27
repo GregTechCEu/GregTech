@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.texture.custom.FireboxActiveRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -42,8 +43,14 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        getBaseTexture().render(renderState, translation, ArrayUtils.add(pipeline,
-                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
+        ICubeRenderer baseTexture = getBaseTexture();
+        if (baseTexture instanceof FireboxActiveRenderer) {
+            baseTexture.renderOriented(renderState, translation, ArrayUtils.add(pipeline,
+                    new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))), getFrontFacing());
+        } else {
+            baseTexture.render(renderState, translation, ArrayUtils.add(pipeline,
+                    new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
+        }
     }
 
     @Override
@@ -74,8 +81,12 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
     public ICubeRenderer getBaseTexture() {
         MultiblockControllerBase controller = getController();
         if (controller != null) {
+            this.setPaintingColor(0xFFFFFF);
             return this.hatchTexture = controller.getBaseTexture(this);
         } else if (this.hatchTexture != null) {
+            if (hatchTexture != Textures.getInactiveTexture(hatchTexture)) {
+                return this.hatchTexture = Textures.getInactiveTexture(hatchTexture);
+            }
             return this.hatchTexture;
         } else {
             this.setPaintingColor(DEFAULT_PAINTING_COLOR);
