@@ -1,5 +1,5 @@
 {
-  "weight": 25,
+  "weight": 50,
   "density": 1.0,
   "max_height": 40,
   "min_height": 10,
@@ -17,8 +17,8 @@
   "generator": {
     "type": "sphere",
     "radius": [
-      10,
-      15
+      9,
+      13
     ]
   },
   "filler": {
@@ -28,7 +28,7 @@
       "values": [
         {
           "weight": 100,
-          "value": "fluid:oil_light"
+          "value": "fluid:oil_medium"
         }
       ]
     }
