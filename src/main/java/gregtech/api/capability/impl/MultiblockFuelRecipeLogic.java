@@ -66,7 +66,10 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     public void update() {
         super.update();
         if (workingEnabled && progressTime > 0) {
-            totalContinuousRunningTime = Math.max(0, totalContinuousRunningTime + 1);
+            if (totalContinuousRunningTime == Integer.MAX_VALUE)
+                totalContinuousRunningTime = 0;
+            else
+                totalContinuousRunningTime += 1;
         } else {
             totalContinuousRunningTime = 0;
         }

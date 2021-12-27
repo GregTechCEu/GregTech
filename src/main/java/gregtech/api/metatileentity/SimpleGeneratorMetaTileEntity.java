@@ -71,7 +71,7 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.outputItemInventory = new ItemHandlerProxy(new ItemStackHandler(0), exportItems);
+        this.outputItemInventory = new ItemHandlerProxy(new NotifiableItemStackHandler(0, this, true), exportItems);
         this.outputFluidInventory = new FluidHandlerProxy(new FluidTankList(false), exportFluids);
     }
 

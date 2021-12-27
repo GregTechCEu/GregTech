@@ -4088,6 +4088,8 @@ gregtech.multiblock.turbine.efficiency=Turbine Efficiency: %s%%
 gregtech.multiblock.turbine.energy_per_tick=Energy Output: %s/%s EU/t
 gregtech.multiblock.turbine.energy_per_tick_maxed=Energy Output: %s EU/t
 gregtech.multiblock.turbine.obstructed=Turbine Face Obstructed
+gregtech.multiblock.turbine.voltage_tooltip=Base Production: §e%s§7 EU/t
+gregtech.multiblock.turbine.efficiency_tooltip=Each Rotor Holder above %s§7 adds §610%%§7 efficiency.
 
 gregtech.multiblock.large_boiler.temperature=Temperature: %s / %s C
 gregtech.multiblock.large_boiler.steam_output=Steam Output: %s L/t

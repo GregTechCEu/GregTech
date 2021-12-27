@@ -107,7 +107,8 @@ public class Textures {
     public static final OrientedOverlayRenderer DISTILLATION_TOWER_OVERLAY = new OrientedOverlayRenderer("multiblock/distillation_tower", FRONT);
     public static final OrientedOverlayRenderer CRACKING_UNIT_OVERLAY = new OrientedOverlayRenderer("multiblock/cracking_unit", FRONT);
     public static final OrientedOverlayRenderer LARGE_CHEMICAL_REACTOR_OVERLAY = new OrientedOverlayRenderer("multiblock/large_chemical_reactor", FRONT);
-    public static final OrientedOverlayRenderer DIESEL_ENGINE_OVERLAY = new OrientedOverlayRenderer("multiblock/generator/large_combustion_engine", FRONT);
+    public static final OrientedOverlayRenderer LARGE_COMBUSTION_ENGINE_OVERLAY = new OrientedOverlayRenderer("multiblock/generator/large_combustion_engine", FRONT);
+    public static final OrientedOverlayRenderer EXTREME_COMBUSTION_ENGINE_OVERLAY = new OrientedOverlayRenderer("multiblock/generator/extreme_combustion_engine", FRONT);
     public static final OrientedOverlayRenderer LARGE_STEAM_TURBINE_OVERLAY = new OrientedOverlayRenderer("multiblock/generator/large_steam_turbine", FRONT);
     public static final OrientedOverlayRenderer LARGE_GAS_TURBINE_OVERLAY = new OrientedOverlayRenderer("multiblock/generator/large_gas_turbine", FRONT);
     public static final OrientedOverlayRenderer LARGE_PLASMA_TURBINE_OVERLAY = new OrientedOverlayRenderer("multiblock/generator/large_plasma_turbine", FRONT);

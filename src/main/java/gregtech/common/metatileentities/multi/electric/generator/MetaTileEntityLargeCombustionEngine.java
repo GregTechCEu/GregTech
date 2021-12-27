@@ -39,6 +39,7 @@ import java.util.List;
 public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockController {
 
     private final int tier;
+    private final boolean isExtreme;
 
     public MetaTileEntityLargeCombustionEngine(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, RecipeMaps.COMBUSTION_GENERATOR_FUELS, tier);
@@ -46,6 +47,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
         this.recipeMapWorkable.enableOverclockVoltage();
         this.recipeMapWorkable.setOverclockTier(tier);
         this.tier = tier;
+        this.isExtreme = tier > GTValues.EV;
     }
 
     @Override
@@ -65,7 +67,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 int oxygenAmount = oxygenStack == null ? 0 : oxygenStack.amount;
                 int liquidOxygenAmount = liquidOxygenStack == null ? 0 : liquidOxygenStack.amount;
                 textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.lubricant_amount", lubricantAmount));
-                if (liquidOxygenAmount == 0) {
+                if (!isExtreme || liquidOxygenAmount == 0) {
                     if (oxygenAmount >= 2) {
                         textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.oxygen_amount", oxygenAmount));
                         textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.oxygen_boosted"));
@@ -73,7 +75,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                         textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost"));
                     }
                 }
-                if (tier > GTValues.EV && oxygenAmount == 0) {
+                if (isExtreme && oxygenAmount == 0) {
                     if (liquidOxygenAmount >= 2) {
                         textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount", liquidOxygenAmount));
                         textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted"));
@@ -93,7 +95,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.large_combustion_engine.tooltip.1", GTValues.V[tier]));
         tooltip.add(I18n.format("gregtech.machine.large_combustion_engine.tooltip.2"));
-        if (tier > GTValues.EV) {
+        if (isExtreme) {
             tooltip.add(I18n.format("gregtech.machine.large_combustion_engine.tooltip.boost_extreme.1", GTValues.V[tier] * 2));
             tooltip.add(I18n.format("gregtech.machine.large_combustion_engine.tooltip.boost_extreme.2", GTValues.V[tier] * 4));
         } else {
@@ -118,29 +120,29 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     }
 
     public IBlockState getCasingState() {
-        return tier > GTValues.EV ? MetaBlocks.METAL_CASING.getState(MetalCasingType.TUNGSTENSTEEL_ROBUST) :
+        return isExtreme ? MetaBlocks.METAL_CASING.getState(MetalCasingType.TUNGSTENSTEEL_ROBUST) :
                 MetaBlocks.METAL_CASING.getState(MetalCasingType.TITANIUM_STABLE);
     }
 
     public IBlockState getGearboxState() {
-        return  tier > GTValues.EV ? MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.TUNGSTENSTEEL_GEARBOX) :
+        return isExtreme ? MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.TUNGSTENSTEEL_GEARBOX) :
                 MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.TITANIUM_GEARBOX);
     }
 
     public IBlockState getIntakeState() {
-        return  tier > GTValues.EV ? MetaBlocks.MULTIBLOCK_CASING.getState(MultiblockCasingType.EXTREME_ENGINE_INTAKE_CASING) :
+        return isExtreme ? MetaBlocks.MULTIBLOCK_CASING.getState(MultiblockCasingType.EXTREME_ENGINE_INTAKE_CASING) :
                 MetaBlocks.MULTIBLOCK_CASING.getState(MultiblockCasingType.ENGINE_INTAKE_CASING);
     }
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        return  tier > GTValues.EV ? Textures.ROBUST_TUNGSTENSTEEL_CASING : Textures.STABLE_TITANIUM_CASING;
+        return isExtreme ? Textures.ROBUST_TUNGSTENSTEEL_CASING : Textures.STABLE_TITANIUM_CASING;
     }
 
     @Nonnull
     @Override
     protected ICubeRenderer getFrontOverlay() {
-        return Textures.DIESEL_ENGINE_OVERLAY;
+        return Textures.EXTREME_COMBUSTION_ENGINE_OVERLAY;
     }
 
     @Override
@@ -196,7 +198,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 if (OXYGEN_STACK.isFluidStackIdentical(((RecipeMapMultiblockController) metaTileEntity).getInputFluidInventory().drain(OXYGEN_STACK, false))) {
                     ((RecipeMapMultiblockController) metaTileEntity).getInputFluidInventory().drain(OXYGEN_STACK, true);
                     isOxygenBoosted = true;
-                } else if (LIQUID_OXYGEN_STACK.isFluidStackIdentical(((RecipeMapMultiblockController) metaTileEntity).getInputFluidInventory().drain(LIQUID_OXYGEN_STACK, false))) {
+                } else if (isExtreme && LIQUID_OXYGEN_STACK.isFluidStackIdentical(((RecipeMapMultiblockController) metaTileEntity).getInputFluidInventory().drain(LIQUID_OXYGEN_STACK, false))) {
                     ((RecipeMapMultiblockController) metaTileEntity).getInputFluidInventory().drain(LIQUID_OXYGEN_STACK, true);
                     isLiquidOxygenBoosted = true;
                     isOxygenBoosted = false;
