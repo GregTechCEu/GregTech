@@ -685,7 +685,7 @@ public class VanillaOverrideRecipes {
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.plate, Materials.Wood, 4)
-                .input(OrePrefix.gearSmall, Materials.Wood)
+                .input(OrePrefix.gear, Materials.Wood)
                 .input(OrePrefix.stick, Materials.RedAlloy)
                 .inputs(new ItemStack(Blocks.IRON_BARS, 2))
                 .outputs(new ItemStack(Blocks.NOTEBLOCK))

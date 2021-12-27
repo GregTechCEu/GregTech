@@ -347,7 +347,7 @@ public class UnknownCompositionMaterials {
         Wood = new Material.Builder(1617, "wood")
                 .dust(0, 300)
                 .color(0x643200).iconSet(WOOD)
-                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD, FLAMMABLE, GENERATE_GEAR, GENERATE_SMALL_GEAR, GENERATE_FRAME)
+                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD, FLAMMABLE, GENERATE_GEAR, GENERATE_FRAME)
                 .build();
 
         Paper = new Material.Builder(1618, "paper")
