@@ -114,11 +114,9 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
             excessWater %= STEAM_PER_WATER;
 
             FluidStack drainedWater = ModHandler.getWaterFromContainer(getInputTank(), (int) amount, true);
-            GTLog.logger.info("Water drained: {}", amount);
             if (amount != 0 && (drainedWater == null || drainedWater.amount < amount)) {
                 getMetaTileEntity().explodeMultiblock();
             } else {
-                GTLog.logger.info("Steam per tick: {}", generatedSteam);
                 setLastTickSteam(generatedSteam);
                 getOutputTank().fill(ModHandler.getSteam(generatedSteam), true);
             }

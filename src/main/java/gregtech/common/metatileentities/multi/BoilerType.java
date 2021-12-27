@@ -20,7 +20,7 @@ public enum BoilerType {
             Textures.BRONZE_FIREBOX_ACTIVE,
             Textures.LARGE_BRONZE_BOILER),
 
-    STEEL(1200, 1800,
+    STEEL(1800, 1800,
             METAL_CASING.getState(STEEL_SOLID),
             BOILER_FIREBOX_CASING.getState(STEEL_FIREBOX),
             BOILER_CASING.getState(STEEL_PIPE),
@@ -29,7 +29,7 @@ public enum BoilerType {
             Textures.STEEL_FIREBOX_ACTIVE,
             Textures.LARGE_STEEL_BOILER),
 
-    TITANIUM(1600, 2400,
+    TITANIUM(3200, 2400,
             METAL_CASING.getState(TITANIUM_STABLE),
             BOILER_FIREBOX_CASING.getState(TITANIUM_FIREBOX),
             BOILER_CASING.getState(TITANIUM_PIPE),
@@ -38,7 +38,7 @@ public enum BoilerType {
             Textures.TITANIUM_FIREBOX_ACTIVE,
             Textures.LARGE_TITANIUM_BOILER),
 
-    TUNGSTENSTEEL(2000, 3000,
+    TUNGSTENSTEEL(6400, 3000,
             METAL_CASING.getState(TUNGSTENSTEEL_ROBUST),
             BOILER_FIREBOX_CASING.getState(TUNGSTENSTEEL_FIREBOX),
             BOILER_CASING.getState(TUNGSTENSTEEL_PIPE),
