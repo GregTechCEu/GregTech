@@ -15,13 +15,12 @@ import java.util.List;
 
 public class TurbineRotorBehavior extends AbstractMaterialPartBehavior implements IItemMaxStackSizeProvider {
 
-    private static final int TOOL_DURABILITY_MULTIPLIER = 40;
-
+    //TODO rework rotor stats once material stats are also reworked
     @Override
     public int getPartMaxDurability(ItemStack itemStack) {
         Material material = getPartMaterial(itemStack);
         ToolProperty property = material.getProperty(PropertyKey.TOOL);
-        return property != null ? property.getToolDurability() * TOOL_DURABILITY_MULTIPLIER : -1;
+        return property == null ? -1 : 800 * (int) Math.pow(property.getToolDurability(), 0.65);
     }
 
     public int getRotorEfficiency(ItemStack stack) {
