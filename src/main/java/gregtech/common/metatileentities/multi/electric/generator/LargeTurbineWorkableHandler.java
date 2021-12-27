@@ -72,7 +72,6 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
 
         int turbineMaxVoltage = (int) getMaxVoltage();
         FluidStack recipeFluidStack = recipe.getFluidInputs().get(0);
-        int inputAmount = 0;
         int parallel = 0;
 
         if (excessVoltage >= turbineMaxVoltage) {
@@ -83,21 +82,18 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
             parallel = MathHelper.ceil((turbineMaxVoltage - excessVoltage) /
                             (Math.abs(recipe.getEUt()) * holderEfficiency));
 
-            inputAmount = recipeFluidStack.amount * parallel;
-            if (getInputFluidStack().amount < inputAmount)
+            if (getInputFluidStack().amount < recipeFluidStack.amount * parallel)
                 return false;
 
+            //this is necessary to prevent over-consumption of fuel
             excessVoltage += (int) (parallel * Math.abs(recipe.getEUt()) * holderEfficiency - turbineMaxVoltage);
         }
 
-        //rebuild the recipe and adjust voltage to match the turbine, with adjusted input
+        //rebuild the recipe and adjust voltage to match the turbine
         RecipeBuilder<?> recipeBuilder = getRecipeMap().recipeBuilder();
         recipeBuilder.append(recipe, parallel, false, false)
                 .EUt(-turbineMaxVoltage);
-        if (recipeFluidStack.amount != inputAmount) {
-            recipeBuilder.clearFluidInputs()
-                    .fluidInputs(new FluidStack(recipeFluidStack.getFluid(), inputAmount));
-        }
+        applyParallelBonus(recipeBuilder);
         recipe = recipeBuilder.build().getResult();
 
         if (recipe != null && setupAndConsumeRecipeInputs(recipe, getInputInventory())) {
