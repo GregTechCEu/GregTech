@@ -113,7 +113,7 @@ public class GTOreInfo implements IRecipeWrapper {
         if (entry.getEntries() != null && !entry.getEntries().isEmpty()) {
             for (int i = 0; i < getOutputCount(); i++) {
                 Pair<Integer, FillerEntry> entryWithWeight = entry.getEntries().get(i);
-                oreWeights.add((int) Math.round((entryWithWeight.getKey() / (double) totalWeight) * 10000));
+                oreWeights.add((int) Math.round((entryWithWeight.getKey() / (double) totalWeight) * 100));
             }
         }
     }
