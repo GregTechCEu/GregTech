@@ -433,6 +433,9 @@ public class PartsRecipeHandler {
         //noinspection ConstantConditions
         TurbineRotorBehavior.getInstanceFor(rotorStack).setPartMaterial(rotorStack, material);
 
+        if (material.hasProperty(PropertyKey.GEM))
+            return;
+
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.turbineBlade, material, 8)
                 .input(OrePrefix.stickLong, Materials.Magnalium)
