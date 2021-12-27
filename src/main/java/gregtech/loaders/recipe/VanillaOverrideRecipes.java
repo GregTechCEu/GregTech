@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
+import gregtech.api.items.OreDictNames;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
@@ -196,7 +197,7 @@ public class VanillaOverrideRecipes {
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:dispenser"));
 
         ModHandler.addShapedRecipe("dispenser", new ItemStack(Blocks.DISPENSER), "CRC", "STS", "GAG",
-                'C', OrePrefix.stoneCobble,
+                'C', OreDictNames.stoneCobble,
                 'R', new UnificationEntry(OrePrefix.ring, Materials.Iron),
                 'S', new UnificationEntry(OrePrefix.spring, Materials.Iron),
                 'T', new ItemStack(Items.STRING),
@@ -223,7 +224,7 @@ public class VanillaOverrideRecipes {
 
         ModHandler.addShapedRecipe("piston_iron", new ItemStack(Blocks.PISTON), "WWW", "GFG", "CRC",
                 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood),
-                'C', OrePrefix.stoneCobble,
+                'C', OreDictNames.stoneCobble,
                 'R', new UnificationEntry(OrePrefix.plate, Materials.RedAlloy),
                 'G', new UnificationEntry(OrePrefix.gearSmall, Materials.Iron),
                 'F', "fenceWood"
@@ -390,7 +391,7 @@ public class VanillaOverrideRecipes {
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:dropper"));
         ModHandler.addShapedRecipe("dropper", new ItemStack(Blocks.DROPPER), "CRC", "STS", "GAG",
-                'C', new UnificationEntry(OrePrefix.stoneCobble),
+                'C', OreDictNames.stoneCobble,
                 'R', new UnificationEntry(OrePrefix.ring, Materials.Iron),
                 'S', new UnificationEntry(OrePrefix.springSmall, Materials.Iron),
                 'T', new ItemStack(Items.STRING),
@@ -401,7 +402,7 @@ public class VanillaOverrideRecipes {
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:observer"));
         ModHandler.addShapedRecipe("observer", new ItemStack(Blocks.OBSERVER), "RCR", "CQC", "GSG",
                 'R', new UnificationEntry(OrePrefix.ring, Materials.Iron),
-                'C', new UnificationEntry(OrePrefix.stoneCobble),
+                'C', OreDictNames.stoneCobble,
                 'Q', new UnificationEntry(OrePrefix.plate, Materials.NetherQuartz),
                 'G', new UnificationEntry(OrePrefix.gearSmall, Materials.Iron),
                 'S', new UnificationEntry(OrePrefix.stick, Materials.RedAlloy)
@@ -409,7 +410,7 @@ public class VanillaOverrideRecipes {
 
         ModHandler.addShapedRecipe("observer_certus", new ItemStack(Blocks.OBSERVER), "RCR", "CQC", "GSG",
                 'R', new UnificationEntry(OrePrefix.ring, Materials.Iron),
-                'C', new UnificationEntry(OrePrefix.stoneCobble),
+                'C', OreDictNames.stoneCobble,
                 'Q', new UnificationEntry(OrePrefix.plate, Materials.CertusQuartz),
                 'G', new UnificationEntry(OrePrefix.gearSmall, Materials.Iron),
                 'S', new UnificationEntry(OrePrefix.stick, Materials.RedAlloy)
@@ -417,7 +418,7 @@ public class VanillaOverrideRecipes {
 
         ModHandler.addShapedRecipe("observer_quartzite", new ItemStack(Blocks.OBSERVER), "RCR", "CQC", "GSG",
                 'R', new UnificationEntry(OrePrefix.ring, Materials.Iron),
-                'C', new UnificationEntry(OrePrefix.stoneCobble),
+                'C', OreDictNames.stoneCobble,
                 'Q', new UnificationEntry(OrePrefix.plate, Materials.Quartzite),
                 'G', new UnificationEntry(OrePrefix.gearSmall, Materials.Iron),
                 'S', new UnificationEntry(OrePrefix.stick, Materials.RedAlloy)
@@ -693,12 +694,12 @@ public class VanillaOverrideRecipes {
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:furnace"));
         ModHandler.addShapedRecipe("furnace", new ItemStack(Blocks.FURNACE), "CCC", "CFC", "CCC",
                 'F', new ItemStack(Items.FLINT),
-                'C', new UnificationEntry(OrePrefix.stoneCobble)
+                'C', OreDictNames.stoneCobble
         );
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .circuitMeta(8)
-                .input(OrePrefix.stoneCobble, Materials.Stone, 8)
+                .input(OreDictNames.stoneCobble, 8)
                 .inputs(new ItemStack(Items.FLINT))
                 .outputs(new ItemStack(Blocks.FURNACE))
                 .duration(100).EUt(VA[ULV]).buildAndRegister();

@@ -1,6 +1,7 @@
 package gregtech.loaders;
 
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -47,6 +48,8 @@ public class OreDictionaryLoader {
         }
 
         OreDictUnifier.registerOre(OreDictUnifier.get(OrePrefix.dust, Materials.MetalMixture), OrePrefix.dye, Color.Brown);
+
+        OreDictUnifier.registerOre(OreDictUnifier.get(OrePrefix.craftingLens, Materials.Glass), OrePrefix.craftingLens, MarkerMaterials.Color.White);
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.COAL_ORE), OrePrefix.ore, Materials.Coal);
         OreDictUnifier.registerOre(new ItemStack(Blocks.IRON_ORE), OrePrefix.ore, Materials.Iron);
@@ -146,6 +149,5 @@ public class OreDictionaryLoader {
         OreDictUnifier.registerOre(new ItemStack(Items.WRITABLE_BOOK, 1, W), "craftingBook");
         OreDictUnifier.registerOre(new ItemStack(Items.WRITTEN_BOOK, 1, W), "craftingBook");
         OreDictUnifier.registerOre(new ItemStack(Items.ENCHANTED_BOOK, 1, W), "craftingBook");
-
     }
 }

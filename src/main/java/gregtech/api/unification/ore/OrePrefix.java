@@ -178,10 +178,6 @@ public class OrePrefix {
 
     // Prefix to determine which kind of Rock this is.
     public static final OrePrefix stone = new OrePrefix("stone", -1, Materials.Stone, null, SELF_REFERENCING, null);
-    public static final OrePrefix cobblestone = new OrePrefix("cobblestone", -1, Materials.Stone, null, SELF_REFERENCING, null);
-    // Prefix to determine which kind of Rock this is.
-    // Cobblestone Prefix for all Cobblestones.
-    public static final OrePrefix stoneCobble = new OrePrefix("stoneCobble", -1, Materials.Stone, null, SELF_REFERENCING, null);
 
     public static final OrePrefix frameGt = new OrePrefix("frameGt", M * 2, null, null, ENABLE_UNIFICATION, material -> material.hasFlag(GENERATE_FRAME));
 

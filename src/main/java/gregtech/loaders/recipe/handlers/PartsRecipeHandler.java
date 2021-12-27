@@ -216,8 +216,7 @@ public class PartsRecipeHandler {
             OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.Red);
         } else if (material == Materials.Emerald) { // override Emerald Lens to be Green
             OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.Green);
-        } else if (material == Materials.Glass) { // override Glass Lens to be White, and have "default" oredict
-            OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.White);
+        } else if (material == Materials.Glass) { // the overriding is done in OreDictionaryLoader to prevent log spam
             OreDictUnifier.registerOre(stack, OrePrefix.craftingLens.name() + material.toCamelCaseString());
         } else { // add more custom lenses here if needed
 

@@ -36,6 +36,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
@@ -696,17 +697,19 @@ public class MachineRecipeLoader {
                 .chancedOutput(nugget, Gold, 500, 120)
                 .buildAndRegister();
 
-        MACERATOR_RECIPES.recipeBuilder()
-                .input(stone, Soapstone)
-                .output(dustImpure, Talc)
-                .chancedOutput(dustTiny, Chromite, 1000, 280)
-                .buildAndRegister();
+        if (!OreDictionary.getOres("stoneSoapstone").isEmpty())
+            MACERATOR_RECIPES.recipeBuilder()
+                    .input(stone, Soapstone)
+                    .output(dustImpure, Talc)
+                    .chancedOutput(dustTiny, Chromite, 1000, 280)
+                    .buildAndRegister();
 
-        MACERATOR_RECIPES.recipeBuilder()
-                .input(stone, Redrock)
-                .output(dust, Redrock)
-                .chancedOutput(dust, Redrock, 1000, 380)
-                .buildAndRegister();
+        if (!OreDictionary.getOres("stoneRedrock").isEmpty())
+            MACERATOR_RECIPES.recipeBuilder()
+                    .input(stone, Redrock)
+                    .output(dust, Redrock)
+                    .chancedOutput(dust, Redrock, 1000, 380)
+                    .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, Marble)

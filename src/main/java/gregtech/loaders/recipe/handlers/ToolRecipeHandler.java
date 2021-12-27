@@ -10,6 +10,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.GemProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
@@ -28,6 +29,7 @@ import java.util.function.Function;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
+import static gregtech.api.unification.material.properties.PropertyKey.GEM;
 import static gregtech.common.items.MetaItems.*;
 
 public class ToolRecipeHandler {
@@ -119,7 +121,7 @@ public class ToolRecipeHandler {
             addSimpleToolRecipe(toolPrefix, material, toolItem,
                     new UnificationEntry(OrePrefix.plate, material),
                     new UnificationEntry(OrePrefix.ingot, material), recipe);
-        } else if (material.hasProperty(PropertyKey.GEM)) {
+        } else if (material.hasProperty(GEM)) {
             addSimpleToolRecipe(toolPrefix, material, toolItem,
                     new UnificationEntry(OrePrefix.gem, material),
                     new UnificationEntry(OrePrefix.gem, material), recipe);
@@ -273,13 +275,14 @@ public class ToolRecipeHandler {
 
         int voltageMultiplier = getVoltageMultiplier(material);
 
-        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, material, 3)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_AXE)
-                .outputs(OreDictUnifier.get(toolPrefix, material))
-                .duration((int) material.getMass() * 3)
-                .EUt(8 * voltageMultiplier)
-                .buildAndRegister();
+        if (!material.hasProperty(GEM))
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.ingot, material, 3)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_AXE)
+                    .outputs(OreDictUnifier.get(toolPrefix, material))
+                    .duration((int) material.getMass() * 3)
+                    .EUt(8 * voltageMultiplier)
+                    .buildAndRegister();
 
     }
 
@@ -288,13 +291,14 @@ public class ToolRecipeHandler {
 
         int voltageMultiplier = getVoltageMultiplier(material);
 
-        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, material, 2)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_HOE)
-                .outputs(OreDictUnifier.get(toolPrefix, material))
-                .duration((int) material.getMass() * 2)
-                .EUt(8 * voltageMultiplier)
-                .buildAndRegister();
+        if (!material.hasProperty(GEM))
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.ingot, material, 2)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_HOE)
+                    .outputs(OreDictUnifier.get(toolPrefix, material))
+                    .duration((int) material.getMass() * 2)
+                    .EUt(8 * voltageMultiplier)
+                    .buildAndRegister();
     }
 
     public static void processPickaxeHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
@@ -302,13 +306,14 @@ public class ToolRecipeHandler {
 
         int voltageMultiplier = getVoltageMultiplier(material);
 
-        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, material, 3)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_PICKAXE)
-                .outputs(OreDictUnifier.get(toolPrefix, material))
-                .duration((int) material.getMass() * 3)
-                .EUt(8 * voltageMultiplier)
-                .buildAndRegister();
+        if (!material.hasProperty(GEM))
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.ingot, material, 3)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_PICKAXE)
+                    .outputs(OreDictUnifier.get(toolPrefix, material))
+                    .duration((int) material.getMass() * 3)
+                    .EUt(8 * voltageMultiplier)
+                    .buildAndRegister();
 
     }
 
@@ -317,7 +322,8 @@ public class ToolRecipeHandler {
 
         int voltageMultiplier = getVoltageMultiplier(material);
 
-        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+        if (!material.hasProperty(GEM))
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.ingot, material, 2)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_SAW)
                 .outputs(OreDictUnifier.get(OrePrefix.toolHeadSaw, material))
@@ -335,7 +341,8 @@ public class ToolRecipeHandler {
 
         int voltageMultiplier = getVoltageMultiplier(material);
 
-        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+        if (!material.hasProperty(GEM))
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.ingot, material)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_SHOVEL)
                 .outputs(OreDictUnifier.get(toolPrefix, material))
@@ -349,26 +356,28 @@ public class ToolRecipeHandler {
 
         int voltageMultiplier = getVoltageMultiplier(material);
 
-        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, material, 2)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_SWORD)
-                .outputs(OreDictUnifier.get(toolPrefix, material))
-                .duration((int) material.getMass() * 2)
-                .EUt(8 * voltageMultiplier)
-                .buildAndRegister();
+        if (!material.hasProperty(GEM))
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.ingot, material, 2)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_SWORD)
+                    .outputs(OreDictUnifier.get(toolPrefix, material))
+                    .duration((int) material.getMass() * 2)
+                    .EUt(8 * voltageMultiplier)
+                    .buildAndRegister();
     }
 
     public static void processHammerHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
         if (!material.hasFlag(NO_WORKING)) {
             processSimpleToolHead(toolPrefix, material, MetaItems.HARD_HAMMER, "II ", "IIh", "II ");
 
-            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.ingot, material, 6)
-                    .notConsumable(MetaItems.SHAPE_EXTRUDER_HAMMER)
-                    .outputs(OreDictUnifier.get(toolPrefix, material))
-                    .duration((int) material.getMass() * 6)
-                    .EUt(8 *  getVoltageMultiplier(material))
-                    .buildAndRegister();
+            if (!material.hasProperty(GEM))
+                RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                        .input(OrePrefix.ingot, material, 6)
+                        .notConsumable(MetaItems.SHAPE_EXTRUDER_HAMMER)
+                        .outputs(OreDictUnifier.get(toolPrefix, material))
+                        .duration((int) material.getMass() * 6)
+                        .EUt(8 * getVoltageMultiplier(material))
+                        .buildAndRegister();
         }
         ModHandler.addMirroredShapedRecipe(String.format("hammer_%s", material.toString()),
                 MetaItems.HARD_HAMMER.getStackForm(material),
@@ -380,13 +389,14 @@ public class ToolRecipeHandler {
     public static void processFileHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
         processSimpleToolHead(toolPrefix, material, MetaItems.FILE, " I ", " I ", " fh");
 
-        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, material, 2)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_FILE)
-                .outputs(OreDictUnifier.get(toolPrefix, material))
-                .duration((int) material.getMass() * 2)
-                .EUt(8 * getVoltageMultiplier(material))
-                .buildAndRegister();
+        if (!material.hasProperty(GEM))
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.ingot, material, 2)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_FILE)
+                    .outputs(OreDictUnifier.get(toolPrefix, material))
+                    .duration((int) material.getMass() * 2)
+                    .EUt(8 * getVoltageMultiplier(material))
+                    .buildAndRegister();
 
         if (material.hasProperty(PropertyKey.INGOT)) {
             ModHandler.addShapedRecipe(String.format("file_%s", material.toString()),
