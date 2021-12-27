@@ -137,7 +137,7 @@ public class GTJeiPlugin implements IModPlugin {
                             registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
                         }
                     } else if (logic.getRecipeMap() != null) {
-                        registerRecipeMapCatalyst(registry, map, metaTileEntity);
+                        registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
                     }
                 }
             }

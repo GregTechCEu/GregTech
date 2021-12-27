@@ -29,6 +29,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockBoilerCasing.BoilerCasingType;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
+import gregtech.client.renderer.ICubeRenderer;
 import gregtech.api.sound.GTSounds;
 import gregtech.common.blocks.BlockFireboxCasing;
 import net.minecraft.block.state.IBlockState;
@@ -45,7 +46,6 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
-import static gregtech.api.gui.widgets.AdvancedTextWidget.withHoverTextTranslate;
 
 public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase implements ISoundCreator {
 
@@ -196,7 +196,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 */
     @Override
     public boolean isActive() {
-        return super.isActive() && recipeLogic.isActive();
+        return super.isActive() && recipeLogic.isActive() && recipeLogic.isWorkingEnabled();
     }
 
     private void replaceFireboxAsActive(boolean isActive) {

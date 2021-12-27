@@ -1,9 +1,7 @@
 package gregtech.common.metatileentities.multi;
 
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.SimpleCubeRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.state.IBlockState;
 
 import static gregtech.common.blocks.BlockBoilerCasing.BoilerCasingType.*;
@@ -60,18 +58,18 @@ public enum BoilerType {
 
     // Rendering Data
     public final ICubeRenderer casingRenderer;
-    public final SimpleCubeRenderer fireboxIdleRenderer;
-    public final SimpleCubeRenderer fireboxActiveRenderer;
-    public final OrientedOverlayRenderer frontOverlay;
+    public final ICubeRenderer fireboxIdleRenderer;
+    public final ICubeRenderer fireboxActiveRenderer;
+    public final ICubeRenderer frontOverlay;
 
     BoilerType(int steamPerTick, int ticksToBoiling,
                IBlockState casingState,
                IBlockState fireboxState,
                IBlockState pipeState,
                ICubeRenderer casingRenderer,
-               SimpleCubeRenderer fireboxIdleRenderer,
-               SimpleCubeRenderer fireboxActiveRenderer,
-               OrientedOverlayRenderer frontOverlay) {
+               ICubeRenderer fireboxIdleRenderer,
+               ICubeRenderer fireboxActiveRenderer,
+               ICubeRenderer frontOverlay) {
 
         this.steamPerTick = steamPerTick;
         this.ticksToBoiling = ticksToBoiling;
