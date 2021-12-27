@@ -344,7 +344,7 @@ public class FirstDegreeMaterials {
         NiobiumTitanium = new Material.Builder(296, "niobium_titanium")
                 .ingot().fluid()
                 .color(0x1D1D29)
-                .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE)
+                .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FOIL, GENERATE_FINE_WIRE)
                 .components(Niobium, 1, Titanium, 1)
                 .fluidPipeProperties(2900, 150, true)
                 .cableProperties(GTValues.V[6], 4, 2)
