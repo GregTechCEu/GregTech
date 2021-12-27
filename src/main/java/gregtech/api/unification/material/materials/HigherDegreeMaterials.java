@@ -106,7 +106,7 @@ public class HigherDegreeMaterials {
         HSSE = new Material.Builder(2519, "hsse")
                 .ingot(4).fluid()
                 .color(0x336600).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_FRAME)
+                .flags(EXT2_METAL, GENERATE_FRAME, GENERATE_RING)
                 .components(HSSG, 6, Cobalt, 1, Manganese, 1, Silicon, 1)
                 .toolStats(10.0f, 8.0f, 5120, 21)
                 .blastTemp(5000, GasTier.HIGH, VA[EV], 1400)
