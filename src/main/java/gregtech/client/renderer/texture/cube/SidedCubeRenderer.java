@@ -23,30 +23,20 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class SimpleSidedCubeRenderer implements ICubeRenderer {
-
-    public enum RenderSide {
-        TOP, BOTTOM, SIDE;
-
-        public static RenderSide bySide(EnumFacing side) {
-            if (side == EnumFacing.UP) {
-                return TOP;
-            } else if (side == EnumFacing.DOWN) {
-                return BOTTOM;
-            } else return SIDE;
-        }
-    }
+public class SidedCubeRenderer implements ICubeRenderer {
 
     protected final String basePath;
+    protected final OrientedOverlayRenderer.OverlayFace[] faces;
 
     @SideOnly(Side.CLIENT)
-    protected Map<RenderSide, TextureAtlasSprite> sprites;
+    protected Map<OrientedOverlayRenderer.OverlayFace, TextureAtlasSprite> sprites;
 
     @SideOnly(Side.CLIENT)
-    protected Map<RenderSide, TextureAtlasSprite> spritesEmissive;
+    protected Map<OrientedOverlayRenderer.OverlayFace, TextureAtlasSprite> spritesEmissive;
 
-    public SimpleSidedCubeRenderer(String basePath) {
+    public SidedCubeRenderer(String basePath, OrientedOverlayRenderer.OverlayFace... faces) {
         this.basePath = basePath;
+        this.faces = faces;
         Textures.CUBE_RENDERER_REGISTRY.put(basePath, this);
         Textures.iconRegisters.add(this);
     }
@@ -61,9 +51,9 @@ public class SimpleSidedCubeRenderer implements ICubeRenderer {
             modID = split[0];
             basePath = split[1];
         }
-        this.sprites = new EnumMap<>(RenderSide.class);
-        this.spritesEmissive = new EnumMap<>(RenderSide.class);
-        for (RenderSide overlayFace : RenderSide.values()) {
+        this.sprites = new EnumMap<>(OrientedOverlayRenderer.OverlayFace.class);
+        this.spritesEmissive = new EnumMap<>(OrientedOverlayRenderer.OverlayFace.class);
+        for (OrientedOverlayRenderer.OverlayFace overlayFace : faces) {
             String faceName = overlayFace.name().toLowerCase();
             ResourceLocation resourceLocation = new ResourceLocation(modID, String.format("blocks/%s/%s", basePath, faceName));
             sprites.put(overlayFace, textureMap.registerSprite(resourceLocation));
@@ -75,28 +65,34 @@ public class SimpleSidedCubeRenderer implements ICubeRenderer {
     }
 
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getSpriteOnSide(RenderSide renderSide) {
+    public TextureAtlasSprite getSpriteOnSide(OrientedOverlayRenderer.OverlayFace renderSide) {
         return sprites.get(renderSide);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getParticleSprite() {
-        return getSpriteOnSide(RenderSide.TOP);
+        return getSpriteOnSide(OrientedOverlayRenderer.OverlayFace.TOP);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
-        RenderSide overlayFace = RenderSide.bySide(frontFacing);
-        TextureAtlasSprite renderSprite = sprites.get(overlayFace);
-        Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
-        TextureAtlasSprite spriteEmissive = spritesEmissive.get(overlayFace);
-        if (spriteEmissive != null) {
-            if (ConfigHolder.client.machinesEmissiveTextures) {
-                IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
-                Textures.renderFace(renderState, translation, lightPipeline, frontFacing, bounds, spriteEmissive, BloomEffectUtil.getRealBloomLayer());
-            } else Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, spriteEmissive, BlockRenderLayer.CUTOUT_MIPPED);
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            TextureAtlasSprite renderSprite = sprites.get(OrientedOverlayRenderer.OverlayFace.bySide(facing, frontFacing));
+            if (renderSprite != null) {
+                Textures.renderFace(renderState, translation, pipeline, facing, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
+
+                TextureAtlasSprite emissiveSprite = spritesEmissive.get(OrientedOverlayRenderer.OverlayFace.bySide(facing, frontFacing));
+                if (emissiveSprite != null) {
+                    if (ConfigHolder.client.machinesEmissiveTextures) {
+                        IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
+                        Textures.renderFace(renderState, translation, lightPipeline, facing, bounds, emissiveSprite, BloomEffectUtil.getRealBloomLayer());
+                    } else {
+                        Textures.renderFace(renderState, translation, pipeline, facing, bounds, emissiveSprite, BlockRenderLayer.CUTOUT_MIPPED);
+                    }
+                }
+            }
         }
     }
 }

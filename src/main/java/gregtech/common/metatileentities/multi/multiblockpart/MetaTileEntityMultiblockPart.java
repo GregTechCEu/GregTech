@@ -74,17 +74,13 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
     public ICubeRenderer getBaseTexture() {
         MultiblockControllerBase controller = getController();
         if (controller != null) {
-            this.hatchTexture = controller.getBaseTexture(this);
-        }
-        if (controller == null && this.hatchTexture != null) {
+            return this.hatchTexture = controller.getBaseTexture(this);
+        } else if (this.hatchTexture != null) {
             return this.hatchTexture;
-        }
-        if (controller == null) {
+        } else {
             this.setPaintingColor(DEFAULT_PAINTING_COLOR);
             return Textures.VOLTAGE_CASINGS[tier];
         }
-        this.setPaintingColor(0xFFFFFF);
-        return controller.getBaseTexture(this);
     }
 
     public boolean shouldRenderOverlay() {

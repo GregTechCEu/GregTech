@@ -35,6 +35,8 @@ import gregtech.api.sound.GTSounds;
 import gregtech.common.blocks.BlockFireboxCasing;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -83,7 +85,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     public void invalidateStructure() {
         super.invalidateStructure();
         resetTileAbilities();
-        this.throttlePercentage = 100; // todo sync
+        this.throttlePercentage = 100;
         this.recipeLogic.invalidate();
         replaceFireboxAsActive(false);
     }
@@ -194,7 +196,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         return super.isActive() && recipeLogic.isActive() && recipeLogic.isWorkingEnabled();
     }
 
-    private void replaceFireboxAsActive(boolean isActive) {
+    public void replaceFireboxAsActive(boolean isActive) {
         BlockPos centerPos = getPos().offset(getFrontFacing().getOpposite()).down();
         for (int x = -1; x <= 1; x++) {
             for (int z = -1; z <= 1; z++) {
@@ -210,7 +212,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
     @Override
     public int getLightValueForPart(IMultiblockPart sourcePart) {
-        return sourcePart == null ? 0 : (isActive() && recipeLogic.isWorkingEnabled() ? 15 : 0);
+        return sourcePart == null ? 0 : isActive() ? 15 : 0;
     }
 
     @Override
@@ -254,14 +256,9 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (sourcePart != null && isFireboxPart(sourcePart)) {
-            return isActive() && recipeLogic.isWorkingEnabled() ? boilerType.fireboxActiveRenderer : boilerType.fireboxIdleRenderer;
+            return isActive() ? boilerType.fireboxActiveRenderer : boilerType.fireboxIdleRenderer;
         }
         return boilerType.casingRenderer;
-    }
-
-    @Override
-    public boolean shouldRenderOverlay(IMultiblockPart sourcePart) {
-        return sourcePart == null || !isFireboxPart(sourcePart);
     }
 
     @Override
@@ -356,16 +353,36 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         }*/
     }
 
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        data.setInteger("ThrottlePercentage", throttlePercentage);
+        return super.writeToNBT(data);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        throttlePercentage = data.getInteger("ThrottlePercentage");
+        super.readFromNBT(data);
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeVarInt(throttlePercentage);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        throttlePercentage = buf.readVarInt();
+    }
+
     public boolean canCreateSound() {
         return isActive();
     }
 
     public int getThrottle() {
         return throttlePercentage;
-    }
-
-    public void setThrottle() {
-
     }
 
     @Override
