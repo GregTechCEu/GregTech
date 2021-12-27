@@ -329,7 +329,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         if (super.onRightClick(playerIn, hand, facing, hitResult))
             return true;
 
-        if (!this.isStructureFormed() && playerIn.isSneaking() && this.rightClickDelayTimer == 0 && this.getWorld().isRemote) {
+        if (!this.isStructureFormed() && playerIn.isSneaking() && playerIn.getActiveItemStack().isEmpty() && this.rightClickDelayTimer == 0 && this.getWorld().isRemote) {
             this.rightClickDelayTimer = 4;
             WorldRenderEventRenderer.renderMultiBlockPreview(this, 60000);
             return true;

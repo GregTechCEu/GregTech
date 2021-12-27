@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pattern.BlockPattern;
 import gregtech.client.utils.TrackedDummyWorld;
 import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
@@ -100,28 +99,30 @@ public class WorldRenderEventRenderer {
     private static int opList = -1;
     private static int layer = -1;
     private static MultiblockControllerBase controllerBase;
+    private static boolean hasRendered = false;
 
 
     public static void renderMultiBlockPreview(MultiblockControllerBase controller, long durTimeMillis) {
-        if (controller == null) {
-            reset();
+        if (!controller.getPos().equals(mbpPos)) {
+            layer = -1;
+        }
+        if (hasRendered) {
+            resetMultiblockRender();
             posHighLight = null;
             hlEndTime = 0;
-        } else if (!controller.getPos().equals(mbpPos)) {
-            layer = -1;
         }
         controllerBase = controller;
         mbpEndTime = durTimeMillis;
     }
 
     private static void drawMultiBlockPreview(RenderWorldLastEvent evt) {
-        if (controllerBase != null && Loader.isModLoaded(GTValues.MODID_JEI)) {
+        if (controllerBase != null && Loader.isModLoaded(GTValues.MODID_JEI) && !hasRendered) {
             long durTimeMillis = mbpEndTime;
-            reset();
+            resetMultiblockRender();
             mbpEndTime = System.currentTimeMillis() + durTimeMillis;
             worldSceneRenderer = JEIOptional.getWorldSceneRenderer(controllerBase);
             if (worldSceneRenderer == null) {
-                reset();
+                resetMultiblockRender();
                 controllerBase = null;
                 return;
             }
@@ -165,7 +166,7 @@ public class WorldRenderEventRenderer {
                     layer++;
                 }
             } else {
-                reset();
+                resetMultiblockRender();
                 controllerBase = null;
                 return;
             }
@@ -174,7 +175,7 @@ public class WorldRenderEventRenderer {
             RelativeDirection[] structureDir = controllerBase.structurePattern.structureDir;
 
             if (structureDir == null) {
-                reset();
+                resetMultiblockRender();
                 controllerBase = null;
                 if (mte != null) {
                     mte.update();
@@ -256,11 +257,11 @@ public class WorldRenderEventRenderer {
                 } catch (Exception ignored) {
                 }
             }
-            controllerBase = null;
+            hasRendered = true;
         } else if (worldSceneRenderer != null) {
             long time = System.currentTimeMillis();
-            if (time > mbpEndTime) {
-                reset();
+            if (time > mbpEndTime || controllerBase.isStructureFormed() || controllerBase.getHolder().isInvalid()) {
+                resetMultiblockRender();
                 layer = -1;
                 controllerBase = null;
                 return;
@@ -294,10 +295,11 @@ public class WorldRenderEventRenderer {
         }
     }
 
-    private static void reset() {
+    private static void resetMultiblockRender() {
         mbpPos = null;
         worldSceneRenderer = null;
         mbpEndTime = 0;
+        hasRendered = false;
         if (opList != -1) {
             GlStateManager.glDeleteLists(opList, 1);
             opList = -1;

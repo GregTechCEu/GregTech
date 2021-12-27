@@ -72,4 +72,8 @@ public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockW
         return recipeMapWorkable.isActive();
     }
 
+    @Override
+    protected boolean openGUIOnRightClick() {
+        return isStructureFormed();
+    }
 }
