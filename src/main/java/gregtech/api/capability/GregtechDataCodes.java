@@ -29,6 +29,8 @@ public class GregtechDataCodes {
     public static final int NEEDS_VENTING = 2;
     public static final int VENTING_SIDE = 3;
     public static final int VENTING_STUCK = 4;
+    public static final int BOILER_HEAT = 10;
+    public static final int BOILER_LAST_TICK_STEAM = 11;
 
     // Misc TEs (Transformer, World Accelerator)
     public static final int SYNC_TILE_MODE = 100;

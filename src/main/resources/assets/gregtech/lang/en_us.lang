@@ -4091,11 +4091,9 @@ gregtech.multiblock.turbine.obstructed=Turbine Face Obstructed
 gregtech.multiblock.turbine.voltage_tooltip=Base Production: §e%s§7 EU/t
 gregtech.multiblock.turbine.efficiency_tooltip=Each Rotor Holder above %s§7 adds §610%%§7 efficiency.
 
-gregtech.multiblock.large_boiler.temperature=Temperature: %s / %s C
+gregtech.multiblock.large_boiler.temperature=Temperature: %s C
 gregtech.multiblock.large_boiler.steam_output=Steam Output: %s L/t
-gregtech.multiblock.large_boiler.throttle=Throttle: %d %% (%d %% eff.)
-gregtech.multiblock.large_boiler.message_throttle_change=Throttle changed to: %d %%
-gregtech.multiblock.large_boiler.message_throttle_too_hot=Boiler is running too hot to throttle!
+gregtech.multiblock.large_boiler.throttle=Throttle: %d%%
 gregtech.multiblock.large_boiler.heat_efficiency=Heat Efficiency: %d%%
 gregtech.multiblock.large_boiler.heat_efficiency.tooltip=The higher boiler temperature is, the higher it's fuel efficiency
 gregtech.multiblock.large_boiler.throttle.tooltip=Boiler can output less steam and consume less fuel, but it comes with price: the fuel efficiency is lower at higher throttle rates.

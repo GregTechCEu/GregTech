@@ -13,6 +13,7 @@ import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.*;
 import gregtech.api.gui.Widget.ClickData;
+import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -46,18 +47,18 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
+import static gregtech.api.gui.widgets.AdvancedTextWidget.withHoverTextTranslate;
 
 public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase implements ISoundCreator {
 
     public final BoilerType boilerType;
-
-    private int throttlePercentage = 100;
-
     protected BoilerRecipeLogic recipeLogic;
 
     private FluidTankList fluidImportInventory;
     private ItemHandlerList itemImportInventory;
     private FluidTankList steamOutputTank;
+
+    private int throttlePercentage = 100;
 
     public MetaTileEntityLargeBoiler(ResourceLocation metaTileEntityId, BoilerType boilerType) {
         super(metaTileEntityId);
@@ -110,16 +111,12 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
         if (isStructureFormed()) { // todo
-            //textList.add(new TextComponentTranslation("gregtech.multiblock.large_boiler.temperature", currentTemperature, boilerType.maxTemperature));
-            //textList.add(new TextComponentTranslation("gregtech.multiblock.large_boiler.steam_output", lastTickSteamOutput, boilerType.baseSteamOutput));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.large_boiler.temperature", recipeLogic.getHeatScaled()));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.large_boiler.steam_output", recipeLogic.getLastTickSteam()));
 
-           // ITextComponent heatEffText = new TextComponentTranslation("gregtech.multiblock.large_boiler.heat_efficiency", (int) (getHeatEfficiencyMultiplier() * 100));
-            //withHoverTextTranslate(heatEffText, "gregtech.multiblock.large_boiler.heat_efficiency.tooltip");
-            //textList.add(heatEffText);
-
-            //ITextComponent throttleText = new TextComponentTranslation("gregtech.multiblock.large_boiler.throttle", throttlePercentage, (int) (getThrottleEfficiency() * 100));
-            //withHoverTextTranslate(throttleText, "gregtech.multiblock.large_boiler.throttle.tooltip");
-            //textList.add(throttleText);
+            ITextComponent throttleText = new TextComponentTranslation("gregtech.multiblock.large_boiler.throttle", getThrottle());
+            withHoverTextTranslate(throttleText, "gregtech.multiblock.large_boiler.throttle.tooltip");
+            textList.add(throttleText);
 
             ITextComponent buttonText = new TextComponentTranslation("gregtech.multiblock.large_boiler.throttle_modify");
             buttonText.appendText(" ");
@@ -136,11 +133,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         int modifier = componentData.equals("add") ? 1 : -1;
         int result = (clickData.isShiftClick ? 1 : 5) * modifier;
         this.throttlePercentage = MathHelper.clamp(throttlePercentage + result, 20, 100);
-    }
-/*
-    private double getHeatEfficiencyMultiplier() {
-        double temperature = currentTemperature / (boilerType.maxTemperature * 1.0);
-        return 1.0 + Math.round(boilerType.temperatureEffBuff * temperature) / 100.0;
     }
 
     private int setupRecipeAndConsumeInputs() {
@@ -228,10 +220,10 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 .where('P', states(boilerType.pipeState))
                 .where('X', states(boilerType.fireboxState).setMinGlobalLimited(4)
                         .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1))
-                        .or(abilities(MultiblockAbility.IMPORT_ITEMS).setMinGlobalLimited(1)))
+                        .or(abilities(MultiblockAbility.IMPORT_ITEMS).setMinGlobalLimited(1))
+                        .or(autoAbilities())) // muffler, maintenance
                 .where('C', states(boilerType.casingState).setMinGlobalLimited(20)
-                        .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1))
-                        .or(autoAbilities())) // maintainer
+                        .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1)))
                 .build();
     }
 
@@ -369,9 +361,18 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         return throttlePercentage;
     }
 
+    public void setThrottle() {
+
+    }
+
     @Override
     public IItemHandlerModifiable getImportItems() {
         return itemImportInventory;
+    }
+
+    @Override
+    public FluidTankList getImportFluids() {
+        return fluidImportInventory;
     }
 
     @Override
@@ -379,11 +380,13 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         return super.createExportItemHandler();
     }
 
-    public IMultipleTankHandler getInputTank() {
-        return fluidImportInventory;
+    @Override
+    public FluidTankList getExportFluids() {
+        return steamOutputTank;
     }
 
-    public IMultipleTankHandler getOutputTank() {
-        return steamOutputTank;
+    @Override
+    protected boolean shouldUpdate(MTETrait trait) {
+        return !(trait instanceof BoilerRecipeLogic);
     }
 }
