@@ -169,7 +169,7 @@ public class MaterialFlagAddition {
         oreProp.setSeparatedInto(Iron);
 
         oreProp = Bauxite.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(Grossular, Rutile, Gallium, Gallium);
+        oreProp.setOreByProducts(Grossular, Rutile, Gallium);
         oreProp.setWashedIn(SodiumPersulfate);
 
         oreProp = Lazurite.getProperty(PropertyKey.ORE);
