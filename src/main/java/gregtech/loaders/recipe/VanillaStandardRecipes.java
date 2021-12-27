@@ -289,7 +289,7 @@ public class VanillaStandardRecipes {
                 .buildAndRegister();
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-                .inputs(CountableIngredient.from("blockWool", 1))
+                .inputs(CountableIngredient.from("wool", 1))
                 .outputs(new ItemStack(Items.STRING, 3))
                 .chancedOutput(new ItemStack(Items.STRING, 1), 2000, 800)
                 .duration(400)
