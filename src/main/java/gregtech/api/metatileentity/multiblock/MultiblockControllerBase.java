@@ -329,7 +329,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         if (super.onRightClick(playerIn, hand, facing, hitResult))
             return true;
 
-        if (!this.isStructureFormed() && playerIn.isSneaking() && playerIn.getActiveItemStack().isEmpty() && this.rightClickDelayTimer == 0 && this.getWorld().isRemote) {
+        if (!this.isStructureFormed() && playerIn.isSneaking() && playerIn.getHeldItem(hand).isEmpty() && this.rightClickDelayTimer == 0 && this.getWorld().isRemote) {
             this.rightClickDelayTimer = 4;
             WorldRenderEventRenderer.renderMultiBlockPreview(this, 60000);
             return true;
@@ -369,11 +369,5 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public String[] getDescription() {
         String key = String.format("gregtech.multiblock.%s.description", metaTileEntityId.getPath());
         return I18n.hasKey(key) ? new String[]{I18n.format(key)} : new String[0];
-    }
-
-    public void explodeMultiblock() {
-        List<IMultiblockPart> parts = new ArrayList<>(getMultiblockParts());
-        parts.forEach(p -> ((MetaTileEntity) p).doExplosion(8));
-        doExplosion(8);
     }
 }
