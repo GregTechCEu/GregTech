@@ -248,6 +248,10 @@ public class ConfigHolder {
         @Config.Comment({"Chance with which flint and steel will create fire.", "Default: 50"})
         @Config.SlidingOption
         public int flintChanceToCreateFire = 50;
+
+        @Config.Comment({"Whether to give the terminal to new players on login", "Default: true"})
+        public boolean spawnTerminal = true;
+
     }
 
     public static class ClientOptions {

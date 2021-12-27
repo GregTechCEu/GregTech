@@ -22,12 +22,14 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.EnumDifficulty;
@@ -43,12 +45,16 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class EventHandlers {
+
+    private static final String HAS_TERMINAL = GTValues.MODID + ".terminal";
 
     @SubscribeEvent
     public static void onEndermanTeleportEvent(EnderTeleportEvent event) {
@@ -200,5 +206,23 @@ public class EventHandlers {
     @SubscribeEvent
     public static void onWorldLoadEvent(WorldEvent.Load event) {
         VirtualTankRegistry.initializeStorage(event.getWorld());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (ConfigHolder.misc.spawnTerminal) {
+            NBTTagCompound playerData = event.player.getEntityData();
+            NBTTagCompound data = playerData.hasKey(EntityPlayer.PERSISTED_NBT_TAG) ? playerData.getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG) : new NBTTagCompound();
+
+            if (!data.getBoolean(HAS_TERMINAL)) {
+                ItemStack terminal = MetaItems.TERMINAL.getStackForm();
+                if (event.player.isCreative()) {
+                    terminal.getOrCreateSubCompound("terminal").setBoolean("_creative", true);
+                }
+                ItemHandlerHelper.giveItemToPlayer(event.player, terminal);
+                data.setBoolean(HAS_TERMINAL, true);
+                playerData.setTag(EntityPlayer.PERSISTED_NBT_TAG, data);
+            }
+        }
     }
 }
