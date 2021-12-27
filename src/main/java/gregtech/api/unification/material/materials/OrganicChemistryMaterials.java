@@ -100,7 +100,7 @@ public class OrganicChemistryMaterials {
         Polyethylene = new Material.Builder(1012, "plastic") //todo add polyethylene oredicts
                 .ingot(1).fluid()
                 .color(0xC8C8C8)
-                .flags(GENERATE_FOIL, GENERATE_ROTOR, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
+                .flags(GENERATE_FOIL, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
                 .components(Carbon, 1, Hydrogen, 2)
                 .fluidPipeProperties(350, 60, true)
                 .build();

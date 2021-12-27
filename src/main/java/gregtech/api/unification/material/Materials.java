@@ -110,24 +110,18 @@ public class Materials {
         };
     }
 
-    public static final List<MaterialFlag> STD_SOLID = new ArrayList<>();
-    public static final List<MaterialFlag> STD_GEM = new ArrayList<>();
     public static final List<MaterialFlag> STD_METAL = new ArrayList<>();
     public static final List<MaterialFlag> EXT_METAL = new ArrayList<>();
     public static final List<MaterialFlag> EXT2_METAL = new ArrayList<>();
 
     static {
-        STD_SOLID.addAll(Arrays.asList(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD));
-
-        STD_GEM.addAll(STD_SOLID);
-
         STD_METAL.add(GENERATE_PLATE);
 
         EXT_METAL.addAll(STD_METAL);
-        EXT_METAL.addAll(Arrays.asList(GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD));
+        EXT_METAL.addAll(Arrays.asList(GENERATE_ROD));
 
         EXT2_METAL.addAll(EXT_METAL);
-        EXT2_METAL.addAll(Arrays.asList(GENERATE_GEAR, GENERATE_FOIL, GENERATE_FINE_WIRE));
+        EXT2_METAL.addAll(Arrays.asList(GENERATE_LONG_ROD, GENERATE_BOLT_SCREW));
     }
 
     public static final MarkerMaterial _NULL = new MarkerMaterial("_null");

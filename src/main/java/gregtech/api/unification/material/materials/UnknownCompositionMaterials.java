@@ -280,7 +280,7 @@ public class UnknownCompositionMaterials {
         NetherStar = new Material.Builder(1602, "nether_star")
                 .gem(4)
                 .iconSet(NETHERSTAR)
-                .flags(STD_SOLID, NO_SMASHING, NO_SMELTING)
+                .flags(NO_SMASHING, NO_SMELTING)
                 .build();
 
         Endstone = new Material.Builder(1603, "endstone")
@@ -347,7 +347,7 @@ public class UnknownCompositionMaterials {
         Wood = new Material.Builder(1617, "wood")
                 .dust(0, 300)
                 .color(0x643200).iconSet(WOOD)
-                .flags(STD_SOLID, FLAMMABLE, GENERATE_GEAR, GENERATE_FRAME)
+                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD, FLAMMABLE, GENERATE_GEAR, GENERATE_FRAME)
                 .build();
 
         Paper = new Material.Builder(1618, "paper")
