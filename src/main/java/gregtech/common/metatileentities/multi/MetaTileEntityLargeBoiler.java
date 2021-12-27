@@ -48,6 +48,7 @@ import java.util.*;
 
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withHoverTextTranslate;
+import static net.minecraft.util.text.TextFormatting.*;
 
 public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase implements ISoundCreator {
 
@@ -110,11 +111,14 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        if (isStructureFormed()) { // todo
-            textList.add(new TextComponentTranslation("gregtech.multiblock.large_boiler.temperature", recipeLogic.getHeatScaled()));
+        if (isStructureFormed()) {
+            int efficiency = recipeLogic.getHeatScaled();
+            textList.add(new TextComponentTranslation("gregtech.multiblock.large_boiler.efficiency",
+                    (efficiency == 0 ? DARK_RED : efficiency <= 40 ? RED : efficiency == 100 ? GREEN : YELLOW).toString() + efficiency + "%"));
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_boiler.steam_output", recipeLogic.getLastTickSteam()));
 
-            ITextComponent throttleText = new TextComponentTranslation("gregtech.multiblock.large_boiler.throttle", getThrottle());
+            ITextComponent throttleText = new TextComponentTranslation("gregtech.multiblock.large_boiler.throttle",
+                    AQUA.toString() + getThrottle() + "%");
             withHoverTextTranslate(throttleText, "gregtech.multiblock.large_boiler.throttle.tooltip");
             textList.add(throttleText);
 
@@ -130,9 +134,8 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     protected void handleDisplayClick(String componentData, ClickData clickData) {
         super.handleDisplayClick(componentData, clickData);
-        int modifier = componentData.equals("add") ? 1 : -1;
-        int result = (clickData.isShiftClick ? 1 : 5) * modifier;
-        this.throttlePercentage = MathHelper.clamp(throttlePercentage + result, 20, 100);
+        int result = componentData.equals("add") ? 5 : -5;
+        this.throttlePercentage = MathHelper.clamp(throttlePercentage + result, 25, 100);
     }
 
     private int setupRecipeAndConsumeInputs() {

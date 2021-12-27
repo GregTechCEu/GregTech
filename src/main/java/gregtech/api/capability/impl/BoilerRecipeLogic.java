@@ -9,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -35,9 +34,8 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     @Override
     public void update() {
         if (!isActive() && currentHeat > 0) {
-            currentHeat--;
+            setHeat(currentHeat - 1);
             setLastTickSteam(0);
-            writeCustomData(BOILER_HEAT, buf -> buf.writeVarInt(currentHeat));
         }
         super.update();
     }
@@ -118,10 +116,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
             FluidStack drainedWater = ModHandler.getWaterFromContainer(getInputTank(), (int) amount, true);
             GTLog.logger.info("Water drained: {}", amount);
             if (amount != 0 && (drainedWater == null || drainedWater.amount < amount)) {
-                BlockPos pos = getMetaTileEntity().getPos();
-                getMetaTileEntity().getWorld().setBlockToAir(pos);
-                getMetaTileEntity().getWorld().createExplosion(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                        15, true);
+                getMetaTileEntity().explodeMultiblock();
             } else {
                 GTLog.logger.info("Steam per tick: {}", generatedSteam);
                 setLastTickSteam(generatedSteam);
@@ -129,8 +124,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
             }
         }
         if (currentHeat < getMaximumHeat()) {
-            currentHeat++;
-            writeCustomData(BOILER_HEAT, buf -> buf.writeVarInt(currentHeat));
+            setHeat(currentHeat + 1);
         }
 
         if (++progressTime > maxProgressTime) {
@@ -159,7 +153,14 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     }
 
     public int getHeatScaled() {
-        return (int) Math.round(currentHeat / (1.0 * getMaximumHeat()));
+        return (int) Math.round(currentHeat / (1.0 * getMaximumHeat()) * 100);
+    }
+
+    public void setHeat(int heat) {
+        if (heat != this.currentHeat && !metaTileEntity.getWorld().isRemote) {
+            writeCustomData(BOILER_HEAT, b -> b.writeVarInt(heat));
+        }
+        this.currentHeat = heat;
     }
 
     public int getLastTickSteam() {
@@ -187,7 +188,6 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     protected void completeRecipe() {
         progressTime = 0;
         setMaxProgress(0);
-        setLastTickSteam(0);
         recipeEUt = 0;
         fluidOutputs = null;
         itemOutputs = null;
@@ -227,12 +227,14 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     public void writeInitialData(PacketBuffer buf) {
         super.writeInitialData(buf);
         buf.writeVarInt(currentHeat);
+        buf.writeVarInt(lastTickSteamOutput);
     }
 
     @Override
     public void receiveInitialData(PacketBuffer buf) {
         super.receiveInitialData(buf);
         this.currentHeat = buf.readVarInt();
+        this.lastTickSteamOutput = buf.readVarInt();
     }
 
     @Override
@@ -240,6 +242,8 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
         super.receiveCustomData(dataId, buf);
         if (dataId == BOILER_HEAT) {
             this.currentHeat = buf.readVarInt();
+        } else if (dataId == BOILER_LAST_TICK_STEAM) {
+            this.lastTickSteamOutput = buf.readVarInt();
         }
     }
 

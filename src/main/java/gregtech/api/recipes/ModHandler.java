@@ -72,6 +72,7 @@ public class ModHandler {
     }
 
     public static FluidStack getWaterFromContainer(@Nonnull IFluidHandler fluidHandler, int amount, boolean doDrain) {
+        if (amount == 0) return null;
         FluidStack drainedWater = fluidHandler.drain(Materials.Water.getFluid(amount), doDrain);
         if (drainedWater == null || drainedWater.amount == 0) {
             drainedWater = fluidHandler.drain(Materials.DistilledWater.getFluid(amount), doDrain);
