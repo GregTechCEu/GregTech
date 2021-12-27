@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
@@ -362,7 +363,7 @@ public class ParallelLogic {
         return minMultiplier;
     }
 
-    public static RecipeBuilder<?> doParallelRecipes(Recipe currentRecipe, RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids, IItemHandlerModifiable exportInventory, IMultipleTankHandler exportFluids, int parallelAmount, long maxVoltage, boolean trimOutputs, boolean canVoidRecipeOutputs) {
+    public static RecipeBuilder<?> doParallelRecipes(Recipe currentRecipe, RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids, IItemHandlerModifiable exportInventory, IMultipleTankHandler exportFluids, int parallelAmount, long maxVoltage, Pair<Boolean, Integer> trimItemOutputs, Pair<Boolean, Integer> trimFluidOutputs, boolean canVoidRecipeOutputs) {
         int multiplierByInputs = getMaxRecipeMultiplier(currentRecipe, importInventory, importFluids, parallelAmount);
         if (multiplierByInputs == 0) {
             return null;
@@ -379,7 +380,7 @@ public class ParallelLogic {
         int parallelizable = Math.min(limitByVoltage, Math.min(multiplierByInputs, limitByOutput));
 
         if (parallelizable > 0) {
-            recipeBuilder.append(currentRecipe, parallelizable, false, trimOutputs);
+            recipeBuilder.append(currentRecipe, parallelizable, false, trimItemOutputs, trimFluidOutputs);
         }
 
         return recipeBuilder;
@@ -396,7 +397,7 @@ public class ParallelLogic {
      * @param maxVoltage      The maximum voltage of the machine
      * @return A {@link RecipeBuilder} containing the recipes that can be performed in parallel, limited by the ingredients available, and the output space available.
      */
-    public static RecipeBuilder<?> appendItemRecipes(RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IItemHandlerModifiable exportInventory, int parallelAmount, long maxVoltage, boolean trimOutputs, boolean canVoidRecipeOutputs) {
+    public static RecipeBuilder<?> appendItemRecipes(RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IItemHandlerModifiable exportInventory, int parallelAmount, long maxVoltage, Pair<Boolean, Integer> trimItemOutputs, Pair<Boolean, Integer> trimFluidOutputs, boolean canVoidRecipeOutputs) {
         RecipeBuilder<?> recipeBuilder = null;
 
         OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(exportInventory);
@@ -443,7 +444,7 @@ public class ParallelLogic {
             int multiplierRecipeAmount = Math.min(ingredientRatio, limitByOutput);
 
             if (multiplierRecipeAmount > 0) {
-                recipeBuilder.append(matchingRecipe, multiplierRecipeAmount, true, trimOutputs);
+                recipeBuilder.append(matchingRecipe, multiplierRecipeAmount, true, trimItemOutputs, trimFluidOutputs);
                 engagedItems += multiplierRecipeAmount;
             }
 

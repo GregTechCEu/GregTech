@@ -3,6 +3,7 @@ package gregtech.api.capability.impl;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.recipes.RecipeBuilder;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 
@@ -25,8 +26,8 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
     }
 
     @Override
-    public boolean trimOutputs() {
-        return true;
+    public Pair<Boolean, Integer> trimItemOutputs() {
+        return Pair.of(true, 1);
     }
 
     @Override

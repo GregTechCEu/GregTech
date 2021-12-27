@@ -7,6 +7,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 
@@ -34,7 +35,7 @@ public interface IParallelableRecipeLogic {
      * @param parallelLimit the maximum number of parallel recipes to be performed
      * @return the recipe builder with the parallelized recipe. returns null the recipe cant fit
      */
-    default RecipeBuilder<?> findMultipliedParallelRecipe(RecipeMap<?> recipeMap, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelLimit, long maxVoltage, boolean trimOutputs, boolean canVoidRecipeOutputs) {
+    default RecipeBuilder<?> findMultipliedParallelRecipe(RecipeMap<?> recipeMap, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelLimit, long maxVoltage, Pair<Boolean, Integer> trimItemOutputs, Pair<Boolean, Integer> trimFluidOutputs, boolean canVoidRecipeOutputs) {
         return ParallelLogic.doParallelRecipes(
                 currentRecipe,
                 recipeMap,
@@ -44,7 +45,8 @@ public interface IParallelableRecipeLogic {
                 fluidOutputs,
                 parallelLimit,
                 maxVoltage,
-                trimOutputs,
+                trimItemOutputs,
+                trimFluidOutputs,
                 canVoidRecipeOutputs);
     }
 
@@ -58,14 +60,15 @@ public interface IParallelableRecipeLogic {
      * @param parallelLimit the maximum number of parallel recipes to be performed
      * @return the recipe builder with the parallelized recipe. returns null the recipe cant fit
      */
-    default RecipeBuilder<?> findAppendedParallelItemRecipe(RecipeMap<?> recipeMap, IItemHandlerModifiable inputs, IItemHandlerModifiable outputs, int parallelLimit, long maxVoltage, boolean trimOutputs, boolean canVoidRecipeOutputs) {
+    default RecipeBuilder<?> findAppendedParallelItemRecipe(RecipeMap<?> recipeMap, IItemHandlerModifiable inputs, IItemHandlerModifiable outputs, int parallelLimit, long maxVoltage, Pair<Boolean, Integer> trimItemOutputs, Pair<Boolean, Integer> trimFluidOutputs, boolean canVoidRecipeOutputs) {
         return ParallelLogic.appendItemRecipes(
                 recipeMap,
                 inputs,
                 outputs,
                 parallelLimit,
                 maxVoltage,
-                trimOutputs,
+                trimItemOutputs,
+                trimFluidOutputs,
                 canVoidRecipeOutputs);
     }
 
@@ -73,9 +76,9 @@ public interface IParallelableRecipeLogic {
         if (parallelLimit > 1) {
             RecipeBuilder<?> parallelBuilder = null;
             if (logic.getParallelLogicType() == ParallelLogicType.MULTIPLY) {
-                parallelBuilder = findMultipliedParallelRecipe(logic.getRecipeMap(), currentRecipe, inputs, fluidInputs, outputs, fluidOutputs, parallelLimit, maxVoltage, logic.trimOutputs(), logic.canVoidRecipeOutputs());
+                parallelBuilder = findMultipliedParallelRecipe(logic.getRecipeMap(), currentRecipe, inputs, fluidInputs, outputs, fluidOutputs, parallelLimit, maxVoltage, logic.trimItemOutputs(), logic.trimFluidOutputs(), logic.canVoidRecipeOutputs());
             } else if (logic.getParallelLogicType() == ParallelLogicType.APPEND_ITEMS) {
-                parallelBuilder = findAppendedParallelItemRecipe(logic.getRecipeMap(), inputs, outputs, parallelLimit, maxVoltage, logic.trimOutputs(), logic.canVoidRecipeOutputs());
+                parallelBuilder = findAppendedParallelItemRecipe(logic.getRecipeMap(), inputs, outputs, parallelLimit, maxVoltage, logic.trimItemOutputs(), logic.trimFluidOutputs(), logic.canVoidRecipeOutputs());
             }
             // if the builder returned is null, no recipe was found.
             if (parallelBuilder == null) {

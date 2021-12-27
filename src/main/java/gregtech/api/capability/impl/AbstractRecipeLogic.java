@@ -28,6 +28,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -256,12 +257,21 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * should limit the recipe output only to the first output
+     * Should the output items of a recipe be limited by some trim factor
      *
-     * @return true if only the first output should be considered
+     * @return A Pair of if the recipe should be trimmed, and to what resulting number
      */
-    public boolean trimOutputs() {
-        return false;
+    public Pair<Boolean, Integer> trimItemOutputs() {
+        return Pair.of(false, 1);
+    }
+
+    /**
+     * Should the output fluids of a recipe be limited by some trim factor
+     *
+     * @return A Pair of if the recipe fluid outputs should be trimmed, and to what resulting number
+     */
+    public Pair<Boolean, Integer> trimFluidOutputs() {
+        return Pair.of(false, 1);
     }
 
     public boolean canVoidRecipeOutputs() {
@@ -631,18 +641,54 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.progressTime = 1;
         setMaxProgress(resultOverclock[1]);
         this.recipeEUt = resultOverclock[0];
-        this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
-        if (trimOutputs() && parallelRecipesPerformed == 0) {
-            // if it's a paralelled recipe, the output is already trimmed
-            if (recipe.getOutputs().size() > 0) {
-                this.itemOutputs = GTUtility.copyStackList(recipe.getOutputs().subList(0, 1));
-            } else {
-                this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt), recipeMap)
+
+        // Fluid Logic and trimming. TODO chanced fluid outputs?
+        Pair<Boolean, Integer> outputFluidTrim = trimFluidOutputs();
+        if(outputFluidTrim.getLeft() && parallelRecipesPerformed == 0 && recipe.getFluidOutputs().size() > outputFluidTrim.getRight()) {
+
+            // If there are more fluid outputs than the trim factor
+            this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs().subList(0, trimFluidOutputs().getRight()));
+        }
+        else {
+            this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
+        }
+
+        // Item Logic and trimming
+        Pair<Boolean, Integer> outputItemTrim = trimItemOutputs();
+        // if it's a paralleled recipe, the output is already trimmed
+        if (outputItemTrim.getLeft() && parallelRecipesPerformed == 0 && (recipe.getOutputs().size() + recipe.getChancedOutputs().size()) > outputItemTrim.getRight()) {
+            // If there are item outputs, and the number of outputs is greater than the trim factor
+            if (recipe.getOutputs().size() > 0 && recipe.getOutputs().size() >= outputItemTrim.getRight()) {
+                this.itemOutputs = GTUtility.copyStackList(recipe.getOutputs().subList(0, outputItemTrim.getRight()));
+            }
+            // Mix regular outputs and chanced outputs
+            else if(recipe.getOutputs().size() > 0) {
+                int numChanced = outputItemTrim.getRight() - recipe.getOutputs().size();
+                List<Recipe.ChanceEntry> tempChance = recipe.getChancedOutputs().subList(0, Math.min(numChanced, recipe.getChancedOutputs().size()));
+                this.itemOutputs = GTUtility.copyStackList(recipe.getOutputs());
+                List<ItemStack> chanced = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt), recipeMap)
                         .stream()
-                        .filter(is ->
-                                ItemStackHashStrategy.comparingAllButCount()
-                                        .equals(is, recipe.getChancedOutputs().get(0).getItemStack()))
+                        .filter(is -> tempChance.stream().anyMatch(nis -> ItemStackHashStrategy.comparingAllButCount().equals(is, nis.getItemStack())))
                         .collect(Collectors.toList()));
+
+                this.itemOutputs.addAll(chanced);
+            }
+            // Only fill with resulting chanced outputs, since there are no regular outputs
+            else {
+                // Which Chanced outputs were actually output by the recipe
+                NonNullList<ItemStack> tempOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt), recipeMap));
+                int numOutputs = Math.min(tempOutputs.size(), outputItemTrim.getRight());
+
+                if(numOutputs <= outputItemTrim.getRight()) {
+                    this.itemOutputs = tempOutputs;
+                }
+                else {
+                    List<Recipe.ChanceEntry> tempChance = recipe.getChancedOutputs().subList(0, numOutputs);
+
+                    this.itemOutputs.addAll(tempOutputs.stream()
+                            .filter(is -> tempChance.stream().anyMatch(nis -> ItemStackHashStrategy.comparingAllButCount().equals(is, nis.getItemStack())))
+                            .collect(Collectors.toList()));
+                }
             }
         } else {
             this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt), recipeMap));

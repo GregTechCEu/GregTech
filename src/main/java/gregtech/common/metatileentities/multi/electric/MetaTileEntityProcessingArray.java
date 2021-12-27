@@ -37,6 +37,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -274,11 +275,23 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
 
         @Override
-        public boolean trimOutputs() {
+        public Pair<Boolean, Integer> trimItemOutputs() {
             MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(currentMachineStack);
 
+            boolean isLowMacerator = mte instanceof MetaTileEntityMacerator && machineTier < GTValues.HV;
+
+            boolean isHVMacerator = mte instanceof MetaTileEntityMacerator && machineTier == GTValues.HV;
+
             //Clear the chanced outputs of LV and MV macerators, as they do not have the slots to get byproducts
-            return mte instanceof MetaTileEntityMacerator && machineTier < GTValues.HV;
+            if(isLowMacerator) {
+                return Pair.of(isLowMacerator, 1);
+            }
+            // Trim HV macerators to 3 slots
+            else if(isHVMacerator) {
+                return Pair.of(isHVMacerator, 3);
+            }
+
+            return Pair.of(false, 1);
         }
     }
 }
