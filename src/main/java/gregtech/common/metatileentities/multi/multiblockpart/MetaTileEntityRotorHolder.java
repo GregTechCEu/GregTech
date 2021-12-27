@@ -187,11 +187,6 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     }
 
     @Override
-    public boolean isRotorSpinning() {
-        return isRotorSpinning;
-    }
-
-    @Override
     public int getRotorSpeed() {
         return this.currentSpeed;
     }

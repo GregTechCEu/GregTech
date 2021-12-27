@@ -45,12 +45,6 @@ public interface IRotorHolder {
     boolean hasRotor();
 
     /**
-     *
-     * @return true if the rotor is spinning
-     */
-    boolean isRotorSpinning();
-
-    /**
      * @return the current speed of the holder
      */
     int getRotorSpeed();
