@@ -251,13 +251,13 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
 
     private int calculateVeinCenterX() {
         int gridSizeX = WorldGeneratorImpl.GRID_SIZE_X * 16;
-        int offset = ConfigHolder.worldgen.generateVeinsInCenterOfChunk ? gridSizeX / 2 : gridRandom.nextInt(gridSizeX);
+        int offset = (ConfigHolder.worldgen.generateVeinsInCenterOfChunk && currentOreVein.isVein()) ? gridSizeX / 2 : gridRandom.nextInt(gridSizeX);
         return gridX * gridSizeX + offset;
     }
 
     private int calculateVeinCenterZ() {
         int gridSizeZ = WorldGeneratorImpl.GRID_SIZE_Z * 16;
-        int offset = ConfigHolder.worldgen.generateVeinsInCenterOfChunk ? gridSizeZ / 2 : gridRandom.nextInt(gridSizeZ);
+        int offset = (ConfigHolder.worldgen.generateVeinsInCenterOfChunk && currentOreVein.isVein()) ? gridSizeZ / 2 : gridRandom.nextInt(gridSizeZ);
         return gridZ * gridSizeZ + offset;
     }
 
