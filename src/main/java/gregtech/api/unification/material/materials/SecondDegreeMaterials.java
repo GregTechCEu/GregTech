@@ -259,7 +259,7 @@ public class SecondDegreeMaterials {
         SteelMagnetic = new Material.Builder(2035, "steel_magnetic")
                 .ingot()
                 .color(0x808080).iconSet(MAGNETIC)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE)
+                .flags(GENERATE_ROD)
                 .components(Steel, 1)
                 .ingotSmeltInto(Steel)
                 .arcSmeltInto(Steel)

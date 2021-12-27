@@ -523,7 +523,6 @@ public class FirstDegreeMaterials {
         SolderingAlloy = new Material.Builder(320, "soldering_alloy")
                 .ingot(1).fluid()
                 .color(0x9696A0)
-                .flags(EXT_METAL)
                 .components(Tin, 6, Lead, 3, Antimony, 1)
                 .build();
 
@@ -691,7 +690,7 @@ public class FirstDegreeMaterials {
         Graphite = new Material.Builder(341, "graphite")
                 .ingot().ore().fluid()
                 .color(0x808080)
-                .flags(STD_METAL, NO_SMELTING, FLAMMABLE, DISABLE_DECOMPOSITION)
+                .flags(NO_SMELTING, FLAMMABLE, DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
                 .build();
 
@@ -777,7 +776,7 @@ public class FirstDegreeMaterials {
         NickelZincFerrite = new Material.Builder(355, "nickel_zinc_ferrite")
                 .ingot(0).fluid()
                 .color(0x3C3C3C).iconSet(METALLIC)
-                .flags(EXT_METAL, GENERATE_RING)
+                .flags(GENERATE_RING)
                 .components(Nickel, 1, Zinc, 1, Iron, 4)
                 .build();
 
@@ -1006,7 +1005,7 @@ public class FirstDegreeMaterials {
         IronMagnetic = new Material.Builder(395, "iron_magnetic")
                 .ingot()
                 .color(0xC8C8C8).iconSet(MAGNETIC)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE)
+                .flags(GENERATE_BOLT_SCREW)
                 .components(Iron, 1)
                 .ingotSmeltInto(Iron)
                 .arcSmeltInto(WroughtIron)
@@ -1160,7 +1159,7 @@ public class FirstDegreeMaterials {
         NeodymiumMagnetic = new Material.Builder(418, "neodymium_magnetic")
                 .ingot()
                 .color(0x646464).iconSet(MAGNETIC)
-                .flags(EXT2_METAL, GENERATE_LONG_ROD)
+                .flags(GENERATE_ROD)
                 .components(Neodymium, 1)
                 .ingotSmeltInto(Neodymium)
                 .arcSmeltInto(Neodymium)
@@ -1198,7 +1197,7 @@ public class FirstDegreeMaterials {
         SamariumMagnetic = new Material.Builder(423, "samarium_magnetic")
                 .ingot()
                 .color(0xFFFFCD).iconSet(MAGNETIC)
-                .flags(STD_METAL, GENERATE_LONG_ROD)
+                .flags(GENERATE_LONG_ROD)
                 .components(Samarium, 1)
                 .ingotSmeltInto(Samarium)
                 .arcSmeltInto(Samarium)

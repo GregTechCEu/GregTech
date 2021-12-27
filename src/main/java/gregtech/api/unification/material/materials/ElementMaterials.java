@@ -43,7 +43,7 @@ public class ElementMaterials {
         Antimony = new Material.Builder(4, "antimony")
                 .ingot().fluid()
                 .color(0xDCDCF0).iconSet(SHINY)
-                .flags(EXT_METAL, MORTAR_GRINDABLE)
+                .flags(MORTAR_GRINDABLE)
                 .element(Elements.Sb)
                 .build();
 
@@ -149,7 +149,6 @@ public class ElementMaterials {
                 .ingot().fluid()
                 .color(0x87917D).iconSet(METALLIC)
                 .element(Elements.Ce)
-                .flags()
                 .blastTemp(1068)
                 .build();
 
@@ -419,7 +418,6 @@ public class ElementMaterials {
         Lithium = new Material.Builder(56, "lithium")
                 .ingot().fluid().ore()
                 .color(0xBDC7DB)
-                .flags(STD_METAL)
                 .element(Elements.Li)
                 .build();
 
@@ -529,7 +527,6 @@ public class ElementMaterials {
         Niobium = new Material.Builder(71, "niobium")
                 .ingot().fluid()
                 .color(0xBEB4C8).iconSet(METALLIC)
-                .flags(STD_METAL)
                 .element(Elements.Nb)
                 .blastTemp(2750, GasTier.MID, VA[HV], 900)
                 .build();
@@ -606,7 +603,6 @@ public class ElementMaterials {
         Plutonium239 = new Material.Builder(81, "plutonium")
                 .ingot(3).fluid().ore(true)
                 .color(0xF03232).iconSet(METALLIC)
-                .flags(EXT_METAL)
                 .element(Elements.Pu239)
                 .build();
 
@@ -620,7 +616,6 @@ public class ElementMaterials {
         Potassium = new Material.Builder(83, "potassium")
                 .ingot(1).fluid()
                 .color(0xBEDCFF).iconSet(METALLIC)
-                .flags(EXT_METAL)
                 .element(Elements.K)
                 .build();
 
@@ -697,7 +692,6 @@ public class ElementMaterials {
         Ruthenium = new Material.Builder(93, "ruthenium")
                 .ingot().fluid()
                 .color(0x50ACCD).iconSet(SHINY)
-                .flags(EXT2_METAL)
                 .element(Elements.Ru)
                 .blastTemp(2607, GasTier.MID, VA[EV], 900)
                 .build();
@@ -713,7 +707,7 @@ public class ElementMaterials {
         Samarium = new Material.Builder(95, "samarium")
                 .ingot().fluid()
                 .color(0xFFFFCC).iconSet(METALLIC)
-                .flags(STD_METAL, GENERATE_LONG_ROD)
+                .flags(GENERATE_LONG_ROD)
                 .element(Elements.Sm)
                 .blastTemp(5400, GasTier.HIGH, VA[EV], 1500)
                 .build();
@@ -721,7 +715,6 @@ public class ElementMaterials {
         Scandium = new Material.Builder(96, "scandium")
                 .ingot().fluid()
                 .iconSet(METALLIC)
-                .flags(STD_METAL)
                 .element(Elements.Sc)
                 .blastTemp(1814)
                 .setHidden()
@@ -744,7 +737,7 @@ public class ElementMaterials {
         Silicon = new Material.Builder(99, "silicon")
                 .ingot().fluid()
                 .color(0x3C3C50).iconSet(METALLIC)
-                .flags(STD_METAL, GENERATE_FOIL)
+                .flags(GENERATE_FOIL)
                 .element(Elements.Si)
                 .blastTemp(1687) // no gas tier for silicon
                 .build();
@@ -760,7 +753,6 @@ public class ElementMaterials {
         Sodium = new Material.Builder(101, "sodium")
                 .ingot().fluid()
                 .color(0x000096).iconSet(METALLIC)
-                .flags(STD_METAL)
                 .element(Elements.Na)
                 .build();
 
@@ -896,7 +888,6 @@ public class ElementMaterials {
         Vanadium = new Material.Builder(118, "vanadium")
                 .ingot().fluid()
                 .color(0x323232).iconSet(METALLIC)
-                .flags(STD_METAL)
                 .element(Elements.V)
                 .blastTemp(2183, GasTier.MID)
                 .build();
@@ -910,7 +901,6 @@ public class ElementMaterials {
         Ytterbium = new Material.Builder(120, "ytterbium")
                 .ingot().fluid()
                 .color(0xA7A7A7).iconSet(METALLIC)
-                .flags(STD_METAL)
                 .element(Elements.Yb)
                 .blastTemp(1097)
                 .setHidden()
@@ -919,7 +909,6 @@ public class ElementMaterials {
         Yttrium = new Material.Builder(121, "yttrium")
                 .ingot().fluid()
                 .color(0x76524C).iconSet(METALLIC)
-                .flags(STD_METAL)
                 .element(Elements.Y)
                 .blastTemp(1799)
                 .build();
@@ -934,7 +923,6 @@ public class ElementMaterials {
         Zirconium = new Material.Builder(123, "zirconium")
                 .ingot(6).fluid()
                 .color(0xC8FFFF).iconSet(METALLIC)
-                .flags(EXT2_METAL)
                 .element(Elements.Zr)
                 .setHidden()
                 .build();
@@ -970,7 +958,7 @@ public class ElementMaterials {
         Neutronium = new Material.Builder(127, "neutronium")
                 .ingot(6).fluid()
                 .color(0xFAFAFA)
-                .flags(EXT2_METAL, GENERATE_FRAME)
+                .flags(EXT_METAL, GENERATE_BOLT_SCREW, GENERATE_FRAME)
                 .element(Elements.Nt)
                 .toolStats(24.0f, 12.0f, 655360, 21)
                 .fluidPipeProperties(1000000, 2800, true)
