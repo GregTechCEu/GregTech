@@ -188,12 +188,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     private void updateSideBlockedConnection(EnumFacing side) {
         WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
-        boolean isSideOpen = false;
-        int sideIndex = 1 << side.getIndex();
-        for (int blockedConnections : openConnectionsMap.values()) {
-            isSideOpen |= (blockedConnections & sideIndex) > 0;
-        }
-        worldPipeNet.updateBlockedConnections(getPos(), side, !isSideOpen);
+        worldPipeNet.updateBlockedConnections(getPos(), side, !isConnectionOpen(AttachmentType.PIPE, side));
     }
 
     private int withSideConnectionBlocked(int blockedConnections, EnumFacing side, boolean blocked) {
@@ -311,7 +306,12 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         writePipeProperties(buf);
-        buf.writeVarInt(openConnections);
+        buf.writeVarInt(openConnectionsMap.size());
+        openConnectionsMap.forEachEntry((key, value) -> {
+            buf.writeVarInt(key);
+            buf.writeVarInt(value);
+            return true;
+        });
         buf.writeInt(insulationColor);
         this.coverableImplementation.writeInitialSyncData(buf);
     }
@@ -319,7 +319,11 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         readPipeProperties(buf);
-        this.openConnections = buf.readVarInt();
+        int size = buf.readVarInt();
+        for(int i = 0; i < size; i++) {
+            openConnectionsMap.put(buf.readVarInt(), buf.readVarInt());
+        }
+        recomputeBlockedConnections();
         this.insulationColor = buf.readInt();
         this.coverableImplementation.readInitialSyncData(buf);
     }
