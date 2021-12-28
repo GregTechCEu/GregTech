@@ -94,7 +94,6 @@ public class MetaBlocks {
     public static BlockWarningSign WARNING_SIGN;
     public static HermeticCasings HERMETIC_CASING;
 
-    public static BlockConcrete CONCRETE;
     public static BlockAsphalt ASPHALT;
 
     public static BlockStoneSmooth STONE_SMOOTH;
