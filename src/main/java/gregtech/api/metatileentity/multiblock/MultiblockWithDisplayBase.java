@@ -105,7 +105,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * @return whether this multiblock has maintenance mechanics
      */
     public boolean hasMaintenanceMechanics() {
-        return ConfigHolder.machines.enableMaintenance;
+        return true;
     }
 
     public boolean hasMufflerMechanics() {

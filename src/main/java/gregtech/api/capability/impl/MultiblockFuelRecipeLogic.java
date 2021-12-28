@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
+import gregtech.common.ConfigHolder;
 
 import javax.annotation.Nonnull;
 
@@ -25,7 +26,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         int numMaintenanceProblems = displayBase == null ? 0 : displayBase.getNumMaintenanceProblems();
 
         int[] overclock = null;
-        if (displayBase != null && displayBase.hasMaintenanceMechanics()) {
+        if (displayBase != null && ConfigHolder.machines.enableMaintenance && displayBase.hasMaintenanceMechanics()) {
             IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
             double durationMultiplier = hatch.getDurationMultiplier();
             if (durationMultiplier != 1.0) {

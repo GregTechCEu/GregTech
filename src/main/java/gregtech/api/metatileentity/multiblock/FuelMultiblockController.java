@@ -6,6 +6,7 @@ import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -39,7 +40,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                     .setStyle(new Style().setColor(TextFormatting.RED)
                             .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))));
         } else {
-            if (hasMaintenanceMechanics())
+            if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics())
                 addMaintenanceText(textList);
 
             if (hasMufflerMechanics() && !isMufflerFaceFree())
