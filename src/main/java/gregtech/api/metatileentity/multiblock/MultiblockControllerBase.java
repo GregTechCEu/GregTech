@@ -11,7 +11,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pattern.*;
 import gregtech.client.renderer.ICubeRenderer;
-import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
+import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
@@ -327,7 +327,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             return true;
 
         if (this.getWorld().isRemote && !this.isStructureFormed() && playerIn.isSneaking() && playerIn.getHeldItem(hand).isEmpty()) {
-            BlockPosHighlightRenderer.renderMultiBlockPreview(this, 60000);
+            MultiblockPreviewRenderer.renderMultiBlockPreview(this, 60000);
             return true;
         }
         return false;
