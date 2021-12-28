@@ -1,6 +1,6 @@
 package gregtech.client.event;
 
-import gregtech.client.renderer.handler.WorldRenderEventRenderer;
+import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.client.utils.DepthTextureUtil;
 import gregtech.client.renderer.handler.TerminalARRenderer;
 import gregtech.client.renderer.handler.ToolOverlayRenderer;
@@ -43,7 +43,7 @@ public class ClientEventHandler {
     public static void onRenderWorldLast(RenderWorldLastEvent event) {
         DepthTextureUtil.renderWorld(event);
 //        GTParticleManager.renderWorld(event);
-        WorldRenderEventRenderer.renderWorldLastEvent(event);
+        BlockPosHighlightRenderer.renderWorldLastEvent(event);
         TerminalARRenderer.renderWorldLastEvent(event);
     }
 

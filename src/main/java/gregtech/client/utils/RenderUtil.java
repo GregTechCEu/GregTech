@@ -107,8 +107,8 @@ public class RenderUtil {
     private static void applyScissor(int x, int y, int w, int h) {
         //translate upper-left to bottom-left
         ScaledResolution r = ((GuiIngameForge) Minecraft.getMinecraft().ingameGUI).getResolution();
-        int s = r.getScaleFactor();
-        int translatedY = r.getScaledHeight() - y - h;
+        int s = r == null ? 1 : r.getScaleFactor();
+        int translatedY = r == null ? 0 : (r.getScaledHeight() - y - h);
         GL11.glScissor(x * s, translatedY * s, w * s, h * s);
     }
 

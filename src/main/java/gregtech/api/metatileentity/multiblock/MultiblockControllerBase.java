@@ -11,7 +11,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pattern.*;
 import gregtech.client.renderer.ICubeRenderer;
-import gregtech.client.renderer.handler.WorldRenderEventRenderer;
+import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
@@ -52,7 +52,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
     private final List<IMultiblockPart> multiblockParts = new ArrayList<>();
     private boolean structureFormed;
-    private int rightClickDelayTimer = 0;
 
     public MultiblockControllerBase(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -80,8 +79,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 updateFormedValid();
             }
         }
-        if (rightClickDelayTimer > 0)
-            rightClickDelayTimer--;
     }
 
     /**
@@ -329,9 +326,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         if (super.onRightClick(playerIn, hand, facing, hitResult))
             return true;
 
-        if (!this.isStructureFormed() && playerIn.isSneaking() && playerIn.getHeldItem(hand).isEmpty() && this.rightClickDelayTimer == 0 && this.getWorld().isRemote) {
-            this.rightClickDelayTimer = 4;
-            WorldRenderEventRenderer.renderMultiBlockPreview(this, 60000);
+        if (this.getWorld().isRemote && !this.isStructureFormed() && playerIn.isSneaking() && playerIn.getHeldItem(hand).isEmpty()) {
+            BlockPosHighlightRenderer.renderMultiBlockPreview(this, 60000);
             return true;
         }
         return false;
