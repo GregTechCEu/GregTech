@@ -102,6 +102,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
             }
             if (getOffsetTimer() % 20 == 0)
                 damageRotor(1 + controller.getNumMaintenanceProblems());
+        } else if (!hasRotor()) {
+            setCurrentSpeed(0);
         } else if (currentSpeed > 0) {
             setCurrentSpeed(Math.max(0, currentSpeed - SPEED_DECREMENT));
         }
