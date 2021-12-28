@@ -231,7 +231,7 @@ public class EventHandlers {
 
     @SubscribeEvent
     public static void onFurnaceFuelBurnTime(FurnaceFuelBurnTimeEvent event) {
-        if(event.getItemStack().isItemEqual(FluidUtil.getFilledBucket(Materials.Creosote.getFluid(1000)))) {
+        if(ItemStack.areItemStacksEqual(event.getItemStack(), FluidUtil.getFilledBucket(Materials.Creosote.getFluid(1000)))) {
             event.setBurnTime(6400);
         }
     }
