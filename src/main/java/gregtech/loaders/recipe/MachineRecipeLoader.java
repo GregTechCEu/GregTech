@@ -336,6 +336,24 @@ public class MachineRecipeLoader {
                 .fluidOutputs(Materials.IndiumConcentrate.getFluid(1000))
                 .duration(60).EUt(150).buildAndRegister();
 
+        RecipeMaps.MIXER_RECIPES.recipeBuilder()
+                .input(dust, Coal)
+                .fluidInputs(Concrete.getFluid(L))
+                .outputs(MetaBlocks.ASPHALT.getItemVariant(BlockAsphalt.BlockType.ASPHALT))
+                .duration(60).EUt(16).buildAndRegister();
+
+        RecipeMaps.MIXER_RECIPES.recipeBuilder()
+                .input(dust, Charcoal)
+                .fluidInputs(Concrete.getFluid(L))
+                .outputs(MetaBlocks.ASPHALT.getItemVariant(BlockAsphalt.BlockType.ASPHALT))
+                .duration(60).EUt(16).buildAndRegister();
+
+        RecipeMaps.MIXER_RECIPES.recipeBuilder()
+                .input(dust, Carbon)
+                .fluidInputs(Concrete.getFluid(L))
+                .outputs(MetaBlocks.ASPHALT.getItemVariant(BlockAsphalt.BlockType.ASPHALT))
+                .duration(60).EUt(16).buildAndRegister();
+
     }
 
     private static final MaterialStack[][] alloySmelterList = {

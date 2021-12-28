@@ -2398,6 +2398,8 @@ gregtech.tank_valve.tooltip=Use to fill and drain multiblock tanks. Auto outputs
 
 gregtech.machine.clipboard.name=Clipboard
 
+# Asphalt
+tile.asphalt.asphalt.name=Asphalt
 
 # Smooth Stone Blocks
 tile.stone_smooth.black_granite.name=Black Granite
