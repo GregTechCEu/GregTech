@@ -263,6 +263,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return false;
     }
 
+    public boolean canVoidRecipeOutputs() {
+        return false;
+    }
+
     protected void trySearchNewRecipe() {
         long maxVoltage = getMaxVoltage();
         Recipe currentRecipe;
@@ -407,11 +411,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         IMultipleTankHandler importFluids = getInputTank();
         IMultipleTankHandler exportFluids = getOutputTank();
 
-        if (!MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs(exportInventory.getSlots()))) {
+        if (!canVoidRecipeOutputs() && !MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs(exportInventory.getSlots()))) {
             this.isOutputsFull = true;
             return false;
         }
-        if (!MetaTileEntity.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
+        if (!canVoidRecipeOutputs() && !MetaTileEntity.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
