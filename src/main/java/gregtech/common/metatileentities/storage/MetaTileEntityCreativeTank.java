@@ -97,7 +97,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     @Override
     public void update() {
         super.update();
-        if (getOffsetTimer() % ticksPerCycle != 0 || fluidTank.getFluid() == null
+        if (ticksPerCycle != 0 || getOffsetTimer() % ticksPerCycle != 0 || fluidTank.getFluid() == null
                 || getWorld().isRemote || !active) return;
 
         FluidStack stack = fluidTank.getFluid().copy();
