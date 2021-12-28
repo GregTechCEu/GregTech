@@ -199,7 +199,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     @Override
     public List<BlockPos> getAOEBlocks(ItemStack itemStack, EntityPlayer player, RayTraceResult rayTraceResult) {
         T metaToolValueItem = getItem(itemStack);
-        if (metaToolValueItem != null) {
+        if (rayTraceResult.getBlockPos() != null && metaToolValueItem != null) {
             IToolStats toolStats = metaToolValueItem.getToolStats();
             return toolStats.getAOEBlocks(itemStack, player, rayTraceResult);
         }
