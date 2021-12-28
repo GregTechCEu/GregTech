@@ -31,7 +31,6 @@ import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.worldgen.LootTableHelper;
-import gregtech.common.worldgen.WorldGenAbandonedBase;
 import gregtech.common.worldgen.WorldGenRubberTree;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
@@ -154,7 +153,6 @@ public class GregTechMod {
         }
 
         WorldGenRegistry.INSTANCE.initializeRegistry();
-        GameRegistry.registerWorldGenerator(new WorldGenAbandonedBase(), 20000);
         if (!ConfigHolder.worldgen.disableRubberTreeGeneration) {
             GameRegistry.registerWorldGenerator(new WorldGenRubberTree(), 10000);
         }

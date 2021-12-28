@@ -134,9 +134,6 @@ public class ConfigHolder {
         @Config.Comment({"Whether to disable Rubber Tree world generation.", "Default: false"})
         public boolean disableRubberTreeGeneration = false;
 
-        @Config.Comment({"Chance of generating Abandoned Base in chunk = 1 / THIS_VALUE.", "0 disables Abandoned Base generation.", "Default: 1000"})
-        public int abandonedBaseRarity = 1000;
-
         @Config.Comment({"Whether to increase number of rolls for dungeon chests. Increases dungeon loot drastically.", "Default: true"})
         public boolean increaseDungeonLoot = true;
 
