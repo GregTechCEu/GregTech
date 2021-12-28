@@ -546,7 +546,7 @@ public class MetaTileEntities {
         }
 
         // Battery Buffer, IDs 1315-1360
-        endPos = GTValues.HT ? BATTERY_BUFFER[0].length - 1 : Math.min(BATTERY_BUFFER[0].length - 1, GTValues.UV);
+        endPos = GTValues.HT ? BATTERY_BUFFER[0].length - 1 : Math.min(BATTERY_BUFFER[0].length - 1, GTValues.UHV + 1);
         int[] batteryBufferSlots = new int[]{4, 8, 16};
         for (int slot = 0; slot < batteryBufferSlots.length; slot++) {
             BATTERY_BUFFER[slot] = new MetaTileEntityBatteryBuffer[endPos];
@@ -558,7 +558,7 @@ public class MetaTileEntities {
         }
 
         // Charger, IDs 1375-1389
-        endPos = GTValues.HT ? CHARGER.length - 1 : Math.min(CHARGER.length - 1, GTValues.UV + 1);
+        endPos = GTValues.HT ? CHARGER.length - 1 : Math.min(CHARGER.length - 1, GTValues.UHV + 1);
         for (int i = 0; i < endPos; i++) {
             String chargerId = "charger." + GTValues.VN[i].toLowerCase();
             MetaTileEntityCharger charger = new MetaTileEntityCharger(gregtechId(chargerId), i, 4);
