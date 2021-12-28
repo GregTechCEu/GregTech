@@ -21,6 +21,8 @@ public abstract class InventoryItemSource extends ItemSource {
     private StoredItemsChangeCallback changeCallback = null;
     protected IItemHandler itemHandler = EmptyHandler.INSTANCE;
     private Map<ItemStackKey, Integer> itemStackByAmountMap = new HashMap<>();
+    private boolean cachedRefreshResult = false;
+    private long lastItemHandlerUpdateTick = -1L;
 
     public InventoryItemSource(World world, int priority) {
         this.world = world;
@@ -55,10 +57,12 @@ public abstract class InventoryItemSource extends ItemSource {
 
     private boolean refreshItemHandler(boolean simulated) {
         IItemHandler newItemHandler = computeItemHandler();
+        this.lastItemHandlerUpdateTick = world.getTotalWorldTime();
         if (newItemHandler == null) {
             if (!simulated && invalidationCallback != null) {
                 invalidationCallback.run();
             }
+            this.cachedRefreshResult = false;
             return false;
         }
         if (!newItemHandler.equals(itemHandler) || newItemHandler.getSlots() != itemHandler.getSlots()) {
@@ -66,8 +70,10 @@ public abstract class InventoryItemSource extends ItemSource {
             if (!simulated) {
                 recomputeItemStackCount();
             }
+            this.cachedRefreshResult = false;
             return false;
         }
+        this.cachedRefreshResult = true;
         return true;
     }
 
@@ -77,7 +83,11 @@ public abstract class InventoryItemSource extends ItemSource {
     }
 
     private boolean checkItemHandlerValid(boolean simulated) {
-        return refreshItemHandler(simulated);
+        long currentUpdateTick = world.getTotalWorldTime();
+        if (currentUpdateTick != lastItemHandlerUpdateTick) {
+            return refreshItemHandler(simulated);
+        }
+        return cachedRefreshResult;
     }
 
     /**
