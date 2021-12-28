@@ -1,7 +1,11 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
@@ -10,9 +14,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.BOILER_HEAT;
 import static gregtech.api.capability.GregtechDataCodes.BOILER_LAST_TICK_STEAM;
@@ -27,6 +35,8 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
 
     public BoilerRecipeLogic(MetaTileEntityLargeBoiler tileEntity) {
         super(tileEntity, null);
+        this.fluidOutputs = Collections.emptyList();
+        this.itemOutputs = NonNullList.create();
     }
 
     @Override
@@ -45,31 +55,37 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
             return;
         }
 
+        // can optimize with an override of checkPreviousRecipe() and a check here
+
         IMultipleTankHandler importFluids = boiler.getImportFluids();
+        List<ItemStack> dummyList = NonNullList.create();
         boolean didStartRecipe = false;
 
-        // todo can optimize with an override of checkPreviousRecipe() and a check here
-        // (might need to?)
-
-        // TODO Do these after fuel recipes are done differently
-/*
         for (IFluidTank fluidTank : importFluids.getFluidTanks()) {
             FluidStack fuelStack = fluidTank.drain(Integer.MAX_VALUE, false);
             if (fuelStack == null || ModHandler.isWater(fuelStack)) continue;
 
-            FuelRecipe dieselRecipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.findRecipe(GTValues.V[GTValues.MAX], fuelStack);
+            Recipe dieselRecipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.findRecipe(
+                    GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack), Integer.MAX_VALUE, MatchingMode.IGNORE_ITEMS);
             if (dieselRecipe != null) {
-                // should exit here
-                //int duration = dieselRecipe.getDuration();
-                //Recipe recipe = new Recipe(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), )
+                ((FluidTank) fluidTank).drain(dieselRecipe.getFluidInputs().get(0), true);
+                // divide by 4, since we divide by 2 for the steam ratio, and by 2 again to half the duration of the fuel
+                setMaxProgress(adjustBurnTimeForThrottle(Math.max(1, boiler.boilerType.runtimeBoost((Math.abs(dieselRecipe.getEUt()) * dieselRecipe.getDuration()) / 4))));
+                didStartRecipe = true;
+                break;
             }
 
-            FuelRecipe denseFuelRecipe = RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.findRecipe(GTValues.V[GTValues.MAX], fuelStack);
+            Recipe denseFuelRecipe = RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.findRecipe(
+                    GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack), Integer.MAX_VALUE, MatchingMode.IGNORE_ITEMS);
             if (denseFuelRecipe != null) {
-                // should exit here
+                ((FluidTank) fluidTank).drain(denseFuelRecipe.getFluidInputs().get(0), true);
+                // leave as is, as it is 2x burntime for semi-fluid (so just skip the EU->Steam ratio)
+                setMaxProgress(adjustBurnTimeForThrottle(Math.max(1, boiler.boilerType.runtimeBoost((Math.abs(denseFuelRecipe.getEUt()) * denseFuelRecipe.getDuration())))));
+                didStartRecipe = true;
+                break;
             }
         }
-*/
+
         if (!didStartRecipe) {
             IItemHandlerModifiable importItems = boiler.getImportItems();
             for (int i = 0; i < importItems.getSlots(); i++) {
@@ -79,22 +95,19 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
                     this.excessFuel += fuelBurnTime % 80;
                     int excessProgress = this.excessFuel / 80;
                     setMaxProgress(excessProgress + adjustBurnTimeForThrottle(boiler.boilerType.runtimeBoost(fuelBurnTime / 80)));
-                    this.progressTime = 1;
-                    this.recipeEUt = adjustEUtForThrottle(boiler.boilerType.steamPerTick());
-
-                    // avoid some NPEs
-                    this.fluidOutputs = Collections.emptyList();
-                    this.itemOutputs = NonNullList.create();
-
                     stack.shrink(1);
-
-                    if (wasActiveAndNeedsUpdate) {
-                        wasActiveAndNeedsUpdate = false;
-                    } else {
-                        setActive(true);
-                    }
+                    didStartRecipe = true;
                     break;
                 }
+            }
+        }
+        if (didStartRecipe) {
+            this.progressTime = 1;
+            this.recipeEUt = adjustEUtForThrottle(boiler.boilerType.steamPerTick());
+            if (wasActiveAndNeedsUpdate) {
+                wasActiveAndNeedsUpdate = false;
+            } else {
+                setActive(true);
             }
         }
         metaTileEntity.getNotifiedItemInputList().clear();
@@ -179,8 +192,6 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
         progressTime = 0;
         maxProgressTime = 0;
         recipeEUt = 0;
-        fluidOutputs = null;
-        itemOutputs = null;
         setActive(false);
         setLastTickSteam(0);
     }
@@ -190,8 +201,6 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
         progressTime = 0;
         setMaxProgress(0);
         recipeEUt = 0;
-        fluidOutputs = null;
-        itemOutputs = null;
         wasActiveAndNeedsUpdate = true;
     }
 
@@ -219,7 +228,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound compound) {
+    public void deserializeNBT(@Nonnull NBTTagCompound compound) {
         super.deserializeNBT(compound);
         this.currentHeat = compound.getInteger("Heat");
         this.excessFuel = compound.getInteger("ExcessFuel");
@@ -228,14 +237,14 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public void writeInitialData(PacketBuffer buf) {
+    public void writeInitialData(@Nonnull PacketBuffer buf) {
         super.writeInitialData(buf);
         buf.writeVarInt(currentHeat);
         buf.writeVarInt(lastTickSteamOutput);
     }
 
     @Override
-    public void receiveInitialData(PacketBuffer buf) {
+    public void receiveInitialData(@Nonnull PacketBuffer buf) {
         super.receiveInitialData(buf);
         this.currentHeat = buf.readVarInt();
         this.lastTickSteamOutput = buf.readVarInt();

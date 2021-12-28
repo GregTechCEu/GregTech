@@ -96,8 +96,8 @@ public enum BoilerType {
         switch(this) {
             case BRONZE:        return ticks * 2;
             case STEEL:         return ticks * 150 / 100;
-            case TITANIUM:      return ticks * 130 / 100;
-            case TUNGSTENSTEEL: return ticks * 120 / 100;
+            case TITANIUM:      return ticks * 120 / 100;
+            case TUNGSTENSTEEL: return ticks;
         }
         return 0;
     }
