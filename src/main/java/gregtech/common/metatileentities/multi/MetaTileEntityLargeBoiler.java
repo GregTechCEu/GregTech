@@ -406,11 +406,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     @Override
-    protected IItemHandlerModifiable createExportItemHandler() {
-        return super.createExportItemHandler();
-    }
-
-    @Override
     public FluidTankList getExportFluids() {
         return steamOutputTank;
     }

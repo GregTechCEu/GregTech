@@ -67,11 +67,11 @@ public class ModHandler {
         return false;
     }
 
-    public static FluidStack getWaterFromContainer(@Nonnull IFluidHandler fluidHandler, boolean doDrain) {
-        return getWaterFromContainer(fluidHandler, 1, doDrain);
+    public static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, boolean doDrain) {
+        return getBoilerFluidFromContainer(fluidHandler, 1, doDrain);
     }
 
-    public static FluidStack getWaterFromContainer(@Nonnull IFluidHandler fluidHandler, int amount, boolean doDrain) {
+    public static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, int amount, boolean doDrain) {
         if (amount == 0) return null;
         FluidStack drainedWater = fluidHandler.drain(Materials.Water.getFluid(amount), doDrain);
         if (drainedWater == null || drainedWater.amount == 0) {

@@ -33,7 +33,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     public void update() {
-        if (!isActive() && currentHeat > 0) {
+        if ((!isActive() || !isWorkingEnabled()) && currentHeat > 0) {
             setHeat(currentHeat - 1);
             setLastTickSteam(0);
         }
@@ -77,12 +77,12 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
             for (int i = 0; i < importItems.getSlots(); i++) {
                 ItemStack stack = importItems.getStackInSlot(i);
                 int fuelBurnTime = (int) Math.ceil(ModHandler.getFuelValue(stack));
-                if (fuelBurnTime / 80 > 0) {
+                if (fuelBurnTime / 80 > 0) { // try to ensure this fuel can burn for at least 1 tick
                     this.excessFuel += fuelBurnTime % 80;
                     int excessProgress = this.excessFuel / 80;
-                    setMaxProgress(excessProgress + adjustBurnTimeForConfig(boiler.boilerType.runtimeBoost(fuelBurnTime / 80)));
+                    setMaxProgress(excessProgress + adjustBurnTimeForThrottle(boiler.boilerType.runtimeBoost(fuelBurnTime / 80)));
                     this.progressTime = 1;
-                    this.recipeEUt = adjustEUtForConfig(boiler.boilerType.steamPerTick());
+                    this.recipeEUt = adjustEUtForThrottle(boiler.boilerType.steamPerTick());
 
                     // avoid some NPEs
                     this.fluidOutputs = Collections.emptyList();
@@ -105,15 +105,14 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     protected void updateRecipeProgress() {
-        // todo figure out how maintenance fits in
-        int generatedSteam = this.recipeEUt * this.currentHeat / getMaximumHeat();
+        int generatedSteam = this.recipeEUt * getMaximumHeatFromMaintenance() / getMaximumHeat();
         if (generatedSteam > 0) {
             long amount = (generatedSteam + STEAM_PER_WATER) / STEAM_PER_WATER;
             excessWater += amount * STEAM_PER_WATER - generatedSteam;
             amount -= excessWater / STEAM_PER_WATER;
             excessWater %= STEAM_PER_WATER;
 
-            FluidStack drainedWater = ModHandler.getWaterFromContainer(getInputTank(), (int) amount, true);
+            FluidStack drainedWater = ModHandler.getBoilerFluidFromContainer(getInputTank(), (int) amount, true);
             if (amount != 0 && (drainedWater == null || drainedWater.amount < amount)) {
                 getMetaTileEntity().explodeMultiblock();
             } else {
@@ -130,15 +129,21 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
         }
     }
 
-    private int adjustEUtForConfig(int rawEUt) {
+    private int getMaximumHeatFromMaintenance() {
+        if (ConfigHolder.machines.enableMaintenance) {
+            return (int) Math.min(currentHeat, (1 - 0.1 * getMetaTileEntity().getMaintenanceProblems()) * getMaximumHeat());
+        } else return currentHeat;
+    }
+
+    private int adjustEUtForThrottle(int rawEUt) {
         int throttle = ((MetaTileEntityLargeBoiler) metaTileEntity).getThrottle();
         return Math.max(25, (int) (rawEUt * (throttle / 100.0)));
     }
 
-    private int adjustBurnTimeForConfig(int rawBurnTime) {
+    private int adjustBurnTimeForThrottle(int rawBurnTime) {
         MetaTileEntityLargeBoiler boiler = (MetaTileEntityLargeBoiler) metaTileEntity;
         int EUt = boiler.boilerType.steamPerTick();
-        int adjustedEUt = adjustEUtForConfig(EUt);
+        int adjustedEUt = adjustEUtForThrottle(EUt);
         int adjustedBurnTime = rawBurnTime * EUt / adjustedEUt;
         this.excessProjectedEU += EUt * rawBurnTime - adjustedEUt * adjustedBurnTime;
         adjustedBurnTime += this.excessProjectedEU / adjustedEUt;
