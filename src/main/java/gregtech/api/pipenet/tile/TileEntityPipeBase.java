@@ -232,7 +232,12 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public final <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         boolean isCoverable = capability == GregtechTileCapabilities.CAPABILITY_COVERABLE;
         CoverBehavior coverBehavior = facing == null ? null : coverableImplementation.getCoverAtSide(facing);
-        T defaultValue = getCapabilityInternal(capability, facing);
+        T defaultValue;
+        if (getPipeBlock() == null)
+            defaultValue = null;
+        else
+            defaultValue = getCapabilityInternal(capability, facing);
+
         if (isCoverable) {
             return defaultValue;
         }
@@ -323,7 +328,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void receiveInitialSyncData(PacketBuffer buf) {
         readPipeProperties(buf);
         int size = buf.readVarInt();
-        for(int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             openConnectionsMap.put(buf.readVarInt(), buf.readVarInt());
         }
         recomputeBlockedConnections();
