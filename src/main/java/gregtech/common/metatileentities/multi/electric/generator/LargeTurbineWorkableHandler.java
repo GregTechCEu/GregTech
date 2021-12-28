@@ -98,7 +98,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
 
         //rebuild the recipe and adjust voltage to match the turbine
         RecipeBuilder<?> recipeBuilder = getRecipeMap().recipeBuilder();
-        recipeBuilder.append(recipe, parallel, false, false)
+        recipeBuilder.append(recipe, parallel, false, trimItemOutputs(), trimFluidOutputs())
                 .EUt(-turbineMaxVoltage);
         applyParallelBonus(recipeBuilder);
         recipe = recipeBuilder.build().getResult();
