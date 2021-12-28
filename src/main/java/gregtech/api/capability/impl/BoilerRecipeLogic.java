@@ -15,6 +15,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -92,6 +93,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
                 ItemStack stack = importItems.getStackInSlot(i);
                 int fuelBurnTime = (int) Math.ceil(ModHandler.getFuelValue(stack));
                 if (fuelBurnTime / 80 > 0) { // try to ensure this fuel can burn for at least 1 tick
+                    if (FluidUtil.getFluidHandler(stack) != null) continue;
                     this.excessFuel += fuelBurnTime % 80;
                     int excessProgress = this.excessFuel / 80;
                     setMaxProgress(excessProgress + adjustBurnTimeForThrottle(boiler.boilerType.runtimeBoost(fuelBurnTime / 80)));
