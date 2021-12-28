@@ -17,8 +17,6 @@ import java.util.Collections;
 import static gregtech.api.capability.GregtechDataCodes.BOILER_HEAT;
 import static gregtech.api.capability.GregtechDataCodes.BOILER_LAST_TICK_STEAM;
 
-// TODO Move to common
-
 public class BoilerRecipeLogic extends AbstractRecipeLogic {
 
     private static final long STEAM_PER_WATER = 160;
@@ -274,7 +272,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected boolean drawEnergy(int recipeEUt) {
+    protected boolean drawEnergy(int recipeEUt, boolean simulate) {
         GTLog.logger.error("Large Boiler called drawEnergy(), this should not be possible!");
         return false;
     }
