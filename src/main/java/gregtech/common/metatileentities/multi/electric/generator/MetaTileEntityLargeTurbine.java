@@ -91,6 +91,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         this.exportFluidHandler = new FluidTankList(true, getAbilities(MultiblockAbility.EXPORT_FLUIDS));
+        ((LargeTurbineWorkableHandler) this.recipeMapWorkable).updateTanks();
     }
 
     @Override
