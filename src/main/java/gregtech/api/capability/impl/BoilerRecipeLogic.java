@@ -52,7 +52,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
     @Override
     protected void trySearchNewRecipe() {
         MetaTileEntityLargeBoiler boiler = (MetaTileEntityLargeBoiler) metaTileEntity;
-        if (ConfigHolder.machines.enableMaintenance && boiler.hasMaintenanceMechanics() && boiler.getMaintenanceProblems() > 5) {
+        if (ConfigHolder.machines.enableMaintenance && boiler.hasMaintenanceMechanics() && boiler.getNumMaintenanceProblems() > 5) {
             return;
         }
 
@@ -144,7 +144,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
 
     private int getMaximumHeatFromMaintenance() {
         if (ConfigHolder.machines.enableMaintenance) {
-            return (int) Math.min(currentHeat, (1 - 0.1 * getMetaTileEntity().getMaintenanceProblems()) * getMaximumHeat());
+            return (int) Math.min(currentHeat, (1 - 0.1 * getMetaTileEntity().getNumMaintenanceProblems()) * getMaximumHeat());
         } else return currentHeat;
     }
 
