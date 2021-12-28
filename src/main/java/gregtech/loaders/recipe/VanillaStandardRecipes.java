@@ -391,19 +391,19 @@ public class VanillaStandardRecipes {
                 .inputs(new ItemStack(Items.COAL, 1, GTValues.W))
                 .input(OrePrefix.stick, Materials.Wood, 1)
                 .outputs(new ItemStack(Blocks.TORCH, 4))
-                .duration(400).EUt(1).buildAndRegister();
+                .duration(100).EUt(1).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(gem, Coke)
                 .input(OrePrefix.stick, Materials.Wood, 1)
                 .outputs(new ItemStack(Blocks.TORCH, 8))
-                .duration(400).EUt(1).buildAndRegister();
+                .duration(100).EUt(1).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(dust, Coke)
                 .input(OrePrefix.stick, Materials.Wood, 1)
                 .outputs(new ItemStack(Blocks.TORCH, 8))
-                .duration(400).EUt(1).buildAndRegister();
+                .duration(100).EUt(1).buildAndRegister();
 
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
@@ -450,8 +450,8 @@ public class VanillaStandardRecipes {
         ModHandler.addShapedRecipe("torch_creosote", new ItemStack(Blocks.TORCH, 16), "WB", "S ", 'W', OreDictUnifier.get("wool"), 'S', new UnificationEntry(stick, Wood), 'B', FluidUtil.getFilledBucket(Creosote.getFluid(1000)));
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(dust, Redstone).input(stick, Wood).outputs(new ItemStack(Blocks.REDSTONE_TORCH, 1)).duration(400).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Sulfur).outputs(new ItemStack(Blocks.TORCH, 2)).duration(400).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Phosphorus).outputs(new ItemStack(Blocks.TORCH, 6)).duration(400).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Sulfur).outputs(new ItemStack(Blocks.TORCH, 2)).duration(100).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Phosphorus).outputs(new ItemStack(Blocks.TORCH, 6)).duration(100).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(6).inputs(new ItemStack(Blocks.PLANKS, 6, 0)).outputs(new ItemStack(Blocks.OAK_STAIRS, 4)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(6).inputs(new ItemStack(Blocks.PLANKS, 6, 1)).outputs(new ItemStack(Blocks.SPRUCE_STAIRS, 4)).buildAndRegister();
