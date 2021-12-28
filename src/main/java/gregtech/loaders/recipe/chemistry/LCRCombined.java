@@ -102,5 +102,13 @@ public class LCRCombined {
                 .fluidInputs(Tetranitromethane.getFluid(400))
                 .fluidOutputs(CetaneBoostedDiesel.getFluid(7500))
                 .duration(120).EUt(VA[HV]).buildAndRegister();
+
+        LARGE_CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(AceticAcid.getFluid(3000))
+                .notConsumable(dust, Quicklime)
+                .notConsumable(new IntCircuitIngredient(24))
+                .fluidOutputs(Acetone.getFluid(2000))
+                .fluidOutputs(Oxygen.getFluid(1000))
+                .duration(400).EUt(VA[HV]).buildAndRegister();
     }
 }

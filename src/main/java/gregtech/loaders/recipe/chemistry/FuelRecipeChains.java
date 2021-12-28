@@ -54,7 +54,7 @@ public class FuelRecipeChains {
                 .fluidInputs(Octane.getFluid(2000))
                 .fluidInputs(NitrousOxide.getFluid(2000))
                 .fluidInputs(Toluene.getFluid(1000))
-                .fluidInputs(EthylTertButylEther.getFluid(1500))
+                .fluidInputs(EthylTertButylEther.getFluid(1000))
                 .notConsumable(new IntCircuitIngredient(24))
                 .fluidOutputs(HighOctaneGasoline.getFluid(32000))
                 .buildAndRegister();
