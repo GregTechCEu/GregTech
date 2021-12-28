@@ -8,6 +8,7 @@ import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.packets.CPacketKeysPressed;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.Key;
@@ -38,8 +39,10 @@ import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -223,6 +226,13 @@ public class EventHandlers {
                 data.setBoolean(HAS_TERMINAL, true);
                 playerData.setTag(EntityPlayer.PERSISTED_NBT_TAG, data);
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onFurnaceFuelBurnTime(FurnaceFuelBurnTimeEvent event) {
+        if(event.getItemStack().isItemEqual(FluidUtil.getFilledBucket(Materials.Creosote.getFluid(1000)))) {
+            event.setBurnTime(6400);
         }
     }
 }

@@ -583,7 +583,7 @@ public class Material implements Comparable<Material> {
          * it will be a weighted average of the components of the Material.
          *
          * @param color The RGB-formatted Color.
-         * @param noFluid Whether the fluid should be colored or not.
+         * @param hasFluidColor Whether the fluid should be colored or not.
          */
         public Builder color(int color, boolean hasFluidColor) {
             this.materialInfo.color = color;
