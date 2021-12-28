@@ -10,10 +10,7 @@ import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTLog;
-import gregtech.common.blocks.BlockConcrete;
-import gregtech.common.blocks.BlockMineral;
-import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.blocks.StoneBlock;
+import gregtech.common.blocks.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -99,7 +96,6 @@ public class OreDictionaryLoader {
         OreDictUnifier.registerOre(new ItemStack(Blocks.ICE), OrePrefix.block, Materials.Ice);
         OreDictUnifier.registerOre(new ItemStack(Blocks.OBSIDIAN), OrePrefix.block, Materials.Obsidian);
         OreDictUnifier.registerOre(new ItemStack(Blocks.GLASS), OrePrefix.block, Materials.Glass);
-        OreDictUnifier.registerOre(MetaBlocks.CONCRETE.getItemVariant(BlockConcrete.ConcreteVariant.LIGHT_CONCRETE, StoneBlock.ChiselingVariant.NORMAL), OrePrefix.stone, Materials.Concrete);
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.STONE, 1, 1), OrePrefix.stone, Materials.Granite);
         OreDictUnifier.registerOre(new ItemStack(Blocks.STONE, 1, 2), OrePrefix.stone, Materials.Granite);
@@ -107,10 +103,12 @@ public class OreDictionaryLoader {
         OreDictUnifier.registerOre(new ItemStack(Blocks.STONE, 1, 6), OrePrefix.stone, Materials.Andesite);
         OreDictUnifier.registerOre(new ItemStack(Blocks.STONE, 1, 3), OrePrefix.stone, Materials.Diorite);
         OreDictUnifier.registerOre(new ItemStack(Blocks.STONE, 1, 4), OrePrefix.stone, Materials.Diorite);
-        OreDictUnifier.registerOre(new ItemStack(MetaBlocks.GRANITE, 1, 0), OrePrefix.stone, Materials.GraniteBlack);
-        OreDictUnifier.registerOre(new ItemStack(MetaBlocks.GRANITE, 1, 1), OrePrefix.stone, Materials.GraniteRed);
-        OreDictUnifier.registerOre(MetaBlocks.MINERAL.getItemVariant(BlockMineral.MineralVariant.MARBLE, StoneBlock.ChiselingVariant.NORMAL), OrePrefix.stone, Materials.Marble);
-        OreDictUnifier.registerOre(MetaBlocks.MINERAL.getItemVariant(BlockMineral.MineralVariant.BASALT, StoneBlock.ChiselingVariant.NORMAL), OrePrefix.stone, Materials.Basalt);
+        OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.BLACK_GRANITE, 1), OrePrefix.stone, Materials.GraniteBlack);
+        OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.RED_GRANITE, 1), OrePrefix.stone, Materials.GraniteRed);
+        OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.MARBLE, 1), OrePrefix.stone, Materials.Marble);
+        OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.BASALT, 1), OrePrefix.stone, Materials.Basalt);
+        OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.CONCRETE_LIGHT, 1), OrePrefix.stone, Materials.Concrete);
+        OreDictUnifier.registerOre(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.CONCRETE_DARK, 1), OrePrefix.stone, Materials.Concrete);
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.ANVIL), "craftingAnvil");
         OreDictUnifier.registerOre(new ItemStack(Blocks.OBSIDIAN, 1, W), OrePrefix.stone, Materials.Obsidian);

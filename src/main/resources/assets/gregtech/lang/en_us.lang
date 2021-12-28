@@ -2393,62 +2393,119 @@ gregtech.tank_valve.tooltip=Use to fill and drain multiblock tanks. Auto outputs
 
 gregtech.machine.clipboard.name=Clipboard
 
-# Granite blocks
-tile.granite.black_granite.normal.name=Black Granite
-tile.granite.black_granite.cracked.name=Black Granite Cobblestone
-tile.granite.black_granite.mossy.name=Mossy Black Granite Cobblestone
-tile.granite.black_granite.chiseled.name=Chiseled Black Granite
-tile.granite.black_granite_bricks.normal.name=Black Granite Bricks
-tile.granite.black_granite_bricks.cracked.name=Cracked Black Granite Bricks
-tile.granite.black_granite_bricks.mossy.name=Mossy Black Granite Bricks
-tile.granite.black_granite_bricks.chiseled.name=Chiseled Black Granite Bricks
 
-tile.granite.red_granite.normal.name=Red Granite
-tile.granite.red_granite.cracked.name=Red Granite Cobblestone
-tile.granite.red_granite.mossy.name=Mossy Red Granite Cobblestone
-tile.granite.red_granite.chiseled.name=Chiseled Red Granite
-tile.granite.red_granite_bricks.normal.name=Red Granite Bricks
-tile.granite.red_granite_bricks.cracked.name=Cracked Red Granite Bricks
-tile.granite.red_granite_bricks.mossy.name=Mossy Red Granite Bricks
-tile.granite.red_granite_bricks.chiseled.name=Chiseled Red Granite Bricks
+# Smooth Stone Blocks
+tile.stone_smooth.black_granite.name=Black Granite
+tile.stone_smooth.red_granite.name=Red Granite
+tile.stone_smooth.marble.name=Marble
+tile.stone_smooth.basalt.name=Basalt
+tile.stone_smooth.concrete_light.name=Light Concrete
+tile.stone_smooth.concrete_dark.name=Dark Concrete
 
-# Mineral blocks
-tile.mineral.marble.normal.name=Marble
-tile.mineral.marble.cracked.name=Marble Cobblestone
-tile.mineral.marble.mossy.name=Mossy Marble Cobblestone
-tile.mineral.marble.chiseled.name=Chiseled Marble
-tile.mineral.marble_bricks.normal.name=Marble Bricks
-tile.mineral.marble_bricks.cracked.name=Cracked Marble Bricks
-tile.mineral.marble_bricks.mossy.name=Mossy Marble Bricks
-tile.mineral.marble_bricks.chiseled.name=Chiseled Marble Bricks
+# Cobble Stone Blocks
+tile.stone_cobble.black_granite.name=Black Granite Cobblestone
+tile.stone_cobble.red_granite.name=Red Granite Cobblestone
+tile.stone_cobble.marble.name=Marble Cobblestone
+tile.stone_cobble.basalt.name=Basalt Cobblestone
+tile.stone_cobble.concrete_light.name=Light Concrete Cobblestone
+tile.stone_cobble.concrete_dark.name=Dark Concrete Cobblestone
 
-tile.mineral.basalt.normal.name=Basalt
-tile.mineral.basalt.cracked.name=Basalt Cobblestone
-tile.mineral.basalt.mossy.name=Mossy Basalt Cobblestone
-tile.mineral.basalt.chiseled.name=Chiseled Basalt
-tile.mineral.basalt_bricks.normal.name=Basalt Bricks
-tile.mineral.basalt_bricks.cracked.name=Cracked Basalt Bricks
-tile.mineral.basalt_bricks.mossy.name=Mossy Basalt Bricks
-tile.mineral.basalt_bricks.chiseled.name=Chiseled Basalt Bricks
+# Mossy Cobble Stone Blocks
+tile.stone_cobble_mossy.black_granite.name=Mossy Black Granite Cobblestone
+tile.stone_cobble_mossy.red_granite.name=Mossy Red Granite Cobblestone
+tile.stone_cobble_mossy.marble.name=Mossy Marble Cobblestone
+tile.stone_cobble_mossy.basalt.name=Mossy Basalt Cobblestone
+tile.stone_cobble_mossy.concrete_light.name=Mossy Light Concrete Cobblestone
+tile.stone_cobble_mossy.concrete_dark.name=Mossy Dark Concrete Cobblestone
 
-# Concrete blocks
-tile.concrete.light_concrete.normal.name=Light Concrete
-tile.concrete.light_concrete.cracked.name=Light Concrete Cobblestone
-tile.concrete.light_concrete.mossy.name=Mossy Light Concrete Cobblestone
-tile.concrete.light_concrete.chiseled.name=Chiseled Light Concrete Cobblestone
-tile.concrete.light_bricks.normal.name=Light Concrete Bricks
-tile.concrete.light_bricks.cracked.name=Cracked Light Concrete Bricks
-tile.concrete.light_bricks.mossy.name=Mossy Light Concrete Bricks
-tile.concrete.light_bricks.chiseled.name=Chiseled Light Concrete Bricks
+# Chiseled Stone Blocks
+tile.stone_polished.black_granite.name=Polished Black Granite
+tile.stone_polished.red_granite.name=Polished Red Granite
+tile.stone_polished.marble.name=Polished Marble
+tile.stone_polished.basalt.name=Polished Basalt
+tile.stone_polished.concrete_light.name=Polished Light Concrete
+tile.stone_polished.concrete_dark.name=Polished Dark Concrete
 
-tile.concrete.dark_concrete.normal.name=Dark Concrete
-tile.concrete.dark_concrete.cracked.name=Dark Concrete Cobblestone
-tile.concrete.dark_concrete.mossy.name=Mossy Dark Concrete Cobblestone
-tile.concrete.dark_concrete.chiseled.name=Chiseled Dark Concrete Cobblestone
-tile.concrete.dark_bricks.normal.name=Dark Concrete Bricks
-tile.concrete.dark_bricks.cracked.name=Cracked Dark Concrete Bricks
-tile.concrete.dark_bricks.mossy.name=Mossy Dark Concrete Bricks
-tile.concrete.dark_bricks.chiseled.name=Chiseled Dark Concrete Bricks
+# Stone Brick Blocks
+tile.stone_bricks.black_granite.name=Black Granite Bricks
+tile.stone_bricks.red_granite.name=Red Granite Bricks
+tile.stone_bricks.marble.name=Marble Bricks
+tile.stone_bricks.basalt.name=Basalt Bricks
+tile.stone_bricks.concrete_light.name=Light Concrete Bricks
+tile.stone_bricks.concrete_dark.name=Dark Concrete Bricks
+
+# Cracked Stone Brick Blocks
+tile.stone_bricks_cracked.black_granite.name=Cracked Black Granite Bricks
+tile.stone_bricks_cracked.red_granite.name=Cracked Red Granite Bricks
+tile.stone_bricks_cracked.marble.name=Cracked Marble Bricks
+tile.stone_bricks_cracked.basalt.name=Cracked Basalt Bricks
+tile.stone_bricks_cracked.concrete_light.name=Cracked Light Concrete Bricks
+tile.stone_bricks_cracked.concrete_dark.name=Cracked Dark Concrete Bricks
+
+# Mossy Stone Brick Blocks
+tile.stone_bricks_mossy.black_granite.name=Mossy Black Granite Bricks
+tile.stone_bricks_mossy.red_granite.name=Mossy Red Granite Bricks
+tile.stone_bricks_mossy.marble.name=Mossy Marble Bricks
+tile.stone_bricks_mossy.basalt.name=Mossy Basalt Bricks
+tile.stone_bricks_mossy.concrete_light.name=Mossy Light Concrete Bricks
+tile.stone_bricks_mossy.concrete_dark.name=Mossy Dark Concrete Bricks
+
+# Chiseled Stone Blocks
+tile.stone_chiseled.black_granite.name=Chiseled Black Granite
+tile.stone_chiseled.red_granite.name=Chiseled Red Granite
+tile.stone_chiseled.marble.name=Chiseled Marble
+tile.stone_chiseled.basalt.name=Chiseled Basalt
+tile.stone_chiseled.concrete_light.name=Chiseled Light Concrete
+tile.stone_chiseled.concrete_dark.name=Chiseled Dark Concrete
+
+# Tiled Stone Blocks
+tile.stone_tiled.black_granite.name=Black Granite Tiles
+tile.stone_tiled.red_granite.name=Red Granite Tiles
+tile.stone_tiled.marble.name=Marble Tiles
+tile.stone_tiled.basalt.name=Basalt Tiles
+tile.stone_tiled.concrete_light.name=Light Concrete Tiles
+tile.stone_tiled.concrete_dark.name=Dark Concrete Tiles
+
+# Small Tiled Stone Blocks
+tile.stone_tiled_small.black_granite.name=Small Black Granite Tiles
+tile.stone_tiled_small.red_granite.name=Small Red Granite Tiles
+tile.stone_tiled_small.marble.name=Small Marble Tiles
+tile.stone_tiled_small.basalt.name=Small Basalt Tiles
+tile.stone_tiled_small.concrete_light.name=Small Light Concrete Tiles
+tile.stone_tiled_small.concrete_dark.name=Small Dark Concrete Tiles
+
+# Small Stone Brick Blocks
+tile.stone_bricks_small.black_granite.name=Small Black Granite Bricks
+tile.stone_bricks_small.red_granite.name=Small Red Granite Bricks
+tile.stone_bricks_small.marble.name=Small Marble Bricks
+tile.stone_bricks_small.basalt.name=Small Basalt Bricks
+tile.stone_bricks_small.concrete_light.name=Small Light Concrete Bricks
+tile.stone_bricks_small.concrete_dark.name=Small Dark Concrete Bricks
+
+# Stone Bricks Windmill A Blocks
+tile.stone_bricks_windmill_a.black_granite.name=Black Granite Windmill Tiles A
+tile.stone_bricks_windmill_a.red_granite.name=Red Granite Windmill Tiles A
+tile.stone_bricks_windmill_a.marble.name=Marble Windmill Tiles A
+tile.stone_bricks_windmill_a.basalt.name=Basalt Windmill Tiles A
+tile.stone_bricks_windmill_a.concrete_light.name=Light Concrete Windmill Tiles A
+tile.stone_bricks_windmill_a.concrete_dark.name=Dark Concrete Windmill Tiles A
+
+# Stone Bricks Windmill B Blocks
+tile.stone_bricks_windmill_b.black_granite.name=Black Granite Windmill Tiles B
+tile.stone_bricks_windmill_b.red_granite.name=Red Granite Windmill Tiles B
+tile.stone_bricks_windmill_b.marble.name=Marble Windmill Tiles B
+tile.stone_bricks_windmill_b.basalt.name=Basalt Windmill Tiles B
+tile.stone_bricks_windmill_b.concrete_light.name=Light Concrete Windmill Tiles B
+tile.stone_bricks_windmill_b.concrete_dark.name=Dark Concrete Windmill Tiles B
+
+# Square Stone Brick Blocks
+tile.stone_bricks_square.black_granite.name=Square Black Granite Bricks
+tile.stone_bricks_square.red_granite.name=Square Red Granite Bricks
+tile.stone_bricks_square.marble.name=Square Marble Bricks
+tile.stone_bricks_square.basalt.name=Square Basalt Bricks
+tile.stone_bricks_square.concrete_light.name=Square Light Concrete Bricks
+tile.stone_bricks_square.concrete_dark.name=Square Dark Concrete Bricks
+
 
 # Steam machines
 gregtech.machine.steam_boiler.tooltip_produces=Produces %,dL of Steam per second
