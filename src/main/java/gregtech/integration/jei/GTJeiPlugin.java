@@ -14,7 +14,6 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -25,8 +24,6 @@ import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
 import gregtech.integration.jei.recipe.*;
-import gregtech.integration.jei.recipe.fuel.FuelRecipeMapCategory;
-import gregtech.integration.jei.recipe.fuel.GTFuelRecipeWrapper;
 import gregtech.integration.jei.recipe.primitive.MaterialTree;
 import gregtech.integration.jei.recipe.primitive.MaterialTreeCategory;
 import gregtech.integration.jei.recipe.primitive.OreByProduct;
@@ -88,9 +85,6 @@ public class GTJeiPlugin implements IModPlugin {
                 registry.addRecipeCategories(new RecipeMapCategory(recipeMap, registry.getJeiHelpers().getGuiHelper()));
             }
         }
-        for (FuelRecipeMap fuelRecipeMap : FuelRecipeMap.getRecipeMaps()) {
-            registry.addRecipeCategories(new FuelRecipeMapCategory(fuelRecipeMap, registry.getJeiHelpers().getGuiHelper()));
-        }
         registry.addRecipeCategories(new OreByProductCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new GTOreCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new MaterialTreeCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -125,13 +119,6 @@ public class GTJeiPlugin implements IModPlugin {
                         GTValues.MODID + ":" + recipeMap.unlocalizedName
                 );
             }
-        }
-
-        for (FuelRecipeMap fuelRecipeMap : FuelRecipeMap.getRecipeMaps()) {
-            List<GTFuelRecipeWrapper> recipeList = fuelRecipeMap.getRecipeList().stream()
-                    .map(GTFuelRecipeWrapper::new)
-                    .collect(Collectors.toList());
-            registry.addRecipes(recipeList, GTValues.MODID + ":" + fuelRecipeMap.unlocalizedName);
         }
 
         Map<RecipeMap<?>, List<MetaTileEntity>> deferredCatalysts = new HashMap<>();
