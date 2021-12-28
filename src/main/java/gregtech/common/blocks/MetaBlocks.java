@@ -23,7 +23,7 @@ import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
 import gregtech.common.blocks.wood.BlockGregLeaves;
 import gregtech.common.blocks.wood.BlockGregLog;
-import gregtech.common.blocks.wood.BlockGregPlank;
+import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.blocks.wood.BlockGregSapling;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
@@ -119,7 +119,7 @@ public class MetaBlocks {
     public static BlockGregLog LOG;
     public static BlockGregLeaves LEAVES;
     public static BlockGregSapling SAPLING;
-    public static BlockGregPlank PLANKS;
+    public static BlockGregPlanks PLANKS;
 
     public static final Map<Material, BlockCompressed> COMPRESSED = new HashMap<>();
     public static final Map<Material, BlockFrame> FRAMES = new HashMap<>();
@@ -213,8 +213,8 @@ public class MetaBlocks {
         LEAVES.setRegistryName("leaves");
         SAPLING = new BlockGregSapling();
         SAPLING.setRegistryName("sapling");
-        PLANKS = new BlockGregPlank();
-        PLANKS.setRegistryName("plank");
+        PLANKS = new BlockGregPlanks();
+        PLANKS.setRegistryName("planks");
 
         StoneType.init();
 
@@ -256,8 +256,10 @@ public class MetaBlocks {
             }
         }
         for (BlockFluidPipe pipe : FLUID_PIPES) {
-            if(!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood)) {
+            if(!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood) ||
+            !pipe.getItemPipeType(pipe.getItem(Materials.TreatedWood)).getOrePrefix().isIgnored(Materials.TreatedWood)) {
                 pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(310, 5, false));
+                pipe.addPipeMaterial(Materials.TreatedWood, new FluidPipeProperties(310, 8, false));
             }
         }
         registerTileEntity();
@@ -535,7 +537,8 @@ public class MetaBlocks {
         OreDictUnifier.registerOre(new ItemStack(LOG, 1, GTValues.W), OrePrefix.log, Materials.Wood);
         OreDictUnifier.registerOre(new ItemStack(LEAVES, 1, GTValues.W), "treeLeaves");
         OreDictUnifier.registerOre(new ItemStack(SAPLING, 1, GTValues.W), "treeSapling");
-        OreDictUnifier.registerOre(new ItemStack(PLANKS, 1, GTValues.W), OrePrefix.plank, Materials.Wood);
+        OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK), OrePrefix.plank, Materials.Wood);
+        OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK), OrePrefix.plank, Materials.TreatedWood);
         GameRegistry.addSmelting(LOG, new ItemStack(Items.COAL, 1, 1), 0.15F);
 
         for (Entry<Material, BlockCompressed> entry : COMPRESSED.entrySet()) {

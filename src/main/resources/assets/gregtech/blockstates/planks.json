@@ -8,9 +8,14 @@
   },
   "variants": {
     "variant": {
-      "rubber_plank": {
+      "rubber": {
         "textures": {
           "all": "gregtech:blocks/wood/rubber/planks_rubber"
+        }
+      },
+      "treated": {
+        "textures": {
+          "all": "gregtech:blocks/wood/treated/planks_treated"
         }
       }
     }

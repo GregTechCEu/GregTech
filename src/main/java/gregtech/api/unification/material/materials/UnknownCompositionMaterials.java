@@ -2,6 +2,7 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Material.FluidType;
+import gregtech.api.unification.material.Materials;
 
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
@@ -449,5 +450,12 @@ public class UnknownCompositionMaterials {
                 .color(0x2C39B1).iconSet(DIAMOND)
                 .flags(NO_UNIFICATION)
                 .build();
+
+        TreatedWood = new Material.Builder(1648, "treated_wood")
+                .dust(0, 300)
+                .color(0x502800).iconSet(WOOD)
+                .flags(GENERATE_PLATE, FLAMMABLE, GENERATE_ROD, GENERATE_FRAME)
+                .build();
+
     }
 }

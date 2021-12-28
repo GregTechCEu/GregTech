@@ -636,6 +636,7 @@ public class Materials {
     public static Material Wheat;
     public static Material Meat;
     public static Material Wood;
+    public static Material TreatedWood;
     public static Material Paper;
     public static Material FishOil;
     public static Material RubySlurry;

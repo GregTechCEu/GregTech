@@ -20,7 +20,6 @@ import gregtech.common.advancement.GTTriggers;
 import gregtech.common.blocks.*;
 import gregtech.common.blocks.wood.BlockGregLeaves;
 import gregtech.common.blocks.wood.BlockGregLog;
-import gregtech.common.blocks.wood.BlockGregPlank;
 import gregtech.common.blocks.wood.BlockGregSapling;
 import gregtech.common.items.MetaItems;
 import gregtech.common.pipelike.cable.BlockCable;
@@ -166,10 +165,10 @@ public class CommonProxy {
         registry.register(createItemBlock(STONE_WINDMILL_A, VariantItemBlock::new));
         registry.register(createItemBlock(STONE_WINDMILL_B, VariantItemBlock::new));
         registry.register(createItemBlock(STONE_BRICKS_SQUARE, VariantItemBlock::new));
+        registry.register(createItemBlock(PLANKS, VariantItemBlock::new));
         registry.register(createMultiTexItemBlock(LOG, state -> state.getValue(BlockGregLog.VARIANT).getName()));
         registry.register(createMultiTexItemBlock(LEAVES, state -> state.getValue(BlockGregLeaves.VARIANT).getName()));
         registry.register(createMultiTexItemBlock(SAPLING, state -> state.getValue(BlockGregSapling.VARIANT).getName()));
-        registry.register(createMultiTexItemBlock(PLANKS, state -> state.getValue(BlockGregPlank.VARIANT).getName()));
 
         COMPRESSED.values()
                 .stream().distinct()

@@ -1621,6 +1621,7 @@ material.uraninite=Uraninite
 material.uvarovite=Uvarovite
 material.vanadium_gallium=Vanadium-Gallium
 material.wood=Wood
+material.treated_wood=Treated Wood
 material.wrought_iron=Wrought Iron
 material.wulfenite=Wulfenite
 material.yellow_limonite=Yellow Limonite
@@ -1635,7 +1636,6 @@ material.osmiridium=Osmiridium
 material.calcium_chloride=Calcium Chloride
 material.lithium_chloride=Lithium Chloride
 
-material.wood_sealed=Sealed Wood
 material.glass=Glass
 material.perlite=Perlite
 material.borax=Borax
@@ -1997,10 +1997,13 @@ item.wood.dust=Wood Pulp
 item.wood.plate=Wood Plank
 item.wood.stickLong=Long Wood Stick
 item.wood.bolt=Short Wood Stick
-item.wood_sealed.dustTiny=Tiny Pile of Sealed Wood Pulp
-item.wood_sealed.dustSmall=Small Pile of Sealed Wood Pulp
-item.wood_sealed.dust=Sealed Wood Pulp
-item.wood_sealed.plate=Sealed Wood Plank
+item.treated_wood.dustTiny=Tiny Pile of Treated Wood Pulp
+item.treated_wood.dustSmall=Small Pile of Treated Wood Pulp
+item.treated_wood.dust=Treated Treated Wood Pulp
+item.treated_wood.plate=Treated Treated Wood Plank
+item.treated_wood.stick=Treated Wood Stick
+item.treated_wood.stickLong=Long Treated Wood Stick
+item.treated_wood.bolt=Short Treated Wood Stick
 item.glass.gem=Glass Crystal
 item.glass.gemChipped=Chipped Glass Crystal
 item.glass.gemFlawed=Flawed Glass Crystal
@@ -2182,7 +2185,9 @@ tile.gt.reinforced_stone.name=Reinforced Stone
 tile.gt.log.rubber_wood.name=Rubber Wood
 tile.gt.leaves.rubber_wood.name=Rubber Tree Leaves
 tile.gt.sapling.rubber_wood.name=Rubber Tree Sapling
-tile.gt.plank.rubber_plank.name=Rubber Wood Planks
+
+tile.planks.rubber.name=Rubber Wood Planks
+tile.planks.treated.name=Treated Wood Planks
 
 tile.surface_rock.name=Surface Rock
 

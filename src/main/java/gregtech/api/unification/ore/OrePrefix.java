@@ -306,9 +306,11 @@ public class OrePrefix {
         ingot.setIgnored(Materials.Iron);
         ingot.setIgnored(Materials.Gold);
         ingot.setIgnored(Materials.Wood);
+        ingot.setIgnored(Materials.TreatedWood);
         ingot.setIgnored(Materials.Paper);
 
         nugget.setIgnored(Materials.Wood);
+        nugget.setIgnored(Materials.TreatedWood);
         nugget.setIgnored(Materials.Gold);
         nugget.setIgnored(Materials.Paper);
         nugget.setIgnored(Materials.Iron);
@@ -330,6 +332,7 @@ public class OrePrefix {
         block.setIgnored(Materials.Wheat);
         block.setIgnored(Materials.Oilsands);
         block.setIgnored(Materials.Wood);
+        block.setIgnored(Materials.TreatedWood);
         block.setIgnored(Materials.RawRubber);
         block.setIgnored(Materials.Clay);
         block.setIgnored(Materials.Brick);
@@ -367,6 +370,10 @@ public class OrePrefix {
         pipeHugeFluid.setIgnored(Materials.Wood);
         pipeQuadrupleFluid.setIgnored(Materials.Wood);
         pipeNonupleFluid.setIgnored(Materials.Wood);
+        pipeTinyFluid.setIgnored(Materials.TreatedWood);
+        pipeHugeFluid.setIgnored(Materials.TreatedWood);
+        pipeQuadrupleFluid.setIgnored(Materials.TreatedWood);
+        pipeNonupleFluid.setIgnored(Materials.TreatedWood);
         pipeSmallRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeNormalRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeLargeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
