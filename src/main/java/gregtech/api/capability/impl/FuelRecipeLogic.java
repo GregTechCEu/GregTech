@@ -46,10 +46,11 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
         // the builder automatically multiplies by -1, so nothing extra is needed here
         builder.EUt(builder.getEUt());
-        if (ignoreOutputs) {
-            builder.clearOutputs();
-            builder.clearFluidOutputs();
-        }
+    }
+
+    @Override
+    public boolean canVoidRecipeOutputs() {
+        return ignoreOutputs;
     }
 
     @Override
