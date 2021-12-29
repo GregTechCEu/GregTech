@@ -8,7 +8,6 @@ import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class FuelRecipeLogic extends RecipeLogicEnergy {
@@ -16,7 +15,7 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     private final boolean ignoreOutputs;
 
     public FuelRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, Supplier<IEnergyContainer> energyContainer) {
-        this(tileEntity, recipeMap, energyContainer, false);
+        this(tileEntity, recipeMap, energyContainer, true);
     }
 
     public FuelRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, Supplier<IEnergyContainer> energyContainer, boolean ignoreOutputs) {
@@ -46,6 +45,10 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
         // the builder automatically multiplies by -1, so nothing extra is needed here
         builder.EUt(builder.getEUt());
+        if (ignoreOutputs) {
+            builder.clearOutputs();
+            builder.clearFluidOutputs();
+        }
     }
 
     @Override

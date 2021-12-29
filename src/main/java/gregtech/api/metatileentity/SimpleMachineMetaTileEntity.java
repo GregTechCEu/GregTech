@@ -62,19 +62,19 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     private static final int FONT_HEIGHT = 9; // Minecraft's FontRenderer FONT_HEIGHT value
 
     public SimpleMachineMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean hasFrontFacing) {
-        this(metaTileEntityId, recipeMap, renderer, tier, hasFrontFacing, GTUtility.defaultTankSizeFunction);
+        this(metaTileEntityId, recipeMap, renderer, tier, hasFrontFacing, GTUtility.defaultTankSizeFunction, false);
     }
 
     public SimpleMachineMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean hasFrontFacing,
-                                       Function<Integer, Integer> tankScalingFunction) {
-        super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction);
+                                       Function<Integer, Integer> tankScalingFunction, boolean ignoreOutputs) {
+        super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction, ignoreOutputs);
         this.hasFrontFacing = hasFrontFacing;
         this.chargerInventory = new ItemStackHandler(1);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new SimpleMachineMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), hasFrontFacing, getTankScalingFunction());
+        return new SimpleMachineMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), hasFrontFacing, getTankScalingFunction(), ignoreOutputs);
     }
 
     @Override

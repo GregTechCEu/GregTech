@@ -91,7 +91,7 @@ public class FuelRecipes {
         //steam generator fuels
         RecipeMaps.STEAM_TURBINE_FUELS.recipeBuilder()
                 .fluidInputs(Steam.getFluid(640))
-                .fluidOutputs(DistilledWater.getFluid(4))
+                .fluidOutputs(DistilledWater.getFluid(640))
                 .duration(10)
                 .EUt((int) V[LV])
                 .buildAndRegister();
