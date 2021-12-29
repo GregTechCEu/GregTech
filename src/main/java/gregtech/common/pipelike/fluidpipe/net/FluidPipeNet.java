@@ -71,6 +71,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
 
     private void markDirty(FluidStack stack, BlockPos pos, int amount) {
         dirtyStacks.computeIfAbsent(stack, key -> new HashMap<>()).merge(pos, amount, Integer::sum);
+        worldData.markDirty();
     }
 
     public int fill(FluidStack stack, BlockPos pos, boolean doFill) {
