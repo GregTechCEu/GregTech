@@ -90,7 +90,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
             if (!value.isEmpty()) {
                 ticksPerCycle = Integer.parseInt(value);
             }
-        }).setMaxLength(10).setNumbersOnly(0, Integer.MAX_VALUE));
+        }).setMaxLength(10).setNumbersOnly(1, Integer.MAX_VALUE));
         builder.label(7, 65, "Ticks per cycle");
 
 
@@ -102,7 +102,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public void update() {
         super.update();
-        if (getOffsetTimer() % ticksPerCycle != 0) return;
+        if (ticksPerCycle == 0 || getOffsetTimer() % ticksPerCycle != 0) return;
         ItemStack stack = handler.getStackInSlot(0).copy();
         if (getWorld().isRemote || !active || stack.isEmpty()) return;
 
