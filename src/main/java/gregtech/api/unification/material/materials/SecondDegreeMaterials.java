@@ -447,7 +447,7 @@ public class SecondDegreeMaterials {
         RhodiumPlatedPalladium = new Material.Builder(2062, "rhodium_plated_palladium")
                 .ingot().fluid()
                 .color(0xDAC5C5).iconSet(SHINY)
-                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
+                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR)
                 .components(Palladium, 3, Rhodium, 1)
                 .toolStats(12.0f, 3.0f, 1024, 33)
                 .blastTemp(4500, GasTier.HIGH, VA[IV], 1200)
