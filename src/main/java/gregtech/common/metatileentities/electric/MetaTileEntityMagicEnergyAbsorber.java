@@ -65,7 +65,7 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
     @Override
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(getRenderer().getParticleSprite(), getPaintingColor());
+        return Pair.of(getRenderer().getParticleSprite(), getPaintingColorForRendering());
     }
 
     @Override

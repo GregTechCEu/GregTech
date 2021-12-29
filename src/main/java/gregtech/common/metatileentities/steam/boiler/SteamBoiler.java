@@ -74,7 +74,6 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
         BRONZE_SLOT_BACKGROUND_TEXTURE = getGuiTexture("slot_%s");
         SLOT_FURNACE_BACKGROUND = getGuiTexture("slot_%s_furnace_background");
         this.containerInventory = new ItemStackHandler(2);
-        this.setPaintingColor(0xFFFFFF);
     }
 
     @Override
@@ -94,7 +93,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     @SideOnly(Side.CLIENT)
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(getBaseRenderer().getParticleSprite(), getPaintingColor());
+        return Pair.of(getBaseRenderer().getParticleSprite(), getPaintingColorForRendering());
     }
 
     @Override
@@ -102,6 +101,11 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         getBaseRenderer().render(renderState, translation, colouredPipeline);
         renderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isBurning(), true);
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0xFFFFFF;
     }
 
     @Override

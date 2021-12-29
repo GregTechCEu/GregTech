@@ -56,7 +56,6 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         super(metaTileEntityId);
         this.tankSize = tankSize;
         this.material = material;
-        this.paintingColor = 0xFFFFFF;
         initializeInventory();
     }
 
@@ -217,11 +216,11 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         if (ModHandler.isMaterialWood(material)) {
-            return Pair.of(Textures.WOODEN_DRUM.getParticleTexture(), getPaintingColor());
+            return Pair.of(Textures.WOODEN_DRUM.getParticleTexture(), getPaintingColorForRendering());
         } else {
             int color = ColourRGBA.multiply(
                     GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()),
-                    GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColor()));
+                    GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
             color = GTUtility.convertOpaqueRGBA_CLtoRGB(color);
             return Pair.of(Textures.DRUM.getParticleTexture(), color);
         }
@@ -239,6 +238,11 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         if (isAutoOutput) {
             Textures.STEAM_VENT_OVERLAY.renderSided(EnumFacing.DOWN, renderState, translation, pipeline);
         }
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0xFFFFFF;
     }
 
     @Override

@@ -60,7 +60,7 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
 
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(Textures.VOLTAGE_CASINGS[tier].getParticleSprite(), this.getPaintingColor());
+        return Pair.of(Textures.VOLTAGE_CASINGS[tier].getParticleSprite(), this.getPaintingColorForRendering());
     }
 
     @Override

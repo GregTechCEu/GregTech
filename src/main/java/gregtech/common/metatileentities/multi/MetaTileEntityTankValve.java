@@ -54,12 +54,16 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
     @Override
     public ICubeRenderer getBaseTexture() {
         if (getController() == null) {
-            this.setPaintingColor(DEFAULT_PAINTING_COLOR);
             if (isMetal)
                 return Textures.SOLID_STEEL_CASING;
             return Textures.WOOD_WALL;
         }
         return super.getBaseTexture();
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0xFFFFFF;
     }
 
     @Override

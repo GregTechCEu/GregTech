@@ -156,7 +156,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(Textures.VOLTAGE_CASINGS[14].getParticleSprite(), this.getPaintingColor());
+        return Pair.of(Textures.VOLTAGE_CASINGS[14].getParticleSprite(), this.getPaintingColorForRendering());
     }
 
     @Override

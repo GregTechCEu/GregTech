@@ -42,7 +42,6 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ISou
                 recipeMap, isHighPressure, steamFluidTank, 1.0);
         this.isHighPressure = isHighPressure;
         this.renderer = renderer;
-        this.setPaintingColor(0xFFFFFF);
     }
 
     @Override
@@ -68,6 +67,11 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ISou
     }
 
     @Override
+    public int getDefaultPaintingColor() {
+        return 0xFFFFFF;
+    }
+
+    @Override
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking()) {
             EnumFacing currentVentingSide = workableHandler.getVentingSide();
@@ -82,7 +86,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ISou
     @Override
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(getBaseRenderer().getParticleSprite(), getPaintingColor());
+        return Pair.of(getBaseRenderer().getParticleSprite(), getPaintingColorForRendering());
     }
 
     @Override

@@ -38,7 +38,7 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
 
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(getBaseTexture().getParticleSprite(), getPaintingColor());
+        return Pair.of(getBaseTexture().getParticleSprite(), getPaintingColorForRendering());
     }
 
     @Override
@@ -81,7 +81,6 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
     public ICubeRenderer getBaseTexture() {
         MultiblockControllerBase controller = getController();
         if (controller != null) {
-            this.setPaintingColor(0xFFFFFF);
             return this.hatchTexture = controller.getBaseTexture(this);
         } else if (this.hatchTexture != null) {
             if (hatchTexture != Textures.getInactiveTexture(hatchTexture)) {
@@ -89,7 +88,6 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
             }
             return this.hatchTexture;
         } else {
-            this.setPaintingColor(DEFAULT_PAINTING_COLOR);
             return Textures.VOLTAGE_CASINGS[tier];
         }
     }
@@ -162,15 +160,22 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
     @Override
     public void addToMultiBlock(MultiblockControllerBase controllerBase) {
         setController(controllerBase);
+        scheduleRenderUpdate();
     }
 
     @Override
     public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
         setController(null);
+        scheduleRenderUpdate();
     }
 
     @Override
     public boolean isAttachedToMultiBlock() {
         return getController() != null;
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return !isAttachedToMultiBlock() && hatchTexture == null ? super.getDefaultPaintingColor() : 0xFFFFFF;
     }
 }

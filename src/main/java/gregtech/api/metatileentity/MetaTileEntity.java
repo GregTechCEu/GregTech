@@ -69,7 +69,6 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 
 public abstract class MetaTileEntity implements ICoverable {
 
-    public static final int DEFAULT_PAINTING_COLOR = ConfigHolder.machines.defaultPaintingColor;
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
     public static final String TAG_KEY_FRAGILE = "Fragile";
@@ -91,7 +90,7 @@ public abstract class MetaTileEntity implements ICoverable {
     protected final List<MTETrait> mteTraits = new ArrayList<>();
 
     protected EnumFacing frontFacing = EnumFacing.NORTH;
-    protected int paintingColor = DEFAULT_PAINTING_COLOR;
+    private int paintingColor = -1;
 
     private final int[] sidedRedstoneOutput = new int[6];
     private final int[] sidedRedstoneInput = new int[6];
@@ -218,7 +217,7 @@ public abstract class MetaTileEntity implements ICoverable {
                 return tagCompound.getInteger(TAG_KEY_PAINTING_COLOR);
             }
         }
-        return paintingColor;
+        return isPainted() ? paintingColor : getDefaultPaintingColor();
     }
 
     /**
@@ -242,7 +241,7 @@ public abstract class MetaTileEntity implements ICoverable {
      * @param itemStack itemstack from which this MTE is being placed
      */
     public void writeItemStackData(NBTTagCompound itemStack) {
-        if (this.paintingColor != DEFAULT_PAINTING_COLOR) { //for machines to stack
+        if (isPainted()) {
             itemStack.setInteger(TAG_KEY_PAINTING_COLOR, this.paintingColor);
         }
     }
@@ -736,18 +735,6 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public void writeInitialSyncData(PacketBuffer buf) {
         buf.writeByte(this.frontFacing.getIndex());
-        boolean isPainted = false;
-        if (this.paintingColor != DEFAULT_PAINTING_COLOR && !(this instanceof MultiblockControllerBase)) {
-            for (EnumDyeColor color : EnumDyeColor.values()) {
-                if (this.paintingColor == color.colorValue) {
-                    isPainted = true;
-                    break;
-                }
-            }
-            if (!isPainted) {
-                setPaintingColor(DEFAULT_PAINTING_COLOR);
-            }
-        }
         buf.writeInt(this.paintingColor);
         buf.writeShort(mteTraits.size());
         for (MTETrait trait : mteTraits) {
@@ -766,6 +753,10 @@ public abstract class MetaTileEntity implements ICoverable {
         }
         buf.writeBoolean(isFragile);
         buf.writeBoolean(muffled);
+    }
+
+    public boolean isPainted() {
+        return this.paintingColor != -1;
     }
 
     public void receiveInitialSyncData(PacketBuffer buf) {
@@ -1144,6 +1135,10 @@ public abstract class MetaTileEntity implements ICoverable {
         }
     }
 
+    public int getDefaultPaintingColor() {
+        return ConfigHolder.machines.defaultPaintingColor;
+    }
+
     public void setFragile(boolean fragile) {
         this.isFragile = fragile;
         if (getWorld() != null && !getWorld().isRemote) {
@@ -1171,7 +1166,9 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         data.setInteger("FrontFacing", frontFacing.getIndex());
-        data.setInteger(TAG_KEY_PAINTING_COLOR, paintingColor);
+        if (isPainted()) {
+            data.setInteger(TAG_KEY_PAINTING_COLOR, paintingColor);
+        }
         data.setInteger("CachedLightValue", cachedLightValue);
 
         if (shouldSerializeInventories()) {
@@ -1206,7 +1203,9 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public void readFromNBT(NBTTagCompound data) {
         this.frontFacing = EnumFacing.VALUES[data.getInteger("FrontFacing")];
-        this.paintingColor = data.getInteger(TAG_KEY_PAINTING_COLOR);
+        if (data.hasKey(TAG_KEY_PAINTING_COLOR)) {
+            this.paintingColor = data.getInteger(TAG_KEY_PAINTING_COLOR);
+        }
         this.cachedLightValue = data.getInteger("CachedLightValue");
 
         if (shouldSerializeInventories()) {
@@ -1274,7 +1273,6 @@ public abstract class MetaTileEntity implements ICoverable {
         return frontFacing;
     }
 
-    @Override
     public int getPaintingColor() {
         return paintingColor;
     }

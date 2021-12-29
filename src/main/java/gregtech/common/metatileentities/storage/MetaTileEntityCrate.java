@@ -40,7 +40,6 @@ public class MetaTileEntityCrate extends MetaTileEntity {
         super(metaTileEntityId);
         this.material = material;
         this.inventorySize = inventorySize;
-        this.paintingColor = 0xFFFFFF;
         initializeInventory();
     }
 
@@ -90,11 +89,11 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         if (ModHandler.isMaterialWood(material)) {
-            return Pair.of(Textures.WOODEN_CRATE.getParticleTexture(), getPaintingColor());
+            return Pair.of(Textures.WOODEN_CRATE.getParticleTexture(), getPaintingColorForRendering());
         } else {
             int color = ColourRGBA.multiply(
                     GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()),
-                    GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColor()));
+                    GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
             color = GTUtility.convertOpaqueRGBA_CLtoRGB(color);
             return Pair.of(Textures.METAL_CRATE.getParticleTexture(), color);
         }
@@ -108,6 +107,11 @@ public class MetaTileEntityCrate extends MetaTileEntity {
             int baseColor = ColourRGBA.multiply(GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()), GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
             Textures.METAL_CRATE.render(renderState, translation, baseColor, pipeline);
         }
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0xFFFFFF;
     }
 
     @Override

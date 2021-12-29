@@ -86,17 +86,20 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     public ICubeRenderer getBaseTexture() {
         MultiblockControllerBase controller = getController();
         if (controller != null) {
-            this.hatchTexture = controller.getBaseTexture(this);
-        }
-        if (controller == null && this.hatchTexture != null) {
+            return this.hatchTexture = controller.getBaseTexture(this);
+        } else if (this.hatchTexture != null) {
+            if (hatchTexture != Textures.getInactiveTexture(hatchTexture)) {
+                return this.hatchTexture = Textures.getInactiveTexture(hatchTexture);
+            }
             return this.hatchTexture;
-        }
-        if (controller == null) {
-            this.setPaintingColor(DEFAULT_PAINTING_COLOR);
+        } else {
             return Textures.VOLTAGE_CASINGS[getTier() == 2 ? 3 : 5];
         }
-        this.setPaintingColor(0xFFFFFF);
-        return controller.getBaseTexture(this);
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return isAttachedToMultiBlock() ? 0xFFFFFF : super.getDefaultPaintingColor();
     }
 
     @Override

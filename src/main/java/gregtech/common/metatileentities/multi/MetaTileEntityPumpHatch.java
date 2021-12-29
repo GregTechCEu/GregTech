@@ -43,7 +43,6 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart implem
         this.waterTank = new FluidTank(FLUID_TANK_SIZE);
         this.containerInventory = new ItemStackHandler(2);
         initializeInventory();
-        this.setPaintingColor(0xFFFFFF);
     }
 
     @Override
@@ -138,5 +137,10 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart implem
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", FLUID_TANK_SIZE));
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0xFFFFFF;
     }
 }

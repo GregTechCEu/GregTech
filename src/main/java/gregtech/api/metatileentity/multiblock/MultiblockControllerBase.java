@@ -55,7 +55,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public MultiblockControllerBase(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
-        this.setPaintingColor(0xFFFFFF);
     }
 
     @Override
@@ -200,7 +199,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(getBaseTexture(null).getParticleSprite(), getPaintingColor());
+        return Pair.of(getBaseTexture(null).getParticleSprite(), getPaintingColorForRendering());
     }
 
     /**
@@ -365,6 +364,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public String[] getDescription() {
         String key = String.format("gregtech.multiblock.%s.description", metaTileEntityId.getPath());
         return I18n.hasKey(key) ? new String[]{I18n.format(key)} : new String[0];
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0xFFFFFF;
     }
 
     public void explodeMultiblock() {
