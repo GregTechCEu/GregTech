@@ -121,7 +121,7 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
         BlockCable blockCable = (BlockCable) state.getBlock();
         TileEntityCable tileEntityCable = (TileEntityCable) blockCable.getPipeTileEntity(world, pos);
         if (tileEntityCable == null) return false;
-        int paintingColor = tileEntityCable.getInsulationColor();
+        int paintingColor = tileEntityCable.getPaintingColor();
         int connectedSidesMask = blockCable.getVisualConnections(tileEntityCable);
         Insulation insulation = tileEntityCable.getPipeType();
         Material material = tileEntityCable.getPipeMaterial();
@@ -278,7 +278,7 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
             particleColor = material.getMaterialRGB();
         } else {
             atlasSprite = insulationTextures[5];
-            particleColor = tileEntity.getInsulationColor();
+            particleColor = tileEntity.getPaintingColor();
         }
         return Pair.of(atlasSprite, particleColor);
     }

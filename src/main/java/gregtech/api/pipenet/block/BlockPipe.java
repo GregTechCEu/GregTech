@@ -22,9 +22,7 @@ import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
-import gregtech.client.renderer.handler.ToolOverlayRenderer;
 import gregtech.common.ConfigHolder;
-import gregtech.common.advancement.GTTriggers;
 import gregtech.common.tools.DamageValues;
 import gregtech.integration.ctm.IFacadeWrapper;
 import net.minecraft.block.Block;
@@ -37,7 +35,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -410,8 +407,8 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         IPipeTile<PipeType, NodeDataType> tileEntityPipe = (IPipeTile<PipeType, NodeDataType>) world.getTileEntity(pos);
         if (tileEntityPipe != null && tileEntityPipe.getPipeType() != null &&
                 tileEntityPipe.getPipeType().isPaintable() &&
-                tileEntityPipe.getInsulationColor() != color.colorValue) {
-            tileEntityPipe.setInsulationColor(color.colorValue);
+                tileEntityPipe.getPaintingColor() != color.colorValue) {
+            tileEntityPipe.setPaintingColor(color.colorValue);
             return true;
         }
         return false;

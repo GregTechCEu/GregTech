@@ -144,7 +144,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
         ItemPipeType itemPipeType = tileEntityPipe.getPipeType();
         Material pipeMaterial = tileEntityPipe.getPipeMaterial();
-        int paintingColor = tileEntityPipe.getInsulationColor();
+        int paintingColor = tileEntityPipe.getPaintingColor();
         int connectedSidesMap = blockFluidPipe.getVisualConnections(tileEntityPipe);
 
         if (itemPipeType != null && pipeMaterial != null) {
@@ -308,7 +308,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }
         TextureAtlasSprite atlasSprite = pipeTextures.get(material.getMaterialIconSet()).get(itemPipeType).sideTexture;
-        int pipeColor = getPipeColor(material, tileEntity.getInsulationColor());
+        int pipeColor = getPipeColor(material, tileEntity.getPaintingColor());
         return Pair.of(atlasSprite, pipeColor);
     }
 }

@@ -25,9 +25,9 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     void transferDataFrom(IPipeTile<PipeType, NodeDataType> sourceTile);
 
-    int getInsulationColor();
+    int getPaintingColor();
 
-    void setInsulationColor(int newInsulationColor);
+    void setPaintingColor(int paintingColor);
 
     boolean isPainted();
 
