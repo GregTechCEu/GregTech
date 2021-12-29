@@ -40,16 +40,16 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     private static final int FONT_HEIGHT = 9; // Minecraft's FontRenderer FONT_HEIGHT value
 
     public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier) {
-        this(metaTileEntityId, recipeMap, renderer, tier, true);
+        this(metaTileEntityId, recipeMap, renderer, tier, false);
     }
 
-    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean ignoreOutputs) {
-        this(metaTileEntityId, recipeMap, renderer, tier, GTUtility.generatorTankSizeFunction, ignoreOutputs);
+    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean handlesRecipeOutputs) {
+        this(metaTileEntityId, recipeMap, renderer, tier, GTUtility.generatorTankSizeFunction, handlesRecipeOutputs);
     }
 
     public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
-                                         Function<Integer, Integer> tankScalingFunction, boolean ignoreOutputs) {
-        super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction, ignoreOutputs);
+                                         Function<Integer, Integer> tankScalingFunction, boolean handlesRecipeOutputs) {
+        super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction, handlesRecipeOutputs);
     }
 
     @Override
@@ -107,9 +107,8 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
 
 
         ModularUI.Builder builder;
-        if (handlesRecipeOutputs) builder = workableRecipeMap.createUITemplateNoOutputs(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
-        else builder = workableRecipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
-
+        if (handlesRecipeOutputs) builder = workableRecipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
+        else builder = workableRecipeMap.createUITemplateNoOutputs(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
         builder.widget(new LabelWidget(6, 6, getMetaFullName()))
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);
 
