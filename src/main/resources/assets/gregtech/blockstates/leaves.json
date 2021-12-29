@@ -1,10 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "minecraft:leaves",
-    "textures": {
-      "all": "gregtech:blocks/rendering_error"
-    }
+    "transform": "forge:default-block"
   },
   "variants": {
     "check_decay": {
@@ -17,9 +14,7 @@
     },
     "variant": {
       "rubber_wood": {
-        "textures": {
-          "all": "gregtech:blocks/wood/rubber/leaves_rubber"
-        }
+        "model": "birch_leaves"
       }
     }
   }

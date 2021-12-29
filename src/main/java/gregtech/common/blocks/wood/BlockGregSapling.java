@@ -1,28 +1,22 @@
 package gregtech.common.blocks.wood;
 
 import gregtech.api.GregTechAPI;
-import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockGregLog.LogVariant;
+import gregtech.common.worldgen.WorldGenRubberTree;
 import net.minecraft.block.*;
-import net.minecraft.block.BlockLog.EnumAxis;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenBigTree;
-import net.minecraft.world.gen.feature.WorldGenTrees;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.event.terraingen.TerrainGen;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
@@ -88,7 +82,7 @@ public class BlockGregSapling extends BlockBush implements IGrowable, IPlantable
             super.updateTick(worldIn, pos, state, rand);
             if (!worldIn.isAreaLoaded(pos, 1))
                 return;
-            if (worldIn.getLightFromNeighbors(pos.up()) >= 9 && rand.nextInt(7) == 0) {
+            if (worldIn.getLightFromNeighbors(pos.up()) >= 9 && rand.nextInt(30) == 0) {
                 this.grow(worldIn, rand, pos, state);
             }
         }
@@ -111,31 +105,8 @@ public class BlockGregSapling extends BlockBush implements IGrowable, IPlantable
     }
 
     @Override
-    public void grow(@Nonnull World worldIn, @Nonnull Random rand, @Nonnull BlockPos pos, IBlockState state) {
-        if (state.getValue(STAGE) == 0) {
-            worldIn.setBlockState(pos, state.cycleProperty(STAGE), 4);
-        } else {
-            this.generateTree(worldIn, pos, state, rand);
-        }
-    }
-
-    public void generateTree(World worldIn, BlockPos pos, IBlockState state, Random rand) {
-        if (!TerrainGen.saplingGrowTree(worldIn, rand, pos)) return;
-        WorldGenerator worldgenerator;
-        IBlockState logState = MetaBlocks.LOG.getDefaultState()
-                .withProperty(BlockGregLog.VARIANT, LogVariant.RUBBER_WOOD)
-                .withProperty(BlockGregLog.NATURAL, true);
-        IBlockState leavesState = MetaBlocks.LEAVES.getDefaultState()
-                .withProperty(BlockGregLeaves.VARIANT, LogVariant.RUBBER_WOOD);
-        if (rand.nextInt(10) == 0) {
-            worldgenerator = new WorldGenBigTreeCustom(true, logState, leavesState.withProperty(BlockGregLeaves.CHECK_DECAY, false), BlockGregLog.LOG_AXIS);
-        } else {
-            worldgenerator = new WorldGenTrees(true, 6, logState, leavesState, false);
-        }
-        worldIn.setBlockState(pos, Blocks.AIR.getDefaultState(), 4);
-        if (!worldgenerator.generate(worldIn, rand, pos)) {
-            worldIn.setBlockState(pos, state, 4);
-        }
+    public void grow(@Nonnull World worldIn, @Nonnull Random rand, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+        new WorldGenRubberTree(true).grow(worldIn, pos, rand);
     }
 
     public ItemStack getItem(LogVariant variant) {
@@ -145,30 +116,4 @@ public class BlockGregSapling extends BlockBush implements IGrowable, IPlantable
     public ItemStack getItem(LogVariant variant, int amount) {
         return new ItemStack(this, amount, variant.ordinal() * 2);
     }
-
-    public static class WorldGenBigTreeCustom extends WorldGenBigTree {
-
-        private final IBlockState logBlock;
-        private final IBlockState leavesBlock;
-        private final PropertyEnum<EnumAxis> logAxisProperty;
-
-        public WorldGenBigTreeCustom(boolean notify, IBlockState logBlock, IBlockState leavesBlock, PropertyEnum<EnumAxis> logAxisProperty) {
-            super(notify);
-            this.logBlock = logBlock;
-            this.leavesBlock = leavesBlock;
-            this.logAxisProperty = logAxisProperty;
-        }
-
-        @Override
-        protected void setBlockAndNotifyAdequately(@Nonnull World worldIn, @Nonnull BlockPos pos, IBlockState state) {
-            if (state.getBlock() instanceof BlockLeaves) {
-                state = leavesBlock;
-            } else if (state.getBlock() instanceof BlockLog) {
-                EnumAxis rotation = state.getValue(BlockLog.LOG_AXIS);
-                state = logBlock.withProperty(logAxisProperty, rotation);
-            }
-            super.setBlockAndNotifyAdequately(worldIn, pos, state);
-        }
-    }
-
 }

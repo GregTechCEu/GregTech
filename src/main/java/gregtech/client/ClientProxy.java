@@ -49,8 +49,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ColorizerFoliage;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.biome.BiomeColorHelper;
 import net.minecraftforge.client.ClientCommandHandler;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -328,4 +331,11 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
+    @SubscribeEvent
+    public static void onBlockColorsInit(ColorHandlerEvent.Block event) {
+        event.getBlockColors().registerBlockColorHandler((state, world, pos, i)
+                -> world != null && pos != null
+                        ? BiomeColorHelper.getFoliageColorAtPos(world, pos)
+                        : ColorizerFoliage.getFoliageColorBasic(), MetaBlocks.LEAVES);
+    }
 }
