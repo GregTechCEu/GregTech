@@ -166,14 +166,14 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         return true;
     }
 
-    private int getPipeColor(Material material, int insulationColor) {
-        if (insulationColor == -1) {
+    private int getPipeColor(Material material, int paintingColor) {
+        if (paintingColor == -1) {
             return material.getMaterialRGB();
-        } else return insulationColor;
+        } else return paintingColor;
     }
 
-    public void renderPipeBlock(Material material, FluidPipeType pipeType, int insulationColor, CCRenderState state, IVertexOperation[] pipeline, int connectMask) {
-        int pipeColor = GTUtility.convertRGBtoOpaqueRGBA_CL(getPipeColor(material, insulationColor));
+    public void renderPipeBlock(Material material, FluidPipeType pipeType, int paintingColor, CCRenderState state, IVertexOperation[] pipeline, int connectMask) {
+        int pipeColor = GTUtility.convertRGBtoOpaqueRGBA_CL(getPipeColor(material, paintingColor));
         float thickness = pipeType.getThickness();
         ColourMultiplier multiplier = new ColourMultiplier(pipeColor);
         PipeTextureInfo textureInfo = this.pipeTextures.get(material.getMaterialIconSet()).get(pipeType);

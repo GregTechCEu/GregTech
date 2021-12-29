@@ -280,7 +280,9 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             blockedConnectionsTag.setInteger(Integer.toString(attachmentType), blockedConnections);
         }
         compound.setTag("BlockedConnectionsMap", blockedConnectionsTag);
-        compound.setInteger("InsulationColor", paintingColor);
+        if (isPainted()) {
+            compound.setInteger("InsulationColor", paintingColor);
+        }
         this.coverableImplementation.writeToNBT(compound);
         return compound;
     }
@@ -302,7 +304,9 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             this.openConnectionsMap.put(attachmentType, blockedConnections);
         }
         recomputeBlockedConnections();
-        this.paintingColor = compound.getInteger("InsulationColor");
+        if (compound.hasKey("InsulationColor")) {
+            this.paintingColor = compound.getInteger("InsulationColor");
+        }
         this.coverableImplementation.readFromNBT(compound);
     }
 
