@@ -336,7 +336,7 @@ public class ConfigHolder {
 
             @Config.Comment({"Bloom Strength", "OUTPUT = BACKGROUND + BLOOM * {strength} * (base + LT + (1 - BACKGROUND_BRIGHTNESS)*(HT-LT)))", "Default: 2"})
             @Config.RangeDouble(min = 0)
-            public double strength = 2;
+            public double strength = 1.5;
 
             @Config.Comment({"Blur Step (bloom range)", "Default: 1"})
             @Config.RangeDouble(min = 0)
