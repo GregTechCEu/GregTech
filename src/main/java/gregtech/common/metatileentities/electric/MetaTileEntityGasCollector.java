@@ -23,7 +23,7 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
 
     public MetaTileEntityGasCollector(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean hasFrontFacing,
                                       Function<Integer, Integer> tankScalingFunction) {
-        super(metaTileEntityId, recipeMap, renderer, tier, hasFrontFacing, tankScalingFunction, false);
+        super(metaTileEntityId, recipeMap, renderer, tier, hasFrontFacing, tankScalingFunction, true);
     }
 
     @Override

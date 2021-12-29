@@ -62,12 +62,12 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     private static final int FONT_HEIGHT = 9; // Minecraft's FontRenderer FONT_HEIGHT value
 
     public SimpleMachineMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean hasFrontFacing) {
-        this(metaTileEntityId, recipeMap, renderer, tier, hasFrontFacing, GTUtility.defaultTankSizeFunction, false);
+        this(metaTileEntityId, recipeMap, renderer, tier, hasFrontFacing, GTUtility.defaultTankSizeFunction, true);
     }
 
     public SimpleMachineMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean hasFrontFacing,
-                                       Function<Integer, Integer> tankScalingFunction, boolean ignoreOutputs) {
-        super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction, ignoreOutputs);
+                                       Function<Integer, Integer> tankScalingFunction, boolean handlesRecipeOutputs) {
+        super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction, handlesRecipeOutputs);
         this.hasFrontFacing = hasFrontFacing;
         this.chargerInventory = new ItemStackHandler(1);
     }
