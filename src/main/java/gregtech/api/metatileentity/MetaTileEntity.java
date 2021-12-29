@@ -226,9 +226,6 @@ public abstract class MetaTileEntity implements ICoverable {
      * @param itemStack itemstack of itemblock
      */
     public void initFromItemStackData(NBTTagCompound itemStack) {
-        if (itemStack.hasKey(TAG_KEY_PAINTING_COLOR, NBT.TAG_INT)) {
-            setPaintingColor(itemStack.getInteger(TAG_KEY_PAINTING_COLOR));
-        }
         if (itemStack.hasKey(TAG_KEY_FRAGILE)) {
             setFragile(itemStack.getBoolean(TAG_KEY_FRAGILE));
         }
@@ -241,9 +238,6 @@ public abstract class MetaTileEntity implements ICoverable {
      * @param itemStack itemstack from which this MTE is being placed
      */
     public void writeItemStackData(NBTTagCompound itemStack) {
-        if (isPainted()) {
-            itemStack.setInteger(TAG_KEY_PAINTING_COLOR, this.paintingColor);
-        }
     }
 
     public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
