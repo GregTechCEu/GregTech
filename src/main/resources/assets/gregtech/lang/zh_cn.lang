@@ -2628,6 +2628,8 @@ tile.surface_rock_new.name=Surface Rock
 gregtech.block.surface_rock.material=Rock Material: %s
 gregtech.block.surface_rock.underground_materials=Underground Materials: %s
 
+behavior.prospector.not_enough_energy=Analyzing failed: Not Enough Energy!
+
 tile.wire_coil.fluxed_electrum.name=Fluxed Electrum Coil Block
 tile.wire_coil.diamericium_titanium.name=Diamericium Titanium Coil Block
 tile.fusion_coil.superconductor.name=Superconducting Coil Block
