@@ -33,7 +33,7 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> extends SyncedTileEntityBase implements IPipeTile<PipeType, NodeDataType> {
 
     protected final PipeCoverableImplementation coverableImplementation = new PipeCoverableImplementation(this);
-    protected int insulationColor = DEFAULT_COVER_COLOR;
+    protected int insulationColor = -1;
     private TIntIntMap openConnectionsMap = new TIntIntHashMap();
     private int openConnections = 0;
     private NodeDataType cachedNodeData;
@@ -126,7 +126,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Override
     public int getInsulationColor() {
-        return insulationColor;
+        return isPainted() ? insulationColor : getDefaultPaintingColor();
     }
 
     @Override
@@ -137,6 +137,16 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             writeCustomData(UPDATE_INSULATION_COLOR, buffer -> buffer.writeInt(insulationColor));
             markDirty();
         }
+    }
+
+    @Override
+    public boolean isPainted() {
+        return this.insulationColor != -1;
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0xFFFFFF;
     }
 
     @Override
@@ -217,7 +227,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     private int getCableMark() {
-        return insulationColor == DEFAULT_INSULATION_COLOR ? 0 : insulationColor;
+        return insulationColor == -1 ? 0 : insulationColor;
     }
 
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {

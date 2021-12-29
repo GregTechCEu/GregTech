@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 
 public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> {
 
-    int DEFAULT_INSULATION_COLOR = ConfigHolder.machines.defaultInsulationColor;
+    int DEFAULT_INSULATION_COLOR = 0x404040;
     int DEFAULT_COVER_COLOR = ConfigHolder.machines.defaultPaintingColor;
 
     World getPipeWorld();
@@ -32,6 +32,10 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     int getInsulationColor();
 
     void setInsulationColor(int newInsulationColor);
+
+    boolean isPainted();
+
+    int getDefaultPaintingColor();
 
     int getOpenConnections();
 

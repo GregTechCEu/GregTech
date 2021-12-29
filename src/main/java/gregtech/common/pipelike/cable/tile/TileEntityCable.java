@@ -28,11 +28,6 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     private final IEnergyContainer clientCapability = IEnergyContainer.DEFAULT;
     private WeakReference<EnergyNet> currentEnergyNet = new WeakReference<>(null);
 
-    public TileEntityCable() {
-        super();
-        this.insulationColor = ConfigHolder.machines.defaultInsulationColor;
-    }
-
     @Override
     public Class<Insulation> getPipeTypeClass() {
         return Insulation.class;
@@ -117,5 +112,8 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         return currentEnergyNet;
     }
 
-
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0x404040;
+    }
 }

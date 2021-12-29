@@ -51,12 +51,8 @@ public class ConfigHolder {
         public boolean requireWrenchForMachines = false;
 
         @Config.Comment({"The default color to overlay onto machines.", "16777215 (0xFFFFFF in decimal) is no coloring (like GTCE).",
-                "13819135 (0xD2DCFF in decimal) is the classic blue from GT5 (default).", "THIS IS SERVER SIDE!!!"})
+                "13819135 (0xD2DCFF in decimal) is the classic blue from GT5 (default)."})
         public int defaultPaintingColor = 0xD2DCFF;
-
-        @Config.Comment({"The default color to overlay onto cable insulation.", "7829367 (0x777777 in decimal) is no coloring (like GTCE).",
-                "4210752 (0x404040 in decimal) is the classic black from GT5 (default).", "THIS IS SERVER SIDE!!!"})
-        public int defaultInsulationColor = 0x404040;
 
         @Config.Comment({"Whether to enable the Maintenance Hatch, required for Multiblocks.", "Default: true"})
         public boolean enableMaintenance = true;

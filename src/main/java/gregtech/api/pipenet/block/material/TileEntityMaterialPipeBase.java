@@ -37,6 +37,11 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
     }
 
     @Override
+    public int getDefaultPaintingColor() {
+        return pipeMaterial == null ? super.getDefaultPaintingColor() : pipeMaterial.getMaterialRGB();
+    }
+
+    @Override
     public void transferDataFrom(IPipeTile<PipeType, NodeDataType> tileEntity) {
         super.transferDataFrom(tileEntity);
         this.pipeMaterial = ((IMaterialPipeTile<PipeType, NodeDataType>) tileEntity).getPipeMaterial();
