@@ -36,6 +36,11 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     public final boolean handlesRecipeOutputs;
 
     public WorkableTieredMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
+                                        Function<Integer, Integer> tankScalingFunction) {
+        this(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction, true);
+    }
+
+    public WorkableTieredMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
                                         Function<Integer, Integer> tankScalingFunction, boolean handlesRecipeOutputs) {
         super(metaTileEntityId, tier);
         this.renderer = renderer;

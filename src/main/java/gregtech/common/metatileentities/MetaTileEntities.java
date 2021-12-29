@@ -758,7 +758,7 @@ public class MetaTileEntities {
 
             String voltageName = GTValues.VN[i + 1].toLowerCase();
             machines[i + 1] = registerMetaTileEntity(startId + i,
-                    new SimpleMachineMetaTileEntity(resourceId.apply(String.format("%s.%s", name, voltageName)), map, texture, i + 1, hasFrontFacing, tankScalingFunction, true));
+                    new SimpleMachineMetaTileEntity(resourceId.apply(String.format("%s.%s", name, voltageName)), map, texture, i + 1, hasFrontFacing, tankScalingFunction));
         }
     }
 
