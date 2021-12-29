@@ -1128,7 +1128,7 @@ public abstract class MetaTileEntity implements ICoverable {
     }
 
     public int getDefaultPaintingColor() {
-        return ConfigHolder.machines.defaultPaintingColor;
+        return ConfigHolder.client.defaultPaintingColor;
     }
 
     public void setFragile(boolean fragile) {

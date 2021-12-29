@@ -175,7 +175,7 @@ public class PipeCoverableImplementation implements ICoverable {
 
     @Override
     public int getPaintingColorForRendering() {
-        return ConfigHolder.machines.defaultPaintingColor;
+        return ConfigHolder.client.defaultPaintingColor;
     }
 
     @Override
