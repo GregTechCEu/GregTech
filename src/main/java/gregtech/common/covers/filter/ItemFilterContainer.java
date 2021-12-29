@@ -54,6 +54,10 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         return filterInventory;
     }
 
+    public ItemFilterWrapper getFilterWrapper() {
+        return filterWrapper;
+    }
+
     private void onFilterInstanceChange() {
         this.filterWrapper.setMaxStackSize(getTransferStackSize());
     }
@@ -95,7 +99,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
                 .setTextScale(0.7f)
                 .setShouldClientCallback(false));
 
-        stackSizeGroup.addWidget(new TextFieldWidget2(113, 75, 31, 20, () -> String.valueOf(transferStackSize), val -> {
+        stackSizeGroup.addWidget(new TextFieldWidget2(113, 77, 31, 20, () -> String.valueOf(transferStackSize), val -> {
                     if (val != null && !val.isEmpty())
                         setTransferStackSize(Integer.parseInt(val));
                 })

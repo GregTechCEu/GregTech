@@ -306,7 +306,7 @@ public class CoverFluidRegulator extends CoverPump {
                 .setValidator(getTextFieldValidator(() -> transferMode == TransferMode.TRANSFER_EXACT ? maxFluidTransferRate : Integer.MAX_VALUE))
                 .setScale(0.6f));
 
-        stackSizeGroup.addWidget(new SimpleTextWidget(129, 78, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.5f));
+        stackSizeGroup.addWidget(new SimpleTextWidget(129, 78, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
 
         return super.buildUI(builder.widget(filterGroup).widget(stackSizeGroup), player);
     }
