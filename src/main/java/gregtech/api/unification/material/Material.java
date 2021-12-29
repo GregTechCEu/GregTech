@@ -364,6 +364,8 @@ public class Material implements Comparable<Material> {
          * @since GTCEu 2.0.0
          */
         public Builder(int id, String name) {
+            if (name.charAt(name.length() - 1) == '_')
+                throw new IllegalArgumentException("Material name cannot end with a '_'!");
             materialInfo = new MaterialInfo(id, name);
             properties = new MaterialProperties();
             flags = new MaterialFlags();
