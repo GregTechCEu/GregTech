@@ -85,7 +85,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
             if (!value.isEmpty()) {
                 ticksPerCycle = Integer.parseInt(value);
             }
-        }).setMaxLength(10).setNumbersOnly(0, Integer.MAX_VALUE));
+        }).setMaxLength(10).setNumbersOnly(1, Integer.MAX_VALUE));
         builder.label(7, 65, "Ticks per cycle");
 
 
