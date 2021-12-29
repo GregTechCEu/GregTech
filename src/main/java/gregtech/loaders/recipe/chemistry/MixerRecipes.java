@@ -71,7 +71,6 @@ public class MixerRecipes {
                 .input(dust, Clay)
                 .input(dust, Stone, 3)
                 .fluidInputs(Water.getFluid(500))
-                .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(Concrete.getFluid(576))
                 .duration(20).EUt(16).buildAndRegister();
 
@@ -80,7 +79,6 @@ public class MixerRecipes {
                 .input(dust, Calcite)
                 .input(dust, Gypsum)
                 .fluidInputs(Water.getFluid(1000))
-                .notConsumable(new IntCircuitIngredient(2))
                 .fluidOutputs(Concrete.getFluid(1152))
                 .duration(40).EUt(16).buildAndRegister();
 
@@ -89,7 +87,6 @@ public class MixerRecipes {
                 .input(dust, Marble)
                 .input(dust, Gypsum)
                 .fluidInputs(Water.getFluid(1000))
-                .notConsumable(new IntCircuitIngredient(2))
                 .fluidOutputs(Concrete.getFluid(1152))
                 .duration(40).EUt(16).buildAndRegister();
 
