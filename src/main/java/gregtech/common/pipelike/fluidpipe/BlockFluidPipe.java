@@ -159,7 +159,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
                 FluidStack copy = stack.copy();
                 while (copy.amount > 0 && pairs2.size() > 0) {
                     int c = copy.amount / pairs2.size();
-                    int m = copy.amount / pairs2.size();
+                    int m = copy.amount % pairs2.size();
                     Iterator<Pair<FluidPipeNet, TileEntityFluidPipe>> iterator = pairs2.iterator();
                     while (iterator.hasNext()) {
                         Pair<FluidPipeNet, TileEntityFluidPipe> pair = iterator.next();
