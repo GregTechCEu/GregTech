@@ -19,11 +19,7 @@ import java.util.*;
 
 public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements ITickable {
 
-    private static final int TIMER = 100;
-
-    public TileEntityFluidPipeTickable() {
-        GTLog.logger.info("Creating tickable fluid pipe");
-    }
+    private static final int TIMER = 30;
 
     // key is id
     // first 8 bits of value is channel
@@ -70,14 +66,13 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         wave = buildWave(channel, side, TIMER);
         waves.put(id, wave);
 
-        GTLog.logger.info("Received Wave from {} {}, at {}", id, side.getName(), pos);
+        GTLog.logger.info("Received Wave from {} {} with {} * {}, at {}", id, side.getName(), stack.getFluid().getName(), stack.amount, pos);
         return ins;
     }
 
     @Override
     public void update() {
-        int handledChannels = 0;
-        if (!world.isRemote && ++time % 20 == 0) {
+        if (!world.isRemote && ++time % FREQUENCY == 0) {
             PipeTankList tankList = getTankList();
             if (tankList == null) {// world is not ready
                 GTLog.logger.info("Could not initialise PipeTankList");
@@ -92,7 +87,6 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                 EnumFacing fromFace = getFacing(wave);
 
                 int channel = getChannel(wave);
-                handledChannels |= 1 << channel;
                 if (!insertToNeighbour(id, fromFace, channel)) {
                     iterator.remove();
                 }
@@ -106,18 +100,13 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                 int wave = entry.getValue();
                 int timer = getTimer(wave);
                 if (timer == 1) {
+                    GTLog.logger.info("Removing channel {} at {}", getChannel(wave), pos);
                     iterator.remove();
                     continue;
                 }
                 wave = setTimer(wave, --timer);
                 entry.setValue(wave);
             }
-
-            /*for (int i = 0; i < getFluidTanks().length; i++) {
-                if ((handledChannels & (1 << i)) == 0) {
-                    insertToNeighbour(-1, null, i);
-                }
-            }*/
         }
     }
 
@@ -125,7 +114,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         //GTLog.logger.info("Try inserting to neighbour with id {}, fromFace {}, channel {}", id, fromFace == null ? "null" : fromFace.getName(), channel);
         FluidStack fluid = getTankList().getFluidStack(channel);
         if (fluid == null || fluid.amount <= 0) {
-            return false;
+            return true;
         }
 
         if (id < 0)
@@ -136,13 +125,13 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         List<IFluidHandler> handlers = new ArrayList<>();
         BlockPos.PooledMutableBlockPos mutableBlockPos = BlockPos.PooledMutableBlockPos.retain();
         for (EnumFacing facing : EnumFacing.VALUES) {
-            if ((fromFace != null && facing == fromFace) || !isConnectionOpen(AttachmentType.PIPE, facing) || !canInsertTo(facing, fluid, true))
+            if ((fromFace != null && facing == fromFace) || !isConnectionOpen(AttachmentType.PIPE, facing) || !canInsertTo(facing, fluid, this, FluidFilterMode.FILTER_FILL))
                 continue;
             mutableBlockPos.setPos(pos).move(facing);
             TileEntity te = world.getTileEntity(pos.offset(facing));
             if (te == null)
                 continue;
-            if (te instanceof TileEntityFluidPipeTickable) {
+            if (te instanceof TileEntityFluidPipeTickable && canInsertTo(facing.getOpposite(), fluid, (TileEntityFluidPipe) te, FluidFilterMode.FILTER_DRAIN)) {
                 pipes.add(Pair.of(facing.getOpposite(), (TileEntityFluidPipeTickable) te));
                 continue;
             }
@@ -152,13 +141,12 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         }
         mutableBlockPos.release();
 
-        GTLog.logger.info("");
-
         if (handlers.size() > 0 || pipes.size() > 0) {
-            int max = fluid.amount;
+            int maxTransfer = Math.min(getCapacityPerTank() / 2, fluid.amount);
+            int amount = maxTransfer;
 
-            int c = max / (pipes.size() + handlers.size());
-            int m = max % (pipes.size() + handlers.size());
+            int c = amount / (pipes.size() + handlers.size());
+            int m = amount % (pipes.size() + handlers.size());
 
             // insert to pipes
             if (pipes.size() > 0) {
@@ -173,9 +161,12 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                         ins = pair.getValue().sendWave(id, pair.getKey(), toInsert);
                         if (ins > 0)
                             m--;
-                    } else
+                    } else {
+                        if(c == 0)
+                            break;
                         ins = pair.getValue().sendWave(id, pair.getKey(), toInsert);
-                    max -= ins;
+                    }
+                    amount -= ins;
                 }
             }
 
@@ -189,15 +180,18 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                     ins = handler.fill(toInsert, true);
                     if (ins > 0)
                         m--;
-                } else
+                } else {
+                    if(c == 0)
+                        break;
                     ins = handler.fill(toInsert, true);
-                max -= ins;
+                }
+                amount -= ins;
             }
 
             // drain from pipe
-            if (max != fluid.amount) {
-                FluidStack drained = getTankList().drainChannel(fluid.amount - max, true, channel);
-                if (drained == null || drained.amount < fluid.amount - max) {
+            if (amount != maxTransfer) {
+                FluidStack drained = getTankList().drainChannel(maxTransfer - amount, true, channel);
+                if (drained == null || drained.amount < maxTransfer - amount) {
                     GTLog.logger.throwing(new IllegalStateException("Could not drain all fluid"));
                 }
             }
@@ -231,11 +225,11 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         return value | (timer << 16);
     }
 
-    private boolean canInsertTo(EnumFacing facing, FluidStack stack, boolean onlyFilter) {
-        ICoverable coverable = getCoverableImplementation();
+    private static boolean canInsertTo(EnumFacing facing, FluidStack stack, TileEntityFluidPipe pipe, FluidFilterMode notMode) {
+        ICoverable coverable = pipe.getCoverableImplementation();
         CoverBehavior cover = coverable.getCoverAtSide(facing);
         if(cover instanceof CoverFluidFilter) {
-            return ((CoverFluidFilter) cover).getFilterMode() != FluidFilterMode.FILTER_DRAIN && ((CoverFluidFilter) cover).testFluidStack(stack);
+            return ((CoverFluidFilter) cover).getFilterMode() != notMode && ((CoverFluidFilter) cover).testFluidStack(stack);
         }
         return true;
     }

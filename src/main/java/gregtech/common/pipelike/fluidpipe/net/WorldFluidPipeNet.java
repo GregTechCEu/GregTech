@@ -1,10 +1,10 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
-import gregtech.api.pipenet.tickable.TickableWorldPipeNet;
+import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import net.minecraft.world.World;
 
-public class WorldFluidPipeNet extends TickableWorldPipeNet<FluidPipeProperties, FluidPipeNet> {
+public class WorldFluidPipeNet extends WorldPipeNet<FluidPipeProperties, FluidPipeNet> {
 
     private static final String DATA_ID_BASE = "gregtech.fluid_pipe_net";
 
@@ -21,11 +21,6 @@ public class WorldFluidPipeNet extends TickableWorldPipeNet<FluidPipeProperties,
 
     public WorldFluidPipeNet(String name) {
         super(name);
-    }
-
-    @Override
-    protected int getUpdateRate() {
-        return 1;
     }
 
     @Override

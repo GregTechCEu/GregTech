@@ -62,15 +62,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         return false;
     }
 
-    @Override
-    public void setWorld(World worldIn) {
-        super.setWorld(worldIn);
-        if(!(this instanceof TileEntityFluidPipeTickable)) {
-            GTLog.logger.info("Update ticking in setWorld");
-            setSupportsTicking();
-        }
-    }
-
     @Nullable
     @Override
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {

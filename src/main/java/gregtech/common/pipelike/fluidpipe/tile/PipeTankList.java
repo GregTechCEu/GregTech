@@ -82,7 +82,6 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
             resource.amount = max;
             if (doFill) {
                 tank.setFluid(resource);
-                GTLog.logger.info("Added new fluid {} * {} to pipe", resource.getLocalizedName(), resource.amount);
                 // check and destroy pipe
                 boolean isBurning = pipe.getNodeData().getMaxFluidTemperature() < resource.getFluid().getTemperature(resource);
                 boolean isLeaking = !pipe.getNodeData().isGasProof() && resource.getFluid().isGaseous(resource);
@@ -95,7 +94,6 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
         int max = Math.min(resource.amount, tank.getCapacity() - stack.amount);
         if (doFill) {
             stack.amount += max;
-            GTLog.logger.info("Added fluid {} * {} to pipe", resource.getLocalizedName(), resource.amount);
         }
         return max;
     }
