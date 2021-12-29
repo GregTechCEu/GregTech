@@ -47,7 +47,7 @@ public class WorldGeneratorImpl implements IWorldGenerator {
 
         long rubberTreeSeed = random.nextLong();
         if (!ConfigHolder.worldgen.disableRubberTreeGeneration) {
-            generateRubberTree(random, rubberTreeSeed, chunkProvider.provideChunk(chunkX, chunkZ), 1.0f); // Hook in Config here for tree rarity if desired
+            generateRubberTree(random, rubberTreeSeed, chunkProvider.provideChunk(chunkX, chunkZ), ConfigHolder.worldgen.rubberTreeRateIncrease);
         }
     }
 
@@ -62,7 +62,7 @@ public class WorldGeneratorImpl implements IWorldGenerator {
         }
     }
 
-    private static void generateRubberTree(Random random, long seed, Chunk chunk, float baseScale) {
+    private static void generateRubberTree(Random random, long seed, Chunk chunk, double baseScale) {
         random.setSeed(seed);
         Biome[] biomes = new Biome[4];
         for (int i = 0; i < 4; i++) {
@@ -80,7 +80,7 @@ public class WorldGeneratorImpl implements IWorldGenerator {
                     rubberTrees += random.nextInt(5) + 1;
             }
         }
-        rubberTrees = Math.round(rubberTrees * baseScale);
+        rubberTrees = (int) Math.round(rubberTrees * baseScale);
         rubberTrees /= 2;
         if (rubberTrees > 0 && random.nextInt(100) < rubberTrees) {
             WorldGenRubberTree gen = new WorldGenRubberTree(false);
