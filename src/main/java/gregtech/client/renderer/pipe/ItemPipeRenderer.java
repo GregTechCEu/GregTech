@@ -122,7 +122,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         Material material = blockFluidPipe.getItemMaterial(stack);
         if (pipeType != null && material != null) {
             int connections = 1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex();
-            renderPipeBlock(material, pipeType, IPipeTile.DEFAULT_COVER_COLOR, renderState, new IVertexOperation[0], connections);
+            renderPipeBlock(material, pipeType, -1, renderState, new IVertexOperation[0], connections);
         }
         renderState.draw();
         GlStateManager.disableBlend();
@@ -168,7 +168,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     private int getPipeColor(Material material, int insulationColor) {
-        if (insulationColor == IPipeTile.DEFAULT_COVER_COLOR) {
+        if (insulationColor == -1) {
             return material.getMaterialRGB();
         } else return insulationColor;
     }

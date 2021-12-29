@@ -105,7 +105,7 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
         Material material = blockCable.getItemMaterial(stack);
         if (insulation != null && material != null) {
             int connections = 1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex();
-            renderCableBlock(material, insulation, IPipeTile.DEFAULT_INSULATION_COLOR, renderState, new IVertexOperation[0], connections);
+            renderCableBlock(material, insulation, 0x404040, renderState, new IVertexOperation[0], connections);
         }
         renderState.draw();
         GlStateManager.disableBlend();

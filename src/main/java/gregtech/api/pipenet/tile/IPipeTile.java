@@ -3,7 +3,6 @@ package gregtech.api.pipenet.tile;
 import gnu.trove.map.TIntIntMap;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
-import gregtech.common.ConfigHolder;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -13,9 +12,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import java.util.function.Consumer;
 
 public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> {
-
-    int DEFAULT_INSULATION_COLOR = 0x404040;
-    int DEFAULT_COVER_COLOR = ConfigHolder.machines.defaultPaintingColor;
 
     World getPipeWorld();
 
