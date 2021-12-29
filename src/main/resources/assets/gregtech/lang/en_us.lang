@@ -798,6 +798,15 @@ metaitem.cover.energy.detector.name=Energy Detector
 metaitem.cover.energy.detector.tooltip=Gives out Energy Amount as Redstone (as Cover)
 metaitem.cover.player.detector.name=Player Detector
 metaitem.cover.player.detector.tooltip=Gives out close Players as Redstone (as Cover)
+metaitem.cover.drain.name=Drain Cover
+metaitem.cover.fluid.voiding.name=Fluid Voiding Cover
+metaitem.cover.fluid.voiding.tooltip=Voids Fluids (as Cover)
+metaitem.cover.fluid.voiding.advanced.name=Advanced Fluid Voiding Cover
+metaitem.cover.fluid.voiding.advanced.tooltip=Voids Fluids (as Cover) with amount control
+metaitem.cover.item.voiding.name=Item Voiding Cover
+metaitem.cover.item.voiding.tooltip=Voids Items (as Cover)
+metaitem.cover.item.voiding.advanced.name=Advanced Item Voiding Cover
+metaitem.cover.item.voiding.advanced.tooltip=Voids Items (as Cover) with amount control
 
 metaitem.cover.facade.name=%s Facade
 metaitem.cover.facade.tooltip=Decorative outfit
@@ -1084,6 +1093,14 @@ cover.item_filter.ignore_damage.enabled=Ignore Damage
 cover.item_filter.ignore_damage.disabled=Respect Damage
 cover.item_filter.ignore_nbt.enabled=Ignore NBT
 cover.item_filter.ignore_nbt.disabled=Respect NBT
+
+cover.voiding.voiding_mode.void_any=Void Matching
+cover.voiding.voiding_mode.void_overflow=Void Overflow
+cover.voiding.voiding_mode.description=§eVoid Matching§r will void anything matching the filter. /n§eVoid Overflow§r will void anything matching the filter, up to the specified amount.
+cover.fluid.voiding.title=Fluid Voiding Settings
+cover.fluid.voiding.advanced.title=Advanced Fluid Voiding Settings
+cover.item.voiding.title=Item Voiding Settings
+cover.item.voiding.advanced.title=Advanced Item Voiding Settings
 
 cover.smart_item_filter.title=Smart Item Filter
 cover.smart_item_filter.filtering_mode.electrolyzer=Electrolyzer

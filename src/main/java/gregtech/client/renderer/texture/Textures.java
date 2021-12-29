@@ -170,6 +170,10 @@ public class Textures {
     public static final SimpleOverlayRenderer CRAFTING = new SimpleOverlayRenderer("cover/overlay_crafting");
     public static final SimpleOverlayRenderer SOLAR_PANEL = new SimpleOverlayRenderer("cover/overlay_solar_panel");
     public static final SimpleOverlayRenderer INFINITE_WATER = new SimpleOverlayRenderer("cover/overlay_infinite_water");
+    public static final SimpleOverlayRenderer FLUID_VOIDING = new SimpleOverlayRenderer("cover/overlay_fluid_voiding");
+    public static final SimpleOverlayRenderer ITEM_VOIDING = new SimpleOverlayRenderer("cover/overlay_item_voiding");
+    public static final SimpleOverlayRenderer FLUID_VOIDING_ADVANCED = new SimpleOverlayRenderer("cover/overlay_fluid_voiding_advanced");
+    public static final SimpleOverlayRenderer ITEM_VOIDING_ADVANCED = new SimpleOverlayRenderer("cover/overlay_item_voiding_advanced");
     public static final SimpleOverlayRenderer ENDER_FLUID_LINK = new SimpleOverlayRenderer("cover/overlay_ender_fluid_link");
     public static final SimpleOverlayRenderer PIPE_OUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_out");
     public static final SimpleOverlayRenderer PIPE_IN_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_in");
