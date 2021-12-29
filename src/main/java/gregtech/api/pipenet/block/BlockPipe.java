@@ -247,7 +247,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     @Nullable
     @Override
     public TileEntity createNewTileEntity(@Nonnull World worldIn, int meta) {
-        return createNewTileEntity(false);
+        return createNewTileEntity(true);
     }
 
     /**
