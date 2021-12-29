@@ -74,7 +74,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new SimpleMachineMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), hasFrontFacing, getTankScalingFunction(), ignoreOutputs);
+        return new SimpleMachineMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), hasFrontFacing, getTankScalingFunction(), handlesRecipeOutputs);
     }
 
     @Override

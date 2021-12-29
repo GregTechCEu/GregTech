@@ -26,7 +26,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -55,12 +54,12 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new SimpleGeneratorMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), getTankScalingFunction(), ignoreOutputs);
+        return new SimpleGeneratorMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), getTankScalingFunction(), handlesRecipeOutputs);
     }
 
     @Override
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
-        final FuelRecipeLogic result = new FuelRecipeLogic(this, recipeMap, () -> energyContainer, ignoreOutputs);
+        final FuelRecipeLogic result = new FuelRecipeLogic(this, recipeMap, () -> energyContainer, handlesRecipeOutputs);
         result.enableOverclockVoltage();
         return result;
     }
@@ -108,7 +107,7 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
 
 
         ModularUI.Builder builder;
-        if (ignoreOutputs) builder = workableRecipeMap.createUITemplateNoOutputs(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
+        if (handlesRecipeOutputs) builder = workableRecipeMap.createUITemplateNoOutputs(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
         else builder = workableRecipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
 
         builder.widget(new LabelWidget(6, 6, getMetaFullName()))

@@ -33,13 +33,13 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
 
     private final Function<Integer, Integer> tankScalingFunction;
 
-    protected final boolean ignoreOutputs;
+    protected final boolean handlesRecipeOutputs;
 
     public WorkableTieredMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
-                                        Function<Integer, Integer> tankScalingFunction, boolean ignoreOutputs) {
+                                        Function<Integer, Integer> tankScalingFunction, boolean handlesRecipeOutputs) {
         super(metaTileEntityId, tier);
         this.renderer = renderer;
-        this.ignoreOutputs = ignoreOutputs;
+        this.handlesRecipeOutputs = handlesRecipeOutputs;
         this.workable = createWorkable(recipeMap);
         this.recipeMap = recipeMap;
         this.tankScalingFunction = tankScalingFunction;
