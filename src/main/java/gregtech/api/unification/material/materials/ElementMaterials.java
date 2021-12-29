@@ -204,7 +204,7 @@ public class ElementMaterials {
         Darmstadtium = new Material.Builder(27, "darmstadtium")
                 .ingot().fluid()
                 .color(0x578062)
-                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
+                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR)
                 .element(Elements.Ds)
                 .build();
 
@@ -692,7 +692,7 @@ public class ElementMaterials {
         Ruthenium = new Material.Builder(93, "ruthenium")
                 .ingot().fluid()
                 .color(0x50ACCD).iconSet(SHINY)
-                .flags(GENERATE_FOIL)
+                .flags(GENERATE_FOIL, GENERATE_GEAR)
                 .element(Elements.Ru)
                 .blastTemp(2607, GasTier.MID, VA[EV], 900)
                 .build();
@@ -986,7 +986,7 @@ public class ElementMaterials {
         Trinium = new Material.Builder(130, "trinium")
                 .ingot(7).fluid()
                 .color(0x9973BD).iconSet(SHINY)
-                .flags(GENERATE_FOIL, GENERATE_BOLT_SCREW)
+                .flags(GENERATE_FOIL, GENERATE_BOLT_SCREW, GENERATE_GEAR)
                 .element(Elements.Ke)
                 .cableProperties(GTValues.V[7], 6, 4)
                 .blastTemp(7200, GasTier.HIGH, VA[LuV], 1500)
