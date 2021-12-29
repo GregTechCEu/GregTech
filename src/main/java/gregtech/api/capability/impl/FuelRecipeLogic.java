@@ -2,26 +2,19 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class FuelRecipeLogic extends RecipeLogicEnergy {
 
-    private final boolean ignoreOutputs;
-
     public FuelRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, Supplier<IEnergyContainer> energyContainer) {
-        this(tileEntity, recipeMap, energyContainer, false);
-    }
-
-    public FuelRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, Supplier<IEnergyContainer> energyContainer, boolean ignoreOutputs) {
         super(tileEntity, recipeMap, energyContainer);
-        this.ignoreOutputs = ignoreOutputs;
     }
 
     @Override
@@ -46,11 +39,17 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
         // the builder automatically multiplies by -1, so nothing extra is needed here
         builder.EUt(builder.getEUt());
+        if (metaTileEntity instanceof WorkableTieredMetaTileEntity && !((WorkableTieredMetaTileEntity) metaTileEntity).handlesRecipeOutputs) {
+            builder.clearOutputs();
+            builder.clearFluidOutputs();
+        }
     }
 
     @Override
     public boolean canVoidRecipeOutputs() {
-        return ignoreOutputs;
+        if (metaTileEntity instanceof WorkableTieredMetaTileEntity)
+            return !((WorkableTieredMetaTileEntity) metaTileEntity).handlesRecipeOutputs;
+        return false;
     }
 
     @Override

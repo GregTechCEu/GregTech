@@ -26,7 +26,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,32 +37,29 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     protected IItemHandler outputItemInventory;
     protected IFluidHandler outputFluidInventory;
 
-    protected boolean ignoreOutputs;
-
     private static final int FONT_HEIGHT = 9; // Minecraft's FontRenderer FONT_HEIGHT value
 
     public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier) {
         this(metaTileEntityId, recipeMap, renderer, tier, false);
     }
 
-    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean ignoreOutputs) {
-        this(metaTileEntityId, recipeMap, renderer, tier, GTUtility.generatorTankSizeFunction, ignoreOutputs);
+    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean handlesRecipeOutputs) {
+        this(metaTileEntityId, recipeMap, renderer, tier, GTUtility.generatorTankSizeFunction, handlesRecipeOutputs);
     }
 
     public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
-                                         Function<Integer, Integer> tankScalingFunction, boolean ignoreOutputs) {
-        super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction);
-        this.ignoreOutputs = ignoreOutputs;
+                                         Function<Integer, Integer> tankScalingFunction, boolean handlesRecipeOutputs) {
+        super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction, handlesRecipeOutputs);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new SimpleGeneratorMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), getTankScalingFunction(), ignoreOutputs);
+        return new SimpleGeneratorMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), getTankScalingFunction(), handlesRecipeOutputs);
     }
 
     @Override
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
-        final FuelRecipeLogic result = new FuelRecipeLogic(this, recipeMap, () -> energyContainer, ignoreOutputs);
+        final FuelRecipeLogic result = new FuelRecipeLogic(this, recipeMap, () -> energyContainer);
         result.enableOverclockVoltage();
         return result;
     }
@@ -111,9 +107,8 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
 
 
         ModularUI.Builder builder;
-        if (ignoreOutputs) builder = workableRecipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
+        if (handlesRecipeOutputs) builder = workableRecipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
         else builder = workableRecipeMap.createUITemplateNoOutputs(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
-
         builder.widget(new LabelWidget(6, 6, getMetaFullName()))
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);
 
