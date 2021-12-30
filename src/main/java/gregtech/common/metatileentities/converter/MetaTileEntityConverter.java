@@ -14,9 +14,8 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.render.SimpleOverlayRenderer;
-import gregtech.api.render.Textures;
-import gregtech.api.util.PipelineUtil;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.PipelineUtil;
 import gregtech.common.tools.DamageValues;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
@@ -125,7 +124,7 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
         if (converterTrait.isFeToEu()) {
             for (EnumFacing facing : EnumFacing.values()) {
                 if (facing == frontFacing)
-                    getEUOutputTexture().renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+                    Textures.ENERGY_OUT.renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
                 else
                     Textures.CONVERTER_FE_IN.renderSided(facing, renderState, translation, pipeline);
             }
@@ -134,34 +133,8 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
                 if (facing == frontFacing)
                     Textures.CONVERTER_FE_OUT.renderSided(facing, renderState, translation, pipeline);
                 else
-                    getEUInputTexture().renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+                    Textures.ENERGY_IN.renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
             }
-        }
-    }
-
-    private SimpleOverlayRenderer getEUOutputTexture() {
-        switch(slots){
-            case 16:
-                return Textures.ENERGY_OUT_ULTRA;
-            case 9:
-                return Textures.ENERGY_OUT_HI;
-            case 4:
-                return Textures.ENERGY_OUT_MULTI;
-            default:
-                return Textures.ENERGY_OUT;
-        }
-    }
-
-    private SimpleOverlayRenderer getEUInputTexture() {
-        switch(slots){
-            case 16:
-                return Textures.ENERGY_IN_ULTRA;
-            case 9:
-                return Textures.ENERGY_IN_HI;
-            case 4:
-                return Textures.ENERGY_IN_MULTI;
-            default:
-                return Textures.ENERGY_IN;
         }
     }
 
@@ -172,19 +145,24 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        int rowSize = (int) Math.sqrt(converterTrait.getBaseAmps());
+        int slotWidth, slotHeight;
+        if (slots == 8) {
+            slotWidth = 4;
+            slotHeight = 2;
+        } else {
+            slotWidth = slotHeight = (int) Math.sqrt(converterTrait.getBaseAmps());
+        }
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-                        18 + 18 * rowSize + 94)
+                        18 + 18 * slotHeight + 94)
                 .label(10, 5, getMetaFullName());
 
-        for (int y = 0; y < rowSize; y++) {
-            for (int x = 0; x < rowSize; x++) {
-                int index = y * rowSize + x;
-                builder.widget(new SlotWidget(importItems, index, 89 - rowSize * 9 + x * 18, 18 + y * 18, true, true)
+        for (int y = 0; y < slotHeight; y++) {
+            for (int x = 0; x < slotWidth; x++) {
+                builder.widget(new SlotWidget(importItems, y * slotWidth + x, 89 - slotWidth * 9 + x * 18, 18 + y * 18, true, true)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.BATTERY_OVERLAY));
             }
         }
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * rowSize + 12);
+        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * slotHeight + 12);
         return builder.build(getHolder(), entityPlayer);
     }
 
@@ -238,6 +216,4 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
         tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", FeCompat.toFe(voltage * amps, true), amps, voltage, GTValues.VN[tier]));
         tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VN[tier], FeCompat.toFe(voltage * amps, false)));
     }
-
-
 }

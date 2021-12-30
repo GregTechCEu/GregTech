@@ -7,14 +7,14 @@ public class FeCompat {
      * Conversion ratio used by native conversion
      */
     public static double nativeRatio() {
-        return ConfigHolder.U.energyOptions.euToFeRatio;
+        return ConfigHolder.compat.energy.euToFeRatio;
     }
 
     /**
      * Conversion ratio used by energy converters
      */
     public static double ratio(boolean feToEu) {
-        return feToEu ? ConfigHolder.U.energyOptions.feToEuRatio : ConfigHolder.U.energyOptions.euToFeRatio;
+        return feToEu ? ConfigHolder.compat.energy.feToEuRatio : ConfigHolder.compat.energy.euToFeRatio;
     }
 
     /**

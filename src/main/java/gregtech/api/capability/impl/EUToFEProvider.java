@@ -10,15 +10,13 @@ import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nonnull;
 
-public class EUToFEProvider implements ICapabilitySerializable<NBTTagLong> {
-
-    private final TileEntity tileEntity;
+public class EUToFEProvider extends CapabilityCompatProvider implements INBTSerializable<NBTTagLong> {
 
     /**
      * Internally used FE Buffer so that a very large packet of EU is not partially destroyed
@@ -28,14 +26,14 @@ public class EUToFEProvider implements ICapabilitySerializable<NBTTagLong> {
     private long feBuffer;
 
     public EUToFEProvider(TileEntity tileEntity) {
-        this.tileEntity = tileEntity;
+        super(tileEntity);
     }
 
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
-        if (!ConfigHolder.compat.energy.nativeEUToFE || capability != GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
-            return false;
-        return tileEntity.hasCapability(capability, facing);
+        return ConfigHolder.compat.energy.nativeEUToFE &&
+                capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER &&
+                hasUpvalueCapability(CapabilityEnergy.ENERGY, facing);
     }
 
     @Override
@@ -43,7 +41,7 @@ public class EUToFEProvider implements ICapabilitySerializable<NBTTagLong> {
         if (!ConfigHolder.compat.energy.nativeEUToFE || capability != GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
             return null;
 
-        IEnergyStorage energyStorage = tileEntity.getCapability(CapabilityEnergy.ENERGY, facing);
+        IEnergyStorage energyStorage = getUpvalueCapability(CapabilityEnergy.ENERGY, facing);
         return energyStorage != null ?
                 GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(new GTEnergyWrapper(energyStorage)) :
                 null;
@@ -166,8 +164,8 @@ public class EUToFEProvider implements ICapabilitySerializable<NBTTagLong> {
 
                 int extract = energyStorage.extractEnergy(FeCompat.nativeToFe(delta), true);
 
-                if (extract != ConfigHolder.U.energyOptions.euToFeRatio)
-                    extract -= extract % ConfigHolder.U.energyOptions.euToFeRatio;
+                if (extract != ConfigHolder.compat.energy.euToFeRatio)
+                    extract -= extract % ConfigHolder.compat.energy.euToFeRatio;
 
                 return FeCompat.nativeToEu(energyStorage.extractEnergy(extract, false));
 
@@ -175,8 +173,8 @@ public class EUToFEProvider implements ICapabilitySerializable<NBTTagLong> {
 
                 int receive = energyStorage.receiveEnergy(FeCompat.nativeToFe(delta), true);
 
-                if (receive != ConfigHolder.U.energyOptions.euToFeRatio)
-                    receive -= receive % ConfigHolder.U.energyOptions.euToFeRatio;
+                if (receive != ConfigHolder.compat.energy.euToFeRatio)
+                    receive -= receive % ConfigHolder.compat.energy.euToFeRatio;
 
                 return FeCompat.nativeToEu(energyStorage.receiveEnergy(receive, false));
             }
