@@ -52,7 +52,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ColorizerFoliage;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.ClientCommandHandler;
-import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -113,6 +112,11 @@ public class ClientProxy extends CommonProxy {
 
     public static final IBlockColor SURFACE_ROCK_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
             state.getValue(((BlockSurfaceRock) state.getBlock()).variantProperty).getMaterialRGB();
+
+    public static final IBlockColor RUBBER_LEAVES_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
+            ColorizerFoliage.getFoliageColorBirch();
+
+    public static final IItemColor RUBBER_LEAVES_ITEM_COLOR = (stack, tintIndex) -> ColorizerFoliage.getFoliageColorBirch();
 
     public void onPreLoad() {
         super.onPreLoad();
@@ -328,12 +332,6 @@ public class ClientProxy extends CommonProxy {
             Map<Type, ResourceLocation> playerTextures = ObfuscationReflectionHelper.getPrivateValue(NetworkPlayerInfo.class, playerInfo, 1);
             playerTextures.put(Type.CAPE, GREGTECH_CAPE_TEXTURE);
         }
-    }
-
-    @SubscribeEvent
-    public static void onBlockColorsInit(ColorHandlerEvent.Block event) {
-        event.getBlockColors().registerBlockColorHandler((state, world, pos, i)
-                -> ColorizerFoliage.getFoliageColorBirch(), MetaBlocks.RUBBER_LEAVES);
     }
 
     @Override
