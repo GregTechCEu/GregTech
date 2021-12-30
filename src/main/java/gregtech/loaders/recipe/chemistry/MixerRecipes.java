@@ -103,12 +103,6 @@ public class MixerRecipes {
                 .fluidOutputs(DrillingFluid.getFluid(5000))
                 .duration(64).EUt(16).buildAndRegister();
 
-        MIXER_RECIPES.recipeBuilder()
-                .input(dust, Sodium)
-                .input(dust, Potassium)
-                .fluidOutputs(SodiumPotassium.getFluid(1000))
-                .duration(400).EUt(VA[LV]).buildAndRegister();
-
         MIXER_RECIPES.recipeBuilder().duration(160).EUt(VA[HV])
                 .input(dust, Beryllium)
                 .input(dust, Potassium, 4)

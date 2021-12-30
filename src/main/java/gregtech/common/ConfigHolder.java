@@ -129,9 +129,6 @@ public class ConfigHolder {
         @Config.Comment({"Change the recipe of Rods in the Lathe to 1 Rod and 2 Small Piles of Dust, instead of 2 Rods.", "Default: false"})
         public boolean harderRods = false;
 
-        @Config.Comment({"Enable more challenging recipes for Energy Input and Dynamo Hatches.", "Default: false"})
-        public boolean harderEnergyHatches = false;
-
         @Config.Comment({"Whether to make Glass related recipes harder. Default: true"})
         public boolean hardGlassRecipes = true;
 

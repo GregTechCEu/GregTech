@@ -624,7 +624,7 @@ public class CraftingComponent {
 
         POWER_COMPONENT = new Component(Stream.of(new Object[][]{
 
-                {2, MetaItems.INDUCTOR.getStackForm()},
+                {2, MetaItems.ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm()},
                 {3, MetaItems.ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm()},
                 {4, MetaItems.LOW_POWER_INTEGRATED_CIRCUIT.getStackForm()},
                 {5, MetaItems.POWER_INTEGRATED_CIRCUIT.getStackForm()},

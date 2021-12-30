@@ -480,7 +480,7 @@ public class CircuitRecipes {
                 .input(wireFine, Platinum, 4)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 2))
                 .output(ADVANCED_SMD_RESISTOR, 16)
-                .EUt(384).duration(160).buildAndRegister();
+                .EUt(3840).duration(160).buildAndRegister();
 
         // Advanced SMD Diode
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -488,7 +488,7 @@ public class CircuitRecipes {
                 .input(wireFine, NiobiumTitanium, 4)
                 .fluidInputs(Polybenzimidazole.getFluid(L / 2))
                 .output(ADVANCED_SMD_DIODE, 16)
-                .EUt(VA[HV]).duration(150).buildAndRegister();
+                .EUt(3840).duration(150).buildAndRegister();
 
         // Advanced SMD Transistor
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -496,7 +496,7 @@ public class CircuitRecipes {
                 .input(wireFine, HSSG, 8)
                 .fluidInputs(Polybenzimidazole.getFluid(L))
                 .output(ADVANCED_SMD_TRANSISTOR, 16)
-                .EUt(VA[HV]).duration(160).buildAndRegister();
+                .EUt(3840).duration(160).buildAndRegister();
 
         // Advanced SMD Capacitor
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -504,7 +504,7 @@ public class CircuitRecipes {
                 .input(foil, HSSS)
                 .fluidInputs(Polybenzimidazole.getFluid(L / 4))
                 .output(ADVANCED_SMD_CAPACITOR, 16)
-                .EUt(VA[HV]).duration(80).buildAndRegister();
+                .EUt(3840).duration(80).buildAndRegister();
 
         // Advanced SMD Inductor
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -512,7 +512,7 @@ public class CircuitRecipes {
                 .input(wireFine, Palladium, 4)
                 .fluidInputs(Polybenzimidazole.getFluid(L))
                 .output(ADVANCED_SMD_INDUCTOR, 16)
-                .EUt(VA[HV]).duration(160).buildAndRegister();
+                .EUt(3840).duration(160).buildAndRegister();
 
         // Carbon Fibers
         AUTOCLAVE_RECIPES.recipeBuilder()

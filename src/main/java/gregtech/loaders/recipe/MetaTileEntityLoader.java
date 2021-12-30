@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.items.OreDictNames;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.recipes.FluidCellIngredient;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
@@ -299,14 +298,6 @@ public class MetaTileEntityLoader {
         registerMachineRecipe(MetaTileEntities.BATTERY_BUFFER[0], "WTW", "WMW", 'M', HULL, 'W', WIRE_QUAD, 'T', OreDictNames.chestWood);
         registerMachineRecipe(MetaTileEntities.BATTERY_BUFFER[1], "WTW", "WMW", 'M', HULL, 'W', WIRE_OCT, 'T', OreDictNames.chestWood);
         registerMachineRecipe(MetaTileEntities.BATTERY_BUFFER[2], "WTW", "WMW", 'M', HULL, 'W', WIRE_HEX, 'T', OreDictNames.chestWood);
-
-        if (ConfigHolder.recipes.harderEnergyHatches) {
-            registerMachineRecipe(ArrayUtils.subarray(MetaTileEntities.ENERGY_INPUT_HATCH, GTValues.ULV, GTValues.HV), "CKL", "SHR", "CKL", 'C', CABLE, 'K', VOLTAGE_COIL, 'L', new FluidCellIngredient(Materials.Lubricant.getFluid()), 'S', CIRCUIT, 'H', HULL, 'R', ROTOR);
-            registerMachineRecipe(ArrayUtils.subarray(MetaTileEntities.ENERGY_OUTPUT_HATCH, GTValues.ULV, GTValues.HV), "CKL", "SHR", "CKL", 'C', CIRCUIT, 'K', VOLTAGE_COIL, 'L', new FluidCellIngredient(Materials.Lubricant.getFluid()), 'S', SPRING, 'H', HULL, 'R', ROTOR);
-        } else {
-            registerMachineRecipe(MetaTileEntities.ENERGY_INPUT_HATCH, "CH", "  ", 'C', CABLE, 'H', HULL);
-            registerMachineRecipe(MetaTileEntities.ENERGY_OUTPUT_HATCH, "HC", "  ", 'C', CABLE, 'H', HULL);
-        }
 
         registerMachineRecipe(MetaTileEntities.CHARGER, "WTW", "WMW", "BCB", 'M', HULL, 'W', WIRE_QUAD, 'T', OreDictNames.chestWood, 'B', CABLE, 'C', CIRCUIT);
 

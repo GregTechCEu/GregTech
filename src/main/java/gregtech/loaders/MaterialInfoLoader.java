@@ -110,6 +110,55 @@ public class MaterialInfoLoader {
                 new MaterialStack(Materials.Europium, OrePrefix.cableGtSingle.materialAmount * 2),
                 new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2)));
 
+
+        OreDictUnifier.registerOre(MetaTileEntities.ENERGY_INPUT_HATCH[3].getStackForm(), new ItemMaterialInfo(
+                new MaterialStack(Materials.StainlessSteel, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.Gold, OrePrefix.cableGtSingle.materialAmount * 4),
+                new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 4),
+                new MaterialStack(Materials.BlackSteel, OrePrefix.wireFine.materialAmount * 16),
+                new MaterialStack(Materials.SteelMagnetic, OrePrefix.stick.materialAmount)
+        ));
+
+        OreDictUnifier.registerOre(MetaTileEntities.ENERGY_INPUT_HATCH[4].getStackForm(), new ItemMaterialInfo(
+                new MaterialStack(Materials.Titanium, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.Aluminium, OrePrefix.cableGtSingle.materialAmount * 4),
+                new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 4),
+                new MaterialStack(Materials.TungstenSteel, OrePrefix.wireFine.materialAmount * 16),
+                new MaterialStack(Materials.NeodymiumMagnetic, OrePrefix.stick.materialAmount)
+        ));
+
+        OreDictUnifier.registerOre(MetaTileEntities.ENERGY_INPUT_HATCH[5].getStackForm(), new ItemMaterialInfo(
+                new MaterialStack(Materials.TungstenSteel, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.Tungsten, OrePrefix.cableGtSingle.materialAmount * 4),
+                new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 4),
+                new MaterialStack(Materials.Iridium, OrePrefix.wireFine.materialAmount * 16),
+                new MaterialStack(Materials.NeodymiumMagnetic, OrePrefix.stick.materialAmount)
+        ));
+
+        OreDictUnifier.registerOre(MetaTileEntities.ENERGY_OUTPUT_HATCH[3].getStackForm(), new ItemMaterialInfo(
+                new MaterialStack(Materials.StainlessSteel, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.Gold, OrePrefix.cableGtSingle.materialAmount * 2 + OrePrefix.spring.materialAmount * 2),
+                new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2),
+                new MaterialStack(Materials.BlackSteel, OrePrefix.wireFine.materialAmount * 16),
+                new MaterialStack(Materials.SteelMagnetic, OrePrefix.stick.materialAmount)
+        ));
+
+        OreDictUnifier.registerOre(MetaTileEntities.ENERGY_OUTPUT_HATCH[4].getStackForm(), new ItemMaterialInfo(
+                new MaterialStack(Materials.Titanium, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.Aluminium, OrePrefix.cableGtSingle.materialAmount * 2 + OrePrefix.spring.materialAmount * 2),
+                new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2),
+                new MaterialStack(Materials.TungstenSteel, OrePrefix.wireFine.materialAmount * 16),
+                new MaterialStack(Materials.NeodymiumMagnetic, OrePrefix.stick.materialAmount)
+        ));
+
+        OreDictUnifier.registerOre(MetaTileEntities.ENERGY_OUTPUT_HATCH[5].getStackForm(), new ItemMaterialInfo(
+                new MaterialStack(Materials.TungstenSteel, OrePrefix.plate.materialAmount * 8),
+                new MaterialStack(Materials.Tungsten, OrePrefix.cableGtSingle.materialAmount * 2 + OrePrefix.spring.materialAmount * 2),
+                new MaterialStack(Materials.Rubber, OrePrefix.plate.materialAmount * 2),
+                new MaterialStack(Materials.Iridium, OrePrefix.wireFine.materialAmount * 16),
+                new MaterialStack(Materials.NeodymiumMagnetic, OrePrefix.stick.materialAmount)
+        ));
+
         if (ConfigHolder.recipes.hardWoodRecipes) {
             OreDictUnifier.registerOre(new ItemStack(Items.ACACIA_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2), new MaterialStack(Materials.Iron, OrePrefix.screw.materialAmount)));
             OreDictUnifier.registerOre(new ItemStack(Items.BIRCH_DOOR, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2), new MaterialStack(Materials.Iron, OrePrefix.screw.materialAmount)));
