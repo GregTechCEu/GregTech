@@ -1,0 +1,7 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "stage=0": { "model": "gregtech:rubber_sapling" },
+    "stage=1": { "model": "gregtech:rubber_sapling" }
+  }
+}

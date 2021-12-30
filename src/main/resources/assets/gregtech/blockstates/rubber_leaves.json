@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "transform": "forge:default-block"
+    "model": "birch_leaves"
   },
   "variants": {
     "check_decay": {
@@ -11,11 +11,6 @@
     "decayable": {
       "false": {},
       "true": {}
-    },
-    "variant": {
-      "rubber_wood": {
-        "model": "birch_leaves"
-      }
     }
   }
 }

@@ -18,9 +18,6 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.advancement.GTTrigger;
 import gregtech.common.advancement.GTTriggers;
 import gregtech.common.blocks.*;
-import gregtech.common.blocks.wood.BlockGregLeaves;
-import gregtech.common.blocks.wood.BlockGregLog;
-import gregtech.common.blocks.wood.BlockGregSapling;
 import gregtech.common.items.MetaItems;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.ItemBlockCable;
@@ -36,11 +33,9 @@ import gregtech.loaders.recipe.GTRecipeManager;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
@@ -108,9 +103,9 @@ public class CommonProxy {
         registry.register(STONE_WINDMILL_A);
         registry.register(STONE_WINDMILL_B);
         registry.register(STONE_BRICKS_SQUARE);
-        registry.register(LOG);
-        registry.register(LEAVES);
-        registry.register(SAPLING);
+        registry.register(RUBBER_LOG);
+        registry.register(RUBBER_LEAVES);
+        registry.register(RUBBER_SAPLING);
         registry.register(PLANKS);
 
         COMPRESSED.values().stream().distinct().forEach(registry::register);
@@ -170,9 +165,9 @@ public class CommonProxy {
         registry.register(createItemBlock(STONE_WINDMILL_B, VariantItemBlock::new));
         registry.register(createItemBlock(STONE_BRICKS_SQUARE, VariantItemBlock::new));
         registry.register(createItemBlock(PLANKS, VariantItemBlock::new));
-        registry.register(createMultiTexItemBlock(LOG, state -> state.getValue(BlockGregLog.VARIANT).getName()));
-        registry.register(createMultiTexItemBlock(LEAVES, state -> state.getValue(BlockGregLeaves.VARIANT).getName()));
-        registry.register(createMultiTexItemBlock(SAPLING, state -> state.getValue(BlockGregSapling.VARIANT).getName()));
+        registry.register(createItemBlock(RUBBER_LOG, ItemBlock::new));
+        registry.register(createItemBlock(RUBBER_LEAVES, ItemBlock::new));
+        registry.register(createItemBlock(RUBBER_SAPLING, ItemBlock::new));
 
         COMPRESSED.values()
                 .stream().distinct()
@@ -260,9 +255,9 @@ public class CommonProxy {
         ItemStack stack = event.getItemStack();
         Block block = Block.getBlockFromItem(stack.getItem());
         //handle sapling and log burn rates
-        if (block == MetaBlocks.LOG) {
+        if (block == MetaBlocks.RUBBER_LOG) {
             event.setBurnTime(300);
-        } else if (block == MetaBlocks.SAPLING) {
+        } else if (block == MetaBlocks.RUBBER_SAPLING) {
             event.setBurnTime(100);
         }
         //handle material blocks burn value
@@ -277,16 +272,6 @@ public class CommonProxy {
                 event.setBurnTime((int) (materialUnitsInBlock * property.getBurnTime()));
             }
         }
-    }
-
-    @SuppressWarnings("deprecation")
-    private static <T extends Block> ItemBlock createMultiTexItemBlock(T block, Function<IBlockState, String> nameProducer) {
-        ItemBlock itemBlock = new ItemMultiTexture(block, block, stack -> {
-            IBlockState blockState = block.getStateFromMeta(stack.getMetadata());
-            return nameProducer.apply(blockState);
-        });
-        itemBlock.setRegistryName(block.getRegistryName());
-        return itemBlock;
     }
 
     private static <T extends Block> ItemBlock createItemBlock(T block, Function<T, ItemBlock> producer) {
@@ -320,5 +305,9 @@ public class CommonProxy {
         if(GTValues.isModLoaded(GTValues.MODID_JEI) && event.getSide() == Side.CLIENT) {
             GTJeiPlugin.setupInputHandler();
         }
+    }
+
+    public boolean isFancyGraphics() {
+        return true;
     }
 }

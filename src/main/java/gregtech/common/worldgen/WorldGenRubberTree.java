@@ -2,9 +2,6 @@ package gregtech.common.worldgen;
 
 import gregtech.api.util.GTLog;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.blocks.wood.BlockGregLeaves;
-import gregtech.common.blocks.wood.BlockGregLog;
-import gregtech.common.blocks.wood.BlockGregLog.LogVariant;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
@@ -46,8 +43,8 @@ public class WorldGenRubberTree extends WorldGenerator {
             //IC2.log.debug(LogCategory.General, "Rubber tree growth cancelled by " + TreeManager.INSTANCE.getCallerClass());
             return false;
         }
-        IBlockState woodBlock = MetaBlocks.LOG.getDefaultState().withProperty(BlockGregLog.VARIANT, LogVariant.RUBBER_WOOD);
-        IBlockState leaves = MetaBlocks.LEAVES.getDefaultState().withProperty(BlockGregLeaves.VARIANT, LogVariant.RUBBER_WOOD);
+        IBlockState woodBlock = MetaBlocks.RUBBER_LOG.getDefaultState();
+        IBlockState leaves = MetaBlocks.RUBBER_LEAVES.getDefaultState();
         int height = getGrowHeight(world, pos);
         if (height < 2)
             return false;
@@ -87,8 +84,8 @@ public class WorldGenRubberTree extends WorldGenerator {
         IBlockState baseState = world.getBlockState(below);
         Block baseBlock = baseState.getBlock();
         if (baseBlock.isAir(baseState, world, below) ||
-                !baseBlock.canSustainPlant(baseState, world, below, EnumFacing.UP, MetaBlocks.SAPLING) || (
-                !world.isAirBlock(pos.up()) && world.getBlockState(pos.up()).getBlock() != MetaBlocks.SAPLING))
+                !baseBlock.canSustainPlant(baseState, world, below, EnumFacing.UP, MetaBlocks.RUBBER_SAPLING) || (
+                !world.isAirBlock(pos.up()) && world.getBlockState(pos.up()).getBlock() != MetaBlocks.RUBBER_SAPLING))
             return 0;
         int height = 1;
         pos = pos.up();
