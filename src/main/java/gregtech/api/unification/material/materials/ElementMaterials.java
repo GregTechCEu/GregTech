@@ -120,7 +120,7 @@ public class ElementMaterials {
                 .build();
 
         Calcium = new Material.Builder(16, "calcium")
-                .ingot().fluid()
+                .dust()
                 .color(0xFFF5DE).iconSet(METALLIC)
                 .element(Elements.Ca)
                 .build();
@@ -134,7 +134,7 @@ public class ElementMaterials {
                 .build();
 
         Carbon = new Material.Builder(18, "carbon")
-                .ingot().fluid()
+                .dust().fluid()
                 .color(0x141414)
                 .element(Elements.C)
                 .build();
@@ -146,10 +146,9 @@ public class ElementMaterials {
                 .build();
 
         Cerium = new Material.Builder(20, "cerium")
-                .ingot().fluid()
+                .dust().fluid()
                 .color(0x87917D).iconSet(METALLIC)
                 .element(Elements.Ce)
-                .blastTemp(1068)
                 .build();
 
         Chlorine = new Material.Builder(21, "chlorine")
@@ -393,10 +392,9 @@ public class ElementMaterials {
                 .build();
 
         Lanthanum = new Material.Builder(53, "lanthanum")
-                .ingot().fluid()
+                .dust().fluid()
                 .color(0x5D7575).iconSet(METALLIC)
                 .element(Elements.La)
-                .blastTemp(1193, GasTier.MID)
                 .build();
 
         Lawrencium = new Material.Builder(54, "lawrencium")
@@ -416,7 +414,7 @@ public class ElementMaterials {
                 .build();
 
         Lithium = new Material.Builder(56, "lithium")
-                .ingot().fluid().ore()
+                .dust().fluid().ore()
                 .color(0xBDC7DB)
                 .element(Elements.Li)
                 .build();
@@ -429,14 +427,13 @@ public class ElementMaterials {
                 .build();
 
         Lutetium = new Material.Builder(58, "lutetium")
-                .ingot().fluid()
+                .dust().fluid()
                 .color(0x00AAFF).iconSet(METALLIC)
                 .element(Elements.Lu)
-                .blastTemp(1925)
                 .build();
 
         Magnesium = new Material.Builder(59, "magnesium")
-                .ingot().fluid()
+                .dust().fluid()
                 .color(0xFFC8C8).iconSet(METALLIC)
                 .element(Elements.Mg)
                 .build();
@@ -614,7 +611,7 @@ public class ElementMaterials {
                 .build();
 
         Potassium = new Material.Builder(83, "potassium")
-                .ingot(1).fluid()
+                .dust(1).fluid()
                 .color(0xBEDCFF).iconSet(METALLIC)
                 .element(Elements.K)
                 .build();
