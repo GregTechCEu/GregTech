@@ -45,11 +45,12 @@ public class WorldGenRubberTree extends WorldGenerator {
         if (height < 2)
             return false;
         height -= random.nextInt(height / 2 + 1);
+        height = Math.max(5, height);
         BlockPos.MutableBlockPos tmpPos = new BlockPos.MutableBlockPos();
         for (int cHeight = 0; cHeight < height; cHeight++) {
             BlockPos cPos = pos.up(cHeight);
             setBlockAndNotifyAdequately(world, cPos, woodBlock);
-            if (height < 4 || (height < 7 && cHeight > 1) || cHeight > 2) {
+            if ((height < 7 && cHeight > 1) || cHeight > 2) {
                 for (int cx = pos.getX() - 2; cx <= pos.getX() + 2; cx++) {
                     for (int cz = pos.getZ() - 2; cz <= pos.getZ() + 2; cz++) {
                         int chance = Math.max(1, cHeight + 4 - height);
@@ -85,7 +86,7 @@ public class WorldGenRubberTree extends WorldGenerator {
             return 0;
         int height = 1;
         pos = pos.up();
-        while (world.isAirBlock(pos) && height < 8) {
+        while (world.isAirBlock(pos) && height < 7) {
             pos = pos.up();
             height++;
         }
