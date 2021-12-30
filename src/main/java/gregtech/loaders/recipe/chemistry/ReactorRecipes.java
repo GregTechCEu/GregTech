@@ -133,9 +133,10 @@ public class ReactorRecipes {
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Iron)
-                .fluidInputs(Chlorine.getFluid(3000))
+                .fluidInputs(HydrochloricAcid.getFluid(3000))
                 .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(Iron3Chloride.getFluid(1000))
+                .fluidOutputs(Hydrogen.getFluid(3000))
                 .duration(400).EUt(VA[LV])
                 .buildAndRegister();
 

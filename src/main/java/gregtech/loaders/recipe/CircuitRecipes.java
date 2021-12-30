@@ -701,14 +701,14 @@ public class CircuitRecipes {
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(300)
                 .input(foil, Gold, 4)
                 .input(PHENOLIC_BOARD)
-                .fluidInputs(SodiumPersulfate.getFluid(250))
+                .fluidInputs(SodiumPersulfate.getFluid(200))
                 .output(GOOD_CIRCUIT_BOARD)
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(75)
+        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(300)
                 .input(foil, Gold, 4)
                 .input(PHENOLIC_BOARD)
-                .fluidInputs(Iron3Chloride.getFluid(125))
+                .fluidInputs(Iron3Chloride.getFluid(100))
                 .output(GOOD_CIRCUIT_BOARD)
                 .buildAndRegister();
 
@@ -749,7 +749,7 @@ public class CircuitRecipes {
                 .output(PLASTIC_CIRCUIT_BOARD)
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().duration(150).EUt(VA[HV])
+        CHEMICAL_RECIPES.recipeBuilder().duration(600).EUt(VA[LV])
                 .input(PLASTIC_BOARD)
                 .input(foil, Copper, 6)
                 .fluidInputs(Iron3Chloride.getFluid(250))
@@ -772,7 +772,7 @@ public class CircuitRecipes {
                 .output(ADVANCED_CIRCUIT_BOARD)
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().duration(225).EUt(VA[HV])
+        CHEMICAL_RECIPES.recipeBuilder().duration(900).EUt(VA[LV])
                 .input(EPOXY_BOARD)
                 .input(foil, Electrum, 8)
                 .fluidInputs(Iron3Chloride.getFluid(500))
@@ -807,14 +807,14 @@ public class CircuitRecipes {
                 .buildAndRegister();
 
         // Extreme Circuit Board
-        CHEMICAL_RECIPES.recipeBuilder().duration(300).EUt(VA[HV])
+        CHEMICAL_RECIPES.recipeBuilder().duration(1200).EUt(VA[LV])
                 .input(FIBER_BOARD)
                 .input(foil, AnnealedCopper, 12)
                 .fluidInputs(SodiumPersulfate.getFluid(2000))
                 .output(EXTREME_CIRCUIT_BOARD)
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().duration(150).EUt(VA[EV])
+        CHEMICAL_RECIPES.recipeBuilder().duration(1200).EUt(VA[LV])
                 .input(FIBER_BOARD)
                 .input(foil, AnnealedCopper, 12)
                 .fluidInputs(Iron3Chloride.getFluid(1000))
@@ -830,14 +830,14 @@ public class CircuitRecipes {
                 .buildAndRegister();
 
         // Elite Circuit Board
-        CHEMICAL_RECIPES.recipeBuilder().duration(300).EUt(VA[EV])
+        CHEMICAL_RECIPES.recipeBuilder().duration(1500).EUt(VA[MV])
                 .input(MULTILAYER_FIBER_BOARD)
                 .input(foil, Platinum, 8)
                 .fluidInputs(SodiumPersulfate.getFluid(4000))
                 .output(ELITE_CIRCUIT_BOARD)
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().duration(150).EUt(VA[IV])
+        CHEMICAL_RECIPES.recipeBuilder().duration(1500).EUt(VA[MV])
                 .input(MULTILAYER_FIBER_BOARD)
                 .input(foil, Platinum, 8)
                 .fluidInputs(Iron3Chloride.getFluid(2000))
@@ -869,17 +869,17 @@ public class CircuitRecipes {
                 .output(WETWARE_BOARD, 16)
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().duration(300).EUt(VA[IV])
+        CHEMICAL_RECIPES.recipeBuilder().duration(1800).EUt(VA[HV])
                 .input(WETWARE_BOARD)
                 .input(foil, NiobiumTitanium, 32)
-                .fluidInputs(SodiumPersulfate.getFluid(8000))
+                .fluidInputs(SodiumPersulfate.getFluid(10000))
                 .output(WETWARE_CIRCUIT_BOARD)
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().duration(150).EUt(VA[LuV])
+        CHEMICAL_RECIPES.recipeBuilder().duration(1800).EUt(VA[HV])
                 .input(WETWARE_BOARD)
                 .input(foil, NiobiumTitanium, 32)
-                .fluidInputs(Iron3Chloride.getFluid(4000))
+                .fluidInputs(Iron3Chloride.getFluid(5000))
                 .output(WETWARE_CIRCUIT_BOARD)
                 .buildAndRegister();
     }
