@@ -298,7 +298,7 @@ public class MetaFluids {
                 textureLocation = fluidTextureMap.getOrDefault(Pair.of(material, fluidType), MaterialIconType.fluid.getBlockPath(material.getMaterialIconSet()));
 
 
-            fluid = new MaterialFluid(fluidName, material, fluidState, textureLocation);
+            fluid = new MaterialFluid(fluidName, material, fluidState.prefixLocale, textureLocation);
             fluid.setTemperature(temperature);
             if (material.hasFluidColor())
                 fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
@@ -351,15 +351,15 @@ public class MetaFluids {
         }
     }
 
-    private static class MaterialFluid extends Fluid {
+    public static class MaterialFluid extends Fluid {
 
         private final Material material;
-        private final FluidState state;
+        private final String prefix;
 
-        public MaterialFluid(String fluidName, Material material, FluidState fluidState, ResourceLocation texture) {
+        public MaterialFluid(String fluidName, Material material, String prefix, ResourceLocation texture) {
             super(fluidName, texture, texture, GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
             this.material = material;
-            this.state = fluidState;
+            this.prefix = prefix;
         }
 
         @Override
@@ -371,8 +371,8 @@ public class MetaFluids {
         @SideOnly(Side.CLIENT)
         public String getLocalizedName(FluidStack stack) {
             String localizedName = I18n.format(getUnlocalizedName());
-            if (state.prefixLocale != null) {
-                return I18n.format(state.prefixLocale, localizedName);
+            if (prefix != null) {
+                return I18n.format(prefix, localizedName);
             }
             return localizedName;
         }
