@@ -53,7 +53,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
 
     private boolean autoOutputItems;
     private boolean autoOutputFluids;
-    private boolean allowInputFromOutputSideItems = true;
+    private boolean allowInputFromOutputSideItems = false;
     private boolean allowInputFromOutputSideFluids = false;
 
     protected IItemHandler outputItemInventory;
@@ -166,22 +166,12 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
                 if (facing == getOutputFacingItems() || hitFacing == getOutputFacingItems()) {
                     if (isAllowInputFromOutputSideItems()) {
                         setAllowInputFromOutputSideItems(false);
+                        setAllowInputFromOutputSideFluids(false);
                         playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
                     } else {
                         setAllowInputFromOutputSideItems(true);
-                        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
-                    }
-                }
-
-                if (facing == getOutputFacingFluids() || hitFacing == getOutputFacingFluids()) {
-                    if (isAllowInputFromOutputSideFluids()) {
-                        setAllowInputFromOutputSideFluids(false);
-                        if (getOutputFacingItems() != getOutputFacingFluids())
-                            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
-                    } else {
                         setAllowInputFromOutputSideFluids(true);
-                        if (getOutputFacingItems() != getOutputFacingFluids())
-                            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
+                        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
                     }
                 }
             }
