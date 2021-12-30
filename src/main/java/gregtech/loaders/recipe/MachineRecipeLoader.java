@@ -19,7 +19,6 @@ import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.StoneBlock.ChiselingVariant;
-import gregtech.common.blocks.wood.BlockGregLog.LogVariant;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
@@ -702,17 +701,17 @@ public class MachineRecipeLoader {
                 .buildAndRegister();
 
         EXTRACTOR_RECIPES.recipeBuilder().duration(300).EUt(2)
-                .inputs(MetaBlocks.LEAVES.getItem(LogVariant.RUBBER_WOOD, 16))
+                .inputs(new ItemStack(MetaBlocks.RUBBER_LEAVES, 16))
                 .output(dust, RawRubber)
                 .buildAndRegister();
 
         EXTRACTOR_RECIPES.recipeBuilder().duration(300).EUt(2)
-                .inputs(MetaBlocks.LOG.getItem(LogVariant.RUBBER_WOOD))
+                .inputs(new ItemStack(MetaBlocks.RUBBER_LOG))
                 .output(dust, RawRubber)
                 .buildAndRegister();
 
         EXTRACTOR_RECIPES.recipeBuilder().duration(300).EUt(2)
-                .inputs(MetaBlocks.SAPLING.getItem(LogVariant.RUBBER_WOOD))
+                .inputs(new ItemStack(MetaBlocks.RUBBER_SAPLING))
                 .output(dust, RawRubber)
                 .buildAndRegister();
 

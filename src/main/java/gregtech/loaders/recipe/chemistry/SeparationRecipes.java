@@ -5,7 +5,6 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.blocks.wood.BlockGregLog;
 import gregtech.common.items.MetaItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -112,7 +111,7 @@ public class SeparationRecipes {
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(20)
-                .inputs(MetaBlocks.LOG.getItem(BlockGregLog.LogVariant.RUBBER_WOOD))
+                .inputs(new ItemStack(MetaBlocks.RUBBER_LOG))
                 .chancedOutput(RUBBER_DROP, 5000, 1200)
                 .chancedOutput(PLANT_BALL, 3750, 900)
                 .chancedOutput(dust, Carbon, 2500, 600)

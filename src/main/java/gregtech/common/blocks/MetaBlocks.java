@@ -21,10 +21,10 @@ import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
-import gregtech.common.blocks.wood.BlockGregLeaves;
-import gregtech.common.blocks.wood.BlockGregLog;
+import gregtech.common.blocks.wood.BlockRubberLeaves;
+import gregtech.common.blocks.wood.BlockRubberLog;
 import gregtech.common.blocks.wood.BlockGregPlanks;
-import gregtech.common.blocks.wood.BlockGregSapling;
+import gregtech.common.blocks.wood.BlockRubberSapling;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
@@ -116,9 +116,9 @@ public class MetaBlocks {
     public static BlockPetrifiedFoam PETRIFIED_FOAM;
     public static BlockPetrifiedFoam REINFORCED_PETRIFIED_FOAM;
 
-    public static BlockGregLog LOG;
-    public static BlockGregLeaves LEAVES;
-    public static BlockGregSapling SAPLING;
+    public static BlockRubberLog RUBBER_LOG;
+    public static BlockRubberLeaves RUBBER_LEAVES;
+    public static BlockRubberSapling RUBBER_SAPLING;
     public static BlockGregPlanks PLANKS;
 
     public static final Map<Material, BlockCompressed> COMPRESSED = new HashMap<>();
@@ -210,12 +210,12 @@ public class MetaBlocks {
         REINFORCED_PETRIFIED_FOAM = new BlockPetrifiedFoam(true);
         REINFORCED_PETRIFIED_FOAM.setRegistryName("reinforced_petrified_foam");
 
-        LOG = new BlockGregLog();
-        LOG.setRegistryName("log");
-        LEAVES = new BlockGregLeaves();
-        LEAVES.setRegistryName("leaves");
-        SAPLING = new BlockGregSapling();
-        SAPLING.setRegistryName("sapling");
+        RUBBER_LOG = new BlockRubberLog();
+        RUBBER_LOG.setRegistryName("rubber_log");
+        RUBBER_LEAVES = new BlockRubberLeaves();
+        RUBBER_LEAVES.setRegistryName("rubber_leaves");
+        RUBBER_SAPLING = new BlockRubberSapling();
+        RUBBER_SAPLING.setRegistryName("rubber_sapling");
         PLANKS = new BlockGregPlanks();
         PLANKS.setRegistryName("planks");
 
@@ -269,8 +269,8 @@ public class MetaBlocks {
 
         //not sure if that's a good place for that, but i don't want to make a dedicated method for that
         //could possibly override block methods, but since these props don't depend on state why not just use nice and simple vanilla method
-        Blocks.FIRE.setFireInfo(LOG, 5, 5);
-        Blocks.FIRE.setFireInfo(LEAVES, 30, 60);
+        Blocks.FIRE.setFireInfo(RUBBER_LOG, 5, 5);
+        Blocks.FIRE.setFireInfo(RUBBER_LEAVES, 30, 60);
         Blocks.FIRE.setFireInfo(PLANKS, 5, 20);
     }
 
@@ -405,9 +405,11 @@ public class MetaBlocks {
         registerItemModel(STONE_WINDMILL_A);
         registerItemModel(STONE_WINDMILL_B);
         registerItemModel(STONE_BRICKS_SQUARE);
-        registerItemModelWithOverride(LOG, ImmutableMap.of(BlockGregLog.LOG_AXIS, EnumAxis.Y));
-        registerItemModel(LEAVES);
-        registerItemModel(SAPLING);
+        registerItemModelWithOverride(RUBBER_LOG, ImmutableMap.of(BlockRubberLog.LOG_AXIS, EnumAxis.Y));
+        registerItemModel(RUBBER_LEAVES);
+        registerItemModel(RUBBER_SAPLING);
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RUBBER_SAPLING), 0,
+                new ModelResourceLocation(RUBBER_SAPLING.getRegistryName(), "inventory"));
         registerItemModel(PLANKS);
 
         COMPRESSED.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
@@ -517,6 +519,9 @@ public class MetaBlocks {
         Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(
                 FOAM_BLOCK_COLOR, FOAM, REINFORCED_FOAM, PETRIFIED_FOAM, REINFORCED_PETRIFIED_FOAM);
 
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(RUBBER_LEAVES_BLOCK_COLOR, RUBBER_LEAVES);
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(RUBBER_LEAVES_ITEM_COLOR, RUBBER_LEAVES);
+
         MetaBlocks.COMPRESSED.values().stream().distinct().forEach(block -> {
             Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(COMPRESSED_BLOCK_COLOR, block);
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler(COMPRESSED_ITEM_COLOR, block);
@@ -538,12 +543,12 @@ public class MetaBlocks {
     }
 
     public static void registerOreDict() {
-        OreDictUnifier.registerOre(new ItemStack(LOG, 1, GTValues.W), OrePrefix.log, Materials.Wood);
-        OreDictUnifier.registerOre(new ItemStack(LEAVES, 1, GTValues.W), "treeLeaves");
-        OreDictUnifier.registerOre(new ItemStack(SAPLING, 1, GTValues.W), "treeSapling");
+        OreDictUnifier.registerOre(new ItemStack(RUBBER_LOG, 1, GTValues.W), OrePrefix.log, Materials.Wood);
+        OreDictUnifier.registerOre(new ItemStack(RUBBER_LEAVES, 1, GTValues.W), "treeLeaves");
+        OreDictUnifier.registerOre(new ItemStack(RUBBER_SAPLING, 1, GTValues.W), "treeSapling");
         OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.RUBBER_PLANK), OrePrefix.plank, Materials.Wood);
         OreDictUnifier.registerOre(PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK), OrePrefix.plank, Materials.TreatedWood);
-        GameRegistry.addSmelting(LOG, new ItemStack(Items.COAL, 1, 1), 0.15F);
+        GameRegistry.addSmelting(RUBBER_LOG, new ItemStack(Items.COAL, 1, 1), 0.15F);
 
         for (Entry<Material, BlockCompressed> entry : COMPRESSED.entrySet()) {
             Material material = entry.getKey();

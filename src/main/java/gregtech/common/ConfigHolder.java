@@ -114,6 +114,10 @@ public class ConfigHolder {
         @Config.Comment({"Whether to disable Rubber Tree world generation.", "Default: false"})
         public boolean disableRubberTreeGeneration = false;
 
+        @Config.Comment({"Multiplier for the chance to spawn a Rubber Tree on any given roll. Higher values make Rubber Trees more common.", "Default: 1.0"})
+        @Config.RangeDouble(min = 0)
+        public double rubberTreeRateIncrease = 1.0;
+
         @Config.Comment({"Whether to increase number of rolls for dungeon chests. Increases dungeon loot drastically.", "Default: true"})
         public boolean increaseDungeonLoot = true;
 

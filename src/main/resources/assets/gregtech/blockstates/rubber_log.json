@@ -4,8 +4,8 @@
     "transform": "forge:default-block",
     "model": "minecraft:cube_column",
     "textures": {
-      "end": "gregtech:blocks/rendering_error",
-      "side": "gregtech:blocks/rendering_error"
+      "end": "gregtech:blocks/wood/rubber/log_rubber_top",
+      "side": "gregtech:blocks/wood/rubber/log_rubber_side"
     }
   },
   "variants": {
@@ -28,16 +28,6 @@
       "true": {},
       "false": {}
     },
-    "inventory": [
-      {}
-    ],
-    "variant": {
-      "rubber_wood": {
-        "textures": {
-          "end": "gregtech:blocks/wood/rubber/log_rubber_top",
-          "side": "gregtech:blocks/wood/rubber/log_rubber_side"
-        }
-      }
-    }
+    "inventory": [{}]
   }
 }
