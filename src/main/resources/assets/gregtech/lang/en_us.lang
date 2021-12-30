@@ -4165,6 +4165,7 @@ gregtech.multiblock.large_boiler.throttle.tooltip=Boiler can output less Steam a
 gregtech.multiblock.large_boiler.throttle_modify=Modify Throttle:
 gregtech.multiblock.large_boiler.rate_tooltip=Produces %dL of Steam with 1 Coal at %dL/t
 gregtech.multiblock.large_boiler.heat_time_tooltip=Takes %.2f seconds to heat up
+gregtech.multiblock.large_boiler.explosion_tooltip=§cWill explode if provided Fuel with no Water
 
 gregtech.multiblock.large_miner.done=Done!
 gregtech.multiblock.large_miner.working=Working...
