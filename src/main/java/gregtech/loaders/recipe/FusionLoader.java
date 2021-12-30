@@ -19,7 +19,7 @@ public class FusionLoader {
                 .buildAndRegister();
 
         RecipeMaps.FUSION_RECIPES.recipeBuilder()
-                .fluidInputs(Materials.Carbon.getFluid(125))
+                .fluidInputs(Materials.Carbon.getFluid(16))
                 .fluidInputs(Materials.Helium3.getFluid(125))
                 .fluidOutputs(Materials.Oxygen.getPlasma(125))
                 .duration(32)
