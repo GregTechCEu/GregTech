@@ -1,6 +1,5 @@
 package gregtech.common.worldgen;
 
-import gregtech.api.util.GTLog;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -33,14 +32,11 @@ public class WorldGenRubberTree extends WorldGenerator {
 
     public boolean grow(World world, BlockPos pos, Random random) {
         if (world == null) {
-            //IC2.log.warn(LogCategory.General, "RubberTree did not spawn! w=%s.", new Object[] { world });
             return false;
         }
         SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(world, random, pos);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         if (event.getResult() == Event.Result.DENY) {
-            GTLog.logger.info("Rubber tree growth cancelled by " + ""); // todo?
-            //IC2.log.debug(LogCategory.General, "Rubber tree growth cancelled by " + TreeManager.INSTANCE.getCallerClass());
             return false;
         }
         IBlockState woodBlock = MetaBlocks.RUBBER_LOG.getDefaultState();
