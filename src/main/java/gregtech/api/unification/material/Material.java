@@ -12,6 +12,7 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
 import net.minecraft.enchantment.Enchantment;
@@ -156,7 +157,12 @@ public class Material implements Comparable<Material> {
         FluidProperty prop = getProperty(PropertyKey.FLUID);
         if (prop == null)
             throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a Fluid!");
-        return prop.getFluid();
+
+        Fluid fluid = prop.getFluid();
+        if (fluid == null)
+            GTLog.logger.warn("Material {} Fluid was null!", this);
+
+        return fluid;
     }
 
     public FluidStack getFluid(int amount) {
