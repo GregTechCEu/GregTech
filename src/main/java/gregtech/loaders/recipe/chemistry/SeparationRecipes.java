@@ -362,7 +362,7 @@ public class SeparationRecipes {
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .input(dust, Graphite)
                 .output(dust, Carbon, 4)
-                .duration(100).EUt(26).buildAndRegister();
+                .duration(100).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(AceticAcid.getFluid(2000))
@@ -437,19 +437,6 @@ public class SeparationRecipes {
                 .fluidOutputs(Water.getFluid(5000))
                 .fluidOutputs(Hydrogen.getFluid(6000))
                 .duration(480).EUt(VA[MV]).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, SodiumHydroxide, 3)
-                .output(dust, Sodium)
-                .fluidOutputs(Oxygen.getFluid(1000))
-                .fluidOutputs(Hydrogen.getFluid(1000))
-                .duration(360).EUt(60).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(HydrochloricAcid.getFluid(1000))
-                .fluidOutputs(Hydrogen.getFluid(1000))
-                .fluidOutputs(Chlorine.getFluid(1000))
-                .duration(360).EUt(30).buildAndRegister();
 
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()

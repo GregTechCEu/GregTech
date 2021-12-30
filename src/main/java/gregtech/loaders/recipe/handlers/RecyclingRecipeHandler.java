@@ -22,7 +22,7 @@ public class RecyclingRecipeHandler {
             OrePrefix.frameGt, OrePrefix.plateDense, OrePrefix.spring,
             OrePrefix.springSmall, OrePrefix.block, OrePrefix.wireFine,
             OrePrefix.rotor, OrePrefix.lens, OrePrefix.turbineBlade,
-            OrePrefix.round, OrePrefix.plateDouble,
+            OrePrefix.round, OrePrefix.plateDouble, OrePrefix.dust,
             (Predicate<OrePrefix>) orePrefix -> orePrefix.name().startsWith("toolHead"),
             (Predicate<OrePrefix>) orePrefix -> orePrefix.name().startsWith("gem"),
             (Predicate<OrePrefix>) orePrefix -> orePrefix.name().startsWith("cableGt"),
@@ -55,6 +55,6 @@ public class RecyclingRecipeHandler {
         boolean ignoreArcSmelting = IGNORE_ARC_SMELTING.contains(thingPrefix) && !(
                 material.hasProperty(PropertyKey.INGOT)
                         && material.getProperty(PropertyKey.INGOT).getArcSmeltInto() != material);
-        RecyclingRecipes.registerRecyclingRecipes(OreDictUnifier.get(thingPrefix, material), materialStacks, ignoreArcSmelting);
+        RecyclingRecipes.registerRecyclingRecipes(OreDictUnifier.get(thingPrefix, material), materialStacks, ignoreArcSmelting, thingPrefix);
     }
 }

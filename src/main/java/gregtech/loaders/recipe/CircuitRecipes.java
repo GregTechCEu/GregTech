@@ -351,6 +351,13 @@ public class CircuitRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(wireFine, Copper, 4)
+                .input(SILICON_WAFER)
+                .fluidInputs(Glass.getFluid(L * 2))
+                .output(DIODE, 2)
+                .duration(400).EUt(VA[LV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(wireFine, Copper, 4)
                 .input(dustSmall, GalliumArsenide)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .output(DIODE, 2)
@@ -678,35 +685,21 @@ public class CircuitRecipes {
                 .output(PHENOLIC_BOARD)
                 .duration(30).EUt(VA[ULV]).buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(30).EUt(VA[ULV])
-                .input(dust, Wood)
-                .notConsumable(SHAPE_MOLD_PLATE)
-                .fluidInputs(BisphenolA.getFluid(18))
-                .output(PHENOLIC_BOARD, 2)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(30).EUt(VA[ULV])
-                .input(dust, Wood)
-                .notConsumable(SHAPE_MOLD_PLATE)
-                .fluidInputs(Epoxy.getFluid(18))
-                .output(PHENOLIC_BOARD, 3)
-                .buildAndRegister();
-
         // Good Circuit Board
         ModHandler.addShapedRecipe("good_circuit_board", GOOD_CIRCUIT_BOARD.getStackForm(),
                 "WWW", "WBW", "WWW",
-                'W', new UnificationEntry(wireGtSingle, Gold),
+                'W', new UnificationEntry(wireGtSingle, Silver),
                 'B', PHENOLIC_BOARD.getStackForm());
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(300)
-                .input(foil, Gold, 4)
+                .input(foil, Silver, 4)
                 .input(PHENOLIC_BOARD)
                 .fluidInputs(SodiumPersulfate.getFluid(200))
                 .output(GOOD_CIRCUIT_BOARD)
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(300)
-                .input(foil, Gold, 4)
+                .input(foil, Silver, 4)
                 .input(PHENOLIC_BOARD)
                 .fluidInputs(Iron3Chloride.getFluid(100))
                 .output(GOOD_CIRCUIT_BOARD)
@@ -943,12 +936,12 @@ public class CircuitRecipes {
                 .input(component, Component.Diode, 4)
                 .input(wireFine, Gold, 4)
                 .input(bolt, Silver, 4)
-                .output(INTEGRATED_CIRCUIT_MV)
+                .output(INTEGRATED_CIRCUIT_MV, 2)
                 .buildAndRegister();
 
         // HV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).duration(800)
-                .input(INTEGRATED_CIRCUIT_MV)
+                .input(INTEGRATED_CIRCUIT_MV, 2)
                 .input(INTEGRATED_LOGIC_CIRCUIT, 2)
                 .input(RANDOM_ACCESS_MEMORY, 2)
                 .input(component, Component.Transistor, 4)

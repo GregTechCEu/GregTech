@@ -104,12 +104,6 @@ public class FuelRecipes {
                 .buildAndRegister();
 
         RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
-                .fluidInputs(Hydrogen.getFluid(8))
-                .duration(5)
-                .EUt((int) V[LV])
-                .buildAndRegister();
-
-        RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
                 .fluidInputs(CarbonMonoxide.getFluid(8))
                 .duration(6)
                 .EUt((int) V[LV])

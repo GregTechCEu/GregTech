@@ -697,7 +697,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Graphite = new Material.Builder(341, "graphite")
-                .ingot().ore().fluid()
+                .ore()
                 .color(0x808080)
                 .flags(NO_SMELTING, FLAMMABLE, DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
@@ -923,7 +923,6 @@ public class FirstDegreeMaterials {
         SodiumHydroxide = new Material.Builder(377, "sodium_hydroxide")
                 .dust(1)
                 .color(0x003380)
-                .flags(DISABLE_DECOMPOSITION)
                 .components(Sodium, 1, Oxygen, 1, Hydrogen, 1)
                 .build();
 
@@ -1180,7 +1179,6 @@ public class FirstDegreeMaterials {
 
         HydrochloricAcid = new Material.Builder(419, "hydrochloric_acid")
                 .fluid()
-                .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 1, Chlorine, 1)
                 .build();
 
