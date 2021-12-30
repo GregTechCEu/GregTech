@@ -380,6 +380,10 @@ public class ModHandler {
         } else if (ingredient instanceof OrePrefix) {
             ingredient = ((OrePrefix) ingredient).name();
         } else if (ingredient instanceof UnificationEntry) {
+            UnificationEntry entry = (UnificationEntry) ingredient;
+            if(ConfigHolder.misc.debug && entry.material != null && !entry.orePrefix.isIgnored(entry.material) && !entry.orePrefix.doGenerateItem(entry.material)) {
+                GTLog.logger.error("Attempted to create recipe for invalid/missing Unification Entry {}", ingredient.toString(), new IllegalArgumentException());
+            }
             ingredient = ingredient.toString();
         } else if (!(ingredient instanceof ItemStack
                 || ingredient instanceof Item
