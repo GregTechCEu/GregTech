@@ -43,14 +43,13 @@ public class BlockRubberLog extends BlockLog {
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState()
-                .withProperty(LOG_AXIS, EnumAxis.values()[meta / 4 % 4])
-                .withProperty(NATURAL, meta % 4 % 2 == 1);
+                .withProperty(NATURAL, (meta & 1) == 1)
+                .withProperty(LOG_AXIS, EnumAxis.values()[meta >> 1]);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(LOG_AXIS).ordinal() * 2 +
-                (state.getValue(NATURAL) ? 1 : 0);
+        return (state.getValue(NATURAL) ? 1 : 0) | (state.getValue(LOG_AXIS).ordinal() << 1);
     }
 
     @Override
