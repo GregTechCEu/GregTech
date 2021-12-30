@@ -534,7 +534,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                 lines.add(I18n.format("metaitem.generic.electric_item.tooltip",
                         electricItem.getCharge(),
                         electricItem.getMaxCharge(),
-                        GTValues.VN[electricItem.getTier()]));
+                        GTValues.VNF[electricItem.getTier()]));
             }
         }
 
@@ -558,7 +558,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     private static void addDischargeItemTooltip(List<String> tooltip, long maxCharge, long currentCharge, int tier) {
         if (currentCharge == 0) { // do not display when empty
-            tooltip.add(I18n.format("metaitem.generic.electric_item.tooltip", currentCharge, maxCharge, GTValues.VN[tier]));
+            tooltip.add(I18n.format("metaitem.generic.electric_item.tooltip", currentCharge, maxCharge, GTValues.VNF[tier]));
             return;
         }
         Instant start = Instant.now();
@@ -578,7 +578,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             timeRemaining = duration.toHours();
             unit = "hr";
         }
-        tooltip.add(I18n.format("metaitem.battery.charge_detailed", currentCharge, maxCharge, GTValues.VN[tier],
+        tooltip.add(I18n.format("metaitem.battery.charge_detailed", currentCharge, maxCharge, GTValues.VNF[tier],
                 percentRemaining < 30 ? 'c' : percentRemaining < 60 ? 'e' : 'a',
                 timeRemaining, unit));
     }

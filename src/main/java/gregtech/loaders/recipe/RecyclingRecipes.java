@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -39,11 +40,11 @@ public class RecyclingRecipes {
             ItemStack itemStack = entry.getKey();
             ItemMaterialInfo materialInfo = entry.getValue();
             ArrayList<MaterialStack> materialStacks = new ArrayList<>(materialInfo.getMaterials());
-            registerRecyclingRecipes(itemStack, materialStacks, false);
+            registerRecyclingRecipes(itemStack, materialStacks, false, null);
         }
     }
 
-    public static void registerRecyclingRecipes(ItemStack input, List<MaterialStack> components, boolean ignoreArcSmelting) {
+    public static void registerRecyclingRecipes(ItemStack input, List<MaterialStack> components, boolean ignoreArcSmelting, @Nullable OrePrefix prefix) {
 
         // Gather the valid Materials for use in recycling recipes.
         // - Filter out Materials that cannot create a Dust
@@ -61,19 +62,28 @@ public class RecyclingRecipes {
         // Calculate the voltage multiplier based on if a Material has a Blast Property
         int voltageMultiplier = calculateVoltageMultiplier(components);
 
-        registerMaceratorRecycling(input, components, voltageMultiplier);
-        registerExtractorRecycling(input, components, voltageMultiplier);
+        if (prefix != OrePrefix.dust) {
+            registerMaceratorRecycling(input, components, voltageMultiplier);
+        }
+        if (prefix != null) {
+            registerExtractorRecycling(input, components, voltageMultiplier, prefix);
+        }
         if (ignoreArcSmelting) return;
 
-        //do not apply arc smelting for gems, solid materials and dust materials
-        //only generate recipes for ingot materials
         if (components.size() == 1) {
             Material m = components.get(0).material;
-            if (!(m.hasProperty(PropertyKey.INGOT) && m.getProperty(PropertyKey.INGOT).getArcSmeltInto() != m)) {
+
+            // skip non-ingot materials
+            if (!m.hasProperty(PropertyKey.INGOT)) {
+                return;
+            }
+
+            // Skip Ingot -> Ingot Arc Recipes
+            if (OreDictUnifier.getPrefix(input) == OrePrefix.ingot && m.getProperty(PropertyKey.INGOT).getArcSmeltInto() == m) {
                 return;
             }
         }
-        registerArcRecycling(input, components, voltageMultiplier);
+        registerArcRecycling(input, components, voltageMultiplier, prefix);
     }
 
     private static void registerMaceratorRecycling(ItemStack input, List<MaterialStack> materials, int multiplier) {
@@ -92,12 +102,35 @@ public class RecyclingRecipes {
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .inputs(input.copy())
                 .outputs(outputs)
-                .duration(calculateDuration(materials))
+                .duration(calculateDuration(outputs))
                 .EUt(2 * multiplier)
                 .buildAndRegister();
     }
 
-    private static void registerExtractorRecycling(ItemStack input, List<MaterialStack> materials, int multiplier) {
+    private static void registerExtractorRecycling(ItemStack input, List<MaterialStack> materials, int multiplier, @Nullable OrePrefix prefix) {
+
+        // Handle simple materials separately
+        if (prefix != null && prefix.secondaryMaterials.isEmpty()) {
+            MaterialStack ms = OreDictUnifier.getMaterial(input);
+            if (ms == null || ms.material == null) {
+                return;
+            }
+            Material m = ms.material;
+            if (m.hasProperty(PropertyKey.INGOT) && m.getProperty(PropertyKey.INGOT).getMacerateInto() != m) {
+                m = m.getProperty(PropertyKey.INGOT).getMacerateInto();
+            }
+            if (!m.hasProperty(PropertyKey.FLUID) || (prefix == OrePrefix.dust && m.hasProperty(PropertyKey.BLAST))) {
+                return;
+            }
+            RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                    .inputs(input.copy())
+                    .fluidOutputs(m.getFluid((int) (ms.amount * L / M)))
+                    .duration((int) Math.max(1, ms.amount * ms.material.getMass() / M))
+                    .EUt(GTValues.VA[GTValues.LV] * multiplier)
+                    .buildAndRegister();
+
+            return;
+        }
 
         // Find the first Material which can create a Fluid.
         // If no Material in the list can create a Fluid, return.
@@ -126,14 +159,18 @@ public class RecyclingRecipes {
         // Null check the Item before adding it to the Builder.
         // - Try to output an Ingot, otherwise output a Dust.
         if (itemMs != null) {
-            OrePrefix prefix = itemMs.material.hasProperty(PropertyKey.INGOT) ? OrePrefix.ingot : OrePrefix.dust;
-            extractorBuilder.output(prefix, itemMs.material, (int) (itemMs.amount / M));
+            OrePrefix outputPrefix = itemMs.material.hasProperty(PropertyKey.INGOT) ? OrePrefix.ingot : OrePrefix.dust;
+            extractorBuilder.output(outputPrefix, itemMs.material, (int) (itemMs.amount / M));
         }
 
         extractorBuilder.buildAndRegister();
     }
 
-    private static void registerArcRecycling(ItemStack input, List<MaterialStack> materials, int multiplier) {
+    private static void registerArcRecycling(ItemStack input, List<MaterialStack> materials, int multiplier, @Nullable OrePrefix prefix) {
+        // Block dusts from being arc'd instead of EBF'd
+        if (prefix == OrePrefix.dust && OreDictUnifier.getMaterial(input).material.hasProperty(PropertyKey.BLAST)) {
+            return;
+        }
 
         // Filter down the materials list.
         // - Map to the Arc Smelting result as defined below
@@ -157,7 +194,7 @@ public class RecyclingRecipes {
         RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
                 .inputs(input.copy())
                 .outputs(outputs)
-                .duration(calculateDuration(materials))
+                .duration(calculateDuration(outputs))
                 .EUt(GTValues.VA[GTValues.LV] * multiplier)
                 .buildAndRegister();
     }
@@ -252,9 +289,12 @@ public class RecyclingRecipes {
      * - Sums the amount of material times the mass of the material for the List
      * - Divides that by M
      */
-    private static int calculateDuration(List<MaterialStack> materials) {
+    private static int calculateDuration(List<ItemStack> materials) {
         long duration = 0;
-        for (MaterialStack ms : materials) duration += (ms.amount * ms.material.getMass());
+        for (ItemStack is : materials) {
+            MaterialStack ms = OreDictUnifier.getMaterial(is);
+            if (ms != null) duration += ms.amount * ms.material.getMass();
+        }
         return (int) Math.max(1L, duration / M);
     }
 
@@ -310,30 +350,45 @@ public class RecyclingRecipes {
         // Sort the List by total material amount descending.
         outputs.sort(Comparator.comparingLong(e -> -e.getSecond().amount));
 
-        // Cut out "duplicate" outputs.
+        // Sort "duplicate" outputs to the end.
         // For example, if there are blocks of Steel and nuggets of Steel, and the nuggets
         // are preventing some other output from occupying one of the final slots of the machine,
         // cut the nuggets out to favor the newer item instead of having 2 slots occupied by Steel.
+        //
+        // There is probably a better way to do this.
         Map<MaterialStack, ItemStack> temp = new HashMap<>();
         for (Tuple<ItemStack, MaterialStack> t : outputs) {
-            if (temp.containsKey(t.getSecond())) continue;
-            temp.put(t.getSecond(), t.getFirst());
+            boolean isInMap = false;
+            for (MaterialStack ms : temp.keySet()) {
+                if (ms.material == t.getSecond().material) {
+                    isInMap = true;
+                    break;
+                }
+            }
+            if (!isInMap) temp.put(t.getSecond(), t.getFirst());
         }
+        temp.putAll(outputs.stream()
+                .filter(t -> !temp.containsKey(t.getSecond()))
+                .collect(Collectors.toMap(Tuple::getSecond, Tuple::getFirst)));
 
-        // Not enough unique elements in the result list map.
-        if (temp.size() < maxOutputs) {
-            int limit = maxOutputs - temp.size(); // maximum number of outputs to append
-            temp.putAll(outputs.stream()
-                    .filter(t -> !temp.containsKey(t.getSecond()))
-                    .limit(limit)
-                    .collect(Collectors.toMap(Tuple::getSecond, Tuple::getFirst)));
-        }
-
-        return temp.entrySet().stream()
+        // Filter Ash to the very end of the list, after all others
+        List<ItemStack> ashStacks = temp.entrySet().stream()
+                .filter(e -> isAshMaterial(e.getKey()))
                 .sorted(Comparator.comparingLong(e -> -e.getKey().amount))
+                .map(Entry::getValue)
+                .collect(Collectors.toList());
+
+        List<ItemStack> returnValues = temp.entrySet().stream()
+                .sorted(Comparator.comparingLong(e -> -e.getKey().amount))
+                .filter(e -> !isAshMaterial(e.getKey()))
                 .limit(maxOutputs)
                 .map(Entry::getValue)
                 .collect(Collectors.toList());
+
+        for (int i = 0; i < ashStacks.size() && returnValues.size() < maxOutputs; i++) {
+            returnValues.add(ashStacks.get(i));
+        }
+        return returnValues;
     }
 
     private static void splitStacks(List<Tuple<ItemStack, MaterialStack>> list, ItemStack originalStack, UnificationEntry entry) {
@@ -399,5 +454,9 @@ public class RecyclingRecipes {
                 OreDictUnifier.get(smallestPrefix, material, (int) (smallestMS.amount / smallestPrefix.materialAmount)),
                 new MaterialStack(material, smallestMS.amount)
         ));
+    }
+
+    private static boolean isAshMaterial(MaterialStack ms) {
+        return ms.material == Materials.Ash || ms.material == Materials.DarkAsh || ms.material == Materials.Carbon;
     }
 }

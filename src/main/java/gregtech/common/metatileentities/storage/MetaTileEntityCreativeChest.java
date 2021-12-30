@@ -12,6 +12,8 @@ import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.cclop.ColourOperation;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,6 +27,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.function.Function;
@@ -56,7 +59,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.VOLTAGE_CASINGS[14].render(renderState, translation, pipeline, Cuboid6.full);
+        Textures.VOLTAGE_CASINGS[14].render(renderState, translation, ArrayUtils.add(pipeline,
+                new ColourOperation(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
         Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(this.getFrontFacing(), renderState, translation, pipeline);
         Textures.PIPE_OUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
         Textures.ITEM_OUTPUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
@@ -86,7 +90,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
             if (!value.isEmpty()) {
                 ticksPerCycle = Integer.parseInt(value);
             }
-        }).setMaxLength(10).setNumbersOnly(0, Integer.MAX_VALUE));
+        }).setMaxLength(10).setNumbersOnly(1, Integer.MAX_VALUE));
         builder.label(7, 65, "Ticks per cycle");
 
 
@@ -98,7 +102,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     @Override
     public void update() {
         super.update();
-        if (getOffsetTimer() % ticksPerCycle != 0) return;
+        if (ticksPerCycle == 0 || getOffsetTimer() % ticksPerCycle != 0) return;
         ItemStack stack = handler.getStackInSlot(0).copy();
         if (getWorld().isRemote || !active || stack.isEmpty()) return;
 
@@ -156,7 +160,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(Textures.VOLTAGE_CASINGS[14].getParticleSprite(), this.getPaintingColor());
+        return Pair.of(Textures.VOLTAGE_CASINGS[14].getParticleSprite(), this.getPaintingColorForRendering());
     }
 
     @Override

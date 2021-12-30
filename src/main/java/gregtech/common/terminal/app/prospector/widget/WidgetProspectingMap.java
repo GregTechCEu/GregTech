@@ -27,6 +27,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Consumer;
 
 public class WidgetProspectingMap extends Widget {
     private final int chunkRadius;
@@ -37,6 +40,9 @@ public class WidgetProspectingMap extends Widget {
     private int chunkIndex = 0;
     @SideOnly(Side.CLIENT)
     private ProspectingTexture texture;
+    @SideOnly(Side.CLIENT)
+    private Consumer<PacketProspecting> onPacketReceived;
+    Queue<PacketProspecting> packetQueue = new LinkedBlockingQueue<>();
 
     public static final int ORE_PROSPECTING_MODE = 0;
     public static final int FLUID_PROSPECTING_MODE = 1;
@@ -54,6 +60,12 @@ public class WidgetProspectingMap extends Widget {
                 }
             };
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public WidgetProspectingMap setOnPacketReceived(Consumer<PacketProspecting> onPacketReceived) {
+        this.onPacketReceived = onPacketReceived;
+        return this;
     }
 
     @SideOnly(Side.CLIENT)
@@ -124,6 +136,7 @@ public class WidgetProspectingMap extends Widget {
     @SideOnly(Side.CLIENT)
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+
         if(texture !=null) {
             GlStateManager.color(1,1,1,1);
             texture.draw(this.getPosition().x, this.getPosition().y);
@@ -137,6 +150,20 @@ public class WidgetProspectingMap extends Widget {
         if (id == 2) {
             PacketProspecting packet = PacketProspecting.readPacketData(buffer);
             if (packet != null) {
+                if (onPacketReceived != null) {
+                    onPacketReceived.accept(packet);
+                }
+                addPacketToQueue(packet);
+            }
+        }
+    }
+
+    @Override
+    public void updateScreen() {
+        if (packetQueue != null) {
+            int max = 10;
+            while (max-- > 0 && !packetQueue.isEmpty()) {
+                PacketProspecting packet = packetQueue.poll();
                 if (texture == null) {
                     texture = new ProspectingTexture(packet.mode, chunkRadius, darkMode);
                 }
@@ -146,6 +173,11 @@ public class WidgetProspectingMap extends Widget {
                 }
             }
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void addPacketToQueue(PacketProspecting packet) {
+        packetQueue.add(packet);
     }
 
     @SideOnly(Side.CLIENT)

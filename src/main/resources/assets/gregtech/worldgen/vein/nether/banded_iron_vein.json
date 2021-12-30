@@ -1,0 +1,37 @@
+{
+  "weight": 30,
+  "density": 0.2,
+  "min_height": 20,
+  "max_height": 40,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "banded_iron"
+  },
+  "dimension_filter": [
+    "is_nether"
+  ],
+  "generator": {
+    "type": "layered",
+    "radius": [
+      17,
+      24
+    ]
+  },
+  "filler": {
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:brown_limonite"
+      },
+      {
+        "secondary": "ore:yellow_limonite"
+      },
+      {
+        "between": "ore:banded_iron"
+      },
+      {
+        "sporadic": "ore:gold"
+      }
+    ]
+  }
+}

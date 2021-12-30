@@ -46,11 +46,6 @@ public class MaterialFlags {
     public static final MaterialFlag NO_UNIFICATION = new MaterialFlag.Builder("no_unification").build();
 
     /**
-     * Decomposition recipe requires hydrogen as additional input. Amount is equal to input amount
-     */
-    public static final MaterialFlag DECOMPOSITION_REQUIRES_HYDROGEN = new MaterialFlag.Builder("decomposition_requires_hydrogen").build();
-
-    /**
      * Enables electrolyzer decomposition recipe generation
      */
     public static final MaterialFlag DECOMPOSITION_BY_ELECTROLYZING = new MaterialFlag.Builder("decomposition_by_electrolyzing").build();

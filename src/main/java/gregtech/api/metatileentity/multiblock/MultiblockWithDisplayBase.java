@@ -30,7 +30,9 @@ import net.minecraft.util.text.event.HoverEvent.Action;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
@@ -82,28 +84,28 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * @return the byte value representing the maintenance problems
      */
     public byte getMaintenanceProblems() {
-        return maintenance_problems;
+        return ConfigHolder.machines.enableMaintenance ? maintenance_problems : 0b111111;
     }
 
     /**
      * @return the amount of maintenance problems the multiblock has
      */
     public int getNumMaintenanceProblems() {
-        return 6 - Integer.bitCount(maintenance_problems);
+        return ConfigHolder.machines.enableMaintenance ? 6 - Integer.bitCount(maintenance_problems) : 0;
     }
 
     /**
      * @return whether the multiblock has any maintenance problems
      */
     public boolean hasMaintenanceProblems() {
-        return this.maintenance_problems < 63;
+        return ConfigHolder.machines.enableMaintenance && this.maintenance_problems < 63;
     }
 
     /**
      * @return whether this multiblock has maintenance mechanics
      */
     public boolean hasMaintenanceMechanics() {
-        return ConfigHolder.machines.enableMaintenance;
+        return true;
     }
 
     public boolean hasMufflerMechanics() {
@@ -242,7 +244,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     public TraceabilityPredicate autoAbilities(boolean checkMaintainer, boolean checkMuffler) {
         TraceabilityPredicate predicate = new TraceabilityPredicate();
         if (checkMaintainer && hasMaintenanceMechanics()) {
-            predicate = predicate.or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1));
+            predicate = predicate.or(abilities(MultiblockAbility.MAINTENANCE_HATCH)
+                    .setMinGlobalLimited(ConfigHolder.machines.enableMaintenance ? 1 : 0).setMaxGlobalLimited(1));
         }
         if (checkMuffler && hasMufflerMechanics()) {
             predicate =  predicate.or(abilities(MultiblockAbility.MUFFLER_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1));
@@ -263,7 +266,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                     .setStyle(new Style().setColor(TextFormatting.RED)
                             .setHoverEvent(new HoverEvent(Action.SHOW_TEXT, tooltip))));
         } else {
-            if (hasMaintenanceMechanics()) {
+            if (hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
                 addMaintenanceText(textList);
             }
             if (hasMufflerMechanics() && !isMufflerFaceFree())
@@ -274,7 +277,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
     }
 
-    private void addMaintenanceText(List<ITextComponent> textList) {
+    protected void addMaintenanceText(List<ITextComponent> textList) {
         if (!hasMaintenanceProblems()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.universal.no_problems")
                     .setStyle(new Style().setColor(TextFormatting.GREEN))

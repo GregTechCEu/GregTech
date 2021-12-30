@@ -1,5 +1,6 @@
 package gregtech.api;
 
+import gregtech.GregTechVersion;
 import gregtech.api.util.XSTR;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -11,6 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
 
+import static net.minecraft.util.text.TextFormatting.*;
+
 /**
  * Made for static imports, this Class is just a Helper.
  */
@@ -19,7 +22,7 @@ public class GTValues {
     /**
      * Version String for use in addon mods' @Mod(dependencies = "...") block.
      */
-    public static final String MOD_VERSION_DEP = "required-after:gregtech@[2.0,);";
+    public static final String MOD_VERSION_DEP = "required-after:gregtech@[" + GregTechVersion.VERSION + ",);";
 
     /**
      * <p/>
@@ -77,9 +80,19 @@ public class GTValues {
     public static final int MAX = 14;
 
     /**
-     * The short names for the voltages
+     * The short names for the voltages, used for registration primarily
      */
     public static final String[] VN = new String[]{"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV", "UEV", "UIV", "UMV", "UXV", "MAX"};
+
+    /**
+     * The short names for the voltages, formatted for text
+     */
+    public static final String[] VNF = new String[]{
+            DARK_GRAY + "ULV", GRAY + "LV", AQUA + "MV",
+            GOLD + "HV", DARK_PURPLE + "EV", DARK_BLUE + "IV",
+            LIGHT_PURPLE + "LuV", WHITE + "ZPM", DARK_AQUA + "UV",
+            DARK_RED + "UHV", GREEN + "UEV", DARK_GREEN + "UIV",
+            YELLOW + "UMV", BLUE + "UXV", RED + "MAX"};
 
     /**
      * Color values for the voltages

@@ -7,11 +7,10 @@ import codechicken.lib.texture.TextureUtils.IIconRegister;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
-import gregtech.client.renderer.texture.Textures;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.cclop.ColourOperation;
 import gregtech.client.renderer.cclop.LightMapOperation;
-import gregtech.api.util.GTUtility;
-import gregtech.client.utils.BloomEffectUtil;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
@@ -63,7 +62,7 @@ public class LargeTurbineRenderer implements IIconRegister {
                 break;
         }
         if (hasBase) {
-            Textures.renderFace(renderState, cornerOffset, ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240)), side, Cuboid6.full, baseRingSprite, BloomEffectUtil.getRealBloomLayer());
+            Textures.renderFace(renderState, cornerOffset, ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240)), side, Cuboid6.full, baseRingSprite, BlockRenderLayer.CUTOUT_MIPPED);
             Textures.renderFace(renderState, cornerOffset, ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240), new ColourOperation(0xFFFFFFFF)), side, Cuboid6.full, baseBackgroundSprite, BlockRenderLayer.CUTOUT_MIPPED);
         }
         if (hasRotor) {

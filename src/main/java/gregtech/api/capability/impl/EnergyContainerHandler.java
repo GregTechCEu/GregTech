@@ -192,7 +192,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         long canAccept = getEnergyCapacity() - getEnergyStored();
         if (voltage > 0L && (side == null || inputsEnergy(side))) {
             if (voltage > getInputVoltage()) {
-                GTUtility.doOvervoltageExplosion(metaTileEntity, voltage);
+                metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
                 return Math.min(amperage, getInputAmperage() - amps);
             }
             if (canAccept >= voltage) {

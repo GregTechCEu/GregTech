@@ -1,9 +1,14 @@
 package gregtech.loaders.recipe.chemistry;
 
+import gregtech.api.GTValues;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.common.blocks.BlockStoneSmooth;
+import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.blocks.wood.BlockGregPlanks;
 import net.minecraft.init.Items;
 
-import static gregtech.api.GTValues.*;
+import static gregtech.api.GTValues.ULV;
+import static gregtech.api.GTValues.VA;
 import static gregtech.api.recipes.RecipeMaps.CHEMICAL_BATH_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
@@ -46,6 +51,18 @@ public class ChemicalBathRecipes {
                 .input(Items.REEDS, 1, true)
                 .fluidInputs(DistilledWater.getFluid(100))
                 .output(Items.PAPER)
+                .duration(100).EUt(VA[ULV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input("plankWood", 1)
+                .fluidInputs(Creosote.getFluid(100))
+                .outputs(MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK))
+                .duration(100).EUt(VA[ULV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .inputs(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.CONCRETE_LIGHT))
+                .fluidInputs(Water.getFluid(100))
+                .outputs(MetaBlocks.STONE_SMOOTH.getItemVariant(BlockStoneSmooth.BlockType.CONCRETE_DARK))
                 .duration(100).EUt(VA[ULV]).buildAndRegister();
 
         //todo add these to ore byproducts
@@ -96,5 +113,19 @@ public class ChemicalBathRecipes {
                 .chancedOutput(OreDictUnifier.get(dust, Cobalt), 7000, 580)
                 .chancedOutput(OreDictUnifier.get(dust, Stone), 4000, 650)
                 .duration(800).EUt(VA[ULV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(dust, Scheelite, 6)
+                .fluidInputs(HydrochloricAcid.getFluid(2000))
+                .output(dust, TungsticAcid, 7)
+                .output(dust, CalciumChloride, 3)
+                .duration(210).EUt(VA[GTValues.EV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(dust, Tungstate, 7)
+                .fluidInputs(HydrochloricAcid.getFluid(2000))
+                .output(dust, TungsticAcid, 7)
+                .output(dust, LithiumChloride, 4)
+                .duration(210).EUt(VA[GTValues.EV]).buildAndRegister();
     }
 }

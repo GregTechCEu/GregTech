@@ -114,10 +114,10 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
             int[] overclock = super.performOverclocking(recipe, negativeEU);
 
             int coilTier = ((MetaTileEntityCrackingUnit) metaTileEntity).getCoilTier();
-            if (coilTier == -1)
+            if (coilTier <= 0)
                 return overclock;
 
-            overclock[0] *= 1.0f - coilTier / 20; // each coil above cupronickel (coilTier = 0) uses 5% less energy
+            overclock[0] *= 1.0f - coilTier * 0.05; // each coil above cupronickel (coilTier = 0) uses 5% less energy
             overclock[0] = Math.max(1, overclock[0]);
 
             return overclock;

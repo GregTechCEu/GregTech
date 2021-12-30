@@ -5,6 +5,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.integration.jei.recipe.primitive.BasicRecipeCategory;
+import gregtech.integration.jei.utils.render.ItemStackTextRenderer;
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
@@ -67,7 +68,9 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
             int yPos = baseYPos + (i / NUM_OF_SLOTS) * SLOT_HEIGHT;
             int xPos = 70 + (i % NUM_OF_SLOTS) * SLOT_WIDTH;
 
-            itemStackGroup.init(i + 2, false, xPos, yPos);
+            itemStackGroup.init(i + 2, false,
+                    new ItemStackTextRenderer(recipeWrapper.getOreWeight(i) * 100, -1),
+                    xPos + 1, yPos + 1, 16, 16, 0, 0);
         }
 
         itemStackGroup.addTooltipCallback(recipeWrapper::addTooltip);

@@ -23,7 +23,6 @@ import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import gregtech.common.advancement.GTTriggers;
 import gregtech.common.tools.DamageValues;
 import gregtech.integration.ctm.IFacadeWrapper;
 import net.minecraft.block.Block;
@@ -36,7 +35,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -77,23 +75,44 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     }
 
     public static Cuboid6 getSideBox(EnumFacing side, float thickness) {
-        float min = (1.0f - thickness) / 2.0f;
-        float max = min + thickness;
-        if (side == null) {
+        float min = (1.0f - thickness) / 2.0f, max = min + thickness;
+        float faceMin = 0f, faceMax = 1f;
+
+        if(side == null)
             return new Cuboid6(min, min, min, max, max, max);
-        } else if (side == EnumFacing.DOWN) {
-            return new Cuboid6(min, 0.0f, min, max, min, max);
-        } else if (side == EnumFacing.UP) {
-            return new Cuboid6(min, max, min, max, 1.0f, max);
-        } else if (side == EnumFacing.WEST) {
-            return new Cuboid6(0.0f, min, min, min, max, max);
-        } else if (side == EnumFacing.EAST) {
-            return new Cuboid6(max, min, min, 1.0f, max, max);
-        } else if (side == EnumFacing.NORTH) {
-            return new Cuboid6(min, min, 0.0f, max, max, min);
-        } else if (side == EnumFacing.SOUTH) {
-            return new Cuboid6(min, min, max, max, max, 1.0f);
-        } else throw new IllegalArgumentException(side.toString());
+        Cuboid6 cuboid;
+        switch (side) {
+            case WEST:
+                cuboid = new Cuboid6(faceMin, min, min, min, max, max);
+                break;
+            case EAST:
+                cuboid = new Cuboid6(max, min, min, faceMax, max, max);
+                break;
+            case NORTH:
+                cuboid = new Cuboid6(min, min, faceMin, max, max, min);
+                break;
+            case SOUTH:
+                cuboid = new Cuboid6(min, min, max, max, max, faceMax);
+                break;
+            case UP:
+                cuboid = new Cuboid6(min, max, min, max, faceMax, max);
+                break;
+            case DOWN:
+                cuboid = new Cuboid6(min, faceMin, min, max, min, max);
+                break;
+            default: cuboid = new Cuboid6(min, min, min, max, max, max);
+        }
+        return cuboid;
+    }
+
+    /**
+     * @return the pipe cuboid for that side but with a offset one the facing with the cover to prevent z fighting.
+     */
+    public static Cuboid6 getCoverSideBox(EnumFacing side, float thickness) {
+        Cuboid6 cuboid = getSideBox(side, thickness);
+        if(side != null)
+            cuboid.setSide(side, side.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE ? 0.001 : 0.999);
+        return cuboid;
     }
 
     public abstract Class<PipeType> getPipeTypeClass();
@@ -299,9 +318,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         EnumActionResult result = coverBehavior.onRightClick(entityPlayer, hand, hit);
         if (result == EnumActionResult.PASS) {
             return entityPlayer.isSneaking() && entityPlayer.getHeldItemMainhand().isEmpty() && coverBehavior.onScrewdriverClick(entityPlayer, hand, hit) != EnumActionResult.PASS;
-        } else if (result == EnumActionResult.SUCCESS) {
-            if (!world.isRemote)
-                GTTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) entityPlayer);
         }
         return true;
     }
@@ -391,8 +407,8 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         IPipeTile<PipeType, NodeDataType> tileEntityPipe = (IPipeTile<PipeType, NodeDataType>) world.getTileEntity(pos);
         if (tileEntityPipe != null && tileEntityPipe.getPipeType() != null &&
                 tileEntityPipe.getPipeType().isPaintable() &&
-                tileEntityPipe.getInsulationColor() != color.colorValue) {
-            tileEntityPipe.setInsulationColor(color.colorValue);
+                tileEntityPipe.getPaintingColor() != color.colorValue) {
+            tileEntityPipe.setPaintingColor(color.colorValue);
             return true;
         }
         return false;
@@ -456,12 +472,13 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                         connections |= 1 << (facing.getIndex() + 6);
                     }
                 }
-            } else {
-                CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
-                if (cover != null && cover.shouldRenderConnected()) {
-                    connections |= 1 << facing.getIndex();
-                }
             }
+            CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
+            if (cover != null && cover.shouldRenderConnected()) {
+                connections |= 1 << facing.getIndex();
+                connections |= 1 << (facing.getIndex() + 12);
+            }
+
         }
         return connections;
     }
@@ -498,7 +515,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     }
 
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, Entity entity) {
-        if(entity instanceof EntityPlayer) {
+        if (entity instanceof EntityPlayer) {
             return hasPipeCollisionChangingItem(world, pos, ((EntityPlayer) entity).getHeldItem(EnumHand.MAIN_HAND)) ||
                     hasPipeCollisionChangingItem(world, pos, ((EntityPlayer) entity).getHeldItem(EnumHand.OFF_HAND));
         }
@@ -508,7 +525,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
         return doDrawGrid(stack) ||
                 stack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null) ||
-                GTUtility.isCoverBehaviorItem(stack, () -> hasCover(getPipeTileEntity(world, pos)));
+                GTUtility.isCoverBehaviorItem(stack,
+                        () -> hasCover(getPipeTileEntity(world, pos)),
+                        coverDef -> ICoverable.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
     }
 
     protected boolean doDrawGrid(ItemStack stack) {

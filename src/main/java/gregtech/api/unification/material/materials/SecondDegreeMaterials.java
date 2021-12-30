@@ -79,12 +79,7 @@ public class SecondDegreeMaterials {
                 .components(DarkAsh, 1, Sulfur, 1)
                 .build();
 
-        Niter = new Material.Builder(2009, "niter")
-                .dust(1)
-                .color(0xFFC8C8).iconSet(FLINT)
-                .flags(NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
-                .components(Saltpeter, 1)
-                .build();
+        // Free ID 2009
 
         Apatite = new Material.Builder(2010, "apatite")
                 .gem(1).ore(4, 2)
@@ -115,12 +110,12 @@ public class SecondDegreeMaterials {
         TungstenSteel = new Material.Builder(2013, "tungsten_steel")
                 .ingot(4).fluid()
                 .color(0x6464A0).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_DENSE, GENERATE_FRAME, GENERATE_SPRING)
+                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_DENSE, GENERATE_FRAME, GENERATE_SPRING, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .components(Steel, 1, Tungsten, 1)
                 .toolStats(8.0f, 4.0f, 2560, 21)
                 .fluidPipeProperties(7568, 100, true)
                 .cableProperties(GTValues.V[5], 3, 2)
-                .blastTemp(3000, GasTier.MID)
+                .blastTemp(3000, GasTier.MID, GTValues.VA[EV], 1000)
                 .build();
 
         CobaltBrass = new Material.Builder(2014, "cobalt_brass")
@@ -142,7 +137,7 @@ public class SecondDegreeMaterials {
         GarnetRed = new Material.Builder(2016, "garnet_red")
                 .gem().ore(4, 1)
                 .color(0xC85050).iconSet(RUBY)
-                .flags(STD_SOLID, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Pyrope, 3, Almandine, 5, Spessartine, 8)
                 .toolStats(7.5f, 3.0f, 156, 33)
                 .build();
@@ -150,7 +145,7 @@ public class SecondDegreeMaterials {
         GarnetYellow = new Material.Builder(2017, "garnet_yellow")
                 .gem().ore(4, 1)
                 .color(0xC8C850).iconSet(RUBY)
-                .flags(STD_SOLID, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Andradite, 5, Grossular, 8, Uvarovite, 3)
                 .toolStats(7.5f, 3.0f, 156, 33)
                 .build();
@@ -176,11 +171,7 @@ public class SecondDegreeMaterials {
                 .components(Aluminium, 2, PotassiumFeldspar, 1, Oxygen, 3)
                 .build();
 
-        Chrysotile = new Material.Builder(2021, "chrysotile")
-                .dust()
-                .color(0x6E8C6E).iconSet(ROUGH)
-                .components(Asbestos, 1)
-                .build();
+        // Free ID 2021
 
         VanadiumMagnetite = new Material.Builder(2022, "vanadium_magnetite")
                 .dust().ore()
@@ -197,31 +188,28 @@ public class SecondDegreeMaterials {
                 .build();
 
         Pollucite = new Material.Builder(2024, "pollucite")
-                .dust()
+                .dust().ore()
                 .color(0xF0D2D2)
                 .components(Caesium, 2, Aluminium, 2, Silicon, 4, Water, 2, Oxygen, 12)
                 .build();
 
-        Vermiculite = new Material.Builder(2025, "vermiculite")
-                .dust()
-                .color(0xC8B40F).iconSet(METALLIC)
-                .components(Iron, 3, Aluminium, 4, Silicon, 4, Hydrogen, 2, Water, 4, Oxygen, 12)
-                .build();
+        // Free ID 2025
 
         Bentonite = new Material.Builder(2026, "bentonite")
-                .dust().ore(7, 1)
+                .dust().ore(3, 1)
                 .color(0xF5D7D2).iconSet(ROUGH)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Sodium, 1, Magnesium, 6, Silicon, 12, Hydrogen, 4, Water, 5, Oxygen, 36)
                 .build();
 
         FullersEarth = new Material.Builder(2027, "fullers_earth")
-                .dust().ore()
+                .dust().ore(2, 1)
                 .color(0xA0A078).iconSet(FINE)
                 .components(Magnesium, 1, Silicon, 4, Hydrogen, 1, Water, 4, Oxygen, 11)
                 .build();
 
         Pitchblende = new Material.Builder(2028, "pitchblende")
-                .dust(3).ore(2, 1)
+                .dust(3).ore(true)
                 .color(0xC8D200)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Uraninite, 3, Thorium, 1, Lead, 1)
@@ -229,7 +217,7 @@ public class SecondDegreeMaterials {
                 .setFormula("(UO2)3ThPb", true);
 
         Monazite = new Material.Builder(2029, "monazite")
-                .gem(1).ore(8, 2) // todo does this need 8x ore multiplier?
+                .gem(1).ore(4, 2)
                 .color(0x324632).iconSet(DIAMOND)
                 .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE)
                 .components(RareEarth, 1, Phosphate, 1)
@@ -242,7 +230,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         Trona = new Material.Builder(2031, "trona")
-                .dust(1).ore()
+                .dust(1).ore(2, 1)
                 .color(0x87875F).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Sodium, 3, Carbon, 2, Hydrogen, 1, Water, 2, Oxygen, 6)
@@ -255,8 +243,9 @@ public class SecondDegreeMaterials {
                 .build();
 
         Zeolite = new Material.Builder(2033, "zeolite")
-                .dust().ore()
+                .dust().ore(3, 1)
                 .color(0xF0E6E6)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Sodium, 1, Calcium, 4, Silicon, 27, Aluminium, 9, Water, 28, Oxygen, 72)
                 .build();
 
@@ -270,7 +259,7 @@ public class SecondDegreeMaterials {
         SteelMagnetic = new Material.Builder(2035, "steel_magnetic")
                 .ingot()
                 .color(0x808080).iconSet(MAGNETIC)
-                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, MORTAR_GRINDABLE)
+                .flags(GENERATE_ROD)
                 .components(Steel, 1)
                 .ingotSmeltInto(Steel)
                 .arcSmeltInto(Steel)
@@ -282,7 +271,7 @@ public class SecondDegreeMaterials {
         VanadiumSteel = new Material.Builder(2036, "vanadium_steel")
                 .ingot(3).fluid()
                 .color(0xc0c0c0).iconSet(METALLIC)
-                .flags(EXT2_METAL)
+                .flags(EXT2_METAL, GENERATE_FOIL)
                 .components(Vanadium, 1, Chrome, 1, Steel, 7)
                 .toolStats(7.0f, 3.0f, 1920, 21)
                 .fluidPipeProperties(2073, 100, true)
@@ -292,8 +281,8 @@ public class SecondDegreeMaterials {
         Potin = new Material.Builder(2037, "potin")
                 .ingot().fluid()
                 .color(0xc99781).iconSet(METALLIC)
-                .flags(EXT2_METAL)
-                .components(Lead, 2, Bronze, 2, Tin, 1)
+                .flags(EXT2_METAL, GENERATE_GEAR)
+                .components(Copper, 6, Tin, 2, Lead, 1)
                 .fluidPipeProperties(2023, 69, true)
                 .build();
 
@@ -318,7 +307,7 @@ public class SecondDegreeMaterials {
         NaquadahAlloy = new Material.Builder(2042, "naquadah_alloy")
                 .ingot(5).fluid()
                 .color(0x282828).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_RING, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_DENSE)
+                .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_RING, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_DENSE, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Naquadah, 2, Osmiridium, 1, Trinium, 1)
                 .toolStats(8.0f, 5.0f, 5120, 21)
                 .cableProperties(GTValues.V[8], 2, 4)
@@ -458,7 +447,7 @@ public class SecondDegreeMaterials {
         RhodiumPlatedPalladium = new Material.Builder(2062, "rhodium_plated_palladium")
                 .ingot().fluid()
                 .color(0xDAC5C5).iconSet(SHINY)
-                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
+                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR)
                 .components(Palladium, 3, Rhodium, 1)
                 .toolStats(12.0f, 3.0f, 1024, 33)
                 .blastTemp(4500, GasTier.HIGH, VA[IV], 1200)
@@ -469,6 +458,13 @@ public class SecondDegreeMaterials {
                 .color(0xC8C8DC).iconSet(ROUGH)
                 .flags(MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Sodium, 2, Lithium, 1, Aluminium, 2, Silicon, 2, Water, 6)
+                .build();
+
+        Redstone = new Material.Builder(2064, "redstone")
+                .dust().ore(5, 1).fluid()
+                .color(0xC80000).iconSet(ROUGH)
+                .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3)
                 .build();
     }
 }

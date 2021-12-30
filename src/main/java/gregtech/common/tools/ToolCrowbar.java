@@ -49,4 +49,9 @@ public class ToolCrowbar extends ToolBase {
     public Set<String> getToolClasses(ItemStack stack) {
         return CROWBAR_TOOL_CLASSES;
     }
+
+    @Override
+    public boolean canPlayBreakingSound(ItemStack stack, IBlockState state) {
+        return canMineBlock(state, stack);
+    }
 }

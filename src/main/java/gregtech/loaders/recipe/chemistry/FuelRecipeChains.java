@@ -35,6 +35,13 @@ public class FuelRecipeChains {
                 .fluidOutputs(NitrousOxide.getFluid(1000))
                 .buildAndRegister();
 
+        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(50)
+                .notConsumable(new IntCircuitIngredient(24))
+                .fluidInputs(Nitrogen.getFluid(20000))
+                .fluidInputs(Oxygen.getFluid(10000))
+                .fluidOutputs(NitrousOxide.getFluid(10000))
+                .buildAndRegister();
+
         // Ethyl Tert-Butyl Ether
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(400)
                 .fluidInputs(Butene.getFluid(1000))
@@ -47,7 +54,7 @@ public class FuelRecipeChains {
                 .fluidInputs(Octane.getFluid(2000))
                 .fluidInputs(NitrousOxide.getFluid(2000))
                 .fluidInputs(Toluene.getFluid(1000))
-                .fluidInputs(EthylTertButylEther.getFluid(1500))
+                .fluidInputs(EthylTertButylEther.getFluid(1000))
                 .notConsumable(new IntCircuitIngredient(24))
                 .fluidOutputs(HighOctaneGasoline.getFluid(32000))
                 .buildAndRegister();

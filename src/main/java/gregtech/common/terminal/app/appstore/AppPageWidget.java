@@ -190,6 +190,10 @@ public class AppPageWidget extends TerminalDialogWidget {
 
     private void updateTerminalAppTier(int tier, int lastTier) {
         TerminalOSWidget os = store.getOs();
+        os.openedApps.stream()
+                .filter(app->app.getRegistryName().equals(this.application.getRegistryName()))
+                .findFirst()
+                .ifPresent(app->os.closeApplication(app, os.isRemote()));
         if (lastTier == -1) { // update terminal
             NBTTagList installed = os.tabletNBT.getTagList("_installed", Constants.NBT.TAG_STRING);
             installed.appendTag(new NBTTagString(application.getRegistryName()));

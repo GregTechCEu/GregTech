@@ -6,7 +6,6 @@ import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
-import gregtech.common.items.MetaItems;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -14,22 +13,22 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.*;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import java.util.Iterator;
 import java.util.List;
 
-public class AdvancedQuarkTechSuite extends QuarkTechSuite {
-    private int cachedSlotId = -1;
+public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
+    //A replacement for checking the current world time, to get around the gamerule that stops it
+    private long timer = 0L;
+    private List<Pair<NonNullList<ItemStack>, List<Integer>>> inventoryIndexMap;
 
     public AdvancedQuarkTechSuite(int energyPerUse, long capacity, int tier) {
         super(EntityEquipmentSlot.CHEST, energyPerUse, capacity, tier);
@@ -38,178 +37,113 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite {
     @Override
     public void onArmorTick(World world, EntityPlayer player, ItemStack item) {
         IElectricItem cont = item.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if(cont == null) {
+        if (cont == null) {
             return;
         }
+
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(item);
-        boolean hoverMode = data.hasKey("Hover") && data.getBoolean("Hover");
-        boolean flyEnabled = data.hasKey("FlyMode") && data.getBoolean("FlyMode");
-        byte toggleTimer = data.hasKey("ToggleTimer") ? data.getByte("ToggleTimer") : 0;
-        boolean canShare = data.hasKey("CanShare") && data.getBoolean("CanShare");
-        boolean result = false;
-        float energyUsageMultiplier = 1.0F;
+        boolean hoverMode = data.hasKey("hover") && data.getBoolean("hover");
+        byte toggleTimer = data.hasKey("toggleTimer") ? data.getByte("toggleTimer") : 0;
+        boolean canShare = data.hasKey("canShare") && data.getBoolean("canShare");
 
-        // Mode toggle
-        if (!world.isRemote) {
-            if (ArmorUtils.isKeyDown(player, EnumKey.FLY_KEY) && toggleTimer == 0) {
-                flyEnabled = !flyEnabled;
-                toggleTimer = 10;
-            }
-        }
-
-        if (ArmorUtils.isKeyDown(player, EnumKey.JUMP) && ArmorUtils.isKeyDown(player, EnumKey.MODE_SWITCH) && toggleTimer == 0) {
+        if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.HOVER_KEY)) {
             hoverMode = !hoverMode;
-            toggleTimer = 10;
+            toggleTimer = 5;
+            data.setBoolean("hover", hoverMode);
             if (!world.isRemote) {
-                String status = hoverMode ? "metaarmor.jetpack.hover.enable" : "metaarmor.jetpack.hover.disable";
-                player.sendMessage(new TextComponentTranslation(status));
+                if (hoverMode)
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.hover.enable"), true);
+                else
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.hover.disable"), true);
             }
         }
 
-        // Additional features
-        if (player.onGround) hoverMode = false;
-        if (cont.getCharge() >= energyPerUse) player.extinguish();
+        if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.SHARE_KEY)) {
+            canShare = !canShare;
+            toggleTimer = 5;
+            data.setBoolean("canShare", canShare);
+            if (!world.isRemote) {
+                if (canShare)
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.qts.share.enable"), true);
+                else
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.qts.share.disable"), true);
+            }
+        }
 
-        // Backpack mechanics
+        performFlying(player, hoverMode, item);
+
+        if (player.isBurning())
+            player.extinguish();
+
+        // Charging mechanics
         if (canShare && !world.isRemote) {
-            // Trying to find item in inventory
-            if (cachedSlotId < 0) {
-                // Do not call this method often
-                if (world.getWorldTime() % 40 == 0) {
-                    cachedSlotId = ArmorUtils.getChargeableItem(player, cont.getTier());
-                }
-            } else {
-                ItemStack cachedItem = player.inventory.mainInventory.get(cachedSlotId);
-                if (!ArmorUtils.isPossibleToCharge(cachedItem)) {
-                    cachedSlotId = -1;
-                }
-            }
+            // Check for new things to charge every 5 seconds
+            if (timer % 100 == 0)
+                inventoryIndexMap = ArmorUtils.getChargeableItem(player, cont.getTier());
 
+            if (inventoryIndexMap != null && !inventoryIndexMap.isEmpty()) {
+                // Charge all inventory slots
+                for (int i = 0; i < inventoryIndexMap.size(); i++) {
+                    Pair<NonNullList<ItemStack>, List<Integer>> inventoryMap = inventoryIndexMap.get(i);
+                    Iterator<Integer> inventoryIterator = inventoryMap.getValue().iterator();
+                    while (inventoryIterator.hasNext()) {
+                        int slot = inventoryIterator.next();
+                        IElectricItem chargable = inventoryMap.getKey().get(slot).getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
 
-            // Do neighbor armor charge
-            for (int i = 0; i < player.inventory.armorInventory.size(); i++) {
-                IElectricItem chargeable = player.inventory.armorInventory.get(i).getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                if (chargeable == null) continue;
-                if (player.inventory.armorInventory.get(i).isItemEqual(MetaItems.ADVANCED_QUARK_TECH_SUITE_CHESTPLATE.getStackForm()))
-                    continue;
-                if ((chargeable.getCharge() + chargeable.getTransferLimit() * 10) <= chargeable.getMaxCharge() && cont.canUse(chargeable.getTransferLimit() * 10) && world.getWorldTime() % 10 == 0) {
-                    long delta = chargeable.charge(chargeable.getTransferLimit() * 10, chargeable.getTier(), true, false);
-                    if (delta > 0) cont.discharge(delta, cont.getTier(), true, false, false);
-                    player.inventoryContainer.detectAndSendChanges();
-                }
-            }
-
-            // Do charge
-            if (cachedSlotId >= 0) {
-                IElectricItem chargeable = player.inventory.mainInventory.get(cachedSlotId).getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                if (chargeable == null) {
-                    return;
-                }
-                if (cont.canUse(chargeable.getTransferLimit() * 10) && world.getWorldTime() % 10 == 0) {
-                    long delta = chargeable.charge(chargeable.getTransferLimit() * 10, chargeable.getTier(), true, false);
-                    if (delta > 0) cont.discharge(delta, cont.getTier(), true, false, false);
-                    player.inventoryContainer.detectAndSendChanges();
-                }
-            }
-        }
-
-        // Fly mechanics
-        if (flyEnabled && cont.canUse(energyPerUse)) {
-            if (hoverMode) {
-                if (!ArmorUtils.isKeyDown(player, EnumKey.JUMP) || !ArmorUtils.isKeyDown(player, EnumKey.SHIFT)) {
-                    if (player.motionY > 0.1D) {
-                        player.motionY -= 0.1D;
-                    }
-
-                    if (player.motionY < -0.1D) {
-                        player.motionY += 0.1D;
-                    }
-
-                    if (player.motionY <= 0.1D && player.motionY >= -0.1D) {
-                        player.motionY = 0.0D;
-                    }
-
-                    if (player.motionY > 0.1D || player.motionY < -0.1D) {
-                        if (player.motionY < 0) {
-                            player.motionY += 0.05D;
-                        } else {
-                            player.motionY -= 0.0025D;
+                        // Safety check the null, it should not actually happen. Also don't try and charge itself
+                        if (chargable == null || chargable == cont) {
+                            inventoryIterator.remove();
+                            continue;
                         }
-                    } else {
-                        player.motionY = 0.0D;
-                    }
-                }
 
-                if (ArmorUtils.isKeyDown(player, EnumKey.FORWARD)) {
-                    player.moveRelative(0.0F, 0.0F, 0.25F, 0.2F);
-                }
+                        long attemptedChargeAmount = chargable.getTransferLimit() * 10;
 
-                if (ArmorUtils.isKeyDown(player, EnumKey.JUMP)) {
-                    player.motionY = 0.35D;
-                }
-
-                if (ArmorUtils.isKeyDown(player, EnumKey.SHIFT)) {
-                    player.motionY = -0.35D;
-                }
-
-                if (ArmorUtils.isKeyDown(player, EnumKey.JUMP) && ArmorUtils.isKeyDown(player, EnumKey.SHIFT)) {
-                    player.motionY = 0.0D;
-                }
-
-                player.fallDistance = 0.0F;
-                result = true;
-            } else {
-                if (ArmorUtils.isKeyDown(player, EnumKey.JUMP)) {
-                    if (ArmorUtils.isKeyDown(player, EnumKey.BOOST) && !ArmorUtils.isKeyDown(player, EnumKey.FORWARD)) {
-                        if (player.motionY <= 1.6D) player.motionY += 0.4D;
-                        energyUsageMultiplier = 1.5F;
-                    } else {
-                        if (player.motionY <= 0.8D) player.motionY += 0.2D;
-                    }
-
-                    if (ArmorUtils.isKeyDown(player, EnumKey.FORWARD)) {
-                        if (ArmorUtils.isKeyDown(player, EnumKey.BOOST)) {
-                            player.moveRelative(0.0F, 0.0F, 1.0F, 0.20F);
-                            energyUsageMultiplier = 1.5F;
-                        } else {
-                            player.moveRelative(0.0F, 0.0F, 1.0F, 0.1F);
+                        // Accounts for tick differences when charging items
+                        if (chargable.getCharge() < chargable.getMaxCharge() && cont.canUse(attemptedChargeAmount) && timer % 10 == 0) {
+                            long delta = chargable.charge(attemptedChargeAmount, cont.getTier(), true, false);
+                            if (delta > 0) {
+                                cont.discharge(delta, cont.getTier(), true, false, false);
+                            }
+                            if (chargable.getCharge() == chargable.getMaxCharge()) {
+                                inventoryIterator.remove();
+                            }
+                            player.inventoryContainer.detectAndSendChanges();
                         }
                     }
-                    player.fallDistance = 0.0F;
-                    result = true;
+
+                    if (inventoryMap.getValue().isEmpty())
+                        inventoryIndexMap.remove(inventoryMap);
                 }
             }
         }
 
-        // Fly discharge
-        if (result) {
-            cont.discharge(MathHelper.floor(energyPerUse * energyUsageMultiplier / 4), cont.getTier(), true, false, false);
-            ArmorUtils.resetPlayerFloatingTime(player);
-        }
+        if (toggleTimer > 0) toggleTimer--;
 
-        // Do not spam of server packets
-        if (toggleTimer > 0) {
-            toggleTimer--;
-        }
-
-        data.setBoolean("CanShare", canShare);
-        data.setBoolean("FlyMode", flyEnabled);
-        data.setBoolean("Hover", hoverMode);
-        data.setByte("ToggleTimer", toggleTimer);
+        data.setBoolean("canShare", canShare);
+        data.setBoolean("hover", hoverMode);
+        data.setByte("toggleTimer", toggleTimer);
         player.inventoryContainer.detectAndSendChanges();
+
+        timer++;
+        if (timer == Long.MAX_VALUE)
+            timer = 0;
     }
 
     @Override
     public void addInfo(ItemStack itemStack, List<String> lines) {
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(itemStack);
         String state = "";
-        if (data.hasKey("CanShare")) {
-            state = data.getBoolean("CanShare") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled");
+        if (data.hasKey("canShare")) {
+            state = data.getBoolean("canShare") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled");
         } else {
             state = I18n.format("metaarmor.hud.status.disabled");
         }
         lines.add(I18n.format("metaarmor.energy_share.tooltip", state));
         lines.add(I18n.format("metaarmor.energy_share.tooltip.guide"));
+        if (data.hasKey("hover")) {
+            String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled"));
+            lines.add(I18n.format("metaarmor.hud.hover_mode", status));
+        }
         super.addInfo(itemStack, lines);
     }
 
@@ -217,12 +151,12 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite {
     public ActionResult<ItemStack> onRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (player.getHeldItem(hand).getItem() instanceof ArmorMetaItem<?> && player.isSneaking()) {
             NBTTagCompound data = GTUtility.getOrCreateNbtCompound(player.getHeldItem(hand));
-            boolean canShareEnergy = data.hasKey("CanShare") && data.getBoolean("CanShare");
+            boolean canShareEnergy = data.hasKey("canShare") && data.getBoolean("canShare");
 
             canShareEnergy = !canShareEnergy;
             String locale = "metaarmor.energy_share." + (canShareEnergy ? "enable" : "disable");
             if (!world.isRemote) player.sendMessage(new TextComponentTranslation(locale));
-            data.setBoolean("CanShare", canShareEnergy);
+            data.setBoolean("canShare", canShareEnergy);
             return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
         } else {
             return super.onRightClick(world, player, hand);
@@ -242,18 +176,13 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite {
         if (!cont.canUse(energyPerUse)) return;
         NBTTagCompound data = item.getTagCompound();
         if (data != null) {
-            if (data.hasKey("CanShare")) {
-                String status = data.getBoolean("CanShare") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
+            if (data.hasKey("canShare")) {
+                String status = data.getBoolean("canShare") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
                 this.HUD.newString(I18n.format("mataarmor.hud.supply_mode", I18n.format(status)));
             }
 
-            if (data.hasKey("FlyMode")) {
-                String status = data.getBoolean("FlyMode") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
-                this.HUD.newString(I18n.format("metaarmor.hud.gravi_engine", I18n.format(status)));
-            }
-
-            if (data.hasKey("Hover")) {
-                String status = data.getBoolean("Hover") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
+            if (data.hasKey("hover")) {
+                String status = data.getBoolean("hover") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
                 this.HUD.newString(I18n.format("metaarmor.hud.hover_mode", I18n.format(status)));
             }
         }
@@ -266,7 +195,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite {
         int damageLimit = Integer.MAX_VALUE;
         IElectricItem item = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (energyPerUse > 0) {
-            damageLimit = (int) Math.min(damageLimit, 25.0D * item.getCharge() / energyPerUse);
+            damageLimit = (int) Math.min(damageLimit, 25.0D * item.getCharge() / (energyPerUse * 250.0D));
         }
         return new ArmorProperties(8, getDamageAbsorption() * getAbsorption(armor), damageLimit);
     }
@@ -284,5 +213,78 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite {
     @Override
     public double getDamageAbsorption() {
         return 1.5D;
+    }
+
+    @Override
+    public boolean canUseEnergy(@Nonnull ItemStack stack, int amount) {
+        IElectricItem container = getIElectricItem(stack);
+        if (container == null)
+            return false;
+        return container.canUse(amount);
+    }
+
+    @Override
+    public void drainEnergy(@Nonnull ItemStack stack, int amount) {
+        IElectricItem container = getIElectricItem(stack);
+        if (container == null)
+            return;
+        container.discharge(amount, tier, true, false, false);
+    }
+
+    @Override
+    public boolean hasEnergy(@Nonnull ItemStack stack) {
+        IElectricItem container = getIElectricItem(stack);
+        if (container == null)
+            return false;
+        return container.getCharge() > 0;
+    }
+
+    private IElectricItem getIElectricItem(@Nonnull ItemStack stack) {
+        return stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+    }
+
+    @Override
+    public double getSprintEnergyModifier() {
+        return 6.0D;
+    }
+
+    @Override
+    public double getSprintSpeedModifier() {
+        return 2.4D;
+    }
+
+    @Override
+    public double getVerticalHoverSpeed() {
+        return 0.45D;
+    }
+
+    @Override
+    public double getVerticalHoverSlowSpeed() {
+        return 0.0D;
+    }
+
+    @Override
+    public double getVerticalAcceleration() {
+        return 0.15D;
+    }
+
+    @Override
+    public double getVerticalSpeed() {
+        return 0.9D;
+    }
+
+    @Override
+    public double getSidewaysSpeed() {
+        return 0.21D;
+    }
+
+    @Override
+    public EnumParticleTypes getParticle() {
+        return null;
+    }
+
+    @Override
+    public float getFallDamageReduction() {
+        return 8f;
     }
 }

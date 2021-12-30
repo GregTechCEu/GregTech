@@ -11,6 +11,7 @@ import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.TextFormatting;
 
 public class TransformerInfoProvider extends ElectricContainerInfoProvider {
 
@@ -25,8 +26,8 @@ public class TransformerInfoProvider extends ElectricContainerInfoProvider {
             MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
             if (metaTileEntity instanceof MetaTileEntityTransformer) {
                 MetaTileEntityTransformer mteTransformer = (MetaTileEntityTransformer) metaTileEntity;
-                String inputVoltageN = GTValues.VN[GTUtility.getTierByVoltage(capability.getInputVoltage())];
-                String outputVoltageN = GTValues.VN[GTUtility.getTierByVoltage(capability.getOutputVoltage())];
+                String inputVoltageN = GTValues.VNF[GTUtility.getTierByVoltage(capability.getInputVoltage())];
+                String outputVoltageN = GTValues.VNF[GTUtility.getTierByVoltage(capability.getOutputVoltage())];
                 long inputAmperage = capability.getInputAmperage();
                 long outputAmperage = capability.getOutputAmperage();
                 IProbeInfo horizontalPane = probeInfo.vertical(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
@@ -38,20 +39,20 @@ public class TransformerInfoProvider extends ElectricContainerInfoProvider {
                 } else {
                     transformInfo = "{*gregtech.top.transform_down*} ";
                 }
-                transformInfo += inputVoltageN + " (" + inputAmperage + "A) -> "
-                        + outputVoltageN + " (" + outputAmperage + "A)";
+                transformInfo += inputVoltageN + TextFormatting.GREEN + " (" + inputAmperage + "A) -> "
+                        + outputVoltageN + TextFormatting.GREEN + " (" + outputAmperage + "A)";
                 horizontalPane.text(TextStyleClass.INFO + transformInfo);
 
                 // Input/Output side line
                 horizontalPane = probeInfo.vertical(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
                 if (capability.inputsEnergy(sideHit)) {
                     transformInfo = "{*gregtech.top.transform_input*} "
-                            + inputVoltageN + " (" + inputAmperage + "A)";
+                            + inputVoltageN + TextFormatting.GREEN + " (" + inputAmperage + "A)";
                     horizontalPane.text(TextStyleClass.INFO + transformInfo);
 
                 } else if (capability.outputsEnergy(sideHit)) {
                     transformInfo = "{*gregtech.top.transform_output*} "
-                            + outputVoltageN + " (" + outputAmperage + "A)";
+                            + outputVoltageN + TextFormatting.GREEN + " (" + outputAmperage + "A)";
                     horizontalPane.text(TextStyleClass.INFO + transformInfo);
                 }
             }

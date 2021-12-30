@@ -2,7 +2,7 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Material.FluidType;
-import net.minecraft.init.Enchantments;
+import gregtech.api.unification.material.Materials;
 
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
@@ -63,102 +63,126 @@ public class UnknownCompositionMaterials {
         ConstructionFoam = new Material.Builder(1516, "construction_foam")
                 .fluid().color(0x808080).build();
 
-        HydroCrackedEthane = new Material.Builder(1517, "hydrocracked_ethane")
-                .fluid(FluidType.GAS).color(0x9696BC).build();
+        // Free IDs 1517-1521
 
-        HydroCrackedEthylene = new Material.Builder(1518, "hydrocracked_ethylene")
-                .fluid(FluidType.GAS).color(0xA3A3A0).build();
+        SulfuricHeavyFuel = new Material.Builder(1522, "sulfuric_heavy_fuel")
+                .fluid().build();
 
-        HydroCrackedPropene = new Material.Builder(1519, "hydrocracked_propene")
-                .fluid(FluidType.GAS).color(0xBEA540).build();
+        HeavyFuel = new Material.Builder(1523, "heavy_fuel")
+                .fluid().build();
 
-        HydroCrackedPropane = new Material.Builder(1520, "hydrocracked_propane")
-                .fluid(FluidType.GAS).color(0xBEA540).build();
-
-        HydroCrackedLightFuel = new Material.Builder(1521, "hydrocracked_light_fuel")
-                .fluid().color(0xB7AF08).build();
-
-        HydroCrackedButane = new Material.Builder(1522, "hydrocracked_butane")
-                .fluid(FluidType.GAS).color(0x852C18).build();
-
-        HydroCrackedNaphtha = new Material.Builder(1523, "hydrocracked_naphtha")
-                .fluid().color(0xBFB608).build();
-
-        HydroCrackedHeavyFuel = new Material.Builder(1524, "hydrocracked_heavy_fuel")
+        LightlyHydroCrackedHeavyFuel = new Material.Builder(1524, "lightly_hydrocracked_heavy_fuel")
                 .fluid().color(0xFFFF00).build();
 
-        HydroCrackedGas = new Material.Builder(1525, "hydrocracked_gas")
-                .fluid(FluidType.GAS).color(0xB4B4B4).build();
+        SeverelyHydroCrackedHeavyFuel = new Material.Builder(1525, "severely_hydrocracked_heavy_fuel")
+                .fluid().color(0xFFFF00).build();
 
-        HydroCrackedButene = new Material.Builder(1526, "hydrocracked_butene")
-                .fluid(FluidType.GAS).color(0x993E05).build();
+        LightlySteamCrackedHeavyFuel = new Material.Builder(1526, "lightly_steamcracked_heavy_fuel")
+                .fluid().build();
 
-        HydroCrackedButadiene = new Material.Builder(1527, "hydrocracked_butadiene")
-                .fluid(FluidType.GAS).color(0xAD5203).build();
+        SeverelySteamCrackedHeavyFuel = new Material.Builder(1527, "severely_steamcracked_heavy_fuel")
+                .fluid().build();
 
-        SteamCrackedEthane = new Material.Builder(1528, "steamcracked_ethane")
-                .fluid(FluidType.GAS).color(0x9696BC).build();
+        SulfuricLightFuel = new Material.Builder(1528, "sulfuric_light_fuel")
+                .fluid().build();
 
-        SteamCrackedEthylene = new Material.Builder(1529, "steamcracked_ethylene")
-                .fluid(FluidType.GAS).color(0xA3A3A0).build();
+        LightFuel = new Material.Builder(1529, "light_fuel")
+                .fluid().build();
 
-        SteamCrackedPropene = new Material.Builder(1530, "steamcracked_propene")
-                .fluid(FluidType.GAS).color(0xBEA540).build();
+        LightlyHydroCrackedLightFuel = new Material.Builder(1530, "lightly_hydrocracked_light_fuel")
+                .fluid().color(0xB7AF08).build();
 
-        SteamCrackedPropane = new Material.Builder(1531, "steamcracked_propane")
-                .fluid(FluidType.GAS).color(0xBEA540).build();
+        SeverelyHydroCrackedLightFuel = new Material.Builder(1531, "severely_hydrocracked_light_fuel")
+                .fluid().color(0xB7AF08).build();
 
-        SteamCrackedButane = new Material.Builder(1532, "steamcracked_butane")
-                .fluid(FluidType.GAS).color(0x852C18).build();
+        LightlySteamCrackedLightFuel = new Material.Builder(1532, "lightly_steamcracked_light_fuel")
+                .fluid().build();
 
-        SteamCrackedNaphtha = new Material.Builder(1533, "steamcracked_naphtha")
+        SeverelySteamCrackedLightFuel = new Material.Builder(1533, "severely_steamcracked_light_fuel")
+                .fluid().build();
+
+        SulfuricNaphtha = new Material.Builder(1534, "sulfuric_naphtha")
+                .fluid().build();
+
+        Naphtha = new Material.Builder(1535, "naphtha")
+                .fluid().build();
+
+        LightlyHydroCrackedNaphtha = new Material.Builder(1536, "lightly_hydrocracked_naphtha")
                 .fluid().color(0xBFB608).build();
 
-        SteamCrackedGas = new Material.Builder(1534, "steamcracked_gas")
+        SeverelyHydroCrackedNaphtha = new Material.Builder(1537, "severely_hydrocracked_naphtha")
+                .fluid().color(0xBFB608).build();
+
+        LightlySteamCrackedNaphtha = new Material.Builder(1538, "lightly_steamcracked_naphtha")
+                .fluid().color(0xBFB608).build();
+
+        SeverelySteamCrackedNaphtha = new Material.Builder(1539, "severely_steamcracked_naphtha")
+                .fluid().color(0xBFB608).build();
+
+        SulfuricGas = new Material.Builder(1540, "sulfuric_gas")
+                .fluid(FluidType.GAS).build();
+
+        RefineryGas = new Material.Builder(1541, "refinery_gas")
+                .fluid(FluidType.GAS).build();
+
+        LightlyHydroCrackedGas = new Material.Builder(1542, "lightly_hydrocracked_gas")
                 .fluid(FluidType.GAS).color(0xB4B4B4).build();
 
-        SteamCrackedButene = new Material.Builder(1535, "steamcracked_butene")
+        SeverelyHydroCrackedGas = new Material.Builder(1543, "severely_hydrocracked_gas")
+                .fluid(FluidType.GAS).color(0xB4B4B4).build();
+
+        LightlySteamCrackedGas = new Material.Builder(1544, "lightly_steamcracked_gas")
+                .fluid(FluidType.GAS).color(0xB4B4B4).build();
+
+        SeverelySteamCrackedGas = new Material.Builder(1545, "severely_steamcracked_gas")
+                .fluid(FluidType.GAS).color(0xB4B4B4).build();
+
+        HydroCrackedEthane = new Material.Builder(1546, "hydrocracked_ethane")
+                .fluid(FluidType.GAS).color(0x9696BC).build();
+
+        HydroCrackedEthylene = new Material.Builder(1547, "hydrocracked_ethylene")
+                .fluid(FluidType.GAS).color(0xA3A3A0).build();
+
+        HydroCrackedPropene = new Material.Builder(1548, "hydrocracked_propene")
+                .fluid(FluidType.GAS).color(0xBEA540).build();
+
+        HydroCrackedPropane = new Material.Builder(1549, "hydrocracked_propane")
+                .fluid(FluidType.GAS).color(0xBEA540).build();
+
+        HydroCrackedButane = new Material.Builder(1550, "hydrocracked_butane")
+                .fluid(FluidType.GAS).color(0x852C18).build();
+
+        HydroCrackedButene = new Material.Builder(1551, "hydrocracked_butene")
                 .fluid(FluidType.GAS).color(0x993E05).build();
 
-        SteamCrackedButadiene = new Material.Builder(1536, "steamcracked_butadiene")
+        HydroCrackedButadiene = new Material.Builder(1552, "hydrocracked_butadiene")
                 .fluid(FluidType.GAS).color(0xAD5203).build();
 
-        SteamCrackedLightFuel = new Material.Builder(1537, "steamcracked_light_fuel")
-                .fluid().build();
+        SteamCrackedEthane = new Material.Builder(1553, "steamcracked_ethane")
+                .fluid(FluidType.GAS).color(0x9696BC).build();
 
-        SteamCrackedHeavyFuel = new Material.Builder(1538, "steamcracked_heavy_fuel")
-                .fluid().build();
+        SteamCrackedEthylene = new Material.Builder(1554, "steamcracked_ethylene")
+                .fluid(FluidType.GAS).color(0xA3A3A0).build();
 
-        SulfuricGas = new Material.Builder(1539, "sulfuric_gas")
+        SteamCrackedPropene = new Material.Builder(1555, "steamcracked_propene")
+                .fluid(FluidType.GAS).color(0xBEA540).build();
+
+        SteamCrackedPropane = new Material.Builder(1556, "steamcracked_propane")
+                .fluid(FluidType.GAS).color(0xBEA540).build();
+
+        SteamCrackedButane = new Material.Builder(1557, "steamcracked_butane")
+                .fluid(FluidType.GAS).color(0x852C18).build();
+
+        SteamCrackedButene = new Material.Builder(1558, "steamcracked_butene")
+                .fluid(FluidType.GAS).color(0x993E05).build();
+
+        SteamCrackedButadiene = new Material.Builder(1559, "steamcracked_butadiene")
+                .fluid(FluidType.GAS).color(0xAD5203).build();
+
+        //Free IDs 1560-1575
+
+        LPG = new Material.Builder(1576, "lpg")
                 .fluid(FluidType.GAS).build();
-
-        RefineryGas = new Material.Builder(1540, "refinery_gas")
-                .fluid(FluidType.GAS).build();
-
-        SulfuricNaphtha = new Material.Builder(1541, "sulfuric_naphtha")
-                .fluid().build();
-
-        SulfuricLightFuel = new Material.Builder(1542, "sulfuric_light_fuel")
-                .fluid().build();
-
-        SulfuricHeavyFuel = new Material.Builder(1543, "sulfuric_heavy_fuel")
-                .fluid().build();
-
-        Naphtha = new Material.Builder(1544, "naphtha")
-                .fluid().build();
-
-        LightFuel = new Material.Builder(1545, "light_fuel")
-                .fluid().build();
-
-        HeavyFuel = new Material.Builder(1546, "heavy_fuel")
-                .fluid().build();
-
-        LPG = new Material.Builder(1574, "lpg")
-                .fluid(FluidType.GAS).build();
-
-        //Free ID 1575
-
-        //Free ID 1576
 
         RawGrowthMedium = new Material.Builder(1577, "raw_growth_medium")
                 .fluid().color(0xA47351).build();
@@ -176,7 +200,7 @@ public class UnknownCompositionMaterials {
                 .color(0x0A0A0A)
                 .build();
 
-        OilMedium = new Material.Builder(1581, "oil_medium")
+        RawOil = new Material.Builder(1581, "oil_medium")
                 .fluid(FluidType.FLUID, true)
                 .color(0x0A0A0A)
                 .build();
@@ -257,7 +281,7 @@ public class UnknownCompositionMaterials {
         NetherStar = new Material.Builder(1602, "nether_star")
                 .gem(4)
                 .iconSet(NETHERSTAR)
-                .flags(STD_SOLID, NO_SMASHING, NO_SMELTING)
+                .flags(NO_SMASHING, NO_SMELTING)
                 .build();
 
         Endstone = new Material.Builder(1603, "endstone")
@@ -272,7 +296,7 @@ public class UnknownCompositionMaterials {
                 .flags(NO_SMASHING, FLAMMABLE)
                 .build();
 
-        NitroDiesel = new Material.Builder(1605, "nitro_fuel")
+        CetaneBoostedDiesel = new Material.Builder(1605, "nitro_fuel")
                 .fluid()
                 .color(0xC8FF00)
                 .flags(FLAMMABLE, EXPLOSIVE)
@@ -299,13 +323,7 @@ public class UnknownCompositionMaterials {
 
         // FREE ID 1611
 
-        Vinteum = new Material.Builder(1612, "vinteum")
-                .gem(3).ore()
-                .color(0x64C8FF).iconSet(EMERALD)
-                .flags(STD_GEM, NO_SMASHING, NO_SMELTING)
-                .toolStats(12.0f, 3.0f, 128, 15)
-                .addDefaultEnchant(Enchantments.FORTUNE, 2)
-                .build();
+        // Free ID 1612
 
         Milk = new Material.Builder(1613, "milk")
                 .fluid()
@@ -330,7 +348,7 @@ public class UnknownCompositionMaterials {
         Wood = new Material.Builder(1617, "wood")
                 .dust(0, 300)
                 .color(0x643200).iconSet(WOOD)
-                .flags(STD_SOLID, FLAMMABLE, GENERATE_GEAR, GENERATE_FRAME)
+                .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD, FLAMMABLE, GENERATE_GEAR, GENERATE_FRAME)
                 .build();
 
         Paper = new Material.Builder(1618, "paper")
@@ -426,5 +444,18 @@ public class UnknownCompositionMaterials {
 
         NaquadriaWaste = new Material.Builder(1646, "naquadria_waste")
                 .fluid().color(0x425B42).build();
+
+        Lapotron = new Material.Builder(1647, "lapotron")
+                .gem()
+                .color(0x2C39B1).iconSet(DIAMOND)
+                .flags(NO_UNIFICATION)
+                .build();
+
+        TreatedWood = new Material.Builder(1648, "treated_wood")
+                .dust(0, 300)
+                .color(0x502800).iconSet(WOOD)
+                .flags(GENERATE_PLATE, FLAMMABLE, GENERATE_ROD, GENERATE_FRAME)
+                .build();
+
     }
 }

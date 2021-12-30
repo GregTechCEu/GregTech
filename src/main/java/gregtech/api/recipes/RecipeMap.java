@@ -127,7 +127,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (currentOrePrefix != null) {
             Material currentMaterial = OrePrefix.getCurrentMaterial();
             GTLog.logger.error("Error happened during processing ore registration of prefix {} and material {}. " +
-                            "Seems like cross-mod compatibility issue. Report to GTCE github.",
+                            "Seems like cross-mod compatibility issue. Report to GTCEu github.",
                     currentOrePrefix, currentMaterial);
         }
     }
@@ -394,6 +394,16 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         builder.widget(new RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture, moveType, this));
         addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
         addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
+        if (this.specialTexture != null && this.specialTexturePosition != null)
+            addSpecialTexture(builder);
+        return builder;
+    }
+
+    //this DOES NOT include machine control widgets or binds player inventory
+    public ModularUI.Builder createUITemplateNoOutputs(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+        ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
+        builder.widget(new RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture, moveType, this));
+        addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
         if (this.specialTexture != null && this.specialTexturePosition != null)
             addSpecialTexture(builder);
         return builder;

@@ -258,4 +258,9 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
     public Set<String> getToolClasses(ItemStack stack) {
         return DRILL_TOOL_CLASSES;
     }
+
+    @Override
+    public boolean canPlayBreakingSound(ItemStack stack, IBlockState state) {
+        return canMineBlock(state, stack);
+    }
 }

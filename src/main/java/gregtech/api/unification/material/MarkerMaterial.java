@@ -19,15 +19,11 @@ public final class MarkerMaterial extends Material {
     }
 
     @Override
-    protected void registerMaterial(Material material) {
+    protected void registerMaterial() {
     }
 
     @Override
     public void verifyMaterial() {
-    }
-
-    @Override
-    public void postVerify() {
     }
 
     @Override

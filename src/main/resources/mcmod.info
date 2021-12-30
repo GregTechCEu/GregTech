@@ -1,15 +1,23 @@
 [{
   "modid": "gregtech",
   "name": "GregTech",
-  "description": "Finally, the awesome technology of GregTech-Intergalactical can be used in 1.12!",
+  "description": "Finally, the awesome technology of GregTech-Intergalactical can be used in 1.12, now new and improved!",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "logoFile": "/assets/gregtech/textures/gt_logo_long.png",
-  "url": "https://minecraft.curseforge.com/projects/gregtechce",
+  "logoFile": "assets/gregtech/textures/gt_logo_long.png",
+  "url": "https://www.curseforge.com/minecraft/mc-mods/gregtech-ce-unofficial",
   "authorList": [
-      "Archengius",
-      "Exidex"
+    "dan",
+    "TechLord22",
+    "KilaBash",
+    "Archengius",
+    "Exidex",
+    "BloodAsp",
+    "Muramasa",
+    "GregoriusT"
   ],
-  "credits": "GregoriusT for making GregTech and textures, various GT community members for help in development.",
-  "dependencies": ["codechickenlib"]
+  "credits": "GregoriusT for making GregTech and textures, the GT5u authors and maintainers for providing the original code, and the community.",
+  "dependencies": [
+    "codechickenlib"
+  ]
 }]

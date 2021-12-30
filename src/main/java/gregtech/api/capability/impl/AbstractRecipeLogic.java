@@ -1,6 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.IWorkable;
@@ -30,7 +31,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic {
@@ -48,6 +48,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private boolean allowOverclocking = true;
     protected int parallelRecipesPerformed;
     private long overclockVoltage = 0;
+
+    protected boolean canRecipeProgress = true;
 
     protected int progressTime;
     protected int maxProgressTime;
@@ -87,7 +89,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     protected abstract long getEnergyCapacity();
 
-    protected abstract boolean drawEnergy(int recipeEUt);
+    protected abstract boolean drawEnergy(int recipeEUt, boolean simulate);
 
     abstract long getMaxVoltage();
 
@@ -134,6 +136,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         World world = getMetaTileEntity().getWorld();
         if (world != null && !world.isRemote) {
             if (workingEnabled) {
+                if (getMetaTileEntity().getOffsetTimer() % 20 == 0)
+                    this.canRecipeProgress = canProgressRecipe();
+
                 if (progressTime > 0) {
                     updateRecipeProgress();
                 }
@@ -209,13 +214,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     protected void updateRecipeProgress() {
-        boolean drawEnergy = drawEnergy(recipeEUt);
-        if (drawEnergy || (recipeEUt < 0)) {
+        if (canRecipeProgress && drawEnergy(recipeEUt, true)) {
+            drawEnergy(recipeEUt, false);
             //as recipe starts with progress on 1 this has to be > only not => to compensate for it
             if (++progressTime > maxProgressTime) {
                 completeRecipe();
             }
-            if (this.hasNotEnoughEnergy && getEnergyInputPerSecond() > 19 * recipeEUt) {
+            if (this.hasNotEnoughEnergy && getEnergyInputPerSecond() > 19L * recipeEUt) {
                 this.hasNotEnoughEnergy = false;
             }
         } else if (recipeEUt > 0) {
@@ -234,6 +239,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
+     *
+     * @return {@code true} if the recipe can progress, else false
+     */
+    protected boolean canProgressRecipe() {
+        return true;
+    }
+
+    /**
      * used to force the workable to search for new recipes
      * use sparingly
      */
@@ -247,6 +260,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return true if only the first output should be considered
      */
     public boolean trimOutputs() {
+        return false;
+    }
+
+    public boolean canVoidRecipeOutputs() {
         return false;
     }
 
@@ -386,45 +403,54 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return - true if the recipe is successful, false if the recipe is not successful
      */
     protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
-
-        //Format: EU/t, Duration
-        int[] resultOverclock = calculateOverclock(recipe);
-        int totalEUt = resultOverclock[0] * resultOverclock[1];
+        if (!hasEnoughPower(calculateOverclock(recipe))) {
+            return false;
+        }
 
         IItemHandlerModifiable exportInventory = getOutputInventory();
         IMultipleTankHandler importFluids = getInputTank();
         IMultipleTankHandler exportFluids = getOutputTank();
 
-        boolean enoughPower;
-        //RIP Ternary
-        if (totalEUt >= 0) {
-            int capacity;
-            if (totalEUt > getEnergyCapacity() / 2) {
-                capacity = resultOverclock[0];
-            } else {
-                capacity = totalEUt;
-            }
-
-            enoughPower = getEnergyStored() >= capacity;
-        } else {
-            int power = resultOverclock[0];
-            enoughPower = getEnergyStored() - (long) power <= getEnergyCapacity();
-        }
-
-        if (!enoughPower) {
-            return false;
-        }
-
-        if (!MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs(exportInventory.getSlots()))) {
+        if (!canVoidRecipeOutputs() && !MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs(exportInventory.getSlots()))) {
             this.isOutputsFull = true;
             return false;
         }
-        if (!MetaTileEntity.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
+        if (!canVoidRecipeOutputs() && !MetaTileEntity.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
         this.isOutputsFull = false;
         return recipe.matches(true, importInventory, importFluids);
+    }
+
+    protected boolean hasEnoughPower(@Nonnull int[] resultOverclock) {
+        // Format of resultOverclock: EU/t, duration
+        int totalEUt = resultOverclock[0] * resultOverclock[1];
+
+        //RIP Ternary
+        // Power Consumption case
+        if (totalEUt >= 0) {
+            int capacity;
+            // If the total consumed power is greater than half the internal capacity
+            if (totalEUt > getEnergyCapacity() / 2) {
+                // Only draw 1A of power from the internal buffer to allow for recharging of the internal buffer from
+                // external sources
+                capacity = resultOverclock[0];
+            } else {
+                // If the total consumed power is less than half the capacity, just drain the whole thing
+                capacity = totalEUt;
+            }
+
+            // Return true if we have energy energy stored to progress the recipe, either 1A or the whole amount
+            return getEnergyStored() >= capacity;
+        }
+        // Power Generation case
+        else {
+            // This is the EU/t generated by the generator
+            int power = resultOverclock[0];
+            // Return true if we can fit at least 1A of energy into the energy output
+            return getEnergyStored() - (long) power <= getEnergyCapacity();
+        }
     }
 
     /**
@@ -590,7 +616,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         final int maxTier = getOverclockingTier(getMaxVoltage());
         final String[] result = new String[maxTier + 1];
         result[0] = "gregtech.gui.overclock.off";
-        if (maxTier >= 0) System.arraycopy(GTValues.VN, 1, result, 1, maxTier);
+        if (maxTier >= 0) System.arraycopy(GTValues.VNF, 1, result, 1, maxTier);
         return result;
     }
 
@@ -673,11 +699,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     protected void setActive(boolean active) {
-        this.isActive = active;
-        metaTileEntity.markDirty();
-        World world = metaTileEntity.getWorld();
-        if (world != null && !world.isRemote) {
-            writeCustomData(1, buf -> buf.writeBoolean(active));
+        if (this.isActive != active) {
+            this.isActive = active;
+            metaTileEntity.markDirty();
+            World world = metaTileEntity.getWorld();
+            if (world != null && !world.isRemote) {
+                writeCustomData(GregtechDataCodes.WORKABLE_ACTIVE, buf -> buf.writeBoolean(active));
+            }
         }
     }
 
@@ -687,7 +715,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         metaTileEntity.markDirty();
         World world = metaTileEntity.getWorld();
         if (world != null && !world.isRemote) {
-            writeCustomData(5, buf -> buf.writeBoolean(workingEnabled));
+            writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(workingEnabled));
         }
     }
 
@@ -757,23 +785,23 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
-        if (dataId == 1) {
+        if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.isActive = buf.readBoolean();
             getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == 5) {
+        } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.workingEnabled = buf.readBoolean();
             getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
         }
     }
 
     @Override
-    public void writeInitialData(PacketBuffer buf) {
+    public void writeInitialData(@Nonnull PacketBuffer buf) {
         buf.writeBoolean(this.isActive);
         buf.writeBoolean(this.workingEnabled);
     }
 
     @Override
-    public void receiveInitialData(PacketBuffer buf) {
+    public void receiveInitialData(@Nonnull PacketBuffer buf) {
         this.isActive = buf.readBoolean();
         this.workingEnabled = buf.readBoolean();
     }
@@ -782,6 +810,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setBoolean("WorkEnabled", workingEnabled);
+        compound.setBoolean("CanRecipeProgress", canRecipeProgress);
         compound.setBoolean(ALLOW_OVERCLOCKING, allowOverclocking);
         compound.setLong(OVERCLOCK_VOLTAGE, this.overclockVoltage);
         if (progressTime > 0) {
@@ -803,8 +832,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound compound) {
+    public void deserializeNBT(@Nonnull NBTTagCompound compound) {
         this.workingEnabled = compound.getBoolean("WorkEnabled");
+        this.canRecipeProgress = compound.getBoolean("CanRecipeProgress");
         this.progressTime = compound.getInteger("Progress");
         if (compound.hasKey(ALLOW_OVERCLOCKING)) {
             this.allowOverclocking = compound.getBoolean(ALLOW_OVERCLOCKING);

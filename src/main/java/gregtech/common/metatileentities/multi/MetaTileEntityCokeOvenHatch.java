@@ -13,7 +13,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTFluidUtils;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -25,7 +25,6 @@ public class MetaTileEntityCokeOvenHatch extends MetaTileEntityMultiblockPart {
 
     public MetaTileEntityCokeOvenHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 0);
-        this.setPaintingColor(0xFFFFFF);
     }
 
     @Override
@@ -87,4 +86,8 @@ public class MetaTileEntityCokeOvenHatch extends MetaTileEntityMultiblockPart {
         return false;
     }
 
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0xFFFFFF;
+    }
 }

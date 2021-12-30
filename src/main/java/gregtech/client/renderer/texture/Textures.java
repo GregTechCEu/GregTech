@@ -14,13 +14,9 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.cclop.UVMirror;
 import gregtech.client.renderer.texture.cube.*;
-import gregtech.client.renderer.texture.custom.ClipboardRenderer;
-import gregtech.client.renderer.texture.custom.LargeTurbineRenderer;
-import gregtech.client.renderer.texture.custom.SafeRenderer;
-import gregtech.client.renderer.texture.custom.TankRenderer;
+import gregtech.client.renderer.texture.cube.OrientedOverlayRenderer.OverlayFace;
+import gregtech.client.renderer.texture.custom.*;
 import gregtech.api.util.GTLog;
-import gregtech.client.renderer.texture.custom.CrateRenderer;
-import gregtech.client.renderer.texture.custom.DrumRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
@@ -64,16 +60,8 @@ public class Textures {
     public static final SimpleOverlayRenderer CLEAN_STAINLESS_STEEL_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_clean_stainless_steel");
     public static final SimpleOverlayRenderer STABLE_TITANIUM_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_stable_titanium");
     public static final SimpleOverlayRenderer ROBUST_TUNGSTENSTEEL_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_robust_tungstensteel");
-    public static final SimpleOverlayRenderer ROBUST_HSSE_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_robust_hsse");
+    public static final SimpleOverlayRenderer ROBUST_HSSE_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_study_hsse");
     public static final SimpleOverlayRenderer INERT_PTFE_CASING = new SimpleOverlayRenderer("casings/solid/machine_casing_inert_ptfe");
-    public static final SimpleOverlayRenderer BRONZE_FIREBOX = new SimpleOverlayRenderer("casings/firebox/machine_casing_firebox_bronze");
-    public static final SimpleOverlayRenderer BRONZE_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_bronze_active");
-    public static final SimpleOverlayRenderer STEEL_FIREBOX = new SimpleOverlayRenderer("casings/firebox/machine_casing_firebox_steel");
-    public static final SimpleOverlayRenderer STEEL_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_steel_active");
-    public static final SimpleOverlayRenderer TITANIUM_FIREBOX = new SimpleOverlayRenderer("casings/firebox/machine_casing_firebox_titanium");
-    public static final SimpleOverlayRenderer TITANIUM_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_titanium_active");
-    public static final SimpleOverlayRenderer TUNGSTENSTEEL_FIREBOX = new SimpleOverlayRenderer("casings/firebox/machine_casing_firebox_tungstensteel");
-    public static final SimpleOverlayRenderer TUNGSTENSTEEL_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_tungstensteel_active");
     public static final SimpleOverlayRenderer FUSION_TEXTURE = new SimpleOverlayRenderer("casings/fusion/machine_casing_fusion_hatch");
     public static final SimpleOverlayRenderer ACTIVE_FUSION_TEXTURE = new SimpleOverlayRenderer("casings/fusion/machine_casing_fusion_hatch_yellow");
 
@@ -84,6 +72,7 @@ public class Textures {
     public static final SimpleSidedCubeRenderer STEAM_BRICKED_CASING_STEEL = new SimpleSidedCubeRenderer("casings/steam/bricked_steel");
     public static final SimpleSidedCubeRenderer[] VOLTAGE_CASINGS = new SimpleSidedCubeRenderer[GTValues.V.length];
     public static final SimpleSidedCubeRenderer PRIMITIVE_PUMP = new SimpleSidedCubeRenderer("casings/pump_deck");
+    public static final SimpleSidedCubeRenderer WOOD_WALL = new SimpleSidedCubeRenderer("casings/wood_wall");
     public static final SimpleSidedCubeRenderer MAGIC_ENERGY_ABSORBER = new SimpleSidedCubeRenderer("casings/magic/absorber/normal");
     public static final SimpleSidedCubeRenderer MAGIC_ENERGY_ABSORBER_ACTIVE = new SimpleSidedCubeRenderer("casings/magic/absorber/active");
 
@@ -106,7 +95,8 @@ public class Textures {
     public static final OrientedOverlayRenderer DISTILLATION_TOWER_OVERLAY = new OrientedOverlayRenderer("multiblock/distillation_tower", FRONT);
     public static final OrientedOverlayRenderer CRACKING_UNIT_OVERLAY = new OrientedOverlayRenderer("multiblock/cracking_unit", FRONT);
     public static final OrientedOverlayRenderer LARGE_CHEMICAL_REACTOR_OVERLAY = new OrientedOverlayRenderer("multiblock/large_chemical_reactor", FRONT);
-    public static final OrientedOverlayRenderer DIESEL_ENGINE_OVERLAY = new OrientedOverlayRenderer("multiblock/generator/large_combustion_engine", FRONT);
+    public static final OrientedOverlayRenderer LARGE_COMBUSTION_ENGINE_OVERLAY = new OrientedOverlayRenderer("multiblock/generator/large_combustion_engine", FRONT);
+    public static final OrientedOverlayRenderer EXTREME_COMBUSTION_ENGINE_OVERLAY = new OrientedOverlayRenderer("multiblock/generator/extreme_combustion_engine", FRONT);
     public static final OrientedOverlayRenderer LARGE_STEAM_TURBINE_OVERLAY = new OrientedOverlayRenderer("multiblock/generator/large_steam_turbine", FRONT);
     public static final OrientedOverlayRenderer LARGE_GAS_TURBINE_OVERLAY = new OrientedOverlayRenderer("multiblock/generator/large_gas_turbine", FRONT);
     public static final OrientedOverlayRenderer LARGE_PLASMA_TURBINE_OVERLAY = new OrientedOverlayRenderer("multiblock/generator/large_plasma_turbine", FRONT);
@@ -120,6 +110,7 @@ public class Textures {
     public static final OrientedOverlayRenderer LARGE_MINER_OVERLAY_BASIC = new OrientedOverlayRenderer("multiblock/large_miner_basic", FRONT);
     public static final OrientedOverlayRenderer LARGE_MINER_OVERLAY_ADVANCED = new OrientedOverlayRenderer("multiblock/large_miner_advanced", FRONT);
     public static final OrientedOverlayRenderer LARGE_MINER_OVERLAY_ADVANCED_2 = new OrientedOverlayRenderer("multiblock/large_miner_advanced_2", FRONT);
+    public static final OrientedOverlayRenderer MULTIBLOCK_TANK_OVERLAY = new OrientedOverlayRenderer("multiblock/multiblock_tank", FRONT);
     public static final OrientedOverlayRenderer ALLOY_SMELTER_OVERLAY = new OrientedOverlayRenderer("machines/alloy_smelter", FRONT);
     public static final OrientedOverlayRenderer FURNACE_OVERLAY = new OrientedOverlayRenderer("machines/furnace", FRONT);
     public static final OrientedOverlayRenderer ELECTRIC_FURNACE_OVERLAY = new OrientedOverlayRenderer("machines/electric_furnace", FRONT);
@@ -193,6 +184,15 @@ public class Textures {
     public static final SimpleOverlayRenderer ITEM_HATCH_OUTPUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_item_hatch_output");
     public static final SimpleOverlayRenderer ITEM_HATCH_INPUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_item_hatch_input");
 
+    public static final ICubeRenderer BRONZE_FIREBOX = new SidedCubeRenderer("casings/firebox/overlay/bronze", OverlayFace.values());
+    public static final ICubeRenderer BRONZE_FIREBOX_ACTIVE = new FireboxActiveRenderer("casings/firebox/overlay/bronze/active", OverlayFace.values());
+    public static final ICubeRenderer STEEL_FIREBOX = new SidedCubeRenderer("casings/firebox/overlay/steel", OverlayFace.values());
+    public static final ICubeRenderer STEEL_FIREBOX_ACTIVE = new FireboxActiveRenderer("casings/firebox/overlay/steel/active", OverlayFace.values());
+    public static final ICubeRenderer TITANIUM_FIREBOX = new SidedCubeRenderer("casings/firebox/overlay/titanium", OverlayFace.values());
+    public static final ICubeRenderer TITANIUM_FIREBOX_ACTIVE = new FireboxActiveRenderer("casings/firebox/overlay/titanium/active", OverlayFace.values());
+    public static final ICubeRenderer TUNGSTENSTEEL_FIREBOX = new SidedCubeRenderer("casings/firebox/overlay/tungstensteel", OverlayFace.values());
+    public static final ICubeRenderer TUNGSTENSTEEL_FIREBOX_ACTIVE = new FireboxActiveRenderer("casings/firebox/overlay/tungstensteel/active", OverlayFace.values());
+
     public static final SimpleOverlayRenderer ROTOR_HOLDER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_rotor_holder");
     public static final SimpleOverlayRenderer ADV_PUMP_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_adv_pump");
     public static final SimpleOverlayRenderer FILTER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_filter");
@@ -243,6 +243,8 @@ public class Textures {
     public static final SimpleOverlayRenderer COVER_INTERFACE_PROXY = new SimpleOverlayRenderer("cover/cover_interface_proxy");
     public static final SimpleOverlayRenderer COVER_INTERFACE_WIRELESS = new SimpleOverlayRenderer("cover/cover_interface_wireless");
 
+    public static final SimpleOverlayRenderer SURFACE_ROCK_TEXTURE = new SimpleOverlayRenderer("stones/surface_rock_stone");
+
     public static final SimpleOverlayRenderer CONVERTER_FE_OUT = new SimpleOverlayRenderer("overlay/converter/converter_fe_out");
     public static final SimpleOverlayRenderer CONVERTER_FE_IN = new SimpleOverlayRenderer("overlay/converter/converter_fe_in");
 
@@ -284,4 +286,12 @@ public class Textures {
         renderState.render();
     }
 
+    // TODO Could maybe be cleaned up?
+    public static ICubeRenderer getInactiveTexture(ICubeRenderer renderer) {
+        if (renderer == BRONZE_FIREBOX_ACTIVE) return BRONZE_FIREBOX;
+        if (renderer == STEEL_FIREBOX_ACTIVE) return STEEL_FIREBOX;
+        if (renderer == TITANIUM_FIREBOX_ACTIVE) return TITANIUM_FIREBOX;
+        if (renderer == TUNGSTENSTEEL_FIREBOX_ACTIVE) return TUNGSTENSTEEL_FIREBOX;
+        return renderer;
+    }
 }

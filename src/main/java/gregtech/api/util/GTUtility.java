@@ -8,6 +8,7 @@ import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.cover.CoverDefinition;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.items.IToolItem;
@@ -41,9 +42,9 @@ import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.Constants;
@@ -720,17 +721,8 @@ public class GTUtility {
         return replacement;
     }
 
-    public static void doOvervoltageExplosion(MetaTileEntity metaTileEntity, long voltage) {
-        BlockPos pos = metaTileEntity.getPos();
-        metaTileEntity.getWorld().setBlockToAir(pos);
-        if (!metaTileEntity.getWorld().isRemote) {
-            double posX = pos.getX() + 0.5;
-            double posY = pos.getY() + 0.5;
-            double posZ = pos.getZ() + 0.5;
-            ((WorldServer) metaTileEntity.getWorld()).spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY, posZ,
-                    10, 0.2, 0.2, 0.2, 0.0);
-            metaTileEntity.getWorld().createExplosion(null, posX, posY, posZ, getTierByVoltage(voltage), ConfigHolder.machines.doExplosions);
-        }
+    public static int getExplosionPower(long voltage) {
+        return getTierByVoltage(voltage) + 1;
     }
 
     public static int getRedstonePower(World world, BlockPos blockPos, EnumFacing side) {
@@ -759,10 +751,10 @@ public class GTUtility {
     }
 
     public static boolean isCoverBehaviorItem(ItemStack itemStack) {
-        return isCoverBehaviorItem(itemStack, null);
+        return isCoverBehaviorItem(itemStack, null, null);
     }
 
-    public static boolean isCoverBehaviorItem(ItemStack itemStack, BooleanSupplier hasCoverSupplier) {
+    public static boolean isCoverBehaviorItem(ItemStack itemStack, BooleanSupplier hasCoverSupplier, Function<CoverDefinition, Boolean> canPlaceCover) {
         if (itemStack.getItem() instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) itemStack.getItem();
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
@@ -770,7 +762,7 @@ public class GTUtility {
                 List<IItemBehaviour> behaviourList = valueItem.getBehaviours();
                 for(IItemBehaviour behaviour : behaviourList) {
                     if(behaviour instanceof CoverPlaceBehavior)
-                        return true;
+                        return canPlaceCover == null || canPlaceCover.apply(((CoverPlaceBehavior) behaviour).coverDefinition);
                     if(behaviour instanceof CrowbarBehaviour)
                         return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
                 }
@@ -855,7 +847,7 @@ public class GTUtility {
     /**
      * Alternative function for tank sizes, takes a tier input and returns the corresponding size
      * <p>
-     * This function is meant for use with machine that need very large tanks, it stops scaling past HV
+     * This function is meant for use with machines that need very large tanks, it stops scaling past HV
      */
     public static final Function<Integer, Integer> largeTankSizeFunction = tier -> {
         if (tier <= GTValues.LV)
@@ -865,6 +857,13 @@ public class GTUtility {
         // HV+
         return 64000;
     };
+
+    /**
+     * Alternative function for tank sizes, takes a tier input and returns the corresponding size
+     * <p>
+     * This function is meant for use with generators, and always returns 16000
+     */
+    public static final Function<Integer, Integer> generatorTankSizeFunction = tier -> 16000;
 
     public static String romanNumeralString(int num) {
 

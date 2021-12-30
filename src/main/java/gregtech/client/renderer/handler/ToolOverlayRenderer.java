@@ -4,6 +4,8 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.vec.Vector3;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.ICoverable.PrimaryBoxData;
 import gregtech.api.items.toolitem.IAOEItem;
@@ -13,9 +15,6 @@ import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
-import gregtech.common.pipelike.cable.Insulation;
-import gregtech.common.pipelike.fluidpipe.FluidPipeType;
-import gregtech.common.pipelike.itempipe.ItemPipeType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
@@ -105,7 +104,8 @@ public class ToolOverlayRenderer {
                 rColor = gColor = bColor = 0.2f + (float) Math.sin((float) (System.currentTimeMillis() % (Math.PI * 800)) / 800) / 2;
 
                 if (tileEntity instanceof TileEntityPipeBase)
-                    drawOverlayLines(facing, box, ((TileEntityPipeBase) tileEntity)::isConnectionOpenAny);
+                    drawOverlayLines(facing, box, facing1 -> ((TileEntityPipeBase<?, ?>) tileEntity).isConnectionOpenAny(facing1) ||
+                            ((TileEntityPipeBase<?, ?>) tileEntity).getCoverableImplementation().getCoverAtSide(facing1) != null);
                 else if (tileEntity instanceof MetaTileEntityHolder)
                     drawOverlayLines(facing, box, face -> ((MetaTileEntityHolder) tileEntity).getMetaTileEntity().isSideUsed(face));
                 else
@@ -139,21 +139,22 @@ public class ToolOverlayRenderer {
         // MetaTileEntity
         if (tileEntity instanceof MetaTileEntityHolder) {
             MetaTileEntity mte = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
-            if(mte == null || !mte.canRenderMachineGrid())
+            if (mte == null || !mte.canRenderMachineGrid())
                 return false;
-            if(itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null))
+            if (itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null))
                 return true;
         }
 
         // Pipes
-        if(state.getBlock() instanceof BlockPipe) {
+        if (state.getBlock() instanceof BlockPipe) {
             return ((BlockPipe<?, ?, ?>) state.getBlock()).hasPipeCollisionChangingItem(tileEntity.getWorld(), tileEntity.getPos(), itemStack);
         }
 
         // ICoverable
         ICoverable coverable;
         if ((coverable = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null)) != null) {
-            return itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null) || GTUtility.isCoverBehaviorItem(itemStack, coverable::hasAnyCover);
+            return itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null) ||
+                    GTUtility.isCoverBehaviorItem(itemStack, coverable::hasAnyCover, cover -> ICoverable.canPlaceCover(cover, coverable));
         }
 
         return false;
@@ -226,7 +227,7 @@ public class ToolOverlayRenderer {
         Vector3 shiftVert = new Vector3(0, 0.25, 0);
 
         Vector3 cubeCenter = new Vector3(box.getCenter());
-        
+
         topRight.subtract(cubeCenter);
         bottomRight.subtract(cubeCenter);
         bottomLeft.subtract(cubeCenter);

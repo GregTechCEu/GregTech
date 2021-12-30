@@ -99,5 +99,4 @@ public class SimpleSidedCubeRenderer implements ICubeRenderer {
             } else Textures.renderFace(renderState, translation, pipeline, frontFacing, bounds, spriteEmissive, BlockRenderLayer.CUTOUT_MIPPED);
         }
     }
-    
 }

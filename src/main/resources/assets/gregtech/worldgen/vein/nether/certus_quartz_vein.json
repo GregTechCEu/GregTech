@@ -1,0 +1,37 @@
+{
+  "weight": 40,
+  "density": 0.25,
+  "min_height": 80,
+  "max_height": 120,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "barite"
+  },
+  "dimension_filter": [
+    "is_nether"
+  ],
+  "generator": {
+    "type": "layered",
+    "radius": [
+      14,
+      16
+    ]
+  },
+  "filler": {
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:quartzite"
+      },
+      {
+        "secondary": "ore:certus_quartz"
+      },
+      {
+        "between": "ore:certus_quartz"
+      },
+      {
+        "sporadic": "ore:barite"
+      }
+    ]
+  }
+}

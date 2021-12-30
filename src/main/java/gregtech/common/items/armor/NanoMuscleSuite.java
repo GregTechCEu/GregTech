@@ -1,6 +1,5 @@
 package gregtech.common.items.armor;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
@@ -9,6 +8,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
 import gregtech.common.items.MetaItems;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,72 +18,68 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
-public class NanoMuscleSuite extends ArmorLogicSuite {
+public class NanoMuscleSuite extends ArmorLogicSuite implements IStepAssist {
 
     public NanoMuscleSuite(EntityEquipmentSlot slot, int energyPerUse, long maxCapacity, int tier) {
         super(energyPerUse, maxCapacity, tier, slot);
     }
 
     @Override
-    public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
+    public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack itemStack) {
         IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);
         byte toggleTimer = nbtData.getByte("toggleTimer");
-        boolean ret = false;
         if (SLOT == EntityEquipmentSlot.HEAD) {
             boolean nightvision = nbtData.getBoolean("Nightvision");
-            if (ArmorUtils.isKeyDown(player, EnumKey.MENU) && ArmorUtils.isKeyDown(player, EnumKey.MODE_SWITCH) && toggleTimer == 0) {
-                toggleTimer = 10;
-                nightvision = !nightvision;
-                if (!world.isRemote) {
-                    nbtData.setBoolean("Nightvision", nightvision);
-                    if (nightvision) {
-                        player.sendMessage(new TextComponentTranslation("metaarmor.nms.nightvision.enabled"));
-                    } else {
-                        player.sendMessage(new TextComponentTranslation("metaarmor.nms.nightvision.disabled"));
+            if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.MODE_SWITCH)) {
+                toggleTimer = 5;
+                if (!nightvision && item.getCharge() >= 4) {
+                    nightvision = true;
+                    if (!world.isRemote)
+                        player.sendStatusMessage(new TextComponentTranslation("metaarmor.nms.nightvision.enabled"), true);
+                } else if (nightvision) {
+                    nightvision = false;
+                    disableNightVision(world, player, true);
+                } else {
+                    if (!world.isRemote) {
+                        player.sendStatusMessage(new TextComponentTranslation("metaarmor.nms.nightvision.error"), true);
                     }
                 }
+
+                if (!world.isRemote) {
+                    nbtData.setBoolean("Nightvision", nightvision);
+                }
             }
 
-            if (nightvision && !world.isRemote && item != null && item.getCharge() >= (energyPerUse / 100)) {
-                BlockPos pos = new BlockPos((int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ));
-                int skylight = player.getEntityWorld().getLightFromNeighbors(pos);
-                if (skylight > 8) {
-                    player.removePotionEffect(MobEffects.NIGHT_VISION);
-                    player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 100, 0, true, true));
-                } else {
-                    player.removePotionEffect(MobEffects.BLINDNESS);
-                    player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 300, 0, true, true));
-                }
-                ret = true;
-                item.discharge((energyPerUse / 100), GTValues.HV, true, false, false);
-            }
-
-            if (!nightvision && !world.isRemote) {
-                PotionEffect blindness = player.getActivePotionEffect(MobEffects.BLINDNESS);
-                PotionEffect night_vision = player.getActivePotionEffect(MobEffects.NIGHT_VISION);
-                if (blindness != null) {
-                    if (blindness.getDuration() < 1) player.removePotionEffect(MobEffects.BLINDNESS);
-                }
-                if (night_vision != null) {
-                    if (night_vision.getDuration() < 1) player.removePotionEffect(MobEffects.NIGHT_VISION);
-                }
+            if (nightvision && !world.isRemote && item.getCharge() >= 4) {
+                player.removePotionEffect(MobEffects.BLINDNESS);
+                player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 999999, 0, true, false));
+                item.discharge((4), this.tier, true, false, false);
             }
 
             if (!world.isRemote && toggleTimer > 0) {
                 --toggleTimer;
                 nbtData.setByte("toggleTimer", toggleTimer);
             }
+        } else if (SLOT == EntityEquipmentSlot.FEET) {
+            updateStepHeight(player);
         }
-        if (ret) {
-            player.inventoryContainer.detectAndSendChanges();
+        player.inventoryContainer.detectAndSendChanges();
+    }
+
+    public void disableNightVision(@Nonnull World world, EntityPlayer player, boolean sendMsg) {
+        if (!world.isRemote) {
+            player.removePotionEffect(MobEffects.NIGHT_VISION);
+            if (sendMsg) player.sendStatusMessage(new TextComponentTranslation("metaarmor.nms.nightvision.disabled"), true);
         }
     }
 
@@ -97,7 +93,7 @@ public class NanoMuscleSuite extends ArmorLogicSuite {
         int damageLimit = Integer.MAX_VALUE;
         if (source == DamageSource.FALL && this.getEquipmentSlot(armor) == EntityEquipmentSlot.FEET) {
             if (energyPerUse > 0 && container != null) {
-                damageLimit = (int) Math.min(damageLimit, 25.0 * container.getCharge() / energyPerUse);
+                damageLimit = (int) Math.min(damageLimit, 25.0 * container.getCharge() / (energyPerUse * 10.0D));
             }
             return new ArmorProperties(10, (damage < 8.0) ? 1.0 : 0.875, damageLimit);
         }
@@ -113,14 +109,14 @@ public class NanoMuscleSuite extends ArmorLogicSuite {
     public void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage, EntityEquipmentSlot equipmentSlot) {
         IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (item != null) {
-            item.discharge((long) energyPerUse * damage, item.getTier(), true, false, false);
+            item.discharge((long) energyPerUse / 10 * damage, item.getTier(), true, false, false);
         }
     }
 
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
         ItemStack currentChest = Minecraft.getMinecraft().player.inventory.armorItemInSlot(EntityEquipmentSlot.CHEST.getIndex());
-        ItemStack advancedChest = MetaItems.ADVANCED_NANO_MUSCLE_CHESTPLATE.getStackForm();
+        ItemStack advancedChest = MetaItems.NANO_CHESTPLATE_ADVANCED.getStackForm();
         String armorTexture = "nano_muscule_suite";
         if (advancedChest.isItemEqual(currentChest)) armorTexture = "advanced_nano_muscle_suite";
         return SLOT != EntityEquipmentSlot.LEGS ?
@@ -130,6 +126,35 @@ public class NanoMuscleSuite extends ArmorLogicSuite {
 
     @Override
     public double getDamageAbsorption() {
-        return 0.9D;
+        return 1.0D;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean isNeedDrawHUD() {
+        return true;
+    }
+
+    @Override
+    public void drawHUD(ItemStack item) {
+        super.addCapacityHUD(item);
+        this.HUD.draw();
+        this.HUD.reset();
+    }
+
+    @Override
+    public void addInfo(ItemStack itemStack, List<String> lines) {
+        super.addInfo(itemStack, lines);
+        if (SLOT == EntityEquipmentSlot.HEAD) {
+            NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);
+            boolean nv = nbtData.getBoolean("Nightvision");
+            if (nv) {
+                lines.add(I18n.format("metaarmor.message.nightvision.enabled"));
+            } else {
+                lines.add(I18n.format("metaarmor.message.nightvision.disabled"));
+            }
+        } else if (SLOT == EntityEquipmentSlot.FEET) {
+            lines.add(I18n.format("metaarmor.tooltip.stepassist"));
+            lines.add(I18n.format("metaarmor.tooltip.falldamage"));
+        }
     }
 }

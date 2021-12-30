@@ -44,6 +44,13 @@
           "top": "gregtech:blocks/casings/pump_deck/top",
           "side": "gregtech:blocks/casings/pump_deck/side"
         }
+      },
+      "wood_wall": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/wood_wall/bottom",
+          "top": "gregtech:blocks/casings/wood_wall/top",
+          "side": "gregtech:blocks/casings/wood_wall/side"
+        }
       }
     }
   }

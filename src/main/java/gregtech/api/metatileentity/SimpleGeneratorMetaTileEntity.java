@@ -4,73 +4,71 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
-import gregtech.api.capability.impl.EnergyContainerHandler;
-import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.FuelRecipeLogic;
-import gregtech.api.capability.impl.NotifiableFilteredFluidHandler;
+import gregtech.api.capability.IActiveOutputSide;
+import gregtech.api.capability.impl.*;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.widgets.FluidContainerSlotWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.gui.widgets.TankWidget;
-import gregtech.api.metatileentity.sound.ISoundCreator;
-import gregtech.api.recipes.machines.FuelRecipeMap;
+import gregtech.api.gui.widgets.CycleButtonWidget;
+import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Function;
 
-public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity implements ISoundCreator {
+public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity implements IActiveOutputSide {
 
-    private final FuelRecipeLogic workableHandler;
-    private final ItemStackHandler containerInventory;
-    private final ICubeRenderer overlayRenderer;
-    private final FuelRecipeMap recipeMap;
+    protected IItemHandler outputItemInventory;
+    protected IFluidHandler outputFluidInventory;
 
-    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, FuelRecipeMap recipeMap, ICubeRenderer renderer, int tier) {
-        super(metaTileEntityId, tier);
-        this.containerInventory = new ItemStackHandler(2);
-        this.overlayRenderer = renderer;
-        this.recipeMap = recipeMap;
-        this.workableHandler = createWorkableHandler();
+    private static final int FONT_HEIGHT = 9; // Minecraft's FontRenderer FONT_HEIGHT value
+
+    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier) {
+        this(metaTileEntityId, recipeMap, renderer, tier, false);
     }
 
-    protected FuelRecipeLogic createWorkableHandler() {
-        return new FuelRecipeLogic(this, recipeMap,
-                () -> energyContainer, () -> importFluids, GTValues.V[getTier()]);
+    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean handlesRecipeOutputs) {
+        this(metaTileEntityId, recipeMap, renderer, tier, GTUtility.generatorTankSizeFunction, handlesRecipeOutputs);
     }
 
-    @Override
-    protected FluidTankList createImportFluidHandler() {
-        return new FluidTankList(false, new NotifiableFilteredFluidHandler(16000, this, false)
-                .setFillPredicate(this::canInputFluid));
+    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
+                                         Function<Integer, Integer> tankScalingFunction, boolean handlesRecipeOutputs) {
+        super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction, handlesRecipeOutputs);
     }
 
     @Override
-    protected FluidTankList createExportFluidHandler() {
-        return new FluidTankList(false, this.importFluids);
-    }
-
-    private boolean canInputFluid(FluidStack fluid) {
-        return workableHandler.recipeMap.findRecipe(GTValues.V[getTier()], fluid) != null;
+    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+        return new SimpleGeneratorMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), getTankScalingFunction(), handlesRecipeOutputs);
     }
 
     @Override
-    protected boolean isEnergyEmitter() {
-        return true;
+    protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
+        final FuelRecipeLogic result = new FuelRecipeLogic(this, recipeMap, () -> energyContainer);
+        result.enableOverclockVoltage();
+        return result;
+    }
+
+    @Override
+    protected void initializeInventory() {
+        super.initializeInventory();
+        this.outputItemInventory = new ItemHandlerProxy(new NotifiableItemStackHandler(0, this, true), exportItems);
+        this.outputFluidInventory = new FluidHandlerProxy(new FluidTankList(false), exportFluids);
     }
 
     @Override
@@ -80,61 +78,53 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity implemen
     }
 
     @Override
-    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.overlayRenderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), workableHandler.isActive(), workableHandler.isWorkingEnabled());
-        Textures.ENERGY_OUT.renderSided(getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+    public boolean hasFrontFacing() {
+        return true;
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
-        data.setTag("ContainerInventory", containerInventory.serializeNBT());
-        return data;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
-        this.containerInventory.deserializeNBT(data.getCompoundTag("ContainerInventory"));
-    }
-
-    @Override
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
-        super.clearMachineInventory(itemBuffer);
-        clearInventory(itemBuffer, containerInventory);
-    }
-
-    @Override
-    public void update() {
-        super.update();
-        if (!getWorld().isRemote && !containerInventory.getStackInSlot(0).isEmpty()) {
-            fillContainerFromInternalTank(containerInventory, containerInventory, 0, 1);
-            fillInternalTankFromFluidContainer(containerInventory, containerInventory, 0, 1);
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            if (fluidInventory.getTankProperties().length > 0) {
+                return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidInventory);
+            }
+            return null;
+        } else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (itemInventory.getSlots() > 0) {
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemInventory);
+            }
+            return null;
         }
-    }
-
-    @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new SimpleGeneratorMetaTileEntity(metaTileEntityId, workableHandler.recipeMap, overlayRenderer, getTier());
+        return super.getCapability(capability, side);
     }
 
     protected ModularUI.Builder createGuiTemplate(EntityPlayer player) {
-        Builder builder = ModularUI.defaultBuilder();
-        builder.image(7, 16, 81, 55, GuiTextures.DISPLAY);
-        TankWidget tankWidget = new TankWidget(importFluids.getTankAt(0), 69, 52, 18, 18)
-                .setHideTooltip(true).setAlwaysShowFull(true);
-        builder.widget(tankWidget);
-        builder.label(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF);
-        builder.dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF);
-        builder.dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF);
-        return builder.label(6, 6, getMetaFullName())
-                .widget(new FluidContainerSlotWidget(containerInventory, 0, 90, 17, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
-                .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON))
-                .widget(new SlotWidget(containerInventory, 1, 90, 54, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
-                .bindPlayerInventory(player.inventory);
+        RecipeMap<?> workableRecipeMap = workable.getRecipeMap();
+        int yOffset = 0;
+        if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
+                workableRecipeMap.getMaxOutputs() >= 6 || workableRecipeMap.getMaxFluidOutputs() >= 6)
+            yOffset = FONT_HEIGHT;
+
+
+        ModularUI.Builder builder;
+        if (handlesRecipeOutputs) builder = workableRecipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
+        else builder = workableRecipeMap.createUITemplateNoOutputs(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
+        builder.widget(new LabelWidget(6, 6, getMetaFullName()))
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);
+
+        builder.widget(new CycleButtonWidget(7, 62 + yOffset, 18, 18,
+                workable.getAvailableOverclockingTiers(), workable::getOverclockTier, workable::setOverclockTier)
+                .setTooltipHoverString("gregtech.gui.overclock.description")
+                .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));
+
+        return builder;
+    }
+
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        this.renderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), workable.isActive(), workable.isWorkingEnabled());
+        Textures.ENERGY_OUT.renderSided(getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
     }
 
     @Override
@@ -143,21 +133,37 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity implemen
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), GTValues.VN[getTier()]));
+    public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
+        String key = this.metaTileEntityId.getPath().split("\\.")[0];
+        tooltip.add(1, I18n.format(String.format("gregtech.machine.%s.tooltip", key)));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        if (recipeMap.getMaxFluidInputs() > 0 || recipeMap.getMaxFluidOutputs() > 0)
+            tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", this.getTankScalingFunction().apply(getTier())));
     }
 
     @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
-        if (getWorld() != null && getWorld().isRemote) {
-            this.setupSound(recipeMap.getSound(), this.getPos());
-        }
+    public boolean isAutoOutputItems() {
+        return false;
     }
 
-    public boolean canCreateSound() {
-        return workableHandler.isActive();
+    @Override
+    public boolean isAutoOutputFluids() {
+        return false;
     }
 
+    @Override
+    public boolean isAllowInputFromOutputSideItems() {
+        return false;
+    }
+
+    @Override
+    public boolean isAllowInputFromOutputSideFluids() {
+        return false;
+    }
+
+    @Override
+    protected boolean isEnergyEmitter() {
+        return true;
+    }
 }

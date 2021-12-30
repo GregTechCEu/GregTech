@@ -28,15 +28,25 @@ import java.util.function.Function;
 public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity implements ISoundCreator {
 
     protected final RecipeLogicEnergy workable;
+    protected final RecipeMap<?> recipeMap;
     protected final ICubeRenderer renderer;
 
     private final Function<Integer, Integer> tankScalingFunction;
 
+    public final boolean handlesRecipeOutputs;
+
     public WorkableTieredMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
                                         Function<Integer, Integer> tankScalingFunction) {
+        this(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction, true);
+    }
+
+    public WorkableTieredMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
+                                        Function<Integer, Integer> tankScalingFunction, boolean handlesRecipeOutputs) {
         super(metaTileEntityId, tier);
         this.renderer = renderer;
+        this.handlesRecipeOutputs = handlesRecipeOutputs;
         this.workable = createWorkable(recipeMap);
+        this.recipeMap = recipeMap;
         this.tankScalingFunction = tankScalingFunction;
         initializeInventory();
         reinitializeEnergyContainer();
@@ -141,7 +151,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VN[getTier()]));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         if (workable.getRecipeMap().getMaxFluidInputs() != 0)
             tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", this.tankScalingFunction.apply(getTier())));

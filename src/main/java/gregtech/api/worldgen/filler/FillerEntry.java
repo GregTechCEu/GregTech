@@ -15,8 +15,6 @@ public interface FillerEntry {
 
     IBlockState apply(IBlockState source, IBlockAccess blockAccess, BlockPos blockPos);
 
-    List<FillerEntry> getSubEntries();
-
     Collection<IBlockState> getPossibleResults();
 
     default List<Pair<Integer, FillerEntry>> getEntries() {
@@ -29,11 +27,6 @@ public interface FillerEntry {
             @Override
             public IBlockState apply(IBlockState source, IBlockAccess blockAccess, BlockPos blockPos) {
                 return blockState;
-            }
-
-            @Override
-            public List<FillerEntry> getSubEntries() {
-                return Collections.emptyList();
             }
 
             @Override

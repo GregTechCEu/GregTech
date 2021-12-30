@@ -394,7 +394,7 @@ public class MetaItem1 extends StandardMetaItem {
         GELLED_TOLUENE = addItem(498, "gelled_toluene");
         CARBON_FIBERS = addItem(499, "carbon.fibers");
         CARBON_MESH = addItem(500, "carbon.mesh");
-        CARBON_PLATE = addItem(501, "carbon.plate");
+        CARBON_FIBER_PLATE = addItem(501, "carbon.plate");
         DUCT_TAPE = addItem(502, "duct_tape");
         WIRELESS = addItem(503, "wireless");
         CAMERA = addItem(504, "camera");
@@ -428,12 +428,13 @@ public class MetaItem1 extends StandardMetaItem {
         SYSTEM_ON_CHIP_WAFER = addItem(572, "wafer.system_on_chip");
         ADVANCED_SYSTEM_ON_CHIP_WAFER = addItem(573, "wafer.advanced_system_on_chip");
         HIGHLY_ADVANCED_SOC_WAFER = addItem(574, "wafer.highly_advanced_system_on_chip");
-        ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER = addItem(575, "wafer.ultra_low_power_integrated_circuit");
-        LOW_POWER_INTEGRATED_CIRCUIT_WAFER = addItem(576, "wafer.low_power_integrated_circuit");
-        POWER_INTEGRATED_CIRCUIT_WAFER = addItem(577, "wafer.power_integrated_circuit");
-        HIGH_POWER_INTEGRATED_CIRCUIT_WAFER = addItem(578, "wafer.high_power_integrated_circuit");
-        NAND_MEMORY_CHIP_WAFER = addItem(579, "wafer.nand_memory_chip");
-        NOR_MEMORY_CHIP_WAFER = addItem(580, "wafer.nor_memory_chip");
+        NAND_MEMORY_CHIP_WAFER = addItem(575, "wafer.nand_memory_chip");
+        NOR_MEMORY_CHIP_WAFER = addItem(576, "wafer.nor_memory_chip");
+        ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER = addItem(577, "wafer.ultra_low_power_integrated_circuit");
+        LOW_POWER_INTEGRATED_CIRCUIT_WAFER = addItem(578, "wafer.low_power_integrated_circuit");
+        POWER_INTEGRATED_CIRCUIT_WAFER = addItem(579, "wafer.power_integrated_circuit");
+        HIGH_POWER_INTEGRATED_CIRCUIT_WAFER = addItem(580, "wafer.high_power_integrated_circuit");
+        ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT_WAFER = addItem(581, "wafer.ultra_high_power_integrated_circuit");
 
         // Engraved and Complex Cut Wafers: ID 591-615
         CENTRAL_PROCESSING_UNIT = addItem(591, "plate.central_processing_unit");
@@ -445,12 +446,13 @@ public class MetaItem1 extends StandardMetaItem {
         SYSTEM_ON_CHIP = addItem(597, "plate.system_on_chip");
         ADVANCED_SYSTEM_ON_CHIP = addItem(598, "plate.advanced_system_on_chip");
         HIGHLY_ADVANCED_SOC = addItem(599, "plate.highly_advanced_system_on_chip");
-        ULTRA_LOW_POWER_INTEGRATED_CIRCUIT = addItem(600, "plate.ultra_low_power_integrated_circuit");
-        LOW_POWER_INTEGRATED_CIRCUIT = addItem(601, "plate.low_power_integrated_circuit");
-        POWER_INTEGRATED_CIRCUIT = addItem(602, "plate.power_integrated_circuit");
-        HIGH_POWER_INTEGRATED_CIRCUIT = addItem(603, "plate.high_power_integrated_circuit");
-        NAND_MEMORY_CHIP = addItem(604, "plate.nand_memory_chip");
-        NOR_MEMORY_CHIP = addItem(605, "plate.nor_memory_chip");
+        NAND_MEMORY_CHIP = addItem(600, "plate.nand_memory_chip");
+        NOR_MEMORY_CHIP = addItem(601, "plate.nor_memory_chip");
+        ULTRA_LOW_POWER_INTEGRATED_CIRCUIT = addItem(602, "plate.ultra_low_power_integrated_circuit");
+        LOW_POWER_INTEGRATED_CIRCUIT = addItem(603, "plate.low_power_integrated_circuit");
+        POWER_INTEGRATED_CIRCUIT = addItem(604, "plate.power_integrated_circuit");
+        HIGH_POWER_INTEGRATED_CIRCUIT = addItem(605, "plate.high_power_integrated_circuit");
+        ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT = addItem(606, "plate.ultra_high_power_integrated_circuit");
 
         // ???: ID 616-620
 
@@ -543,35 +545,35 @@ public class MetaItem1 extends StandardMetaItem {
         BATTERY_MV_SODIUM = addItem(733, "battery.re.mv.sodium").addComponents(ElectricStats.createRechargeableBattery(360000, GTValues.MV)).setUnificationData(OrePrefix.battery, Tier.Good).setModelAmount(8);
         BATTERY_HV_SODIUM = addItem(734, "battery.re.hv.sodium").addComponents(ElectricStats.createRechargeableBattery(1200000, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8);
 
-        BATTERY_LV_LITHIUM = addItem(735, "battery.re.lv.lithium").addComponents(ElectricStats.createRechargeableBattery(100000, GTValues.LV)).setUnificationData(OrePrefix.battery, Tier.Basic).setModelAmount(8);
-        BATTERY_MV_LITHIUM = addItem(736, "battery.re.mv.lithium").addComponents(ElectricStats.createRechargeableBattery(400000, GTValues.MV)).setUnificationData(OrePrefix.battery, Tier.Good).setModelAmount(8);
-        BATTERY_HV_LITHIUM = addItem(737, "battery.re.hv.lithium").addComponents(ElectricStats.createRechargeableBattery(1600000, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8);
+        BATTERY_LV_LITHIUM = addItem(735, "battery.re.lv.lithium").addComponents(ElectricStats.createRechargeableBattery(120000, GTValues.LV)).setUnificationData(OrePrefix.battery, Tier.Basic).setModelAmount(8);
+        BATTERY_MV_LITHIUM = addItem(736, "battery.re.mv.lithium").addComponents(ElectricStats.createRechargeableBattery(420000, GTValues.MV)).setUnificationData(OrePrefix.battery, Tier.Good).setModelAmount(8);
+        BATTERY_HV_LITHIUM = addItem(737, "battery.re.hv.lithium").addComponents(ElectricStats.createRechargeableBattery(1800000, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8);
 
-        BATTERY_LV_CADMIUM = addItem(738, "battery.re.lv.cadmium").addComponents(ElectricStats.createRechargeableBattery(120000, GTValues.LV)).setUnificationData(OrePrefix.battery, Tier.Basic).setModelAmount(8);
-        BATTERY_MV_CADMIUM = addItem(739, "battery.re.mv.cadmium").addComponents(ElectricStats.createRechargeableBattery(420000, GTValues.MV)).setUnificationData(OrePrefix.battery, Tier.Good).setModelAmount(8);
-        BATTERY_HV_CADMIUM = addItem(740, "battery.re.hv.cadmium").addComponents(ElectricStats.createRechargeableBattery(1800000, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8);
+        BATTERY_LV_CADMIUM = addItem(738, "battery.re.lv.cadmium").addComponents(ElectricStats.createRechargeableBattery(100000, GTValues.LV)).setUnificationData(OrePrefix.battery, Tier.Basic).setModelAmount(8);
+        BATTERY_MV_CADMIUM = addItem(739, "battery.re.mv.cadmium").addComponents(ElectricStats.createRechargeableBattery(400000, GTValues.MV)).setUnificationData(OrePrefix.battery, Tier.Good).setModelAmount(8);
+        BATTERY_HV_CADMIUM = addItem(740, "battery.re.hv.cadmium").addComponents(ElectricStats.createRechargeableBattery(1600000, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8);
 
-        ENERGIUM_CRYSTAL = addItem(741, "energy_crystal").addComponents(ElectricStats.createRechargeableBattery(6400000L, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8);
-        LAPOTRON_CRYSTAL = addItem(742, "lapotron_crystal").addComponents(ElectricStats.createRechargeableBattery(16000000L, GTValues.EV)).setUnificationData(OrePrefix.battery, Tier.Extreme).setModelAmount(8);
+        ENERGIUM_CRYSTAL = addItem(741, "energy_crystal").addComponents(ElectricStats.createRechargeableBattery(6_400_000L, GTValues.HV)).setUnificationData(OrePrefix.battery, Tier.Advanced).setModelAmount(8);
+        LAPOTRON_CRYSTAL = addItem(742, "lapotron_crystal").addComponents(ElectricStats.createRechargeableBattery(25_000_000L, GTValues.EV)).setUnificationData(OrePrefix.battery, Tier.Extreme).setModelAmount(8);
 
-        BATTERY_EV_VANADIUM = addItem(743, "battery.ev.vanadium").addComponents(ElectricStats.createRechargeableBattery(10240000L, GTValues.EV)).setUnificationData(OrePrefix.battery, Tier.Extreme).setModelAmount(8);
-        BATTERY_IV_VANADIUM = addItem(744, "battery.iv.vanadium").addComponents(ElectricStats.createRechargeableBattery(40960000L, GTValues.IV)).setUnificationData(OrePrefix.battery, Tier.Elite).setModelAmount(8);
-        BATTERY_LUV_VANADIUM = addItem(745, "battery.luv.vanadium").addComponents(ElectricStats.createRechargeableBattery(163840000L, GTValues.LuV)).setUnificationData(OrePrefix.battery, Tier.Master).setModelAmount(8);
+        BATTERY_EV_VANADIUM = addItem(743, "battery.ev.vanadium").addComponents(ElectricStats.createRechargeableBattery(10_240_000L, GTValues.EV)).setUnificationData(OrePrefix.battery, Tier.Extreme).setModelAmount(8);
+        BATTERY_IV_VANADIUM = addItem(744, "battery.iv.vanadium").addComponents(ElectricStats.createRechargeableBattery(40_960_000L, GTValues.IV)).setUnificationData(OrePrefix.battery, Tier.Elite).setModelAmount(8);
+        BATTERY_LUV_VANADIUM = addItem(745, "battery.luv.vanadium").addComponents(ElectricStats.createRechargeableBattery(163_840_000L, GTValues.LuV)).setUnificationData(OrePrefix.battery, Tier.Master).setModelAmount(8);
 
-        BATTERY_ZPM_NAQUADRIA = addItem(746, "battery.zpm.naquadria").addComponents(ElectricStats.createRechargeableBattery(655360000L, GTValues.ZPM)).setUnificationData(OrePrefix.battery, Tier.Ultimate).setModelAmount(8);
-        BATTERY_UV_NAQUADRIA = addItem(747, "battery.uv.naquadria").addComponents(ElectricStats.createRechargeableBattery(2621440000L, GTValues.UV)).setUnificationData(OrePrefix.battery, Tier.Super).setModelAmount(8);
+        BATTERY_ZPM_NAQUADRIA = addItem(746, "battery.zpm.naquadria").addComponents(ElectricStats.createRechargeableBattery(655_360_000L, GTValues.ZPM)).setUnificationData(OrePrefix.battery, Tier.Ultimate).setModelAmount(8);
+        BATTERY_UV_NAQUADRIA = addItem(747, "battery.uv.naquadria").addComponents(ElectricStats.createRechargeableBattery(2_621_440_000L, GTValues.UV)).setUnificationData(OrePrefix.battery, Tier.Super).setModelAmount(8);
 
-        ENERGY_LAPOTRONIC_ORB = addItem(748, "energy.lapotronic_orb").addComponents(ElectricStats.createRechargeableBattery(100000000L, GTValues.IV)).setUnificationData(OrePrefix.battery, Tier.Elite).setModelAmount(8);
-        ENERGY_LAPOTRONIC_ORB_CLUSTER = addItem(749, "energy.lapotronic_orb_cluster").addComponents(ElectricStats.createRechargeableBattery(1000000000L, GTValues.LuV)).setUnificationData(OrePrefix.battery, Tier.Master).setModelAmount(8);
+        ENERGY_LAPOTRONIC_ORB = addItem(748, "energy.lapotronic_orb").addComponents(ElectricStats.createRechargeableBattery(250_000_000L, GTValues.IV)).setUnificationData(OrePrefix.battery, Tier.Elite).setModelAmount(8);
+        ENERGY_LAPOTRONIC_ORB_CLUSTER = addItem(749, "energy.lapotronic_orb_cluster").addComponents(ElectricStats.createRechargeableBattery(1_000_000_000L, GTValues.LuV)).setUnificationData(OrePrefix.battery, Tier.Master).setModelAmount(8);
 
-        ENERGY_MODULE = addItem(750, "energy.module").addComponents(new IItemComponent[]{ElectricStats.createRechargeableBattery(10000000000L, GTValues.ZPM)}).setUnificationData(OrePrefix.battery, Tier.Ultimate).setModelAmount(8);
-        ENERGY_CLUSTER = addItem(751, "energy.cluster").addComponents(new IItemComponent[]{ElectricStats.createRechargeableBattery(100000000000L, GTValues.UV)}).setUnificationData(OrePrefix.battery, Tier.Super).setModelAmount(8);
+        ENERGY_MODULE = addItem(750, "energy.module").addComponents(new IItemComponent[]{ElectricStats.createRechargeableBattery(4_000_000_000L, GTValues.ZPM)}).setUnificationData(OrePrefix.battery, Tier.Ultimate).setModelAmount(8);
+        ENERGY_CLUSTER = addItem(751, "energy.cluster").addComponents(new IItemComponent[]{ElectricStats.createRechargeableBattery(20_000_000_000L, GTValues.UV)}).setUnificationData(OrePrefix.battery, Tier.Super).setModelAmount(8);
 
         ZERO_POINT_MODULE = addItem(752, "zpm").addComponents(ElectricStats.createBattery(2000000000000L, GTValues.ZPM, true)).setModelAmount(8);
         ULTIMATE_BATTERY = addItem(753, "max.battery").addComponents(ElectricStats.createRechargeableBattery(Long.MAX_VALUE, GTValues.UHV)).setUnificationData(OrePrefix.battery, Tier.Infinite).setModelAmount(8);
 
-        IMPELLER_MV = addItem(776, "impeller.mv").setRarity(EnumRarity.UNCOMMON);
-        IMPELLER_HV = addItem(777, "impeller.hv").setRarity(EnumRarity.RARE);
+        POWER_THRUSTER = addItem(776, "power_thruster").setRarity(EnumRarity.UNCOMMON);
+        POWER_THRUSTER_ADVANCED = addItem(777, "power_thruster_advanced").setRarity(EnumRarity.RARE);
         GRAVITATION_ENGINE = addItem(778, "gravitation_engine").setRarity(EnumRarity.EPIC);
 
         // Plugins: 780-799
@@ -579,9 +581,6 @@ public class MetaItem1 extends StandardMetaItem {
         PLUGIN_FAKE_GUI = addItem(781, "plugin.fake_gui").addComponents(new FakeGuiPluginBehavior());
         PLUGIN_ONLINE_PIC = addItem(782, "plugin.online_pic").addComponents(new OnlinePicPluginBehavior());
         PLUGIN_TEXT = addItem(783, "plugin.text").addComponents(new TextPluginBehavior());
-
-        COLOURED_LEDS = addItem(798, "coloured.leds");
-        DISPLAY = addItem(799, "display");
 
         // Records: 800-819
         SUS_RECORD = addItem(800, "record.sus").addComponents(new MusicDiscStats(GTSounds.RECORD_SOUND)).setRarity(EnumRarity.RARE).setMaxStackSize(1).setInvisible();

@@ -1,6 +1,8 @@
 package gregtech.api.net.packets;
 
+import io.netty.buffer.Unpooled;
 import lombok.NoArgsConstructor;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
 import java.util.HashMap;
@@ -58,6 +60,23 @@ public class PacketProspecting {
             return null;
         }
         return packet;
+    }
+
+
+    public static PacketProspecting readPacketData(NBTTagCompound nbt) {
+        if (nbt.hasKey("buffer")) {
+            return PacketProspecting.readPacketData(new PacketBuffer(Unpooled.wrappedBuffer(nbt.getByteArray("buffer"))));
+        }
+        return null;
+    }
+
+    public NBTTagCompound writePacketData() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+        writePacketData(buffer);
+        byte[] bytes = buffer.array();
+        nbt.setByteArray("buffer", bytes);
+        return nbt;
     }
 
     public void writePacketData(PacketBuffer buffer) {

@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 public class RecipeLogicEnergy extends AbstractRecipeLogic {
 
-    private final Supplier<IEnergyContainer> energyContainer;
+    protected final Supplier<IEnergyContainer> energyContainer;
 
     public RecipeLogicEnergy(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, Supplier<IEnergyContainer> energyContainer) {
         super(tileEntity, recipeMap);
@@ -31,10 +31,10 @@ public class RecipeLogicEnergy extends AbstractRecipeLogic {
     }
 
     @Override
-    protected boolean drawEnergy(int recipeEUt) {
+    protected boolean drawEnergy(int recipeEUt, boolean simulate) {
         long resultEnergy = getEnergyStored() - recipeEUt;
         if (resultEnergy >= 0L && resultEnergy <= getEnergyCapacity()) {
-            energyContainer.get().changeEnergy(-recipeEUt);
+            if (!simulate) energyContainer.get().changeEnergy(-recipeEUt);
             return true;
         } else return false;
     }

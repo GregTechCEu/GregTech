@@ -31,8 +31,6 @@ import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.worldgen.LootTableHelper;
-import gregtech.common.worldgen.WorldGenAbandonedBase;
-import gregtech.common.worldgen.WorldGenRubberTree;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
@@ -45,7 +43,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import static gregtech.api.GregTechAPI.*;
 
@@ -91,12 +88,10 @@ public class GregTechMod {
         MATERIAL_REGISTRY.unfreeze();
         GTLog.logger.info("Registering GTCEu Materials");
         Materials.register();
-        MATERIAL_REGISTRY.flush();
 
         // Then, register addon Materials
         GTLog.logger.info("Registering addon Materials");
         MinecraftForge.EVENT_BUS.post(new MaterialEvent());
-        MATERIAL_REGISTRY.flush();
 
         // Then, run CraftTweaker Material registration scripts
         if (GTValues.isModLoaded(GTValues.MODID_CT)) {
@@ -156,10 +151,6 @@ public class GregTechMod {
         }
 
         WorldGenRegistry.INSTANCE.initializeRegistry();
-        GameRegistry.registerWorldGenerator(new WorldGenAbandonedBase(), 20000);
-        if (!ConfigHolder.worldgen.disableRubberTreeGeneration) {
-            GameRegistry.registerWorldGenerator(new WorldGenRubberTree(), 10000);
-        }
 
         LootTableHelper.initialize();
         FilterTypeRegistry.init();
@@ -188,6 +179,11 @@ public class GregTechMod {
     public void postInit(FMLPostInitializationEvent event) {
         BedrockFluidVeinHandler.recalculateChances(true);
 
+    }
+
+    @Mod.EventHandler
+    public void loadComplete(FMLLoadCompleteEvent event) {
+        proxy.onLoadComplete(event);
     }
 
     @Mod.EventHandler

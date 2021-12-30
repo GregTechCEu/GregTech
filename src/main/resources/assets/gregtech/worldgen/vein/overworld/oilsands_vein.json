@@ -1,6 +1,6 @@
 {
-  "weight": 30,
-  "density": 0.6,
+  "weight": 40,
+  "density": 0.3,
   "max_height": 80,
   "min_height": 50,
   "vein_populator": {
@@ -8,22 +8,27 @@
     "material": "oilsands"
   },
   "generator": {
-    "type": "ellipsoid",
+    "type": "layered",
     "radius": [
-      15,
-      15
+      20,
+      32
     ]
   },
   "filler": {
-    "type": "simple",
-    "value": {
-      "type": "weight_random",
-      "values": [
-        {
-          "weight": 100,
-          "value": "ore:oilsands"
-        }
-      ]
-    }
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:oilsands"
+      },
+      {
+        "secondary": "ore:oilsands"
+      },
+      {
+        "between": "ore:oilsands"
+      },
+      {
+        "sporadic": "ore:oilsands"
+      }
+    ]
   }
 }

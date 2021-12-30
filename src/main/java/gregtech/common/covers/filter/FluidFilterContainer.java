@@ -90,21 +90,10 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
 
     @Override
     public void deserializeNBT(NBTTagCompound tagCompound) {
-        //LEGACY SAVE FORMAT SUPPORT
-        if (tagCompound.hasKey("FilterTypeInventory")) {
-            this.filterInventory.deserializeNBT(tagCompound.getCompoundTag("FilterTypeInventory"));
-        } else {
-            this.filterInventory.deserializeNBT(tagCompound.getCompoundTag("FilterInventory"));
-        }
+        this.filterInventory.deserializeNBT(tagCompound.getCompoundTag("FilterInventory"));
         this.filterWrapper.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
         if (filterWrapper.getFluidFilter() != null) {
-            //LEGACY SAVE FORMAT SUPPORT
-            if (tagCompound.hasKey("FluidFilter")) {
-                this.filterWrapper.getFluidFilter().readFromNBT(tagCompound);
-            } else {
-                NBTTagCompound filterInventory = tagCompound.getCompoundTag("Filter");
-                this.filterWrapper.getFluidFilter().readFromNBT(filterInventory);
-            }
+            this.filterWrapper.getFluidFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
         }
     }
 }

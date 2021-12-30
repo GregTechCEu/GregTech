@@ -1,7 +1,8 @@
 {
-  "weight": 300,
-  "density": 0.45,
-  "min_height": 45,
+  "weight": 40,
+  "density": 0.25,
+  "max_height": 60,
+  "min_height": 40,
   "vein_populator": {
     "type": "surface_rock",
     "material": "apatite"
@@ -9,7 +10,7 @@
   "generator": {
     "type": "layered",
     "radius": [
-      13,
+      14,
       16
     ]
   },
@@ -20,13 +21,13 @@
         "primary": "ore:apatite"
       },
       {
-        "secondary": "ore:iron"
+        "secondary": "ore:apatite"
       },
       {
         "between": "ore:tricalcium_phosphate"
       },
       {
-        "sporadic": "ore:phosphate"
+        "sporadic": "ore:pyrochlore"
       }
     ]
   }

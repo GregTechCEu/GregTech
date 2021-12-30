@@ -1,73 +1,68 @@
 package gregtech.loaders.recipe;
 
-import gregtech.api.GTValues;
-import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.MarkerMaterials;
-import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.ore.OrePrefix;
-import gregtech.common.blocks.BlockFusionCasing;
-import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.items.MetaItems;
-import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.api.unification.material.MarkerMaterials.Tier;
 
 import static gregtech.api.GTValues.*;
+import static gregtech.api.recipes.RecipeMaps.ASSEMBLY_LINE_RECIPES;
+import static gregtech.api.unification.material.Materials.*;
+import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.common.blocks.BlockFusionCasing.CasingType.*;
+import static gregtech.common.blocks.MetaBlocks.FUSION_CASING;
+import static gregtech.common.items.MetaItems.*;
+import static gregtech.common.metatileentities.MetaTileEntities.FUSION_REACTOR;
 
 public class AssemblyLineLoader {
+
     public static void init() {
 
-        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
-                .input(OrePrefix.circuit, MarkerMaterials.Tier.Ultimate)
-                .input(OrePrefix.circuit, MarkerMaterials.Tier.Ultimate)
-                .input(OrePrefix.circuit, MarkerMaterials.Tier.Ultimate)
-                .input(OrePrefix.circuit, MarkerMaterials.Tier.Ultimate)
-                .input(OrePrefix.plate, Materials.Plutonium241)
-                .input(OrePrefix.plate, Materials.Trinium)
-                .inputs(MetaItems.FIELD_GENERATOR_IV.getStackForm(2))
-                .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(32))
-                .input(OrePrefix.wireGtSingle, Materials.IndiumTinBariumTitaniumCuprate, 32)
-                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L * 8))
-                .fluidInputs(Materials.NiobiumTitanium.getFluid(GTValues.L * 8))
-                .outputs(MetaTileEntities.FUSION_REACTOR[0].getStackForm())
-                .duration(800)
-                .EUt(VA[LuV])
-                .buildAndRegister();
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .inputs(FUSION_CASING.getItemVariant(SUPERCONDUCTOR_COIL))
+                .input(circuit, Tier.Ultimate)
+                .input(circuit, Tier.Ultimate)
+                .input(circuit, Tier.Ultimate)
+                .input(circuit, Tier.Ultimate)
+                .input(plateDouble, Plutonium241)
+                .input(plateDouble, Osmiridium)
+                .input(FIELD_GENERATOR_IV, 2)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 64)
+                .input(wireGtSingle, IndiumTinBariumTitaniumCuprate, 32)
+                .fluidInputs(SolderingAlloy.getFluid(L * 8))
+                .fluidInputs(NiobiumTitanium.getFluid(L * 8))
+                .outputs(FUSION_REACTOR[0].getStackForm())
+                .duration(800).EUt(VA[LuV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
-                .input(OrePrefix.circuit, MarkerMaterials.Tier.Super)
-                .input(OrePrefix.circuit, MarkerMaterials.Tier.Super)
-                .input(OrePrefix.circuit, MarkerMaterials.Tier.Super)
-                .input(OrePrefix.circuit, MarkerMaterials.Tier.Super)
-                .input(OrePrefix.plate, Materials.Naquadria)
-                .input(OrePrefix.plate, Materials.Europium)
-                .inputs(MetaItems.FIELD_GENERATOR_LUV.getStackForm(2))
-                .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(48))
-                .input(OrePrefix.wireGtSingle, Materials.UraniumRhodiumDinaquadide, 32)
-                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L * 8))
-                .fluidInputs(Materials.NaquadahAlloy.getFluid(GTValues.L * 8))
-                .outputs(MetaTileEntities.FUSION_REACTOR[1].getStackForm())
-                .duration(1000)
-                .EUt(61440)
-                .buildAndRegister();
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .inputs(FUSION_CASING.getItemVariant(FUSION_COIL))
+                .input(circuit, Tier.Super)
+                .input(circuit, Tier.Super)
+                .input(circuit, Tier.Super)
+                .input(circuit, Tier.Super)
+                .input(plateDouble, Naquadria)
+                .input(plateDouble, Europium)
+                .input(FIELD_GENERATOR_LUV, 2)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 48)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 48)
+                .input(wireGtSingle, UraniumRhodiumDinaquadide, 32)
+                .fluidInputs(SolderingAlloy.getFluid(L * 8))
+                .fluidInputs(VanadiumGallium.getFluid(L * 8))
+                .outputs(FUSION_REACTOR[1].getStackForm())
+                .duration(1000).EUt(61440).buildAndRegister();
 
-        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
-                .input(OrePrefix.circuit, MarkerMaterials.Tier.Infinite)
-                .input(OrePrefix.circuit, MarkerMaterials.Tier.Infinite)
-                .input(OrePrefix.circuit, MarkerMaterials.Tier.Infinite)
-                .input(OrePrefix.circuit, MarkerMaterials.Tier.Infinite)
-                .input(OrePrefix.plate, Materials.NetherStar)
-                .input(OrePrefix.plate, Materials.Americium)
-                .inputs(MetaItems.FIELD_GENERATOR_ZPM.getStackForm(2))
-                .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(64))
-                .input(OrePrefix.wireGtSingle, Materials.EnrichedNaquadahTriniumEuropiumDuranide, 32)
-                .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L * 8))
-                .fluidInputs(Materials.YttriumBariumCuprate.getFluid(GTValues.L * 8))
-                .outputs(MetaTileEntities.FUSION_REACTOR[2].getStackForm())
-                .duration(1000)
-                .EUt(VA[ZPM])
-                .buildAndRegister();
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .inputs(FUSION_CASING.getItemVariant(FUSION_COIL))
+                .input(circuit, Tier.Infinite)
+                .input(circuit, Tier.Infinite)
+                .input(circuit, Tier.Infinite)
+                .input(circuit, Tier.Infinite)
+                .input(QUANTUM_STAR)
+                .input(plateDouble, Americium)
+                .input(FIELD_GENERATOR_ZPM, 2)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 64)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 64)
+                .input(wireGtSingle, EnrichedNaquadahTriniumEuropiumDuranide, 32)
+                .fluidInputs(SolderingAlloy.getFluid(L * 8))
+                .fluidInputs(YttriumBariumCuprate.getFluid(L * 8))
+                .outputs(FUSION_REACTOR[2].getStackForm())
+                .duration(1000).EUt(VA[ZPM]).buildAndRegister();
     }
 }

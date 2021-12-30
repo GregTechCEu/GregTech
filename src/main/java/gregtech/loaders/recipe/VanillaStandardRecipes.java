@@ -17,8 +17,10 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 
 import static gregtech.api.GTValues.*;
+import static gregtech.api.items.OreDictNames.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
@@ -84,11 +86,6 @@ public class VanillaStandardRecipes {
         COMPRESSOR_RECIPES.recipeBuilder().duration(300).EUt(2)
                 .inputs(new ItemStack(Items.GLOWSTONE_DUST, 4))
                 .outputs(new ItemStack(Blocks.GLOWSTONE))
-                .buildAndRegister();
-
-        COMPRESSOR_RECIPES.recipeBuilder().duration(300).EUt(2)
-                .inputs(new ItemStack(Items.QUARTZ, 4))
-                .outputs(new ItemStack(Blocks.QUARTZ_BLOCK))
                 .buildAndRegister();
 
         COMPRESSOR_RECIPES.recipeBuilder().inputs(new ItemStack(Blocks.ICE, 2, GTValues.W)).outputs(new ItemStack(Blocks.PACKED_ICE)).buildAndRegister();
@@ -209,7 +206,7 @@ public class VanillaStandardRecipes {
                 .buildAndRegister();
 
         FORGE_HAMMER_RECIPES.recipeBuilder()
-                .input(cobblestone.name(), 1)
+                .input(cobblestone, 1)
                 .outputs(new ItemStack(Blocks.GRAVEL, 1))
                 .EUt(16).duration(10)
                 .buildAndRegister();
@@ -245,12 +242,12 @@ public class VanillaStandardRecipes {
         if (!ConfigHolder.recipes.disableManualCompression) {
             ModHandler.addShapelessRecipe("nether_quartz_block_to_nether_quartz", new ItemStack(Items.QUARTZ, 4), Blocks.QUARTZ_BLOCK);
         }
-        ModHandler.addShapelessRecipe("clay_block_to_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Clay, 4), 'm', Blocks.CLAY);
-        ModHandler.addShapelessRecipe("clay_ball_to_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Clay), 'm', Items.CLAY_BALL);
-        ModHandler.addShapelessRecipe("brick_block_to_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Brick, 4), 'm', Blocks.BRICK_BLOCK);
-        ModHandler.addShapelessRecipe("brick_to_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Brick), 'm', Items.BRICK);
-        ModHandler.addShapelessRecipe("wheat_to_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Wheat, 1), 'm', Items.WHEAT);
-        ModHandler.addShapelessRecipe("gravel_to_flint", new ItemStack(Items.FLINT, 1), 'm', Blocks.GRAVEL);
+        ModHandler.addShapelessRecipe("clay_block_to_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Clay), 'm', Blocks.CLAY);
+        ModHandler.addShapelessRecipe("clay_ball_to_dust", OreDictUnifier.get(OrePrefix.dustSmall, Materials.Clay), 'm', Items.CLAY_BALL);
+        ModHandler.addShapelessRecipe("brick_block_to_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Brick), 'm', Blocks.BRICK_BLOCK);
+        ModHandler.addShapelessRecipe("brick_to_dust", OreDictUnifier.get(OrePrefix.dustSmall, Materials.Brick), 'm', Items.BRICK);
+        ModHandler.addShapelessRecipe("wheat_to_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Wheat), 'm', Items.WHEAT);
+        ModHandler.addShapelessRecipe("gravel_to_flint", new ItemStack(Items.FLINT), 'm', Blocks.GRAVEL);
         ModHandler.addShapelessRecipe("bone_to_bone_meal", new ItemStack(Items.DYE, 4, 15), 'm', Items.BONE);
         ModHandler.addShapelessRecipe("blaze_rod_to_powder", new ItemStack(Items.BLAZE_POWDER, 3), 'm', Items.BLAZE_ROD);
 
@@ -292,7 +289,7 @@ public class VanillaStandardRecipes {
                 .buildAndRegister();
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-                .inputs(CountableIngredient.from("blockWool", 1))
+                .inputs(CountableIngredient.from("wool", 1))
                 .outputs(new ItemStack(Items.STRING, 3))
                 .chancedOutput(new ItemStack(Items.STRING, 1), 2000, 800)
                 .duration(400)
@@ -394,7 +391,20 @@ public class VanillaStandardRecipes {
                 .inputs(new ItemStack(Items.COAL, 1, GTValues.W))
                 .input(OrePrefix.stick, Materials.Wood, 1)
                 .outputs(new ItemStack(Blocks.TORCH, 4))
-                .duration(400).EUt(1).buildAndRegister();
+                .duration(100).EUt(1).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(gem, Coke)
+                .input(OrePrefix.stick, Materials.Wood, 1)
+                .outputs(new ItemStack(Blocks.TORCH, 8))
+                .duration(100).EUt(1).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(dust, Coke)
+                .input(OrePrefix.stick, Materials.Wood, 1)
+                .outputs(new ItemStack(Blocks.TORCH, 8))
+                .duration(100).EUt(1).buildAndRegister();
+
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.PLANKS, 1, 0))
@@ -437,10 +447,11 @@ public class VanillaStandardRecipes {
         ModHandler.addShapedRecipe("torch_phosphorus", new ItemStack(Blocks.TORCH, 6), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Phosphorus), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_coke", new ItemStack(Blocks.TORCH, 8), "C", "S", 'C', new UnificationEntry(OrePrefix.gem, Materials.Coke), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_coke_dust", new ItemStack(Blocks.TORCH, 8), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Coke), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
+        ModHandler.addShapedRecipe("torch_creosote", new ItemStack(Blocks.TORCH, 16), "WB", "S ", 'W', OreDictUnifier.get("wool"), 'S', new UnificationEntry(stick, Wood), 'B', FluidUtil.getFilledBucket(Creosote.getFluid(1000)));
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(dust, Redstone).input(stick, Wood).outputs(new ItemStack(Blocks.REDSTONE_TORCH, 1)).duration(400).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Sulfur).outputs(new ItemStack(Blocks.TORCH, 2)).duration(400).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Phosphorus).outputs(new ItemStack(Blocks.TORCH, 6)).duration(400).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Sulfur).outputs(new ItemStack(Blocks.TORCH, 2)).duration(100).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).input(stick, Wood).input(dust, Phosphorus).outputs(new ItemStack(Blocks.TORCH, 6)).duration(100).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(6).inputs(new ItemStack(Blocks.PLANKS, 6, 0)).outputs(new ItemStack(Blocks.OAK_STAIRS, 4)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(6).inputs(new ItemStack(Blocks.PLANKS, 6, 1)).outputs(new ItemStack(Blocks.SPRUCE_STAIRS, 4)).buildAndRegister();
@@ -505,6 +516,11 @@ public class VanillaStandardRecipes {
                 .inputs(new ItemStack(Blocks.SNOW, 1))
                 .outputs(new ItemStack(Blocks.SNOW_LAYER, 16))
                 .duration(25).EUt(VA[ULV]).buildAndRegister();
+
+        CUTTER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.GLOWSTONE))
+                .output(plate, Glowstone, 4)
+                .duration(100).EUt(16).buildAndRegister();
     }
 
     /**
@@ -684,25 +700,25 @@ public class VanillaStandardRecipes {
 
         ModHandler.addShapedRecipe("piston_bronze", new ItemStack(Blocks.PISTON, 1), "WWW", "CBC", "CRC",
                 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood),
-                'C', OrePrefix.stoneCobble,
+                'C', stoneCobble,
                 'R', new UnificationEntry(OrePrefix.dust, Materials.Redstone),
                 'B', new UnificationEntry(OrePrefix.ingot, Materials.Bronze));
 
         ModHandler.addShapedRecipe("piston_steel", new ItemStack(Blocks.PISTON, 2), "WWW", "CBC", "CRC",
                 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood),
-                'C', OrePrefix.stoneCobble,
+                'C', stoneCobble,
                 'R', new UnificationEntry(OrePrefix.dust, Materials.Redstone),
                 'B', new UnificationEntry(OrePrefix.ingot, Materials.Steel));
 
         ModHandler.addShapedRecipe("piston_aluminium", new ItemStack(Blocks.PISTON, 4), "WWW", "CBC", "CRC",
                 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood),
-                'C', OrePrefix.stoneCobble,
+                'C', stoneCobble,
                 'R', new UnificationEntry(OrePrefix.dust, Materials.Redstone),
                 'B', new UnificationEntry(OrePrefix.ingot, Materials.Aluminium));
 
         ModHandler.addShapedRecipe("piston_titanium", new ItemStack(Blocks.PISTON, 8), "WWW", "CBC", "CRC",
                 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood),
-                'C', OrePrefix.stoneCobble,
+                'C', stoneCobble,
                 'R', new UnificationEntry(OrePrefix.dust, Materials.Redstone),
                 'B', new UnificationEntry(OrePrefix.ingot, Materials.Titanium));
 
@@ -899,17 +915,13 @@ public class VanillaStandardRecipes {
 
         ModHandler.addSmeltingRecipe(new ItemStack(Items.SLIME_BALL), RUBBER_DROP.getStackForm());
 
-        ModHandler.addShapelessRecipe("powder_coal", new ItemStack(Items.GUNPOWDER, 6), new UnificationEntry(OrePrefix.dust, Materials.Coal), new UnificationEntry(OrePrefix.dust, Materials.Coal), new UnificationEntry(OrePrefix.dust, Materials.Coal), new UnificationEntry(OrePrefix.dust, Materials.Sulfur), new UnificationEntry(OrePrefix.dust, Materials.Saltpeter), new UnificationEntry(OrePrefix.dust, Materials.Saltpeter));
-        ModHandler.addShapelessRecipe("powder_charcoal", new ItemStack(Items.GUNPOWDER, 6), new UnificationEntry(OrePrefix.dust, Materials.Charcoal), new UnificationEntry(OrePrefix.dust, Materials.Charcoal), new UnificationEntry(OrePrefix.dust, Materials.Charcoal), new UnificationEntry(OrePrefix.dust, Materials.Sulfur), new UnificationEntry(OrePrefix.dust, Materials.Saltpeter), new UnificationEntry(OrePrefix.dust, Materials.Saltpeter));
-        ModHandler.addShapelessRecipe("powder_carbon", new ItemStack(Items.GUNPOWDER, 6), new UnificationEntry(OrePrefix.dust, Materials.Carbon), new UnificationEntry(OrePrefix.dust, Materials.Carbon), new UnificationEntry(OrePrefix.dust, Materials.Carbon), new UnificationEntry(OrePrefix.dust, Materials.Sulfur), new UnificationEntry(OrePrefix.dust, Materials.Saltpeter), new UnificationEntry(OrePrefix.dust, Materials.Saltpeter));
-
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.STRING, 3))
                 .outputs(new ItemStack(Blocks.WOOL, 1, 0))
                 .duration(100).EUt(4).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(cobblestone, Stone)
+                .input(cobblestone, 1)
                 .inputs(new ItemStack(Blocks.VINE))
                 .outputs(new ItemStack(Blocks.MOSSY_COBBLESTONE))
                 .duration(40).EUt(1).buildAndRegister();
@@ -920,7 +932,7 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Blocks.STONEBRICK, 1, 1))
                 .duration(40).EUt(1).buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(6).input(stoneCobble, Stone, 6).outputs(new ItemStack(Blocks.STONE_STAIRS, 4)).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(6).input(stoneCobble, 6).outputs(new ItemStack(Blocks.STONE_STAIRS, 4)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(6).inputs(new ItemStack(Blocks.BRICK_BLOCK, 6)).outputs(new ItemStack(Blocks.BRICK_STAIRS, 4)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(6).inputs(new ItemStack(Blocks.STONEBRICK, 6, GTValues.W)).outputs(new ItemStack(Blocks.STONE_BRICK_STAIRS, 4)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(1).duration(100).circuitMeta(6).inputs(new ItemStack(Blocks.NETHER_BRICK, 6)).outputs(new ItemStack(Blocks.NETHER_BRICK_STAIRS, 4)).buildAndRegister();
@@ -949,7 +961,7 @@ public class VanillaStandardRecipes {
 
         if (!ConfigHolder.recipes.hardMiscRecipes) {
             ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(6).circuitMeta(4).input("plankWood", 4).outputs(new ItemStack(Blocks.CRAFTING_TABLE)).buildAndRegister();
-            ASSEMBLER_RECIPES.recipeBuilder().circuitMeta(8).input(OrePrefix.stoneCobble, Materials.Stone, 8).outputs(new ItemStack(Blocks.FURNACE)).duration(100).EUt(VA[ULV]).buildAndRegister();
+            ASSEMBLER_RECIPES.recipeBuilder().circuitMeta(8).input(stoneCobble, 8).outputs(new ItemStack(Blocks.FURNACE)).duration(100).EUt(VA[ULV]).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().inputs(new ItemStack(Blocks.OBSIDIAN, 4)).input(gem, Diamond, 2).inputs(new ItemStack(Items.BOOK)).outputs(new ItemStack(Blocks.ENCHANTING_TABLE)).duration(100).EUt(VA[ULV]).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV]).circuitMeta(1).inputs(new ItemStack(Blocks.COBBLESTONE, 7)).inputs(new ItemStack(Items.BOW)).input(dust, Redstone).outputs(new ItemStack(Blocks.DISPENSER)).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV]).circuitMeta(2).inputs(new ItemStack(Blocks.COBBLESTONE, 7)).input(dust, Redstone).outputs(new ItemStack(Blocks.DROPPER)).buildAndRegister();
@@ -1077,6 +1089,17 @@ public class VanillaStandardRecipes {
                 .notConsumable(new IntCircuitIngredient(9))
                 .outputs(new ItemStack(Blocks.PRISMARINE, 1, 1))
                 .duration(200).EUt(2).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .fluidInputs(Blaze.getFluid(GTValues.L))
+                .input(OrePrefix.gem, Materials.EnderPearl)
+                .outputs(new ItemStack(Items.ENDER_EYE))
+                .duration(50).EUt(VA[HV]).buildAndRegister();
+
+        COMPRESSOR_RECIPES.recipeBuilder()
+                .input(dust, Blaze, 4)
+                .output(stick, Blaze)
+                .buildAndRegister();
     }
 
     /**

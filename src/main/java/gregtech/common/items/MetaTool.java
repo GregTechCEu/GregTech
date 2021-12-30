@@ -4,21 +4,11 @@ import gregtech.api.GTValues;
 import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.toolitem.*;
-import gregtech.api.recipes.ModHandler;
 import gregtech.api.sound.GTSounds;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.ConfigHolder;
 import gregtech.common.tools.*;
 import gregtech.common.tools.largedrills.ToolDrills;
-import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.ItemStack;
-
-import java.util.function.Function;
 
 import static gregtech.common.items.MetaItems.*;
 
@@ -59,7 +49,7 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
                 .setFullRepairCost(6)
                 .addOreDict(ToolDictNames.craftingToolHardHammer)
                 .addComponents(new HammerItemStat())
-                .setSound(SoundEvents.BLOCK_ANVIL_USE);
+                .setSound(SoundEvents.BLOCK_ANVIL_LAND);
 
         SOFT_HAMMER = addItem(7, "tool.soft_hammer").setToolStats(new ToolSoftHammer())
                 .setFullRepairCost(6)
@@ -165,18 +155,21 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
         CHAINSAW_LV = addItem(25, "tool.chainsaw.lv").setToolStats(new ToolChainsaw(GTValues.LV))
                 .setFullRepairCost(4)
                 .addOreDict(ToolDictNames.craftingToolSaw)
+                .addOreDict(ToolDictNames.craftingToolChainsaw)
                 .addComponents(ElectricStats.createElectricItem(100000L, GTValues.LV))
                 .setSound(GTSounds.CHAINSAW_TOOL);
 
         CHAINSAW_MV = addItem(26, "tool.chainsaw.mv").setToolStats(new ToolChainsaw(GTValues.MV))
                 .setFullRepairCost(4)
                 .addOreDict(ToolDictNames.craftingToolSaw)
+                .addOreDict(ToolDictNames.craftingToolChainsaw)
                 .addComponents(ElectricStats.createElectricItem(400000L, GTValues.MV))
                 .setSound(GTSounds.CHAINSAW_TOOL);
 
         CHAINSAW_HV = addItem(27, "tool.chainsaw.hv").setToolStats(new ToolChainsaw(GTValues.HV))
                 .setFullRepairCost(4)
                 .addOreDict(ToolDictNames.craftingToolSaw)
+                .addOreDict(ToolDictNames.craftingToolChainsaw)
                 .addComponents(ElectricStats.createElectricItem(1600000L, GTValues.HV))
                 .setSound(GTSounds.CHAINSAW_TOOL);
 

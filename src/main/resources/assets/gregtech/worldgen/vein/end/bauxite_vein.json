@@ -1,0 +1,37 @@
+{
+  "weight": 40,
+  "density": 0.25,
+  "min_height": 10,
+  "max_height": 80,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "aluminium"
+  },
+  "dimension_filter": [
+    "name:the_end"
+  ],
+  "generator": {
+    "type": "layered",
+    "radius": [
+      14,
+      16
+    ]
+  },
+  "filler": {
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:bauxite"
+      },
+      {
+        "secondary": "ore:ilmenite"
+      },
+      {
+        "between": "ore:aluminium"
+      },
+      {
+        "sporadic": "ore:ilmenite"
+      }
+    ]
+  }
+}

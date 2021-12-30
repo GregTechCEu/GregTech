@@ -112,7 +112,8 @@ public class GuiTextures {
     public static final TextureArea EXTRACTOR_OVERLAY = TextureArea.fullImage("textures/gui/overlay/extractor_overlay.png");
     public static final SteamTexture EXTRACTOR_OVERLAY_STEAM = SteamTexture.fullImage("textures/gui/overlay/extractor_overlay_%s.png");
     public static final TextureArea FILTER_SLOT_OVERLAY = TextureArea.fullImage("textures/gui/overlay/filter_slot_overlay.png");
-    public static final TextureArea FURNACE_OVERLAY = TextureArea.fullImage("textures/gui/overlay/furnace_overlay.png");
+    public static final TextureArea FURNACE_OVERLAY_1 = TextureArea.fullImage("textures/gui/overlay/furnace_overlay_1.png");
+    public static final TextureArea FURNACE_OVERLAY_2 = TextureArea.fullImage("textures/gui/overlay/furnace_overlay_2.png");
     public static final SteamTexture FURNACE_OVERLAY_STEAM = SteamTexture.fullImage("textures/gui/overlay/furnace_overlay_%s.png");
     public static final TextureArea HAMMER_OVERLAY = TextureArea.fullImage("textures/gui/overlay/hammer_overlay.png");
     public static final SteamTexture HAMMER_OVERLAY_STEAM = SteamTexture.fullImage("textures/gui/overlay/hammer_overlay_%s.png");
@@ -175,6 +176,7 @@ public class GuiTextures {
     public static final TextureArea PROGRESS_BAR_COMPRESS = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_compress.png");
     public static final SteamTexture PROGRESS_BAR_COMPRESS_STEAM = SteamTexture.fullImage("textures/gui/progress_bar/progress_bar_compress_%s.png");
     public static final TextureArea PROGRESS_BAR_CRACKING = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_cracking.png");
+    public static final TextureArea PROGRESS_BAR_CRACKING_INPUT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_cracking_2.png");
     public static final TextureArea PROGRESS_BAR_CRYSTALLIZATION = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_crystallization.png");
     public static final TextureArea PROGRESS_BAR_DISTILLATION_TOWER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_distillation_tower.png");
     public static final TextureArea PROGRESS_BAR_EXTRACT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_extract.png");

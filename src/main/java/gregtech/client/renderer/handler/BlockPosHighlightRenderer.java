@@ -19,6 +19,7 @@ public class BlockPosHighlightRenderer {
     private static BlockPos posHighLight;
     private static long hlEndTime;
 
+
     public static void renderBlockBoxHighLight(BlockPos blockpos, long durTimeMillis) {
         posHighLight = blockpos;
         hlEndTime = System.currentTimeMillis() + durTimeMillis;
@@ -66,5 +67,4 @@ public class BlockPosHighlightRenderer {
             GlStateManager.popMatrix();
         }
     }
-
 }

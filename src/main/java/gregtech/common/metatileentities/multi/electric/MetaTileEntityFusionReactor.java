@@ -19,11 +19,12 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.client.renderer.ICubeRenderer;
-import gregtech.client.renderer.ICustomRenderFast;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.shader.postprocessing.BloomEffect;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.RenderBufferHelper;
 import gregtech.client.utils.RenderUtil;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFusionCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
@@ -195,7 +196,8 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         ((EnergyContainerHandler) this.energyContainer).setEnergyStored(energyStored);
     }
 
-    private void initializeAbilities() {
+    @Override
+    protected void initializeAbilities() {
         this.inputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.IMPORT_ITEMS));
         this.inputFluidInventory = new FluidTankList(true, getAbilities(MultiblockAbility.IMPORT_FLUIDS));
         this.outputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.EXPORT_ITEMS));
@@ -230,7 +232,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                     writeCustomData(GregtechDataCodes.UPDATE_COLOR, this::writeColor);
                 }
             }
-        } else if (!recipeMapWorkable.isWorking() && color != null){
+        } else if (!recipeMapWorkable.isWorking() && isStructureFormed() && color != null){
             color = null;
             writeCustomData(GregtechDataCodes.UPDATE_COLOR, this::writeColor);
         }
@@ -278,6 +280,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.fusion_reactor.capacity", calculateEnergyStorageFactor(16) / 1000000L));
+        tooltip.add(I18n.format("gregtech.machine.fusion_reactor.overclocking"));
     }
 
     @Nonnull
@@ -299,6 +302,16 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
         public FusionRecipeLogic(MetaTileEntityFusionReactor tileEntity) {
             super(tileEntity);
+        }
+
+        @Override
+        protected double getOverclockingDurationDivisor() {
+            return 2.0D;
+        }
+
+        @Override
+        protected double getOverclockingVoltageMultiplier() {
+            return 2.0D;
         }
 
         @Override
@@ -354,7 +367,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         if (color != null && MinecraftForgeClient.getRenderPass() == 0) {
             final int c = color;
-            BloomEffectUtil.requestRenderFast(RENDER_HANDLER, (buffer)->{
+            BloomEffectUtil.requestCustomBloom(RENDER_HANDLER, (buffer)->{
                 int color = RenderUtil.colorInterpolator(c, -1).apply(Eases.EaseQuadIn.getInterpolation(Math.abs((Math.abs(getOffsetTimer() % 50) + partialTicks) - 25) / 25));
                 float a = (float)(color >> 24 & 255) / 255.0F;
                 float r = (float)(color >> 16 & 255) / 255.0F;
@@ -391,13 +404,24 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         return true;
     }
 
-    static ICustomRenderFast RENDER_HANDLER = new ICustomRenderFast(){
+    static BloomEffectUtil.IBloomRenderFast RENDER_HANDLER = new BloomEffectUtil.IBloomRenderFast(){
+        @Override
+        public int customBloomStyle() {
+            return ConfigHolder.client.shader.fusionBloom.useShader ? ConfigHolder.client.shader.fusionBloom.bloomStyle : -1;
+        }
+
         float lastBrightnessX;
         float lastBrightnessY;
 
         @Override
         @SideOnly(Side.CLIENT)
         public void preDraw(BufferBuilder buffer) {
+            BloomEffect.strength = (float) ConfigHolder.client.shader.fusionBloom.strength;
+            BloomEffect.baseBrightness = (float) ConfigHolder.client.shader.fusionBloom.baseBrightness;
+            BloomEffect.highBrightnessThreshold = (float) ConfigHolder.client.shader.fusionBloom.highBrightnessThreshold;
+            BloomEffect.lowBrightnessThreshold = (float) ConfigHolder.client.shader.fusionBloom.lowBrightnessThreshold;
+            BloomEffect.step = 1;
+
             lastBrightnessX = OpenGlHelper.lastBrightnessX;
             lastBrightnessY = OpenGlHelper.lastBrightnessY;
             GlStateManager.color(1,1,1,1);

@@ -339,24 +339,9 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         this.pumpMode = PumpMode.values()[tagCompound.getInteger("PumpMode")];
         this.distributionMode = DistributionMode.values()[tagCompound.getInteger("DistributionMode")];
         this.blocksInput = tagCompound.getBoolean("BlocksInput");
-        //LEGACY SAVE FORMAT SUPPORT
-        if (tagCompound.hasKey("AllowManualIO")) {
-            this.manualImportExportMode = tagCompound.getBoolean("AllowManualIO")
-                    ? ManualImportExportMode.FILTERED
-                    : ManualImportExportMode.DISABLED;
-        }
-        if (tagCompound.hasKey("FluidFilter")) {
-            this.fluidFilter.deserializeNBT(tagCompound);
-        } else {
-            this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
-        }
-        if (tagCompound.hasKey("WorkingAllowed")) {
-            this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
-        }
-        if (tagCompound.hasKey("ManualImportExportMode")) {
-            this.manualImportExportMode = ManualImportExportMode.values()[tagCompound.getInteger("ManualImportExportMode")];
-        }
-
+        this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
+        this.manualImportExportMode = ManualImportExportMode.values()[tagCompound.getInteger("ManualImportExportMode")];
+        this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
     }
 
     @Override

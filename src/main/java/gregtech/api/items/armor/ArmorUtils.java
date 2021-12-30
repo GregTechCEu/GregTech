@@ -27,10 +27,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 public class ArmorUtils {
@@ -50,31 +47,65 @@ public class ArmorUtils {
     }
 
     /**
-     * Searching in player's inventory for tool/armor item, w
+     * Searches all three player inventories for items that can be charged
      *
      * @param tier of charger
-     * @return index of slot, where is item
+     * @return Map of the inventory and a list of the index of a chargable item
      */
-    public static int getChargeableItem(EntityPlayer player, int tier) {
-        int result = -1;
+    public static List<Pair<NonNullList<ItemStack>, List<Integer>>> getChargeableItem(EntityPlayer player, int tier) {
+        List<Pair<NonNullList<ItemStack>, List<Integer>>> inventorySlotMap = new ArrayList<>();
+
+        List<Integer> openMainSlots = new ArrayList<>();
         for (int i = 0; i < player.inventory.mainInventory.size(); i++) {
             ItemStack current = player.inventory.mainInventory.get(i);
             IElectricItem item = current.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
             if (item == null) continue;
 
             if (isPossibleToCharge(current) && item.getTier() <= tier) {
-                result = i;
-                break;
+                openMainSlots.add(i);
             }
         }
-        return result;
+
+        if(!openMainSlots.isEmpty()) {
+            inventorySlotMap.add(Pair.of(player.inventory.mainInventory, openMainSlots));
+        }
+
+
+        List<Integer> openArmorSlots = new ArrayList<>();
+        for(int i = 0; i < player.inventory.armorInventory.size(); i++) {
+            ItemStack current = player.inventory.armorInventory.get(i);
+            IElectricItem item = current.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+            if(item == null) {
+                continue;
+            }
+
+            if(isPossibleToCharge(current) && item.getTier() <= tier) {
+                openArmorSlots.add(i);
+            }
+        }
+
+        if(!openArmorSlots.isEmpty()) {
+            inventorySlotMap.add(Pair.of(player.inventory.armorInventory, openArmorSlots));
+        }
+
+        ItemStack offHand = player.inventory.offHandInventory.get(0);
+        IElectricItem offHandItem = offHand.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if(offHandItem == null) {
+            return inventorySlotMap;
+        }
+
+        if(isPossibleToCharge(offHand) && offHandItem.getTier() <= tier) {
+            inventorySlotMap.add(Pair.of(player.inventory.offHandInventory, Collections.singletonList(0)));
+        }
+
+        return inventorySlotMap;
     }
 
     /**
      * Spawn particle behind player with speedY speed
      */
     public static void spawnParticle(World world, EntityPlayer player, EnumParticleTypes type, double speedY) {
-        if (SIDE.isClient()) {
+        if (type != null && SIDE.isClient()) {
             Vec3d forward = player.getForward();
             world.spawnParticle(type, player.posX - forward.x, player.posY + 0.5D, player.posZ - forward.z, 0.0D, speedY, 0.0D);
         }
@@ -207,6 +238,7 @@ public class ArmorUtils {
             }
         }
 
+        @Nonnull
         private Pair<Integer, Integer> getStringCoord(int index) {
             int posX;
             int posY;
@@ -214,25 +246,19 @@ public class ArmorUtils {
             int windowHeight = new ScaledResolution(mc).getScaledHeight();
             int windowWidth = new ScaledResolution(mc).getScaledWidth();
             int stringWidth = mc.fontRenderer.getStringWidth(stringList.get(index));
-            ConfigHolder.ClientOptions.ArmorHud configs = ConfigHolder.client.armorHud;
-            switch (configs.hudLocation) {
-                case 1:
-                    posX = 1 + configs.hudOffsetX;
-                    posY = 1 + configs.hudOffsetY + (fontHeight * index);
-                    break;
-                case 2:
-                    posX = windowWidth - (1 + configs.hudOffsetX) - stringWidth;
-                    posY = 1 + configs.hudOffsetY + (fontHeight * index);
-                    break;
-                case 3:
-                    posX = 1 + configs.hudOffsetX;
-                    posY = windowHeight - fontHeight * (stringAmount - index) - 1 - configs.hudOffsetY;
-                    break;
-                case 4:
-                    posX = windowWidth - (1 + configs.hudOffsetX) - stringWidth;
-                    posY = windowHeight - fontHeight * (stringAmount - index) - 1 - configs.hudOffsetY;
-                    break;
-                default:
+            if (ConfigHolder.client.armorHud.hudLocation == 1) {
+                posX = 1 + ConfigHolder.client.armorHud.hudOffsetX;
+                posY = 1 + ConfigHolder.client.armorHud.hudOffsetY + (fontHeight * index);
+            } else if (ConfigHolder.client.armorHud.hudLocation == 2) {
+                posX = windowWidth - (1 + ConfigHolder.client.armorHud.hudOffsetX) - stringWidth;
+                posY = 1 + ConfigHolder.client.armorHud.hudOffsetY + (fontHeight * index);
+            } else if (ConfigHolder.client.armorHud.hudLocation == 3) {
+                posX = 1 + ConfigHolder.client.armorHud.hudOffsetX;
+                posY = windowHeight - fontHeight * (stringAmount - index) - 1 - ConfigHolder.client.armorHud.hudOffsetY;
+            } else if (ConfigHolder.client.armorHud.hudLocation == 4){
+                posX = windowWidth - (1 + ConfigHolder.client.armorHud.hudOffsetX) - stringWidth;
+                posY = windowHeight - fontHeight * (stringAmount - index) - 1 - ConfigHolder.client.armorHud.hudOffsetY;
+            } else {
                     throw new IllegalArgumentException();
             }
             return Pair.of(posX, posY);

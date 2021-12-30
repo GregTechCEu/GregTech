@@ -18,7 +18,6 @@ import gregtech.api.worldgen.populator.IVeinPopulator;
 import gregtech.api.worldgen.populator.VeinBufferPopulator;
 import gregtech.api.worldgen.populator.VeinChunkPopulator;
 import gregtech.api.worldgen.shape.IBlockGeneratorAccess;
-import gregtech.api.worldgen.shape.LayeredGenerator;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -27,6 +26,7 @@ import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
+import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -251,13 +251,13 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
 
     private int calculateVeinCenterX() {
         int gridSizeX = WorldGeneratorImpl.GRID_SIZE_X * 16;
-        int offset = ConfigHolder.worldgen.generateVeinsInCenterOfChunk ? gridSizeX / 2 : gridRandom.nextInt(gridSizeX);
+        int offset = (ConfigHolder.worldgen.generateVeinsInCenterOfChunk && currentOreVein.isVein()) ? gridSizeX / 2 : gridRandom.nextInt(gridSizeX);
         return gridX * gridSizeX + offset;
     }
 
     private int calculateVeinCenterZ() {
         int gridSizeZ = WorldGeneratorImpl.GRID_SIZE_Z * 16;
-        int offset = ConfigHolder.worldgen.generateVeinsInCenterOfChunk ? gridSizeZ / 2 : gridRandom.nextInt(gridSizeZ);
+        int offset = (ConfigHolder.worldgen.generateVeinsInCenterOfChunk && currentOreVein.isVein()) ? gridSizeZ / 2 : gridRandom.nextInt(gridSizeZ);
         return gridZ * gridSizeZ + offset;
     }
 
@@ -297,15 +297,7 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
             long chunkKey = (long) chunkX << 32 | chunkZ & 0xFFFFFFFFL;
             ChunkDataEntry dataEntry = dataByChunkPos.get(chunkKey);
             if (dataEntry == null) {
-                if (currentOreVein.getShapeGenerator() instanceof LayeredGenerator) {
-                    dataEntry = new ChunkDataEntry(
-                            chunkX, chunkZ,
-                            currentOreVein.getDensity(), gridRandom,
-                            veinCenterY - ((LayeredGenerator) currentOreVein.getShapeGenerator()).getYRadius()
-                    );
-                } else {
-                    dataEntry = new ChunkDataEntry(chunkX, chunkZ, gridRandom);
-                }
+                dataEntry = new ChunkDataEntry(chunkX, chunkZ, gridRandom);
                 dataByChunkPos.put(chunkKey, dataEntry);
             }
             dataEntry.setBlock(localX, worldY, localZ, definition, index);
@@ -315,35 +307,32 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
 
     public static class ChunkDataEntry {
 
-        private final Map<OreDepositDefinition, TLongList> oreBlocks = new HashMap<>();
+        private final Map<OreDepositDefinition, MutablePair<TLongList, Integer>> oreBlocks = new HashMap<>();
         private final Map<OreDepositDefinition, TLongSet> generatedBlocksSet = new HashMap<>();
         private final List<OreDepositDefinition> generatedOres = new ArrayList<>();
         private final int chunkX;
         private final int chunkZ;
-        private final double density;
         private final Random gridRandom;
 
-        private final int lowestY;
-
         public ChunkDataEntry(int chunkX, int chunkZ, Random gridRandom) {
-            this(chunkX, chunkZ, 1.0, gridRandom, 0);
-        }
-
-        public ChunkDataEntry(int chunkX, int chunkZ, double density, Random gridRandom, int lowestY) {
             this.chunkX = chunkX;
             this.chunkZ = chunkZ;
-            this.density = density;
             this.gridRandom = gridRandom;
-            this.lowestY = lowestY;
         }
 
         public void setBlock(int x, int y, int z, OreDepositDefinition definition, int index) {
             int xzValue = (x & 0xFF) | ((z & 0xFF) << 8) | ((y & 0xFF) << 16);
             long blockIndex = (long) xzValue << 32 | index & 0xFFFFFFFFL;
-            TLongList longList = oreBlocks.get(definition);
-            if (longList == null) {
+            MutablePair<TLongList, Integer> pair = oreBlocks.get(definition);
+            TLongList longList;
+            if (pair == null) {
                 longList = new TLongArrayList();
-                oreBlocks.put(definition, longList);
+                oreBlocks.put(definition, MutablePair.of(longList, y));
+            } else {
+                longList = pair.getLeft();
+                if (y < pair.getRight()) {
+                    pair.setRight(y);
+                }
             }
             longList.add(blockIndex);
         }
@@ -351,8 +340,10 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
         public boolean populateChunk(World world) {
             MutableBlockPos blockPos = new MutableBlockPos();
             boolean generatedAnything = false;
-            for (OreDepositDefinition definition : oreBlocks.keySet()) {
-                TLongList blockIndexList = oreBlocks.get(definition);
+            for (Map.Entry<OreDepositDefinition, MutablePair<TLongList, Integer>> entry : oreBlocks.entrySet()) {
+                OreDepositDefinition definition = entry.getKey();
+                TLongList blockIndexList = entry.getValue().getLeft();
+                int lowestY = entry.getValue().getRight();
                 TLongSet generatedBlocks = new TLongHashSet();
                 boolean generatedOreVein = false;
                 for (int i = 0; i < blockIndexList.size(); i++) {
@@ -369,7 +360,7 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
                         //it's primary ore block
                         if (!definition.getGenerationPredicate().test(currentState, world, blockPos))
                             continue; //do not generate if predicate didn't match
-                        newState = definition.getBlockFiller().apply(currentState, world, blockPos, blockX, blockY, blockZ, density, gridRandom, blockY - lowestY);
+                        newState = definition.getBlockFiller().apply(currentState, world, blockPos, blockX, blockY, blockZ, definition.getDensity(), gridRandom, blockY - lowestY);
                     } else {
                         //it's populator-generated block with index
                         VeinBufferPopulator populator = (VeinBufferPopulator) definition.getVeinPopulator();

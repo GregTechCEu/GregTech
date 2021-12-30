@@ -7,6 +7,9 @@ public enum OreDictNames {
     chestWood,
     chestEnder,
 
+    cobblestone, // For just cobblestone.
+    stoneCobble, // For any kind of cobblestone (e.g. mossy cobblestone).
+
     craftingAnvil,
     craftingFurnace,
     craftingBook,

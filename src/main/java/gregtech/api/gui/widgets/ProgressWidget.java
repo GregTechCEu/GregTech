@@ -150,7 +150,7 @@ public class ProgressWidget extends Widget {
         }
     }
 
-    private static class TimedProgressSupplier implements DoubleSupplier {
+    public static class TimedProgressSupplier implements DoubleSupplier {
 
         private final int msPerCycle;
         private final int maxValue;
@@ -166,6 +166,10 @@ public class ProgressWidget extends Widget {
 
         @Override
         public double getAsDouble() {
+            return calculateTime();
+        }
+
+        private double calculateTime() {
             long currentTime = System.currentTimeMillis();
             long msPassed = (currentTime - startTime) % msPerCycle;
             int currentValue = (int) Math.floorDiv(msPassed * (maxValue + 1), msPerCycle);

@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 public class SimpleMachineGuideApp extends GuideApp<MetaTileEntity> {
 
     public SimpleMachineGuideApp() {
-        super("machines", new ItemStackTexture(MetaTileEntities.CHEMICAL_REACTOR[0].getStackForm()));
+        super("machines", new ItemStackTexture(MetaTileEntities.CHEMICAL_REACTOR[GTValues.LV].getStackForm()));
     }
 
     @Override

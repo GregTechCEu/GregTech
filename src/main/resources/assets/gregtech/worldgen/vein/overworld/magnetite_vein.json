@@ -1,40 +1,34 @@
 {
-  "weight": 100,
-  "density": 0.3,
-  "min_height": 50,
+  "weight": 80,
+  "density": 0.15,
+  "max_height": 60,
+  "min_height": 30,
   "vein_populator": {
     "type": "surface_rock",
     "material": "magnetite"
   },
   "generator": {
-    "type": "ellipsoid",
+    "type": "layered",
     "radius": [
-      19,
-      22
+      20,
+      32
     ]
   },
   "filler": {
-    "type": "simple",
-    "value": {
-      "type": "weight_random",
-      "values": [
-        {
-          "weight": 60,
-          "value": "ore:magnetite"
-        },
-        {
-          "weight": 15,
-          "value": "ore:iron"
-        },
-        {
-          "weight": 15,
-          "value": "ore:vanadium_magnetite"
-        },
-        {
-          "weight": 10,
-          "value": "ore:gold"
-        }
-      ]
-    }
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:magnetite"
+      },
+      {
+        "secondary": "ore:magnetite"
+      },
+      {
+        "between": "ore:vanadium_magnetite"
+      },
+      {
+        "sporadic": "ore:gold"
+      }
+    ]
   }
 }

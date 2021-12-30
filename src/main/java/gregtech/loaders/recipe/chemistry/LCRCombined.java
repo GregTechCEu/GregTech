@@ -10,32 +10,6 @@ import static gregtech.api.unification.ore.OrePrefix.dust;
 public class LCRCombined {
 
     static void init() {
-        LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(24))
-                .fluidInputs(Epichlorohydrin.getFluid(1000))
-                .fluidInputs(Phenol.getFluid(2000))
-                .fluidInputs(Acetone.getFluid(1000))
-                .fluidInputs(HydrochloricAcid.getFluid(1000))
-                .input(dust, SodiumHydroxide, 3)
-                .fluidOutputs(Epoxy.getFluid(1000))
-                .fluidOutputs(SaltWater.getFluid(1000))
-                .fluidOutputs(DilutedHydrochloricAcid.getFluid(1000))
-                .EUt(VA[LV])
-                .duration(24 * 20)
-                .buildAndRegister();
-
-        LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(24))
-                .fluidInputs(Chlorine.getFluid(2000))
-                .fluidInputs(Propene.getFluid(1000))
-                .fluidInputs(HypochlorousAcid.getFluid(1000))
-                .input(dust, SodiumHydroxide, 3)
-                .fluidOutputs(HydrochloricAcid.getFluid(1000))
-                .fluidOutputs(Epichlorohydrin.getFluid(1000))
-                .fluidOutputs(SaltWater.getFluid(1000))
-                .EUt(VA[LV])
-                .duration(24 * 20)
-                .buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(24))
@@ -60,22 +34,61 @@ public class LCRCombined {
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(24))
-                .input(dust, Sulfur)
-                .fluidInputs(Water.getFluid(4000))
-                .fluidOutputs(SulfuricAcid.getFluid(1000))
-                .EUt(VA[HV])
-                .duration(320)
-                .buildAndRegister();
+                .fluidInputs(Propene.getFluid(1000))
+                .fluidInputs(Benzene.getFluid(1000))
+                .fluidInputs(Oxygen.getFluid(1000))
+                .fluidInputs(PhosphoricAcid.getFluid(100))
+                .fluidOutputs(Phenol.getFluid(1000))
+                .fluidOutputs(Acetone.getFluid(1000))
+                .duration(480).EUt(VA[LV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(24))
-                .fluidInputs(Nitrogen.getFluid(1000))
-                .fluidInputs(Hydrogen.getFluid(3000))
-                .fluidInputs(Oxygen.getFluid(4000))
-                .fluidOutputs(NitricAcid.getFluid(1000))
-                .fluidOutputs(Water.getFluid(1000))
-                .EUt(VA[HV])
-                .duration(320)
-                .buildAndRegister();
+                .fluidInputs(Benzene.getFluid(1000))
+                .fluidInputs(Chlorine.getFluid(2000))
+                .fluidInputs(Water.getFluid(1000))
+                .fluidOutputs(Phenol.getFluid(1000))
+                .fluidOutputs(HydrochloricAcid.getFluid(1000))
+                .fluidOutputs(DilutedHydrochloricAcid.getFluid(1000))
+                .duration(560).EUt(VA[LV]).buildAndRegister();
+
+        LARGE_CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(24))
+                .fluidInputs(Benzene.getFluid(2000))
+                .fluidInputs(Chlorine.getFluid(4000))
+                .input(dust, SodiumHydroxide, 6)
+                .output(dust, Salt, 4)
+                .fluidOutputs(Phenol.getFluid(2000))
+                .fluidOutputs(HydrochloricAcid.getFluid(2000))
+                .duration(1120).EUt(VA[LV]).buildAndRegister();
+
+        LARGE_CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(24))
+                .fluidInputs(LightFuel.getFluid(20000))
+                .fluidInputs(HeavyFuel.getFluid(4000))
+                .fluidOutputs(Diesel.getFluid(24000))
+                .duration(100).EUt(VA[HV]).buildAndRegister();
+
+        LARGE_CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(24))
+                .fluidInputs(Diesel.getFluid(10000))
+                .fluidInputs(Tetranitromethane.getFluid(200))
+                .fluidOutputs(CetaneBoostedDiesel.getFluid(10000))
+                .duration(120).EUt(VA[HV]).buildAndRegister();
+
+        LARGE_CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(24))
+                .fluidInputs(BioDiesel.getFluid(10000))
+                .fluidInputs(Tetranitromethane.getFluid(400))
+                .fluidOutputs(CetaneBoostedDiesel.getFluid(7500))
+                .duration(120).EUt(VA[HV]).buildAndRegister();
+
+        LARGE_CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(AceticAcid.getFluid(3000))
+                .notConsumable(dust, Quicklime)
+                .notConsumable(new IntCircuitIngredient(24))
+                .fluidOutputs(Acetone.getFluid(2000))
+                .fluidOutputs(Oxygen.getFluid(1000))
+                .duration(400).EUt(VA[HV]).buildAndRegister();
     }
 }

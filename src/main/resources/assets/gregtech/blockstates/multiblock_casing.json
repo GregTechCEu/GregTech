@@ -22,7 +22,19 @@
     "active=true,variant=engine_intake": {
       "model": "minecraft:cube_all",
       "textures": {
-        "all": "gregtech:blocks/casings/pipe/machine_casing_engine_intake"
+        "all": "gregtech:blocks/casings/pipe/machine_casing_engine_intake_active"
+      }
+    },
+    "active=false,variant=extreme_engine_intake": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/pipe/machine_casing_extreme_engine_intake"
+      }
+    },
+    "active=true,variant=extreme_engine_intake": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/pipe/machine_casing_extreme_engine_intake_active"
       }
     },
     "active=false,variant=grate": {

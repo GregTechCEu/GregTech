@@ -3,6 +3,7 @@ package gregtech.api.worldgen.populator;
 import com.google.gson.JsonObject;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.config.OreConfigUtils;
@@ -58,7 +59,10 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
             } else {
                 ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().damageDropped(blockState));
                 UnificationEntry entry = OreDictUnifier.getUnificationEntry(itemStack);
-                resultMaterial = entry == null ? null : entry.material;
+                if (entry != null && entry.material != null && entry.material.hasProperty(PropertyKey.ORE))
+                    resultMaterial = entry.material;
+                else
+                    resultMaterial = null;
             }
             if (resultMaterial != null) {
                 result.add(resultMaterial);
@@ -67,11 +71,10 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
         return result;
     }
 
-    private void setStoneBlock(World world, BlockPos blockPos, Collection<Material> undergroundMaterials) {
-        boolean surfaceRockPlaced = world.setBlockState(blockPos, MetaBlocks.SURFACE_ROCK.getDefaultState());
-        if (!surfaceRockPlaced) {
+    private void setStoneBlock(World world, BlockPos blockPos) {
+        boolean surfaceRockPlaced = world.setBlockState(blockPos, MetaBlocks.SURFACE_ROCK.get(this.material).getBlock(this.material));
+        if (!surfaceRockPlaced)
             failedGenerationCounter++;
-        }
     }
 
     /**
@@ -89,8 +92,7 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
     public void populateChunk(World world, int chunkX, int chunkZ, Random random, OreDepositDefinition definition, GridEntryInfo gridEntryInfo) {
         int stonesCount = random.nextInt(2);
         if (stonesCount > 0 && world.getWorldType() != WorldType.FLAT) {
-            Set<Material> undergroundMaterials = findUndergroundMaterials(gridEntryInfo.getGeneratedBlocks(definition, chunkX, chunkZ));
-            if (undergroundMaterials.isEmpty())
+            if (findUndergroundMaterials(gridEntryInfo.getGeneratedBlocks(definition, chunkX, chunkZ)).isEmpty())
                 return;
             for (int i = 0; i < stonesCount; i++) {
                 int randomX = chunkX * 16 + 8 + random.nextInt(16);
@@ -110,7 +112,7 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
                     continue;
                 }
 
-                setStoneBlock(world, topBlockPos, undergroundMaterials);
+                setStoneBlock(world, topBlockPos);
             }
         }
 

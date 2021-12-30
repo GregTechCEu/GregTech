@@ -1,7 +1,6 @@
 package gregtech.api.recipes.logic;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -17,9 +16,9 @@ import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityItemBus;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
@@ -50,7 +49,6 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
     public static void init() {
         Bootstrap.register();
         Materials.register();
-        GregTechAPI.MATERIAL_REGISTRY.flush();
         OrePrefix.runMaterialHandlers();
         MetaItems.init();
     }
@@ -216,7 +214,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
         RecipeBuilder<?> parallelRecipe = findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(),
-                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, false);
+                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, false, false);
 
         //Check if the correct number of parallels were done
         assertEquals(4, parallelRecipe.getParallel());
@@ -270,7 +268,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 2), false);
 
         RecipeBuilder<?> parallelRecipe = findMultipliedParallelRecipe(map, recipe, importItemBus.getImportItems(), importFluidBus.getImportFluids(),
-                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, false);
+                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE, false, false);
 
         //Check if the correct number of parallels were done
         assertEquals(2, parallelRecipe.getParallel());
@@ -324,7 +322,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
         RecipeBuilder<?> parallelRecipe = findAppendedParallelItemRecipe(map, importItemBus.getImportItems(),
-                exportItemBus.getExportItems(), parallelLimit, 120, false);
+                exportItemBus.getExportItems(), parallelLimit, 120, false, false);
 
         //Check if the correct number of parallels were done
         assertEquals(4, parallelRecipe.getParallel());
@@ -375,7 +373,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 2), false);
 
         RecipeBuilder<?> parallelRecipe = findAppendedParallelItemRecipe(map, importItemBus.getImportItems(),
-                exportItemBus.getExportItems(), parallelLimit, 120, false);
+                exportItemBus.getExportItems(), parallelLimit, 120, false, false);
 
         //Check if the correct number of parallels were done
         assertEquals(2, parallelRecipe.getParallel());
@@ -412,7 +410,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt) {
+            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -484,7 +482,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt) {
+            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -545,7 +543,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt) {
+            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -609,7 +607,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt) {
+            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
                 return true;
             }
 

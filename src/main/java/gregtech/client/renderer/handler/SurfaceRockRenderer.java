@@ -9,7 +9,6 @@ import codechicken.lib.render.block.ICCBlockRenderer;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.render.pipeline.attribute.ColourAttribute;
-import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.TransformationList;
@@ -20,6 +19,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.PositionedRect;
 import gregtech.api.util.Size;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockSurfaceRock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -72,21 +72,26 @@ public class SurfaceRockRenderer implements ICCBlockRenderer {
         ArrayList<IndexedCuboid6> result = new ArrayList<>();
         List<PositionedRect> occupiedAreas = new ArrayList<>();
         int stonePlaceAttempts = 64;
-        int maxStones = 8;
+        int maxStones = 1;
         int stonesPlaced = 0;
         for (int i = 0; i < stonePlaceAttempts && stonesPlaced < maxStones; i++) {
-            int sizeX = 2 + random.nextInt(3);
-            int sizeZ = 2 + random.nextInt(3);
-            int stoneHeight = 4 + random.nextInt(4);
-            int posX = random.nextInt(16 - sizeX);
-            int posZ = random.nextInt(16 - sizeZ);
+//            int sizeX = 2 + random.nextInt(14);
+//            int sizeZ = 2 + random.nextInt(14);
+//            int stoneHeight = 1 + random.nextInt(4);
+            int sizeX = 6;
+            int sizeZ = 6;
+            int stoneHeight = 2;
+//            int posX = random.nextInt(16 - sizeX);
+//            int posZ = random.nextInt(16 - sizeZ);
+            int posX = 6;
+            int posZ = 6;
             PositionedRect rect = new PositionedRect(new Position(posX, posZ), new Size(sizeX, sizeZ));
             if (occupiedAreas.stream().noneMatch(rect::intersects)) {
                 Vector3 minVector = new Vector3(posX / 16.0, 0 / 16.0, posZ / 16.0);
                 Cuboid6 bounds = new Cuboid6(minVector, minVector.copy());
                 bounds.max.add(sizeX / 16.0, stoneHeight / 16.0, sizeZ / 16.0);
                 int brightness = 100 + random.nextInt(130);
-                result.add(new IndexedCuboid6(brightness, bounds));
+                result.add(new IndexedCuboid6(255, bounds));
                 occupiedAreas.add(rect);
                 stonesPlaced++;
             }
@@ -106,8 +111,9 @@ public class SurfaceRockRenderer implements ICCBlockRenderer {
         renderState.bind(buffer);
         Matrix4 translation = new Matrix4();
         translation.translate(pos.getX(), pos.getY(), pos.getZ());
-        TextureAtlasSprite stoneSprite = TextureUtils.getBlockTexture("stone");
-        Material material = ((BlockSurfaceRock) state.getBlock()).getStoneMaterial(world, pos, state);
+//        TextureAtlasSprite stoneSprite = TextureUtils.getBlockTexture("stone");
+        TextureAtlasSprite stoneSprite = Textures.SURFACE_ROCK_TEXTURE.getParticleSprite();
+        Material material = state.getValue(((BlockSurfaceRock) state.getBlock()).variantProperty);
         int renderingColor = GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB());
         IVertexOperation[] operations = new IVertexOperation[]{
                 new IconTransformation(stoneSprite),

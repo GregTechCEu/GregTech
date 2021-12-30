@@ -85,7 +85,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
             if (!value.isEmpty()) {
                 ticksPerCycle = Integer.parseInt(value);
             }
-        }).setMaxLength(10).setNumbersOnly(0, Integer.MAX_VALUE));
+        }).setMaxLength(10).setNumbersOnly(1, Integer.MAX_VALUE));
         builder.label(7, 65, "Ticks per cycle");
 
 
@@ -97,7 +97,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     @Override
     public void update() {
         super.update();
-        if (getOffsetTimer() % ticksPerCycle != 0 || fluidTank.getFluid() == null
+        if (ticksPerCycle == 0 || getOffsetTimer() % ticksPerCycle != 0 || fluidTank.getFluid() == null
                 || getWorld().isRemote || !active) return;
 
         FluidStack stack = fluidTank.getFluid().copy();
@@ -156,7 +156,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(Textures.VOLTAGE_CASINGS[14].getParticleSprite(), this.getPaintingColor());
+        return Pair.of(Textures.VOLTAGE_CASINGS[14].getParticleSprite(), this.getPaintingColorForRendering());
     }
 
     @Override

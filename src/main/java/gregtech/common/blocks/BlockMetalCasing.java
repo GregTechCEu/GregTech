@@ -39,7 +39,7 @@ public class BlockMetalCasing extends VariantBlock<BlockMetalCasing.MetalCasingT
         TUNGSTENSTEEL_ROBUST("tungstensteel_robust"),
         COKE_BRICKS("coke_bricks"),
         PTFE_INERT_CASING("ptfe_inert"),
-        HSSE_ROBUST("hsse_robust");
+        HSSE_STURDY("hsse_sturdy");
 
         private final String name;
 

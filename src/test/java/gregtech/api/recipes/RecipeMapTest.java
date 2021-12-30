@@ -1,6 +1,5 @@
 package gregtech.api.recipes;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.MetaFluids;
@@ -25,7 +24,6 @@ public class RecipeMapTest {
     public static void init() {
         Bootstrap.register();
         Materials.register();
-        GregTechAPI.MATERIAL_REGISTRY.flush();
         MetaFluids.init();
     }
 

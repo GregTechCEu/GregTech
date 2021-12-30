@@ -199,7 +199,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     @Override
     public List<BlockPos> getAOEBlocks(ItemStack itemStack, EntityPlayer player, RayTraceResult rayTraceResult) {
         T metaToolValueItem = getItem(itemStack);
-        if (metaToolValueItem != null) {
+        if (rayTraceResult.getBlockPos() != null && metaToolValueItem != null) {
             IToolStats toolStats = metaToolValueItem.getToolStats();
             return toolStats.getAOEBlocks(itemStack, player, rayTraceResult);
         }
@@ -699,6 +699,16 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             }
         }
         return false;
+    }
+
+    public void setCraftingSoundTime(ItemStack stack) {
+        NBTTagCompound statsTag = getOrCreateToolStatsTag(stack);
+        statsTag.setInteger("lastCraftingUse", (int) System.currentTimeMillis());
+    }
+
+    public boolean canPlaySound(ItemStack stack) {
+        NBTTagCompound statsTag = getOrCreateToolStatsTag(stack);
+        return Math.abs((int) System.currentTimeMillis() - statsTag.getInteger("lastCraftingUse")) > 16;
     }
 
     @SideOnly(Side.CLIENT)

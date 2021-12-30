@@ -800,11 +800,6 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     }
 
     @Override
-    public boolean canPipePassThrough() {
-        return true;
-    }
-
-    @Override
     public boolean canAttach() {
         return canCapabilityAttach();
     }

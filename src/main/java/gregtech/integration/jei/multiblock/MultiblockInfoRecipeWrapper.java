@@ -101,7 +101,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private IDrawable slot;
     private IDrawable infoIcon;
     private boolean drawInfoIcon;
-    private ItemStack tooltipBlockStack;
+    private static ItemStack tooltipBlockStack;
+    private static long lastRender;
     private List<String> predicateTips;
 
     private BlockPos selected;
@@ -287,7 +288,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             button.drawButton(minecraft, mouseX, mouseY, 0.0f);
         }
 
-        this.tooltipBlockStack = null;
+        tooltipBlockStack = null;
         this.predicateTips = null;
         RayTraceResult rayTraceResult = renderer.getLastTraceResult();
         boolean insideView = mouseX >= 0 && mouseY >= 0 &&
@@ -338,11 +339,12 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                     }
                 }
             }
-            if (itemStack != null && !itemStack.isEmpty()) {
-                this.tooltipBlockStack = itemStack;
+            if (!itemStack.isEmpty()) {
+                tooltipBlockStack = itemStack;
             }
         }
 
+        lastRender = System.currentTimeMillis();
         this.lastMouseX = mouseX;
         this.lastMouseY = mouseY;
 
@@ -572,5 +574,13 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.color(1, 1, 1, 1);
     }
+
+    public static ItemStack getHoveredItemStack() {
+        if(lastRender > System.currentTimeMillis() - 100) {
+            return tooltipBlockStack;
+        }
+        return null;
+    }
+
 
 }

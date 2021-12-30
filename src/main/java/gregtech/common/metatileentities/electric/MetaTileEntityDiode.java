@@ -149,6 +149,6 @@ public class MetaTileEntityDiode extends TieredMetaTileEntity {
         tooltip.add(I18n.format("gregtech.machine.diode.tooltip_general"));
         tooltip.add(I18n.format("gregtech.machine.diode.tooltip_tool_usage"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in",
-                energyContainer.getInputVoltage(), GTValues.VN[getTier()]));
+                energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
     }
 }

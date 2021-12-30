@@ -74,7 +74,6 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
         BRONZE_SLOT_BACKGROUND_TEXTURE = getGuiTexture("slot_%s");
         SLOT_FURNACE_BACKGROUND = getGuiTexture("slot_%s_furnace_background");
         this.containerInventory = new ItemStackHandler(2);
-        this.setPaintingColor(0xFFFFFF);
     }
 
     @Override
@@ -94,7 +93,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     @SideOnly(Side.CLIENT)
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(getBaseRenderer().getParticleSprite(), getPaintingColor());
+        return Pair.of(getBaseRenderer().getParticleSprite(), getPaintingColorForRendering());
     }
 
     @Override
@@ -102,6 +101,11 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         getBaseRenderer().render(renderState, translation, colouredPipeline);
         renderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isBurning(), true);
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0xFFFFFF;
     }
 
     @Override
@@ -218,10 +222,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
                 filledSteam = steamFluidTank.fill(ModHandler.getSteam(fillAmount), true);
             }
             if (this.hasNoWater && hasDrainedWater) {
-                getWorld().setBlockToAir(getPos());
-                getWorld().createExplosion(null,
-                        getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
-                        2.0f, true);
+                doExplosion(2.0f);
             } else this.hasNoWater = !hasDrainedWater;
             if (filledSteam == 0 && hasDrainedWater) {
                 getWorld().playSound(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,

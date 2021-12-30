@@ -21,7 +21,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -50,7 +50,6 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
         this.containerInventory = new ItemStackHandler(2);
         this.steamFluidTank = new FilteredFluidHandler(INVENTORY_SIZE).setFillPredicate(ModHandler::isSteam);
         initializeInventory();
-        this.setPaintingColor(0xFFFFFF);
     }
 
     @Override
@@ -102,6 +101,11 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
         if (controller == null)
             return IS_STEEL ? Textures.STEAM_CASING_STEEL : Textures.STEAM_CASING_BRONZE;
         return controller.getBaseTexture(this);
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0xFFFFFF;
     }
 
     @Override

@@ -231,7 +231,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
 
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(Textures.STEAM_CASING_BRONZE.getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.TOP), getPaintingColor());
+        return Pair.of(Textures.STEAM_CASING_BRONZE.getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.TOP), getPaintingColorForRendering());
     }
 
     public void setVentingStuck(boolean ventingStuck) {

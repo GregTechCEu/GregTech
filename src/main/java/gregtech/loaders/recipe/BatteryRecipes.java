@@ -1,8 +1,11 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.stack.UnificationEntry;
+import net.minecraft.item.ItemStack;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
@@ -14,18 +17,18 @@ public class BatteryRecipes {
 
     public static void init() {
         standardBatteries();
-        highEndBatteries();
+        gemBatteries();
     }
 
     private static void standardBatteries() {
 
         // Tantalum Battery (since it doesn't fit elsewhere)
-        ASSEMBLER_RECIPES.recipeBuilder().duration(30).EUt(4)
+        ASSEMBLER_RECIPES.recipeBuilder()
                 .input(dust, Tantalum)
                 .input(foil, Manganese)
-                .fluidInputs(Polyethylene.getFluid(144))
-                .outputs(BATTERY_ULV_TANTALUM.getStackForm(8))
-                .buildAndRegister();
+                .fluidInputs(Polyethylene.getFluid(L))
+                .output(BATTERY_ULV_TANTALUM, 8)
+                .duration(30).EUt(4).buildAndRegister();
 
         // :trol:
         ModHandler.addShapedRecipe("tantalum_capacitor", BATTERY_ULV_TANTALUM.getStackForm(2),
@@ -42,12 +45,12 @@ public class BatteryRecipes {
                 'C', new UnificationEntry(cableGtSingle, Tin),
                 'P', new UnificationEntry(plate, BatteryAlloy));
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(1)
+        ASSEMBLER_RECIPES.recipeBuilder()
                 .input(cableGtSingle, Tin)
                 .input(plate, BatteryAlloy)
-                .fluidInputs(Polyethylene.getFluid(144))
+                .fluidInputs(Polyethylene.getFluid(L))
                 .output(BATTERY_HULL_LV)
-                .buildAndRegister();
+                .duration(400).EUt(1).buildAndRegister();
 
         // MV
         ModHandler.addShapedRecipe("battery_hull_mv", BATTERY_HULL_MV.getStackForm(),
@@ -55,19 +58,19 @@ public class BatteryRecipes {
                 'C', new UnificationEntry(cableGtSingle, Copper),
                 'P', new UnificationEntry(plate, BatteryAlloy));
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(2)
+        ASSEMBLER_RECIPES.recipeBuilder()
                 .input(cableGtSingle, Copper, 2)
                 .input(plate, BatteryAlloy, 3)
-                .fluidInputs(Polyethylene.getFluid(432))
+                .fluidInputs(Polyethylene.getFluid(L * 3))
                 .output(BATTERY_HULL_MV)
-                .buildAndRegister();
+                .duration(200).EUt(2).buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(2)
+        ASSEMBLER_RECIPES.recipeBuilder()
                 .input(cableGtSingle, AnnealedCopper, 2)
                 .input(plate, BatteryAlloy, 3)
-                .fluidInputs(Polyethylene.getFluid(432))
+                .fluidInputs(Polyethylene.getFluid(L * 3))
                 .output(BATTERY_HULL_MV)
-                .buildAndRegister();
+                .duration(200).EUt(2).buildAndRegister();
 
         // HV
         ASSEMBLER_RECIPES.recipeBuilder().duration(300).EUt(4)
@@ -233,11 +236,87 @@ public class BatteryRecipes {
         EXTRACTOR_RECIPES.recipeBuilder().input(BATTERY_UV_NAQUADRIA).output(BATTERY_HULL_LARGE_NAQUADRIA).buildAndRegister();
     }
 
-    private static void highEndBatteries() {
+    private static void gemBatteries() {
+
+        // Energy Crystal
+        MIXER_RECIPES.recipeBuilder().duration(600).EUt(VA[MV])
+                .input(dust, Redstone, 5)
+                .input(dust, Ruby, 4)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(ENERGIUM_DUST, 9)
+                .buildAndRegister();
+
+        AUTOCLAVE_RECIPES.recipeBuilder()
+                .input(ENERGIUM_DUST, 9)
+                .fluidInputs(Water.getFluid(1000))
+                .output(ENERGIUM_CRYSTAL)
+                .duration(1800).EUt(VA[HV]).buildAndRegister();
+
+        AUTOCLAVE_RECIPES.recipeBuilder()
+                .input(ENERGIUM_DUST, 9)
+                .fluidInputs(DistilledWater.getFluid(1000))
+                .output(ENERGIUM_CRYSTAL)
+                .duration(1200).EUt(320).buildAndRegister();
+
+        AUTOCLAVE_RECIPES.recipeBuilder()
+                .input(ENERGIUM_DUST, 9)
+                .fluidInputs(BlackSteel.getFluid(L * 2))
+                .output(ENERGIUM_CRYSTAL)
+                .duration(300).EUt(256).buildAndRegister();
+
+        AUTOCLAVE_RECIPES.recipeBuilder()
+                .input(ENERGIUM_DUST, 9)
+                .fluidInputs(BlueSteel.getFluid(L / 2))
+                .output(ENERGIUM_CRYSTAL)
+                .duration(150).EUt(192).buildAndRegister();
+
+        // Lapotron Crystal
+        MIXER_RECIPES.recipeBuilder()
+                .input(ENERGIUM_DUST, 3)
+                .input(dust, Lapis, 2)
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, Lapotron, 5)
+                .duration(200).EUt(VA[HV]).buildAndRegister();
+
+        AUTOCLAVE_RECIPES.recipeBuilder()
+                .input(dust, Lapotron, 15)
+                .fluidInputs(Water.getFluid(1000))
+                .output(gem, Lapotron)
+                .duration(1800).EUt(VA[HV]).buildAndRegister();
+
+        AUTOCLAVE_RECIPES.recipeBuilder()
+                .input(dust, Lapotron, 15)
+                .fluidInputs(DistilledWater.getFluid(1000))
+                .output(gem, Lapotron)
+                .duration(1200).EUt(320).buildAndRegister();
+
+        AUTOCLAVE_RECIPES.recipeBuilder()
+                .input(dust, Lapotron, 15)
+                .fluidInputs(BlueSteel.getFluid(L * 2))
+                .output(gem, Lapotron)
+                .duration(300).EUt(256).buildAndRegister();
+
+        AUTOCLAVE_RECIPES.recipeBuilder()
+                .input(dust, Lapotron, 15)
+                .fluidInputs(RedSteel.getFluid(L / 2))
+                .output(gem, Lapotron)
+                .duration(150).EUt(192).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(gem, Lapotron)
+                .input(circuit, Tier.Advanced, 2)
+                .output(LAPOTRON_CRYSTAL)
+                .duration(600).EUt(VA[EV]).buildAndRegister();
 
         // Lapotronic Energy Orb
+        LASER_ENGRAVER_RECIPES.recipeBuilder()
+                .input(LAPOTRON_CRYSTAL)
+                .notConsumable(craftingLens, Color.Blue)
+                .output(ENGRAVED_LAPOTRON_CHIP, 3)
+                .duration(256).EUt(VA[HV]).buildAndRegister();
+
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(512).EUt(1024)
-                .input(FIBER_BOARD)
+                .input(EXTREME_CIRCUIT_BOARD)
                 .input(POWER_INTEGRATED_CIRCUIT, 4)
                 .input(ENGRAVED_LAPOTRON_CHIP, 24)
                 .input(NANO_CENTRAL_PROCESSING_UNIT, 2)
@@ -249,62 +328,57 @@ public class BatteryRecipes {
 
         // Lapotronic Energy Cluster
         ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(80000).duration(1000)
-                .input(MULTILAYER_FIBER_BOARD)
-                .input(foil, Europium, 32)
+                .input(EXTREME_CIRCUIT_BOARD)
+                .input(plate, Europium, 8)
                 .input(circuit, Tier.Master, 4)
-                .input(ENGRAVED_LAPOTRON_CHIP, 36)
-                .input(ENGRAVED_LAPOTRON_CHIP, 36)
-                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 64)
-                .input(SMD_DIODE, 32)
-                .input(SMD_CAPACITOR, 32)
-                .input(SMD_RESISTOR, 32)
-                .input(SMD_TRANSISTOR, 32)
-                .input(wireFine, Platinum, 64)
-                .fluidInputs(SolderingAlloy.getFluid(L * 5))
-                .output(ENERGY_LAPOTRONIC_ORB_CLUSTER)
-                .buildAndRegister();
-
-        ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(80000).duration(500)
-                .input(MULTILAYER_FIBER_BOARD)
-                .input(foil, Europium, 32)
-                .input(circuit, Tier.Master, 4)
-                .input(ENGRAVED_LAPOTRON_CHIP, 36)
-                .input(ENGRAVED_LAPOTRON_CHIP, 36)
-                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 64)
+                .input(ENERGY_LAPOTRONIC_ORB)
+                .input(FIELD_GENERATOR_IV)
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 16)
                 .input(ADVANCED_SMD_DIODE, 8)
                 .input(ADVANCED_SMD_CAPACITOR, 8)
                 .input(ADVANCED_SMD_RESISTOR, 8)
                 .input(ADVANCED_SMD_TRANSISTOR, 8)
+                .input(ADVANCED_SMD_INDUCTOR, 8)
                 .input(wireFine, Platinum, 64)
+                .input(bolt, Naquadah, 16)
                 .fluidInputs(SolderingAlloy.getFluid(L * 5))
                 .output(ENERGY_LAPOTRONIC_ORB_CLUSTER)
                 .buildAndRegister();
 
         // Energy Module
-        ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(100000).duration(2000)
-                .input(plate, Europium, 16)
-                .input(WETWARE_SUPER_COMPUTER_UV, 4)
-                .input(ENERGY_LAPOTRONIC_ORB_CLUSTER, 8)
-                .input(FIELD_GENERATOR_LUV, 2)
-                .input(NANO_CENTRAL_PROCESSING_UNIT, 64)
-                .input(NANO_CENTRAL_PROCESSING_UNIT, 64)
-                .input(SMD_DIODE, 8)
-                .input(cableGtSingle, Naquadah, 32)
-                .fluidInputs(SolderingAlloy.getFluid(L * 20))
-                .fluidInputs(Polybenzimidazole.getFluid(L * 2))
+        ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(100000).duration(1200)
+                .input(ELITE_CIRCUIT_BOARD)
+                .input(plateDouble, Europium, 8)
+                .input(circuit, Tier.Ultimate, 4)
+                .input(ENERGY_LAPOTRONIC_ORB_CLUSTER)
+                .input(FIELD_GENERATOR_LUV)
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 32)
+                .input(ADVANCED_SMD_DIODE, 12)
+                .input(ADVANCED_SMD_CAPACITOR, 12)
+                .input(ADVANCED_SMD_RESISTOR, 12)
+                .input(ADVANCED_SMD_TRANSISTOR, 12)
+                .input(ADVANCED_SMD_INDUCTOR, 12)
+                .input(wireFine, Ruridit, 64)
+                .input(bolt, Trinium, 16)
+                .fluidInputs(SolderingAlloy.getFluid(L * 10))
                 .output(ENERGY_MODULE)
                 .buildAndRegister();
 
         // Energy Cluster
-        ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(200000).duration(2000)
+        ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(200000).duration(1400)
+                .input(WETWARE_CIRCUIT_BOARD)
                 .input(plate, Americium, 16)
                 .input(WETWARE_SUPER_COMPUTER_UV, 4)
-                .input(ENERGY_MODULE, 8)
-                .input(FIELD_GENERATOR_ZPM, 2)
-                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 64)
-                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 64)
-                .input(SMD_DIODE, 16)
-                .input(cableGtSingle, YttriumBariumCuprate, 32)
+                .input(ENERGY_MODULE)
+                .input(FIELD_GENERATOR_ZPM)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 32)
+                .input(ADVANCED_SMD_DIODE, 16)
+                .input(ADVANCED_SMD_CAPACITOR, 16)
+                .input(ADVANCED_SMD_RESISTOR, 16)
+                .input(ADVANCED_SMD_TRANSISTOR, 16)
+                .input(ADVANCED_SMD_INDUCTOR, 16)
+                .input(wireFine, Osmiridium, 64)
+                .input(bolt, Naquadria, 16)
                 .fluidInputs(SolderingAlloy.getFluid(L * 20))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .output(ENERGY_CLUSTER)
@@ -312,20 +386,22 @@ public class BatteryRecipes {
 
         // Ultimate Battery
         ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(300000).duration(2000)
-                .input(plate, Neutronium, 16)
-                .input(circuit, Tier.Infinite)
-                .input(circuit, Tier.Infinite)
-                .input(circuit, Tier.Infinite)
-                .input(circuit, Tier.Infinite)
-                .input(ENERGY_CLUSTER, 8)
-                .input(FIELD_GENERATOR_UV, 2)
-                .input(HIGH_POWER_INTEGRATED_CIRCUIT_WAFER, 64)
-                .input(HIGH_POWER_INTEGRATED_CIRCUIT_WAFER, 64)
-                .input(SMD_DIODE, 16)
-                .input(wireGtSingle, EnrichedNaquadahTriniumEuropiumDuranide, 32)
-                .fluidInputs(SolderingAlloy.getFluid(L * 20))
-                .fluidInputs(Polybenzimidazole.getFluid(1000))
-                .fluidInputs(Naquadria.getFluid(L * 9))
+                .input(plateDouble, Darmstadtium, 16)
+                .input(circuit, Tier.Infinite, 4)
+                .input(ENERGY_CLUSTER, 16)
+                .input(FIELD_GENERATOR_UV, 4)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT_WAFER, 64)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT_WAFER, 64)
+                .input(ADVANCED_SMD_DIODE, 64)
+                .input(ADVANCED_SMD_CAPACITOR, 64)
+                .input(ADVANCED_SMD_RESISTOR, 64)
+                .input(ADVANCED_SMD_TRANSISTOR, 64)
+                .input(ADVANCED_SMD_INDUCTOR, 64)
+                .input(wireGtSingle, EnrichedNaquadahTriniumEuropiumDuranide, 64)
+                .input(bolt, Neutronium, 64)
+                .fluidInputs(SolderingAlloy.getFluid(L * 40))
+                .fluidInputs(Polybenzimidazole.getFluid(2000))
+                .fluidInputs(Naquadria.getFluid(L * 18))
                 .output(ULTIMATE_BATTERY)
                 .buildAndRegister();
     }

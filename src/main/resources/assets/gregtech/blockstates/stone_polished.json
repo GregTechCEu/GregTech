@@ -1,0 +1,40 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecraft:cube_all"
+  },
+  "variants": {
+    "variant": {
+      "black_granite": {
+        "textures": {
+          "all": "gregtech:blocks/stones/black_granite/black_granite_polished"
+        }
+      },
+      "red_granite": {
+        "textures": {
+          "all": "gregtech:blocks/stones/red_granite/red_granite_polished"
+        }
+      },
+      "marble": {
+        "textures": {
+          "all": "gregtech:blocks/stones/marble/marble_polished"
+        }
+      },
+      "basalt": {
+        "textures": {
+          "all": "gregtech:blocks/stones/basalt/basalt_polished"
+        }
+      },
+      "concrete_light": {
+        "textures": {
+          "all": "gregtech:blocks/stones/concrete_light/concrete_light_polished"
+        }
+      },
+      "concrete_dark": {
+        "textures": {
+          "all": "gregtech:blocks/stones/concrete_dark/concrete_dark_polished"
+        }
+      }
+    }
+  }
+}

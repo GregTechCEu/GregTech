@@ -1,32 +1,34 @@
 {
   "weight": 80,
-  "density": 0.6,
-  "min_height": 50,
+  "density": 0.15,
+  "max_height": 80,
+  "min_height": 30,
   "vein_populator": {
     "type": "surface_rock",
     "material": "coal"
   },
   "generator": {
-    "type": "ellipsoid",
+    "type": "layered",
     "radius": [
-      16,
-      16
+      20,
+      32
     ]
   },
   "filler": {
-    "type": "simple",
-    "value": {
-      "type": "weight_random",
-      "values": [
-        {
-          "weight": 100,
-          "value": "ore:coal"
-        },
-        {
-          "weight": 20,
-          "value": "ore:graphite"
-        }
-      ]
-    }
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:coal"
+      },
+      {
+        "secondary": "ore:coal"
+      },
+      {
+        "between": "ore:coal"
+      },
+      {
+        "sporadic": "ore:coal"
+      }
+    ]
   }
 }

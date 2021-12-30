@@ -341,7 +341,7 @@ public class CraftingComponent {
                 {5, new UnificationEntry(OrePrefix.plate, Materials.TungstenSteel)},
                 {6, new UnificationEntry(OrePrefix.plate, Materials.RhodiumPlatedPalladium)},
                 {7, new UnificationEntry(OrePrefix.plate, Materials.NaquadahAlloy)},
-                {8, new UnificationEntry(OrePrefix.plate, Materials.Livermorium)},
+                {8, new UnificationEntry(OrePrefix.plate, Materials.Darmstadtium)},
                 {9, new UnificationEntry(OrePrefix.plate, Materials.Neutronium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
@@ -399,7 +399,7 @@ public class CraftingComponent {
                 {5, new UnificationEntry(OrePrefix.rotor, Materials.TungstenSteel)},
                 {6, new UnificationEntry(OrePrefix.rotor, Materials.RhodiumPlatedPalladium)},
                 {7, new UnificationEntry(OrePrefix.rotor, Materials.NaquadahAlloy)},
-                {8, new UnificationEntry(OrePrefix.rotor, Materials.Livermorium)},
+                {8, new UnificationEntry(OrePrefix.rotor, Materials.Darmstadtium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
@@ -624,15 +624,15 @@ public class CraftingComponent {
 
         POWER_COMPONENT = new Component(Stream.of(new Object[][]{
 
-                {2, MetaItems.INDUCTOR.getStackForm()},
+                {2, MetaItems.ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm()},
                 {3, MetaItems.ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm()},
                 {4, MetaItems.LOW_POWER_INTEGRATED_CIRCUIT.getStackForm()},
                 {5, MetaItems.POWER_INTEGRATED_CIRCUIT.getStackForm()},
                 {6, MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm()},
                 {7, MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm()},
-                {8, MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm()},
-                {9, MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm()},
-                {GTValues.FALLBACK, MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT},
+                {8, MetaItems.ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm()},
+                {9, MetaItems.ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm()},
+                {GTValues.FALLBACK, MetaItems.ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 

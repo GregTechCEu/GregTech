@@ -78,7 +78,8 @@ public class DeviceHardware extends Hardware {
     }
 
     public enum DEVICE{
-        PROSPECTOR_LV(MetaItems.PROSPECTOR_LV, "scanner"),
+        PROSPECTOR_LV(MetaItems.PROSPECTOR_LV, "prospector"),
+        PROSPECTOR_HV(MetaItems.PROSPECTOR_HV, "advanced_prospector"),
         WIRELESS(MetaItems.WIRELESS, "wireless"),
         CAMERA(MetaItems.CAMERA, "camera"),
 

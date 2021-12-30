@@ -1,385 +1,59 @@
 package gregtech.api.capability.impl;
 
-import gregtech.api.GTValues;
-import gregtech.api.capability.*;
-import gregtech.api.metatileentity.MTETrait;
+import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
-import gregtech.api.metatileentity.multiblock.IMaintenance;
-import gregtech.api.recipes.machines.FuelRecipeMap;
-import gregtech.api.recipes.recipes.FuelRecipe;
-import gregtech.api.util.GTUtility;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
+import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
+import gregtech.api.metatileentity.multiblock.ParallelLogicType;
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeBuilder;
+import gregtech.api.recipes.RecipeMap;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
+import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
-public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelable {
+public class FuelRecipeLogic extends RecipeLogicEnergy {
 
-    public final FuelRecipeMap recipeMap;
-    protected FuelRecipe previousRecipe;
-
-    protected final Supplier<IEnergyContainer> energyContainer;
-    protected final Supplier<IMultipleTankHandler> fluidTank;
-    public final long maxVoltage;
-
-    private int recipeDurationLeft;
-    private long recipeOutputVoltage;
-
-    private boolean isActive;
-    private boolean workingEnabled = true;
-    private boolean wasActiveAndNeedsUpdate = false;
-    protected boolean invalidInputsForRecipes;
-
-    public FuelRecipeLogic(MetaTileEntity metaTileEntity, FuelRecipeMap recipeMap, Supplier<IEnergyContainer> energyContainer, Supplier<IMultipleTankHandler> fluidTank, long maxVoltage) {
-        super(metaTileEntity);
-        this.recipeMap = recipeMap;
-        this.energyContainer = energyContainer;
-        this.fluidTank = fluidTank;
-        this.maxVoltage = maxVoltage;
-    }
-
-    public long getRecipeOutputVoltage() {
-        return recipeOutputVoltage;
+    public FuelRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, Supplier<IEnergyContainer> energyContainer) {
+        super(tileEntity, recipeMap, energyContainer);
     }
 
     @Override
-    public String getName() {
-        return "FuelRecipeMapWorkable";
+    protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
+        // no overclocking happens other than parallelization,
+        // so return the recipe's values, with EUt made positive for it to be made negative later
+        return new int[]{recipe.getEUt() * -1, recipe.getDuration()};
     }
 
     @Override
-    public int getNetworkID() {
-        return TraitNetworkIds.TRAIT_ID_WORKABLE;
+    public Enum<ParallelLogicType> getParallelLogicType() {
+        return ParallelLogicType.MULTIPLY; //TODO APPEND_FLUIDS
     }
 
     @Override
-    public Collection<IFuelInfo> getFuels() {
-        if (!isReadyForRecipes())
-            return Collections.emptySet();
-        final IMultipleTankHandler fluidTanks = this.fluidTank.get();
-        if (fluidTanks == null)
-            return Collections.emptySet();
-
-        final LinkedHashMap<String, IFuelInfo> fuels = new LinkedHashMap<>();
-        // Fuel capacity is all tanks
-        int fuelCapacity = 0;
-        for (IFluidTank fluidTank : fluidTanks) {
-            fuelCapacity += fluidTank.getCapacity();
-        }
-
-        for (IFluidTank fluidTank : fluidTanks) {
-            final FluidStack tankContents = fluidTank.drain(Integer.MAX_VALUE, false);
-            if (tankContents == null || tankContents.amount <= 0)
-                continue;
-            int fuelRemaining = tankContents.amount;
-            FuelRecipe recipe = findRecipe(tankContents);
-            if (recipe == null)
-                continue;
-            int amountPerRecipe = calculateFuelAmount(recipe);
-            int duration = calculateRecipeDuration(recipe);
-            long fuelBurnTime = (duration * fuelRemaining) / amountPerRecipe;
-
-            FluidFuelInfo fuelInfo = (FluidFuelInfo) fuels.get(tankContents.getUnlocalizedName());
-            if (fuelInfo == null) {
-                fuelInfo = new FluidFuelInfo(tankContents, fuelRemaining, fuelCapacity, amountPerRecipe, fuelBurnTime);
-                fuels.put(tankContents.getUnlocalizedName(), fuelInfo);
-            } else {
-                fuelInfo.addFuelRemaining(fuelRemaining);
-                fuelInfo.addFuelBurnTime(fuelBurnTime);
-            }
-        }
-        return fuels.values();
-    }
-
-    @Override
-    public <T> T getCapability(Capability<T> capability) {
-        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
-            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
-        }
-        if (capability == GregtechCapabilities.CAPABILITY_FUELABLE) {
-            return GregtechCapabilities.CAPABILITY_FUELABLE.cast(this);
-        }
-        return null;
-    }
-
-    protected boolean hasNotifiedInputs() {
-        return metaTileEntity.getNotifiedFluidInputList().size() > 0;
-    }
-
-    protected boolean canWorkWithInputs() {
-        // if the inputs were bad last time, check if they've changed before trying to find a new recipe.
-        if (this.invalidInputsForRecipes && !hasNotifiedInputs()) return false;
-        else {
-            this.invalidInputsForRecipes = false;
-        }
+    protected boolean hasEnoughPower(@Nonnull int[] resultOverclock) {
+        // generators always have enough power to run recipes
         return true;
     }
 
     @Override
-    public void update() {
-        if (getMetaTileEntity().getWorld().isRemote) {
-            return;
-        }
-
-        if (workingEnabled) {
-            if (recipeDurationLeft > 0) {
-                //Checks if the recipe should be canceled for any reason (Once per second)
-                if (metaTileEntity.getOffsetTimer() % 20 == 0 && isObstructed()) {
-                    this.recipeDurationLeft = 0;
-                    this.wasActiveAndNeedsUpdate = true;
-                }
-                //Check if the full energy amount can be added to the output container, or if the energy should be voided
-                else if ((energyContainer.get().getEnergyCanBeInserted() >= recipeOutputVoltage || shouldVoidExcessiveEnergy())) {
-                    energyContainer.get().addEnergy(recipeOutputVoltage);
-                    //If the recipe has finished, mark the machine as needing to be updated
-                    if (--this.recipeDurationLeft == 0) {
-                        this.wasActiveAndNeedsUpdate = true;
-                    }
-                }
-            }
-            if (recipeDurationLeft == 0 && isReadyForRecipes() && canWorkWithInputs()) {
-                tryAcquireNewRecipe();
-            }
-        }
-        if (wasActiveAndNeedsUpdate) {
-            setActive(false);
-            this.wasActiveAndNeedsUpdate = false;
+    public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
+        // the builder automatically multiplies by -1, so nothing extra is needed here
+        builder.EUt(builder.getEUt());
+        if (metaTileEntity instanceof WorkableTieredMetaTileEntity && !((WorkableTieredMetaTileEntity) metaTileEntity).handlesRecipeOutputs) {
+            builder.clearOutputs();
+            builder.clearFluidOutputs();
         }
     }
 
-    /**
-     * Whether the multiblock can begin searching for new recipes once a recipe is completed.
-     * This is called only when the multiblock begins searching for new recipes, not during the recipe progression.
-     * This method will also cancel searching for recipes if there are too many maintenance issues.
-     *
-     * @return {@code true} if the multiblock should search for a new recipe
-     */
-    protected boolean isReadyForRecipes() {
-        if (metaTileEntity instanceof IMaintenance) {
-
-            IMaintenance controller = (IMaintenance) metaTileEntity;
-
-            // do not run recipes when there are more than 5 maintenance problems
-            if (controller.hasMaintenanceMechanics() && controller.getNumMaintenanceProblems() > 5) {
-                return false;
-            }
-        }
-
-        return !isObstructed();
-    }
-
-    /**
-     * Whether the multiblock should cancel its recipe for any reason.
-     * This will be checked every 20 update ticks, unlike {@link FuelRecipeLogic#isReadyForRecipes()}
-     * Some examples of usage would be if a rotor or air intake is obstructed.
-     *
-     * @return {@code true} if the multiblock should cancel its recipe for any reason
-     */
-    protected boolean isObstructed() {
+    @Override
+    public boolean canVoidRecipeOutputs() {
+        if (metaTileEntity instanceof WorkableTieredMetaTileEntity)
+            return !((WorkableTieredMetaTileEntity) metaTileEntity).handlesRecipeOutputs;
         return false;
     }
 
-    protected boolean shouldVoidExcessiveEnergy() {
-        return false;
-    }
-
-    /**
-     * Search the combined Fluid Inventory to find a valid fluid for running the power generation recipe.
-     */
-    private void tryAcquireNewRecipe() {
-
-        // Set this here to avoid it being updated multiple time in the loop through the fluid tanks.
-        // It will get reset if a valid recipe is found
-        this.invalidInputsForRecipes = true;
-        IMultipleTankHandler fluidTanks = this.fluidTank.get();
-        for (IFluidTank fluidTank : fluidTanks) {
-            FluidStack tankContents = fluidTank.getFluid();
-            if (tankContents != null && tankContents.amount > 0) {
-                int fuelAmountUsed = tryAcquireNewRecipe(tankContents);
-                if (fuelAmountUsed > 0) {
-                    fluidTank.drain(fuelAmountUsed, true);
-
-                    if (metaTileEntity instanceof MultiblockWithDisplayBase) {
-                        MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
-                        if (previousRecipe != null) {
-                            // output muffler items
-                            if (controller.hasMufflerMechanics())
-                                controller.outputRecoveryItems();
-
-                            // increase total multiblock active time
-                            controller.calculateMaintenance(previousRecipe.getDuration());
-                        }
-                    }
-
-                    // If we have successfully found a recipe, update the variable before leaving the loop
-                    this.invalidInputsForRecipes = false;
-                    break; //recipe is found and ready to use
-                }
-            }
-        }
-
-        // Clear notified Fluid input list, either after successfully finding a recipe, or failure to find a recipe
-        metaTileEntity.getNotifiedFluidInputList().clear();
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    private int tryAcquireNewRecipe(FluidStack fluidStack) {
-        FuelRecipe currentRecipe;
-        if (this.previousRecipe != null && this.previousRecipe.matches(getMaxVoltage(), fluidStack)) {
-            //if previous recipe still matches inputs, try to use it
-            currentRecipe = this.previousRecipe;
-        } else {
-            //else, try searching new recipe for given inputs
-            currentRecipe = recipeMap.findRecipe(getMaxVoltage(), fluidStack);
-            //if we found recipe that can be buffered, buffer it
-            if (currentRecipe != null) {
-                this.previousRecipe = currentRecipe;
-            }
-        }
-
-        //Check if we have found a valid recipe
-        if (currentRecipe != null && checkRecipe(currentRecipe)) {
-            int fuelAmountToUse = calculateFuelAmount(currentRecipe);
-            //Check if we have the required amount of fuel, and optionally boosters
-            if (fluidStack.amount >= fuelAmountToUse) {
-                //Initialize the required variables. This is basically setupRecipe in AbstractRecipeLogic, just condensed
-                this.recipeDurationLeft = calculateRecipeDuration(currentRecipe);
-                this.recipeOutputVoltage = startRecipe(currentRecipe, fuelAmountToUse, recipeDurationLeft);
-                if (wasActiveAndNeedsUpdate) {
-                    this.wasActiveAndNeedsUpdate = false;
-                } else {
-                    setActive(true);
-                }
-                return fuelAmountToUse;
-            }
-        }
-        return 0;
-    }
-
-    // Similar to tryAcquire but with no side effects
-    private FuelRecipe findRecipe(FluidStack fluidStack) {
-        FuelRecipe currentRecipe;
-        if (previousRecipe != null && previousRecipe.matches(getMaxVoltage(), fluidStack)) {
-            currentRecipe = previousRecipe;
-        } else {
-            currentRecipe = recipeMap.findRecipe(getMaxVoltage(), fluidStack);
-        }
-        if (currentRecipe != null && checkRecipe(currentRecipe))
-            return currentRecipe;
-        return null;
-    }
-
-    protected boolean checkRecipe(FuelRecipe recipe) {
-        return true;
-    }
-
-    public long getMaxVoltage() {
-        return maxVoltage;
-    }
-
-    protected int calculateFuelAmount(FuelRecipe currentRecipe) {
-        return currentRecipe.getRecipeFluid().amount * getVoltageMultiplier(getMaxVoltage(), currentRecipe.getMinVoltage());
-    }
-
-    protected int calculateRecipeDuration(FuelRecipe currentRecipe) {
-        int numMaintenanceProblems = (this.metaTileEntity instanceof MultiblockWithDisplayBase) ?
-                ((MultiblockWithDisplayBase) metaTileEntity).getNumMaintenanceProblems() : 0;
-
-        // apply maintenance penalties
-        return (int) (currentRecipe.getDuration() * (1 - 0.1 * numMaintenanceProblems));
-    }
-
-    /**
-     * Performs preparations for starting given recipe and determines it's output voltage
-     *
-     * @return recipe's output voltage
-     */
-    protected long startRecipe(FuelRecipe currentRecipe, int fuelAmountUsed, int recipeDuration) {
-        return getMaxVoltage();
-    }
-
-    public static int getVoltageMultiplier(long maxVoltage, long minVoltage) {
-        return (int) (maxVoltage / minVoltage);
-    }
-
-    public static long getTieredVoltage(long voltage) {
-        return GTValues.V[GTUtility.getTierByVoltage(voltage)];
-    }
-
-    protected void setActive(boolean active) {
-        // If we are changing states (active -> inactive), clear remaining recipe duration
-        if (this.isActive && !active) {
-            recipeDurationLeft = 0;
-        }
-        this.isActive = active;
-        if (!metaTileEntity.getWorld().isRemote) {
-            metaTileEntity.markDirty();
-            writeCustomData(1, buf -> buf.writeBoolean(active));
-        }
-    }
-
     @Override
-    public void setWorkingEnabled(boolean workingEnabled) {
-        this.workingEnabled = workingEnabled;
-        metaTileEntity.markDirty();
+    public int getParallelLimit() {
+        return (int) Math.max(1, Math.pow(4, getOverclockTier() - 1));
     }
-
-    @Override
-    public boolean isWorkingEnabled() {
-        return workingEnabled;
-    }
-
-    @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
-        if (dataId == 1) {
-            this.isActive = buf.readBoolean();
-            getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
-        }
-    }
-
-    @Override
-    public void writeInitialData(PacketBuffer buf) {
-        buf.writeBoolean(this.isActive);
-    }
-
-    @Override
-    public void receiveInitialData(PacketBuffer buf) {
-        this.isActive = buf.readBoolean();
-    }
-
-    @Override
-    public NBTTagCompound serializeNBT() {
-        NBTTagCompound compound = new NBTTagCompound();
-        compound.setBoolean("WorkEnabled", this.workingEnabled);
-        compound.setInteger("RecipeDurationLeft", this.recipeDurationLeft);
-        if (recipeDurationLeft > 0) {
-            compound.setLong("RecipeOutputVoltage", this.recipeOutputVoltage);
-        }
-        return compound;
-    }
-
-    @Override
-    public void deserializeNBT(NBTTagCompound compound) {
-        if (!compound.hasKey("WorkEnabled", NBT.TAG_BYTE)) {
-            //change working mode only if there is a tag compound with it's value
-            this.workingEnabled = compound.getBoolean("WorkEnabled");
-        }
-        this.recipeDurationLeft = compound.getInteger("RecipeDurationLeft");
-        if (recipeDurationLeft > 0) {
-            this.recipeOutputVoltage = compound.getLong("RecipeOutputVoltage");
-        }
-        this.isActive = recipeDurationLeft > 0;
-    }
-
 }

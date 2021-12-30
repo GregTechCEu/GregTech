@@ -96,11 +96,6 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
         }
     }
 
-    @Override
-    public boolean shouldRenderOverlay(IMultiblockPart sourcePart) {
-        return sourcePart == null || !isFireboxPart(sourcePart);
-    }
-
     private void replaceFireboxAsActive(boolean isActive) {
         BlockPos centerPos = getPos().offset(getFrontFacing().getOpposite()).down();
         for (int x = -1; x <= 1; x++) {

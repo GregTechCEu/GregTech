@@ -141,7 +141,7 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
         tooltip.add(I18n.format("gregtech.machine.fisher.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.fisher.speed", fishingTicks));
         tooltip.add(I18n.format("gregtech.machine.fisher.requirement", (int) Math.sqrt(WATER_CHECK_SIZE), (int) Math.sqrt(WATER_CHECK_SIZE)));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VN[getTier()]));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
     }
 }

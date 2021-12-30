@@ -105,7 +105,6 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
             }
         };
         this.fluidInventory = getActualFluidTank();
-        this.paintingColor = 0xFFFFFF;
     }
 
     @Override
@@ -671,6 +670,11 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
             return null;
         }
         return getActualTankFluid();
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0xFFFFFF;
     }
 
     @Override

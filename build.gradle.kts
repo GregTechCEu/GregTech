@@ -1,7 +1,4 @@
 import net.minecraftforge.gradle.user.UserBaseExtension
-import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.lib.Constants
-import org.eclipse.jgit.lib.ObjectId
 
 buildscript {
     repositories {
@@ -34,8 +31,6 @@ apply {
     plugin("net.minecraftforge.gradle.forge")
 }
 
-val git: Git = Git.open(projectDir)
-
 val mcVersion = "1.12.2"
 val forgeVersion = "14.23.5.2847"
 val mcFullVersion = "$mcVersion-$forgeVersion"
@@ -54,6 +49,8 @@ minecraft {
     mappings = "stable_39"
     runDir = "run"
     isUseDepAts = true
+    replace("@VERSION@", modVersion)
+    replaceIn("GregTechVersion.java")
 }
 
 repositories {
@@ -161,14 +158,6 @@ idea {
     }
 }
 
-fun getBuildNumber(): String {
-    val gitLog = git.log()
-    val headCommitId = git.repository.resolve(Constants.HEAD)
-    val startCommitId = ObjectId.fromString("f867923385572819385b53651f397a380a29c6b6")
-    gitLog.addRange(startCommitId, headCommitId)
-    return gitLog.call().toList().size.toString()
-}
-
 fun getVersionFromJava(file: File): String  {
     var major = "0"
     var minor = "0"
@@ -198,23 +187,8 @@ fun getVersionFromJava(file: File): String  {
             }
         }
     }
-
-    val branchNameOrTag = System.getenv("CI_COMMIT_REF_NAME")
-    if (branchNameOrTag != null && !branchNameOrTag.startsWith("v") && branchNameOrTag != "master") {
-        if (extra != "") {
-            return "$major.$minor.$revision-$extra-$branchNameOrTag"
-        }
-        return "$major.$minor.$revision-$branchNameOrTag"
-    }
-
-    var version = "$major.$minor.$revision"
-    if (branchNameOrTag != null && branchNameOrTag == "master") {
-        version += ".${getBuildNumber()}"
-    }
-
     if (extra != "") {
-        version += "-$extra"
+        return "$major.$minor.$revision-$extra"
     }
-
-    return version
+    return "$major.$minor.$revision"
 }

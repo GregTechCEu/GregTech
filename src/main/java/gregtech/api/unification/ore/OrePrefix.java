@@ -49,7 +49,6 @@ public class OrePrefix {
     // In case of an Sand-Ores Mod. Ore -> Material is a Oneway Operation!
     public static final OrePrefix oreSand = new OrePrefix("oreSand", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, null);
     public static final OrePrefix oreRedSand = new OrePrefix("oreRedSand", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, null);
-    public static final OrePrefix oreGravel = new OrePrefix("oreGravel", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, null);
 
     // Prefix of the Nether-Ores Mod. Causes Ores to double. Ore -> Material is a Oneway Operation!
     public static final OrePrefix oreNetherrack = new OrePrefix("oreNetherrack", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
@@ -164,7 +163,7 @@ public class OrePrefix {
     // made of 4 Ingots.
     public static final OrePrefix toolHeadWrench = new OrePrefix("toolHeadWrench", M * 4, null, MaterialIconType.toolHeadWrench, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
     // made of 5 Ingots.
-    public static final OrePrefix turbineBlade = new OrePrefix("turbineBlade", M * 10, null, MaterialIconType.turbineBlade, ENABLE_UNIFICATION, hasToolProperty.and(m -> m.hasFlags(GENERATE_BOLT_SCREW, GENERATE_PLATE)));
+    public static final OrePrefix turbineBlade = new OrePrefix("turbineBlade", M * 10, null, MaterialIconType.turbineBlade, ENABLE_UNIFICATION, hasToolProperty.and(m -> m.hasFlags(GENERATE_BOLT_SCREW, GENERATE_PLATE) && !m.hasProperty(PropertyKey.GEM)));
 
     public static final OrePrefix paneGlass = new OrePrefix("paneGlass", -1, MarkerMaterials.Color.Colorless, null, SELF_REFERENCING, null);
     public static final OrePrefix blockGlass = new OrePrefix("blockGlass", -1, MarkerMaterials.Color.Colorless, null, SELF_REFERENCING, null);
@@ -179,10 +178,6 @@ public class OrePrefix {
 
     // Prefix to determine which kind of Rock this is.
     public static final OrePrefix stone = new OrePrefix("stone", -1, Materials.Stone, null, SELF_REFERENCING, null);
-    public static final OrePrefix cobblestone = new OrePrefix("cobblestone", -1, Materials.Stone, null, SELF_REFERENCING, null);
-    // Prefix to determine which kind of Rock this is.
-    // Cobblestone Prefix for all Cobblestones.
-    public static final OrePrefix stoneCobble = new OrePrefix("stoneCobble", -1, Materials.Stone, null, SELF_REFERENCING, null);
 
     public static final OrePrefix frameGt = new OrePrefix("frameGt", M * 2, null, null, ENABLE_UNIFICATION, material -> material.hasFlag(GENERATE_FRAME));
 
@@ -279,6 +274,10 @@ public class OrePrefix {
         battery.setMarkerPrefix(true);
         circuit.setMarkerPrefix(true);
 
+        gemExquisite.setIgnored(Materials.Sugar);
+
+        gemFlawless.setIgnored(Materials.Sugar);
+
         gem.setIgnored(Materials.Diamond);
         gem.setIgnored(Materials.Emerald);
         gem.setIgnored(Materials.Lapis);
@@ -290,6 +289,7 @@ public class OrePrefix {
         excludeAllGems(Materials.EnderPearl);
         excludeAllGems(Materials.EnderEye);
         excludeAllGems(Materials.Flint);
+        excludeAllGemsButNormal(Materials.Lapotron);
 
         dust.setIgnored(Materials.Redstone);
         dust.setIgnored(Materials.Glowstone);
@@ -306,9 +306,11 @@ public class OrePrefix {
         ingot.setIgnored(Materials.Iron);
         ingot.setIgnored(Materials.Gold);
         ingot.setIgnored(Materials.Wood);
+        ingot.setIgnored(Materials.TreatedWood);
         ingot.setIgnored(Materials.Paper);
 
         nugget.setIgnored(Materials.Wood);
+        nugget.setIgnored(Materials.TreatedWood);
         nugget.setIgnored(Materials.Gold);
         nugget.setIgnored(Materials.Paper);
         nugget.setIgnored(Materials.Iron);
@@ -330,6 +332,7 @@ public class OrePrefix {
         block.setIgnored(Materials.Wheat);
         block.setIgnored(Materials.Oilsands);
         block.setIgnored(Materials.Wood);
+        block.setIgnored(Materials.TreatedWood);
         block.setIgnored(Materials.RawRubber);
         block.setIgnored(Materials.Clay);
         block.setIgnored(Materials.Brick);
@@ -339,20 +342,23 @@ public class OrePrefix {
         block.setIgnored(Materials.Netherrack);
         block.setIgnored(Materials.Concrete);
         block.setIgnored(Materials.Blaze);
+        block.setIgnored(Materials.Lapotron);
 
         ore.addSecondaryMaterial(new MaterialStack(Materials.Stone, dust.materialAmount));
-        oreGranite.addSecondaryMaterial(new MaterialStack(Materials.Granite, dust.materialAmount));
-        oreDiorite.addSecondaryMaterial(new MaterialStack(Materials.Diorite, dust.materialAmount));
-        oreAndesite.addSecondaryMaterial(new MaterialStack(Materials.Andesite, dust.materialAmount));
-        oreRedgranite.addSecondaryMaterial(new MaterialStack(Materials.GraniteRed, dust.materialAmount));
-        oreBlackgranite.addSecondaryMaterial(new MaterialStack(Materials.GraniteBlack, dust.materialAmount));
-        oreBasalt.addSecondaryMaterial(new MaterialStack(Materials.Basalt, dust.materialAmount));
-        oreMarble.addSecondaryMaterial(new MaterialStack(Materials.Marble, dust.materialAmount));
-        oreSand.addSecondaryMaterial(new MaterialStack(Materials.SiliconDioxide, dustTiny.materialAmount));
-        oreRedSand.addSecondaryMaterial(new MaterialStack(Materials.SiliconDioxide, dustTiny.materialAmount));
-        oreGravel.addSecondaryMaterial(new MaterialStack(Materials.Flint, dustTiny.materialAmount));
         oreNetherrack.addSecondaryMaterial(new MaterialStack(Materials.Netherrack, dust.materialAmount));
         oreEndstone.addSecondaryMaterial(new MaterialStack(Materials.Endstone, dust.materialAmount));
+
+        if (ConfigHolder.worldgen.allUniqueStoneTypes) {
+            oreGranite.addSecondaryMaterial(new MaterialStack(Materials.Granite, dust.materialAmount));
+            oreDiorite.addSecondaryMaterial(new MaterialStack(Materials.Diorite, dust.materialAmount));
+            oreAndesite.addSecondaryMaterial(new MaterialStack(Materials.Andesite, dust.materialAmount));
+            oreRedgranite.addSecondaryMaterial(new MaterialStack(Materials.GraniteRed, dust.materialAmount));
+            oreBlackgranite.addSecondaryMaterial(new MaterialStack(Materials.GraniteBlack, dust.materialAmount));
+            oreBasalt.addSecondaryMaterial(new MaterialStack(Materials.Basalt, dust.materialAmount));
+            oreMarble.addSecondaryMaterial(new MaterialStack(Materials.Marble, dust.materialAmount));
+            oreSand.addSecondaryMaterial(new MaterialStack(Materials.SiliconDioxide, dustTiny.materialAmount));
+            oreRedSand.addSecondaryMaterial(new MaterialStack(Materials.SiliconDioxide, dustTiny.materialAmount));
+        }
 
         crushed.addSecondaryMaterial(new MaterialStack(Materials.Stone, dust.materialAmount));
 
@@ -364,6 +370,10 @@ public class OrePrefix {
         pipeHugeFluid.setIgnored(Materials.Wood);
         pipeQuadrupleFluid.setIgnored(Materials.Wood);
         pipeNonupleFluid.setIgnored(Materials.Wood);
+        pipeTinyFluid.setIgnored(Materials.TreatedWood);
+        pipeHugeFluid.setIgnored(Materials.TreatedWood);
+        pipeQuadrupleFluid.setIgnored(Materials.TreatedWood);
+        pipeNonupleFluid.setIgnored(Materials.TreatedWood);
         pipeSmallRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeNormalRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeLargeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
@@ -377,10 +387,17 @@ public class OrePrefix {
         plateDouble.setIgnored(Materials.BorosilicateGlass);
         plate.setIgnored(Materials.BorosilicateGlass);
         foil.setIgnored(Materials.BorosilicateGlass);
+
+        dustSmall.setIgnored(Materials.Lapotron);
+        dustTiny.setIgnored(Materials.Lapotron);
     }
 
     private static void excludeAllGems(Material material) {
         gem.setIgnored(material);
+        excludeAllGemsButNormal(material);
+    }
+
+    private static void excludeAllGemsButNormal(Material material) {
         gemChipped.setIgnored(material);
         gemFlawed.setIgnored(material);
         gemFlawless.setIgnored(material);

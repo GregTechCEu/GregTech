@@ -43,15 +43,6 @@ public class ConfigHolder {
 
     public static class MachineOptions {
 
-        @Config.Comment({"Sets the bonus EU output of Steam Turbines.", "Default: 6144"})
-        public int steamTurbineBonusOutput = 6144;
-
-        @Config.Comment({"Sets the bonus EU output of Plasma Turbines.", "Default: 6144"})
-        public int plasmaTurbineBonusOutput = 6144;
-
-        @Config.Comment({"Sets the bonus EU output of Gas Turbines.", "Default 6144"})
-        public int gasTurbineBonusOutput = 6144;
-
         @Config.Comment({"Whether insufficient energy supply should reset Machine recipe progress to zero.",
                 "If true, progress will reset.", "If false, progress will decrease to zero with 2x speed", "Default: false"})
         public boolean recipeProgressLowEnergy = false;
@@ -59,16 +50,8 @@ public class ConfigHolder {
         @Config.Comment({"Whether to require a Wrench to break machines.", "Default: false"})
         public boolean requireWrenchForMachines = false;
 
-        @Config.Comment({"The default color to overlay onto machines.", "16777215 (0xFFFFFF in decimal) is no coloring (default).",
-                "13819135 (0xD2DCFF in decimal) is the classic blue from GT5.", "THIS IS SERVER SIDE!!!"})
-        public int defaultPaintingColor = 0xFFFFFF;
-
-        @Config.Comment({"The default color to overlay onto cable insulation.", "7829367 (0x777777 in decimal) is no coloring (default).",
-                "4210752 (0x404040 in decimal) is the classic black from GT5.", "THIS IS SERVER SIDE!!!"})
-        public int defaultInsulationColor = 0x777777;
-
-        @Config.Comment({"Whether to enable the Maintenance Hatch, required for Multiblocks.", "Default: false"})
-        public boolean enableMaintenance = true; // TODO Change this before release
+        @Config.Comment({"Whether to enable the Maintenance Hatch, required for Multiblocks.", "Default: true"})
+        public boolean enableMaintenance = true;
 
         @Config.Comment({"Whether to enable High-Tier Solar Panels (IV-UV). They will not have recipes.", "Default: false"})
         public boolean enableHighTierSolars = false;
@@ -76,12 +59,9 @@ public class ConfigHolder {
         @Config.Comment({"Whether to enable World Accelerators, which accelerate ticks for surrounding Tile Entities, Crops, etc.", "Default: true"})
         public boolean enableWorldAccelerators = true;
 
-        @Config.Comment({"Whether to allow GT machines to be affected by World Accelerators.", "Default: false"})
-        public boolean accelerateGTMachines = false;
-
         @Config.Comment({"Whether to use GT6-style pipe and cable connections, meaning they will not auto-connect " +
-                "unless placed directly onto another pipe or cable.", "Default: false"})
-        public boolean gt6StylePipesCables = false;
+                "unless placed directly onto another pipe or cable.", "Default: true"})
+        public boolean gt6StylePipesCables = true;
 
         @Config.Comment({"Divisor for Recipe Duration per Overclock.", "Default: 2.0"})
         @Config.RangeDouble(min = 2.0, max = 3.0)
@@ -134,23 +114,24 @@ public class ConfigHolder {
         @Config.Comment({"Whether to disable Rubber Tree world generation.", "Default: false"})
         public boolean disableRubberTreeGeneration = false;
 
-        @Config.Comment({"Chance of generating Abandoned Base in chunk = 1 / THIS_VALUE.", "0 disables Abandoned Base generation.", "Default: 1000"})
-        public int abandonedBaseRarity = 1000;
+        @Config.Comment({"Multiplier for the chance to spawn a Rubber Tree on any given roll. Higher values make Rubber Trees more common.", "Default: 1.0"})
+        @Config.RangeDouble(min = 0)
+        public double rubberTreeRateIncrease = 1.0;
 
         @Config.Comment({"Whether to increase number of rolls for dungeon chests. Increases dungeon loot drastically.", "Default: true"})
         public boolean increaseDungeonLoot = true;
 
         @Config.Comment({"Allow GregTech to add additional GregTech Items as loot in various structures.", "Default: true"})
         public boolean addLoot = true;
+
+        @Config.Comment({"Should all Stone Types drop unique Ore Item Blocks?", "Default: false (meaning only Stone, Netherrack, and Endstone"})
+        public boolean allUniqueStoneTypes = false;
     }
 
     public static class RecipeOptions {
 
         @Config.Comment({"Change the recipe of Rods in the Lathe to 1 Rod and 2 Small Piles of Dust, instead of 2 Rods.", "Default: false"})
         public boolean harderRods = false;
-
-        @Config.Comment({"Enable more challenging recipes for Energy Input and Dynamo Hatches.", "Default: false"})
-        public boolean harderEnergyHatches = false;
 
         @Config.Comment({"Whether to make Glass related recipes harder. Default: true"})
         public boolean hardGlassRecipes = true;
@@ -192,6 +173,9 @@ public class ConfigHolder {
 
         @Config.Comment({"Whether to remove Block/Ingot compression and decompression in the Crafting Table.", "Default: false"})
         public boolean disableManualCompression = false;
+
+        @Config.Comment({"Whether to remove Vanilla Block Recipes from the Crafting Table.", "Default: false"})
+        public boolean removeVanillaBlockRecipes = false;
     }
 
     public static class CompatibilityOptions {
@@ -236,7 +220,7 @@ public class ConfigHolder {
         @Config.Comment({"Whether to enable more verbose logging.", "Default: false"})
         public boolean debug = false;
 
-        @Config.Comment({"Setting this to true makes GTCE ignore error and invalid recipes that would otherwise cause crash.", "Default: true"})
+        @Config.Comment({"Setting this to true makes GTCEu ignore error and invalid recipes that would otherwise cause crash.", "Default: true"})
         public boolean ignoreErrorOrInvalidRecipes = true;
 
         @Config.Comment({"Whether to enable a login message to players when they join the world.", "Default: true"})
@@ -246,6 +230,10 @@ public class ConfigHolder {
         @Config.Comment({"Chance with which flint and steel will create fire.", "Default: 50"})
         @Config.SlidingOption
         public int flintChanceToCreateFire = 50;
+
+        @Config.Comment({"Whether to give the terminal to new players on login", "Default: true"})
+        public boolean spawnTerminal = true;
+
     }
 
     public static class ClientOptions {
@@ -272,21 +260,24 @@ public class ConfigHolder {
                 "Higher values increase quality (limited by the resolution of your screen) but are more GPU intensive.", "Default: 2"})
         @Config.RangeDouble(min = 0, max = 5)
         @Config.SlidingOption
-        @Config.RequiresWorldRestart
         public double resolution = 2;
 
         @Config.Comment({"Whether or not to enable Emissive Textures for GregTech Machines.", "Default: true"})
         public boolean machinesEmissiveTextures = true;
 
         @Config.Comment({"Whether or not to enable Emissive Textures for GregTech Casings " +
-                "when the multiblock is working (EBF coils, Fusion Casings, etc.).", "Default: true"})
-        public boolean casingsActiveEmissiveTextures = true;
+                "when the multiblock is working (EBF coils, Fusion Casings, etc.).", "Default: false"})
+        public boolean casingsActiveEmissiveTextures = false;
 
         @Config.Comment({"Whether or not sounds should be played when using tools outside of crafting.", "Default: true"})
         public boolean toolUseSounds = true;
 
         @Config.Comment({"Whether or not sounds should be played when crafting with tools.", "Default: true"})
         public boolean toolCraftingSounds = true;
+
+        @Config.Comment({"The default color to overlay onto machines.", "16777215 (0xFFFFFF in decimal) is no coloring (like GTCE).",
+                "13819135 (0xD2DCFF in decimal) is the classic blue from GT5 (default)."})
+        public int defaultPaintingColor = 0xD2DCFF;
 
         public static class GuiConfig {
             @Config.Comment({"The scrolling speed of widgets", "Default: 13"})
@@ -314,6 +305,10 @@ public class ConfigHolder {
 
         public static class ShaderOptions {
 
+            @Config.Comment("Bloom config options for the fusion reactor.")
+            @Config.Name("Fusion Reactor")
+            public FusionBloom fusionBloom = new FusionBloom();
+
             @Config.Comment({"Whether to use shader programs.", "Default: true"})
             public boolean useShader = true;
 
@@ -326,18 +321,18 @@ public class ConfigHolder {
             public int bloomStyle = 2;
 
             @Config.Comment({"The brightness after bloom should not exceed this value. It can be used to limit the brightness of highlights " +
-                    "(e.g., daytime).", "OUTPUT = BACKGROUND + BLOOM * strength * (base + LT + (1 - BACKGROUND_BRIGHTNESS)*({HT}-LT)))", "This value should be greater than lowBrightnessThreshold.", "Default: 1.3"})
+                    "(e.g., daytime).", "OUTPUT = BACKGROUND + BLOOM * strength * (base + LT + (1 - BACKGROUND_BRIGHTNESS)*({HT}-LT)))", "This value should be greater than lowBrightnessThreshold.", "Default: 0.5"})
             @Config.RangeDouble(min = 0)
-            public double highBrightnessThreshold = 1.3;
+            public double highBrightnessThreshold = 0.5;
 
             @Config.Comment({"The brightness after bloom should not smaller than this value. It can be used to limit the brightness of dusky parts " +
-                    "(e.g., night/caves).", "OUTPUT = BACKGROUND + BLOOM * strength * (base + {LT} + (1 - BACKGROUND_BRIGHTNESS)*(HT-{LT})))", "This value should be smaller than highBrightnessThreshold.", "Default: 0.3"})
+                    "(e.g., night/caves).", "OUTPUT = BACKGROUND + BLOOM * strength * (base + {LT} + (1 - BACKGROUND_BRIGHTNESS)*(HT-{LT})))", "This value should be smaller than highBrightnessThreshold.", "Default: 0.2"})
             @Config.RangeDouble(min = 0)
-            public double lowBrightnessThreshold = 0.3;
+            public double lowBrightnessThreshold = 0.2;
 
-            @Config.Comment({"The base brightness of the bloom.", "It is similar to strength", "This value should be smaller than highBrightnessThreshold.", "OUTPUT = BACKGROUND + BLOOM * strength * ({base} + LT + (1 - BACKGROUND_BRIGHTNESS)*(HT-LT)))", "Default: 0.3"})
+            @Config.Comment({"The base brightness of the bloom.", "It is similar to strength", "This value should be smaller than highBrightnessThreshold.", "OUTPUT = BACKGROUND + BLOOM * strength * ({base} + LT + (1 - BACKGROUND_BRIGHTNESS)*(HT-LT)))", "Default: 0.1"})
             @Config.RangeDouble(min = 0)
-            public double baseBrightness = 0;
+            public double baseBrightness = 0.1;
 
             @Config.Comment({"Mipmap Size.", "Higher values increase quality, but are slower to render.", "Default: 5"})
             @Config.RangeInt(min = 2, max = 5)
@@ -346,7 +341,7 @@ public class ConfigHolder {
 
             @Config.Comment({"Bloom Strength", "OUTPUT = BACKGROUND + BLOOM * {strength} * (base + LT + (1 - BACKGROUND_BRIGHTNESS)*(HT-LT)))", "Default: 2"})
             @Config.RangeDouble(min = 0)
-            public double strength = 2;
+            public double strength = 1.5;
 
             @Config.Comment({"Blur Step (bloom range)", "Default: 1"})
             @Config.RangeDouble(min = 0)
@@ -354,10 +349,35 @@ public class ConfigHolder {
         }
     }
 
-    public static class ToolOptions {
+    public static class FusionBloom {
+        @Config.Comment({"Whether to use shader programs.", "Default: true"})
+        public boolean useShader = true;
 
-        @Config.Name("BatPack Options")
-        public BatPack batpack = new BatPack();
+        @Config.Comment({"Bloom Strength", "OUTPUT = BACKGROUND + BLOOM * {strength} * (base + LT + (1 - BACKGROUND_BRIGHTNESS)*(HT-LT)))", "Default: 2"})
+        @Config.RangeDouble(min = 0)
+        public double strength = 1.5;
+
+        @Config.Comment({"Bloom Algorithm", "0 - Simple Gaussian Blur Bloom (Fast)", "1 - Unity Bloom", "2 - Unreal Bloom", "Default: 2"})
+        @Config.RangeInt(min = 0, max = 2)
+        @Config.SlidingOption
+        public int bloomStyle = 1;
+
+        @Config.Comment({"The brightness after bloom should not exceed this value. It can be used to limit the brightness of highlights " +
+                "(e.g., daytime).", "OUTPUT = BACKGROUND + BLOOM * strength * (base + LT + (1 - BACKGROUND_BRIGHTNESS)*({HT}-LT)))", "This value should be greater than lowBrightnessThreshold.", "Default: 0.5"})
+        @Config.RangeDouble(min = 0)
+        public double highBrightnessThreshold = 1.3;
+
+        @Config.Comment({"The brightness after bloom should not smaller than this value. It can be used to limit the brightness of dusky parts " +
+                "(e.g., night/caves).", "OUTPUT = BACKGROUND + BLOOM * strength * (base + {LT} + (1 - BACKGROUND_BRIGHTNESS)*(HT-{LT})))", "This value should be smaller than highBrightnessThreshold.", "Default: 0.2"})
+        @Config.RangeDouble(min = 0)
+        public double lowBrightnessThreshold = 0.3;
+
+        @Config.Comment({"The base brightness of the bloom.", "It is similar to strength", "This value should be smaller than highBrightnessThreshold.", "OUTPUT = BACKGROUND + BLOOM * strength * ({base} + LT + (1 - BACKGROUND_BRIGHTNESS)*(HT-LT)))", "Default: 0.1"})
+        @Config.RangeDouble(min = 0)
+        public double baseBrightness = 0;
+    }
+
+    public static class ToolOptions {
 
         @Config.Name("NanoSaber Options")
         public NanoSaber nanoSaber = new NanoSaber();
@@ -365,71 +385,63 @@ public class ConfigHolder {
         @Config.Comment({"Should EV and IV Drills be enabled, which may cause lag when used on low-end devices?", "Default: true"})
         public boolean enableHighTierDrills = true;
 
-        @Config.Comment({"NightVision Goggles Voltage Tier.", "Default: 2 (LV)"})
+        @Config.Comment("NightVision Goggles Voltage Tier. Default: 1 (LV)")
         @Config.RangeInt(min = 0, max = 14)
-        @Config.SlidingOption
-        public int voltageTierNightVision = 2;
+        public int voltageTierNightVision = 1;
 
-        @Config.Comment({"NanoSuit Voltage Tier.", "Default: 3 (MV)"})
+        @Config.Comment("NanoSuit Voltage Tier. Default: 3 (HV)")
         @Config.RangeInt(min = 0, max = 14)
-        @Config.SlidingOption
         public int voltageTierNanoSuit = 3;
 
-        @Config.Comment({"Advanced NanoSuit Chestplate Voltage Tier.", "Default: 4 (EV)"})
+        @Config.Comment({"Advanced NanoSuit Chestplate Voltage Tier.", "Default: 3 (HV)"})
         @Config.RangeInt(min = 0, max = 14)
-        @Config.SlidingOption
-        public int voltageTierAdvNanoSuit = 4;
+        public int voltageTierAdvNanoSuit = 3;
 
         @Config.Comment({"QuarkTech Suit Voltage Tier.", "Default: 5 (IV)"})
         @Config.RangeInt(min = 0, max = 14)
         @Config.SlidingOption
         public int voltageTierQuarkTech = 5;
 
-        @Config.Comment({"Advanced QuarkTech Suit Chestplate Voltage Tier.", "Default: 5 (IV)"})
+        @Config.Comment({"Advanced QuarkTech Suit Chestplate Voltage Tier.", "Default: 5 (LuV)"})
         @Config.RangeInt(min = 0, max = 14)
-        @Config.SlidingOption
-        public int voltageTierAdvQuarkTech = 5;
+        public int voltageTierAdvQuarkTech = 6;
 
-        @Config.Comment({"Impeller Jetpack Voltage Tier.", "Default: 2 (MV)"})
+        @Config.Comment({"Electric Impeller Jetpack Voltage Tier.", "Default: 2 (MV)"})
         @Config.RangeInt(min = 0, max = 14)
-        @Config.SlidingOption
         public int voltageTierImpeller = 2;
 
-        @Config.Comment({"Advanced Impeller Jetpack Voltage Tier.", "Default: 3 (HV)"})
+        @Config.Comment({"Advanced Electric Jetpack Voltage Tier.", "Default: 3 (HV)"})
         @Config.RangeInt(min = 0, max = 14)
-        @Config.SlidingOption
         public int voltageTierAdvImpeller = 3;
 
-        public static class BatPack {
-            @Config.Comment({"Total LV BatPack capacity.", "Default: 600,000"})
-            @Config.RangeInt(min = 1)
-            public int capacityLV = 600000;
+        @Config.Comment("Armor HUD Location")
+        public ArmorHud armorHud = new ArmorHud();
+    }
 
-            @Config.Comment({"Total MV BatPack capacity.", "Default: 2,400,000"})
-            @Config.RangeInt(min = 1)
-            public int capacityMV = 2400000;
+    public static class ArmorHud {
+        @Config.Comment({"Sets HUD location", "1 - left-upper corner", "2 - right-upper corner", "3 - left-bottom corner", "4 - right-bottom corner"})
+        public byte hudLocation = 1;
+        @Config.Comment("Horizontal offset of HUD [0 ~ 100)")
+        public byte hudOffsetX = 0;
+        @Config.Comment("Vertical offset of HUD [0 ~ 100)")
+        public byte hudOffsetY = 0;
+    }
 
-            @Config.Comment({"Total HV BatPack capacity.", "Default: 9,600,000"})
-            @Config.RangeInt(min = 1)
-            public int capacityHV = 9600000;
-        }
+    public static class NanoSaber {
 
-        public static class NanoSaber {
+        @Config.RangeDouble(min = 0, max = 100)
+        @Config.Comment({"The additional damage added when the NanoSaber is powered.", "Default: 20.0"})
+        public double nanoSaberDamageBoost = 20;
 
-            @Config.RangeDouble(min = 0, max = 100)
-            @Config.Comment({"The additional damage added when the NanoSaber is powered.", "Default: 20.0"})
-            public double nanoSaberDamageBoost = 20;
+        @Config.RangeDouble(min = 0, max = 100)
+        @Config.Comment({"The base damage of the NanoSaber.", "Default: 5.0"})
+        public double nanoSaberBaseDamage = 5;
 
-            @Config.RangeDouble(min = 0, max = 100)
-            @Config.Comment({"The base damage of the NanoSaber.", "Default: 5.0"})
-            public double nanoSaberBaseDamage = 5;
+        @Config.Comment({"Should Zombies spawn with charged, active NanoSabers on hard difficulty?", "Default: true"})
+        public boolean zombieSpawnWithSabers = true;
 
-            @Config.Comment({"Should Zombies spawn with charged, active NanoSabers on hard difficulty?", "Default: true"})
-            public boolean zombieSpawnWithSabers = true;
-
-            @Config.RangeInt(min = 1, max = 512)
-            @Config.Comment({"The EU/t consumption of the NanoSaber.", "Default: 64"})
-            public int energyConsumption = 64;
-        }
+        @Config.RangeInt(min = 1, max = 512)
+        @Config.Comment({"The EU/t consumption of the NanoSaber.", "Default: 64"})
+        public int energyConsumption = 64;
     }
 }

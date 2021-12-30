@@ -29,9 +29,11 @@ public class GregtechDataCodes {
     public static final int NEEDS_VENTING = 2;
     public static final int VENTING_SIDE = 3;
     public static final int VENTING_STUCK = 4;
+    public static final int BOILER_HEAT = 15;
+    public static final int BOILER_LAST_TICK_STEAM = 16;
 
     // Misc TEs (Transformer, World Accelerator)
-    public static final int SYNC_TILE_MODE = 100;
+    public static final int SYNC_TILE_MODE = 500;
 
     // Clipboard
     public static final int UPDATE_UI = 0;
@@ -108,5 +110,9 @@ public class GregtechDataCodes {
     public static final int CHANGE_PHANTOM_FLUID = 11;
     public static final int VOID_PHANTOM_FLUID = 12;
     public static final int LOAD_PHANTOM_FLUID_STACK_FROM_NBT = 13;
+
+    // Recipe Logic
+    public static final int WORKABLE_ACTIVE = 1;
+    public static final int WORKING_ENABLED = 5;
 
 }

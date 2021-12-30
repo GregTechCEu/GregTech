@@ -32,4 +32,20 @@ public class LayeredBlockFiller extends BlockFiller {
     public List<FillerEntry> getAllPossibleStates() {
         return Collections.singletonList(fillerEntry);
     }
+
+    public FillerEntry getPrimary() {
+        return fillerEntry.getPrimary();
+    }
+
+    public FillerEntry getSecondary() {
+        return fillerEntry.getSecondary();
+    }
+
+    public FillerEntry getBetween() {
+        return fillerEntry.getBetween();
+    }
+
+    public FillerEntry getSporadic() {
+        return fillerEntry.getSporadic();
+    }
 }

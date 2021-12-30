@@ -2,12 +2,8 @@ package gregtech.api.unification.ore;
 
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Materials;
-import gregtech.common.blocks.BlockGranite;
-import gregtech.common.blocks.BlockGranite.GraniteVariant;
-import gregtech.common.blocks.BlockMineral;
-import gregtech.common.blocks.BlockMineral.MineralVariant;
+import gregtech.common.blocks.BlockStoneSmooth;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.blocks.StoneBlock.ChiselingVariant;
 import net.minecraft.block.*;
 import net.minecraft.block.BlockStone.EnumType;
 import net.minecraft.init.Blocks;
@@ -52,19 +48,19 @@ public class StoneTypes {
             () -> Blocks.STONE.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.ANDESITE),
             state -> state.getBlock() instanceof BlockStone && state.getValue(BlockStone.VARIANT) == EnumType.ANDESITE, false);
 
-    public static StoneType BLACK_GRANITE = new StoneType(8, "black_granite", new ResourceLocation(GTValues.MODID, "blocks/stones/granite/granite_black_stone"), SoundType.STONE, OrePrefix.oreBlackgranite, Materials.GraniteBlack, "pickaxe",
-            () -> MetaBlocks.GRANITE.withVariant(GraniteVariant.BLACK_GRANITE, ChiselingVariant.NORMAL),
-            state -> state.getBlock() instanceof BlockGranite && ((BlockGranite) state.getBlock()).getVariant(state) == GraniteVariant.BLACK_GRANITE, false);
+    public static StoneType BLACK_GRANITE = new StoneType(8, "black_granite", new ResourceLocation(GTValues.MODID, "blocks/stones/black_granite/black_granite_smooth"), SoundType.STONE, OrePrefix.oreBlackgranite, Materials.GraniteBlack, "pickaxe",
+            () -> MetaBlocks.STONE_SMOOTH.getState(BlockStoneSmooth.BlockType.BLACK_GRANITE),
+            state -> state.getBlock() instanceof BlockStoneSmooth && ((BlockStoneSmooth) state.getBlock()).getVariant(state) == BlockStoneSmooth.BlockType.BLACK_GRANITE, false);
 
-    public static StoneType RED_GRANITE = new StoneType(9, "red_granite", new ResourceLocation(GTValues.MODID, "blocks/stones/granite/granite_red_stone"), SoundType.STONE, OrePrefix.oreRedgranite, Materials.GraniteRed, "pickaxe",
-            () -> MetaBlocks.GRANITE.withVariant(GraniteVariant.RED_GRANITE, ChiselingVariant.NORMAL),
-            state -> state.getBlock() instanceof BlockGranite && ((BlockGranite) state.getBlock()).getVariant(state) == GraniteVariant.RED_GRANITE, false);
+    public static StoneType RED_GRANITE = new StoneType(9, "red_granite", new ResourceLocation(GTValues.MODID, "blocks/stones/red_granite/red_granite_smooth"), SoundType.STONE, OrePrefix.oreRedgranite, Materials.GraniteRed, "pickaxe",
+            () -> MetaBlocks.STONE_SMOOTH.getState(BlockStoneSmooth.BlockType.RED_GRANITE),
+            state -> state.getBlock() instanceof BlockStoneSmooth && ((BlockStoneSmooth) state.getBlock()).getVariant(state) == BlockStoneSmooth.BlockType.RED_GRANITE, false);
 
-    public static StoneType MARBLE = new StoneType(10, "marble", new ResourceLocation(GTValues.MODID, "blocks/stones/marble/marble_stone"), SoundType.STONE, OrePrefix.oreMarble, Materials.Marble, "pickaxe",
-            () -> MetaBlocks.MINERAL.withVariant(MineralVariant.MARBLE, ChiselingVariant.NORMAL),
-            state -> state.getBlock() instanceof BlockMineral && ((BlockMineral) state.getBlock()).getVariant(state) == MineralVariant.MARBLE, false);
+    public static StoneType MARBLE = new StoneType(10, "marble", new ResourceLocation(GTValues.MODID, "blocks/stones/marble/marble_smooth"), SoundType.STONE, OrePrefix.oreMarble, Materials.Marble, "pickaxe",
+            () -> MetaBlocks.STONE_SMOOTH.getState(BlockStoneSmooth.BlockType.MARBLE),
+            state -> state.getBlock() instanceof BlockStoneSmooth && ((BlockStoneSmooth) state.getBlock()).getVariant(state) == BlockStoneSmooth.BlockType.MARBLE, false);
 
-    public static StoneType BASALT = new StoneType(11, "basalt", new ResourceLocation(GTValues.MODID, "blocks/stones/basalt/basalt_stone"), SoundType.STONE, OrePrefix.oreBasalt, Materials.Basalt, "pickaxe",
-            () -> MetaBlocks.MINERAL.withVariant(MineralVariant.BASALT, ChiselingVariant.NORMAL),
-            state -> state.getBlock() instanceof BlockMineral && ((BlockMineral) state.getBlock()).getVariant(state) == MineralVariant.BASALT, false);
+    public static StoneType BASALT = new StoneType(11, "basalt", new ResourceLocation(GTValues.MODID, "blocks/stones/basalt/basalt_smooth"), SoundType.STONE, OrePrefix.oreBasalt, Materials.Basalt, "pickaxe",
+            () -> MetaBlocks.STONE_SMOOTH.getState(BlockStoneSmooth.BlockType.BASALT),
+            state -> state.getBlock() instanceof BlockStoneSmooth && ((BlockStoneSmooth) state.getBlock()).getVariant(state) == BlockStoneSmooth.BlockType.BASALT, false);
 }

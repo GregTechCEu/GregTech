@@ -127,6 +127,19 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
+    public static void addOre(Material m, @Optional int oreMultiplier, @Optional int byproductMultiplier, @Optional boolean emissive) {
+        if (checkFrozen("add an Ore to a material")) return;
+        oreMultiplier = oreMultiplier == 0 ? 1 : oreMultiplier;
+        byproductMultiplier = byproductMultiplier == 0 ? 1 : byproductMultiplier;
+        if (!m.hasProperty(PropertyKey.ORE)) {
+            m.getProperty(PropertyKey.ORE).setOreMultiplier(oreMultiplier);
+            m.getProperty(PropertyKey.ORE).setByProductMultiplier(byproductMultiplier);
+            m.getProperty(PropertyKey.ORE).setEmissive(emissive);
+        }
+        else m.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, byproductMultiplier, emissive));
+    }
+
+    @ZenMethod
     public static void addItemPipes(Material m, int priority, float transferRate) {
         if (checkFrozen("add Item Pipes to a material")) return;
         if (m.hasProperty(PropertyKey.ITEM_PIPE)) {

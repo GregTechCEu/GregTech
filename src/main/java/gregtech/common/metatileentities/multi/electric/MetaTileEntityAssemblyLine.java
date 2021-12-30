@@ -10,9 +10,9 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockMultiblockCasing;
-import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.state.IBlockState;
@@ -33,13 +33,14 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     @Override
     protected BlockPattern createStructurePattern() {
-        return FactoryBlockPattern.start(LEFT, DOWN, FRONT)
-                .aisle("#Y#", "GSG", "RTR", "FIF")
-                .aisle("#Y#", "GAG", "RTR", "FIF").setRepeatable(3, 15)
-                .aisle("#Y#", "GAG", "RTR", "COC")
+        return FactoryBlockPattern.start(FRONT, UP, RIGHT)
+                .aisle("FIF", "RTR", "SAG", "#Y#")
+                .aisle("FIF", "RTR", "GAG", "#Y#").setRepeatable(3, 15)
+                .aisle("FOF", "RTR", "GAG", "#Y#")
                 .where('S', selfPredicate())
-                .where('C', states(getCasingState()))
-                .where('F', states(getCasingState()).or(autoAbilities(false, true, false, false, true, false, false)))
+                .where('F', states(getCasingState())
+                        .or(autoAbilities(false, true, false, false, false, false, false))
+                        .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMaxGlobalLimited(4)))
                 .where('O', abilities(MultiblockAbility.EXPORT_ITEMS).addTooltips("gregtech.multiblock.pattern.location_end"))
                 .where('Y', states(getCasingState()).or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1)))
                 .where('I', metaTileEntities(MetaTileEntities.ITEM_IMPORT_BUS[0]))

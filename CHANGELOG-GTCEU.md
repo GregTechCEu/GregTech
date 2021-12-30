@@ -1,24 +1,12 @@
 <h1 align="center">Changes made by GregTech: CE Unofficial</h1>
 
-<br>TODO "Merged Content" should mostly redirect into the "New Content" section (especially multiblocks)
-<br>TODO Link Replication changes to sec. 1.1
-<br>TODO Link Multiblock in-world preview changes to sec. 1.3
-<br>TODO
-<br>TODO
-<br>TODO
-<br>TODO
-<br>TODO
-
 ## Table of Contents
 
 - [Overview](#overview)
 
 - [Table of Contents](#table-of-contents)
 
-- [1 - Merged Content](#1---merged-content)
-    - [1.1 - From Shadows of Greg](#11---from-shadows-of-greg)
-    - [1.2 - From Gregicality](#12---from-gregicality)
-    - [1.3 - From other CE Addons](#13---from-other-ce-addons)
+- [1 - Introduction](#1---introduction)
 
 - [2 - New Content](#2---new-content)
     - [2.1 - Pipes and Cables](#21---pipes-and-cables)
@@ -64,10 +52,13 @@
 
 - [11 - Internal Changes](#10---internal-changes)
 
-- [#335](https://github.com/GregTechCEu/GregTech/pull/335): Added Config to make Stone Types other than Stone, Netherrack, and Endstone not drop unique ores (cleans up Inventory/JEI clutter)
-- [#369](https://github.com/GregTechCEu/GregTech/pull/369): Added new Vein Generator to create layered veins similar to GT5u
+## Overview
 
-- [#234](https://github.com/GregTechCEu/GregTech/pull/234): Added Sounds to GT Tools, Machines (with configs)
+## [1 - Introduction](#table-of-contents)
+
+This changelog attempts to gather all meaningful changes made to GregTech CE: Unofficial. However, it is definitely missing many, many things, and does not go into detail on any of the changes, so check them out in game!
+
+## [2 - New Content](#table-of-contents)
 
 - [#46](https://github.com/GregTechCEu/GregTech/pull/46): Added the Terminal, a centralized place for Applications. Applications:
     - [#46](https://github.com/GregTechCEu/GregTech/pull/46): GuideBook App, which contains useful information and documentation of the Mod
@@ -75,42 +66,6 @@
     - [#115](https://github.com/GregTechCEu/GregTech/pull/115): GT Console app, providing an EnderIO-like system for configuring GT machines
     - [#133](https://github.com/GregTechCEu/GregTech/pull/133): A few games, for passing the time while your EBF is cooking
     - [#178](https://github.com/GregTechCEu/GregTech/pull/178): Virtual Tank App, for checking your Ender Fluid Link Cover stored fluids
-
-- [#44](https://github.com/GregTechCEu/GregTech/pull/44): Added the Clipboard, functionally similar to the Bibliocraft Clipboard
-
-## Overview
-
-## [1 - Merged Content](#table-of-contents)
-
-### [1.1 - From Shadows of Greg](#table-of-contents)
-
-**[Shadows of Greg](https://github.com/Shadows-of-Fire/Shadows-of-Greg)**, an addon for GTCE, was merged almost in its entirety into GTCEu.
-
-**Multiblocks**:
-- [0c43ded](https://github.com/GregTechCEu/GregTech/commit/0c43dedb8f237f9d47d91ed5f9eb0ebef1cef912): Added the Assembly Line
-- [9e537dc](https://github.com/GregTechCEu/GregTech/commit/9e537dca63ac95ad21e97b28b60ab31f3a01fc93): Added the Fusion Reactor
-
-**Single-blocks**:
-- [20cc5c3](https://github.com/GregTechCEu/GregTech/commit/20cc5c3c88f41b1d86241a1564cb022be17c1891): Added High-Tier Air Collectors and Pumps
-
-**Misc additions**:
-- [a5cf551](https://github.com/GregTechCEu/GregTech/commit/a5cf551113e5b3aa779b6416bd8b82737059ff95): All SoG Materials added to GTCEu (Growth Medium, Neutronium, etc)
-- [733a540](https://github.com/GregTechCEu/GregTech/commit/733a5405a94e303bad665e6ce330970124fac9a0): Added Crates and Drums
-
-
-### [1.2 - From Gregicality](#table-of-contents)
-
-**[Gregicality](https://github.com/Gregicality/gregicality)**, an expanded version of Shadows of Greg, had some features merged into CEu.
-- [#10](https://github.com/GregTechCEu/GregTech/pull/10): Added the Large Chemical Reactor
-
-
-### [1.3 - From other CE Addons](#table-of-contents)
-
-**[Multiblock Tweaker](https://github.com/eutro/MultiblockTweaker)**
-
-**[CEU](https://github.com/Tictim/CEU)**
-
-## [2 - New Content](#table-of-contents)
 
 ### [2.1 - Pipes and Cables](#table-of-contents)
 - [c09c319](https://github.com/GregTechCEu/GregTech/commit/c09c319b2a6f827d44e7d801320cf5f60833d23b): Use GT5u-style Pipe models
@@ -142,7 +97,9 @@
 #### [2.3.1 - New Multiblocks](#table-of-contents)
 - [#34](https://github.com/GregTechCEu/GregTech/pull/34): Added the Primitive Water Pump (from IMPACT) for collecting Water in the Steam Era
 - [#42](https://github.com/GregTechCEu/GregTech/pull/42): Added the Steam Grinder and Steam Oven
-
+- [#10](https://github.com/GregTechCEu/GregTech/pull/10): Added the Large Chemical Reactor
+- [0c43ded](https://github.com/GregTechCEu/GregTech/commit/0c43dedb8f237f9d47d91ed5f9eb0ebef1cef912): Added the Assembly Line
+- [9e537dc](https://github.com/GregTechCEu/GregTech/commit/9e537dca63ac95ad21e97b28b60ab31f3a01fc93): Added the Fusion Reactor
 - [#241](https://github.com/GregTechCEu/GregTech/pull/241): Fusion Reactor now has a slightly modified structure, new recipes
 - [#185](https://github.com/GregTechCEu/GregTech/pull/185): Added Large Miners, for mining ores in-world
 - [#196](https://github.com/GregTechCEu/GregTech/pull/196): Added the Central Monitor (think, ComputerCraft), with features from monitoring machines, proxying machine GUIs, displaying images and GIFs, among other things
@@ -403,6 +360,10 @@
 - [#105](https://github.com/GregTechCEu/GregTech/pull/105): Rubber Wood now creates custom Rubber Planks
 - [#106](https://github.com/GregTechCEu/GregTech/pull/106): GT Concrete now gives the player a slight speed-boost
 - [#119](https://github.com/GregTechCEu/GregTech/pull/119): Clean up mod priority related configs
+- [#335](https://github.com/GregTechCEu/GregTech/pull/335): Added Config to make Stone Types other than Stone, Netherrack, and Endstone not drop unique ores (cleans up Inventory/JEI clutter)
+- [#369](https://github.com/GregTechCEu/GregTech/pull/369): Added new Vein Generator to create layered veins similar to GT5u
+- [#234](https://github.com/GregTechCEu/GregTech/pull/234): Added Sounds to GT Tools, Machines (with configs)
+- [#44](https://github.com/GregTechCEu/GregTech/pull/44): Added the Clipboard, functionally similar to the Bibliocraft Clipboard
 
 ## [11 - Internal Changes](#table-of-contents)
 - [6155d82](https://github.com/GregTechCEu/GregTech/commit/6155d82b85b8f61e68c42376719826c0388b6a14): UHV, UEV, UIV, UMV, and UXV tiers were added
@@ -431,7 +392,3 @@
 - [#320](https://github.com/GregTechCEu/GregTech/pull/320): Rewrote `NetworkHandler` and associated packet classes to be much easier to use
 - [#173](https://github.com/GregTechCEu/GregTech/pull/173): Allow addons to more easily add and modify ore veins
 - [#379](https://github.com/GregTechCEu/GregTech/pull/379): Implemented the `NO_UNIFICATION` flag for creating materials with no recipes generated
-
-TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-- Larger Cells? Yes
-- Add Transformer Lang bug to Bug Fixes if commit isnt found

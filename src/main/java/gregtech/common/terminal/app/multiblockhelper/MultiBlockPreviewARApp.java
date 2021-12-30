@@ -8,43 +8,28 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.MultiblockShapeInfo;
-import gregtech.client.utils.TrackedDummyWorld;
-import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.app.ARApplication;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.MachineSceneWidget;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalTheme;
-import gregtech.api.util.BlockInfo;
+import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
+import gregtech.client.shader.Shaders;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldType;
-import net.minecraft.world.biome.Biome;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -184,6 +169,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
     private static Set<MultiblockControllerBase> found;
     @SideOnly(Side.CLIENT)
     private static BlockPos lastPos;
+    private static int opList = -1;
 
     @Override
     public void onAROpened() {
@@ -204,11 +190,13 @@ public class MultiBlockPreviewARApp extends ARApplication {
         World world = player.world;
         int tick = Math.abs(player.ticksExisted % 27); // 0 - 26
         if (tick == 0) {
+            boolean reRender = false;
             Iterator<MultiblockControllerBase> iterator = controllerList.keySet().iterator();
             if (iterator.hasNext()) {
                 MultiblockControllerBase controller = iterator.next();
                 if (!controller.isValid() || controller.isStructureFormed() || !inRange(player.getPosition(), controller.getPos())) {
                     iterator.remove();
+                    reRender = true;
                 }
             }
             for (MultiblockControllerBase controllerBase : found) {
@@ -216,11 +204,18 @@ public class MultiBlockPreviewARApp extends ARApplication {
                     List<MultiblockShapeInfo> shapeInfos = controllerBase.getMatchingShapes();
                     if (!shapeInfos.isEmpty()) {
                         controllerList.put(controllerBase, shapeInfos.get(0));
+                        reRender = true;
                     }
                 }
             }
             found.clear();
             lastPos = player.getPosition();
+            if (reRender) {
+                opList = GLAllocation.generateDisplayLists(1); // allocate op list
+                GlStateManager.glNewList(opList, GL11.GL_COMPILE);
+                controllerList.forEach((controller, shapes) -> MultiblockPreviewRenderer.renderControllerInList(controller, shapes, 0));
+                GlStateManager.glEndList();
+            }
         }
         if (lastPos == null) {
             lastPos = player.getPosition();
@@ -241,177 +236,30 @@ public class MultiBlockPreviewARApp extends ARApplication {
     @SideOnly(Side.CLIENT)
     @Override
     public void drawARScreen(RenderWorldLastEvent event) {
-        Minecraft mc = Minecraft.getMinecraft();
-        Entity entity = mc.getRenderViewEntity();
-        if (entity == null) entity = mc.player;
+        if (opList != -1) {
+            MultiblockPreviewRenderer.resetMultiblockRender();
+            Minecraft mc = Minecraft.getMinecraft();
+            Entity entity = mc.getRenderViewEntity();
+            if (entity == null) entity = mc.player;
 
-        float partialTicks = event.getPartialTicks();
+            float partialTicks = event.getPartialTicks();
 
-        double tx = entity.lastTickPosX + ((entity.posX - entity.lastTickPosX) * partialTicks);
-        double ty = entity.lastTickPosY + ((entity.posY - entity.lastTickPosY) * partialTicks);
-        double tz = entity.lastTickPosZ + ((entity.posZ - entity.lastTickPosZ) * partialTicks);
+            double tx = entity.lastTickPosX + ((entity.posX - entity.lastTickPosX) * partialTicks);
+            double ty = entity.lastTickPosY + ((entity.posY - entity.lastTickPosY) * partialTicks);
+            double tz = entity.lastTickPosZ + ((entity.posZ - entity.lastTickPosZ) * partialTicks);
 
-        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-tx, -ty, -tz);
-        GlStateManager.enableBlend();
-
-        BlockRenderLayer oldLayer = MinecraftForgeClient.getRenderLayer();
-
-        controllerList.forEach(MultiBlockPreviewARApp::renderControllerInList);
-
-        ForgeHooksClient.setRenderLayer(oldLayer);
-        GlStateManager.enableLighting();
-
-        GlStateManager.popMatrix();
-        GlStateManager.color(1F, 1F, 1F, 0F);
-    }
-
-    @SideOnly(Side.CLIENT)
-    private static void renderControllerInList(MultiblockControllerBase controllerBase, MultiblockShapeInfo shapeInfo) {
-        BlockPos mbpPos = controllerBase.getPos();
-        EnumFacing frontFacing, previewFacing;
-        previewFacing = controllerBase.getFrontFacing();
-        BlockPos controllerPos = BlockPos.ORIGIN;
-        MultiblockControllerBase mte = null;
-        BlockInfo[][][] blocks = shapeInfo.getBlocks();
-        Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
-        for (int x = 0; x < blocks.length; x++) {
-            BlockInfo[][] aisle = blocks[x];
-            for (int y = 0; y < aisle.length; y++) {
-                BlockInfo[] column = aisle[y];
-                for (int z = 0; z < column.length; z++) {
-                    blockMap.put(new BlockPos(x, y, z), column[z]);
-                    MetaTileEntity metaTE = column[z].getTileEntity() instanceof MetaTileEntityHolder ? ((MetaTileEntityHolder) column[z].getTileEntity()).getMetaTileEntity() : null;
-                    if (metaTE instanceof MultiblockControllerBase && metaTE.metaTileEntityId.equals(controllerBase.metaTileEntityId)) {
-                        controllerPos = new BlockPos(x, y, z);
-                        previewFacing = metaTE.getFrontFacing();
-                        mte = (MultiblockControllerBase) metaTE;
-                        break;
-                    }
-                }
-            }
-        }
-        TrackedDummyWorld world = new TrackedDummyWorld();
-        world.addBlocks(blockMap);
-
-        EnumFacing facing = controllerBase.getFrontFacing();
-        EnumFacing spin = EnumFacing.NORTH;
-
-
-        // TODO SIDEWAYS ONE DAY
-        //  spin = controllerBase.getSpin();
-
-        frontFacing = facing.getYOffset() == 0 ? facing : facing.getYOffset() < 0 ? spin : spin.getOpposite();
-        Rotation rotatePreviewBy = Rotation.values()[(4 + frontFacing.getHorizontalIndex() - previewFacing.getHorizontalIndex()) % 4];
-
-        Minecraft mc = Minecraft.getMinecraft();
-        BlockRendererDispatcher brd = mc.getBlockRendererDispatcher();
-        Tessellator tes = Tessellator.getInstance();
-        BufferBuilder buff = tes.getBuffer();
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(mbpPos.getX(), mbpPos.getY(), mbpPos.getZ());
-        GlStateManager.translate(0.5, 0, 0.5);
-        GlStateManager.rotate(rotatePreviewBy.ordinal() * 90, 0, -1, 0);
-        GlStateManager.translate(-0.5, 0, -0.5);
-
-        if (facing == EnumFacing.UP) {
-            GlStateManager.translate(0.5, 0.5, 0.5);
-            GlStateManager.rotate(90, -previewFacing.getZOffset(), 0, previewFacing.getXOffset());
-            GlStateManager.translate(-0.5, -0.5, -0.5);
-        } else if (facing == EnumFacing.DOWN) {
-            GlStateManager.translate(0.5, 0.5, 0.5);
-            GlStateManager.rotate(90, previewFacing.getZOffset(), 0, -previewFacing.getXOffset());
-            GlStateManager.translate(-0.5, -0.5, -0.5);
-        } else {
-            int degree = 90 * (spin == EnumFacing.EAST ? -1 : spin == EnumFacing.SOUTH ? 2 : spin == EnumFacing.WEST ? 1 : 0);
-            GlStateManager.translate(0.5, 0.5, 0.5);
-            GlStateManager.rotate(degree, previewFacing.getXOffset(), 0, previewFacing.getZOffset());
-            GlStateManager.translate(-0.5, -0.5, -0.5);
-        }
-
-        TargetBlockAccess targetBA = new TargetBlockAccess(world, BlockPos.ORIGIN);
-        for (BlockPos pos : blockMap.keySet()) {
-            targetBA.setPos(pos);
+            Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+            GlStateManager.color(1F, 1F, 1F, 1F);
             GlStateManager.pushMatrix();
-            BlockPos.MutableBlockPos tPos = new BlockPos.MutableBlockPos(pos.subtract(controllerPos));
-            GlStateManager.translate(tPos.getX(), tPos.getY(), tPos.getZ());
-            GlStateManager.translate(0.125, 0.125, 0.125);
-            GlStateManager.scale(0.75, 0.75, 0.75);
+            GlStateManager.translate(-tx, -ty, -tz);
+            GlStateManager.enableBlend();
 
-            buff.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-            IBlockState state = world.getBlockState(pos);
-            for (BlockRenderLayer brl : BlockRenderLayer.values()) {
-                if (state.getBlock().canRenderInLayer(state, brl)) {
-                    ForgeHooksClient.setRenderLayer(brl);
-                    brd.renderBlock(state, BlockPos.ORIGIN, targetBA, buff);
-                }
-            }
-            tes.draw();
+            GlStateManager.callList(opList);
+
+            GlStateManager.enableLighting();
             GlStateManager.popMatrix();
-        }
-
-        GlStateManager.popMatrix();
-        if (mte != null) {
-            mte.checkStructurePattern();
+            GlStateManager.color(1F, 1F, 1F, 0F);
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    private static class TargetBlockAccess implements IBlockAccess {
-
-        private final IBlockAccess delegate;
-        private BlockPos targetPos;
-
-        public TargetBlockAccess(IBlockAccess delegate, BlockPos pos) {
-            this.delegate = delegate;
-            this.targetPos = pos;
-        }
-
-        public void setPos(BlockPos pos) {
-            targetPos = pos;
-        }
-
-        @Override
-        public TileEntity getTileEntity(BlockPos pos) {
-            return pos.equals(BlockPos.ORIGIN) ? delegate.getTileEntity(targetPos) : null;
-        }
-
-        @Override
-        public int getCombinedLight(BlockPos pos, int lightValue) {
-            return 15;
-        }
-
-        @Override
-        public IBlockState getBlockState(BlockPos pos) {
-            return pos.equals(BlockPos.ORIGIN) ? delegate.getBlockState(targetPos) : Blocks.AIR.getDefaultState();
-        }
-
-        @Override
-        public boolean isAirBlock(BlockPos pos) {
-            return !pos.equals(BlockPos.ORIGIN) || delegate.isAirBlock(targetPos);
-        }
-
-        @Override
-        public Biome getBiome(BlockPos pos) {
-            return delegate.getBiome(targetPos);
-        }
-
-        @Override
-        public int getStrongPower(BlockPos pos, EnumFacing direction) {
-            return 0;
-        }
-
-        @Override
-        public WorldType getWorldType() {
-            return delegate.getWorldType();
-        }
-
-        @Override
-        public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
-            return pos.equals(BlockPos.ORIGIN) && delegate.isSideSolid(targetPos, side, _default);
-        }
-
-    }
 }

@@ -120,4 +120,9 @@ public class ToolChainsaw extends ToolSaw {
         }
         return powerUnit == null ? ItemStack.EMPTY : powerUnit.getChargedStackWithOverride(electricItem);
     }
+
+    @Override
+    public boolean canPlayBreakingSound(ItemStack stack, IBlockState state) {
+        return canMineBlock(state, stack);
+    }
 }

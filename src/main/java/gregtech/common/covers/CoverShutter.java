@@ -45,4 +45,9 @@ public class CoverShutter extends CoverBehavior {
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
         return null;
     }
+
+    @Override
+    public boolean shouldRenderConnected() {
+        return false;
+    }
 }

@@ -13,7 +13,7 @@ public class ChemistryRecipes {
 
     public static void init() {
 
-        CrackingRecipes.init();
+        PetrochemRecipes.init();
         DistillationRecipes.init();
         SeparationRecipes.init();
         MixerRecipes.init();
@@ -28,6 +28,7 @@ public class ChemistryRecipes {
         GemSlurryRecipes.init();
         PlatGroupMetalsRecipes.init();
         NaquadahRecipes.init();
+        AcidRecipes.init();
 
 
         // A Few Random Recipes
@@ -63,6 +64,11 @@ public class ChemistryRecipes {
                 .fluidOutputs(LiquidEnderAir.getFluid(4000))
                 .duration(80).EUt(VA[IV]).buildAndRegister();
 
+        VACUUM_RECIPES.recipeBuilder()
+                .fluidInputs(Oxygen.getFluid(1000))
+                .fluidOutputs(LiquidOxygen.getFluid(1000))
+                .duration(240).EUt(VA[EV]).buildAndRegister();
+
         BLAST_RECIPES.recipeBuilder()
                 .input(dust, FerriteMixture)
                 .fluidInputs(Oxygen.getFluid(2000))
@@ -79,20 +85,6 @@ public class ChemistryRecipes {
                 .input(ingot, Polycaprolactam)
                 .output(Items.STRING, 32)
                 .duration(80).EUt(48).buildAndRegister();
-
-        BLAST_RECIPES.recipeBuilder()
-                .input(Items.REDSTONE)
-                .input(ingot, Copper)
-                .output(ingot, RedAlloy, 2)
-                .blastFurnaceTemp(1200)
-                .duration(884).EUt(VA[MV]).buildAndRegister();
-
-        BLAST_RECIPES.recipeBuilder()
-                .input(Items.REDSTONE)
-                .input(dust, Copper)
-                .output(ingot, RedAlloy, 2)
-                .blastFurnaceTemp(1200)
-                .duration(884).EUt(VA[MV]).buildAndRegister();
 
         GAS_COLLECTOR_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(1))

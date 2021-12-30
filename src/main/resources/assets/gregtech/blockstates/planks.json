@@ -1,0 +1,23 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecraft:cube_all",
+    "textures": {
+      "all": "gregtech:blocks/rendering_error"
+    }
+  },
+  "variants": {
+    "variant": {
+      "rubber": {
+        "textures": {
+          "all": "gregtech:blocks/wood/rubber/planks_rubber"
+        }
+      },
+      "treated": {
+        "textures": {
+          "all": "gregtech:blocks/wood/treated/planks_treated"
+        }
+      }
+    }
+  }
+}

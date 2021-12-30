@@ -59,7 +59,7 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
     @Override
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(getBaseRenderer().getParticleSprite(), getPaintingColor());
+        return Pair.of(getBaseRenderer().getParticleSprite(), getPaintingColorForRendering());
     }
 
     @Override

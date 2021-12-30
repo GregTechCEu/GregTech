@@ -8,7 +8,6 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.recipes.builders.*;
 import gregtech.api.recipes.machines.*;
 import gregtech.api.sound.GTSounds;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import net.minecraft.init.SoundEvents;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -23,7 +22,7 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> ALLOY_SMELTER_RECIPES = new RecipeMap<>("alloy_smelter", 1, 2, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
-            .setSlotOverlay(false, false, GuiTextures.FURNACE_OVERLAY)
+            .setSlotOverlay(false, false, GuiTextures.FURNACE_OVERLAY_1)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
             .setSound(GTSounds.FURNACE);
 
@@ -34,17 +33,15 @@ public class RecipeMaps {
             .onRecipeBuild(recipeBuilder -> {
                 if (recipeBuilder.getFluidInputs().isEmpty()) {
                     recipeBuilder.fluidInputs(Materials.Oxygen.getFluid(recipeBuilder.duration));
-                    for (Material material : new Material[]{Materials.Argon, Materials.Nitrogen}) {
-                        int plasmaAmount = (int) Math.max(1L, recipeBuilder.duration / (material.getMass() * 16L));
-                        RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
-                                .inputsIngredients(recipeBuilder.getInputs())
-                                .outputs(recipeBuilder.getOutputs())
-                                .duration(Math.max(1, recipeBuilder.duration / 16))
-                                .EUt(recipeBuilder.EUt / 3)
-                                .fluidInputs(material.getPlasma(plasmaAmount))
-                                .fluidOutputs(material.getFluid(plasmaAmount))
-                                .buildAndRegister();
-                    }
+                    int plasmaAmount = (int) Math.max(1L, recipeBuilder.duration / (Materials.Argon.getMass() * 16L));
+                    RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
+                            .inputsIngredients(recipeBuilder.getInputs())
+                            .outputs(recipeBuilder.getOutputs())
+                            .duration(Math.max(1, recipeBuilder.duration / 16))
+                            .EUt(recipeBuilder.EUt / 3)
+                            .fluidInputs(Materials.Argon.getPlasma(plasmaAmount))
+                            .fluidOutputs(Materials.Argon.getFluid(plasmaAmount))
+                            .buildAndRegister();
                 }
             });
 
@@ -260,9 +257,10 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> CRACKING_RECIPES = new RecipeMap<>("cracker", 0, 0, 0, 0, 2, 2, 1, 2, new SimpleRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> CRACKING_RECIPES = new RecipeMapCrackerUnit<>("cracker", 0, 1, 0, 0, 2, 2, 1, 2, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, true, GuiTextures.CRACKING_OVERLAY_1)
             .setSlotOverlay(true, true, GuiTextures.CRACKING_OVERLAY_2)
+            .setSlotOverlay(false, false, GuiTextures.CIRCUIT_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_CRACKING, MoveType.HORIZONTAL)
             .setSound(GTSounds.FIRE);
 
@@ -516,7 +514,7 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> FURNACE_RECIPES = new RecipeMapFurnace("electric_furnace", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
-            .setSlotOverlay(false, false, GuiTextures.FURNACE_OVERLAY)
+            .setSlotOverlay(false, false, GuiTextures.FURNACE_OVERLAY_1)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
             .setSound(GTSounds.FURNACE);
 
@@ -561,7 +559,7 @@ public class RecipeMaps {
             .setSlotOverlay(false, false, true, GuiTextures.IMPLOSION_OVERLAY_1)
             .setSlotOverlay(false, false, false, GuiTextures.IMPLOSION_OVERLAY_2)
             .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
-            .setSound(GTSounds.EXPLOSION);
+            .setSound(SoundEvents.ENTITY_GENERIC_EXPLODE);
 
     /**
      * Example:
@@ -666,7 +664,7 @@ public class RecipeMaps {
 
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> ORE_WASHER_RECIPES = new RecipeMap<>("ore_washer", 1, 1, 1, 3, 0, 1, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(16), false)
+    public static final RecipeMap<SimpleRecipeBuilder> ORE_WASHER_RECIPES = new RecipeMap<>("ore_washer", 1, 2, 1, 3, 0, 1, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(16), false)
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.CIRCULAR)
@@ -674,10 +672,10 @@ public class RecipeMaps {
 
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> PACKER_RECIPES = new RecipeMap<>("packer", 2, 2, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder().EUt(12).duration(10), false)
+    public static final RecipeMap<SimpleRecipeBuilder> PACKER_RECIPES = new RecipeMap<>("packer", 2, 2, 1, 2, 0, 0, 0, 0, new SimpleRecipeBuilder().EUt(12).duration(10), false)
             .setSlotOverlay(false, false, true, GuiTextures.BOX_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.BOXED_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_PACKER, MoveType.HORIZONTAL)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_UNPACKER, MoveType.HORIZONTAL)
             .setSound(GTSounds.ASSEMBLER);
 
     /**
@@ -768,18 +766,11 @@ public class RecipeMaps {
 
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> THERMAL_CENTRIFUGE_RECIPES = new RecipeMap<>("thermal_centrifuge", 1, 1, 1, 3, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(60), false)
+    public static final RecipeMap<SimpleRecipeBuilder> THERMAL_CENTRIFUGE_RECIPES = new RecipeMap<>("thermal_centrifuge", 1, 1, 1, 3, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(30), false)
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
             .setSound(GTSounds.CENTRIFUGE);
-
-
-    @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> UNPACKER_RECIPES = new RecipeMap<>("unpacker", 2, 2, 1, 2, 0, 0, 0, 0, new SimpleRecipeBuilder().EUt(12).duration(10), false)
-            .setSlotOverlay(false, false, GuiTextures.BOXED_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_UNPACKER, MoveType.HORIZONTAL)
-            .setSound(GTSounds.ASSEMBLER);
 
     /**
      * Example:
@@ -814,34 +805,38 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_WIREMILL, MoveType.HORIZONTAL)
             .setSound(GTSounds.MOTOR);
 
-    public static final RecipeMap<SimpleRecipeBuilder> SIMPLE_WASHER_RECIPES = new RecipeMap<>("simple_washer", 1, 1, 1, 1, 1, 1, 0, 0, new SimpleRecipeBuilder(), true)
-            .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
-            .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.CIRCULAR)
-            .setSound(GTSounds.BATH);
-
 
     //////////////////////////////////////
     //         Fuel Recipe Maps         //
     //////////////////////////////////////
 
     @ZenProperty
-    public static final FuelRecipeMap COMBUSTION_GENERATOR_FUELS = new FuelRecipeMap("combustion_generator")
+    public static final RecipeMap<FuelRecipeBuilder> COMBUSTION_GENERATOR_FUELS = new RecipeMap<>("combustion_generator", 0, 0, 0, 0, 1, 1, 0, 0, new FuelRecipeBuilder(), false)
+            .setSlotOverlay(false, true, true, GuiTextures.FURNACE_OVERLAY_2)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
             .setSound(GTSounds.COMBUSTION);
 
     @ZenProperty
-    public static final FuelRecipeMap GAS_TURBINE_FUELS = new FuelRecipeMap("gas_turbine")
+    public static final RecipeMap<FuelRecipeBuilder> GAS_TURBINE_FUELS = new RecipeMap<>("gas_turbine", 0, 0, 0, 0, 1, 1, 0, 0, new FuelRecipeBuilder(), false)
+            .setSlotOverlay(false, true, true, GuiTextures.DARK_CANISTER_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR, MoveType.HORIZONTAL)
             .setSound(GTSounds.TURBINE);
 
     @ZenProperty
-    public static final FuelRecipeMap PLASMA_GENERATOR_FUELS = new FuelRecipeMap("plasma_generator")
+    public static final RecipeMap<FuelRecipeBuilder> STEAM_TURBINE_FUELS = new RecipeMap<>("steam_turbine", 0, 0, 0, 0, 1, 1, 0, 1, new FuelRecipeBuilder(), false)
+            .setSlotOverlay(false, true, true, GuiTextures.CENTRIFUGE_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR, MoveType.HORIZONTAL)
             .setSound(GTSounds.TURBINE);
 
     @ZenProperty
-    public static final FuelRecipeMap SEMI_FLUID_GENERATOR_FUELS = new FuelRecipeMap("semi_fluid_generator")
+    public static final RecipeMap<FuelRecipeBuilder> SEMI_FLUID_GENERATOR_FUELS = new RecipeMap<>("semi_fluid_generator", 0, 0, 0, 0, 1, 1, 0, 0, new FuelRecipeBuilder(), false)
+            .setSlotOverlay(false, true, true, GuiTextures.FURNACE_OVERLAY_2)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
             .setSound(GTSounds.COMBUSTION);
 
     @ZenProperty
-    public static final FuelRecipeMap STEAM_TURBINE_FUELS = new FuelRecipeMap("steam_turbine")
+    public static final RecipeMap<FuelRecipeBuilder> PLASMA_GENERATOR_FUELS = new RecipeMap<>("plasma_generator", 0, 0, 0, 0, 1, 1, 0, 1, new FuelRecipeBuilder(), false)
+            .setSlotOverlay(false, true, true, GuiTextures.CENTRIFUGE_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR, MoveType.HORIZONTAL)
             .setSound(GTSounds.TURBINE);
 }

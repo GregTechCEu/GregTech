@@ -1,0 +1,40 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecraft:cube_all"
+  },
+  "variants": {
+    "variant": {
+      "black_granite": {
+        "textures": {
+          "all": "gregtech:blocks/stones/black_granite/black_granite_windmill_b"
+        }
+      },
+      "red_granite": {
+        "textures": {
+          "all": "gregtech:blocks/stones/red_granite/red_granite_windmill_b"
+        }
+      },
+      "marble": {
+        "textures": {
+          "all": "gregtech:blocks/stones/marble/marble_windmill_b"
+        }
+      },
+      "basalt": {
+        "textures": {
+          "all": "gregtech:blocks/stones/basalt/basalt_windmill_b"
+        }
+      },
+      "concrete_light": {
+        "textures": {
+          "all": "gregtech:blocks/stones/concrete_light/concrete_light_windmill_b"
+        }
+      },
+      "concrete_dark": {
+        "textures": {
+          "all": "gregtech:blocks/stones/concrete_dark/concrete_dark_windmill_b"
+        }
+      }
+    }
+  }
+}

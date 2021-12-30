@@ -30,12 +30,6 @@ public class GrowthMediumRecipes {
                 .outputs(new ItemStack(Blocks.DIRT))
                 .buildAndRegister();
 
-        BREWING_RECIPES.recipeBuilder().EUt(4).duration(128)
-                .input(BIO_CHAFF)
-                .fluidInputs(Water.getFluid(750))
-                .fluidOutputs(Biomass.getFluid(750))
-                .buildAndRegister();
-
         // Bacteria
         BREWING_RECIPES.recipeBuilder().EUt(VA[HV]).duration(300)
                 .input(BIO_CHAFF, 4)

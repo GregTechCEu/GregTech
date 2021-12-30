@@ -86,7 +86,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     public IBlockState getCasingState() {
         return tier == 0
                 ? MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.TUNGSTENSTEEL_ROBUST)
-                : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSE_ROBUST);
+                : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.HSSE_STURDY);
     }
 
     @Override
@@ -114,11 +114,6 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
     @Override
     public boolean canBeDistinct() {
-        return true;
-    }
-
-    @Override
-    public boolean hasMaintenanceMechanics() {
         return true;
     }
 

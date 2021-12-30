@@ -19,7 +19,6 @@
   "tick.turbine": {"category": "block", "sounds": [{"name": "gregtech:turbine", "stream": false}]},
   "tick.combustion": {"category": "block", "sounds": [{"name": "gregtech:combustion", "stream": false}]},
   "tick.miner": {"category": "block", "sounds": [{"name": "gregtech:miner", "stream": false}]},
-  "tick.explosion": {"category": "block", "sounds": [{"name": "gregtech:explosion", "stream": false}]},
   "tick.science": {"category": "block", "sounds": [{"name": "gregtech:science", "stream": false}]},
   "use.wrench": {"category": "block", "sounds": [{"name": "gregtech:wrench", "stream": false}]},
   "use.soft_hammer": {"category": "block", "sounds": [{"name": "gregtech:soft_hammer", "stream": false}]},

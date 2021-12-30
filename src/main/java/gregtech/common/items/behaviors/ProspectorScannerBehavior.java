@@ -64,7 +64,7 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
                 PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
                 holder.openUI();
             } else {
-                player.sendMessage(new TextComponentTranslation("behavior.scanner.not_enough_energy"));
+                player.sendMessage(new TextComponentTranslation("behavior.prospector.not_enough_energy"));
             }
         }
         return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);

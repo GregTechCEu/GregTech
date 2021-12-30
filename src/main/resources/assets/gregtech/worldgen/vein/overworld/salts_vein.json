@@ -1,40 +1,34 @@
 {
-  "weight": 70,
-  "density": 0.7,
-  "min_height": 40,
+  "weight": 50,
+  "density": 0.2,
+  "max_height": 70,
+  "min_height": 50,
   "vein_populator": {
     "type": "surface_rock",
     "material": "salt"
   },
   "generator": {
-    "type": "ellipsoid",
+    "type": "layered",
     "radius": [
-      14,
-      17
+      17,
+      24
     ]
   },
   "filler": {
-    "type": "simple",
-    "value": {
-      "type": "weight_random",
-      "values": [
-        {
-          "weight": 40,
-          "value": "ore:salt"
-        },
-        {
-          "weight": 35,
-          "value": "ore:rock_salt"
-        },
-        {
-          "weight": 15,
-          "value": "ore:lepidolite"
-        },
-        {
-          "weight": 10,
-          "value": "ore:spodumene"
-        }
-      ]
-    }
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:rock_salt"
+      },
+      {
+        "secondary": "ore:salt"
+      },
+      {
+        "between": "ore:lepidolite"
+      },
+      {
+        "sporadic": "ore:spodumene"
+      }
+    ]
   }
 }

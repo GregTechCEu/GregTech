@@ -139,7 +139,7 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
             chargeTime = duration.toHours();
             unit = "hr";
         }
-        tooltip.add(I18n.format("metaitem.battery.charge_time", chargeTime, unit, GTValues.VN[tier]));
+        tooltip.add(I18n.format("metaitem.battery.charge_time", chargeTime, unit, GTValues.VNF[tier]));
     }
 
     private static boolean isInDischargeMode(ItemStack itemStack) {

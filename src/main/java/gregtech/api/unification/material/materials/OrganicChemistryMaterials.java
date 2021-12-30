@@ -57,7 +57,7 @@ public class OrganicChemistryMaterials {
         ReinforcedEpoxyResin = new Material.Builder(1006, "reinforced_epoxy_resin")
                 .ingot().fluid()
                 .color(0xA07A10)
-                .flags(STD_METAL, DISABLE_DECOMPOSITION, NO_SMASHING, GENERATE_FINE_WIRE, GENERATE_ROD, FLAMMABLE)
+                .flags(STD_METAL, DISABLE_DECOMPOSITION, NO_SMASHING, FLAMMABLE)
                 .components(Carbon, 6, Hydrogen, 4, Oxygen, 1)
                 .build();
 
@@ -100,7 +100,7 @@ public class OrganicChemistryMaterials {
         Polyethylene = new Material.Builder(1012, "plastic") //todo add polyethylene oredicts
                 .ingot(1).fluid()
                 .color(0xC8C8C8)
-                .flags(GENERATE_FOIL, GENERATE_ROTOR, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
+                .flags(GENERATE_FOIL, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
                 .components(Carbon, 1, Hydrogen, 2)
                 .fluidPipeProperties(350, 60, true)
                 .build();
@@ -108,7 +108,7 @@ public class OrganicChemistryMaterials {
         Epoxy = new Material.Builder(1013, "epoxy")
                 .ingot(1).fluid()
                 .color(0xC88C14)
-                .flags(EXT2_METAL, DISABLE_DECOMPOSITION, NO_SMASHING, FLAMMABLE)
+                .flags(STD_METAL, DISABLE_DECOMPOSITION, NO_SMASHING, FLAMMABLE)
                 .components(Carbon, 21, Hydrogen, 25, Chlorine, 1, Oxygen, 5)
                 .build();
 
@@ -130,7 +130,7 @@ public class OrganicChemistryMaterials {
                 .build();
 
         Sugar = new Material.Builder(1017, "sugar")
-                .dust(1)
+                .gem(1)
                 .color(0xFAFAFA).iconSet(FINE)
                 .components(Carbon, 2, Water, 5, Oxygen, 25)
                 .build();

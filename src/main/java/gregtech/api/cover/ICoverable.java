@@ -60,7 +60,7 @@ public interface ICoverable {
 
     double getCoverPlateThickness();
 
-    int getPaintingColor();
+    int getPaintingColorForRendering();
 
     boolean shouldRenderBackSide();
 
@@ -79,7 +79,7 @@ public interface ICoverable {
     default void renderCovers(CCRenderState renderState, Matrix4 translation, BlockRenderLayer layer) {
         renderState.lightMatrix.locate(getWorld(), getPos());
         double coverPlateThickness = getCoverPlateThickness();
-        IVertexOperation[] platePipeline = new IVertexOperation[]{renderState.lightMatrix, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColor()))};
+        IVertexOperation[] platePipeline = new IVertexOperation[]{renderState.lightMatrix, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))};
         IVertexOperation[] coverPipeline = new IVertexOperation[]{renderState.lightMatrix};
 
         for (EnumFacing sideFacing : EnumFacing.values()) {
@@ -205,6 +205,15 @@ public interface ICoverable {
             default:
                 throw new UnsupportedOperationException();
         }
+    }
+
+    static boolean canPlaceCover(CoverDefinition coverDef, ICoverable coverable) {
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            CoverBehavior cover = coverDef.createCoverBehavior(coverable, facing);
+            if (coverable.canPlaceCoverOnSide(facing) && cover.canAttach())
+                return true;
+        }
+        return false;
     }
 
     default boolean canRenderMachineGrid() {
