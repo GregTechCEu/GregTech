@@ -6,126 +6,151 @@ import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.util.GTLog;
 import gregtech.common.covers.CoverFluidFilter;
 import gregtech.common.covers.FluidFilterMode;
+import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagIntArray;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements ITickable {
 
-    private static final int TIMER = 30;
-
-    // key is id
-    // first 8 bits of value is channel
-    // next 8 bits is facing
-    // last 16 bits is tick timer
-    private final Map<Integer, Integer> waves = new HashMap<>();
+    // key is channel
+    private final Map<Byte, DirectionalWave> waves = new HashMap<>();
+    private final Set<Integer> waveIds = new HashSet<>();
     private long time = 0;
-    private static int waveCounter = 0;
+    private boolean init = false;
 
-    private int generateWaveId() {
-        if (waveCounter == 2000000000) // this will go up relatively fast, I hope it wont cause issues with resetting
-            waveCounter = 0;
-        return waveCounter++;
+    public Collection<DirectionalWave> getWaves() {
+        return waves.values();
     }
 
-    public void notifyNewWave(EnumFacing fromFace, int channel) {
+    public boolean doAcceptFluid(FluidStack stack, byte channel, EnumFacing facing) {
+        if (!init || facing == null) {
+            GTLog.logger.info("Init {}, null facing {}", init, facing == null);
+            return false;
+        }
+        DirectionalWave dWave = waves.get(channel);
+        return dWave == null || dWave.facing == facing;
+    }
+
+    public void notifyNewWave(EnumFacing fromFace, byte channel) {
         if (fromFace == null)
             return;
         GTLog.logger.info("Notifying new wave {}, {}", channel, fromFace.getName());
-        waves.put(generateWaveId(), buildWave(channel, fromFace, TIMER));
+        FluidPipeNet net = getFluidPipeNet();
+        if (waves.containsKey(channel))
+            GTLog.logger.error("there already is a wave in channel {}", channel);
+        this.waves.put(channel, new DirectionalWave(net.createWave(), channel, fromFace));
     }
 
-    public int sendWave(int id, EnumFacing side, FluidStack stack) {
+    // get wave from pipe
+    public int sendWave(Wave wave, EnumFacing side, FluidStack stack) {
+        if (!init || stack == null || stack.amount <= 0)
+            return 0;
         PipeTankList tankList = getTankList();
         if (tankList == null) // world is not ready
             return 0;
 
-        int wave = waves.getOrDefault(id, 0);
-        if (wave != 0) {
-            if (getFacing(wave) != side) {
-                GTLog.logger.error("facing does not match");
-                return 0;
-            }
-        }
-
-        int channel = tankList.findChannel(stack);
+        byte channel = tankList.findChannel(stack);
         if (channel < 0) {
             GTLog.logger.info("no channel found");
             return 0;
         }
 
-        int ins = getTankList().fillChannel(stack, true, channel);
+        DirectionalWave dWave = waves.get(channel);
+        if (dWave != null) {
+            if (dWave.wave == null)
+                return 0;
+            if (!dWave.isDead()) {
+                if (dWave.facing != side)
+                    return 0;
+                if (dWave.wave != wave) {
+                    GTLog.logger.info("Wave doesn't match");
+                    return 0;
+                }
+                // if this pipe has never seen that wave add this pipe to the wave
+                dWave.reset();
+            } else {
+                dWave = null;
+            }
+        }
 
-        wave = buildWave(channel, side, TIMER);
-        waves.put(id, wave);
+        if (waveIds.add(wave.getId())) {
+            wave.addUser();
+        }
 
-        GTLog.logger.info("Received Wave from {} {} with {} * {}, at {}", id, side.getName(), stack.getFluid().getName(), stack.amount, pos);
+        int ins = getTankList(side).fillChannel(stack, true, channel);
+
+        if (dWave == null)
+            waves.put(channel, new DirectionalWave(wave, channel, side));
+
+        GTLog.logger.info("Received Wave from {} {} with {} * {}, at {}", wave.getId(), side.getName(), stack.getFluid().getName(), stack.amount, pos);
         return ins;
     }
 
     @Override
     public void update() {
-        if (!world.isRemote && ++time % FREQUENCY == 0) {
+        if (!world.isRemote) {
+            FluidPipeNet net = getFluidPipeNet();
+            if (!init) {
+                for (DirectionalWave wave : waves.values()) {
+                    wave.setWave(net);
+                }
+                init = true;
+            }
+
             PipeTankList tankList = getTankList();
             if (tankList == null) {// world is not ready
                 GTLog.logger.info("Could not initialise PipeTankList");
                 return;
             }
-            // push waves to neighbours
-            Iterator<Map.Entry<Integer, Integer>> iterator = waves.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<Integer, Integer> entry = iterator.next();
-                int id = entry.getKey();
-                int wave = entry.getValue();
-                EnumFacing fromFace = getFacing(wave);
+            if (++time % FREQUENCY == 0) {
+                // push waves to neighbours
+                FluidTank[] tanks = getFluidTanks();
+                for (Map.Entry<Byte, DirectionalWave> entry : waves.entrySet()) {
+                    FluidTank tank = tanks[entry.getKey()];
 
-                int channel = getChannel(wave);
-                if (!insertToNeighbour(id, fromFace, channel)) {
-                    iterator.remove();
+                    insertToNeighbour(entry.getValue().wave, entry.getValue().facing, tank.getFluid(), entry.getKey());
                 }
             }
-        }
-        if (!world.isRemote) {
-            // decrease timer on waves each tick
-            Iterator<Map.Entry<Integer, Integer>> iterator = waves.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<Integer, Integer> entry = iterator.next();
-                int wave = entry.getValue();
-                int timer = getTimer(wave);
-                if (timer == 1) {
-                    GTLog.logger.info("Removing channel {} at {}", getChannel(wave), pos);
-                    iterator.remove();
-                    continue;
+
+            waves.entrySet().removeIf(entry -> {
+                FluidStack fluid = tankList.getFluidStack(entry.getKey());
+                if (fluid == null && entry.getValue().decrementTimer() && entry.getValue().wave.removeUser()) {
+                    GTLog.logger.info("Removing wave {} at {}", entry.getValue().wave.getId(), pos);
+                    waveIds.remove(entry.getValue().wave.getId());
+                    net.killWave(entry.getValue().wave.getId());
+                    return true;
                 }
-                wave = setTimer(wave, --timer);
-                entry.setValue(wave);
-            }
+                return false;
+            });
         }
     }
 
-    private boolean insertToNeighbour(int id, EnumFacing fromFace, int channel) {
+    private void insertToNeighbour(Wave wave, EnumFacing fromFace, FluidStack fluid, int channel) {
         //GTLog.logger.info("Try inserting to neighbour with id {}, fromFace {}, channel {}", id, fromFace == null ? "null" : fromFace.getName(), channel);
-        FluidStack fluid = getTankList().getFluidStack(channel);
         if (fluid == null || fluid.amount <= 0) {
-            return true;
+            return;
         }
-
-        if (id < 0)
-            GTLog.logger.info("Handeling unhandles fluid in channel {}", channel);
 
         // search for pipes & fluid handlers
         List<Pair<EnumFacing, TileEntityFluidPipeTickable>> pipes = new ArrayList<>();
         List<IFluidHandler> handlers = new ArrayList<>();
         BlockPos.PooledMutableBlockPos mutableBlockPos = BlockPos.PooledMutableBlockPos.retain();
         for (EnumFacing facing : EnumFacing.VALUES) {
-            if ((fromFace != null && facing == fromFace) || !isConnectionOpen(AttachmentType.PIPE, facing) || !canInsertTo(facing, fluid, this, FluidFilterMode.FILTER_FILL))
+            if (facing == fromFace || !isConnectionOpen(AttachmentType.PIPE, facing) || !canInsertTo(facing, fluid, this, FluidFilterMode.FILTER_FILL))
                 continue;
             mutableBlockPos.setPos(pos).move(facing);
             TileEntity te = world.getTileEntity(pos.offset(facing));
@@ -150,21 +175,20 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
             // insert to pipes
             if (pipes.size() > 0) {
-                if (id < 0)
-                    id = generateWaveId();
                 for (Pair<EnumFacing, TileEntityFluidPipeTickable> pair : pipes) {
                     FluidStack toInsert = fluid.copy();
                     toInsert.amount = c;
                     int ins;
                     if (m > 0) {
                         toInsert.amount++;
-                        ins = pair.getValue().sendWave(id, pair.getKey(), toInsert);
+                        ins = pair.getValue().sendWave(wave, pair.getKey(), toInsert);
                         if (ins > 0)
                             m--;
                     } else {
-                        if(c == 0)
+                        if (c == 0)
                             break;
-                        ins = pair.getValue().sendWave(id, pair.getKey(), toInsert);
+                        // send wave to next pipe
+                        ins = pair.getValue().sendWave(wave, pair.getKey(), toInsert);
                     }
                     amount -= ins;
                 }
@@ -181,7 +205,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                     if (ins > 0)
                         m--;
                 } else {
-                    if(c == 0)
+                    if (c == 0)
                         break;
                     ins = handler.fill(toInsert, true);
                 }
@@ -197,7 +221,6 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             }
 
         }
-        return true;
     }
 
     @Override
@@ -205,32 +228,109 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         return true;
     }
 
-    private int buildWave(int channel, EnumFacing facing, int timer) {
-        return channel | (facing.getIndex() << 8) | (timer << 16);
-    }
-
-    private EnumFacing getFacing(int value) {
-        return EnumFacing.VALUES[(value >> 8) & 255];
-    }
-
-    private static int getChannel(int value) {
-        return value & 255;
-    }
-
-    private static int getTimer(int value) {
-        return value >> 16;
-    }
-
-    private static int setTimer(int value, int timer) {
-        return value | (timer << 16);
-    }
-
     private static boolean canInsertTo(EnumFacing facing, FluidStack stack, TileEntityFluidPipe pipe, FluidFilterMode notMode) {
         ICoverable coverable = pipe.getCoverableImplementation();
         CoverBehavior cover = coverable.getCoverAtSide(facing);
-        if(cover instanceof CoverFluidFilter) {
+        if (cover instanceof CoverFluidFilter) {
             return ((CoverFluidFilter) cover).getFilterMode() != notMode && ((CoverFluidFilter) cover).testFluidStack(stack);
         }
         return true;
+    }
+
+    @Nonnull
+    @Override
+    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+        NBTTagIntArray waveIdsNbt = new NBTTagIntArray(new ArrayList<>(waveIds));
+        nbt.setTag("WaveIDs", waveIdsNbt);
+        NBTTagList wavesNbt = new NBTTagList();
+        for (Map.Entry<Byte, DirectionalWave> entry : waves.entrySet()) {
+            wavesNbt.appendTag(entry.getValue().toTag());
+        }
+        nbt.setTag("Waves", wavesNbt);
+        return nbt;
+    }
+
+    @Override
+    public void readFromNBT(@Nonnull NBTTagCompound nbt) {
+        GTLog.logger.info("Read pipe data");
+        super.readFromNBT(nbt);
+        if (nbt.hasKey("WaveIDs") && nbt.hasKey("Waves")) { // prevents crash with existing pipes
+            NBTTagIntArray waveIdsNbt = (NBTTagIntArray) nbt.getTag("WaveIDs");
+            waveIds.clear();
+            for (int id : waveIdsNbt.getIntArray()) {
+                waveIds.add(id);
+            }
+            NBTTagList wavesNbt = nbt.getTagList("Waves", Constants.NBT.TAG_COMPOUND);
+            waves.clear();
+            for (int i = 0; i < wavesNbt.tagCount(); i++) {
+                DirectionalWave dWave = DirectionalWave.ofTag(wavesNbt.getCompoundTagAt(i));
+                waves.put(dWave.channel, dWave);
+            }
+        }
+    }
+
+    public static class DirectionalWave {
+        public static final byte DEFAULT_TIME = 20;
+
+        private Wave wave;
+        private byte channel;
+        private EnumFacing facing;
+        private byte timer = DEFAULT_TIME;
+
+        private DirectionalWave(Wave wave, byte channel, EnumFacing facing) {
+            this.wave = wave;
+            this.channel = channel;
+            this.facing = facing;
+        }
+
+        private void setWave(FluidPipeNet net) {
+            wave = net.getWave(wave.getId());
+        }
+
+        public EnumFacing getFacing() {
+            return facing;
+        }
+
+        public boolean isDead() {
+            return wave.getUseCount() <= 0;
+        }
+
+        public Wave getWave() {
+            return wave;
+        }
+
+        public byte getTimer() {
+            return timer;
+        }
+
+        public byte getChannel() {
+            return channel;
+        }
+
+        public boolean decrementTimer() {
+            if (timer == 1)
+                GTLog.logger.info("[{}]Removing user, {}", wave.getId(), wave.getUseCount() - 1);
+            return --timer == 0;
+        }
+
+        public void reset() {
+            timer = DEFAULT_TIME;
+        }
+
+        private static DirectionalWave ofTag(NBTTagCompound tag) {
+            DirectionalWave dWave = new DirectionalWave(new Wave(tag.getInteger("ID")), tag.getByte("Channel"), EnumFacing.VALUES[tag.getByte("Facing")]);
+            dWave.timer = tag.getByte("Timer");
+            return dWave;
+        }
+
+        private NBTTagCompound toTag() {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setInteger("ID", wave.getId());
+            tag.setByte("Channel", channel);
+            tag.setByte("Facing", (byte) facing.getIndex());
+            tag.setByte("Timer", timer);
+            return tag;
+        }
     }
 }

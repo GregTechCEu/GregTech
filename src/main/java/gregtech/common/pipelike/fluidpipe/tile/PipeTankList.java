@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
-import gregtech.api.util.GTLog;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -45,11 +44,11 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
         return tanks[channel].getFluid();
     }
 
-    protected int findChannel(FluidStack stack) {
+    protected byte findChannel(FluidStack stack) {
         if (stack == null || tanks == null)
             return -1;
-        int empty = -1;
-        for (int i = tanks.length - 1; i >= 0; i--) {
+        byte empty = -1;
+        for (byte i = (byte) (tanks.length - 1); i >= 0; i--) {
             FluidStack f = tanks[i].getFluid();
             if (f == null)
                 empty = i;
@@ -61,19 +60,19 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
 
     @Override
     public int fill(FluidStack resource, boolean doFill) {
-        int channel = findChannel(resource);
+        byte channel = findChannel(resource);
         if (channel < 0)
             return 0;
         FluidStack stack = getFluidStack(channel);
         int ins = fillChannel(resource, doFill, channel);
-        if (stack == null || stack.amount <= 0 && ins > 0 && pipe instanceof TileEntityFluidPipeTickable) {
+        if (doFill && (stack == null || stack.amount <= 0) && ins > 0 && pipe instanceof TileEntityFluidPipeTickable) {
             ((TileEntityFluidPipeTickable) pipe).notifyNewWave(facing, channel);
         }
         return ins;
     }
 
-    protected int fillChannel(FluidStack resource, boolean doFill, int channel) {
-        if (resource == null || resource.amount <= 0 || channel < 0 || channel >= tanks.length)
+    protected int fillChannel(FluidStack resource, boolean doFill, byte channel) {
+        if (resource == null || resource.amount <= 0 || channel < 0 || channel >= tanks.length || !((TileEntityFluidPipeTickable) pipe).doAcceptFluid(resource, channel, facing))
             return 0;
         FluidTank tank = tanks[channel];
         FluidStack stack = tank.getFluid();

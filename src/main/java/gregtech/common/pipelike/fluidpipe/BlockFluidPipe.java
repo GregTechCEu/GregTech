@@ -199,6 +199,15 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
             }
             builder.delete(builder.length() - 2, builder.length());
             playerIn.sendMessage(new TextComponentString(builder.toString()));
+
+            for(TileEntityFluidPipeTickable.DirectionalWave wave : ((TileEntityFluidPipeTickable)pipe).getWaves()) {
+                builder = new StringBuilder()
+                        .append("Wave in C ").append(wave.getChannel())
+                        .append(", ID ").append(wave.getWave().getId())
+                        .append(", F ").append(wave.getFacing().name().charAt(0))
+                        .append(", users ").append(wave.getWave().getUseCount());
+                playerIn.sendMessage(new TextComponentString(builder.toString()));
+            }
         }
 
 
