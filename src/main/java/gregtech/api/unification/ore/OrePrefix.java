@@ -536,7 +536,7 @@ public class OrePrefix {
         }
         if (material != null) {
             generatedMaterials.add(material);
-            if (material.isHidden() && material.hasFluid()) {
+            if (material.isHidden() && (material.hasFluid() || material.hasProperty(PropertyKey.PLASMA))) {
                 FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);
                 if (fluidProperty != null && fluidProperty.getFluid() == null) {
                     int temperature = fluidProperty.getFluidTemperature();
