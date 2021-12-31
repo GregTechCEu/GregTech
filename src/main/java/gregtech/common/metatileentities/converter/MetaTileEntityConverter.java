@@ -212,8 +212,9 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
         long voltage = converterTrait.getVoltage();
         long amps = converterTrait.getBaseAmps();
         tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_tool_usage"));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", slots));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", converterTrait.getEnergyEUContainer().getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", FeCompat.toFe(voltage * amps, true), amps, voltage, GTValues.VN[tier]));
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VN[tier], FeCompat.toFe(voltage * amps, false)));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", FeCompat.toFe(voltage * amps, true), amps, voltage, GTValues.VNF[tier]));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VNF[tier], FeCompat.toFe(voltage * amps, false)));
     }
 }

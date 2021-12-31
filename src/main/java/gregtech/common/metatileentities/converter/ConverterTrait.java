@@ -207,7 +207,7 @@ public class ConverterTrait extends MTETrait {
             long inputAmps = getInputAmperage();
             if (usedAmps >= inputAmps) return 0;
             if (voltage > getInputVoltage()) {
-                GTUtility.doOvervoltageExplosion(metaTileEntity, voltage);
+                metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
                 return Math.min(amperage, inputAmps - usedAmps);
             }
 
