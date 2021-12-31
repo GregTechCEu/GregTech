@@ -490,7 +490,7 @@ public class FirstDegreeMaterials {
         Sapphire = new Material.Builder(314, "sapphire")
                 .gem().ore()
                 .color(0x6464C8).iconSet(GEM_VERTICAL)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
                 .components(Aluminium, 2, Oxygen, 3)
                 .toolStats(7.5f, 4.0f, 256, 15)
                 .build();

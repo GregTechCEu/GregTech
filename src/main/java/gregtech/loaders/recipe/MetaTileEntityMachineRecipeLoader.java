@@ -19,8 +19,7 @@ public class MetaTileEntityMachineRecipeLoader {
         // Energy Output Hatches
 
         ModHandler.addShapedRecipe(true, "dynamo_hatch.ulv", ENERGY_OUTPUT_HATCH[ULV].getStackForm(),
-                " V ", "SHS", " P ",
-                'P', new UnificationEntry(circuit, Tier.Primitive),
+                " V ", "SHS", "   ",
                 'S', new UnificationEntry(spring, Lead),
                 'V', VOLTAGE_COIL_ULV.getStackForm(),
                 'H', HULL[ULV].getStackForm());
@@ -28,14 +27,12 @@ public class MetaTileEntityMachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[ULV])
                 .input(spring, Lead, 2)
-                .input(circuit, Tier.Primitive)
                 .input(VOLTAGE_COIL_ULV)
                 .output(ENERGY_OUTPUT_HATCH[ULV])
                 .duration(200).EUt(VA[ULV]).buildAndRegister();
 
         ModHandler.addShapedRecipe(true, "dynamo_hatch.lv", ENERGY_OUTPUT_HATCH[LV].getStackForm(),
-                " V ", "SHS", " P ",
-                'P', new UnificationEntry(circuit, Tier.Basic),
+                " V ", "SHS", "   ",
                 'S', new UnificationEntry(spring, Tin),
                 'V', VOLTAGE_COIL_LV.getStackForm(),
                 'H', HULL[LV].getStackForm());
@@ -43,7 +40,6 @@ public class MetaTileEntityMachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[LV])
                 .input(spring, Tin, 2)
-                .input(circuit, Tier.Basic)
                 .input(VOLTAGE_COIL_LV)
                 .output(ENERGY_OUTPUT_HATCH[LV])
                 .duration(200).EUt(VA[LV]).buildAndRegister();
@@ -126,31 +122,27 @@ public class MetaTileEntityMachineRecipeLoader {
         // Energy Input Hatches
 
         ModHandler.addShapedRecipe(true, "energy_hatch.ulv", ENERGY_INPUT_HATCH[ULV].getStackForm(),
-                " V ", "CHC", " P ",
+                " V ", "CHC", "   ",
                 'C', new UnificationEntry(cableGtSingle, RedAlloy),
-                'P', new UnificationEntry(circuit, Tier.Primitive),
                 'V', VOLTAGE_COIL_ULV.getStackForm(),
                 'H', HULL[ULV].getStackForm());
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[ULV])
                 .input(cableGtSingle, RedAlloy, 2)
-                .input(circuit, Tier.Primitive)
                 .input(VOLTAGE_COIL_ULV)
                 .output(ENERGY_INPUT_HATCH[ULV])
                 .duration(200).EUt(VA[ULV]).buildAndRegister();
 
         ModHandler.addShapedRecipe(true, "energy_hatch.lv", ENERGY_INPUT_HATCH[LV].getStackForm(),
-                " V ", "CHC", " P ",
+                " V ", "CHC", "   ",
                 'C', new UnificationEntry(cableGtSingle, Tin),
-                'P', new UnificationEntry(circuit, Tier.Basic),
                 'V', VOLTAGE_COIL_LV.getStackForm(),
                 'H', HULL[LV].getStackForm());
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[LV])
                 .input(cableGtSingle, Tin, 2)
-                .input(circuit, Tier.Basic)
                 .input(VOLTAGE_COIL_LV)
                 .output(ENERGY_INPUT_HATCH[LV])
                 .duration(200).EUt(VA[LV]).buildAndRegister();

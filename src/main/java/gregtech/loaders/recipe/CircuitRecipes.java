@@ -95,10 +95,10 @@ public class CircuitRecipes {
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.LightBlue).output(CENTRAL_PROCESSING_UNIT_WAFER, 8).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(VA[IV]).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.LightBlue).output(CENTRAL_PROCESSING_UNIT_WAFER, 16).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[MV]).input(SILICON_WAFER).notConsumable(craftingLens, Color.Magenta).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER).buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Magenta).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 4).buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Magenta).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 8).buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(VA[IV]).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Magenta).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 16).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[MV]).input(SILICON_WAFER).notConsumable(craftingLens, Color.Blue).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Blue).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 4).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Blue).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 8).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(VA[IV]).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Blue).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 16).buildAndRegister();
 
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[MV]).input(SILICON_WAFER).notConsumable(craftingLens, Color.Orange).output(LOW_POWER_INTEGRATED_CIRCUIT_WAFER).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Orange).output(LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 4).buildAndRegister();
