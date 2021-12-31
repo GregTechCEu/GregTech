@@ -102,11 +102,15 @@ public class WireRecipeHandler {
 
         // Rubber Recipe (ULV-EV cables)
         if (voltageTier <= GTValues.EV) {
-            ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
+            IntCircuitRecipeBuilder builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
                     .input(wirePrefix, material)
                     .output(cablePrefix, material)
-                    .fluidInputs(Rubber.getFluid(GTValues.L * insulationAmount))
-                    .buildAndRegister();
+                    .fluidInputs(Rubber.getFluid(GTValues.L * insulationAmount));
+
+            if (voltageTier == GTValues.EV) {
+                builder.input(foil, PolyvinylChloride, insulationAmount);
+            }
+            builder.buildAndRegister();
         }
 
         // Silicone Rubber Recipe (all cables)
@@ -119,9 +123,9 @@ public class WireRecipeHandler {
             builder.input(foil, PolyphenyleneSulfide, insulationAmount);
         }
 
-        // Apply Material Foil if IV or above.
-        if (voltageTier >= GTValues.IV) {
-            builder.input(foil, material, insulationAmount);
+        // Apply a PVC Foil if EV or above.
+        if (voltageTier >= GTValues.EV) {
+            builder.input(foil, PolyvinylChloride, insulationAmount);
         }
 
         builder.fluidInputs(SiliconeRubber.getFluid(GTValues.L * insulationAmount / 2))
@@ -135,6 +139,11 @@ public class WireRecipeHandler {
         // Apply a Polyphenylene Sulfate Foil if LuV or above.
         if (voltageTier >= GTValues.LuV) {
             builder.input(foil, PolyphenyleneSulfide, insulationAmount);
+        }
+
+        // Apply a PVC Foil if EV or above.
+        if (voltageTier >= GTValues.EV) {
+            builder.input(foil, PolyvinylChloride, insulationAmount);
         }
 
         builder.fluidInputs(StyreneButadieneRubber.getFluid(GTValues.L * insulationAmount / 4))
