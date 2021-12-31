@@ -101,7 +101,9 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
             for (int i = 0; i < stonesCount; i++) {
                 int randomX = baseX + random.nextInt(8);
                 int randomZ = baseZ + random.nextInt(8);
-                generateSurfaceRock(world, randomX, randomZ);
+
+                generateSurfaceRock(world, new BlockPos(randomX, 0, randomZ));
+
             }
             // guarantee a surface rock in the center of the vein
             generateSurfaceRock(world, gridEntryInfo.getCenterPos(definition));
@@ -113,14 +115,13 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
         }
     }
 
-    public void generateSurfaceRock(World world, int x, int z) {
-        generateSurfaceRock(world, new BlockPos(x, 0, z));
-    }
-
     public void generateSurfaceRock(World world, BlockPos pos) {
         BlockPos topBlockPos = world.getTopSolidOrLiquidBlock(pos);
         Block blockAtPos = world.getBlockState(topBlockPos).getBlock();
 
+        if(topBlockPos.getY() >= world.provider.getActualHeight()) {
+            return;
+        }
         //Checks if the block is a replaceable feature like grass, snow layers, or Air. Liquids are replaceable, so
         // exclude one deep liquid blocks, for looks
         if (!blockAtPos.isReplaceable(world, topBlockPos) || world.getBlockState(topBlockPos).getMaterial().isLiquid()) {
