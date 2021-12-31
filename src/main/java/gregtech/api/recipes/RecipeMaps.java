@@ -33,15 +33,6 @@ public class RecipeMaps {
             .onRecipeBuild(recipeBuilder -> {
                 if (recipeBuilder.getFluidInputs().isEmpty()) {
                     recipeBuilder.fluidInputs(Materials.Oxygen.getFluid(recipeBuilder.duration));
-                    int plasmaAmount = (int) Math.max(1L, recipeBuilder.duration / (Materials.Argon.getMass() * 16L));
-                    RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
-                            .inputsIngredients(recipeBuilder.getInputs())
-                            .outputs(recipeBuilder.getOutputs())
-                            .duration(Math.max(1, recipeBuilder.duration / 16))
-                            .EUt(recipeBuilder.EUt / 3)
-                            .fluidInputs(Materials.Argon.getPlasma(plasmaAmount))
-                            .fluidOutputs(Materials.Argon.getFluid(plasmaAmount))
-                            .buildAndRegister();
                 }
             });
 
