@@ -43,7 +43,7 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition { //to
         // amount of fluid the vein gets depleted by
         this.depletionAmount = configRoot.get("depletion").getAsJsonObject().get("amount").getAsInt();
         // the chance [0, 100] that the vein will deplete by depletionAmount
-        this.depletionChance = configRoot.get("depletion").getAsJsonObject().get("chance").getAsInt();
+        this.depletionChance = Math.max(0, Math.min(100, configRoot.get("depletion").getAsJsonObject().get("chance").getAsInt()));
 
         // the fluid which the vein contains
         Fluid fluid = FluidRegistry.getFluid(configRoot.get("fluid").getAsString());

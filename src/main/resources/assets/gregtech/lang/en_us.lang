@@ -3894,6 +3894,13 @@ gregtech.machine.miner.multi.description=A multiblock mining machine that covers
 gregtech.machine.miner.fluid_usage=Consumes §b%dmb§7 of §e%s§7 per tick. Each overclock doubles the fluid consumption.
 gregtech.machine.miner.overclock=Requires %s§7 power. Overclocks up to %s§7.
 
+gregtech.machine.fluid_drilling_rig.mv.name=Basic Fluid Drilling Rig
+gregtech.machine.fluid_drilling_rig.hv.name=Advanced Fluid Drilling Rig
+gregtech.machine.fluid_drilling_rig.ev.name=Advanced Fluid Drilling Rig II
+gregtech.machine.fluid_drilling_rig.description=Drills fluids from veins under bedrock.
+gregtech.machine.fluid_drilling_rig.production=Production Multiplier: §e%sx§7
+gregtech.machine.fluid_drilling_rig.energy=Requires %s§7 power. Each overclock increases production by §e25%%§7.
+
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
 gregtech.multiblock.central_monitor.height=Screen Height:

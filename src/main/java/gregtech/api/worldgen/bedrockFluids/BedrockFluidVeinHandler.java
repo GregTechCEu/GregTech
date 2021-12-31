@@ -89,13 +89,17 @@ public class BedrockFluidVeinHandler {
      * @return rate of fluid in the given vein
      */
     public static int getFluidRateInChunk(@Nonnull World world, int chunkX, int chunkZ) {
-        if (world.isRemote)
-            return 0;
-
         FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
         if (info == null)
             return 0;
         return info.currentFluidAmount;
+    }
+
+    public static boolean isChunkDepleted(@Nonnull World world, int chunkX, int chunkZ) {
+        FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
+        if (info == null)
+            return true;
+        return info.currentFluidAmount == 0;
     }
 
     /**
@@ -108,9 +112,6 @@ public class BedrockFluidVeinHandler {
      */
     @Nullable
     public static Fluid getFluid(@Nonnull World world, int chunkX, int chunkZ) {
-        if (world.isRemote)
-            return null;
-
         FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
         if (info == null)
             return null;
@@ -131,9 +132,6 @@ public class BedrockFluidVeinHandler {
      * @return rate of fluid produced post depletion
      */
     public static int getDepletedFluidRate(@Nonnull World world, int chunkX, int chunkZ) {
-        if (world.isRemote)
-            return 0;
-
         FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
         if (info == null)
             return 0;
@@ -143,39 +141,30 @@ public class BedrockFluidVeinHandler {
     /**
      * Depletes fluid from a given chunk
      *
-     * @param world  World whose chunk to drain
-     * @param chunkX Chunk x
-     * @param chunkZ Chunk z
+     * @param coefficient the depletion coefficient of the rig depleting the chunk
+     * @param world       World whose chunk to drain
+     * @param chunkX      Chunk x
+     * @param chunkZ      Chunk z
      */
-    public static void depleteVein(@Nonnull World world, int chunkX, int chunkZ) {
-        if (world.isRemote)
-            return;
-
+    public static void depleteVein(float coefficient, @Nonnull World world, int chunkX, int chunkZ) {
         FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
         if (info == null || info.currentFluidAmount == 0)
             return;
-
         BedrockFluidDepositDefinition definition = info.getVein();
 
-        // attempt to deplete the vein
-        // ciel(chance) - chance * 100 = % to get depleted
-        // if random value < % chance, deplete by 1
-//        int rawChance = definition.getDepletionChance();
-//        int chanceToDecrease = (int) (100 * (Math.ceil(rawChance) - rawChance));
-//        if (GTUtility.getRandomIntXSTR(100) < chanceToDecrease)
-
-        // alternative depletion algorithm: 1 in vein's chance to deplete by vein's depletion amount
-        if (GTValues.RNG.nextInt(definition.getDepletionChance()) == 1)
-            info.currentFluidAmount = Math.max(0, info.currentFluidAmount - definition.getDepletionAmount());
-
-        BedrockFluidVeinSaveData.setDirty();
+        double averageDecrease = definition.getDepletionAmount() * coefficient;
+        int decrease = (int) Math.ceil(averageDecrease);
+        if (GTValues.RNG.nextFloat() >= (decrease - averageDecrease)) {
+            info.currentFluidAmount = Math.max(0, info.currentFluidAmount - decrease);
+            BedrockFluidVeinSaveData.setDirty();
+        }
     }
 
     /**
      * Gets the total weight of all veins for the given dimension ID and biome type
      *
      * @param provider The WorldProvider whose dimension to check
-     * @param biome The biome type to check
+     * @param biome    The biome type to check
      * @return The total weight associated with the dimension/biome pair
      */
     public static int getTotalWeight(@Nonnull WorldProvider provider, Biome biome) {
@@ -237,6 +226,12 @@ public class BedrockFluidVeinHandler {
             this.vein = vein;
             this.maximumCapacity = maximumCapacity;
             this.currentFluidAmount = currentFluidAmount;
+        }
+
+        public FluidVeinWorldEntry(@Nonnull FluidVeinWorldEntry entry) {
+            this.vein = entry.getVein();
+            this.maximumCapacity = entry.maximumCapacity;
+            this.currentFluidAmount = entry.currentFluidAmount;
         }
 
         private FluidVeinWorldEntry() {
