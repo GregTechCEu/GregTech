@@ -5,6 +5,7 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.IWorkable;
+import gregtech.api.metatileentity.IVoidable;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
@@ -264,6 +265,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     public boolean canVoidRecipeOutputs() {
+        if (metaTileEntity instanceof IVoidable)
+            return ((IVoidable) metaTileEntity).canVoidRecipeOutputs();
         return false;
     }
 
@@ -411,11 +414,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         IMultipleTankHandler importFluids = getInputTank();
         IMultipleTankHandler exportFluids = getOutputTank();
 
-        if (!canVoidRecipeOutputs() && !MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs(exportInventory.getSlots()))) {
-            this.isOutputsFull = true;
-            return false;
-        }
-        if (!canVoidRecipeOutputs() && !MetaTileEntity.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
+        if (!canVoidRecipeOutputs() &&
+                (!MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs(exportInventory.getSlots())) ||
+                 !MetaTileEntity.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs()))) {
             this.isOutputsFull = true;
             return false;
         }

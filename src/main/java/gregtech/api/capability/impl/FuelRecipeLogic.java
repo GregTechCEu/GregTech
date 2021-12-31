@@ -1,6 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.metatileentity.IVoidable;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
@@ -39,17 +40,6 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
         // the builder automatically multiplies by -1, so nothing extra is needed here
         builder.EUt(builder.getEUt());
-        if (metaTileEntity instanceof WorkableTieredMetaTileEntity && !((WorkableTieredMetaTileEntity) metaTileEntity).handlesRecipeOutputs) {
-            builder.clearOutputs();
-            builder.clearFluidOutputs();
-        }
-    }
-
-    @Override
-    public boolean canVoidRecipeOutputs() {
-        if (metaTileEntity instanceof WorkableTieredMetaTileEntity)
-            return !((WorkableTieredMetaTileEntity) metaTileEntity).handlesRecipeOutputs;
-        return false;
     }
 
     @Override
