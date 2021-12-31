@@ -263,7 +263,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 return new int[]{recipeEUt, recipeDuration};
             }
 
-            int originalTier = Math.max(1, GTUtility.getTierByVoltage(recipeEUt / this.parallelRecipesPerformed));
+            int originalTier = Math.max(1, GTUtility.getTierByVoltage(recipeEUt / Math.max(1, this.parallelRecipesPerformed)));
             int numOverclocks = Math.min(this.machineTier, GTUtility.getTierByVoltage(getMaxVoltage())) - originalTier;
             return unlockedVoltageOverclockingLogic(
                     recipeEUt, getMaxVoltage(), recipeDuration,
