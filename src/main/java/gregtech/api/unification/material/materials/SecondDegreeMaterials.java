@@ -158,14 +158,14 @@ public class SecondDegreeMaterials {
                 .build();
 
         GraniteBlack = new Material.Builder(2019, "granite_black")
-                .dust(3)
+                .dust(1)
                 .color(0x0A0A0A).iconSet(ROUGH)
                 .flags(NO_SMASHING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 4, Biotite, 1)
                 .build();
 
         GraniteRed = new Material.Builder(2020, "granite_red")
-                .dust(3)
+                .dust(1)
                 .color(0xFF0080).iconSet(ROUGH)
                 .flags(NO_SMASHING)
                 .components(Aluminium, 2, PotassiumFeldspar, 1, Oxygen, 3)
@@ -294,7 +294,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         Andesite = new Material.Builder(2039, "andesite")
-                .dust()
+                .dust(1)
                 .color(0xBEBEBE).iconSet(ROUGH)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Asbestos, 4, Saltpeter, 1)
