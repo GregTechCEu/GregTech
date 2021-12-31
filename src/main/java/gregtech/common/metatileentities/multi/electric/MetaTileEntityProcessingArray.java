@@ -26,7 +26,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.electric.MetaTileEntityMacerator;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -278,17 +277,10 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         public Pair<Boolean, Integer> trimItemOutputs() {
             MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(currentMachineStack);
 
-            boolean isLowMacerator = mte instanceof MetaTileEntityMacerator && machineTier < GTValues.HV;
+            int availableSlots = mte.getExportItems().getSlots();
 
-            boolean isHVMacerator = mte instanceof MetaTileEntityMacerator && machineTier == GTValues.HV;
-
-            //Clear the chanced outputs of LV and MV macerators, as they do not have the slots to get byproducts
-            if(isLowMacerator) {
-                return Pair.of(isLowMacerator, 1);
-            }
-            // Trim HV macerators to 3 slots
-            else if(isHVMacerator) {
-                return Pair.of(isHVMacerator, 3);
+            if(availableSlots < this.activeRecipeMap.getMaxOutputs()) {
+                return Pair.of(true, availableSlots);
             }
 
             return Pair.of(false, 1);
