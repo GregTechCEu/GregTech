@@ -179,6 +179,12 @@ public class ConfigHolder {
 
         @Config.Comment({"Whether to make crafting recipes for Bricks, Firebricks, and Coke Bricks harder.", "Default: false"})
         public boolean harderBrickRecipes = false;
+
+        @Config.Comment({"Whether to make the recipe for the EBF Controller harder.", "Default: false"})
+        public boolean harderEBFControllerRecipe = false;
+
+        @Config.Comment({"Whether Wrenches should require Plates instead of Ingots to craft.", "Default: false"})
+        public boolean plateWrenches = false;
     }
 
     public static class CompatibilityOptions {
