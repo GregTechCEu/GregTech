@@ -38,7 +38,7 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
 
     public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
                                          Function<Integer, Integer> tankScalingFunction) {
-        this(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction,false);
+        this(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction, false);
     }
 
     public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
