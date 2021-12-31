@@ -75,6 +75,7 @@ public class Textures {
     public static final SimpleSidedCubeRenderer WOOD_WALL = new SimpleSidedCubeRenderer("casings/wood_wall");
     public static final SimpleSidedCubeRenderer MAGIC_ENERGY_ABSORBER = new SimpleSidedCubeRenderer("casings/magic/absorber/normal");
     public static final SimpleSidedCubeRenderer MAGIC_ENERGY_ABSORBER_ACTIVE = new SimpleSidedCubeRenderer("casings/magic/absorber/active");
+    public static final SimpleSidedCubeRenderer DRUM_OVERLAY = new SimpleSidedCubeRenderer("storage/drums/drum_top");
 
     // Simple Oriented Cube Renderers
     public static final SimpleOrientedCubeRenderer CRAFTING_TABLE = new SimpleOrientedCubeRenderer("casings/crafting_table");
