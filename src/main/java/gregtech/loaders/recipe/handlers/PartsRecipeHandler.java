@@ -396,16 +396,19 @@ public class PartsRecipeHandler {
                 GTUtility.copyAmount(2, stickStack),
                 "s", "X", 'X', new UnificationEntry(OrePrefix.stickLong, material));
 
-        ModHandler.addShapedRecipe(String.format("stick_long_gem_flawless_%s", material.toString()),
-                stickStack,
-                "sf",
-                "G ",
-                'G', new UnificationEntry(OrePrefix.gemFlawless, material));
+        if(material.hasProperty(PropertyKey.GEM)) {
+            ModHandler.addShapedRecipe(String.format("stick_long_gem_flawless_%s", material.toString()),
+                    stickStack,
+                    "sf",
+                    "G ",
+                    'G', new UnificationEntry(OrePrefix.gemFlawless, material));
 
-        ModHandler.addShapedRecipe(String.format("stick_long_gem_exquisite_%s", material.toString()),
-                GTUtility.copyAmount(2, stickStack),
-                "sf", "G ",
-                'G', new UnificationEntry(OrePrefix.gemExquisite, material));
+            ModHandler.addShapedRecipe(String.format("stick_long_gem_exquisite_%s", material.toString()),
+                    GTUtility.copyAmount(2, stickStack),
+                    "sf", "G ",
+                    'G', new UnificationEntry(OrePrefix.gemExquisite, material));
+
+        }
 
         ModHandler.addShapedRecipe(String.format("stick_long_stick_%s", material.toString()), stack,
                 "ShS",
