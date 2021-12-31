@@ -1,5 +1,29 @@
 ## Changelog
 
+### 2.0.2
+BETA RELEASE
+* Fix crash on null Fluid with some mods (and add better logging)
+* Fix Rubber Trees being too tall/too short in some cases
+* Buff Garnet Sand Centrifuge recipe
+* Fix Crafting Recipe for the Terminal
+* Fix ULPIC's being needed in MV but requiring HV to craft
+* Fix Rubber Trees not giving Sticky Resin
+* Fix some Stone Types having higher harvest levels than the other ores
+* Clean up Cable covering recipes, add cable Unpacking recipes
+* Fix Surface Rock placement being poor
+    * Rocks now cannot spawn as far from the vein center
+    * A rock is guaranteed to spawn in the center of a chunk with a vein in it
+* Fix drum overlay being improperly tinted
+* Fix a few veins (Sulfur, Cassiterite) being too limited on their height range, making them very rare
+* Fix Crafting Station recipe not allowing non-Vanilla Wood Planks
+* Remove Argon Plasma Arc Furnace recipes
+* Add a few new configs:
+    * `harderBrickRecipes`: Harder recipes for Bricks, Coke Bricks, and Firebricks (default false)
+    * `plateWrenches`: Use Plates to make Wrenches instead of Ingots (default false)
+    * `harderEBFControllerRecipe`: Use Electric Furnaces instead of Furnaces in the EBF recipe (default false)
+* Fix a few minor problems in the Terminal
+* Fix some invalid Crafting recipes, add logging
+
 ### 2.0.1
 BETA RELEASE
 * Add Cosmetic Blocks for Marble, Basalt, Red Granite, etc (all stone types)
