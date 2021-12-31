@@ -97,18 +97,11 @@ public class WireCombiningHandler {
     }
 
     private static void processCableStripping(OrePrefix prefix, Material material, WireProperties property) {
-        RecipeBuilder<?> builder = PACKER_RECIPES.recipeBuilder()
+        PACKER_RECIPES.recipeBuilder()
                 .input(prefix, material)
                 .output(cableToWireMap.get(prefix), material)
-                .duration(100).EUt(GTValues.VA[GTValues.ULV]);
-
-        int tier = GTUtility.getTierByVoltage(property.getVoltage());
-        int outputAmount = (int) (prefix.secondaryMaterials.get(0).amount / GTValues.M);
-        if (tier <= GTValues.EV) {
-            builder.output(plate, Materials.Rubber, outputAmount);
-        } else {
-            builder.output(foil, Materials.SiliconeRubber, outputAmount * 2);
-        }
-        builder.buildAndRegister();
+                .output(plate, Materials.Rubber, (int) (prefix.secondaryMaterials.get(0).amount / GTValues.M))
+                .duration(100).EUt(GTValues.VA[GTValues.ULV])
+                .buildAndRegister();
     }
 }
