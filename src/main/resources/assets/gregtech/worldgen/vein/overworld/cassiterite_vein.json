@@ -1,8 +1,8 @@
 {
   "weight": 50,
   "density": 0.2,
-  "max_height": 220,
-  "min_height": 60,
+  "max_height": 60,
+  "min_height": 40,
   "vein_populator": {
     "type": "surface_rock",
     "material": "cassiterite"
