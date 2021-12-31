@@ -14,6 +14,8 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import javax.annotation.Nonnull;
 import java.util.Random;
 
+import static gregtech.common.blocks.wood.BlockRubberLog.NATURAL;
+
 public class WorldGenRubberTree extends WorldGenerator {
 
     public WorldGenRubberTree(boolean notify) {
@@ -39,7 +41,7 @@ public class WorldGenRubberTree extends WorldGenerator {
         if (event.getResult() == Event.Result.DENY) {
             return false;
         }
-        IBlockState woodBlock = MetaBlocks.RUBBER_LOG.getDefaultState();
+        IBlockState woodBlock = MetaBlocks.RUBBER_LOG.getDefaultState().withProperty(NATURAL, true);
         IBlockState leaves = MetaBlocks.RUBBER_LEAVES.getDefaultState();
         int height = getGrowHeight(world, pos);
         if (height < 2)
