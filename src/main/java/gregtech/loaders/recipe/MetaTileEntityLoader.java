@@ -20,7 +20,9 @@ import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidUtil;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
@@ -55,7 +57,25 @@ public class MetaTileEntityLoader {
         // If these recipes are changed, change the values in MaterialInfoLoader.java
         registerMachineRecipe(false, MetaTileEntities.HULL, "PLP", "CHC", 'P', HULL_PLATE, 'L', PLATE, 'C', CABLE, 'H', CASING);
 
-        ModHandler.addShapedRecipe("casing_primitive_bricks", MetaBlocks.METAL_CASING.getItemVariant(PRIMITIVE_BRICKS, 1), "XX", "XX", 'X', MetaItems.FIRECLAY_BRICK);
+        if (ConfigHolder.recipes.harderBrickRecipes) {
+            ModHandler.addShapedRecipe("bucket_of_concrete", FluidUtil.getFilledBucket(Materials.Concrete.getFluid(1000)),
+                    "CBS", "CWQ", " L ",
+                    'C', new UnificationEntry(OrePrefix.dust, Materials.Calcite),
+                    'B', new ItemStack(Items.BUCKET),
+                    'S', new UnificationEntry(OrePrefix.dust, Materials.Stone),
+                    'W', new ItemStack(Items.WATER_BUCKET),
+                    'Q', new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
+                    'L', new UnificationEntry(OrePrefix.dust, Materials.Clay));
+
+            ModHandler.addShapedRecipe("casing_primitive_bricks", MetaBlocks.METAL_CASING.getItemVariant(PRIMITIVE_BRICKS),
+                    "BGB", "BCB", "BGB",
+                    'B', MetaItems.FIRECLAY_BRICK.getStackForm(),
+                    'G', new UnificationEntry(OrePrefix.dust, Materials.Gypsum),
+                    'C', FluidUtil.getFilledBucket(Materials.Concrete.getFluid(1000)));
+        } else {
+            ModHandler.addShapedRecipe("casing_primitive_bricks", MetaBlocks.METAL_CASING.getItemVariant(PRIMITIVE_BRICKS, 1), "XX", "XX", 'X', MetaItems.FIRECLAY_BRICK);
+        }
+
         ModHandler.addShapedRecipe("casing_coke_bricks", MetaBlocks.METAL_CASING.getItemVariant(COKE_BRICKS, 1), "XX", "XX", 'X', MetaItems.COKE_OVEN_BRICK);
         ModHandler.addShapedRecipe(true, "casing_bronze_bricks", MetaBlocks.METAL_CASING.getItemVariant(BRONZE_BRICKS, 2), "PhP", "PBP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Bronze), 'B', new ItemStack(Blocks.BRICK_BLOCK, 1));
         ModHandler.addShapedRecipe(true, "casing_steel_solid", MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID, 2), "PhP", "PFP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'F', new UnificationEntry(OrePrefix.frameGt, Materials.Steel));

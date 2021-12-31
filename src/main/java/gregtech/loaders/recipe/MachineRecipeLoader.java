@@ -226,6 +226,12 @@ public class MachineRecipeLoader {
                 .input(COKE_OVEN_BRICK, 4)
                 .outputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.COKE_BRICKS))
                 .duration(300).EUt(2).buildAndRegister();
+
+        ALLOY_SMELTER_RECIPES.recipeBuilder()
+                .input("sand", 1)
+                .inputs(new ItemStack(Items.CLAY_BALL))
+                .output(COKE_OVEN_BRICK, 2)
+                .duration(200).EUt(VA[ULV]).buildAndRegister();
     }
 
     private static void registerPrimitiveBlastFurnaceRecipes() {

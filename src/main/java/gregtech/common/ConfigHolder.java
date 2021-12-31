@@ -176,6 +176,9 @@ public class ConfigHolder {
 
         @Config.Comment({"Whether to remove Vanilla Block Recipes from the Crafting Table.", "Default: false"})
         public boolean removeVanillaBlockRecipes = false;
+
+        @Config.Comment({"Whether to make crafting recipes for Bricks, Firebricks, and Coke Bricks harder.", "Default: false"})
+        public boolean harderBrickRecipes = false;
     }
 
     public static class CompatibilityOptions {

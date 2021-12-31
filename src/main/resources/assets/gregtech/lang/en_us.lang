@@ -2283,7 +2283,7 @@ tile.boiler_casing.titanium_firebox.name=Titanium Firebox Casing
 tile.boiler_casing.tungstensteel_firebox.name=Tungstensteel Firebox Casing
 
 # Metal casing blocks
-tile.metal_casing.primitive_bricks.name=Primitive Bricks
+tile.metal_casing.primitive_bricks.name=Firebricks
 tile.metal_casing.coke_bricks.name=Coke Oven Bricks
 tile.metal_casing.bronze_bricks.name=Bronze Machine Casing
 tile.metal_casing.invar_heatproof.name=Heat Proof Invar Machine Casing

@@ -64,7 +64,7 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe("plank_to_wooden_shape", WOODEN_FORM_EMPTY.getStackForm(), "   ", " X ", "s  ", 'X', new UnificationEntry(OrePrefix.plank, Materials.Wood));
         ModHandler.addShapedRecipe("wooden_shape_brick", WOODEN_FORM_BRICK.getStackForm(), "k ", " X", 'X', WOODEN_FORM_EMPTY.getStackForm());
 
-        if (ConfigHolder.recipes.hardMiscRecipes) {
+        if (ConfigHolder.recipes.harderBrickRecipes) {
             ModHandler.addShapelessRecipe("compressed_clay", COMPRESSED_CLAY.getStackForm(), WOODEN_FORM_BRICK.getStackForm(), new ItemStack(Items.CLAY_BALL));
             ModHandler.addSmeltingRecipe(COMPRESSED_CLAY.getStackForm(), new ItemStack(Items.BRICK));
         }
