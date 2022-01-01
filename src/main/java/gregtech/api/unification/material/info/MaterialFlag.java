@@ -56,7 +56,7 @@ public class MaterialFlag {
     }
 
     public static MaterialFlag getByName(String name) {
-        return FLAG_REGISTRY.stream().filter(f -> f.toString().equals(name)).findFirst().orElse(null);
+        return FLAG_REGISTRY.stream().filter(f -> f.toString().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     public static class Builder {

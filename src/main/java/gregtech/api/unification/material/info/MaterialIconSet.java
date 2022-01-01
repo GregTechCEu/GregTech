@@ -61,7 +61,7 @@ public class MaterialIconSet {
 
     @ZenMethod("get")
     public static MaterialIconSet getByName(String name) {
-        return ICON_SETS.get(name);
+        return ICON_SETS.get(name.toUpperCase(Locale.ROOT));
     }
 
     @Override
