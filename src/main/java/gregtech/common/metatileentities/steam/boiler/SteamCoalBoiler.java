@@ -60,6 +60,11 @@ public class SteamCoalBoiler extends SteamBoiler implements IFuelable {
     }
 
     @Override
+    protected int getCoolDownRate() {
+        return 1;
+    }
+
+    @Override
     public IItemHandlerModifiable createExportItemHandler() {
         return new ItemStackHandler(1);
     }

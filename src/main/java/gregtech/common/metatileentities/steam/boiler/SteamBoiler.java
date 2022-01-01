@@ -205,7 +205,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
             }
         } else if (timeBeforeCoolingDown == 0) {
             if (currentTemperature > 0) {
-                currentTemperature--;
+                currentTemperature -= getCoolDownRate();
                 timeBeforeCoolingDown = getCooldownInterval();
             }
         } else --timeBeforeCoolingDown;
@@ -247,6 +247,8 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     protected abstract void tryConsumeNewFuel();
 
     protected abstract int getCooldownInterval();
+
+    protected abstract int getCoolDownRate();
 
     public int getMaxTemperate() {
         return isHighPressure ? 1000 : 500;
