@@ -346,6 +346,19 @@ public class MiscRecipeLoader {
                     .buildAndRegister();
         }
 
+        // Glass Fluid Extraction
+        EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.GLASS))
+                .fluidOutputs(Glass.getFluid(L))
+                .duration(20).EUt(30).buildAndRegister();
+
+        // Glass Plate in Alloy Smelter
+        ALLOY_SMELTER_RECIPES.recipeBuilder()
+                .input(dust, Glass, 2)
+                .notConsumable(SHAPE_MOLD_PLATE.getStackForm())
+                .output(plate, Glass)
+                .duration(40).EUt(6).buildAndRegister();
+
         // Dyed Lens Recipes
         RecipeBuilder<?> builder = CHEMICAL_BATH_RECIPES.recipeBuilder().EUt(VA[HV]).duration(200).input(craftingLens, Glass);
         final int dyeAmount = 288;

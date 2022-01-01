@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe;
 
+import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.MarkerMaterials.Component;
@@ -233,6 +234,12 @@ public class CircuitRecipes {
                 .notConsumable(SHAPE_MOLD_BALL)
                 .output(GLASS_TUBE)
                 .duration(160).EUt(16).buildAndRegister();
+
+        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+                .fluidInputs(Glass.getFluid(GTValues.L))
+                .notConsumable(SHAPE_MOLD_BALL)
+                .output(GLASS_TUBE)
+                .duration(200).EUt(24).buildAndRegister();
 
         FORMING_PRESS_RECIPES.recipeBuilder()
                 .input(dust, Glass)
