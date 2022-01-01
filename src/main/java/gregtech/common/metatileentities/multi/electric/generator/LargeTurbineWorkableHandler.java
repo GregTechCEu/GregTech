@@ -29,11 +29,6 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
     }
 
     @Override
-    public boolean canVoidRecipeOutputs() {
-        return true;
-    }
-
-    @Override
     protected void updateRecipeProgress() {
         if (canRecipeProgress) {
             if (!isActive)
