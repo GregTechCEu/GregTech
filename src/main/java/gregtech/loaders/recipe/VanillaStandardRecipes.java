@@ -168,6 +168,11 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Blocks.GLASS, 1))
                 .buildAndRegister();
 
+        EXTRACTOR_RECIPES.recipeBuilder().duration(20).EUt(30)
+                .inputs(new ItemStack(Blocks.GLASS))
+                .fluidOutputs(Glass.getFluid(L))
+                .buildAndRegister();
+
         for (int i = 0; i < 16; i++) {
             // nerf glass panes
             if (ConfigHolder.recipes.hardGlassRecipes) {
