@@ -11,7 +11,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.recipes.ModHandler;
+import gregtech.api.unification.material.Materials;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
@@ -20,12 +20,19 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
 
-    private FluidTank lavaFluidTank;
+    private FluidTank fuelFluidTank;
+
+    private final List<FluidStack> boilerFuels = new ArrayList<FluidStack>() {{
+        boilerFuels.add(Materials.Lava.getFluid(100));
+        boilerFuels.add(Materials.Creosote.getFluid(250));
+    }};
 
     public SteamLavaBoiler(ResourceLocation metaTileEntityId, boolean isHighPressure) {
         super(metaTileEntityId, isHighPressure, Textures.LAVA_BOILER_OVERLAY);
@@ -44,19 +51,19 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
     @Override
     protected FluidTankList createImportFluidHandler() {
         FluidTankList superHandler = super.createImportFluidHandler();
-        this.lavaFluidTank = new FilteredFluidHandler(16000)
-                .setFillPredicate(ModHandler::isLava);
-        return new FluidTankList(false, superHandler, lavaFluidTank);
+        this.fuelFluidTank = new FilteredFluidHandler(16000)
+                .setFillPredicate(boilerFuels::contains);
+        return new FluidTankList(false, superHandler, fuelFluidTank);
 
     }
 
-    public static final int LAVA_PER_OPERATION = 100; // todo this may be too good?
-
     @Override
     protected void tryConsumeNewFuel() {
-        if (lavaFluidTank.getFluidAmount() >= LAVA_PER_OPERATION) {
-            lavaFluidTank.drain(LAVA_PER_OPERATION, true);
-            setFuelMaxBurnTime(LAVA_PER_OPERATION);
+        for(FluidStack fuel : boilerFuels) {
+            if(fuel.containsFluid(fuel) && fuelFluidTank.getFluidAmount() >= fuel.amount) {
+                fuelFluidTank.drain(fuel.amount, true);
+                setFuelMaxBurnTime((1000 / fuel.amount) * 10);
+            }
         }
     }
 
@@ -77,19 +84,19 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
 
     @Override
     public Collection<IFuelInfo> getFuels() {
-        FluidStack lava = lavaFluidTank.drain(Integer.MAX_VALUE, false);
-        if (lava == null || lava.amount == 0)
+        FluidStack fuel = fuelFluidTank.drain(Integer.MAX_VALUE, false);
+        if (fuel == null || fuel.amount == 0)
             return Collections.emptySet();
-        final int fuelRemaining = lava.amount;
-        final int fuelCapacity = lavaFluidTank.getCapacity();
+        final int fuelRemaining = fuel.amount;
+        final int fuelCapacity = fuelFluidTank.getCapacity();
         final long burnTime = (long) fuelRemaining * (this.isHighPressure ? 6 : 12); // 100 mb lasts 600 or 1200 ticks
-        return Collections.singleton(new FluidFuelInfo(lava, fuelRemaining, fuelCapacity, LAVA_PER_OPERATION, burnTime));
+        return Collections.singleton(new FluidFuelInfo(fuel, fuelRemaining, fuelCapacity, boilerFuels.get(boilerFuels.indexOf(fuel)).amount, burnTime));
     }
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return createUITemplate(entityPlayer)
-                .widget(new TankWidget(lavaFluidTank, 119, 26, 10, 54)
+                .widget(new TankWidget(fuelFluidTank, 119, 26, 10, 54)
                         .setBackgroundTexture(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure)))
                 .build(getHolder(), entityPlayer);
     }
