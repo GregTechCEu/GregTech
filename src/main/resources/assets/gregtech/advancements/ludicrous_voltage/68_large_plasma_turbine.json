@@ -8,7 +8,7 @@
     },
     "icon": {
       "item": "gregtech:machine",
-      "data": 1011
+      "data": 1012
     },
     "frame": "goal"
   },
@@ -19,7 +19,7 @@
         "items": [
           {
             "item": "gregtech:machine",
-            "data": 1011
+            "data": 1012
           }
         ]
       }

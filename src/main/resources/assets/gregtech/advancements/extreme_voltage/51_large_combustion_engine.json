@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.extreme_voltage.51_large_combustion_engine.name"
     },
     "icon": {
-      "item": "gregtech:turbine_casing",
-      "data": 2
+      "item": "gregtech:machine",
+      "data": 1007
     }
   },
   "criteria": {

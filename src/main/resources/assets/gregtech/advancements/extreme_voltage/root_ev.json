@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.root_ev.name"
     },
     "icon": {
-      "item": "gregtech:machine",
-      "data": 1007
+      "item": "gregtech:meta_ingot",
+      "data": 113
     },
     "frame": "goal",
     "background": "gregtech:textures/blocks/casings/solid/machine_casing_stable_titanium.png"
