@@ -417,7 +417,7 @@ public class OrganicChemistryMaterials {
                 .fluid()
                 .color(0xA1DEA6)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Carbon, 12, Hydrogen, 10, Chlorine, 2, Nitrogen, 4)
+                .components(Carbon, 12, Hydrogen, 10, Chlorine, 2, Nitrogen, 2)
                 .build();
 
         Nitrochlorobenzene = new Material.Builder(1061, "nitrochlorobenzene")
