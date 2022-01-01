@@ -2533,10 +2533,10 @@ gregtech.machine.steam_boiler_solar_bronze.name=Steam Solar Boiler
 gregtech.machine.steam_boiler_solar_bronze.tooltip=Steam Power by Sun
 gregtech.machine.steam_boiler_solar_steel.name=High Pressure Steam Solar Boiler
 gregtech.machine.steam_boiler_solar_steel.tooltip=Steam Power by Sun
-gregtech.machine.steam_boiler_lava_bronze.name=Small Steam Lava Boiler
+gregtech.machine.steam_boiler_lava_bronze.name=Small Steam Semi-Fuel Boiler
 gregtech.machine.steam_boiler_lava_bronze.tooltip=A Boiler running off Lava
-gregtech.machine.steam_boiler_lava_steel.name=High Pressure Steam Lava Boiler
-gregtech.machine.steam_boiler_lava_steel.tooltip=Faster than Small Steam Lava Boiler
+gregtech.machine.steam_boiler_lava_steel.name=High Pressure Steam Semi-Fuel Boiler
+gregtech.machine.steam_boiler_lava_steel.tooltip=Faster than Small Steam Semi-Fuel Boiler
 
 gregtech.machine.steam_extractor_bronze.name=Steam Extractor
 gregtech.machine.steam_extractor_bronze.tooltip=Extracting your first Rubber
