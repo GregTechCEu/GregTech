@@ -254,10 +254,18 @@ public class PartsRecipeHandler {
                         "h", "P", "P", 'P', new UnificationEntry(plate, material));
             }
 
-            BENDER_RECIPES.recipeBuilder().EUt(VA[LV]).duration((int) material.getMass() * 2)
+            BENDER_RECIPES.recipeBuilder().EUt(96).duration((int) material.getMass() * 2)
                     .input(plate, material, 2)
                     .output(doublePrefix, material)
                     .circuitMeta(2)
+                    .buildAndRegister();
+
+            BENDER_RECIPES.recipeBuilder()
+                    .input(ingot, material, 2)
+                    .circuitMeta(2)
+                    .output(doublePrefix, material)
+                    .duration((int) material.getMass() * 2)
+                    .EUt(96)
                     .buildAndRegister();
         }
     }
