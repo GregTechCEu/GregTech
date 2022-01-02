@@ -632,7 +632,7 @@ public class VanillaOverrideRecipes {
                 'S', new ItemStack(Items.STRING),
                 'P', new ItemStack(Items.PAPER),
                 'L', new ItemStack(Items.LEATHER),
-                'G', MetaItems.RUBBER_DROP.getStackForm().copy()
+                'G', MetaItems.STICKY_RESIN.getStackForm().copy()
         );
 
         ModHandler.removeRecipeByName(new ResourceLocation("brewing_stand"));

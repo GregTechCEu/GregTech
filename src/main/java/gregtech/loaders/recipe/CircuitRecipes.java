@@ -251,42 +251,42 @@ public class CircuitRecipes {
         ModHandler.addShapedRecipe("resistor_wire", RESISTOR.getStackForm(2),
                 "SPS", "WCW", " P ",
                 'P', new ItemStack(Items.PAPER),
-                'S', RUBBER_DROP.getStackForm(),
+                'S', STICKY_RESIN.getStackForm(),
                 'W', new UnificationEntry(wireGtSingle, Copper),
                 'C', new UnificationEntry(dust, Coal));
 
         ModHandler.addShapedRecipe("resistor_wire_fine", RESISTOR.getStackForm(2),
                 "SPS", "WCW", " P ",
                 'P', new ItemStack(Items.PAPER),
-                'S', RUBBER_DROP.getStackForm(),
+                'S', STICKY_RESIN.getStackForm(),
                 'W', new UnificationEntry(wireFine, Copper),
                 'C', new UnificationEntry(dust, Coal));
 
         ModHandler.addShapedRecipe("resistor_wire_charcoal", RESISTOR.getStackForm(2),
                 "SPS", "WCW", " P ",
                 'P', new ItemStack(Items.PAPER),
-                'S', RUBBER_DROP.getStackForm(),
+                'S', STICKY_RESIN.getStackForm(),
                 'W', new UnificationEntry(wireGtSingle, Copper),
                 'C', new UnificationEntry(dust, Charcoal));
 
         ModHandler.addShapedRecipe("resistor_wire_fine_charcoal", RESISTOR.getStackForm(2),
                 "SPS", "WCW", " P ",
                 'P', new ItemStack(Items.PAPER),
-                'S', RUBBER_DROP.getStackForm(),
+                'S', STICKY_RESIN.getStackForm(),
                 'W', new UnificationEntry(wireFine, Copper),
                 'C', new UnificationEntry(dust, Charcoal));
 
         ModHandler.addShapedRecipe("resistor_wire_carbon", RESISTOR.getStackForm(2),
                 "SPS", "WCW", " P ",
                 'P', new ItemStack(Items.PAPER),
-                'S', RUBBER_DROP.getStackForm(),
+                'S', STICKY_RESIN.getStackForm(),
                 'W', new UnificationEntry(wireGtSingle, Copper),
                 'C', new UnificationEntry(dust, Carbon));
 
         ModHandler.addShapedRecipe("resistor_wire_fine_carbon", RESISTOR.getStackForm(2),
                 "SPS", "WCW", " P ",
                 'P', new ItemStack(Items.PAPER),
-                'S', RUBBER_DROP.getStackForm(),
+                'S', STICKY_RESIN.getStackForm(),
                 'W', new UnificationEntry(wireFine, Copper),
                 'C', new UnificationEntry(dust, Carbon));
 
@@ -635,13 +635,13 @@ public class CircuitRecipes {
         // Coated Board
         ModHandler.addShapedRecipe("coated_board", COATED_BOARD.getStackForm(3),
                 "RRR", "PPP", "RRR",
-                'R', RUBBER_DROP.getStackForm(),
+                'R', STICKY_RESIN.getStackForm(),
                 'P', new UnificationEntry(plate, Wood));
 
         ModHandler.addShapelessRecipe("coated_board_1x", COATED_BOARD.getStackForm(),
                 new UnificationEntry(plate, Wood),
-                RUBBER_DROP.getStackForm(),
-                RUBBER_DROP.getStackForm());
+                STICKY_RESIN.getStackForm(),
+                STICKY_RESIN.getStackForm());
 
         ModHandler.addShapedRecipe("basic_circuit_board", BASIC_CIRCUIT_BOARD.getStackForm(),
                 "WWW", "WBW", "WWW",

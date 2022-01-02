@@ -364,7 +364,7 @@ public class MetaItem1 extends StandardMetaItem {
         }
 
         // Plant/Rubber Related: ID 438-445
-        RUBBER_DROP = addItem(438, "rubber_drop").setBurnValue(200);
+        STICKY_RESIN = addItem(438, "rubber_drop").setBurnValue(200);
         PLANT_BALL = addItem(439, "plant_ball").setBurnValue(75);
         BIO_CHAFF = addItem(440, "bio_chaff").setBurnValue(200);
 

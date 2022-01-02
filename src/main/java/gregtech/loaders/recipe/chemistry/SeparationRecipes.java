@@ -23,7 +23,7 @@ import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.items.MetaItems.PLANT_BALL;
-import static gregtech.common.items.MetaItems.RUBBER_DROP;
+import static gregtech.common.items.MetaItems.STICKY_RESIN;
 
 public class SeparationRecipes {
 
@@ -104,7 +104,7 @@ public class SeparationRecipes {
         }
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(400).EUt(5)
-                .input(RUBBER_DROP)
+                .input(STICKY_RESIN)
                 .output(dust, RawRubber, 3)
                 .chancedOutput(PLANT_BALL, 1000, 850)
                 .fluidOutputs(Glue.getFluid(100))
@@ -112,7 +112,7 @@ public class SeparationRecipes {
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(20)
                 .inputs(new ItemStack(MetaBlocks.RUBBER_LOG))
-                .chancedOutput(RUBBER_DROP, 5000, 1200)
+                .chancedOutput(STICKY_RESIN, 5000, 1200)
                 .chancedOutput(PLANT_BALL, 3750, 900)
                 .chancedOutput(dust, Carbon, 2500, 600)
                 .chancedOutput(dust, Wood, 2500, 700)

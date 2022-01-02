@@ -691,7 +691,7 @@ public class MachineRecipeLoader {
 
 
         EXTRACTOR_RECIPES.recipeBuilder()
-                .inputs(RUBBER_DROP.getStackForm())
+                .inputs(STICKY_RESIN.getStackForm())
                 .output(dust, RawRubber, 3)
                 .duration(150).EUt(2)
                 .buildAndRegister();

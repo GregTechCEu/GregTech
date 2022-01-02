@@ -431,7 +431,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem BOTTLE_PURPLE_DRINK;
 
     public static MetaItem<?>.MetaValueItem PLANT_BALL;
-    public static MetaItem<?>.MetaValueItem RUBBER_DROP;
+    public static MetaItem<?>.MetaValueItem STICKY_RESIN;
     public static MetaItem<?>.MetaValueItem ENERGIUM_DUST;
 
     public static MetaItem<?>.MetaValueItem POWER_UNIT_LV;
