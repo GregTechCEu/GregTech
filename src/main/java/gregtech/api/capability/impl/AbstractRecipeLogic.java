@@ -259,19 +259,19 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * Should the output items of a recipe be limited by some trim factor
      *
-     * @return A Pair of if the recipe should be trimmed, and to what resulting number
+     * @return The number of resulting item outputs, or -1 for no trim
      */
-    public Pair<Boolean, Integer> trimItemOutputs() {
-        return Pair.of(false, 1);
+    public int trimItemOutputs() {
+        return -1;
     }
 
     /**
      * Should the output fluids of a recipe be limited by some trim factor
      *
-     * @return A Pair of if the recipe fluid outputs should be trimmed, and to what resulting number
+     * @return The number of resulting fluid outputs, or -1 for no trim
      */
-    public Pair<Boolean, Integer> trimFluidOutputs() {
-        return Pair.of(false, 1);
+    public int trimFluidOutputs() {
+        return -1;
     }
 
     public boolean canVoidRecipeOutputs() {
@@ -643,27 +643,27 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.recipeEUt = resultOverclock[0];
 
         // Fluid Logic and trimming. TODO chanced fluid outputs?
-        Pair<Boolean, Integer> outputFluidTrim = trimFluidOutputs();
-        if(outputFluidTrim.getLeft() && parallelRecipesPerformed == 0 && recipe.getFluidOutputs().size() > outputFluidTrim.getRight()) {
+        int outputFluidTrim = trimFluidOutputs();
+        if(outputFluidTrim != -1 && parallelRecipesPerformed == 0 && recipe.getFluidOutputs().size() > outputFluidTrim) {
 
             // If there are more fluid outputs than the trim factor
-            this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs().subList(0, trimFluidOutputs().getRight()));
+            this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs().subList(0, trimFluidOutputs()));
         }
         else {
             this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
         }
 
         // Item Logic and trimming
-        Pair<Boolean, Integer> outputItemTrim = trimItemOutputs();
+        int outputItemTrim = trimItemOutputs();
         // if it's a paralleled recipe, the output is already trimmed
-        if (outputItemTrim.getLeft() && parallelRecipesPerformed == 0 && (recipe.getOutputs().size() + recipe.getChancedOutputs().size()) > outputItemTrim.getRight()) {
+        if (outputItemTrim != -1 && parallelRecipesPerformed == 0 && (recipe.getOutputs().size() + recipe.getChancedOutputs().size()) > outputItemTrim) {
             // If there are item outputs, and the number of outputs is greater than the trim factor
-            if (recipe.getOutputs().size() > 0 && recipe.getOutputs().size() >= outputItemTrim.getRight()) {
-                this.itemOutputs = GTUtility.copyStackList(recipe.getOutputs().subList(0, outputItemTrim.getRight()));
+            if (recipe.getOutputs().size() > 0 && recipe.getOutputs().size() >= outputItemTrim) {
+                this.itemOutputs = GTUtility.copyStackList(recipe.getOutputs().subList(0, outputItemTrim));
             }
             // Mix regular outputs and chanced outputs
             else if(recipe.getOutputs().size() > 0) {
-                int numChanced = outputItemTrim.getRight() - recipe.getOutputs().size();
+                int numChanced = outputItemTrim - recipe.getOutputs().size();
                 List<Recipe.ChanceEntry> tempChance = recipe.getChancedOutputs().subList(0, Math.min(numChanced, recipe.getChancedOutputs().size()));
                 this.itemOutputs = GTUtility.copyStackList(recipe.getOutputs());
                 List<ItemStack> chanced = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt), recipeMap)
@@ -677,9 +677,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             else {
                 // Which Chanced outputs were actually output by the recipe
                 NonNullList<ItemStack> tempOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt), recipeMap));
-                int numOutputs = Math.min(tempOutputs.size(), outputItemTrim.getRight());
+                int numOutputs = Math.min(tempOutputs.size(), outputItemTrim);
 
-                if(numOutputs <= outputItemTrim.getRight()) {
+                if(numOutputs <= outputItemTrim) {
                     this.itemOutputs = tempOutputs;
                 }
                 else {

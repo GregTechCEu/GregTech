@@ -26,8 +26,8 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
     }
 
     @Override
-    public Pair<Boolean, Integer> trimItemOutputs() {
-        return Pair.of(true, 1);
+    public int trimItemOutputs() {
+        return 1;
     }
 
     @Override

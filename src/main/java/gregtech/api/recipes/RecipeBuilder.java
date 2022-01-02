@@ -20,7 +20,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -419,7 +418,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
      * @return the builder holding the multiplied recipe
      */
 
-    public R append(Recipe recipe, int multiplier, boolean multiplyDuration, Pair<Boolean, Integer> trimItemOutputs, Pair<Boolean, Integer> trimFluidOutputs) {
+    public R append(Recipe recipe, int multiplier, boolean multiplyDuration, int trimItemOutputs, int trimFluidOutputs) {
         for (Map.Entry<RecipeProperty<?>, Object> property : recipe.getPropertyValues()) {
             this.applyProperty(property.getKey().getKey(), property.getValue());
         }
@@ -438,20 +437,20 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.fluidInputs(newFluidInputs);
 
         // Item Output and Trimming logic
-        if (trimItemOutputs.getLeft()) {
+        if (trimItemOutputs != -1) {
             // If there are more outputs than the trim factor
-            if (!outputItems.isEmpty() && outputItems.size() >= trimItemOutputs.getRight()) {
-                this.outputs(outputItems.subList(0, trimItemOutputs.getRight()));
+            if (!outputItems.isEmpty() && outputItems.size() >= trimItemOutputs) {
+                this.outputs(outputItems.subList(0, trimItemOutputs));
             }
             // Combine regular outputs and chanced outputs to reach the trim factor
             else if(!outputItems.isEmpty()) {
-                int numChanced = trimItemOutputs.getRight() - outputItems.size();
+                int numChanced = trimItemOutputs - outputItems.size();
                 this.outputs(outputItems);
                 trimmedChancedOutputsMultiply(recipe, multiplier, Math.min(numChanced, recipe.getChancedOutputs().size()));
             }
             // Chanced outputs only
             else if (recipe.getChancedOutputs().size() > 0) {
-                trimmedChancedOutputsMultiply(recipe, multiplier, Math.min(trimItemOutputs.getRight(), recipe.getChancedOutputs().size()));
+                trimmedChancedOutputsMultiply(recipe, multiplier, Math.min(trimItemOutputs, recipe.getChancedOutputs().size()));
             }
         } else {
             this.outputs(outputItems);
@@ -459,8 +458,8 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         }
 
         // Fluid Output and Trimming Logic TODO Chanced Fluid output support
-        if(trimFluidOutputs.getLeft() && outputFluids.size() > trimFluidOutputs.getRight()) {
-            this.fluidOutputs(outputFluids.subList(0, trimFluidOutputs.getRight()));
+        if(trimFluidOutputs != -1 && outputFluids.size() > trimFluidOutputs) {
+            this.fluidOutputs(outputFluids.subList(0, trimFluidOutputs));
         }
         else {
             this.fluidOutputs(outputFluids);

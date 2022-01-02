@@ -274,16 +274,16 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
 
         @Override
-        public Pair<Boolean, Integer> trimItemOutputs() {
+        public int trimItemOutputs() {
             MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(currentMachineStack);
 
             int availableSlots = mte.getExportItems().getSlots();
 
             if(availableSlots < this.activeRecipeMap.getMaxOutputs()) {
-                return Pair.of(true, availableSlots);
+                return availableSlots;
             }
 
-            return Pair.of(false, 1);
+            return -1;
         }
     }
 }
