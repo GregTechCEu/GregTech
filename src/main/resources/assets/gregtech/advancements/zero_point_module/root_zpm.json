@@ -8,7 +8,7 @@
     },
     "icon": {
       "item": "gregtech:machine",
-      "data": 1020
+      "data": 1021
     },
     "frame": "challenge",
     "background": "gregtech:textures/blocks/casings/fusion/machine_casing_fusion.png"
@@ -20,7 +20,7 @@
         "items": [
           {
             "item": "gregtech:machine",
-            "data": 1020
+            "data": 1021
           }
         ]
       }
