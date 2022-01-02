@@ -29,13 +29,11 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
 
     private FluidTank fuelFluidTank;
 
-    private final List<FluidStack> boilerFuels = new ArrayList<FluidStack>() {{
-        boilerFuels.add(Materials.Lava.getFluid(100));
-        boilerFuels.add(Materials.Creosote.getFluid(250));
-    }};
+    private final List<FluidStack> boilerFuels;
 
     public SteamLavaBoiler(ResourceLocation metaTileEntityId, boolean isHighPressure) {
         super(metaTileEntityId, isHighPressure, Textures.LAVA_BOILER_OVERLAY);
+        this.boilerFuels = getBoilerFuels();
     }
 
     @Override
@@ -48,11 +46,19 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
         return isHighPressure ? 600 : 240;
     }
 
+    private List<FluidStack> getBoilerFuels() {
+        List<FluidStack> fuels = new ArrayList<>();
+        fuels.add(Materials.Lava.getFluid(100));
+        fuels.add(Materials.Creosote.getFluid(250));
+
+        return fuels;
+    }
+
     @Override
     protected FluidTankList createImportFluidHandler() {
         FluidTankList superHandler = super.createImportFluidHandler();
         this.fuelFluidTank = new FilteredFluidHandler(16000)
-                .setFillPredicate(boilerFuels::contains);
+                .setFillPredicate(fs -> boilerFuels.stream().anyMatch(nfs -> nfs.isFluidEqual(fs)));
         return new FluidTankList(false, superHandler, fuelFluidTank);
 
     }
@@ -60,7 +66,7 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
     @Override
     protected void tryConsumeNewFuel() {
         for(FluidStack fuel : boilerFuels) {
-            if(fuel.containsFluid(fuel) && fuelFluidTank.getFluidAmount() >= fuel.amount) {
+            if(fuelFluidTank.getFluid() != null && fuelFluidTank.getFluid().isFluidEqual(fuel) && fuelFluidTank.getFluidAmount() >= fuel.amount) {
                 fuelFluidTank.drain(fuel.amount, true);
                 setFuelMaxBurnTime((1000 / fuel.amount) * 10);
             }
