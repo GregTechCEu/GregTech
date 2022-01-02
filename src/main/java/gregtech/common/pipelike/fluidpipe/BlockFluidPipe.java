@@ -226,6 +226,15 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
+    public boolean isHoldingPipe(EntityPlayer player) {
+        if (player == null) {
+            return false;
+        }
+        ItemStack stack = player.getHeldItemMainhand();
+        return stack != ItemStack.EMPTY && stack.getItem() instanceof ItemBlockFluidPipe;
+    }
+
+    @Override
     public void onEntityCollision(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
         if (worldIn.isRemote) return;
         if (entityIn instanceof EntityLivingBase && entityIn.world.getWorldTime() % 20 == 0L) {
