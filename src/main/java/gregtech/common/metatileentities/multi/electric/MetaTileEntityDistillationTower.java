@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -30,6 +31,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
 
     public MetaTileEntityDistillationTower(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.DISTILLATION_RECIPES);
+        this.recipeMapWorkable = new DistillationTowerWorkable(this);
     }
 
     @Override
@@ -93,5 +95,18 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.DISTILLATION_TOWER_OVERLAY;
+    }
+
+    @SuppressWarnings("InnerClassMayBeStatic")
+    protected class DistillationTowerWorkable extends MultiblockRecipeLogic {
+
+        public DistillationTowerWorkable(RecipeMapMultiblockController tileEntity) {
+            super(tileEntity);
+        }
+
+        @Override
+        public int trimFluidOutputs() {
+            return getOutputTank().getTanks();
+        }
     }
 }

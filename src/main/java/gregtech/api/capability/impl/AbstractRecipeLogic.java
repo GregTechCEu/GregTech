@@ -28,7 +28,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -423,10 +422,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         IItemHandlerModifiable exportInventory = getOutputInventory();
         IMultipleTankHandler importFluids = getInputTank();
         IMultipleTankHandler exportFluids = getOutputTank();
+        int numFluidOutputs = recipe.getFluidOutputs().size();
+        int numItemOutputs = recipe.getAllItemOutputs(exportInventory.getSlots()).size();
+        int fluidTrimLength = trimFluidOutputs() == -1 ? numFluidOutputs : Math.min(numFluidOutputs, trimFluidOutputs());
+        int itemTrimLength = trimItemOutputs() == -1 ? numItemOutputs : Math.min(numItemOutputs, trimItemOutputs());
 
         if (!canVoidRecipeOutputs() &&
-                (!MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs(exportInventory.getSlots())) ||
-                 !MetaTileEntity.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs()))) {
+                (!MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs(exportInventory.getSlots()).subList(0, itemTrimLength)) ||
+                 !MetaTileEntity.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs().subList(0, fluidTrimLength)))) {
             this.isOutputsFull = true;
             return false;
         }
