@@ -42,7 +42,7 @@ public class OrganicChemistryMaterials {
         StyreneButadieneRubber = new Material.Builder(1004, "styrene_butadiene_rubber")
                 .ingot().fluid()
                 .color(0x211A18).iconSet(SHINY)
-                .flags(GENERATE_FOIL, GENERATE_GEAR, GENERATE_RING, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
+                .flags(GENERATE_FOIL, GENERATE_RING, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
                 .components(Carbon, 20, Hydrogen, 26)
                 .build()
                 .setFormula("(C4H6)3C8H8", true);

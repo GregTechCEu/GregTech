@@ -567,9 +567,9 @@ public class ElementMaterials {
                 .build();
 
         Palladium = new Material.Builder(77, "palladium")
-                .ingot().fluid(FluidType.FLUID, true).ore()
+                .ingot().fluid(FluidType.FLUID).ore()
                 .color(0x808080).iconSet(SHINY)
-                .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
+                .flags(GENERATE_PLATE, GENERATE_FOIL, GENERATE_FINE_WIRE)
                 .element(Elements.Pd)
                 .toolStats(8.0f, 2.0f, 512, 33)
                 .blastTemp(1828, GasTier.LOW, VA[HV], 900)
