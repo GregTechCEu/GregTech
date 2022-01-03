@@ -47,6 +47,8 @@ public class TricorderBehavior implements IItemBehaviour {
     }
 
     public List<String> getScannerInfo(EntityPlayer player, World world, BlockPos pos, int scanLevel, EnumFacing side, float hitX, float hitY, float hitZ) {
+        int energyCost = 0;
+
         List<String> list = new ArrayList<>();
 
         TileEntity tileEntity = world.getTileEntity(pos);
@@ -79,6 +81,7 @@ public class TricorderBehavior implements IItemBehaviour {
             FluidTankList tanks = metaTileEntity.getImportFluids();
             if (tanks != null) {
                 if (!tanks.getFluidTanks().isEmpty()) {
+                    energyCost += 500;
                     for (int i = 0; i < tanks.getFluidTanks().size(); i++) {
                         IFluidTank tank = tanks.getTankAt(i);
                         list.add("Tank " + i + ": " +
