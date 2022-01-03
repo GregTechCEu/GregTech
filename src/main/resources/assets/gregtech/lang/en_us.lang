@@ -2208,6 +2208,10 @@ metaitem.prospector.tooltip.ores=Scans Ores in a %s Chunk Radius
 metaitem.prospector.tooltip.fluids=Scans Ores and Fluids in a %s Chunk Radius
 behavior.prospector.not_enough_energy=Not Enough Energy!
 
+metaitem.tricorder_scanner.name=Tricorder Scanner
+behavior.tricorder.position=----- X: §b%s§r Y: §b%s§r Z: §b%s§r D: §b%s§r -----
+behavior.tricorder.block_name=Name: §9%s§r MetaData: §9%s§r
+
 metaitem.terminal.name=Terminal
 metaitem.terminal.tooltip=Sharp tools make good work
 metaitem.terminal.tooltip.creative=§bCreative Mode
