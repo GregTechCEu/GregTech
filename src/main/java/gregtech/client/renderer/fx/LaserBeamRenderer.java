@@ -1,64 +1,15 @@
 package gregtech.client.renderer.fx;
 
 import codechicken.lib.vec.Vector3;
-import gregtech.api.GTValues;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.ITextureObject;
-import net.minecraft.client.renderer.texture.SimpleTexture;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class LaserBeamRenderer {
-    public static ResourceLocation LASER_RED = new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser.png");
-    private static final Minecraft MINECRAFT = Minecraft.getMinecraft();
-    public static ResourceLocation LASER_RED_START = new ResourceLocation(GTValues.MODID, "textures/fx/laser/laser_start.png");
-
-    /**
-     * Render the Laser Beam.
-     *
-     * @param body            body texture.
-     * @param head            head texture. wont render the head texture if null.
-     * @param direction       direction and length vector of laser beam.
-     * @param cameraDirection Vector from the eye to the origin position of the laser.
-     *                        <p>
-     *                        if NULL, a 3D laser rendering will be simulated by two quads (perpendicular to each other)
-     *                        </p>
-     *                        <p>
-     *                        else render normal vertical quad.
-     *                        </p>
-     * @param beamHeight beam width.
-     * @param headWidth head width.
-     * @param alpha alpha.
-     * @param emit add emit animation for body texture.
-     */
-    public static void renderBeam(ResourceLocation body, ResourceLocation head, Vector3 direction, Vector3 cameraDirection, double beamHeight, double headWidth, float alpha, float emit) {
-        TextureManager renderEngine = MINECRAFT.getRenderManager().renderEngine;
-        ITextureObject bodyTexture = null;
-        if (body != null) {
-            bodyTexture = renderEngine.getTexture(body);
-            if (bodyTexture == null) {
-                bodyTexture = new SimpleTexture(body);
-                renderEngine.loadTexture(body, bodyTexture);
-            }
-        }
-        ITextureObject headTexture = null;
-        if (head != null) {
-            headTexture = renderEngine.getTexture(head);
-            if (headTexture == null) {
-                headTexture = new SimpleTexture(head);
-                renderEngine.loadTexture(head, headTexture);
-            }
-        }
-        emit = - emit * (MINECRAFT.player.ticksExisted + MINECRAFT.getRenderPartialTicks());
-        renderRawBeam(bodyTexture == null ? -1 : bodyTexture.getGlTextureId(), headTexture == null ? -1 : headTexture.getGlTextureId(), direction, cameraDirection, beamHeight, headWidth, alpha, emit);
-    }
 
     /**
      * Render the Laser Beam.
@@ -79,6 +30,10 @@ public class LaserBeamRenderer {
      * @param offset offset of the UV texture.
      */
     public static void renderRawBeam(int texture, int headTexture, Vector3 direction, Vector3 cameraDirection, double beamHeight, double headWidth, float alpha, double offset){
+        // TODO trick here. should be more strict in the future.
+        if (direction.x == direction.z && direction.x == 0) {
+            direction = direction.copy().add(0.001, 0, 0.001);
+        }
         if (texture != -1) {
             GlStateManager.bindTexture(texture);
         }
@@ -102,7 +57,6 @@ public class LaserBeamRenderer {
             Vector3 v1 = cameraDirection.copy().project(direction).subtract(cameraDirection);
             Vector3 v2 = new Vector3(0,1,0).crossProduct(direction);
             float rowX = (float)Math.toDegrees(v1.copy().angle(v2));
-            // TODO I feel like I'm having a problem with the normal vector flip, but I should leave it here atm and to do other important things.
             if (v1.add(v2).y < 0) rowX = - rowX;
             GlStateManager.rotate(rowX, 1.0F, 0.0F, 0.0F);
             GlStateManager.glNormal3f(0.0F, 0.0F, 1);

@@ -7,6 +7,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.function.Consumer;
+
 /**
  * Created with IntelliJ IDEA.
  *
@@ -18,6 +20,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public abstract class GTParticle extends Particle {
     protected float texturesPerRow = 16F;
     protected boolean motionless = false;
+    protected Consumer<GTParticle> onUpdate;
 
     public GTParticle(World worldIn, double posXIn, double posYIn, double posZIn) {
         super(worldIn, posXIn, posYIn, posZIn);
@@ -59,8 +62,15 @@ public abstract class GTParticle extends Particle {
         this.texturesPerRow = texturesPerRow;
     }
 
+    public void setOnUpdate(Consumer<GTParticle> onUpdate) {
+        this.onUpdate = onUpdate;
+    }
+
     @Override
     public void onUpdate() {
+        if (this.onUpdate != null) {
+            onUpdate.accept(this);
+        }
         if (this.particleAge >= 0 && this.particleAge++ >= this.particleMaxAge) {
             this.setExpired();
         }

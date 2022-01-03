@@ -2,9 +2,13 @@ package gregtech.client.particle;
 
 import codechicken.lib.vec.Vector3;
 import gregtech.client.renderer.fx.LaserBeamRenderer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -14,14 +18,15 @@ import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class GTLaserBeamParticle extends GTParticle{
+    private static final Minecraft MINECRAFT = Minecraft.getMinecraft();
     private ResourceLocation body;
     private ResourceLocation head;
     private Vector3 direction;
     private float beamHeight = 0.075f;
-    private float headWidth = 0;
+    private float headWidth;
     private float alpha = 1;
-    private float emit = 0;
-    private boolean doubleVertical = true;
+    private float emit;
+    private boolean doubleVertical;
 
     public GTLaserBeamParticle(World worldIn, Vector3 startPos, Vector3 endPos) {
         super(worldIn, startPos.x, startPos.y, startPos.z);
@@ -60,7 +65,7 @@ public class GTLaserBeamParticle extends GTParticle{
         return this;
     }
 
-    public GTLaserBeamParticle setBeamHeigth(float beamHeight) {
+    public GTLaserBeamParticle setBeamHeight(float beamHeight) {
         this.beamHeight = beamHeight;
         return this;
     }
@@ -99,12 +104,29 @@ public class GTLaserBeamParticle extends GTParticle{
     public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
         GlStateManager.translate(posX - interpPosX, posY - interpPosY, posZ - interpPosZ);
 
-        Vector3 cameraDir = null;
+        Vector3 cameraDirection = null;
         if (!doubleVertical) {
-            cameraDir = new Vector3(posX, posY, posZ).subtract(new Vector3(entityIn.getPositionEyes(partialTicks)));
+            cameraDirection = new Vector3(posX, posY, posZ).subtract(new Vector3(entityIn.getPositionEyes(partialTicks)));
         }
-        LaserBeamRenderer.renderBeam(body, head, direction, cameraDir, beamHeight, headWidth, 1, emit);
-
+        TextureManager renderEngine = MINECRAFT.getRenderManager().renderEngine;
+        ITextureObject bodyTexture = null;
+        if (body != null) {
+            bodyTexture = renderEngine.getTexture(body);
+            if (bodyTexture == null) {
+                bodyTexture = new SimpleTexture(body);
+                renderEngine.loadTexture(body, bodyTexture);
+            }
+        }
+        ITextureObject headTexture = null;
+        if (head != null) {
+            headTexture = renderEngine.getTexture(head);
+            if (headTexture == null) {
+                headTexture = new SimpleTexture(head);
+                renderEngine.loadTexture(head, headTexture);
+            }
+        }
+        float offset = - emit * (MINECRAFT.player.ticksExisted + MINECRAFT.getRenderPartialTicks());
+        LaserBeamRenderer.renderRawBeam(bodyTexture == null ? -1 : bodyTexture.getGlTextureId(), headTexture == null ? -1 : headTexture.getGlTextureId(), direction, cameraDirection, beamHeight, headWidth, alpha, offset);
         GlStateManager.translate(interpPosX - posX, interpPosY - posY, interpPosZ - posZ);
     }
 

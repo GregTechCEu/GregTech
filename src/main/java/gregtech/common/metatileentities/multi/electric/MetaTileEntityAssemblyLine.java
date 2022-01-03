@@ -1,5 +1,8 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import codechicken.lib.vec.Vector3;
+import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -8,6 +11,8 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.client.particle.GTLaserBeamParticle;
+import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockGlassCasing;
@@ -16,11 +21,18 @@ import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
+
+    private int beamCount;
+    @SideOnly(Side.CLIENT)
+    private GTLaserBeamParticle[][] beamParticles;
 
     public MetaTileEntityAssemblyLine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.ASSEMBLY_LINE_RECIPES);
@@ -59,5 +71,114 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     protected IBlockState getCasingState() {
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if (getRecipeMapWorkable().isWorking()) {
+            int count = (int) (getRecipeMapWorkable().getProgressPercent() * getAbilities(MultiblockAbility.IMPORT_ITEMS).size()) + 1;
+            if (count != beamCount) {
+                beamCount = count;
+                writeCustomData(GregtechDataCodes.UPDATE_PARTICLE, this::writeParticles);
+            }
+            return;
+        }
+        if (beamCount != 0) {
+            beamCount = 0;
+            writeCustomData(GregtechDataCodes.UPDATE_PARTICLE, this::writeParticles);
+        }
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        writeParticles(buf);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        readParticles(buf);
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        if (dataId == GregtechDataCodes.UPDATE_PARTICLE) {
+            readParticles(buf);
+        } else {
+            super.receiveCustomData(dataId, buf);
+        }
+    }
+
+    @Override
+    public void onRemoval() {
+        super.onRemoval();
+        if (getWorld().isRemote && beamParticles != null) {
+            for (GTLaserBeamParticle[] particle : beamParticles) {
+                if (particle[0] != null) {
+                    particle[0].setExpired();
+                    particle[1].setExpired();
+                }
+            }
+        }
+        beamParticles = null;
+    }
+
+    private void writeParticles(PacketBuffer buf) {
+        buf.writeVarInt(beamCount);
+    }
+
+    private void readParticles(PacketBuffer buf) {
+        beamCount = buf.readVarInt();
+        if (beamParticles == null) {
+            beamParticles = new GTLaserBeamParticle[17][2];
+        }
+        for (int i = 0; i < beamParticles.length; i++) {
+            GTLaserBeamParticle particle = beamParticles[i][0];
+            if (i < beamCount && particle == null) {
+                Vector3 startPos = new Vector3().add(
+                        getPos().offset(getFrontFacing().rotateY().getOpposite(), i))
+                        .add(0.5, 0, 0.5);
+                Vector3 endPos = startPos.copy().subtract(0, 1, 0);
+
+                beamParticles[i][0] = new GTLaserBeamParticle(getWorld(), startPos, endPos)
+                        .setBody(new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser.png"))
+                        .setBeamHeight(0.125f)
+                        // Try commenting or adjusting on the next four lines to see what happens
+//                        .setDoubleVertical(true)
+                        .setHead(new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser_start.png"))
+                        .setHeadWidth(0.1f)
+                        .setEmit(0.2f);
+                beamParticles[i][0].setOnUpdate(p -> { // remove it if machine is inValid
+                    if (!this.isValid()) p.setExpired();
+                });
+
+                startPos = new Vector3().add(
+                        getPos().offset(getFrontFacing().rotateY().getOpposite(), i).offset(getFrontFacing().getOpposite(), 2))
+                        .add(0.5, 0, 0.5);
+                endPos = startPos.copy().subtract(0, 1, 0);
+                beamParticles[i][1] = new GTLaserBeamParticle(getWorld(), startPos, endPos)
+                        .setBody(new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser.png"))
+                        .setBeamHeight(0.125f)
+                        // Try commenting or adjusting on the next four lines to see what happens
+//                        .setDoubleVertical(true)
+                        .setHead(new ResourceLocation(GTValues.MODID,"textures/fx/laser/laser_start.png"))
+                        .setHeadWidth(0.1f)
+                        .setEmit(0.15f);
+                beamParticles[i][1].setOnUpdate(p -> { // remove it if machine is inValid
+                    if (!this.isValid()) p.setExpired();
+                });
+
+                // dont forget to add particles
+                GTParticleManager.INSTANCE.addEffect(beamParticles[i][0], beamParticles[i][1]);
+                
+            } else if (i >= beamCount && particle != null) {
+                particle.setExpired();
+                beamParticles[i][0] = null;
+                beamParticles[i][1].setExpired();
+                beamParticles[i][1] = null;
+            }
+        }
     }
 }
