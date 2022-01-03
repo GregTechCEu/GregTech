@@ -125,7 +125,7 @@ public class GTLaserBeamParticle extends GTParticle{
                 renderEngine.loadTexture(head, headTexture);
             }
         }
-        float offset = - emit * (MINECRAFT.player.ticksExisted + MINECRAFT.getRenderPartialTicks());
+        float offset = - emit * (MINECRAFT.player.ticksExisted + partialTicks);
         LaserBeamRenderer.renderRawBeam(bodyTexture == null ? -1 : bodyTexture.getGlTextureId(), headTexture == null ? -1 : headTexture.getGlTextureId(), direction, cameraDirection, beamHeight, headWidth, alpha, offset);
         GlStateManager.translate(interpPosX - posX, interpPosY - posY, interpPosZ - posZ);
     }
