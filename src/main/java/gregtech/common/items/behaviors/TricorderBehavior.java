@@ -1,5 +1,6 @@
 package gregtech.common.items.behaviors;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -65,17 +66,21 @@ public class TricorderBehavior implements IItemBehaviour {
                 " Z: " + TextFormatting.AQUA + formatNumbers(pos.getZ()) + TextFormatting.RESET +
                 " D: " + TextFormatting.AQUA + world.provider.getDimension() + TextFormatting.RESET + " -----");
 
-        // name of the machine
-//        list.add(new TextComponentTranslation("behavior.tricorder.block_name", I18n.format(block.getLocalizedName()), world.getBlockState(pos).getBlock().getMetaFromState(world.getBlockState(pos))));
-        list.add("Name: " + TextFormatting.BLUE + LocalizationUtils.format(block.getLocalizedName()) + TextFormatting.RESET +
-                " MetaData: " + TextFormatting.AQUA + world.getBlockState(pos).getBlock().getMetaFromState(world.getBlockState(pos)) + TextFormatting.RESET);
 
         // hardness and blast resistance
         list.add("Hardness: " + TextFormatting.YELLOW + block.blockHardness + TextFormatting.RESET +
-                " Blast Resistance: " + TextFormatting.YELLOW + block.getExplosionResistance(world, pos, player, new Explosion(world, player, pos.getX(), pos.getY(), pos.getZ(), 1, false, false)) + TextFormatting.RESET);
+                " Blast Resistance: " + TextFormatting.YELLOW + block.getExplosionResistance(null) + TextFormatting.RESET);
 
         if (tileEntity instanceof MetaTileEntityHolder) {
+            // todo does this need a null check? probably
             MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+
+            // name of the machine
+            //  todo this wont work for pipes/cables, will need to check ```if (tileEntity instanceof TileEntityPipeBase)```
+//        list.add(new TextComponentTranslation("behavior.tricorder.block_name", I18n.format(block.getLocalizedName()), world.getBlockState(pos).getBlock().getMetaFromState(world.getBlockState(pos))));
+            list.add(1, "Name: " + TextFormatting.BLUE + LocalizationUtils.format(metaTileEntity.getMetaFullName()) + TextFormatting.RESET +
+                    " MetaData: " + TextFormatting.AQUA + GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId) + TextFormatting.RESET);
+
 
             // fluid tanks
             FluidTankList tanks = metaTileEntity.getImportFluids();
@@ -86,7 +91,7 @@ public class TricorderBehavior implements IItemBehaviour {
                         IFluidTank tank = tanks.getTankAt(i);
                         list.add("Tank " + i + ": " +
                                 TextFormatting.GREEN + formatNumbers((tank.getFluid() == null ? 0 : tank.getFluid().amount)) + TextFormatting.RESET + " L / " +
-                                TextFormatting.YELLOW + formatNumbers(tank.getCapacity()) + TextFormatting.RESET + " L " + TextFormatting.GOLD + tank.getFluid().getLocalizedName() + TextFormatting.RESET);
+                                TextFormatting.YELLOW + formatNumbers(tank.getCapacity()) + TextFormatting.RESET + " L " + TextFormatting.GOLD + (tank.getFluid() == null ? "" : tank.getFluid().getLocalizedName()) + TextFormatting.RESET);
                     }
                 }
             }
