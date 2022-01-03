@@ -417,7 +417,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         int startInputsY = 33 - (int) (itemSlotsToDown / 2.0 * 18) + yOffset;
         boolean wasGroup = itemHandler.getSlots() + fluidHandler.getTanks() == 12;
         if (wasGroup) startInputsY -= 9;
-        if (itemHandler.getSlots() == 6 && fluidHandler.getTanks() == 2 && !isOutputs) startInputsY -= 9;
+        else if (itemHandler.getSlots() >= 6 && fluidHandler.getTanks() >= 2 && !isOutputs) startInputsY -= 9;
         for (int i = 0; i < itemSlotsToDown; i++) {
             for (int j = 0; j < itemSlotsToLeft; j++) {
                 int slotIndex = i * itemSlotsToLeft + j;
