@@ -2,22 +2,25 @@ package gregtech.common.pipelike.cable.tile;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.PerTickLongCounter;
-import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.EnergyNetHandler;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 
-public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties> {
+public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties> implements IDataInfoProvider {
 
     private final EnumMap<EnumFacing, EnergyNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     private final PerTickLongCounter maxVoltageCounter = new PerTickLongCounter(0);
@@ -115,5 +118,14 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     @Override
     public int getDefaultPaintingColor() {
         return 0x404040;
+    }
+
+    @Override
+    public List<String> getDataInfo() {
+        List<String> list = new ArrayList<>();
+
+        list.add("Last second " + TextFormatting.RED + this.getAverageVoltage() + TextFormatting.RESET + " EU/t");
+        list.add("Last second " + TextFormatting.RED + this.getAverageAmperage() + TextFormatting.RESET + " A");
+        return list;
     }
 }

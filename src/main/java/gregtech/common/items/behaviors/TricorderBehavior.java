@@ -13,7 +13,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
@@ -87,7 +86,6 @@ public class TricorderBehavior implements IItemBehaviour {
                 return list;
 
             // name of the machine
-            //  todo this wont work for pipes/cables, will need to check ```if (tileEntity instanceof TileEntityPipeBase)```
 //        list.add(new TextComponentTranslation("behavior.tricorder.block_name", I18n.format(block.getLocalizedName()), world.getBlockState(pos).getBlock().getMetaFromState(world.getBlockState(pos))));
             list.add(1, "Name: " + TextFormatting.BLUE + LocalizationUtils.format(metaTileEntity.getMetaFullName()) + TextFormatting.RESET +
                     " MetaData: " + TextFormatting.AQUA + GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId) + TextFormatting.RESET);
@@ -107,6 +105,7 @@ public class TricorderBehavior implements IItemBehaviour {
                     }
                 }
             }
+
             // sound muffling
             if (metaTileEntity instanceof ISoundCreator) {
                 energyCost += 500;
@@ -128,11 +127,11 @@ public class TricorderBehavior implements IItemBehaviour {
                             TextFormatting.YELLOW + GTUtility.formatNumbers(workable.getMaxProgress()) + TextFormatting.RESET);
             }
 
-            list.add("=========================");
-
             // energy container
             IEnergyContainer container = metaTileEntity.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
             if (container != null && container.getEnergyCapacity() > 0) {
+                list.add("=========================");
+
                 list.add(
                         "Max IN: " + TextFormatting.RED + GTUtility.formatNumbers(container.getInputVoltage()) + " (" + GTValues.VN[GTUtility.getTierByVoltage(container.getInputVoltage())] + ") " + TextFormatting.RESET +
                                 " EU at " + TextFormatting.RED + GTUtility.formatNumbers(container.getInputAmperage()) + TextFormatting.RESET + " A");
@@ -157,41 +156,58 @@ public class TricorderBehavior implements IItemBehaviour {
                 list.addAll(provider.getDataInfo());
             }
 
-            // crops (adds 1000EU)
-            list.add("=========================");
+        } else if (tileEntity instanceof IPipeTile) {
+            // pipes need special name handling
+            IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
 
-            // bedrock fluids
-            if (player.isCreative()) {
-                Fluid fluid = BedrockFluidVeinHandler.getFluid(world, pos.getX() / 16, pos.getZ() / 16);//-# to only read
-                if (fluid != null) {
-                    FluidStack stack = new FluidStack(fluid, BedrockFluidVeinHandler.getFluidRateInChunk(world, pos.getX() / 16, pos.getZ() / 16));
-                    list.add(TextFormatting.GOLD + fluid.getLocalizedName(stack) + TextFormatting.RESET + ": " + TextFormatting.YELLOW + GTUtility.formatNumbers(stack.amount) + TextFormatting.RESET + " L");
-                } else {
-                    list.add(TextFormatting.GOLD + "Nothing" + TextFormatting.RESET + ": " + TextFormatting.YELLOW + '0' + TextFormatting.RESET + " L");
-                }
+            if (pipeTile.getPipeBlock().getRegistryName() != null) {
+                list.add("Name: " + TextFormatting.BLUE + LocalizationUtils.format(pipeTile.getPipeBlock().getTranslationKey()) + TextFormatting.RESET +
+                        " MetaData: " + TextFormatting.AQUA + block.getMetaFromState(world.getBlockState(pos)) + TextFormatting.RESET);
             }
 
-            // pollution
+            // machine-specific info
+            if (tileEntity instanceof IDataInfoProvider) {
+                IDataInfoProvider provider = (IDataInfoProvider) tileEntity;
+
+                list.add("=========================");
+
+                list.addAll(provider.getDataInfo());
+            }
+
+            if (tileEntity instanceof TileEntityFluidPipe) {
+                // getting fluid info always costs 500
+                energyCost += 500;
+            }
+        } else if (tileEntity instanceof IDataInfoProvider) {
+            IDataInfoProvider provider = (IDataInfoProvider) tileEntity;
+
+            list.add("=========================");
+
+            list.addAll(provider.getDataInfo());
+        }
+
+
+
+        // crops (adds 1000EU)
+
+        // bedrock fluids
+        if (player.isCreative()) {
+            list.add("=========================");
+            Fluid fluid = BedrockFluidVeinHandler.getFluid(world, pos.getX() / 16, pos.getZ() / 16);//-# to only read
+            if (fluid != null) {
+                FluidStack stack = new FluidStack(fluid, BedrockFluidVeinHandler.getFluidRateInChunk(world, pos.getX() / 16, pos.getZ() / 16));
+                list.add(TextFormatting.GOLD + fluid.getLocalizedName(stack) + TextFormatting.RESET + ": " + TextFormatting.YELLOW + GTUtility.formatNumbers(stack.amount) + TextFormatting.RESET + " L");
+            } else {
+                list.add(TextFormatting.GOLD + "Nothing" + TextFormatting.RESET + ": " + TextFormatting.YELLOW + '0' + TextFormatting.RESET + " L");
+            }
+        }
+
+        // pollution
 //            if (GT_Pollution.hasPollution(currentChunk)) {
 //                list.add("Pollution in Chunk: " + TextFormatting.RED + GTUtility.formatNumbers(GT_Pollution.getPollution(currentChunk)) + TextFormatting.RESET + " gibbl");
 //            } else {
 //                list.add(TextFormatting.GREEN + "No Pollution in Chunk! HAYO!" + TextFormatting.RESET);
 //            }
-
-        } else {
-            if (tileEntity instanceof TileEntityPipeBase) {
-                IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
-
-                if (pipeTile.getPipeBlock().getRegistryName() != null) {
-                    list.add("Name: " + TextFormatting.BLUE + LocalizationUtils.format(pipeTile.getPipeBlock().getRegistryName().toString()) + TextFormatting.RESET +
-                            " MetaData: " + TextFormatting.AQUA + block.getMetaFromState(world.getBlockState(pos)) + TextFormatting.RESET);
-                }
-
-                if (pipeTile.getPipeBlock().getPipeTypeClass() == TileEntityFluidPipe.class) {
-
-                }
-            }
-        }
 
         return list;
     }
