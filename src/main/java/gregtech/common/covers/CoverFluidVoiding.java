@@ -26,7 +26,7 @@ public class CoverFluidVoiding extends CoverPump {
 
     protected final NullFluidTank nullFluidTank = new NullFluidTank();
     protected final FluidFilterContainer fluidFilter;
-    protected boolean isWorkingAllowed = true;
+    protected boolean isWorkingAllowed = false;
 
     public CoverFluidVoiding(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide, 0, Integer.MAX_VALUE);

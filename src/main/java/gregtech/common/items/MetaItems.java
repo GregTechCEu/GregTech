@@ -442,9 +442,9 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_DIGITAL_INTERFACE;
     public static MetaItem<?>.MetaValueItem COVER_DIGITAL_INTERFACE_WIRELESS;
     public static MetaItem<?>.MetaValueItem COVER_FLUID_VOIDING;
-    public static MetaItem<?>.MetaValueItem COVER_FLUID_VOIDING_REGULATOR;
+    public static MetaItem<?>.MetaValueItem COVER_FLUID_VOIDING_ADVANCED;
     public static MetaItem<?>.MetaValueItem COVER_ITEM_VOIDING;
-    public static MetaItem<?>.MetaValueItem COVER_ADVANCED_ITEM_VOIDING;
+    public static MetaItem<?>.MetaValueItem COVER_ITEM_VOIDING_ADVANCED;
 
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ULV;

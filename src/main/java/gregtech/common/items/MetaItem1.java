@@ -337,9 +337,9 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_DIGITAL_INTERFACE = addItem(312, "cover.digital");
         COVER_DIGITAL_INTERFACE_WIRELESS = addItem(313, "cover.digital.wireless");
         COVER_FLUID_VOIDING = addItem(314, "cover.fluid.voiding");
-        COVER_FLUID_VOIDING_REGULATOR = addItem(315, "cover.fluid.voiding.advanced");
+        COVER_FLUID_VOIDING_ADVANCED = addItem(315, "cover.fluid.voiding.advanced");
         COVER_ITEM_VOIDING = addItem(316, "cover.item.voiding");
-        COVER_ADVANCED_ITEM_VOIDING = addItem(317, "cover.item.voiding.advanced");
+        COVER_ITEM_VOIDING_ADVANCED = addItem(317, "cover.item.voiding.advanced");
 
         COVER_FACADE = addItem(330, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 

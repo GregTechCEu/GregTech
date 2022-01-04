@@ -800,13 +800,13 @@ metaitem.cover.player.detector.name=Player Detector
 metaitem.cover.player.detector.tooltip=Gives out close Players as Redstone (as Cover)
 metaitem.cover.drain.name=Drain Cover
 metaitem.cover.fluid.voiding.name=Fluid Voiding Cover
-metaitem.cover.fluid.voiding.tooltip=Voids Fluids (as Cover)
+metaitem.cover.fluid.voiding.tooltip=Voids Fluids (as Cover)./nNeeds to be activated manually after placement
 metaitem.cover.fluid.voiding.advanced.name=Advanced Fluid Voiding Cover
-metaitem.cover.fluid.voiding.advanced.tooltip=Voids Fluids (as Cover) with amount control
+metaitem.cover.fluid.voiding.advanced.tooltip=Voids Fluids (as Cover) with amount control./nNeeds to be activated manually after placement
 metaitem.cover.item.voiding.name=Item Voiding Cover
-metaitem.cover.item.voiding.tooltip=Voids Items (as Cover)
+metaitem.cover.item.voiding.tooltip=Voids Items (as Cover)./nNeeds to be activated manually after placement
 metaitem.cover.item.voiding.advanced.name=Advanced Item Voiding Cover
-metaitem.cover.item.voiding.advanced.tooltip=Voids Items (as Cover) with amount control
+metaitem.cover.item.voiding.advanced.tooltip=Voids Items (as Cover) with amount control./nNeeds to be activated manually after placement
 
 metaitem.cover.facade.name=%s Facade
 metaitem.cover.facade.tooltip=Decorative outfit

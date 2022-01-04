@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 public class CoverItemVoiding extends CoverConveyor {
 
     protected final NullItemHandler nullItemHandler = new NullItemHandler();
-    protected boolean isWorkingAllowed = true;
+    protected boolean isWorkingAllowed = false;
 
     public CoverItemVoiding(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide, 0, Integer.MAX_VALUE);
