@@ -481,10 +481,14 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
             list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.workable_consumption", GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt()), GTUtility.formatNumbers(1))));
         }
 
-        list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.multiblock_tier", GTUtility.formatNumbers(energyContainer.getInputVoltage()), GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getInputVoltage())])));
+        list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.multiblock_energy_input", GTUtility.formatNumbers(energyContainer.getInputVoltage()), GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getInputVoltage())])));
 
         if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics()) {
             list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.multiblock_maintenance", GTUtility.formatNumbers(getNumMaintenanceProblems()))));
+        }
+
+        if (recipeMapWorkable.getParallelLimit() > 1) {
+            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.multiblock_parallel", recipeMapWorkable.getParallelLimit())));
         }
 
         return list;

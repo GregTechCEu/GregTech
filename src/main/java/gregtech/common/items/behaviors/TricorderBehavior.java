@@ -220,9 +220,4 @@ public class TricorderBehavior implements IItemBehaviour {
 
         return list;
     }
-
-    @Override
-    public void addInformation(ItemStack itemStack, List<String> lines) {
-    }
-
 }
