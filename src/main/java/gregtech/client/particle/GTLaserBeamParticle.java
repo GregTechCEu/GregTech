@@ -101,6 +101,11 @@ public class GTLaserBeamParticle extends GTParticle{
     }
 
     @Override
+    public int getFXLayer() {
+        return 1;
+    }
+
+    @Override
     public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
         GlStateManager.translate(posX - interpPosX, posY - interpPosY, posZ - interpPosZ);
 
