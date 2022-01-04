@@ -16,6 +16,7 @@ import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
@@ -48,13 +49,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements ISoundCreator, IMultipleRecipeMaps {
+public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements ISoundCreator, IMultipleRecipeMaps, IDataInfoProvider {
 
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
@@ -462,5 +465,28 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         }
 
         return true; // return true here on the client to keep the GUI closed
+    }
+
+    @Nonnull
+    @Override
+    public List<ITextComponent> getDataInfo() {
+        List<ITextComponent> list = new ArrayList<>();
+        if (recipeMapWorkable.getMaxProgress() > 0) {
+            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.workable_progress", GTUtility.formatNumbers(recipeMapWorkable.getProgress() / 20), GTUtility.formatNumbers(recipeMapWorkable.getMaxProgress() / 20))));
+        }
+
+        list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.energy_container_storage", GTUtility.formatNumbers(energyContainer.getEnergyStored()), GTUtility.formatNumbers(energyContainer.getEnergyCapacity()))));
+
+        if (recipeMapWorkable.getRecipeEUt() > 0) {
+            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.workable_consumption", GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt()), GTUtility.formatNumbers(1))));
+        }
+
+        list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.multiblock_tier", GTUtility.formatNumbers(energyContainer.getInputVoltage()), GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getInputVoltage())])));
+
+        if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics()) {
+            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.multiblock_maintenance", GTUtility.formatNumbers(getNumMaintenanceProblems()))));
+        }
+
+        return list;
     }
 }

@@ -30,9 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -59,8 +57,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         if (isStructureFormed()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.blast_furnace.max_temperature", blastFurnaceTemperature)
-                    .setStyle(new Style().setColor(TextFormatting.RED)));
+            textList.add(new TextComponentTranslation(I18n.format("gregtech.multiblock.blast_furnace.max_temperature", blastFurnaceTemperature)));
         }
         super.addDisplayText(textList);
     }
@@ -162,5 +159,13 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                 .sorted(Comparator.comparingInt(CoilType::getLevel))
                 .forEach(coilType -> shapeInfo.add(builder.where('C', MetaBlocks.WIRE_COIL.getState(coilType)).build()));
         return shapeInfo;
+    }
+
+    @Nonnull
+    @Override
+    public List<ITextComponent> getDataInfo() {
+        List<ITextComponent> list = super.getDataInfo();
+        list.add(new TextComponentTranslation(I18n.format("gregtech.multiblock.blast_furnace.max_temperature", GTUtility.formatNumbers(getCurrentTemperature()))));
+        return list;
     }
 }

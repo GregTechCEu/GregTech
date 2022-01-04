@@ -88,15 +88,25 @@ public class TricorderBehavior implements IItemBehaviour {
 
             // fluid tanks
             FluidTankList tanks = metaTileEntity.getImportFluids();
-            if (tanks != null) {
-                if (!tanks.getFluidTanks().isEmpty()) {
-                    energyCost += 500;
-                    for (int i = 0; i < tanks.getFluidTanks().size(); i++) {
-                        IFluidTank tank = tanks.getTankAt(i);
-                        list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.tank", i,
-                                tank.getFluid() == null ? 0 : tank.getFluid().amount, tank.getCapacity(),
-                                tank.getFluid() == null ? "" : tank.getFluid().getLocalizedName())));
-                    }
+            int tankIndex = 0;
+            if (tanks != null && !tanks.getFluidTanks().isEmpty()) {
+                energyCost += 500;
+                for (int i = tankIndex; i < tanks.getFluidTanks().size(); i++) {
+                    IFluidTank tank = tanks.getTankAt(i);
+                    list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.tank", i,
+                            tank.getFluid() == null ? 0 : tank.getFluid().amount, tank.getCapacity(),
+                            tank.getFluid() == null ? "" : tank.getFluid().getLocalizedName())));
+                }
+                tankIndex += tanks.getFluidTanks().size();
+            }
+            tanks = metaTileEntity.getExportFluids();
+            if (tanks != null && !tanks.getFluidTanks().isEmpty()) {
+                energyCost += 500;
+                for (int i = 0; i < tanks.getFluidTanks().size(); i++) {
+                    IFluidTank tank = tanks.getTankAt(i);
+                    list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.tank", i + tankIndex,
+                            tank.getFluid() == null ? 0 : tank.getFluid().amount, tank.getCapacity(),
+                            tank.getFluid() == null ? "" : tank.getFluid().getLocalizedName())));
                 }
             }
 
@@ -182,7 +192,7 @@ public class TricorderBehavior implements IItemBehaviour {
             list.addAll(provider.getDataInfo());
         } else {
             list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.block_name",
-                    I18n.format(block.getTranslationKey()), block.getMetaFromState(world.getBlockState(pos)))));
+                    I18n.format(block.getLocalizedName()), block.getMetaFromState(world.getBlockState(pos)))));
         }
 
 

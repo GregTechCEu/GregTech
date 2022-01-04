@@ -7,6 +7,7 @@ import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -14,6 +15,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.HoverEvent;
 
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class FuelMultiblockController extends RecipeMapMultiblockController {
@@ -66,5 +69,28 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                 textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
             }
         }
+    }
+
+    @Nonnull
+    @Override
+    public List<ITextComponent> getDataInfo() {
+        List<ITextComponent> list = new ArrayList<>();
+        if (recipeMapWorkable.getMaxProgress() > 0) {
+            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.workable_progress", GTUtility.formatNumbers(recipeMapWorkable.getProgress() / 20), GTUtility.formatNumbers(recipeMapWorkable.getMaxProgress() / 20))));
+        }
+
+        list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.energy_container_storage", GTUtility.formatNumbers(energyContainer.getEnergyStored()), GTUtility.formatNumbers(energyContainer.getEnergyCapacity()))));
+
+        if (recipeMapWorkable.getRecipeEUt() < 0) {
+            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.workable_production", GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt() * -1), GTUtility.formatNumbers(1))));
+        }
+
+        list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.multiblock_energy_output", GTUtility.formatNumbers(energyContainer.getOutputVoltage()), GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getOutputVoltage())])));
+
+        if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics()) {
+            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.multiblock_maintenance", GTUtility.formatNumbers(getNumMaintenanceProblems()))));
+        }
+
+        return list;
     }
 }

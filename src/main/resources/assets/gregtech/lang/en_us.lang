@@ -2229,6 +2229,9 @@ behavior.tricorder.workable_progress=Progress: §a%s§r s / §e%s§r s
 behavior.tricorder.workable_stored_energy=Stored Energy: §a%s§r EU / §e%s§r EU
 behavior.tricorder.workable_consumption=Probably uses: §c%s§r EU/t at §c%s§r A
 behavior.tricorder.workable_production=Probably produces: §c%s§r EU/t at §c%s§r A
+behavior.tricorder.multiblock_energy_input=Max Energy Income: §e%s§r EU/t Tier: §e%s§r
+behavior.tricorder.multiblock_energy_output=Max Energy Output: §e%s§r EU/t Tier: §e%s§r
+behavior.tricorder.multiblock_maintenance=Problems: §c%s§r
 
 metaitem.terminal.name=Terminal
 metaitem.terminal.tooltip=Sharp tools make good work
@@ -2559,6 +2562,8 @@ gregtech.machine.steam_boiler_lava_bronze.name=Small Steam Lava Boiler
 gregtech.machine.steam_boiler_lava_bronze.tooltip=A Boiler running off Lava
 gregtech.machine.steam_boiler_lava_steel.name=High Pressure Steam Lava Boiler
 gregtech.machine.steam_boiler_lava_steel.tooltip=Faster than Small Steam Lava Boiler
+
+gregtech.machine.steam_boiler.heat_amount=Heat Capacity: %s %%
 
 gregtech.machine.steam_extractor_bronze.name=Steam Extractor
 gregtech.machine.steam_extractor_bronze.tooltip=Extracting your first Rubber
@@ -4159,7 +4164,7 @@ gregtech.multiblock.pattern.clear_amount_3=§6Must have a clear 3x3x1 space in f
 gregtech.multiblock.pattern.single=§6Only this block can be used§r
 gregtech.multiblock.pattern.location_end=§cVery End§r
 
-gregtech.multiblock.blast_furnace.max_temperature=Max Temperature: %sK
+gregtech.multiblock.blast_furnace.max_temperature=Heat Capacity: §c%sK
 gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s
 gregtech.multiblock.multi_furnace.heating_coil_discount=Heating Coil EU Boost: %sx
 gregtech.multiblock.distillation_tower.distilling_fluid=Distilling %s
