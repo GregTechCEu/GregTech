@@ -11,10 +11,10 @@ import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class GTLaserBeamParticle extends GTParticle{
@@ -32,7 +32,16 @@ public class GTLaserBeamParticle extends GTParticle{
         super(worldIn, startPos.x, startPos.y, startPos.z);
         this.setMotionless(true);
         this.setImmortal();
+        this.setRenderRange(64);
         this.direction = endPos.copy().subtract(startPos);
+    }
+
+    @Override
+    public boolean shouldRendered(Entity entityIn, float partialTicks) {
+        if (squareRenderRange < 0) return true;
+        Vec3d eyePos = entityIn.getPositionEyes(partialTicks);
+        return eyePos.squareDistanceTo(posX, posY, posZ) <= squareRenderRange ||
+                eyePos.squareDistanceTo(posX + direction.x, posY + direction.y, posZ + direction.z) <= squareRenderRange;
     }
 
     /**
@@ -101,8 +110,8 @@ public class GTLaserBeamParticle extends GTParticle{
     }
 
     @Override
-    public int getFXLayer() {
-        return 1;
+    public boolean shouldDisableDepth() {
+        return true;
     }
 
     @Override
@@ -141,34 +150,25 @@ public class GTLaserBeamParticle extends GTParticle{
     }
 
     public static IGTParticleHandler HANDLER = new IGTParticleHandler() {
-        int lastBlendFuncSrc;
-        int lastBlendFuncDest;
         float lastBrightnessX;
         float lastBrightnessY;
 
         @Override
         public void preDraw(BufferBuilder buffer) {
-            lastBlendFuncSrc = GlStateManager.glGetInteger(GL11.GL_BLEND_SRC);
-            lastBlendFuncDest = GlStateManager.glGetInteger(GL11.GL_BLEND_DST);
-            GlStateManager.enableBlend();
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
             lastBrightnessX = OpenGlHelper.lastBrightnessX;
             lastBrightnessY = OpenGlHelper.lastBrightnessY;
-            GlStateManager.disableLighting();
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
             GlStateManager.enableRescaleNormal();
             GlStateManager.disableCull();
-            GlStateManager.depthMask(false);
         }
 
         @Override
         public void postDraw(BufferBuilder buffer) {
-            GlStateManager.depthMask(true);
             GlStateManager.enableCull();
             GlStateManager.disableRescaleNormal();
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
-            GlStateManager.blendFunc(lastBlendFuncSrc, lastBlendFuncDest);
-            GlStateManager.disableBlend();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         }
 
     };

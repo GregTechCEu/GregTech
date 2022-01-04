@@ -18,7 +18,8 @@ import java.util.function.Consumer;
  */
 @SideOnly(Side.CLIENT)
 public abstract class GTParticle extends Particle {
-    protected float texturesPerRow = 16F;
+    protected int texturesCount = 1;
+    protected int squareRenderRange = -1;
     protected boolean motionless = false;
     protected Consumer<GTParticle> onUpdate;
 
@@ -30,14 +31,43 @@ public abstract class GTParticle extends Particle {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
     }
 
+    @Override
+    public int getFXLayer() {
+        return shouldDisableDepth() ? 1 : 0;
+    }
+
+    public boolean shouldRendered(Entity entityIn, float partialTicks) {
+        if (squareRenderRange < 0) return true;
+        return entityIn.getPositionEyes(partialTicks).squareDistanceTo(posX, posY, posZ) <= squareRenderRange;
+    }
+
+    /**
+     * Set the render range, over the range do not render.
+     * <P>
+     *     -1 -- always render.
+     * </P>
+     */
+    public void setRenderRange(int renderRange) {
+        this.squareRenderRange = renderRange * renderRange;
+    }
+
+    /**
+     * Particles can live forever now.
+     */
     public void setImmortal() {
         this.particleAge = -1;
     }
 
+    /**
+     * It can stop motion. It always has a motion before {@link Particle#onUpdate()}
+     */
     public void setMotionless(boolean motionless) {
         this.motionless = motionless;
     }
 
+    /**
+     * Set color blend of this particle.
+     */
     public void setColor(int color) {
         this.setRBGColorF((color >> 16 & 255) / 255.0F,
                 (color >> 8 & 255) / 255.0F,
@@ -45,25 +75,57 @@ public abstract class GTParticle extends Particle {
         this.setAlphaF((color >> 24 & 255) / 255.0F);
     }
 
+    /**
+     * Set scale of this particle.
+     */
     public void setScale(float scale) {
         this.particleScale = scale;
     }
 
+    /**
+     * Set Gravity of this particle.
+     */
     public void setGravity(float gravity) {
         this.particleGravity = gravity;
     }
 
+    /**
+     * Set sub-texture coord.
+     */
     public void setTexturesIndex(int particleTextureIndexX, int particleTextureIndexY) {
         this.particleTextureIndexX = particleTextureIndexX;
         this.particleTextureIndexY = particleTextureIndexY;
     }
 
-    public void setTexturesPerRow(float texturesPerRow) {
-        this.texturesPerRow = texturesPerRow;
+    /**
+     * How many sub-textures in the current texture. it always 16 in the {@link Particle}. but we allow the bigger or smaller texture in the GTParticle.
+     */
+    public void setTexturesCount(int texturesCount) {
+        this.texturesCount = texturesCount;
     }
 
+    /**
+     * Update each tick
+     */
     public void setOnUpdate(Consumer<GTParticle> onUpdate) {
         this.onUpdate = onUpdate;
+    }
+
+    public void setParticleTextureIndex(int particleTextureIndex) {
+        this.particleTextureIndexX = particleTextureIndex % texturesCount;
+        this.particleTextureIndexY = particleTextureIndex / texturesCount;
+    }
+
+    public float getTexturesCount() {
+        return texturesCount;
+    }
+
+    public boolean isMotionless() {
+        return motionless;
+    }
+
+    public int getSquareRenderRange() {
+        return squareRenderRange >= 0 ? -1 : (int) Math.sqrt(squareRenderRange);
     }
 
     @Override
@@ -95,10 +157,10 @@ public abstract class GTParticle extends Particle {
 
     @Override
     public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
-        float minU = (float) this.particleTextureIndexX / texturesPerRow;
-        float maxU = minU + 1F / texturesPerRow;//0.0624375F;
-        float minV = (float) this.particleTextureIndexY / texturesPerRow;
-        float maxV = minV + 1F / texturesPerRow;//0.0624375F;
+        float minU = this.particleTextureIndexX * 1F / texturesCount;
+        float maxU = minU + 1F / texturesCount;//0.0624375F;
+        float minV = this.particleTextureIndexY * 1F / texturesCount;
+        float maxV = minV + 1F / texturesCount;//0.0624375F;
         float scale = 0.1F * this.particleScale;
 
         if (this.particleTexture != null) {

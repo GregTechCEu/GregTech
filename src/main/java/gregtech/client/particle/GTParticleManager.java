@@ -138,6 +138,8 @@ public class GTParticleManager {
         GlStateManager.disableLighting();
 
         renderGlParticlesInLayer(renderQueueBack, tessellator, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+
+        GlStateManager.depthMask(false);
         renderGlParticlesInLayer(renderQueueFront, tessellator, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
 
         GlStateManager.depthMask(true);
@@ -151,13 +153,15 @@ public class GTParticleManager {
             if (particles.isEmpty()) continue;
             BufferBuilder buffer = tessellator.getBuffer();
             handler.preDraw(buffer);
-            for (final Particle particle : particles) {
-                try {
-                    particle.renderParticle(buffer, entityIn, partialTicks, rotationX, rotationXZ, rotationZ, rotationYZ, rotationXY);
-                }
-                catch (Throwable throwable) {
-                    GTLog.logger.error("particle render error: {}", particle.toString(), throwable);
-                    particle.setExpired();
+            for (final GTParticle particle : particles) {
+                if (particle.shouldRendered(entityIn, partialTicks)) {
+                    try {
+                        particle.renderParticle(buffer, entityIn, partialTicks, rotationX, rotationXZ, rotationZ, rotationYZ, rotationXY);
+                    }
+                    catch (Throwable throwable) {
+                        GTLog.logger.error("particle render error: {}", particle.toString(), throwable);
+                        particle.setExpired();
+                    }
                 }
             }
             handler.postDraw(buffer);
@@ -187,7 +191,7 @@ public class GTParticleManager {
     public static void debugOverlay(RenderGameOverlayEvent.Text event) {
         if (event.getLeft().size() >= 5) {
             String particleTxt = event.getLeft().get(4);
-            particleTxt += "." + TextFormatting.GOLD + "PARTICLE-BACK: " + INSTANCE.getStatistics(INSTANCE.renderQueueBack) + "PARTICLE-FRONt: " + INSTANCE.getStatistics(INSTANCE.renderQueueFront);
+            particleTxt += "." + TextFormatting.GOLD + " PARTICLE-BACK: " + INSTANCE.getStatistics(INSTANCE.renderQueueBack) + "PARTICLE-FRONt: " + INSTANCE.getStatistics(INSTANCE.renderQueueFront);
             event.getLeft().set(4, particleTxt);
         }
     }

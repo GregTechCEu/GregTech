@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.util.GTUtility;
 import gregtech.client.particle.GTLaserBeamParticle;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.ICubeRenderer;
@@ -151,7 +152,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                         .setHeadWidth(0.1f)
                         .setEmit(0.2f);
                 beamParticles[i][0].setOnUpdate(p -> { // remove it if machine is inValid
-                    if (!this.isValid()) p.setExpired();
+                    if (!isValid() || getWorld().getTileEntity(getPos()) != this.getHolder()) p.setExpired();
                 });
 
                 startPos = new Vector3().add(
@@ -167,7 +168,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                         .setHeadWidth(0.1f)
                         .setEmit(0.15f);
                 beamParticles[i][1].setOnUpdate(p -> { // remove it if machine is inValid
-                    if (!this.isValid()) p.setExpired();
+                    if (!isValid() || !GTUtility.isPosChunkLoaded(getWorld(), getPos())) p.setExpired();
                 });
 
                 // dont forget to add particles
