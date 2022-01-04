@@ -131,7 +131,7 @@ public class MaterialPropertyExpansion {
         if (checkFrozen("add an Ore to a material")) return;
         oreMultiplier = oreMultiplier == 0 ? 1 : oreMultiplier;
         byproductMultiplier = byproductMultiplier == 0 ? 1 : byproductMultiplier;
-        if (!m.hasProperty(PropertyKey.ORE)) {
+        if (m.hasProperty(PropertyKey.ORE)) {
             m.getProperty(PropertyKey.ORE).setOreMultiplier(oreMultiplier);
             m.getProperty(PropertyKey.ORE).setByProductMultiplier(byproductMultiplier);
             m.getProperty(PropertyKey.ORE).setEmissive(emissive);
