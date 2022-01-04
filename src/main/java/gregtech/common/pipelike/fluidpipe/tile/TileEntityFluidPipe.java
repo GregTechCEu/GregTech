@@ -18,6 +18,7 @@ import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,7 +27,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -369,18 +371,19 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         }
     }
 
+    @Nonnull
     @Override
-    public List<String> getDataInfo() {
-        List<String> list = new ArrayList<>();
+    public List<ITextComponent> getDataInfo() {
+        List<ITextComponent> list = new ArrayList<>();
 
         FluidStack[] fluids = this.getContainedFluids();
         if (fluids != null) {
             for (int i = 0; i < fluids.length; i++) {
                 if (fluids[i] != null) {
-                    list.add("Tank " + i + ": " +
-                            TextFormatting.GREEN + GTUtility.formatNumbers((fluids[i].getFluid() == null ? 0 : fluids[i].amount)) + TextFormatting.RESET + " L / " +
-                            TextFormatting.YELLOW + GTUtility.formatNumbers(this.getCapacityPerTank()) + TextFormatting.RESET + " L " + TextFormatting.GOLD + (fluids[i].getFluid() == null ? "" : fluids[i].getFluid().getLocalizedName(fluids[i])) + TextFormatting.RESET);
-                }
+                    list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.tank", i,
+                            GTUtility.formatNumbers((fluids[i].getFluid() == null ? 0 : fluids[i].amount)),
+                            GTUtility.formatNumbers(this.getCapacityPerTank()), (fluids[i].getFluid() == null ? "" : fluids[i].getFluid().getLocalizedName(fluids[i])))));
+               }
             }
         }
         return list;

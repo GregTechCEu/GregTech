@@ -18,6 +18,7 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.block.Block;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -25,8 +26,8 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -48,18 +49,17 @@ public class TricorderBehavior implements IItemBehaviour {
         if (!world.isRemote && !world.isAirBlock(pos)) {
             ItemStack stack = player.getHeldItem(hand);
 
-            List<String> list = getScannerInfo(player, world, pos, 0, side, hitX, hitY, hitZ);
-            for (String line : list) {
-                player.sendMessage(new TextComponentString(line));
+            for (ITextComponent line : getScannerInfo(player, world, pos, 0, side, hitX, hitY, hitZ)) {
+                player.sendMessage(line);
             }
         }
-        return EnumActionResult.PASS;
+        return EnumActionResult.SUCCESS;
     }
 
-    public List<String> getScannerInfo(EntityPlayer player, World world, BlockPos pos, int scanLevel, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public List<ITextComponent> getScannerInfo(EntityPlayer player, World world, BlockPos pos, int scanLevel, EnumFacing side, float hitX, float hitY, float hitZ) {
         int energyCost = 0;
 
-        List<String> list = new ArrayList<>();
+        List<ITextComponent> list = new ArrayList<>();
 
         TileEntity tileEntity = world.getTileEntity(pos);
 
@@ -68,17 +68,12 @@ public class TricorderBehavior implements IItemBehaviour {
         // coordinates of the block
         //todo TextComponentTranslations do not show colors
 
-        // list.add(new TextComponentTranslation("behavior.tricorder.position", GTUtility.formatNumbers(pos.getX()), GTUtility.formatNumbers(pos.getY()), GTUtility.formatNumbers(pos.getZ()), world.provider.getDimension()));
-        list.add(
-                "----- X: " + TextFormatting.AQUA + GTUtility.formatNumbers(pos.getX()) + TextFormatting.RESET +
-                " Y: " + TextFormatting.AQUA + GTUtility.formatNumbers(pos.getY()) + TextFormatting.RESET +
-                " Z: " + TextFormatting.AQUA + GTUtility.formatNumbers(pos.getZ()) + TextFormatting.RESET +
-                " D: " + TextFormatting.AQUA + world.provider.getDimension() + TextFormatting.RESET + " -----");
-
+        list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.position",
+                GTUtility.formatNumbers(pos.getX()), GTUtility.formatNumbers(pos.getY()),
+                GTUtility.formatNumbers(pos.getZ()), world.provider.getDimension())));
 
         // hardness and blast resistance
-        list.add("Hardness: " + TextFormatting.YELLOW + block.blockHardness + TextFormatting.RESET +
-                " Blast Resistance: " + TextFormatting.YELLOW + block.getExplosionResistance(null) + TextFormatting.RESET);
+        list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.block_hardness", block.blockHardness, block.getExplosionResistance(null))));
 
         if (tileEntity instanceof MetaTileEntityHolder) {
             MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
@@ -86,11 +81,10 @@ public class TricorderBehavior implements IItemBehaviour {
                 return list;
 
             // name of the machine
-//        list.add(new TextComponentTranslation("behavior.tricorder.block_name", I18n.format(block.getLocalizedName()), world.getBlockState(pos).getBlock().getMetaFromState(world.getBlockState(pos))));
-            list.add(1, "Name: " + TextFormatting.BLUE + LocalizationUtils.format(metaTileEntity.getMetaFullName()) + TextFormatting.RESET +
-                    " MetaData: " + TextFormatting.AQUA + GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId) + TextFormatting.RESET);
+            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.block_name",
+                    LocalizationUtils.format(metaTileEntity.getMetaFullName()), GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId))));
 
-            list.add("=========================");
+            list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 
             // fluid tanks
             FluidTankList tanks = metaTileEntity.getImportFluids();
@@ -99,9 +93,9 @@ public class TricorderBehavior implements IItemBehaviour {
                     energyCost += 500;
                     for (int i = 0; i < tanks.getFluidTanks().size(); i++) {
                         IFluidTank tank = tanks.getTankAt(i);
-                        list.add("Tank " + i + ": " +
-                                TextFormatting.GREEN + GTUtility.formatNumbers((tank.getFluid() == null ? 0 : tank.getFluid().amount)) + TextFormatting.RESET + " L / " +
-                                TextFormatting.YELLOW + GTUtility.formatNumbers(tank.getCapacity()) + TextFormatting.RESET + " L " + TextFormatting.GOLD + (tank.getFluid() == null ? "" : tank.getFluid().getLocalizedName()) + TextFormatting.RESET);
+                        list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.tank", i,
+                                tank.getFluid() == null ? 0 : tank.getFluid().amount, tank.getCapacity(),
+                                tank.getFluid() == null ? "" : tank.getFluid().getLocalizedName())));
                     }
                 }
             }
@@ -109,38 +103,40 @@ public class TricorderBehavior implements IItemBehaviour {
             // sound muffling
             if (metaTileEntity instanceof ISoundCreator) {
                 energyCost += 500;
-                if (metaTileEntity.isMuffled()) list.add(TextFormatting.GREEN + "Is Muffled" + TextFormatting.RESET);
+                if (metaTileEntity.isMuffled())
+                    list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.muffled")));
             }
 
             // workable progress info
             IWorkable workable = metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, null);
             if (workable != null) {
                 if (!workable.isWorkingEnabled()) {
-                    list.add("Disabled." + TextFormatting.RED + TextFormatting.RESET);
+                    list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.machine_disabled")));
                 }
-//                if (workable.wasShutdown()) { todo
-//                    list.add("Shut down due to power loss." + TextFormatting.RED + TextFormatting.RESET);
-//                }
+                //            if (workable.wasShutdown()) { //todo
+                //                list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.machine_power_loss")));
+                //            }
                 energyCost += 400;
-                if (workable.getMaxProgress() > 0)
-                    list.add("Progress/Load: " + TextFormatting.GREEN + GTUtility.formatNumbers(workable.getProgress())  + TextFormatting.RESET + " / " +
-                            TextFormatting.YELLOW + GTUtility.formatNumbers(workable.getMaxProgress()) + TextFormatting.RESET);
+                if (workable.getMaxProgress() > 0) {
+                    list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.machine_progress",
+                            GTUtility.formatNumbers(workable.getProgress()), GTUtility.formatNumbers(workable.getMaxProgress()))));
+                }
             }
 
             // energy container
             IEnergyContainer container = metaTileEntity.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
             if (container != null && container.getEnergyCapacity() > 0) {
-                list.add("=========================");
-
-                list.add(
-                        "Max IN: " + TextFormatting.RED + GTUtility.formatNumbers(container.getInputVoltage()) + " (" + GTValues.VN[GTUtility.getTierByVoltage(container.getInputVoltage())] + ") " + TextFormatting.RESET +
-                                " EU at " + TextFormatting.RED + GTUtility.formatNumbers(container.getInputAmperage()) + TextFormatting.RESET + " A");
-                list.add(
-                        "Max OUT: " + TextFormatting.RED + GTUtility.formatNumbers(container.getOutputVoltage()) + " (" + GTValues.VN[GTUtility.getTierByVoltage(container.getOutputVoltage())] + ") " + TextFormatting.RESET +
-                                " EU at " + TextFormatting.RED + GTUtility.formatNumbers(container.getOutputAmperage()) + TextFormatting.RESET + " A");
-                list.add(
-                        "Energy: " + TextFormatting.GREEN + GTUtility.formatNumbers(container.getEnergyStored()) + TextFormatting.RESET + " EU / " +
-                                TextFormatting.YELLOW + GTUtility.formatNumbers(container.getEnergyCapacity()) + TextFormatting.RESET + " EU");
+                list.add(new TextComponentTranslation("behavior.tricorder.divider"));
+                if (container.getInputVoltage() > 0) {
+                    list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.energy_container_in", GTUtility.formatNumbers(container.getInputVoltage()),
+                            GTValues.VN[GTUtility.getTierByVoltage(container.getInputVoltage())], GTUtility.formatNumbers(container.getInputAmperage()))));
+                }
+                if (container.getOutputVoltage() > 0) {
+                    list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.energy_container_out", GTUtility.formatNumbers(container.getOutputVoltage()),
+                            GTValues.VN[GTUtility.getTierByVoltage(container.getOutputVoltage())], GTUtility.formatNumbers(container.getOutputAmperage()))));
+                }
+                list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.energy_container_storage", GTUtility.formatNumbers(container.getEnergyStored()),
+                        GTUtility.formatNumbers(container.getEnergyCapacity()))));
             }
 
             // machine-specific info
@@ -151,7 +147,7 @@ public class TricorderBehavior implements IItemBehaviour {
                 provider = (IDataInfoProvider) metaTileEntity;
 
             if (provider != null) {
-                list.add("=========================");
+                list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 
                 list.addAll(provider.getDataInfo());
             }
@@ -161,15 +157,15 @@ public class TricorderBehavior implements IItemBehaviour {
             IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
 
             if (pipeTile.getPipeBlock().getRegistryName() != null) {
-                list.add("Name: " + TextFormatting.BLUE + LocalizationUtils.format(pipeTile.getPipeBlock().getTranslationKey()) + TextFormatting.RESET +
-                        " MetaData: " + TextFormatting.AQUA + block.getMetaFromState(world.getBlockState(pos)) + TextFormatting.RESET);
+                list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.block_name",
+                        LocalizationUtils.format(pipeTile.getPipeBlock().getTranslationKey()), block.getMetaFromState(world.getBlockState(pos)))));
             }
 
-            // machine-specific info
+            // pipe-specific info
             if (tileEntity instanceof IDataInfoProvider) {
                 IDataInfoProvider provider = (IDataInfoProvider) tileEntity;
 
-                list.add("=========================");
+                list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 
                 list.addAll(provider.getDataInfo());
             }
@@ -181,24 +177,27 @@ public class TricorderBehavior implements IItemBehaviour {
         } else if (tileEntity instanceof IDataInfoProvider) {
             IDataInfoProvider provider = (IDataInfoProvider) tileEntity;
 
-            list.add("=========================");
+            list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 
             list.addAll(provider.getDataInfo());
+        } else {
+            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.block_name",
+                    I18n.format(block.getTranslationKey()), block.getMetaFromState(world.getBlockState(pos)))));
         }
-
 
 
         // crops (adds 1000EU)
 
         // bedrock fluids
         if (player.isCreative()) {
-            list.add("=========================");
+            list.add(new TextComponentTranslation("behavior.tricorder.divider"));
             Fluid fluid = BedrockFluidVeinHandler.getFluid(world, pos.getX() / 16, pos.getZ() / 16);//-# to only read
             if (fluid != null) {
                 FluidStack stack = new FluidStack(fluid, BedrockFluidVeinHandler.getFluidRateInChunk(world, pos.getX() / 16, pos.getZ() / 16));
-                list.add(TextFormatting.GOLD + fluid.getLocalizedName(stack) + TextFormatting.RESET + ": " + TextFormatting.YELLOW + GTUtility.formatNumbers(stack.amount) + TextFormatting.RESET + " L");
+                list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.bedrock_fluid.amount", fluid.getLocalizedName(stack),
+                        GTUtility.formatNumbers(stack.amount))));
             } else {
-                list.add(TextFormatting.GOLD + "Nothing" + TextFormatting.RESET + ": " + TextFormatting.YELLOW + '0' + TextFormatting.RESET + " L");
+                list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.bedrock_fluid.amount")));
             }
         }
 

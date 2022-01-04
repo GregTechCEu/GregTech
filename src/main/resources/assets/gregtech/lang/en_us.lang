@@ -2210,7 +2210,25 @@ behavior.prospector.not_enough_energy=Not Enough Energy!
 
 metaitem.tricorder_scanner.name=Tricorder Scanner
 behavior.tricorder.position=----- X: §b%s§r Y: §b%s§r Z: §b%s§r D: §b%s§r -----
+behavior.tricorder.block_hardness=Hardness: §e%s§r Blast Resistance: §e%s§r
 behavior.tricorder.block_name=Name: §9%s§r MetaData: §9%s§r
+behavior.tricorder.divider==========================
+behavior.tricorder.tank=Tank %s: §a%s§r L / §e%s§r L §6%s§r
+behavior.tricorder.muffled=§aMuffled.§r
+behavior.tricorder.machine_disabled=§cDisabled.§r
+behavior.tricorder.machine_power_loss=§cShut down due to power loss.§r
+behavior.tricorder.machine_progress=Progress/Load: §a%s§r / §e%s§r
+behavior.tricorder.energy_container_in=Max IN: §c%s (%s)§r EU at §c%s§r A
+behavior.tricorder.energy_container_out=Max OUT: §c%s (%s)§r EU at §c%s§r A
+behavior.tricorder.energy_container_storage=Energy: §a%s§r EU / §e%s§r EU
+behavior.tricorder.bedrock_fluid.amount=§6%s§r: §e%s§r L
+behavior.tricorder.bedrock_fluid.nothing=§6Nothing§r: §e0§r L
+behavior.tricorder.eut_per_sec=Last second §c%s§r EU/t
+behavior.tricorder.amp_per_sec=Last second §c%s§r A
+behavior.tricorder.workable_progress=Progress: §a%s§r s / §e%s§r s
+behavior.tricorder.workable_stored_energy=Stored Energy: §a%s§r EU / §e%s§r EU
+behavior.tricorder.workable_consumption=Probably uses: §c%s§r EU/t at §c%s§r A
+behavior.tricorder.workable_production=Probably produces: §c%s§r EU/t at §c%s§r A
 
 metaitem.terminal.name=Terminal
 metaitem.terminal.tooltip=Sharp tools make good work
@@ -3288,6 +3306,9 @@ gregtech.machine.battery_buffer.max.4.name=MAX Voltage 4x Battery Buffer
 gregtech.machine.battery_buffer.max.8.name=MAX Voltage 8x Battery Buffer
 gregtech.machine.battery_buffer.max.16.name=MAX Voltage 16x Battery Buffer
 
+gregtech.battery_buffer.average_input=Average input: §e%s§r EU/t
+gregtech.battery_buffer.average_output=Average output: §e%s§r EU/t
+
 # Transformers
 gregtech.machine.transformer.tooltip_tool_usage=Use Soft Hammer to invert (Starts as Transform Down)
 gregtech.machine.transformer.tooltip_transform_down=Transform Down: §a%dA %dEU (%s§a)§7 -> §a%dA %dEU (%s§a)
@@ -4177,8 +4198,8 @@ gregtech.multiblock.large_miner.invfull=Inventory Full!
 gregtech.multiblock.large_miner.needspower=Needs Power!
 gregtech.multiblock.large_miner.vent=Venting Blocked!
 gregtech.multiblock.large_miner.steam=Needs Steam!
-gregtech.multiblock.large_miner.radius=Radius: %d Blocks
-gregtech.multiblock.large_miner.errorradius=Cannot change radius while working!
+gregtech.multiblock.large_miner.radius=Radius: §a%d§r Blocks
+gregtech.multiblock.large_miner.errorradius=§cCannot change radius while working!
 gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
 
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%

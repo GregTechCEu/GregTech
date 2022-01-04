@@ -13,7 +13,8 @@ import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -21,6 +22,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -176,23 +178,27 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         }
     }
 
+    @Nonnull
     @Override
-    public List<String> getDataInfo() {
-        List<String> list = new ArrayList<>();
+    public List<ITextComponent> getDataInfo() {
+        List<ITextComponent> list = new ArrayList<>();
 
         if (workable != null) {
-            list.add(
-                    "Progress: " + TextFormatting.GREEN + GTUtility.formatNumbers((workable.getProgress() / 20)) + TextFormatting.RESET + " s / " +
-                            TextFormatting.YELLOW + GTUtility.formatNumbers(workable.getMaxProgress() / 20) + TextFormatting.RESET + " s");
+            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.workable_progress", GTUtility.formatNumbers((workable.getProgress() / 20)),
+                    GTUtility.formatNumbers(workable.getMaxProgress() / 20))));
+
             if (energyContainer != null) {
-                list.add(
-                        "Stored Energy: " + TextFormatting.GREEN + GTUtility.formatNumbers(energyContainer.getEnergyStored()) + TextFormatting.RESET + " EU / " +
-                                TextFormatting.YELLOW + GTUtility.formatNumbers(energyContainer.getEnergyCapacity()) + TextFormatting.RESET + " EU");
+                list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.workable_stored_energy", GTUtility.formatNumbers(energyContainer.getEnergyStored()),
+                        GTUtility.formatNumbers(energyContainer.getEnergyCapacity()))));
             }
             // multi amp recipes: change 0 ? 0 : 1 to 0 ? 0 : amperage
-            list.add(
-                    (workable.getRecipeEUt() < 0 ? "Probably produces: " : "Probably uses: ") + TextFormatting.RED + GTUtility.formatNumbers(Math.abs(workable.getRecipeEUt())) + TextFormatting.RESET + " EU/t at " +
-                            TextFormatting.RED + GTUtility.formatNumbers(workable.getRecipeEUt() == 0 ? 0 : 1) + TextFormatting.RESET + " A");
+            if (workable.getRecipeEUt() > 0) {
+                list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.workable_consumption", GTUtility.formatNumbers(workable.getRecipeEUt()),
+                        GTUtility.formatNumbers(workable.getRecipeEUt() == 0 ? 0 : 1))));
+            } else {
+                list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.workable_production", GTUtility.formatNumbers(workable.getRecipeEUt() * -1),
+                        GTUtility.formatNumbers(workable.getRecipeEUt() == 0 ? 0 : 1))));
+            }
         }
 
         return list;
