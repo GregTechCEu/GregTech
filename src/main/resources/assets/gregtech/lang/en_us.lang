@@ -4199,28 +4199,6 @@ gregtech.command.util.hand.no_item=You must hold something in mainhand before ex
 
 gregtech.chat.cape=§5Congrats: you just unlocked a new cape! See the Cape Selector terminal app to use it.§r
 
-info.infinite_energy.infinite=Infinite: §lOn§r
-info.infinite_energy.finite=Infinite: §lOff§r
-info.button.accept=Press §lENTER§r to accept changes
-info.button.decline=Press §lESC§r to decline changes
-info.infinite_energy.accept=Accept
-info.infinite_energy.decline=Decline
-info.infinite_energy.ulv=Voltage: ULV
-info.infinite_energy.lv=Voltage: LV
-info.infinite_energy.mv=Voltage: MV
-info.infinite_energy.hv=Voltage: HV
-info.infinite_energy.ev=Voltage: EV
-info.infinite_energy.iv=Voltage: IV
-info.infinite_energy.luv=Voltage: LUV
-info.infinite_energy.zpm=Voltage: ZPM
-info.infinite_energy.uv=Voltage: UV
-info.infinite_energy.uhv=Voltage: UHV
-info.infinite_energy.uev=Voltage: UEV
-info.infinite_energy.uiv=Voltage: UIV
-info.infinite_energy.umv=Voltage: UMV
-info.infinite_energy.uxv=Voltage: UXV
-info.infinite_energy.max=Voltage: MAX
-
 gregtech.universal.clear_nbt_recipe.tooltip=§cThis will destroy all contents!
 
 gregtech.cover.energy_detector.message_electricity_storage_normal=Monitoring Normal Electricity Storage

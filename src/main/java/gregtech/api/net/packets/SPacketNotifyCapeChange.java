@@ -37,7 +37,7 @@ public class SPacketNotifyCapeChange implements IPacket {
 
     @Override
     public void executeClient(NetHandlerPlayClient handler) {
-        CapesRegistry.giveCape(uuid, cape, true);
+        CapesRegistry.giveRawCape(uuid, cape);
     }
 
 }

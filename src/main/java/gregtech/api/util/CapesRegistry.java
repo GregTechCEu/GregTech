@@ -7,29 +7,28 @@ import gregtech.client.renderer.texture.Textures;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.storage.MapStorage;
-import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
-public class CapesRegistry extends WorldSavedData {
+public class CapesRegistry {
 
-    private static final String DATA_ID = GTValues.MODID + ".capes";
     private static final Map<UUID, List<ResourceLocation>> UNLOCKED_CAPES = new HashMap<>();
     private static final Map<UUID, ResourceLocation> WORN_CAPES = new HashMap<>();
     private static final Map<Advancement, ResourceLocation> CAPE_ADVANCEMENTS = new HashMap<>();
-
-    public CapesRegistry() {
-        super(DATA_ID);
-    }
 
     public static void registerDevCapes() {
         unlockCape(UUID.fromString("2fa297a6-7803-4629-8360-7059155cf43e"), Textures.GREGTECH_CAPE_TEXTURE); // KilaBash
@@ -45,8 +44,8 @@ public class CapesRegistry extends WorldSavedData {
         return WORN_CAPES.get(uuid);
     }
 
-    public NBTTagCompound writeToNBT(NBTTagCompound comp) {
-        // Add resource locations
+    public static void save() {
+        NBTTagCompound comp = new NBTTagCompound();
         NBTTagList unlockedCapesTag = new NBTTagList();
         for (Map.Entry<UUID, List<ResourceLocation>> entry : UNLOCKED_CAPES.entrySet()) {
             for (ResourceLocation cape : entry.getValue()) {
@@ -77,10 +76,25 @@ public class CapesRegistry extends WorldSavedData {
             wornCapesTag.appendTag(tag);
         }
         comp.setTag("WornCapesValList", wornCapesTag);
-        return comp;
+        try {
+            CompressedStreamTools.safeWrite(comp, new File(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0).getSaveHandler().getWorldDirectory(), "gregtech_cape.dat"));
+        } catch (IOException exception) {
+            GTLog.logger.error(exception);
+        }
     }
 
-    public void readFromNBT(NBTTagCompound comp) {
+    public static void load() {
+        NBTTagCompound comp = null;
+        try {
+            comp = CompressedStreamTools.read(new File(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0).getSaveHandler().getWorldDirectory(), "gregtech_cape.dat"));
+        } catch (IOException exception) {
+            GTLog.logger.error(exception);
+        }
+        if (comp == null) {
+            UNLOCKED_CAPES.clear();
+            WORN_CAPES.clear();
+            return;
+        }
         UNLOCKED_CAPES.clear();
         NBTTagList unlockedCapesTag = comp.getTagList("UnlockedCapesValList", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < unlockedCapesTag.tagCount(); i++) {
@@ -111,21 +125,10 @@ public class CapesRegistry extends WorldSavedData {
     }
 
     public static void initializeStorage(World world) {
-        MapStorage storage = world.getMapStorage();
-        CapesRegistry instance = (CapesRegistry) storage.getOrLoadData(CapesRegistry.class, DATA_ID);
-
-        if (instance == null) {
-            instance = new CapesRegistry();
-            storage.setData(DATA_ID, instance);
-            registerCape(new ResourceLocation(GTValues.MODID, "ultimate_voltage/74_wetware_mainframe"), Textures.GREGTECH_CAPE_TEXTURE, world);
-            registerCape(new ResourceLocation(GTValues.MODID, "steam/12_electronic_circuit"), Textures.RED_CAPE_TEXTURE, world);
-            registerCape(new ResourceLocation(GTValues.MODID, "high_voltage/82_large_chemical_reactor"), Textures.YELLOW_CAPE_TEXTURE, world);
-            registerCape(new ResourceLocation(GTValues.MODID, "ludicrous_voltage/60_fusion"), Textures.GREEN_CAPE_TEXTURE, world);
-        }
-    }
-
-    public boolean isDirty() {
-        return true; // Doesn't work too well otherwise.
+        registerCape(new ResourceLocation(GTValues.MODID, "ultimate_voltage/74_wetware_mainframe"), Textures.GREGTECH_CAPE_TEXTURE, world);
+        registerCape(new ResourceLocation(GTValues.MODID, "steam/12_electronic_circuit"), Textures.RED_CAPE_TEXTURE, world);
+        registerCape(new ResourceLocation(GTValues.MODID, "high_voltage/82_large_chemical_reactor"), Textures.YELLOW_CAPE_TEXTURE, world);
+        registerCape(new ResourceLocation(GTValues.MODID, "ludicrous_voltage/60_fusion"), Textures.GREEN_CAPE_TEXTURE, world);
     }
 
     /**
@@ -134,7 +137,7 @@ public class CapesRegistry extends WorldSavedData {
      * @return A list of ResourceLocations containing the cape textures that the player has unlocked.
      */
     public static List<ResourceLocation> getUnlockedCapes(UUID uuid) {
-        return UNLOCKED_CAPES.get(uuid);
+        return UNLOCKED_CAPES.getOrDefault(uuid, Collections.emptyList());
     }
 
 
@@ -146,7 +149,7 @@ public class CapesRegistry extends WorldSavedData {
      * @param world The world that may contain the advancement used for getting a cape.
      */
     public static void registerCape(ResourceLocation advancement, ResourceLocation cape, World world) {
-        if (world instanceof WorldServer) {
+        if (!world.isRemote) {
             AdvancementManager advManager = ObfuscationReflectionHelper.getPrivateValue(World.class, world, "field_191951_C");
             Advancement advObject = advManager.getAdvancement(advancement);
             CAPE_ADVANCEMENTS.put(advObject, cape);
@@ -172,24 +175,35 @@ public class CapesRegistry extends WorldSavedData {
         if (CAPE_ADVANCEMENTS.containsKey(advancement)) {
             unlockCape(player.getPersistentID(), CAPE_ADVANCEMENTS.get(advancement));
             player.sendMessage(new TextComponentTranslation("gregtech.chat.cape"));
+            save();
         }
     }
 
     public static void clearMaps() {
         UNLOCKED_CAPES.clear();
+        WORN_CAPES.clear();
     }
 
-    public static void giveCape(UUID uuid, ResourceLocation cape, boolean isRemote) {
+    @SideOnly(Side.CLIENT)
+    public static void giveRawCape(UUID uuid, ResourceLocation cape) {
         WORN_CAPES.put(uuid, cape);
-        if (!isRemote) {
-            NetworkHandler.channel.sendToAll(new SPacketNotifyCapeChange(uuid, cape).toFMLPacket());
-        }
+    }
+
+    public static void giveCape(UUID uuid, ResourceLocation cape) {
+        WORN_CAPES.put(uuid, cape);
+        NetworkHandler.channel.sendToAll(new SPacketNotifyCapeChange(uuid, cape).toFMLPacket());
+        save();
     }
 
     // For loading capes when the player logs in, so that it's synced to the clients.
-    public static void loadWornCapeOnLogin(UUID uuid) {
-        if(WORN_CAPES.get(uuid) != null) {
-            NetworkHandler.channel.sendToAll(new SPacketNotifyCapeChange(uuid, WORN_CAPES.get(uuid)).toFMLPacket());
+    public static void loadWornCapeOnLogin(EntityPlayer player) {
+        if (player instanceof EntityPlayerMP) {
+            UUID uuid = player.getPersistentID();
+            NetworkHandler.channel.sendToAll(new SPacketNotifyCapeChange(uuid, WORN_CAPES.get(uuid)).toFMLPacket()); // sync to others
+            for (EntityPlayerMP otherPlayer : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()) { // sync to login
+                uuid = otherPlayer.getPersistentID();
+                NetworkHandler.channel.sendTo(new SPacketNotifyCapeChange(uuid, WORN_CAPES.get(uuid)).toFMLPacket(), (EntityPlayerMP) player);
+            }
         }
     }
 

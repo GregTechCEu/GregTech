@@ -57,6 +57,7 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
         int yPosition = getSelfPosition().y;
         int width = (getSize().width - 42) / 70;
         int rowNumber = 0;
+        if (capes == null || capes.isEmpty()) return;
         int i = 0;
         while (true) {
             WidgetGroup row = new WidgetGroup();
@@ -67,7 +68,7 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
                 int finalRowNumber = rowNumber;
                 int finalI = i;
                 ClickButtonWidget capeButton = new ClickButtonWidget(xPosition + rowPosition * 70, yPosition + rowNumber * 56, 28, 44, "",
-                        (data) -> this.setCape(data, finalRowPosition, finalRowNumber, capes.get(finalI))).setButtonTexture(capeImage)
+                        (data) -> this.setCape(finalRowPosition, finalRowNumber, capes.get(finalI))).setButtonTexture(capeImage)
                         .setShouldClientCallback(true);
                 row.addWidget(capeButton);
 
@@ -86,16 +87,17 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
         }
     }
 
-    private void setCape(ClickData data, int x, int y, ResourceLocation cape) {
+    private void setCape(int x, int y, ResourceLocation cape) {
         if (selectedX == x && selectedY == y) {
             selectedX = -1; // Sets a "not in use" flag.
-            CapesRegistry.giveCape(uuid, null, data.isClient);
-            return;
+            cape = null;
+        } else {
+            selectedX = x;
+            selectedY = y;
         }
-
-        selectedX = x;
-        selectedY = y;
-        CapesRegistry.giveCape(uuid, cape, data.isClient);
+        if (!isRemote()) {
+            CapesRegistry.giveCape(uuid, cape);
+        }
     }
 
     public List<ResourceLocation> getCapes() {

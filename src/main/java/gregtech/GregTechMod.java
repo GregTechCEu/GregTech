@@ -190,6 +190,7 @@ public class GregTechMod {
     @Mod.EventHandler
     public void onServerLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new GregTechCommand());
+        CapesRegistry.load();
     }
 
     @Mod.EventHandler
