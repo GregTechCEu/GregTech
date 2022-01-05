@@ -124,7 +124,7 @@ public abstract class GTParticle extends Particle {
         return motionless;
     }
 
-    public int getSquareRenderRange() {
+    public int getRenderRange() {
         return squareRenderRange >= 0 ? -1 : (int) Math.sqrt(squareRenderRange);
     }
 
