@@ -9,7 +9,6 @@ import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.handler.SurfaceRockRenderer;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
@@ -143,17 +142,6 @@ public class ClientProxy extends CommonProxy {
         TerminalRegistry.initTerminalFiles();
         ModCompatibility.initCompat();
         FacadeRenderer.init();
-        this.registerAutomaticCapes();
-    }
-
-    private void registerAutomaticCapes() {
-        CapesRegistry.unlockCapeEverywhere(UUID.fromString("2fa297a6-7803-4629-8360-7059155cf43e"), Textures.GREGTECH_CAPE_TEXTURE); // KilaBash
-        CapesRegistry.unlockCapeEverywhere(UUID.fromString("a82fb558-64f9-4dd6-a87d-84040e84bb43"), Textures.GREGTECH_CAPE_TEXTURE); // Dan
-        CapesRegistry.unlockCapeEverywhere(UUID.fromString("5c2933b3-5340-4356-81e7-783c53bd7845"), Textures.GREGTECH_CAPE_TEXTURE); // Tech22
-        CapesRegistry.unlockCapeEverywhere(UUID.fromString("56bd41d0-06ef-4ed7-ab48-926ce45651f9"), Textures.GREGTECH_CAPE_TEXTURE); // Zalgo239
-        CapesRegistry.unlockCapeEverywhere(UUID.fromString("aaf70ec1-ac70-494f-9966-ea5933712750"), Textures.GREGTECH_CAPE_TEXTURE); // Bruberu
-        CapesRegistry.unlockCapeEverywhere(UUID.fromString("a24a9108-23d2-43fc-8db7-43f809d017db"), Textures.GREGTECH_CAPE_TEXTURE); // ALongString
-        CapesRegistry.unlockCapeEverywhere(UUID.fromString("77e2129d-8f68-4025-9394-df946f1f3aee"), Textures.GREGTECH_CAPE_TEXTURE); // Brachy84
     }
 
     public void registerColors() {
@@ -277,11 +265,9 @@ public class ClientProxy extends CommonProxy {
             Map<Type, ResourceLocation> playerTextures = ObfuscationReflectionHelper.getPrivateValue(NetworkPlayerInfo.class, playerInfo, 1);
             if (defaultPlayerCape == null && playerTextures.get(Type.CAPE) != null)
                 defaultPlayerCape = playerTextures.get(Type.CAPE);
-
-            if (CapesRegistry.wornCapes.get(event.getEntityPlayer().getPersistentID()) != null)
-                playerTextures.put(Type.CAPE, CapesRegistry.wornCapes.get(event.getEntityPlayer().getPersistentID()));
-            else
-                playerTextures.put(Type.CAPE, defaultPlayerCape);
+            // TODO
+            ResourceLocation cape = CapesRegistry.getPlayerCape(event.getEntityPlayer().getPersistentID());
+            playerTextures.put(Type.CAPE, cape == null ? defaultPlayerCape : cape);
         }
     }
 

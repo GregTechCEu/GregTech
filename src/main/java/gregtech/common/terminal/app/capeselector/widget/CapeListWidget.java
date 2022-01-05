@@ -8,8 +8,10 @@ import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.util.CapesRegistry;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,13 +22,40 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
 
     public CapeListWidget(int xPosition, int yPosition, int width, int height, UUID uuid) {
         super(xPosition, yPosition, width * 70 + 42, height * 56 + 12); // Cape banners are 28x44, expanded to 70x56
-
         this.uuid = uuid;
-        capes = CapesRegistry.getUnlockedCapes(uuid);
+    }
 
-        if (capes == null || capes.size() == 0)
-            return;
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+        if (capes == null) {
+            updateCapCandidates(CapesRegistry.getUnlockedCapes(uuid));
+            writeUpdateInfo(-1, buf -> {
+                buf.writeVarInt(capes.size());
+                capes.stream().map(ResourceLocation::toString).forEach(buf::writeString);
+            });
+        }
+    }
 
+    @Override
+    public void readUpdateInfo(int id, PacketBuffer buffer) {
+        if (id == -1) {
+            capes = new ArrayList<>();
+            int count = buffer.readVarInt();
+            for (int i = 0; i < count; i++) {
+                capes.add(new ResourceLocation(buffer.readString(Short.MAX_VALUE)));
+            }
+            updateCapCandidates(capes);
+        } else {
+            super.readUpdateInfo(id, buffer);
+        }
+    }
+
+    private void updateCapCandidates(List<ResourceLocation> capes) {
+        this.capes = capes;
+        int xPosition = getSelfPosition().x;
+        int yPosition = getSelfPosition().y;
+        int width = (getSize().width - 42) / 70;
         int rowNumber = 0;
         int i = 0;
         while (true) {
@@ -42,7 +71,7 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
                         .setShouldClientCallback(true);
                 row.addWidget(capeButton);
 
-                if(capes.get(i).equals(CapesRegistry.wornCapes.get(uuid))) { // If this is the cape that the player is wearing right now, select it.
+                if(capes.get(i).equals(CapesRegistry.getPlayerCape(uuid))) { // If this is the cape that the player is wearing right now, select it.
                     selectedX = finalRowPosition;
                     selectedY = finalRowNumber;
                 }
@@ -60,14 +89,13 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
     private void setCape(ClickData data, int x, int y, ResourceLocation cape) {
         if (selectedX == x && selectedY == y) {
             selectedX = -1; // Sets a "not in use" flag.
-            CapesRegistry.giveCape(uuid, null);
-
+            CapesRegistry.giveCape(uuid, null, data.isClient);
             return;
         }
 
         selectedX = x;
         selectedY = y;
-        CapesRegistry.giveCape(uuid, cape);
+        CapesRegistry.giveCape(uuid, cape, data.isClient);
     }
 
     public List<ResourceLocation> getCapes() {

@@ -27,14 +27,13 @@ public class CapeSelectorApp extends AbstractApplication {
 
         this.setCapeList(new CapeListWidget(27, 33, 4, 2, this.gui.entityPlayer.getPersistentID()));
 
-        this.addWidget(new SimpleTextWidget(166, 33, "", 0xFFFFFF, () -> "Click on an unlocked cape to select it!"));
-
         this.addWidget(new SimpleTextWidget(166, 33, "", 0xFFFFFF, () -> {
             if(this.getCapeList().getCapes() == null || this.getCapeList().getCapes().isEmpty()) {
                 return "It looks like you haven't unlocked any capes yet!";
             }
-            return "";
+            return "Click on an unlocked cape to select it!";
         }));
+
         this.addWidget(new SimpleTextWidget(166, 45, "", 0xFFFFFF, () -> {
             if(this.getCapeList().getCapes() == null || this.getCapeList().getCapes().isEmpty()) {
                 return "You can get these from high-level advancements.";

@@ -214,14 +214,6 @@ public class EventHandlers {
     public static void onWorldLoadEvent(WorldEvent.Load event) {
         VirtualTankRegistry.initializeStorage(event.getWorld());
         CapesRegistry.initializeStorage(event.getWorld());
-        CapesRegistry.registerCape(new ResourceLocation(GTValues.MODID, "ultimate_voltage/74_wetware_mainframe"),
-                Textures.GREGTECH_CAPE_TEXTURE, event.getWorld());
-        CapesRegistry.registerCape(new ResourceLocation(GTValues.MODID, "steam/12_electronic_circuit"),
-                Textures.RED_CAPE_TEXTURE, event.getWorld());
-        CapesRegistry.registerCape(new ResourceLocation(GTValues.MODID, "high_voltage/82_large_chemical_reactor"),
-                Textures.YELLOW_CAPE_TEXTURE, event.getWorld());
-        CapesRegistry.registerCape(new ResourceLocation(GTValues.MODID, "ludicrous_voltage/60_fusion"),
-                Textures.GREEN_CAPE_TEXTURE, event.getWorld());
     }
 
     @SubscribeEvent
