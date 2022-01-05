@@ -124,7 +124,7 @@ public class CapesRegistry {
         }
     }
 
-    public static void initializeStorage(World world) {
+    public static void checkAdvancements(World world) {
         registerCape(new ResourceLocation(GTValues.MODID, "ultimate_voltage/74_wetware_mainframe"), Textures.GREGTECH_CAPE_TEXTURE, world);
         registerCape(new ResourceLocation(GTValues.MODID, "steam/12_electronic_circuit"), Textures.RED_CAPE_TEXTURE, world);
         registerCape(new ResourceLocation(GTValues.MODID, "high_voltage/82_large_chemical_reactor"), Textures.YELLOW_CAPE_TEXTURE, world);
@@ -152,7 +152,9 @@ public class CapesRegistry {
         if (!world.isRemote) {
             AdvancementManager advManager = ObfuscationReflectionHelper.getPrivateValue(World.class, world, "field_191951_C");
             Advancement advObject = advManager.getAdvancement(advancement);
-            CAPE_ADVANCEMENTS.put(advObject, cape);
+            if (advObject != null) {
+                CAPE_ADVANCEMENTS.put(advObject, cape);
+            }
         }
     }
 

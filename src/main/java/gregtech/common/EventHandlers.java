@@ -182,7 +182,7 @@ public class EventHandlers {
     @SubscribeEvent
     public static void onWorldLoadEvent(WorldEvent.Load event) {
         VirtualTankRegistry.initializeStorage(event.getWorld());
-        CapesRegistry.initializeStorage(event.getWorld());
+        CapesRegistry.checkAdvancements(event.getWorld());
     }
 
     @SubscribeEvent
