@@ -4,17 +4,10 @@ import gregtech.api.GTValues;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.info.MaterialIconType;
-import gregtech.api.unification.material.properties.DustProperty;
-import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.client.model.IModelSupplier;
-import gregtech.client.model.SimpleStateMapper;
-import gregtech.client.renderer.handler.SurfaceRockRenderer;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -22,37 +15,28 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @SuppressWarnings("deprecation")
-public class BlockSurfaceRock extends DelayedStateBlock implements IModelSupplier {
+public class BlockSurfaceRock extends DelayedStateBlock {
 
     private static final AxisAlignedBB STONE_AABB = new AxisAlignedBB(2.0 / 16.0, 0.0 / 16.0, 2.0 / 16.0, 14.0 / 16.0, 2.0 / 16.0, 14.0 / 16.0);
     public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "surface_rock"), "normal");
-
     public final PropertyMaterial variantProperty;
 
     public BlockSurfaceRock(Material[] materials) {
-        super(net.minecraft.block.material.Material.ROCK);
+        super(net.minecraft.block.material.Material.GOURD);
         setTranslationKey("surface_rock");
-        setHardness(1.5f);
+        setHardness(0.25f);
         this.variantProperty = PropertyMaterial.create("variant", materials);
         initBlockState();
     }
@@ -60,17 +44,7 @@ public class BlockSurfaceRock extends DelayedStateBlock implements IModelSupplie
     @Nullable
     @Override
     public String getHarvestTool(IBlockState state) {
-        return "pickaxe";
-    }
-
-    @Override
-    public int getHarvestLevel(IBlockState state) {
-        Material material = state.getValue(variantProperty);
-        DustProperty prop = material.getProperty(PropertyKey.DUST);
-        if (prop != null) {
-            return material.getHarvestLevel();
-        }
-        return 0;
+        return "shovel";
     }
 
     @Override
@@ -111,40 +85,19 @@ public class BlockSurfaceRock extends DelayedStateBlock implements IModelSupplie
     }
 
     @Override
-    @Nonnull
-    @SuppressWarnings("deprecation")
-    public net.minecraft.block.material.Material getMaterial(IBlockState state) {
-        return net.minecraft.block.material.Material.ROCK;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public MapColor getMapColor(@Nonnull IBlockState state, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
-        return getMaterial(state).getMaterialMapColor();
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if(playerIn.getHeldItem(hand).isEmpty()) {
+            dropBlockAsItem(worldIn, pos, state, 0);
+            worldIn.setBlockToAir(pos);
+            playerIn.swingArm(hand);
+        }
+        return true;
     }
 
     @Nonnull
     @Override
     public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nullable Entity entity) {
-        return SoundType.STONE;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void onTextureStitch(TextureStitchEvent.Pre event) { // TODO
-        for (IBlockState state : this.getBlockState().getValidStates()) {
-            Material m = state.getValue(variantProperty);
-            event.getMap().registerSprite(MaterialIconType.block.getBlockPath(m.getMaterialIconSet()));
-        }
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void onModelRegister() {
-        ModelLoader.setCustomStateMapper(this, new SimpleStateMapper(MODEL_LOCATION));
-        for (IBlockState state : this.getBlockState().getValidStates()) {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), MODEL_LOCATION);
-        }
+        return SoundType.GROUND;
     }
 
     @Override
@@ -178,13 +131,6 @@ public class BlockSurfaceRock extends DelayedStateBlock implements IModelSupplie
     @Override
     public boolean isOpaqueCube(@Nonnull IBlockState state) {
         return false;
-    }
-
-    @Override
-    @Nonnull
-    @SideOnly(Side.CLIENT)
-    public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
-        return SurfaceRockRenderer.BLOCK_RENDER_TYPE;
     }
 
     @Override

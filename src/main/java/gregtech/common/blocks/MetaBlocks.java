@@ -414,7 +414,6 @@ public class MetaBlocks {
 
         COMPRESSED.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
         FRAMES.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
-        SURFACE_ROCK.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
         ORES.forEach(IModelSupplier::onModelRegister);
     }
 
@@ -492,6 +491,16 @@ public class MetaBlocks {
                 @Override
                 protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
                     return ItemPipeRenderer.MODEL_LOCATION;
+                }
+            });
+        }
+
+        for (BlockSurfaceRock surfaceRock : SURFACE_ROCK.values()) {
+            ModelLoader.setCustomStateMapper(surfaceRock, new DefaultStateMapper() {
+                @Nonnull
+                @Override
+                protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
+                    return BlockSurfaceRock.MODEL_LOCATION;
                 }
             });
         }
