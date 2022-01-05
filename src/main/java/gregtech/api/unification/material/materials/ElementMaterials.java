@@ -67,7 +67,7 @@ public class ElementMaterials {
                 .build();
 
         Barium = new Material.Builder(8, "barium")
-                .ingot().fluid()
+                .dust().fluid()
                 .color(0x83824C).iconSet(METALLIC)
                 .element(Elements.Ba)
                 .build();
