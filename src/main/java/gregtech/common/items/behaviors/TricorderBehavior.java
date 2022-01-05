@@ -75,8 +75,9 @@ public class TricorderBehavior implements IItemBehaviour {
         // hardness and blast resistance
         list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.block_hardness", block.blockHardness, block.getExplosionResistance(null))));
 
+        MetaTileEntity metaTileEntity;
         if (tileEntity instanceof MetaTileEntityHolder) {
-            MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+            metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
             if (metaTileEntity == null)
                 return list;
 
@@ -217,6 +218,11 @@ public class TricorderBehavior implements IItemBehaviour {
 //            } else {
 //                list.add(TextFormatting.GREEN + "No Pollution in Chunk! HAYO!" + TextFormatting.RESET);
 //            }
+
+        // debug
+        if (tileEntity instanceof MetaTileEntityHolder) {
+            list.addAll(((MetaTileEntityHolder) tileEntity).getDebugInfo(player, 3));
+        }
 
         return list;
     }
