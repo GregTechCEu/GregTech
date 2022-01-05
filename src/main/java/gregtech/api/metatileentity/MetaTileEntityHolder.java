@@ -37,7 +37,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     MetaTileEntity metaTileEntity;
     private boolean needToUpdateLightning = false;
 
-    private int[] timeStatistics = new int[25];
+    private int[] timeStatistics = new int[20];
     private int timeStatisticsIndex = 0;
     private int lagWarningCount = 0;
 
@@ -152,7 +152,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
             this.needToUpdateLightning = false;
         }
 
-        if (world.isRemote && metaTileEntity != null && getMetaTileEntity().isValid()) {
+        if (!world.isRemote && metaTileEntity != null && getMetaTileEntity().isValid()) {
             tickTime = System.nanoTime() - tickTime;
             if (timeStatistics.length > 0) {
                 timeStatistics[timeStatisticsIndex] = (int) tickTime;
