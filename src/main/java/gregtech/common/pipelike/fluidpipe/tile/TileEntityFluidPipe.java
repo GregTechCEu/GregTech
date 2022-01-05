@@ -378,13 +378,21 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
 
         FluidStack[] fluids = this.getContainedFluids();
         if (fluids != null) {
+            boolean allTanksEmpty = true;
             for (int i = 0; i < fluids.length; i++) {
                 if (fluids[i] != null) {
+                    if (fluids[i].getFluid() == null)
+                        continue;
+
+                    allTanksEmpty = false;
                     list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.tank", i,
-                            GTUtility.formatNumbers((fluids[i].getFluid() == null ? 0 : fluids[i].amount)),
-                            GTUtility.formatNumbers(this.getCapacityPerTank()), (fluids[i].getFluid() == null ? "" : fluids[i].getFluid().getLocalizedName(fluids[i])))));
+                            GTUtility.formatNumbers(fluids[i].amount),
+                            GTUtility.formatNumbers(this.getCapacityPerTank()), fluids[i].getFluid().getLocalizedName(fluids[i]))));
                }
             }
+
+            if (allTanksEmpty)
+                list.add(new TextComponentTranslation("behavior.tricorder.tanks_empty"));
         }
         return list;
     }

@@ -90,13 +90,17 @@ public class TricorderBehavior implements IItemBehaviour {
             // fluid tanks
             FluidTankList tanks = metaTileEntity.getImportFluids();
             int tankIndex = 0;
+            boolean allTanksEmpty = true;
             if (tanks != null && !tanks.getFluidTanks().isEmpty()) {
                 energyCost += 500;
                 for (int i = tankIndex; i < tanks.getFluidTanks().size(); i++) {
                     IFluidTank tank = tanks.getTankAt(i);
+                    if (tank.getFluid() == null)
+                        continue;
+
+                    allTanksEmpty = false;
                     list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.tank", i,
-                            tank.getFluid() == null ? 0 : tank.getFluid().amount, tank.getCapacity(),
-                            tank.getFluid() == null ? "" : tank.getFluid().getLocalizedName())));
+                            tank.getFluid().amount, tank.getCapacity(), tank.getFluid().getLocalizedName())));
                 }
                 tankIndex += tanks.getFluidTanks().size();
             }
@@ -105,11 +109,17 @@ public class TricorderBehavior implements IItemBehaviour {
                 energyCost += 500;
                 for (int i = 0; i < tanks.getFluidTanks().size(); i++) {
                     IFluidTank tank = tanks.getTankAt(i);
+                    if (tank.getFluid() == null)
+                        continue;
+
+                    allTanksEmpty = false;
                     list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.tank", i + tankIndex,
-                            tank.getFluid() == null ? 0 : tank.getFluid().amount, tank.getCapacity(),
-                            tank.getFluid() == null ? "" : tank.getFluid().getLocalizedName())));
+                            tank.getFluid().amount, tank.getCapacity(), tank.getFluid().getLocalizedName())));
                 }
             }
+
+            if (allTanksEmpty && (metaTileEntity.getImportFluids() != null || metaTileEntity.getExportFluids() != null))
+                list.add(new TextComponentTranslation("behavior.tricorder.tanks_empty"));
 
             // sound muffling
             if (metaTileEntity instanceof ISoundCreator) {
@@ -221,7 +231,7 @@ public class TricorderBehavior implements IItemBehaviour {
 
         // debug
         if (tileEntity instanceof MetaTileEntityHolder) {
-            list.addAll(((MetaTileEntityHolder) tileEntity).getDebugInfo(player, 3));
+            list.addAll(((MetaTileEntityHolder) tileEntity).getDebugInfo(player, 2));
         }
 
         return list;
