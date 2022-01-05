@@ -379,13 +379,13 @@ public class Recipe {
         return outputs;
     }
 
-    public List<ItemStack> getResultItemOutputs(int maxOutputSlots, int tier) {
+    public List<ItemStack> getResultItemOutputs(int maxOutputSlots, int tier, RecipeMap<?> recipeMap) {
         ArrayList<ItemStack> outputs = new ArrayList<>(GTUtility.copyStackList(getOutputs()));
         List<ChanceEntry> chancedOutputsList = getChancedOutputs();
         List<ItemStack> resultChanced = new ArrayList<>();
         int maxChancedSlots = maxOutputSlots - outputs.size();
         for (ChanceEntry chancedOutput : chancedOutputsList) {
-            int outputChance = RecipeMap.getChanceFunction().chanceFor(chancedOutput.getChance(), chancedOutput.getBoostPerTier(), tier);
+            int outputChance = recipeMap.getChanceFunction().chanceFor(chancedOutput.getChance(), chancedOutput.getBoostPerTier(), tier);
             if (GTValues.RNG.nextInt(Recipe.getMaxChancedValue()) <= outputChance) {
                 ItemStack stackToAdd = chancedOutput.getItemStack();
                 GTUtility.addStackToItemStackList(stackToAdd, resultChanced);
