@@ -108,6 +108,17 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 classReader.accept(new TargetClassVisitor(classWriter, CCLVisitor.TARGET_METHOD, CCLVisitor::new), 0);
                 return classWriter.toByteArray();
             }
+            case NuclearCraftRecipeHelperVisitor.TARGET_CLASS_NAME: {
+                ClassReader classReader = new ClassReader(basicClass);
+                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+                classReader.accept(new TargetClassVisitor(classWriter, NuclearCraftRecipeHelperVisitor.TARGET_METHOD, NuclearCraftRecipeHelperVisitor::new), 0);
+                basicClass = classWriter.toByteArray();
+
+                classReader = new ClassReader(basicClass);
+                classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+                classReader.accept(new TargetClassVisitor(classWriter, NuclearCraftRecipeHelperVisitor.TARGET_METHOD_2, NuclearCraftRecipeHelperVisitor::new), 0);
+                return classWriter.toByteArray();
+            }
         }
         return basicClass;
     }
