@@ -38,6 +38,7 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
         this.tier = tier;
         this.SLOT = slot;
         if (ArmorUtils.SIDE.isClient() && this.isNeedDrawHUD()) {
+            //noinspection NewExpressionSideOnly
             HUD = new ArmorUtils.ModularHUD();
         }
     }
@@ -72,7 +73,6 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
 
     @Override
     public void addToolComponents(ArmorMetaValueItem mvi) {
-//		mvi.addStats(ElectricStats.createElectricItem(maxCapacity, tier));
         mvi.addComponents(new ElectricStats(maxCapacity, tier, true, false) {
             @Override
             public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
@@ -87,6 +87,9 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
     }
 
     public void addInfo(ItemStack itemStack, List<String> lines) {
+        int armor = (int) Math.round(20.0F * this.getAbsorption(itemStack) * this.getDamageAbsorption());
+        if (armor > 0)
+            lines.add(I18n.format("attribute.modifier.plus.0", armor, I18n.format("attribute.name.generic.armor")));
     }
 
     public ActionResult<ItemStack> onRightClick(World world, EntityPlayer player, EnumHand hand) {
@@ -122,7 +125,9 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
         return "";
     }
 
-    public abstract double getDamageAbsorption();
+    public double getDamageAbsorption() {
+        return 0;
+    }
 
     @SideOnly(Side.CLIENT)
     public boolean isNeedDrawHUD() {

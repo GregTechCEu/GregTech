@@ -39,7 +39,7 @@ public class HermeticCasings extends VariantBlock<HermeticCasings.HermeticCasing
         HERMETIC_LUV("hermetic_casing_luv"),
         HERMETIC_ZPM("hermetic_casing_zpm"),
         HERMETIC_UV("hermetic_casing_uv"),
-        HERMETIC_MAX("hermetic_casing_max");
+        HERMETIC_UHV("hermetic_casing_uhv");
 
         private final String name;
 

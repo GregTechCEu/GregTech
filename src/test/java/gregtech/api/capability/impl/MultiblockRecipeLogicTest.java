@@ -14,9 +14,9 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.MetaTileEntities;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityItemBus;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
@@ -27,6 +27,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,13 +83,13 @@ public class MultiblockRecipeLogicTest {
                             }
 
                             @Override
-                            protected void reinitializeStructurePattern() {
+                            public void reinitializeStructurePattern() {
 
                             }
 
                             // function checks for the temperature of the recipe against the coils
                             @Override
-                            public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
+                            public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
                                 return true;
                             }
 
@@ -102,11 +103,6 @@ public class MultiblockRecipeLogicTest {
                             @Override
                             public boolean hasMufflerMechanics() {
                                 return false;
-                            }
-
-                            @Override
-                            public int getParallelLimit() {
-                                return 1;
                             }
                         });
 
@@ -200,12 +196,12 @@ public class MultiblockRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt) {
+            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
                 return true;
             }
 
             @Override
-            protected long getMaxVoltage() {
+            public long getMaxVoltage() {
                 return 32;
             }
 
@@ -334,19 +330,14 @@ public class MultiblockRecipeLogicTest {
 
 
                             @Override
-                            protected void reinitializeStructurePattern() {
+                            public void reinitializeStructurePattern() {
 
                             }
 
                             // function checks for the temperature of the recipe against the coils
                             @Override
-                            public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
+                            public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
                                 return true;
-                            }
-
-                            @Override
-                            public int getParallelLimit() {
-                                return 1;
                             }
                         });
 
@@ -461,12 +452,12 @@ public class MultiblockRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt) {
+            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
                 return true;
             }
 
             @Override
-            protected long getMaxVoltage() {
+            public long getMaxVoltage() {
                 return 32;
             }
 

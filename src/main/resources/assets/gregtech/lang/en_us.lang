@@ -43,39 +43,45 @@ gregtech.top.valid_structure=§aStructure Formed
 gregtech.top.obstructed_structure=§cStructure Obstructed
 
 gregtech.multiblock.title=Multiblock Pattern
-gregtech.multiblock.primitive_blast_furnace.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
+gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
 gregtech.multiblock.coke_oven.description=The Coke Oven is a multiblock structure used for getting coke and creosote in the early game. It doesn't require fuel and has an internal tank of 32 buckets for creosote. Its inventory can be accessed via its Coke Oven Hatch.
 gregtech.multiblock.vacuum_freezer.description=The Vacuum Freezer is a multiblock structure mainly used for freezing Hot Ingots into regular Ingots. However, it can also freeze other substances, such as Water.
 gregtech.multiblock.implosion_compressor.description=The Implosion Compressor is a multiblock structure that uses explosives to turn gem dusts into their corresponding gems.
-gregtech.multiblock.pyrolyze_oven.description=The Pyrolyze Oven is a multiblock structure used for turning Logs into Charcoal and Creosote Oil, or Ash and Heavy Oil.
-gregtech.multiblock.cracker.description=The Cracker Unit is a multiblock structure used for turning Light and Heavy Fuel into their Cracked variants.
+gregtech.multiblock.pyrolyse_oven.description=The Pyrolyse Oven is a multiblock structure used for turning Logs into Charcoal and Creosote Oil, or Ash and Heavy Oil.
+gregtech.multiblock.cracker.description=The Oil Cracking Unit is a multiblock structure used for turning Light and Heavy Fuel into their Cracked variants.
 gregtech.multiblock.large_combustion_engine.description=The Large Combustion Engine is a multiblock structure that acts as a Combustion Generator for EV power.
+gregtech.multiblock.extreme_combustion_engine.description=The Extreme Combustion Engine is a multiblock structure that acts as a Combustion Generator for IV power.
 gregtech.multiblock.distillation_tower.description=The Distillation Tower is a multiblock structure used for distilling the various types of Oil and some of their byproducts. Each layer must have exactly one output hatch, starting from the second one. The bottom layer can output items and insert fluids in any position.
 gregtech.multiblock.electric_blast_furnace.description=The Electric Blast Furnace (EBF) is a multiblock structure used for smelting alloys, cooking metals and refining ores. It is required for obtaining high-tier alloys and metals, such as aluminium, stainless steel, titanium, and naquadah alloy.
-gregtech.multiblock.multi_smelter.description=The Multi Smelter is a multiblock structure used for smelting massive amounts of items at once. Different tiers of coils provide a speed boost and energy efficiency gain. 16 is the base value of items smelted per operation, and can be multiplied by using higher level coils.
-gregtech.multiblock.large_boiler.description=Large Boilers are multiblocks that generate steam from an energy source and water. Said energy source is usually a solid fuel or some high-density fluid. Tiers differ only by amount of steam outputted.
+gregtech.multiblock.multi_furnace.description=The Multi Smelter is a multiblock structure used for smelting massive amounts of items at once. Different tiers of coils provide a speed boost and energy efficiency gain. 16 is the base value of items smelted per operation, and can be multiplied by using higher level coils.
+gregtech.multiblock.large_boiler.description=Large Boilers are multiblocks that generate steam from an energy source and water. Said energy source is either any Solid Fuel with a Burn Time, or a Diesel/Semi-Fluid Fuel. Can be throttled back in increments of 5%% to reduce Steam output and Fuel consumption.
 gregtech.multiblock.large_turbine.description=Large Turbines are multiblocks that generate power from steam, gases, and plasma by having them spin the turbine's rotor. Energy output is based on rotor efficiency and current speed of turbine. Gearbox casings are used in the center of the structure.
 gregtech.multiblock.assembly_line.description=The Assembly Line is a large multiblock structure consisting of 5 to 16 "slices". In theory, it's large Assembling Machine, used for creating advanced crafting components.
-gregtech.multiblock.fusion_reactor_mk1.description=The Fusion Reactor Mark 1 is a large multiblock structure used for fusing elements into heavier ones. It can only use LuV, ZPM, and UV Energy Hatches. For every Hatch it has, its buffer increases by 10M EU, and has a maximum of 160M.
-gregtech.multiblock.fusion_reactor_mk2.description=The Fusion Reactor Mark 2 is a large multiblock structure used for fusing elements into heavier ones. It can only use ZPM and UV Energy Hatches. For every Hatch it has, its buffer increases by 20M EU, and has a maximum of 320M.
-gregtech.multiblock.fusion_reactor_mk3.description=The Fusion Reactor Mark 3 is a large multiblock structure used for fusing elements into heavier ones. It can only use UV Energy Hatches. For every Hatch it has, its buffer increases by 40M EU, and has a maximum of 640M.
+gregtech.multiblock.fusion_reactor.luv.description=The Fusion Reactor Mark 1 is a large multiblock structure used for fusing elements into heavier ones. It can only use LuV, ZPM, and UV Energy Hatches. For every Hatch it has, its buffer increases by 10M EU, and has a maximum of 160M.
+gregtech.multiblock.fusion_reactor.zpm.description=The Fusion Reactor Mark 2 is a large multiblock structure used for fusing elements into heavier ones. It can only use ZPM and UV Energy Hatches. For every Hatch it has, its buffer increases by 20M EU, and has a maximum of 320M.
+gregtech.multiblock.fusion_reactor.uv.description=The Fusion Reactor Mark 3 is a large multiblock structure used for fusing elements into heavier ones. It can only use UV Energy Hatches. For every Hatch it has, its buffer increases by 40M EU, and has a maximum of 640M.
 gregtech.multiblock.fusion_reactor.heat=Heat: %d
-gregtech.multiblock.large_chemical_reactor.description=The Large Chemical Reactor performs chemical reactions at 100% energy efficiency. Overclocks multiply both speed and energy by 4. The multiblock requires exactly 1 Cupronickel Coil Block, which must be placed adjacent to the PTFE Pipe casing located in the center.
+gregtech.multiblock.large_chemical_reactor.description=The Large Chemical Reactor performs chemical reactions at 100%% energy efficiency. Overclocks multiply both speed and energy by 4. The multiblock requires exactly 1 Cupronickel Coil Block, which must be placed adjacent to the PTFE Pipe casing located in the center.
 gregtech.multiblock.primitive_water_pump.description=The Primitive Water Pump is a pre-Steam Era multiblock that collects water once per second, depending on the Biome it is in. It can use a Pump, ULV, or LV Output Hatch, increasing the amount of water per tier. Follows the formula: Biome Coefficient * Hatch Multiplier.
 gregtech.multiblock.primitive_water_pump.extra1=Biome Coefficient:/n  Ocean, River: 1000 L/s/n  Swamp: 800 L/s/n  Jungle: 350 L/s/n  Snowy: 300 L/s/n  Plains, Forest: 250 L/s/n  Taiga: 175 L/s/n  Beach: 170 L/s/n  Other: 100 L/s
 gregtech.multiblock.primitive_water_pump.extra2=Hatch Multipliers:/n  Pump Hatch: 1x/n  ULV Output Hatch: 2x/n  LV Output Hatch: 4x
+gregtech.multiblock.processing_array.description=The Processing Array combines up to 16 single block machine(s) in a single multiblock, effectively easing automation.
+gregtech.multiblock.advanced_processing_array.description=The Processing Array combines up to 64 single block machine(s) in a single multiblock, effectively easing automation.
 
 item.invalid.name=Invalid item
 fluid.empty=Empty
 
+gregtech.tooltip.hold_shift=Hold §aShift§7 for more info
+
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.fluid_container.tooltip_empty=§9No Fluids Contained
-metaitem.generic.electric_item.tooltip=%,d/%,d EU - Tier §e%s
+metaitem.generic.electric_item.tooltip=%,d/%,d EU - Tier %s
 metaitem.electric.discharge_mode.enabled=§eDischarge Mode Enabled
 metaitem.electric.discharge_mode.disabled=§eDischarge Mode Disabled
 metaitem.electric.discharge_mode.tooltip=Use while sneaking to toggle discharge mode
 
 metaitem.dust.tooltip.purify=Throw into Cauldron to get clean Dust
+metaitem.crushed.tooltip.purify=Throw into Cauldron to get Purified Ore
 metaitem.int_circuit.configuration=Configuration: %,d
 metaitem.credit.copper.name=Copper Credit
 metaitem.credit.copper.tooltip=0.125 Credits
@@ -171,8 +177,8 @@ metaitem.shape.extruder.pipe.tiny.name=Extruder Shape (Tiny Pipe)
 metaitem.shape.extruder.pipe.tiny.tooltip=Extruder Shape for making tiny Pipes
 metaitem.shape.extruder.pipe.small.name=Extruder Shape (Small Pipe)
 metaitem.shape.extruder.pipe.small.tooltip=Extruder Shape for making small Pipes
-metaitem.shape.extruder.pipe.medium.name=Extruder Shape (Normal Pipe)
-metaitem.shape.extruder.pipe.medium.tooltip=Extruder Shape for making Pipes
+metaitem.shape.extruder.pipe.normal.name=Extruder Shape (Pipe)
+metaitem.shape.extruder.pipe.normal.tooltip=Extruder Shape for making Pipes
 metaitem.shape.extruder.pipe.large.name=Extruder Shape (Large Pipe)
 metaitem.shape.extruder.pipe.large.tooltip=Extruder Shape for making large Pipes
 metaitem.shape.extruder.pipe.huge.name=Extruder Shape (Huge Pipe)
@@ -252,24 +258,24 @@ metaitem.ingot.iridiumalloy.name=Iridium Alloy Ingot
 metaitem.ingot.iridiumalloy.tooltip=Used to make Iridium Plates
 
 metaitem.battery.hull.lv.name=Small Battery Hull
-metaitem.battery.hull.lv.tooltip=An empty LV Battery Hull
+metaitem.battery.hull.lv.tooltip=An empty §7LV §7Battery Hull
 metaitem.battery.hull.mv.name=Medium Battery Hull
-metaitem.battery.hull.mv.tooltip=An empty MV Battery Hull
+metaitem.battery.hull.mv.tooltip=An empty §bMV §7Battery Hull
 metaitem.battery.hull.hv.name=Large Battery Hull
-metaitem.battery.hull.hv.tooltip=An empty HV Battery Hull
+metaitem.battery.hull.hv.tooltip=An empty §6HV §7Battery Hull
 metaitem.battery.hull.ev.name=Small Vanadium Battery Hull
-metaitem.battery.hull.ev.tooltip=An empty EV Battery Hull
+metaitem.battery.hull.ev.tooltip=An empty §5EV §7Battery Hull
 metaitem.battery.hull.iv.name=Medium Vanadium Battery Hull
-metaitem.battery.hull.iv.tooltip=An empty IV Battery Hull
+metaitem.battery.hull.iv.tooltip=An empty §1IV §7Battery Hull
 metaitem.battery.hull.luv.name=Large Vanadium Battery Hull
-metaitem.battery.hull.luv.tooltip=An empty LuV Battery Hull
+metaitem.battery.hull.luv.tooltip=An empty §dLuV §7Battery Hull
 metaitem.battery.hull.zpm.name=Medium Naquadria Battery Hull
-metaitem.battery.hull.zpm.tooltip=An empty ZPM Battery Hull
+metaitem.battery.hull.zpm.tooltip=An empty §fZPM §7Battery Hull
 metaitem.battery.hull.uv.name=Large Naquadria Battery Hull
-metaitem.battery.hull.uv.tooltip=An empty UV Battery Hull
+metaitem.battery.hull.uv.tooltip=An empty §3UV §7Battery Hull
 
 metaitem.battery.charge_time=§aHolds %,d%s of Power
-metaitem.battery.charge_detailed=%,d/%,d EU - Tier §e%s §r(§%c%,d%s remaining§r)
+metaitem.battery.charge_detailed=%,d/%,d EU - Tier %s §7(§%c%,d%s remaining§7)
 
 metaitem.battery.re.ulv.tantalum.name=Tantalum Capacitor
 metaitem.battery.re.ulv.tantalum.tooltip=Reusable Battery
@@ -307,14 +313,14 @@ metaitem.battery.zpm.naquadria.tooltip=Reusable Battery
 metaitem.battery.uv.naquadria.name=Large Naquadria Battery
 metaitem.battery.uv.naquadria.tooltip=Reusable Battery
 
-metaitem.energy_crystal.name=Energy Crystal
+metaitem.energy_crystal.name=Energium Crystal
 metaitem.energy_crystal.tooltip=Reusable Battery
 metaitem.lapotron_crystal.name=Lapotron Crystal
 metaitem.lapotron_crystal.tooltip=Reusable Battery
-metaitem.energy.lapotronicorb.name=Lapotronic Energy Orb
-metaitem.energy.lapotronicorb.tooltip=Reusable Battery
-metaitem.energy.lapotronicorb2.name=Lapotronic Energy Orb Cluster
-metaitem.energy.lapotronicorb2.tooltip=Reusable Battery
+metaitem.energy.lapotronic_orb.name=Lapotronic Energy Orb
+metaitem.energy.lapotronic_orb.tooltip=Reusable Battery
+metaitem.energy.lapotronic_orb_cluster.name=Lapotronic Energy Orb Cluster
+metaitem.energy.lapotronic_orb_cluster.tooltip=Reusable Battery
 metaitem.zpm.name=Zero Point Module
 metaitem.energy.module.name=Energy Module
 metaitem.energy.module.tooltip=Reusable Battery
@@ -445,6 +451,23 @@ metaitem.circuit.integrated.tooltip=Use to open configuration GUI
 metaitem.circuit.integrated.gui=Programmed Circuit Configuration
 metaitem.circuit.integrated.jei_description=JEI is only showing recipes for the given configuration.\n\nYou can select a configuration in the Programmed Circuit configuration tab.
 
+item.glass.lens=Glass Lens (White)
+metaitem.glass_lens.orange.name=Glass Lens (Orange)
+metaitem.glass_lens.magenta.name=Glass Lens (Magenta)
+metaitem.glass_lens.light_blue.name=Glass Lens (Light Blue)
+metaitem.glass_lens.yellow.name=Glass Lens (Yellow)
+metaitem.glass_lens.lime.name=Glass Lens (Lime)
+metaitem.glass_lens.pink.name=Glass Lens (Pink)
+metaitem.glass_lens.gray.name=Glass Lens (Gray)
+metaitem.glass_lens.light_gray.name=Glass Lens (Light Gray)
+metaitem.glass_lens.cyan.name=Glass Lens (Cyan)
+metaitem.glass_lens.purple.name=Glass Lens (Purple)
+metaitem.glass_lens.blue.name=Glass Lens (Blue)
+metaitem.glass_lens.brown.name=Glass Lens (Brown)
+metaitem.glass_lens.green.name=Glass Lens (Green)
+metaitem.glass_lens.red.name=Glass Lens (Red)
+metaitem.glass_lens.black.name=Glass Lens (Black)
+
 #CIRCUITS LOCALIZATION
 metaitem.boule.silicon.name=Monocrystalline Silicon Boule
 metaitem.boule.silicon.tooltip=Raw Circuit
@@ -504,8 +527,8 @@ metaitem.component.transistor.tooltip=Basic Electronic Component
 metaitem.component.capacitor.name=Capacitor
 metaitem.component.capacitor.tooltip=Basic Electronic Component
 metaitem.component.glass.tube.name=Glass Tube
-metaitem.component.small_coil.name=Small Coil
-metaitem.component.small_coil.tooltip=Basic Electronic Component
+metaitem.component.inductor.name=Inductor
+metaitem.component.inductor.tooltip=A Small Coil
 metaitem.component.smd.diode.name=SMD Diode
 metaitem.component.smd.diode.tooltip=Electronic Component
 metaitem.component.smd.capacitor.name=SMD Capacitor
@@ -514,6 +537,8 @@ metaitem.component.smd.transistor.name=SMD Transistor
 metaitem.component.smd.transistor.tooltip=Electronic Component
 metaitem.component.smd.resistor.name=SMD Resistor
 metaitem.component.smd.resistor.tooltip=Electronic Component
+metaitem.component.smd.inductor.name=SMD Inductor
+metaitem.component.smd.inductor.tooltip=Electronic Component
 metaitem.component.advanced_smd.diode.name=Advanced SMD Diode
 metaitem.component.advanced_smd.diode.tooltip=Advanced Electronic Component
 metaitem.component.advanced_smd.capacitor.name=Advanced SMD Capacitor
@@ -522,37 +547,41 @@ metaitem.component.advanced_smd.transistor.name=Advanced SMD Transistor
 metaitem.component.advanced_smd.transistor.tooltip=Advanced Electronic Component
 metaitem.component.advanced_smd.resistor.name=Advanced SMD Resistor
 metaitem.component.advanced_smd.resistor.tooltip=Advanced Electronic Component
+metaitem.component.advanced_smd.inductor.name=Advanced SMD Inductor
+metaitem.component.advanced_smd.inductor.tooltip=Advanced Electronic Component
 
 metaitem.wafer.highly_advanced_system_on_chip.name=HASoC Wafer
-metaitem.wafer.highly_advanced_system_on_chip.tooltip=Raw Circuit
+metaitem.wafer.highly_advanced_system_on_chip.tooltip=Raw Highly Advanced Circuit
 metaitem.wafer.advanced_system_on_chip.name=ASoC Wafer
-metaitem.wafer.advanced_system_on_chip.tooltip=Raw Circuit
+metaitem.wafer.advanced_system_on_chip.tooltip=Raw Advanced Circuit
 metaitem.wafer.integrated_logic_circuit.name=Integrated Logic Circuit Wafer
-metaitem.wafer.integrated_logic_circuit.tooltip=Raw Circuit
+metaitem.wafer.integrated_logic_circuit.tooltip=Raw Integrated Circuit
 metaitem.wafer.central_processing_unit.name=CPU Wafer
-metaitem.wafer.central_processing_unit.tooltip=Raw Circuit
+metaitem.wafer.central_processing_unit.tooltip=Raw Processing Unit
 metaitem.wafer.high_power_integrated_circuit.name=HPIC Wafer
-metaitem.wafer.high_power_integrated_circuit.tooltip=Raw Circuit
+metaitem.wafer.high_power_integrated_circuit.tooltip=Raw High Power Circuit
+metaitem.wafer.ultra_high_power_integrated_circuit.name=UHPIC Wafer
+metaitem.wafer.ultra_high_power_integrated_circuit.tooltip=Raw Ultra High Power Circuit
 metaitem.wafer.nand_memory_chip.name=NAND Wafer
-metaitem.wafer.nand_memory_chip.tooltip=Raw Circuit
+metaitem.wafer.nand_memory_chip.tooltip=Raw Logic Gate
 metaitem.wafer.ultra_low_power_integrated_circuit.name=ULPIC Wafer
-metaitem.wafer.ultra_low_power_integrated_circuit.tooltip=Raw Circuit
+metaitem.wafer.ultra_low_power_integrated_circuit.tooltip=Raw Ultra Low Power Circuit
 metaitem.wafer.low_power_integrated_circuit.name=LPIC Wafer
-metaitem.wafer.low_power_integrated_circuit.tooltip=Raw Circuit
+metaitem.wafer.low_power_integrated_circuit.tooltip=Raw Low Power Circuit
 metaitem.wafer.power_integrated_circuit.name=PIC Wafer
-metaitem.wafer.power_integrated_circuit.tooltip=Raw Circuit
+metaitem.wafer.power_integrated_circuit.tooltip=Raw Power Circuit
 metaitem.wafer.nano_central_processing_unit.name=Nano CPU Wafer
-metaitem.wafer.nano_central_processing_unit.tooltip=Raw Circuit
+metaitem.wafer.nano_central_processing_unit.tooltip=Raw Nano Circuit
 metaitem.wafer.nor_memory_chip.name=NOR Wafer
-metaitem.wafer.nor_memory_chip.tooltip=Raw Circuit
+metaitem.wafer.nor_memory_chip.tooltip=Raw Logic Gate
 metaitem.wafer.qbit_central_processing_unit.name=Qubit CPU Wafer
-metaitem.wafer.qbit_central_processing_unit.tooltip=Raw Circuit
+metaitem.wafer.qbit_central_processing_unit.tooltip=Raw Qubit Circuit
 metaitem.wafer.random_access_memory.name=RAM Wafer
-metaitem.wafer.random_access_memory.tooltip=Raw Circuit
+metaitem.wafer.random_access_memory.tooltip=Raw Memory
 metaitem.wafer.system_on_chip.name=SoC Wafer
-metaitem.wafer.system_on_chip.tooltip=Raw Circuit
+metaitem.wafer.system_on_chip.tooltip=Raw Basic Circuit
 metaitem.wafer.simple_system_on_chip.name=Simple SoC Wafer
-metaitem.wafer.simple_system_on_chip.tooltip=Raw Primitive Circuit
+metaitem.wafer.simple_system_on_chip.tooltip=Raw Simple Circuit
 metaitem.engraved.crystal_chip.name=Engraved Crystal Chip
 metaitem.engraved.crystal_chip.tooltip=Needed for Circuits
 metaitem.crystal.raw.name=Raw Crystal Chip
@@ -561,35 +590,42 @@ metaitem.crystal.raw_chip.name=Raw Crystal Chip Parts
 metaitem.crystal.raw_chip.tooltip=Raw Crystal Processor Parts
 metaitem.engraved.lapotron_chip.name=Engraved Lapotron Crystal Chip
 
-metaitem.crystal.central_processing_unit.name=Crystal Processing Unit
-metaitem.crystal.central_processing_unit.tooltip=Crystal CPU
+metaitem.crystal.central_processing_unit.name=Crystal CPU
+metaitem.crystal.central_processing_unit.tooltip=Crystal Processing Unit
 metaitem.crystal.system_on_chip.name=Crystal SoC
-metaitem.crystal.system_on_chip.tooltip=Crystal System on a Chip
+metaitem.crystal.system_on_chip.tooltip=Crystal System on Chip
 metaitem.plate.advanced_system_on_chip.name=ASoC
 metaitem.plate.advanced_system_on_chip.tooltip=Advanced System on Chip
 metaitem.plate.highly_advanced_system_on_chip.name=HASoC
-metaitem.plate.highly_advanced_system_on_chip.tooltip=Highly Advanced System on a Chip
-metaitem.plate.integrated_logic_circuit.name=Integrated Logic Circuit
-metaitem.plate.central_processing_unit.name=Central Processing Unit
-metaitem.plate.high_power_integrated_circuit.name=High Power IC
-metaitem.plate.high_power_integrated_circuit.tooltip=High Power Circuit
-metaitem.plate.nand_memory_chip.name=NAND Gate
+metaitem.plate.highly_advanced_system_on_chip.tooltip=Highly Advanced System on Chip
+metaitem.plate.integrated_logic_circuit.name=Integrated Circuit
+metaitem.plate.integrated_logic_circuit.tooltip=Integrated Logic Circuit
+metaitem.plate.central_processing_unit.name=CPU
+metaitem.plate.central_processing_unit.tooltip=Central Processing Unit
+metaitem.plate.high_power_integrated_circuit.name=HPIC
+metaitem.plate.high_power_integrated_circuit.tooltip=High Power IC
+metaitem.plate.ultra_high_power_integrated_circuit.name=UHPIC
+metaitem.plate.ultra_high_power_integrated_circuit.tooltip=Ultra High Power IC
+metaitem.plate.nand_memory_chip.name=NAND
+metaitem.plate.nand_memory_chip.tooltip=NAND Logic Gate
 metaitem.plate.nano_central_processing_unit.name=Nano CPU
 metaitem.plate.nano_central_processing_unit.tooltip=Nano Central Processing Unit
-metaitem.plate.nor_memory_chip.name=NOR Gate
-metaitem.plate.ultra_low_power_integrated_circuit.name=Ultra Low Power IC
-metaitem.plate.ultra_low_power_integrated_circuit.tooltip=Ultra Low Power Circuit
-metaitem.plate.low_power_integrated_circuit.name=Low Power IC
-metaitem.plate.low_power_integrated_circuit.tooltip=Low Power Circuit
-metaitem.plate.power_integrated_circuit.name=Power IC
-metaitem.plate.power_integrated_circuit.tooltip=Power Integrated Circuit
+metaitem.plate.nor_memory_chip.name=NOR
+metaitem.plate.nor_memory_chip.tooltip=NOR Logic Gate
+metaitem.plate.ultra_low_power_integrated_circuit.name=ULPIC
+metaitem.plate.ultra_low_power_integrated_circuit.tooltip=Ultra Low Power IC
+metaitem.plate.low_power_integrated_circuit.name=LPIC
+metaitem.plate.low_power_integrated_circuit.tooltip=Low Power IC
+metaitem.plate.power_integrated_circuit.name=PIC
+metaitem.plate.power_integrated_circuit.tooltip=Power IC
 metaitem.plate.qbit_central_processing_unit.name=Qubit CPU
+metaitem.plate.qbit_central_processing_unit.tooltip=Qubit Central Processing Unit
 metaitem.plate.random_access_memory.name=RAM
 metaitem.plate.random_access_memory.tooltip=Random Access Memory
 metaitem.plate.system_on_chip.name=SoC
-metaitem.plate.system_on_chip.tooltip=System on a Chip
+metaitem.plate.system_on_chip.tooltip=System on Chip
 metaitem.plate.simple_system_on_chip.name=Simple SoC
-metaitem.plate.simple_system_on_chip.tooltip=Simple System on a Chip
+metaitem.plate.simple_system_on_chip.tooltip=Simple System on Chip
 
 
 # T1: Electronic
@@ -677,8 +713,6 @@ metaitem.neutron_reflector.name=Iridium Neutron Reflector
 metaitem.neutron_reflector.tooltip=Indestructible
 metaitem.duct_tape.name=BrainTech Aerospace Advanced Reinforced Duct Tape FAL-84
 
-metaitem.component.sawblade.diamond.name=Diamond Saw Blade
-metaitem.component.sawblade.tungsten.name=Tungsten Saw Blade
 metaitem.component.grinder.diamond.name=Diamond Grinding Head
 metaitem.component.grinder.tungsten.name=Tungsten Grinding Head
 
@@ -701,7 +735,9 @@ metaitem.smart_item_filter.tooltip=Filters items basing on specific machine's re
 metaitem.cover.controller.name=Machine Controller
 metaitem.cover.controller.tooltip=Turns Machines ON/OFF (as Cover)
 metaitem.cover.activity.detector.name=Activity Detector
-metaitem.cover.activity.detector.tooltip=Gives out Activity as Redstone (as Cover)
+metaitem.cover.activity.detector.tooltip=Gives out Activity Status as Redstone (as Cover)
+metaitem.cover.activity.detector_advanced.name=Advanced Activity Detector
+metaitem.cover.activity.detector_advanced.tooltip=Gives out Progress Status as Redstone (as Cover)
 metaitem.cover.fluid.detector.name=Fluid Detector
 metaitem.cover.fluid.detector.tooltip=Gives out Fluid Amount as Redstone (as Cover)
 metaitem.cover.item.detector.name=Item Detector
@@ -764,7 +800,7 @@ metaitem.dye.brown.name=Chemical Brown Dye
 metaitem.dye.blue.name=Chemical Blue Dye
 metaitem.dye.purple.name=Chemical Purple Dye
 metaitem.dye.cyan.name=Chemical Cyan Dye
-metaitem.dye.light_gray.name=Chemical Light Gray Dye
+metaitem.dye.silver.name=Chemical Light Gray Dye
 metaitem.dye.gray.name=Chemical Gray Dye
 metaitem.dye.pink.name=Chemical Pink Dye
 metaitem.dye.lime.name=Chemical Lime Dye
@@ -779,7 +815,7 @@ metaitem.plant_ball.name=Plant Ball
 metaitem.tool_parts_box.name=Tool Parts Box
 metaitem.tool_parts_box.tooltip=Contains some tool parts/nRight click to open
 metaitem.foam_sprayer.name=Foam Sprayer
-metaitem.foam_sprayer.tooltip=Sprays Construction Foam/nUse on a frame to foam connected frames/nUse iron metal to create reinforced stone/nFoam can be colored
+metaitem.foam_sprayer.tooltip=Sprays Construction Foam/nUse on a frame to foam connected frames/nFoam can be colored
 metaitem.energium_dust.name=Energium Dust
 metaitem.compressed.clay.name=Compressed Clay
 metaitem.compressed.fireclay.name=Compressed Fireclay
@@ -810,7 +846,6 @@ metaitem.tool.screwdriver.tooltip=Adjusts Covers and Machines
 metaitem.tool.mortar.name=%s Mortar
 metaitem.tool.wire_cutter.name=%s Wire Cutter
 metaitem.tool.branch_cutter.name=%s Branch Cutter
-metaitem.tool.universal_spade.name=%s Universal Spade
 metaitem.tool.knife.name=%s Knife
 metaitem.tool.butchery_knife.name=%s Butchery Knife
 metaitem.tool.butchery_knife.tooltip=Has a slow Attack Rate
@@ -867,6 +902,7 @@ metaitem.tool.tooltip.attack_damage=§fAttack damage: §9%,.1f
 metaitem.tool.tooltip.mining_speed=§fMining speed: §6%,.1f
 metaitem.tool.tooltip.durability=§fDurability: §a%,d / %,d
 metaitem.tool.tooltip.rotor.efficiency=Turbine Efficiency: §9%,d%%
+metaitem.tool.tooltip.rotor.power=Turbine Power: §9%,d%%
 
 metaitem.voltage_coil.ulv.name=Ultra Low Voltage Coil
 metaitem.voltage_coil.ulv.tooltip=Primitive Coil
@@ -899,13 +935,10 @@ metaitem.voltage_coil.uxv.tooltip=Legendary Coil
 metaitem.voltage_coil.max.name=Maximum Voltage Coil
 metaitem.voltage_coil.max.tooltip=Maximum Coil
 
-metaitem.liquid_fuel_jetpack.name=Liquid-Fueled Jetpack
-metaitem.impeller_jetpack.name=Thruster Jetpack
-metaitem.advanced_impeller_jetpack.name=Advanced Thruster Jetpack
-metaitem.battery_pack.lv.name=Battery Pack (§eLV§r)
-metaitem.battery_pack.mv.name=Battery Pack (§eMV§r)
-metaitem.battery_pack.hv.name=Battery Pack (§eHV§r)
-
+metaitem.liquid_fuel_jetpack.name=Liquid-Fueled Impeller Jetpack
+metaitem.liquid_fuel_jetpack.tooltip=Uses Combustion Generator Fuels for Thrust
+metaitem.electric_jetpack.name=Electric Thruster Jetpack
+metaitem.advanced_electric_jetpack.name=Advanced Thruster Jetpack
 metaitem.nightvision_goggles.name=NightVision Goggles
 
 metaitem.nms.chestplate.name=NanoMuscle™ Suite Chestplate
@@ -920,30 +953,46 @@ metaitem.qts.boots.name=QuarkTech™ Suite Boots
 metaitem.qts.helmet.name=QuarkTech™ Suite Helmet
 metaitem.qts.advanced_chestplate.name=Advanced QuarkTech™ Suite Chestplate
 
-metaitem.impeller.mv.name=Power Thruster
-metaitem.impeller.hv.name=Advanced Power Thruster
+metaitem.power_thruster.name=Power Thruster
+metaitem.power_thruster_advanced.name=Advanced Power Thruster
 metaitem.gravitation_engine.name=Gravitation Engine Unit
 
 metaarmor.nms.nightvision.enabled=NanoMuscle™ Suite: NightVision Enabled
 metaarmor.nms.nightvision.disabled=NanoMuscle™ Suite: NightVision Disabled
+metaarmor.nms.nightvision.error=NanoMuscle™ Suite: §cNot enough power!
 
 metaarmor.qts.nightvision.enabled=QuarkTech™ Suite: NightVision Enabled
 metaarmor.qts.nightvision.disabled=QuarkTech™ Suite: NightVision Disabled
+metaarmor.qts.nightvision.error=QuarkTech™ Suite: §cNot enough power!
 
 metaarmor.jetpack.hover.enable=Jetpack: Hover Mode Enabled
 metaarmor.jetpack.hover.disable=Jetpack: Hover Mode Disabled
+
+metaarmor.jetpack.emergency_hover_mode=Emergency Hover Mode Enabled!
+
+metaarmor.nms.share.enable=NanoMuscle™ Suite: Charging Enabled
+metaarmor.nms.share.disable=NanoMuscle™ Suite: Charging Disabled
+
+metaarmor.qts.share.enable=QuarkTech™ Suite: Charging Enabled
+metaarmor.qts.share.disable=QuarkTech™ Suite: Charging Disabled
 
 metaarmor.message.nightvision.enabled=§bNightVision: §aOn
 metaarmor.message.nightvision.disabled=§bNightVision: §cOff
 metaarmor.message.nightvision.error=§cNot enough power!
 
+metaarmor.tooltip.stepassist=Provides Step-Assist
+metaarmor.tooltip.speed=Increases Running Speed
+metaarmor.tooltip.jump=Increases Jump Height and Distance
+metaarmor.tooltip.falldamage=Nullifies Fall Damage
+metaarmor.tooltip.poitons=Nullifies Harmful Effects
+metaarmor.tooltip.burning=Nullifies Burning
+
 metaarmor.hud.status.enabled=§aON
 metaarmor.hud.status.disabled=§cOFF
-metaarmor.hud.energy_lvl=Energy level: %s
-metaarmor.hud.fuel_lvl=Fuel level: %s
-metaarmor.hud.hover_mode=Hover mode: %s
-mataarmor.hud.supply_mode=Supply mode: %s
-metaarmor.hud.fly_mode=Fly mode: %s
+metaarmor.hud.energy_lvl=Energy Level: %s
+metaarmor.hud.fuel_lvl=Fuel Level: %s
+metaarmor.hud.hover_mode=Hover Mode: %s
+mataarmor.hud.supply_mode=Supply Mode: %s
 metaarmor.hud.gravi_engine=GraviEngine: %s
 
 metaarmor.energy_share.enable=Energy Supply: Gadgets charging enabled
@@ -951,7 +1000,13 @@ metaarmor.energy_share.disable=Energy Supply: Gadgets charging disabled
 metaarmor.energy_share.tooltip=Supply mode: %s
 metaarmor.energy_share.tooltip.guide=To change mode shift-right click when holding item
 
+metaitem.record.sus.name=Music Disc
+metaitem.record.sus.tooltip=§7Leonz - Among Us Drip
+
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
+
+gregtech.recipe_memory_widget.tooltip.1=§7Left click to automatically input this recipe into the crafting grid
+gregtech.recipe_memory_widget.tooltip.2=§7Shift click to lock/unlock this recipe
 
 cover.filter.blacklist.disabled=Whitelist
 cover.filter.blacklist.enabled=Blacklist
@@ -1017,7 +1072,7 @@ cover.fluid_regulator.transfer_mode.description=§eTransfer Any§r - in this mod
 cover.fluid_regulator.supply_exact=Supply Exact: %s
 cover.fluid_regulator.keep_exact=Keep Exact: %s
 
-cover.machine_controller.name=Machine Controller Settings
+cover.machine_controller.title=Machine Controller Settings
 cover.machine_controller.normal=Normal
 cover.machine_controller.inverted=Inverted
 cover.machine_controller.inverted.description=§eNormal§r - in this mode, the cover will require a signal weaker than the set redstone level to run/n§eInverted§r - in this mode, the cover will require a signal stronger than the set redstone level to run
@@ -1110,7 +1165,6 @@ item.material.oreprefix.crystal=%s Crystal
 item.material.oreprefix.toolHeadSword=%s Sword Blade
 item.material.oreprefix.toolHeadPickaxe=%s Pickaxe Head
 item.material.oreprefix.toolHeadShovel=%s Shovel Head
-item.material.oreprefix.toolHeadUniversalSpade=%s Universal Spade Head
 item.material.oreprefix.toolHeadAxe=%s Axe Head
 item.material.oreprefix.toolHeadHoe=%s Hoe Head
 item.material.oreprefix.toolHeadSense=%s Sense Blade
@@ -1119,7 +1173,7 @@ item.material.oreprefix.toolHeadHammer=%s Hammer Head
 item.material.oreprefix.toolHeadPlow=%s Plow Head
 item.material.oreprefix.toolHeadSaw=%s Saw Blade
 item.material.oreprefix.toolHeadBuzzSaw=%s Buzzsaw Blade
-item.material.oreprefix.toolHeadScrewdriver=%s Screwdriver Tip
+item.material.oreprefix.toolHeadScrewdriver=%s Screwdriver Head
 item.material.oreprefix.toolHeadDrill=%s Drill Tip
 item.material.oreprefix.toolHeadChainsaw=%s Chainsaw Tip
 item.material.oreprefix.toolHeadWrench=%s Wrench Tip
@@ -1135,19 +1189,19 @@ item.material.oreprefix.block=Block of %s
 item.material.oreprefix.frameGt=%s Frame Box
 item.material.oreprefix.pipeTinyFluid=Tiny %s Fluid Pipe
 item.material.oreprefix.pipeSmallFluid=Small %s Fluid Pipe
-item.material.oreprefix.pipeNormalFluid=Normal %s Fluid Pipe
+item.material.oreprefix.pipeNormalFluid=%s Fluid Pipe
 item.material.oreprefix.pipeLargeFluid=Large %s Fluid Pipe
 item.material.oreprefix.pipeHugeFluid=Huge %s Fluid Pipe
 item.material.oreprefix.pipeQuadrupleFluid=Quadruple %s Fluid Pipe
 item.material.oreprefix.pipeNonupleFluid=Nonuple %s Fluid Pipe
 item.material.oreprefix.pipeTinyItem=Tiny %s Item Pipe
 item.material.oreprefix.pipeSmallItem=Small %s Item Pipe
-item.material.oreprefix.pipeNormalItem=Normal %s Item Pipe
+item.material.oreprefix.pipeNormalItem=%s Item Pipe
 item.material.oreprefix.pipeLargeItem=Large %s Item Pipe
 item.material.oreprefix.pipeHugeItem=Huge %s Item Pipe
 item.material.oreprefix.pipeTinyRestrictive=Tiny Restrictive %s Item Pipe
 item.material.oreprefix.pipeSmallRestrictive=Small Restrictive %s Item Pipe
-item.material.oreprefix.pipeNormalRestrictive=Normal Restrictive %s Item Pipe
+item.material.oreprefix.pipeNormalRestrictive=Restrictive %s Item Pipe
 item.material.oreprefix.pipeLargeRestrictive=Large Restrictive %s Item Pipe
 item.material.oreprefix.pipeHugeRestrictive=Huge Restrictive %s Item Pipe
 item.material.oreprefix.pipe=%s Pipe
@@ -1322,8 +1376,6 @@ material.aqua_regia=Aqua Regia
 material.fireclay=Fireclay
 material.brick=Brick
 material.coke=Coke
-material.tenorite=Tenorite
-material.cuprite=Cuprite
 material.bornite=Bornite
 material.chalcocite=Chalcocite
 material.enargite=Enargite
@@ -1337,6 +1389,7 @@ material.nether_air=Nether Air
 material.liquid_nether_air=Liquid Nether Air
 material.ender_air=Ender Air
 material.liquid_ender_air=Liquid Ender Air
+material.liquid_oxygen=Liquid Oxygen
 material.almandine=Almandine
 material.andradite=Andradite
 material.annealed_copper=Annealed Copper
@@ -1480,8 +1533,8 @@ material.sterilized_growth_medium=Sterilized Growth Medium
 material.vinyl_acetate=Vinyl Acetate
 material.gallium_arsenide=Gallium Arsenide
 material.polyphenylene_sulfide=Polyphenylene Sulfide
-material.nickel_sulfate_water_solution=Nickel Sulfate Water Solution
-material.copper_sulfate_water_solution=Copper Sulfate Water Solution
+material.sulfuric_nickel_solution=Sulfuric Nickel Solution
+material.sulfuric_copper_solution=Sulfuric Copper Solution
 material.propane=Propane
 material.propene=Propene
 material.ethane=Ethane
@@ -1497,26 +1550,34 @@ material.indium_concentrate=Indium Concentrate
 material.lead_zinc_solution=Lead-Zinc Solution
 material.tetrafluoroethylene=Tetrafluoroethylene
 material.salt_water=Salt Water
+material.lightly_hydrocracked_heavy_fuel=Lightly Hydro-Cracked Heavy Fuel
+material.lightly_steamcracked_heavy_fuel=Lightly Steam-Cracked Heavy Fuel
+material.lightly_hydrocracked_light_fuel=Lightly Hydro-Cracked Light Fuel
+material.lightly_steamcracked_light_fuel=Lightly Steam-Cracked Light Fuel
+material.lightly_hydrocracked_naphtha=Lightly Hydro-Cracked Naphtha
+material.lightly_steamcracked_naphtha=Lightly Steam-Cracked Naphtha
+material.lightly_hydrocracked_gas=Lightly Hydro-Cracked Refinery Gas
+material.lightly_steamcracked_gas=Lightly Steam-Cracked Refinery Gas
+material.severely_hydrocracked_heavy_fuel=Severely Hydro-Cracked Heavy Fuel
+material.severely_steamcracked_heavy_fuel=Severely Steam-Cracked Heavy Fuel
+material.severely_hydrocracked_light_fuel=Severely Hydro-Cracked Light Fuel
+material.severely_steamcracked_light_fuel=Severely Steam-Cracked Light Fuel
+material.severely_hydrocracked_naphtha=Severely Hydro-Cracked Naphtha
+material.severely_steamcracked_naphtha=Severely Steam-Cracked Naphtha
+material.severely_hydrocracked_gas=Severely Hydro-Cracked Refinery Gas
+material.severely_steamcracked_gas=Severely Steam-Cracked Refinery Gas
 material.hydrocracked_ethane=Hydro-Cracked Ethane
 material.hydrocracked_ethylene=Hydro-Cracked Ethylene
 material.hydrocracked_propene=Hydro-Cracked Propene
 material.hydrocracked_propane=Hydro-Cracked Propane
-material.hydrocracked_light_fuel=Hydro-Cracked Light Fuel
 material.hydrocracked_butane=Hydro-Cracked Butane
-material.hydrocracked_naphtha=Hydro-Cracked Naphtha
-material.hydrocracked_heavy_fuel=Hydro-Cracked Heavy Fuel
-material.hydrocracked_gas=Hydro-Cracked Refinery Gas
 material.hydrocracked_butene=Hydro-Cracked Butene
 material.hydrocracked_butadiene=Hydro-Cracked Butadiene
 material.steamcracked_ethane=Steam-Cracked Ethane
 material.steamcracked_ethylene=Steam-Cracked Ethylene
 material.steamcracked_propene=Steam-Cracked Propene
 material.steamcracked_propane=Steam-Cracked Propane
-material.steamcracked_light_fuel=Steam-Cracked Light Fuel
 material.steamcracked_butane=Steam-Cracked Butane
-material.steamcracked_naphtha=Steam-Cracked Naphtha
-material.steamcracked_heavy_fuel=Steam-Cracked Heavy Fuel
-material.steamcracked_gas=Steam-Cracked Refinery Gas
 material.steamcracked_butene=Steam-Cracked Butene
 material.steamcracked_butadiene=Steam-Cracked Butadiene
 material.chloromethane=Chloromethane
@@ -1563,6 +1624,7 @@ material.uraninite=Uraninite
 material.uvarovite=Uvarovite
 material.vanadium_gallium=Vanadium-Gallium
 material.wood=Wood
+material.treated_wood=Treated Wood
 material.wrought_iron=Wrought Iron
 material.wulfenite=Wulfenite
 material.yellow_limonite=Yellow Limonite
@@ -1572,10 +1634,11 @@ material.certus_quartz=Certus Quartz
 material.quartzite=Quartzite
 material.graphite=Graphite
 material.graphene=Graphene
-material.jasper=Jasper
+material.tungstic_acid=Tungstic Acid
 material.osmiridium=Osmiridium
+material.calcium_chloride=Calcium Chloride
+material.lithium_chloride=Lithium Chloride
 
-material.wood_sealed=Sealed Wood
 material.glass=Glass
 material.perlite=Perlite
 material.borax=Borax
@@ -1602,7 +1665,7 @@ material.red_steel=Red Steel
 material.blue_steel=Blue Steel
 material.damascus_steel=Damascus Steel
 material.tungsten_steel=Tungstensteel
-material.nitro_fuel=Nitro-Diesel
+material.nitro_fuel=Cetane-Boosted Diesel
 material.red_alloy=Red Alloy
 material.cobalt_brass=Cobalt Brass
 material.tricalcium_phosphate=Tricalcium Phosphate
@@ -1695,16 +1758,13 @@ material.naquadria=Naquadria
 material.tritanium=Tritanium
 material.duranium=Duranium
 
-material.diamericium_titanium=Diamericium Titanium
-material.fluxed_electrum=Fluxed Electrum
-
 material.milk=Milk
 material.cocoa=Cocoa
 material.wheat=Wheat
 material.meat=Mince Meat
 
 material.sodium_bicarbonate=Sodium Bicarbonate
-material.polybenzimidazole=Polybenzimidazole
+material.polybenzimidazole=Polybenzimidazole (PBI)
 material.diphenyl_isophthalate=Diphenyl Isophthalate
 material.phthalic_acid=Phthalic Acid
 material.dimethylbenzene=Dimethylbenzene
@@ -1774,6 +1834,45 @@ material.dye_magenta=Chemical Magenta Dye
 material.dye_orange=Chemical Orange Dye
 material.dye_white=Chemical White Dye
 
+material.platinum_raw=Raw Platinum
+material.inert_metal_mixture=Inert Metal Mixture
+material.rhodium_sulfate=Rhodium Sulfate
+material.ruthenium_tetroxide=Ruthenium Tetroxide
+material.osmium_tetroxide=Osmium Tetroxide
+material.iridium_chloride=Iridium Chloride
+material.platinum_sludge_residue=Platinum Sludge Residue
+material.palladium_raw=Raw Palladium
+material.rarest_metal_mixture=Rarest Metal Mixture
+material.ammonium_chloride=Ammonium Chloride
+material.acidic_osmium_solution=Acidic Osmium Solution
+material.iridium_metal_residue=Iridium Metal Residue
+material.rhodium_plated_palladium=Rhodium Plated Palladium
+
+material.fluoroantimonic_acid=Fluoroantimonic Acid
+material.titanium_trifluoride=Titanium Trifluoride
+material.calcium_phosphide=Calcium Phosphide
+material.indium_phosphide=Indium Phosphide
+material.barium_sulfide=Barium Sulfide
+material.trinium_sulfide=Trinium Sulfide
+material.zinc_sulfide=Zinc Sulfide
+material.gallium_sulfide=Gallium Sulfide
+material.antimony_trifluoride=Antimony Trifluoride
+material.enriched_naquadah_sulfate=Enriched Naquadah Sulfate
+material.naquadria_sulfate=Naquadria Sulfate
+material.impure_enriched_naquadah_solution=Impure Enriched Naquadah Solution
+material.enriched_naquadah_solution=Enriched Naquadah Solution
+material.acidic_enriched_naquadah_solution=Acidic Enriched Naquadah Solution
+material.enriched_naquadah_waste=Enriched Naquadah Waste
+material.impure_naquadria_solution=Impure Naquadria Solution
+material.naquadria_solution=Naquadria Solution
+material.acidic_naquadria_solution=Acidic Naquadria Solution
+material.naquadria_waste=Naquadria Waste
+material.pyrochlore=Pyrochlore
+material.electrotine=Electrotine
+material.blue_alloy=Blue Alloy
+material.lapotron=Lapotron
+material.aluminium_sulfite=Aluminium Sulfite
+
 item.nether_quartz.oreNetherrack=Nether Quartz Ore
 item.gunpowder.dustTiny=Tiny Pile of Gunpowder
 item.gunpowder.dustSmall=Small Pile of Gunpowder
@@ -1803,6 +1902,9 @@ item.dark_ash.dust=Dark Ashes
 item.ice.dustTiny=Tiny Pile of Crushed Ice
 item.ice.dustSmall=Small Pile of Crushed Ice
 item.ice.dust=Crushed Ice
+item.sugar.gem=Sugar Cube
+item.sugar.gemChipped=Small Sugar Cubes
+item.sugar.gemFlawed=Tiny Sugar Cube
 item.plastic.dustTiny=Tiny Pile of Polyethylene (PE) Pulp
 item.plastic.dustSmall=Small Pile of Polyethylene (PE) Pulp
 item.plastic.dust=Polyethylene (PE) Pulp
@@ -1846,13 +1948,6 @@ item.polyvinyl_chloride.nugget=Polyvinyl Chloride (PVC) Chip
 item.polyvinyl_chloride.ingot=Polyvinyl Chloride (PVC) Bar
 item.polyvinyl_chloride.plate=Polyvinyl Chloride (PVC) Sheet
 item.polyvinyl_chloride.foil=Thin Polyvinyl Chloride (PVC) Sheet
-item.polystyrene.dustTiny=Tiny Pile of Polystyrene Pulp
-item.polystyrene.dustSmall=Small Pile of Polystyrene Pulp
-item.polystyrene.dust=Polystyrene Pulp
-item.polystyrene.nugget=Polystyrene Chip
-item.polystyrene.ingot=Polystyrene Bar
-item.polystyrene.plate=Polystyrene Sheet
-item.polystyrene.foil=Thin Polystyrene Sheet
 item.polyphenylene_sulfide.dustTiny=Tiny Pile of Polyphenylene Sulfide Pulp
 item.polyphenylene_sulfide.dustSmall=Small Pile of Polyphenylene Sulfide Pulp
 item.polyphenylene_sulfide.dust=Polyphenylene Sulfide Pulp
@@ -1860,13 +1955,13 @@ item.polyphenylene_sulfide.nugget=Polyphenylene Sulfide Chip
 item.polyphenylene_sulfide.ingot=Polyphenylene Sulfide Bar
 item.polyphenylene_sulfide.plate=Polyphenylene Sulfide Sheet
 item.polyphenylene_sulfide.foil=Thin Polyphenylene Sulfide Sheet
-item.polybenzimidazole.dustTiny=Tiny Pile of Polybenzimidazole Pulp
-item.polybenzimidazole.dustSmall=Small Pile of Polybenzimidazole Pulp
-item.polybenzimidazole.dust=Polybenzimidazole Pulp
-item.polybenzimidazole.nugget=Polybenzimidazole Chip
-item.polybenzimidazole.ingot=Polybenzimidazole Bar
-item.polybenzimidazole.plate=Polybenzimidazole Sheet
-item.polybenzimidazole.foil=Thin Polybenzimidazole Sheet
+item.polybenzimidazole.dustTiny=Tiny Pile of Polybenzimidazole (PBI) Pulp
+item.polybenzimidazole.dustSmall=Small Pile of Polybenzimidazole (PBI) Pulp
+item.polybenzimidazole.dust=Polybenzimidazole (PBI) Pulp
+item.polybenzimidazole.nugget=Polybenzimidazole (PBI) Chip
+item.polybenzimidazole.ingot=Polybenzimidazole (PBI) Bar
+item.polybenzimidazole.plate=Polybenzimidazole (PBI) Sheet
+item.polybenzimidazole.foil=Thin Polybenzimidazole (PBI) Sheet
 item.rock_salt.dustTiny=Tiny Pile of Rock Salt
 item.rock_salt.dustSmall=Small Pile of Rock Salt
 item.rock_salt.dustImpure=Impure Pile of Rock Salt
@@ -1906,10 +2001,13 @@ item.wood.dust=Wood Pulp
 item.wood.plate=Wood Plank
 item.wood.stickLong=Long Wood Stick
 item.wood.bolt=Short Wood Stick
-item.wood_sealed.dustTiny=Tiny Pile of Sealed Wood Pulp
-item.wood_sealed.dustSmall=Small Pile of Sealed Wood Pulp
-item.wood_sealed.dust=Sealed Wood Pulp
-item.wood_sealed.plate=Sealed Wood Plank
+item.treated_wood.dustTiny=Tiny Pile of Treated Wood Pulp
+item.treated_wood.dustSmall=Small Pile of Treated Wood Pulp
+item.treated_wood.dust=Treated Treated Wood Pulp
+item.treated_wood.plate=Treated Treated Wood Plank
+item.treated_wood.stick=Treated Wood Stick
+item.treated_wood.stickLong=Long Treated Wood Stick
+item.treated_wood.bolt=Short Treated Wood Stick
 item.glass.gem=Glass Crystal
 item.glass.gemChipped=Chipped Glass Crystal
 item.glass.gemFlawed=Flawed Glass Crystal
@@ -1979,6 +2077,27 @@ item.meat.dustSmall=Small Pile of Mince Meat
 item.meat.dust=Mince Meat
 item.borosilicate_glass.ingot=Borosilicate Glass Bar
 item.borosilicate_glass.wireFine=Borosilicate Glass Fibers
+item.platinum_group_sludge.dustTiny=Tiny Clump of Platinum Group Sludge
+item.platinum_group_sludge.dustSmall=Small Clump of Platinum Group Sludge
+item.platinum_group_sludge.dust=Platinum Group Sludge
+item.platinum_raw.dustTiny=Tiny Pile of Raw Platinum Powder
+item.platinum_raw.dustSmall=Small Pile of Raw Platinum Powder
+item.platinum_raw.dust=Raw Platinum Powder
+item.palladium_raw.dustTiny=Tiny Pile of Raw Palladium Powder
+item.palladium_raw.dustSmall=Small Pile of Raw Palladium Powder
+item.palladium_raw.dust=Raw Palladium Powder
+item.inert_metal_mixture.dustTiny=Tiny Pile of Inert Metal Mixture
+item.inert_metal_mixture.dustSmall=Small Pile of Inert Metal Mixture
+item.inert_metal_mixture.dust=Inert Metal Mixture
+item.rarest_metal_mixture.dustTiny=Tiny Pile of Rarest Metal Mixture
+item.rarest_metal_mixture.dustSmall=Small Pile of Rarest Metal Mixture
+item.rarest_metal_mixture.dust=Rarest Metal Mixture
+item.platinum_sludge_residue.dustTiny=Tiny Pile of Platinum Sludge Residue
+item.platinum_sludge_residue.dustSmall=Small Pile of Platinum Sludge Residue
+item.platinum_sludge_residue.dust=Platinum Sludge Residue
+item.iridium_metal_residue.dustTiny=Tiny Pile of Iridium Metal Residue
+item.iridium_metal_residue.dustSmall=Small Pile of Iridium Metal Residue
+item.iridium_metal_residue.dust=Iridium Metal Residue
 
 recipemap.ore_washer.name=Ore Washer
 recipemap.thermal_centrifuge.name=Thermal Centrifuge
@@ -2019,7 +2138,7 @@ recipemap.vacuum_freezer.name=Vacuum Freezer
 recipemap.chemical_reactor.name=Chemical Reactor
 recipemap.large_chemical_reactor.name=Large Chemical Reactor
 recipemap.distillation_tower.name=Distillation Tower
-recipemap.cracker.name=Cracking Unit
+recipemap.cracker.name=Oil Cracking Unit
 recipemap.pyrolyse_oven.name=Pyrolyse Oven
 recipemap.wiremill.name=Wiremill
 recipemap.bender.name=Metal Bender
@@ -2035,11 +2154,11 @@ recipemap.forge_hammer.name=Forge Hammer
 recipemap.compressor.name=Compressor
 recipemap.packer.name=Packer
 recipemap.unpacker.name=Unpacker
-recipemap.combustion_generator.name=Combustion Generator
-recipemap.gas_turbine.name=Gas Turbine
-recipemap.steam_turbine.name=Steam Turbine
+recipemap.combustion_generator.name=Combustion Fuels
+recipemap.gas_turbine.name=Gas Fuels
+recipemap.steam_turbine.name=Steam Fuels
 recipemap.semi_fluid_generator.name=Semi Fluid Fuels
-recipemap.plasma_generator.name=Plasma Generator
+recipemap.plasma_generator.name=Plasma Fuels
 recipemap.circuit_assembler.name=Circuit Assembler
 recipemap.mass_fabricator.name=Mass Fabricator
 recipemap.materialtree.name=Material Tree
@@ -2050,6 +2169,8 @@ recipemap.coke_oven.name=Coke Oven
 
 behaviour.hoe=Can till dirt
 behaviour.soft_hammer=Activates and Deactivates Machines
+behaviour.soft_hammer.enabled=Working Enabled
+behaviour.soft_hammer.disabled=Working Disabled
 behaviour.lighter.tooltip=Can light things on fire
 behaviour.lighter.uses=Remaining uses: %,d
 behavior.plunger.description=Use to clear 1000 L out of a machine's output tank./nUse while sneaking to clear 1000 L out of a machine's input tank./nInput tank clearing works only on GT machines!
@@ -2065,10 +2186,12 @@ tile.gt.foam.name=Foam
 tile.gt.reinforced_foam.name=Reinforced Foam
 tile.gt.petrified_foam.name=Petrified Foam
 tile.gt.reinforced_stone.name=Reinforced Stone
-tile.gt.log.rubber_wood.name=Rubber Wood
-tile.gt.leaves.rubber_wood.name=Rubber Tree Leaves
-tile.gt.sapling.rubber_wood.name=Rubber Tree Sapling
-tile.gt.plank.rubber_plank.name=Rubber Wood Planks
+tile.rubber_log.name=Rubber Wood
+tile.rubber_leaves.name=Rubber Tree Leaves
+tile.rubber_sapling.name=Rubber Tree Sapling
+
+tile.planks.rubber.name=Rubber Wood Planks
+tile.planks.treated.name=Treated Wood Planks
 
 tile.surface_rock.name=Surface Rock
 
@@ -2076,12 +2199,14 @@ tile.surface_rock_new.name=Surface Rock
 gregtech.block.surface_rock.material=Rock Material: %s
 gregtech.block.surface_rock.underground_materials=Underground Materials: %s
 
-metaitem.scanner.name=Scanner
-metaitem.scanner.tooltip=Hold right mouse button on surface rocks/nto discover underground materials
-behavior.scanner.analyzing=Analyzing...
-behavior.scanner.analyzing_failed=Analyzing failed!
-behavior.scanner.analyzing_complete=Analyzing complete!
-behavior.scanner.not_enough_energy=Analyzing failed: Not Enough Energy!
+metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
+metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
+metaitem.prospector.luv.name=Electric Prospector's Scanner (LuV)
+metaitem.prospector.mode.ores=Ore Prospection Mode
+metaitem.prospector.mode.fluid=Fluid Prospection Mode
+metaitem.prospector.tooltip.ores=Scans Ores in a %s Chunk Radius
+metaitem.prospector.tooltip.fluids=Scans Ores and Fluids in a %s Chunk Radius
+behavior.prospector.not_enough_energy=Not Enough Energy!
 
 metaitem.terminal.name=Terminal
 metaitem.terminal.tooltip=Sharp tools make good work
@@ -2110,11 +2235,14 @@ tile.casing.ev=EV Machine Casing
 tile.casing.iv=IV Machine Casing
 
 # Wire coil blocks
-tile.wire_coil.tooltip_ebf=When used in §aElectric Blast Furnace§7:
-tile.wire_coil.tooltip_heat=  Base Heating Capacity: §e%,dK
-tile.wire_coil.tooltip_smelter=When used in §aMulti Smelter§7:
-tile.wire_coil.tooltip_level=  Level: §e%,d
-tile.wire_coil.tooltip_discount=  Energy Discount: §a%,dx
+tile.wire_coil.tooltip_heat=Base Heat Capacity: §e%,dK
+tile.wire_coil.tooltip_smelter=§aMulti Smelter§7:
+tile.wire_coil.tooltip_parallel_smelter=  Max Parallel: §e%s§7
+tile.wire_coil.tooltip_energy_smelter=  Energy Usage: §e%s EU/t per recipe§7
+tile.wire_coil.tooltip_pyro=§aPyrolyse Oven§7:
+tile.wire_coil.tooltip_speed_pyro=  Processing Speed: §e%s%%§7
+tile.wire_coil.tooltip_cracking=§aCracking Unit§7:
+tile.wire_coil.tooltip_energy_cracking=  Energy Usage: §e%s%%§7
 
 tile.wire_coil.cupronickel.name=Cupronickel Coil Block
 tile.wire_coil.kanthal.name=Kanthal Coil Block
@@ -2122,9 +2250,8 @@ tile.wire_coil.nichrome.name=Nichrome Coil Block
 tile.wire_coil.tungstensteel.name=Tungstensteel Coil Block
 tile.wire_coil.hss_g.name=HSS-G Coil Block
 tile.wire_coil.naquadah.name=Naquadah Coil Block
-tile.wire_coil.naquadah_alloy.name=Naquadah Alloy Coil Block
-tile.wire_coil.fluxed_electrum.name=Fluxed Electrum Coil Block
-tile.wire_coil.diamericium_titanium.name=Diamericium Titanium Coil Block
+tile.wire_coil.trinium.name=Trinium Coil Block
+tile.wire_coil.tritanium.name=Tritanium Coil Block
 
 # General casing block tooltip
 tile.machine_casing.tooltip1=Mobs cannot Spawn on this Block
@@ -2147,7 +2274,7 @@ tile.boiler_casing.bronze_pipe.name=Bronze Pipe Casing
 tile.boiler_casing.steel_pipe.name=Steel Pipe Casing
 tile.boiler_casing.titanium_pipe.name=Titanium Pipe Casing
 tile.boiler_casing.tungstensteel_pipe.name=Tungstensteel Pipe Casing
-tile.boiler_casing.polytetrafluoroethylene_pipe.name=Polytetrafluoroethylene (PTFE) Pipe Casing
+tile.boiler_casing.polytetrafluoroethylene_pipe.name=PTFE Pipe Casing
 
 #Firebox casing blocks
 tile.boiler_casing.bronze_firebox.name=Bronze Firebox Casing
@@ -2156,7 +2283,7 @@ tile.boiler_casing.titanium_firebox.name=Titanium Firebox Casing
 tile.boiler_casing.tungstensteel_firebox.name=Tungstensteel Firebox Casing
 
 # Metal casing blocks
-tile.metal_casing.primitive_bricks.name=Primitive Bricks
+tile.metal_casing.primitive_bricks.name=Firebricks
 tile.metal_casing.coke_bricks.name=Coke Oven Bricks
 tile.metal_casing.bronze_bricks.name=Bronze Machine Casing
 tile.metal_casing.invar_heatproof.name=Heat Proof Invar Machine Casing
@@ -2165,7 +2292,8 @@ tile.metal_casing.steel_solid.name=Solid Steel Machine Casing
 tile.metal_casing.stainless_clean.name=Clean Stainless Steel Casing
 tile.metal_casing.titanium_stable.name=Stable Titanium Machine Casing
 tile.metal_casing.tungstensteel_robust.name=Robust Tungstensteel Machine Casing
-tile.metal_casing.ptfe_inert.name=Chemically Inert Polytetrafluoroethylene (PTFE) Machine Casing
+tile.metal_casing.ptfe_inert.name=Chemically Inert PTFE Machine Casing
+tile.metal_casing.hsse_sturdy.name=Sturdy HSS-E Machine Casing
 
 # Machine casing blocks
 tile.machine_casing.ultra_low_voltage.name=ULV Machine Casing
@@ -2192,22 +2320,26 @@ tile.steam_casing.steel_bricks_hull.name=Bricked Wrought Iron Hull
 tile.steam_casing.bronze.tooltip=For your first Steam Machines
 tile.steam_casing.steel.tooltip=For improved Steam Machines
 tile.steam_casing.pump_deck.name=Pump Deck
+tile.steam_casing.wood_wall.name=Wooden Wall
 
 # Gearbox casing blocks
-tile.turbine_casing.bronze_gearbox.name=Bronze Gear Box Casing
-tile.turbine_casing.steel_gearbox.name=Steel Gear Box Casing
-tile.turbine_casing.titanium_gearbox.name=Titanium Gear Box Casing
-tile.turbine_casing.steel_turbine_casing.name=Steel Turbine Casing
+tile.turbine_casing.bronze_gearbox.name=Bronze Gearbox Casing
+tile.turbine_casing.steel_gearbox.name=Steel Gearbox Casing
+tile.turbine_casing.stainless_steel_gearbox.name=Stainless Steel Gearbox Casing
+tile.turbine_casing.titanium_gearbox.name=Titanium Gearbox Casing
+tile.turbine_casing.tungstensteel_gearbox.name=Tungstensteel Gearbox Casing
 
 # Turbine casing blocks
+tile.turbine_casing.steel_turbine_casing.name=Steel Turbine Casing
 tile.turbine_casing.titanium_turbine_casing.name=Titanium Turbine Casing
 tile.turbine_casing.stainless_turbine_casing.name=Stainless Turbine Casing
 tile.turbine_casing.tungstensteel_turbine_casing.name=Tungstensteel Turbine Casing
 
 # Multiblock casing blocks
 tile.multiblock_casing.engine_intake.name=Engine Intake Casing
+tile.multiblock_casing.extreme_engine_intake.name=Extreme Engine Intake Casing
 tile.multiblock_casing.grate.name=Grate Machine Casing
-tile.multiblock_casing.assembler.name=Assembler Machine Casing
+tile.multiblock_casing.assembly_control.name=Assembly Control Casing
 tile.multiblock_casing.assembly_line.name=Assembly Line Casing
 
 # Fusion casing blocks
@@ -2264,72 +2396,131 @@ gregtech.machine.workbench.tab.crafting=Crafting
 gregtech.machine.workbench.tab.container=Container
 
 # Tanks
-gregtech.machine.wooden_tank.name=Wooden Tank
-gregtech.machine.bronze_tank.name=Bronze Tank
-gregtech.machine.steel_tank.name=Steel Tank
-gregtech.machine.aluminium_tank.name=Aluminium Tank
-gregtech.machine.stainless_steel_tank.name=Stainless Steel Tank
-gregtech.machine.titanium_tank.name=Titanium Tank
-gregtech.machine.tungstensteel_tank.name=Tungstensteel Tank
+gregtech.machine.tank_valve.wood.name=Wooden Tank Valve
+gregtech.machine.tank.wood.name=Wooden Multiblock Tank
+gregtech.machine.tank_valve.steel.name=Steel Tank Valve
+gregtech.machine.tank.steel.name=Steel Multiblock Tank
+
+gregtech.multiblock.tank.tooltip=Fill and drain through the controller or tank valves.
+gregtech.tank_valve.tooltip=Use to fill and drain multiblock tanks. Auto outputs when facing down.
 
 gregtech.machine.clipboard.name=Clipboard
 
-# Granite blocks
-tile.granite.black_granite.normal.name=Black Granite
-tile.granite.black_granite.cracked.name=Black Granite Cobblestone
-tile.granite.black_granite.mossy.name=Mossy Black Granite Cobblestone
-tile.granite.black_granite.chiseled.name=Chiseled Black Granite
-tile.granite.black_granite_bricks.normal.name=Black Granite Bricks
-tile.granite.black_granite_bricks.cracked.name=Cracked Black Granite Bricks
-tile.granite.black_granite_bricks.mossy.name=Mossy Black Granite Bricks
-tile.granite.black_granite_bricks.chiseled.name=Chiseled Black Granite Bricks
+# Asphalt
+tile.asphalt.asphalt.name=Asphalt
 
-tile.granite.red_granite.normal.name=Red Granite
-tile.granite.red_granite.cracked.name=Red Granite Cobblestone
-tile.granite.red_granite.mossy.name=Mossy Red Granite Cobblestone
-tile.granite.red_granite.chiseled.name=Chiseled Red Granite
-tile.granite.red_granite_bricks.normal.name=Red Granite Bricks
-tile.granite.red_granite_bricks.cracked.name=Cracked Red Granite Bricks
-tile.granite.red_granite_bricks.mossy.name=Mossy Red Granite Bricks
-tile.granite.red_granite_bricks.chiseled.name=Chiseled Red Granite Bricks
+# Smooth Stone Blocks
+tile.stone_smooth.black_granite.name=Black Granite
+tile.stone_smooth.red_granite.name=Red Granite
+tile.stone_smooth.marble.name=Marble
+tile.stone_smooth.basalt.name=Basalt
+tile.stone_smooth.concrete_light.name=Light Concrete
+tile.stone_smooth.concrete_dark.name=Dark Concrete
 
-# Mineral blocks
-tile.mineral.marble.normal.name=Marble
-tile.mineral.marble.cracked.name=Marble Cobblestone
-tile.mineral.marble.mossy.name=Mossy Marble Cobblestone
-tile.mineral.marble.chiseled.name=Chiseled Marble
-tile.mineral.marble_bricks.normal.name=Marble Bricks
-tile.mineral.marble_bricks.cracked.name=Cracked Marble Bricks
-tile.mineral.marble_bricks.mossy.name=Mossy Marble Bricks
-tile.mineral.marble_bricks.chiseled.name=Chiseled Marble Bricks
+# Cobble Stone Blocks
+tile.stone_cobble.black_granite.name=Black Granite Cobblestone
+tile.stone_cobble.red_granite.name=Red Granite Cobblestone
+tile.stone_cobble.marble.name=Marble Cobblestone
+tile.stone_cobble.basalt.name=Basalt Cobblestone
+tile.stone_cobble.concrete_light.name=Light Concrete Cobblestone
+tile.stone_cobble.concrete_dark.name=Dark Concrete Cobblestone
 
-tile.mineral.basalt.normal.name=Basalt
-tile.mineral.basalt.cracked.name=Basalt Cobblestone
-tile.mineral.basalt.mossy.name=Mossy Basalt Cobblestone
-tile.mineral.basalt.chiseled.name=Chiseled Basalt
-tile.mineral.basalt_bricks.normal.name=Basalt Bricks
-tile.mineral.basalt_bricks.cracked.name=Cracked Basalt Bricks
-tile.mineral.basalt_bricks.mossy.name=Mossy Basalt Bricks
-tile.mineral.basalt_bricks.chiseled.name=Chiseled Basalt Bricks
+# Mossy Cobble Stone Blocks
+tile.stone_cobble_mossy.black_granite.name=Mossy Black Granite Cobblestone
+tile.stone_cobble_mossy.red_granite.name=Mossy Red Granite Cobblestone
+tile.stone_cobble_mossy.marble.name=Mossy Marble Cobblestone
+tile.stone_cobble_mossy.basalt.name=Mossy Basalt Cobblestone
+tile.stone_cobble_mossy.concrete_light.name=Mossy Light Concrete Cobblestone
+tile.stone_cobble_mossy.concrete_dark.name=Mossy Dark Concrete Cobblestone
 
-# Concrete blocks
-tile.concrete.light_concrete.normal.name=Light Concrete
-tile.concrete.light_concrete.cracked.name=Light Concrete Cobblestone
-tile.concrete.light_concrete.mossy.name=Mossy Light Concrete Cobblestone
-tile.concrete.light_concrete.chiseled.name=Chiseled Light Concrete Cobblestone
-tile.concrete.light_bricks.normal.name=Light Concrete Bricks
-tile.concrete.light_bricks.cracked.name=Cracked Light Concrete Bricks
-tile.concrete.light_bricks.mossy.name=Mossy Light Concrete Bricks
-tile.concrete.light_bricks.chiseled.name=Chiseled Light Concrete Bricks
+# Chiseled Stone Blocks
+tile.stone_polished.black_granite.name=Polished Black Granite
+tile.stone_polished.red_granite.name=Polished Red Granite
+tile.stone_polished.marble.name=Polished Marble
+tile.stone_polished.basalt.name=Polished Basalt
+tile.stone_polished.concrete_light.name=Polished Light Concrete
+tile.stone_polished.concrete_dark.name=Polished Dark Concrete
 
-tile.concrete.dark_concrete.normal.name=Dark Concrete
-tile.concrete.dark_concrete.cracked.name=Dark Concrete Cobblestone
-tile.concrete.dark_concrete.mossy.name=Mossy Dark Concrete Cobblestone
-tile.concrete.dark_concrete.chiseled.name=Chiseled Dark Concrete Cobblestone
-tile.concrete.dark_bricks.normal.name=Dark Concrete Bricks
-tile.concrete.dark_bricks.cracked.name=Cracked Dark Concrete Bricks
-tile.concrete.dark_bricks.mossy.name=Mossy Dark Concrete Bricks
-tile.concrete.dark_bricks.chiseled.name=Chiseled Dark Concrete Bricks
+# Stone Brick Blocks
+tile.stone_bricks.black_granite.name=Black Granite Bricks
+tile.stone_bricks.red_granite.name=Red Granite Bricks
+tile.stone_bricks.marble.name=Marble Bricks
+tile.stone_bricks.basalt.name=Basalt Bricks
+tile.stone_bricks.concrete_light.name=Light Concrete Bricks
+tile.stone_bricks.concrete_dark.name=Dark Concrete Bricks
+
+# Cracked Stone Brick Blocks
+tile.stone_bricks_cracked.black_granite.name=Cracked Black Granite Bricks
+tile.stone_bricks_cracked.red_granite.name=Cracked Red Granite Bricks
+tile.stone_bricks_cracked.marble.name=Cracked Marble Bricks
+tile.stone_bricks_cracked.basalt.name=Cracked Basalt Bricks
+tile.stone_bricks_cracked.concrete_light.name=Cracked Light Concrete Bricks
+tile.stone_bricks_cracked.concrete_dark.name=Cracked Dark Concrete Bricks
+
+# Mossy Stone Brick Blocks
+tile.stone_bricks_mossy.black_granite.name=Mossy Black Granite Bricks
+tile.stone_bricks_mossy.red_granite.name=Mossy Red Granite Bricks
+tile.stone_bricks_mossy.marble.name=Mossy Marble Bricks
+tile.stone_bricks_mossy.basalt.name=Mossy Basalt Bricks
+tile.stone_bricks_mossy.concrete_light.name=Mossy Light Concrete Bricks
+tile.stone_bricks_mossy.concrete_dark.name=Mossy Dark Concrete Bricks
+
+# Chiseled Stone Blocks
+tile.stone_chiseled.black_granite.name=Chiseled Black Granite
+tile.stone_chiseled.red_granite.name=Chiseled Red Granite
+tile.stone_chiseled.marble.name=Chiseled Marble
+tile.stone_chiseled.basalt.name=Chiseled Basalt
+tile.stone_chiseled.concrete_light.name=Chiseled Light Concrete
+tile.stone_chiseled.concrete_dark.name=Chiseled Dark Concrete
+
+# Tiled Stone Blocks
+tile.stone_tiled.black_granite.name=Black Granite Tiles
+tile.stone_tiled.red_granite.name=Red Granite Tiles
+tile.stone_tiled.marble.name=Marble Tiles
+tile.stone_tiled.basalt.name=Basalt Tiles
+tile.stone_tiled.concrete_light.name=Light Concrete Tiles
+tile.stone_tiled.concrete_dark.name=Dark Concrete Tiles
+
+# Small Tiled Stone Blocks
+tile.stone_tiled_small.black_granite.name=Small Black Granite Tiles
+tile.stone_tiled_small.red_granite.name=Small Red Granite Tiles
+tile.stone_tiled_small.marble.name=Small Marble Tiles
+tile.stone_tiled_small.basalt.name=Small Basalt Tiles
+tile.stone_tiled_small.concrete_light.name=Small Light Concrete Tiles
+tile.stone_tiled_small.concrete_dark.name=Small Dark Concrete Tiles
+
+# Small Stone Brick Blocks
+tile.stone_bricks_small.black_granite.name=Small Black Granite Bricks
+tile.stone_bricks_small.red_granite.name=Small Red Granite Bricks
+tile.stone_bricks_small.marble.name=Small Marble Bricks
+tile.stone_bricks_small.basalt.name=Small Basalt Bricks
+tile.stone_bricks_small.concrete_light.name=Small Light Concrete Bricks
+tile.stone_bricks_small.concrete_dark.name=Small Dark Concrete Bricks
+
+# Stone Bricks Windmill A Blocks
+tile.stone_bricks_windmill_a.black_granite.name=Black Granite Windmill Tiles A
+tile.stone_bricks_windmill_a.red_granite.name=Red Granite Windmill Tiles A
+tile.stone_bricks_windmill_a.marble.name=Marble Windmill Tiles A
+tile.stone_bricks_windmill_a.basalt.name=Basalt Windmill Tiles A
+tile.stone_bricks_windmill_a.concrete_light.name=Light Concrete Windmill Tiles A
+tile.stone_bricks_windmill_a.concrete_dark.name=Dark Concrete Windmill Tiles A
+
+# Stone Bricks Windmill B Blocks
+tile.stone_bricks_windmill_b.black_granite.name=Black Granite Windmill Tiles B
+tile.stone_bricks_windmill_b.red_granite.name=Red Granite Windmill Tiles B
+tile.stone_bricks_windmill_b.marble.name=Marble Windmill Tiles B
+tile.stone_bricks_windmill_b.basalt.name=Basalt Windmill Tiles B
+tile.stone_bricks_windmill_b.concrete_light.name=Light Concrete Windmill Tiles B
+tile.stone_bricks_windmill_b.concrete_dark.name=Dark Concrete Windmill Tiles B
+
+# Square Stone Brick Blocks
+tile.stone_bricks_square.black_granite.name=Square Black Granite Bricks
+tile.stone_bricks_square.red_granite.name=Square Red Granite Bricks
+tile.stone_bricks_square.marble.name=Square Marble Bricks
+tile.stone_bricks_square.basalt.name=Square Basalt Bricks
+tile.stone_bricks_square.concrete_light.name=Square Light Concrete Bricks
+tile.stone_bricks_square.concrete_dark.name=Square Dark Concrete Bricks
+
 
 # Steam machines
 gregtech.machine.steam_boiler.tooltip_produces=Produces %,dL of Steam per second
@@ -2380,45 +2571,34 @@ gregtech.machine.steam_miner.tooltip=Mines ores below the miner ONLY!
 gregtech.machine.steam_miner.description=Working Area: §b%dx%d§7 blocks. §b%ds§7 per block. Uses §b16mB/t§7 of steam.
 
 # Generators
+gregtech.machine.combustion_generator.tooltip=Requires flammable Liquids
+
 gregtech.machine.combustion_generator.lv.name=Basic Combustion Generator
-gregtech.machine.combustion_generator.lv.tooltip=Requires flammable Liquids
 gregtech.machine.combustion_generator.mv.name=Advanced Combustion Generator
-gregtech.machine.combustion_generator.mv.tooltip=Requires flammable Liquids
 gregtech.machine.combustion_generator.hv.name=Turbo Combustion Generator
-gregtech.machine.combustion_generator.hv.tooltip=Requires flammable Liquids
-gregtech.machine.combustion_generator.ev.name=Turbo Combustion Generator II
-gregtech.machine.combustion_generator.ev.tooltip=Requires flammable Liquids
+
+gregtech.machine.steam_turbine.tooltip=Converts Steam into EU
 
 gregtech.machine.steam_turbine.lv.name=Basic Steam Turbine
-gregtech.machine.steam_turbine.lv.tooltip=Converts Steam into EU
 gregtech.machine.steam_turbine.mv.name=Advanced Steam Turbine
-gregtech.machine.steam_turbine.mv.tooltip=Converts Steam into EU
 gregtech.machine.steam_turbine.hv.name=Turbo Steam Turbine
-gregtech.machine.steam_turbine.hv.tooltip=Converts Steam into EU
-gregtech.machine.steam_turbine.ev.name=Turbo Steam Turbine II
-gregtech.machine.steam_turbine.ev.tooltip=Converts Steam into EU
+
+gregtech.machine.gas_turbine.tooltip=Requires flammable Gases
 
 gregtech.machine.gas_turbine.lv.name=Basic Gas Turbine
-gregtech.machine.gas_turbine.lv.tooltip=Requires flammable Gasses
 gregtech.machine.gas_turbine.mv.name=Advanced Gas Turbine
-gregtech.machine.gas_turbine.mv.tooltip=Requires flammable Gasses
 gregtech.machine.gas_turbine.hv.name=Turbo Gas Turbine
-gregtech.machine.gas_turbine.hv.tooltip=Requires flammable Gasses
-gregtech.machine.gas_turbine.ev.name=Turbo Gas Turbine II
-gregtech.machine.gas_turbine.ev.tooltip=Requires flammable Gasses
 
 
 gregtech.machine.magic_energy_absorber.name=Magic Energy Absorber
-gregtech.machine.magic_energy_absorber.tooltip=Max Voltage OUT: §a2048 §7(§aEV§7)/nCollects energy from end crystals on naturally generated obsidian pillars in the End within 64 blocks./nEach ender crystal adds 32 EU/t to output/nPlace Dragon Egg on top to amplify output/n/nWhen amplified:/nEach ender crystal adds 128 EU/t
-gregtech.machine.magic_energy_converter.name=Magic Energy Converter
-gregtech.machine.magic_energy_converter.tooltip=Voltage OUT: §a128 §7(§aMV§7)/nCollects essentia from containers within 16 blocks/nConsumes 20 Potentia per second
+gregtech.machine.magic_energy_absorber.tooltip=Max Voltage OUT: §a2048 §7(§5EV§7)/nCollects energy from end crystals on naturally generated obsidian pillars in the End within 64 blocks./nEach ender crystal adds 32 EU/t to output/nPlace Dragon Egg on top to amplify output/n/nWhen amplified:/nEach ender crystal adds 128 EU/t
 
 # Machines
 gregtech.machine.block_breaker.lv.name=Basic Block Breaker
 gregtech.machine.block_breaker.mv.name=Advanced Block Breaker
 gregtech.machine.block_breaker.hv.name=Advanced Block Breaker II
 gregtech.machine.block_breaker.ev.name=Advanced Block Breaker III
-gregtech.machine.block_breaker.tooltip=Mines block on front face and collects its drops
+gregtech.machine.block_breaker.tooltip=Mines block on front face and collects its drops/nOnly works when powered with Redstone
 gregtech.machine.block_breaker.consumption=Consumes §e%,d EU§7 per operation
 gregtech.machine.block_breaker.speed_bonus=Speed Bonus: §e%,d%%
 
@@ -2856,10 +3036,7 @@ gregtech.machine.ore_washer.uiv.name=High-Tech Ore Washing Plant III
 gregtech.machine.ore_washer.umv.name=High-Tech Ore Washing Plant IV
 gregtech.machine.ore_washer.uxv.name=Ultimate Ore Washing Plant
 
-gregtech.machine.ore_washer.simple.name=Simple Ore Washing Plant
-gregtech.machine.ore_washer.simple.tooltip=It's like an automatic Cauldron for Washing. Grants no Byproducts, but it is fast.
-
-gregtech.machine.packer.tooltip=Puts things into Boxes
+gregtech.machine.packer.tooltip=Puts things into and Grabs things out of Boxes
 
 gregtech.machine.packer.lv.name=Basic Packager
 gregtech.machine.packer.mv.name=Advanced Packager
@@ -2874,22 +3051,6 @@ gregtech.machine.packer.uev.name=High-Tech Packer II
 gregtech.machine.packer.uiv.name=High-Tech Packer III
 gregtech.machine.packer.umv.name=High-Tech Packer IV
 gregtech.machine.packer.uxv.name=Ultimate Packer
-
-gregtech.machine.unpacker.tooltip=Grabs things out of Boxes
-
-gregtech.machine.unpacker.lv.name=Basic Unpackager
-gregtech.machine.unpacker.mv.name=Advanced Unpackager
-gregtech.machine.unpacker.hv.name=Advanced Unpackager II
-gregtech.machine.unpacker.ev.name=Advanced Unpackager III
-gregtech.machine.unpacker.iv.name=Elite Unpackager
-gregtech.machine.unpacker.luv.name=Elite Unpackager II
-gregtech.machine.unpacker.zpm.name=Elite Unpackager III
-gregtech.machine.unpacker.uv.name=Elite Unpackager IV
-gregtech.machine.unpacker.uhv.name=High-Tech Unpacker
-gregtech.machine.unpacker.uev.name=High-Tech Unpacker II
-gregtech.machine.unpacker.uiv.name=High-Tech Unpacker III
-gregtech.machine.unpacker.umv.name=High-Tech Unpacker IV
-gregtech.machine.unpacker.uxv.name=Ultimate Unpacker
 
 gregtech.machine.polarizer.tooltip=Bipolarising your Magnets
 
@@ -3037,6 +3198,11 @@ gregtech.machine.scanner.uxv.name=Ultimate Scanner
 
 gregtech.machine.infinite_energy.name=Infinite GT Energy Unit Emitter
 gregtech.machine.infinite_energy.tooltip=§8You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§8 to use this
+gregtech.machine.creative_chest.name=Creative Quantum Chest
+gregtech.machine.creative_chest.tooltip=§8You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§8 to use this
+gregtech.machine.creative_tank.name=Creative Quantum Tank
+gregtech.machine.creative_tank.tooltip=§8You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§8 to use this
+
 
 # Machine hulls
 gregtech.machine.hull.tooltip=§fYou just need §5I§dm§4a§cg§ei§an§ba§3t§7i§1o§5n§f to use this
@@ -3058,86 +3224,71 @@ gregtech.machine.hull.uxv.name=UXV Machine Hull
 gregtech.machine.hull.max.name=MAX Machine Hull
 
 # Battery buffers
-gregtech.machine.battery_buffer.ulv.1.name=Ultra Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.ulv.4.name=Ultra Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.ulv.9.name=Ultra Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.ulv.16.name=Ultra Low Voltage Battery Buffer
+gregtech.machine.battery_buffer.ulv.4.name=Ultra Low Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.ulv.8.name=Ultra Low Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.ulv.16.name=Ultra Low Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.lv.1.name=Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.lv.4.name=Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.lv.9.name=Low Voltage Battery Buffer
-gregtech.machine.battery_buffer.lv.16.name=Low Voltage Battery Buffer
+gregtech.machine.battery_buffer.lv.4.name=Low Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.lv.8.name=Low Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.lv.16.name=Low Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.mv.1.name=Medium Voltage Battery Buffer
-gregtech.machine.battery_buffer.mv.4.name=Medium Voltage Battery Buffer
-gregtech.machine.battery_buffer.mv.9.name=Medium Voltage Battery Buffer
-gregtech.machine.battery_buffer.mv.16.name=Medium Voltage Battery Buffer
+gregtech.machine.battery_buffer.mv.4.name=Medium Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.mv.8.name=Medium Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.mv.16.name=Medium Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.hv.1.name=High Voltage Battery Buffer
-gregtech.machine.battery_buffer.hv.4.name=High Voltage Battery Buffer
-gregtech.machine.battery_buffer.hv.9.name=High Voltage Battery Buffer
-gregtech.machine.battery_buffer.hv.16.name=High Voltage Battery Buffer
+gregtech.machine.battery_buffer.hv.4.name=High Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.hv.8.name=High Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.hv.16.name=High Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.ev.1.name=Extreme Voltage Battery Buffer
-gregtech.machine.battery_buffer.ev.4.name=Extreme Voltage Battery Buffer
-gregtech.machine.battery_buffer.ev.9.name=Extreme Voltage Battery Buffer
-gregtech.machine.battery_buffer.ev.16.name=Extreme Voltage Battery Buffer
+gregtech.machine.battery_buffer.ev.4.name=Extreme Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.ev.8.name=Extreme Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.ev.16.name=Extreme Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.iv.1.name=Insane Voltage Battery Buffer
-gregtech.machine.battery_buffer.iv.4.name=Insane Voltage Battery Buffer
-gregtech.machine.battery_buffer.iv.9.name=Insane Voltage Battery Buffer
-gregtech.machine.battery_buffer.iv.16.name=Insane Voltage Battery Buffer
+gregtech.machine.battery_buffer.iv.4.name=Insane Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.iv.8.name=Insane Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.iv.16.name=Insane Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.luv.1.name=Ludicrous Voltage Battery Buffer
-gregtech.machine.battery_buffer.luv.4.name=Ludicrous Voltage Battery Buffer
-gregtech.machine.battery_buffer.luv.9.name=Ludicrous Voltage Battery Buffer
-gregtech.machine.battery_buffer.luv.16.name=Ludicrous Voltage Battery Buffer
+gregtech.machine.battery_buffer.luv.4.name=Ludicrous Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.luv.8.name=Ludicrous Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.luv.16.name=Ludicrous Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.zpm.1.name=ZPM Voltage Battery Buffer
-gregtech.machine.battery_buffer.zpm.4.name=ZPM Voltage Battery Buffer
-gregtech.machine.battery_buffer.zpm.9.name=ZPM Voltage Battery Buffer
-gregtech.machine.battery_buffer.zpm.16.name=ZPM Voltage Battery Buffer
+gregtech.machine.battery_buffer.zpm.4.name=ZPM Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.zpm.8.name=ZPM Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.zpm.16.name=ZPM Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uv.1.name=Ultimate Voltage Battery Buffer
-gregtech.machine.battery_buffer.uv.4.name=Ultimate Voltage Battery Buffer
-gregtech.machine.battery_buffer.uv.9.name=Ultimate Voltage Battery Buffer
-gregtech.machine.battery_buffer.uv.16.name=Ultimate Voltage Battery Buffer
+gregtech.machine.battery_buffer.uv.4.name=Ultimate Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uv.8.name=Ultimate Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uv.16.name=Ultimate Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uhv.1.name=UHV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uhv.4.name=UHV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uhv.9.name=UHV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uhv.16.name=UHV Voltage Battery Buffer
+gregtech.machine.battery_buffer.uhv.4.name=UHV Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uhv.8.name=UHV Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uhv.16.name=UHV Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uev.1.name=UEV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uev.4.name=UEV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uev.9.name=UEV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uev.16.name=UEV Voltage Battery Buffer
+gregtech.machine.battery_buffer.uev.4.name=UEV Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uev.8.name=UEV Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uev.16.name=UEV Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uiv.1.name=UIV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uiv.4.name=UIV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uiv.9.name=UIV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uiv.16.name=UIV Voltage Battery Buffer
+gregtech.machine.battery_buffer.uiv.4.name=UIV Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uiv.8.name=UIV Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uiv.16.name=UIV Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.umv.1.name=UMV Voltage Battery Buffer
-gregtech.machine.battery_buffer.umv.4.name=UMV Voltage Battery Buffer
-gregtech.machine.battery_buffer.umv.9.name=UMV Voltage Battery Buffer
-gregtech.machine.battery_buffer.umv.16.name=UMV Voltage Battery Buffer
+gregtech.machine.battery_buffer.umv.4.name=UMV Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.umv.8.name=UMV Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.umv.16.name=UMV Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uxv.1.name=UXV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uxv.4.name=UXV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uxv.9.name=UXV Voltage Battery Buffer
-gregtech.machine.battery_buffer.uxv.16.name=UXV Voltage Battery Buffer
+gregtech.machine.battery_buffer.uxv.4.name=UXV Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uxv.8.name=UXV Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uxv.16.name=UXV Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.max.1.name=MAX Voltage Battery Buffer
-gregtech.machine.battery_buffer.max.4.name=MAX Voltage Battery Buffer
-gregtech.machine.battery_buffer.max.9.name=MAX Voltage Battery Buffer
-gregtech.machine.battery_buffer.max.16.name=MAX Voltage Battery Buffer
+gregtech.machine.battery_buffer.max.4.name=MAX Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.max.8.name=MAX Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.max.16.name=MAX Voltage 16x Battery Buffer
 
 # Transformers
 gregtech.machine.transformer.tooltip_tool_usage=Use Soft Hammer to invert (Starts as Transform Down)
-gregtech.machine.transformer.tooltip_transform_down=Transform Down: §a%dA %dEU (%d)§7 -> §a%dA %dEU (%d)
+gregtech.machine.transformer.tooltip_transform_down=Transform Down: §a%dA %dEU (%s§a)§7 -> §a%dA %dEU (%s§a)
 gregtech.machine.transformer.message_transform_down=Transforming Down, In: %dEU %dA, Out: %dEU %dA
-gregtech.machine.transformer.tooltip_transform_up=Transform Up: §a%dA %dEU (%d)§7 -> §a%dA %dEU (%d)
+gregtech.machine.transformer.tooltip_transform_up=Transform Up: §a%dA %dEU (%s§a)§7 -> §a%dA %dEU (%s§a)
 gregtech.machine.transformer.message_transform_up=Transforming Up, In: %dEU %dA, Out: %dEU %dA
 gregtech.machine.transformer_adjustable.tooltip_tool_usage=Use Screwdriver to cycle amperage (Starts as 4 Amps)
 gregtech.machine.transformer_adjustable.message_adjust=Adjusted Hi-Amp to %dEU %dA, Lo-Amp to %dEU %dA
@@ -3175,7 +3326,7 @@ gregtech.machine.transformer.adjustable.uxv.name=UXV Voltage Adjustable Transfor
 # Diodes
 gregtech.machine.diode.message=Max Amperage throughput: %s
 gregtech.machine.diode.tooltip_general=A simple Diode that will allow Energy Flow in only one direction.
-gregtech.machine.diode.tooltip_tool_usage=Hit with a Soft Hammer to toggle Amperage flow.
+gregtech.machine.diode.tooltip_tool_usage=Hit with a Soft Hammer to change Amperage flow.
 
 gregtech.machine.diode.ulv.name=Ultra Low Voltage Diode
 gregtech.machine.diode.lv.name=Low Voltage Diode
@@ -3194,21 +3345,21 @@ gregtech.machine.diode.uxv.name=UXV Voltage Diode
 gregtech.machine.diode.max.name=MAX Voltage Diode
 
 # Chargers
-gregtech.machine.charger.ulv.name=Ultra Low Voltage Battery Charger
-gregtech.machine.charger.lv.name=Low Voltage Battery Charger
-gregtech.machine.charger.mv.name=Medium Voltage Battery Charger
-gregtech.machine.charger.hv.name=High Voltage Battery Charger
-gregtech.machine.charger.ev.name=Extreme Voltage Battery Charger
-gregtech.machine.charger.iv.name=Insane Voltage Battery Charger
-gregtech.machine.charger.luv.name=Ludicrous Voltage Battery Charger
-gregtech.machine.charger.zpm.name=ZPM Voltage Battery Charger
-gregtech.machine.charger.uv.name=Ultimate Voltage Battery Charger
-gregtech.machine.charger.uhv.name=UHV Voltage Battery Charger
-gregtech.machine.charger.uev.name=UEV Voltage Battery Charger
-gregtech.machine.charger.uiv.name=UIV Voltage Battery Charger
-gregtech.machine.charger.umv.name=UMV Voltage Battery Charger
-gregtech.machine.charger.uxv.name=UXV Voltage Battery Charger
-gregtech.machine.charger.max.name=MAX Voltage Battery Charger
+gregtech.machine.charger.ulv.name=Ultra Low Voltage Turbo Charger
+gregtech.machine.charger.lv.name=Low Voltage Turbo Charger
+gregtech.machine.charger.mv.name=Medium Voltage Turbo Charger
+gregtech.machine.charger.hv.name=High Voltage Turbo Charger
+gregtech.machine.charger.ev.name=Extreme Voltage Turbo Charger
+gregtech.machine.charger.iv.name=Insane Voltage Turbo Charger
+gregtech.machine.charger.luv.name=Ludicrous Voltage Turbo Charger
+gregtech.machine.charger.zpm.name=ZPM Voltage Turbo Charger
+gregtech.machine.charger.uv.name=Ultimate Voltage Turbo Charger
+gregtech.machine.charger.uhv.name=UHV Voltage Turbo Charger
+gregtech.machine.charger.uev.name=UEV Voltage Turbo Charger
+gregtech.machine.charger.uiv.name=UIV Voltage Turbo Charger
+gregtech.machine.charger.umv.name=UMV Voltage Turbo Charger
+gregtech.machine.charger.uxv.name=UXV Voltage Turbo Charger
+gregtech.machine.charger.max.name=MAX Voltage Turbo Charger
 
 # Pumps
 gregtech.machine.pump.tooltip_range=Pumping Area: %,dx%,d
@@ -3283,7 +3434,7 @@ tile.hermetic_casing.hermetic_casing_iv.name=Hermetic Casing V
 tile.hermetic_casing.hermetic_casing_luv.name=Hermetic Casing VI
 tile.hermetic_casing.hermetic_casing_zpm.name=Hermetic Casing VII
 tile.hermetic_casing.hermetic_casing_uv.name=Hermetic Casing VIII
-tile.hermetic_casing.hermetic_casing_max.name=Hermetic Casing IX
+tile.hermetic_casing.hermetic_casing_uhv.name=Hermetic Casing IX
 
 #Gas Collectors
 gregtech.machine.gas_collector.lv.name=Basic Gas Collector
@@ -3343,7 +3494,10 @@ gregtech.machine.world_accelerator.mode_entity=Entity Mode
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side
 gregtech.machine.basic.input_from_output_side.disallow=Disallow Input from Output Side
+gregtech.machine.muffle.on=Sound Muffling: Enabled
+gregtech.machine.muffle.off=Sound Muffling: Disabled
 gregtech.machine.perfect_oc=Does not lose energy efficiency when overclocked.
+gregtech.machine.parallel_limit=Can run up to §b%d§r§7 Recipes at once.
 
 # Advancements
 gregtech.advancement.root_steam.name=Steam Age
@@ -3439,9 +3593,9 @@ gregtech.advancement.medium_voltage.36_integrated_logic_circuit.desc=Produce an 
 gregtech.advancement.medium_voltage.37_advanced_integrated_logic_circuit.name=Step Forward
 gregtech.advancement.medium_voltage.37_advanced_integrated_logic_circuit.desc=Obtain Advanced Circuits.
 gregtech.advancement.medium_voltage.38_super_chest.name=New Storage
-gregtech.advancement.medium_voltage.38_super_chest.desc=Craft a Quantum Chest.
+gregtech.advancement.medium_voltage.38_super_chest.desc=Craft a Super Chest I.
 gregtech.advancement.medium_voltage.39_super_tank.name=Where is the Ocean?
-gregtech.advancement.medium_voltage.39_super_tank.desc=Build a Quantum Tank.
+gregtech.advancement.medium_voltage.39_super_tank.desc=Build a Super Tank I.
 gregtech.advancement.root_hv.name=High Voltage
 gregtech.advancement.root_hv.desc=Produce a Stainless Steel Ingot.
 gregtech.advancement.high_voltage.40_workstation.name=Workstations
@@ -3524,8 +3678,8 @@ gregtech.advancement.zero_point_module.71_neuro_processing_unit.name=Neuro Proce
 gregtech.advancement.zero_point_module.71_neuro_processing_unit.desc=Produce a Neuro Processing Unit.
 gregtech.advancement.zero_point_module.72_wetware_processor.name=Wetware Processor
 gregtech.advancement.zero_point_module.72_wetware_processor.desc=Get Wetware Processors.
-gregtech.advancement.zero_point_module.73_naquadah_alloy_coil.name=Over 9000!
-gregtech.advancement.zero_point_module.73_naquadah_alloy_coil.desc=Craft a Naquadah Alloy Heating Coil.
+gregtech.advancement.zero_point_module.73_trinium_coil.name=Over 9000!
+gregtech.advancement.zero_point_module.73_trinium_coil.desc=Craft a Trinium Heating Coil.
 gregtech.advancement.root_uv.name=Ultimate Voltage
 gregtech.advancement.root_uv.desc=Produce Tritanium.
 gregtech.advancement.ultimate_voltage.74_wetware_mainframe.name=Wetware Mainframe
@@ -3538,13 +3692,12 @@ gregtech.advancement.ultimate_voltage.77_ultimate_battery.name=What Now?
 gregtech.advancement.ultimate_voltage.77_ultimate_battery.desc=Craft an Ultimate Battery.
 gregtech.advancement.ultimate_voltage.78_hasoc_wafer.name=HASoC Wafer
 gregtech.advancement.ultimate_voltage.78_hasoc_wafer.desc=Produce an HASoC Wafer to make cheaper Master Circuits.
-gregtech.advancement.ultimate_voltage.79_fluxed_electrum_coil.name=The Formula is Too Long
-gregtech.advancement.ultimate_voltage.79_fluxed_electrum_coil.desc=Craft a Fluxed Electrum Heating Coil.
-gregtech.advancement.ultimate_voltage.80_diamericium_titanium_coil.name=The Final Coil
-gregtech.advancement.ultimate_voltage.80_diamericium_titanium_coil.desc=Craft a Diamericium Titanium Heating Coil.
+gregtech.advancement.ultimate_voltage.79_tritanium_coil.name=The Final Coil
+gregtech.advancement.ultimate_voltage.79_tritanium_coil.desc=Craft a Tritanium Heating Coil.
 
 
 behaviour.softhammer=Activates and Deactivates Machines
+behaviour.hammer=Turns on and off Muffling for Machines (by hitting them)
 behaviour.wrench=Rotates Blocks on Rightclick
 behaviour.boor.by=by %s
 behaviour.paintspray.white.tooltip=Can paint things in White
@@ -3576,16 +3729,27 @@ gregtech.machine.electric_blast_furnace.tooltip.3=For every voltage tier above �
 gregtech.machine.vacuum_freezer.name=Vacuum Freezer
 gregtech.machine.implosion_compressor.name=Implosion Compressor
 gregtech.machine.pyrolyse_oven.name=Pyrolyse Oven
+gregtech.machine.pyrolyse_oven.tooltip.1=§aCupronickel Coils§7 are §a25%%§7 slower. Every coil after §aKanthal§7 increases speed by §a50%%§7.
 gregtech.machine.distillation_tower.name=Distillation Tower
 gregtech.machine.multi_furnace.name=Multi Smelter
-gregtech.machine.cracker.name=Cracker Unit
+gregtech.machine.cracker.name=Oil Cracking Unit
+gregtech.machine.cracker.tooltip.1=Every coil after §aCupronickel§7 reduces energy usage by §a5%%§7.
 gregtech.machine.coke_oven.name=Coke Oven
+gregtech.machine.processing_array.name=Processing Array
+gregtech.machine.advanced_processing_array.name=Advanced Processing Array
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
 gregtech.machine.coke_oven_hatch.tooltip=Allows automation access to coke oven. Must be centered on coke oven side.
+gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 
 
 
 gregtech.machine.large_combustion_engine.name=Large Combustion Engine
+gregtech.machine.large_combustion_engine.tooltip.1=Produces up to §e%s§7 EU/t.
+gregtech.machine.large_combustion_engine.tooltip.2=Requires §e1000 L/hr§7 of Lubricant to run.
+gregtech.machine.large_combustion_engine.tooltip.boost_regular=Supply §e20 L/s§7 of Oxygen to produce up to §e%s§7 EU/t at §e2x§7 fuel consumption.
+gregtech.machine.large_combustion_engine.tooltip.boost_extreme.1=Supply §e20 L/s§7 of Oxygen to produce up to §e%s§7 EU/t at §e1x§7 fuel consumption.
+gregtech.machine.large_combustion_engine.tooltip.boost_extreme.2=Supply §e80 L/s§7 of Liquid Oxygen to produce up to §e%s§7 EU/t at §e1.33x§7 fuel consumption.
+gregtech.machine.extreme_combustion_engine.name=Extreme Combustion Engine
 gregtech.machine.large_turbine.steam.name=Large Steam Turbine
 gregtech.machine.large_turbine.gas.name=Large Gas Turbine
 gregtech.machine.large_turbine.plasma.name=Large Plasma Turbine
@@ -3600,6 +3764,7 @@ gregtech.machine.fusion_reactor.luv.name=Fusion Reactor Computer Mark 1
 gregtech.machine.fusion_reactor.zpm.name=Fusion Reactor Computer Mark 2
 gregtech.machine.fusion_reactor.uv.name=Fusion Reactor Computer Mark 3
 gregtech.machine.fusion_reactor.capacity=§7Maximum Energy Storage: §e%sM EU
+gregtech.machine.fusion_reactor.overclocking=Overclocks double energy and halve duration.
 
 gregtech.machine.miner.lv.name=Basic Miner
 gregtech.machine.miner.mv.name=Advanced Miner
@@ -3610,21 +3775,20 @@ gregtech.machine.miner.usage=Max Working Area: §b%dx%d§7 blocks. §b%ds§7 per
 gregtech.machine.large_miner.ev.name=Basic Large Miner
 gregtech.machine.large_miner.iv.name=Advanced Large Miner
 gregtech.machine.large_miner.luv.name=Advanced Large Miner II
-gregtech.machine.miner.multi.modes=Has Silk Touch and Chunk Boundary Modes.
+gregtech.machine.miner.multi.modes=Has Silk Touch and Chunk Aligned Modes.
 gregtech.machine.miner.multi.tooltip=Max Working Area: §b%dx%d§7 chunks.
 gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator.
+gregtech.machine.miner.multi.description=A multiblock mining machine that covers a large area and produces huge quantity of ore.
 #Small ores lang: gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator. Small ore Fortune §b%d§7.
 gregtech.machine.miner.fluid_usage=Consumes §b%dmb§7 of §e%s§7 per tick. Each overclock doubles the fluid consumption.
-gregtech.machine.miner.overclock=Requires §e%s§7 power. Overclocks up to §e%s§7.
-
-gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
+gregtech.machine.miner.overclock=Requires %s§7 power. Overclocks up to %s§7.
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
 gregtech.multiblock.central_monitor.height=Screen Height:
 gregtech.multiblock.central_monitor.width=Screen Width: %d
 gregtech.multiblock.central_monitor.height_modify=Modify Height: %d
-gregtech.multiblock.central_monitor.tooltip.1=This is a screen that monitors machines proxied by the Digital Interface Cover. You can easily monitor the Fluids, Items, Energy, and States of machines proxied in Energy Network.
+gregtech.multiblock.central_monitor.tooltip.1=This is a machine that monitors machines proxied by the Digital Interface Cover. You can easily monitor the Fluids, Items, Energy, and States of machines proxied in Energy Network.
 gregtech.multiblock.central_monitor.tooltip.2=You can build the central monitor screen from 3X2 to %dX%d (width X height).
 gregtech.multiblock.central_monitor.tooltip.3=The default height is 3. You can adjust the screen height in the GUI before the structure is formed.
 gregtech.multiblock.central_monitor.tooltip.4=Energy consumption: %d EU/s for each screen.
@@ -3654,7 +3818,7 @@ gregtech.machine.item_bus.import.iv.name=IV Input Bus
 gregtech.machine.item_bus.import.luv.name=LuV Input Bus
 gregtech.machine.item_bus.import.zpm.name=ZPM Input Bus
 gregtech.machine.item_bus.import.uv.name=UV Input Bus
-gregtech.machine.item_bus.import.max.name=MAX Input Bus
+gregtech.machine.item_bus.import.uhv.name=UHV Input Bus
 
 gregtech.machine.item_bus.export.tooltip=Item Output for Multiblocks
 
@@ -3667,7 +3831,7 @@ gregtech.machine.item_bus.export.iv.name=IV Output Bus
 gregtech.machine.item_bus.export.luv.name=LuV Output Bus
 gregtech.machine.item_bus.export.zpm.name=ZPM Output Bus
 gregtech.machine.item_bus.export.uv.name=UV Output Bus
-gregtech.machine.item_bus.export.max.name=MAX Output Bus
+gregtech.machine.item_bus.export.uhv.name=UHV Output Bus
 
 gregtech.machine.fluid_hatch.import.tooltip=Fluid Input for Multiblocks
 
@@ -3680,7 +3844,7 @@ gregtech.machine.fluid_hatch.import.iv.name=IV Input Hatch
 gregtech.machine.fluid_hatch.import.luv.name=LuV Input Hatch
 gregtech.machine.fluid_hatch.import.zpm.name=ZPM Input Hatch
 gregtech.machine.fluid_hatch.import.uv.name=UV Input Hatch
-gregtech.machine.fluid_hatch.import.max.name=MAX Input Hatch
+gregtech.machine.fluid_hatch.import.uhv.name=UHV Input Hatch
 
 gregtech.machine.fluid_hatch.export.tooltip=Fluid Output for Multiblocks
 
@@ -3700,7 +3864,7 @@ gregtech.machine.fluid_hatch.export.iv.name=IV Output Hatch
 gregtech.machine.fluid_hatch.export.luv.name=LuV Output Hatch
 gregtech.machine.fluid_hatch.export.zpm.name=ZPM Output Hatch
 gregtech.machine.fluid_hatch.export.uv.name=UV Output Hatch
-gregtech.machine.fluid_hatch.export.max.name=MAX Output Hatch
+gregtech.machine.fluid_hatch.export.uhv.name=UHV Output Hatch
 
 gregtech.machine.energy_hatch.input.tooltip=Energy Input for Multiblocks
 
@@ -3720,23 +3884,19 @@ gregtech.machine.energy_hatch.input.umv.name=UMV Energy Hatch
 gregtech.machine.energy_hatch.input.uxv.name=UXV Energy Hatch
 gregtech.machine.energy_hatch.input.max.name=MAX Energy Hatch
 
-gregtech.machine.energy_hatch.adjustable.input.tooltip=Adjustable Ampere Energy Input for Multiblocks
+gregtech.machine.energy_hatch.input_hi_amp.tooltip=Multiple Ampere Energy Input for Multiblocks
 
-gregtech.machine.energy_hatch.adjustable.input.ulv.name=ULV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.lv.name=LV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.mv.name=MV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.hv.name=HV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.ev.name=EV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.iv.name=IV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.luv.name=LuV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.zpm.name=ZPM Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.uv.name=UV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.uhv.name=UHV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.uev.name=UEV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.uiv.name=UIV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.umv.name=UMV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.uxv.name=UXV Adjustable Energy Hatch
-gregtech.machine.energy_hatch.adjustable.input.max.name=MAX Adjustable Energy Hatch
+gregtech.machine.energy_hatch.input_4a.iv.name=IV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.luv.name=LuV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.zpm.name=ZPM 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.uv.name=UV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.uhv.name=UHV 4A Energy Hatch
+
+gregtech.machine.energy_hatch.input_16a.iv.name=IV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.luv.name=LuV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.zpm.name=ZPM 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.uv.name=UV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.uhv.name=UHV 16A Energy Hatch
 
 gregtech.machine.energy_hatch.output.tooltip=Energy Output for Multiblocks
 
@@ -3756,33 +3916,29 @@ gregtech.machine.energy_hatch.output.umv.name=UMV Dynamo Hatch
 gregtech.machine.energy_hatch.output.uxv.name=UXV Dynamo Hatch
 gregtech.machine.energy_hatch.output.max.name=MAX Dynamo Hatch
 
-gregtech.machine.energy_hatch.adjustable.output.tooltip=Adjustable Ampere Energy Output for Multiblocks
+gregtech.machine.energy_hatch.output_hi_amp.tooltip=Multiple Ampere Energy Output for Multiblocks
 
-gregtech.machine.energy_hatch.adjustable.output.ulv.name=ULV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.lv.name=LV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.mv.name=MV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.hv.name=HV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.ev.name=EV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.iv.name=IV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.luv.name=LuV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.zpm.name=ZPM Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.uv.name=UV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.uhv.name=UHV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.uev.name=UEV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.uiv.name=UIV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.umv.name=UMV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.uxv.name=UXV Adjustable Dynamo Hatch
-gregtech.machine.energy_hatch.adjustable.output.max.name=MAX Adjustable Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.iv.name=IV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.luv.name=LuV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.zpm.name=ZPM 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.uv.name=UV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.uhv.name=UHV 4A Dynamo Hatch
 
-gregtech.machine.energy_hatch_adjustable.message_adjust=Adjusted Amperage to %dA
+gregtech.machine.energy_hatch.output_16a.iv.name=IV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.luv.name=LuV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.zpm.name=ZPM 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.uv.name=UV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.uhv.name=UHV 16A Dynamo Hatch
 
 gregtech.machine.rotor_holder.tooltip1=Rotor Holder for Multiblocks
 gregtech.machine.rotor_holder.tooltip2=Holds Rotor in place so it will not fly away
 
 gregtech.machine.rotor_holder.hv.name=HV Rotor Holder
+gregtech.machine.rotor_holder.ev.name=EV Rotor Holder
+gregtech.machine.rotor_holder.iv.name=IV Rotor Holder
 gregtech.machine.rotor_holder.luv.name=LuV Rotor Holder
-gregtech.machine.rotor_holder.uhv.name=UHV Rotor Holder
-gregtech.machine.rotor_holder.max.name=MAX Rotor Holder
+gregtech.machine.rotor_holder.zpm.name=ZPM Rotor Holder
+gregtech.machine.rotor_holder.uv.name=UV Rotor Holder
 
 gregtech.machine.maintenance_hatch.name=Maintenance Hatch
 gregtech.machine.maintenance_hatch.tooltip=For maintaining Multiblocks
@@ -3822,6 +3978,12 @@ gregtech.muffler.recovery_tooltip=Recovers Items §b%d%%§7 of the time!
 gregtech.machine.pump_hatch.name=Pump Output Hatch
 gregtech.machine.pump_hatch.tooltip=Primitive Fluid Output for Water Pump
 
+gregtech.machine.machine_hatch.name=Machine Access Interface
+gregtech.machine.machine_hatch.locked=Machine Interface Locked
+gregtech.machine.machine_hatch.tooltip=Specialized Access Bus that only holds valid items
+gregtech.machine.machine_hatch.processing_array=When in the §eProcessing Array§7, only holds machines that work in the §eProcessing Array
+
+
 gregtech.machine.fluid_tank.max_multiblock=Max Multiblock Size: %,dx%,dx%,d
 gregtech.machine.fluid_tank.fluid=Contains %s L of %s
 
@@ -3829,8 +3991,8 @@ gregtech.machine.item_controller.tooltip.redstone=Requires Redstone Input To Wor
 gregtech.machine.item_controller.tooltip.consumption=While working, constantly consumes %,d EU/t
 
 # Universal tooltips
-gregtech.universal.tooltip.voltage_in=Voltage IN: §a%,d (%s)
-gregtech.universal.tooltip.voltage_out=Voltage OUT: §a%,d (%s)
+gregtech.universal.tooltip.voltage_in=Voltage IN: §a%,d (§r%s§a)
+gregtech.universal.tooltip.voltage_out=Voltage OUT: §a%,d (§r%s§a)
 gregtech.universal.tooltip.energy_storage_capacity=Energy Capacity: §9%,d
 gregtech.universal.tooltip.amperage_in=Amperage IN: §e%,d
 gregtech.universal.tooltip.amperage_in_till=Amperage IN up to: §e%,d
@@ -3838,16 +4000,16 @@ gregtech.universal.tooltip.amperage_out=Amperage OUT: §e%,d
 gregtech.universal.tooltip.amperage_out_till=Amperage OUT up to: §e%,d
 gregtech.universal.tooltip.item_storage_capacity=Item Slots: %,d
 gregtech.universal.tooltip.fluid_storage_capacity=Fluid Capacity: %,d L
-gregtech.universal.tooltip.max_voltage_in=Max Voltage IN: §a%,d (%s)
+gregtech.universal.tooltip.max_voltage_in=Max Voltage IN: §a%,d (§r%s§a)
 
 gregtech.recipe.total=Total: %,d EU
-gregtech.recipe.eu=Usage: %,d EU/t (%s)
+gregtech.recipe.eu=Usage: %,d EU/t (%s§r)
 gregtech.recipe.eu_inverted=Generation: %,d EU/t
 gregtech.recipe.duration=Duration: %,.2f secs
 gregtech.recipe.amperage=Amperage: %,d
 gregtech.recipe.not_consumed=§bDoes not get consumed in the process
 gregtech.recipe.chance=Chance: %s%% +%s%%/tier
-gregtech.recipe.blast_furnace_temperature=Temperature: %,dK (%s)
+gregtech.recipe.temperature=Temperature: %,dK (%s)
 gregtech.recipe.explosive=Explosive: %s
 gregtech.recipe.eu_to_start=Energy To Start: %sEU
 gregtech.recipe.dimensions=Dimensions: %s
@@ -3877,20 +4039,31 @@ gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
+gregtech.gui.fluid_lock.tooltip.enabled=Fluid Locking Enabled
+gregtech.gui.fluid_lock.tooltip.disabled=Fluid Locking Disabled
+gregtech.gui.fluid_voiding_partial.tooltip.enabled=Fluid Voiding (Above %d%%) Enabled
+gregtech.gui.fluid_voiding_partial.tooltip.disabled=Fluid Voiding (Above %d%%) Disabled
+gregtech.gui.fluid_voiding_all.tooltip.enabled=Fluid Voiding (All) Enabled
+gregtech.gui.fluid_voiding_all.tooltip.disabled=Fluid Voiding (All) Disabled
 gregtech.gui.silktouch.enabled=Silk Touch Enabled: Click to Disable./n§7Switching requires an idle machine.
 gregtech.gui.silktouch.disabled=Silk Touch Disabled: Click to Enable./n§7Switching requires an idle machine.
 gregtech.gui.chunkmode.enabled=Chunk Mode Enabled: Click to Disable./n§7Switching requires an idle machine.
 gregtech.gui.chunkmode.disabled=Chunk Mode Disabled: Click to Enable./n§7Switching requires an idle machine.
-
-gregtech.jei.ore_by_product_from_ore=Use %s for %s
-gregtech.jei.ore_by_product_from_machine=Produce by processing %s with %s
-gregtech.jei.ore_by_product_not_obtainable=Byproduct not obtainable
 
 ore.spawnlocation.name=Ore Spawn Information
 gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spawn locations.
 gregtech.jei.ore.surface_rock_2=They can be broken for 3 Tiny Piles of the dust, with Fortune giving a bonus.
 gregtech.jei.ore.biome_weighting=%s Weight: %d
 gregtech.jei.ore.biome_weighting_no_spawn=%s Weight: Cannot Spawn
+gregtech.jei.ore.ore_weight=Weight in vein: %d%%
+gregtech.jei.ore.primary_1=Top Ore
+gregtech.jei.ore.primary_2=Spawns in the top %d layers of the vein
+gregtech.jei.ore.secondary_1=Bottom Ore
+gregtech.jei.ore.secondary_2=Spawns in the bottom %d layers of the vein
+gregtech.jei.ore.between_1=Between Ore
+gregtech.jei.ore.between_2=Spawns in the middle %d layers of the vein, with other ores
+gregtech.jei.ore.sporadic_1=Sporadic Ore
+gregtech.jei.ore.sporadic_2=Spawns anywhere in the vein
 
 gregtech.jei.materials.average_mass=Average mass: %,d
 gregtech.jei.materials.average_protons=Average protons: %,d
@@ -3899,7 +4072,7 @@ gregtech.jei.materials.average_neutrons=Average neutrons: %,d
 gregtech.item_filter.empty_item=Empty (No Item)
 gregtech.item_filter.footer=§eClick with item to override
 
-gregtech.cable.voltage=Max Voltage: §a%,d §a(%s)
+gregtech.cable.voltage=Max Voltage: §a%,d §a(%s§a)
 gregtech.cable.amperage=Max Amperage: §e%,d
 gregtech.cable.loss_per_block=Loss/Meter/Ampere: §c%,d§7 EU-Volt
 gregtech.cable.superconductor=§d%s Superconductor
@@ -3921,7 +4094,7 @@ gregtech.multiblock.progress=Progress: %s%%
 gregtech.multiblock.invalid_structure=Invalid structure.
 gregtech.multiblock.invalid_structure.tooltip=This block is a controller of the multiblock structure. For building help, see structure template in JEI.
 gregtech.multiblock.validation_failed=Invalid amount of inputs/outputs.
-gregtech.multiblock.max_energy_per_tick=Max EU/t: §a%s (%s)
+gregtech.multiblock.max_energy_per_tick=Max EU/t: §a%s (%s§r)
 gregtech.multiblock.generation_eu=Outputting: §a%s EU/t
 gregtech.multiblock.universal.no_problems=No Maintenance Problems!
 gregtech.multiblock.universal.has_problems=Has Maintenance Problems!
@@ -3939,51 +4112,60 @@ gregtech.multiblock.universal.distinct.no=No
 gregtech.multiblock.universal.distinct.yes=Yes
 gregtech.multiblock.universal.distinct.info=If enabled, each Item Input Bus will be treated as fully distinct from each other for recipe lookup. Useful for things like Programmed Circuits, Extruder Shapes, etc.
 gregtech.multiblock.parallel=Performing up to %d Recipes in Parallel
+gregtech.multiblock.multiple_recipemaps.header=Machine Mode:
+gregtech.multiblock.multiple_recipemaps.tooltip=Screwdriver the controller to change which machine mode to use.
+gregtech.multiblock.multiple_recipemaps_recipes.tooltip=Machine Modes: §e%s§r
+gregtech.multiblock.multiple_recipemaps.switch_message=The machine must be off to switch modes!
 
-gregtech.multiblock.preview.zoom=Use mousewheel or right-click+Drag to zoom
+gregtech.multiblock.preview.zoom=Use mousewheel or right-click + drag to zoom
 gregtech.multiblock.preview.rotate=Click and drag to rotate
-gregtech.multiblock.preview.any_hatch=Any tier hatch can be used to form the structure
-gregtech.multiblock.preview.any_hatch_maintenance=Any type of maintenance hatch can be used to form the structure
-gregtech.multiblock.preview.limit=Minimum Limit: %d
-gregtech.multiblock.preview.limit_per_layer=Only %d per layer
-gregtech.multiblock.preview.only=Only %s allowed
-gregtech.multiblock.preview.only_location=Only allowed at %s
-gregtech.multiblock.preview.location.b_c=Bottom Center
-gregtech.multiblock.preview.location.b_l=Bottom Layer
-gregtech.multiblock.preview.location.t_c=Top Center
-gregtech.multiblock.preview.primitive_pump.hatch=Only Pump Hatch, ULV Hatch, or LV Hatch allowed
-gregtech.multiblock.preview.location_end=Very End
-gregtech.multiblock.preview.distillation_multi_fluid=Quadruple/Nonuple Output Hatches not allowed
-gregtech.multiblock.preview.clear_amount=Must have a clear %dx%dx%d space in front
+gregtech.multiblock.preview.select=Right-click to check candidates
+
+gregtech.multiblock.pattern.error=Expected components (%s) at (%s).
+gregtech.multiblock.pattern.error.limited_exact=§cExactly: %d§r
+gregtech.multiblock.pattern.error.limited_within=§cBetween %d and %d§r
+gregtech.multiblock.pattern.error.limited.0=§cMaximum: %d§r
+gregtech.multiblock.pattern.error.limited.1=§cMinimum: %d§r
+gregtech.multiblock.pattern.error.limited.2=§cMaximum: %d per layer§r
+gregtech.multiblock.pattern.error.limited.3=§cMinimum: %d per layer§r
+gregtech.multiblock.pattern.error.coils=§cAll heating coils must be the same§r
+gregtech.multiblock.pattern.clear_amount_1=§6Must have a clear 1x1x1 space in front§r
+gregtech.multiblock.pattern.clear_amount_3=§6Must have a clear 3x3x1 space in front§r
+gregtech.multiblock.pattern.single=§6Only this block can be used§r
+gregtech.multiblock.pattern.location_end=§cVery End§r
 
 gregtech.multiblock.blast_furnace.max_temperature=Max Temperature: %sK
 gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s
 gregtech.multiblock.multi_furnace.heating_coil_discount=Heating Coil EU Boost: %sx
 gregtech.multiblock.distillation_tower.distilling_fluid=Distilling %s
-gregtech.multiblock.cracker.cracking_fluid=Cracking %s
 
 gregtech.multiblock.large_combustion_engine.lubricant_amount=Lubricant Amount: %sL
-gregtech.multiblock.large_combustion_engine.fuel_amount=Fuel Amount: %sL (%s)
 gregtech.multiblock.large_combustion_engine.oxygen_amount=Oxygen Amount: %sL
-gregtech.multiblock.large_combustion_engine.oxygen_boosted=Oxygen boosted.
-gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost=Supply oxygen to boost.
+gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount=Liquid Oxygen Amount: %sL
+gregtech.multiblock.large_combustion_engine.oxygen_boosted=§bOxygen boosted.
+gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted=§bLiquid Oxygen boosted.
+gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost=Supply Oxygen to boost.
+gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost=Supply Liquid Oxygen to boost.
+gregtech.multiblock.large_combustion_engine.obstructed=Engine Intakes Obstructed.
 
 gregtech.multiblock.turbine.fuel_amount=Fuel Amount: %sL (%s)
-gregtech.multiblock.turbine.rotor_speed=Rotor Speed: %s / %s RPM
-gregtech.multiblock.turbine.rotor_efficiency=Rotor Efficiency: %s%%
+gregtech.multiblock.turbine.rotor_speed=Rotor Speed: %s/%s RPM
 gregtech.multiblock.turbine.rotor_durability=Rotor Durability: %s%%
-gregtech.multiblock.turbine.low_rotor_durability=WARNING: Rotor Durability below %s%% (%s%%)
+gregtech.multiblock.turbine.efficiency=Turbine Efficiency: %s%%
+gregtech.multiblock.turbine.energy_per_tick=Energy Output: %s/%s EU/t
+gregtech.multiblock.turbine.energy_per_tick_maxed=Energy Output: %s EU/t
 gregtech.multiblock.turbine.obstructed=Turbine Face Obstructed
+gregtech.multiblock.turbine.voltage_tooltip=Base Production: §e%s§7 EU/t
+gregtech.multiblock.turbine.efficiency_tooltip=Each Rotor Holder above %s§7 adds §610%%§7 efficiency.
 
-gregtech.multiblock.large_boiler.temperature=Temperature: %s / %s C
+gregtech.multiblock.large_boiler.efficiency=Efficiency: %s
 gregtech.multiblock.large_boiler.steam_output=Steam Output: %s L/t
-gregtech.multiblock.large_boiler.throttle=Throttle: %d %% (%d %% eff.)
-gregtech.multiblock.large_boiler.message_throttle_change=Throttle changed to: %d %%
-gregtech.multiblock.large_boiler.message_throttle_too_hot=Boiler is running too hot to throttle!
-gregtech.multiblock.large_boiler.heat_efficiency=Heat Efficiency: %d%%
-gregtech.multiblock.large_boiler.heat_efficiency.tooltip=The higher boiler temperature is, the higher it's fuel efficiency
-gregtech.multiblock.large_boiler.throttle.tooltip=Boiler can output less steam and consume less fuel, but it comes with price: the fuel efficiency is lower at higher throttle rates.
+gregtech.multiblock.large_boiler.throttle=Throttle: %d
+gregtech.multiblock.large_boiler.throttle.tooltip=Boiler can output less Steam and consume less fuel (efficiency is not lost, does not affect heat-up time)
 gregtech.multiblock.large_boiler.throttle_modify=Modify Throttle:
+gregtech.multiblock.large_boiler.rate_tooltip=Produces %dL of Steam with 1 Coal at %dL/t
+gregtech.multiblock.large_boiler.heat_time_tooltip=Takes %.2f seconds to heat up
+gregtech.multiblock.large_boiler.explosion_tooltip=§cWill explode if provided Fuel with no Water
 
 gregtech.multiblock.large_miner.done=Done!
 gregtech.multiblock.large_miner.working=Working...
@@ -3994,6 +4176,10 @@ gregtech.multiblock.large_miner.steam=Needs Steam!
 gregtech.multiblock.large_miner.radius=Radius: %d Blocks
 gregtech.multiblock.large_miner.errorradius=Cannot change radius while working!
 gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
+
+gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
+
+gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
 
 gregtech.command.usage=Usage: /gregtech <worldgen/util>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
@@ -4046,6 +4232,12 @@ gregtech.cover.fluid_detector.message_fluid_storage_inverted=Monitoring Inverted
 gregtech.cover.item_detector.message_item_storage_normal=Monitoring Normal Item Storage
 gregtech.cover.item_detector.message_item_storage_inverted=Monitoring Inverted Item Storage
 
+gregtech.cover.activity_detector.message_activity_normal=Monitoring Normal Activity Status
+gregtech.cover.activity_detector.message_activity_inverted=Monitoring Inverted Activity Status
+
+gregtech.cover.activity_detector_advanced.message_activity_normal=Monitoring Normal Progress Status
+gregtech.cover.activity_detector_advanced.message_activity_inverted=Monitoring Inverted Progress Status
+
 gregtech.terminal.app_name.items=Item Guides
 gregtech.terminal.app_name.machines=Machine Guides
 gregtech.terminal.app_name.multiblocks=Multiblock Guides
@@ -4054,6 +4246,7 @@ gregtech.terminal.app_name.settings=System Settings
 gregtech.terminal.app_name.guide_editor=Guide Editor
 gregtech.terminal.app_name.recipe_chart=Recipe Chart
 gregtech.terminal.app_name.ore_prospector=Ore Prospector
+gregtech.terminal.app_name.fluid_prospector=Fluid Prospector
 gregtech.terminal.app_name.pong=Pong
 gregtech.terminal.app_name.minesweeper=Minesweeper
 gregtech.terminal.app_name.maze=Theseus's Escape
@@ -4132,6 +4325,7 @@ terminal.guide_editor.default=Default Value
 terminal.guide_editor.page_config=Page Config
 terminal.guide_editor.widgets_box=Widgets Box
 terminal.guide_editor.widget_config=Widget Config
+terminal.guide_editor.error_type=Item types do not match and will still be saved, but will not be seen in app.
 
 terminal.settings.description=The system settings for GTOS.
 terminal.settings.theme=Theme
@@ -4169,8 +4363,8 @@ terminal.recipe_chart.tier.3=cache of 8 pages
 
 terminal.prospector.vis_mode=switching color mode
 terminal.prospector.list=All Resources
-terminal.prospector.ore=Ore statistics
-terminal.prospector.fluid=Fluid statistics
+terminal.prospector.ore=Ore Data
+terminal.prospector.fluid=Fluid Data
 
 terminal.ore_prospector.description=Hate the scanner toy? Don't want to run around looking for ores? Come and look at it.
 terminal.ore_prospector.tier.0=radius size 1
@@ -4181,8 +4375,17 @@ terminal.ore_prospector.tier.4=radius size 5
 terminal.ore_prospector.tier.5=radius size 6
 terminal.ore_prospector.tier.6=radius size 7
 
+terminal.fluid_prospector.description=You know, there's gold in bedrocks.
+terminal.fluid_prospector.tier.0=radius size 1
+terminal.fluid_prospector.tier.1=radius size 2
+terminal.fluid_prospector.tier.2=radius size 3
+terminal.fluid_prospector.tier.3=radius size 4
+terminal.fluid_prospector.tier.4=radius size 5
+terminal.fluid_prospector.tier.5=radius size 6
+terminal.fluid_prospector.tier.6=radius size 7
+
 terminal.console.description=A tool to help you free your inventory, it's time to say goodbye to wrench, screwdriver, hammer, and crowbar.
-terminal.console.notice=Please right click the machine when opening the terminal.
+terminal.console.notice=Please shift-right-click a machine when opening the terminal.
 terminal.console.front=Set as front
 terminal.console.items=set as items output
 terminal.console.fluids=set as fluids output
@@ -4243,3 +4446,6 @@ monitor.gui.title.argb=ARGB:
 monitor.gui.title.slot=Slot:
 monitor.gui.title.plugin=Plugin:
 monitor.gui.title.config=Config
+
+fluid.tile.lava=Lava
+fluid.tile.water=Water

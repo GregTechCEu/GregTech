@@ -229,8 +229,8 @@ public class AdvancedTextWidget extends Widget {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
-        super.drawInBackground(mouseX, mouseY, context);
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        super.drawInBackground(mouseX, mouseY, partialTicks, context);
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         Position position = getPosition();
         for (int i = 0; i < displayText.size(); i++) {

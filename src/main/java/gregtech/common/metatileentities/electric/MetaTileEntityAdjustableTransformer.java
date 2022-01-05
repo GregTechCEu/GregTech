@@ -10,9 +10,9 @@ import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.render.SimpleOverlayRenderer;
-import gregtech.api.render.Textures;
-import gregtech.api.util.PipelineUtil;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.PipelineUtil;
 import gregtech.common.tools.DamageValues;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,6 +40,7 @@ public class MetaTileEntityAdjustableTransformer extends MetaTileEntityTransform
     public MetaTileEntityAdjustableTransformer(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
         this.ampIndex = 2;
+        reinitializeEnergyContainer();
     }
 
     @Override
@@ -181,8 +182,8 @@ public class MetaTileEntityAdjustableTransformer extends MetaTileEntityTransform
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        String lowerTierName = GTValues.VN[getTier()];
-        String higherTierName = GTValues.VN[getTier() + 1];
+        String lowerTierName = GTValues.VNF[getTier()];
+        String higherTierName = GTValues.VNF[getTier() + 1];
         long lowerVoltage = energyContainer.getOutputVoltage();
         long higherVoltage = energyContainer.getInputVoltage();
         long lowerAmperage = energyContainer.getInputAmperage();

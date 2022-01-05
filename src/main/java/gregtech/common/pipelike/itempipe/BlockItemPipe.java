@@ -12,11 +12,12 @@ import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
-import gregtech.common.render.ItemPipeRenderer;
+import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
@@ -57,7 +58,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+    public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
         if (!worldIn.isRemote) {
             ItemPipeNet itemPipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
@@ -97,7 +98,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
+    public void getSubBlocks(@Nonnull CreativeTabs itemIn, @Nonnull NonNullList<ItemStack> items) {
         for (Material material : enabledMaterials.keySet()) {
             for (ItemPipeType itemPipeType : ItemPipeType.values()) {
                 if (!itemPipeType.getOrePrefix().isIgnored(material)) {
@@ -122,31 +123,19 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
         return tile != null && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()) != null;
     }
 
-    @Nonnull
     @Override
-    public int getVisualConnections(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile) {
-        int connections = selfTile.getOpenConnections();
-        float selfTHICCness = selfTile.getPipeType().getThickness();
-        for (EnumFacing facing : EnumFacing.values()) {
-            CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
-            if (cover != null) {
-                // adds side to open connections of it isn't already open & has a cover
-                connections |= 1 << facing.getIndex();
-                continue;
-            }
-            // check if neighbour is a smaller item pipe
-            TileEntity neighbourTile = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
-            if (neighbourTile instanceof TileEntityItemPipe &&
-                    ((TileEntityItemPipe) neighbourTile).isConnectionOpenAny(facing.getOpposite()) &&
-                    ((TileEntityItemPipe) neighbourTile).getPipeType().getThickness() < selfTHICCness) {
-                connections |= 1 << (facing.getIndex() + 6);
-            }
+    public boolean isHoldingPipe(EntityPlayer player) {
+        if (player == null) {
+            return false;
         }
-        return connections;
+        ItemStack stack = player.getHeldItemMainhand();
+        return stack != ItemStack.EMPTY && stack.getItem() instanceof ItemBlockItemPipe;
     }
 
     @Override
+    @Nonnull
     @SideOnly(Side.CLIENT)
+    @SuppressWarnings("deprecation")
     public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
         return ItemPipeRenderer.BLOCK_RENDER_TYPE;
     }

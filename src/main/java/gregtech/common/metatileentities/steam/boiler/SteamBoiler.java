@@ -6,15 +6,18 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.SimpleSidedCubeRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
@@ -24,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
@@ -39,17 +43,16 @@ import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 
-public abstract class SteamBoiler extends MetaTileEntity {
+public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreator {
 
     private static final EnumFacing[] STEAM_PUSH_DIRECTIONS = ArrayUtils.add(EnumFacing.HORIZONTALS, EnumFacing.UP);
 
-    public final TextureArea BRONZE_BACKGROUND_TEXTURE;
     public final TextureArea BRONZE_SLOT_BACKGROUND_TEXTURE;
 
     public final TextureArea SLOT_FURNACE_BACKGROUND;
 
     protected final boolean isHighPressure;
-    private final OrientedOverlayRenderer renderer;
+    private final ICubeRenderer renderer;
 
     protected FluidTank waterFluidTank;
     protected FluidTank steamFluidTank;
@@ -64,15 +67,18 @@ public abstract class SteamBoiler extends MetaTileEntity {
     private boolean wasBurningAndNeedsUpdate;
     private final ItemStackHandler containerInventory;
 
-    public SteamBoiler(ResourceLocation metaTileEntityId, boolean isHighPressure, OrientedOverlayRenderer renderer) {
+    public SteamBoiler(ResourceLocation metaTileEntityId, boolean isHighPressure, ICubeRenderer renderer) {
         super(metaTileEntityId);
         this.renderer = renderer;
         this.isHighPressure = isHighPressure;
-        BRONZE_BACKGROUND_TEXTURE = getGuiTexture("%s_gui");
         BRONZE_SLOT_BACKGROUND_TEXTURE = getGuiTexture("slot_%s");
         SLOT_FURNACE_BACKGROUND = getGuiTexture("slot_%s_furnace_background");
         this.containerInventory = new ItemStackHandler(2);
-        this.setPaintingColor(0xFFFFFF);
+    }
+
+    @Override
+    public boolean canCreateSound() {
+        return isBurning;
     }
 
     @SideOnly(Side.CLIENT)
@@ -87,14 +93,19 @@ public abstract class SteamBoiler extends MetaTileEntity {
     @SideOnly(Side.CLIENT)
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(getBaseRenderer().getParticleSprite(), getPaintingColor());
+        return Pair.of(getBaseRenderer().getParticleSprite(), getPaintingColorForRendering());
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         getBaseRenderer().render(renderState, translation, colouredPipeline);
-        renderer.render(renderState, translation, pipeline, getFrontFacing(), isBurning());
+        renderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isBurning(), true);
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0xFFFFFF;
     }
 
     @Override
@@ -187,14 +198,16 @@ public abstract class SteamBoiler extends MetaTileEntity {
                 fuelBurnTimeLeft -= isHighPressure ? 2 : 1;
                 if (fuelBurnTimeLeft == 0) {
                     this.fuelMaxBurnTime = 0;
-                    this.timeBeforeCoolingDown = 40;
+                    this.timeBeforeCoolingDown = getCooldownInterval();
                     //boiler has no fuel now, so queue burning state update
                     this.wasBurningAndNeedsUpdate = true;
                 }
             }
         } else if (timeBeforeCoolingDown == 0) {
-            if (currentTemperature > 0)
-                currentTemperature--;
+            if (currentTemperature > 0) {
+                currentTemperature -= getCoolDownRate();
+                timeBeforeCoolingDown = getCooldownInterval();
+            }
         } else --timeBeforeCoolingDown;
     }
 
@@ -209,10 +222,7 @@ public abstract class SteamBoiler extends MetaTileEntity {
                 filledSteam = steamFluidTank.fill(ModHandler.getSteam(fillAmount), true);
             }
             if (this.hasNoWater && hasDrainedWater) {
-                getWorld().setBlockToAir(getPos());
-                getWorld().createExplosion(null,
-                        getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
-                        2.0f, true);
+                doExplosion(2.0f);
             } else this.hasNoWater = !hasDrainedWater;
             if (filledSteam == 0 && hasDrainedWater) {
                 getWorld().playSound(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
@@ -235,6 +245,10 @@ public abstract class SteamBoiler extends MetaTileEntity {
     }
 
     protected abstract void tryConsumeNewFuel();
+
+    protected abstract int getCooldownInterval();
+
+    protected abstract int getCoolDownRate();
 
     public int getMaxTemperate() {
         return isHighPressure ? 1000 : 500;
@@ -267,31 +281,43 @@ public abstract class SteamBoiler extends MetaTileEntity {
     }
 
     public ModularUI.Builder createUITemplate(EntityPlayer player) {
-        return ModularUI.builder(BRONZE_BACKGROUND_TEXTURE, 176, 166)
-                .widget(new LabelWidget(6, 6, getMetaFullName()))
-
+        return ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(isHighPressure), 176, 166)
+                .label(6, 6, getMetaFullName())
                 .widget(new ProgressWidget(this::getTemperaturePercent, 96, 26, 10, 54)
-                        .setProgressBar(getGuiTexture("bar_%s_empty"),
-                                getGuiTexture("bar_heat"),
+                        .setProgressBar(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure),
+                                GuiTextures.PROGRESS_BAR_BOILER_HEAT,
                                 MoveType.VERTICAL))
 
                 .widget(new TankWidget(waterFluidTank, 83, 26, 10, 54)
-                        .setBackgroundTexture(getGuiTexture("bar_%s_empty")))
+                        .setBackgroundTexture(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure)))
                 .widget(new TankWidget(steamFluidTank, 70, 26, 10, 54)
-                        .setBackgroundTexture(getGuiTexture("bar_%s_empty")))
+                        .setBackgroundTexture(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure)))
 
                 .widget(new FluidContainerSlotWidget(containerInventory, 0, 43, 26, true)
-                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getGuiTexture("overlay_%s_in")))
-                .widget(new SlotWidget(containerInventory, 1, 43, 62, true, false)
-                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getGuiTexture("overlay_%s_out")))
-                .widget(new ImageWidget(43, 44, 18, 18)
-                        .setImage(getGuiTexture("overlay_%s_fluid_container")))
+                        .setBackgroundTexture(GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.IN_SLOT_OVERLAY_STEAM.get(isHighPressure)))
+                .slot(containerInventory, 1, 43, 62, true, false,
+                        GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.OUT_SLOT_OVERLAY_STEAM.get(isHighPressure))
+                .image(43, 44, 18, 18, GuiTextures.CANISTER_OVERLAY_STEAM.get(isHighPressure))
 
-                .bindPlayerInventory(player.inventory, BRONZE_SLOT_BACKGROUND_TEXTURE, 0);
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT_STEAM.get(isHighPressure), 0);
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.steam_boiler.tooltip_produces", getBaseSteamOutput()));
+    }
+
+    @Override
+    public void onAttached(Object... data) {
+        super.onAttached(data);
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(GTSounds.BOILER, this.getPos());
+        }
+    }
+
+    @Override
+    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+        super.clearMachineInventory(itemBuffer);
+        clearInventory(itemBuffer, containerInventory);
     }
 }

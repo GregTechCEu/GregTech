@@ -10,23 +10,22 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
+import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.impl.FluidHandlerProxy;
-import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.ItemHandlerProxy;
-import gregtech.api.capability.impl.NotifiableFluidTank;
+import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.recipes.FluidKey;
-import gregtech.api.render.Textures;
+import gregtech.api.recipes.RecipeMap;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
-import gregtech.core.hooks.BloomRenderLayerHooks;
+import gregtech.client.utils.BloomEffectUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -45,7 +44,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.FluidActionResult;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -65,10 +67,10 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 
 public abstract class MetaTileEntity implements ICoverable {
 
-    public static final int DEFAULT_PAINTING_COLOR = ConfigHolder.U.GT5u.defaultPaintingColor;
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
     public static final String TAG_KEY_FRAGILE = "Fragile";
+    public static final String TAG_KEY_MUFFLED = "Muffled";
 
     public final ResourceLocation metaTileEntityId;
     MetaTileEntityHolder holder;
@@ -86,7 +88,7 @@ public abstract class MetaTileEntity implements ICoverable {
     protected final List<MTETrait> mteTraits = new ArrayList<>();
 
     protected EnumFacing frontFacing = EnumFacing.NORTH;
-    protected int paintingColor = DEFAULT_PAINTING_COLOR;
+    private int paintingColor = -1;
 
     private final int[] sidedRedstoneOutput = new int[6];
     private final int[] sidedRedstoneInput = new int[6];
@@ -99,6 +101,8 @@ public abstract class MetaTileEntity implements ICoverable {
     protected List<IItemHandlerModifiable> notifiedItemInputList = new ArrayList<>();
     protected List<IFluidHandler> notifiedFluidInputList = new ArrayList<>();
     protected List<IFluidHandler> notifiedFluidOutputList = new ArrayList<>();
+
+    protected boolean muffled = false;
 
     public MetaTileEntity(ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
@@ -192,13 +196,15 @@ public abstract class MetaTileEntity implements ICoverable {
         TextureAtlasSprite atlasSprite = TextureUtils.getMissingSprite();
         IVertexOperation[] renderPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         for (EnumFacing face : EnumFacing.VALUES) {
-            Textures.renderFace(renderState, translation, renderPipeline, face, Cuboid6.full, atlasSprite);
+            Textures.renderFace(renderState, translation, renderPipeline, face, Cuboid6.full, atlasSprite, BlockRenderLayer.CUTOUT_MIPPED);
         }
     }
 
     @SideOnly(Side.CLIENT)
     public boolean canRenderInLayer(BlockRenderLayer renderLayer) {
-        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED || renderLayer == BloomRenderLayerHooks.BLOOM;
+        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED ||
+                renderLayer == BloomEffectUtil.getRealBloomLayer() ||
+                (renderLayer == BlockRenderLayer.TRANSLUCENT && !getWorld().getBlockState(getPos()).getValue(BlockMachine.OPAQUE));
     }
 
     @SideOnly(Side.CLIENT)
@@ -209,7 +215,7 @@ public abstract class MetaTileEntity implements ICoverable {
                 return tagCompound.getInteger(TAG_KEY_PAINTING_COLOR);
             }
         }
-        return paintingColor;
+        return isPainted() ? paintingColor : getDefaultPaintingColor();
     }
 
     /**
@@ -218,9 +224,6 @@ public abstract class MetaTileEntity implements ICoverable {
      * @param itemStack itemstack of itemblock
      */
     public void initFromItemStackData(NBTTagCompound itemStack) {
-        if (itemStack.hasKey(TAG_KEY_PAINTING_COLOR, NBT.TAG_INT)) {
-            setPaintingColor(itemStack.getInteger(TAG_KEY_PAINTING_COLOR));
-        }
         if (itemStack.hasKey(TAG_KEY_FRAGILE)) {
             setFragile(itemStack.getBoolean(TAG_KEY_FRAGILE));
         }
@@ -233,9 +236,6 @@ public abstract class MetaTileEntity implements ICoverable {
      * @param itemStack itemstack from which this MTE is being placed
      */
     public void writeItemStackData(NBTTagCompound itemStack) {
-        if (this.paintingColor != DEFAULT_PAINTING_COLOR) { //for machines to stack
-            itemStack.setInteger(TAG_KEY_PAINTING_COLOR, this.paintingColor);
-        }
     }
 
     public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
@@ -349,7 +349,6 @@ public abstract class MetaTileEntity implements ICoverable {
                 coverBehavior.onRightClick(playerIn, hand, result);
         if (coverResult != EnumActionResult.PASS) {
             if (coverResult == EnumActionResult.SUCCESS) {
-                if (!getWorld().isRemote) GTTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) playerIn);
                 return true;
             }
             return false;
@@ -384,7 +383,7 @@ public abstract class MetaTileEntity implements ICoverable {
                 MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
             }
             return true;
-        } else if (playerIn.isSneaking()) {
+        } else if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
             EnumFacing hitFacing = hitResult.sideHit;
 
             CoverBehavior coverBehavior = hitFacing == null ? null : getCoverAtSide(hitFacing);
@@ -454,6 +453,7 @@ public abstract class MetaTileEntity implements ICoverable {
             getHolder().markDirty();
         }
         onCoverPlacementUpdate();
+        GTTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
         return true;
     }
 
@@ -744,6 +744,11 @@ public abstract class MetaTileEntity implements ICoverable {
             }
         }
         buf.writeBoolean(isFragile);
+        buf.writeBoolean(muffled);
+    }
+
+    public boolean isPainted() {
+        return this.paintingColor != -1;
     }
 
     public void receiveInitialSyncData(PacketBuffer buf) {
@@ -765,6 +770,7 @@ public abstract class MetaTileEntity implements ICoverable {
             }
         }
         this.isFragile = buf.readBoolean();
+        this.muffled = buf.readBoolean();
     }
 
     public void writeTraitData(MTETrait trait, int internalId, Consumer<PacketBuffer> dataWriter) {
@@ -1121,6 +1127,10 @@ public abstract class MetaTileEntity implements ICoverable {
         }
     }
 
+    public int getDefaultPaintingColor() {
+        return ConfigHolder.client.defaultPaintingColor;
+    }
+
     public void setFragile(boolean fragile) {
         this.isFragile = fragile;
         if (getWorld() != null && !getWorld().isRemote) {
@@ -1148,7 +1158,9 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         data.setInteger("FrontFacing", frontFacing.getIndex());
-        data.setInteger(TAG_KEY_PAINTING_COLOR, paintingColor);
+        if (isPainted()) {
+            data.setInteger(TAG_KEY_PAINTING_COLOR, paintingColor);
+        }
         data.setInteger("CachedLightValue", cachedLightValue);
 
         if (shouldSerializeInventories()) {
@@ -1177,12 +1189,15 @@ public abstract class MetaTileEntity implements ICoverable {
         }
         data.setTag("Covers", coversList);
         data.setBoolean(TAG_KEY_FRAGILE, isFragile);
+        data.setBoolean(TAG_KEY_MUFFLED, muffled);
         return data;
     }
 
     public void readFromNBT(NBTTagCompound data) {
         this.frontFacing = EnumFacing.VALUES[data.getInteger("FrontFacing")];
-        this.paintingColor = data.getInteger(TAG_KEY_PAINTING_COLOR);
+        if (data.hasKey(TAG_KEY_PAINTING_COLOR)) {
+            this.paintingColor = data.getInteger(TAG_KEY_PAINTING_COLOR);
+        }
         this.cachedLightValue = data.getInteger("CachedLightValue");
 
         if (shouldSerializeInventories()) {
@@ -1212,6 +1227,7 @@ public abstract class MetaTileEntity implements ICoverable {
         }
 
         this.isFragile = data.getBoolean(TAG_KEY_FRAGILE);
+        this.muffled = data.getBoolean(TAG_KEY_MUFFLED);
     }
 
     @Override
@@ -1234,7 +1250,7 @@ public abstract class MetaTileEntity implements ICoverable {
         }
     }
 
-    public void onAttached() {
+    public void onAttached(Object... data) {
     }
 
     /**
@@ -1249,7 +1265,6 @@ public abstract class MetaTileEntity implements ICoverable {
         return frontFacing;
     }
 
-    @Override
     public int getPaintingColor() {
         return paintingColor;
     }
@@ -1294,10 +1309,6 @@ public abstract class MetaTileEntity implements ICoverable {
         return notifiedFluidOutputList;
     }
 
-    public int getParallelLimit() {
-        return 1;
-    }
-
     public boolean isFragile() {
         return isFragile;
     }
@@ -1329,6 +1340,38 @@ public abstract class MetaTileEntity implements ICoverable {
         return false;
     }
 
-    public void preInit(Object... data) {
+    public final void toggleMuffled() {
+        muffled = !muffled;
+    }
+
+    public boolean isMuffled() {
+        return muffled;
+    }
+
+    public boolean canRenderFrontFaceX() {
+        return false;
+    }
+
+    public boolean isSideUsed(EnumFacing face) {
+        if (getCoverAtSide(face) != null) return true;
+        return face == this.getFrontFacing() && this.canRenderFrontFaceX();
+    }
+
+    public RecipeMap<?> getRecipeMap() {
+
+        for(int i = 0; i < mteTraits.size(); i++) {
+            if(mteTraits.get(i).getName().equals("RecipeMapWorkable")) {
+                return ((AbstractRecipeLogic) mteTraits.get(i)).getRecipeMap();
+            }
+        }
+        return null;
+    }
+
+    public void doExplosion(float explosionPower) {
+        getWorld().setBlockToAir(getPos());
+        if (ConfigHolder.machines.doExplosions) {
+            getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
+                    explosionPower, true);
+        }
     }
 }

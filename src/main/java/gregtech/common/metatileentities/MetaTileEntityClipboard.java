@@ -46,7 +46,7 @@ import java.util.Optional;
 
 import static codechicken.lib.raytracer.RayTracer.*;
 import static gregtech.api.capability.GregtechDataCodes.*;
-import static gregtech.api.render.Textures.CLIPBOARD_RENDERER;
+import static gregtech.client.renderer.texture.Textures.CLIPBOARD_RENDERER;
 import static gregtech.common.items.MetaItems.CLIPBOARD;
 
 public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRenderMetaTileEntity {
@@ -55,9 +55,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     public FakeModularGui guiCache;
     public FakeModularUIContainerClipboard guiContainerCache;
     private static final Cuboid6 pageBox = new Cuboid6(3 / 16.0, 0.25 / 16.0, 0.25 / 16.0, 13 / 16.0, 14.25 / 16.0, 0.3 / 16.0);
-    private static boolean receivesData = false;
     private static final NBTBase NO_CLIPBOARD_SIG = new NBTTagInt(0);
-
 
     public MetaTileEntityClipboard(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -74,8 +72,6 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
             if (guiCache != null)
                 guiCache.updateScreen();
         } else {
-            if(!receivesData)
-                this.writeCustomData(DETECT_UPDATE_RECEIVED, buffer -> { }); // Doesn't do anything, just helps start updates quickly
             if (guiContainerCache != null)
                 guiContainerCache.detectAndSendChanges();
         }
@@ -122,7 +118,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
             if (clipboardBehaviour.get() instanceof ClipboardBehavior) {
                 PlayerInventoryHolder holder = new PlayerInventoryHolder(new GregFakePlayer(entityPlayer.world), EnumHand.MAIN_HAND); // We can't have this actually set the player's hand
                 holder.setCurrentItem(this.getClipboard());
-                if(entityPlayer instanceof GregFakePlayer) { // This is how to tell if this is being called in-world or not
+                if (entityPlayer instanceof GregFakePlayer) { // This is how to tell if this is being called in-world or not
                     return ((ClipboardBehavior) clipboardBehaviour.get()).createMTEUI(holder, entityPlayer);
                 } else {
                     return ((ClipboardBehavior) clipboardBehaviour.get()).createUI(holder, entityPlayer);
@@ -149,8 +145,10 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
             ui = builder.build(ui.holder, ui.entityPlayer);
             FakeModularUIContainerClipboard fakeModularUIContainer = new FakeModularUIContainerClipboard(ui, this);
             this.guiContainerCache = fakeModularUIContainer;
-            this.guiCache = new FakeModularGui(ui, fakeModularUIContainer);
-            this.writeCustomData(CREATE_FAKE_UI, buffer -> { });
+            if (getWorld().isRemote)
+                this.guiCache = new FakeModularGui(ui, fakeModularUIContainer);
+            this.writeCustomData(CREATE_FAKE_UI, buffer -> {
+            });
         } catch (Exception e) {
             GTLog.logger.error(e);
         }
@@ -197,18 +195,20 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
                 MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
             }
         } else {
-            BlockPos pos = this.getPos(); // Saving this for later so it doesn't get mangled
-            World world = this.getWorld(); // Same here
+            if(!getWorld().isRemote) {
+                BlockPos pos = this.getPos(); // Saving this for later so it doesn't get mangled
+                World world = this.getWorld(); // Same here
 
-            NonNullList<ItemStack> drops = NonNullList.create();
-            getDrops(drops, playerIn);
+                NonNullList<ItemStack> drops = NonNullList.create();
+                getDrops(drops, playerIn);
 
-            Block.spawnAsEntity(playerIn.world, this.getPos(), drops.get(0));
-            this.dropAllCovers();
-            this.onRemoval();
+                Block.spawnAsEntity(playerIn.world, this.getPos(), drops.get(0));
+                this.dropAllCovers();
+                this.onRemoval();
 
-            world.removeTileEntity(pos);
-            world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+                world.removeTileEntity(pos);
+                world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+            }
         }
         return true;
     }
@@ -335,7 +335,6 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        receivesData = true;
         if (dataId == UPDATE_UI) {
             int windowID = buf.readVarInt();
             int widgetID = buf.readVarInt();
@@ -352,11 +351,13 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
                 guiCache.mouseClicked(mouseX, mouseY, 0); // Left mouse button
             }
             this.scheduleRenderUpdate();
+            this.markDirty();
         }
     }
 
     @Override
-    public void preInit(Object... data) {
+    public void onAttached(Object... data) {
+        super.onAttached(data);
         if (data.length != 0 && data[0] instanceof ItemStack)
             this.setClipboard((ItemStack) data[0]);
     }
@@ -381,20 +382,17 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (this.getWorld().isRemote) return;
         Pair<Double, Double> clickCoords = this.checkLookingAt(player);
-        if (this.guiContainerCache != null && guiContainerCache.modularUI != null) {
-            int width = guiContainerCache.modularUI.getWidth();
-            int height = guiContainerCache.modularUI.getHeight();
-            double scale = 1.0 / Math.max(width, height);
-            int mouseX = (int) ((clickCoords.getLeft() / scale));
-            int mouseY = (int) ((clickCoords.getRight() / scale));
-            if (0 <= mouseX && mouseX <= width && 0 <= mouseY && mouseY <= height) {
-                this.writeCustomData(MOUSE_POSITION, buf -> {
-                    buf.writeVarInt(mouseX);
-                    buf.writeVarInt(mouseY);
-                });
-            }
+        int width = 178; // These should always be correct.
+        int height = 230;
+        double scale = 1.0 / Math.max(width, height);
+        int mouseX = (int) ((clickCoords.getLeft() / scale));
+        int mouseY = (int) ((clickCoords.getRight() / scale));
+        if (0 <= mouseX && mouseX <= width && 0 <= mouseY && mouseY <= height) {
+            this.writeCustomData(MOUSE_POSITION, buf -> {
+                buf.writeVarInt(mouseX);
+                buf.writeVarInt(mouseY);
+            });
         }
-
     }
 
     @Override

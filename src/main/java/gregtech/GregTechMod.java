@@ -9,7 +9,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
-import gregtech.api.model.ResourcePackHook;
+import gregtech.api.sound.GTSounds;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
@@ -19,60 +19,56 @@ import gregtech.api.util.NBTUtil;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBinds;
+import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.api.worldgen.config.WorldGenRegistry;
-import gregtech.common.*;
-import gregtech.core.hooks.BloomRenderLayerHooks;
+import gregtech.common.CommonProxy;
+import gregtech.common.ConfigHolder;
+import gregtech.common.MetaEntities;
+import gregtech.common.MetaFluids;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.blocks.modelfactories.BlockCompressedFactory;
-import gregtech.common.blocks.modelfactories.BlockFrameFactory;
-import gregtech.common.blocks.modelfactories.BlockOreFactory;
 import gregtech.common.command.GregTechCommand;
 import gregtech.common.covers.CoverBehaviors;
 import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.worldgen.LootTableHelper;
-import gregtech.common.worldgen.WorldGenAbandonedBase;
-import gregtech.common.worldgen.WorldGenRubberTree;
+import gregtech.client.utils.BloomEffectUtil;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.*;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.LoaderException;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional.Method;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import static gregtech.api.GregTechAPI.*;
 
 @Mod(modid = GTValues.MODID,
         name = "GregTech",
         acceptedMinecraftVersions = "[1.12,1.13)",
-        dependencies = "required:forge@[14.23.5.2847,);" + CodeChickenLib.MOD_VERSION_DEP + "after:forestry;after:jei@[4.15.0,);after:crafttweaker;before:ctm")
+        dependencies = "required:forge@[14.23.5.2847,);" + CodeChickenLib.MOD_VERSION_DEP + "after:forestry;after:jei@[4.15.0,);after:crafttweaker")
 public class GregTechMod {
 
     static {
         FluidRegistry.enableUniversalBucket();
         if (FMLCommonHandler.instance().getSide().isClient()) {
-            BloomRenderLayerHooks.init();
-            ResourcePackHook.init();
-            BlockOreFactory.init();
-            BlockCompressedFactory.init();
-            BlockFrameFactory.init();
+            BloomEffectUtil.init();
         }
     }
 
     @Mod.Instance(GTValues.MODID)
     public static GregTechMod instance;
 
-    @SidedProxy(modId = GTValues.MODID, clientSide = "gregtech.common.ClientProxy", serverSide = "gregtech.common.CommonProxy")
+    @SidedProxy(modId = GTValues.MODID, clientSide = "gregtech.client.ClientProxy", serverSide = "gregtech.common.CommonProxy")
     public static CommonProxy proxy;
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
         NetworkHandler.init();
-        GTLog.init(event.getModLog());
 
         /* Start UI Factory Registration */
         UI_FACTORY_REGISTRY.unfreeze();
@@ -93,12 +89,10 @@ public class GregTechMod {
         MATERIAL_REGISTRY.unfreeze();
         GTLog.logger.info("Registering GTCEu Materials");
         Materials.register();
-        MATERIAL_REGISTRY.flush();
 
         // Then, register addon Materials
         GTLog.logger.info("Registering addon Materials");
         MinecraftForge.EVENT_BUS.post(new MaterialEvent());
-        MATERIAL_REGISTRY.flush();
 
         // Then, run CraftTweaker Material registration scripts
         if (GTValues.isModLoaded(GTValues.MODID_CT)) {
@@ -117,6 +111,8 @@ public class GregTechMod {
         MetaBlocks.init();
         MetaItems.init();
         MetaFluids.init();
+
+        GTSounds.registerSounds();
 
         /* Start MetaTileEntity Registration */
         MTE_REGISTRY.unfreeze();
@@ -138,7 +134,7 @@ public class GregTechMod {
         if (RecipeMap.isFoundInvalidRecipe()) {
             GTLog.logger.fatal("Seems like invalid recipe was found.");
             //crash if config setting is set to false, or we are in deobfuscated environment
-            if (!ConfigHolder.ignoreErrorOrInvalidRecipes || !FMLForgePlugin.RUNTIME_DEOBF) {
+            if (!ConfigHolder.misc.ignoreErrorOrInvalidRecipes || !FMLForgePlugin.RUNTIME_DEOBF) {
                 GTLog.logger.fatal("Loading cannot continue. Either fix or report invalid recipes, or enable ignoreErrorOrInvalidRecipes in the config as a temporary solution");
                 throw new LoaderException("Found at least one invalid recipe. Please read the log above for more details.");
             } else {
@@ -156,10 +152,6 @@ public class GregTechMod {
         }
 
         WorldGenRegistry.INSTANCE.initializeRegistry();
-        GameRegistry.registerWorldGenerator(new WorldGenAbandonedBase(), 20000);
-        if (!ConfigHolder.disableRubberTreeGeneration) {
-            GameRegistry.registerWorldGenerator(new WorldGenRubberTree(), 10000);
-        }
 
         LootTableHelper.initialize();
         FilterTypeRegistry.init();
@@ -182,6 +174,17 @@ public class GregTechMod {
     @Mod.EventHandler
     public void onPostInit(FMLPostInitializationEvent event) {
         proxy.onPostLoad();
+    }
+
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        BedrockFluidVeinHandler.recalculateChances(true);
+
+    }
+
+    @Mod.EventHandler
+    public void loadComplete(FMLLoadCompleteEvent event) {
+        proxy.onLoadComplete(event);
     }
 
     @Mod.EventHandler

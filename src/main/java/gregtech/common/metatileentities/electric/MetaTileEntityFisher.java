@@ -10,7 +10,7 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.OreDictUnifier;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
@@ -44,7 +44,7 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
     public MetaTileEntityFisher(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
         this.inventorySize = (tier + 1) * (tier + 1);
-        this.fishingTicks = 1000 - tier * 200;
+        this.fishingTicks = 1000 - tier * 200L;
         this.energyAmountPerFish = GTValues.V[tier];
         initializeInventory();
     }
@@ -141,7 +141,7 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
         tooltip.add(I18n.format("gregtech.machine.fisher.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.fisher.speed", fishingTicks));
         tooltip.add(I18n.format("gregtech.machine.fisher.requirement", (int) Math.sqrt(WATER_CHECK_SIZE), (int) Math.sqrt(WATER_CHECK_SIZE)));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VN[getTier()]));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
     }
 }

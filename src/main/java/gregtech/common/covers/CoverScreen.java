@@ -6,7 +6,7 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 
@@ -24,5 +24,10 @@ public class CoverScreen extends CoverBehavior {
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
         Textures.DISPLAY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+    }
+
+    @Override
+    public boolean shouldRenderConnected() {
+        return false;
     }
 }

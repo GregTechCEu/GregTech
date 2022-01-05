@@ -25,14 +25,20 @@ public class GregtechDataCodes {
     public static final int UPDATE_LOCKED_STATE = 8;
     public static final int UPDATE_CONTENTS_SEED = 9;
 
+    // Steam Machines
+    public static final int NEEDS_VENTING = 2;
+    public static final int VENTING_SIDE = 3;
+    public static final int VENTING_STUCK = 4;
+    public static final int BOILER_HEAT = 15;
+    public static final int BOILER_LAST_TICK_STEAM = 16;
+
     // Misc TEs (Transformer, World Accelerator)
-    public static final int SYNC_TILE_MODE = 100;
+    public static final int SYNC_TILE_MODE = 500;
 
     // Clipboard
     public static final int UPDATE_UI = 0;
     public static final int CREATE_FAKE_UI = 1;
     public static final int MOUSE_POSITION = 2;
-    public static final int DETECT_UPDATE_RECEIVED = 3;
 
     // Pump
     public static final int PUMP_HEAD_LEVEL = 200;
@@ -71,6 +77,9 @@ public class GregtechDataCodes {
     public static final int SYNC_FLUID_CHANGE = 3;
     public static final int SYNC_TANK_SHAPE = 4;
 
+    // Fusion Reactor
+    public static final int UPDATE_COLOR = 371;
+
     // Central Monitor
     public static final int UPDATE_ALL = 1;
     public static final int UPDATE_COVERS = 2;
@@ -95,5 +104,15 @@ public class GregtechDataCodes {
     public static final int UPDATE_ENERGY = 4;
     public static final int UPDATE_ENERGY_PER = 5;
     public static final int UPDATE_MACHINE = 6;
+
+    // Phantom Tanks
+    public static final int REMOVE_PHANTOM_FLUID_TYPE = 10;
+    public static final int CHANGE_PHANTOM_FLUID = 11;
+    public static final int VOID_PHANTOM_FLUID = 12;
+    public static final int LOAD_PHANTOM_FLUID_STACK_FROM_NBT = 13;
+
+    // Recipe Logic
+    public static final int WORKABLE_ACTIVE = 1;
+    public static final int WORKING_ENABLED = 5;
 
 }

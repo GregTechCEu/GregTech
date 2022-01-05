@@ -9,8 +9,8 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.*;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.BlockPipe.PipeConnectionData;
-import gregtech.api.render.GTBlockOperation;
 import gregtech.api.util.GTUtility;
+import gregtech.client.utils.RenderUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -60,7 +60,7 @@ public interface ICoverable {
 
     double getCoverPlateThickness();
 
-    int getPaintingColor();
+    int getPaintingColorForRendering();
 
     boolean shouldRenderBackSide();
 
@@ -68,13 +68,19 @@ public interface ICoverable {
 
     void scheduleRenderUpdate();
 
+    default boolean hasAnyCover() {
+        for(EnumFacing facing : EnumFacing.VALUES)
+            if(getCoverAtSide(facing) != null)
+                return true;
+        return false;
+    }
+
     @SideOnly(Side.CLIENT)
-    default void renderCovers(CCRenderState renderState, Matrix4 translation, GTBlockOperation mteOp) {
-        BlockRenderLayer layer = mteOp.layer;
+    default void renderCovers(CCRenderState renderState, Matrix4 translation, BlockRenderLayer layer) {
         renderState.lightMatrix.locate(getWorld(), getPos());
         double coverPlateThickness = getCoverPlateThickness();
-        IVertexOperation[] platePipeline = new IVertexOperation[]{mteOp, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColor()))};
-        IVertexOperation[] coverPipeline = new IVertexOperation[]{mteOp, renderState.lightMatrix};
+        IVertexOperation[] platePipeline = new IVertexOperation[]{renderState.lightMatrix, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))};
+        IVertexOperation[] coverPipeline = new IVertexOperation[]{renderState.lightMatrix};
 
         for (EnumFacing sideFacing : EnumFacing.values()) {
             CoverBehavior coverBehavior = getCoverAtSide(sideFacing);
@@ -86,7 +92,7 @@ public interface ICoverable {
                 coverBehavior.renderCoverPlate(renderState, translation, platePipeline, plateBox, layer);
             }
             if (coverBehavior.canRenderInLayer(layer)) {
-                coverBehavior.renderCover(renderState, translation.copy(), coverPipeline, plateBox, layer);
+                coverBehavior.renderCover(renderState, RenderUtil.adjustTrans(translation, sideFacing, 1), coverPipeline, plateBox, layer);
                 if (coverPlateThickness == 0.0 && shouldRenderBackSide() && coverBehavior.canRenderBackside()) {
                     //machine is full block, but still not opaque - render cover on the back side too
                     Matrix4 backTranslation = translation.copy();
@@ -96,7 +102,7 @@ public interface ICoverable {
                         REVERSE_HORIZONTAL_ROTATION.apply(backTranslation);
                     }
                     backTranslation.translate(-sideFacing.getXOffset(), -sideFacing.getYOffset(), -sideFacing.getZOffset());
-                    coverBehavior.renderCover(renderState, backTranslation, coverPipeline, plateBox, layer);
+                    coverBehavior.renderCover(renderState, backTranslation, coverPipeline, plateBox, layer); // may need to translate the layer here as well
                 }
             }
         }
@@ -201,7 +207,16 @@ public interface ICoverable {
         }
     }
 
-    public default boolean canRenderMachineGrid() {
+    static boolean canPlaceCover(CoverDefinition coverDef, ICoverable coverable) {
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            CoverBehavior cover = coverDef.createCoverBehavior(coverable, facing);
+            if (coverable.canPlaceCoverOnSide(facing) && cover.canAttach())
+                return true;
+        }
+        return false;
+    }
+
+    default boolean canRenderMachineGrid() {
         return true;
     }
 }

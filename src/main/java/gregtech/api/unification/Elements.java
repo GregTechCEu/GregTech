@@ -150,9 +150,8 @@ public class Elements {
     public static final Element Nq1 = add(174, 354, 140, null, "NaquadahEnriched", "Nq+", true);
     public static final Element Nq2 = add(174, 348, 140, null, "Naquadria", "*Nq*", true);
     public static final Element Nt = add(0, 1000, -1, null, "Neutronium", "Nt", false);
-    public static final Element Ad = add(750, 1000, -1, null, "Adamantium", "Ad", false);
-    public static final Element Vb = add(850, 900, -1, null, "Vibranium", "Vb", false);
-    public static final Element Tn = add(550, 670, -1, null, "Taranium", "Tn", false);
+    public static final Element Sp = add(1, 0, -1, null, "Space", "Sp", false);
+    public static final Element Ma = add(1, 0, -1, null, "Magic", "Ma", false);
 
     // TODO Cosmic Neutronium, other Gregicality Elements
 

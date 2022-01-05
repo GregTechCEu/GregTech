@@ -1,8 +1,8 @@
 package gregtech.api.unification.stack;
 
 import gregtech.api.GTValues;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -11,7 +11,7 @@ import java.util.Map;
  *
  * @param <V> value type
  */
-public class WildcardAwareHashMap<V> extends HashMap<ItemAndMetadata, V> {
+public class WildcardAwareHashMap<V> extends Object2ObjectOpenHashMap<ItemAndMetadata, V> {
 
     public WildcardAwareHashMap(int initialCapacity, float loadFactor) {
         super(initialCapacity, loadFactor);

@@ -14,7 +14,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.render.SimpleOverlayRenderer;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.api.util.GTUtility;
 import gregtech.common.covers.filter.FluidFilter;
 import gregtech.common.covers.filter.FluidFilterWrapper;
@@ -67,6 +67,11 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         return this.coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.attachedSide) != null;
     }
 
+    @Override
+    public boolean canPipePassThrough() {
+        return true;
+    }
+
     public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         if (!playerIn.world.isRemote) {
             this.openUI((EntityPlayerMP) playerIn);
@@ -115,13 +120,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         super.readFromNBT(tagCompound);
         this.filterMode = FluidFilterMode.values()[tagCompound.getInteger("FilterMode")];
         this.fluidFilter.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
-        //LEGACY SAVE FORMAT SUPPORT
-        if (tagCompound.hasKey("FluidFilter")) {
-            this.fluidFilter.getFluidFilter().readFromNBT(tagCompound);
-        } else {
-            NBTTagCompound filterComponent = tagCompound.getCompoundTag("Filter");
-            this.fluidFilter.getFluidFilter().readFromNBT(filterComponent);
-        }
+        this.fluidFilter.getFluidFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
     }
 
     private class FluidHandlerFiltered extends FluidHandlerDelegate {

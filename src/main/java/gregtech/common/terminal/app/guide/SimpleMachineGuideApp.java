@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 public class SimpleMachineGuideApp extends GuideApp<MetaTileEntity> {
 
     public SimpleMachineGuideApp() {
-        super("machines", new ItemStackTexture(MetaTileEntities.CHEMICAL_REACTOR[0].getStackForm()));
+        super("machines", new ItemStackTexture(MetaTileEntities.CHEMICAL_REACTOR[GTValues.LV].getStackForm()));
     }
 
     @Override
@@ -32,7 +32,7 @@ public class SimpleMachineGuideApp extends GuideApp<MetaTileEntity> {
     }
 
     @Override
-    protected MetaTileEntity ofJson(JsonObject json) {
+    public MetaTileEntity ofJson(JsonObject json) {
         String[] valids = {"machine", "generator", "metatileentity"};
         if (json.isJsonObject()) {
             for (String valid : valids) {

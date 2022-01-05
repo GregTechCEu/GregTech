@@ -4,6 +4,7 @@ import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
@@ -145,6 +146,7 @@ public class GTRecipeWrapper implements IRecipeWrapper {
     }
 
     private int getPropertyListHeight() {
+        if (recipeMap == RecipeMaps.COKE_OVEN_RECIPES) return LINE_HEIGHT - 6; // fun hack TODO Make this easier to position
         return (recipe.getPropertyCount() + 3) * LINE_HEIGHT - 3;
     }
 }

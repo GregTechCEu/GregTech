@@ -37,24 +37,30 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
     private int toolEnchantability;
 
     /**
+     * If crafting tools should not be made from this material
+     */
+    private boolean ignoreCraftingTools;
+
+    /**
      * Enchantment to be applied to tools made from this Material.
      * <p>
      * Default: none.
      */
     public final List<EnchantmentData> toolEnchantments = new ArrayList<>();
 
-    public ToolProperty(float toolSpeed, float toolAttackDamage, int toolDurability, int toolEnchantability) {
+    public ToolProperty(float toolSpeed, float toolAttackDamage, int toolDurability, int toolEnchantability, boolean ignoreCraftingTools) {
         this.toolSpeed = toolSpeed;
         this.toolAttackDamage = toolAttackDamage;
         this.toolDurability = toolDurability;
         this.toolEnchantability = toolEnchantability;
+        this.ignoreCraftingTools = ignoreCraftingTools;
     }
 
     /**
      * Default values constructor.
      */
     public ToolProperty() {
-        this(1.0f, 1.0f, 100, 10);
+        this(1.0f, 1.0f, 100, 10, false);
     }
 
     public float getToolSpeed() {
@@ -91,6 +97,14 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
     public void setToolEnchantability(int toolEnchantability) {
         if (toolEnchantability <= 0) throw new IllegalArgumentException("Tool Enchantability must be greater than zero!");
         this.toolEnchantability = toolEnchantability;
+    }
+
+    public boolean getShouldIgnoreCraftingTools() {
+        return ignoreCraftingTools;
+    }
+
+    public void setShouldIgnoreCraftingTools(boolean ignore) {
+        this.ignoreCraftingTools = ignore;
     }
 
     @Override

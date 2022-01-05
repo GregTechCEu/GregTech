@@ -48,7 +48,7 @@ public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
 
     @Override
     public ItemPipeProperties modifyProperties(ItemPipeProperties baseProperties) {
-        return new ItemPipeProperties((int) ((baseProperties.priority * resistanceMultiplier) + 0.5), baseProperties.transferRate * rateMultiplier);
+        return new ItemPipeProperties((int) ((baseProperties.getPriority() * resistanceMultiplier) + 0.5), baseProperties.getTransferRate() * rateMultiplier);
     }
 
     public float getRateMultiplier() {

@@ -1,0 +1,135 @@
+{
+  "section": "Resource Pack",
+  "title": "Custom Emissive Texture",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "Developers and resource pack authors can easily have emissive textures and set the bloom effect.\n\n§lContents:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "emissive",
+      "content": [
+        "1. §1Emissive Texture"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "bloom",
+      "content": [
+        "2.§1 Bloom"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "demo",
+      "content": [
+        "3. §1Demo"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "emissive",
+      "content": [
+        "§lEmissive Texture"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "* For model-based blocks: Similar to §4CTM§r, you only need to set mcmeta file for the texture that you want to have the emissive effect."
+      ]
+    },
+    {
+      "type": "card",
+      "fill": -3745585,
+      "width": 190,
+      "height": 100,
+      "isShadow": true
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§2light §rhere  represents the default level of light it emit (from 0~15). Besides, you can also set sky and block separately as what CTM does."
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "* For CEu machines: They mostly are overlay textures under the assets/textures/blocks/machines and assets/textures/overlay/machines. You no need to set the mcmeta file for them. Just add a new texture file for the emissive part named \"XXX_emissive.png\"."
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§lBloom"
+      ],
+      "ref": "bloom"
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "* For CEu machines: You don\u0027t need to modify anything; all emissive textures have the bloom effect by default.\n\n* For model-based blocks: You just need to add an extra line to the mcmeta file. (§2\"layer\"§r: \"BLOOM\")"
+      ]
+    },
+    {
+      "type": "card",
+      "fill": -3745585,
+      "width": 190,
+      "height": 110,
+      "isShadow": true
+    },
+    {
+      "type": "textbox",
+      "ref": "demo",
+      "content": [
+        "§lDemo"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/138578815-d2d4e357-8080-4d57-b8ac-61235eac8c2a.png",
+      "width": 190,
+      "height": 130
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/138578838-b9e6a16d-e348-4fea-8ab4-8a940e1ecd0f.png",
+      "width": 190,
+      "height": 100
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/138578853-9a2497f4-e1f5-45e9-ab64-26b5eb859139.png",
+      "width": 190,
+      "height": 110
+    }
+  ],
+  "fixed": [
+    {
+      "type": "textbox",
+      "x": 8,
+      "y": 206,
+      "width": 181,
+      "height": 90,
+      "content": [
+        "{\n  §2\"ctm\"§r: {\n        §2\"ctm_version\"§r: 1,\n        §2\"gregtech:§r true,\n        §2\"extra\"§r: {\n            §2\"light\"§r: 15\n        }\n  }\n}"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 8,
+      "y": 550,
+      "width": 181,
+      "height": 100,
+      "content": [
+        "{\n  §2\"ctm\"§r: {\n        §2\"ctm_version\"§r: 1,\n        §2\"layer\"§r: \"BLOOM\",\n        §2\"gregtech\"§r true,\n        §2\"extra\"§r: {\n            §2\"light\"§r: 15\n        }\n  }\n}"
+      ]
+    }
+  ]
+}

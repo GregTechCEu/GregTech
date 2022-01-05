@@ -73,34 +73,12 @@ public class GregTechAPI {
     @ZenRegister
     public static class MaterialRegistry extends GTControlledRegistry<String, Material> {
 
-        private List<Material> DEFERRED_REGISTRY = new ArrayList<>();
-
         private MaterialRegistry() {
             super(Short.MAX_VALUE);
         }
 
-        @Override
-        public void register(int id, String key, Material value) {
-            register(value); // id, key can be discarded since Material holds them
-        }
-
         public void register(Material value) {
-            DEFERRED_REGISTRY.add(value);
-        }
-
-        public void flush() {
-            DEFERRED_REGISTRY.forEach(Material::verifyMaterial);
-            DEFERRED_REGISTRY.forEach(m -> {
-                m.postVerify();
-                super.register(m.getId(), m.toString(), m);
-            });
-            DEFERRED_REGISTRY = new ArrayList<>();
-        }
-
-        @Override
-        public void freeze() {
-            if (!frozen) flush();
-            super.freeze();
+            register(value.getId(), value.toString(), value);
         }
 
         @ZenMethod

@@ -11,11 +11,15 @@ import java.util.List;
 
 public class FluidHandlerProxy implements IFluidHandler {
 
-    public final IFluidHandler input;
-    public final IFluidHandler output;
-    private final IFluidTankProperties[] properties;
+    public IFluidHandler input;
+    public IFluidHandler output;
+    private IFluidTankProperties[] properties;
 
     public FluidHandlerProxy(IFluidHandler input, IFluidHandler output) {
+        reinitializeHandler(input, output);
+    }
+
+    public void reinitializeHandler(IFluidHandler input, IFluidHandler output) {
         this.input = input;
         this.output = output;
 

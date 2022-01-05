@@ -1,17 +1,13 @@
 package gregtech.api.recipes;
 
-import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.util.GTLog;
 import gregtech.common.MetaFluids;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import org.apache.logging.log4j.LogManager;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -26,10 +22,8 @@ public class RecipeMapTest {
 
     @BeforeClass
     public static void init() {
-        GTLog.init(LogManager.getLogger(GTValues.MODID)); // yes this was necessary
         Bootstrap.register();
         Materials.register();
-        GregTechAPI.MATERIAL_REGISTRY.flush();
         MetaFluids.init();
     }
 

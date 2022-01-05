@@ -104,6 +104,7 @@ public class ToolChainsaw extends ToolSaw {
     public void onBlockDestroyed(ItemStack stack, World world, IBlockState state, BlockPos pos, EntityLivingBase entity) {
         super.onBlockDestroyed(stack, world, state, pos, entity);
         if (!entity.isSneaking() && entity instanceof EntityPlayer) {
+            this.onBreakingUse(stack, world, pos);
             ToolUtility.applyTimberAxe(stack, world, pos, (EntityPlayer) entity);
         }
     }
@@ -118,5 +119,10 @@ public class ToolChainsaw extends ToolSaw {
             case GTValues.HV: powerUnit = MetaItems.POWER_UNIT_HV; break;
         }
         return powerUnit == null ? ItemStack.EMPTY : powerUnit.getChargedStackWithOverride(electricItem);
+    }
+
+    @Override
+    public boolean canPlayBreakingSound(ItemStack stack, IBlockState state) {
+        return canMineBlock(state, stack);
     }
 }

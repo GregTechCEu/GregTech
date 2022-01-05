@@ -78,9 +78,9 @@ public class MaterialTree implements IRecipeWrapper {
 
         name = material.getLocalizedName();
         formula = material.getChemicalFormula();
-        avgM = material.getAverageMass();
-        avgP = material.getAverageProtons();
-        avgN = material.getAverageNeutrons();
+        avgM = material.getMass();
+        avgP = material.getProtons();
+        avgN = material.getNeutrons();
         if (material.hasProperty(PropertyKey.BLAST)) {
             blastTemp = material.getBlastTemperature();
         } else {

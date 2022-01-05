@@ -11,12 +11,7 @@ public class ToolMortar extends ToolBase {
 
     @Override
     public int getToolDamagePerContainerCraft(ItemStack stack) {
-        return 5;
-    }
-
-    @Override
-    public float getBaseDamage(ItemStack stack) {
-        return 2.0F;
+        return 2;
     }
 
 }

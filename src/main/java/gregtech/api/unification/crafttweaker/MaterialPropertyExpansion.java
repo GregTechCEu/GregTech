@@ -98,7 +98,7 @@ public class MaterialPropertyExpansion {
     public static void addFluidPipes(Material m, int maxFluidTemperature, int throughput, boolean gasProof) {
         if (checkFrozen("add fluid pipes to a material")) return;
         if (m.hasProperty(PropertyKey.FLUID_PIPE)) {
-            m.getProperty(PropertyKey.FLUID_PIPE).setMaxFluidTemperature(maxFluidTemperature);;
+            m.getProperty(PropertyKey.FLUID_PIPE).setMaxFluidTemperature(maxFluidTemperature);
             m.getProperty(PropertyKey.FLUID_PIPE).setThroughput(throughput);
             m.getProperty(PropertyKey.FLUID_PIPE).setGasProof(gasProof);
         } else m.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxFluidTemperature, throughput, gasProof));
@@ -127,11 +127,24 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
+    public static void addOre(Material m, @Optional int oreMultiplier, @Optional int byproductMultiplier, @Optional boolean emissive) {
+        if (checkFrozen("add an Ore to a material")) return;
+        oreMultiplier = oreMultiplier == 0 ? 1 : oreMultiplier;
+        byproductMultiplier = byproductMultiplier == 0 ? 1 : byproductMultiplier;
+        if (m.hasProperty(PropertyKey.ORE)) {
+            m.getProperty(PropertyKey.ORE).setOreMultiplier(oreMultiplier);
+            m.getProperty(PropertyKey.ORE).setByProductMultiplier(byproductMultiplier);
+            m.getProperty(PropertyKey.ORE).setEmissive(emissive);
+        }
+        else m.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, byproductMultiplier, emissive));
+    }
+
+    @ZenMethod
     public static void addItemPipes(Material m, int priority, float transferRate) {
         if (checkFrozen("add Item Pipes to a material")) return;
         if (m.hasProperty(PropertyKey.ITEM_PIPE)) {
-            m.getProperty(PropertyKey.ITEM_PIPE).priority = priority;
-            m.getProperty(PropertyKey.ITEM_PIPE).transferRate = transferRate;
+            m.getProperty(PropertyKey.ITEM_PIPE).setPriority(priority);
+            m.getProperty(PropertyKey.ITEM_PIPE).setTransferRate(transferRate);
         } else m.setProperty(PropertyKey.ITEM_PIPE, new ItemPipeProperties(priority, transferRate));
     }
 
@@ -142,7 +155,7 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
-    public static void addTools(Material m, float toolSpeed, float toolAttackDamage, int toolDurability, @Optional int toolEnchantability) {
+    public static void addTools(Material m, float toolSpeed, float toolAttackDamage, int toolDurability, @Optional int toolEnchantability, @Optional boolean shouldIgnoreCraftingTools) {
         if (checkFrozen("add Tools to a material")) return;
         if (toolEnchantability == 0) toolEnchantability = 10;
         if (m.hasProperty(PropertyKey.TOOL)) {
@@ -150,17 +163,18 @@ public class MaterialPropertyExpansion {
             m.getProperty(PropertyKey.TOOL).setToolAttackDamage(toolAttackDamage);
             m.getProperty(PropertyKey.TOOL).setToolDurability(toolDurability);
             m.getProperty(PropertyKey.TOOL).setToolEnchantability(toolEnchantability);
-        } else m.setProperty(PropertyKey.TOOL, new ToolProperty(toolSpeed, toolAttackDamage, toolDurability, toolEnchantability));
+            m.getProperty(PropertyKey.TOOL).setShouldIgnoreCraftingTools(shouldIgnoreCraftingTools);
+        } else m.setProperty(PropertyKey.TOOL, new ToolProperty(toolSpeed, toolAttackDamage, toolDurability, toolEnchantability, shouldIgnoreCraftingTools));
     }
 
     @ZenMethod
     public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock, @Optional boolean isSuperCon) {
         if (checkFrozen("add Wires to a material")) return;
         if (m.hasProperty(PropertyKey.WIRE)) {
-            m.getProperty(PropertyKey.WIRE).voltage = voltage;
-            m.getProperty(PropertyKey.WIRE).amperage = baseAmperage;
-            m.getProperty(PropertyKey.WIRE).lossPerBlock = lossPerBlock;
-            m.getProperty(PropertyKey.WIRE).isSuperconductor = isSuperCon;
+            m.getProperty(PropertyKey.WIRE).setVoltage(voltage);
+            m.getProperty(PropertyKey.WIRE).setAmperage(baseAmperage);
+            m.getProperty(PropertyKey.WIRE).setLossPerBlock(lossPerBlock);
+            m.getProperty(PropertyKey.WIRE).setSuperconductor(isSuperCon);
         } else m.setProperty(PropertyKey.WIRE, new WireProperties(voltage, baseAmperage, lossPerBlock, isSuperCon));
     }
 }

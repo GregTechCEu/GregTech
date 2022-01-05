@@ -1,52 +1,67 @@
 package gregtech.common;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IElectricItem;
 import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.net.KeysPacket;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.net.NetworkHandler;
-import gregtech.api.render.Textures;
 import gregtech.api.util.CapesRegistry;
+import gregtech.api.net.packets.CPacketKeysPressed;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.Key;
 import gregtech.api.util.input.KeyBinds;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.armor.PowerlessJetpack;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.tools.ToolUtility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class EventHandlers {
+
+    private static final String HAS_TERMINAL = GTValues.MODID + ".terminal";
 
     @SubscribeEvent
     public static void onEndermanTeleportEvent(EnderTeleportEvent event) {
@@ -61,7 +76,7 @@ public class EventHandlers {
         EntityLivingBase entity = event.getEntityLiving();
         EnumDifficulty difficulty = entity.world.getDifficulty();
         if (difficulty == EnumDifficulty.HARD && entity.getRNG().nextFloat() <= 0.03f) {
-            if (entity instanceof EntityZombie && ConfigHolder.nanoSaberConfiguration.zombieSpawnWithSabers) {
+            if (entity instanceof EntityZombie && ConfigHolder.tools.nanoSaber.zombieSpawnWithSabers) {
                 ItemStack itemStack = MetaItems.NANO_SABER.getInfiniteChargedStack();
                 ToggleEnergyConsumerBehavior.setItemActive(itemStack, true);
                 entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, itemStack);
@@ -71,17 +86,30 @@ public class EventHandlers {
     }
 
     @SubscribeEvent
-    public static void onPlayerInteraction(PlayerInteractEvent.RightClickBlock event) {
+    public static void onPlayerInteractionRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getWorld().getTileEntity(event.getPos()) instanceof MetaTileEntityHolder) {
+            event.setUseBlock(Event.Result.ALLOW);
+        }
         ItemStack stack = event.getItemStack();
         if (!stack.isEmpty() && stack.getItem() == Items.FLINT_AND_STEEL) {
             if (!event.getWorld().isRemote
                     && !event.getEntityPlayer().capabilities.isCreativeMode
-                    && GTValues.RNG.nextInt(100) >= ConfigHolder.flintChanceToCreateFire) {
+                    && GTValues.RNG.nextInt(100) >= ConfigHolder.misc.flintChanceToCreateFire) {
                 stack.damageItem(1, event.getEntityPlayer());
                 if (stack.getItemDamage() >= stack.getMaxDamage()) {
                     stack.shrink(1);
                 }
                 event.setCanceled(true);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerInteractionLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+        if (event.getEntityPlayer().isCreative()) {
+            TileEntity holder = event.getWorld().getTileEntity(event.getPos());
+            if (holder instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) holder).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
+                ((MetaTileEntityCentralMonitor) ((MetaTileEntityHolder) holder).getMetaTileEntity()).invalidateStructure();
             }
         }
     }
@@ -132,42 +160,54 @@ public class EventHandlers {
                     needNewPacket = true;
                 }
             }
-            if (needNewPacket) NetworkHandler.INSTANCE.sendToServer(new KeysPacket(KeyBinds.REGISTRY));
+            if (needNewPacket) {
+                NetworkHandler.channel.sendToServer(new CPacketKeysPressed(KeyBinds.REGISTRY).toFMLPacket());
+            }
         }
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onEntityLivingFallEvent(LivingFallEvent event) {
-        if (!event.getEntity().getEntityWorld().isRemote && event.getEntity() instanceof EntityLivingBase) {
-            EntityLivingBase entity = (EntityLivingBase) event.getEntity();
-            ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-            ItemStack jet = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-            final ItemStack NANO = MetaItems.NANO_MUSCLE_SUITE_BOOTS.getStackForm();
-            final ItemStack QUARK = MetaItems.QUARK_TECH_SUITE_BOOTS.getStackForm();
-            final ItemStack JET = MetaItems.IMPELLER_JETPACK.getStackForm();
-            final ItemStack ADJET = MetaItems.ADVANCED_IMPELLER_JETPACK.getStackForm();
-            final ItemStack FLUIDJET = MetaItems.SEMIFLUID_JETPACK.getStackForm();
+        if (event.getEntity() instanceof EntityPlayerMP) {
+            EntityPlayerMP player = (EntityPlayerMP) event.getEntity();
+            ItemStack armor = player.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+            ItemStack jet = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 
-
-            if (!(jet.isItemEqual(JET) || jet.isItemEqual(ADJET) || (jet.isItemEqual(FLUIDJET)) || armor.isItemEqual(QUARK) || armor.isItemEqual(NANO))) {
+            if (player.fallDistance < 3.2f)
                 return;
-            }
-            if (jet.isItemEqual(FLUIDJET)) {
-                event.setCanceled(true);
-            } else {
-                ItemStack armorPiece = jet.isEmpty() ? armor : jet;
 
-                ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) armorPiece.getItem()).getItem(armorPiece);
-                ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
-                IElectricItem item = armorPiece.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                if (item == null) return;
-                int energyCost = (armorLogic.getEnergyPerUse() * Math.round(event.getDistance()));
-                if (item.getCharge() >= energyCost) {
-                    item.discharge(energyCost, item.getTier(), true, false, false);
-                    event.setCanceled(true);
-                }
+            if (!armor.isEmpty() && armor.getItem() instanceof ArmorMetaItem<?>) {
+                ((ArmorMetaItem<?>) armor.getItem()).getItem(armor).getArmorLogic().damageArmor(player, armor, DamageSource.FALL, (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);
+                player.fallDistance = 0;
+                event.setCanceled(true);
+            } else if (!jet.isEmpty() && jet.getItem() instanceof ArmorMetaItem<?> && GTUtility.getOrCreateNbtCompound(jet).hasKey("flyMode")) {
+                ((ArmorMetaItem<?>) jet.getItem()).getItem(jet).getArmorLogic().damageArmor(player, jet, DamageSource.FALL, (int) (player.fallDistance - 1.2f), EntityEquipmentSlot.FEET);
+                player.fallDistance = 0;
+                event.setCanceled(true);
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void onLivingEquipmentChangeEvent(LivingEquipmentChangeEvent event) {
+        if (event.getFrom().isEmpty())
+            return;
+
+        ItemStack stack = event.getFrom();
+        if (!(stack.getItem() instanceof ArmorMetaItem))
+            return;
+
+        ArmorMetaItem<?> armorMetaItem = (ArmorMetaItem<?>) stack.getItem();
+        if (armorMetaItem.getItem(stack).isItemEqual(MetaItems.NIGHTVISION_GOGGLES.getStackForm()) ||
+            armorMetaItem.getItem(stack).isItemEqual(MetaItems.NANO_HELMET.getStackForm()) ||
+            armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_HELMET.getStackForm())) {
+            event.getEntityLiving().removePotionEffect(MobEffects.NIGHT_VISION);
+        }
+        if (armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_CHESTPLATE.getStackForm()) ||
+            armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_CHESTPLATE_ADVANCED.getStackForm())) {
+            event.getEntity().isImmuneToFire = false;
+        }
+
     }
 
     @SubscribeEvent
@@ -187,5 +227,31 @@ public class EventHandlers {
     @SubscribeEvent
     public static void onPlayerAdvancement(AdvancementEvent event) {
         CapesRegistry.unlockCapeOnAdvancement(event.getEntityPlayer(), event.getAdvancement());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (ConfigHolder.misc.spawnTerminal) {
+            NBTTagCompound playerData = event.player.getEntityData();
+            NBTTagCompound data = playerData.hasKey(EntityPlayer.PERSISTED_NBT_TAG) ? playerData.getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG) : new NBTTagCompound();
+
+            if (!data.getBoolean(HAS_TERMINAL)) {
+                ItemStack terminal = MetaItems.TERMINAL.getStackForm();
+                if (event.player.isCreative()) {
+                    terminal.getOrCreateSubCompound("terminal").setBoolean("_creative", true);
+                }
+                ItemHandlerHelper.giveItemToPlayer(event.player, terminal);
+                data.setBoolean(HAS_TERMINAL, true);
+                playerData.setTag(EntityPlayer.PERSISTED_NBT_TAG, data);
+            }
+        }
+        CapesRegistry.loadWornCapeOnLogin(event.player.getPersistentID());
+    }
+
+    @SubscribeEvent
+    public static void onFurnaceFuelBurnTime(FurnaceFuelBurnTimeEvent event) {
+        if(ItemStack.areItemStacksEqual(event.getItemStack(), FluidUtil.getFilledBucket(Materials.Creosote.getFluid(1000)))) {
+            event.setBurnTime(6400);
+        }
     }
 }

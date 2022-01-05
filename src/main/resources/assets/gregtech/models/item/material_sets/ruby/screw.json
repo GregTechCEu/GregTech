@@ -1,6 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "gregtech:items/material_sets/ruby/screw"
+    "layer0": "gregtech:items/material_sets/ruby/screw",
+    "layer1": "gregtech:items/material_sets/ruby/screw_overlay"
   }
 }

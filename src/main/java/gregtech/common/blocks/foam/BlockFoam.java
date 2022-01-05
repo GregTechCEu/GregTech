@@ -72,12 +72,14 @@ public class BlockFoam extends BlockColored {
 
     @Nonnull
     @Override
+    @SuppressWarnings("deprecation")
     public EnumPushReaction getPushReaction(@Nonnull IBlockState state) {
         return EnumPushReaction.DESTROY;
     }
 
     @Nullable
     @Override
+    @SuppressWarnings("deprecation")
     public AxisAlignedBB getCollisionBoundingBox(@Nonnull IBlockState blockState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
         return null;
     }
@@ -95,18 +97,21 @@ public class BlockFoam extends BlockColored {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean isOpaqueCube(@Nonnull IBlockState state) {
         return false;
     }
 
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean isFullCube(@Nonnull IBlockState state) {
         return false;
     }
 
     @Nonnull
     @Override
+    @SuppressWarnings("deprecation")
     public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
         return BlockFaceShape.UNDEFINED;
     }

@@ -3,7 +3,7 @@ package gregtech.common.gui.widget.monitor;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
-import gregtech.api.util.RenderUtil;
+import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -17,7 +17,7 @@ public class WidgetMonitorScreen extends Widget {
     }
 
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         Position position = this.getPosition();
         Size size = this.getSize();
         RenderUtil.renderRect(position.x, position.y, size.width, size.height, 0, 0XFF7B7A7C);

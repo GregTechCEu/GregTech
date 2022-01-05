@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.itempipe.net;
 
-import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.PipeNetWalker;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
@@ -52,7 +51,7 @@ public class ItemNetWalker extends PipeNetWalker {
         if (minProperties == null)
             minProperties = pipeProperties;
         else
-            minProperties = new ItemPipeProperties(minProperties.priority + pipeProperties.priority, Math.min(minProperties.transferRate, pipeProperties.transferRate));
+            minProperties = new ItemPipeProperties(minProperties.getPriority() + pipeProperties.getPriority(), Math.min(minProperties.getTransferRate(), pipeProperties.getTransferRate()));
     }
 
     @Override

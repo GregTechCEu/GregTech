@@ -7,13 +7,14 @@ public enum OreDictNames {
     chestWood,
     chestEnder,
 
+    cobblestone, // For just cobblestone.
+    stoneCobble, // For any kind of cobblestone (e.g. mossy cobblestone).
+
     craftingAnvil,
     craftingFurnace,
     craftingBook,
 
-    craftingSawBlade,
     craftingDuctTape,
-    craftingGrinder,
     craftingPiston,
 
     craftingIronFurnace,
@@ -32,5 +33,8 @@ public enum OreDictNames {
     craftingLensPurple,
     craftingLensRed,
     craftingLensWhite,
-    craftingLensYellow
+    craftingLensYellow,
+
+    // Represents all dyed Glass Lenses, and the undyed version
+    craftingLensGlass
 }

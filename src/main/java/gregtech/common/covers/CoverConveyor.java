@@ -18,8 +18,8 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.render.SimpleSidedCubeRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
@@ -29,6 +29,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
@@ -79,6 +80,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     protected void setConveyorMode(ConveyorMode conveyorMode) {
         this.conveyorMode = conveyorMode;
+        writeUpdateData(1, buf -> buf.writeEnumValue(conveyorMode));
         coverHolder.markDirty();
     }
 
@@ -404,7 +406,11 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.CONVEYOR_OVERLAY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        if (conveyorMode == ConveyorMode.EXPORT) {
+            Textures.CONVEYOR_OVERLAY.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        } else {
+            Textures.CONVEYOR_OVERLAY_INVERTED.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        }
     }
 
     @Override
@@ -468,8 +474,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         primaryGroup.addWidget(new ToggleButtonWidget(130, 166, 20, 20, GuiTextures.BLOCKS_INPUT, () -> blocksInput, val -> blocksInput = val).setTooltipText("cover.conveyor.blocks_input"));
 
         TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
-        TileEntity otherTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
-        if (coverTile instanceof TileEntityItemPipe ^ otherTile instanceof TileEntityItemPipe) {
+        if (coverTile instanceof TileEntityItemPipe) {
             final ImageCycleButtonWidget distributionModeButton = new ImageCycleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE, 3,
                     () -> distributionMode.ordinal(),
                     val -> setDistributionMode(DistributionMode.values()[val]))
@@ -496,6 +501,27 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     }
 
     @Override
+    public void readUpdateData(int id, PacketBuffer packetBuffer) {
+        super.readUpdateData(id, packetBuffer);
+        if (id == 1) {
+            this.conveyorMode = packetBuffer.readEnumValue(ConveyorMode.class);
+            coverHolder.scheduleRenderUpdate();
+        }
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer packetBuffer) {
+        super.writeInitialSyncData(packetBuffer);
+        packetBuffer.writeEnumValue(conveyorMode);
+    }
+
+    @Override
+    public void readInitialSyncData(PacketBuffer packetBuffer) {
+        super.readInitialSyncData(packetBuffer);
+        this.conveyorMode = packetBuffer.readEnumValue(ConveyorMode.class);
+    }
+
+    @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferRate", transferRate);
@@ -514,24 +540,9 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         this.conveyorMode = ConveyorMode.values()[tagCompound.getInteger("ConveyorMode")];
         this.distributionMode = DistributionMode.values()[tagCompound.getInteger("DistributionMode")];
         this.blocksInput = tagCompound.getBoolean("BlocksInput");
-        //LEGACY SAVE FORMAT SUPPORT
-        if (tagCompound.hasKey("AllowManualIO")) {
-            this.manualImportExportMode = tagCompound.getBoolean("AllowManualIO")
-                    ? ManualImportExportMode.FILTERED
-                    : ManualImportExportMode.DISABLED;
-        }
-        if (tagCompound.hasKey("FilterInventory")) {
-            this.itemFilterContainer.deserializeNBT(tagCompound);
-        } else {
-            NBTTagCompound filterComponent = tagCompound.getCompoundTag("Filter");
-            this.itemFilterContainer.deserializeNBT(filterComponent);
-        }
-        if (tagCompound.hasKey("WorkingAllowed")) {
-            this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
-        }
-        if (tagCompound.hasKey("ManualImportExportMode")) {
-            this.manualImportExportMode = ManualImportExportMode.values()[tagCompound.getInteger("ManualImportExportMode")];
-        }
+        this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
+        this.manualImportExportMode = ManualImportExportMode.values()[tagCompound.getInteger("ManualImportExportMode")];
+        this.itemFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
     }
 
     @Override

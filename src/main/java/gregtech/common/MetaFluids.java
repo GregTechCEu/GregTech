@@ -172,7 +172,7 @@ public class MetaFluids {
 
         setMaterialFluidTexture(Materials.Air, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Deuterium, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.DistilledWater, FluidType.NORMAL, new ResourceLocation("blocks/water_still"));
+//        setMaterialFluidTexture(Materials.DistilledWater, FluidType.NORMAL, new ResourceLocation("blocks/water_still"));
         setMaterialFluidTexture(Materials.Tritium, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Helium, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Helium, FluidType.PLASMA);
@@ -181,7 +181,7 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.TitaniumTetrachloride, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Steam, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.OilHeavy, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.OilMedium, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.RawOil, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.OilLight, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.HydrogenSulfide, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.SulfuricGas, FluidType.NORMAL);
@@ -193,10 +193,12 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.LightFuel, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.HeavyFuel, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.LPG, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.SteamCrackedLightFuel, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.SteamCrackedHeavyFuel, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.LightlySteamCrackedLightFuel, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.SeverelySteamCrackedLightFuel, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.LightlySteamCrackedHeavyFuel, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.SeverelySteamCrackedHeavyFuel, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Chlorine, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.NitroDiesel, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.CetaneBoostedDiesel, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.SodiumPersulfate, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.GlycerylTrinitrate, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Lubricant, FluidType.NORMAL);
@@ -214,6 +216,11 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.LeadZincSolution, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.NaturalGas, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Blaze, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.FluoroantimonicAcid, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.Naquadah, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.NaquadahEnriched, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.Naquadria, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.Ice, FluidType.NORMAL);
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
             if (material.isHidden()) continue;
@@ -291,9 +298,12 @@ public class MetaFluids {
                 textureLocation = fluidTextureMap.getOrDefault(Pair.of(material, fluidType), MaterialIconType.fluid.getBlockPath(material.getMaterialIconSet()));
 
 
-            fluid = new MaterialFluid(fluidName, material, fluidState, textureLocation);
+            fluid = new MaterialFluid(fluidName, material, fluidState.prefixLocale, textureLocation);
             fluid.setTemperature(temperature);
-            fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
+            if (material.hasFluidColor())
+                fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
+            else
+                fluid.setColor(0xFFFFFFFF);
 
             // set properties and register
             setStateProperties(fluid, fluidState);
@@ -341,15 +351,15 @@ public class MetaFluids {
         }
     }
 
-    private static class MaterialFluid extends Fluid {
+    public static class MaterialFluid extends Fluid {
 
         private final Material material;
-        private final FluidState state;
+        private final String prefix;
 
-        public MaterialFluid(String fluidName, Material material, FluidState fluidState, ResourceLocation texture) {
+        public MaterialFluid(String fluidName, Material material, String prefix, ResourceLocation texture) {
             super(fluidName, texture, texture, GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
             this.material = material;
-            this.state = fluidState;
+            this.prefix = prefix;
         }
 
         @Override
@@ -361,8 +371,8 @@ public class MetaFluids {
         @SideOnly(Side.CLIENT)
         public String getLocalizedName(FluidStack stack) {
             String localizedName = I18n.format(getUnlocalizedName());
-            if (state.prefixLocale != null) {
-                return I18n.format(state.prefixLocale, localizedName);
+            if (prefix != null) {
+                return I18n.format(prefix, localizedName);
             }
             return localizedName;
         }

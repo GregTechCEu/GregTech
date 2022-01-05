@@ -18,7 +18,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.List;
+import javax.annotation.Nonnull;
 
 public class AdvancedJetpack extends Jetpack {
 
@@ -27,117 +27,79 @@ public class AdvancedJetpack extends Jetpack {
     }
 
     @Override
-    public void onArmorTick(World world, EntityPlayer player, ItemStack item) {
+    public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack item) {
         IElectricItem cont = item.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if(cont == null) {
             return;
         }
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(item);
-        boolean hoverMode = data.hasKey("Hover") && data.getBoolean("Hover");
-        boolean flyEnabled = data.hasKey("FlyMode") && data.getBoolean("FlyMode");
-        byte toggleTimer = data.hasKey("ToggleTimer") ? data.getByte("ToggleTimer") : 0;
-        boolean result = false;
+        boolean hoverMode = data.hasKey("hover") && data.getBoolean("hover");
+        byte toggleTimer = data.hasKey("toggleTimer") ? data.getByte("toggleTimer") : 0;
 
-        // Mode toggle
-        if (!world.isRemote) {
-            if (ArmorUtils.isKeyDown(player, EnumKey.FLY_KEY) && toggleTimer == 0) {
-                flyEnabled = !flyEnabled;
-                toggleTimer = 10;
-            }
-        }
-
-        if (ArmorUtils.isKeyDown(player, EnumKey.JUMP) && ArmorUtils.isKeyDown(player, EnumKey.MODE_SWITCH) && toggleTimer == 0) {
+        if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.HOVER_KEY)) {
             hoverMode = !hoverMode;
-            toggleTimer = 10;
+            toggleTimer = 5;
+            data.setBoolean("hover", hoverMode);
             if (!world.isRemote) {
-                String status = hoverMode ? "metaarmor.jetpack.hover.enable" : "metaarmor.jetpack.hover.disable";
-                player.sendMessage(new TextComponentTranslation(status));
+                if (hoverMode)
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.hover.enable"), true);
+                else
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.jetpack.hover.disable"), true);
             }
         }
 
-        if (player.onGround) hoverMode = false;
+        performFlying(player, hoverMode, item);
 
-        // Fly mechanics
-        if (flyEnabled && cont.canUse(energyPerUse) && !player.isInWater() && !player.isInLava()) {
-            if (hoverMode) {
-                if (!ArmorUtils.isKeyDown(player, EnumKey.JUMP) || !ArmorUtils.isKeyDown(player, EnumKey.SHIFT)) {
-                    if (player.motionY > 0.1D) {
-                        player.motionY -= 0.1D;
-                    }
+        if (toggleTimer > 0) toggleTimer--;
 
-                    if (player.motionY < -0.1D) {
-                        player.motionY += 0.1D;
-                    }
-
-                    if (player.motionY <= 0.1D && player.motionY >= -0.1D) {
-                        player.motionY = 0.0D;
-                    }
-
-                    if (player.motionY > 0.1D || player.motionY < -0.1D) {
-                        if (player.motionY < 0) {
-                            player.motionY += 0.05D;
-                        } else {
-                            player.motionY -= 0.0025D;
-                        }
-                    } else {
-                        player.motionY = 0.0D;
-                    }
-                    ArmorUtils.spawnParticle(world, player, EnumParticleTypes.CLOUD, -0.6D);
-                    ArmorUtils.playJetpackSound(player);
-                }
-
-                if (ArmorUtils.isKeyDown(player, EnumKey.FORWARD)) {
-                    player.moveRelative(0.0F, 0.0F, 0.25F, 0.2F);
-                }
-
-                if (ArmorUtils.isKeyDown(player, EnumKey.JUMP)) {
-                    player.motionY = 0.35D;
-                }
-
-                if (ArmorUtils.isKeyDown(player, EnumKey.SHIFT)) {
-                    player.motionY = -0.35D;
-                }
-
-                if (ArmorUtils.isKeyDown(player, EnumKey.JUMP) && ArmorUtils.isKeyDown(player, EnumKey.SHIFT)) {
-                    player.motionY = 0.0D;
-                }
-
-                player.fallDistance = 0.0F;
-                result = true;
-            } else {
-                if (ArmorUtils.isKeyDown(player, EnumKey.JUMP)) {
-                    if (player.motionY <= 0.8D) player.motionY += 0.2D;
-                    if (ArmorUtils.isKeyDown(player, EnumKey.FORWARD)) {
-                        player.moveRelative(0.0F, 0.0F, 0.85F, 0.1F);
-                    }
-                    ArmorUtils.spawnParticle(world, player, EnumParticleTypes.CLOUD, -0.6D);
-                    ArmorUtils.playJetpackSound(player);
-                    player.fallDistance = 0.0F;
-                    result = true;
-                }
-            }
-        }
-
-        // Fly discharge
-        if (result) {
-            cont.discharge(energyPerUse, cont.getTier(), true, false, false);
-            ArmorUtils.resetPlayerFloatingTime(player);
-        }
-
-        // Do not spam of server packets
-        if (toggleTimer > 0) {
-            toggleTimer--;
-        }
-
-        data.setBoolean("FlyMode", flyEnabled);
-        data.setBoolean("Hover", hoverMode);
-        data.setByte("ToggleTimer", toggleTimer);
+        data.setBoolean("hover", hoverMode);
+        data.setByte("toggleTimer", toggleTimer);
         player.inventoryContainer.detectAndSendChanges();
     }
 
     @Override
-    public void addInfo(ItemStack itemStack, List<String> lines) {
-        super.addInfo(itemStack, lines);
+    public double getSprintEnergyModifier() {
+        return 2.5D;
+    }
+
+    @Override
+    public double getSprintSpeedModifier() {
+        return 1.3D;
+    }
+
+    @Override
+    public double getVerticalHoverSpeed() {
+        return 0.34D;
+    }
+
+    @Override
+    public double getVerticalHoverSlowSpeed() {
+        return 0.03D;
+    }
+
+    @Override
+    public double getVerticalAcceleration() {
+        return 0.13D;
+    }
+
+    @Override
+    public double getVerticalSpeed() {
+        return 0.48D;
+    }
+
+    @Override
+    public double getSidewaysSpeed() {
+        return 0.14D;
+    }
+
+    @Override
+    public EnumParticleTypes getParticle() {
+        return EnumParticleTypes.CLOUD;
+    }
+
+    @Override
+    public float getFallDamageReduction() {
+        return 2.0f;
     }
 
     @SideOnly(Side.CLIENT)
@@ -153,18 +115,8 @@ public class AdvancedJetpack extends Jetpack {
         if (!cont.canUse(energyPerUse)) return;
         NBTTagCompound data = item.getTagCompound();
         if (data != null) {
-            if (data.hasKey("CanShare")) {
-                String status = data.getBoolean("CanShare") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
-                this.HUD.newString(I18n.format("mataarmor.hud.supply_mode", I18n.format(status)));
-            }
-
-            if (data.hasKey("FlyMode")) {
-                String status = data.getBoolean("FlyMode") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
-                this.HUD.newString(I18n.format("metaarmor.hud.fly_mode", I18n.format(status)));
-            }
-
-            if (data.hasKey("Hover")) {
-                String status = data.getBoolean("Hover") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
+            if (data.hasKey("hover")) {
+                String status = data.getBoolean("hover") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
                 this.HUD.newString(I18n.format("metaarmor.hud.hover_mode", I18n.format(status)));
             }
         }

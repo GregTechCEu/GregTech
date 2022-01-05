@@ -4,16 +4,15 @@ import java.util.Objects;
 
 public class ItemPipeProperties implements IMaterialProperty<ItemPipeProperties> {
 
-    // TODO These need to be private, and done through getters/setters
     /**
      * Items will try to take the path with the lowest priority
      */
-    public int priority;
+    private int priority;
 
     /**
      * rate in stacks per sec
      */
-    public float transferRate;
+    private float transferRate;
 
     public ItemPipeProperties(int priority, float transferRate) {
         this.priority = priority;
@@ -25,6 +24,40 @@ public class ItemPipeProperties implements IMaterialProperty<ItemPipeProperties>
      */
     public ItemPipeProperties() {
         this(1, 0.25f);
+    }
+
+    /**
+     * Retrieves the priority of the item pipe
+     *
+     * @return The item pipe priority
+     */
+    public int getPriority() {
+        return priority;
+    }
+
+    /**
+     * Sets the Priority of the item pipe
+     */
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    /**
+     * Retrieve the transfer rate of the item pipe
+     *
+     * @return The transfer rate of the item pipe
+     */
+    public float getTransferRate() {
+        return transferRate;
+    }
+
+    /**
+     * Sets the transfer rate of the item pipe
+     *
+     * @param transferRate The transfer rate
+     */
+    public void setTransferRate(float transferRate) {
+        this.transferRate = transferRate;
     }
 
     @Override

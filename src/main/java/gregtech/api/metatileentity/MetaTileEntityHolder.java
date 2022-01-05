@@ -5,6 +5,8 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.gui.IUIHolder;
+import gregtech.api.net.packets.CPacketRecoverMTE;
+import gregtech.api.net.NetworkHandler;
 import gregtech.api.util.GTLog;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,7 +28,7 @@ import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
 public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIHolder {
 
-    private MetaTileEntity metaTileEntity;
+    MetaTileEntity metaTileEntity;
     private boolean needToUpdateLightning = false;
 
     public MetaTileEntity getMetaTileEntity() {
@@ -41,24 +43,22 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
      */
     public MetaTileEntity setMetaTileEntity(MetaTileEntity sampleMetaTileEntity, Object... data) {
         Preconditions.checkNotNull(sampleMetaTileEntity, "metaTileEntity");
-        this.metaTileEntity = sampleMetaTileEntity.createMetaTileEntity(this);
-        this.metaTileEntity.holder = this;
-        if(data.length != 0) {
-            this.metaTileEntity.preInit(data);
-        }
-        this.metaTileEntity.onAttached();
+        setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
+        this.metaTileEntity.onAttached(data);
         if (hasWorld() && !getWorld().isRemote) {
             updateBlockOpacity();
-            writeCustomData(INITIALIZE_MTE, buffer -> {
-                buffer.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId));
-                metaTileEntity.writeInitialSyncData(buffer);
-            });
+            sendInitialSyncData();
             //just to update neighbours so cables and other things will work properly
             this.needToUpdateLightning = true;
             world.neighborChanged(getPos(), getBlockType(), getPos());
             markDirty();
         }
         return metaTileEntity;
+    }
+
+    protected void setRawMetaTileEntity(MetaTileEntity metaTileEntity){
+        this.metaTileEntity = metaTileEntity;
+        this.metaTileEntity.holder = this;
     }
 
     private void updateBlockOpacity() {
@@ -89,8 +89,8 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
             MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
             NBTTagCompound metaTileEntityData = compound.getCompoundTag("MetaTileEntity");
             if (sampleMetaTileEntity != null) {
-                this.metaTileEntity = sampleMetaTileEntity.createMetaTileEntity(this);
-                this.metaTileEntity.holder = this;
+                setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
+                this.metaTileEntity.onAttached();
                 this.metaTileEntity.readFromNBT(metaTileEntityData);
             } else {
                 GTLog.logger.error("Failed to load MetaTileEntity with invalid ID " + metaTileEntityIdRaw);
@@ -128,7 +128,14 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     public void update() {
         if (metaTileEntity != null) {
             metaTileEntity.update();
+        } else if (world.isRemote) { // recover the mte
+            NetworkHandler.channel.sendToServer(new CPacketRecoverMTE(world.provider.getDimension(), getPos()).toFMLPacket());
+        } else { // remove the block
+            if (world.getBlockState(pos).getBlock() instanceof BlockMachine) {
+                world.setBlockToAir(pos);
+            }
         }
+        
         if (this.needToUpdateLightning) {
             getWorld().checkLight(getPos());
             this.needToUpdateLightning = false;
@@ -136,6 +143,13 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         //increment only after current tick, so meta tile entities will get first tick as timer == 0
         //and update their settings which depend on getTimer() % N properly
         super.update();
+    }
+
+    public void sendInitialSyncData() {
+        writeCustomData(INITIALIZE_MTE, buffer -> {
+            buffer.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId));
+            metaTileEntity.writeInitialSyncData(buffer);
+        });
     }
 
     @Override

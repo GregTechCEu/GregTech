@@ -47,13 +47,13 @@ public class ImageWidget extends GuideWidget{
 
     @Override
     public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
-        super.loadConfigurator(group, config, isFixed, needUpdate);
-        group.addWidget(new SelectorConfigurator(group, config, "form", Arrays.asList("url", "item", "resource")).setOnUpdated(needUpdate));
-        group.addWidget(new StringConfigurator(group, config, "source").setOnUpdated(needUpdate));
         if (!isFixed) {
             group.addWidget(new NumberConfigurator(group, config, "width").setOnUpdated(needUpdate));
             group.addWidget(new NumberConfigurator(group, config, "height").setOnUpdated(needUpdate));
         }
+        group.addWidget(new SelectorConfigurator(group, config, "form", Arrays.asList("url", "item", "resource")).setOnUpdated(needUpdate));
+        group.addWidget(new StringConfigurator(group, config, "source").setOnUpdated(needUpdate));
+        super.loadConfigurator(group, config, isFixed, needUpdate);
     }
 
     @Override

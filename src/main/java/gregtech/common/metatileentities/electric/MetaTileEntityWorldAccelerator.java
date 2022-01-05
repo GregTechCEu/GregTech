@@ -11,7 +11,8 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.render.Textures;
+import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -43,7 +44,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     private static Class<?> cofhTileClass;
 
     private static boolean considerTile(TileEntity tile) {
-        if (!ConfigHolder.U.GT5u.accelerateGTMachines && tile instanceof MetaTileEntityHolder) {
+        if (tile instanceof MetaTileEntityHolder || tile instanceof TileEntityPipeBase) {
             return false;
         }
         if (cofhTileClass == null) {
@@ -79,7 +80,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VN[getTier()]));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in", getMaxInputOutputAmperage()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.machine.world_accelerator.description"));
@@ -161,9 +162,9 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (isTEMode()) {
-            Textures.WORLD_ACCELERATOR_TE_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive);
+            Textures.WORLD_ACCELERATOR_TE_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive, isWorkingEnabled());
         } else {
-            Textures.WORLD_ACCELERATOR_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive);
+            Textures.WORLD_ACCELERATOR_OVERLAY.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive, isWorkingEnabled());
         }
     }
 

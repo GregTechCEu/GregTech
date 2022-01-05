@@ -65,8 +65,8 @@ public class WidgetARGB extends WidgetGroup {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
-        super.drawInBackground(mouseX, mouseY, context);
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        super.drawInBackground(mouseX, mouseY, partialTicks, context);
         Gui.drawRect(this.getPosition().x + 88, this.getPosition().y, this.getPosition().x + 100, this.getPosition().y + height, color);
     }
 }

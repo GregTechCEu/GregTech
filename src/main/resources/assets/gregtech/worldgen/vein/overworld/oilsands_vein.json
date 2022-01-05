@@ -1,0 +1,34 @@
+{
+  "weight": 40,
+  "density": 0.3,
+  "max_height": 80,
+  "min_height": 50,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "oilsands"
+  },
+  "generator": {
+    "type": "layered",
+    "radius": [
+      20,
+      32
+    ]
+  },
+  "filler": {
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:oilsands"
+      },
+      {
+        "secondary": "ore:oilsands"
+      },
+      {
+        "between": "ore:oilsands"
+      },
+      {
+        "sporadic": "ore:oilsands"
+      }
+    ]
+  }
+}

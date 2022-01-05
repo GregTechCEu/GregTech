@@ -3,7 +3,7 @@ package gregtech.integration.jei.recipe.primitive;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.recipes.recipeproperties.BlastTemperatureProperty;
+import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
@@ -23,8 +23,8 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, MaterialTree> {
 
@@ -274,7 +274,7 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
         }
         // don't think theres a good way to get the coil tier other than this
         if (materialBFTemp != 0) {
-            BlastTemperatureProperty.getInstance().drawInfo(minecraft, 0, FONT_HEIGHT * linesDrawn, 0x111111, materialBFTemp);
+            TemperatureProperty.getInstance().drawInfo(minecraft, 0, FONT_HEIGHT * linesDrawn, 0x111111, materialBFTemp);
             linesDrawn++;
         }
         minecraft.fontRenderer.drawString(materialAvgM, 0, FONT_HEIGHT * linesDrawn, 0x111111);

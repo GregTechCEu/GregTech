@@ -4,7 +4,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.util.Position;
-import gregtech.api.util.RenderUtil;
+import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import net.minecraft.client.gui.Gui;
@@ -34,7 +34,7 @@ public class WidgetScreenGrid extends Widget {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         int x = this.getPosition().x;
         int y = this.getPosition().y;
         int width = this.getSize().width;

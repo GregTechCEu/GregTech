@@ -2,12 +2,12 @@ package gregtech.common.terminal.app.prospector.widget;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
-import gregtech.api.net.SProspectingPacket;
+import gregtech.api.net.packets.PacketProspecting;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.info.MaterialIconType;
-import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.terminal.app.prospector.ProspectingTexture;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.Gui;
@@ -27,6 +27,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Consumer;
 
 public class WidgetProspectingMap extends Widget {
     private final int chunkRadius;
@@ -37,6 +40,12 @@ public class WidgetProspectingMap extends Widget {
     private int chunkIndex = 0;
     @SideOnly(Side.CLIENT)
     private ProspectingTexture texture;
+    @SideOnly(Side.CLIENT)
+    private Consumer<PacketProspecting> onPacketReceived;
+    Queue<PacketProspecting> packetQueue = new LinkedBlockingQueue<>();
+
+    public static final int ORE_PROSPECTING_MODE = 0;
+    public static final int FLUID_PROSPECTING_MODE = 1;
 
     public WidgetProspectingMap(int xPosition, int yPosition, int chunkRadius, WidgetOreList widgetOreList, int mode, int scanTick) {
         super(new Position(xPosition, yPosition), new Size(16 * (chunkRadius * 2 - 1), 16 * (chunkRadius * 2 - 1)));
@@ -51,6 +60,12 @@ public class WidgetProspectingMap extends Widget {
                 }
             };
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public WidgetProspectingMap setOnPacketReceived(Consumer<PacketProspecting> onPacketReceived) {
+        this.onPacketReceived = onPacketReceived;
+        return this;
     }
 
     @SideOnly(Side.CLIENT)
@@ -84,30 +99,28 @@ public class WidgetProspectingMap extends Widget {
             int oz = side == 3 ? r : side == 0 ? -(offset - r + 1) : side == 1 ? -r : (offset - r + 1);
 
             Chunk chunk = world.getChunk(cX + ox, cZ + oz);
-            SProspectingPacket packet = new SProspectingPacket(cX + ox, cZ + oz, (int) player.posX, (int) player.posZ, this.mode);
+            PacketProspecting packet = new PacketProspecting(cX + ox, cZ + oz, (int) player.posX, (int) player.posZ, this.mode);
 
             switch (mode) {
-                case 0:
+                case ORE_PROSPECTING_MODE:
                     for (int x = 0; x < 16; x++) {
                         for (int z = 0; z < 16; z++) {
                             int ySize = chunk.getHeightValue(x, z);
                             for (int y = 1; y < ySize; y++) {
                                 Block block = chunk.getBlockState(x, y, z).getBlock();
-                                OrePrefix orePrefix = OreDictUnifier.getPrefix(block);
-                                if (orePrefix != null && orePrefix.materialIconType == MaterialIconType.ore) {
+                                if (GTUtility.isOre(block)) {
                                     packet.addBlock(x, y, z, OreDictUnifier.getOreDictionaryNames(new ItemStack(block)).stream().findFirst().get());
                                 }
                             }
                         }
                     }
                     break;
-                case 1:
-                    // TODO UNDERGROUND OIL IN THE FUTURE
-//                    PumpjackHandler.OilWorldInfo fStack = PumpjackHandler.getOilWorldInfo(world, chunk.x, chunk.z);
-//                    if (fStack != null && fStack.getType() != null) {
-//                        packet.addBlock(0, 2, 0, fStack.current + "");
-//                        packet.addBlock(0, 1, 0, fStack.getType().fluid);
-//                    }
+                case FLUID_PROSPECTING_MODE:
+                    BedrockFluidVeinHandler.FluidVeinWorldEntry fStack = BedrockFluidVeinHandler.getFluidVeinWorldEntry(world, chunk.x, chunk.z);
+                    if (fStack != null && fStack.getVein() != null) {
+                        packet.addBlock(0, 2, 0, fStack.getCurrentFluidAmount() + "");
+                        packet.addBlock(0, 1, 0, fStack.getVein().getStoredFluid().getName());
+                    }
                     break;
                 default:
                     break;
@@ -123,6 +136,7 @@ public class WidgetProspectingMap extends Widget {
     @SideOnly(Side.CLIENT)
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+
         if(texture !=null) {
             GlStateManager.color(1,1,1,1);
             texture.draw(this.getPosition().x, this.getPosition().y);
@@ -134,8 +148,22 @@ public class WidgetProspectingMap extends Widget {
     public void readUpdateInfo(int id, PacketBuffer buffer) {
         super.readUpdateInfo(id, buffer);
         if (id == 2) {
-            SProspectingPacket packet = SProspectingPacket.readPacketData(buffer);
+            PacketProspecting packet = PacketProspecting.readPacketData(buffer);
             if (packet != null) {
+                if (onPacketReceived != null) {
+                    onPacketReceived.accept(packet);
+                }
+                addPacketToQueue(packet);
+            }
+        }
+    }
+
+    @Override
+    public void updateScreen() {
+        if (packetQueue != null) {
+            int max = 10;
+            while (max-- > 0 && !packetQueue.isEmpty()) {
+                PacketProspecting packet = packetQueue.poll();
                 if (texture == null) {
                     texture = new ProspectingTexture(packet.mode, chunkRadius, darkMode);
                 }
@@ -145,6 +173,11 @@ public class WidgetProspectingMap extends Widget {
                 }
             }
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void addPacketToQueue(PacketProspecting packet) {
+        packetQueue.add(packet);
     }
 
     @SideOnly(Side.CLIENT)

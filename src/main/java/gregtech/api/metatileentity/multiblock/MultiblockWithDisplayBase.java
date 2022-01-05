@@ -7,15 +7,13 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.multiblock.BlockWorldState;
-import gregtech.api.multiblock.IMaintenance;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,8 +30,9 @@ import net.minecraft.util.text.event.HoverEvent.Action;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
@@ -85,28 +84,28 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * @return the byte value representing the maintenance problems
      */
     public byte getMaintenanceProblems() {
-        return maintenance_problems;
+        return ConfigHolder.machines.enableMaintenance ? maintenance_problems : 0b111111;
     }
 
     /**
      * @return the amount of maintenance problems the multiblock has
      */
     public int getNumMaintenanceProblems() {
-        return 6 - Integer.bitCount(maintenance_problems);
+        return ConfigHolder.machines.enableMaintenance ? 6 - Integer.bitCount(maintenance_problems) : 0;
     }
 
     /**
      * @return whether the multiblock has any maintenance problems
      */
     public boolean hasMaintenanceProblems() {
-        return this.maintenance_problems < 63;
+        return ConfigHolder.machines.enableMaintenance && this.maintenance_problems < 63;
     }
 
     /**
      * @return whether this multiblock has maintenance mechanics
      */
     public boolean hasMaintenanceMechanics() {
-        return ConfigHolder.U.GT5u.enableMaintenance;
+        return true;
     }
 
     public boolean hasMufflerMechanics() {
@@ -119,7 +118,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * @param duration in ticks to add to the counter of active time
      */
     public void calculateMaintenance(int duration) {
-        if (!ConfigHolder.U.GT5u.enableMaintenance || !hasMaintenanceMechanics())
+        if (!ConfigHolder.machines.enableMaintenance || !hasMaintenanceMechanics())
             return;
 
         IMaintenanceHatch maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
@@ -139,7 +138,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
-        if (this.hasMaintenanceMechanics() && ConfigHolder.U.GT5u.enableMaintenance) { // nothing extra if no maintenance
+        if (this.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) { // nothing extra if no maintenance
             if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
                 return;
             IMaintenanceHatch maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
@@ -230,39 +229,28 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     @Override
     public void invalidateStructure() {
-        if (hasMaintenanceMechanics() && ConfigHolder.U.GT5u.enableMaintenance) { // nothing extra if no maintenance
-            if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
-                return;
-            getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0)
-                    .storeMaintenanceData(maintenance_problems, timeActive);
+        if (hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) { // nothing extra if no maintenance
+            if (!getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
+                getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0)
+                        .storeMaintenanceData(maintenance_problems, timeActive);
         }
         super.invalidateStructure();
     }
 
-    @Override
-    protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
-        boolean canForm = super.checkStructureComponents(parts, abilities);
-        if (!canForm)
-            return false;
+    public TraceabilityPredicate autoAbilities() {
+        return autoAbilities(true, true);
+    }
 
-        int mufflerCount = abilities.getOrDefault(MultiblockAbility.MUFFLER_HATCH, Collections.emptyList()).size();
-
-        // Only one muffler if it the multi requires one, otherwise allow none
-        if (hasMufflerMechanics()) {
-            if (mufflerCount != 1)
-                return false;
-        } else {
-            if (mufflerCount != 0)
-                return false;
+    public TraceabilityPredicate autoAbilities(boolean checkMaintainer, boolean checkMuffler) {
+        TraceabilityPredicate predicate = new TraceabilityPredicate();
+        if (checkMaintainer && hasMaintenanceMechanics()) {
+            predicate = predicate.or(abilities(MultiblockAbility.MAINTENANCE_HATCH)
+                    .setMinGlobalLimited(ConfigHolder.machines.enableMaintenance ? 1 : 0).setMaxGlobalLimited(1));
         }
-
-        // Only one maintenance hatch if the multi requires one, otherwise allow any amount
-        if (!hasMaintenanceMechanics())
-            return true;
-
-        int maintenanceCount = abilities.getOrDefault(MultiblockAbility.MAINTENANCE_HATCH, Collections.emptyList()).size();
-
-        return maintenanceCount == 1;
+        if (checkMuffler && hasMufflerMechanics()) {
+            predicate =  predicate.or(abilities(MultiblockAbility.MUFFLER_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1));
+        }
+        return predicate;
     }
 
     /**
@@ -278,7 +266,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                     .setStyle(new Style().setColor(TextFormatting.RED)
                             .setHoverEvent(new HoverEvent(Action.SHOW_TEXT, tooltip))));
         } else {
-            if (hasMaintenanceMechanics()) {
+            if (hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
                 addMaintenanceText(textList);
             }
             if (hasMufflerMechanics() && !isMufflerFaceFree())
@@ -289,10 +277,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
     }
 
-    private void addMaintenanceText(List<ITextComponent> textList) {
+    protected void addMaintenanceText(List<ITextComponent> textList) {
         if (!hasMaintenanceProblems()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.universal.no_problems")
-                    .setStyle(new Style().setColor(TextFormatting.AQUA))
+                    .setStyle(new Style().setColor(TextFormatting.GREEN))
             );
         } else {
 
@@ -383,11 +371,5 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (dataId == STORE_TAPED) {
             storedTaped = buf.readBoolean();
         }
-    }
-
-    public static Predicate<BlockWorldState> maintenancePredicate(IBlockState... allowedAlternatives) {
-        if (ConfigHolder.U.GT5u.enableMaintenance) {
-            return abilityPartPredicate(MultiblockAbility.MAINTENANCE_HATCH).or(statePredicate(allowedAlternatives));
-        } else return statePredicate(allowedAlternatives);
     }
 }

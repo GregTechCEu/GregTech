@@ -52,7 +52,8 @@ public class BlockSteamCasing extends VariantBlock<BlockSteamCasing.SteamCasingT
         BRONZE_BRICKS_HULL("bronze_bricks_hull"),
         STEEL_HULL("steel_hull"),
         STEEL_BRICKS_HULL("steel_bricks_hull"),
-        PUMP_DECK("pump_deck");
+        PUMP_DECK("pump_deck"),
+        WOOD_WALL("wood_wall");
 
         private final String name;
 

@@ -19,9 +19,9 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.Position;
-import gregtech.api.util.RenderUtil;
+import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import net.minecraft.client.Minecraft;
@@ -431,19 +431,19 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         WidgetGroup primaryGroup = new WidgetGroup(new Position(0, 10));
         primaryGroup.addWidget(new LabelWidget(10, 5, "metaitem.cover.digital.name", 0));
         ToggleButtonWidget[] buttons = new ToggleButtonWidget[5];
-        buttons[0] = new ToggleButtonWidget(40, 20, 20, 20, Textures.BUTTON_FLUID, () -> this.mode == MODE.FLUID, (pressed) -> {
+        buttons[0] = new ToggleButtonWidget(40, 20, 20, 20, GuiTextures.BUTTON_FLUID, () -> this.mode == MODE.FLUID, (pressed) -> {
             if (pressed) setMode(MODE.FLUID);
         }).setTooltipText("metaitem.cover.digital.mode.fluid");
-        buttons[1] = new ToggleButtonWidget(60, 20, 20, 20, Textures.BUTTON_ITEM, () -> this.mode == MODE.ITEM, (pressed) -> {
+        buttons[1] = new ToggleButtonWidget(60, 20, 20, 20, GuiTextures.BUTTON_ITEM, () -> this.mode == MODE.ITEM, (pressed) -> {
             if (pressed) setMode(MODE.ITEM);
         }).setTooltipText("metaitem.cover.digital.mode.item");
-        buttons[2] = new ToggleButtonWidget(80, 20, 20, 20, Textures.BUTTON_ENERGY, () -> this.mode == MODE.ENERGY, (pressed) -> {
+        buttons[2] = new ToggleButtonWidget(80, 20, 20, 20, GuiTextures.BUTTON_ENERGY, () -> this.mode == MODE.ENERGY, (pressed) -> {
             if (pressed) setMode(MODE.ENERGY);
         }).setTooltipText("metaitem.cover.digital.mode.energy");
-        buttons[3] = new ToggleButtonWidget(100, 20, 20, 20, Textures.BUTTON_MACHINE, () -> this.mode == MODE.MACHINE, (pressed) -> {
+        buttons[3] = new ToggleButtonWidget(100, 20, 20, 20, GuiTextures.BUTTON_MACHINE, () -> this.mode == MODE.MACHINE, (pressed) -> {
             if (pressed) setMode(MODE.MACHINE);
         }).setTooltipText("metaitem.cover.digital.mode.machine");
-        buttons[4] = new ToggleButtonWidget(140, 20, 20, 20, Textures.BUTTON_INTERFACE, () -> this.mode == MODE.PROXY, (pressed) -> {
+        buttons[4] = new ToggleButtonWidget(140, 20, 20, 20, GuiTextures.BUTTON_INTERFACE, () -> this.mode == MODE.PROXY, (pressed) -> {
             if (pressed) setMode(MODE.PROXY);
         }).setTooltipText("metaitem.cover.digital.mode.proxy");
         primaryGroup.addWidget(new LabelWidget(10, 25, "metaitem.cover.digital.title.mode", 0));
@@ -743,10 +743,10 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                         return 0;
                     }
                     public long getEnergyStored() {
-                        return (long) (fe.getEnergyStored() / ConfigHolder.U.energyOptions.rfRatio);
+                        return (long) (fe.getEnergyStored() / ConfigHolder.compat.energy.rfRatio);
                     }
                     public long getEnergyCapacity() {
-                        return (long) (fe.getMaxEnergyStored() / ConfigHolder.U.energyOptions.rfRatio);
+                        return (long) (fe.getMaxEnergyStored() / ConfigHolder.compat.energy.rfRatio);
                     }
                     public long getInputAmperage() {
                         return 0;
@@ -801,11 +801,6 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     }
 
     @Override
-    public boolean canPipePassThrough() {
-        return true;
-    }
-
-    @Override
     public boolean canAttach() {
         return canCapabilityAttach();
     }
@@ -844,19 +839,19 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
             translation.apply(rotation);
         }
         if (mode == MODE.PROXY) {
-            Textures.COVER_INTERFACE_PROXY.renderSided(this.attachedSide, cuboid6, ccRenderState, ops, RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+            Textures.COVER_INTERFACE_PROXY.renderSided(this.attachedSide, cuboid6, ccRenderState, ops, translation);
         } else if (mode == MODE.FLUID) {
-            Textures.COVER_INTERFACE_FLUID.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+            Textures.COVER_INTERFACE_FLUID.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), translation);
             Textures.COVER_INTERFACE_FLUID_GLASS.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 3));
         } else if (mode == MODE.ITEM) {
-            Textures.COVER_INTERFACE_ITEM.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+            Textures.COVER_INTERFACE_ITEM.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), translation);
         } else if (mode == MODE.ENERGY) {
-            Textures.COVER_INTERFACE_ENERGY.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+            Textures.COVER_INTERFACE_ENERGY.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), translation);
         } else if (mode == MODE.MACHINE) {
             if (isWorkingEnabled) {
-                Textures.COVER_INTERFACE_MACHINE_ON.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+                Textures.COVER_INTERFACE_MACHINE_ON.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), translation);
             } else {
-                Textures.COVER_INTERFACE_MACHINE_OFF.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+                Textures.COVER_INTERFACE_MACHINE_OFF.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), translation);
             }
         }
     }
@@ -966,9 +961,9 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         }
         if (this.isProxy()) {
             if (isWorkingEnabled) {
-                RenderUtil.renderTextureArea(Textures.COVER_INTERFACE_MACHINE_ON_PROXY, -7f / 16, 1f / 16, 14f / 16, 3f / 16, 0.002f);
+                RenderUtil.renderTextureArea(GuiTextures.COVER_INTERFACE_MACHINE_ON_PROXY, -7f / 16, 1f / 16, 14f / 16, 3f / 16, 0.002f);
             } else {
-                RenderUtil.renderTextureArea(Textures.COVER_INTERFACE_MACHINE_OFF_PROXY, -7f / 16, -1f / 16, 14f / 16, 5f / 16, 0.002f);
+                RenderUtil.renderTextureArea(GuiTextures.COVER_INTERFACE_MACHINE_OFF_PROXY, -7f / 16, -1f / 16, 14f / 16, 5f / 16, 0.002f);
             }
         }
     }

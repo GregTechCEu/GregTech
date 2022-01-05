@@ -19,6 +19,7 @@ public class BlockInfo {
 
     private final IBlockState blockState;
     private final TileEntity tileEntity;
+    private final Object info;
 
     public BlockInfo(Block block) {
         this(block.getDefaultState());
@@ -29,8 +30,13 @@ public class BlockInfo {
     }
 
     public BlockInfo(IBlockState blockState, TileEntity tileEntity) {
+        this(blockState, tileEntity, null);
+    }
+
+    public BlockInfo(IBlockState blockState, TileEntity tileEntity, Object info) {
         this.blockState = blockState;
         this.tileEntity = tileEntity;
+        this.info = info;
         Preconditions.checkArgument(tileEntity == null || blockState.getBlock().hasTileEntity(blockState),
                 "Cannot create block info with tile entity for block not having it");
     }
@@ -41,6 +47,10 @@ public class BlockInfo {
 
     public TileEntity getTileEntity() {
         return tileEntity;
+    }
+
+    public Object getInfo() {
+        return info;
     }
 
     public void apply(World world, BlockPos pos) {

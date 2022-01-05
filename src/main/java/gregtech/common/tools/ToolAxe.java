@@ -63,6 +63,7 @@ public class ToolAxe extends ToolBase {
     public void onBlockDestroyed(ItemStack stack, World world, IBlockState state, BlockPos pos, EntityLivingBase entity) {
         super.onBlockDestroyed(stack, world, state, pos, entity);
         if (!entity.isSneaking() && entity instanceof EntityPlayer) {
+            this.onBreakingUse(stack, world, pos);
             ToolUtility.applyTimberAxe(stack, world, pos, (EntityPlayer) entity);
         }
     }

@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.storage;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.base.Preconditions;
 import gregtech.api.gui.GuiTextures;
@@ -16,7 +15,7 @@ import gregtech.api.gui.widgets.TabGroup.TabLocation;
 import gregtech.api.gui.widgets.tab.ItemTabInfo;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
@@ -35,8 +34,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -55,7 +52,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
     public MetaTileEntityWorkbench(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
-        this.setPaintingColor(0xFFFFFF);
     }
 
     public static AbstractWidgetGroup createWorkbenchTab(CraftingRecipeResolver recipeResolver, ItemStackHandler craftingGrid, CraftingRecipeMemory recipeMemory,
@@ -97,25 +93,21 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         return new MetaTileEntityWorkbench(metaTileEntityId);
     }
 
-    @SideOnly(Side.CLIENT)
-    private int getResultRenderingColor() {
-        int paintingColor = getPaintingColorForRendering();
-        if (paintingColor == DEFAULT_PAINTING_COLOR) {
-            paintingColor = Materials.Bronze.getMaterialRGB();
-        }
-        return paintingColor;
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0xFFFFFF;
     }
 
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(Textures.CRAFTING_TABLE.getParticleSprite(), getResultRenderingColor());
+        return Pair.of(Textures.CRAFTING_TABLE.getParticleSprite(), getDefaultPaintingColor());
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         int paintingColor = getPaintingColorForRendering();
         pipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(paintingColor)));
-        Textures.CRAFTING_TABLE.render(renderState, translation, pipeline, Cuboid6.full, getFrontFacing());
+        Textures.CRAFTING_TABLE.renderOriented(renderState, translation, pipeline, getFrontFacing());
     }
 
     @Override
@@ -185,13 +177,13 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         widgetGroup.addWidget(new LabelWidget(5, 30, "gregtech.machine.workbench.storage_note_2"));
         CraftingRecipeResolver recipeResolver = getRecipeResolver();
         IItemList itemList = recipeResolver == null ? null : recipeResolver.getItemSourceList();
-        widgetGroup.addWidget(new ItemListGridWidget(2, 45, 9, 5, itemList));
+        widgetGroup.addWidget(new ItemListGridWidget(11, 45, 8, 5, itemList));
         return widgetGroup;
     }
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        Builder builder = ModularUI.builder(GuiTextures.BORDERED_BACKGROUND, 176, 221)
+        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 221)
                 .bindPlayerInventory(entityPlayer.inventory, 138);
         builder.label(5, 5, getMetaFullName());
 

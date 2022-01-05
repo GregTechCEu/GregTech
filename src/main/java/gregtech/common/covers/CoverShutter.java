@@ -7,7 +7,7 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
@@ -44,5 +44,10 @@ public class CoverShutter extends CoverBehavior {
     @Override
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
         return null;
+    }
+
+    @Override
+    public boolean shouldRenderConnected() {
+        return false;
     }
 }

@@ -3,7 +3,6 @@ package gregtech.api.terminal;
 import gregtech.api.GTValues;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.hardware.Hardware;
-import gregtech.api.terminal.util.GuideJsonLoader;
 import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
@@ -23,14 +22,16 @@ import gregtech.common.terminal.app.guide.TutorialGuideApp;
 import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
 import gregtech.common.terminal.app.hardwaremanager.HardwareManagerApp;
 import gregtech.common.terminal.app.multiblockhelper.MultiBlockPreviewARApp;
-import gregtech.common.terminal.app.prospector.OreProspectorApp;
+import gregtech.common.terminal.app.prospector.ProspectorApp;
 import gregtech.common.terminal.app.recipechart.RecipeChartApp;
 import gregtech.common.terminal.app.settings.SettingsApp;
 import gregtech.common.terminal.app.worldprospector.WorldProspectorARApp;
 import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.common.terminal.hardware.DeviceHardware;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -53,7 +54,7 @@ public class TerminalRegistry {
 
     static {
         if (FMLCommonHandler.instance().getSide().isClient()) {
-            TERMINAL_PATH = new File(Loader.instance().getConfigDir(), ConfigHolder.U.clientConfig.terminalRootPath);
+            TERMINAL_PATH = new File(Loader.instance().getConfigDir(), ConfigHolder.client.terminalRootPath);
         }
     }
 
@@ -82,25 +83,48 @@ public class TerminalRegistry {
                 .battery(GTValues.LV, 150)
                 .build();
 
-        AppRegistryBuilder.create(new OreProspectorApp())
+        AppRegistryBuilder.create(new ProspectorApp(0))
+                .battery(0, GTValues.LV, 640)
+                .battery(1, GTValues.LV, 640)
+                .battery(2, GTValues.MV, 1000)
+                .battery(3, GTValues.HV, 1500)
+                .battery(4, GTValues.HV, 1500)
+                .upgrade(0, MetaItems.SENSOR_LV.getStackForm(1))
+                .upgrade(1, MetaItems.SENSOR_HV.getStackForm(1))
+                .upgrade(2, MetaItems.SENSOR_EV.getStackForm(1))
+                .upgrade(3, MetaItems.SENSOR_IV.getStackForm(1))
+                .upgrade(4, MetaItems.SENSOR_LUV.getStackForm(1))
+                .device(0, DeviceHardware.DEVICE.PROSPECTOR_LV)
+                .device(1, DeviceHardware.DEVICE.PROSPECTOR_LV)
+                .device(2, DeviceHardware.DEVICE.PROSPECTOR_LV)
+                .device(3, DeviceHardware.DEVICE.PROSPECTOR_HV)
+                .device(4, DeviceHardware.DEVICE.PROSPECTOR_HV)
+                .build();
+        //TODO, Change when Fluid Prospector is re-enabled
+        /*AppRegistryBuilder.create(new ProspectorApp(1))
                 .battery(GTValues.MV, 1000)
-                .upgrade(MetaItems.COIN_DOGE.getStackForm(10))
-                .upgrade(6, MetaItems.COIN_GOLD_ANCIENT.getStackForm())
-                .device(DeviceHardware.DEVICE.SCANNER)
+                .upgrade(0, MetaItems.SENSOR_LV.getStackForm(1))
+                .upgrade(1, MetaItems.SENSOR_LV.getStackForm(2))
+                .upgrade(2, MetaItems.SENSOR_MV.getStackForm(1))
+                .upgrade(3, MetaItems.SENSOR_MV.getStackForm(3))
+                .upgrade(4, MetaItems.SENSOR_HV.getStackForm(1))
+                .upgrade(5, MetaItems.SENSOR_HV.getStackForm(3))
+                .upgrade(6, MetaItems.SENSOR_IV.getStackForm(1))
+                .device(DeviceHardware.DEVICE.PROSPECTOR_LV)
+                .build(); */
+        AppRegistryBuilder.create(new MultiBlockPreviewARApp())
+                .battery(GTValues.LV, 128)
+                .device(DeviceHardware.DEVICE.CAMERA)
+                .upgrade(1, MetaItems.EMITTER_HV.getStackForm(4), MetaItems.WORKSTATION_EV.getStackForm(2))
+                .defaultApp()
                 .build();
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
-            AppRegistryBuilder.create(new MultiBlockPreviewARApp())
-                    .battery(GTValues.LV, 512)
-                    .device(DeviceHardware.DEVICE.CAMERA)
-                    .upgrade(0, MetaItems.COIN_DOGE.getStackForm(10))
-                    .upgrade(1, MetaItems.COIN_DOGE.getStackForm(30), MetaItems.COIN_CHOCOLATE.getStackForm(10))
-                    .build();
             AppRegistryBuilder.create(new RecipeChartApp())
-                    .battery(GTValues.LV, 100)
-                    .upgrade(0, MetaItems.COIN_DOGE.getStackForm(10))
-                    .upgrade(1, MetaItems.COIN_DOGE.getStackForm(20))
-                    .upgrade(2, MetaItems.COIN_DOGE.getStackForm(30), MetaItems.COIN_CHOCOLATE.getStackForm(10))
-                    .upgrade(3, MetaItems.COIN_DOGE.getStackForm(40), MetaItems.COIN_CHOCOLATE.getStackForm(10), MetaItems.COIN_GOLD_ANCIENT.getStackForm())
+                    .battery(GTValues.LV, 160)
+                    .upgrade(0, new ItemStack(Items.PAPER, 32))
+                    .upgrade(1, new ItemStack(Items.PAPER, 64))
+                    .upgrade(2, MetaItems.RANDOM_ACCESS_MEMORY.getStackForm(16))
+                    .upgrade(3, MetaItems.RANDOM_ACCESS_MEMORY.getStackForm(32))
                     .build();
         }
         AppRegistryBuilder.create(new ConsoleApp())
@@ -113,7 +137,10 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new HardwareManagerApp()).defaultApp().build();
         AppRegistryBuilder.create(new AppStoreApp()).defaultApp().build();
         AppRegistryBuilder.create(new WorldProspectorARApp())
-                .battery(GTValues.LV, 233)
+                .battery(GTValues.LV, 320)
+                .upgrade(0, MetaItems.EMITTER_LV.getStackForm(2))
+                .upgrade(1, MetaItems.EMITTER_MV.getStackForm(2))
+                .upgrade(2, MetaItems.EMITTER_HV.getStackForm(2))
                 .device(DeviceHardware.DEVICE.CAMERA)
                 .build();
         AppRegistryBuilder.create(new VirtualTankApp())
@@ -130,8 +157,13 @@ public class TerminalRegistry {
 
     @SideOnly(Side.CLIENT)
     public static void initTerminalFiles() {
+        ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(TerminalRegistry::onResourceManagerReload);
+    }
+
+
+    @SideOnly(Side.CLIENT)
+    public static void onResourceManagerReload(IResourceManager resourceManager) {
         FileUtility.extractJarFiles(String.format("/assets/%s/%s", GTValues.MODID, "terminal"), TERMINAL_PATH, false);
-        ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new GuideJsonLoader());
     }
 
     public static void registerApp(AbstractApplication application) {

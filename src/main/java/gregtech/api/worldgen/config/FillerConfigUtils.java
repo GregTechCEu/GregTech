@@ -117,6 +117,28 @@ public class FillerConfigUtils {
         return new WeightRandomMatcherEntry(randomList);
     }
 
+    public static LayeredFillerEntry createLayeredFiller(JsonObject object) {
+        JsonArray values = object.get("values").getAsJsonArray();
+        Preconditions.checkArgument(values.size() == 4, "Invalid number of ores in a Layered vein (should be 4, is actually %d", values.size());
+
+        return new LayeredFillerEntry(
+                readLayerFiller(values.get(0).getAsJsonObject(), "primary"),
+                readLayerFiller(values.get(1).getAsJsonObject(), "secondary"),
+                readLayerFiller(values.get(2).getAsJsonObject(), "between"),
+                createBlockStateFiller(values.get(3).getAsJsonObject().get("sporadic"))
+        );
+    }
+
+    private static Pair<FillerEntry, Integer> readLayerFiller(JsonObject object, String layerType) {
+        FillerEntry filler = createBlockStateFiller(object.get(layerType));
+        JsonElement layerElement = object.get("layers");
+        int layers = -1;
+        if (layerElement != null) {
+            layers = layerElement.getAsInt();
+        }
+        return Pair.of(filler, layers);
+    }
+
     private static class OreFilterEntry implements FillerEntry {
 
         private final Map<StoneType, IBlockState> blockStateMap;
@@ -136,11 +158,6 @@ public class FillerConfigUtils {
         }
 
         @Override
-        public List<FillerEntry> getSubEntries() {
-            return Collections.emptyList();
-        }
-
-        @Override
         public Set<IBlockState> getPossibleResults() {
             return allowedStates;
         }
@@ -149,18 +166,14 @@ public class FillerConfigUtils {
     private static class BlockStateMatcherEntry implements FillerEntry {
 
         private final List<Pair<WorldBlockPredicate, FillerEntry>> matchers;
-        private final ImmutableList<FillerEntry> subEntries;
         private final ImmutableList<IBlockState> blockStates;
 
         public BlockStateMatcherEntry(List<Pair<WorldBlockPredicate, FillerEntry>> matchers) {
             this.matchers = matchers;
-            ImmutableList.Builder<FillerEntry> entryBuilder = ImmutableList.builder();
             ImmutableList.Builder<IBlockState> stateBuilder = ImmutableList.builder();
             for (Pair<WorldBlockPredicate, FillerEntry> matcher : matchers) {
-                entryBuilder.add(matcher.getRight());
                 stateBuilder.addAll(matcher.getRight().getPossibleResults());
             }
-            this.subEntries = entryBuilder.build();
             this.blockStates = stateBuilder.build();
         }
 
@@ -175,11 +188,6 @@ public class FillerConfigUtils {
         }
 
         @Override
-        public List<FillerEntry> getSubEntries() {
-            return subEntries;
-        }
-
-        @Override
         public Collection<IBlockState> getPossibleResults() {
             return blockStates;
         }
@@ -188,18 +196,14 @@ public class FillerConfigUtils {
     private static class WeightRandomMatcherEntry implements FillerEntry {
 
         private final List<Pair<Integer, FillerEntry>> randomList;
-        private final ImmutableList<FillerEntry> subEntries;
         private final ImmutableList<IBlockState> blockStates;
 
         public WeightRandomMatcherEntry(List<Pair<Integer, FillerEntry>> randomList) {
             this.randomList = randomList;
-            ImmutableList.Builder<FillerEntry> entryBuilder = ImmutableList.builder();
             ImmutableList.Builder<IBlockState> stateBuilder = ImmutableList.builder();
             for (Pair<Integer, FillerEntry> randomEntry : randomList) {
-                entryBuilder.add(randomEntry.getRight());
                 stateBuilder.addAll(randomEntry.getRight().getPossibleResults());
             }
-            this.subEntries = entryBuilder.build();
             this.blockStates = stateBuilder.build();
         }
 
@@ -211,8 +215,90 @@ public class FillerConfigUtils {
         }
 
         @Override
-        public List<FillerEntry> getSubEntries() {
-            return subEntries;
+        public Collection<IBlockState> getPossibleResults() {
+            return blockStates;
+        }
+
+        @Override
+        public List<Pair<Integer, FillerEntry>> getEntries() {
+            return randomList;
+        }
+    }
+
+    public static class LayeredFillerEntry implements FillerEntry {
+
+        private final FillerEntry primary;
+        private final FillerEntry secondary;
+        private final FillerEntry between;
+        private final FillerEntry sporadic;
+
+        private final int primaryLayers;
+        private final int secondaryLayers;
+        private final int betweenLayers;
+
+        // Provided for readability
+        private final int sporadicDivisor;
+        private final int startPrimary;
+        private final int startBetween;
+
+        private final ImmutableList<IBlockState> blockStates;
+
+        public LayeredFillerEntry(Pair<FillerEntry, Integer> primary, Pair<FillerEntry, Integer> secondary, Pair<FillerEntry, Integer> between, FillerEntry sporadic) {
+            this.primary = primary.getLeft();
+            this.secondary = secondary.getLeft();
+            this.between = between.getLeft();
+            this.sporadic = sporadic;
+
+            this.primaryLayers = primary.getRight() == -1 ? 4 : primary.getRight();
+            this.secondaryLayers = secondary.getRight() == -1 ? 3 : secondary.getRight();
+            this.betweenLayers = between.getRight() == -1 ? 3 : between.getRight();
+
+            // Ensure "between" is not more than the total primary and secondary layers
+            Preconditions.checkArgument(primaryLayers + secondaryLayers >= betweenLayers,
+                    "Error: cannot be more \"between\" layers than primary and secondary layers combined!");
+
+            this.sporadicDivisor = primaryLayers + secondaryLayers - 1;
+            this.startPrimary = secondaryLayers;
+            this.startBetween = secondaryLayers - betweenLayers / 2;
+
+            this.blockStates = ImmutableList.<IBlockState>builder()
+                    .addAll(this.primary.getPossibleResults())
+                    .addAll(this.secondary.getPossibleResults())
+                    .addAll(this.between.getPossibleResults())
+                    .addAll(this.sporadic.getPossibleResults())
+                    .build();
+        }
+
+        @Override
+        public IBlockState apply(IBlockState source, IBlockAccess blockAccess, BlockPos blockPos) {
+            // should never be called, but just to be safe...
+            return apply(source, blockAccess, blockPos, 1.0, new Random(), 0);
+        }
+
+        public IBlockState apply(IBlockState source, IBlockAccess blockAccess, BlockPos blockPos, double density, Random random, int layer) {
+            // First try to spawn "between"
+            if (layer >= startBetween && layer - startBetween + 1 <= betweenLayers) {
+                if (random.nextFloat() <= density / 2) {
+                    return between.apply(source, blockAccess, blockPos);
+                }
+            }
+
+            // Then try primary/secondary
+            if (layer >= startPrimary) {
+                if (random.nextFloat() <= density) {
+                    return primary.apply(source, blockAccess, blockPos);
+                }
+            } else {
+                if (random.nextFloat() <= density) {
+                    return secondary.apply(source, blockAccess, blockPos);
+                }
+            }
+
+            // Then lastly, try sporadic
+            if (random.nextFloat() <= density / sporadicDivisor) {
+                return sporadic.apply(source, blockAccess, blockPos);
+            }
+            return source;
         }
 
         @Override
@@ -222,7 +308,35 @@ public class FillerConfigUtils {
 
         @Override
         public List<Pair<Integer, FillerEntry>> getEntries() {
-            return randomList;
+            return Collections.emptyList(); // todo
+        }
+
+        public FillerEntry getPrimary() {
+            return primary;
+        }
+
+        public FillerEntry getSecondary() {
+            return secondary;
+        }
+
+        public FillerEntry getBetween() {
+            return between;
+        }
+
+        public FillerEntry getSporadic() {
+            return sporadic;
+        }
+
+        public int getPrimaryLayers() {
+            return primaryLayers;
+        }
+
+        public int getSecondaryLayers() {
+            return secondaryLayers;
+        }
+
+        public int getBetweenLayers() {
+            return betweenLayers;
         }
     }
 }

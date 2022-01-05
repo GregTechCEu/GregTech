@@ -74,11 +74,12 @@ public class DeviceHardware extends Hardware {
     }
 
     public DEVICE getDevice() {
-        return DEVICE.values()[getNBT().getInteger("d")];
+        return DEVICE.values()[getNBT().getInteger("d") % DEVICE.values().length];
     }
 
     public enum DEVICE{
-        SCANNER(MetaItems.SCANNER, "scanner"),
+        PROSPECTOR_LV(MetaItems.PROSPECTOR_LV, "prospector"),
+        PROSPECTOR_HV(MetaItems.PROSPECTOR_HV, "advanced_prospector"),
         WIRELESS(MetaItems.WIRELESS, "wireless"),
         CAMERA(MetaItems.CAMERA, "camera"),
 

@@ -14,7 +14,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.render.SimpleOverlayRenderer;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.api.util.GTUtility;
 import gregtech.common.covers.filter.ItemFilter;
 import gregtech.common.covers.filter.ItemFilterWrapper;
@@ -64,6 +64,11 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
     }
 
     @Override
+    public boolean canPipePassThrough() {
+        return true;
+    }
+
+    @Override
     public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         if (!playerIn.world.isRemote) {
             openUI((EntityPlayerMP) playerIn);
@@ -110,17 +115,7 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
         super.readFromNBT(tagCompound);
         this.filterMode = ItemFilterMode.values()[tagCompound.getInteger("FilterMode")];
         this.itemFilter.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
-        //LEGACY SAVE FORMAT SUPPORT
-        if (tagCompound.hasKey("FilterInventory") || tagCompound.hasKey("OreDictionaryFilter")) {
-            if (tagCompound.hasKey("FilterInventory")) {
-                tagCompound.setTag("ItemFilter", tagCompound.getCompoundTag("FilterInventory"));
-                tagCompound.removeTag("FilterInventory");
-            }
-            this.itemFilter.getItemFilter().readFromNBT(tagCompound);
-        } else {
-            NBTTagCompound filterComponent = tagCompound.getCompoundTag("Filter");
-            this.itemFilter.getItemFilter().readFromNBT(filterComponent);
-        }
+        this.itemFilter.getItemFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
     }
 
     @Override

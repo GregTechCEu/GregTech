@@ -1,6 +1,6 @@
 # GregTech CE: Unofficial
 
-This is a fork of GregTech Community Edition for MC 1.12.2 maintained by the Gregicality development team.
+This is a fork of GregTech Community Edition for MC 1.12.2 maintained by the Gregtech CEu development team.
 
 ## Welcome to GregTech CE: Unofficial
 ### What is this?
@@ -35,7 +35,7 @@ We work with our addon-partners to attempt to preserve backwards-compatibility.
 
 ## Contribution
 ### Current state of project
-GTCEu is under active development with regular updates. It is primarily maintained by the Gregicality and Omnifactory development teams. The GTCEu community is very active and regularly contributes code, testing and ideas.
+GTCEu is under active development with regular updates. The GTCEu community is very active and regularly contributes code, testing and ideas.
 We are always looking for contributors!
 
 ### How to contribute
@@ -43,7 +43,9 @@ Remember: Every contribution counts.
 Found a bug? Please let us know by creating an Issue with the bug template. 
 Something is missing? Thought about a cool feature idea? Of course there's a template for that.  We'll have a look!
 Know how to mod or at least code? Then don't hesitate and jump to Discord channel, contact the Maintainer to discuss possible contribution.
-Anything else? Sure come to [Discord](https://discord.gg/7FJM6fVjR5).
+Anything else? Sure come to [Discord](https://discord.gg/bWSWuYvURP).
 
 ## Credited Works
 Heating Coil Textures are from the **[GregTech: New Horizons Modpack](https://www.curseforge.com/minecraft/modpacks/gt-new-horizons)**.
+
+Primitive Water Pump is from the **[Impact: GregTech Edition Modpack](https://gtimpact.space/)**.

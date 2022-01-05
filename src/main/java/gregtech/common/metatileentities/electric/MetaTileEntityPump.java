@@ -17,7 +17,7 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
@@ -185,11 +185,11 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         if (fluidSourceBlocks.isEmpty()) {
             if (getOffsetTimer() % 20 == 0) {
                 BlockPos downPos = selfPos.down(1);
-                if (downPos != null && downPos.getY() >= 0) {
+                if (downPos.getY() >= 0) {
                     IBlockState downBlock = getWorld().getBlockState(downPos);
                     if (downBlock.getBlock() instanceof BlockLiquid ||
                             downBlock.getBlock() instanceof IFluidBlock ||
-                            !downBlock.isTopSolid()) {
+                            !downBlock.isSideSolid(getWorld(), downPos, EnumFacing.UP)) {
                         this.pumpHeadY++;
                     }
                 }
@@ -295,7 +295,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         int maxPumpRange = getMaxPumpRange();
         tooltip.add(I18n.format("gregtech.machine.pump.tooltip_range", maxPumpRange, maxPumpRange));
         tooltip.add(I18n.format("gregtech.machine.pump.tooltip_speed", getPumpingCycleLength()));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VN[getTier()]));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", exportFluids.getTankAt(0).getCapacity()));
     }

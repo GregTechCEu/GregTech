@@ -1,14 +1,18 @@
 package gregtech.api.unification.material.properties;
 
+import gregtech.api.GTValues;
+import gregtech.api.unification.material.Material;
+
 import java.util.Objects;
+
+import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FOIL;
 
 public class WireProperties implements IMaterialProperty<WireProperties> {
 
-    // TODO these need to be private and handled with getters/setters
-    public int voltage;
-    public int amperage;
-    public int lossPerBlock;
-    public boolean isSuperconductor;
+    private int voltage;
+    private int amperage;
+    private int lossPerBlock;
+    private boolean isSuperconductor;
 
     public WireProperties(int voltage, int baseAmperage, int lossPerBlock) {
         this(voltage, baseAmperage, lossPerBlock, false);
@@ -28,9 +32,87 @@ public class WireProperties implements IMaterialProperty<WireProperties> {
         this(8, 1, 1, false);
     }
 
+    /**
+     * Retrieves the current wire voltage
+     *
+     * @return The current wire voltage
+     */
+    public int getVoltage() {
+        return voltage;
+    }
+
+    /**
+     * Sets the current wire voltage
+     *
+     * @param voltage The new wire voltage
+     */
+    public void setVoltage(int voltage) {
+        this.voltage = voltage;
+    }
+
+    /**
+     * Retrieves the current wire amperage
+     *
+     * @return The current wire amperage
+     */
+    public int getAmperage() {
+        return amperage;
+    }
+
+    /**
+     * Sets the current wire amperage
+     *
+     * @param amperage The new current wire amperage
+     */
+    public void setAmperage(int amperage) {
+        this.amperage = amperage;
+    }
+
+    /**
+     * Retrieves the current wire loss per block
+     *
+     * @return The current wire loss per block
+     */
+    public int getLossPerBlock() {
+        return lossPerBlock;
+    }
+
+    /**
+     * Sets the current wire loss per block
+     *
+     * @param lossPerBlock The new wire loss per block
+     */
+    public void setLossPerBlock(int lossPerBlock) {
+        this.lossPerBlock = lossPerBlock;
+    }
+
+    /**
+     * If the current wire is a Superconductor wire
+     *
+     * @return {@code true} if the current wire is a Superconductor
+     */
+    public boolean isSuperconductor() {
+        return isSuperconductor;
+    }
+
+    /**
+     * Sets the current wire to a superconductor wire
+     *
+     * @param isSuperconductor The new wire superconductor status
+     */
+    public void setSuperconductor(boolean isSuperconductor) {
+        this.isSuperconductor = isSuperconductor;
+    }
+
     @Override
     public void verifyProperty(MaterialProperties properties) {
         properties.ensureSet(PropertyKey.INGOT, true);
+
+        // Ensure all Materials with Cables and voltage tier IV or above have a Foil for recipe generation
+        Material thisMaterial = properties.getMaterial();
+        if (!isSuperconductor && voltage >= GTValues.V[GTValues.IV] && !thisMaterial.hasFlag(GENERATE_FOIL)) {
+            thisMaterial.addFlags(GENERATE_FOIL);
+        }
     }
 
     @Override

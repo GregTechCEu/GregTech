@@ -7,10 +7,12 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.ToolMetaItem;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
+import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.common.items.armor.MetaArmor;
-import gregtech.common.render.FacadeItemModel;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.EnumDyeColor;
@@ -21,9 +23,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public final class MetaItems {
 
@@ -81,7 +81,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_WIRE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_TINY;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_SMALL;
-    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_MEDIUM;
+    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_NORMAL;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_LARGE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_HUGE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BLOCK;
@@ -117,7 +117,7 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem CARBON_FIBERS;
     public static MetaItem<?>.MetaValueItem CARBON_MESH;
-    public static MetaItem<?>.MetaValueItem CARBON_PLATE;
+    public static MetaItem<?>.MetaValueItem CARBON_FIBER_PLATE;
     public static MetaItem<?>.MetaValueItem DUCT_TAPE;
 
     public static MetaItem<?>.MetaValueItem NEUTRON_REFLECTOR;
@@ -141,7 +141,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem BATTERY_HV_CADMIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_HV_LITHIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_HV_SODIUM;
-    public static MetaItem<?>.MetaValueItem ENERGY_CRYSTAL;
+    public static MetaItem<?>.MetaValueItem ENERGIUM_CRYSTAL;
     public static MetaItem<?>.MetaValueItem LAPOTRON_CRYSTAL;
 
     public static MetaItem<?>.MetaValueItem BATTERY_EV_VANADIUM;
@@ -151,7 +151,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem BATTERY_UV_NAQUADRIA;
 
     public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB;
-    public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB2;
+    public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB_CLUSTER;
     public static MetaItem<?>.MetaValueItem ZERO_POINT_MODULE;
     public static MetaItem<?>.MetaValueItem ULTIMATE_BATTERY;
 
@@ -247,6 +247,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem TOOL_DATA_STICK;
     public static MetaItem<?>.MetaValueItem TOOL_DATA_ORB;
 
+    public static final Map<MarkerMaterial, MetaValueItem> GLASS_LENSES = new HashMap<>();
+
     public static MetaItem<?>.MetaValueItem SILICON_BOULE;
     public static MetaItem<?>.MetaValueItem GLOWSTONE_BOULE;
     public static MetaItem<?>.MetaValueItem NAQUADAH_BOULE;
@@ -264,6 +266,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem LOW_POWER_INTEGRATED_CIRCUIT_WAFER;
     public static MetaItem<?>.MetaValueItem POWER_INTEGRATED_CIRCUIT_WAFER;
     public static MetaItem<?>.MetaValueItem HIGH_POWER_INTEGRATED_CIRCUIT_WAFER;
+    public static MetaItem<?>.MetaValueItem ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT_WAFER;
     public static MetaItem<?>.MetaValueItem NAND_MEMORY_CHIP_WAFER;
     public static MetaItem<?>.MetaValueItem NANO_CENTRAL_PROCESSING_UNIT_WAFER;
     public static MetaItem<?>.MetaValueItem NOR_MEMORY_CHIP_WAFER;
@@ -283,6 +286,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem LOW_POWER_INTEGRATED_CIRCUIT;
     public static MetaItem<?>.MetaValueItem POWER_INTEGRATED_CIRCUIT;
     public static MetaItem<?>.MetaValueItem HIGH_POWER_INTEGRATED_CIRCUIT;
+    public static MetaItem<?>.MetaValueItem ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT;
     public static MetaItem<?>.MetaValueItem NAND_MEMORY_CHIP;
     public static MetaItem<?>.MetaValueItem NANO_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem NOR_MEMORY_CHIP;
@@ -318,15 +322,17 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem DIODE;
     public static MetaItem<?>.MetaValueItem CAPACITOR;
     public static MetaItem<?>.MetaValueItem TRANSISTOR;
-    public static MetaItem<?>.MetaValueItem SMALL_COIL;
+    public static MetaItem<?>.MetaValueItem INDUCTOR;
     public static MetaItem<?>.MetaValueItem SMD_CAPACITOR;
     public static MetaItem<?>.MetaValueItem SMD_DIODE;
     public static MetaItem<?>.MetaValueItem SMD_RESISTOR;
     public static MetaItem<?>.MetaValueItem SMD_TRANSISTOR;
+    public static MetaItem<?>.MetaValueItem SMD_INDUCTOR;
     public static MetaItem<?>.MetaValueItem ADVANCED_SMD_CAPACITOR;
     public static MetaItem<?>.MetaValueItem ADVANCED_SMD_DIODE;
     public static MetaItem<?>.MetaValueItem ADVANCED_SMD_RESISTOR;
     public static MetaItem<?>.MetaValueItem ADVANCED_SMD_TRANSISTOR;
+    public static MetaItem<?>.MetaValueItem ADVANCED_SMD_INDUCTOR;
 
     // T1: Electronic
     public static MetaItem<?>.MetaValueItem ELECTRONIC_CIRCUIT_LV;
@@ -371,8 +377,6 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem WETWARE_SUPER_COMPUTER_UV;
     public static MetaItem<?>.MetaValueItem WETWARE_MAINFRAME_UHV;
 
-    public static MetaItem<?>.MetaValueItem COMPONENT_SAW_BLADE_DIAMOND;
-    public static MetaItem<?>.MetaValueItem COMPONENT_SAW_BLADE_TUNGSTEN;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_DIAMOND;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_TUNGSTEN;
 
@@ -389,13 +393,13 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_FACADE;
 
     public static MetaItem<?>.MetaValueItem COVER_ACTIVITY_DETECTOR;
+    public static MetaItem<?>.MetaValueItem COVER_ACTIVITY_DETECTOR_ADVANCED;
     public static MetaItem<?>.MetaValueItem COVER_FLUID_DETECTOR;
     public static MetaItem<?>.MetaValueItem COVER_ITEM_DETECTOR;
     public static MetaItem<?>.MetaValueItem COVER_ENERGY_DETECTOR;
 
     public static MetaItem<?>.MetaValueItem COVER_SCREEN;
     public static MetaItem<?>.MetaValueItem COVER_CRAFTING;
-    public static MetaItem<?>.MetaValueItem COVER_DRAIN;
     public static MetaItem<?>.MetaValueItem COVER_INFINITE_WATER;
     public static MetaItem<?>.MetaValueItem COVER_ENDER_FLUID_LINK;
     public static MetaItem<?>.MetaValueItem COVER_DIGITAL_INTERFACE;
@@ -418,9 +422,6 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem PLUGIN_FAKE_GUI;
     public static MetaItem<?>.MetaValueItem PLUGIN_ADVANCED_MONITOR;
 
-    public static MetaItem<?>.MetaValueItem COLOURED_LEDS;
-    public static MetaItem<?>.MetaValueItem DISPLAY;
-
     public static MetaItem<?>.MetaValueItem INTEGRATED_CIRCUIT;
 
     public static MetaItem<?>.MetaValueItem FOAM_SPRAYER;
@@ -430,7 +431,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem BOTTLE_PURPLE_DRINK;
 
     public static MetaItem<?>.MetaValueItem PLANT_BALL;
-    public static MetaItem<?>.MetaValueItem RUBBER_DROP;
+    public static MetaItem<?>.MetaValueItem STICKY_RESIN;
     public static MetaItem<?>.MetaValueItem ENERGIUM_DUST;
 
     public static MetaItem<?>.MetaValueItem POWER_UNIT_LV;
@@ -440,7 +441,9 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem POWER_UNIT_IV;
 
     public static MetaItem<?>.MetaValueItem NANO_SABER;
-    public static MetaItem<?>.MetaValueItem SCANNER;
+    public static MetaItem<?>.MetaValueItem PROSPECTOR_LV;
+    public static MetaItem<?>.MetaValueItem PROSPECTOR_HV;
+    public static MetaItem<?>.MetaValueItem PROSPECTOR_LUV;
     public static MetaItem<?>.MetaValueItem WIRELESS;
     public static MetaItem<?>.MetaValueItem CAMERA;
     public static MetaItem<?>.MetaValueItem TERMINAL;
@@ -465,7 +468,6 @@ public final class MetaItems {
     public static ToolMetaItem<?>.MetaToolValueItem MORTAR;
     public static ToolMetaItem<?>.MetaToolValueItem WIRE_CUTTER;
     public static ToolMetaItem<?>.MetaToolValueItem BRANCH_CUTTER;
-    public static ToolMetaItem<?>.MetaToolValueItem UNIVERSAL_SPADE;
     public static ToolMetaItem<?>.MetaToolValueItem KNIFE;
     public static ToolMetaItem<?>.MetaToolValueItem BUTCHERY_KNIFE;
     public static ToolMetaItem<?>.MetaToolValueItem SENSE;
@@ -485,8 +487,8 @@ public final class MetaItems {
     public static ToolMetaItem<?>.MetaToolValueItem BUZZSAW;
     public static ToolMetaItem<?>.MetaToolValueItem SCREWDRIVER_LV;
 
-    public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_MODULE;
-    public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_CLUSTER;
+    public static MetaItem<?>.MetaValueItem ENERGY_MODULE;
+    public static MetaItem<?>.MetaValueItem ENERGY_CLUSTER;
     public static MetaItem<?>.MetaValueItem NEURO_PROCESSOR;
     public static MetaItem<?>.MetaValueItem STEM_CELLS;
     public static MetaItem<?>.MetaValueItem PETRI_DISH;
@@ -507,30 +509,28 @@ public final class MetaItems {
 
     public static ArmorMetaItem<?>.ArmorMetaValueItem NIGHTVISION_GOGGLES;
 
-    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_MUSCLE_SUITE_CHESTPLATE;
-    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_MUSCLE_SUITE_LEGGINGS;
-    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_MUSCLE_SUITE_BOOTS;
-    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_MUSCLE_SUITE_HELMET;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_CHESTPLATE;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_LEGGINGS;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_BOOTS;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_HELMET;
 
-    public static ArmorMetaItem<?>.ArmorMetaValueItem QUARK_TECH_SUITE_CHESTPLATE;
-    public static ArmorMetaItem<?>.ArmorMetaValueItem QUARK_TECH_SUITE_LEGGINGS;
-    public static ArmorMetaItem<?>.ArmorMetaValueItem QUARK_TECH_SUITE_BOOTS;
-    public static ArmorMetaItem<?>.ArmorMetaValueItem QUARK_TECH_SUITE_HELMET;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem QUANTUM_CHESTPLATE;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem QUANTUM_LEGGINGS;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem QUANTUM_BOOTS;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem QUANTUM_HELMET;
 
     public static ArmorMetaItem<?>.ArmorMetaValueItem SEMIFLUID_JETPACK;
-    public static ArmorMetaItem<?>.ArmorMetaValueItem IMPELLER_JETPACK;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem ELECTRIC_JETPACK;
 
-    public static ArmorMetaItem<?>.ArmorMetaValueItem BATPACK_LV;
-    public static ArmorMetaItem<?>.ArmorMetaValueItem BATPACK_MV;
-    public static ArmorMetaItem<?>.ArmorMetaValueItem BATPACK_HV;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem ELECTRIC_JETPACK_ADVANCED;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_CHESTPLATE_ADVANCED;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem QUANTUM_CHESTPLATE_ADVANCED;
 
-    public static ArmorMetaItem<?>.ArmorMetaValueItem ADVANCED_IMPELLER_JETPACK;
-    public static ArmorMetaItem<?>.ArmorMetaValueItem ADVANCED_NANO_MUSCLE_CHESTPLATE;
-    public static ArmorMetaItem<?>.ArmorMetaValueItem ADVANCED_QUARK_TECH_SUITE_CHESTPLATE;
-
-    public static MetaItem<?>.MetaValueItem IMPELLER_MV;
-    public static MetaItem<?>.MetaValueItem IMPELLER_HV;
+    public static MetaItem<?>.MetaValueItem POWER_THRUSTER;
+    public static MetaItem<?>.MetaValueItem POWER_THRUSTER_ADVANCED;
     public static MetaItem<?>.MetaValueItem GRAVITATION_ENGINE;
+
+    public static MetaItem<?>.MetaValueItem SUS_RECORD;
 
     private static final List<OrePrefix> orePrefixes = new ArrayList<OrePrefix>() {{
         add(OrePrefix.dust);
@@ -578,7 +578,6 @@ public final class MetaItems {
         add(OrePrefix.toolHeadDrill);
         add(OrePrefix.toolHeadChainsaw);
         add(OrePrefix.toolHeadWrench);
-        add(OrePrefix.toolHeadUniversalSpade);
         add(OrePrefix.toolHeadSense);
         add(OrePrefix.toolHeadBuzzSaw);
         add(OrePrefix.toolHeadScrewdriver);
@@ -606,12 +605,11 @@ public final class MetaItems {
                 ((MetaPrefixItem) item).registerOreDict();
             }
         }
-    }
-
-    public static void registerRecipes() {
-        for (MetaItem<?> item : ITEMS) {
-            if (item instanceof MetaTool)
-                ((MetaTool) item).registerRecipes();
+        for (Map.Entry<MarkerMaterial, MetaValueItem> entry : GLASS_LENSES.entrySet()) {
+            // Register "craftingLensWhite" for example
+            OreDictUnifier.registerOre(entry.getValue().getStackForm(), OrePrefix.craftingLens, entry.getKey());
+            // Register "craftingLensGlass", intended only for recipes to dye lenses and not in the Engraver
+            OreDictUnifier.registerOre(entry.getValue().getStackForm(), String.format("%s%s", OrePrefix.craftingLens.name(), "Glass"));
         }
     }
 
@@ -634,7 +632,7 @@ public final class MetaItems {
     @SideOnly(Side.CLIENT)
     public static void registerBakedModels(ModelBakeEvent event) {
         GTLog.logger.info("Registering special item models");
-        registerSpecialItemModel(event, COVER_FACADE, new FacadeItemModel());
+        registerSpecialItemModel(event, COVER_FACADE, new FacadeRenderer());
     }
 
     @SideOnly(Side.CLIENT)

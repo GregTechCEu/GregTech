@@ -149,7 +149,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
 
     protected void removeWidget(Widget widget) {
         if (!widgets.contains(widget)) {
-            if (ConfigHolder.debug) {
+            if (ConfigHolder.misc.debug) {
                 GTLog.logger.warn("widget not added");
             }
             return;
@@ -257,6 +257,15 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
         if (waitToRemoved != null) {
             waitToRemoved.forEach(this::removeWidget);
             waitToRemoved = null;
+        }
+    }
+
+    @Override
+    public void updateScreenOnFrame() {
+        for (Widget widget : widgets) {
+            if (widget.isActive()) {
+                widget.updateScreenOnFrame();
+            }
         }
     }
 

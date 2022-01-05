@@ -116,8 +116,8 @@ metaitem.shape.extruder.pipe.tiny.name=模头(微型管道)
 metaitem.shape.extruder.pipe.tiny.tooltip=用来制作微型管道的模头
 metaitem.shape.extruder.pipe.small.name=模头(小型管道)
 metaitem.shape.extruder.pipe.small.tooltip=用来制作小型管道的模头
-metaitem.shape.extruder.pipe.medium.name=模头(管道)
-metaitem.shape.extruder.pipe.medium.tooltip=用来制作管道的模头
+metaitem.shape.extruder.pipe.normal.name=模头(管道)
+metaitem.shape.extruder.pipe.normal.tooltip=用来制作管道的模头
 metaitem.shape.extruder.pipe.large.name=模头(大型管道)
 metaitem.shape.extruder.pipe.large.tooltip=用来制作大型管道的模头
 metaitem.shape.extruder.pipe.huge.name=模头(巨型管道)
@@ -339,6 +339,23 @@ metaitem.circuit.integrated.name=编程电路
 metaitem.circuit.integrated.tooltip=右击打开配置界面
 metaitem.circuit.integrated.gui=编程电路配置
 
+item.glass.lens=玻璃透镜 (白色的)
+metaitem.glass_lens.orange.name=玻璃透镜 (橘子)
+metaitem.glass_lens.magenta.name=玻璃透镜 (品紅)
+metaitem.glass_lens.light_blue.name=玻璃透镜 (淺藍)
+metaitem.glass_lens.yellow.name=玻璃透镜 (黃色)
+metaitem.glass_lens.lime.name=玻璃透镜 (酸橙)
+metaitem.glass_lens.pink.name=玻璃透镜 (粉色的)
+metaitem.glass_lens.gray.name=玻璃透镜 (灰色的)
+metaitem.glass_lens.light_gray.name=玻璃透镜 (淺灰)
+metaitem.glass_lens.cyan.name=玻璃透镜 (青色)
+metaitem.glass_lens.purple.name=玻璃透镜 (紫色的)
+metaitem.glass_lens.blue.name=玻璃透镜 (藍色)
+metaitem.glass_lens.brown.name=玻璃透镜 (棕色的)
+metaitem.glass_lens.green.name=玻璃透镜 (綠色)
+metaitem.glass_lens.red.name=玻璃透镜 (红色的)
+metaitem.glass_lens.black.name=玻璃透镜 (黑色的)
+
 #CIRCUITS LOCALIZATION
 metaitem.boule.silicon.name=单晶硅
 metaitem.boule.glowstone.name=萤石掺杂的单晶硅
@@ -429,7 +446,6 @@ metaitem.carbon.fibers.name=粗制碳网
 metaitem.carbon.mesh.name=粗制碳板
 metaitem.carbon.plate.name=碳板
 
-metaitem.component.sawblade.diamond.name=钻石锯片
 metaitem.component.grinder.diamond.name=钻石研磨头
 metaitem.component.grinder.tungsten.name=钨研磨头
 
@@ -537,7 +553,6 @@ metaitem.tool.screwdriver.tooltip=/n右击覆盖板以配置它
 metaitem.tool.mortar.name=%s研钵
 metaitem.tool.wire_cutter.name=%s剪线钳
 metaitem.tool.branch_cutter.name=%s剪枝器
-metaitem.tool.universal_spade.name=%s万用铲
 metaitem.tool.knife.name=%s刀
 metaitem.tool.butchery_knife.name=%s屠刀
 metaitem.tool.butchery_knife.tooltip=攻击速度很低
@@ -619,7 +634,7 @@ cover.pump.mode.export=模式: 过滤输出
 cover.pump.mode.import=模式: 过滤输入
 cover.pump.fluid_filter.title=流体过滤
 
-cover.machine_controller.name=机器控制覆盖板设置
+cover.machine_controller.title=机器控制覆盖板设置
 cover.machine_controller.normal=不反转信号
 cover.machine_controller.inverted=反转信号
 cover.machine_controller.redstone=最小红石信号强度: %d
@@ -704,7 +719,6 @@ item.material.oreprefix.crystal=%s晶体
 item.material.oreprefix.toolHeadSword=%s剑刃
 item.material.oreprefix.toolHeadPickaxe=%s镐头
 item.material.oreprefix.toolHeadShovel=%s铲头
-item.material.oreprefix.toolHeadUniversalSpade=%s万用铲头
 item.material.oreprefix.toolHeadAxe=%s斧头
 item.material.oreprefix.toolHeadHoe=%s锄头
 item.material.oreprefix.toolHeadSense=%s镰刀刃
@@ -859,8 +873,6 @@ material.nitration_mixture=硝酸混酸
 material.fireclay=耐火砖
 material.brick=砖
 material.coke=焦煤
-material.tenorite=黑铜矿
-material.cuprite=赤铜矿
 material.bornite=斑铜矿
 material.chalcocite=辉铜矿
 material.enargite=硫砷铜矿
@@ -2085,7 +2097,7 @@ gregtech.machine.item_bus.import.iv.name=输入总线(IV)
 gregtech.machine.item_bus.import.luv.name=输入总线(LuV)
 gregtech.machine.item_bus.import.zpm.name=输入总线(ZPM)
 gregtech.machine.item_bus.import.uv.name=输入总线(UV)
-gregtech.machine.item_bus.import.max.name=输入总线(MAX)
+gregtech.machine.item_bus.import.uhv.name=输入总线(UHV)
 
 gregtech.machine.item_bus.export.tooltip=从多方块结构输出物品
 
@@ -2098,7 +2110,7 @@ gregtech.machine.item_bus.export.iv.name=输出总线(IV)
 gregtech.machine.item_bus.export.luv.name=输出总线(LuV)
 gregtech.machine.item_bus.export.zpm.name=输出总线(ZPM)
 gregtech.machine.item_bus.export.uv.name=输出总线(UV)
-gregtech.machine.item_bus.export.max.name=输出总线(MAX)
+gregtech.machine.item_bus.export.uhv.name=输出总线(UHV)
 
 gregtech.machine.fluid_hatch.import.tooltip=为多方块结构输入流体
 
@@ -2111,7 +2123,7 @@ gregtech.machine.fluid_hatch.import.iv.name=输入仓(IV)
 gregtech.machine.fluid_hatch.import.luv.name=输入仓(LuV)
 gregtech.machine.fluid_hatch.import.zpm.name=输入仓(ZPM)
 gregtech.machine.fluid_hatch.import.uv.name=输入仓(UV)
-gregtech.machine.fluid_hatch.import.max.name=输入仓(MAX)
+gregtech.machine.fluid_hatch.import.uhv.name=输入仓(UHV)
 
 gregtech.machine.fluid_hatch.export.tooltip=从多方块结构输出流体
 
@@ -2124,7 +2136,7 @@ gregtech.machine.fluid_hatch.export.iv.name=输出仓(IV)
 gregtech.machine.fluid_hatch.export.luv.name=输出仓(LuV)
 gregtech.machine.fluid_hatch.export.zpm.name=输出仓(ZPM)
 gregtech.machine.fluid_hatch.export.uv.name=输出仓(UV)
-gregtech.machine.fluid_hatch.export.max.name=输出仓(MAX)
+gregtech.machine.fluid_hatch.export.uhv.name=输出仓(UHV)
 
 gregtech.machine.energy_hatch.input.tooltip=为多方块结构提供能量
 
@@ -2177,7 +2189,7 @@ gregtech.recipe.duration=耗时: %.1f 秒
 gregtech.recipe.amperage=电流: %d
 gregtech.recipe.not_consumed=不在加工时消耗
 gregtech.recipe.chance=出产概率: %s%% +%s%%/tier
-gregtech.recipe.blast_furnace_temperature=温度: %d K (%s)
+gregtech.recipe.temperature=温度: %d K (%s)
 gregtech.recipe.eu_to_start=启动耗电: %sEU
 
 gregtech.fluid.click_to_fill=§7手持空的流体容器点击储罐以取走流体.
@@ -2615,12 +2627,9 @@ tile.gt.seal.name=Sealed Block
 tile.surface_rock_new.name=Surface Rock
 gregtech.block.surface_rock.material=Rock Material: %s
 gregtech.block.surface_rock.underground_materials=Underground Materials: %s
-metaitem.scanner.name=Scanner
-metaitem.scanner.tooltip=Hold right mouse button on surface rocks/nto discover underground materials
-behavior.scanner.analyzing=Analyzing...
-behavior.scanner.analyzing_failed=Analyzing failed!
-behavior.scanner.analyzing_complete=Analyzing complete!
-behavior.scanner.not_enough_energy=Analyzing failed: Not Enough Energy!
+
+behavior.prospector.not_enough_energy=Analyzing failed: Not Enough Energy!
+
 tile.wire_coil.fluxed_electrum.name=Fluxed Electrum Coil Block
 tile.wire_coil.diamericium_titanium.name=Diamericium Titanium Coil Block
 tile.fusion_coil.superconductor.name=Superconducting Coil Block
@@ -3095,9 +3104,6 @@ gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
-gregtech.jei.ore_by_product_from_ore=Use %s for %s
-gregtech.jei.ore_by_product_from_machine=Produce by processing %s with %s
-gregtech.jei.ore_by_product_not_obtainable=Byproduct not obtainable
 ore.spawnlocation.name=Ore Spawn Information
 gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spawn locations.
 gregtech.jei.ore.surface_rock_2=They can be broken for 3 Tiny Piles of the dust, with Fortune giving a bonus.
@@ -3252,9 +3258,9 @@ gregtech.advancement.medium_voltage.36_integrated_logic_circuit.desc=Produce an 
 gregtech.advancement.medium_voltage.37_advanced_integrated_logic_circuit.name=Step Forward
 gregtech.advancement.medium_voltage.37_advanced_integrated_logic_circuit.desc=Obtain Advanced Circuits.
 gregtech.advancement.medium_voltage.38_super_chest.name=New Storage
-gregtech.advancement.medium_voltage.38_super_chest.desc=Craft a Quantum Chest.
+gregtech.advancement.medium_voltage.38_super_chest.desc=Craft a Super Chest I.
 gregtech.advancement.medium_voltage.39_super_tank.name=Where is the Ocean?
-gregtech.advancement.medium_voltage.39_super_tank.desc=Build a Quantum Tank.
+gregtech.advancement.medium_voltage.39_super_tank.desc=Build a Super Tank I.
 gregtech.advancement.root_hv.name=High Voltage
 gregtech.advancement.root_hv.desc=Produce a Stainless Steel Ingot.
 gregtech.advancement.high_voltage.40_workstation.name=Workstations
@@ -3537,3 +3543,6 @@ gregtech.cover.fluid_detector.message_fluid_storage_normal=Monitoring Normal Flu
 gregtech.cover.fluid_detector.message_fluid_storage_inverted=Monitoring Inverted Fluid Storage
 gregtech.cover.item_detector.message_item_storage_normal=Monitoring Normal Item Storage
 gregtech.cover.item_detector.message_item_storage_inverted=Monitoring Inverted Item Storage
+
+fluid.tile.lava=Lava
+fluid.tile.water=Water

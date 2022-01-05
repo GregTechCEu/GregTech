@@ -7,8 +7,8 @@ import gregtech.api.enchants.EnchantmentEnderDamage;
 import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
-import gregtech.api.recipes.recipeproperties.BlastTemperatureProperty;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
+import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.DustProperty;
@@ -18,10 +18,6 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.advancement.GTTrigger;
 import gregtech.common.advancement.GTTriggers;
 import gregtech.common.blocks.*;
-import gregtech.common.blocks.wood.BlockGregLeaves;
-import gregtech.common.blocks.wood.BlockGregLog;
-import gregtech.common.blocks.wood.BlockGregPlank;
-import gregtech.common.blocks.wood.BlockGregSapling;
 import gregtech.common.items.MetaItems;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.ItemBlockCable;
@@ -29,20 +25,17 @@ import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
+import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
-import gregtech.loaders.oreprocessing.DecompositionRecipeHandler;
-import gregtech.loaders.oreprocessing.RecipeHandlerList;
-import gregtech.loaders.oreprocessing.ToolRecipeHandler;
-import gregtech.loaders.recipe.*;
+import gregtech.loaders.recipe.CraftingComponent;
+import gregtech.loaders.recipe.GTRecipeManager;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
@@ -53,8 +46,10 @@ import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.lang.reflect.InvocationTargetException;
@@ -91,20 +86,31 @@ public class CommonProxy {
         registry.register(MULTIBLOCK_CASING);
         registry.register(TRANSPARENT_CASING);
         registry.register(WIRE_COIL);
-        registry.register(WIRE_COIL2);
         registry.register(FUSION_CASING);
         registry.register(WARNING_SIGN);
-        registry.register(GRANITE);
-        registry.register(MINERAL);
-        registry.register(CONCRETE);
-        registry.register(LOG);
-        registry.register(LEAVES);
-        registry.register(SAPLING);
+        registry.register(ASPHALT);
+        registry.register(STONE_SMOOTH);
+        registry.register(STONE_COBBLE);
+        registry.register(STONE_COBBLE_MOSSY);
+        registry.register(STONE_POLISHED);
+        registry.register(STONE_BRICKS);
+        registry.register(STONE_BRICKS_CRACKED);
+        registry.register(STONE_BRICKS_MOSSY);
+        registry.register(STONE_CHISELED);
+        registry.register(STONE_TILED);
+        registry.register(STONE_TILED_SMALL);
+        registry.register(STONE_BRICKS_SMALL);
+        registry.register(STONE_WINDMILL_A);
+        registry.register(STONE_WINDMILL_B);
+        registry.register(STONE_BRICKS_SQUARE);
+        registry.register(RUBBER_LOG);
+        registry.register(RUBBER_LEAVES);
+        registry.register(RUBBER_SAPLING);
         registry.register(PLANKS);
-        registry.register(SURFACE_ROCK);
 
         COMPRESSED.values().stream().distinct().forEach(registry::register);
         FRAMES.values().stream().distinct().forEach(registry::register);
+        SURFACE_ROCK.values().stream().distinct().forEach(registry::register);
         ORES.forEach(registry::register);
     }
 
@@ -123,7 +129,7 @@ public class CommonProxy {
             registry.register(item);
             item.registerSubItems();
         }
-        ToolRecipeHandler.initializeMetaItems();
+        GTRecipeManager.preLoad();
 
         registry.register(createItemBlock(MACHINE, MachineItemBlock::new));
 
@@ -141,16 +147,27 @@ public class CommonProxy {
         registry.register(createItemBlock(MULTIBLOCK_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(TRANSPARENT_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(WIRE_COIL, VariantItemBlock::new));
-        registry.register(createItemBlock(WIRE_COIL2, VariantItemBlock::new));
         registry.register(createItemBlock(FUSION_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(WARNING_SIGN, VariantItemBlock::new));
-        registry.register(createItemBlock(GRANITE, StoneItemBlock::new));
-        registry.register(createItemBlock(MINERAL, StoneItemBlock::new));
-        registry.register(createItemBlock(CONCRETE, StoneItemBlock::new));
-        registry.register(createMultiTexItemBlock(LOG, state -> state.getValue(BlockGregLog.VARIANT).getName()));
-        registry.register(createMultiTexItemBlock(LEAVES, state -> state.getValue(BlockGregLeaves.VARIANT).getName()));
-        registry.register(createMultiTexItemBlock(SAPLING, state -> state.getValue(BlockGregSapling.VARIANT).getName()));
-        registry.register(createMultiTexItemBlock(PLANKS, state -> state.getValue(BlockGregPlank.VARIANT).getName()));
+        registry.register(createItemBlock(ASPHALT, VariantItemBlock::new));
+        registry.register(createItemBlock(STONE_SMOOTH, VariantItemBlock::new));
+        registry.register(createItemBlock(STONE_COBBLE, VariantItemBlock::new));
+        registry.register(createItemBlock(STONE_COBBLE_MOSSY, VariantItemBlock::new));
+        registry.register(createItemBlock(STONE_POLISHED, VariantItemBlock::new));
+        registry.register(createItemBlock(STONE_BRICKS, VariantItemBlock::new));
+        registry.register(createItemBlock(STONE_BRICKS_CRACKED, VariantItemBlock::new));
+        registry.register(createItemBlock(STONE_BRICKS_MOSSY, VariantItemBlock::new));
+        registry.register(createItemBlock(STONE_CHISELED, VariantItemBlock::new));
+        registry.register(createItemBlock(STONE_TILED, VariantItemBlock::new));
+        registry.register(createItemBlock(STONE_TILED_SMALL, VariantItemBlock::new));
+        registry.register(createItemBlock(STONE_BRICKS_SMALL, VariantItemBlock::new));
+        registry.register(createItemBlock(STONE_WINDMILL_A, VariantItemBlock::new));
+        registry.register(createItemBlock(STONE_WINDMILL_B, VariantItemBlock::new));
+        registry.register(createItemBlock(STONE_BRICKS_SQUARE, VariantItemBlock::new));
+        registry.register(createItemBlock(PLANKS, VariantItemBlock::new));
+        registry.register(createItemBlock(RUBBER_LOG, ItemBlock::new));
+        registry.register(createItemBlock(RUBBER_LEAVES, ItemBlock::new));
+        registry.register(createItemBlock(RUBBER_SAPLING, ItemBlock::new));
 
         COMPRESSED.values()
                 .stream().distinct()
@@ -177,12 +194,8 @@ public class CommonProxy {
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         // registers coiltypes for the BlastTemperatureProperty used in Blast Furnace Recipes
         for (BlockWireCoil.CoilType values : BlockWireCoil.CoilType.values()) {
-            BlastTemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
+            TemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
                     String.format("tile.wire_coil.%s.name", values.getName()));
-        }
-        for (BlockWireCoil2.CoilType2 values : BlockWireCoil2.CoilType2.values()) {
-            BlastTemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
-                    String.format("tile.wire_coil2.%s.name", values.getName()));
         }
 
         //Registers Fusion tiers for the FusionEUToStartProperty
@@ -199,12 +212,7 @@ public class CommonProxy {
 
         GTLog.logger.info("Registering recipes...");
 
-        MetaItems.registerRecipes();
-        MachineRecipeLoader.init();
-        CraftingRecipeLoader.init();
-        MetaTileEntityLoader.init();
-        MetaTileEntityMachineRecipeLoader.init();
-        RecipeHandlerList.register();
+        GTRecipeManager.load();
     }
 
     //this is called almost last, to make sure all mods registered their ore dictionary
@@ -222,9 +230,7 @@ public class CommonProxy {
     public static void registerRecipesLowest(RegistryEvent.Register<IRecipe> event) {
         GTLog.logger.info("Running late material handlers...");
         OrePrefix.runMaterialHandlers();
-        DecompositionRecipeHandler.runRecipeGeneration();
-        RecyclingRecipes.init();
-        WoodMachineRecipes.init();
+        GTRecipeManager.loadLatest();
 
         if (GTValues.isModLoaded(GTValues.MODID_CT)) {
             MetaItemBracketHandler.rebuildComponentRegistry();
@@ -249,9 +255,9 @@ public class CommonProxy {
         ItemStack stack = event.getItemStack();
         Block block = Block.getBlockFromItem(stack.getItem());
         //handle sapling and log burn rates
-        if (block == MetaBlocks.LOG) {
+        if (block == MetaBlocks.RUBBER_LOG) {
             event.setBurnTime(300);
-        } else if (block == MetaBlocks.SAPLING) {
+        } else if (block == MetaBlocks.RUBBER_SAPLING) {
             event.setBurnTime(100);
         }
         //handle material blocks burn value
@@ -266,16 +272,6 @@ public class CommonProxy {
                 event.setBurnTime((int) (materialUnitsInBlock * property.getBurnTime()));
             }
         }
-    }
-
-    @SuppressWarnings("deprecation")
-    private static <T extends Block> ItemBlock createMultiTexItemBlock(T block, Function<IBlockState, String> nameProducer) {
-        ItemBlock itemBlock = new ItemMultiTexture(block, block, stack -> {
-            IBlockState blockState = block.getStateFromMeta(stack.getMetadata());
-            return nameProducer.apply(blockState);
-        });
-        itemBlock.setRegistryName(block.getRegistryName());
-        return itemBlock;
     }
 
     private static <T extends Block> ItemBlock createItemBlock(T block, Function<T, ItemBlock> producer) {
@@ -301,7 +297,17 @@ public class CommonProxy {
     }
 
     public void onPostLoad() {
-        WoodMachineRecipes.postInit();
+        GTRecipeManager.postLoad();
         TerminalRegistry.init();
+    }
+
+    public void onLoadComplete(FMLLoadCompleteEvent event) {
+        if(GTValues.isModLoaded(GTValues.MODID_JEI) && event.getSide() == Side.CLIENT) {
+            GTJeiPlugin.setupInputHandler();
+        }
+    }
+
+    public boolean isFancyGraphics() {
+        return true;
     }
 }

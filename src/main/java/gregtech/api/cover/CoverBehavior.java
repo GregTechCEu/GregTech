@@ -9,9 +9,9 @@ import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.gui.IUIHolder;
-import gregtech.api.render.SimpleSidedCubeRenderer.RenderSide;
-import gregtech.api.render.Textures;
-import gregtech.core.hooks.BloomRenderLayerHooks;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer.RenderSide;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.BloomEffectUtil;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -138,10 +138,16 @@ public abstract class CoverBehavior implements IUIHolder {
     public void onRemoved() {
     }
 
+    /**
+     * @return If the pipe this is placed on should render a connection to the cover
+     */
     public boolean shouldRenderConnected() {
         return true;
     }
 
+    /**
+     * @return If the pipe this is placed on and a pipe on the other side should be able to connect
+     */
     public boolean canPipePassThrough() {
         return false;
     }
@@ -182,7 +188,7 @@ public abstract class CoverBehavior implements IUIHolder {
 
     @SideOnly(Side.CLIENT)
     public boolean canRenderInLayer(BlockRenderLayer renderLayer) {
-        return renderLayer == BlockRenderLayer.CUTOUT || renderLayer == BloomRenderLayerHooks.BLOOM;
+        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED || renderLayer == BloomEffectUtil.getRealBloomLayer();
     }
 
     @SideOnly(Side.CLIENT)
@@ -190,10 +196,8 @@ public abstract class CoverBehavior implements IUIHolder {
         TextureAtlasSprite casingSide = getPlateSprite();
         for (EnumFacing coverPlateSide : EnumFacing.VALUES) {
             boolean isAttachedSide = attachedSide.getAxis() == coverPlateSide.getAxis();
-            if (isAttachedSide) {
-                Textures.renderFace(renderState, translation, pipeline, coverPlateSide, plateBox, casingSide);
-            } else if (coverHolder.getCoverAtSide(coverPlateSide) == null) {
-                Textures.renderFace(renderState, translation, pipeline, coverPlateSide, plateBox, casingSide);
+            if (isAttachedSide || coverHolder.getCoverAtSide(coverPlateSide) == null) {
+                Textures.renderFace(renderState, translation, pipeline, coverPlateSide, plateBox, casingSide, BlockRenderLayer.CUTOUT_MIPPED);
             }
         }
     }

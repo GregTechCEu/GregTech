@@ -1,19 +1,16 @@
 package gregtech.common.metatileentities.multi.steam;
 
 
-import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.capability.impl.SteamMultiWorkable;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
+import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
-import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFireboxCasing;
 import gregtech.common.blocks.BlockMetalCasing;
@@ -34,6 +31,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     public MetaTileEntitySteamOven(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.FURNACE_RECIPES, CONVERSION_RATE);
         this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE);
+        this.recipeMapWorkable.setParallelLimit(8);
     }
 
     @Override
@@ -58,27 +56,22 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
                 .aisle("XXX", "CCC", "#C#")
                 .aisle("XXX", "C#C", "#C#")
                 .aisle("XXX", "CSC", "#C#")
-                .setAmountAtLeast('L', 6)
-                .setAmountAtMost('H', 1)
                 .where('S', selfPredicate())
-                .where('L', statePredicate(getCasingState()))
-                .where('H', abilityPartPredicate(MultiblockAbility.STEAM))
-                .where('X', state -> statePredicate(getFireboxState())
-                        .or(abilityPartPredicate(MultiblockAbility.STEAM)).test(state))
-                .where('C', statePredicate(getCasingState()).or(abilityPartPredicate(
-                        MultiblockAbility.STEAM_IMPORT_ITEMS, MultiblockAbility.STEAM_EXPORT_ITEMS)))
-                .where('#', (tile) -> true)
+                .where('X', states(getFireboxState()).or(autoAbilities(true, false, false, false, false)))
+                .where('C', states(getCasingState()).setMinGlobalLimited(6)
+                        .or(autoAbilities(false, false, true, true, false)))
+                .where('#', any())
                 .build();
     }
 
     public IBlockState getCasingState() {
-        return ConfigHolder.U.steelSteamMultiblocks ?
+        return ConfigHolder.machines.steelSteamMultiblocks ?
                 MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID) :
                 MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.BRONZE_BRICKS);
     }
 
     public IBlockState getFireboxState() {
-        return ConfigHolder.U.steelSteamMultiblocks ?
+        return ConfigHolder.machines.steelSteamMultiblocks ?
                 MetaBlocks.BOILER_FIREBOX_CASING.getState(BlockFireboxCasing.FireboxCasingType.STEEL_FIREBOX) :
                 MetaBlocks.BOILER_FIREBOX_CASING.getState(BlockFireboxCasing.FireboxCasingType.BRONZE_FIREBOX);
     }
@@ -89,7 +82,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        if (ConfigHolder.U.steelSteamMultiblocks) {
+        if (ConfigHolder.machines.steelSteamMultiblocks) {
             if (sourcePart != null && isFireboxPart(sourcePart)) {
                 return isActive ? Textures.STEEL_FIREBOX_ACTIVE : Textures.STEEL_FIREBOX;
             }
@@ -101,11 +94,6 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
             }
             return Textures.BRONZE_PLATED_BRICKS;
         }
-    }
-
-    @Override
-    public boolean shouldRenderOverlay(IMultiblockPart sourcePart) {
-        return sourcePart == null || !isFireboxPart(sourcePart);
     }
 
     private void replaceFireboxAsActive(boolean isActive) {
@@ -170,14 +158,9 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
         }
     }
 
-    @Override
-    public int getParallelLimit() {
-        return 8;
-    }
-
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         return Textures.ELECTRIC_FURNACE_OVERLAY;
     }
 

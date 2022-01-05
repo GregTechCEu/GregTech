@@ -4,7 +4,6 @@ import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
-import gregtech.api.util.GTUtility;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -27,7 +26,7 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
         List<Inventory> data = NET_DATA.get(pipePos);
         if (data == null) {
             data = ItemNetWalker.createNetData(getWorldData(), pipePos, facing);
-            data.sort(Comparator.comparingInt(inv -> inv.properties.priority));
+            data.sort(Comparator.comparingInt(inv -> inv.properties.getPriority()));
             NET_DATA.put(pipePos, data);
         }
         return data;
@@ -52,8 +51,8 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
 
     @Override
     protected void writeNodeData(ItemPipeProperties nodeData, NBTTagCompound tagCompound) {
-        tagCompound.setInteger("Resistance", nodeData.priority);
-        tagCompound.setFloat("Rate", nodeData.transferRate);
+        tagCompound.setInteger("Resistance", nodeData.getPriority());
+        tagCompound.setFloat("Rate", nodeData.getTransferRate());
     }
 
     @Override

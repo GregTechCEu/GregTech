@@ -1,5 +1,6 @@
 package gregtech.api.util;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
@@ -8,10 +9,8 @@ import org.apache.logging.log4j.Logger;
  */
 public class GTLog {
 
-    public static Logger logger;
+    public static Logger logger = LogManager.getLogger("GregTech");
 
-    public static void init(Logger modLogger) {
-        logger = modLogger;
+    private GTLog() {
     }
-
 }

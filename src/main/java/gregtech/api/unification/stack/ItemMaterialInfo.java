@@ -2,14 +2,34 @@ package gregtech.api.unification.stack;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class ItemMaterialInfo {
 
-    public final MaterialStack material;
-    public final ImmutableList<MaterialStack> additionalComponents;
+    private final List<MaterialStack> materials = new ArrayList<>();
 
-    public ItemMaterialInfo(MaterialStack material, MaterialStack... additionalComponents) {
-        this.material = material;
-        this.additionalComponents = ImmutableList.copyOf(additionalComponents);
+    public ItemMaterialInfo(MaterialStack... materials) {
+        this.materials.addAll(Arrays.asList(materials));
+    }
+
+    public ItemMaterialInfo(List<MaterialStack> materials) {
+        this.materials.addAll(materials);
+    }
+
+    /**
+     * Returns the first MaterialStack in the "materials" list
+     */
+    public MaterialStack getMaterial() {
+        return materials.size() == 0 ? null : materials.get(0);
+    }
+
+    /**
+     * Returns all MaterialStacks associated with this Object.
+     */
+    public ImmutableList<MaterialStack> getMaterials() {
+        return ImmutableList.copyOf(materials);
     }
 
     @Override
@@ -18,21 +38,16 @@ public class ItemMaterialInfo {
         if (o == null || getClass() != o.getClass()) return false;
 
         ItemMaterialInfo that = (ItemMaterialInfo) o;
-
-        if (!material.equals(that.material)) return false;
-        return additionalComponents.equals(that.additionalComponents);
+        return materials.equals(that.materials);
     }
 
     @Override
     public int hashCode() {
-        int result = material.hashCode();
-        result = 31 * result + additionalComponents.hashCode();
-        return result;
+        return materials.hashCode();
     }
 
     @Override
     public String toString() {
-        return material.material.toCamelCaseString();
+        return materials.size() == 0 ? "" : materials.get(0).material.toCamelCaseString();
     }
-
 }

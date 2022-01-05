@@ -21,13 +21,14 @@ public class ImageTextFieldWidget extends TextFieldWidget {
 
     public ImageTextFieldWidget(int xPosition, int yPosition, int width, int height, SizedTextureArea textureArea, Supplier<String> textSupplier, Consumer<String> textResponder, int maxStringLength, int color) {
         this(xPosition, yPosition, width, height, textureArea, textSupplier, textResponder, maxStringLength);
-        this.textField.setTextColor(color);
+        if(isClientSide())
+            this.textField.setTextColor(color);
     }
 
 
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         this.textureArea.drawHorizontalCutArea(this.getPosition().x - 2, this.getPosition().y, this.getSize().width, this.getSize().height);
-        super.drawInBackground(mouseX, mouseY, context);
+        super.drawInBackground(mouseX, mouseY, partialTicks, context);
     }
 }

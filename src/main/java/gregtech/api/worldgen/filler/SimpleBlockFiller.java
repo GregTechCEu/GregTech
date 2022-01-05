@@ -8,6 +8,7 @@ import net.minecraft.world.IBlockAccess;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class SimpleBlockFiller extends BlockFiller {
 
@@ -26,7 +27,7 @@ public class SimpleBlockFiller extends BlockFiller {
     }
 
     @Override
-    public IBlockState apply(IBlockState currentState, IBlockAccess blockAccess, BlockPos blockPos, int relativeX, int relativeY, int relativeZ) {
+    public IBlockState apply(IBlockState currentState, IBlockAccess blockAccess, BlockPos blockPos, int relativeX, int relativeY, int relativeZ, double density, Random gridRandom, int layer) {
         return fillerEntry.apply(currentState, blockAccess, blockPos);
     }
 

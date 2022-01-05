@@ -17,10 +17,6 @@ public abstract class AbstractItemLootEntry extends LootEntry {
 
     private final LootFunction[] functions;
 
-    public interface LootEntryCreator {
-        AbstractItemLootEntry create(JsonObject jsonObject, int weightIn, int qualityIn, LootFunction[] functionsIn, LootCondition[] conditionsIn, String entryName);
-    }
-
     protected AbstractItemLootEntry(int weightIn, int qualityIn, LootFunction[] functionsIn, LootCondition[] conditionsIn, String entryName) {
         super(weightIn, qualityIn, conditionsIn, entryName);
         this.functions = functionsIn;

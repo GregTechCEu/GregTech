@@ -5,9 +5,10 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.*;
+import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.render.OrientedOverlayRenderer;
+import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -24,21 +25,35 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity {
+public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity implements ISoundCreator {
 
     protected final RecipeLogicEnergy workable;
-    protected final OrientedOverlayRenderer renderer;
+    protected final RecipeMap<?> recipeMap;
+    protected final ICubeRenderer renderer;
 
     private final Function<Integer, Integer> tankScalingFunction;
 
-    public WorkableTieredMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier,
+    public final boolean handlesRecipeOutputs;
+
+    public WorkableTieredMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
                                         Function<Integer, Integer> tankScalingFunction) {
+        this(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction, true);
+    }
+
+    public WorkableTieredMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
+                                        Function<Integer, Integer> tankScalingFunction, boolean handlesRecipeOutputs) {
         super(metaTileEntityId, tier);
         this.renderer = renderer;
+        this.handlesRecipeOutputs = handlesRecipeOutputs;
         this.workable = createWorkable(recipeMap);
+        this.recipeMap = recipeMap;
         this.tankScalingFunction = tankScalingFunction;
         initializeInventory();
         reinitializeEnergyContainer();
+    }
+
+    public boolean canCreateSound() {
+        return workable.isActive();
     }
 
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
@@ -54,7 +69,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         } else this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 64L, tierVoltage, 2, 0L, 0L) {
             @Override
             public long getInputAmperage() {
-                if(getEnergyCapacity() / 2 > getEnergyStored() && workable.isActive()) {
+                if (getEnergyCapacity() / 2 > getEnergyStored() && workable.isActive()) {
                     return 2;
                 }
                 return 1;
@@ -70,25 +85,25 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        renderer.render(renderState, translation, pipeline, getFrontFacing(), workable.isActive());
+        renderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), workable.isActive(), workable.isWorkingEnabled());
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         if (workable == null) return new ItemStackHandler(0);
-        return new NotifiableItemStackHandler(workable.recipeMap.getMaxInputs(), this, false);
+        return new NotifiableItemStackHandler(workable.getRecipeMap().getMaxInputs(), this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
         if (workable == null) return new ItemStackHandler(0);
-        return new NotifiableItemStackHandler(workable.recipeMap.getMaxOutputs(), this, true);
+        return new NotifiableItemStackHandler(workable.getRecipeMap().getMaxOutputs(), this, true);
     }
 
     @Override
     protected FluidTankList createImportFluidHandler() {
         if (workable == null) return new FluidTankList(false);
-        FilteredFluidHandler[] fluidImports = new FilteredFluidHandler[workable.recipeMap.getMaxFluidInputs()];
+        FilteredFluidHandler[] fluidImports = new FilteredFluidHandler[workable.getRecipeMap().getMaxFluidInputs()];
         for (int i = 0; i < fluidImports.length; i++) {
             NotifiableFilteredFluidHandler filteredFluidHandler = new NotifiableFilteredFluidHandler(this.tankScalingFunction.apply(this.getTier()), this, false);
             filteredFluidHandler.setFillPredicate(this::canInputFluid);
@@ -100,7 +115,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     @Override
     protected FluidTankList createExportFluidHandler() {
         if (workable == null) return new FluidTankList(false);
-        FluidTank[] fluidExports = new FluidTank[workable.recipeMap.getMaxFluidOutputs()];
+        FluidTank[] fluidExports = new FluidTank[workable.getRecipeMap().getMaxFluidOutputs()];
         for (int i = 0; i < fluidExports.length; i++) {
             fluidExports[i] = new NotifiableFluidTank(this.tankScalingFunction.apply(this.getTier()), this, true);
         }
@@ -108,7 +123,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     }
 
     protected boolean canInputFluid(FluidStack inputFluid) {
-        RecipeMap<?> recipeMap = workable.recipeMap;
+        RecipeMap<?> recipeMap = workable.getRecipeMap();
         if (recipeMap.canInputFluidForce(inputFluid.getFluid()))
             return true; //if recipe map forces input of given fluid, return true
         Set<Recipe> matchingRecipes = null;
@@ -136,12 +151,25 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VN[getTier()]));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", this.tankScalingFunction.apply(getTier())));
+        if (workable.getRecipeMap().getMaxFluidInputs() != 0)
+            tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", this.tankScalingFunction.apply(getTier())));
     }
 
     public Function<Integer, Integer> getTankScalingFunction() {
         return tankScalingFunction;
+    }
+
+    public boolean isActive() {
+        return workable.isActive();
+    }
+
+    @Override
+    public void onAttached(Object... data) {
+        super.onAttached(data);
+        if (getWorld() != null && getWorld().isRemote) {
+            this.setupSound(this.workable.getRecipeMap().getSound(), this.getPos());
+        }
     }
 }

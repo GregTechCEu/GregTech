@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.electric;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.capability.impl.EnergyContainerBatteryCharger;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -30,6 +31,7 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
         super(metaTileEntityId, tier);
         this.inventorySize = inventorySize;
         initializeInventory();
+        reinitializeEnergyContainer();
     }
 
     @Override
@@ -38,22 +40,8 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
     }
 
     @Override
-    public void update() {
-        super.update();
-        if (!getWorld().isRemote && energyContainer.getEnergyStored() > 0) {
-            for (int i = 0; i < importItems.getSlots(); i++) {
-                ItemStack batteryStack = importItems.getStackInSlot(i);
-                IElectricItem electricItem = batteryStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                if (electricItem != null) {
-                    long inputVoltage = Math.min(energyContainer.getInputVoltage(), energyContainer.getEnergyStored());
-                    long energyUsed = electricItem.charge(inputVoltage, getTier(), false, false);
-                    if (energyUsed > 0L) {
-                        energyContainer.removeEnergy(energyUsed);
-                        importItems.setStackInSlot(i, batteryStack);
-                    }
-                }
-            }
-        }
+    protected void reinitializeEnergyContainer() {
+        this.energyContainer = new EnergyContainerBatteryCharger(this, getTier(), inventorySize);
     }
 
     @Override
@@ -108,7 +96,7 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", inventorySize));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VN[getTier()]));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", energyContainer.getInputAmperage()));
     }
 }

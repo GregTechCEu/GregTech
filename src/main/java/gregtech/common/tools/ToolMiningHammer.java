@@ -17,7 +17,10 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class ToolMiningHammer extends ToolBase {
 
@@ -150,7 +153,7 @@ public class ToolMiningHammer extends ToolBase {
                             blockState.getPlayerRelativeBlockHardness(entityPlayer, world, offsetPos) > 0.0f &&
                             stack.canHarvestBlock(blockState)) {
                         GTUtility.harvestBlock(world, offsetPos, entityPlayer);
-                        ((ToolMetaItem) stack.getItem()).damageItem(stack, damagePerBlockBreak, false);
+                        ((ToolMetaItem<?>) stack.getItem()).damageItem(stack, entityPlayer, damagePerBlockBreak, false);
                     }
                 }
             }
@@ -158,6 +161,9 @@ public class ToolMiningHammer extends ToolBase {
     }
 
     private static BlockPos rotate(BlockPos origin, int x, int y, EnumFacing sideHit, EnumFacing horizontalFacing) {
+        if (sideHit == null) {
+            return BlockPos.ORIGIN;
+        }
         switch (sideHit.getAxis()) {
             case X:
                 return origin.add(0, y, x);

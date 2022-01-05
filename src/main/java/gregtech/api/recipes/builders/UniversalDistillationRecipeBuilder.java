@@ -6,9 +6,10 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ValidationResult;
-import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+
+import static gregtech.api.capability.impl.AbstractRecipeLogic.STANDARD_OVERCLOCK_DURATION_DIVISOR;
 
 public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalDistillationRecipeBuilder> {
 
@@ -42,7 +43,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
 
             int ratio = getRatioForDistillery(this.fluidInputs.get(0), this.fluidOutputs.get(i), this.outputs.size() > 0 ? this.outputs.get(0) : null);
 
-            int recipeDuration = (int) (this.duration * ConfigHolder.U.overclockDivisor);
+            int recipeDuration = (int) (this.duration * STANDARD_OVERCLOCK_DURATION_DIVISOR);
 
             boolean shouldDivide = ratio != 1;
 

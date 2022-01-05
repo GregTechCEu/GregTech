@@ -8,6 +8,7 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
+import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.Position;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -41,7 +42,6 @@ public final class ModularUI implements ISizeProvider {
     private ModularUIGui modularUIGui;
 
     public boolean isJEIHandled;
-    public boolean needNativeClick;
 
     /**
      * UIHolder of this modular UI
@@ -202,8 +202,17 @@ public final class ModularUI implements ISizeProvider {
             return widget(new SlotWidget(itemHandler, slotIndex, x, y).setBackgroundTexture(overlays));
         }
 
+        public Builder slot(IItemHandlerModifiable itemHandler, int slotIndex, int x, int y, boolean canTakeItems, boolean canPutItems, IGuiTexture... overlays) {
+            return widget(new SlotWidget(itemHandler, slotIndex, x, y, canTakeItems, canPutItems).setBackgroundTexture(overlays));
+        }
+
+        // todo this shouldn't exist, only RecipeProgressWidget should directly take a DoubleSupplier
         public Builder progressBar(DoubleSupplier progressSupplier, int x, int y, int width, int height, TextureArea texture, MoveType moveType) {
             return widget(new ProgressWidget(progressSupplier, x, y, width, height, texture, moveType));
+        }
+
+        public Builder progressBar(DoubleSupplier progressSupplier, int x, int y, int width, int height, TextureArea texture, MoveType moveType, RecipeMap<?> recipeMap) {
+            return widget(new RecipeProgressWidget(progressSupplier, x, y, width, height, texture, moveType, recipeMap));
         }
 
         public Builder bindPlayerInventory(InventoryPlayer inventoryPlayer) {

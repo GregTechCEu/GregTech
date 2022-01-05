@@ -1,6 +1,7 @@
 package gregtech.api.recipes;
 
 import com.google.common.collect.ImmutableList;
+import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
@@ -378,14 +379,14 @@ public class Recipe {
         return outputs;
     }
 
-    public List<ItemStack> getResultItemOutputs(int maxOutputSlots, Random random, int tier) {
+    public List<ItemStack> getResultItemOutputs(int maxOutputSlots, int tier) {
         ArrayList<ItemStack> outputs = new ArrayList<>(GTUtility.copyStackList(getOutputs()));
         List<ChanceEntry> chancedOutputsList = getChancedOutputs();
         List<ItemStack> resultChanced = new ArrayList<>();
         int maxChancedSlots = maxOutputSlots - outputs.size();
         for (ChanceEntry chancedOutput : chancedOutputsList) {
             int outputChance = RecipeMap.getChanceFunction().chanceFor(chancedOutput.getChance(), chancedOutput.getBoostPerTier(), tier);
-            if (random.nextInt(Recipe.getMaxChancedValue()) <= outputChance) {
+            if (GTValues.RNG.nextInt(Recipe.getMaxChancedValue()) <= outputChance) {
                 ItemStack stackToAdd = chancedOutput.getItemStack();
                 GTUtility.addStackToItemStackList(stackToAdd, resultChanced);
             }
@@ -499,6 +500,10 @@ public class Recipe {
 
     public int getPropertyCount() {
         return recipePropertyStorage.getSize();
+    }
+
+    public RecipePropertyStorage getRecipePropertyStorage() {
+        return recipePropertyStorage;
     }
 
     ///////////////////////////////////////////////////////////

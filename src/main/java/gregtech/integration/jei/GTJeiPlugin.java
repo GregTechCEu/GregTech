@@ -5,15 +5,15 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
-import gregtech.api.capability.impl.FuelRecipeLogic;
 import gregtech.api.gui.impl.ModularUIGuiHandler;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
+import gregtech.api.metatileentity.multiblock.IMultipleRecipeMaps;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -23,10 +23,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
-import gregtech.integration.jei.multiblock.MultiblockInfoPage;
 import gregtech.integration.jei.recipe.*;
-import gregtech.integration.jei.recipe.fuel.FuelRecipeMapCategory;
-import gregtech.integration.jei.recipe.fuel.GTFuelRecipeWrapper;
 import gregtech.integration.jei.recipe.primitive.MaterialTree;
 import gregtech.integration.jei.recipe.primitive.MaterialTreeCategory;
 import gregtech.integration.jei.recipe.primitive.OreByProduct;
@@ -34,21 +31,30 @@ import gregtech.integration.jei.recipe.primitive.OreByProductCategory;
 import gregtech.integration.jei.utils.CustomItemReturnRecipeWrapper;
 import gregtech.integration.jei.utils.MachineSubtypeHandler;
 import gregtech.integration.jei.utils.MetaItemSubtypeHandler;
+import gregtech.integration.jei.utils.MultiblockInfoRecipeFocusShower;
 import gregtech.loaders.recipe.CustomItemReturnShapedOreRecipeRecipe;
+import mezz.jei.Internal;
 import mezz.jei.api.*;
 import mezz.jei.api.ingredients.IIngredientRegistry;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import mezz.jei.config.Constants;
+import mezz.jei.input.IShowsRecipeFocuses;
+import mezz.jei.input.InputHandler;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @JEIPlugin
 public class GTJeiPlugin implements IModPlugin {
@@ -79,9 +85,6 @@ public class GTJeiPlugin implements IModPlugin {
                 registry.addRecipeCategories(new RecipeMapCategory(recipeMap, registry.getJeiHelpers().getGuiHelper()));
             }
         }
-        for (FuelRecipeMap fuelRecipeMap : FuelRecipeMap.getRecipeMaps()) {
-            registry.addRecipeCategories(new FuelRecipeMapCategory(fuelRecipeMap, registry.getJeiHelpers().getGuiHelper()));
-        }
         registry.addRecipeCategories(new OreByProductCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new GTOreCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new MaterialTreeCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -103,23 +106,22 @@ public class GTJeiPlugin implements IModPlugin {
 
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
             if(!recipeMap.isHidden) {
-                List<GTRecipeWrapper> recipesList = recipeMap.getRecipeList()
-                        .stream()
-                        .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay())
-                        .map(r -> new GTRecipeWrapper(recipeMap, r))
-                        .collect(Collectors.toList());
-                registry.addRecipes(recipesList, GTValues.MODID + ":" + recipeMap.unlocalizedName);
+                Stream<Recipe> recipeStream = recipeMap.getRecipeList().stream()
+                        .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay());
+
+                if (recipeMap.getSmallRecipeMap() != null) {
+                    List<Recipe> smallRecipes = recipeMap.getSmallRecipeMap().getRecipeList();
+                    recipeStream = recipeStream.filter(recipe -> !smallRecipes.contains(recipe));
+                }
+
+                registry.addRecipes(
+                        recipeStream.map(r -> new GTRecipeWrapper(recipeMap, r)).collect(Collectors.toList()),
+                        GTValues.MODID + ":" + recipeMap.unlocalizedName
+                );
             }
         }
 
-        for (FuelRecipeMap fuelRecipeMap : FuelRecipeMap.getRecipeMaps()) {
-            List<GTFuelRecipeWrapper> recipeList = fuelRecipeMap.getRecipeList().stream()
-                    .map(GTFuelRecipeWrapper::new)
-                    .collect(Collectors.toList());
-            registry.addRecipes(recipeList, GTValues.MODID + ":" + fuelRecipeMap.unlocalizedName);
-        }
-
-        List<SteamMetaTileEntity> deferredCatalysts = new ArrayList<>();
+        Map<RecipeMap<?>, List<MetaTileEntity>> deferredCatalysts = new HashMap<>();
         for (ResourceLocation metaTileEntityId : GregTechAPI.MTE_REGISTRY.getKeys()) {
             MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
             assert metaTileEntity != null;
@@ -127,27 +129,22 @@ public class GTJeiPlugin implements IModPlugin {
                 IControllable workableCapability = metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
 
                 if (workableCapability instanceof AbstractRecipeLogic) {
+                    AbstractRecipeLogic logic = (AbstractRecipeLogic) workableCapability;
                     if (metaTileEntity instanceof SteamMetaTileEntity) {
-                        deferredCatalysts.add((SteamMetaTileEntity) metaTileEntity);
-                    } else {
-                        RecipeMap<?> recipeMap = ((AbstractRecipeLogic) workableCapability).recipeMap;
-                        registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
-                        if (recipeMap instanceof RecipeMapFurnace) {
-                            registry.addRecipeCatalyst(metaTileEntity.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
+                        deferredCatalysts.computeIfAbsent(logic.getRecipeMap(), k -> new ArrayList<>()).add(metaTileEntity);
+                    } else if (metaTileEntity instanceof IMultipleRecipeMaps && ((IMultipleRecipeMaps) metaTileEntity).hasMultipleRecipeMaps()) {
+                        for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity).getAvailableRecipeMaps()) {
+                            registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
                         }
+                    } else if (logic.getRecipeMap() != null) {
+                        registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
                     }
-                } else if (workableCapability instanceof FuelRecipeLogic) {
-                    FuelRecipeMap recipeMap = ((FuelRecipeLogic) workableCapability).recipeMap;
-                    registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
                 }
             }
         }
-        for (SteamMetaTileEntity steamMetaTileEntity : deferredCatalysts) {
-            IControllable workableCapability = steamMetaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
-            RecipeMap<?> recipeMap = ((AbstractRecipeLogic) workableCapability).recipeMap;
-            registry.addRecipeCatalyst(steamMetaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
-            if (recipeMap instanceof RecipeMapFurnace) {
-                registry.addRecipeCatalyst(steamMetaTileEntity.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
+        for (Map.Entry<RecipeMap<?>, List<MetaTileEntity>> deferredMetaTileEntities : deferredCatalysts.entrySet()) {
+            for (MetaTileEntity mte : deferredMetaTileEntities.getValue()) {
+                registerRecipeMapCatalyst(registry, deferredMetaTileEntities.getKey(), mte);
             }
         }
 
@@ -157,42 +154,33 @@ public class GTJeiPlugin implements IModPlugin {
         registry.addRecipeCatalyst(MetaTileEntities.LARGE_TITANIUM_BOILER.getStackForm(), semiFluidMapId);
         registry.addRecipeCatalyst(MetaTileEntities.LARGE_TUNGSTENSTEEL_BOILER.getStackForm(), semiFluidMapId);
 
-        //TODO, add Electromagnetic Separator to the Ore Byproduct page
         List<OreByProduct> oreByproductList = new CopyOnWriteArrayList<>();
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
             if (material.hasProperty(PropertyKey.ORE)) {
-                final OreByProduct oreByProduct = new OreByProduct(material);
-                if (oreByProduct.hasByProducts())
-                    oreByproductList.add(oreByProduct);
+                oreByproductList.add(new OreByProduct(material));
             }
         }
         String oreByProductId = GTValues.MODID + ":" + "ore_by_product";
         registry.addRecipes(oreByproductList, oreByProductId);
-        for (MetaTileEntity machine : MetaTileEntities.MACERATOR) {
-            if (machine == null) continue;
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
-        }
-        for (MetaTileEntity machine : MetaTileEntities.ORE_WASHER) {
-            if (machine == null) continue;
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
-        }
-        for (MetaTileEntity machine : MetaTileEntities.CENTRIFUGE) {
-            if (machine == null) continue;
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
-        }
-        for (MetaTileEntity machine : MetaTileEntities.THERMAL_CENTRIFUGE) {
-            if (machine == null) continue;
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
-        }
-        for (MetaTileEntity machine : MetaTileEntities.CHEMICAL_BATH) {
-            if (machine == null) continue;
-            registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
+        MetaTileEntity[][] machineLists = new MetaTileEntity[][]{
+                MetaTileEntities.MACERATOR,
+                MetaTileEntities.ORE_WASHER,
+                MetaTileEntities.CENTRIFUGE,
+                MetaTileEntities.THERMAL_CENTRIFUGE,
+                MetaTileEntities.CHEMICAL_BATH,
+                MetaTileEntities.ELECTROMAGNETIC_SEPARATOR,
+                MetaTileEntities.SIFTER,
+                MetaTileEntities.ORE_WASHER
+        };
+        for (MetaTileEntity[] machine : machineLists) {
+            if (machine.length < 1 || machine[0] == null) continue;
+            registry.addRecipeCatalyst(machine[0].getStackForm(), oreByProductId);
         }
 
         //Material Tree
         List<MaterialTree> materialTreeList = new CopyOnWriteArrayList<>();
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-            if (material.hasProperty(PropertyKey.DUST)) {
+            if (material.hasProperty(PropertyKey.DUST) && !material.isHidden()) {
                 materialTreeList.add(new MaterialTree(material));
             }
         }
@@ -207,7 +195,9 @@ public class GTJeiPlugin implements IModPlugin {
 
         String oreSpawnID = GTValues.MODID + ":" + "ore_spawn_location";
         registry.addRecipes(oreInfoList, oreSpawnID);
-        registry.addRecipeCatalyst(MetaItems.SCANNER.getStackForm(), oreSpawnID);
+        registry.addRecipeCatalyst(MetaItems.PROSPECTOR_LV.getStackForm(), oreSpawnID);
+        registry.addRecipeCatalyst(MetaItems.PROSPECTOR_HV.getStackForm(), oreSpawnID);
+        registry.addRecipeCatalyst(MetaItems.PROSPECTOR_LUV.getStackForm(), oreSpawnID);
         //Ore Veins End
 
 
@@ -226,11 +216,35 @@ public class GTJeiPlugin implements IModPlugin {
         }
 
         //Multiblock info page registration
-        MultiblockInfoCategory.multiblockRecipes.values().forEach(v -> {
-            MultiblockInfoPage infoPage = v.getInfoPage();
-            registry.addIngredientInfo(infoPage.getController().getStackForm(),
-                    VanillaTypes.ITEM,
-                    infoPage.getDescription());
+        MultiblockInfoCategory.REGISTER.forEach(mte->{
+            String[] desc = mte.getDescription();
+            if (desc.length > 0) {
+                registry.addIngredientInfo(mte.getStackForm(), VanillaTypes.ITEM, mte.getDescription());
+            }
         });
+    }
+
+    public static void setupInputHandler() {
+        try {
+            Field inputHandlerField = Internal.class.getDeclaredField("inputHandler");
+            inputHandlerField.setAccessible(true);
+            InputHandler inputHandler = (InputHandler) inputHandlerField.get(null);
+            List<IShowsRecipeFocuses> showsRecipeFocuses = ObfuscationReflectionHelper.getPrivateValue(InputHandler.class, inputHandler, "showsRecipeFocuses");
+
+            showsRecipeFocuses.add(new MultiblockInfoRecipeFocusShower());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void registerRecipeMapCatalyst(IModRegistry registry, RecipeMap<?> recipeMap, MetaTileEntity metaTileEntity) {
+        registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
+        if (recipeMap instanceof RecipeMapFurnace) {
+            registry.addRecipeCatalyst(metaTileEntity.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
+        }
+        if (recipeMap.getSmallRecipeMap() != null) {
+            registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.getSmallRecipeMap().unlocalizedName);
+        }
     }
 }

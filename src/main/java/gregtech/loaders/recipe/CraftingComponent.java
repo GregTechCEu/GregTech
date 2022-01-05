@@ -1,14 +1,13 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
-import gregtech.api.items.OreDictNames;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.common.blocks.BlockTransparentCasing;
+import gregtech.common.blocks.BlockGlassCasing;
+import gregtech.common.blocks.BlockMachineCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -26,14 +25,20 @@ public class CraftingComponent {
     public static Component CIRCUIT;
     public static Component BETTER_CIRCUIT;
     public static Component PUMP;
+    public static Component WIRE_ELECTRIC;
+    public static Component WIRE_QUAD;
+    public static Component WIRE_OCT;
+    public static Component WIRE_HEX;
     public static Component CABLE;
-    public static Component WIRE;
     public static Component CABLE_QUAD;
+    public static Component CABLE_TIER_UP;
+    public static Component CASING;
     public static Component HULL;
     public static Component PIPE_NORMAL;
     public static Component PIPE_LARGE;
     public static Component GLASS;
     public static Component PLATE;
+    public static Component HULL_PLATE;
     public static Component MOTOR;
     public static Component ROTOR;
     public static Component SENSOR;
@@ -53,6 +58,9 @@ public class CraftingComponent {
     public static Component STICK_ELECTROMAGNETIC;
     public static Component STICK_RADIOACTIVE;
     public static Component PIPE_REACTOR;
+    public static Component POWER_COMPONENT;
+    public static Component VOLTAGE_COIL;
+    public static Component SPRING;
 
     public static final Map<BlastProperty.GasTier, FluidStack> EBF_GASES = new HashMap<BlastProperty.GasTier, FluidStack>() {{
         put(BlastProperty.GasTier.LOW, Materials.Nitrogen.getFluid(1000));
@@ -119,22 +127,7 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        CABLE = new Component(Stream.of(new Object[][]{
-
-                {0, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Lead)},
-                {1, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin)},
-                {2, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper)},
-                {3, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold)},
-                {4, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Aluminium)},
-                {5, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Platinum)},
-                {6, new UnificationEntry(OrePrefix.cableGtSingle, Materials.NiobiumTitanium)},
-                {7, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Naquadah)},
-                {8, new UnificationEntry(OrePrefix.cableGtSingle, Materials.NaquadahAlloy)},
-                {9, new UnificationEntry(OrePrefix.wireGtSingle, Materials.RutheniumTriniumAmericiumNeutronate)},
-
-        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
-
-        WIRE = new Component(Stream.of(new Object[][]{
+        WIRE_ELECTRIC = new Component(Stream.of(new Object[][]{
 
                 {0, new UnificationEntry(OrePrefix.wireGtSingle, Materials.Gold)},
                 {1, new UnificationEntry(OrePrefix.wireGtSingle, Materials.Gold)},
@@ -148,17 +141,90 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
+        WIRE_QUAD = new Component(Stream.of(new Object[][]{
+
+                {0, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Lead)},
+                {1, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Tin)},
+                {2, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Copper)},
+                {3, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Gold)},
+                {4, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Aluminium)},
+                {5, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Tungsten)},
+                {6, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.NiobiumTitanium)},
+                {7, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.VanadiumGallium)},
+                {8, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.YttriumBariumCuprate)},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+        WIRE_OCT = new Component(Stream.of(new Object[][]{
+
+                {0, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Lead)},
+                {1, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Tin)},
+                {2, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Copper)},
+                {3, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Gold)},
+                {4, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Aluminium)},
+                {5, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Tungsten)},
+                {6, new UnificationEntry(OrePrefix.wireGtOctal, Materials.NiobiumTitanium)},
+                {7, new UnificationEntry(OrePrefix.wireGtOctal, Materials.VanadiumGallium)},
+                {8, new UnificationEntry(OrePrefix.wireGtOctal, Materials.YttriumBariumCuprate)},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+        WIRE_HEX = new Component(Stream.of(new Object[][]{
+
+                {0, new UnificationEntry(OrePrefix.wireGtHex, Materials.Lead)},
+                {1, new UnificationEntry(OrePrefix.wireGtHex, Materials.Tin)},
+                {2, new UnificationEntry(OrePrefix.wireGtHex, Materials.Copper)},
+                {3, new UnificationEntry(OrePrefix.wireGtHex, Materials.Gold)},
+                {4, new UnificationEntry(OrePrefix.wireGtHex, Materials.Aluminium)},
+                {5, new UnificationEntry(OrePrefix.wireGtHex, Materials.Tungsten)},
+                {6, new UnificationEntry(OrePrefix.wireGtHex, Materials.NiobiumTitanium)},
+                {7, new UnificationEntry(OrePrefix.wireGtHex, Materials.VanadiumGallium)},
+                {8, new UnificationEntry(OrePrefix.wireGtHex, Materials.YttriumBariumCuprate)},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+        CABLE = new Component(Stream.of(new Object[][]{
+
+                {0, new UnificationEntry(OrePrefix.cableGtSingle, Materials.RedAlloy)},
+                {1, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin)},
+                {2, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper)},
+                {3, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold)},
+                {4, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Aluminium)},
+                {5, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Platinum)},
+                {6, new UnificationEntry(OrePrefix.cableGtSingle, Materials.NiobiumTitanium)},
+                {7, new UnificationEntry(OrePrefix.cableGtSingle, Materials.VanadiumGallium)},
+                {8, new UnificationEntry(OrePrefix.cableGtSingle, Materials.YttriumBariumCuprate)},
+                {9, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Europium)},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
         CABLE_QUAD = new Component(Stream.of(new Object[][]{
 
-                {0, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Lead)},
+                {0, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.RedAlloy)},
                 {1, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Tin)},
                 {2, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Copper)},
                 {3, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Gold)},
                 {4, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Aluminium)},
                 {5, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Platinum)},
                 {6, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.NiobiumTitanium)},
-                {7, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.NaquadahAlloy)},
-                {8, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.RutheniumTriniumAmericiumNeutronate)},
+                {7, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.VanadiumGallium)},
+                {8, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.YttriumBariumCuprate)},
+                {9, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Europium)},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+        CABLE_TIER_UP = new Component(Stream.of(new Object[][]{
+
+                {0, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin)},
+                {1, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper)},
+                {2, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold)},
+                {3, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Aluminium)},
+                {4, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Platinum)},
+                {5, new UnificationEntry(OrePrefix.cableGtSingle, Materials.NiobiumTitanium)},
+                {6, new UnificationEntry(OrePrefix.cableGtSingle, Materials.VanadiumGallium)},
+                {7, new UnificationEntry(OrePrefix.cableGtSingle, Materials.YttriumBariumCuprate)},
+                {8, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Europium)},
+                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Europium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
@@ -173,17 +239,42 @@ public class CraftingComponent {
                 {6, MetaTileEntities.HULL[6].getStackForm()},
                 {7, MetaTileEntities.HULL[7].getStackForm()},
                 {8, MetaTileEntities.HULL[8].getStackForm()},
+                {9, MetaTileEntities.HULL[9].getStackForm()},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         if (GTValues.HT) {
             HULL.appendIngredients(Stream.of(new Object[][]{
-                    {9, MetaTileEntities.HULL[9].getStackForm()},
                     {10, MetaTileEntities.HULL[10].getStackForm()},
                     {11, MetaTileEntities.HULL[11].getStackForm()},
                     {12, MetaTileEntities.HULL[12].getStackForm()},
                     {13, MetaTileEntities.HULL[13].getStackForm()},
                     {14, MetaTileEntities.HULL[14].getStackForm()},
+            }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+        }
+
+        CASING = new Component(Stream.of(new Object[][]{
+
+                {0, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.ULV)},
+                {1, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.LV)},
+                {2, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.MV)},
+                {3, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.HV)},
+                {4, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.EV)},
+                {5, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.IV)},
+                {6, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.LuV)},
+                {7, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.ZPM)},
+                {8, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UV)},
+                {9, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UHV)},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+        if (GTValues.HT) {
+            CASING.appendIngredients(Stream.of(new Object[][]{
+                    {10, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UEV)},
+                    {11, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UIV)},
+                    {12, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UMV)},
+                    {13, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UXV)},
+                    {14, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.MAX)},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -227,25 +318,61 @@ public class CraftingComponent {
         GLASS = new Component(Stream.of(new Object[][]{
 
                 {GTValues.FALLBACK, new ItemStack(Blocks.GLASS, 1, GTValues.W)},
-                {4, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS)},
-                {5, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS)},
-                {6, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS)},
-                {7, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS)},
-                {8, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS)}
+                {4, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.TEMPERED_GLASS)},
+                {5, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.TEMPERED_GLASS)},
+                {6, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.TEMPERED_GLASS)},
+                {7, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.TEMPERED_GLASS)},
+                {8, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.TEMPERED_GLASS)}
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         PLATE = new Component(Stream.of(new Object[][]{
 
-                {0, new UnificationEntry(OrePrefix.plate, Materials.Steel)},
+                {0, new UnificationEntry(OrePrefix.plate, Materials.WroughtIron)},
                 {1, new UnificationEntry(OrePrefix.plate, Materials.Steel)},
                 {2, new UnificationEntry(OrePrefix.plate, Materials.Aluminium)},
                 {3, new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel)},
                 {4, new UnificationEntry(OrePrefix.plate, Materials.Titanium)},
                 {5, new UnificationEntry(OrePrefix.plate, Materials.TungstenSteel)},
-                {6, new UnificationEntry(OrePrefix.plate, Materials.HSSG)},
-                {7, new UnificationEntry(OrePrefix.plate, Materials.HSSE)},
-                {8, new UnificationEntry(OrePrefix.plate, Materials.Neutronium)},
+                {6, new UnificationEntry(OrePrefix.plate, Materials.RhodiumPlatedPalladium)},
+                {7, new UnificationEntry(OrePrefix.plate, Materials.NaquadahAlloy)},
+                {8, new UnificationEntry(OrePrefix.plate, Materials.Darmstadtium)},
+                {9, new UnificationEntry(OrePrefix.plate, Materials.Neutronium)},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+        HULL_PLATE = new Component(Stream.of(new Object[][]{
+
+                {0, new UnificationEntry(OrePrefix.plate, Materials.Wood)},
+                {1, new UnificationEntry(OrePrefix.plate, Materials.WroughtIron)},
+                {2, new UnificationEntry(OrePrefix.plate, Materials.WroughtIron)},
+                {3, new UnificationEntry(OrePrefix.plate, Materials.Polyethylene)},
+                {4, new UnificationEntry(OrePrefix.plate, Materials.Polyethylene)},
+                {5, new UnificationEntry(OrePrefix.plate, Materials.Polytetrafluoroethylene)},
+                {6, new UnificationEntry(OrePrefix.plate, Materials.Polytetrafluoroethylene)},
+                {7, new UnificationEntry(OrePrefix.plate, Materials.Polybenzimidazole)},
+                {8, new UnificationEntry(OrePrefix.plate, Materials.Polybenzimidazole)},
+                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.plate, Materials.Polybenzimidazole)},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+        HULL_PLATE = new Component(Stream.of(new Object[][]{
+
+                {0, new UnificationEntry(OrePrefix.plate, Materials.Wood)},
+                {1, new UnificationEntry(OrePrefix.plate, Materials.WroughtIron)},
+                {2, new UnificationEntry(OrePrefix.plate, Materials.WroughtIron)},
+                {3, new UnificationEntry(OrePrefix.plate, Materials.Polyethylene)},
+                {4, new UnificationEntry(OrePrefix.plate, Materials.Polyethylene)},
+                {5, new UnificationEntry(OrePrefix.plate, Materials.Polytetrafluoroethylene)},
+                {6, new UnificationEntry(OrePrefix.plate, Materials.Polytetrafluoroethylene)},
+                {7, new UnificationEntry(OrePrefix.plate, Materials.Polybenzimidazole)},
+                {8, new UnificationEntry(OrePrefix.plate, Materials.Polybenzimidazole)},
+                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.plate, Materials.Polybenzimidazole)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
@@ -270,9 +397,9 @@ public class CraftingComponent {
                 {3, new UnificationEntry(OrePrefix.rotor, Materials.Steel)},
                 {4, new UnificationEntry(OrePrefix.rotor, Materials.StainlessSteel)},
                 {5, new UnificationEntry(OrePrefix.rotor, Materials.TungstenSteel)},
-                {6, new UnificationEntry(OrePrefix.rotor, Materials.Chrome)},
-                {7, new UnificationEntry(OrePrefix.rotor, Materials.Iridium)},
-                {8, new UnificationEntry(OrePrefix.rotor, Materials.Osmium)},
+                {6, new UnificationEntry(OrePrefix.rotor, Materials.RhodiumPlatedPalladium)},
+                {7, new UnificationEntry(OrePrefix.rotor, Materials.NaquadahAlloy)},
+                {8, new UnificationEntry(OrePrefix.rotor, Materials.Darmstadtium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
@@ -294,8 +421,8 @@ public class CraftingComponent {
                 {0, new UnificationEntry(OrePrefix.gem, Materials.Diamond)},
                 {1, new UnificationEntry(OrePrefix.gem, Materials.Diamond)},
                 {2, new UnificationEntry(OrePrefix.gem, Materials.Diamond)},
-                {3, OreDictNames.craftingGrinder},
-                {4, OreDictNames.craftingGrinder},
+                {3, MetaItems.COMPONENT_GRINDER_DIAMOND.getStackForm()},
+                {4, MetaItems.COMPONENT_GRINDER_DIAMOND.getStackForm()},
                 {5, MetaItems.COMPONENT_GRINDER_TUNGSTEN.getStackForm()},
                 {GTValues.FALLBACK, MetaItems.COMPONENT_GRINDER_TUNGSTEN.getStackForm()},
 
@@ -303,13 +430,16 @@ public class CraftingComponent {
 
         SAWBLADE = new Component(Stream.of(new Object[][]{
 
-                {0, OreDictNames.craftingSawBlade},
-                {1, OreDictNames.craftingSawBlade},
-                {2, OreDictNames.craftingSawBlade},
-                {3, OreDictNames.craftingSawBlade},
-                {4, OreDictNames.craftingSawBlade},
-                {5, MetaItems.COMPONENT_SAW_BLADE_TUNGSTEN.getStackForm()},
-                {GTValues.FALLBACK, MetaItems.COMPONENT_SAW_BLADE_TUNGSTEN.getStackForm()},
+                {0, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Bronze)},
+                {1, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.CobaltBrass)},
+                {2, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.VanadiumSteel)},
+                {3, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.BlackBronze)},
+                {4, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Ultimet)},
+                {5, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.TungstenCarbide)},
+                {6, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.HSSS)},
+                {7, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Duranium)},
+                {8, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Tritanium)},
+                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Tritanium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
@@ -488,8 +618,51 @@ public class CraftingComponent {
                 {6, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Polytetrafluoroethylene)},
                 {7, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Polytetrafluoroethylene)},
                 {8, new UnificationEntry(OrePrefix.pipeHugeFluid, Materials.Polytetrafluoroethylene)},
-
                 {GTValues.FALLBACK, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Polyethylene)},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+        POWER_COMPONENT = new Component(Stream.of(new Object[][]{
+
+                {2, MetaItems.ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm()},
+                {3, MetaItems.ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm()},
+                {4, MetaItems.LOW_POWER_INTEGRATED_CIRCUIT.getStackForm()},
+                {5, MetaItems.POWER_INTEGRATED_CIRCUIT.getStackForm()},
+                {6, MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm()},
+                {7, MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm()},
+                {8, MetaItems.ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm()},
+                {9, MetaItems.ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm()},
+                {GTValues.FALLBACK, MetaItems.ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+        VOLTAGE_COIL = new Component(Stream.of(new Object[][]{
+
+                {0, MetaItems.VOLTAGE_COIL_ULV.getStackForm()},
+                {1, MetaItems.VOLTAGE_COIL_LV.getStackForm()},
+                {2, MetaItems.VOLTAGE_COIL_MV.getStackForm()},
+                {3, MetaItems.VOLTAGE_COIL_HV.getStackForm()},
+                {4, MetaItems.VOLTAGE_COIL_EV.getStackForm()},
+                {5, MetaItems.VOLTAGE_COIL_IV.getStackForm()},
+                {6, MetaItems.VOLTAGE_COIL_LUV.getStackForm()},
+                {7, MetaItems.VOLTAGE_COIL_ZPM.getStackForm()},
+                {8, MetaItems.VOLTAGE_COIL_UV.getStackForm()},
+                {GTValues.FALLBACK, MetaItems.VOLTAGE_COIL_UV},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+        SPRING = new Component(Stream.of(new Object[][]{
+
+                {0, new UnificationEntry(OrePrefix.spring, Materials.Lead)},
+                {1, new UnificationEntry(OrePrefix.spring, Materials.Tin)},
+                {2, new UnificationEntry(OrePrefix.spring, Materials.Copper)},
+                {3, new UnificationEntry(OrePrefix.spring, Materials.Gold)},
+                {4, new UnificationEntry(OrePrefix.spring, Materials.Aluminium)},
+                {5, new UnificationEntry(OrePrefix.spring, Materials.Tungsten)},
+                {6, new UnificationEntry(OrePrefix.spring, Materials.NiobiumTitanium)},
+                {7, new UnificationEntry(OrePrefix.spring, Materials.VanadiumGallium)},
+                {8, new UnificationEntry(OrePrefix.spring, Materials.YttriumBariumCuprate)},
+                {9, new UnificationEntry(OrePrefix.spring, Materials.Europium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
     }

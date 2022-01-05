@@ -61,4 +61,9 @@ public class ToolWrench extends ToolBase {
     public Set<String> getToolClasses(ItemStack stack) {
         return WRENCH_TOOL_CLASSES;
     }
+
+    @Override
+    public boolean canPlayBreakingSound(ItemStack stack, IBlockState state) {
+        return canMineBlock(state, stack);
+    }
 }

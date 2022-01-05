@@ -29,8 +29,12 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
     }
 
     @Override
-    public int getPackedLightmapCoords(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return state.getValue(ACTIVE) ? 0b10100000 << 16 | 0b10100000 : super.getPackedLightmapCoords(state, source, pos);
+    @SuppressWarnings("deprecation")
+    public int getPackedLightmapCoords(IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
+        if (state.getValue(ACTIVE)) {
+            return 0b10100000 << 16 | 0b10100000;
+        }
+        return source.getCombinedLight(pos, state.getLightValue(source, pos));
     }
 
     @Override

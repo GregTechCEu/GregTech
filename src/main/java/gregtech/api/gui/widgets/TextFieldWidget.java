@@ -86,6 +86,11 @@ public class TextFieldWidget extends Widget {
         this.textResponder = textResponder;
     }
 
+    public TextFieldWidget doesClientCallback(boolean isClient) {
+        this.isClient = isClient;
+        return this;
+    }
+
     public TextFieldWidget setTextSupplier(Supplier<String> textSupplier, boolean isClient) {
         this.isClient = isClient;
         this.textSupplier = textSupplier;
@@ -139,8 +144,8 @@ public class TextFieldWidget extends Widget {
     }
 
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
-        super.drawInBackground(mouseX, mouseY, context);
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        super.drawInBackground(mouseX, mouseY, partialTicks, context);
         if (background != null) {
             Position position = getPosition();
             Size size = getSize();

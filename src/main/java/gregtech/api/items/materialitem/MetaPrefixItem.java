@@ -40,6 +40,7 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     private final ArrayList<Short> generatedItems = new ArrayList<>();
     private final ArrayList<ItemStack> items = new ArrayList<>();
+    private final ArrayList<Short> hiddenItems = new ArrayList<>();
     private final OrePrefix prefix;
 
     public static final Map<OrePrefix, OrePrefix> purifyMap = new HashMap<OrePrefix, OrePrefix>() {{
@@ -55,6 +56,9 @@ public class MetaPrefixItem extends StandardMetaItem {
             short i = (short) GregTechAPI.MATERIAL_REGISTRY.getIDForObject(material);
             if (orePrefix != null && canGenerate(orePrefix, material)) {
                 generatedItems.add(i);
+            }
+            if (material.isHidden()) {
+                hiddenItems.add(i);
             }
         }
     }
@@ -79,6 +83,8 @@ public class MetaPrefixItem extends StandardMetaItem {
             OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString() + "239");
         } else if (material == Materials.Uranium238) {
             OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString() + "238");
+        } else if (material == Materials.Saltpeter) {
+            OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString());
         }
     }
 
@@ -87,7 +93,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     }
 
     protected boolean canGenerate(OrePrefix orePrefix, Material material) {
-        return orePrefix.doGenerateItem(material) && !material.isHidden();
+        return orePrefix.doGenerateItem(material);
     }
 
     @Override
@@ -149,7 +155,9 @@ public class MetaPrefixItem extends StandardMetaItem {
         super.getSubItems(tab, subItems);
         if (tab == GregTechAPI.TAB_GREGTECH_MATERIALS || tab == CreativeTabs.SEARCH) {
             for (short metadata : generatedItems) {
-                subItems.add(new ItemStack(this, 1, metadata));
+                if (!hiddenItems.contains(metadata)) {
+                    subItems.add(new ItemStack(this, 1, metadata));
+                }
             }
         }
     }

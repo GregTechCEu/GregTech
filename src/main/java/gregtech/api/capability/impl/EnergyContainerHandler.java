@@ -17,8 +17,8 @@ import java.util.function.Predicate;
 
 public class EnergyContainerHandler extends MTETrait implements IEnergyContainer {
 
-    private final long maxCapacity;
-    private long energyStored;
+    protected final long maxCapacity;
+    protected long energyStored;
 
     private final long maxInputVoltage;
     private final long maxInputAmperage;
@@ -26,15 +26,15 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
     private final long maxOutputVoltage;
     private final long maxOutputAmperage;
 
-    private long lastEnergyInputPerSec = 0;
-    private long lastEnergyOutputPerSec = 0;
-    private long energyInputPerSec = 0;
-    private long energyOutputPerSec = 0;
+    protected long lastEnergyInputPerSec = 0;
+    protected long lastEnergyOutputPerSec = 0;
+    protected long energyInputPerSec = 0;
+    protected long energyOutputPerSec = 0;
 
     private Predicate<EnumFacing> sideInputCondition;
     private Predicate<EnumFacing> sideOutputCondition;
 
-    private long amps = 0;
+    protected long amps = 0;
 
     public EnergyContainerHandler(MetaTileEntity tileEntity, long maxCapacity, long maxInputVoltage, long maxInputAmperage, long maxOutputVoltage, long maxOutputAmperage) {
         super(tileEntity);
@@ -192,7 +192,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         long canAccept = getEnergyCapacity() - getEnergyStored();
         if (voltage > 0L && (side == null || inputsEnergy(side))) {
             if (voltage > getInputVoltage()) {
-                GTUtility.doOvervoltageExplosion(metaTileEntity, voltage);
+                metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
                 return Math.min(amperage, getInputAmperage() - amps);
             }
             if (canAccept >= voltage) {

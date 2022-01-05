@@ -4,7 +4,6 @@
     {
       "from": [  0,  0,  0 ],
       "to":   [ 16, 16, 16 ],
-      "shade": false,
       "faces": {
         "down":  { "texture": "#bot_down", "cullface": "down" },
         "up":    { "texture": "#bot_up", "cullface": "up" },

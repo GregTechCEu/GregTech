@@ -17,8 +17,8 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:meta_tool",
-            "data": 26
+            "type": "forge:ore_dict",
+            "ore": "craftingToolChainsaw"
           }
         ]
       }

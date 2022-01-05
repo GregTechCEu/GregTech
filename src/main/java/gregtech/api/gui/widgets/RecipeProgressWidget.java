@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.function.DoubleSupplier;
 
 public class RecipeProgressWidget extends ProgressWidget {
+
     private final RecipeMap<?> recipeMap;
     private final static int HOVER_TEXT_WIDTH = 200;
 
@@ -22,6 +23,11 @@ public class RecipeProgressWidget extends ProgressWidget {
 
     public RecipeProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height, TextureArea fullImage, MoveType moveType, RecipeMap<?> recipeMap) {
         super(progressSupplier, x, y, width, height, fullImage, moveType);
+        this.recipeMap = recipeMap;
+    }
+
+    public RecipeProgressWidget(int ticksPerCycle, int x, int y, int width, int height, TextureArea fullImage, MoveType moveType, RecipeMap<?> recipeMap) {
+        super(ticksPerCycle, x, y, width, height, fullImage, moveType);
         this.recipeMap = recipeMap;
     }
 

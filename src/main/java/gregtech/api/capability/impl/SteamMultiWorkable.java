@@ -4,6 +4,8 @@ import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.recipes.RecipeBuilder;
 
+import javax.annotation.Nonnull;
+
 
 /**
  * General Recipe Handler for Steam Multiblocks.
@@ -23,9 +25,15 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
     }
 
     @Override
-    public void applyParallelBonus(RecipeBuilder<?> builder) {
+    public boolean trimOutputs() {
+        return true;
+    }
+
+    @Override
+    public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
         int currentRecipeEU = builder.getEUt();
-        int currentRecipeDuration = builder.getDuration();
-        builder.EUt((int) Math.min(32.0, Math.ceil(currentRecipeEU) * 1.33)).duration((int) (currentRecipeDuration * 1.5));
+        int currentRecipeDuration = builder.getDuration() / getParallelLimit();
+        builder.EUt((int) Math.min(32.0, Math.ceil(currentRecipeEU) * 1.33))
+                .duration((int) (currentRecipeDuration * 1.5));
     }
 }

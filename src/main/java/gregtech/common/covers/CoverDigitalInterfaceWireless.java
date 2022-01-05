@@ -7,9 +7,8 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.BlockPosFace;
-import gregtech.api.util.RenderUtil;
 import gregtech.common.items.behaviors.CoverDigitalInterfaceWirelessPlaceBehaviour;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import net.minecraft.entity.player.EntityPlayer;
@@ -98,6 +97,6 @@ public class CoverDigitalInterfaceWireless extends CoverDigitalInterface{
 
     @Override
     public void renderCover(CCRenderState ccRenderState, Matrix4 translation, IVertexOperation[] ops, Cuboid6 cuboid6, BlockRenderLayer blockRenderLayer) {
-        Textures.COVER_INTERFACE_WIRELESS.renderSided(this.attachedSide, cuboid6, ccRenderState, ops, RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+        Textures.COVER_INTERFACE_WIRELESS.renderSided(this.attachedSide, cuboid6, ccRenderState, ops, translation);
     }
 }

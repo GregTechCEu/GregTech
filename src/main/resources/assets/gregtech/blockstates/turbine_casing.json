@@ -15,29 +15,39 @@
           "all": "gregtech:blocks/casings/gearbox/machine_casing_gearbox_steel"
         }
       },
+      "stainless_steel_gearbox": {
+        "textures": {
+          "all": "gregtech:blocks/casings/gearbox/machine_casing_gearbox_stainless_steel"
+        }
+      },
       "titanium_gearbox": {
         "textures": {
           "all": "gregtech:blocks/casings/gearbox/machine_casing_gearbox_titanium"
         }
       },
+      "tungstensteel_gearbox": {
+        "textures": {
+          "all": "gregtech:blocks/casings/gearbox/machine_casing_gearbox_tungstensteel"
+        }
+      },
       "steel_turbine_casing": {
         "textures": {
-          "all": "gregtech:blocks/casings/mechanic/machine_casing_turbine"
+          "all": "gregtech:blocks/casings/mechanic/machine_casing_turbine_steel"
         }
       },
       "titanium_turbine_casing": {
         "textures": {
-          "all": "gregtech:blocks/casings/solid/machine_casing_stable_titanium"
+          "all": "gregtech:blocks/casings/mechanic/machine_casing_turbine_titanium"
         }
       },
       "stainless_turbine_casing": {
         "textures": {
-          "all": "gregtech:blocks/casings/solid/machine_casing_clean_stainless_steel"
+          "all": "gregtech:blocks/casings/mechanic/machine_casing_turbine_stainless_steel"
         }
       },
       "tungstensteel_turbine_casing": {
         "textures": {
-          "all": "gregtech:blocks/casings/solid/machine_casing_robust_tungstensteel"
+          "all": "gregtech:blocks/casings/mechanic/machine_casing_turbine_tungstensteel"
         }
       }
     }

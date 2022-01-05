@@ -1,0 +1,34 @@
+{
+  "weight": 40,
+  "density": 0.25,
+  "max_height": 40,
+  "min_height": 10,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "nickel"
+  },
+  "generator": {
+    "type": "layered",
+    "radius": [
+      14,
+      16
+    ]
+  },
+  "filler": {
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:garnierite"
+      },
+      {
+        "secondary": "ore:nickel"
+      },
+      {
+        "between": "ore:cobaltite"
+      },
+      {
+        "sporadic": "ore:pentlandite"
+      }
+    ]
+  }
+}

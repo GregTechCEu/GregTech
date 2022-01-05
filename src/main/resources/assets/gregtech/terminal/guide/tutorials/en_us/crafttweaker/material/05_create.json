@@ -1,0 +1,257 @@
+{
+  "section": "CraftTweaker/Material",
+  "title": "Create a Material",
+  "stream": [
+    {
+      "type": "textbox",
+      "fontSize": 9,
+      "content": [
+        "You can help create a Material by the §lMaterialBuilder§r.\n\n§lContents:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "bui",
+      "content": [
+        "1. §9MaterialBuilder"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "pro",
+      "content": [
+        "2. §9Material Properties"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "ico",
+      "content": [
+        "3. §9Material IconSet"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "com",
+      "content": [
+        "4. §9Material Component"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "fla",
+      "content": [
+        "5. §9Material Flag"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "ele",
+      "content": [
+        "6§r. §9Material Element"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§lMaterialBuilder"
+      ],
+      "ref": "bui"
+    },
+    {
+      "type": "textbox",
+      "ref": "element",
+      "content": [
+        "§o§nMaterialBuilder(String materialName)§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "stroke": 687800320,
+      "stroke_width": 3,
+      "fill": 687800320,
+      "content": [
+        "§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0MaterialBuilder§r§5;§r§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0Material§r§5;§r§5\n§r§5\n§r§9var§r§5 §r§0myMaterial§r§5 §r§5\u003d§r§5 §r§0MaterialBuilder§r§5(§r§2\"my_material\"§r§5)§r§5.§r§0build§r§5(§r§5)§r§5;§r§5\n"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "pro",
+      "content": [
+        "§lMaterial Properties"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§lcolor§r: §o§ncolor(int color)§r\nSet the Color of this Material. Defaults to 0xFFFFFF unless §ncolorAverage()§r.\n\n§lcolorAverage§r: §o§ncolorAverage(int color)§r\nColor will be a weighted average of the components of the Material.\n\n§lFluid§r: §o§nfluid(@Optional String type, @Optional boolean hasBlock)§r\nAdd a FluidProperty to this Material.\n §l○§r type – The Material.FluidType of this Material, either \"fluid\" or \"gas\".\n §l○§r hasBlock – If true, create a Fluid Block for this Material.\n\n§lplasma§r: §o§nplasma()§r \nAdd a PlasmaProperty to this Material.\n §l○§r type – The Material.FluidType of this Material, either \"fluid\" or \"gas\".\n §l○§r hasBlock – If true, create a Fluid Block for this Material.\n\n§ldust§r: §o§ndust(@Optional int harvestLevel, @Optional int burnTime)§r \nAdd a DustProperty to this Material.\n §l○§r harvestLevel – The Harvest Level of this block for Mining. If this Material also has a ToolProperty, this value will also be used to determine the tool\u0027s Mining Level.\n §l○§r burnTime – The Burn Time (in ticks) of this Material as a Furnace Fuel.\n\n§lingot§r: §o§ningot(@Optional int harvestLevel, @Optional int burnTime)§r \nAdd an IngotProperty to this Material.\n §l○§r harvestLevel – The Harvest Level of this block for Mining. If this Material also has a ToolProperty, this value will also be used to determine the tool\u0027s Mining level. If this Material already had a Harvest Level defined, it will be overridden.\n §l○§r burnTime – The Burn Time (in ticks) of this Material as a Furnace Fuel. If this Material already had a Burn Time defined, it will be overridden.\n\n§lgem§r: §o§ngem(@Optional int harvestLevel, @Optional int burnTime)§r \nAdd a GemProperty to this Material.\n §l○§r harvestLevel – The Harvest Level of this block for Mining. If this Material also has a ToolProperty, this value will also be used to determine the tool\u0027s Mining level. If this Material already had a Harvest Level defined, it will be overridden.\n §l○§r burnTime – The Burn Time (in ticks) of this Material as a Furnace Fuel. If this Material already had a Burn Time defined, it will be overridden.\n\n§ltoolStats§r: §o§ntoolStats(float speed, float damage, int durability, int enchantability)§r \nSet the stat for tools which are made from this Material.\n §l○§r speed – Speed.\n §l○§r damage – Attack damage.\n §l○§r durability – Durability of tools.\n §l○§r enchantability – Enchantability of tools.\n\n§lblastTemp§r: §o§nblastTemp(int temp)§r \nBlast Furnace Temperature of this Material. If below 1000K, Primitive Blast Furnace recipes will be also added. If above 1750K, a Hot Ingot and its Vacuum Freezer recipe will be also added.\n\nIf a Material with this Property has a Fluid, its temperature will be set to this if it is the default Fluid temperature.\n §l○§r temp – Temperature.\n\n§lore§r: §o§nore(@Optional int oreMultiplier, @Optional int byproductMultiplier, @Optional boolean emissive)§r \nAdd ore blocks of this Material.\n §l○§r oreMultiplier – Crushed Ore output amount multiplier during Maceration. Default: 1 (no multiplier).\n §l○§r byproductMultiplier – Byproducts output amount multiplier during Maceration. Default: 1 (no multiplier).\n §l○§r emissive – Should ore block use the emissive texture. Default: false.\n\nEmissive ore as follow:"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/143446969-80de6354-ad12-4170-81f5-071d6c0bb7cd.png",
+      "width": 190,
+      "height": 110
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§lwashedIn§r: §o§nwashedIn(String materialName, @Optional int washedAmount)§r \n\n§lwashedIn§r: §o§nwashedIn(Material material, @Optional int washedAmount)§r \nSet washing product of this Material (must has the ore property).\n §l○§r material – material.\n §l○§r washedAmount – amount.\n\n§lseparatedInto§r: §o§nseparatedInto(String... materialNames)§r \n\n§lseparatedInto§r: §o§nseparatedInto(Material... materials)§r \nSet separated products of this Material (must has the ore property).\n §l○§r materials – separated materials.\n\n§laddOreByproducts§r: §o§naddOreByproducts(String... materialNames)§r \n\n§laddOreByproducts§r: §o§naddOreByproducts(Material... materials)§r \nSet ore byproducts of this Material (must has the ore property).\n §l○§r materials – separated materials.\n\n§loreSmeltInto§r: §o§noreSmeltInto(String materialName)§r \n\n§loreSmeltInto§r: §o§noreSmeltInto(Material material)§r \nSet smelt product of this Material (must has the ore property).\n §l○§r material – material.\n\n§lpolarizesInto§r: §o§npolarizesInto(String materialName)§r \n\n§lpolarizesInto§r: §o§npolarizesInto(Material material)§r \nSet polarizes product of this Material (must has the ore property).\n §l○§r material – material.\n\n§larcSmeltInto§r: §o§narcSmeltInto(String materialName)§r \n\n§larcSmeltInto§r: §o§narcSmeltInto(Material material)§r \nSet arcSmelt product of this Material (must has the ore property).\n §l○§r material – material.\n\n§lmacerateInto§r: §o§nmacerateInto(String materialName)§r \n\n§lmacerateInto§r: §o§nmacerateInto(Material material)§r \nSet macerate product of this Material (must has the ore property).\n §l○§r material – material.\n\n§lingotSmeltInto§r: §o§ningotSmeltInto(String materialName)§r \n\n§lingotSmeltInto§r: §o§ningotSmeltInto(Material material)§r \nSet ingotSmelt product of this Material (must has the ore property).\n §l○§r material – material.\n\n§lfluidTemp§r: §o§nfluidTemp(int temp)§r \nSet the temperature of the fluid of this Material (must has the fluid property).\n §l○§r temp – temperature.\n\n§lcableProperties§r: §o§ncableProperties(long voltage, int amperage, int loss, @Optional boolean isSuperCon)§r \nAdd a cables and wires of this Material.\n §l○§r voltage – voltage.\n §l○§r amperage – amperage.\n §l○§r loss – loss.\n §l○§r isSuperCon – isSuperCon.\n\n§lfluidPipeProperties§r: §o§nfluidPipeProperties(int maxTemp, int throughput, boolean gasProof)§r \nAdd fluid pipes of this Material.\n §l○§r maxTemp – max acceptable temperature.\n §l○§r throughput – §l//TODO§r.\n §l○§r gasProof – §l//TODO§r.\n\n§litemPipeProperties§r: §o§nitemPipeProperties(int priority, float stacksPerSec)§r \nAdd item pipes of this Material.\n §l○§r priority – Items will try to take the path with the lowest priority.\n §l○§r stacksPerSec – rate in stacks per sec.\n\n§laddDefaultEnchant§r: §o§naddDefaultEnchant(IEnchantment enchantment)§r \nAdd Default Enchant of this Material.\n §l○§r enchantment – enchantment."
+      ]
+    },
+    {
+      "type": "textbox",
+      "stroke": 687800320,
+      "stroke_width": 3,
+      "fill": 687800320,
+      "content": [
+        "§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0MaterialBuilder§r§5;§r§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0Material§r§5;§r§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0MaterialRegistry§r§5;§r§5\n§r§5\n§r§9var§r§5 §r§0gold§r§5 §r§5\u003d§r§5 §r§0MaterialRegistry§r§5(§r§2\"gold\"§r§5)§r§5\n§r§9var§r§5 §r§0copper§r§5 §r§5\u003d§r§5 §r§0MaterialRegistry§r§5(§r§2\"copper\"§r§5)§r§5\n§r§5\n§r§9var§r§5 §r§0myMaterial§r§5 §r§5\u003d§r§5 §r§0MaterialBuilder§r§5(§r§2\"my_material\"§r§5)§r§5 §r§8// name§r§5\n§r§5 §r§5 §r§5 §r§5 §r§5.§r§0color§r§5(§r§5-§r§c1§r§5)§r§5 §r§8// white§r§5\n§r§5 §r§5 §r§5 §r§5 §r§5.§r§0fluid§r§5(§r§2\"gas\"§r§5,§r§5 §r§cfalse§r§5)§r§5 §r§8// gas without block§r§5\n§r§5 §r§5 §r§5 §r§5 §r§5.§r§0dust§r§5(§r§5)§r§5 §r§8// has dust§r§5\n§r§5 §r§5 §r§5 §r§5 §r§5.§r§0ingot§r§5(§r§5)§r§5 §r§8// has ingot§r§5\n§r§5 §r§5 §r§5 §r§5 §r§5.§r§0toolStats§r§5(§r§c10§r§5,§r§5 §r§c3§r§5,§r§5 §r§c256§r§5,§r§5 §r§c21§r§5)§r§5 §r§8// tool stats§r§5\n§r§5 §r§5 §r§5 §r§5 §r§5.§r§0blastTemp§r§5(§r§c1000§r§5)§r§5 §r§8// EBF temperature§r§5\n§r§5 §r§5 §r§5 §r§5 §r§5.§r§0ore§r§5(§r§5)§r§5 §r§8// has ore blocks§r§5\n§r§5 §r§5 §r§5 §r§5 §r§5.§r§0addOreByproducts§r§5(§r§0gold§r§5,§r§5 §r§0copper§r§5)§r§5 §r§8// add byproducts§r§5\n§r§5 §r§5 §r§5 §r§5 §r§5.§r§0cableProperties§r§5(§r§c0§r§5,§r§5 §r§c2§r§5,§r§5 §r§c0§r§5,§r§5 §r§ctrue§r§5)§r§5 §r§8// add cables§r§5\n§r§5 §r§5 §r§5 §r§5 §r§5.§r§0build§r§5(§r§5)§r§5;§r§5\n"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "ico",
+      "content": [
+        "§lMaterial IconSet"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§liconSet§r: §o§niconSet(String iconSet)§r \nSet the MaterialIconSet of this Material. Defaults vary depending on if the Material has a: \n §l○§r §nGemProperty§r, it will default to §l\"GEM_VERTICAL\"§r\n §l○§r §nIngotProperty§r or §nDustProperty§r, it will default to §l\"DULL\"§r\n §l○§r §nFluidProperty§r, it will default to either §l\"FLUID\"§r or §l\"GAS\"§r, depending on the FluidType\n §l○§r §nPlasmaProperty§r, it will default to §l\"FLUID\"§r\n\nDefault will be determined by first-found Property in this order, unless specified."
+      ]
+    },
+    {
+      "type": "textbox",
+      "stroke": 687800320,
+      "stroke_width": 3,
+      "fill": 687800320,
+      "content": [
+        "§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0MaterialBuilder§r§5;§r§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0Material§r§5;§r§5\n§r§5\n§r§9var§r§5 §r§0myMaterial§r§5 §r§5\u003d§r§5 §r§0MaterialBuilder§r§5(§r§2\"my_material\"§r§5)§r§5.§r§0iconSet§r§5(§r§2\"QUARTZ\"§r§5)§r§5.§r§0build§r§5(§r§5)§r§5;§r§5\n§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "com",
+      "content": [
+        "§lComponent"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "The §lComponent§r refers to compositions of the material. \nFor example, the compositions of the §lSugar§r are §n2*Carbon§r, §n5*Water§r, and §n25*Oxygen§r. That would affect its chemical formula:"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/143438573-cd2e9078-744d-4861-a00c-1e9fc5ccd32a.png",
+      "width": 110,
+      "height": 50
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§lcomponents§r: §o§ncomponents(MaterialStack[] components)§r \nSet the compositions of the material.\n §l○§r components - compositions."
+      ]
+    },
+    {
+      "type": "textbox",
+      "stroke": 687800320,
+      "stroke_width": 3,
+      "fill": 687800320,
+      "content": [
+        "§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0MaterialBuilder§r§5;§r§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0Material§r§5;§r§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0MaterialStack§r§5;§r§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0MaterialRegistry§r§5;§r§5\n§r§5\n§r§9var§r§5 §r§0carbonMaterial§r§5 §r§5\u003d§r§5 §r§0MaterialRegistry§r§5.§r§0get§r§5(§r§2\"carbon\"§r§5)§r§5;§r§5\n§r§9var§r§5 §r§0oxygenMaterial§r§5 §r§5\u003d§r§5 §r§0MaterialRegistry§r§5.§r§0get§r§5(§r§2\"oxygen\"§r§5)§r§5;§r§5\n§r§5\n§r§0val§r§5 §r§0compositions§r§5 §r§0as§r§5 §r§0MaterialStack§r§5[§r§5]§r§5 §r§5\u003d§r§5 §r§5[§r§5\n§r§5 §r§5 §r§5 §r§5 §r§5 §r§5 §r§5 §r§5 §r§0carbonMaterial§r§5 §r§5*§r§5 §r§c2§r§5,§r§5\n§r§5 §r§5 §r§5 §r§5 §r§5 §r§5 §r§5 §r§5 §r§0oxygenMaterial§r§5 §r§5*§r§5 §r§c3§r§5,§r§5\n§r§5 §r§5 §r§5 §r§5 §r§5]§r§5;§r§5\n§r§5\n§r§9var§r§5 §r§0myMaterial§r§5 §r§5\u003d§r§5 §r§0MaterialBuilder§r§5(§r§2\"my_material\"§r§5)§r§5.§r§0components§r§5(§r§0compositions§r§5)§r§5.§r§0build§r§5(§r§5)§r§5;§r§5\n§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "fla",
+      "content": [
+        "§lMaterial Flag"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§lflags§r: §o§nflags(String... names)§r \nAdd MaterialFlags to this Material.\n §l○§r names - names of specific MaterialFlags."
+      ]
+    },
+    {
+      "type": "textbox",
+      "stroke": 687800320,
+      "stroke_width": 3,
+      "fill": 687800320,
+      "content": [
+        "§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0MaterialBuilder§r§5;§r§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0Material§r§5;§r§5\n§r§5\n§r§9var§r§5 §r§0myMaterial§r§5 §r§5\u003d§r§5 §r§0MaterialBuilder§r§5(§r§2\"my_material\"§r§5)§r§5.§r§0flags§r§5(§r§2\"generate_rod\"§r§5,§r§5 §r§2\"generate_foil\"§r§5)§r§5.§r§0build§r§5(§r§5)§r§5;§r§5\n§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "ele",
+      "content": [
+        "§lElement"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§lelement§r: §o§nelement(String elementName)§r \nSet the element of this Material.\n §l○§r elementName - names of the element."
+      ]
+    },
+    {
+      "type": "textbox",
+      "stroke": 687800320,
+      "stroke_width": 3,
+      "fill": 687800320,
+      "content": [
+        "§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0MaterialBuilder§r§5;§r§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0Material§r§5;§r§5\n§r§9import§r§5 §r§0mods§r§5.§r§0gregtech§r§5.§r§0material§r§5.§r§0Elements§r§5;§r§5\n§r§5\n§r§9var§r§5 §r§0CEu§r§5 §r§5\u003d§r§5 §r§0Elements§r§5.§r§0add§r§5(§r§c999§r§5,§r§5 §r§c999§r§5,§r§5 §r§5-§r§c1§r§5,§r§5 §r§cnull§r§5,§r§5 §r§2\"GTCEu\"§r§5,§r§5 §r§2\"CEu\"§r§5,§r§5 §r§cfalse§r§5)§r§5;§r§5 §r§8// create a new element.§r§5\n§r§5\n§r§9var§r§5 §r§0myMaterial§r§5 §r§5\u003d§r§5 §r§0MaterialBuilder§r§5(§r§2\"my_material\"§r§5)§r§5.§r§0element§r§5(§r§2\"CEu\"§r§5)§r§5.§r§0build§r§5(§r§5)§r§5;§r§5 §r§8// register my element.§r§5\n§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    }
+  ],
+  "fixed": []
+}

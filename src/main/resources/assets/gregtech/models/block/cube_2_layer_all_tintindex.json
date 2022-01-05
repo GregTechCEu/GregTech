@@ -1,0 +1,32 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "blocks/iron_block"
+  },
+  "elements": [
+    {
+      "from": [  0,  0,  0 ],
+      "to":   [ 16, 16, 16 ],
+      "faces": {
+        "down":  { "texture": "#particle", "cullface": "down" },
+        "up":    { "texture": "#particle", "cullface": "up" },
+        "north": { "texture": "#particle", "cullface": "north" },
+        "south": { "texture": "#particle", "cullface": "south" },
+        "west":  { "texture": "#particle", "cullface": "west" },
+        "east":  { "texture": "#particle", "cullface": "east" }
+      }
+    },
+    {
+      "from": [  0,  0,  0 ],
+      "to":   [ 16, 16, 16 ],
+      "faces": {
+        "down":  { "texture": "#particle", "cullface": "down", "tintindex": 1 },
+        "up":    { "texture": "#particle", "cullface": "up", "tintindex": 1 },
+        "north": { "texture": "#particle", "cullface": "north", "tintindex": 1 },
+        "south": { "texture": "#particle", "cullface": "south", "tintindex": 1 },
+        "west":  { "texture": "#particle", "cullface": "west", "tintindex": 1 },
+        "east":  { "texture": "#particle", "cullface": "east", "tintindex": 1 }
+      }
+    }
+  ]
+}

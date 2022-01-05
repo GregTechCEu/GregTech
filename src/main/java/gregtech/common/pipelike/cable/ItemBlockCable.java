@@ -25,10 +25,10 @@ public class ItemBlockCable extends ItemBlockMaterialPipe<Insulation, WireProper
     @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         WireProperties wireProperties = blockPipe.createItemProperties(stack);
-        String voltageName = GTValues.VN[GTUtility.getTierByVoltage(wireProperties.voltage)];
-        if (wireProperties.isSuperconductor) tooltip.add(I18n.format("gregtech.cable.superconductor", voltageName));
-        tooltip.add(I18n.format("gregtech.cable.voltage", wireProperties.voltage, voltageName));
-        tooltip.add(I18n.format("gregtech.cable.amperage", wireProperties.amperage));
-        tooltip.add(I18n.format("gregtech.cable.loss_per_block", wireProperties.lossPerBlock));
+        int tier = GTUtility.getTierByVoltage(wireProperties.getVoltage());
+        if (wireProperties.isSuperconductor()) tooltip.add(I18n.format("gregtech.cable.superconductor", GTValues.VN[tier]));
+        tooltip.add(I18n.format("gregtech.cable.voltage", wireProperties.getVoltage(), GTValues.VNF[tier]));
+        tooltip.add(I18n.format("gregtech.cable.amperage", wireProperties.getAmperage()));
+        tooltip.add(I18n.format("gregtech.cable.loss_per_block", wireProperties.getLossPerBlock()));
     }
 }

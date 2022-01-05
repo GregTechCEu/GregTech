@@ -1,0 +1,37 @@
+{
+  "weight": 100,
+  "density": 0.2,
+  "min_height": 10,
+  "max_height": 30,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "sphalerite"
+  },
+  "dimension_filter": [
+    "is_nether"
+  ],
+  "generator": {
+    "type": "layered",
+    "radius": [
+      17,
+      24
+    ]
+  },
+  "filler": {
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:sulfur"
+      },
+      {
+        "secondary": "ore:sulfur"
+      },
+      {
+        "between": "ore:pyrite"
+      },
+      {
+        "sporadic": "ore:sphalerite"
+      }
+    ]
+  }
+}

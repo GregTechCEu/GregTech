@@ -8,7 +8,7 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.common.covers.facade.FacadeHelper;
-import gregtech.common.covers.facade.FacadeRenderer;
+import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.common.items.behaviors.FacadeItem;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -51,7 +51,7 @@ public class CoverFacade extends CoverBehavior implements IFacadeCover {
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
         BlockRenderLayer oldLayer = MinecraftForgeClient.getRenderLayer();
         ForgeHooksClient.setRenderLayer(layer);
-        FacadeRenderer.renderBlockCover(renderState, translation, coverHolder.getWorld(), coverHolder.getPos(), attachedSide.getIndex(), facadeState, plateBox);
+        FacadeRenderer.renderBlockCover(renderState, translation, coverHolder.getWorld(), coverHolder.getPos(), attachedSide.getIndex(), facadeState, plateBox, layer);
         ForgeHooksClient.setRenderLayer(oldLayer);
     }
 

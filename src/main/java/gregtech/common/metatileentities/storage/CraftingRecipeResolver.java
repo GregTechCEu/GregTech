@@ -1,9 +1,11 @@
 package gregtech.common.metatileentities.storage;
 
 import com.google.common.collect.Lists;
+import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.util.DummyContainer;
 import gregtech.common.inventory.itemsource.ItemSourceList;
 import gregtech.common.inventory.itemsource.sources.TileItemSource;
+import gregtech.common.items.MetaTool;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
@@ -89,9 +91,9 @@ public class CraftingRecipeResolver {
             cachedRecipeData.performRecipe(player);
             //update items in the crafting grid to the actual equivalents used in crafting
             InvWrapper invWrapper = new InvWrapper(this.cachedRecipeData.inventory);
-            copyInventoryItems(invWrapper, craftingGrid);
+            copyInventoryItems(invWrapper, craftingGrid, true);
             //also update items in inventory crafting to avoid useless recipe re-caching
-            copyInventoryItems(invWrapper, new InvWrapper(inventoryCrafting));
+            copyInventoryItems(invWrapper, new InvWrapper(inventoryCrafting), false);
             itemSourceList.enableCallback();
         }
     }
@@ -100,8 +102,9 @@ public class CraftingRecipeResolver {
         itemStack.onCrafting(world, player, 1);
         itemStack.getItem().onCreated(itemStack, world, player);
         if (!simulate) {
-            //if we're not simulated, fire the event, unlock recipe and add crafted items
+            //if we're not simulated, fire the event, unlock recipe and add crafted items, and play sounds
             FMLCommonHandler.instance().firePlayerCraftingEvent(player, itemStack, inventoryCrafting);
+
             if (cachedRecipe != null && !cachedRecipe.isDynamic()) {
                 player.unlockRecipes(Lists.newArrayList(cachedRecipe));
             }
@@ -127,7 +130,7 @@ public class CraftingRecipeResolver {
 
     private void notifyStoredItemsChanged() {
         if (cachedRecipeData != null) {
-            copyInventoryItems(craftingGrid, new InvWrapper(this.cachedRecipeData.inventory));
+            copyInventoryItems(craftingGrid, new InvWrapper(this.cachedRecipeData.inventory), true);
             cachedRecipeData.attemptMatchRecipe();
         }
     }
@@ -140,7 +143,7 @@ public class CraftingRecipeResolver {
                 ItemStack resultStack = newRecipe.getCraftingResult(inventoryCrafting).copy();
                 this.craftingResultInventory.setInventorySlotContents(0, resultStack.copy());
                 this.cachedRecipeData = new CachedRecipeData(itemSourceList, newRecipe, resultStack.copy());
-                copyInventoryItems(craftingGrid, new InvWrapper(this.cachedRecipeData.inventory));
+                copyInventoryItems(craftingGrid, new InvWrapper(this.cachedRecipeData.inventory), true);
                 this.cachedRecipeData.attemptMatchRecipe();
             } else {
                 this.craftingResultInventory.setInventorySlotContents(0, ItemStack.EMPTY);

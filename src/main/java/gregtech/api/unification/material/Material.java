@@ -12,6 +12,7 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
 import net.minecraft.enchantment.Enchantment;
@@ -55,9 +56,6 @@ public class Material implements Comparable<Material> {
      */
     private String chemicalFormula;
 
-    // Used to hide "unused" materials in CEu but allow addons to re-enable them
-    private boolean isHidden;
-
     // TODO Fix isotope tooltips being set toSmallDownNumbers
     private String calculateChemicalFormula() {
         if (chemicalFormula != null) return this.chemicalFormula;
@@ -97,9 +95,8 @@ public class Material implements Comparable<Material> {
         this.materialInfo = materialInfo;
         this.properties = properties;
         this.flags = flags;
-
         this.properties.setMaterial(this);
-        registerMaterial(this);
+        registerMaterial();
     }
 
     // thou shall not call
@@ -110,7 +107,8 @@ public class Material implements Comparable<Material> {
         flags = new MaterialFlags();
     }
 
-    protected void registerMaterial(Material material) {
+    protected void registerMaterial() {
+        verifyMaterial();
         GregTechAPI.MATERIAL_REGISTRY.register(this);
     }
 
@@ -159,7 +157,12 @@ public class Material implements Comparable<Material> {
         FluidProperty prop = getProperty(PropertyKey.FLUID);
         if (prop == null)
             throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a Fluid!");
-        return prop.getFluid();
+
+        Fluid fluid = prop.getFluid();
+        if (fluid == null)
+            GTLog.logger.warn("Material {} Fluid was null!", this);
+
+        return fluid;
     }
 
     public FluidStack getFluid(int amount) {
@@ -180,6 +183,11 @@ public class Material implements Comparable<Material> {
     @ZenGetter("materialRGB")
     public int getMaterialRGB() {
         return materialInfo.color;
+    }
+
+    @ZenGetter("hasFluidColor")
+    public boolean hasFluidColor() {
+        return materialInfo.hasFluidColor;
     }
 
     public void setMaterialIconSet(MaterialIconSet materialIconSet) {
@@ -204,12 +212,13 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null)
             return materialInfo.element.getProtons();
         if (materialInfo.componentList.isEmpty())
-            return Elements.get("Technetium").getProtons();
-        long totalProtons = 0;
+            return Math.max(1, Elements.get("Technetium").getProtons());
+        long totalProtons = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {
+            totalAmount += material.amount;
             totalProtons += material.amount * material.material.getProtons();
         }
-        return totalProtons;
+        return totalProtons / totalAmount;
     }
 
     @ZenGetter("neutrons")
@@ -218,57 +227,17 @@ public class Material implements Comparable<Material> {
             return materialInfo.element.getNeutrons();
         if (materialInfo.componentList.isEmpty())
             return Elements.get("Technetium").getNeutrons();
-        long totalNeutrons = 0;
-        for (MaterialStack material : materialInfo.componentList) {
-            totalNeutrons += material.amount * material.material.getNeutrons();
-        }
-        return totalNeutrons;
-    }
-
-    @ZenGetter("mass")
-    public long getMass() {
-        if (materialInfo.element != null)
-            return materialInfo.element.getMass();
-        if (materialInfo.componentList.isEmpty())
-            return Elements.get("Technetium").getMass();
-        long totalMass = 0;
-        for (MaterialStack material : materialInfo.componentList) {
-            totalMass += material.amount * material.material.getMass();
-        }
-        return totalMass;
-    }
-
-    @ZenGetter("averageProtons")
-    public long getAverageProtons() {
-        if (materialInfo.element != null)
-            return materialInfo.element.getProtons();
-        if (materialInfo.componentList.isEmpty())
-            return Math.max(1, Elements.get("Technetium").getProtons());
-        long totalProtons = 0, totalAmount = 0;
-        for (MaterialStack material : materialInfo.componentList) {
-            totalAmount += material.amount;
-            totalProtons += material.amount * material.material.getAverageProtons();
-        }
-        return totalProtons / totalAmount;
-    }
-
-    @ZenGetter("averageNeutrons")
-    public long getAverageNeutrons() {
-        if (materialInfo.element != null)
-            return materialInfo.element.getNeutrons();
-        if (materialInfo.componentList.isEmpty())
-            return Elements.get("Technetium").getNeutrons();
         long totalNeutrons = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {
             totalAmount += material.amount;
-            totalNeutrons += material.amount * material.material.getAverageNeutrons();
+            totalNeutrons += material.amount * material.material.getNeutrons();
         }
         return totalNeutrons / totalAmount;
     }
 
 
-    @ZenGetter("averageMass")
-    public long getAverageMass() {
+    @ZenGetter("mass")
+    public long getMass() {
         if (materialInfo.element != null)
             return materialInfo.element.getMass();
         if (materialInfo.componentList.size() <= 0)
@@ -276,7 +245,7 @@ public class Material implements Comparable<Material> {
         long totalMass = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {
             totalAmount += material.amount;
-            totalMass += material.amount * material.material.getAverageMass();
+            totalMass += material.amount * material.material.getMass();
         }
         return totalMass / totalAmount;
     }
@@ -360,19 +329,16 @@ public class Material implements Comparable<Material> {
     public void verifyMaterial() {
         properties.verify();
         flags.verify(this);
-    }
-
-    public void postVerify() {
         this.chemicalFormula = calculateChemicalFormula();
         calculateDecompositionType();
     }
 
     public boolean isHidden() {
-        return isHidden;
+        return this.materialInfo.isHidden;
     }
 
     public void setHidden(boolean hidden) {
-        this.isHidden = hidden;
+        this.materialInfo.isHidden = hidden;
     }
 
     /**
@@ -383,8 +349,6 @@ public class Material implements Comparable<Material> {
         private final MaterialInfo materialInfo;
         private final MaterialProperties properties;
         private final MaterialFlags flags;
-
-        private boolean isHidden = false;
 
         /*
          * The temporary list of components for this Material.
@@ -615,7 +579,21 @@ public class Material implements Comparable<Material> {
          * @param color The RGB-formatted Color.
          */
         public Builder color(int color) {
+            color(color, true);
+            return this;
+        }
+
+        /**
+         * Set the Color of this Material.<br>
+         * Defaults to 0xFFFFFF unless {@link Builder#colorAverage()} was called, where
+         * it will be a weighted average of the components of the Material.
+         *
+         * @param color The RGB-formatted Color.
+         * @param hasFluidColor Whether the fluid should be colored or not.
+         */
+        public Builder color(int color, boolean hasFluidColor) {
             this.materialInfo.color = color;
+            this.materialInfo.hasFluidColor = hasFluidColor;
             return this;
         }
 
@@ -696,8 +674,17 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        public Builder setHidden() {
+            this.materialInfo.isHidden = true;
+            return this;
+        }
+
         public Builder toolStats(float speed, float damage, int durability, int enchantability) {
-            properties.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, durability, enchantability));
+            return toolStats(speed, damage, durability, enchantability, false);
+        }
+
+        public Builder toolStats(float speed, float damage, int durability, int enchantability, boolean ignoreCraftingTools) {
+            properties.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, durability, enchantability, ignoreCraftingTools));
             return this;
         }
 
@@ -802,21 +789,24 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder cableProperties(long voltage, int amperage, int loss) {
-            properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss));
+            cableProperties((int) voltage, amperage, loss, false);
             return this;
         }
 
         public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon) {
+            properties.ensureSet(PropertyKey.INGOT);
             properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, isSuperCon));
             return this;
         }
 
         public Builder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof) {
+            properties.ensureSet(PropertyKey.INGOT);
             properties.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxTemp, throughput, gasProof));
             return this;
         }
 
         public Builder itemPipeProperties(int priority, float stacksPerSec) {
+            properties.ensureSet(PropertyKey.INGOT);
             properties.setProperty(PropertyKey.ITEM_PIPE, new ItemPipeProperties(priority, stacksPerSec));
             return this;
         }
@@ -828,17 +818,10 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder hidden() {
-            this.isHidden = true;
-            return this;
-        }
-
         public Material build() {
             materialInfo.componentList = ImmutableList.copyOf(composition);
             materialInfo.verifyInfo(properties, averageRGB);
-            Material m = new Material(materialInfo, properties, flags);
-            if (isHidden) m.setHidden(true);
-            return m;
+            return new Material(materialInfo, properties, flags);
         }
     }
 
@@ -868,6 +851,13 @@ public class Material implements Comparable<Material> {
         private int color = -1;
 
         /**
+         * The color of this Material.
+         * <p>
+         * Default: 0xFFFFFF if no Components, otherwise it will be the average of Components.
+         */
+        private boolean hasFluidColor = true;
+
+        /**
          * The IconSet of this Material.
          * <p>
          * Default: - GEM_VERTICAL if it has GemProperty.
@@ -889,6 +879,12 @@ public class Material implements Comparable<Material> {
          * Default: none.
          */
         private Element element;
+
+        /**
+         * Field used to hide Materials from JEI, but keep them generated.
+         * Allows GTCEu to generate all elements without needing to use all of them.
+         */
+        private boolean isHidden = false;
 
         private MaterialInfo(int metaItemSubId, String name) {
             this.metaItemSubId = metaItemSubId;

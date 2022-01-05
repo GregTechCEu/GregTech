@@ -1,33 +1,39 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
 
-    private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-            MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.EXPORT_FLUIDS,
-            MultiblockAbility.INPUT_ENERGY, MultiblockAbility.MAINTENANCE_HATCH
-    };
+    private int coilTier;
 
     public MetaTileEntityCrackingUnit(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.CRACKING_RECIPES);
+        this.recipeMapWorkable = new CrackingUnitWorkableHandler(this);
     }
 
     @Override
@@ -41,12 +47,10 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
                 .aisle("HCHCH", "HCHCH", "HCHCH")
                 .aisle("HCHCH", "H###H", "HCHCH")
                 .aisle("HCHCH", "HCOCH", "HCHCH")
-                .setAmountAtLeast('L', 20)
                 .where('O', selfPredicate())
-                .where('L', statePredicate(getCasingState()))
-                .where('H', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
-                .where('#', isAirPredicate())
-                .where('C', statePredicate(getCoilState()))
+                .where('H', states(getCasingState()).setMinGlobalLimited(12).or(autoAbilities()))
+                .where('#', air())
+                .where('C', heatingCoils())
                 .build();
     }
 
@@ -55,17 +59,68 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
         return Textures.CLEAN_STAINLESS_STEEL_CASING;
     }
 
-    protected IBlockState getCoilState() {
-        return MetaBlocks.WIRE_COIL.getState(CoilType.CUPRONICKEL);
-    }
-
     protected IBlockState getCasingState() {
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STAINLESS_CLEAN);
     }
 
+    @Override
+    protected void addDisplayText(List<ITextComponent> textList) {
+        super.addDisplayText(textList);
+        if (isStructureFormed())
+            textList.add(new TextComponentTranslation("gregtech.multiblock.cracking_unit.energy", 100 - 5 * coilTier));
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.machine.cracker.tooltip.1"));
+    }
+
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
+    protected ICubeRenderer getFrontOverlay() {
         return Textures.CRACKING_UNIT_OVERLAY;
+    }
+
+    @Override
+    protected void formStructure(PatternMatchContext context) {
+        super.formStructure(context);
+        Object type = context.get("CoilType");
+        if (type instanceof CoilType)
+            this.coilTier = ((CoilType) type).ordinal();
+        else
+            this.coilTier = 0;
+    }
+
+    @Override
+    public void invalidateStructure() {
+        super.invalidateStructure();
+        this.coilTier = -1;
+    }
+
+    protected int getCoilTier() {
+        return this.coilTier;
+    }
+
+    @SuppressWarnings("InnerClassMayBeStatic")
+    private class CrackingUnitWorkableHandler extends MultiblockRecipeLogic {
+
+        public CrackingUnitWorkableHandler(RecipeMapMultiblockController tileEntity) {
+            super(tileEntity);
+        }
+
+        @Override
+        protected int[] performOverclocking(Recipe recipe, boolean negativeEU) {
+            int[] overclock = super.performOverclocking(recipe, negativeEU);
+
+            int coilTier = ((MetaTileEntityCrackingUnit) metaTileEntity).getCoilTier();
+            if (coilTier <= 0)
+                return overclock;
+
+            overclock[0] *= 1.0f - coilTier * 0.05; // each coil above cupronickel (coilTier = 0) uses 5% less energy
+            overclock[0] = Math.max(1, overclock[0]);
+
+            return overclock;
+        }
     }
 }

@@ -1,0 +1,34 @@
+{
+  "weight": 60,
+  "density": 0.2,
+  "max_height": 40,
+  "min_height": 5,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "redstone"
+  },
+  "generator": {
+    "type": "layered",
+    "radius": [
+      17,
+      24
+    ]
+  },
+  "filler": {
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:redstone"
+      },
+      {
+        "secondary": "ore:redstone"
+      },
+      {
+        "between": "ore:ruby"
+      },
+      {
+        "sporadic": "ore:cinnabar"
+      }
+    ]
+  }
+}

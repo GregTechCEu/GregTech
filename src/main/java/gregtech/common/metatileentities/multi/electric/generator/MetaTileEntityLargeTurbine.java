@@ -1,89 +1,74 @@
 package gregtech.common.metatileentities.multi.electric.generator;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.IRotorHolder;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.FuelRecipeLogic;
+import gregtech.api.metatileentity.ITieredMetaTileEntity;
+import gregtech.api.metatileentity.IVoidable;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.multiblock.FuelMultiblockController;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
-import gregtech.api.multiblock.PatternMatchContext;
-import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.machines.FuelRecipeMap;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
-import gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType;
-import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.recipes.RecipeMap;
+import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
-import static gregtech.api.metatileentity.multiblock.MultiblockAbility.ABILITY_ROTOR_HOLDER;
+public class MetaTileEntityLargeTurbine extends FuelMultiblockController implements ITieredMetaTileEntity, IVoidable {
 
-public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController {
+    public final int tier;
+
+    public final IBlockState casingState;
+    public final IBlockState gearboxState;
+    public final ICubeRenderer casingRenderer;
+    public final boolean hasMufflerHatch;
+    public final ICubeRenderer frontOverlay;
 
     private static final int MIN_DURABILITY_TO_WARN = 10;
 
-    public enum TurbineType {
-
-        STEAM(RecipeMaps.STEAM_TURBINE_FUELS, MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.STEEL_TURBINE_CASING), MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.STEEL_GEARBOX), Textures.SOLID_STEEL_CASING, true, false, Textures.LARGE_STEAM_TURBINE_OVERLAY),
-        GAS(RecipeMaps.GAS_TURBINE_FUELS, MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.STAINLESS_TURBINE_CASING), MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.STEEL_GEARBOX), Textures.CLEAN_STAINLESS_STEEL_CASING, false, true, Textures.LARGE_GAS_TURBINE_OVERLAY),
-        PLASMA(RecipeMaps.PLASMA_GENERATOR_FUELS, MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.TUNGSTENSTEEL_TURBINE_CASING), MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.STEEL_GEARBOX), Textures.ROBUST_TUNGSTENSTEEL_CASING, true, false, Textures.LARGE_PLASMA_TURBINE_OVERLAY);
-
-        public final FuelRecipeMap recipeMap;
-        public final IBlockState casingState;
-        public final IBlockState gearboxState;
-        public final ICubeRenderer casingRenderer;
-        public final boolean hasOutputHatch;
-        public final boolean hasMufflerHatch;
-        public final OrientedOverlayRenderer frontOverlay;
-
-        TurbineType(FuelRecipeMap recipeMap, IBlockState casingState, IBlockState gearboxState, ICubeRenderer casingRenderer, boolean hasOutputHatch, boolean hasMufflerHatch, OrientedOverlayRenderer frontOverlay) {
-            this.recipeMap = recipeMap;
-            this.casingState = casingState;
-            this.gearboxState = gearboxState;
-            this.casingRenderer = casingRenderer;
-            this.hasOutputHatch = hasOutputHatch;
-            this.hasMufflerHatch = hasMufflerHatch;
-            this.frontOverlay = frontOverlay;
-        }
-    }
-
-    public final TurbineType turbineType;
     public IFluidHandler exportFluidHandler;
 
-    public MetaTileEntityLargeTurbine(ResourceLocation metaTileEntityId, TurbineType turbineType) {
-        super(metaTileEntityId, turbineType.recipeMap, GTValues.V[4]);
-        this.turbineType = turbineType;
-        reinitializeStructurePattern();
-    }
-
-    @Override
-    protected FuelRecipeLogic createWorkable(long maxVoltage) {
-        return new LargeTurbineWorkableHandler(this, recipeMap, () -> energyContainer, () -> importFluidHandler);
+    public MetaTileEntityLargeTurbine(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, int tier, IBlockState casingState, IBlockState gearboxState, ICubeRenderer casingRenderer, boolean hasMufflerHatch, ICubeRenderer frontOverlay) {
+        super(metaTileEntityId, recipeMap, tier);
+        this.casingState = casingState;
+        this.gearboxState = gearboxState;
+        this.casingRenderer = casingRenderer;
+        this.hasMufflerHatch = hasMufflerHatch;
+        this.frontOverlay = frontOverlay;
+        this.tier = tier;
+        this.recipeMapWorkable = new LargeTurbineWorkableHandler(this, tier);
+        this.recipeMapWorkable.enableOverclockVoltage();
+        this.recipeMapWorkable.setOverclockTier(tier);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityLargeTurbine(metaTileEntityId, turbineType);
+        return new MetaTileEntityLargeTurbine(metaTileEntityId, recipeMap, tier, casingState, gearboxState, casingRenderer, hasMufflerHatch, frontOverlay);
     }
 
-    @Override
-    protected void formStructure(PatternMatchContext context) {
-        super.formStructure(context);
-        this.exportFluidHandler = new FluidTankList(true, getAbilities(MultiblockAbility.EXPORT_FLUIDS));
+    public IRotorHolder getRotorHolder() {
+        List<IRotorHolder> abilities = getAbilities(MultiblockAbility.ROTOR_HOLDER);
+        if (abilities.isEmpty())
+            return null;
+        return abilities.get(0);
     }
 
     @Override
@@ -92,35 +77,52 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
         this.exportFluidHandler = null;
     }
 
-    @Override
-    public int getRotorSpeedIncrement() {
-        return 1;
+    /**
+     * @return true if turbine is formed and it's face is free and contains
+     * only air blocks in front of rotor holder
+     */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public boolean isRotorFaceFree() {
+        IRotorHolder rotorHolder = getRotorHolder();
+        if (rotorHolder != null)
+            return isStructureFormed() && getRotorHolder().isFrontFaceFree();
+        return false;
     }
 
     @Override
-    public int getRotorSpeedDecrement() {
-        return -3;
+    protected void formStructure(PatternMatchContext context) {
+        super.formStructure(context);
+        this.exportFluidHandler = new FluidTankList(true, getAbilities(MultiblockAbility.EXPORT_FLUIDS));
+        ((LargeTurbineWorkableHandler) this.recipeMapWorkable).updateTanks();
     }
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         if (isStructureFormed()) {
-            MetaTileEntityRotorHolder rotorHolder = getRotorHolder();
-            FluidStack fuelStack = ((LargeTurbineWorkableHandler) workableHandler).getFuelStack();
+            IRotorHolder rotorHolder = getRotorHolder();
+            FluidStack fuelStack = ((LargeTurbineWorkableHandler) recipeMapWorkable).getInputFluidStack();
             int fuelAmount = fuelStack == null ? 0 : fuelStack.amount;
 
             ITextComponent fuelName = new TextComponentTranslation(fuelAmount == 0 ? "gregtech.fluid.empty" : fuelStack.getUnlocalizedName());
             textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.fuel_amount", fuelAmount, fuelName));
 
-            if (rotorHolder.getRotorEfficiency() > 0.0) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_speed", rotorHolder.getCurrentRotorSpeed(), rotorHolder.getMaxRotorSpeed()));
-                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_efficiency", (int) (rotorHolder.getRotorEfficiency() * 100)));
-                int rotorDurability = (int) (rotorHolder.getRotorDurability() * 100);
+            if (rotorHolder.getRotorEfficiency() > 0) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_speed", rotorHolder.getRotorSpeed(), rotorHolder.getMaxRotorHolderSpeed()));
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.efficiency", rotorHolder.getTotalEfficiency()));
+
+                long maxProduction = ((LargeTurbineWorkableHandler) recipeMapWorkable).getMaxVoltage();
+                long currentProduction = isActive() ? ((LargeTurbineWorkableHandler) recipeMapWorkable).boostProduction((int) maxProduction) : 0;
+                if (currentProduction >= maxProduction) {
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.energy_per_tick_maxed", maxProduction));
+                } else {
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.energy_per_tick", currentProduction, maxProduction));
+                }
+
+                int rotorDurability = rotorHolder.getRotorDurabilityPercent();
                 if (rotorDurability > MIN_DURABILITY_TO_WARN) {
                     textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_durability", rotorDurability));
                 } else {
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.low_rotor_durability",
-                            MIN_DURABILITY_TO_WARN, rotorDurability).setStyle(new Style().setColor(TextFormatting.RED)));
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_durability", rotorDurability).setStyle(new Style().setColor(TextFormatting.RED)));
                 }
             }
             if(!isRotorFaceFree()) {
@@ -132,67 +134,78 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
     }
 
     @Override
-    protected BlockPattern createStructurePattern() {
-        if (turbineType == null)
-            return null;
-
-        FactoryBlockPattern blockPattern = FactoryBlockPattern.start()
-                .aisle("CCCC", "CHHC", "CCCC")
-                .aisle("CHHC", "RGGD", "CHHC")
-                .aisle("CCCC", "CSHC", "CCCC")
-                .where('S', selfPredicate())
-                .where('G', statePredicate(getGearBoxState()))
-                .where('C', statePredicate(getCasingState()))
-                .where('R', abilityPartPredicate(ABILITY_ROTOR_HOLDER))
-                .where('D', abilityPartPredicate(MultiblockAbility.OUTPUT_ENERGY));
-
-                if (turbineType.hasMufflerHatch)
-                    blockPattern.where('H', statePredicate(getCasingState()).or(abilityPartPredicate(getAllowedAbilities()))
-                            .or(abilityPartPredicate(MultiblockAbility.MUFFLER_HATCH)));
-                else
-                    blockPattern.where('H', statePredicate(getCasingState()).or(abilityPartPredicate(getAllowedAbilities())));
-
-                return blockPattern.build();
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.multiblock.turbine.voltage_tooltip", GTValues.V[tier] * 2));
+        tooltip.add(I18n.format("gregtech.multiblock.turbine.efficiency_tooltip", GTValues.VNF[tier]));
     }
 
-    public MultiblockAbility<?>[] getAllowedAbilities() {
-        return turbineType.hasOutputHatch ?
-                new MultiblockAbility[]{MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.EXPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH} :
-                new MultiblockAbility[]{MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH};
+    @Override
+    protected BlockPattern createStructurePattern() {
+        return FactoryBlockPattern.start()
+                .aisle("CCCC", "CHHC", "CCCC")
+                .aisle("CHHC", "RGGR", "CHHC")
+                .aisle("CCCC", "CSHC", "CCCC")
+                .where('S', selfPredicate())
+                .where('G', states(getGearBoxState()))
+                .where('C', states(getCasingState()))
+                .where('R', metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.ROTOR_HOLDER).stream()
+                        .filter(mte -> (mte instanceof ITieredMetaTileEntity) && (((ITieredMetaTileEntity) mte).getTier() >= tier))
+                        .toArray(MetaTileEntity[]::new))
+                        .addTooltips("gregtech.multiblock.pattern.clear_amount_3")
+                        .addTooltips(I18n.format("gregtech.multiblock.pattern.error.limited.1", GTValues.VN[tier]))
+                        .setExactLimit(1)
+                        .or(abilities(MultiblockAbility.OUTPUT_ENERGY)).setExactLimit(1))
+                .where('H', states(getCasingState()).or(autoAbilities(false, true, false, false, true, true, true)))
+                .build();
+    }
+
+    @Override
+    public String[] getDescription() {
+        return new String[]{I18n.format("gregtech.multiblock.large_turbine.description")};
     }
 
     @Override
     public boolean canShare() {
         return false;
-
     }
 
     public IBlockState getCasingState() {
-        return turbineType.casingState;
+        return casingState;
     }
 
     public IBlockState getGearBoxState() {
-        return turbineType.gearboxState;
+        return gearboxState;
     }
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        return turbineType.casingRenderer;
+        return casingRenderer;
     }
 
     @Nonnull
     @Override
-    protected OrientedOverlayRenderer getFrontOverlay() {
-        return turbineType.frontOverlay;
+    protected ICubeRenderer getFrontOverlay() {
+        return frontOverlay;
     }
 
     @Override
     public boolean hasMufflerMechanics() {
-        return turbineType.hasMufflerHatch;
+        return hasMufflerHatch;
     }
 
     @Override
     public boolean isStructureObstructed() {
         return !isRotorFaceFree();
+    }
+
+    @Override
+    public int getTier() {
+        return tier;
+    }
+
+    @Override
+    public boolean canVoidRecipeOutputs() {
+        return true;
     }
 }

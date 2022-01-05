@@ -142,11 +142,6 @@ public abstract class Widget {
     protected void onSizeUpdate() {
     }
 
-    public boolean isMouseOverElement(int mouseX, int mouseY, boolean correctPositionOnMouseWheelMoveEvent) {
-        mouseX = correctPositionOnMouseWheelMoveEvent ? mouseX + this.gui.getGuiLeft() : mouseX;
-        return isMouseOverElement(mouseX, mouseY);
-    }
-
     public boolean isMouseOverElement(int mouseX, int mouseY) {
         Position position = getPosition();
         Size size = getSize();
@@ -176,6 +171,12 @@ public abstract class Widget {
     }
 
     /**
+     * Called clientside approximately every 1/60th of a second with this modular UI open
+     */
+    public void updateScreenOnFrame() {
+    }
+
+    /**
      * Called each draw tick to draw this widget in GUI
      */
     @SideOnly(Side.CLIENT)
@@ -183,19 +184,10 @@ public abstract class Widget {
     }
 
     /**
-     * Called each draw tick to draw this widget in GUI (@Deprecated)
-     */
-    @Deprecated
-    @SideOnly(Side.CLIENT)
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
-    }
-
-    /**
      * Called each draw tick to draw this widget in GUI
      */
     @SideOnly(Side.CLIENT)
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-        drawInBackground(mouseX, mouseY, context);
     }
 
     /**
@@ -283,7 +275,7 @@ public abstract class Widget {
     @SideOnly(Side.CLIENT)
     public void drawHoveringText(ItemStack itemStack, List<String> tooltip, int maxTextWidth, int mouseX, int mouseY) {
         Minecraft mc = Minecraft.getMinecraft();
-        GuiUtils.drawHoveringText(itemStack, tooltip, mouseX, mouseY,
+        GuiUtils.drawHoveringText(itemStack == null ? ItemStack.EMPTY : itemStack, tooltip, mouseX, mouseY,
                 sizes.getScreenWidth(),
                 sizes.getScreenHeight(), maxTextWidth, mc.fontRenderer);
         GlStateManager.disableLighting();

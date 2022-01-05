@@ -1,0 +1,34 @@
+{
+  "weight": 40,
+  "density": 0.25,
+  "max_height": 20,
+  "min_height": 5,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "diamond"
+  },
+  "generator": {
+    "type": "layered",
+    "radius": [
+      14,
+      16
+    ]
+  },
+  "filler": {
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:graphite"
+      },
+      {
+        "secondary": "ore:graphite"
+      },
+      {
+        "between": "ore:diamond"
+      },
+      {
+        "sporadic": "ore:coal"
+      }
+    ]
+  }
+}

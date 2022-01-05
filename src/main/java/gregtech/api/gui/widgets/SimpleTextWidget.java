@@ -31,7 +31,6 @@ public class SimpleTextWidget extends Widget {
     protected boolean isShadow;
     protected float scale = 1;
     protected int width;
-    protected boolean dropShadow;
 
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier) {
         this(xPosition, yPosition, formatLocale, color, textSupplier, false);
@@ -43,11 +42,6 @@ public class SimpleTextWidget extends Widget {
         this.formatLocale = formatLocale;
         this.textSupplier = textSupplier;
         this.clientWidget = clientWidget;
-    }
-
-    public SimpleTextWidget setDropShadow(boolean dropShadow) {
-        this.dropShadow = dropShadow;
-        return this;
     }
 
     public SimpleTextWidget setWidth(int width) {
@@ -97,7 +91,7 @@ public class SimpleTextWidget extends Widget {
     }
 
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         String text = formatLocale.isEmpty() ? (I18n.hasKey(lastText) ? I18n.format(lastText) : lastText) : I18n.format(formatLocale, lastText);
         List<String> texts;
         if (this.width > 0) {

@@ -110,25 +110,18 @@ public class Materials {
         };
     }
 
-    public static final List<MaterialFlag> STD_SOLID = new ArrayList<>();
-    public static final List<MaterialFlag> STD_GEM = new ArrayList<>();
     public static final List<MaterialFlag> STD_METAL = new ArrayList<>();
     public static final List<MaterialFlag> EXT_METAL = new ArrayList<>();
     public static final List<MaterialFlag> EXT2_METAL = new ArrayList<>();
 
     static {
-        STD_SOLID.addAll(Arrays.asList(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD));
-
-        STD_GEM.addAll(STD_SOLID);
-        STD_GEM.add(GENERATE_LENS);
-
         STD_METAL.add(GENERATE_PLATE);
 
         EXT_METAL.addAll(STD_METAL);
-        EXT_METAL.addAll(Arrays.asList(GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD));
+        EXT_METAL.addAll(Arrays.asList(GENERATE_ROD));
 
         EXT2_METAL.addAll(EXT_METAL);
-        EXT2_METAL.addAll(Arrays.asList(GENERATE_GEAR, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_ROUND));
+        EXT2_METAL.addAll(Arrays.asList(GENERATE_LONG_ROD, GENERATE_BOLT_SCREW));
     }
 
     public static final MarkerMaterial _NULL = new MarkerMaterial("_null");
@@ -270,9 +263,6 @@ public class Materials {
     public static Material Tritanium;
     public static Material Duranium;
     public static Material Trinium;
-    public static Material Adamantium;
-    public static Material Vibranium;
-    public static Material Taranium;
 
     /**
      * First Degree Compounds
@@ -297,7 +287,7 @@ public class Materials {
     public static Material Chromite;
     public static Material Cinnabar;
     public static Material Water;
-    public static Material Clay;
+    public static Material LiquidOxygen;
     public static Material Coal;
     public static Material Cobaltite;
     public static Material Cooperite;
@@ -344,7 +334,7 @@ public class Materials {
     public static Material Sapphire;
     public static Material Scheelite;
     public static Material Sodalite;
-    public static Material DiamericiumTitanium;
+    public static Material AluminiumSulfite;
     public static Material Tantalite;
     public static Material Coke;
 
@@ -355,7 +345,6 @@ public class Materials {
     public static Material StainlessSteel;
     public static Material Steel;
     public static Material Stibnite;
-    public static Material Tanzanite;
     public static Material Tetrahedrite;
     public static Material TinAlloy;
     public static Material Topaz;
@@ -373,14 +362,12 @@ public class Materials {
     public static Material Quartzite;
     public static Material Graphite;
     public static Material Graphene;
-    public static Material Jasper;
+    public static Material TungsticAcid;
     public static Material Osmiridium;
-    public static Material Tenorite;
-    public static Material Cuprite;
+    public static Material LithiumChloride;
+    public static Material CalciumChloride;
     public static Material Bornite;
     public static Material Chalcocite;
-    public static Material Enargite;
-    public static Material Tennantite;
 
     public static Material GalliumArsenide;
     public static Material Potash;
@@ -414,15 +401,11 @@ public class Materials {
     public static Material Pentlandite;
     public static Material Spodumene;
     public static Material Lepidolite;
-    public static Material Glauconite;
     public static Material GlauconiteSand;
     public static Material Malachite;
     public static Material Mica;
     public static Material Barite;
     public static Material Alunite;
-    public static Material Dolomite;
-    public static Material Wollastonite;
-    public static Material Kaolinite;
     public static Material Talc;
     public static Material Soapstone;
     public static Material Kyanite;
@@ -464,6 +447,24 @@ public class Materials {
     public static Material UraniumRhodiumDinaquadide;
     public static Material EnrichedNaquadahTriniumEuropiumDuranide;
     public static Material RutheniumTriniumAmericiumNeutronate;
+    public static Material PlatinumRaw;
+    public static Material InertMetalMixture;
+    public static Material RhodiumSulfate;
+    public static Material RutheniumTetroxide;
+    public static Material OsmiumTetroxide;
+    public static Material IridiumChloride;
+    public static Material FluoroantimonicAcid;
+    public static Material TitaniumTrifluoride;
+    public static Material CalciumPhosphide;
+    public static Material IndiumPhosphide;
+    public static Material BariumSulfide;
+    public static Material TriniumSulfide;
+    public static Material ZincSulfide;
+    public static Material GalliumSulfide;
+    public static Material AntimonyTrifluoride;
+    public static Material EnrichedNaquadahSulfate;
+    public static Material NaquadriaSulfate;
+    public static Material Pyrochlore;
 
     /**
      * Organic chemistry
@@ -533,6 +534,12 @@ public class Materials {
     public static Material Ethylbenzene;
     public static Material Naphthalene;
     public static Material Nitrobenzene;
+    public static Material PlatinumSludgeResidue;
+    public static Material PalladiumRaw;
+    public static Material RarestMetalMixture;
+    public static Material AmmoniumChloride;
+    public static Material AcidicOsmiumSolution;
+    public static Material RhodiumPlatedPalladium;
 
     /**
      * Not possible to determine exact Components
@@ -554,15 +561,41 @@ public class Materials {
     public static Material SeedOil;
     public static Material DrillingFluid;
     public static Material ConstructionFoam;
+
+    public static Material Oil;
+    public static Material OilHeavy;
+    public static Material RawOil;
+    public static Material OilLight;
+    public static Material NaturalGas;
+    public static Material SulfuricHeavyFuel;
+    public static Material HeavyFuel;
+    public static Material LightlyHydroCrackedHeavyFuel;
+    public static Material SeverelyHydroCrackedHeavyFuel;
+    public static Material LightlySteamCrackedHeavyFuel;
+    public static Material SeverelySteamCrackedHeavyFuel;
+    public static Material SulfuricLightFuel;
+    public static Material LightFuel;
+    public static Material LightlyHydroCrackedLightFuel;
+    public static Material SeverelyHydroCrackedLightFuel;
+    public static Material LightlySteamCrackedLightFuel;
+    public static Material SeverelySteamCrackedLightFuel;
+    public static Material SulfuricNaphtha;
+    public static Material Naphtha;
+    public static Material LightlyHydroCrackedNaphtha;
+    public static Material SeverelyHydroCrackedNaphtha;
+    public static Material LightlySteamCrackedNaphtha;
+    public static Material SeverelySteamCrackedNaphtha;
+    public static Material SulfuricGas;
+    public static Material RefineryGas;
+    public static Material LightlyHydroCrackedGas;
+    public static Material SeverelyHydroCrackedGas;
+    public static Material LightlySteamCrackedGas;
+    public static Material SeverelySteamCrackedGas;
     public static Material HydroCrackedEthane;
     public static Material HydroCrackedEthylene;
     public static Material HydroCrackedPropene;
     public static Material HydroCrackedPropane;
-    public static Material HydroCrackedLightFuel;
     public static Material HydroCrackedButane;
-    public static Material HydroCrackedNaphtha;
-    public static Material HydroCrackedHeavyFuel;
-    public static Material HydroCrackedGas;
     public static Material HydroCrackedButene;
     public static Material HydroCrackedButadiene;
     public static Material SteamCrackedEthane;
@@ -570,28 +603,12 @@ public class Materials {
     public static Material SteamCrackedPropene;
     public static Material SteamCrackedPropane;
     public static Material SteamCrackedButane;
-    public static Material SteamCrackedNaphtha;
-    public static Material SteamCrackedGas;
     public static Material SteamCrackedButene;
     public static Material SteamCrackedButadiene;
-    public static Material SteamCrackedLightFuel;
-    public static Material SteamCrackedHeavyFuel;
-    public static Material SulfuricGas;
-    public static Material RefineryGas;
-    public static Material SulfuricNaphtha;
-    public static Material SulfuricLightFuel;
-    public static Material SulfuricHeavyFuel;
-    public static Material Naphtha;
-    public static Material LightFuel;
-    public static Material HeavyFuel;
     public static Material LPG;
+
     public static Material RawGrowthMedium;
     public static Material SterileGrowthMedium;
-    public static Material Oil;
-    public static Material OilHeavy;
-    public static Material OilMedium;
-    public static Material OilLight;
-    public static Material NaturalGas;
     public static Material Bacteria;
     public static Material BacterialSludge;
     public static Material EnrichedBacterialSludge;
@@ -611,19 +628,17 @@ public class Materials {
     public static Material NetherStar;
     public static Material Endstone;
     public static Material Netherrack;
-    public static Material NitroDiesel;
+    public static Material CetaneBoostedDiesel;
     public static Material Collagen;
     public static Material Gelatin;
     public static Material Agar;
     public static Material Andesite;
-    public static Material Diorite;
-    public static Material Granite;
-    public static Material Vinteum;
     public static Material Milk;
     public static Material Cocoa;
     public static Material Wheat;
     public static Material Meat;
     public static Material Wood;
+    public static Material TreatedWood;
     public static Material Paper;
     public static Material FishOil;
     public static Material RubySlurry;
@@ -646,6 +661,16 @@ public class Materials {
     public static Material DyeOrange;
     public static Material DyeWhite;
 
+    public static Material ImpureEnrichedNaquadahSolution;
+    public static Material EnrichedNaquadahSolution;
+    public static Material AcidicEnrichedNaquadahSolution;
+    public static Material EnrichedNaquadahWaste;
+    public static Material ImpureNaquadriaSolution;
+    public static Material NaquadriaSolution;
+    public static Material AcidicNaquadriaSolution;
+    public static Material NaquadriaWaste;
+    public static Material Lapotron;
+
     /**
      * Second Degree Compounds
      */
@@ -657,7 +682,6 @@ public class Materials {
     public static Material Amethyst;
     public static Material Lapis;
     public static Material Blaze;
-    public static Material Niter;
     public static Material Apatite;
     public static Material BlackSteel;
     public static Material DamascusSteel;
@@ -669,11 +693,9 @@ public class Materials {
     public static Material Marble;
     public static Material GraniteBlack;
     public static Material GraniteRed;
-    public static Material Chrysotile;
     public static Material VanadiumMagnetite;
     public static Material QuartzSand;
     public static Material Pollucite;
-    public static Material Vermiculite;
     public static Material Bentonite;
     public static Material FullersEarth;
     public static Material Pitchblende;
@@ -686,12 +708,10 @@ public class Materials {
     public static Material SteelMagnetic;
     public static Material VanadiumSteel;
     public static Material Potin;
-    public static Material Brick;
-    public static Material Fireclay;
     public static Material BorosilicateGlass;
     public static Material NaquadahAlloy;
-    public static Material NickelSulfateSolution;
-    public static Material CopperSulfateSolution;
+    public static Material SulfuricNickelSolution;
+    public static Material SulfuricCopperSolution;
     public static Material LeadZincSolution;
     public static Material NitrationMixture;
     public static Material DilutedSulfuricAcid;
@@ -705,11 +725,13 @@ public class Materials {
     public static Material LiquidEnderAir;
     public static Material AquaRegia;
     public static Material SaltWater;
+    public static Material Clay;
+    public static Material Redstone;
 
     /**
      * Third Degree Materials
      */
-    public static Material Redstone;
+    public static Material Electrotine;
     public static Material EnderEye;
     public static Material Diatomite;
     public static Material RedSteel;
@@ -719,13 +741,18 @@ public class Materials {
     public static Material Redrock;
     public static Material GarnetSand;
     public static Material HSSG;
+    public static Material IridiumMetalResidue;
+    public static Material Granite;
+    public static Material Brick;
+    public static Material Fireclay;
+    public static Material Diorite;
 
     /**
      * Fourth Degree Materials
      */
     public static Material RedAlloy;
+    public static Material BlueAlloy;
     public static Material BasalticMineralSand;
     public static Material HSSE;
     public static Material HSSS;
-    public static Material FluxedElectrum;
 }

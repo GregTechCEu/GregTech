@@ -19,20 +19,21 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.Textures;
 import gregtech.api.util.BlockPosFace;
-import gregtech.api.util.RenderUtil;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.covers.CoverDigitalInterface;
 import gregtech.common.gui.widget.monitor.WidgetScreenGrid;
+import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
@@ -66,7 +67,7 @@ import java.util.*;
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase implements IFastRenderMetaTileEntity {
-    private final static long ENERGY_COST = -ConfigHolder.centralMonitorEuCost;
+    private final static long ENERGY_COST = -ConfigHolder.machines.centralMonitorEuCost;
     public final static int MAX_HEIGHT = 9;
     public final static int MAX_WIDTH = 14;
     // run-time data
@@ -86,13 +87,12 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
 
     public MetaTileEntityCentralMonitor(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
-        reinitializeStructurePattern();
     }
 
     private EnergyNet getEnergyNet() {
         if (!this.getWorld().isRemote) {
             TileEntity te = this.getWorld().getTileEntity(this.getPos().offset(frontFacing.getOpposite()));
-            if (te instanceof TileEntityPipeBase) {
+            if (te instanceof TileEntityCable) {
                 TileEntityPipeBase<?, ?> tileEntityCable = (TileEntityCable) te;
                 EnergyNet currentEnergyNet = this.currentEnergyNet.get();
                 if (currentEnergyNet != null && currentEnergyNet.isValid() && currentEnergyNet.containsNode(tileEntityCable.getPipePos())) {
@@ -219,7 +219,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     private void writeParts(PacketBuffer buf) {
-        buf.writeInt(this.getMultiblockParts().size() - 1);
+        buf.writeInt((int) this.getMultiblockParts().stream().filter(MetaTileEntityMonitorScreen.class::isInstance).count());
         this.getMultiblockParts().forEach(part->{
             if (part instanceof MetaTileEntityMonitorScreen) {
                 buf.writeBlockPos(((MetaTileEntityMonitorScreen) part).getPos());
@@ -277,7 +277,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         super.addDisplayText(textList);
         textList.add(new TextComponentTranslation("gregtech.multiblock.central_monitor.height", this.height));
         if (!isStructureFormed()) {
-            ITextComponent buttonText = new TextComponentTranslation("gregtech.multiblock.central_monitor.height_modify");
+            ITextComponent buttonText = new TextComponentTranslation("gregtech.multiblock.central_monitor.height_modify", height);
             buttonText.appendText(" ");
             buttonText.appendSibling(AdvancedTextWidget.withButton(new TextComponentString("[-]"), "sub"));
             buttonText.appendText(" ");
@@ -403,9 +403,15 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                 .aisle(slice.toString()).setRepeatable(3, MAX_WIDTH)
                 .aisle(end.toString())
                 .where('S', selfPredicate())
-                .where('A', statePredicate(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID)).or(abilityPartPredicate(MultiblockAbility.INPUT_ENERGY)))
-                .where('B', tilePredicate((state, tile) -> tile instanceof MetaTileEntityMonitorScreen))
+                .where('A', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID)).setMinGlobalLimited(3)
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setPreviewCount(1)))
+                .where('B', metaTileEntities(MetaTileEntities.MONITOR_SCREEN))
                 .build();
+    }
+
+    @Override
+    public String[] getDescription() {
+        return new String[]{I18n.format("gregtech.multiblock.central_monitor.tooltip.1")};
     }
 
     @Override

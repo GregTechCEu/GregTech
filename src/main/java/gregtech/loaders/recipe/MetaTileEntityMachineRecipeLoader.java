@@ -1,677 +1,553 @@
 package gregtech.loaders.recipe;
 
-import gregtech.api.GTValues;
-import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.unification.material.MarkerMaterials;
-import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.ore.OrePrefix;
-import gregtech.common.ConfigHolder;
-import gregtech.common.items.MetaItems;
-import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.api.recipes.ModHandler;
+import static gregtech.api.unification.material.MarkerMaterials.Tier;
+import gregtech.api.unification.stack.UnificationEntry;
 
+import static gregtech.api.GTValues.*;
+import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
+import static gregtech.api.recipes.RecipeMaps.ASSEMBLY_LINE_RECIPES;
+import static gregtech.api.unification.material.Materials.*;
+import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.common.items.MetaItems.*;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
 
 public class MetaTileEntityMachineRecipeLoader {
 
     public static void init() {
-        if (ConfigHolder.U.GT5u.harderEnergyHatches) {
 
-            // Energy Output Hatches
+        // Energy Output Hatches
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.ULV].getStackForm())
-                    .input(OrePrefix.spring, Materials.Lead)
-                    .input(OrePrefix.circuit, MarkerMaterials.Tier.Primitive, 2)
-                    .inputs(MetaItems.VOLTAGE_COIL_ULV.getStackForm(2))
-                    .input(OrePrefix.rotor, Materials.Lead)
-                    .fluidInputs(Materials.Lubricant.getFluid(2000))
-                    .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.ULV].getStackForm())
-                    .duration(200).EUt(7).buildAndRegister();
+        ModHandler.addShapedRecipe(true, "dynamo_hatch.ulv", ENERGY_OUTPUT_HATCH[ULV].getStackForm(),
+                " V ", "SHS", "   ",
+                'S', new UnificationEntry(spring, Lead),
+                'V', VOLTAGE_COIL_ULV.getStackForm(),
+                'H', HULL[ULV].getStackForm());
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.LV].getStackForm())
-                    .input(OrePrefix.spring, Materials.Tin)
-                    .input(OrePrefix.circuit, MarkerMaterials.Tier.Basic, 2)
-                    .inputs(MetaItems.VOLTAGE_COIL_LV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_LV.getStackForm())
-                    .fluidInputs(Materials.Lubricant.getFluid(2000))
-                    .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.LV].getStackForm())
-                    .duration(200).EUt(30).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[ULV])
+                .input(spring, Lead, 2)
+                .input(VOLTAGE_COIL_ULV)
+                .output(ENERGY_OUTPUT_HATCH[ULV])
+                .duration(200).EUt(VA[ULV]).buildAndRegister();
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.MV].getStackForm())
-                    .input(OrePrefix.spring, Materials.Copper)
-                    .inputs(MetaItems.SMALL_COIL.getStackForm(2))
-                    .inputs(MetaItems.VOLTAGE_COIL_MV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_MV.getStackForm())
-                    .fluidInputs(Materials.Lubricant.getFluid(2000))
-                    .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.MV].getStackForm())
-                    .duration(200).EUt(120).buildAndRegister();
+        ModHandler.addShapedRecipe(true, "dynamo_hatch.lv", ENERGY_OUTPUT_HATCH[LV].getStackForm(),
+                " V ", "SHS", "   ",
+                'S', new UnificationEntry(spring, Tin),
+                'V', VOLTAGE_COIL_LV.getStackForm(),
+                'H', HULL[LV].getStackForm());
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.HV].getStackForm())
-                    .input(OrePrefix.spring, Materials.Gold)
-                    .inputs(MetaItems.ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .inputs(MetaItems.VOLTAGE_COIL_HV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_HV.getStackForm())
-                    .fluidInputs(Materials.Helium.getFluid(1000))
-                    .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.HV].getStackForm())
-                    .duration(200).EUt(480).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[LV])
+                .input(spring, Tin, 2)
+                .input(VOLTAGE_COIL_LV)
+                .output(ENERGY_OUTPUT_HATCH[LV])
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.HV].getStackForm())
-                    .input(OrePrefix.spring, Materials.Gold)
-                    .inputs(MetaItems.ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .inputs(MetaItems.VOLTAGE_COIL_HV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_HV.getStackForm())
-                    .fluidInputs(Materials.SodiumPotassium.getFluid(1000))
-                    .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.HV].getStackForm())
-                    .duration(200).EUt(480).buildAndRegister();
+        ModHandler.addShapedRecipe(true, "dynamo_hatch.mv", ENERGY_OUTPUT_HATCH[MV].getStackForm(),
+                " V ", "SHS", " P ",
+                'P', ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(),
+                'S', new UnificationEntry(spring, Copper),
+                'V', VOLTAGE_COIL_MV.getStackForm(),
+                'H', HULL[MV].getStackForm());
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.EV].getStackForm())
-                    .input(OrePrefix.spring, Materials.Aluminium)
-                    .inputs(MetaItems.LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .inputs(MetaItems.VOLTAGE_COIL_EV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_EV.getStackForm())
-                    .fluidInputs(Materials.Helium.getFluid(2000))
-                    .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.EV].getStackForm())
-                    .duration(200).EUt(1920).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[MV])
+                .input(spring, Copper, 2)
+                .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT)
+                .input(VOLTAGE_COIL_MV)
+                .output(ENERGY_OUTPUT_HATCH[MV])
+                .duration(200).EUt(VA[MV]).buildAndRegister();
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.EV].getStackForm())
-                    .input(OrePrefix.spring, Materials.Aluminium)
-                    .inputs(MetaItems.LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .inputs(MetaItems.VOLTAGE_COIL_EV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_EV.getStackForm())
-                    .fluidInputs(Materials.SodiumPotassium.getFluid(2000))
-                    .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.EV].getStackForm())
-                    .duration(200).EUt(1920).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[HV])
+                .input(spring, Gold, 2)
+                .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_HV)
+                .fluidInputs(SodiumPotassium.getFluid(1000))
+                .output(ENERGY_OUTPUT_HATCH[HV])
+                .duration(200).EUt(VA[HV]).buildAndRegister();
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.IV].getStackForm())
-                    .input(OrePrefix.spring, Materials.Tungsten)
-                    .inputs(MetaItems.POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .inputs(MetaItems.VOLTAGE_COIL_IV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
-                    .fluidInputs(Materials.Helium.getFluid(3000))
-                    .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.IV].getStackForm())
-                    .duration(200).EUt(7680).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[EV])
+                .input(spring, Aluminium, 2)
+                .input(LOW_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_EV)
+                .fluidInputs(SodiumPotassium.getFluid(2000))
+                .output(ENERGY_OUTPUT_HATCH[EV])
+                .duration(200).EUt(VA[EV]).buildAndRegister();
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.IV].getStackForm())
-                    .input(OrePrefix.spring, Materials.Tungsten)
-                    .inputs(MetaItems.POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .inputs(MetaItems.VOLTAGE_COIL_IV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
-                    .fluidInputs(Materials.SodiumPotassium.getFluid(3000))
-                    .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.IV].getStackForm())
-                    .duration(200).EUt(7680).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[IV])
+                .input(spring, Tungsten, 2)
+                .input(POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_IV)
+                .fluidInputs(SodiumPotassium.getFluid(3000))
+                .output(ENERGY_OUTPUT_HATCH[IV])
+                .duration(200).EUt(VA[IV]).buildAndRegister();
 
-            RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.LuV].getStackForm())
-                    .input(OrePrefix.spring, Materials.YttriumBariumCuprate, 2)
-                    .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .input(OrePrefix.circuit, MarkerMaterials.Tier.Master, 2)
-                    .inputs(MetaItems.VOLTAGE_COIL_LUV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_LUV.getStackForm())
-                    .fluidInputs(Materials.Helium.getFluid(6000))
-                    .fluidInputs(Materials.SolderingAlloy.getFluid(720))
-                    .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.LuV].getStackForm())
-                    .duration(400).EUt(30720).buildAndRegister();
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(HULL[LuV])
+                .input(spring, YttriumBariumCuprate, 4)
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(circuit, Tier.Master)
+                .input(VOLTAGE_COIL_LUV, 2)
+                .fluidInputs(SodiumPotassium.getFluid(6000))
+                .fluidInputs(SolderingAlloy.getFluid(720))
+                .output(ENERGY_OUTPUT_HATCH[LuV])
+                .duration(400).EUt(VA[LuV]).buildAndRegister();
 
-            RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.LuV].getStackForm())
-                    .input(OrePrefix.spring, Materials.YttriumBariumCuprate, 2)
-                    .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .input(OrePrefix.circuit, MarkerMaterials.Tier.Master, 2)
-                    .inputs(MetaItems.VOLTAGE_COIL_LUV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_LUV.getStackForm())
-                    .fluidInputs(Materials.SodiumPotassium.getFluid(6000))
-                    .fluidInputs(Materials.SolderingAlloy.getFluid(720))
-                    .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.LuV].getStackForm())
-                    .duration(400).EUt(30720).buildAndRegister();
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(HULL[ZPM])
+                .input(spring, VanadiumGallium, 4)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(circuit, Tier.Ultimate)
+                .input(VOLTAGE_COIL_ZPM, 2)
+                .fluidInputs(SodiumPotassium.getFluid(8000))
+                .fluidInputs(SolderingAlloy.getFluid(1440))
+                .output(ENERGY_OUTPUT_HATCH[ZPM])
+                .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
-            RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.ZPM].getStackForm())
-                    .input(OrePrefix.spring, Materials.VanadiumGallium, 4)
-                    .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .input(OrePrefix.circuit, MarkerMaterials.Tier.Ultimate, 2)
-                    .inputs(MetaItems.VOLTAGE_COIL_ZPM.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_ZPM.getStackForm())
-                    .fluidInputs(Materials.Helium.getFluid(6000))
-                    .fluidInputs(Materials.SolderingAlloy.getFluid(1440))
-                    .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.ZPM].getStackForm())
-                    .duration(600).EUt(122880).buildAndRegister();
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(HULL[UV])
+                .input(spring, NiobiumTitanium, 4)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(circuit, Tier.Super)
+                .input(VOLTAGE_COIL_UV, 2)
+                .fluidInputs(SodiumPotassium.getFluid(10000))
+                .fluidInputs(SolderingAlloy.getFluid(2880))
+                .output(ENERGY_OUTPUT_HATCH[UV])
+                .duration(800).EUt(VA[UV]).buildAndRegister();
 
-            RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.ZPM].getStackForm())
-                    .input(OrePrefix.spring, Materials.VanadiumGallium, 4)
-                    .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .input(OrePrefix.circuit, MarkerMaterials.Tier.Ultimate, 2)
-                    .inputs(MetaItems.VOLTAGE_COIL_ZPM.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_ZPM.getStackForm())
-                    .fluidInputs(Materials.SodiumPotassium.getFluid(6000))
-                    .fluidInputs(Materials.SolderingAlloy.getFluid(1440))
-                    .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.ZPM].getStackForm())
-                    .duration(600).EUt(122880).buildAndRegister();
+        // Energy Input Hatches
 
-            RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.UV].getStackForm())
-                    .input(OrePrefix.spring, Materials.NiobiumTitanium, 4)
-                    .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .input(OrePrefix.circuit, MarkerMaterials.Tier.Super, 2)
-                    .inputs(MetaItems.VOLTAGE_COIL_UV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_UV.getStackForm())
-                    .fluidInputs(Materials.Helium.getFluid(12000))
-                    .fluidInputs(Materials.SolderingAlloy.getFluid(2880))
-                    .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.UV].getStackForm())
-                    .duration(800).EUt(491520).buildAndRegister();
+        ModHandler.addShapedRecipe(true, "energy_hatch.ulv", ENERGY_INPUT_HATCH[ULV].getStackForm(),
+                " V ", "CHC", "   ",
+                'C', new UnificationEntry(cableGtSingle, RedAlloy),
+                'V', VOLTAGE_COIL_ULV.getStackForm(),
+                'H', HULL[ULV].getStackForm());
 
-            RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.UV].getStackForm())
-                    .input(OrePrefix.spring, Materials.NiobiumTitanium, 4)
-                    .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .input(OrePrefix.circuit, MarkerMaterials.Tier.Super, 2)
-                    .inputs(MetaItems.VOLTAGE_COIL_UV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_UV.getStackForm())
-                    .fluidInputs(Materials.SodiumPotassium.getFluid(12000))
-                    .fluidInputs(Materials.SolderingAlloy.getFluid(2880))
-                    .outputs(MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.UV].getStackForm())
-                    .duration(800).EUt(491520).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[ULV])
+                .input(cableGtSingle, RedAlloy, 2)
+                .input(VOLTAGE_COIL_ULV)
+                .output(ENERGY_INPUT_HATCH[ULV])
+                .duration(200).EUt(VA[ULV]).buildAndRegister();
 
-            // Energy Input Hatches
+        ModHandler.addShapedRecipe(true, "energy_hatch.lv", ENERGY_INPUT_HATCH[LV].getStackForm(),
+                " V ", "CHC", "   ",
+                'C', new UnificationEntry(cableGtSingle, Tin),
+                'V', VOLTAGE_COIL_LV.getStackForm(),
+                'H', HULL[LV].getStackForm());
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.ULV].getStackForm())
-                    .input(OrePrefix.cableGtSingle, Materials.Lead, 2)
-                    .input(OrePrefix.circuit, MarkerMaterials.Tier.Primitive)
-                    .inputs(MetaItems.VOLTAGE_COIL_ULV.getStackForm(2))
-                    .input(OrePrefix.rotor, Materials.Lead)
-                    .fluidInputs(Materials.Lubricant.getFluid(2000))
-                    .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.ULV].getStackForm())
-                    .duration(200).EUt(7).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[LV])
+                .input(cableGtSingle, Tin, 2)
+                .input(VOLTAGE_COIL_LV)
+                .output(ENERGY_INPUT_HATCH[LV])
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.LV].getStackForm())
-                    .input(OrePrefix.cableGtSingle, Materials.Tin, 2)
-                    .input(OrePrefix.circuit, MarkerMaterials.Tier.Basic)
-                    .inputs(MetaItems.VOLTAGE_COIL_LV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_LV.getStackForm())
-                    .fluidInputs(Materials.Lubricant.getFluid(2000))
-                    .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.LV].getStackForm())
-                    .duration(200).EUt(30).buildAndRegister();
+        ModHandler.addShapedRecipe(true, "energy_hatch.mv", ENERGY_INPUT_HATCH[MV].getStackForm(),
+                " V ", "CHC", " P ",
+                'C', new UnificationEntry(cableGtSingle, Copper),
+                'P', ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(),
+                'V', VOLTAGE_COIL_MV.getStackForm(),
+                'H', HULL[MV].getStackForm());
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.MV].getStackForm())
-                    .input(OrePrefix.cableGtSingle, Materials.Copper)
-                    .inputs(MetaItems.SMALL_COIL.getStackForm(2))
-                    .inputs(MetaItems.VOLTAGE_COIL_MV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_MV.getStackForm())
-                    .fluidInputs(Materials.Lubricant.getFluid(2000))
-                    .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.MV].getStackForm())
-                    .duration(200).EUt(120).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[MV])
+                .input(cableGtSingle, Copper, 2)
+                .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT)
+                .input(VOLTAGE_COIL_MV)
+                .output(ENERGY_INPUT_HATCH[MV])
+                .duration(200).EUt(VA[MV]).buildAndRegister();
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.HV].getStackForm())
-                    .input(OrePrefix.cableGtSingle, Materials.Gold)
-                    .inputs(MetaItems.ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .inputs(MetaItems.VOLTAGE_COIL_HV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_HV.getStackForm())
-                    .fluidInputs(Materials.Helium.getFluid(1000))
-                    .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV].getStackForm())
-                    .duration(200).EUt(480).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[HV])
+                .input(cableGtSingle, Gold, 2)
+                .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_HV)
+                .fluidInputs(SodiumPotassium.getFluid(1000))
+                .output(ENERGY_INPUT_HATCH[HV])
+                .duration(200).EUt(VA[HV]).buildAndRegister();
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.HV].getStackForm())
-                    .input(OrePrefix.cableGtSingle, Materials.Gold)
-                    .inputs(MetaItems.ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .inputs(MetaItems.VOLTAGE_COIL_HV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_HV.getStackForm())
-                    .fluidInputs(Materials.SodiumPotassium.getFluid(1000))
-                    .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV].getStackForm())
-                    .duration(200).EUt(480).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[EV])
+                .input(cableGtSingle, Aluminium, 2)
+                .input(LOW_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_EV)
+                .fluidInputs(SodiumPotassium.getFluid(2000))
+                .output(ENERGY_INPUT_HATCH[EV])
+                .duration(200).EUt(VA[EV]).buildAndRegister();
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.EV].getStackForm())
-                    .input(OrePrefix.cableGtSingle, Materials.Aluminium)
-                    .inputs(MetaItems.LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .inputs(MetaItems.VOLTAGE_COIL_EV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_EV.getStackForm())
-                    .fluidInputs(Materials.Helium.getFluid(2000))
-                    .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.EV].getStackForm())
-                    .duration(200).EUt(1920).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[IV])
+                .input(cableGtSingle, Tungsten, 2)
+                .input(POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_IV)
+                .fluidInputs(SodiumPotassium.getFluid(3000))
+                .output(ENERGY_INPUT_HATCH[IV])
+                .duration(200).EUt(VA[IV]).buildAndRegister();
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.EV].getStackForm())
-                    .input(OrePrefix.cableGtSingle, Materials.Aluminium)
-                    .inputs(MetaItems.LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .inputs(MetaItems.VOLTAGE_COIL_EV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_EV.getStackForm())
-                    .fluidInputs(Materials.SodiumPotassium.getFluid(2000))
-                    .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.EV].getStackForm())
-                    .duration(200).EUt(1920).buildAndRegister();
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(HULL[LuV])
+                .input(cableGtSingle, NiobiumTitanium, 4)
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(circuit, Tier.Master)
+                .input(VOLTAGE_COIL_LUV, 2)
+                .fluidInputs(SodiumPotassium.getFluid(6000))
+                .fluidInputs(SolderingAlloy.getFluid(720))
+                .output(ENERGY_INPUT_HATCH[LuV])
+                .duration(400).EUt(VA[LuV]).buildAndRegister();
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.IV].getStackForm())
-                    .input(OrePrefix.cableGtSingle, Materials.Tungsten)
-                    .inputs(MetaItems.POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .inputs(MetaItems.VOLTAGE_COIL_IV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
-                    .fluidInputs(Materials.Helium.getFluid(3000))
-                    .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.IV].getStackForm())
-                    .duration(200).EUt(7680).buildAndRegister();
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(HULL[ZPM])
+                .input(cableGtSingle, VanadiumGallium, 4)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(circuit, Tier.Ultimate)
+                .input(VOLTAGE_COIL_ZPM, 2)
+                .fluidInputs(SodiumPotassium.getFluid(8000))
+                .fluidInputs(SolderingAlloy.getFluid(1440))
+                .output(ENERGY_INPUT_HATCH[ZPM])
+                .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.IV].getStackForm())
-                    .input(OrePrefix.cableGtSingle, Materials.Tungsten)
-                    .inputs(MetaItems.POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .inputs(MetaItems.VOLTAGE_COIL_IV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
-                    .fluidInputs(Materials.SodiumPotassium.getFluid(3000))
-                    .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.IV].getStackForm())
-                    .duration(200).EUt(7680).buildAndRegister();
-
-            RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.LuV].getStackForm())
-                    .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
-                    .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .input(OrePrefix.circuit, MarkerMaterials.Tier.Master, 2)
-                    .inputs(MetaItems.VOLTAGE_COIL_LUV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_LUV.getStackForm())
-                    .fluidInputs(Materials.Helium.getFluid(6000))
-                    .fluidInputs(Materials.SolderingAlloy.getFluid(720))
-                    .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.LuV].getStackForm())
-                    .duration(400).EUt(30720).buildAndRegister();
-
-            RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.LuV].getStackForm())
-                    .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
-                    .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .input(OrePrefix.circuit, MarkerMaterials.Tier.Master, 2)
-                    .inputs(MetaItems.VOLTAGE_COIL_LUV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_LUV.getStackForm())
-                    .fluidInputs(Materials.SodiumPotassium.getFluid(6000))
-                    .fluidInputs(Materials.SolderingAlloy.getFluid(720))
-                    .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.LuV].getStackForm())
-                    .duration(400).EUt(30720).buildAndRegister();
-
-            RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.ZPM].getStackForm())
-                    .input(OrePrefix.cableGtDouble, Materials.VanadiumGallium, 2)
-                    .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .input(OrePrefix.circuit, MarkerMaterials.Tier.Ultimate, 2)
-                    .inputs(MetaItems.VOLTAGE_COIL_ZPM.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_ZPM.getStackForm())
-                    .fluidInputs(Materials.Helium.getFluid(6000))
-                    .fluidInputs(Materials.SolderingAlloy.getFluid(1440))
-                    .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.ZPM].getStackForm())
-                    .duration(600).EUt(122880).buildAndRegister();
-
-            RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.ZPM].getStackForm())
-                    .input(OrePrefix.cableGtDouble, Materials.VanadiumGallium, 2)
-                    .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .input(OrePrefix.circuit, MarkerMaterials.Tier.Ultimate, 2)
-                    .inputs(MetaItems.VOLTAGE_COIL_ZPM.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_ZPM.getStackForm())
-                    .fluidInputs(Materials.SodiumPotassium.getFluid(6000))
-                    .fluidInputs(Materials.SolderingAlloy.getFluid(1440))
-                    .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.ZPM].getStackForm())
-                    .duration(600).EUt(122880).buildAndRegister();
-
-            RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.UV].getStackForm())
-                    .input(OrePrefix.cableGtDouble, Materials.YttriumBariumCuprate, 2)
-                    .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .input(OrePrefix.circuit, MarkerMaterials.Tier.Super, 2)
-                    .inputs(MetaItems.VOLTAGE_COIL_UV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_UV.getStackForm())
-                    .fluidInputs(Materials.Helium.getFluid(12000))
-                    .fluidInputs(Materials.SolderingAlloy.getFluid(2880))
-                    .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.UV].getStackForm())
-                    .duration(800).EUt(491520).buildAndRegister();
-
-            RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .inputs(HULL[GTValues.UV].getStackForm())
-                    .input(OrePrefix.cableGtDouble, Materials.YttriumBariumCuprate, 2)
-                    .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                    .input(OrePrefix.circuit, MarkerMaterials.Tier.Super, 2)
-                    .inputs(MetaItems.VOLTAGE_COIL_UV.getStackForm(2))
-                    .inputs(MetaItems.ELECTRIC_PUMP_UV.getStackForm())
-                    .fluidInputs(Materials.SodiumPotassium.getFluid(12000))
-                    .fluidInputs(Materials.SolderingAlloy.getFluid(2880))
-                    .outputs(MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.UV].getStackForm())
-                    .duration(800).EUt(491520).buildAndRegister();
-
-        }
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(HULL[UV])
+                .input(cableGtSingle, YttriumBariumCuprate, 4)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(circuit, Tier.Super)
+                .input(VOLTAGE_COIL_UV, 2)
+                .fluidInputs(SodiumPotassium.getFluid(10000))
+                .fluidInputs(SolderingAlloy.getFluid(2880))
+                .output(ENERGY_INPUT_HATCH[UV])
+                .duration(800).EUt(VA[UV]).buildAndRegister();
 
         // Adjustable Transformers
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(TRANSFORMER[GTValues.ULV].getStackForm())
-                .inputs(MetaItems.ELECTRIC_PUMP_LV.getStackForm())
-                .input(OrePrefix.wireGtQuadruple, Materials.Tin)
-                .input(OrePrefix.wireGtOctal, Materials.Lead)
-                .input(OrePrefix.springSmall, Materials.Lead)
-                .input(OrePrefix.spring, Materials.Tin)
-                .fluidInputs(Materials.Lubricant.getFluid(2000))
-                .outputs(ADJUSTABLE_TRANSFORMER[GTValues.ULV].getStackForm())
-                .duration(200).EUt(7).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[ULV])
+                .input(ELECTRIC_PUMP_LV)
+                .input(wireGtQuadruple, Tin)
+                .input(wireGtOctal, Lead)
+                .input(springSmall, Lead)
+                .input(spring, Tin)
+                .fluidInputs(Lubricant.getFluid(2000))
+                .output(ADJUSTABLE_TRANSFORMER[ULV])
+                .duration(200).EUt(VA[ULV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(TRANSFORMER[GTValues.LV].getStackForm())
-                .inputs(MetaItems.ELECTRIC_PUMP_LV.getStackForm())
-                .input(OrePrefix.wireGtQuadruple, Materials.Copper)
-                .input(OrePrefix.wireGtOctal, Materials.Tin)
-                .input(OrePrefix.springSmall, Materials.Tin)
-                .input(OrePrefix.spring, Materials.Copper)
-                .fluidInputs(Materials.Lubricant.getFluid(2000))
-                .outputs(ADJUSTABLE_TRANSFORMER[GTValues.LV].getStackForm())
-                .duration(200).EUt(30).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[LV])
+                .input(ELECTRIC_PUMP_LV)
+                .input(wireGtQuadruple, Copper)
+                .input(wireGtOctal, Tin)
+                .input(springSmall, Tin)
+                .input(spring, Copper)
+                .fluidInputs(Lubricant.getFluid(2000))
+                .output(ADJUSTABLE_TRANSFORMER[LV])
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(TRANSFORMER[GTValues.MV].getStackForm())
-                .inputs(MetaItems.ELECTRIC_PUMP_MV.getStackForm())
-                .input(OrePrefix.wireGtQuadruple, Materials.Gold)
-                .input(OrePrefix.wireGtOctal, Materials.Copper)
-                .input(OrePrefix.springSmall, Materials.Copper)
-                .input(OrePrefix.spring, Materials.Gold)
-                .fluidInputs(Materials.Lubricant.getFluid(2000))
-                .outputs(ADJUSTABLE_TRANSFORMER[GTValues.MV].getStackForm())
-                .duration(200).EUt(120).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[MV])
+                .input(ELECTRIC_PUMP_MV)
+                .input(wireGtQuadruple, Gold)
+                .input(wireGtOctal, Copper)
+                .input(springSmall, Copper)
+                .input(spring, Gold)
+                .fluidInputs(Lubricant.getFluid(2000))
+                .output(ADJUSTABLE_TRANSFORMER[MV])
+                .duration(200).EUt(VA[MV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(TRANSFORMER[GTValues.HV].getStackForm())
-                .inputs(MetaItems.ELECTRIC_PUMP_MV.getStackForm())
-                .input(OrePrefix.wireGtQuadruple, Materials.Aluminium)
-                .input(OrePrefix.wireGtOctal, Materials.Gold)
-                .input(OrePrefix.springSmall, Materials.Gold)
-                .input(OrePrefix.spring, Materials.Aluminium)
-                .fluidInputs(Materials.Lubricant.getFluid(2000))
-                .outputs(ADJUSTABLE_TRANSFORMER[GTValues.HV].getStackForm())
-                .duration(200).EUt(480).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[HV])
+                .input(ELECTRIC_PUMP_MV)
+                .input(wireGtQuadruple, Aluminium)
+                .input(wireGtOctal, Gold)
+                .input(springSmall, Gold)
+                .input(spring, Aluminium)
+                .fluidInputs(Lubricant.getFluid(2000))
+                .output(ADJUSTABLE_TRANSFORMER[HV])
+                .duration(200).EUt(VA[HV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(TRANSFORMER[GTValues.EV].getStackForm())
-                .inputs(MetaItems.ELECTRIC_PUMP_HV.getStackForm())
-                .input(OrePrefix.wireGtQuadruple, Materials.Tungsten)
-                .input(OrePrefix.wireGtOctal, Materials.Aluminium)
-                .input(OrePrefix.springSmall, Materials.Aluminium)
-                .input(OrePrefix.spring, Materials.Tungsten)
-                .fluidInputs(Materials.Lubricant.getFluid(2000))
-                .outputs(ADJUSTABLE_TRANSFORMER[GTValues.EV].getStackForm())
-                .duration(200).EUt(1920).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[EV])
+                .input(ELECTRIC_PUMP_HV)
+                .input(wireGtQuadruple, Tungsten)
+                .input(wireGtOctal, Aluminium)
+                .input(springSmall, Aluminium)
+                .input(spring, Tungsten)
+                .fluidInputs(Lubricant.getFluid(2000))
+                .output(ADJUSTABLE_TRANSFORMER[EV])
+                .duration(200).EUt(VA[EV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(TRANSFORMER[GTValues.IV].getStackForm())
-                .inputs(MetaItems.ELECTRIC_PUMP_HV.getStackForm())
-                .input(OrePrefix.wireGtQuadruple, Materials.NiobiumTitanium)
-                .input(OrePrefix.wireGtOctal, Materials.Tungsten)
-                .input(OrePrefix.springSmall, Materials.Tungsten)
-                .input(OrePrefix.spring, Materials.NiobiumTitanium)
-                .fluidInputs(Materials.Lubricant.getFluid(2000))
-                .outputs(ADJUSTABLE_TRANSFORMER[GTValues.IV].getStackForm())
-                .duration(200).EUt(7680).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[IV])
+                .input(ELECTRIC_PUMP_HV)
+                .input(wireGtQuadruple, NiobiumTitanium)
+                .input(wireGtOctal, Tungsten)
+                .input(springSmall, Tungsten)
+                .input(spring, NiobiumTitanium)
+                .fluidInputs(Lubricant.getFluid(2000))
+                .output(ADJUSTABLE_TRANSFORMER[IV])
+                .duration(200).EUt(VA[IV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(TRANSFORMER[GTValues.LuV].getStackForm())
-                .inputs(MetaItems.ELECTRIC_PUMP_EV.getStackForm())
-                .input(OrePrefix.wireGtQuadruple, Materials.VanadiumGallium)
-                .input(OrePrefix.wireGtOctal, Materials.NiobiumTitanium)
-                .input(OrePrefix.springSmall, Materials.NiobiumTitanium)
-                .input(OrePrefix.spring, Materials.VanadiumGallium)
-                .fluidInputs(Materials.Lubricant.getFluid(2000))
-                .outputs(ADJUSTABLE_TRANSFORMER[GTValues.LuV].getStackForm())
-                .duration(200).EUt(32768).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[LuV])
+                .input(ELECTRIC_PUMP_EV)
+                .input(wireGtQuadruple, VanadiumGallium)
+                .input(wireGtOctal, NiobiumTitanium)
+                .input(springSmall, NiobiumTitanium)
+                .input(spring, VanadiumGallium)
+                .fluidInputs(Lubricant.getFluid(2000))
+                .output(ADJUSTABLE_TRANSFORMER[LuV])
+                .duration(200).EUt(VA[LuV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(TRANSFORMER[GTValues.ZPM].getStackForm())
-                .inputs(MetaItems.ELECTRIC_PUMP_EV.getStackForm())
-                .input(OrePrefix.wireGtQuadruple, Materials.YttriumBariumCuprate)
-                .input(OrePrefix.wireGtOctal, Materials.VanadiumGallium)
-                .input(OrePrefix.springSmall, Materials.VanadiumGallium)
-                .input(OrePrefix.spring, Materials.YttriumBariumCuprate)
-                .fluidInputs(Materials.Lubricant.getFluid(2000))
-                .outputs(ADJUSTABLE_TRANSFORMER[GTValues.ZPM].getStackForm())
-                .duration(200).EUt(131072).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[ZPM])
+                .input(ELECTRIC_PUMP_EV)
+                .input(wireGtQuadruple, YttriumBariumCuprate)
+                .input(wireGtOctal, VanadiumGallium)
+                .input(springSmall, VanadiumGallium)
+                .input(spring, YttriumBariumCuprate)
+                .fluidInputs(Lubricant.getFluid(2000))
+                .output(ADJUSTABLE_TRANSFORMER[ZPM])
+                .duration(200).EUt(VA[ZPM]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(TRANSFORMER[GTValues.UV].getStackForm())
-                .inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
-                .input(OrePrefix.wireGtQuadruple, Materials.Europium)
-                .input(OrePrefix.wireGtOctal, Materials.YttriumBariumCuprate)
-                .input(OrePrefix.springSmall, Materials.YttriumBariumCuprate)
-                .input(OrePrefix.spring, Materials.Europium)
-                .fluidInputs(Materials.Lubricant.getFluid(2000))
-                .outputs(ADJUSTABLE_TRANSFORMER[GTValues.UV].getStackForm())
-                .duration(200).EUt(524288).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[UV])
+                .input(ELECTRIC_PUMP_IV)
+                .input(wireGtQuadruple, Europium)
+                .input(wireGtOctal, YttriumBariumCuprate)
+                .input(springSmall, YttriumBariumCuprate)
+                .input(spring, Europium)
+                .fluidInputs(Lubricant.getFluid(2000))
+                .output(ADJUSTABLE_TRANSFORMER[UV])
+                .duration(200).EUt(VA[UV]).buildAndRegister();
 
-        // Adjustable Input Hatches
+        // 4A Energy Hatches
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.ULV].getStackForm())
-                .inputs(ENERGY_INPUT_HATCH[GTValues.ULV].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_ULV.getStackForm(2))
-                .input(OrePrefix.cableGtSingle, Materials.Lead, 2)
-                .input(OrePrefix.wireGtQuadruple, Materials.RedAlloy, 4)
-                .input(OrePrefix.plateDouble, Materials.WroughtIron)
-                .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.ULV].getStackForm())
-                .duration(100).EUt(7).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[IV])
+                .input(ENERGY_INPUT_HATCH[IV])
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT)
+                .input(VOLTAGE_COIL_IV)
+                .input(wireGtQuadruple, Tungsten, 2)
+                .output(ENERGY_INPUT_HATCH_4A[0])
+                .duration(100).EUt(VA[EV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.LV].getStackForm())
-                .inputs(ENERGY_INPUT_HATCH[GTValues.LV].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_LV.getStackForm(2))
-                .input(OrePrefix.cableGtSingle, Materials.Tin, 2)
-                .input(OrePrefix.wireGtQuadruple, Materials.Copper, 4)
-                .input(OrePrefix.plateDouble, Materials.Steel)
-                .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.LV].getStackForm())
-                .duration(100).EUt(30).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[LuV])
+                .input(ENERGY_INPUT_HATCH[LuV])
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT)
+                .input(VOLTAGE_COIL_LUV)
+                .input(wireGtQuadruple, NiobiumTitanium, 2)
+                .output(ENERGY_INPUT_HATCH_4A[1])
+                .duration(100).EUt(VA[IV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.MV].getStackForm())
-                .inputs(ENERGY_INPUT_HATCH[GTValues.MV].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_MV.getStackForm(2))
-                .inputs(MetaItems.SMALL_COIL.getStackForm(2))
-                .input(OrePrefix.wireGtQuadruple, Materials.Cupronickel, 4)
-                .input(OrePrefix.plateDouble, Materials.Aluminium)
-                .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.MV].getStackForm())
-                .duration(100).EUt(120).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[ZPM])
+                .input(ENERGY_INPUT_HATCH[ZPM])
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT)
+                .input(VOLTAGE_COIL_ZPM)
+                .input(wireGtQuadruple, VanadiumGallium, 2)
+                .output(ENERGY_INPUT_HATCH_4A[2])
+                .duration(100).EUt(VA[LuV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.HV].getStackForm())
-                .inputs(ENERGY_INPUT_HATCH[GTValues.HV].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_HV.getStackForm(2))
-                .inputs(MetaItems.ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                .input(OrePrefix.wireGtQuadruple, Materials.Kanthal, 4)
-                .input(OrePrefix.plateDouble, Materials.StainlessSteel)
-                .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.HV].getStackForm())
-                .duration(100).EUt(480).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[UV])
+                .input(ENERGY_INPUT_HATCH[UV])
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT)
+                .input(VOLTAGE_COIL_UV)
+                .input(wireGtQuadruple, YttriumBariumCuprate, 2)
+                .output(ENERGY_INPUT_HATCH_4A[3])
+                .duration(100).EUt(VA[ZPM]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.EV].getStackForm())
-                .inputs(ENERGY_INPUT_HATCH[GTValues.EV].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_EV.getStackForm(2))
-                .inputs(MetaItems.LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                .input(OrePrefix.wireGtQuadruple, Materials.Nichrome, 4)
-                .input(OrePrefix.plateDouble, Materials.Titanium)
-                .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.EV].getStackForm())
-                .duration(100).EUt(1920).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(ENERGY_INPUT_HATCH_4A[3], 2)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT)
+                .input(wireGtQuadruple, Europium, 2)
+                .input(plate, Neutronium, 2)
+                .output(ENERGY_INPUT_HATCH_4A[4])
+                .duration(100).EUt(VA[UV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.IV].getStackForm())
-                .inputs(ENERGY_INPUT_HATCH[GTValues.IV].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_IV.getStackForm(2))
-                .inputs(MetaItems.POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                .input(OrePrefix.wireGtQuadruple, Materials.TungstenSteel, 4)
-                .input(OrePrefix.plateDouble, Materials.TungstenSteel)
-                .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.IV].getStackForm())
-                .duration(100).EUt(7680).buildAndRegister();
+        // 16A Energy Hatches
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.LuV].getStackForm())
-                .inputs(ENERGY_INPUT_HATCH[GTValues.LuV].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_LUV.getStackForm(2))
-                .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                .input(OrePrefix.wireGtQuadruple, Materials.HSSG, 4)
-                .input(OrePrefix.plateDouble, Materials.Chrome)
-                .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.LuV].getStackForm())
-                .duration(100).EUt(32768).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(ADJUSTABLE_TRANSFORMER[IV])
+                .input(ENERGY_INPUT_HATCH_4A[0])
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_IV)
+                .input(wireGtOctal, Tungsten, 2)
+                .output(ENERGY_INPUT_HATCH_16A[0])
+                .duration(200).EUt(VA[EV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.ZPM].getStackForm())
-                .inputs(ENERGY_INPUT_HATCH[GTValues.ZPM].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_ZPM.getStackForm(2))
-                .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                .input(OrePrefix.wireGtQuadruple, Materials.Naquadah, 4)
-                .input(OrePrefix.plateDouble, Materials.Iridium)
-                .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.ZPM].getStackForm())
-                .duration(100).EUt(131072).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(ADJUSTABLE_TRANSFORMER[LuV])
+                .input(ENERGY_INPUT_HATCH_4A[1])
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_LUV)
+                .input(wireGtOctal, NiobiumTitanium, 2)
+                .output(ENERGY_INPUT_HATCH_16A[1])
+                .duration(200).EUt(VA[IV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.UV].getStackForm())
-                .inputs(ENERGY_INPUT_HATCH[GTValues.UV].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_UV.getStackForm(2))
-                .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                .input(OrePrefix.wireGtQuadruple, Materials.NaquadahAlloy, 4)
-                .input(OrePrefix.plateDouble, Materials.Osmium)
-                .outputs(ENERGY_INPUT_HATCH_ADJUSTABLE[GTValues.UV].getStackForm())
-                .duration(100).EUt(524288).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(ADJUSTABLE_TRANSFORMER[ZPM])
+                .input(ENERGY_INPUT_HATCH_4A[2])
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_ZPM)
+                .input(wireGtOctal, VanadiumGallium, 2)
+                .output(ENERGY_INPUT_HATCH_16A[2])
+                .duration(200).EUt(VA[LuV]).buildAndRegister();
 
-        // Adjustable Output Hatches
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(ADJUSTABLE_TRANSFORMER[UV])
+                .input(ENERGY_INPUT_HATCH_4A[3])
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_UV)
+                .input(wireGtOctal, YttriumBariumCuprate, 2)
+                .output(ENERGY_INPUT_HATCH_16A[3])
+                .duration(200).EUt(VA[ZPM]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.ULV].getStackForm())
-                .inputs(ENERGY_OUTPUT_HATCH[GTValues.ULV].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_ULV.getStackForm(2))
-                .input(OrePrefix.cableGtSingle, Materials.Lead, 2)
-                .input(OrePrefix.wireGtQuadruple, Materials.RedAlloy, 4)
-                .input(OrePrefix.plateDouble, Materials.WroughtIron)
-                .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.ULV].getStackForm())
-                .duration(100).EUt(7).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(ENERGY_INPUT_HATCH_16A[3], 2)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(wireGtOctal, Europium, 2)
+                .input(plate, Neutronium, 4)
+                .output(ENERGY_INPUT_HATCH_16A[4])
+                .duration(200).EUt(VA[UV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.LV].getStackForm())
-                .inputs(ENERGY_OUTPUT_HATCH[GTValues.LV].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_LV.getStackForm(2))
-                .input(OrePrefix.cableGtSingle, Materials.Tin, 2)
-                .input(OrePrefix.wireGtQuadruple, Materials.Copper, 4)
-                .input(OrePrefix.plateDouble, Materials.Steel)
-                .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.LV].getStackForm())
-                .duration(100).EUt(30).buildAndRegister();
+        // 4A Dynamo Hatches
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.MV].getStackForm())
-                .inputs(ENERGY_OUTPUT_HATCH[GTValues.MV].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_MV.getStackForm(2))
-                .inputs(MetaItems.SMALL_COIL.getStackForm(2))
-                .input(OrePrefix.wireGtQuadruple, Materials.Cupronickel, 4)
-                .input(OrePrefix.plateDouble, Materials.Aluminium)
-                .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.MV].getStackForm())
-                .duration(100).EUt(120).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[IV])
+                .input(ENERGY_OUTPUT_HATCH[IV])
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT)
+                .input(VOLTAGE_COIL_IV)
+                .input(wireGtQuadruple, Tungsten, 2)
+                .output(ENERGY_OUTPUT_HATCH_4A[0])
+                .duration(100).EUt(VA[EV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.HV].getStackForm())
-                .inputs(ENERGY_OUTPUT_HATCH[GTValues.HV].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_HV.getStackForm(2))
-                .inputs(MetaItems.ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                .input(OrePrefix.wireGtQuadruple, Materials.Kanthal, 4)
-                .input(OrePrefix.plateDouble, Materials.StainlessSteel)
-                .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.HV].getStackForm())
-                .duration(100).EUt(480).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[LuV])
+                .input(ENERGY_OUTPUT_HATCH[LuV])
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT)
+                .input(VOLTAGE_COIL_LUV)
+                .input(wireGtQuadruple, NiobiumTitanium, 2)
+                .output(ENERGY_OUTPUT_HATCH_4A[1])
+                .duration(100).EUt(VA[IV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.EV].getStackForm())
-                .inputs(ENERGY_OUTPUT_HATCH[GTValues.EV].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_EV.getStackForm(2))
-                .inputs(MetaItems.LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                .input(OrePrefix.wireGtQuadruple, Materials.Nichrome, 4)
-                .input(OrePrefix.plateDouble, Materials.Titanium)
-                .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.EV].getStackForm())
-                .duration(100).EUt(1920).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[ZPM])
+                .input(ENERGY_OUTPUT_HATCH[ZPM])
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT)
+                .input(VOLTAGE_COIL_ZPM)
+                .input(wireGtQuadruple, VanadiumGallium, 2)
+                .output(ENERGY_OUTPUT_HATCH_4A[2])
+                .duration(100).EUt(VA[LuV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.IV].getStackForm())
-                .inputs(ENERGY_OUTPUT_HATCH[GTValues.IV].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_IV.getStackForm(2))
-                .inputs(MetaItems.POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                .input(OrePrefix.wireGtQuadruple, Materials.TungstenSteel, 4)
-                .input(OrePrefix.plateDouble, Materials.TungstenSteel)
-                .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.IV].getStackForm())
-                .duration(100).EUt(7680).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[UV])
+                .input(ENERGY_OUTPUT_HATCH[UV])
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT)
+                .input(VOLTAGE_COIL_UV)
+                .input(wireGtQuadruple, YttriumBariumCuprate, 2)
+                .output(ENERGY_OUTPUT_HATCH_4A[3])
+                .duration(100).EUt(VA[ZPM]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.LuV].getStackForm())
-                .inputs(ENERGY_OUTPUT_HATCH[GTValues.LuV].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_LUV.getStackForm(2))
-                .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                .input(OrePrefix.wireGtQuadruple, Materials.HSSG, 4)
-                .input(OrePrefix.plateDouble, Materials.Chrome)
-                .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.LuV].getStackForm())
-                .duration(100).EUt(32768).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(ENERGY_OUTPUT_HATCH_4A[3], 2)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT)
+                .input(wireGtQuadruple, Europium, 2)
+                .input(plate, Neutronium, 2)
+                .output(ENERGY_OUTPUT_HATCH_4A[4])
+                .duration(100).EUt(VA[UV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.ZPM].getStackForm())
-                .inputs(ENERGY_OUTPUT_HATCH[GTValues.ZPM].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_ZPM.getStackForm(2))
-                .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                .input(OrePrefix.wireGtQuadruple, Materials.Naquadah, 4)
-                .input(OrePrefix.plateDouble, Materials.Iridium)
-                .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.ZPM].getStackForm())
-                .duration(100).EUt(131072).buildAndRegister();
+        // 16A Dynamo Hatches
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ADJUSTABLE_TRANSFORMER[GTValues.UV].getStackForm())
-                .inputs(ENERGY_OUTPUT_HATCH[GTValues.UV].getStackForm())
-                .inputs(MetaItems.VOLTAGE_COIL_UV.getStackForm(2))
-                .inputs(MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                .input(OrePrefix.wireGtQuadruple, Materials.NaquadahAlloy, 4)
-                .input(OrePrefix.plateDouble, Materials.Osmium)
-                .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.UV].getStackForm())
-                .duration(100).EUt(524288).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(ADJUSTABLE_TRANSFORMER[IV])
+                .input(ENERGY_OUTPUT_HATCH_4A[0])
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_IV)
+                .input(wireGtOctal, Tungsten, 2)
+                .output(ENERGY_OUTPUT_HATCH_16A[0])
+                .duration(200).EUt(VA[EV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(ADJUSTABLE_TRANSFORMER[LuV])
+                .input(ENERGY_OUTPUT_HATCH_4A[1])
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_LUV)
+                .input(wireGtOctal, NiobiumTitanium, 2)
+                .output(ENERGY_OUTPUT_HATCH_16A[1])
+                .duration(200).EUt(VA[IV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(ADJUSTABLE_TRANSFORMER[ZPM])
+                .input(ENERGY_OUTPUT_HATCH_4A[2])
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_ZPM)
+                .input(wireGtOctal, VanadiumGallium, 2)
+                .output(ENERGY_OUTPUT_HATCH_16A[2])
+                .duration(200).EUt(VA[LuV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(ADJUSTABLE_TRANSFORMER[UV])
+                .input(ENERGY_OUTPUT_HATCH_4A[3])
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_UV)
+                .input(wireGtOctal, YttriumBariumCuprate, 2)
+                .output(ENERGY_OUTPUT_HATCH_16A[3])
+                .duration(200).EUt(VA[ZPM]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(ENERGY_OUTPUT_HATCH_16A[3], 2)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(wireGtOctal, Europium, 2)
+                .input(plate, Neutronium, 4)
+                .output(ENERGY_OUTPUT_HATCH_16A[4])
+                .duration(200).EUt(VA[UV]).buildAndRegister();
 
         // Maintenance Hatch
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(HULL[GTValues.LV].getStackForm())
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[LV])
                 .circuitMeta(1)
-                .outputs(MAINTENANCE_HATCH.getStackForm())
-                .duration(100).EUt(30).buildAndRegister();
+                .output(MAINTENANCE_HATCH)
+                .duration(100).EUt(VA[LV]).buildAndRegister();
 
         // Multiblock Miners
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(HULL[GTValues.EV].getStackForm())
-                .input(OrePrefix.frameGt, Materials.Titanium, 4)
-                .input(OrePrefix.circuit, MarkerMaterials.Tier.Extreme, 4)
-                .inputs(MetaItems.ELECTRIC_MOTOR_EV.getStackForm(4))
-                .inputs(MetaItems.ELECTRIC_PUMP_EV.getStackForm(4))
-                .inputs(MetaItems.CONVEYOR_MODULE_EV.getStackForm(4))
-                .input(OrePrefix.gear, Materials.Tungsten, 2)
-                .outputs(MetaTileEntities.BASIC_LARGE_MINER.getStackForm())
-                .duration(400).EUt(1920).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[EV])
+                .input(frameGt, Titanium, 4)
+                .input(circuit, Tier.Extreme, 4)
+                .input(ELECTRIC_MOTOR_EV, 4)
+                .input(ELECTRIC_PUMP_EV, 4)
+                .input(CONVEYOR_MODULE_EV, 4)
+                .input(gear, Tungsten, 2)
+                .output(BASIC_LARGE_MINER)
+                .duration(400).EUt(VA[EV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(HULL[GTValues.IV].getStackForm())
-                .input(OrePrefix.frameGt, Materials.TungstenSteel, 4)
-                .input(OrePrefix.circuit, MarkerMaterials.Tier.Elite, 4)
-                .inputs(MetaItems.ELECTRIC_MOTOR_IV.getStackForm(4))
-                .inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm(4))
-                .inputs(MetaItems.CONVEYOR_MODULE_IV.getStackForm(4))
-                .input(OrePrefix.gear, Materials.Ultimet, 2)
-                .outputs(MetaTileEntities.LARGE_MINER.getStackForm())
-                .duration(400).EUt(7680).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[IV])
+                .input(frameGt, TungstenSteel, 4)
+                .input(circuit, Tier.Elite, 4)
+                .input(ELECTRIC_MOTOR_IV, 4)
+                .input(ELECTRIC_PUMP_IV, 4)
+                .input(CONVEYOR_MODULE_IV, 4)
+                .input(gear, Ultimet, 2)
+                .output(LARGE_MINER)
+                .duration(400).EUt(VA[IV]).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(HULL[GTValues.LuV].getStackForm())
-                .input(OrePrefix.frameGt, Materials.HSSS, 4)
-                .input(OrePrefix.circuit, MarkerMaterials.Tier.Master, 4)
-                .inputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm(4))
-                .inputs(MetaItems.ELECTRIC_PUMP_LUV.getStackForm(4))
-                .inputs(MetaItems.CONVEYOR_MODULE_LUV.getStackForm(4))
-                .input(OrePrefix.gear, Materials.Ruridit, 2)
-                .outputs(MetaTileEntities.ADVANCED_LARGE_MINER.getStackForm())
-                .duration(400).EUt(30720).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[LuV])
+                .input(frameGt, HSSS, 4)
+                .input(circuit, Tier.Master, 4)
+                .input(ELECTRIC_MOTOR_LUV, 4)
+                .input(ELECTRIC_PUMP_LUV, 4)
+                .input(CONVEYOR_MODULE_LUV, 4)
+                .input(gear, Ruridit, 2)
+                .output(ADVANCED_LARGE_MINER)
+                .duration(400).EUt(VA[LuV]).buildAndRegister();
     }
 }

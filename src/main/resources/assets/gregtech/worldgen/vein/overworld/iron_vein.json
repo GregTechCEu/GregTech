@@ -1,0 +1,34 @@
+{
+  "weight": 120,
+  "density": 0.2,
+  "max_height": 40,
+  "min_height": 10,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "banded_iron"
+  },
+  "generator": {
+    "type": "layered",
+    "radius": [
+      17,
+      24
+    ]
+  },
+  "filler": {
+    "type": "layered",
+    "values": [
+      {
+        "primary": "ore:brown_limonite"
+      },
+      {
+        "secondary": "ore:yellow_limonite"
+      },
+      {
+        "between": "ore:banded_iron"
+      },
+      {
+        "sporadic": "ore:malachite"
+      }
+    ]
+  }
+}

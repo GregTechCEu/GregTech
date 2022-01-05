@@ -1,7 +1,6 @@
 package gregtech.api.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -12,9 +11,6 @@ import net.minecraft.item.ItemStack;
  * Rendering is still handled by widget via helpers in {@link gregtech.api.gui.IRenderContext}
  */
 public interface INativeWidget {
-
-    ItemStack VANILLA_LOGIC = new ItemStack(Items.AIR);
-
     /**
      * You should return MC slot handle instance you created earlier
      *
@@ -43,7 +39,7 @@ public interface INativeWidget {
 
     /**
      * Called when slot is clicked in Container
-     * Return {@link INativeWidget#VANILLA_LOGIC} to fallback to vanilla logic
+     * Return null to fallback to vanilla logic
      */
     ItemStack slotClick(int dragType, ClickType clickTypeIn, EntityPlayer player);
 

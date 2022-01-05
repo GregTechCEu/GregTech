@@ -1,0 +1,14 @@
+{
+  "weight": 25,
+  "name": "Overworld Light Oil Deposit",
+  "rate": {
+    "min": 100,
+    "max": 625
+  },
+  "depletion": {
+    "amount": 1,
+    "chance": 5,
+    "depleted_production_rate": 50
+  },
+  "fluid": "oil_light"
+}

@@ -14,10 +14,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
 
@@ -29,24 +31,17 @@ import static gregtech.api.capability.GregtechDataCodes.*;
 
 public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> extends SyncedTileEntityBase implements IPipeTile<PipeType, NodeDataType> {
 
+    protected final PipeCoverableImplementation coverableImplementation = new PipeCoverableImplementation(this);
+    protected int paintingColor = -1;
     private TIntIntMap openConnectionsMap = new TIntIntHashMap();
     private int openConnections = 0;
-
-    protected int insulationColor = DEFAULT_COVER_COLOR;
-    protected final PipeCoverableImplementation coverableImplementation = new PipeCoverableImplementation(this);
     private NodeDataType cachedNodeData;
     private BlockPipe<PipeType, NodeDataType, ?> pipeBlock;
     private PipeType pipeType = getPipeTypeClass().getEnumConstants()[0];
-    private boolean detachedConversionMode = false;
-    private boolean wasInDetachedConversionMode = false;
 
     public TileEntityPipeBase() {
         openConnectionsMap.put(AttachmentType.PIPE.ordinal(), 0);
         recomputeBlockedConnections();
-    }
-
-    public boolean wasInDetachedConversionMode() {
-        return wasInDetachedConversionMode;
     }
 
     public void setPipeData(BlockPipe<PipeType, NodeDataType, ?> pipeBlock, PipeType pipeType) {
@@ -61,7 +56,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void transferDataFrom(IPipeTile<PipeType, NodeDataType> tileEntity) {
         this.pipeType = tileEntity.getPipeType();
         this.openConnectionsMap = tileEntity.getOpenConnectionsMap();
-        this.insulationColor = tileEntity.getInsulationColor();
+        this.paintingColor = tileEntity.getPaintingColor();
         if (tileEntity instanceof TileEntityPipeBase) {
             this.updateEntries.addAll(((TileEntityPipeBase<?, ?>) tileEntity).updateEntries);
         }
@@ -129,20 +124,28 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     @Override
-    public int getInsulationColor() {
-        return insulationColor;
+    public int getPaintingColor() {
+        return isPainted() ? paintingColor : getDefaultPaintingColor();
     }
 
     @Override
-    public void setInsulationColor(int insulationColor) {
-        this.insulationColor = insulationColor;
+    public void setPaintingColor(int paintingColor) {
+        this.paintingColor = paintingColor;
         if (!getWorld().isRemote) {
-            if (!detachedConversionMode) {
-                getPipeBlock().getWorldPipeNet(getWorld()).updateMark(getPos(), getCableMark());
-            }
-            writeCustomData(UPDATE_INSULATION_COLOR, buffer -> buffer.writeInt(insulationColor));
+            getPipeBlock().getWorldPipeNet(getWorld()).updateMark(getPos(), getCableMark());
+            writeCustomData(UPDATE_INSULATION_COLOR, buffer -> buffer.writeInt(paintingColor));
             markDirty();
         }
+    }
+
+    @Override
+    public boolean isPainted() {
+        return this.paintingColor != -1;
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0xFFFFFF;
     }
 
     @Override
@@ -154,57 +157,37 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public void setConnectionBlocked(AttachmentType attachmentType, EnumFacing side, boolean blocked, boolean fromNeighbor) {
         // fix desync between two connections. Can happen if a pipe side is blocked, and a new pipe is placed next to it.
-        TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
-        IPipeTile<?, ?> neighbourPipe = null;
-        if (tile instanceof IPipeTile)
-            neighbourPipe = (IPipeTile<?, ?>) tile;
-        if (neighbourPipe != null && !fromNeighbor && attachmentType == AttachmentType.PIPE && isConnectionOpenAny(side) != neighbourPipe.isConnectionOpenAny(side.getOpposite())) {
-            syncPipeConnections(attachmentType, side);
-            return;
-        }
-        int at = attachmentType.ordinal();
-        int openConnections = withSideConnectionBlocked(openConnectionsMap.get(at), side, blocked);
-        this.openConnectionsMap.put(at, openConnections);
-        recomputeBlockedConnections();
         if (!getWorld().isRemote) {
-            if (!detachedConversionMode) {
-                updateSideBlockedConnection(side);
+            TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
+            // block connections if Pipe Types do not match
+            if (!blocked && tile instanceof IPipeTile && ((IPipeTile<?, ?>) tile).getPipeType().getClass() != this.getPipeType().getClass()) {
+                return;
             }
+            int at = attachmentType.ordinal();
+            int openConnections = withSideConnectionBlocked(openConnectionsMap.get(at), side, blocked);
+            this.openConnectionsMap.put(at, openConnections);
+            recomputeBlockedConnections();
+
+            updateSideBlockedConnection(side);
             writeCustomData(UPDATE_CONNECTIONS, buffer -> {
                 buffer.writeVarInt(at);
                 buffer.writeVarInt(openConnections);
             });
             markDirty();
-            if (neighbourPipe != null && attachmentType == AttachmentType.PIPE && !fromNeighbor) {
-                setNeighborPipeBlocked(attachmentType, side, blocked);
+
+            if (!fromNeighbor && attachmentType == AttachmentType.PIPE && tile instanceof IPipeTile) {
+                syncPipeConnections(attachmentType, side, (IPipeTile<?, ?>) tile);
             }
         }
     }
 
-    private void setNeighborPipeBlocked(AttachmentType type, EnumFacing side, boolean blocked) {
-        // Block/Unblock neighbor pipe if it exists
-        TileEntity te = this.getWorld().getTileEntity(this.getPipePos().offset(side));
-        if (te instanceof TileEntityPipeBase) {
-            TileEntityPipeBase<?, ?> pipeTe = (TileEntityPipeBase<?, ?>) te;
-            pipeTe.setConnectionBlocked(type, side.getOpposite(), blocked, true);
+    private void syncPipeConnections(AttachmentType type, EnumFacing side, IPipeTile<?, ?> pipe) {
+        boolean thisOpen = isConnectionOpen(type, side);
+        boolean neighbourOpen = pipe.isConnectionOpen(type, side.getOpposite());
+        if (thisOpen == neighbourOpen) {
+            return;
         }
-    }
-
-    private boolean isNeighborPipeOpen(AttachmentType type, EnumFacing side) {
-        TileEntity te = this.getWorld().getTileEntity(this.getPipePos().offset(side));
-        if (te instanceof IPipeTile) {
-            IPipeTile<?, ?> pipeTe = (IPipeTile<?, ?>) te;
-            return pipeTe.isConnectionOpen(type, side.getOpposite());
-        }
-        return false;
-    }
-
-    private void syncPipeConnections(AttachmentType type, EnumFacing side) {
-        if (!isNeighborPipeOpen(type, side) && isConnectionOpen(type, side)) {
-            setNeighborPipeBlocked(type, side, false);
-        } else {
-            setConnectionBlocked(type, side, false, true);
-        }
+        pipe.setConnectionBlocked(type, side.getOpposite(), neighbourOpen, true);
     }
 
     private void recomputeBlockedConnections() {
@@ -216,15 +199,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     private void updateSideBlockedConnection(EnumFacing side) {
-        if (!detachedConversionMode) {
-            WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
-            boolean isSideOpen = false;
-            int sideIndex = 1 << side.getIndex();
-            for (int blockedConnections : openConnectionsMap.values()) {
-                isSideOpen |= (blockedConnections & sideIndex) > 0;
-            }
-            worldPipeNet.updateBlockedConnections(getPos(), side, !isSideOpen);
-        }
+        WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
+        worldPipeNet.updateBlockedConnections(getPos(), side, !isConnectionOpen(AttachmentType.PIPE, side));
     }
 
     private int withSideConnectionBlocked(int blockedConnections, EnumFacing side, boolean blocked) {
@@ -250,7 +226,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     private int getCableMark() {
-        return insulationColor == DEFAULT_INSULATION_COLOR ? 0 : insulationColor;
+        return paintingColor == -1 ? 0 : paintingColor;
     }
 
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
@@ -265,7 +241,12 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public final <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         boolean isCoverable = capability == GregtechTileCapabilities.CAPABILITY_COVERABLE;
         CoverBehavior coverBehavior = facing == null ? null : coverableImplementation.getCoverAtSide(facing);
-        T defaultValue = getCapabilityInternal(capability, facing);
+        T defaultValue;
+        if (getPipeBlock() == null)
+            defaultValue = null;
+        else
+            defaultValue = getCapabilityInternal(capability, facing);
+
         if (isCoverable) {
             return defaultValue;
         }
@@ -299,7 +280,9 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             blockedConnectionsTag.setInteger(Integer.toString(attachmentType), blockedConnections);
         }
         compound.setTag("BlockedConnectionsMap", blockedConnectionsTag);
-        compound.setInteger("InsulationColor", insulationColor);
+        if (isPainted()) {
+            compound.setInteger("InsulationColor", paintingColor);
+        }
         this.coverableImplementation.writeToNBT(compound);
         return compound;
     }
@@ -321,7 +304,9 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             this.openConnectionsMap.put(attachmentType, blockedConnections);
         }
         recomputeBlockedConnections();
-        this.insulationColor = compound.getInteger("InsulationColor");
+        if (compound.hasKey("InsulationColor")) {
+            this.paintingColor = compound.getInteger("InsulationColor");
+        }
         this.coverableImplementation.readFromNBT(compound);
     }
 
@@ -342,23 +327,32 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         writePipeProperties(buf);
-        buf.writeVarInt(openConnections);
-        buf.writeInt(insulationColor);
+        buf.writeVarInt(openConnectionsMap.size());
+        openConnectionsMap.forEachEntry((key, value) -> {
+            buf.writeVarInt(key);
+            buf.writeVarInt(value);
+            return true;
+        });
+        buf.writeInt(paintingColor);
         this.coverableImplementation.writeInitialSyncData(buf);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         readPipeProperties(buf);
-        this.openConnections = buf.readVarInt();
-        this.insulationColor = buf.readInt();
+        int size = buf.readVarInt();
+        for (int i = 0; i < size; i++) {
+            openConnectionsMap.put(buf.readVarInt(), buf.readVarInt());
+        }
+        recomputeBlockedConnections();
+        this.paintingColor = buf.readInt();
         this.coverableImplementation.readInitialSyncData(buf);
     }
 
     @Override
     public void receiveCustomData(int discriminator, PacketBuffer buf) {
         if (discriminator == UPDATE_INSULATION_COLOR) {
-            this.insulationColor = buf.readInt();
+            this.paintingColor = buf.readInt();
             scheduleChunkForRenderUpdate();
         } else if (discriminator == UPDATE_CONNECTIONS) {
             this.openConnectionsMap.put(buf.readVarInt(), buf.readVarInt());
@@ -407,5 +401,15 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public boolean shouldRefresh(@Nonnull World world, @Nonnull BlockPos pos, IBlockState oldState, IBlockState newSate) {
         return oldState.getBlock() != newSate.getBlock();
+    }
+
+    public void doExplosion(float explosionPower) {
+        getWorld().setBlockToAir(getPos());
+        if (!getWorld().isRemote) {
+            ((WorldServer) getWorld()).spawnParticle(EnumParticleTypes.SMOKE_LARGE, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
+                    10, 0.2, 0.2, 0.2, 0.0);
+        }
+        getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
+                explosionPower, false);
     }
 }

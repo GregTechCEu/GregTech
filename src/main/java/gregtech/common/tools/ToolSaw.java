@@ -67,7 +67,7 @@ public class ToolSaw extends ToolBase {
         if (result) {
             ToolMetaItem<?> toolMetaItem = (ToolMetaItem<?>) stack.getItem();
             int damagePerBlockBreak = getToolDamagePerBlockBreak(stack);
-            toolMetaItem.damageItem(stack, damagePerBlockBreak, false);
+            toolMetaItem.damageItem(stack, player, damagePerBlockBreak, false);
         }
         return result;
     }

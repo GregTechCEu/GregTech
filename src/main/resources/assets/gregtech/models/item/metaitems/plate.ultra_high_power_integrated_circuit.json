@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "gregtech:items/metaitems/plate.ultra_high_power_integrated_circuit"
+  }
+}

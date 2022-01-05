@@ -1,0 +1,183 @@
+{
+  "metatileentity": "central_monitor",
+  "section": "Electric",
+  "title": "Central Monitor",
+  "stream": [
+    {
+      "type": "slots",
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1029,
+          "count": 1
+        },
+        {
+          "id": "gregtech:machine",
+          "damage": 1667,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§lContents:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "introduction",
+      "content": [
+        "1. §9Introduction"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "fluid",
+      "content": [
+        "2. §9How to build it"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "item",
+      "content": [
+        "3. §r§9How to use it"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "energy",
+      "content": [
+        "4. §9Plugins"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://user-images.githubusercontent.com/18493855/107856228-c1f6eb80-6e61-11eb-8098-454ea7133ca1.png",
+      "width": 190,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "ref": "introduction",
+      "content": [
+        "§lIntroduction"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "§c§lCentral Monitor§r is a multi machine for monitor (visualization and interaction).\n\nIt can monitor the storage and status of machines, including all §9Digital Interface Cover§r§9\u0027s §rfeatures, and extends the capabilities of machines to the screen.\n\nIn addition, there are many plugins that support more advanced features."
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "fluid",
+      "content": [
+        "§lHow to build it?"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "In order to build it, you need a §c§lCentral Monitor§r, several §c§lMonitor Screen§r, several §c§lSteel Metal Casing§r, and at least one §c§lEnergy Input Hatch§r.\n\nYou can build the screen from 3×2 to 14×9  (width × height). The default build height is 3, and you can adjust the screen height in the GUI before the structure formed.\n\n§lEnergy Cost:§r 50 EU/s for each screen."
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "item",
+      "content": [
+        "§lHow to use it?"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "1. The back of §c§lCentral Monitor §rcan be connected to cables or wires, which can be connected to the energy net to monitor all the machines being proxied (A §9Digital Interface Cover§r set with proxy mode is placed at the connecting side between the machine and the wire. ). Besides, a §9Wireless Cover §rthat is boung to the central monitor can also be used, avoiding using cables.\n\n2. Right click the §c§lCentral Monitor §ror screwdriver right click the §c§lMonitor§r to open the GUI for settings."
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "energy",
+      "content": [
+        "§lPlugins"
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "Put the plugin into the plugin slot for use. For specific features, please refer to their guide pages. The following are the supported plugins.\n\n§4§lNote§r§4: §rsome plugins need to work with the proxy mode in the §c§lCentral Monitor§r, and the proxy mode is only used for plugins."
+      ]
+    },
+    {
+      "type": "card",
+      "fill": -3745585,
+      "width": 170,
+      "height": 60,
+      "isShadow": true
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "\n\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d"
+      ]
+    }
+  ],
+  "fixed": [
+    {
+      "type": "slots",
+      "x": 48,
+      "y": 930,
+      "width": 100,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 780,
+          "count": 1
+        },
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 781,
+          "count": 1
+        },
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 782,
+          "count": 1
+        },
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 783,
+          "count": 1
+        }
+      ]
+    }
+  ]
+}

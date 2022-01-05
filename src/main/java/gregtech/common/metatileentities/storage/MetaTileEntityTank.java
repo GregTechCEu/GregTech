@@ -16,8 +16,8 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.render.TankRenderer;
-import gregtech.api.render.Textures;
+import gregtech.client.renderer.texture.custom.TankRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.ByteBufUtils;
 import gregtech.api.util.FluidTooltipUtil;
@@ -162,8 +162,8 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
     }
 
     @Override
-    public void onAttached() {
-        super.onAttached();
+    public void onAttached(Object... data) {
+        super.onAttached(data);
         recomputeTankSizeNow(true);
     }
 
@@ -482,7 +482,7 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
     @Override
     public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
         super.getSubItems(creativeTab, subItems);
-        if (creativeTab == CreativeTabs.SEARCH && !ConfigHolder.hideFilledTanksInJEI) {
+        if (creativeTab == CreativeTabs.SEARCH && !ConfigHolder.compat.hideFilledTanksInJEI) {
             DefaultSubItemHandler.addFluidContainerVariants(getStackForm(), subItems);
         }
     }
@@ -670,6 +670,11 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
             return null;
         }
         return getActualTankFluid();
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return 0xFFFFFF;
     }
 
     @Override

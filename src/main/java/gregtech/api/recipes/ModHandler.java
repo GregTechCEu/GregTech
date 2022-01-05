@@ -5,9 +5,11 @@ import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.recipes.DummyRecipe;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.DummyContainer;
@@ -24,11 +26,14 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
@@ -36,9 +41,11 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -46,11 +53,42 @@ import java.util.stream.Collectors;
 public class ModHandler {
 
     /**
-     * Returns if that Liquid is Water or Distilled Water
+     * Returns if that Liquid is Water or Distilled Water, or a valid Boiler Fluid.
      */
-    public static boolean isWater(FluidStack fluid) {
-        return new FluidStack(FluidRegistry.WATER, 1).isFluidEqual(fluid)
-                || Materials.DistilledWater.getFluid(1).isFluidEqual(fluid);
+    public static boolean isWater(@Nullable FluidStack fluid) {
+        if (fluid == null) return false;
+        if (fluid.isFluidEqual(new FluidStack(FluidRegistry.WATER, 1))) return true;
+        if (fluid.isFluidEqual(Materials.DistilledWater.getFluid(1))) return true;
+
+        for (String fluidName : ConfigHolder.machines.boilerFluids) {
+            Fluid f = FluidRegistry.getFluid(fluidName);
+            if (f != null && fluid.isFluidEqual(new FluidStack(f, 1))) return true;
+        }
+        return false;
+    }
+
+    public static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, boolean doDrain) {
+        return getBoilerFluidFromContainer(fluidHandler, 1, doDrain);
+    }
+
+    public static FluidStack getBoilerFluidFromContainer(@Nonnull IFluidHandler fluidHandler, int amount, boolean doDrain) {
+        if (amount == 0) return null;
+        FluidStack drainedWater = fluidHandler.drain(Materials.Water.getFluid(amount), doDrain);
+        if (drainedWater == null || drainedWater.amount == 0) {
+            drainedWater = fluidHandler.drain(Materials.DistilledWater.getFluid(amount), doDrain);
+        }
+        if (drainedWater == null || drainedWater.amount == 0) {
+            for (String fluidName : ConfigHolder.machines.boilerFluids) {
+                Fluid f = FluidRegistry.getFluid(fluidName);
+                if (f != null) {
+                    drainedWater = fluidHandler.drain(new FluidStack(f, amount), doDrain);
+                    if (drainedWater != null && drainedWater.amount > 0) {
+                        break;
+                    }
+                }
+            }
+        }
+        return drainedWater;
     }
 
     /**
@@ -82,10 +120,14 @@ public class ModHandler {
     }
 
     public static boolean isMaterialWood(Material material) {
-        return material == Materials.Wood;
+        return material == Materials.Wood || material == Materials.TreatedWood;
     }
 
-    public static ItemStack getBurningFuelRemainder(Random random, ItemStack fuelStack) {
+    public static int getFuelValue(ItemStack stack) {
+        return TileEntityFurnace.getItemBurnTime(stack);
+    }
+
+    public static ItemStack getBurningFuelRemainder(ItemStack fuelStack) {
         float remainderChance;
         ItemStack remainder;
         if (OreDictUnifier.getOreDictionaryNames(fuelStack).contains("fuelCoke")) {
@@ -106,7 +148,7 @@ public class ModHandler {
                 remainderChance = 0.5f;
             } else return ItemStack.EMPTY;
         }
-        return random.nextFloat() <= remainderChance ? remainder : ItemStack.EMPTY;
+        return GTValues.RNG.nextFloat() <= remainderChance ? remainder : ItemStack.EMPTY;
     }
 
     ///////////////////////////////////////////////////
@@ -176,7 +218,12 @@ public class ModHandler {
      * <li>'x' -  ToolDictNames.craftingToolWireCutter</li>
      * </ul>
      */
+
     public static void addMirroredShapedRecipe(String regName, ItemStack result, Object... recipe) {
+        addMirroredShapedRecipe(false, regName, result, recipe);
+    }
+
+    public static void addMirroredShapedRecipe(boolean withUnificationData, String regName, ItemStack result, Object... recipe) {
         result = OreDictUnifier.getUnificated(result);
         boolean skip = false;
         if (result.isEmpty()) {
@@ -194,6 +241,9 @@ public class ModHandler {
                 .setMirrored(true)
                 .setRegistryName(regName);
         ForgeRegistries.RECIPES.register(shapedOreRecipe);
+
+        if (withUnificationData) OreDictUnifier.registerOre(result, getRecyclingIngredients(result.getCount(), recipe));
+
     }
 
     /**
@@ -225,6 +275,10 @@ public class ModHandler {
      * </ul>
      */
     public static void addShapedRecipe(String regName, ItemStack result, Object... recipe) {
+        addShapedRecipe(false, regName, result, recipe);
+    }
+
+    public static void addShapedRecipe(boolean withUnificationData, String regName, ItemStack result, Object... recipe) {
         boolean skip = false;
         if (result.isEmpty()) {
             GTLog.logger.error("Result cannot be an empty ItemStack. Recipe: {}", regName);
@@ -241,13 +295,11 @@ public class ModHandler {
                 .setMirrored(false) //make all recipes not mirrored by default
                 .setRegistryName(regName);
         ForgeRegistries.RECIPES.register(shapedOreRecipe);
+
+        if (withUnificationData) OreDictUnifier.registerOre(result, getRecyclingIngredients(result.getCount(), recipe));
     }
 
-    public static void addShapedEnergyTransferRecipe(String regName, ItemStack result, Predicate<ItemStack> chargePredicate, boolean transferMaxCharge, Object... recipe) {
-        addShapedEnergyTransferRecipeWithOverride(regName, result, chargePredicate, true, transferMaxCharge, recipe);
-    }
-
-    public static void addShapedEnergyTransferRecipeWithOverride(String regName, ItemStack result, Predicate<ItemStack> chargePredicate, boolean overrideCharge, boolean transferMaxCharge, Object... recipe) {
+    public static void addShapedEnergyTransferRecipe(String regName, ItemStack result, Predicate<ItemStack> chargePredicate, boolean overrideCharge, boolean transferMaxCharge, Object... recipe) {
         boolean skip = false;
         if (result.isEmpty()) {
             GTLog.logger.error("Result cannot be an empty ItemStack. Recipe: {}", regName);
@@ -328,6 +380,10 @@ public class ModHandler {
         } else if (ingredient instanceof OrePrefix) {
             ingredient = ((OrePrefix) ingredient).name();
         } else if (ingredient instanceof UnificationEntry) {
+            UnificationEntry entry = (UnificationEntry) ingredient;
+            if(ConfigHolder.misc.debug && entry.material != null && !entry.orePrefix.isIgnored(entry.material) && !entry.orePrefix.doGenerateItem(entry.material)) {
+                GTLog.logger.error("Attempted to create recipe for invalid/missing Unification Entry {}", ingredient.toString(), new IllegalArgumentException());
+            }
             ingredient = ingredient.toString();
         } else if (!(ingredient instanceof ItemStack
                 || ingredient instanceof Item
@@ -339,6 +395,85 @@ public class ModHandler {
             throw new IllegalArgumentException(ingredient.getClass().getSimpleName() + " type is not suitable for crafting input.");
         }
         return ingredient;
+    }
+
+    public static ItemMaterialInfo getRecyclingIngredients(int outputCount, Object... recipe) {
+        Map<Character, Integer> inputCountMap = new HashMap<>();
+        Map<Material, Long> materialStacksExploded = new HashMap<>();
+
+        int itr = 0;
+        while (recipe[itr] instanceof String) {
+            String s = (String) recipe[itr];
+            for (char c : s.toCharArray()) {
+                if (getToolNameByCharacter(c) != null) continue; // skip tools
+                int count = inputCountMap.getOrDefault(c, 0);
+                inputCountMap.put(c, count + 1);
+            }
+            itr++;
+        }
+
+        char lastChar = ' ';
+        for (int i = itr; i < recipe.length; i++) {
+            Object ingredient = recipe[i];
+
+            // Track the current working ingredient symbol
+            if (ingredient instanceof Character) {
+                lastChar = (char) ingredient;
+                continue;
+            }
+
+            // Should never happen if recipe is formatted correctly
+            // In the case that it isn't, this error should be handled
+            // by an earlier method call parsing the recipe.
+            if (lastChar == ' ') return null;
+
+            ItemStack stack;
+            if (ingredient instanceof MetaItem.MetaValueItem) {
+                stack = ((MetaItem<?>.MetaValueItem) ingredient).getStackForm();
+            } else if (ingredient instanceof UnificationEntry) {
+                stack = OreDictUnifier.get((UnificationEntry) ingredient);
+            } else if (ingredient instanceof ItemStack) {
+                stack = (ItemStack) ingredient;
+            } else if (ingredient instanceof Item) {
+                stack = new ItemStack((Item) ingredient, 1);
+            } else if (ingredient instanceof Block) {
+                stack = new ItemStack((Block) ingredient, 1);
+            } else if (ingredient instanceof String) {
+                stack = OreDictUnifier.get((String) ingredient);
+            } else continue; // throw out bad entries
+
+            BiConsumer<MaterialStack, Character> func = (ms, c) -> {
+                long amount = materialStacksExploded.getOrDefault(ms.material, 0L);
+                materialStacksExploded.put(ms.material, (ms.amount * inputCountMap.get(c)) + amount);
+            };
+
+            // First try to get ItemMaterialInfo
+            ItemMaterialInfo info = OreDictUnifier.getMaterialInfo(stack);
+            if (info != null) {
+                for (MaterialStack ms : info.getMaterials()) {
+                    if (!(ms.material instanceof MarkerMaterial)) func.accept(ms, lastChar);
+                }
+                continue;
+            }
+
+            // Then try to get a single Material (UnificationEntry needs this, for example)
+            MaterialStack materialStack = OreDictUnifier.getMaterial(stack);
+            if (materialStack != null && !(materialStack.material instanceof MarkerMaterial)) func.accept(materialStack, lastChar);
+
+            // Gather any secondary materials if this item has an OrePrefix
+            OrePrefix prefix = OreDictUnifier.getPrefix(stack);
+            if (prefix != null && !prefix.secondaryMaterials.isEmpty()) {
+                for (MaterialStack ms : prefix.secondaryMaterials) {
+                    func.accept(ms, lastChar);
+                }
+            }
+        }
+
+        return new ItemMaterialInfo(materialStacksExploded.entrySet().stream()
+                .map(e -> new MaterialStack(e.getKey(), e.getValue() / outputCount))
+                .sorted(Comparator.comparingLong(m -> -m.amount))
+                .collect(Collectors.toList())
+        );
     }
 
     /**
@@ -396,8 +531,8 @@ public class ModHandler {
         ForgeRegistries.RECIPES.register(shapelessRecipe);
     }
 
-    private @Nullable
-    static String getToolNameByCharacter(char character) {
+    @Nullable
+    private static String getToolNameByCharacter(char character) {
         switch (character) {
             case 'b':
                 return ToolDictNames.craftingToolBlade.name();
@@ -485,7 +620,7 @@ public class ModHandler {
                 break;
             }
         }
-        if (ConfigHolder.debug) {
+        if (ConfigHolder.misc.debug) {
             if (wasRemoved)
                 GTLog.logger.info("Removed Smelting Recipe for Input: {}", input.getDisplayName());
             else GTLog.logger.error("Failed to Remove Smelting Recipe for Input: {}", input.getDisplayName());
@@ -497,7 +632,7 @@ public class ModHandler {
     public static int removeRecipes(ItemStack output) {
         int recipesRemoved = removeRecipes(recipe -> ItemStack.areItemStacksEqual(recipe.getRecipeOutput(), output));
 
-        if (ConfigHolder.debug) {
+        if (ConfigHolder.misc.debug) {
             if (recipesRemoved != 0)
                 GTLog.logger.info("Removed {} Recipe(s) with Output: {}", recipesRemoved, output.getDisplayName());
             else GTLog.logger.error("Failed to Remove Recipe with Output: {}", output.getDisplayName());
@@ -530,7 +665,7 @@ public class ModHandler {
      *                 Can also accept a String.
      */
     public static void removeRecipeByName(ResourceLocation location) {
-        if (ConfigHolder.debug) {
+        if (ConfigHolder.misc.debug) {
             String recipeName = location.toString();
             if (ForgeRegistries.RECIPES.containsKey(location))
                 GTLog.logger.info("Removed Recipe with Name: {}", recipeName);

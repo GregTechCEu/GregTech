@@ -9,10 +9,14 @@ public enum EnumKey {
     MENU("ALT Menu", Keyboard.KEY_LMENU, Key.KEYS_CATEGORY),
     MODE_SWITCH("Mode Switch", Keyboard.KEY_M, Key.KEYS_CATEGORY),
     FORWARD(null, 0, null),
+    BACKWARD(null, 0, null),
+    LEFT(null, 0, null),
+    RIGHT(null, 0, null),
     JUMP(null, 0, null),
-    SHIFT(null, 0, null),
+    CROUCH(null, 0, null),
     BOOST(null, 0, null),
-    FLY_KEY("Fly key", Keyboard.KEY_F, Key.KEYS_CATEGORY);
+    HOVER_KEY("Jetpack Hover", Keyboard.KEY_H, Key.KEYS_CATEGORY),
+    SHARE_KEY("Armor Charging", Keyboard.KEY_N, Key.KEYS_CATEGORY);
 
     public final String NAME;
     public final String CATEGORY;

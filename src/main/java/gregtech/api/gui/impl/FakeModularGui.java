@@ -1,5 +1,6 @@
 package gregtech.api.gui.impl;
 
+import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
@@ -178,7 +179,7 @@ public class FakeModularGui implements IRenderContext {
             GlStateManager.pushMatrix();
             GlStateManager.color(1.0f, 1.0f, 1.0f);
             GlStateManager.enableBlend();
-            widget.drawInBackground(mouseX, mouseY, this);
+            widget.drawInBackground(mouseX, mouseY, partialTicks, this);
             GlStateManager.popMatrix();
         }
     }
@@ -192,7 +193,12 @@ public class FakeModularGui implements IRenderContext {
         }
     }
 
-    public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        return modularUI.guiWidgets.values().stream().anyMatch(widget -> widget.mouseClicked(mouseX, mouseY, mouseButton));
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
+            Widget widget = modularUI.guiWidgets.get(i);
+            if(widget.isVisible() && widget.isActive() && !(widget instanceof INativeWidget) && widget.mouseClicked(mouseX, mouseY, mouseButton)) {
+                return;
+            }
+        }
     }
 }

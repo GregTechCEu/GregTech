@@ -1,0 +1,223 @@
+{
+  "section": "Terminal",
+  "title": "Hardware",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "Current supported §4§lhardware§r:"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "battery",
+      "content": [
+        "    1.§nBattery"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "device",
+      "content": [
+        "    2.§nDevice"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "isShadow": false,
+      "content": [
+        "§lBattery"
+      ],
+      "ref": "battery"
+    },
+    {
+      "type": "card",
+      "fill": -2172721,
+      "width": 170,
+      "height": 90,
+      "isShadow": true
+    },
+    {
+      "type": "textbox",
+      "ref": "device",
+      "isCenter": true,
+      "content": [
+        "\n\n§lDevice"
+      ]
+    },
+    {
+      "type": "card",
+      "fill": -2172721,
+      "width": 170,
+      "height": 133,
+      "isShadow": true
+    }
+  ],
+  "fixed": [
+    {
+      "type": "textbox",
+      "x": 18,
+      "y": 92,
+      "width": 160,
+      "height": 30,
+      "content": [
+        "All §4§lresuable§r batteries can be used as the §lBattery Hardware"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 53,
+      "y": 229,
+      "width": 102,
+      "height": 10,
+      "content": [
+        "Wireless transmitter"
+      ]
+    },
+    {
+      "type": "slots",
+      "x": 47,
+      "y": 136,
+      "width": 100,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 732,
+          "count": 1
+        },
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 733,
+          "count": 1
+        },
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 742,
+          "count": 1
+        },
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 748,
+          "count": 1
+        },
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 753,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": -16,
+      "y": 224,
+      "width": 100,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 503,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": -16,
+      "y": 250,
+      "width": 100,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 466,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 52,
+      "y": 253,
+      "width": 100,
+      "height": 10,
+      "content": [
+        "Prospector"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 52,
+      "y": 279,
+      "width": 100,
+      "height": 10,
+      "content": [
+        "Solar"
+      ]
+    },
+    {
+      "type": "slots",
+      "x": 10,
+      "y": 325,
+      "width": 48,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 467,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": 12,
+      "y": 275,
+      "width": 45,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 333,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "slots",
+      "x": 22,
+      "y": 302,
+      "width": 25,
+      "height": 18,
+      "item_list": [
+        {
+          "id": "gregtech:meta_item_1",
+          "damage": 504,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 52,
+      "y": 306,
+      "width": 100,
+      "height": 10,
+      "content": [
+        "Camera"
+      ]
+    },
+    {
+      "type": "textbox",
+      "x": 51,
+      "y": 325,
+      "width": 100,
+      "height": 20,
+      "content": [
+        "Advanced Prospector"
+      ]
+    }
+  ]
+}

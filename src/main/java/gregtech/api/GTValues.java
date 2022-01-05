@@ -1,13 +1,18 @@
 package gregtech.api;
 
+import gregtech.GregTechVersion;
 import gregtech.api.util.XSTR;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.time.LocalDate;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
+
+import static net.minecraft.util.text.TextFormatting.*;
 
 /**
  * Made for static imports, this Class is just a Helper.
@@ -17,7 +22,7 @@ public class GTValues {
     /**
      * Version String for use in addon mods' @Mod(dependencies = "...") block.
      */
-    public static final String MOD_VERSION_DEP = "required-after:gregtech@[2.0,);";
+    public static final String MOD_VERSION_DEP = "required-after:gregtech@[" + GregTechVersion.VERSION + ",);";
 
     /**
      * <p/>
@@ -44,7 +49,7 @@ public class GTValues {
      */
     public static final short W = OreDictionary.WILDCARD_VALUE;
 
-    public static final XSTR RNG = new XSTR();
+    public static final Random RNG = new XSTR();
 
     /**
      * The Voltage Tiers. Use this Array instead of the old named Voltage Variables
@@ -53,9 +58,9 @@ public class GTValues {
 
 
     /**
-     * The Voltage Tiers adjusted for cable loss.
+     * The Voltage Tiers adjusted for cable loss. Use this for recipe EU/t to avoid full-amp recipes
      */
-    public static final long[] VA = new long[]{7, 30, 120, 480, 1920, 7680, 30720, 122880, 491520, 1966080, 7864320, 31457280, 125829120, 503316480, 2013265920};
+    public static final int[] VA = new int[]{7, 30, 120, 480, 1920, 7680, 30720, 122880, 491520, 1966080, 7864320, 31457280, 125829120, 503316480, 2013265920};
 
     public static final int ULV = 0;
     public static final int LV = 1;
@@ -75,9 +80,19 @@ public class GTValues {
     public static final int MAX = 14;
 
     /**
-     * The short names for the voltages
+     * The short names for the voltages, used for registration primarily
      */
     public static final String[] VN = new String[]{"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV", "UEV", "UIV", "UMV", "UXV", "MAX"};
+
+    /**
+     * The short names for the voltages, formatted for text
+     */
+    public static final String[] VNF = new String[]{
+            DARK_GRAY + "ULV", GRAY + "LV", AQUA + "MV",
+            GOLD + "HV", DARK_PURPLE + "EV", DARK_BLUE + "IV",
+            LIGHT_PURPLE + "LuV", WHITE + "ZPM", DARK_AQUA + "UV",
+            DARK_RED + "UHV", GREEN + "UEV", DARK_GREEN + "UIV",
+            YELLOW + "UMV", BLUE + "UXV", RED + "MAX"};
 
     /**
      * Color values for the voltages
@@ -106,6 +121,13 @@ public class GTValues {
             MODID_APPENG = "appliedenergistics2",
             MODID_JEI = "jei";
 
+    private static Boolean isClient;
+
+    public static boolean isClientSide() {
+        if (isClient == null) isClient = FMLCommonHandler.instance().getSide().isClient();
+        return isClient;
+    }
+
     //because forge is too fucking retarded to cache results or at least do not create fucking
     //immutable collections every time you retrieve indexed mod list
     private static final ConcurrentMap<String, Boolean> isModLoadedCache = new ConcurrentHashMap<>();
@@ -120,7 +142,7 @@ public class GTValues {
                 Class.forName(modid);
                 isLoaded = true;
             } catch (ClassNotFoundException ignored) {
-            } catch (NoClassDefFoundError ignored) {
+            } catch (NoClassDefFoundError noClassDefFoundError) {
                 isLoaded = true;
             }
         }
