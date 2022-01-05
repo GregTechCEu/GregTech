@@ -2,10 +2,7 @@ package gregtech.common.items.behaviors;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.IWorkable;
+import gregtech.api.capability.*;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.IDataInfoProvider;
@@ -22,6 +19,7 @@ import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -35,12 +33,14 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TricorderBehavior implements IItemBehaviour {
 
     private final int debugLevel;
+    private int energyCost;
 
     public TricorderBehavior(int debugLevel) {
         this.debugLevel = debugLevel;
@@ -50,17 +50,22 @@ public class TricorderBehavior implements IItemBehaviour {
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         if (!world.isRemote && !world.isAirBlock(pos)) {
 
-            for (ITextComponent line : getScannerInfo(player, world, pos, 0, side, hitX, hitY, hitZ)) {
-                player.sendMessage(line);
+            List<ITextComponent> info = getScannerInfo(player, world, pos);
+            if (drainEnergy(player.getHeldItem(hand), energyCost, true)) {
+                drainEnergy(player.getHeldItem(hand), energyCost, false);
+                for (ITextComponent line : info) {
+                    player.sendMessage(line);
+                }
+                if (ConfigHolder.client.toolUseSounds)
+                    world.playSound(null, pos, GTSounds.TRICORDER_TOOL, SoundCategory.PLAYERS, 1, 1);
+            } else {
+                player.sendMessage(new TextComponentTranslation("behavior.prospector.not_enough_energy"));
             }
-
-            if (ConfigHolder.client.toolUseSounds)
-                world.playSound(null, pos, GTSounds.TRICORDER_TOOL, SoundCategory.PLAYERS, 1, 1);
         }
         return EnumActionResult.SUCCESS;
     }
 
-    public List<ITextComponent> getScannerInfo(EntityPlayer player, World world, BlockPos pos, int scanLevel, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public List<ITextComponent> getScannerInfo(EntityPlayer player, World world, BlockPos pos) {
         int energyCost = 0;
 
         List<ITextComponent> list = new ArrayList<>();
@@ -238,6 +243,18 @@ public class TricorderBehavior implements IItemBehaviour {
             list.addAll(((MetaTileEntityHolder) tileEntity).getDebugInfo(player, debugLevel));
         }
 
+        this.energyCost = energyCost;
         return list;
+    }
+
+    private boolean drainEnergy(@Nonnull ItemStack stack, long amount, boolean simulate) {
+        if (debugLevel > 2)
+            return true;
+
+        IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (electricItem == null)
+            return false;
+
+        return electricItem.discharge(amount, Integer.MAX_VALUE, true, false, simulate) >= amount;
     }
 }

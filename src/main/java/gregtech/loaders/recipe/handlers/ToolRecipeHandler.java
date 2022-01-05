@@ -540,7 +540,7 @@ public class ToolRecipeHandler {
                     'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium),
                     'S', MetaItems.SENSOR_MV.getStackForm(),
                     'D', MetaItems.COVER_SCREEN.getStackForm(),
-                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Good),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Advanced),
                     'B', batteryItem.getStackForm());
         }
         for (MetaValueItem batteryItem : batteryItems[GTValues.HV]) {

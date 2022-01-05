@@ -385,8 +385,8 @@ public class MetaItem1 extends StandardMetaItem {
         PROSPECTOR_LV = addItem(466, "prospector.lv").addComponents(ElectricStats.createElectricItem(100_000L, GTValues.LV), new ProspectorScannerBehavior(2, GTValues.LV)).setMaxStackSize(1);
         PROSPECTOR_HV = addItem(467, "prospector.hv").addComponents(ElectricStats.createElectricItem(1_600_000L, GTValues.HV), new ProspectorScannerBehavior(3, GTValues.HV)).setMaxStackSize(1);
         PROSPECTOR_LUV = addItem(468, "prospector.luv").addComponents(ElectricStats.createElectricItem(1_000_000_000L, GTValues.LuV), new ProspectorScannerBehavior(5, GTValues.LuV)).setMaxStackSize(1);
-        TRICORDER_SCANNER = addItem(469, "tricorder_scanner").addComponents(new TricorderBehavior(2));
-        DEBUG_SCANNER = addItem(470, "debug_scanner").addComponents(new TricorderBehavior(3));
+        TRICORDER_SCANNER = addItem(469, "tricorder_scanner").addComponents(ElectricStats.createElectricItem(100_000L, GTValues.MV), new TricorderBehavior(2)).setMaxStackSize(1);
+        DEBUG_SCANNER = addItem(470, "debug_scanner").addComponents(new TricorderBehavior(3)).setMaxStackSize(1);
 
         // Misc Crafting Items: ID 491-515
         ENERGIUM_DUST = addItem(491, "energium_dust");
