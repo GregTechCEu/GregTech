@@ -4,11 +4,10 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.SimpleTextWidget;
-import gregtech.api.render.Textures;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.os.TerminalTheme;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.terminal.app.capeselector.widget.CapeListWidget;
-import net.minecraft.util.ResourceLocation;
 
 public class CapeSelectorApp extends AbstractApplication {
     protected CapeListWidget capeListWidget;
