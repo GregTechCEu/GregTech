@@ -18,7 +18,6 @@ import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,7 +27,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -385,9 +386,11 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                         continue;
 
                     allTanksEmpty = false;
-                    list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.tank", i,
-                            GTUtility.formatNumbers(fluids[i].amount),
-                            GTUtility.formatNumbers(this.getCapacityPerTank()), fluids[i].getFluid().getLocalizedName(fluids[i]))));
+                    list.add(new TextComponentTranslation("behavior.tricorder.tank", i,
+                            new TextComponentTranslation(GTUtility.formatNumbers(fluids[i].amount)).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                            new TextComponentTranslation(GTUtility.formatNumbers(this.getCapacityPerTank())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                            new TextComponentTranslation(fluids[i].getFluid().getLocalizedName(fluids[i])).setStyle(new Style().setColor(TextFormatting.GOLD))
+                    ));
                }
             }
 

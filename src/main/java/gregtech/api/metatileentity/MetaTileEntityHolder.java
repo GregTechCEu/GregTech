@@ -10,7 +10,6 @@ import gregtech.api.net.packets.CPacketRecoverMTE;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -21,7 +20,9 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -171,11 +172,21 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         ArrayList<ITextComponent> list = new ArrayList<>();
         if (logLevel > 2) {
             if (isValid()) {
-                list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.debug_machine_valid", getMetaTileEntity().metaTileEntityId)));
+                list.add(new TextComponentTranslation("behavior.tricorder.debug_machine",
+                        new TextComponentTranslation(getMetaTileEntity().metaTileEntityId.toString()).setStyle(new Style().setColor(TextFormatting.BLUE)),
+                        new TextComponentTranslation("behavior.tricorder.debug_machine_valid").setStyle(new Style().setColor(TextFormatting.GREEN))
+                ));
             } else if (metaTileEntity == null) {
-                list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.debug_machine_invalid_null", -1)));
+                //noinspection NoTranslation
+                list.add(new TextComponentTranslation("behavior.tricorder.debug_machine",
+                        new TextComponentTranslation("-1").setStyle(new Style().setColor(TextFormatting.BLUE)),
+                        new TextComponentTranslation("behavior.tricorder.debug_machine_invalid_null").setStyle(new Style().setColor(TextFormatting.RED))
+                ));
             } else {
-                list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.debug_machine_invalid", getMetaTileEntity().metaTileEntityId)));
+                list.add(new TextComponentTranslation("behavior.tricorder.debug_machine",
+                        new TextComponentTranslation(getMetaTileEntity().metaTileEntityId.toString()).setStyle(new Style().setColor(TextFormatting.BLUE)),
+                        new TextComponentTranslation("behavior.tricorder.debug_machine_invalid").setStyle(new Style().setColor(TextFormatting.RED))
+                ));
             }
         }
         if (logLevel > 1) {
@@ -190,10 +201,17 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
                     // Uncomment this line to print out tick-by-tick times.
                     // list.add(new TextComponentTranslation("tickTime " + tickTime));
                 }
-                list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.debug_cpu_load", GTUtility.formatNumbers(averageTickTime / timeStatistics.length), GTUtility.formatNumbers(timeStatistics.length), GTUtility.formatNumbers(worstTickTime))));
+                list.add(new TextComponentTranslation("behavior.tricorder.debug_cpu_load",
+                        new TextComponentTranslation(GTUtility.formatNumbers(averageTickTime / timeStatistics.length)).setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                        new TextComponentTranslation(GTUtility.formatNumbers(timeStatistics.length)).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                        new TextComponentTranslation(GTUtility.formatNumbers(worstTickTime)).setStyle(new Style().setColor(TextFormatting.RED))
+                ));
             }
             if (lagWarningCount > 0) {
-                list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.debug_lag_count", lagWarningCount, GTUtility.formatNumbers(100_000_000L))));
+                list.add(new TextComponentTranslation("behavior.tricorder.debug_lag_count",
+                        new TextComponentTranslation(GTUtility.formatNumbers(lagWarningCount)).setStyle(new Style().setColor(TextFormatting.RED)),
+                        new TextComponentTranslation(GTUtility.formatNumbers(100_000_000L)).setStyle(new Style().setColor(TextFormatting.RED))
+                ));
             }
         }
         return list;

@@ -5,15 +5,17 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.unification.material.properties.WireProperties;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.PerTickLongCounter;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.EnergyNetHandler;
 import gregtech.common.pipelike.cable.net.WorldENet;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
@@ -127,8 +129,12 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();
-        list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.eut_per_sec", this.getAverageVoltage())));
-        list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.amp_per_sec", this.getAverageAmperage())));
+        list.add(new TextComponentTranslation("behavior.tricorder.eut_per_sec",
+                new TextComponentTranslation(GTUtility.formatNumbers(this.getAverageVoltage())).setStyle(new Style().setColor(TextFormatting.RED))
+        ));
+        list.add(new TextComponentTranslation("behavior.tricorder.amp_per_sec",
+                new TextComponentTranslation(GTUtility.formatNumbers(this.getAverageAmperage())).setStyle(new Style().setColor(TextFormatting.RED))
+        ));
         return list;
     }
 }

@@ -472,23 +472,39 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();
         if (recipeMapWorkable.getMaxProgress() > 0) {
-            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.workable_progress", GTUtility.formatNumbers(recipeMapWorkable.getProgress() / 20), GTUtility.formatNumbers(recipeMapWorkable.getMaxProgress() / 20))));
+            list.add(new TextComponentTranslation("behavior.tricorder.workable_progress",
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getProgress() / 20)).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getMaxProgress() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))
+            ));
         }
 
-        list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.energy_container_storage", GTUtility.formatNumbers(energyContainer.getEnergyStored()), GTUtility.formatNumbers(energyContainer.getEnergyCapacity()))));
+        list.add(new TextComponentTranslation("behavior.tricorder.energy_container_storage",
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyStored())).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW))
+        ));
 
         if (recipeMapWorkable.getRecipeEUt() > 0) {
-            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.workable_consumption", GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt()), GTUtility.formatNumbers(1))));
+            list.add(new TextComponentTranslation("behavior.tricorder.workable_consumption",
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt())).setStyle(new Style().setColor(TextFormatting.RED)),
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
+            ));
         }
 
-        list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.multiblock_energy_input", GTUtility.formatNumbers(energyContainer.getInputVoltage()), GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getInputVoltage())])));
+        list.add(new TextComponentTranslation("behavior.tricorder.multiblock_energy_input",
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getInputVoltage())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                new TextComponentTranslation(GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getInputVoltage())]).setStyle(new Style().setColor(TextFormatting.YELLOW))
+        ));
 
         if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics()) {
-            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.multiblock_maintenance", GTUtility.formatNumbers(getNumMaintenanceProblems()))));
+            list.add(new TextComponentTranslation("behavior.tricorder.multiblock_maintenance",
+                    new TextComponentTranslation(GTUtility.formatNumbers(getNumMaintenanceProblems())).setStyle(new Style().setColor(TextFormatting.RED))
+            ));
         }
 
         if (recipeMapWorkable.getParallelLimit() > 1) {
-            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.multiblock_parallel", recipeMapWorkable.getParallelLimit())));
+            list.add(new TextComponentTranslation("behavior.tricorder.multiblock_parallel",
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getParallelLimit())).setStyle(new Style().setColor(TextFormatting.GREEN))
+            ));
         }
 
         return list;

@@ -7,7 +7,6 @@ import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -76,19 +75,33 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();
         if (recipeMapWorkable.getMaxProgress() > 0) {
-            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.workable_progress", GTUtility.formatNumbers(recipeMapWorkable.getProgress() / 20), GTUtility.formatNumbers(recipeMapWorkable.getMaxProgress() / 20))));
+            list.add(new TextComponentTranslation("behavior.tricorder.workable_progress",
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getProgress() / 20)).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getMaxProgress() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))
+            ));
         }
 
-        list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.energy_container_storage", GTUtility.formatNumbers(energyContainer.getEnergyStored()), GTUtility.formatNumbers(energyContainer.getEnergyCapacity()))));
+        list.add(new TextComponentTranslation("behavior.tricorder.energy_container_storage",
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyStored())).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW))
+        ));
 
         if (recipeMapWorkable.getRecipeEUt() < 0) {
-            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.workable_production", GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt() * -1), GTUtility.formatNumbers(1))));
+            list.add(new TextComponentTranslation("behavior.tricorder.workable_production",
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt() * -1)).setStyle(new Style().setColor(TextFormatting.RED)),
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
+            ));
         }
 
-        list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.multiblock_energy_output", GTUtility.formatNumbers(energyContainer.getOutputVoltage()), GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getOutputVoltage())])));
+        list.add(new TextComponentTranslation("behavior.tricorder.multiblock_energy_output",
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getOutputVoltage())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                new TextComponentTranslation(GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getOutputVoltage())]).setStyle(new Style().setColor(TextFormatting.YELLOW))
+        ));
 
         if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics()) {
-            list.add(new TextComponentTranslation(I18n.format("behavior.tricorder.multiblock_maintenance", GTUtility.formatNumbers(getNumMaintenanceProblems()))));
+            list.add(new TextComponentTranslation("behavior.tricorder.multiblock_maintenance",
+                    new TextComponentTranslation(GTUtility.formatNumbers(getNumMaintenanceProblems())).setStyle(new Style().setColor(TextFormatting.RED))
+            ));
         }
 
         return list;
