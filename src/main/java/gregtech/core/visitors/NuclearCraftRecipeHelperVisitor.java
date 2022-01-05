@@ -19,10 +19,9 @@ public class NuclearCraftRecipeHelperVisitor extends MethodVisitor implements Op
     @Override
     public void visitFieldInsn(int opcode, String owner, String name, String desc) {
         if (opcode == GETSTATIC && name.equals("FLUID_EXTRACTION_RECIPES")) { // FLUID_EXTRACTION_RECIPES -> EXTRACTOR_RECIPES
-            super.visitFieldInsn(opcode, owner, "EXTRACTOR_RECIPES", desc);
-        } else {
-            super.visitFieldInsn(opcode, owner, name, desc);
+            name = "EXTRACTOR_RECIPES";
         }
+        super.visitFieldInsn(opcode, owner, name, desc);
     }
 
     @Override
