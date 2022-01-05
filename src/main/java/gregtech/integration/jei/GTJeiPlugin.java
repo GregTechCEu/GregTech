@@ -169,12 +169,11 @@ public class GTJeiPlugin implements IModPlugin {
                 MetaTileEntities.THERMAL_CENTRIFUGE,
                 MetaTileEntities.CHEMICAL_BATH,
                 MetaTileEntities.ELECTROMAGNETIC_SEPARATOR,
-                MetaTileEntities.SIFTER,
-                MetaTileEntities.ORE_WASHER
+                MetaTileEntities.SIFTER
         };
         for (MetaTileEntity[] machine : machineLists) {
-            if (machine.length < 1 || machine[0] == null) continue;
-            registry.addRecipeCatalyst(machine[0].getStackForm(), oreByProductId);
+            if (machine.length < GTValues.LV + 1 || machine[GTValues.LV] == null) continue;
+            registry.addRecipeCatalyst(machine[GTValues.LV].getStackForm(), oreByProductId);
         }
 
         //Material Tree
