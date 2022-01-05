@@ -2234,6 +2234,11 @@ behavior.tricorder.multiblock_energy_input=Max Energy Income: §e%s§r EU/t Tier
 behavior.tricorder.multiblock_energy_output=Max Energy Output: §e%s§r EU/t Tier: §e%s§r
 behavior.tricorder.multiblock_maintenance=Problems: §c%s§r
 behavior.tricorder.multiblock_parallel=Multi Processing: §a%s§r
+behavior.tricorder.debug_machine_valid=Meta-ID: §9%s§r §avalid§r
+behavior.tricorder.debug_machine_invalid=Meta-ID: §9%s§r §cinvalid!§r
+behavior.tricorder.debug_machine_invalid_null=Meta-ID: §9%s§r §cinvalid! MetaTileEntity == null!§r
+behavior.tricorder.debug_cpu_load=Average CPU load of ~%sns over %s ticks with worst time of %sns.
+behavior.tricorder.debug_lag_count=Caused %s Lag Spike Warnings (anything taking longer than %sms) on the Server.
 
 metaitem.terminal.name=Terminal
 metaitem.terminal.tooltip=Sharp tools make good work
