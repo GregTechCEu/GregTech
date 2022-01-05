@@ -2,9 +2,8 @@ package gregtech.api.util;
 
 import gregtech.api.GTValues;
 import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.PacketClientCapeChange;
-import gregtech.api.net.PacketClipboardUIWidgetUpdate;
-import gregtech.api.render.Textures;
+import gregtech.api.net.packets.CPacketClientCapeChange;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,7 +18,6 @@ import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 public class CapesRegistry extends WorldSavedData {
@@ -201,13 +199,13 @@ public class CapesRegistry extends WorldSavedData {
 
     public static void giveCape(UUID uuid, ResourceLocation cape) {
         wornCapes.put(uuid, cape);
-        NetworkHandler.channel.sendToServer(new PacketClientCapeChange(uuid, cape).toFMLPacket());
+        NetworkHandler.channel.sendToServer(new CPacketClientCapeChange(uuid, cape).toFMLPacket());
     }
 
     // For loading capes when the player logs in, so that it's synced to the clients.
     public static void loadWornCapeOnLogin(UUID uuid) {
         if(wornCapes.get(uuid) != null)
-            NetworkHandler.channel.sendToServer(new PacketClientCapeChange(uuid, wornCapes.get(uuid)).toFMLPacket());
+            NetworkHandler.channel.sendToServer(new CPacketClientCapeChange(uuid, wornCapes.get(uuid)).toFMLPacket());
     }
 
 }
