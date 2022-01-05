@@ -60,5 +60,4 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     protected IBlockState getCasingState() {
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
     }
-
 }
