@@ -384,7 +384,10 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
                         nameTagParticle.name = getName();
                     }
                 } else {
-                    if (nameTagParticle != null) nameTagParticle.setExpired();
+                    if (nameTagParticle != null) {
+                        nameTagParticle.setExpired();
+                        nameTagParticle = null;
+                    }
                 }
             } else {
                 markAsDirty();
@@ -403,6 +406,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         return this.customName != null && !this.customName.isEmpty();
     }
 
+    @Nonnull
     @Override
     public ITextComponent getDisplayName() {
         return this.hasCustomName() ? new TextComponentString(this.getName()) : metaTileEntity != null ? new TextComponentTranslation(metaTileEntity.getMetaFullName()) : new TextComponentString(this.getName());
