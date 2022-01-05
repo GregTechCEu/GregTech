@@ -79,19 +79,11 @@ public class SurfaceBlockPopulator implements VeinChunkPopulator {
     }
 
     private boolean generateSurfaceBlock(World world, BlockPos pos) {
-
-        BlockPos topBlockPos = pos;
-        topBlockPos = world.getTopSolidOrLiquidBlock(topBlockPos).down();
-        IBlockState blockState = world.getBlockState(topBlockPos);
+        BlockPos topBlockPos = SurfaceRockPopulator.findSpawnHeight(world, pos);
+        IBlockState blockState = world.getBlockState(topBlockPos.down());
         Block blockAtPos = blockState.getBlock();
 
         if(topBlockPos.getY() >= world.provider.getActualHeight()) {
-            return false;
-        }
-
-        //Check to see if the block below the planned generation position has a Solid top side. This is similar to
-        //an isSideSolid check
-        if (blockState.getBlockFaceShape(world, topBlockPos, EnumFacing.UP) != BlockFaceShape.SOLID) {
             return false;
         }
 
@@ -102,13 +94,11 @@ public class SurfaceBlockPopulator implements VeinChunkPopulator {
 
         //Checks if the block is a replaceable feature like grass or snow layers. Liquids are replaceable, so
         // exclude one deep liquid blocks, for looks
-        if (!blockAtPos.isReplaceable(world, topBlockPos.up()) || blockState.getMaterial().isLiquid()) {
+        if (!blockAtPos.isReplaceable(world, topBlockPos) || blockState.getMaterial().isLiquid()) {
             return false;
         }
 
-        BlockPos surfaceRockPos = topBlockPos.up();
-
-        return world.setBlockState(surfaceRockPos, this.blockState, 16);
+        return world.setBlockState(topBlockPos, this.blockState, 16);
 
     }
 

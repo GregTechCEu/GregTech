@@ -139,7 +139,7 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
         return material;
     }
 
-    public BlockPos findSpawnHeight(World world, BlockPos pos) {
+    public static BlockPos findSpawnHeight(World world, BlockPos pos) {
         Chunk chunk = world.getChunk(pos);
         BlockPos.PooledMutableBlockPos blockpos = BlockPos.PooledMutableBlockPos.retain();
         blockpos.setPos(pos.getX(), chunk.getTopFilledSegment() + 16, pos.getZ());
