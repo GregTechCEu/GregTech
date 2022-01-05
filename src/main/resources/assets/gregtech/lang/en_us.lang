@@ -2210,6 +2210,8 @@ behavior.prospector.not_enough_energy=Not Enough Energy!
 
 metaitem.tricorder_scanner.name=Portable Scanner
 metaitem.tricorder_scanner.tooltip=Tricorder
+metaitem.debug_scanner.name=Debug Scanner
+metaitem.debug_scanner.tooltip=Tricorder
 behavior.tricorder.position=----- X: §b%s§r Y: §b%s§r Z: §b%s§r D: §b%s§r -----
 behavior.tricorder.block_hardness=Hardness: §e%s§r Blast Resistance: §e%s§r
 behavior.tricorder.block_name=Name: §9%s§r MetaData: §9%s§r

@@ -13,18 +13,20 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
+import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -38,20 +40,22 @@ import java.util.List;
 
 public class TricorderBehavior implements IItemBehaviour {
 
-    private final int cost;
+    private final int debugLevel;
 
-    public TricorderBehavior(int cost) {
-        this.cost = cost;
+    public TricorderBehavior(int debugLevel) {
+        this.debugLevel = debugLevel;
     }
 
     @Override
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         if (!world.isRemote && !world.isAirBlock(pos)) {
-            ItemStack stack = player.getHeldItem(hand);
 
             for (ITextComponent line : getScannerInfo(player, world, pos, 0, side, hitX, hitY, hitZ)) {
                 player.sendMessage(line);
             }
+
+            if (ConfigHolder.client.toolUseSounds)
+                world.playSound(null, pos, GTSounds.TRICORDER_TOOL, SoundCategory.PLAYERS, 1, 1);
         }
         return EnumActionResult.SUCCESS;
     }
@@ -231,7 +235,7 @@ public class TricorderBehavior implements IItemBehaviour {
 
         // debug
         if (tileEntity instanceof MetaTileEntityHolder) {
-            list.addAll(((MetaTileEntityHolder) tileEntity).getDebugInfo(player, 2));
+            list.addAll(((MetaTileEntityHolder) tileEntity).getDebugInfo(player, debugLevel));
         }
 
         return list;
