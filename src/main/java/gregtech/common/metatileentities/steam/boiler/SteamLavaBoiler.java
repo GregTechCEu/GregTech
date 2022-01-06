@@ -17,19 +17,17 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
 
     private FluidTank fuelFluidTank;
 
-    private final List<FluidStack> boilerFuels;
+    private final Map<Fluid, Integer> boilerFuels;
 
     public SteamLavaBoiler(ResourceLocation metaTileEntityId, boolean isHighPressure) {
         super(metaTileEntityId, isHighPressure, Textures.LAVA_BOILER_OVERLAY);
@@ -46,10 +44,10 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
         return isHighPressure ? 600 : 240;
     }
 
-    private List<FluidStack> getBoilerFuels() {
-        List<FluidStack> fuels = new ArrayList<>();
-        fuels.add(Materials.Lava.getFluid(100));
-        fuels.add(Materials.Creosote.getFluid(250));
+    private Map<Fluid, Integer> getBoilerFuels() {
+        Map<Fluid, Integer> fuels = new HashMap<>();
+        fuels.put(Materials.Lava.getFluid(), 100);
+        fuels.put(Materials.Creosote.getFluid(), 250);
 
         return fuels;
     }
@@ -58,17 +56,17 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
     protected FluidTankList createImportFluidHandler() {
         FluidTankList superHandler = super.createImportFluidHandler();
         this.fuelFluidTank = new FilteredFluidHandler(16000)
-                .setFillPredicate(fs -> boilerFuels.stream().anyMatch(nfs -> nfs.isFluidEqual(fs)));
+                .setFillPredicate(fs -> boilerFuels.containsKey(fs.getFluid()));
         return new FluidTankList(false, superHandler, fuelFluidTank);
 
     }
 
     @Override
     protected void tryConsumeNewFuel() {
-        for(FluidStack fuel : boilerFuels) {
-            if(fuelFluidTank.getFluid() != null && fuelFluidTank.getFluid().isFluidEqual(fuel) && fuelFluidTank.getFluidAmount() >= fuel.amount) {
-                fuelFluidTank.drain(fuel.amount, true);
-                setFuelMaxBurnTime((1000 / fuel.amount) * 10);
+        for(Map.Entry<Fluid, Integer> fuels : boilerFuels.entrySet()) {
+            if(fuelFluidTank.getFluid() != null && fuelFluidTank.getFluid().isFluidEqual(new FluidStack(fuels.getKey(), fuels.getValue())) && fuelFluidTank.getFluidAmount() >= fuels.getValue()) {
+                fuelFluidTank.drain(fuels.getValue(), true);
+                setFuelMaxBurnTime(100);
             }
         }
     }
@@ -96,7 +94,7 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
         final int fuelRemaining = fuel.amount;
         final int fuelCapacity = fuelFluidTank.getCapacity();
         final long burnTime = (long) fuelRemaining * (this.isHighPressure ? 6 : 12); // 100 mb lasts 600 or 1200 ticks
-        return Collections.singleton(new FluidFuelInfo(fuel, fuelRemaining, fuelCapacity, boilerFuels.get(boilerFuels.indexOf(fuel)).amount, burnTime));
+        return Collections.singleton(new FluidFuelInfo(fuel, fuelRemaining, fuelCapacity, boilerFuels.get(fuel.getFluid()), burnTime));
     }
 
     @Override
