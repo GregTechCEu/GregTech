@@ -495,7 +495,7 @@ public class MetaBlocks {
             });
         }
 
-        for (BlockSurfaceRock surfaceRock : SURFACE_ROCK.values()) {
+        SURFACE_ROCK.values().stream().distinct().forEach(surfaceRock -> {
             ModelLoader.setCustomStateMapper(surfaceRock, new DefaultStateMapper() {
                 @Nonnull
                 @Override
@@ -503,7 +503,7 @@ public class MetaBlocks {
                     return BlockSurfaceRock.MODEL_LOCATION;
                 }
             });
-        }
+        });
 
         IStateMapper normalStateMapper = new StateMapperBase() {
             @Override
