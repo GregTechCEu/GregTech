@@ -146,7 +146,8 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking()){
     setAutoCollapse(!this.autoCollapse);
-    if(getWorld().isRemote) {
+    if (getWorld().isRemote) {
+        
         playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse", this.autoCollapse));
     }
             return true;
