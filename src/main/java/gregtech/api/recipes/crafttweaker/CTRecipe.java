@@ -47,7 +47,7 @@ public class CTRecipe {
 
     @ZenMethod
     public List<IItemStack> getResultItemOutputs(@Optional(valueLong = 1) int tier) {
-        return this.backingRecipe.getResultItemOutputs(Integer.MAX_VALUE, tier).stream()
+        return this.backingRecipe.getResultItemOutputs(Integer.MAX_VALUE, tier, recipeMap).stream()
                 .map(MCItemStack::new)
                 .collect(Collectors.toList());
     }
