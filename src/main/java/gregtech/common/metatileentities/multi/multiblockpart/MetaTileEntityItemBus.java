@@ -166,7 +166,9 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.autoCollapse = data.getBoolean("autoCollapse");
+        if (data.hasKey("autoCollapse")) {
+            this.autoCollapse = data.getBoolean("autoCollapse");
+        }
     }
 
     @Override
