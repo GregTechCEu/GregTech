@@ -306,7 +306,7 @@ public class MaterialRecipeHandler {
     }
 
     public static void processGemConversion(OrePrefix gemPrefix, Material material, GemProperty property) {
-        long materialAmount = gemPrefix.materialAmount;
+        long materialAmount = gemPrefix.getMaterialAmount(material);
         ItemStack crushedStack = OreDictUnifier.getDust(material, materialAmount);
 
         if (material.hasFlag(MORTAR_GRINDABLE)) {
