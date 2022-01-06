@@ -531,6 +531,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem GRAVITATION_ENGINE;
 
     public static MetaItem<?>.MetaValueItem SUS_RECORD;
+    public static MetaItem<?>.MetaValueItem NAN_CERTIFICATE;
 
     private static final List<OrePrefix> orePrefixes = new ArrayList<OrePrefix>() {{
         add(OrePrefix.dust);

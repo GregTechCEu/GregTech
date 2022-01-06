@@ -592,5 +592,8 @@ public class MetaItem1 extends StandardMetaItem {
                 GLASS_LENSES.put(color, addItem(820 + i, String.format("glass_lens.%s", color.toString())));
             }
         }
+
+        // Misc 1000+
+        NAN_CERTIFICATE = addItem(1000, "nan.certificate").setRarity(EnumRarity.EPIC);
     }
 }

@@ -379,5 +379,12 @@ public class MiscRecipeLoader {
         builder.copy().fluidInputs(DyeGreen.getFluid(dyeAmount))    .output(GLASS_LENSES.get(Color.Green))    .buildAndRegister();
         builder.copy().fluidInputs(DyeRed.getFluid(dyeAmount))      .output(GLASS_LENSES.get(Color.Red))      .buildAndRegister();
         builder.copy().fluidInputs(DyeBlack.getFluid(dyeAmount))    .output(GLASS_LENSES.get(Color.Black))    .buildAndRegister();
+
+        // NAN Certificate
+        EXTRUDER_RECIPES.recipeBuilder()
+                .input(block, Neutronium, 64)
+                .input(block, Neutronium, 64)
+                .output(NAN_CERTIFICATE)
+                .duration(Integer.MAX_VALUE).EUt(VA[ULV]).buildAndRegister();
     }
 }
