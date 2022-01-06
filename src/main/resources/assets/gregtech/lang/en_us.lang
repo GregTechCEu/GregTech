@@ -3836,6 +3836,8 @@ gregtech.machine.item_bus.export.zpm.name=ZPM Output Bus
 gregtech.machine.item_bus.export.uv.name=UV Output Bus
 gregtech.machine.item_bus.export.uhv.name=UHV Output Bus
 
+gregtech.bus.collapse=Allow Bus to auto combine item stacks %s
+
 gregtech.machine.fluid_hatch.import.tooltip=Fluid Input for Multiblocks
 
 gregtech.machine.fluid_hatch.import.ulv.name=ULV Input Hatch
