@@ -144,15 +144,23 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : this.getImportItems());
         if (!playerIn.isSneaking()){
-    setAutoCollapse(!this.autoCollapse);
-    if (getWorld().isRemote) {
-        
-        playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse", this.autoCollapse));
-    }
+            boolean isAttached = false;
+            if (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) : this.getNotifiedItemInputList().contains(inventory)){
+                setAutoCollapse(!this.autoCollapse);
+                isAttached = true;
+            }
+
+            if(!getWorld().isRemote) {
+                if (isAttached) {
+                    playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse", this.autoCollapse));
+                } else {
+                    playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse.error"));
+                }
+            }
             return true;
         }
-
         return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
     }
 
