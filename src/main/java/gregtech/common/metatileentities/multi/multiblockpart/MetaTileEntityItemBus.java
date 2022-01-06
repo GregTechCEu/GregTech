@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable> {
+ private boolean autoCollapse;
 
     private static final int[] INVENTORY_SIZES = {1, 4, 9, 16, 25, 36, 49};
 
@@ -41,6 +42,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
 
     @Override
     public void update() {
+        IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : this.getImportItems());
         super.update();
         if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
             if (isExportHatch) {
@@ -48,7 +50,11 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
             } else {
                 pullItemsFromNearbyHandlers(getFrontFacing());
             }
+            if (isAutoCollapse()){
+                collapseInventorySlotContents(inventory);
+            }
         }
+
     }
 
     @Override
@@ -76,6 +82,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     protected IItemHandlerModifiable createImportItemHandler() {
         return isExportHatch ? new ItemStackHandler(0) : new NotifiableItemStackHandler(getInventorySize(), getController(), false);
     }
+
 
     @Override
     public MultiblockAbility<IItemHandlerModifiable> getAbility() {
@@ -108,6 +115,73 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
             }
         }
         return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7 + xOffset, 18 + 18 * rowSize + 12);
+    }
+
+    private static void collapseInventorySlotContents(IItemHandlerModifiable inventory) {
+        //stack item stacks with equal items and compounds
+        for (int i = 0; i < inventory.getSlots(); i++) {
+            for (int j = i + 1; j < inventory.getSlots(); j++) {
+                ItemStack stack1 = inventory.getStackInSlot(i);
+                ItemStack stack2 = inventory.getStackInSlot(j);
+                if (!stack1.isEmpty() && ItemStack.areItemsEqual(stack1, stack2) &&
+                        ItemStack.areItemStackTagsEqual(stack1, stack2)) {
+                    int maxStackSize = Math.min(stack1.getMaxStackSize(), inventory.getSlotLimit(i));
+                    int itemsCanAccept = Math.min(stack2.getCount(), maxStackSize - Math.min(stack1.getCount(), maxStackSize));
+                    if (itemsCanAccept > 0) {
+                        stack1.grow(itemsCanAccept);
+                        stack2.shrink(itemsCanAccept);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (!playerIn.isSneaking()){
+    setAutoCollapse(!this.autoCollapse);
+    if(getWorld().isRemote) {
+        playerIn.sendMessage(new TextComponentTranslation("gregtech.bus.collapse", this.autoCollapse));
+    }
+            return true;
+        }
+
+        return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
+    }
+
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setBoolean("autoCollapse", autoCollapse);
+        return data;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        this.autoCollapse = data.getBoolean("autoCollapse");
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(autoCollapse);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.autoCollapse = buf.readBoolean();
+    }
+
+
+    public boolean isAutoCollapse() {
+        return autoCollapse;
+    }
+
+    public void setAutoCollapse(boolean inverted) {
+        autoCollapse = inverted;
     }
 
     @Override
