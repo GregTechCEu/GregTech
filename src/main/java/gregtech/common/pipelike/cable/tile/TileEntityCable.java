@@ -60,7 +60,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         averageVoltageCounter.increment(world, voltage);
         averageAmperageCounter.increment(world, amps);
 
-        return averageAmperageCounter.getLast(world) > getMaxAmperage();
+        return getAverageAmperage() > getMaxAmperage();
     }
 
     public double getAverageAmperage() {
