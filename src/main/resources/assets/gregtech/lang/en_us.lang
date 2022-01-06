@@ -3837,6 +3837,7 @@ gregtech.machine.item_bus.export.uv.name=UV Output Bus
 gregtech.machine.item_bus.export.uhv.name=UHV Output Bus
 
 gregtech.bus.collapse=Allow Bus to auto combine item stacks %s
+gregtech.bus.collapse.error=Bus must be attacked to multiblock first
 
 gregtech.machine.fluid_hatch.import.tooltip=Fluid Input for Multiblocks
 
