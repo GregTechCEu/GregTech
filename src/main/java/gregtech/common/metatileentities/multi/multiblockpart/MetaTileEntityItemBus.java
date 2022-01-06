@@ -56,7 +56,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
             } else {
                 pullItemsFromNearbyHandlers(getFrontFacing());
             }
-            if (isAutoCollapse()){
+            if (isAutoCollapse() && (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) : this.getNotifiedItemInputList().contains(inventory))){
                 collapseInventorySlotContents(inventory);
             }
         }
