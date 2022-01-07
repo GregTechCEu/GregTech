@@ -41,7 +41,7 @@ import java.util.List;
 public class TricorderBehavior implements IItemBehaviour {
 
     private final int debugLevel;
-    private int energyCost;
+    private int energyCost = Integer.MAX_VALUE;
 
     public TricorderBehavior(int debugLevel) {
         this.debugLevel = debugLevel;
@@ -67,7 +67,7 @@ public class TricorderBehavior implements IItemBehaviour {
     }
 
     public List<ITextComponent> getScannerInfo(EntityPlayer player, World world, BlockPos pos) {
-        int energyCost = 0;
+        int energyCost = 100;
 
         List<ITextComponent> list = new ArrayList<>();
 
@@ -110,7 +110,7 @@ public class TricorderBehavior implements IItemBehaviour {
             boolean allTanksEmpty = true;
             if (tanks != null && !tanks.getFluidTanks().isEmpty()) {
                 energyCost += 500;
-                for (int i = tankIndex; i < tanks.getFluidTanks().size(); i++) {
+                for (int i = 0; i < tanks.getFluidTanks().size(); i++) {
                     IFluidTank tank = tanks.getTankAt(i);
                     if (tank.getFluid() == null)
                         continue;
@@ -133,7 +133,7 @@ public class TricorderBehavior implements IItemBehaviour {
                         continue;
 
                     allTanksEmpty = false;
-                    list.add(new TextComponentTranslation("behavior.tricorder.tank", i,
+                    list.add(new TextComponentTranslation("behavior.tricorder.tank", tankIndex + i,
                             new TextComponentTranslation(GTUtility.formatNumbers(tank.getFluid().amount)).setStyle(new Style().setColor(TextFormatting.GREEN)),
                             new TextComponentTranslation(GTUtility.formatNumbers(tank.getCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
                             new TextComponentTranslation(tank.getFluid().getLocalizedName()).setStyle(new Style().setColor(TextFormatting.GOLD))
