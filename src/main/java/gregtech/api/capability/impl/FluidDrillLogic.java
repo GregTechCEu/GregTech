@@ -2,7 +2,6 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidDrill;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,6 +26,7 @@ public class FluidDrillLogic {
 
     private Fluid veinFluid;
 
+    private int voltageTier;
     private float coefficient;
 
     public FluidDrillLogic(MetaTileEntityFluidDrill metaTileEntity) {
@@ -68,6 +68,7 @@ public class FluidDrillLogic {
             // the rig cannot drain, therefore it is inactive
             if (this.isActive)
                 setActive(false);
+            return;
         }
 
         currentProgress++;
@@ -75,17 +76,11 @@ public class FluidDrillLogic {
             return;
         currentProgress = 0;
 
-        int rate;
-        if (BedrockFluidVeinHandler.isChunkDepleted(metaTileEntity.getWorld(), getChunkX(), getChunkZ()))
-            rate = BedrockFluidVeinHandler.getDepletedFluidRate(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
-        else
-            rate = (int) Math.floor(BedrockFluidVeinHandler.getFluidRateInChunk(metaTileEntity.getWorld(), getChunkX(), getChunkZ()) * coefficient);
-
-        rate *= metaTileEntity.getRigMultiplier();
+        int rate = getFluidRate();
 
         if (metaTileEntity.fillTanks(new FluidStack(veinFluid, rate), true)) {
             metaTileEntity.fillTanks(new FluidStack(veinFluid, rate), false);
-            BedrockFluidVeinHandler.depleteVein(coefficient, metaTileEntity.getWorld(), getChunkX(), getChunkZ());
+            depleteVein();
         } else {
             metaTileEntity.setInventoryFull(true);
             setActive(false);
@@ -96,6 +91,20 @@ public class FluidDrillLogic {
     private boolean acquireNewFluid() {
         veinFluid = BedrockFluidVeinHandler.getFluid(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
         return veinFluid != null;
+    }
+
+    protected void depleteVein() {
+        BedrockFluidVeinHandler.depleteVein(coefficient, metaTileEntity.getWorld(), getChunkX(), getChunkZ());
+    }
+
+    private int getFluidRate() {
+        int rate;
+        if (BedrockFluidVeinHandler.isChunkDepleted(metaTileEntity.getWorld(), getChunkX(), getChunkZ()))
+            rate = BedrockFluidVeinHandler.getDepletedFluidRate(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
+        else
+            rate = (int) Math.floor(BedrockFluidVeinHandler.getFluidRateInChunk(metaTileEntity.getWorld(), getChunkX(), getChunkZ()) * coefficient);
+
+        return rate * metaTileEntity.getRigMultiplier();
     }
 
     /**
@@ -111,16 +120,11 @@ public class FluidDrillLogic {
             return false;
         }
 
-        int rate;
-        if (BedrockFluidVeinHandler.isChunkDepleted(metaTileEntity.getWorld(), getChunkX(), getChunkZ()))
-            rate = BedrockFluidVeinHandler.getDepletedFluidRate(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
-        else
-            rate = BedrockFluidVeinHandler.getFluidRateInChunk(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
-
-        if (metaTileEntity.fillTanks(new FluidStack(veinFluid, rate), true)) {
+        if (metaTileEntity.fillTanks(new FluidStack(veinFluid, getFluidRate()), true)) {
             metaTileEntity.setInventoryFull(false);
             return true;
         }
+        metaTileEntity.setInventoryFull(true);
         if (isActive()) {
             setActive(false);
             setWasActiveAndNeedsUpdate(true);
@@ -128,8 +132,13 @@ public class FluidDrillLogic {
         return false;
     }
 
+    public void setVoltageTier(int tier) {
+        this.voltageTier = tier;
+        setCoefficient();
+    }
+
     public void setCoefficient() {
-        coefficient = 0.5F + (GTUtility.getTierByVoltage(metaTileEntity.getInputHatchVoltage()) - metaTileEntity.getTier()) * 0.25F;
+        this.coefficient = 0.5F + (voltageTier - metaTileEntity.getTier()) * 0.25F;
     }
 
     private int getChunkX() {

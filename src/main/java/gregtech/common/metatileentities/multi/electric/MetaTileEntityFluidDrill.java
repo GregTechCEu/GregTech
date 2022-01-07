@@ -41,6 +41,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implements ITieredMetaTileEntity, IControllable, IWorkable {
@@ -70,7 +71,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
         this.inputFluidInventory = new FluidTankList(true, getAbilities(MultiblockAbility.IMPORT_FLUIDS));
         this.outputFluidInventory = new FluidTankList(true, getAbilities(MultiblockAbility.EXPORT_FLUIDS));
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
-        this.minerLogic.setCoefficient();
+        this.minerLogic.setVoltageTier(GTUtility.getTierByVoltage(this.energyContainer.getInputVoltage()));
     }
 
     private void resetTileAbilities() {
@@ -107,9 +108,9 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
                 .aisle("XXX", "FCF", "FCF", "FCF", "#F#", "#F#", "#F#")
                 .aisle("XSX", "#F#", "#F#", "#F#", "###", "###", "###")
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()).setMinGlobalLimited(5)
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3).setPreviewCount(1))
-                        .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMaxGlobalLimited(1)).setPreviewCount(2))
+                .where('X', states(getCasingState()).setMinGlobalLimited(3)
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3))
+                        .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMaxGlobalLimited(1)))
                 .where('C', states(getCasingState()))
                 .where('F', states(getFrameState()))
                 .where('#', any())
@@ -191,12 +192,6 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
         return this.tier;
     }
 
-    public int getInputHatchVoltage() {
-        return (int) getAbilities(MultiblockAbility.INPUT_ENERGY).stream()
-                .mapToLong(IEnergyContainer::getInputVoltage)
-                .sum();
-    }
-
     public int getRigMultiplier() {
         if (this.tier == GTValues.MV)
             return 1;
@@ -238,7 +233,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     }
 
     public boolean fillTanks(FluidStack stack, boolean simulate) {
-        return getAbilities(MultiblockAbility.EXPORT_FLUIDS).get(0).fill(stack, !simulate) == stack.amount;
+        return MetaTileEntity.addFluidsToFluidHandler(outputFluidInventory, simulate, Collections.singletonList(stack));
     }
 
     public boolean drainEnergy(boolean simulate) {
