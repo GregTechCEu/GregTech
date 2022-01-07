@@ -1,5 +1,55 @@
 ## Changelog
 
+### 2.0.3
+BETA RELEASE
+
+Featured Changes:
+
+* Portable Scanner (Tricorder):
+    * A new tool available at early MV, useful for scanning many things, like:
+        * Machines: Can be scanned to see their current progress, energy stored, fluids stored internally, etc.
+        * Generators: Can be scanned to see all the above, as well as their Power Production
+        * Cables: Can be scanned to see EU/t at that point (including losses), amperage, and more
+    * Can also be used to see performance data of Machines, showing the nanoseconds of CPU time they are taking on average
+    * Additionally, along comes a Debug Scanner, which shows more advanced details, useful for developers and pack authors
+
+* Surface Rock reworks:
+    * Surface rocks properly spawn in the Nether
+    * Model has been redone once again
+    * Surface rocks can now always be broken by a bare hand
+    * Surface rocks can be right-clicked to be "picked up" (drop their Tiny Dusts)
+    * A few fixes for Surface Blocks, which can be specified in JSON ore veins
+    
+* Fix Various Mod Compatibility Problems:
+    * Fix crash with the Terminal Hardware Manager and some mods (like Building Gadgets)
+    * Fix crash with NuclearCraft in rare situations
+    * Fix NuclearCraft GTCE compat config being required off (config can now safely be enabled if you desire)
+
+* Change pipe/cable hitbox to "full" when holding a Pipe or Cable in your hand, and pressing SHIFT
+* Fix many generator bugs (like Singleblock Generators occasionally outputting multiple amps)
+* Fix Small Coal Boilers consuming Buckets when using Bucket Fuels
+* Fix crash when using `addOre()` on a material in CraftTweaker
+* Fix crash when running the PA with only 1 machine
+* Fix a few default vein spawn heights to make them more accurate to their weight (copper-tin vein, mineral sands vein)
+* Nerf Small Boiler cooldown rates slightly
+* Fix Stainless Steel Gearbox recipe
+* Add a few Glass-related recipes (Fluid Extract Glass Block, Fluid Solidify Glass Tubes)
+* Fix some wrong Advancement triggers
+* Fix double plate bender recipes
+* Change Wooden Barrel to use Sticky Resin instead of Slimeball
+* Fix Coke Oven allowing any number of Coke Oven Hatches
+* Add ability for custom Chance Functions per RecipeMap
+* Fix a few inconsistencies in the Ore Byproduct Page
+* Fix Hammering Enchant being allowed on Axes and some other tools
+* Fix Crafting Station dupe exploit
+* Fix some issues with the LCE and ECE
+* Add TOP info for Maintenance Status for Multiblocks
+* Fix Activity Detector Covers missing recipes
+* Significantly improve the performance of the Rock Breaker (about 16x more performant after changes)
+* Fix `harderBrickRecipes` config making Brick Blocks require a Compressor
+* Fix recipe conflict with Methanol
+* Fix Electric and Steam Furnaces not properly working when clicking on the Progress Bar
+
 ### 2.0.2
 BETA RELEASE
 * Fix crash on null Fluid with some mods (and add better logging)
