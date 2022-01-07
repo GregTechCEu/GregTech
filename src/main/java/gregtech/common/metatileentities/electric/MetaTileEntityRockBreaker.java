@@ -10,7 +10,6 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -85,7 +84,9 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.hasValidFluids = data.getBoolean("hasValidFluids");
+        if (data.hasKey("hasValidFluids")) {
+            this.hasValidFluids = data.getBoolean("hasValidFluids");
+        }
     }
 
     protected class RockBreakerRecipeLogic extends RecipeLogicEnergy {
