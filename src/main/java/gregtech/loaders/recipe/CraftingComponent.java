@@ -625,11 +625,11 @@ public class CraftingComponent {
         POWER_COMPONENT = new Component(Stream.of(new Object[][]{
 
                 {2, MetaItems.ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm()},
-                {3, MetaItems.ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm()},
-                {4, MetaItems.LOW_POWER_INTEGRATED_CIRCUIT.getStackForm()},
-                {5, MetaItems.POWER_INTEGRATED_CIRCUIT.getStackForm()},
+                {3, MetaItems.LOW_POWER_INTEGRATED_CIRCUIT.getStackForm()},
+                {4, MetaItems.POWER_INTEGRATED_CIRCUIT.getStackForm()},
+                {5, MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm()},
                 {6, MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm()},
-                {7, MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm()},
+                {7, MetaItems.ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm()},
                 {8, MetaItems.ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm()},
                 {9, MetaItems.ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm()},
                 {GTValues.FALLBACK, MetaItems.ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT},

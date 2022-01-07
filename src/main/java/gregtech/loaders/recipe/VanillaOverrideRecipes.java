@@ -37,8 +37,13 @@ public class VanillaOverrideRecipes {
             miscRecipes();
         if (ConfigHolder.recipes.hardDyeRecipes)
             dyeRecipes();
-        if (ConfigHolder.recipes.harderBrickRecipes)
+        if (ConfigHolder.recipes.harderBrickRecipes) {
             ModHandler.removeFurnaceSmelting(new ItemStack(Items.CLAY_BALL, 1, GTValues.W));
+            ModHandler.removeRecipeByName("minecraft:brick_block");
+            ModHandler.addShapedRecipe("brick_from_water", new ItemStack(Blocks.BRICK_BLOCK, 2), "BBB", "BWB", "BBB",
+                    'B', new ItemStack(Items.BRICK),
+                    'W', new ItemStack(Items.WATER_BUCKET));
+        }
         removeCompressionRecipes();
         toolArmorRecipes();
 
@@ -754,7 +759,6 @@ public class VanillaOverrideRecipes {
             ModHandler.removeRecipeByName("minecraft:lapis_block");
             ModHandler.removeRecipeByName("minecraft:lapis_lazuli");
             ModHandler.removeRecipeByName("minecraft:quartz_block");
-            ModHandler.removeRecipeByName("minecraft:brick_block");
             ModHandler.removeRecipeByName("minecraft:clay");
             ModHandler.removeRecipeByName("minecraft:nether_brick");
             ModHandler.removeRecipeByName("minecraft:glowstone");

@@ -437,6 +437,13 @@ public class SeparationRecipes {
                 .fluidOutputs(Hydrogen.getFluid(6000))
                 .duration(480).EUt(VA[MV]).buildAndRegister();
 
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .input(dust, TungsticAcid, 7)
+                .output(dust, Tungsten)
+                .fluidOutputs(Hydrogen.getFluid(2000))
+                .fluidOutputs(Oxygen.getFluid(4000))
+                .duration(210).EUt(960).buildAndRegister();
+
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 1, GTValues.W))
