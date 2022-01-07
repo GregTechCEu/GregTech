@@ -179,7 +179,7 @@ public class GTJeiPlugin implements IModPlugin {
         //Material Tree
         List<MaterialTree> materialTreeList = new CopyOnWriteArrayList<>();
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-            if (material.hasProperty(PropertyKey.DUST) && !material.isHidden()) {
+            if (material.hasProperty(PropertyKey.DUST)) {
                 materialTreeList.add(new MaterialTree(material));
             }
         }

@@ -509,7 +509,7 @@ public class OrePrefix {
     }
 
     public boolean doGenerateItem(Material material) {
-        return !material.isHidden() && !isSelfReferencing && !isIgnored(material) && (generationCondition == null || generationCondition.test(material));
+        return !isSelfReferencing && !isIgnored(material) && (generationCondition == null || generationCondition.test(material));
     }
 
     public void setGenerationCondition(@Nullable Predicate<Material> in) {
@@ -536,7 +536,7 @@ public class OrePrefix {
         }
         if (material != null) {
             generatedMaterials.add(material);
-            if (material.isHidden() && (material.hasFluid() || material.hasProperty(PropertyKey.PLASMA))) {
+            if (material.hasFluid() || material.hasProperty(PropertyKey.PLASMA)) {
                 FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);
                 if (fluidProperty != null && fluidProperty.getFluid() == null) {
                     int temperature = fluidProperty.getFluidTemperature();
@@ -606,7 +606,7 @@ public class OrePrefix {
     }
 
     public boolean isIgnored(Material material) {
-        return ignoredMaterials.contains(material) || material.isHidden();
+        return ignoredMaterials.contains(material);
     }
 
     @ZenMethod
