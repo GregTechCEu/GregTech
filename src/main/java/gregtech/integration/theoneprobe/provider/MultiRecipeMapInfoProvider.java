@@ -29,7 +29,7 @@ public class MultiRecipeMapInfoProvider implements IProbeInfoProvider {
             TileEntity tileEntity = world.getTileEntity(data.getPos());
             if (tileEntity == null) return;
             try {
-                IMultipleRecipeMaps resultCapability = tileEntity.getCapability(GregtechTileCapabilities.MULTIPLE_RECIPEMAPS, null);
+                IMultipleRecipeMaps resultCapability = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_MULTIPLE_RECIPEMAPS, null);
                 if (resultCapability != null) {
                     addProbeInfo(resultCapability, probeInfo, tileEntity, sideHit);
                 }

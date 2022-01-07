@@ -1,6 +1,7 @@
 package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.IMufflerHatch;
 import gregtech.api.gui.GuiTextures;
@@ -18,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -27,6 +29,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.util.text.event.HoverEvent.Action;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -371,5 +374,13 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (dataId == STORE_TAPED) {
             storedTaped = buf.readBoolean();
         }
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        T capabilityResult = super.getCapability(capability, side);
+        if (capabilityResult == null && capability == GregtechTileCapabilities.CAPABILITY_MAINTENANCE)
+            return (T) this;
+        return capabilityResult;
     }
 }
