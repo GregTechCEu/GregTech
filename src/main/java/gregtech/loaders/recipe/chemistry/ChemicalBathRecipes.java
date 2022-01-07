@@ -119,13 +119,13 @@ public class ChemicalBathRecipes {
                 .fluidInputs(HydrochloricAcid.getFluid(2000))
                 .output(dust, TungsticAcid, 7)
                 .output(dust, CalciumChloride, 3)
-                .duration(210).EUt(VA[GTValues.EV]).buildAndRegister();
+                .duration(210).EUt(960).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(dust, Tungstate, 7)
                 .fluidInputs(HydrochloricAcid.getFluid(2000))
                 .output(dust, TungsticAcid, 7)
                 .output(dust, LithiumChloride, 4)
-                .duration(210).EUt(VA[GTValues.EV]).buildAndRegister();
+                .duration(210).EUt(960).buildAndRegister();
     }
 }

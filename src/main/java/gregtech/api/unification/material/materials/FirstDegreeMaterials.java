@@ -714,6 +714,7 @@ public class FirstDegreeMaterials {
         TungsticAcid = new Material.Builder(343, "tungstic_acid")
                 .dust()
                 .color(0xBCC800).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Tungsten, 1, Oxygen, 4)
                 .build();
 
