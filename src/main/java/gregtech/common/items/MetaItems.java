@@ -444,6 +444,10 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem PROSPECTOR_LV;
     public static MetaItem<?>.MetaValueItem PROSPECTOR_HV;
     public static MetaItem<?>.MetaValueItem PROSPECTOR_LUV;
+
+    public static MetaItem<?>.MetaValueItem TRICORDER_SCANNER;
+    public static MetaItem<?>.MetaValueItem DEBUG_SCANNER;
+
     public static MetaItem<?>.MetaValueItem WIRELESS;
     public static MetaItem<?>.MetaValueItem CAMERA;
     public static MetaItem<?>.MetaValueItem TERMINAL;

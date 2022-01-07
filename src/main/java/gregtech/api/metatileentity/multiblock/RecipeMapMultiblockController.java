@@ -16,6 +16,7 @@ import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
@@ -48,13 +49,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements ISoundCreator, IMultipleRecipeMaps {
+public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements ISoundCreator, IMultipleRecipeMaps, IDataInfoProvider {
 
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
@@ -462,5 +465,48 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         }
 
         return true; // return true here on the client to keep the GUI closed
+    }
+
+    @Nonnull
+    @Override
+    public List<ITextComponent> getDataInfo() {
+        List<ITextComponent> list = new ArrayList<>();
+        if (recipeMapWorkable.getMaxProgress() > 0) {
+            list.add(new TextComponentTranslation("behavior.tricorder.workable_progress",
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getProgress() / 20)).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getMaxProgress() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))
+            ));
+        }
+
+        list.add(new TextComponentTranslation("behavior.tricorder.energy_container_storage",
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyStored())).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW))
+        ));
+
+        if (recipeMapWorkable.getRecipeEUt() > 0) {
+            list.add(new TextComponentTranslation("behavior.tricorder.workable_consumption",
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt())).setStyle(new Style().setColor(TextFormatting.RED)),
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
+            ));
+        }
+
+        list.add(new TextComponentTranslation("behavior.tricorder.multiblock_energy_input",
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getInputVoltage())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                new TextComponentTranslation(GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getInputVoltage())]).setStyle(new Style().setColor(TextFormatting.YELLOW))
+        ));
+
+        if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics()) {
+            list.add(new TextComponentTranslation("behavior.tricorder.multiblock_maintenance",
+                    new TextComponentTranslation(GTUtility.formatNumbers(getNumMaintenanceProblems())).setStyle(new Style().setColor(TextFormatting.RED))
+            ));
+        }
+
+        if (recipeMapWorkable.getParallelLimit() > 1) {
+            list.add(new TextComponentTranslation("behavior.tricorder.multiblock_parallel",
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getParallelLimit())).setStyle(new Style().setColor(TextFormatting.GREEN))
+            ));
+        }
+
+        return list;
     }
 }

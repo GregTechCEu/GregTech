@@ -9,16 +9,19 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.FluidContainerSlotWidget;
+import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
+import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.recipes.ModHandler;
-import gregtech.client.renderer.ICubeRenderer;
-import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,6 +33,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
@@ -38,12 +43,14 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 
-public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreator {
+public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreator, IDataInfoProvider {
 
     private static final EnumFacing[] STEAM_PUSH_DIRECTIONS = ArrayUtils.add(EnumFacing.HORIZONTALS, EnumFacing.UP);
 
@@ -319,5 +326,11 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
         super.clearMachineInventory(itemBuffer);
         clearInventory(itemBuffer, containerInventory);
+    }
+
+    @Nonnull
+    @Override
+    public List<ITextComponent> getDataInfo() {
+        return Collections.singletonList(new TextComponentTranslation("gregtech.machine.steam_boiler.heat_amount", GTUtility.formatNumbers((int) (this.getTemperaturePercent() * 100))));
     }
 }

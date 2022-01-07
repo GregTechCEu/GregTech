@@ -10,7 +10,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.properties.GemProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
@@ -436,7 +435,7 @@ public class ToolRecipeHandler {
         registerFlintToolRecipes();
         registerMortarRecipes();
         registerSoftHammerRecipes();
-        registerProspectorRecipes();
+        registerScannerRecipes();
     }
 
     private static void registerFlintToolRecipes() {
@@ -521,7 +520,7 @@ public class ToolRecipeHandler {
         }
     }
 
-    private static void registerProspectorRecipes() {
+    private static void registerScannerRecipes() {
         for (MetaValueItem batteryItem : batteryItems[GTValues.LV]) {
             ModHandler.addShapedEnergyTransferRecipe("prospector_lv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_LV.getStackForm(),
                     batteryItem::isItemEqual, true, true,
@@ -531,6 +530,17 @@ public class ToolRecipeHandler {
                     'S', MetaItems.SENSOR_LV.getStackForm(),
                     'D', new UnificationEntry(OrePrefix.plate, Materials.Glass),
                     'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic),
+                    'B', batteryItem.getStackForm());
+        }
+        for (MetaValueItem batteryItem : batteryItems[GTValues.MV]) {
+            ModHandler.addShapedEnergyTransferRecipe("tricorder_" + batteryItem.unlocalizedName, MetaItems.TRICORDER_SCANNER.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "EPS", "CDC", "PBP",
+                    'E', MetaItems.EMITTER_MV.getStackForm(),
+                    'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium),
+                    'S', MetaItems.SENSOR_MV.getStackForm(),
+                    'D', MetaItems.COVER_SCREEN.getStackForm(),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Advanced),
                     'B', batteryItem.getStackForm());
         }
         for (MetaValueItem batteryItem : batteryItems[GTValues.HV]) {

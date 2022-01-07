@@ -8,10 +8,15 @@ import gregtech.api.capability.impl.*;
 import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -19,13 +24,15 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity implements ISoundCreator {
+public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity implements ISoundCreator, IDataInfoProvider {
 
     protected final RecipeLogicEnergy workable;
     protected final RecipeMap<?> recipeMap;
@@ -171,5 +178,39 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         if (getWorld() != null && getWorld().isRemote) {
             this.setupSound(this.workable.getRecipeMap().getSound(), this.getPos());
         }
+    }
+
+    @Nonnull
+    @Override
+    public List<ITextComponent> getDataInfo() {
+        List<ITextComponent> list = new ArrayList<>();
+
+        if (workable != null) {
+            list.add(new TextComponentTranslation("behavior.tricorder.workable_progress",
+                    new TextComponentTranslation(GTUtility.formatNumbers(workable.getProgress() / 20)).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                    new TextComponentTranslation(GTUtility.formatNumbers(workable.getMaxProgress() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))
+            ));
+
+            if (energyContainer != null) {
+                list.add(new TextComponentTranslation("behavior.tricorder.workable_stored_energy",
+                        new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyStored())).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                        new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW))
+                ));
+            }
+            // multi amp recipes: change 0 ? 0 : 1 to 0 ? 0 : amperage
+            if (workable.getRecipeEUt() > 0) {
+                list.add(new TextComponentTranslation("behavior.tricorder.workable_consumption",
+                        new TextComponentTranslation(GTUtility.formatNumbers(workable.getRecipeEUt())).setStyle(new Style().setColor(TextFormatting.RED)),
+                        new TextComponentTranslation(GTUtility.formatNumbers(workable.getRecipeEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
+                ));
+            } else {
+                list.add(new TextComponentTranslation("behavior.tricorder.workable_production",
+                        new TextComponentTranslation(GTUtility.formatNumbers(workable.getRecipeEUt() * -1)).setStyle(new Style().setColor(TextFormatting.RED)),
+                        new TextComponentTranslation(GTUtility.formatNumbers(workable.getRecipeEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
+                ));
+            }
+        }
+
+        return list;
     }
 }

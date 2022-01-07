@@ -2211,6 +2211,42 @@ metaitem.prospector.tooltip.ores=Scans Ores in a %s Chunk Radius
 metaitem.prospector.tooltip.fluids=Scans Ores and Fluids in a %s Chunk Radius
 behavior.prospector.not_enough_energy=Not Enough Energy!
 
+metaitem.tricorder_scanner.name=Portable Scanner
+metaitem.tricorder_scanner.tooltip=Tricorder
+metaitem.debug_scanner.name=Debug Scanner
+metaitem.debug_scanner.tooltip=Tricorder
+behavior.tricorder.position=----- X: %s Y: %s Z: %s D: %s -----
+behavior.tricorder.block_hardness=Hardness: %s Blast Resistance: %s
+behavior.tricorder.block_name=Name: %s MetaData: %s
+behavior.tricorder.divider==========================
+behavior.tricorder.tank=Tank %s: %s L / %s L %s
+behavior.tricorder.tanks_empty=All Tanks Empty
+behavior.tricorder.muffled=Muffled.
+behavior.tricorder.machine_disabled=Disabled.
+behavior.tricorder.machine_power_loss=Shut down due to power loss.
+behavior.tricorder.machine_progress=Progress/Load: %s / %s
+behavior.tricorder.energy_container_in=Max IN: %s (%s) EU at %s A
+behavior.tricorder.energy_container_out=Max OUT: %s (%s) EU at %s A
+behavior.tricorder.energy_container_storage=Energy: %s EU / %s EU
+behavior.tricorder.bedrock_fluid.amount=Fluid In Chunk: %s %s L
+behavior.tricorder.bedrock_fluid.nothing=Fluid In Chunk: §6Nothing§r
+behavior.tricorder.eut_per_sec=Last Second %s EU/t
+behavior.tricorder.amp_per_sec=Last Second %s A
+behavior.tricorder.workable_progress=Progress: %s s / %s s
+behavior.tricorder.workable_stored_energy=Stored Energy: %s EU / %s EU
+behavior.tricorder.workable_consumption=Probably Uses: %s EU/t at %s A
+behavior.tricorder.workable_production=Probably Produces: %s EU/t at %s A
+behavior.tricorder.multiblock_energy_input=Max Energy Income: %s EU/t Tier: %s
+behavior.tricorder.multiblock_energy_output=Max Energy Output: %s EU/t Tier: %s
+behavior.tricorder.multiblock_maintenance=Problems: %s
+behavior.tricorder.multiblock_parallel=Multi Processing: %s
+behavior.tricorder.debug_machine=Meta-ID: %s
+behavior.tricorder.debug_machine_valid= valid
+behavior.tricorder.debug_machine_invalid= invalid!
+behavior.tricorder.debug_machine_invalid_null=invalid! MetaTileEntity == null!
+behavior.tricorder.debug_cpu_load=Average CPU load of ~%sns over %s ticks with worst time of %sns.
+behavior.tricorder.debug_lag_count=Caused %s Lag Spike Warnings (anything taking longer than %sms) on the Server.
+
 metaitem.terminal.name=Terminal
 metaitem.terminal.tooltip=Sharp tools make good work
 metaitem.terminal.tooltip.creative=§bCreative Mode
@@ -2540,6 +2576,8 @@ gregtech.machine.steam_boiler_lava_bronze.name=Small Steam Lava Boiler
 gregtech.machine.steam_boiler_lava_bronze.tooltip=A Boiler running off Lava
 gregtech.machine.steam_boiler_lava_steel.name=High Pressure Steam Lava Boiler
 gregtech.machine.steam_boiler_lava_steel.tooltip=Faster than Small Steam Lava Boiler
+
+gregtech.machine.steam_boiler.heat_amount=Heat Capacity: %s %%
 
 gregtech.machine.steam_extractor_bronze.name=Steam Extractor
 gregtech.machine.steam_extractor_bronze.tooltip=Extracting your first Rubber
@@ -3286,6 +3324,9 @@ gregtech.machine.battery_buffer.uxv.16.name=UXV Voltage 16x Battery Buffer
 gregtech.machine.battery_buffer.max.4.name=MAX Voltage 4x Battery Buffer
 gregtech.machine.battery_buffer.max.8.name=MAX Voltage 8x Battery Buffer
 gregtech.machine.battery_buffer.max.16.name=MAX Voltage 16x Battery Buffer
+
+gregtech.battery_buffer.average_input=Average input: §e%s§r EU/t
+gregtech.battery_buffer.average_output=Average output: §e%s§r EU/t
 
 # Transformers
 gregtech.machine.transformer.tooltip_tool_usage=Use Soft Hammer to invert (Starts as Transform Down)
@@ -4136,7 +4177,7 @@ gregtech.multiblock.pattern.clear_amount_3=§6Must have a clear 3x3x1 space in f
 gregtech.multiblock.pattern.single=§6Only this block can be used§r
 gregtech.multiblock.pattern.location_end=§cVery End§r
 
-gregtech.multiblock.blast_furnace.max_temperature=Max Temperature: %sK
+gregtech.multiblock.blast_furnace.max_temperature=Heat Capacity: §c%sK
 gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s
 gregtech.multiblock.multi_furnace.heating_coil_discount=Heating Coil EU Boost: %sx
 gregtech.multiblock.distillation_tower.distilling_fluid=Distilling %s
@@ -4175,8 +4216,8 @@ gregtech.multiblock.large_miner.invfull=Inventory Full!
 gregtech.multiblock.large_miner.needspower=Needs Power!
 gregtech.multiblock.large_miner.vent=Venting Blocked!
 gregtech.multiblock.large_miner.steam=Needs Steam!
-gregtech.multiblock.large_miner.radius=Radius: %d Blocks
-gregtech.multiblock.large_miner.errorradius=Cannot change radius while working!
+gregtech.multiblock.large_miner.radius=Radius: §a%d§r Blocks
+gregtech.multiblock.large_miner.errorradius=§cCannot change radius while working!
 gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
 
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
