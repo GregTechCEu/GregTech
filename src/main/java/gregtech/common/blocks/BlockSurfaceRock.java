@@ -43,12 +43,12 @@ public class BlockSurfaceRock extends DelayedStateBlock {
 
     @Nullable
     @Override
-    public String getHarvestTool(IBlockState state) {
+    public String getHarvestTool(@Nonnull IBlockState state) {
         return "shovel";
     }
 
+    @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
         Material material = variantProperty.getAllowedValues().get(meta);
         return getDefaultState().withProperty(variantProperty, material);
@@ -85,18 +85,16 @@ public class BlockSurfaceRock extends DelayedStateBlock {
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if(playerIn.getHeldItem(hand).isEmpty()) {
-            dropBlockAsItem(worldIn, pos, state, 0);
-            worldIn.setBlockToAir(pos);
-            playerIn.swingArm(hand);
-        }
+    public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
+        dropBlockAsItem(worldIn, pos, state, 0);
+        worldIn.setBlockToAir(pos);
+        playerIn.swingArm(hand);
         return true;
     }
 
     @Nonnull
     @Override
-    public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nullable Entity entity) {
+    public SoundType getSoundType(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nullable Entity entity) {
         return SoundType.GROUND;
     }
 
