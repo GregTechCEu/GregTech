@@ -9,6 +9,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,8 +24,9 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
 
     public MetaTileEntityRockBreaker(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier) {
         super(metaTileEntityId, recipeMap, renderer, tier, true);
-        if (getWorld() != null && !getWorld().isRemote)
-            onNeighborChanged();
+        if (getWorld() != null && !getWorld().isRemote) {
+            checkAdjacentFluids();
+        }
     }
 
     @Override
@@ -42,23 +44,27 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
     @Override
     public void onNeighborChanged() {
         super.onNeighborChanged();
-        if (hasValidFluids)
-            return;
+        checkAdjacentFluids();
+    }
 
+    private void checkAdjacentFluids() {
         boolean hasLava = false;
         boolean hasWater = false;
         for (EnumFacing side : EnumFacing.VALUES) {
-            if (hasLava && hasWater)
+            if (hasLava && hasWater) {
                 break;
+            }
 
-            if (side == frontFacing || side.getAxis().isVertical())
+            if (side == frontFacing || side.getAxis().isVertical()) {
                 continue;
+            }
 
-            IBlockState state = getWorld().getBlockState(getPos().offset(side));
-            if (state == Blocks.LAVA.getDefaultState())
+            Block block = getWorld().getBlockState(getPos().offset(side)).getBlock();
+            if (block == Blocks.FLOWING_LAVA || block == Blocks.LAVA) {
                 hasLava = true;
-            else if (state == Blocks.WATER.getDefaultState())
+            } else if (block == Blocks.FLOWING_WATER || block == Blocks.WATER) {
                 hasWater = true;
+            }
         }
         this.hasValidFluids = hasLava && hasWater;
     }
