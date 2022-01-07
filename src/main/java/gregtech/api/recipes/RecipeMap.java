@@ -523,7 +523,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
 
-    public List<Recipe> getRecipeList() {
+    public Collection<Recipe> getRecipeList() {
         return Collections.unmodifiableList(new ArrayList<>(recipeSet));
     }
 

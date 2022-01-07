@@ -5,6 +5,9 @@ import gregtech.common.ConfigHolder;
 import gregtech.core.util.TargetClassVisitor;
 import gregtech.core.visitors.*;
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -111,12 +114,13 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
             case NuclearCraftRecipeHelperVisitor.TARGET_CLASS_NAME: {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-                classReader.accept(new TargetClassVisitor(classWriter, NuclearCraftRecipeHelperVisitor.TARGET_METHOD, NuclearCraftRecipeHelperVisitor::new), 0);
-                basicClass = classWriter.toByteArray();
 
-                classReader = new ClassReader(basicClass);
-                classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-                classReader.accept(new TargetClassVisitor(classWriter, NuclearCraftRecipeHelperVisitor.TARGET_METHOD_2, NuclearCraftRecipeHelperVisitor::new), 0);
+                ModContainer container = Loader.instance().getIndexedModList().get("nuclearcraft");
+                if (container.getVersion().contains("2o")) { // overhauled
+                    classReader.accept(new TargetClassVisitor(classWriter, NuclearCraftRecipeHelperVisitor.TARGET_METHOD_NCO, NuclearCraftRecipeHelperVisitor::new), 0);
+                } else {
+                    classReader.accept(new TargetClassVisitor(classWriter, NuclearCraftRecipeHelperVisitor.TARGET_METHOD_NC, NuclearCraftRecipeHelperVisitor::new), 0);
+                }
                 return classWriter.toByteArray();
             }
         }

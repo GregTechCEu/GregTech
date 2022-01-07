@@ -48,10 +48,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -110,7 +107,7 @@ public class GTJeiPlugin implements IModPlugin {
                         .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay());
 
                 if (recipeMap.getSmallRecipeMap() != null) {
-                    List<Recipe> smallRecipes = recipeMap.getSmallRecipeMap().getRecipeList();
+                    Collection<Recipe> smallRecipes = recipeMap.getSmallRecipeMap().getRecipeList();
                     recipeStream = recipeStream.filter(recipe -> !smallRecipes.contains(recipe));
                 }
 
