@@ -723,6 +723,10 @@ public class VanillaStandardRecipes {
                 'R', new UnificationEntry(OrePrefix.dust, Materials.Redstone),
                 'B', new UnificationEntry(OrePrefix.ingot, Materials.Titanium));
 
+        ModHandler.addShapedRecipe("sticky_piston_resin", new ItemStack(Blocks.STICKY_PISTON), "h", "R", "P",
+                'R', STICKY_RESIN.getStackForm(),
+                'P', new ItemStack(Blocks.PISTON));
+
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(16).input(plate, Iron).inputs(new ItemStack(Blocks.PLANKS, 3, GTValues.W)).inputs(new ItemStack(Blocks.COBBLESTONE, 4)).input(dust, Redstone).outputs(new ItemStack(Blocks.PISTON)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(16).input(plate, Bronze).inputs(new ItemStack(Blocks.PLANKS, 3, GTValues.W)).inputs(new ItemStack(Blocks.COBBLESTONE, 4)).input(dust, Redstone).outputs(new ItemStack(Blocks.PISTON)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(16).input(plate, Steel).inputs(new ItemStack(Blocks.PLANKS, 3, GTValues.W)).inputs(new ItemStack(Blocks.COBBLESTONE, 4)).input(dust, Redstone).outputs(new ItemStack(Blocks.PISTON, 2)).buildAndRegister();
