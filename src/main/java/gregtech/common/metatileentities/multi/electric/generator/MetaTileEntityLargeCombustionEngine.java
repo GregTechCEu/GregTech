@@ -75,7 +75,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                         textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost"));
                     }
                 }
-                if (isExtreme) {
+                else {
                     if (((LargeCombustionEngineWorkableHandler) recipeMapWorkable).isOxygenBoosted) {
                         int liquidOxygenAmount = liquidOxygenStack == null ? 0 : liquidOxygenStack.amount;
                         textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount", liquidOxygenAmount));
