@@ -1,12 +1,12 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.recipes.ModHandler;
-import static gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.stack.UnificationEntry;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLY_LINE_RECIPES;
+import static gregtech.api.unification.material.MarkerMaterials.Tier;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.items.MetaItems.*;
@@ -524,7 +524,8 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_MOTOR_EV, 4)
                 .input(ELECTRIC_PUMP_EV, 4)
                 .input(CONVEYOR_MODULE_EV, 4)
-                .input(gear, Tungsten, 2)
+                .input(gear, Tungsten, 4)
+                .circuitMeta(1)
                 .output(BASIC_LARGE_MINER)
                 .duration(400).EUt(VA[EV]).buildAndRegister();
 
@@ -535,7 +536,8 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_MOTOR_IV, 4)
                 .input(ELECTRIC_PUMP_IV, 4)
                 .input(CONVEYOR_MODULE_IV, 4)
-                .input(gear, Ultimet, 2)
+                .input(gear, Iridium, 4)
+                .circuitMeta(1)
                 .output(LARGE_MINER)
                 .duration(400).EUt(VA[IV]).buildAndRegister();
 
@@ -546,8 +548,44 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_MOTOR_LUV, 4)
                 .input(ELECTRIC_PUMP_LUV, 4)
                 .input(CONVEYOR_MODULE_LUV, 4)
-                .input(gear, Ruridit, 2)
+                .input(gear, Ruridit, 4)
+                .circuitMeta(1)
                 .output(ADVANCED_LARGE_MINER)
                 .duration(400).EUt(VA[LuV]).buildAndRegister();
+
+        // Multiblock Fluid Drills
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[MV])
+                .input(frameGt, Steel, 4)
+                .input(circuit, Tier.Good, 4)
+                .input(ELECTRIC_MOTOR_MV, 4)
+                .input(ELECTRIC_PUMP_MV, 4)
+                .input(gear, VanadiumSteel, 4)
+                .circuitMeta(2)
+                .output(BASIC_FLUID_DRILLING_RIG)
+                .duration(400).EUt(VA[MV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[HV])
+                .input(frameGt, Titanium, 4)
+                .input(circuit, Tier.Advanced, 4)
+                .input(ELECTRIC_MOTOR_HV, 4)
+                .input(ELECTRIC_PUMP_HV, 4)
+                .input(gear, BlueSteel, 4)
+                .circuitMeta(2)
+                .output(FLUID_DRILLING_RIG)
+                .duration(400).EUt(VA[HV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[EV])
+                .input(frameGt, TungstenSteel, 4)
+                .input(circuit, Tier.Extreme, 4)
+                .input(ELECTRIC_MOTOR_EV, 4)
+                .input(ELECTRIC_PUMP_EV, 4)
+                .input(gear, TungstenCarbide, 4)
+                .circuitMeta(2)
+                .output(ADVANCED_FLUID_DRILLING_RIG)
+                .duration(400).EUt(VA[EV]).buildAndRegister();
     }
 }
