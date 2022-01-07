@@ -320,7 +320,7 @@ public class ComponentRecipes {
         Material[] circuitTiers = new Material[]{Tier.Basic, Tier.Good, Tier.Advanced, Tier.Extreme,
                 Tier.Elite, Tier.Master, Tier.Ultimate, Tier.Super};
 
-        for (int i = 0; i < FLUID_REGULATORS.length; i++) {
+        for (int i = 0; i < circuitTiers.length; i++) {
             ASSEMBLER_RECIPES.recipeBuilder().circuitMeta(1)
                     .inputs(PUMPS[i].getStackForm())
                     .input(circuit, circuitTiers[i], 2)

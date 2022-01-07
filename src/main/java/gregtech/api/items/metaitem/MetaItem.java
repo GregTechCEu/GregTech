@@ -698,6 +698,11 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return this;
         }
 
+        public MetaValueItem setInvisible(boolean isVisible) {
+            this.visible = isVisible;
+            return this;
+        }
+
         public MetaValueItem setInvisible() {
             this.visible = false;
             return this;

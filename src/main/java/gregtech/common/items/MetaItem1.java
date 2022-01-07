@@ -176,6 +176,11 @@ public class MetaItem1 extends StandardMetaItem {
         ELECTRIC_MOTOR_LUV = addItem(132, "electric.motor.luv");
         ELECTRIC_MOTOR_ZPM = addItem(133, "electric.motor.zpm");
         ELECTRIC_MOTOR_UV = addItem(134, "electric.motor.uv");
+        ELECTRIC_MOTOR_UHV = addItem(135, "electric.motor.uhv").setInvisible(GTValues.HT);
+        ELECTRIC_MOTOR_UEV = addItem(136, "electric.motor.uev").setInvisible(GTValues.HT);
+        ELECTRIC_MOTOR_UIV = addItem(137, "electric.motor.uiv").setInvisible(GTValues.HT);
+        ELECTRIC_MOTOR_UMV = addItem(138, "electric.motor.umv").setInvisible(GTValues.HT);
+        ELECTRIC_MOTOR_UXV = addItem(139, "electric.motor.uxv").setInvisible(GTValues.HT);
 
         // Pumps: ID 141-155
         PUMPS[0] = ELECTRIC_PUMP_LV = addItem(142, "electric.pump.lv");
@@ -186,6 +191,11 @@ public class MetaItem1 extends StandardMetaItem {
         PUMPS[5] = ELECTRIC_PUMP_LUV = addItem(147, "electric.pump.luv");
         PUMPS[6] = ELECTRIC_PUMP_ZPM = addItem(148, "electric.pump.zpm");
         PUMPS[7] = ELECTRIC_PUMP_UV = addItem(149, "electric.pump.uv");
+        PUMPS[8] = ELECTRIC_PUMP_UHV = addItem(150, "electric.pump.uhv").setInvisible(GTValues.HT);
+        PUMPS[9] = ELECTRIC_PUMP_UEV = addItem(151, "electric.pump.uev").setInvisible(GTValues.HT);
+        PUMPS[10] = ELECTRIC_PUMP_UIV = addItem(152, "electric.pump.uiv").setInvisible(GTValues.HT);
+        PUMPS[11] = ELECTRIC_PUMP_UMV = addItem(153, "electric.pump.umv").setInvisible(GTValues.HT);
+        PUMPS[12] = ELECTRIC_PUMP_UXV = addItem(154, "electric.pump.uxv").setInvisible(GTValues.HT);
 
         // Conveyors: ID 156-170
         CONVEYOR_MODULE_LV = addItem(157, "conveyor.module.lv");
@@ -196,6 +206,11 @@ public class MetaItem1 extends StandardMetaItem {
         CONVEYOR_MODULE_LUV = addItem(162, "conveyor.module.luv");
         CONVEYOR_MODULE_ZPM = addItem(163, "conveyor.module.zpm");
         CONVEYOR_MODULE_UV = addItem(164, "conveyor.module.uv");
+        CONVEYOR_MODULE_UHV = addItem(165, "conveyor.module.uhv").setInvisible(GTValues.HT);
+        CONVEYOR_MODULE_UEV = addItem(166, "conveyor.module.uev").setInvisible(GTValues.HT);
+        CONVEYOR_MODULE_UIV = addItem(167, "conveyor.module.uiv").setInvisible(GTValues.HT);
+        CONVEYOR_MODULE_UMV = addItem(168, "conveyor.module.umv").setInvisible(GTValues.HT);
+        CONVEYOR_MODULE_UXV = addItem(169, "conveyor.module.uxv").setInvisible(GTValues.HT);
 
         // Pistons: ID 171-185
         ELECTRIC_PISTON_LV = addItem(172, "electric.piston.lv");
@@ -206,6 +221,11 @@ public class MetaItem1 extends StandardMetaItem {
         ELECTRIC_PISTON_LUV = addItem(177, "electric.piston.luv");
         ELECTRIC_PISTON_ZPM = addItem(178, "electric.piston.zpm");
         ELECTRIC_PISTON_UV = addItem(179, "electric.piston.uv");
+        ELECTRIC_PISTON_UHV = addItem(180, "electric.piston.uhv").setInvisible(GTValues.HT);
+        ELECTRIC_PISTON_UEV = addItem(181, "electric.piston.uev").setInvisible(GTValues.HT);
+        ELECTRIC_PISTON_UIV = addItem(182, "electric.piston.uiv").setInvisible(GTValues.HT);
+        ELECTRIC_PISTON_UMV = addItem(183, "electric.piston.umv").setInvisible(GTValues.HT);
+        ELECTRIC_PISTON_UXV = addItem(184, "electric.piston.uxv").setInvisible(GTValues.HT);
 
         // Robot Arms: ID 186-200
         ROBOT_ARM_LV = addItem(187, "robot.arm.lv");
@@ -216,6 +236,11 @@ public class MetaItem1 extends StandardMetaItem {
         ROBOT_ARM_LUV = addItem(192, "robot.arm.luv");
         ROBOT_ARM_ZPM = addItem(193, "robot.arm.zpm");
         ROBOT_ARM_UV = addItem(194, "robot.arm.uv");
+        ROBOT_ARM_UHV = addItem(195, "robot.arm.uhv").setInvisible(GTValues.HT);
+        ROBOT_ARM_UEV = addItem(196, "robot.arm.uev").setInvisible(GTValues.HT);
+        ROBOT_ARM_UIV = addItem(197, "robot.arm.uiv").setInvisible(GTValues.HT);
+        ROBOT_ARM_UMV = addItem(198, "robot.arm.umv").setInvisible(GTValues.HT);
+        ROBOT_ARM_UXV = addItem(199, "robot.arm.uxv").setInvisible(GTValues.HT);
 
         // Field Generators: ID 201-215
         FIELD_GENERATOR_LV = addItem(202, "field.generator.lv");
@@ -226,6 +251,11 @@ public class MetaItem1 extends StandardMetaItem {
         FIELD_GENERATOR_LUV = addItem(207, "field.generator.luv");
         FIELD_GENERATOR_ZPM = addItem(208, "field.generator.zpm");
         FIELD_GENERATOR_UV = addItem(209, "field.generator.uv");
+        FIELD_GENERATOR_UHV = addItem(210, "field.generator.uhv").setInvisible(GTValues.HT);
+        FIELD_GENERATOR_UEV = addItem(211, "field.generator.uev").setInvisible(GTValues.HT);
+        FIELD_GENERATOR_UIV = addItem(212, "field.generator.uiv").setInvisible(GTValues.HT);
+        FIELD_GENERATOR_UMV = addItem(213, "field.generator.umv").setInvisible(GTValues.HT);
+        FIELD_GENERATOR_UXV = addItem(214, "field.generator.uxv").setInvisible(GTValues.HT);
 
         // Emitters: ID 216-230
         EMITTER_LV = addItem(217, "emitter.lv");
@@ -236,6 +266,11 @@ public class MetaItem1 extends StandardMetaItem {
         EMITTER_LUV = addItem(222, "emitter.luv");
         EMITTER_ZPM = addItem(223, "emitter.zpm");
         EMITTER_UV = addItem(224, "emitter.uv");
+        EMITTER_UHV = addItem(225, "emitter.uhv").setInvisible(GTValues.HT);
+        EMITTER_UEV = addItem(226, "emitter.uev").setInvisible(GTValues.HT);
+        EMITTER_UIV = addItem(227, "emitter.uiv").setInvisible(GTValues.HT);
+        EMITTER_UMV = addItem(228, "emitter.umv").setInvisible(GTValues.HT);
+        EMITTER_UXV = addItem(229, "emitter.uxv").setInvisible(GTValues.HT);
 
         // Sensors: ID 231-245
         SENSOR_LV = addItem(232, "sensor.lv");
@@ -246,6 +281,11 @@ public class MetaItem1 extends StandardMetaItem {
         SENSOR_LUV = addItem(237, "sensor.luv");
         SENSOR_ZPM = addItem(238, "sensor.zpm");
         SENSOR_UV = addItem(239, "sensor.uv");
+        SENSOR_UHV = addItem(240, "sensor.uhv").setInvisible(GTValues.HT);
+        SENSOR_UEV = addItem(241, "sensor.uev").setInvisible(GTValues.HT);
+        SENSOR_UIV = addItem(242, "sensor.uiv").setInvisible(GTValues.HT);
+        SENSOR_UMV = addItem(243, "sensor.umv").setInvisible(GTValues.HT);
+        SENSOR_UXV = addItem(244, "sensor.uxv").setInvisible(GTValues.HT);
 
         // Fluid Regulators: ID 246-260
         FLUID_REGULATORS[0] = FLUID_REGULATOR_LV = addItem(247, "fluid.regulator.lv");
@@ -256,6 +296,11 @@ public class MetaItem1 extends StandardMetaItem {
         FLUID_REGULATORS[5] = FLUID_REGULATOR_LUV = addItem(252, "fluid.regulator.luv");
         FLUID_REGULATORS[6] = FLUID_REGULATOR_ZPM = addItem(253, "fluid.regulator.zpm");
         FLUID_REGULATORS[7] = FLUID_REGULATOR_UV = addItem(254, "fluid.regulator.uv");
+        FLUID_REGULATORS[8] = FLUID_REGULATOR_UHV = addItem(255, "fluid.regulator.uhv").setInvisible(GTValues.HT);
+        FLUID_REGULATORS[9] = FLUID_REGULATOR_UEV = addItem(256, "fluid.regulator.uev").setInvisible(GTValues.HT);
+        FLUID_REGULATORS[10] = FLUID_REGULATOR_UIV = addItem(257, "fluid.regulator.uiv").setInvisible(GTValues.HT);
+        FLUID_REGULATORS[11] = FLUID_REGULATOR_UMV = addItem(258, "fluid.regulator.umv").setInvisible(GTValues.HT);
+        FLUID_REGULATORS[12] = FLUID_REGULATOR_UXV = addItem(259, "fluid.regulator.uxv").setInvisible(GTValues.HT);
 
         // Data Items: ID 261-265
         TOOL_DATA_STICK = addItem(261, "tool.datastick");
