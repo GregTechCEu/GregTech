@@ -105,11 +105,23 @@ public class CoverBehaviors {
         registerBehavior(71, new ResourceLocation(GTValues.MODID, "conveyor.umv"), MetaItems.CONVEYOR_MODULE_UMV, (tile, side) -> new CoverConveyor(tile, side, GTValues.UMV, 16 * 64));
         registerBehavior(72, new ResourceLocation(GTValues.MODID, "conveyor.uxv"), MetaItems.CONVEYOR_MODULE_UXV, (tile, side) -> new CoverConveyor(tile, side, GTValues.UXV, 16 * 64));
 
-        registerBehavior(78, new ResourceLocation(GTValues.MODID, "robotic_arm.uhv"), MetaItems.ROBOT_ARM_UHV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.UV, 16 * 64));
-        registerBehavior(79, new ResourceLocation(GTValues.MODID, "robotic_arm.uev"), MetaItems.ROBOT_ARM_UEV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.UV, 16 * 64));
-        registerBehavior(80, new ResourceLocation(GTValues.MODID, "robotic_arm.uiv"), MetaItems.ROBOT_ARM_UIV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.UV, 16 * 64));
-        registerBehavior(81, new ResourceLocation(GTValues.MODID, "robotic_arm.umv"), MetaItems.ROBOT_ARM_UMV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.UV, 16 * 64));
-        registerBehavior(82, new ResourceLocation(GTValues.MODID, "robotic_arm.uxv"), MetaItems.ROBOT_ARM_UXV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.UV, 16 * 64));
+        registerBehavior(78, new ResourceLocation(GTValues.MODID, "robotic_arm.uhv"), MetaItems.ROBOT_ARM_UHV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.UHV, 16 * 64));
+        registerBehavior(79, new ResourceLocation(GTValues.MODID, "robotic_arm.uev"), MetaItems.ROBOT_ARM_UEV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.UEV, 16 * 64));
+        registerBehavior(80, new ResourceLocation(GTValues.MODID, "robotic_arm.uiv"), MetaItems.ROBOT_ARM_UIV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.UIV, 16 * 64));
+        registerBehavior(81, new ResourceLocation(GTValues.MODID, "robotic_arm.umv"), MetaItems.ROBOT_ARM_UMV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.UMV, 16 * 64));
+        registerBehavior(82, new ResourceLocation(GTValues.MODID, "robotic_arm.uxv"), MetaItems.ROBOT_ARM_UXV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.UXV, 16 * 64));
+
+        registerBehavior(88, new ResourceLocation(GTValues.MODID, "pump.uhv"), MetaItems.ELECTRIC_PUMP_UHV, (tile, side) -> new CoverPump(tile, side, GTValues.UHV, 1280 * 64 * 64 * 4));
+        registerBehavior(89, new ResourceLocation(GTValues.MODID, "pump.uev"), MetaItems.ELECTRIC_PUMP_UEV, (tile, side) -> new CoverPump(tile, side, GTValues.UEV, 1280 * 64 * 64 * 4));
+        registerBehavior(90, new ResourceLocation(GTValues.MODID, "pump.uiv"), MetaItems.ELECTRIC_PUMP_UIV, (tile, side) -> new CoverPump(tile, side, GTValues.UIV, 1280 * 64 * 64 * 4));
+        registerBehavior(91, new ResourceLocation(GTValues.MODID, "pump.umv"), MetaItems.ELECTRIC_PUMP_UMV, (tile, side) -> new CoverPump(tile, side, GTValues.UMV, 1280 * 64 * 64 * 4));
+        registerBehavior(92, new ResourceLocation(GTValues.MODID, "pump.uxv"), MetaItems.ELECTRIC_PUMP_UXV, (tile, side) -> new CoverPump(tile, side, GTValues.UXV, 1280 * 64 * 64 * 4));
+
+        registerBehavior(98, new ResourceLocation(GTValues.MODID, "fluid.regulator.uhv"), MetaItems.FLUID_REGULATOR_UHV, (tile, side) -> new CoverFluidRegulator(tile, side, GTValues.UHV, 1280 * 64 * 64 * 4));
+        registerBehavior(99, new ResourceLocation(GTValues.MODID, "fluid.regulator.uev"), MetaItems.FLUID_REGULATOR_UEV, (tile, side) -> new CoverFluidRegulator(tile, side, GTValues.UEV, 1280 * 64 * 64 * 4));
+        registerBehavior(100, new ResourceLocation(GTValues.MODID, "fluid.regulator.uiv"), MetaItems.FLUID_REGULATOR_UIV, (tile, side) -> new CoverFluidRegulator(tile, side, GTValues.UIV, 1280 * 64 * 64 * 4));
+        registerBehavior(101, new ResourceLocation(GTValues.MODID, "fluid.regulator.umv"), MetaItems.FLUID_REGULATOR_UMV, (tile, side) -> new CoverFluidRegulator(tile, side, GTValues.UMV, 1280 * 64 * 64 * 4));
+        registerBehavior(102, new ResourceLocation(GTValues.MODID, "fluid.regulator.uxv"), MetaItems.FLUID_REGULATOR_UXV, (tile, side) -> new CoverFluidRegulator(tile, side, GTValues.UXV, 1280 * 64 * 64 * 4));
 
 
 
