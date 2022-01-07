@@ -231,7 +231,6 @@ public class MetaBlocks {
                 MetaBlocks::createCompressedBlock);
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-            if (material.isHidden()) continue;
 
             if (material.hasProperty(PropertyKey.ORE)) {
                 createOreBlock(material);
@@ -287,7 +286,6 @@ public class MetaBlocks {
         Map<Integer, Material[]> blocksToGenerate = new TreeMap<>();
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-            if (material.isHidden()) continue;
             if (materialPredicate.test(material)) {
                 int id = material.getId();
                 int metaBlockID = id / 16;

@@ -333,14 +333,6 @@ public class Material implements Comparable<Material> {
         calculateDecompositionType();
     }
 
-    public boolean isHidden() {
-        return this.materialInfo.isHidden;
-    }
-
-    public void setHidden(boolean hidden) {
-        this.materialInfo.isHidden = hidden;
-    }
-
     /**
      * @since GTCEu 2.0.0
      */
@@ -674,11 +666,6 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder setHidden() {
-            this.materialInfo.isHidden = true;
-            return this;
-        }
-
         public Builder toolStats(float speed, float damage, int durability, int enchantability) {
             return toolStats(speed, damage, durability, enchantability, false);
         }
@@ -879,12 +866,6 @@ public class Material implements Comparable<Material> {
          * Default: none.
          */
         private Element element;
-
-        /**
-         * Field used to hide Materials from JEI, but keep them generated.
-         * Allows GTCEu to generate all elements without needing to use all of them.
-         */
-        private boolean isHidden = false;
 
         private MaterialInfo(int metaItemSubId, String name) {
             this.metaItemSubId = metaItemSubId;
