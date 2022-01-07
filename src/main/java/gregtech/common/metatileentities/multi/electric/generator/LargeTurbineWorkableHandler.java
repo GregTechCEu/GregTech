@@ -31,9 +31,6 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
     @Override
     protected void updateRecipeProgress() {
         if (canRecipeProgress) {
-            if (!isActive)
-                setActive(true);
-
             // turbines can void energy
             drawEnergy(recipeEUt, false);
             //as recipe starts with progress on 1 this has to be > only not => to compensate for it
@@ -59,14 +56,14 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
     }
 
     @Override
-    protected long boostProduction(int production) {
+    protected long boostProduction(long production) {
         IRotorHolder rotorHolder = ((MetaTileEntityLargeTurbine) metaTileEntity).getRotorHolder();
         if (rotorHolder != null && rotorHolder.hasRotor()) {
             int maxSpeed = rotorHolder.getMaxRotorHolderSpeed();
             int currentSpeed = rotorHolder.getRotorSpeed();
             if (currentSpeed >= maxSpeed)
                 return production;
-            return (int) (production * Math.pow(1.0 * currentSpeed / maxSpeed, 2));
+            return (long) (production * Math.pow(1.0 * currentSpeed / maxSpeed, 2));
         }
         return 0;
     }
@@ -112,8 +109,8 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
 
     @Override
     public void invalidate() {
-        super.invalidate();
         excessVoltage = 0;
+        super.invalidate();
     }
 
     public void updateTanks() {
