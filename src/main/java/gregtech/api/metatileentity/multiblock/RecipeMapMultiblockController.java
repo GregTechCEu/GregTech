@@ -367,7 +367,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         T capabilityResult = super.getCapability(capability, side);
-        if (capabilityResult == null && capability == GregtechTileCapabilities.MULTIPLE_RECIPEMAPS) {
+        if (capabilityResult == null && capability == GregtechTileCapabilities.CAPABILITY_MULTIPLE_RECIPEMAPS) {
             return (T) this;
         }
         return capabilityResult;
