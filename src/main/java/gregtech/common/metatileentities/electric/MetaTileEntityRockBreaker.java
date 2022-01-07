@@ -51,7 +51,7 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
             if (hasLava && hasWater)
                 break;
 
-            if (side == frontFacing || side == EnumFacing.DOWN || side == EnumFacing.UP)
+            if (side == frontFacing || side.getAxis().isVertical())
                 continue;
 
             IBlockState state = getWorld().getBlockState(getPos().offset(side));
@@ -90,7 +90,7 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
 
         @Override
         protected boolean shouldSearchForRecipes() {
-            return super.shouldSearchForRecipes() && hasValidFluids;
+            return hasValidFluids && super.shouldSearchForRecipes();
         }
     }
 }
