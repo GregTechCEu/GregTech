@@ -23,7 +23,7 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
 
     public MetaTileEntityRockBreaker(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier) {
         super(metaTileEntityId, recipeMap, renderer, tier, true);
-        if (getWorld() != null && getWorld().isRemote)
+        if (getWorld() != null && !getWorld().isRemote)
             onNeighborChanged();
     }
 
