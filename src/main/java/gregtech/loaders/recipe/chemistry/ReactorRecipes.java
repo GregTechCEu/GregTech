@@ -200,6 +200,7 @@ public class ReactorRecipes {
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(Methanol.getFluid(1000))
                 .fluidInputs(AceticAcid.getFluid(1000))
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(MethylAcetate.getFluid(1000))
                 .fluidOutputs(Water.getFluid(1000))
                 .duration(240).EUt(VA[LV]).buildAndRegister();
@@ -406,6 +407,7 @@ public class ReactorRecipes {
                 .fluidInputs(HypochlorousAcid.getFluid(1000))
                 .fluidInputs(Ammonia.getFluid(1000))
                 .fluidOutputs(Water.getFluid(1000))
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(Monochloramine.getFluid(1000))
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
