@@ -186,7 +186,7 @@ public class OreDictUnifier {
                 entryMaterial = entry.orePrefix.materialType;
             }
             if (entryMaterial != null) {
-                return new MaterialStack(entryMaterial, entry.orePrefix.materialAmount);
+                return new MaterialStack(entryMaterial, entry.orePrefix.getMaterialAmount(entryMaterial));
             }
         }
         ItemMaterialInfo info = materialUnificationInfo.get(simpleItemStack);
@@ -312,7 +312,7 @@ public class OreDictUnifier {
     public static ItemStack getGem(MaterialStack materialStack) {
         if (materialStack.material.hasProperty(PropertyKey.GEM)
                 && !OrePrefix.gem.isIgnored(materialStack.material)
-                && materialStack.amount == OrePrefix.gem.materialAmount) {
+                && materialStack.amount == OrePrefix.gem.getMaterialAmount(materialStack.material)) {
             return get(OrePrefix.gem, materialStack.material, (int) (materialStack.amount / M));
         }
         return getDust(materialStack);

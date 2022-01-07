@@ -194,7 +194,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         int damage = itemStack.getItemDamage();
         Material material = GregTechAPI.MATERIAL_REGISTRY.getObjectById(damage);
         DustProperty property = material == null ? null : material.getProperty(PropertyKey.DUST);
-        if (property != null) return (int) (property.getBurnTime() * prefix.materialAmount / GTValues.M);
+        if (property != null) return (int) (property.getBurnTime() * prefix.getMaterialAmount(material) / GTValues.M);
         return super.getItemBurnTime(itemStack);
 
     }

@@ -420,7 +420,7 @@ public class OrePrefix {
     public final @Nullable
     MaterialIconType materialIconType;
 
-    public final long materialAmount;
+    private final long materialAmount;
 
     /**
      * Contains a default material type for self-referencing OrePrefix
@@ -477,7 +477,12 @@ public class OrePrefix {
         this.isMarkerPrefix = isMarkerPrefix;
     }
 
-    public long getMaterialAmount(Material material) {
+    public long getMaterialAmount(@Nullable Material material) {
+
+        if(material == null) {
+            return this.materialAmount;
+        }
+
         if (this == block) {
             //glowstone and nether quartz blocks use 4 gems (dusts)
             if (material == Materials.Glowstone ||
