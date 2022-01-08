@@ -232,6 +232,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             updateParts();
             getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
             if (this.selected != null) {
+                this.selected = null;
                 for (int i = 0; i < predicates.size(); i++) {
                     recipeLayout.getItemStacks().set(i + MAX_PARTS, ItemStack.EMPTY);
                 }
