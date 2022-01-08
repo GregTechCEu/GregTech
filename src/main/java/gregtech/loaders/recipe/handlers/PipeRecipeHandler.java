@@ -122,6 +122,16 @@ public class PipeRecipeHandler {
                 .EUt(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
 
+        if (material.hasFlag(NO_SMASHING)) {
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.dust, material, 3)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_NORMAL)
+                    .outputs(pipeStack)
+                    .duration((int) material.getMass() * 3)
+                    .EUt(6 * getVoltageMultiplier(material))
+                    .buildAndRegister();
+        }
+
         ModHandler.addShapedRecipe(String.format("medium_%s_pipe", material.toString()),
                 GTUtility.copyAmount(2, pipeStack), "XXX", "w h", "XXX",
                 'X', new UnificationEntry(OrePrefix.plate, material));
