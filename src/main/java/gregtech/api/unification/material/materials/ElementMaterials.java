@@ -155,7 +155,7 @@ public class ElementMaterials {
         Cobalt = new Material.Builder(23, "cobalt")
                 .ingot().fluid().ore() // leave for TiCon ore processing
                 .color(0x5050FA).iconSet(METALLIC)
-                .flags(STD_METAL)
+                .flags(EXT_METAL)
                 .element(Elements.Co)
                 .toolStats(10.0f, 3.0f, 256, 21)
                 .cableProperties(GTValues.V[1], 2, 2)
@@ -494,7 +494,7 @@ public class ElementMaterials {
         Palladium = new Material.Builder(77, "palladium")
                 .ingot().fluid(FluidType.FLUID).ore()
                 .color(0x808080).iconSet(SHINY)
-                .flags(GENERATE_PLATE, GENERATE_FOIL, GENERATE_FINE_WIRE)
+                .flags(EXT_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
                 .element(Elements.Pd)
                 .toolStats(8.0f, 2.0f, 512, 33)
                 .blastTemp(1828, GasTier.LOW, VA[HV], 900)
@@ -742,7 +742,7 @@ public class ElementMaterials {
         Uranium238 = new Material.Builder(116, "uranium")
                 .ingot(3).fluid()
                 .color(0x32F032).iconSet(METALLIC)
-                .flags(STD_METAL)
+                .flags(EXT_METAL)
                 .element(Elements.U238)
                 .toolStats(6.0f, 3.0f, 512, 21)
                 .build();
@@ -750,7 +750,7 @@ public class ElementMaterials {
         Uranium235 = new Material.Builder(117, "uranium235")
                 .ingot(3).fluid()
                 .color(0x46FA46).iconSet(SHINY)
-                .flags(STD_METAL, GENERATE_ROD)
+                .flags(EXT_METAL)
                 .element(Elements.U235)
                 .toolStats(6.0f, 3.0f, 512, 33)
                 .build();
