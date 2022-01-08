@@ -100,9 +100,8 @@ public class WorldGenRegistry {
         registerVeinPopulator("fluid_spring", FluidSpringPopulator::new);
         registerVeinPopulator("surface_block", SurfaceBlockPopulator::new);
 
-        WorldGeneratorImpl worldGenerator = new WorldGeneratorImpl();
-        GameRegistry.registerWorldGenerator(worldGenerator, 1);
-        MinecraftForge.ORE_GEN_BUS.register(worldGenerator);
+        GameRegistry.registerWorldGenerator(WorldGeneratorImpl.INSTANCE, 1);
+        MinecraftForge.ORE_GEN_BUS.register(WorldGeneratorImpl.INSTANCE);
         try {
             reinitializeRegisteredVeins();
         } catch (IOException | RuntimeException exception) {
