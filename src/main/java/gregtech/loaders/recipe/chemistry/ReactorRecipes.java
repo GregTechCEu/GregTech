@@ -12,6 +12,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.CHEMICAL_RECIPES;
+import static gregtech.api.recipes.RecipeMaps.LARGE_CHEMICAL_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 
@@ -628,13 +629,13 @@ public class ReactorRecipes {
                 .fluidOutputs(Methanol.getFluid(1000))
                 .duration(264).EUt(60).buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder()
+        LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .input(ingot, Plutonium239, 8)
                 .input(dust, Uranium238)
                 .fluidInputs(Air.getFluid(10000))
                 .output(dust, Plutonium239, 8)
                 .fluidOutputs(Radon.getFluid(1000))
-                .duration(100000).EUt(VA[ULV]).buildAndRegister();
+                .duration(4000).EUt(VA[HV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(Items.PAPER)
