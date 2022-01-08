@@ -276,7 +276,7 @@ public class ElementMaterials {
                 .build();
 
         Hassium = new Material.Builder(43, "hassium")
-                .color(0xDDDDDD).flags(EXT2_METAL)
+                .color(0xDDDDDD)
                 .element(Elements.Hs)
                 .build();
 
