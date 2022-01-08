@@ -338,7 +338,7 @@ public class MixerRecipes {
                 .input(dust, Nickel)
                 .input(dust, Manganese)
                 .input(dust, Chrome)
-                .notConsumable(new IntCircuitIngredient(2))
+                .notConsumable(new IntCircuitIngredient(3))
                 .output(dust, StainlessSteel, 9)
                 .buildAndRegister();
 
