@@ -49,6 +49,8 @@ public class TraceabilityPredicate {
     public final List<SimplePredicate> common = new ArrayList<>();
     public final List<SimplePredicate> limited = new ArrayList<>();
     protected boolean isCenter;
+    protected boolean hasAir = false;
+    protected boolean isSingle = true;
 
     public TraceabilityPredicate() {}
 
@@ -56,6 +58,8 @@ public class TraceabilityPredicate {
         common.addAll(predicate.common);
         limited.addAll(predicate.limited);
         isCenter = predicate.isCenter;
+        hasAir = predicate.hasAir;
+        isSingle = predicate.isSingle;
     }
 
     public TraceabilityPredicate(Predicate<BlockWorldState> predicate, Supplier<BlockInfo[]> candidates) {
@@ -64,6 +68,14 @@ public class TraceabilityPredicate {
 
     public TraceabilityPredicate(Predicate<BlockWorldState> predicate) {
         this(predicate, null);
+    }
+
+    public boolean isHasAir() {
+        return hasAir;
+    }
+
+    public boolean isSingle() {
+        return isSingle;
     }
 
     /**
@@ -86,12 +98,14 @@ public class TraceabilityPredicate {
         if (tips.length > 0) {
             List<String> tooltips = Arrays.stream(tips).collect(Collectors.toList());
             common.forEach(predicate -> {
+                if (predicate.candidates == null) return;
                 if (predicate.toolTips == null) {
                     predicate.toolTips = new ArrayList<>();
                 }
                 predicate.toolTips.addAll(tooltips);
             });
             limited.forEach(predicate -> {
+                if (predicate.candidates == null) return;
                 if (predicate.toolTips == null) {
                     predicate.toolTips = new ArrayList<>();
                 }
@@ -195,6 +209,12 @@ public class TraceabilityPredicate {
     public TraceabilityPredicate or(TraceabilityPredicate other) {
         if (other != null) {
             TraceabilityPredicate newPredicate = new TraceabilityPredicate(this);
+            if (this != AIR && other != AIR) {
+                newPredicate.isSingle = false;
+            } else {
+                newPredicate.isSingle = this.isSingle && other.isSingle;
+            }
+            newPredicate.hasAir = newPredicate.hasAir || this == AIR || other == AIR;
             newPredicate.common.addAll(other.common);
             newPredicate.limited.addAll(other.limited);
             return newPredicate;
@@ -222,7 +242,7 @@ public class TraceabilityPredicate {
         }
 
         @SideOnly(Side.CLIENT)
-        public List<String> getToolTips() {
+        public List<String> getToolTips(TraceabilityPredicate predicates) {
             List<String> result = new ArrayList<>();
             if (toolTips != null) {
                 toolTips.forEach(tip->result.add(I18n.format(tip)));
@@ -244,6 +264,13 @@ public class TraceabilityPredicate {
             }
             if (maxLayerCount != -1) {
                 result.add(I18n.format("gregtech.multiblock.pattern.error.limited.2", maxLayerCount));
+            }
+            if (predicates == null) return result;
+            if (predicates.isSingle) {
+                result.add(I18n.format("gregtech.multiblock.pattern.single"));
+            }
+            if (predicates.hasAir) {
+                result.add(I18n.format("gregtech.multiblock.pattern.replaceable_air"));
             }
             return result;
         }
@@ -279,7 +306,7 @@ public class TraceabilityPredicate {
         }
 
         public List<ItemStack> getCandidates() {
-            return Arrays.stream(this.candidates.get()).filter(info -> info.getBlockState().getBlock() != Blocks.AIR).map(info->{
+            return candidates == null ? Collections.emptyList() : Arrays.stream(this.candidates.get()).filter(info -> info.getBlockState().getBlock() != Blocks.AIR).map(info->{
                 IBlockState blockState = info.getBlockState();
                 MetaTileEntity metaTileEntity = info.getTileEntity() instanceof MetaTileEntityHolder ? ((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity() : null;
                 if (metaTileEntity != null) {
