@@ -265,6 +265,7 @@ public class TraceabilityPredicate {
             if (maxLayerCount != -1) {
                 result.add(I18n.format("gregtech.multiblock.pattern.error.limited.2", maxLayerCount));
             }
+            if (predicates == null) return result;
             if (predicates.isSingle) {
                 result.add(I18n.format("gregtech.multiblock.pattern.single"));
             }
