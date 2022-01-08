@@ -183,19 +183,19 @@ public class MetaItem1 extends StandardMetaItem {
         ELECTRIC_MOTOR_UXV = addItem(139, "electric.motor.uxv").setInvisible(GTValues.HT);
 
         // Pumps: ID 141-155
-        PUMPS[0] = ELECTRIC_PUMP_LV = addItem(142, "electric.pump.lv");
-        PUMPS[1] = ELECTRIC_PUMP_MV = addItem(143, "electric.pump.mv");
-        PUMPS[2] = ELECTRIC_PUMP_HV = addItem(144, "electric.pump.hv");
-        PUMPS[3] = ELECTRIC_PUMP_EV = addItem(145, "electric.pump.ev");
-        PUMPS[4] = ELECTRIC_PUMP_IV = addItem(146, "electric.pump.iv");
-        PUMPS[5] = ELECTRIC_PUMP_LUV = addItem(147, "electric.pump.luv");
-        PUMPS[6] = ELECTRIC_PUMP_ZPM = addItem(148, "electric.pump.zpm");
-        PUMPS[7] = ELECTRIC_PUMP_UV = addItem(149, "electric.pump.uv");
-        PUMPS[8] = ELECTRIC_PUMP_UHV = addItem(150, "electric.pump.uhv").setInvisible(GTValues.HT);
-        PUMPS[9] = ELECTRIC_PUMP_UEV = addItem(151, "electric.pump.uev").setInvisible(GTValues.HT);
-        PUMPS[10] = ELECTRIC_PUMP_UIV = addItem(152, "electric.pump.uiv").setInvisible(GTValues.HT);
-        PUMPS[11] = ELECTRIC_PUMP_UMV = addItem(153, "electric.pump.umv").setInvisible(GTValues.HT);
-        PUMPS[12] = ELECTRIC_PUMP_UXV = addItem(154, "electric.pump.uxv").setInvisible(GTValues.HT);
+        ELECTRIC_PUMP_LV = addItem(142, "electric.pump.lv");
+        ELECTRIC_PUMP_MV = addItem(143, "electric.pump.mv");
+        ELECTRIC_PUMP_HV = addItem(144, "electric.pump.hv");
+        ELECTRIC_PUMP_EV = addItem(145, "electric.pump.ev");
+        ELECTRIC_PUMP_IV = addItem(146, "electric.pump.iv");
+        ELECTRIC_PUMP_LUV = addItem(147, "electric.pump.luv");
+        ELECTRIC_PUMP_ZPM = addItem(148, "electric.pump.zpm");
+        ELECTRIC_PUMP_UV = addItem(149, "electric.pump.uv");
+        ELECTRIC_PUMP_UHV = addItem(150, "electric.pump.uhv").setInvisible(GTValues.HT);
+        ELECTRIC_PUMP_UEV = addItem(151, "electric.pump.uev").setInvisible(GTValues.HT);
+        ELECTRIC_PUMP_UIV = addItem(152, "electric.pump.uiv").setInvisible(GTValues.HT);
+        ELECTRIC_PUMP_UMV = addItem(153, "electric.pump.umv").setInvisible(GTValues.HT);
+        ELECTRIC_PUMP_UXV = addItem(154, "electric.pump.uxv").setInvisible(GTValues.HT);
 
         // Conveyors: ID 156-170
         CONVEYOR_MODULE_LV = addItem(157, "conveyor.module.lv");
@@ -288,14 +288,14 @@ public class MetaItem1 extends StandardMetaItem {
         SENSOR_UXV = addItem(244, "sensor.uxv").setInvisible(GTValues.HT);
 
         // Fluid Regulators: ID 246-260
-        FLUID_REGULATORS[0] = FLUID_REGULATOR_LV = addItem(247, "fluid.regulator.lv");
-        FLUID_REGULATORS[1] = FLUID_REGULATOR_MV = addItem(248, "fluid.regulator.mv");
-        FLUID_REGULATORS[2] = FLUID_REGULATOR_HV = addItem(249, "fluid.regulator.hv");
-        FLUID_REGULATORS[3] = FLUID_REGULATOR_EV = addItem(250, "fluid.regulator.ev");
-        FLUID_REGULATORS[4] = FLUID_REGULATOR_IV = addItem(251, "fluid.regulator.iv");
-        FLUID_REGULATORS[5] = FLUID_REGULATOR_LUV = addItem(252, "fluid.regulator.luv");
-        FLUID_REGULATORS[6] = FLUID_REGULATOR_ZPM = addItem(253, "fluid.regulator.zpm");
-        FLUID_REGULATORS[7] = FLUID_REGULATOR_UV = addItem(254, "fluid.regulator.uv");
+        FLUID_REGULATOR_LV = addItem(247, "fluid.regulator.lv");
+        FLUID_REGULATOR_MV = addItem(248, "fluid.regulator.mv");
+        FLUID_REGULATOR_HV = addItem(249, "fluid.regulator.hv");
+        FLUID_REGULATOR_EV = addItem(250, "fluid.regulator.ev");
+        FLUID_REGULATOR_IV = addItem(251, "fluid.regulator.iv");
+        FLUID_REGULATOR_LUV = addItem(252, "fluid.regulator.luv");
+        FLUID_REGULATOR_ZPM = addItem(253, "fluid.regulator.zpm");
+        FLUID_REGULATOR_UV = addItem(254, "fluid.regulator.uv");
 
         // Data Items: ID 261-265
         TOOL_DATA_STICK = addItem(261, "tool.datastick");
