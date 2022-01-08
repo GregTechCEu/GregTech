@@ -99,11 +99,13 @@ public class ToolUtility {
         MaterialStack input = OreDictUnifier.getMaterial(inputStack);
         if (input != null && input.material.hasProperty(PropertyKey.ORE) && GTUtility.isOre(blockState.getBlock()) && !(player instanceof FakePlayer)) {
             drops.clear();
+            OrePrefix prefix = OreDictUnifier.getPrefix(new ItemStack(blockState.getBlock()));
+            int multiplier = (prefix == OrePrefix.oreEndstone || prefix == OrePrefix.oreNetherrack) ? 2 : 1;
             ItemStack output = OreDictUnifier.get(OrePrefix.crushed, input.material);
 
             if(fortuneLevel > 0){
                 if(fortuneLevel > 3) fortuneLevel = 3;
-                output.setCount((input.material.getProperty((PropertyKey.ORE)).getOreMultiplier()) * Math.max(1, random.nextInt(fortuneLevel + 2) - 1));
+                output.setCount((input.material.getProperty((PropertyKey.ORE)).getOreMultiplier() * multiplier) * Math.max(1, random.nextInt(fortuneLevel + 2) - 1));
                 if (output.getCount() == 0) output.setCount(1);
             }
             else{
