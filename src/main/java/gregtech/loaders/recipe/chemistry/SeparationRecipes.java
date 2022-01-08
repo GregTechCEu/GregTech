@@ -532,14 +532,5 @@ public class SeparationRecipes {
                 .outputs(new ItemStack(Items.BOOK, 3))
                 .duration(300).EUt(2).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().duration(80).EUt(VA[LV])
-                .input(dust, Redstone)
-                .fluidOutputs(Redstone.getFluid(L))
-                .buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder().duration(80).EUt(VA[LV])
-                .input(dust, Glowstone)
-                .fluidOutputs(Glowstone.getFluid(L))
-                .buildAndRegister();
     }
 }
