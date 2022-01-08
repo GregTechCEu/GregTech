@@ -231,8 +231,13 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
             if (this.selected != null) {
                 this.selected = null;
-                for (int i = 0; i < predicates.size(); i++) {
-                    recipeLayout.getItemStacks().set(i + MAX_PARTS, ItemStack.EMPTY);
+                int counter = 0;
+                for (TraceabilityPredicate.SimplePredicate predicate : predicates) {
+                    if(predicate.candidates == null) {
+                        continue;
+                    }
+                    recipeLayout.getItemStacks().set(counter + MAX_PARTS, ItemStack.EMPTY);
+                    counter++;
                 }
                 predicates.clear();
             }
@@ -279,8 +284,13 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         }
 
         // draw candidates slots
-        for (int i = 0; i < predicates.size(); i++) {
-            this.slot.draw(minecraft, 5 + (i / 6) * SLOT_SIZE, (i % 6) * SLOT_SIZE + 10);
+        int counter = 0;
+        for (TraceabilityPredicate.SimplePredicate predicate : predicates) {
+            if(predicate.candidates == null) {
+                continue;
+            }
+            this.slot.draw(minecraft, 5 + (counter / 6) * SLOT_SIZE, (counter % 6) * SLOT_SIZE + 10);
+            counter++;
         }
 
         // draw buttons
@@ -375,8 +385,13 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             if (getCurrentRenderer().getLastTraceResult() == null) {
                 if (this.selected != null) {
                     this.selected = null;
-                    for (int i = 0; i < predicates.size(); i++) {
-                        recipeLayout.getItemStacks().set(i + MAX_PARTS, ItemStack.EMPTY);
+                    int counter = 0;
+                    for (TraceabilityPredicate.SimplePredicate predicate : predicates) {
+                        if(predicate.candidates == null) {
+                            continue;
+                        }
+                        recipeLayout.getItemStacks().set(counter + MAX_PARTS, ItemStack.EMPTY);
+                        counter++;
                     }
                     predicates.clear();
                     return true;
@@ -385,8 +400,13 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             }
             BlockPos selected = getCurrentRenderer().getLastTraceResult().getBlockPos();
             if (!Objects.equals(this.selected, selected)) {
-                for (int i = 0; i < predicates.size(); i++) {
-                    recipeLayout.getItemStacks().set(i + MAX_PARTS, ItemStack.EMPTY);
+                int counter = 0;
+                for (TraceabilityPredicate.SimplePredicate predicate : predicates) {
+                    if(predicate.candidates == null) {
+                        continue;
+                    }
+                    recipeLayout.getItemStacks().set(counter + MAX_PARTS, ItemStack.EMPTY);
+                    counter++;
                 }
                 predicates.clear();
                 this.selected = selected;
@@ -405,22 +425,29 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
     private void setItemStackGroup() {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
-        for (int i = 0; i < predicates.size(); i++) {
-            itemStackGroup.init(i + MAX_PARTS, true, 5 + (i / 6) * SLOT_SIZE, (i % 6) * SLOT_SIZE + 10);
-            List<ItemStack> candidates = new ArrayList<>();
+        int counter = 0;
+        for (TraceabilityPredicate.SimplePredicate predicate : predicates) {
+
+            List<ItemStack> candidates;
+
             // This can happen because of predicate.or(air())
-            if(predicates.get(i).candidates == null) {
-                candidates.add(ItemStack.EMPTY);
+            if(predicate.candidates == null) {
+                continue;
             }
             else {
-                candidates.addAll(predicates.get(i).getCandidates());
+                candidates = new ArrayList<>(predicate.getCandidates());
             }
 
-            itemStackGroup.set(i + MAX_PARTS, candidates);
+            itemStackGroup.init(counter + MAX_PARTS, true, 5 + (counter / 6) * SLOT_SIZE, (counter % 6) * SLOT_SIZE + 10);
+
+            itemStackGroup.set(counter + MAX_PARTS, candidates);
+            counter++;
         }
+
+        int finalCounter = counter;
         itemStackGroup.addTooltipCallback((slotIndex, input, itemStack, tooltip)->{
             if (slotIndex >= MAX_PARTS && slotIndex < MAX_PARTS + predicates.size()) {
-                tooltip.addAll(predicates.get(slotIndex - MAX_PARTS).getToolTips());
+                tooltip.addAll(predicates.get(slotIndex - MAX_PARTS + (predicates.size() - finalCounter)).getToolTips());
             }
         });
     }

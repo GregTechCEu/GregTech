@@ -49,6 +49,7 @@ public class TraceabilityPredicate {
     public final List<SimplePredicate> common = new ArrayList<>();
     public final List<SimplePredicate> limited = new ArrayList<>();
     protected boolean isCenter;
+    public boolean hasAir = false;
 
     public TraceabilityPredicate() {}
 
@@ -56,6 +57,7 @@ public class TraceabilityPredicate {
         common.addAll(predicate.common);
         limited.addAll(predicate.limited);
         isCenter = predicate.isCenter;
+        hasAir = predicate.hasAir;
     }
 
     public TraceabilityPredicate(Predicate<BlockWorldState> predicate, Supplier<BlockInfo[]> candidates) {
@@ -76,6 +78,9 @@ public class TraceabilityPredicate {
 
     public TraceabilityPredicate sort() {
         limited.sort(Comparator.comparingInt(a -> ((a.minLayerCount + 1) * 100 + a.minGlobalCount)));
+        if(hasAir) {
+            this.addTooltips(I18n.format("gregtech.multiblock.pattern.replaceable_air"));
+        }
         return this;
     }
 
@@ -193,6 +198,9 @@ public class TraceabilityPredicate {
     }
 
     public TraceabilityPredicate or(TraceabilityPredicate other) {
+        if(other == AIR) {
+            hasAir = true;
+        }
         if (other != null) {
             TraceabilityPredicate newPredicate = new TraceabilityPredicate(this);
             newPredicate.common.addAll(other.common);
