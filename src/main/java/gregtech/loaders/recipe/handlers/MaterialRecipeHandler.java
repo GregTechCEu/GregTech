@@ -300,6 +300,16 @@ public class MaterialRecipeHandler {
                         .duration((int) material.getMass())
                         .EUt(8 * voltageMultiplier)
                         .buildAndRegister();
+
+                if (material.hasFlag(NO_SMASHING)) {
+                    RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                            .input(dust, material)
+                            .notConsumable(MetaItems.SHAPE_EXTRUDER_PLATE)
+                            .outputs(OreDictUnifier.get(OrePrefix.plate, material))
+                            .duration((int) material.getMass())
+                            .EUt(8 * voltageMultiplier)
+                            .buildAndRegister();
+                }
             }
         }
 
