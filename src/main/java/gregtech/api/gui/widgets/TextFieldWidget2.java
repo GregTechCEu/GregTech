@@ -16,18 +16,28 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
+/**
+ * @author brachy84
+ */
 public class TextFieldWidget2 extends Widget {
+
+    // all positive whole numbers
+    public static final Pattern NATURAL_NUMS = Pattern.compile("[0-9]*");
+    // all positive and negative numbers
+    public static final Pattern WHOLE_NUMS = Pattern.compile("-?[0-9]*");
+    public static final Pattern DECIMALS = Pattern.compile("[0-9]*(\\.[0-9]*)?");
+    public static final Pattern LETTERS = Pattern.compile("[a-zA-Z]*");
 
     private String text;
     private String localisedPostFix;
     private final Supplier<String> supplier;
     private final Consumer<String> setter;
-    private List<Character> allowedChars;
+    private Pattern regex;
     private Function<String, String> validator = s -> s;
     private boolean initialised = false;
     private boolean centered;
@@ -304,31 +314,25 @@ public class TextFieldWidget2 extends Widget {
                 }
                 return true;
             }
-            if (text.length() < maxLength && isAllowed(charTyped)) {
-                String t1 = text.substring(0, cursorPos);
-                String t2 = text.substring(cursorPos);
+            if (charTyped != Character.MIN_VALUE && text.length() < maxLength) {
+                int min = Math.min(cursorPos, cursorPos2);
+                int max = Math.max(cursorPos, cursorPos2);
+                String t1 = text.substring(0, min);
+                String t2 = text.substring(max);
                 t1 += charTyped;
-                text = t1 + t2;
-                cursorPos++;
-                cursorPos2 = cursorPos;
-                return true;
+                if (isAllowed(t1 + t2)) {
+                    text = t1 + t2;
+                    cursorPos = t1.length();
+                    cursorPos2 = cursorPos;
+                    return true;
+                }
             }
         }
         return focused;
     }
 
-    private boolean isAllowed(char c) {
-        return allowedChars == null || allowedChars.contains(c);
-    }
-
     private boolean isAllowed(String t) {
-        if (allowedChars == null)
-            return true;
-        for (int i = 0; i < t.length(); i++) {
-            if (!allowedChars.contains(t.charAt(i)))
-                return false;
-        }
-        return true;
+        return regex == null || regex.matcher(t).matches();
     }
 
     private void replaceMarkedText(String replacement) {
@@ -390,12 +394,13 @@ public class TextFieldWidget2 extends Widget {
     }
 
     /**
-     * If a pressed key is not in this list, it will not be typed. Allows every char by default
+     * If a key is pressed, the new string will be matched against this pattern.
+     * If it doesn't match, the char will not be typed.
      *
-     * @param allowedChars chars to allow as string
+     * @param regex pattern
      */
-    public TextFieldWidget2 setAllowedChars(String allowedChars) {
-        this.allowedChars = Lists.charactersOf(allowedChars);
+    public TextFieldWidget2 setAllowedChars(Pattern regex) {
+        this.regex = regex;
         return this;
     }
 
@@ -416,11 +421,11 @@ public class TextFieldWidget2 extends Widget {
      * @param max maximum accepted value
      */
     public TextFieldWidget2 setNumbersOnly(int min, int max) {
-        if (this.allowedChars == null) {
-            String nums = "0123456789";
+        if (this.regex == null) {
             if (min < 0)
-                nums += "-";
-            setAllowedChars(nums);
+                regex = WHOLE_NUMS;
+            else
+                regex = NATURAL_NUMS;
         }
         setValidator(val -> {
             if (val.isEmpty()) {

@@ -42,6 +42,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Function;
 import java.util.function.IntSupplier;
+import java.util.regex.Pattern;
 
 public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
@@ -186,7 +187,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
             }
         })
                 .setCentered(true)
-                .setAllowedChars("0123456789")
+                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
                 .setMaxLength(8)
                 .setValidator(getTextFieldValidator(() -> bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate));
         primaryGroup.addWidget(textField);
