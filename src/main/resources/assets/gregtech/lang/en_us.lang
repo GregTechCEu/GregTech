@@ -1018,6 +1018,9 @@ cover.filter.blacklist.enabled=Blacklist
 
 cover.ore_dictionary_filter.title=Ore Dictionary Filter
 cover.ore_dictionary_filter.info=§bAccepts complex expressions/n& = AND/n| = OR/n^ = XOR/n! = NOT/n( ) for priority/n* for wildcard/n§bExample:/n§6dust*Gold | (plate* & !*Double*)/nWill match all gold dusts of all sizes or all plates, but not double plates
+cover.ore_dictionary_filter.test_slot.info=Insert a item to test if it matches the filter expression
+cover.ore_dictionary_filter.matches=Item matches
+cover.ore_dictionary_filter.matches_not=Item does not match
 
 cover.fluid_filter.title=Fluid Filter
 cover.fluid_filter.mode.filter_fill=Filter Fill
