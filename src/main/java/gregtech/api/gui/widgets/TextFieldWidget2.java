@@ -1,6 +1,5 @@
 package gregtech.api.gui.widgets;
 
-import com.google.common.collect.Lists;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import net.minecraft.client.Minecraft;
@@ -51,6 +50,7 @@ public class TextFieldWidget2 extends Widget {
     private int cursorPos;
     private int cursorPos2;
 
+    private int clickTime = 20;
     private int cursorTime = 0;
     private boolean drawCursor = true;
 
@@ -70,6 +70,7 @@ public class TextFieldWidget2 extends Widget {
 
     @Override
     public void updateScreen() {
+        clickTime++;
         if (++cursorTime == 10) {
             cursorTime = 0;
             drawCursor = !drawCursor;
@@ -193,17 +194,14 @@ public class TextFieldWidget2 extends Widget {
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY)) {
             focused = true;
-            int base = mouseX - getTextX();
-            float x = 1;
-            int i = 0;
-            while (x < base) {
-                if (i == text.length())
-                    break;
-                x += (Minecraft.getMinecraft().fontRenderer.getCharWidth(text.charAt(i)) + 1) * scale;
-                i++;
+            if (clickTime < 5) {
+                cursorPos = text.length();
+                cursorPos2 = 0;
+            } else {
+                cursorPos = getCursorPosFromMouse(mouseX);
+                cursorPos2 = cursorPos;
             }
-            cursorPos = i;
-            cursorPos2 = i;
+            clickTime = 0;
         } else
             unFocus();
         return focused;
@@ -216,18 +214,22 @@ public class TextFieldWidget2 extends Widget {
                 cursorPos = 0;
                 return true;
             }
-            int base = mouseX - (getTextX());
-            int x = 1;
-            int i = 0;
-            while (x < base) {
-                if (i == text.length())
-                    break;
-                x += (Minecraft.getMinecraft().fontRenderer.getCharWidth(text.charAt(i)) + 1) * scale;
-                i++;
-            }
-            cursorPos = i;
+            cursorPos = getCursorPosFromMouse(mouseX);
         }
         return focused;
+    }
+
+    private int getCursorPosFromMouse(int mouseX) {
+        int base = mouseX - getTextX();
+        float x = 1;
+        int i = 0;
+        while (x < base) {
+            if (i == text.length())
+                break;
+            x += (Minecraft.getMinecraft().fontRenderer.getCharWidth(text.charAt(i))) * scale;
+            i++;
+        }
+        return i;
     }
 
     public String getSelectedText() {
@@ -340,17 +342,18 @@ public class TextFieldWidget2 extends Widget {
         int max = Math.max(cursorPos, cursorPos2);
         String t1 = text.substring(0, min);
         String t2 = text.substring(max);
-        if(replacement != null) {
-            if(t1.length() + t2.length() + replacement.length() > maxLength)
+        if (replacement != null) {
+            if (t1.length() + t2.length() + replacement.length() > maxLength)
                 return;
-            cursorPos = max;
-        } else
-            cursorPos = min;
-        cursorPos2 = cursorPos;
-        if (replacement == null)
+        }
+        if (replacement == null) {
             text = t1 + t2;
-        else
+            cursorPos = min;
+        } else {
             text = t1 + replacement + t2;
+            cursorPos = t1.length() + replacement.length();
+        }
+        cursorPos2 = cursorPos;
     }
 
     public String getText() {
