@@ -3463,8 +3463,9 @@ gregtech.machine.charger.uxv.name=UXV Voltage Turbo Charger
 gregtech.machine.charger.max.name=MAX Voltage Turbo Charger
 
 # Pumps
+gregtech.machine.pump.tooltip=The best way to empty Oceans! Outputs to the front
 gregtech.machine.pump.tooltip_range=Pumping Area: %,dx%,d
-gregtech.machine.pump.tooltip_speed=Pumps Fluid every %,d ticks
+gregtech.machine.pump.tooltip_rate=%dEU/operation, %d ticks per bucket
 
 gregtech.machine.pump.lv.name=Basic Pump
 gregtech.machine.pump.mv.name=Advanced Pump
