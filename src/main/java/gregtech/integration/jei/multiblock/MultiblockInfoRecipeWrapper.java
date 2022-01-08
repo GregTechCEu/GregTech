@@ -407,7 +407,16 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         for (int i = 0; i < predicates.size(); i++) {
             itemStackGroup.init(i + MAX_PARTS, true, 5 + (i / 6) * SLOT_SIZE, (i % 6) * SLOT_SIZE + 10);
-            itemStackGroup.set(i + MAX_PARTS, predicates.get(i).getCandidates());
+            List<ItemStack> candidates = new ArrayList<>();
+            // This can happen because of predicate.or(air())
+            if(predicates.get(i).candidates == null) {
+                candidates.add(ItemStack.EMPTY);
+            }
+            else {
+                candidates.addAll(predicates.get(i).getCandidates());
+            }
+
+            itemStackGroup.set(i + MAX_PARTS, candidates);
         }
         itemStackGroup.addTooltipCallback((slotIndex, input, itemStack, tooltip)->{
             if (slotIndex >= MAX_PARTS && slotIndex < MAX_PARTS + predicates.size()) {
