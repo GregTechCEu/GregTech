@@ -388,16 +388,6 @@ metaitem.fluid.regulator.zpm.name=ZPM Fluid Regulator
 metaitem.fluid.regulator.zpm.tooltip=5,242,880 L/sec (as Cover)
 metaitem.fluid.regulator.uv.name=UV Fluid Regulator
 metaitem.fluid.regulator.uv.tooltip=20,971,520 L/sec (as Cover)
-metaitem.fluid.regulator.uhv.name=UHV Fluid Regulator
-metaitem.fluid.regulator.uhv.tooltip=20,971,520 L/sec (as Cover)
-metaitem.fluid.regulator.uev.name=UEV Fluid Regulator
-metaitem.fluid.regulator.uev.tooltip=20,971,520 L/sec (as Cover)
-metaitem.fluid.regulator.uiv.name=UIV Fluid Regulator
-metaitem.fluid.regulator.uiv.tooltip=20,971,520 L/sec (as Cover)
-metaitem.fluid.regulator.umv.name=UMV Fluid Regulator
-metaitem.fluid.regulator.umv.tooltip=20,971,520 L/sec (as Cover)
-metaitem.fluid.regulator.uxv.name=UXV Fluid Regulator
-metaitem.fluid.regulator.uxv.tooltip=20,971,520 L/sec (as Cover)
 
 metaitem.conveyor.module.lv.name=LV Conveyor Module
 metaitem.conveyor.module.lv.tooltip=8 Items every second (as Cover)

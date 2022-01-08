@@ -117,12 +117,6 @@ public class CoverBehaviors {
         registerBehavior(91, new ResourceLocation(GTValues.MODID, "pump.umv"), MetaItems.ELECTRIC_PUMP_UMV, (tile, side) -> new CoverPump(tile, side, GTValues.UMV, 1280 * 64 * 64 * 4));
         registerBehavior(92, new ResourceLocation(GTValues.MODID, "pump.uxv"), MetaItems.ELECTRIC_PUMP_UXV, (tile, side) -> new CoverPump(tile, side, GTValues.UXV, 1280 * 64 * 64 * 4));
 
-        registerBehavior(98, new ResourceLocation(GTValues.MODID, "fluid.regulator.uhv"), MetaItems.FLUID_REGULATOR_UHV, (tile, side) -> new CoverFluidRegulator(tile, side, GTValues.UHV, 1280 * 64 * 64 * 4));
-        registerBehavior(99, new ResourceLocation(GTValues.MODID, "fluid.regulator.uev"), MetaItems.FLUID_REGULATOR_UEV, (tile, side) -> new CoverFluidRegulator(tile, side, GTValues.UEV, 1280 * 64 * 64 * 4));
-        registerBehavior(100, new ResourceLocation(GTValues.MODID, "fluid.regulator.uiv"), MetaItems.FLUID_REGULATOR_UIV, (tile, side) -> new CoverFluidRegulator(tile, side, GTValues.UIV, 1280 * 64 * 64 * 4));
-        registerBehavior(101, new ResourceLocation(GTValues.MODID, "fluid.regulator.umv"), MetaItems.FLUID_REGULATOR_UMV, (tile, side) -> new CoverFluidRegulator(tile, side, GTValues.UMV, 1280 * 64 * 64 * 4));
-        registerBehavior(102, new ResourceLocation(GTValues.MODID, "fluid.regulator.uxv"), MetaItems.FLUID_REGULATOR_UXV, (tile, side) -> new CoverFluidRegulator(tile, side, GTValues.UXV, 1280 * 64 * 64 * 4));
-
 
 
     }

@@ -296,11 +296,6 @@ public class MetaItem1 extends StandardMetaItem {
         FLUID_REGULATORS[5] = FLUID_REGULATOR_LUV = addItem(252, "fluid.regulator.luv");
         FLUID_REGULATORS[6] = FLUID_REGULATOR_ZPM = addItem(253, "fluid.regulator.zpm");
         FLUID_REGULATORS[7] = FLUID_REGULATOR_UV = addItem(254, "fluid.regulator.uv");
-        FLUID_REGULATORS[8] = FLUID_REGULATOR_UHV = addItem(255, "fluid.regulator.uhv").setInvisible(GTValues.HT);
-        FLUID_REGULATORS[9] = FLUID_REGULATOR_UEV = addItem(256, "fluid.regulator.uev").setInvisible(GTValues.HT);
-        FLUID_REGULATORS[10] = FLUID_REGULATOR_UIV = addItem(257, "fluid.regulator.uiv").setInvisible(GTValues.HT);
-        FLUID_REGULATORS[11] = FLUID_REGULATOR_UMV = addItem(258, "fluid.regulator.umv").setInvisible(GTValues.HT);
-        FLUID_REGULATORS[12] = FLUID_REGULATOR_UXV = addItem(259, "fluid.regulator.uxv").setInvisible(GTValues.HT);
 
         // Data Items: ID 261-265
         TOOL_DATA_STICK = addItem(261, "tool.datastick");

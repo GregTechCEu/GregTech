@@ -320,17 +320,69 @@ public class ComponentRecipes {
         Material[] circuitTiers = new Material[]{Tier.Basic, Tier.Good, Tier.Advanced, Tier.Extreme,
                 Tier.Elite, Tier.Master, Tier.Ultimate, Tier.Super};
 
-        for (int i = 0; i < circuitTiers.length; i++) {
-            ASSEMBLER_RECIPES.recipeBuilder().circuitMeta(1)
-                    .inputs(PUMPS[i].getStackForm())
-                    .input(circuit, circuitTiers[i], 2)
-                    .outputs(FLUID_REGULATORS[i].getStackForm())
-                    .EUt(VA[i + 1])
-                    .duration(400 - 50 * i)
-                    .buildAndRegister();
-        }
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(ELECTRIC_PUMP_LV.getStackForm())
+                .input(circuit, Tier.Basic, 2)
+                .outputs(FLUID_REGULATOR_LV.getStackForm())
+                .EUt(VA[LV])
+                .duration(400)
+                .buildAndRegister();
 
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(ELECTRIC_PUMP_MV.getStackForm())
+                .input(circuit, Tier.Good, 2)
+                .outputs(FLUID_REGULATOR_MV.getStackForm())
+                .EUt(VA[MV])
+                .duration(350)
+                .buildAndRegister();
 
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(ELECTRIC_PUMP_HV.getStackForm())
+                .input(circuit, Tier.Advanced, 2)
+                .outputs(FLUID_REGULATOR_HV.getStackForm())
+                .EUt(VA[HV])
+                .duration(300)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(ELECTRIC_PUMP_EV.getStackForm())
+                .input(circuit, Tier.Extreme, 2)
+                .outputs(FLUID_REGULATOR_EV.getStackForm())
+                .EUt(VA[EV])
+                .duration(250)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(ELECTRIC_PUMP_IV.getStackForm())
+                .input(circuit, Tier.Elite, 2)
+                .outputs(FLUID_REGULATOR_IV.getStackForm())
+                .EUt(VA[IV])
+                .duration(200)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(ELECTRIC_PUMP_LUV.getStackForm())
+                .input(circuit, Tier.Master, 2)
+                .outputs(FLUID_REGULATOR_LUV.getStackForm())
+                .EUt(VA[LuV])
+                .duration(150)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(ELECTRIC_PUMP_ZPM.getStackForm())
+                .input(circuit, Tier.Ultimate, 2)
+                .outputs(FLUID_REGULATOR_ZPM.getStackForm())
+                .EUt(VA[ZPM])
+                .duration(100)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(ELECTRIC_PUMP_UV.getStackForm())
+                .input(circuit, Tier.Super, 2)
+                .outputs(FLUID_REGULATOR_UV.getStackForm())
+                .EUt(VA[UV])
+                .duration(50)
+                .buildAndRegister();
 
         //Pistons Start-------------------------------------------------------------------------------------------------
         ModHandler.addShapedRecipe(true, "electric_piston_lv", ELECTRIC_PISTON_LV.getStackForm(), "PPP", "CRR", "CMG", 'P', new UnificationEntry(plate, Steel), 'C', new UnificationEntry(cableGtSingle, Tin), 'R', new UnificationEntry(stick, Steel), 'G', new UnificationEntry(gearSmall, Steel), 'M', ELECTRIC_MOTOR_LV.getStackForm());

@@ -193,11 +193,6 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_LUV;
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_ZPM;
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_UV;
-    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_UHV;
-    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_UEV;
-    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_UIV;
-    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_UMV;
-    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_UXV;
 
     public static final MetaItem<?>.MetaValueItem[] FLUID_REGULATORS = new MetaValueItem[13];
 
