@@ -49,7 +49,7 @@ public class TraceabilityPredicate {
     public final List<SimplePredicate> common = new ArrayList<>();
     public final List<SimplePredicate> limited = new ArrayList<>();
     protected boolean isCenter;
-    public boolean hasAir = false;
+    protected boolean hasAir = false;
 
     public TraceabilityPredicate() {}
 
@@ -198,11 +198,9 @@ public class TraceabilityPredicate {
     }
 
     public TraceabilityPredicate or(TraceabilityPredicate other) {
-        if(other == AIR) {
-            hasAir = true;
-        }
         if (other != null) {
             TraceabilityPredicate newPredicate = new TraceabilityPredicate(this);
+            newPredicate.hasAir = newPredicate.hasAir || this == AIR || other == AIR;
             newPredicate.common.addAll(other.common);
             newPredicate.limited.addAll(other.limited);
             return newPredicate;
