@@ -211,7 +211,7 @@ public class BlockPattern {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
                         BlockPos pos = setActualRelativeOffset(x, y, z, facing).add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
                         worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
-                        if (world.getBlockState(pos).getBlock() != Blocks.AIR) {
+                        if (!world.isAirBlock(pos)) {
                             blocks.put(pos, world.getBlockState(pos));
                             for (TraceabilityPredicate.SimplePredicate limit : predicate.limited) {
                                 limit.testLimited(worldState);
@@ -356,7 +356,7 @@ public class BlockPattern {
                 }
                 if (!find) {
                     for (EnumFacing enumFacing : FACINGS) {
-                        if (world.getBlockState(pos.offset(enumFacing)).getBlock() == Blocks.AIR && metaTileEntity.isValidFrontFacing(enumFacing)) {
+                        if (world.isAirBlock(pos.offset(enumFacing)) && metaTileEntity.isValidFrontFacing(enumFacing)) {
                             metaTileEntity.setFrontFacing(enumFacing);
                             break;
                         }
