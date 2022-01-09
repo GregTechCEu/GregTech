@@ -70,6 +70,8 @@ public class EnergyNetHandler implements IEnergyContainer {
             }
 
             long amps = dest.acceptEnergyFromNetwork(facing, v, amperage - amperesUsed);
+            if(amps == 0)
+                continue;
             amperesUsed += amps;
 
             long voltageTraveled = voltage;
