@@ -6,7 +6,7 @@ import stanhebben.zenscript.annotations.ZenMethod;
 
 import static gregtech.integration.jei.multiblock.MultiblockInfoCategory.*;
 
-@ZenClass("mods.gregtech.multiblock.utils")
+@ZenClass("mods.gregtech.general.utils")
 @ZenRegister
 public class CTUtilities {
 
