@@ -195,7 +195,7 @@ public class RecyclingRecipes {
                 .inputs(input.copy())
                 .outputs(outputs)
                 .duration(calculateDuration(outputs))
-                .EUt(GTValues.VA[GTValues.LV] * multiplier)
+                .EUt(GTValues.VA[GTValues.LV] * (prefix == null ? 1 : multiplier))
                 .buildAndRegister();
     }
 
