@@ -72,8 +72,7 @@ public class ItemSources implements IItemList {
                 if (amountToInsert == 0) break;
             }
         }
-        if (!simulate
-        ) {
+        if (!simulate) {
             for (ItemSource itemSource : handlerInfoList) {
                 if (itemSourceMap.get(itemSource) != null) {
                     itemInfoMap.putIfAbsent(itemStack, new NetworkItemInfo(itemStack));
