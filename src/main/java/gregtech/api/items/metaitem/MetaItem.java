@@ -556,7 +556,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
 
         if (tooltipFlag.isAdvanced()) {
-            lines.add("metaitem:" + item.unlocalizedName);
+            lines.add("MetaItem Id: " + item.unlocalizedName);
         }
     }
 

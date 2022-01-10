@@ -1,4 +1,4 @@
-package gregtech.common.command.util;
+package gregtech.common.command;
 
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.GregtechCapabilities;
@@ -10,6 +10,7 @@ import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.items.toolitem.ToolMetaItem.MetaToolValueItem;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -20,17 +21,18 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.ClickEvent.Action;
+import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Set;
 
 public class CommandHand extends CommandBase {
     @Nonnull
@@ -85,25 +87,16 @@ public class CommandHand extends CommandBase {
             if (stackInHand.getItem() instanceof MetaItem) {
                 MetaItem<?> metaItem = (MetaItem<?>) stackInHand.getItem();
                 MetaValueItem metaValueItem = metaItem.getItem(stackInHand);
-                if (metaValueItem == null) {
-                    if (metaItem instanceof MetaPrefixItem) {
-                        Material material = ((MetaPrefixItem) metaItem).getMaterial(stackInHand);
-                        OrePrefix orePrefix = ((MetaPrefixItem) metaItem).getOrePrefix();
-                        String oreDictName = new UnificationEntry(orePrefix, material).toString();
-                        player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.material_meta_item", orePrefix.name(), material)
-                                .setStyle(new Style().setClickEvent(new ClickEvent(Action.OPEN_URL, oreDictName))));
-                    }
-                } else {
+                if (metaValueItem != null) {
                     if (metaValueItem instanceof ToolMetaItem.MetaToolValueItem) {
                         IToolStats toolStats = ((MetaToolValueItem) metaValueItem).getToolStats();
                         player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.tool_stats", toolStats.getClass().getName()));
                     }
-                    String id = "<metaitem:" + metaValueItem.unlocalizedName + ">";
-                    ClipboardUtil.copyToClipboard(player, id);
-                    ClickEvent metaItemEvent = new ClickEvent(Action.OPEN_URL, id);
-                    player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.meta_item", id)
-                            .setStyle(new Style().setColor(TextFormatting.AQUA)
-                                    .setClickEvent(metaItemEvent)));
+                    String id = metaValueItem.unlocalizedName;
+                    String ctId = "<metaitem:" + metaValueItem.unlocalizedName + ">";
+                    ClipboardUtil.copyToClipboard(player, ctId);
+                    player.sendMessage(new TextComponentString("MetaItem ID: ").appendSibling(new TextComponentString(id).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                            .setStyle(getCopyStyle(ctId)));
 
                 }
             }
@@ -113,16 +106,43 @@ public class CommandHand extends CommandBase {
                     String id = mte.metaTileEntityId.toString();
                     if(mte.metaTileEntityId.getNamespace().equals("gregtech"))
                         id = mte.metaTileEntityId.getPath();
-                    id = "<meta_tile_entity:" + id + ">";
-                    ClipboardUtil.copyToClipboard(player, id);
-                    ClickEvent metaItemEvent = new ClickEvent(Action.OPEN_FILE, id);
-                    player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.meta_item", id)
-                            .setStyle(new Style().setColor(TextFormatting.AQUA)
-                                    .setClickEvent(metaItemEvent)));
+                    String ctId = "<meta_tile_entity:" + id + ">";
+                    ClipboardUtil.copyToClipboard(player, ctId);
+                    player.sendMessage(new TextComponentString("MetaTileEntity ID: ").appendSibling(new TextComponentString(id).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                            .setStyle(getCopyInfoStyle(ctId)));
+                }
+            }
+
+            Set<String> oreDicts = OreDictUnifier.getOreDictionaryNames(stackInHand);
+            if(!oreDicts.isEmpty()) {
+                sender.sendMessage(new TextComponentString("\u00A73OreDict Entries:"));
+                for(String oreName : oreDicts) {
+                    player.sendMessage(new TextComponentString("    \u00A7e- \u00A7b" + oreName)
+                            .setStyle(getCopyStyle("<ore:" + oreName + ">")));
                 }
             }
         } else {
             throw new CommandException("gregtech.command.util.hand.not_a_player");
         }
+    }
+
+    public static Style getCopyStyle(String copyMessage) {
+        Style style = new Style();
+        ClickEvent click = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/gt copy " + copyMessage);
+        style.setClickEvent(click);
+
+        HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("Click to copy [\u00A76" + copyMessage + "\u00A7r]"));
+        style.setHoverEvent(hoverEvent);
+
+        return style;
+    }
+
+    public static Style getCopyInfoStyle(String copyMessage) {
+        Style style = new Style();
+
+        HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("\u00A76" + copyMessage + "\u00A7r was copied to clipboard"));
+        style.setHoverEvent(hoverEvent);
+
+        return style;
     }
 }
