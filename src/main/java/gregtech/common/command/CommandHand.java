@@ -107,9 +107,9 @@ public class CommandHand extends CommandBase {
                     String id = mte.metaTileEntityId.toString();
                     if (mte.metaTileEntityId.getNamespace().equals("gregtech"))
                         id = mte.metaTileEntityId.getPath();
-                    String ctId = "<meta_tile_entity:" + id + ">";
+                    String ctId = "<metaitem:" + id + ">";
                     ClipboardUtil.copyToClipboard(player, ctId);
-                    player.sendMessage(new TextComponentString("MetaTileEntity Id: ").appendSibling(new TextComponentString(id).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                    player.sendMessage(new TextComponentString("MetaItem Id: ").appendSibling(new TextComponentString(id).setStyle(new Style().setColor(TextFormatting.GREEN)))
                             .setStyle(getCopyInfoStyle(ctId)));
                 }
             } else {

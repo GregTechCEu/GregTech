@@ -90,14 +90,14 @@ public class MetaItemBracketHandler implements IBracketHandler {
     }
 
     public static IItemStack getMetaItem(String name) {
-        ItemStack item = metaItemNames.get(name);
-        if(item == null) {
-            item = metaBlockNames.get(name);
-        }
-        if(item != null) {
+        ItemStack item;
+        if((item = metaItemNames.get(name)) != null) {
             return new MCItemStack(item);
         }
-        return null;
+        if((item = metaBlockNames.get(name)) != null) {
+            return new MCItemStack(item);
+        }
+        return MetaTileEntityBracketHandler.getMetaTileEntityItem(name);
     }
 
     @Override
