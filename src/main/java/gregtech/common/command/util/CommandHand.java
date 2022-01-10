@@ -1,5 +1,6 @@
 package gregtech.common.command.util;
 
+import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.materialitem.MetaPrefixItem;
@@ -8,6 +9,7 @@ import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.items.toolitem.ToolMetaItem.MetaToolValueItem;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -20,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.ClickEvent.Action;
 import net.minecraftforge.fluids.FluidStack;
@@ -95,10 +98,27 @@ public class CommandHand extends CommandBase {
                         IToolStats toolStats = ((MetaToolValueItem) metaValueItem).getToolStats();
                         player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.tool_stats", toolStats.getClass().getName()));
                     }
-                    ClipboardUtil.copyToClipboard(player, metaValueItem.unlocalizedName);
-                    ClickEvent metaItemEvent = new ClickEvent(Action.OPEN_URL, metaValueItem.unlocalizedName);
-                    player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.meta_item", metaValueItem.unlocalizedName, metaValueItem)
-                            .setStyle(new Style().setClickEvent(metaItemEvent)));
+                    String id = "<metaitem:" + metaValueItem.unlocalizedName + ">";
+                    ClipboardUtil.copyToClipboard(player, id);
+                    ClickEvent metaItemEvent = new ClickEvent(Action.OPEN_URL, id);
+                    player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.meta_item", id)
+                            .setStyle(new Style().setColor(TextFormatting.AQUA)
+                                    .setClickEvent(metaItemEvent)));
+
+                }
+            }
+            if(stackInHand.getItem() instanceof MachineItemBlock) {
+                MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(stackInHand);
+                if(mte != null) {
+                    String id = mte.metaTileEntityId.toString();
+                    if(mte.metaTileEntityId.getNamespace().equals("gregtech"))
+                        id = mte.metaTileEntityId.getPath();
+                    id = "<meta_tile_entity:" + id + ">";
+                    ClipboardUtil.copyToClipboard(player, id);
+                    ClickEvent metaItemEvent = new ClickEvent(Action.OPEN_FILE, id);
+                    player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.meta_item", id)
+                            .setStyle(new Style().setColor(TextFormatting.AQUA)
+                                    .setClickEvent(metaItemEvent)));
                 }
             }
         } else {

@@ -554,6 +554,10 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         for (IItemBehaviour behaviour : getBehaviours(itemStack)) {
             behaviour.addInformation(itemStack, lines);
         }
+
+        if (tooltipFlag.isAdvanced()) {
+            lines.add("metaitem:" + item.unlocalizedName);
+        }
     }
 
     private static void addDischargeItemTooltip(List<String> tooltip, long maxCharge, long currentCharge, int tier) {
@@ -562,7 +566,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return;
         }
         Instant start = Instant.now();
-        Instant end = Instant.now().plusSeconds((long)((currentCharge * 1.0) / GTValues.V[tier] / 20));
+        Instant end = Instant.now().plusSeconds((long) ((currentCharge * 1.0) / GTValues.V[tier] / 20));
         Duration duration = Duration.between(start, end);
         double percentRemaining = currentCharge * 1.0 / maxCharge * 100; // used for color
 
