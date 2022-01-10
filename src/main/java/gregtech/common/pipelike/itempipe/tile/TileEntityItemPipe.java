@@ -16,13 +16,14 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
 public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType, ItemPipeProperties> {
 
     private final EnumMap<EnumFacing, ItemNetHandler> handlers = new EnumMap<>(EnumFacing.class);
-    private final Map<String, String> transferred = new HashMap<>();
+    private final Map<BlockPos, EnumSet<EnumFacing>> transferred = new HashMap<>();
     private ItemNetHandler defaultHandler;
     // the ItemNetHandler can only be created on the server so we have a empty placeholder for the client
     private final IItemHandler clientCapability = new ItemStackHandler(0);

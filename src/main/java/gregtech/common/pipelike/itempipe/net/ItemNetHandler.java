@@ -24,7 +24,7 @@ public class ItemNetHandler implements IItemHandler {
     private final TileEntityItemPipeTickable pipe;
     private final World world;
     private final EnumFacing facing;
-    private final Map<String, String> simulatedTransfersGlobalRoundRobin = new HashMap<>();
+    private final Map<BlockPos, EnumSet<EnumFacing>> simulatedTransfersGlobalRoundRobin = new HashMap<>();
     private int simulatedTransfers = 0;
 
     public ItemNetHandler(ItemPipeNet net, TileEntityItemPipe pipe, EnumFacing facing) {
@@ -37,39 +37,15 @@ public class ItemNetHandler implements IItemHandler {
         this.world = pipe.getWorld();
     }
 
-    private static String createDestinationString(BlockPos pos) {
-        return pos.getX() + ";" +
-                pos.getY() + ";" +
-                pos.getZ();
+    public static void transferTo(Map<BlockPos, EnumSet<EnumFacing>> map, BlockPos pos, EnumFacing facing) {
+        map.computeIfAbsent(pos, key -> EnumSet.noneOf(EnumFacing.class)).add(facing);
     }
 
-    public static void transferTo(Map<String, String> map, BlockPos pos, EnumFacing facing) {
-        String sPos = createDestinationString(pos);
-        String facings = map.get(sPos);
-        char c = facing.name().charAt(0);
-        if (facings == null) {
-            facings = Character.toString(c);
-        } else {
-            for (int i = 0; i < facings.length(); i++) {
-                if (c == facings.charAt(i))
-                    return;
-            }
-            facings += c;
-        }
-        map.put(sPos, facings);
-    }
-
-    public static boolean didTransferTo(Map<String, String> map, BlockPos pos, EnumFacing facing) {
-        String sPos = createDestinationString(pos);
-        String facings = map.get(sPos);
-        if (facings == null)
+    public static boolean didTransferTo(Map<BlockPos, EnumSet<EnumFacing>> map, BlockPos pos, EnumFacing facing) {
+        EnumSet<EnumFacing> set = map.get(pos);
+        if(set == null)
             return false;
-        char c = facing.name().charAt(0);
-        for (int i = 0, n = facings.length(); i < n; i++) {
-            if (c == facings.charAt(i))
-                return true;
-        }
-        return false;
+        return set.contains(facing);
     }
 
     @Nonnull
