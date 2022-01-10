@@ -1,5 +1,6 @@
 package gregtech.common.pipelike.itempipe;
 
+import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.block.material.ItemBlockMaterialPipe;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import net.minecraft.client.resources.I18n;
@@ -28,5 +29,9 @@ public class ItemBlockItemPipe extends ItemBlockMaterialPipe<ItemPipeType, ItemP
         else
             tooltip.add(I18n.format("gregtech.item_pipe.rate_stacks", (int) pipeProperties.getTransferRate()));
         tooltip.add(I18n.format("gregtech.item_pipe.priority", pipeProperties.getPriority()));
+
+        if (flagIn.isAdvanced()) {
+            tooltip.add("MetaItem Id: " + ((BlockMaterialPipe<?, ?, ?>) blockPipe).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>) blockPipe).getItemMaterial(stack));
+        }
     }
 }

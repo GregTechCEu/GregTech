@@ -1,5 +1,6 @@
 package gregtech.common.pipelike.fluidpipe;
 
+import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.block.material.ItemBlockMaterialPipe;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import net.minecraft.client.resources.I18n;
@@ -27,5 +28,9 @@ public class ItemBlockFluidPipe extends ItemBlockMaterialPipe<FluidPipeType, Flu
         tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", pipeProperties.getMaxFluidTemperature()));
         if (!pipeProperties.isGasProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.non_gas_proof"));
         if (pipeProperties.getTanks() > 1) tooltip.add(I18n.format("gregtech.fluid_pipe.channels", pipeProperties.getTanks()));
+
+        if (flagIn.isAdvanced()) {
+            tooltip.add("MetaItem Id: " + ((BlockMaterialPipe<?, ?, ?>) blockPipe).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>) blockPipe).getItemMaterial(stack));
+        }
     }
 }

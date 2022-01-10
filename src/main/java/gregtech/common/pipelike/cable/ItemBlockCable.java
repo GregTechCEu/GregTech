@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.cable;
 
 import gregtech.api.GTValues;
+import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.block.material.ItemBlockMaterialPipe;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTUtility;
@@ -30,5 +31,9 @@ public class ItemBlockCable extends ItemBlockMaterialPipe<Insulation, WireProper
         tooltip.add(I18n.format("gregtech.cable.voltage", wireProperties.getVoltage(), GTValues.VNF[tier]));
         tooltip.add(I18n.format("gregtech.cable.amperage", wireProperties.getAmperage()));
         tooltip.add(I18n.format("gregtech.cable.loss_per_block", wireProperties.getLossPerBlock()));
+
+        if (flagIn.isAdvanced()) {
+            tooltip.add("MetaItem Id: " + ((BlockMaterialPipe<?, ?, ?>)blockPipe).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>)blockPipe).getItemMaterial(stack));
+        }
     }
 }

@@ -3,10 +3,14 @@ package gregtech.common.blocks;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class CompressedItemBlock extends ItemBlock {
 
@@ -34,4 +38,11 @@ public class CompressedItemBlock extends ItemBlock {
         return OrePrefix.block.getLocalNameForItem(material);
     }
 
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        super.addInformation(stack, worldIn, tooltip, flagIn);
+        if(flagIn.isAdvanced()) {
+            tooltip.add("MetaItem Id: block" + compressedBlock.getGtMaterial(stack.getMetadata()));
+        }
+    }
 }
