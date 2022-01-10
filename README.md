@@ -49,3 +49,9 @@ Anything else? Sure come to [Discord](https://discord.gg/bWSWuYvURP).
 Heating Coil Textures are from the **[GregTech: New Horizons Modpack](https://www.curseforge.com/minecraft/modpacks/gt-new-horizons)**.
 
 Primitive Water Pump is from the **[Impact: GregTech Edition Modpack](https://gtimpact.space/)**.
+
+Ender Fluid Link Cover is from **[TecTech](https://github.com/Technus/TecTech)**.
+
+Steam Grinder is from **[GregTech++](https://www.curseforge.com/minecraft/mc-mods/gregtech-gt-gtplusplus)**.
+
+See something we forgot to credit? Reach out to us on Discord, or open an issue and ask for appropriate credit, we will happily mark it here
