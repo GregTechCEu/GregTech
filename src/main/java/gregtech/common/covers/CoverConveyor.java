@@ -473,8 +473,8 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                 .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
         primaryGroup.addWidget(new ToggleButtonWidget(130, 166, 20, 20, GuiTextures.BLOCKS_INPUT, () -> blocksInput, val -> blocksInput = val).setTooltipText("cover.conveyor.blocks_input"));
 
-        TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
-        if (coverTile instanceof TileEntityItemPipe) {
+        if (coverHolder.getWorld().getTileEntity(coverHolder.getPos()) instanceof TileEntityItemPipe ||
+                coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide)) instanceof TileEntityItemPipe) {
             final ImageCycleButtonWidget distributionModeButton = new ImageCycleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE, 3,
                     () -> distributionMode.ordinal(),
                     val -> setDistributionMode(DistributionMode.values()[val]))
