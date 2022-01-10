@@ -98,7 +98,7 @@ public class GTUtility {
     public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest, boolean fixTools) {
         for (int i = 0; i < src.getSlots(); i++) {
             ItemStack itemStack = src.getStackInSlot(i);
-            if (itemStack.getItem() instanceof ToolMetaItem) {
+            if (fixTools && itemStack.getItem() instanceof ToolMetaItem) {
                 ItemStack toolStack = itemStack.copy();
                 NBTTagCompound toolStats = toolStack.getTagCompound().getCompoundTag("GT.ToolStats");
                 toolStats.setInteger("Dmg", 0);
@@ -766,10 +766,10 @@ public class GTUtility {
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
             if (valueItem != null) {
                 List<IItemBehaviour> behaviourList = valueItem.getBehaviours();
-                for(IItemBehaviour behaviour : behaviourList) {
-                    if(behaviour instanceof CoverPlaceBehavior)
+                for (IItemBehaviour behaviour : behaviourList) {
+                    if (behaviour instanceof CoverPlaceBehavior)
                         return canPlaceCover == null || canPlaceCover.apply(((CoverPlaceBehavior) behaviour).coverDefinition);
-                    if(behaviour instanceof CrowbarBehaviour)
+                    if (behaviour instanceof CrowbarBehaviour)
                         return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
                 }
             }
@@ -928,13 +928,12 @@ public class GTUtility {
     /**
      * Checks whether a machine is not a multiblock and has a recipemap not present in a blacklist
      *
-     *
      * @param machineStack the ItemStack containing the machine to check the validity of
      * @return whether the machine is valid or not
      */
     public static boolean isMachineValidForMachineHatch(ItemStack machineStack, String[] recipeMapBlacklist) {
 
-        if(machineStack == null || machineStack.isEmpty()) {
+        if (machineStack == null || machineStack.isEmpty()) {
             return false;
         }
 
@@ -947,6 +946,7 @@ public class GTUtility {
 
     /**
      * Attempts to find a passed in RecipeMap unlocalized name in a list of names
+     *
      * @param unlocalizedName The unlocalized name of a RecipeMap
      * @return {@code true} If the RecipeMap is in the config blacklist
      */
