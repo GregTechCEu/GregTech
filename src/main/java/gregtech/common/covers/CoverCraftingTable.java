@@ -11,6 +11,7 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.storage.ICraftingStorage;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
@@ -35,7 +36,7 @@ import static gregtech.api.metatileentity.MetaTileEntity.clearInventory;
 /**
  * Code from this class is mostly copied from {@link MetaTileEntityWorkbench}
  */
-public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, ITickable {
+public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, ITickable, ICraftingStorage {
 
     private final ItemStackHandler internalInventory = new ItemStackHandler(18);
     private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
@@ -149,5 +150,20 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
         this.internalInventory.deserializeNBT(tagCompound.getCompoundTag("InternalInventory"));
         this.itemsCrafted = tagCompound.getInteger("ItemsCrafted");
         this.recipeMemory.deserializeNBT(tagCompound.getCompoundTag("RecipeMemory"));
+    }
+
+    @Override
+    public World getWorld() {
+        return coverHolder.getWorld();
+    }
+
+    @Override
+    public ItemStackHandler getCraftingGrid() {
+        return craftingGrid;
+    }
+
+    @Override
+    public CraftingRecipeMemory getRecipeMemory() {
+        return recipeMemory;
     }
 }

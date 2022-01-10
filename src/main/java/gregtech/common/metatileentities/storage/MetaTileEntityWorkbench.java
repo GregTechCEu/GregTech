@@ -15,7 +15,7 @@ import gregtech.api.gui.widgets.TabGroup.TabLocation;
 import gregtech.api.gui.widgets.tab.ItemTabInfo;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.client.renderer.texture.Textures;
+import gregtech.api.storage.ICraftingStorage;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
@@ -41,7 +41,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class MetaTileEntityWorkbench extends MetaTileEntity {
+public class MetaTileEntityWorkbench extends MetaTileEntity implements ICraftingStorage {
     private final ItemStackHandler internalInventory = new ItemStackHandler(18);
     private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
     private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
@@ -193,5 +193,16 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         builder.widget(tabGroup);
 
         return builder.build(getHolder(), entityPlayer);
+    }
+    public ItemStackHandler getCraftingGrid() {
+        return craftingGrid;
+    }
+
+    public ItemStackHandler getToolInventory() {
+        return toolInventory;
+    }
+
+    public CraftingRecipeMemory getRecipeMemory() {
+        return recipeMemory;
     }
 }
