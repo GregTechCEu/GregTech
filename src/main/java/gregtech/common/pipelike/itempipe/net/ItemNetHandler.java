@@ -20,7 +20,7 @@ import java.util.*;
 
 public class ItemNetHandler implements IItemHandler {
 
-    private final ItemPipeNet net;
+    private ItemPipeNet net;
     private final TileEntityItemPipeTickable pipe;
     private final World world;
     private final EnumFacing facing;
@@ -35,6 +35,14 @@ public class ItemNetHandler implements IItemHandler {
             this.pipe = (TileEntityItemPipeTickable) pipe.setSupportsTicking();
         this.facing = facing;
         this.world = pipe.getWorld();
+    }
+
+    public void updateNetwork(ItemPipeNet net) {
+        this.net = net;
+    }
+
+    public ItemPipeNet getNet() {
+        return net;
     }
 
     public static void transferTo(Map<BlockPos, EnumSet<EnumFacing>> map, BlockPos pos, EnumFacing facing) {

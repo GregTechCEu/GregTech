@@ -50,6 +50,13 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
     }
 
     @Override
+    protected void onConnectionsUpdate() {
+        super.onConnectionsUpdate();
+        NET_DATA.clear();
+    }
+
+
+    @Override
     protected void writeNodeData(ItemPipeProperties nodeData, NBTTagCompound tagCompound) {
         tagCompound.setInteger("Resistance", nodeData.getPriority());
         tagCompound.setFloat("Rate", nodeData.getTransferRate());
