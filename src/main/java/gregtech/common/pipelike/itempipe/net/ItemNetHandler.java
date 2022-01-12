@@ -3,6 +3,7 @@ package gregtech.common.pipelike.itempipe.net;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.*;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
@@ -14,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -26,6 +28,9 @@ public class ItemNetHandler implements IItemHandler {
     private final EnumFacing facing;
     private final Map<BlockPos, EnumSet<EnumFacing>> simulatedTransfersGlobalRoundRobin = new HashMap<>();
     private int simulatedTransfers = 0;
+    private boolean didSimulate = false;
+    private int simulatedAmount = 0;
+    private ItemStack simulatedItemStack = ItemStack.EMPTY;
 
     public ItemNetHandler(ItemPipeNet net, TileEntityItemPipe pipe, EnumFacing facing) {
         this.net = net;
@@ -51,17 +56,24 @@ public class ItemNetHandler implements IItemHandler {
 
     public static boolean didTransferTo(Map<BlockPos, EnumSet<EnumFacing>> map, BlockPos pos, EnumFacing facing) {
         EnumSet<EnumFacing> set = map.get(pos);
-        if(set == null)
+        if (set == null)
             return false;
         return set.contains(facing);
+    }
+
+    private void copyTransferred() {
+        simulatedTransfers = pipe.getTransferredItems();
+        simulatedTransfersGlobalRoundRobin.clear();
+        for (Map.Entry<BlockPos, EnumSet<EnumFacing>> entry : pipe.getTransferred().entrySet()) {
+            simulatedTransfersGlobalRoundRobin.put(entry.getKey(), EnumSet.copyOf(entry.getValue()));
+        }
     }
 
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) return stack;
-        simulatedTransfers = 0;
-        simulatedTransfersGlobalRoundRobin.clear();
+        copyTransferred();
         CoverBehavior pipeCover = getCoverOnPipe(pipe.getPipePos(), facing);
         CoverBehavior tileCover = getCoverOnNeighbour(pipe.getPipePos(), facing);
 
@@ -112,10 +124,35 @@ public class ItemNetHandler implements IItemHandler {
         if (handlers.size() == 1)
             return insert(handlers.get(0), stack, simulate);
         List<ItemPipeNet.Inventory> handlersCopy = new ArrayList<>(handlers);
-        ItemStack remaining = insertToHandlers(handlersCopy, handlers.size(), stack, simulate, global);
-        if (!remaining.isEmpty() && handlersCopy.size() > 0)
-            remaining = insertToHandlers(handlersCopy, handlers.size(), remaining, simulate, global);
-        return remaining;
+        int original = stack.getCount();
+        stack = insertToHandlers(handlersCopy, handlers.size(), stack, simulate, false);
+        if (!stack.isEmpty() && handlersCopy.size() > 0)
+            stack = insertToHandlers(handlersCopy, handlers.size(), stack, simulate, false);
+
+        if (stack.getCount() != original)
+            GTLog.logger.info("Inserted to {}/{} handlers. Start {}, End {}, sim {}", handlers.size() - handlersCopy.size(), handlers.size(), original, stack, simulate);
+
+        if (simulate) {
+            if (stack.getCount() != original) {
+                simulatedItemStack = stack.copy();
+                simulatedItemStack.setCount(original - stack.getCount());
+                didSimulate = true;
+                simulatedAmount = original;
+            } else {
+                simulatedItemStack = ItemStack.EMPTY;
+            }
+        } else if (didSimulate) {
+            ItemStack inserted = stack.copy();
+            inserted.setCount(original - stack.getCount());
+            if (!ItemStack.areItemStacksEqual(simulatedItemStack, inserted)) {
+                GTLog.logger.error("Simulated item ({}) is not equal to actual item {}     -------------------------------------------", simulatedItemStack, inserted);
+            }
+
+            didSimulate = false;
+            simulatedItemStack = ItemStack.EMPTY;
+            simulatedAmount = 0;
+        }
+        return stack;
     }
 
     /**
@@ -129,8 +166,8 @@ public class ItemNetHandler implements IItemHandler {
      */
     private ItemStack insertToHandlers(List<ItemPipeNet.Inventory> copy, int destinations, ItemStack stack, boolean simulate, boolean global) {
         Iterator<ItemPipeNet.Inventory> handlerIterator = copy.listIterator();
-        int remaining = stack.getCount();
-        int count = stack.getCount();
+        int inserted = 0;
+        int count = global && didSimulate && simulatedAmount > 0 ? simulatedAmount : stack.getCount();
         int c = count / destinations;
         int m = c == 0 ? count % destinations : 0;
         while (handlerIterator.hasNext()) {
@@ -143,15 +180,20 @@ public class ItemNetHandler implements IItemHandler {
                 amount++;
                 m--;
             }
+            amount = Math.min(amount, stack.getCount() - inserted);
             if (amount == 0) break;
             ItemStack toInsert = stack.copy();
             toInsert.setCount(amount);
             int r = insert(handler, toInsert, simulate).getCount();
             if (r < amount) {
-                remaining -= (amount - r);
+                inserted += (amount - r);
+                GTLog.logger.info("  ins: {}, r {}, amount {}, c {}, m {}", (amount - r), r, amount, c, m);
                 if (global) {
                     transferTo(handler, simulate);
                 }
+            }
+            if (r == 1 && c == 0 && amount == 1) {
+                m++;
             }
 
             if (global || r > 0)
@@ -161,12 +203,13 @@ public class ItemNetHandler implements IItemHandler {
                 resetTransferred(simulate);
             }
         }
-        if (remaining == 0) {
-            return ItemStack.EMPTY;
-        }
-        ItemStack result = stack.copy();
-        result.setCount(remaining);
-        return result;
+
+        GTLog.logger.info("  reamining {}, inserted {}, start {}", stack.getCount() - inserted, inserted, stack.getCount());
+
+        ItemStack remainder = stack.copy();
+        remainder.setCount(count - inserted);
+        GTLog.logger.info("Return remainder {}, sim {}", remainder, simulate);
+        return remainder;
     }
 
     public ItemStack insert(ItemPipeNet.Inventory handler, ItemStack stack, boolean simulate) {
@@ -283,7 +326,7 @@ public class ItemNetHandler implements IItemHandler {
     private int checkTransferable(TileEntityItemPipeTickable pipe, float rate, int amount, boolean simulate) {
         int max = (int) ((rate * 64) + 0.5);
         if (simulate)
-            return Math.max(0, Math.min(max - (pipe.getTransferredItems() + simulatedTransfers), amount));
+            return Math.max(0, Math.min(max - simulatedTransfers, amount));
         else
             return Math.max(0, Math.min(max - pipe.getTransferredItems(), amount));
     }
@@ -325,10 +368,9 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     private boolean didTransferTo(ItemPipeNet.Inventory handler, boolean simulate) {
-        boolean didPipeTransfer = pipe.didTransferTo(handler.getPipePos(), handler.getFaceToHandler());
         if (simulate)
-            return didPipeTransfer || didTransferTo(simulatedTransfersGlobalRoundRobin, handler.getPipePos(), handler.getFaceToHandler());
-        return didPipeTransfer;
+            return didTransferTo(simulatedTransfersGlobalRoundRobin, handler.getPipePos(), handler.getFaceToHandler());
+        return pipe.didTransferTo(handler.getPipePos(), handler.getFaceToHandler());
     }
 
     private void resetTransferred(boolean simulated) {

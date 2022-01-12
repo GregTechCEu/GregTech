@@ -54,12 +54,18 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
     @Override
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+
             if (world.isRemote)
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(clientCapability);
-            if (handlers.size() == 0)
+
+            ItemPipeNet net = getItemPipeNet();
+            if(net != null)
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new ItemNetHandler(net, this, facing));
+            /*if (handlers.size() == 0)
                 initHandlers();
-            checkNetwork();
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(handlers.getOrDefault(facing, defaultHandler));
+            checkNetwork();*/
+            //return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(handlers.getOrDefault(facing, defaultHandler));
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(clientCapability);
         }
         return super.getCapabilityInternal(capability, facing);
     }
@@ -101,5 +107,9 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
 
     public void resetTransferred() {
         transferred.clear();
+    }
+
+    public Map<BlockPos, EnumSet<EnumFacing>> getTransferred() {
+        return transferred;
     }
 }
