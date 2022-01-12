@@ -65,7 +65,9 @@ public class ItemNetHandler implements IItemHandler {
         simulatedTransfers = pipe.getTransferredItems();
         simulatedTransfersGlobalRoundRobin.clear();
         for (Map.Entry<BlockPos, EnumSet<EnumFacing>> entry : pipe.getTransferred().entrySet()) {
-            simulatedTransfersGlobalRoundRobin.put(entry.getKey(), EnumSet.copyOf(entry.getValue()));
+            EnumSet<EnumFacing> copy = EnumSet.noneOf(EnumFacing.class);
+            copy.addAll(entry.getValue());
+            simulatedTransfersGlobalRoundRobin.put(entry.getKey(), copy);
         }
     }
 
@@ -90,6 +92,11 @@ public class ItemNetHandler implements IItemHandler {
         CoverConveyor conveyor = (CoverConveyor) (pipeConveyor ? pipeCover : tileCover);
         if (conveyor.getConveyorMode() == (pipeConveyor ? CoverConveyor.ConveyorMode.IMPORT : CoverConveyor.ConveyorMode.EXPORT)) {
             boolean roundRobinGlobal = conveyor.getDistributionMode() == DistributionMode.ROUND_ROBIN_GLOBAL;
+
+            // disable enhanced round robin temporarily
+            if (roundRobinGlobal)
+                return stack;
+
             if (roundRobinGlobal || conveyor.getDistributionMode() == DistributionMode.ROUND_ROBIN_PRIO)
                 return insertRoundRobin(stack, simulate, roundRobinGlobal);
         }
@@ -125,12 +132,13 @@ public class ItemNetHandler implements IItemHandler {
             return insert(handlers.get(0), stack, simulate);
         List<ItemPipeNet.Inventory> handlersCopy = new ArrayList<>(handlers);
         int original = stack.getCount();
-        stack = insertToHandlers(handlersCopy, handlers.size(), stack, simulate, false);
+        stack = global ? insertToHandlersEnhanced(handlersCopy, stack, handlers.size(), simulate) : insertToHandlers(handlersCopy, stack, simulate);
         if (!stack.isEmpty() && handlersCopy.size() > 0)
-            stack = insertToHandlers(handlersCopy, handlers.size(), stack, simulate, false);
+            stack = global ? insertToHandlersEnhanced(handlersCopy, stack, handlers.size(), simulate) : insertToHandlers(handlersCopy, stack, simulate);
+        ;
 
-        if (stack.getCount() != original)
-            GTLog.logger.info("Inserted to {}/{} handlers. Start {}, End {}, sim {}", handlers.size() - handlersCopy.size(), handlers.size(), original, stack, simulate);
+        if (stack.getCount() != original) ;
+            //GTLog.logger.info("Inserted to {}/{} handlers. Start {}, End {}, sim {}", handlers.size() - handlersCopy.size(), handlers.size(), original, stack, simulate);
 
         if (simulate) {
             if (stack.getCount() != original) {
@@ -145,7 +153,7 @@ public class ItemNetHandler implements IItemHandler {
             ItemStack inserted = stack.copy();
             inserted.setCount(original - stack.getCount());
             if (!ItemStack.areItemStacksEqual(simulatedItemStack, inserted)) {
-                GTLog.logger.error("Simulated item ({}) is not equal to actual item {}     -------------------------------------------", simulatedItemStack, inserted);
+                //GTLog.logger.error("Simulated item ({}) is not equal to actual item {}     -------------------------------------------", simulatedItemStack, inserted);
             }
 
             didSimulate = false;
@@ -164,15 +172,63 @@ public class ItemNetHandler implements IItemHandler {
      * @param simulate simulate
      * @return remainder
      */
-    private ItemStack insertToHandlers(List<ItemPipeNet.Inventory> copy, int destinations, ItemStack stack, boolean simulate, boolean global) {
+    private ItemStack insertToHandlers(List<ItemPipeNet.Inventory> copy, ItemStack stack, boolean simulate) {
         Iterator<ItemPipeNet.Inventory> handlerIterator = copy.listIterator();
         int inserted = 0;
-        int count = global && didSimulate && simulatedAmount > 0 ? simulatedAmount : stack.getCount();
-        int c = count / destinations;
-        int m = c == 0 ? count % destinations : 0;
+        int count = stack.getCount();
+        int c = count / copy.size();
+        int m = c == 0 ? count % copy.size() : 0;
         while (handlerIterator.hasNext()) {
             ItemPipeNet.Inventory handler = handlerIterator.next();
-            if (global && didTransferTo(handler, simulate)) {
+
+            int amount = c;
+            if (m > 0) {
+                amount++;
+                m--;
+            }
+            amount = Math.min(amount, stack.getCount() - inserted);
+            if (amount == 0) break;
+            ItemStack toInsert = stack.copy();
+            toInsert.setCount(amount);
+            int r = insert(handler, toInsert, simulate).getCount();
+            if (r < amount) {
+                inserted += (amount - r);
+                //GTLog.logger.info("  ins: {}, r {}, amount {}, c {}, m {}", (amount - r), r, amount, c, m);
+
+            }
+            if (r == 1 && c == 0 && amount == 1) {
+                m++;
+            }
+
+            if (r > 0)
+                handlerIterator.remove();
+        }
+        //GTLog.logger.info("  reamining {}, inserted {}, start {}", stack.getCount() - inserted, inserted, stack.getCount());
+
+        ItemStack remainder = stack.copy();
+        remainder.setCount(count - inserted);
+        //GTLog.logger.info("Return remainder {}, sim {}", remainder, simulate);
+        return remainder;
+    }
+
+    /**
+     * Inserts items equally to all handlers
+     * if it couldn't insert all items, the handler will be removed
+     *
+     * @param copy     to insert to
+     * @param stack    to insert
+     * @param simulate simulate
+     * @return remainder
+     */
+    private ItemStack insertToHandlersEnhanced(List<ItemPipeNet.Inventory> copy, ItemStack stack, int dest, boolean simulate) {
+        Iterator<ItemPipeNet.Inventory> handlerIterator = copy.listIterator();
+        int inserted = 0;
+        int count = /*didSimulate && simulatedAmount > 0 ? simulatedAmount : */stack.getCount();
+        int c = count / dest;
+        int m = c == 0 ? count % dest : 0;
+        while (handlerIterator.hasNext()) {
+            ItemPipeNet.Inventory handler = handlerIterator.next();
+            if (didTransferTo(handler, simulate)) {
                 continue;
             }
             int amount = c;
@@ -187,28 +243,26 @@ public class ItemNetHandler implements IItemHandler {
             int r = insert(handler, toInsert, simulate).getCount();
             if (r < amount) {
                 inserted += (amount - r);
-                GTLog.logger.info("  ins: {}, r {}, amount {}, c {}, m {}", (amount - r), r, amount, c, m);
-                if (global) {
-                    transferTo(handler, simulate);
-                }
+                //GTLog.logger.info("  ins: {}, r {}, amount {}, c {}, m {}", (amount - r), r, amount, c, m);
+                transferTo(handler, simulate);
             }
             if (r == 1 && c == 0 && amount == 1) {
                 m++;
             }
 
-            if (global || r > 0)
+            if (r > 0)
                 handlerIterator.remove();
 
-            if (global && !handlerIterator.hasNext()) {
+            if (!handlerIterator.hasNext()) {
                 resetTransferred(simulate);
             }
         }
 
-        GTLog.logger.info("  reamining {}, inserted {}, start {}", stack.getCount() - inserted, inserted, stack.getCount());
+        //GTLog.logger.info("  reamining {}, inserted {}, start {}", stack.getCount() - inserted, inserted, stack.getCount());
 
         ItemStack remainder = stack.copy();
-        remainder.setCount(count - inserted);
-        GTLog.logger.info("Return remainder {}, sim {}", remainder, simulate);
+        remainder.shrink(inserted);
+        //GTLog.logger.info("Return remainder {}, sim {}", remainder, simulate);
         return remainder;
     }
 
