@@ -4,27 +4,23 @@ import com.google.common.collect.Lists;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
-import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
-import gregtech.api.util.Size;
-import gregtech.api.util.SlotUtil;
 import mezz.jei.api.gui.IGhostIngredientHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -104,6 +100,19 @@ public class OreDictFilterTestSlot extends Widget implements IGhostIngredientTar
             GlStateManager.colorMask(true, true, true, true);
             GlStateManager.enableDepth();
             GlStateManager.enableBlend();
+        }
+    }
+
+    @Override
+    public void drawInForeground(int mouseX, int mouseY) {
+        if (isActive() && isMouseOverElement(mouseX, mouseY)) {
+            if (!testStack.isEmpty()) {
+                GuiUtils.preItemToolTip(testStack);
+                this.drawHoveringText(testStack, getItemToolTip(testStack), 300, mouseX, mouseY);
+                GuiUtils.postItemToolTip();
+            } else {
+                drawHoveringText(ItemStack.EMPTY, Arrays.asList(I18n.format("cover.ore_dictionary_filter.test_slot.info").split("/n")), 300, mouseX, mouseY);
+            }
         }
     }
 

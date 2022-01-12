@@ -93,7 +93,7 @@ public class OreDictExprFilter {
             return false;
 
         if (rules == null || rules.isEmpty())
-            return true;
+            return false;
 
         for (String oreDict : oreDicts) {
             if (matches(rules, oreDict))

@@ -2,19 +2,16 @@ package gregtech.common.covers.filter;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
-import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.gui.widgets.DrawableWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.OreDictFilterTestSlot;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.util.ItemStackKey;
 import gregtech.api.util.OreDictExprFilter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.client.config.GuiUtils;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -109,14 +106,6 @@ public class OreDictionaryItemFilter extends ItemFilter {
         widgetGroup.accept(new DrawableWidget(36, 1, 100, 18)
                 .setBackgroundDrawer(((mouseX, mouseY, partialTicks, context, widget) -> {
                     if (testStack.isEmpty()) {
-                        if (Widget.isMouseOver(widget.getPosition().x, widget.getPosition().y, 18, 18, mouseX, mouseY)) {
-                            Minecraft mc = Minecraft.getMinecraft();
-                            ModularUIGui gui = (ModularUIGui) context;
-                            GuiUtils.drawHoveringText(Arrays.asList(I18n.format("cover.ore_dictionary_filter.test_slot.info").split("/n")), mouseX, mouseY,
-                                    gui.width,
-                                    gui.height, 300, mc.fontRenderer);
-                            GlStateManager.disableLighting();
-                        }
                         return;
                     }
                     int color = 0xD15858;
