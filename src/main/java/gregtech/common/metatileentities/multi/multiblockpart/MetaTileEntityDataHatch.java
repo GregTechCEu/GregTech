@@ -7,7 +7,6 @@ import gregtech.api.capability.IResearchDataProvider;
 import gregtech.api.capability.impl.InventortyResearchDataProvider;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -55,9 +54,7 @@ public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockPart implem
         for (int y = 0; y < rowSize; y++) {
             for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
-                builder.widget(new SlotWidget(dataStickInventory, index,
-                        (88 - rowSize * 9 + x * 18) + xOffset, 18 + y * 18, true, true)
-                        .setBackgroundTexture(GuiTextures.SLOT));
+                builder.slot(dataStickInventory, index, (88 - rowSize * 9 + x * 18) + xOffset, 18 + y * 18, GuiTextures.SLOT, GuiTextures.DATA_ORB_OVERLAY);
             }
         }
         return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7 + xOffset, 18 + 18 * rowSize + 12);
