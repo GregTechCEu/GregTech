@@ -45,10 +45,8 @@ public class OreDictExprFilter {
                 i = parseExpression(subRules, expression.substring(i + 1)) + i + 1;
                 rules.add(MatchRule.group(subRules, builder.toString()));
                 builder = new StringBuilder();
-            } else if (builder.length() > 0) {
+            } else {
                 switch (c) {
-                    case '!':
-                        break;
                     case '&':
                         rules.add(new MatchRule(builder.toString()));
                         rules.add(new MatchRule(MatchLogic.AND));
@@ -70,8 +68,6 @@ public class OreDictExprFilter {
                     default:
                         builder.append(c);
                 }
-            } else {
-                builder.append(c);
             }
         }
         if (builder.length() > 0) {

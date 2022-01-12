@@ -49,12 +49,15 @@ public class OreDictionaryItemFilter extends ItemFilter {
                 .setMaxLength(64)
                 .setScale(0.75f)
                 .setValidator(input -> {
+                    // remove all operators that are double
                     input = input.replaceAll("\\*{2,}", "*");
                     input = input.replaceAll("&{2,}", "&");
                     input = input.replaceAll("\\|{2,}", "|");
                     input = input.replaceAll("!{2,}", "!");
                     input = input.replaceAll("\\^{2,}", "^");
                     input = input.replaceAll(" {2,}", " ");
+                    // move ( and ) so it doesn't create invalid expressions f.e. xxx (& yyy) => xxx & (yyy)
+                    // append or prepend ( and ) if the amount is not equal
                     StringBuilder builder = new StringBuilder();
                     int unclosed = 0;
                     char last = ' ';
