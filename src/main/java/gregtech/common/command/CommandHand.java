@@ -98,7 +98,7 @@ public class CommandHand extends CommandBase {
                     String ctId = "<metaitem:" + metaValueItem.unlocalizedName + ">";
                     ClipboardUtil.copyToClipboard(player, ctId);
                     player.sendMessage(new TextComponentString("MetaItem Id: ").appendSibling(new TextComponentString(id).setStyle(new Style().setColor(TextFormatting.GREEN)))
-                            .setStyle(getCopyStyle(ctId)));
+                            .setStyle(getCopyStyle(ctId, true)));
 
                 }
             } else if (stackInHand.getItem() instanceof MachineItemBlock) {
@@ -110,7 +110,7 @@ public class CommandHand extends CommandBase {
                     String ctId = "<metaitem:" + id + ">";
                     ClipboardUtil.copyToClipboard(player, ctId);
                     player.sendMessage(new TextComponentString("MetaItem Id: ").appendSibling(new TextComponentString(id).setStyle(new Style().setColor(TextFormatting.GREEN)))
-                            .setStyle(getCopyInfoStyle(ctId)));
+                            .setStyle(getCopyStyle(ctId, true)));
                 }
             } else {
                 Block block = Block.getBlockFromItem(stackInHand.getItem());
@@ -127,7 +127,7 @@ public class CommandHand extends CommandBase {
                     String ctId = "<metaitem:" + id + ">";
                     ClipboardUtil.copyToClipboard(player, ctId);
                     player.sendMessage(new TextComponentString("MetaItem Id: ").appendSibling(new TextComponentString(id).setStyle(new Style().setColor(TextFormatting.GREEN)))
-                            .setStyle(getCopyInfoStyle(ctId)));
+                            .setStyle(getCopyStyle(ctId, true)));
                 }
             }
 
@@ -136,7 +136,7 @@ public class CommandHand extends CommandBase {
                 sender.sendMessage(new TextComponentString("\u00A73OreDict Entries:"));
                 for (String oreName : oreDicts) {
                     player.sendMessage(new TextComponentString("    \u00A7e- \u00A7b" + oreName)
-                            .setStyle(getCopyStyle("<ore:" + oreName + ">")));
+                            .setStyle(getCopyStyle("<ore:" + oreName + ">", false)));
                 }
             }
         } else {
@@ -144,21 +144,14 @@ public class CommandHand extends CommandBase {
         }
     }
 
-    public static Style getCopyStyle(String copyMessage) {
+    public static Style getCopyStyle(String copyMessage, boolean alreadyCopied) {
         Style style = new Style();
         ClickEvent click = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/gt copy " + copyMessage);
         style.setClickEvent(click);
 
-        HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("Click to copy [\u00A76" + copyMessage + "\u00A7r]"));
-        style.setHoverEvent(hoverEvent);
+        String hoverMsg = alreadyCopied ? "\u00A76" + copyMessage + "\u00A7r was copied to clipboard. \nClick to copy again" : "Click to copy \u00A76" + copyMessage + "\u00A7r";
 
-        return style;
-    }
-
-    public static Style getCopyInfoStyle(String copyMessage) {
-        Style style = new Style();
-
-        HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("\u00A76" + copyMessage + "\u00A7r was copied to clipboard"));
+        HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(hoverMsg));
         style.setHoverEvent(hoverEvent);
 
         return style;

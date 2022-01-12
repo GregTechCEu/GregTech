@@ -59,7 +59,7 @@ public class GregTechCommand extends CommandTreeBase {
             }
             if (args[0].equals("util")) {
                 if (sender.getCommandSenderEntity() instanceof EntityPlayerMP) {
-                    sender.sendMessage(new TextComponentString("'/gt util' is gone. Just use '/gt hand'"));
+                    sender.sendMessage(new TextComponentString("\u00A76/gt util hand\u00A7r was yeeted. The new command is \u00A76/gt hand\u00A7r"));
                 }
                 return;
             }
