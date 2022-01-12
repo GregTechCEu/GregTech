@@ -3290,6 +3290,9 @@ gregtech.machine.scanner.uiv.name=High-Tech Scanner III
 gregtech.machine.scanner.umv.name=High-Tech Scanner IV
 gregtech.machine.scanner.uxv.name=Ultimate Scanner
 
+gregtech.machine.data_hatch.ev.name=Data Access Hatch
+gregtech.machine.data_hatch.luv.name=Advance Data Access Hatch
+
 gregtech.machine.infinite_energy.name=Infinite GT Energy Unit Emitter
 gregtech.machine.infinite_energy.tooltip=§8You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§8 to use this
 gregtech.machine.creative_chest.name=Creative Quantum Chest
