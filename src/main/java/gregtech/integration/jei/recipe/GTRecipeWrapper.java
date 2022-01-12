@@ -85,9 +85,13 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         // Outputs
         if (!recipe.getOutputs().isEmpty() || !recipe.getChancedOutputs().isEmpty()) {
             List<ItemStack> recipeOutputs;
+            boolean outputNeedsReplacing = false;
+            try {
+                outputNeedsReplacing = recipe.getOutputs().get(0).hasTagCompound() && recipe.getOutputs().get(0).isItemEqual(MetaItems.TOOL_DATA_STICK.getStackForm(1));
+            } catch (Exception ignored) {}
 
             // Scanner Output replacing
-            if (recipe.getOutputs().get(0).hasTagCompound() && recipe.getOutputs().get(0).isItemEqual(MetaItems.TOOL_DATA_STICK.getStackForm(1))) {
+            if (outputNeedsReplacing) {
                 ItemStack dataStick = recipe.getOutputs().get(0);
                 NBTTagCompound researchItemNBT = dataStick.getSubCompound("asslineOutput");
                 ItemStack researchItem = new ItemStack(researchItemNBT);
@@ -97,11 +101,11 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     recipeOutputs = getOutputListFromRecipe(recipe);
                     currentItemSlot += recipeOutputs.size();
                 }
-
             } else {
                 recipeOutputs = getOutputListFromRecipe(recipe);
                 currentItemSlot += recipeOutputs.size();
             }
+
 
             List<ChanceEntry> chancedOutputs = recipe.getChancedOutputs();
             chancedOutputs.sort(Comparator.comparingInt(entry -> entry == null ? 0 : entry.getChance()));
