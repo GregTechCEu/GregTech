@@ -42,7 +42,7 @@ public class FrameItemBlock extends ItemBlock {
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         if (flagIn.isAdvanced()) {
-            tooltip.add("MetaItem Id: block" + frameBlock.getGtMaterial(stack.getMetadata()).toCamelCaseString());
+            tooltip.add("MetaItem Id: frame" + frameBlock.getGtMaterial(stack.getMetadata()).toCamelCaseString());
         }
     }
 }

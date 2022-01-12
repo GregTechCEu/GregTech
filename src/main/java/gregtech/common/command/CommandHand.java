@@ -118,7 +118,7 @@ public class CommandHand extends CommandBase {
                 if (block instanceof BlockCompressed) {
                     id = "block" + ((BlockCompressed) block).getGtMaterial(stackInHand.getMetadata()).toCamelCaseString();
                 } else if (block instanceof BlockFrame) {
-                    id = "block" + ((BlockFrame) block).getGtMaterial(stackInHand.getMetadata()).toCamelCaseString();
+                    id = "frame" + ((BlockFrame) block).getGtMaterial(stackInHand.getMetadata()).toCamelCaseString();
                 } else if (block instanceof BlockMaterialPipe) {
                     id = ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>) block).getItemMaterial(stackInHand).toCamelCaseString();
                 }
