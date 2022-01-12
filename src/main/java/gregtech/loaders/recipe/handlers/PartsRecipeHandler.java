@@ -280,13 +280,6 @@ public class PartsRecipeHandler {
                     .EUt(VA[ULV])
                     .buildAndRegister();
         }
-
-        if (material.hasFlag(MORTAR_GRINDABLE)) {
-            ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, material);
-            ModHandler.addShapedRecipe(String.format("plate_to_dust_%s", material),
-                    dustStack, "X", "m",
-                    'X', new UnificationEntry(OrePrefix.plate, material));
-        }
     }
 
     public static void processPlateDouble(OrePrefix doublePrefix, Material material, IngotProperty property) {
