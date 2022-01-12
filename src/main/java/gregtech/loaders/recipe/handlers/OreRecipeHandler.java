@@ -67,7 +67,8 @@ public class OreRecipeHandler {
 
     public static void processOre(OrePrefix orePrefix, Material material, OreProperty property) {
         Material byproductMaterial = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
-        ItemStack byproductStack = OreDictUnifier.get(OrePrefix.dust, byproductMaterial);
+        ItemStack byproductStack = OreDictUnifier.get(OrePrefix.gem, byproductMaterial);
+        if (byproductStack.isEmpty()) byproductStack = OreDictUnifier.get(OrePrefix.dust, byproductMaterial);
         ItemStack crushedStack = OreDictUnifier.get(OrePrefix.crushed, material);
         ItemStack ingotStack;
         Material smeltingMaterial = property.getDirectSmeltResult() == null ? material : property.getDirectSmeltResult();
