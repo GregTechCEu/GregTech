@@ -136,7 +136,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
             return false;
         }
         int machineTier = GTUtility.getTierByVoltage(Math.max(getInputVoltage(), getOutputVoltage()));
-        if (machineTier < electricItem.getTier()) { // stack in slot is too high of a voltage to charge/discharge
+        if (machineTier != electricItem.getTier()) { // stack in slot is not the right voltage tier to charge/discharge
             return false;
         }
 

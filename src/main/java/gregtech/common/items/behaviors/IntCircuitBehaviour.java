@@ -17,7 +17,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -45,21 +44,11 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
         return ModularUI.builder(GuiTextures.BACKGROUND, 176, 60)
                 .label(9, 8, "metaitem.circuit.integrated.gui")
                 .widget(new DynamicLabelWidget(82, 30, () -> Integer.toString(IntCircuitIngredient.getCircuitConfiguration(holder.getCurrentItem())), 0x4D4040))
-                .widget(new ClickButtonWidget(15, 24, 20, 20, "-5", data -> adjustConfiguration(holder, -5)))
-                .widget(new ClickButtonWidget(50, 24, 20, 20, "-1", data -> adjustConfiguration(holder, -1)))
-                .widget(new ClickButtonWidget(104, 24, 20, 20, "+1", data -> adjustConfiguration(holder, +1)))
-                .widget(new ClickButtonWidget(141, 24, 20, 20, "+5", data -> adjustConfiguration(holder, +5)))
+                .widget(new ClickButtonWidget(15, 24, 20, 20, "-5", data -> IntCircuitIngredient.adjustConfiguration(holder, -5)))
+                .widget(new ClickButtonWidget(50, 24, 20, 20, "-1", data -> IntCircuitIngredient.adjustConfiguration(holder, -1)))
+                .widget(new ClickButtonWidget(104, 24, 20, 20, "+1", data -> IntCircuitIngredient.adjustConfiguration(holder, +1)))
+                .widget(new ClickButtonWidget(141, 24, 20, 20, "+5", data -> IntCircuitIngredient.adjustConfiguration(holder, +5)))
                 .build(holder, entityPlayer);
-    }
-
-    private static void adjustConfiguration(PlayerInventoryHolder holder, int amount) {
-        ItemStack stack = holder.getCurrentItem();
-        int configuration = IntCircuitIngredient.getCircuitConfiguration(stack);
-        configuration += amount;
-        configuration = MathHelper.clamp(configuration, 0, IntCircuitIngredient.CIRCUIT_MAX);
-        IntCircuitIngredient.setCircuitConfiguration(stack, configuration);
-
-        holder.markAsDirty();
     }
 
     @Override

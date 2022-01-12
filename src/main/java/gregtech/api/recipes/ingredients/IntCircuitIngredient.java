@@ -1,9 +1,11 @@
 package gregtech.api.recipes.ingredients;
 
+import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
@@ -32,10 +34,37 @@ public class IntCircuitIngredient extends Ingredient {
     }
 
     public static int getCircuitConfiguration(ItemStack itemStack) {
-        if (!MetaItems.INTEGRATED_CIRCUIT.isItemEqual(itemStack) ||
-                !itemStack.hasTagCompound()) return 0;
+        if (!isIntegratedCircuit(itemStack)) return 0;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         return tagCompound.getInteger("Configuration");
+    }
+
+    public static boolean isIntegratedCircuit(ItemStack itemStack) {
+        boolean isCircuit = MetaItems.INTEGRATED_CIRCUIT.isItemEqual(itemStack);
+        if (isCircuit && !itemStack.hasTagCompound()) {
+            NBTTagCompound compound = new NBTTagCompound();
+            compound.setInteger("Configuration", 0);
+            itemStack.setTagCompound(compound);
+        }
+        return isCircuit;
+    }
+
+    public static void adjustConfiguration(PlayerInventoryHolder holder, int amount) {
+        ItemStack stack = holder.getCurrentItem();
+        int configuration = IntCircuitIngredient.getCircuitConfiguration(stack);
+        configuration += amount;
+        configuration = MathHelper.clamp(configuration, 0, IntCircuitIngredient.CIRCUIT_MAX);
+        IntCircuitIngredient.setCircuitConfiguration(stack, configuration);
+
+        holder.markAsDirty();
+    }
+
+    public static void adjustConfiguration(ItemStack stack, int amount) {
+        if (!IntCircuitIngredient.isIntegratedCircuit(stack)) return;
+        int configuration = IntCircuitIngredient.getCircuitConfiguration(stack);
+        configuration += amount;
+        configuration = MathHelper.clamp(configuration, 0, IntCircuitIngredient.CIRCUIT_MAX);
+        IntCircuitIngredient.setCircuitConfiguration(stack, configuration);
     }
 
     private static ItemStack[] gatherMatchingCircuits(int... matchingConfigurations) {

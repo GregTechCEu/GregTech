@@ -4,6 +4,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.impl.*;
@@ -12,8 +13,11 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.Widget;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
@@ -48,6 +52,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     private final boolean hasFrontFacing;
 
     private final ItemStackHandler chargerInventory;
+    private final ItemStackHandler circuitInventory;
     private EnumFacing outputFacingItems;
     private EnumFacing outputFacingFluids;
 
@@ -70,6 +75,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction);
         this.hasFrontFacing = hasFrontFacing;
         this.chargerInventory = new ItemStackHandler(1);
+        this.circuitInventory = new ItemStackHandler(1);
     }
 
     @Override
@@ -207,6 +213,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setTag("ChargerInventory", chargerInventory.serializeNBT());
+        data.setTag("CircuitInventory", circuitInventory.serializeNBT());
         data.setInteger("OutputFacing", getOutputFacingItems().getIndex());
         data.setInteger("OutputFacingF", getOutputFacingFluids().getIndex());
         data.setBoolean("AutoOutputItems", autoOutputItems);
@@ -220,6 +227,9 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         this.chargerInventory.deserializeNBT(data.getCompoundTag("ChargerInventory"));
+        if (data.hasKey("CircuitInventory")) {
+            this.circuitInventory.deserializeNBT(data.getCompoundTag("CircuitInventory"));
+        }
         this.outputFacingItems = EnumFacing.VALUES[data.getInteger("OutputFacing")];
         this.outputFacingFluids = EnumFacing.VALUES[data.getInteger("OutputFacingF")];
         this.autoOutputItems = data.getBoolean("AutoOutputItems");
@@ -379,6 +389,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
         super.clearMachineInventory(itemBuffer);
         clearInventory(itemBuffer, chargerInventory);
+        clearInventory(itemBuffer, circuitInventory);
     }
 
     @Override
@@ -397,8 +408,9 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
 
         ModularUI.Builder builder = workableRecipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset)
                 .widget(new LabelWidget(5, 5, getMetaFullName()))
-                .widget(new SlotWidget(chargerInventory, 0, 79, 62 + yOffset)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY))
+                .widget(new SlotWidget(chargerInventory, 0, 79, 62 + yOffset, true, true, false)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY)
+                        .setTooltipText("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()], GTValues.VNF[getTier()]))
                 .widget(new ImageWidget(79, 42 + yOffset, 18, 18, GuiTextures.INDICATOR_NO_ENERGY)
                         .setPredicate(workable::isHasNotEnoughEnergy))
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);
@@ -423,7 +435,45 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
                 .setTooltipHoverString("gregtech.gui.overclock.description")
                 .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));
 
+        if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
+            SlotWidget circuitSlot = new SlotWidget(circuitInventory, 0, 124, 62 + yOffset, true, true, false)
+                    .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
+            builder.widget(getCircuitSlotTooltip(circuitSlot))
+                    .widget(new ImageWidget(152, 63 + yOffset, 17, 17, GuiTextures.GREGTECH_LOGO))
+                    .widget(new ClickButtonWidget(115, 62 + yOffset, 9, 9, "", this::circuitConfigPlus)
+                            .setShouldClientCallback(true)
+                            .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_PLUS)
+                            .setDisplayFunction(() -> circuitInventory != null && IntCircuitIngredient.isIntegratedCircuit(circuitInventory.getStackInSlot(0))))
+                    .widget(new ClickButtonWidget(115, 71 + yOffset, 9, 9, "", this::circuitConfigMinus)
+                            .setShouldClientCallback(true)
+                            .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_MINUS)
+                            .setDisplayFunction(() -> circuitInventory != null && IntCircuitIngredient.isIntegratedCircuit(circuitInventory.getStackInSlot(0))));
+        }
         return builder;
+    }
+
+    private void circuitConfigPlus(Widget.ClickData data) {
+        ItemStack stack;
+        if (circuitInventory != null && IntCircuitIngredient.isIntegratedCircuit(stack = circuitInventory.getStackInSlot(0))) {
+            IntCircuitIngredient.adjustConfiguration(stack, data.isShiftClick ? 5 : 1);
+        }
+    }
+
+    private void circuitConfigMinus(Widget.ClickData data) {
+        ItemStack stack;
+        if (circuitInventory != null && IntCircuitIngredient.isIntegratedCircuit(stack = circuitInventory.getStackInSlot(0))) {
+            IntCircuitIngredient.adjustConfiguration(stack, data.isShiftClick ? -5 : -1);
+        }
+    }
+
+    // Method provided to override
+    protected TextureArea getCircuitSlotOverlay() {
+        return GuiTextures.INT_CIRCUIT_OVERLAY;
+    }
+
+    // Method provided to override
+    protected SlotWidget getCircuitSlotTooltip(SlotWidget widget) {
+        return widget.setTooltipText("gregtech.gui.configurator_slot.tooltip");
     }
 
     @Override
