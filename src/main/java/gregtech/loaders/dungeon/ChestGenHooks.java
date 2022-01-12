@@ -60,7 +60,7 @@ public class ChestGenHooks {
         }
     }
 
-    public static void addItem(ResourceLocation lootTable, ItemStack item, int minAmount, int additionalAmount, int weight) {
+    public static void addItem(ResourceLocation lootTable, ItemStack item, int minAmount, int maxAmount, int weight) {
         LootEntryItem itemEntry = new LootEntryItem(item.getItem(), weight, 1, new LootFunction[]{
                 new LootFunction(NO_CONDITIONS) {
                     @Nonnull
@@ -68,7 +68,11 @@ public class ChestGenHooks {
                     public ItemStack apply(@Nonnull ItemStack stack, @Nonnull Random rand, @Nonnull LootContext context) {
                         stack.setItemDamage(item.getItemDamage());
                         stack.setTagCompound(item.getTagCompound());
-                        stack.setCount(minAmount + rand.nextInt(additionalAmount));
+
+                        int count = minAmount + rand.nextInt(maxAmount - minAmount + 1);
+                        count = Math.min(count, item.getMaxStackSize());
+
+                        stack.setCount(count);
                         return stack;
                     }
                 }
