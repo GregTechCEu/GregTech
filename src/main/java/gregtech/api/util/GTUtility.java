@@ -962,4 +962,11 @@ public class GTUtility {
         return NUMBER_FORMAT.format(number);
     }
 
+    /**
+     * If pos of this world loaded
+     */
+    public static boolean isPosChunkLoaded(World world, BlockPos pos) {
+        return !world.getChunkProvider().provideChunk(pos.getX() >> 4, pos.getZ() >> 4).isEmpty();
+    }
+
 }
