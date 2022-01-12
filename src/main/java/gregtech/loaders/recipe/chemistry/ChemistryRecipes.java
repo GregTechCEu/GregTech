@@ -110,7 +110,7 @@ public class ChemistryRecipes {
                 .input(dust, Salt, 4)
                 .output(dust, SodaAsh, 6)
                 .output(dust, CalciumChloride, 3)
-                .duration(120).EUt(VA[MV]).blastFurnaceTemp(500)
+                .duration(120).EUt(VA[MV]).blastFurnaceTemp(1500)
                 .buildAndRegister();
 
         // 2NaOH + CO2 -> Na2CO3 + H20
