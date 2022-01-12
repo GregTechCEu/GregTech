@@ -48,7 +48,6 @@ public class OreDictFilterTestSlot extends Widget implements IGhostIngredientTar
 
     public OreDictFilterTestSlot setTestStack(ItemStack testStack) {
         if (testStack != null) {
-            GTLog.logger.info("set testStack to {}", testStack);
             this.testStack = testStack;
         }
         return this;

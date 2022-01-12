@@ -139,7 +139,7 @@ public class OreDictExprFilter {
 
                 boolean newResult;
                 if (rule.isGroup())
-                    newResult = matches(rule.subRules, oreDict);
+                    newResult = rule.logic == MatchLogic.NOT ^ matches(rule.subRules, oreDict);
                 else
                     newResult = matches(rule, oreDict);
 

@@ -109,7 +109,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
         widgetGroup.accept(new DrawableWidget(36, 1, 100, 18)
                 .setBackgroundDrawer(((mouseX, mouseY, partialTicks, context, widget) -> {
                     if (testStack.isEmpty()) {
-                        if (Widget.isMouseOver(widget.getPosition().x, widget.getPosition().y, widget.getSize().width, widget.getSize().height, mouseX, mouseY)) {
+                        if (Widget.isMouseOver(widget.getPosition().x, widget.getPosition().y, 18, 18, mouseX, mouseY)) {
                             Minecraft mc = Minecraft.getMinecraft();
                             ModularUIGui gui = (ModularUIGui) context;
                             GuiUtils.drawHoveringText(Arrays.asList(I18n.format("cover.ore_dictionary_filter.test_slot.info").split("/n")), mouseX, mouseY,
