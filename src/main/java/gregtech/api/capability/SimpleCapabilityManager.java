@@ -51,6 +51,7 @@ public class SimpleCapabilityManager {
         registerCapabilityWithNoDefault(AbstractRecipeLogic.class);
         registerCapabilityWithNoDefault(HardwareProvider.class);
         registerCapabilityWithNoDefault(ConverterTrait.class);
+        registerCapabilityWithNoDefault(IResearchDataProvider.class);
 
         registerCapabilityWithNoDefault(IWrenchItem.class);
         registerCapabilityWithNoDefault(ICutterItem.class);
