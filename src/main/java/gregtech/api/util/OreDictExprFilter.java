@@ -40,8 +40,15 @@ public class OreDictExprFilter {
             char c = expression.charAt(i);
             if (c == ' ')
                 continue;
-            if (builder.length() > 0) {
+            if (c == '(') {
+                List<MatchRule> subRules = new ArrayList<>();
+                i = parseExpression(subRules, expression.substring(i + 1)) + i + 1;
+                rules.add(MatchRule.group(subRules, builder.toString()));
+                builder = new StringBuilder();
+            } else if (builder.length() > 0) {
                 switch (c) {
+                    case '!':
+                        break;
                     case '&':
                         rules.add(new MatchRule(builder.toString()));
                         rules.add(new MatchRule(MatchLogic.AND));
@@ -57,8 +64,6 @@ public class OreDictExprFilter {
                         rules.add(new MatchRule(MatchLogic.XOR));
                         builder = new StringBuilder();
                         break;
-                    case '!':
-                        break;
                     case ')':
                         rules.add(new MatchRule(builder.toString()));
                         return i + 1;
@@ -66,12 +71,7 @@ public class OreDictExprFilter {
                         builder.append(c);
                 }
             } else {
-                if (c == '(') {
-                    List<MatchRule> subRules = new ArrayList<>();
-                    i = parseExpression(subRules, expression.substring(i + 1)) + i + 1;
-                    rules.add(MatchRule.group(subRules));
-                } else
-                    builder.append(c);
+                builder.append(c);
             }
         }
         if (builder.length() > 0) {
@@ -256,8 +256,9 @@ public class OreDictExprFilter {
             return new MatchRule(not ? MatchLogic.NOT : MatchLogic.ANY, expression);
         }
 
-        public static MatchRule group(List<MatchRule> subRules) {
-            return new MatchRule(MatchLogic.ANY, "", subRules);
+        public static MatchRule group(List<MatchRule> subRules, String expression) {
+            MatchLogic logic = expression.startsWith("!") ? MatchLogic.NOT : MatchLogic.ANY;
+            return new MatchRule(logic, "", subRules);
         }
 
         public boolean isGroup() {
