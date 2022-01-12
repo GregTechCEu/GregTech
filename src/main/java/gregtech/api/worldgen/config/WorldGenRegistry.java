@@ -109,14 +109,16 @@ public class WorldGenRegistry {
         } catch (IOException | RuntimeException exception) {
             GTLog.logger.fatal("Failed to initialize worldgen registry.", exception);
         }
-        try {
-            Class<?> transformerHooksClass = Class.forName("micdoodle8.mods.galacticraft.core.TransformerHooks");
-            Field otherModGeneratorsWhitelistField = transformerHooksClass.getDeclaredField("otherModGeneratorsWhitelist");
-            otherModGeneratorsWhitelistField.setAccessible(true);
-            List<IWorldGenerator> otherModGeneratorsWhitelist = (List<IWorldGenerator>) otherModGeneratorsWhitelistField.get(null);
-            otherModGeneratorsWhitelist.add(WorldGeneratorImpl.INSTANCE);
-        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-            GTLog.logger.fatal("Failed to inject world generator into Galacticraft's whitelist.", e);
+        if (GTValues.isModLoaded("galacticraftcore")) {
+            try {
+                Class<?> transformerHooksClass = Class.forName("micdoodle8.mods.galacticraft.core.TransformerHooks");
+                Field otherModGeneratorsWhitelistField = transformerHooksClass.getDeclaredField("otherModGeneratorsWhitelist");
+                otherModGeneratorsWhitelistField.setAccessible(true);
+                List<IWorldGenerator> otherModGeneratorsWhitelist = (List<IWorldGenerator>) otherModGeneratorsWhitelistField.get(null);
+                otherModGeneratorsWhitelist.add(WorldGeneratorImpl.INSTANCE);
+            } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
+                GTLog.logger.fatal("Failed to inject world generator into Galacticraft's whitelist.", e);
+            }
         }
     }
 
