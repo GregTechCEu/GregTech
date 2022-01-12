@@ -4,7 +4,6 @@ import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.WireProperties;
-import gregtech.api.util.GTLog;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -61,16 +60,16 @@ public class EnergyNet extends PipeNet<WireProperties> {
     }
 
     @Override
+    protected void updateBlockedConnections(BlockPos nodePos, EnumFacing facing, boolean isBlocked) {
+        super.updateBlockedConnections(nodePos, facing, isBlocked);
+        NET_DATA.clear();
+    }
+
+    @Override
     protected void transferNodeData(Map<BlockPos, Node<WireProperties>> transferredNodes, PipeNet<WireProperties> parentNet) {
         super.transferNodeData(transferredNodes, parentNet);
         NET_DATA.clear();
         ((EnergyNet) parentNet).NET_DATA.clear();
-    }
-
-    @Override
-    protected void onConnectionsUpdate() {
-        super.onConnectionsUpdate();
-        NET_DATA.clear();
     }
 
     @Override
