@@ -128,23 +128,28 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
 
     public boolean dischargeOrRechargeEnergyContainers(IItemHandlerModifiable itemHandler, int slotIndex) {
         ItemStack stackInSlot = itemHandler.getStackInSlot(slotIndex);
-        if (stackInSlot.isEmpty()) {
+        if (stackInSlot.isEmpty()) { // no stack to charge/discharge
             return false;
         }
         IElectricItem electricItem = stackInSlot.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (electricItem == null || !electricItem.canProvideChargeExternally()) {
+        if (electricItem == null) { // stack in slot is not an electric item
             return false;
         }
         int machineTier = GTUtility.getTierByVoltage(Math.max(getInputVoltage(), getOutputVoltage()));
+        if (machineTier < electricItem.getTier()) { // stack in slot is too high of a voltage to charge/discharge
+            return false;
+        }
 
-        if (getEnergyCanBeInserted() > 0) {
+        if (getEnergyCanBeInserted() > 0) { // if this container has energy...
             double chargePercent = getEnergyStored() / (getEnergyCapacity() * 1.0);
-            if (chargePercent <= 0.5) {
+            // ...and we have less than 50% energy, and the item can discharge power...
+            if (chargePercent <= 0.5 && electricItem.canProvideChargeExternally()) {
+                // ...charge ourselves from the battery...
                 long dischargedBy = electricItem.discharge(getEnergyCanBeInserted(), machineTier, false, true, false);
                 addEnergy(dischargedBy);
                 return dischargedBy > 0L;
 
-            } else if (chargePercent >= 0.9) {
+            } else if (chargePercent >= 0.9) { // ...otherwise, if we have at least 90% power, charge the electric item
                 long chargedBy = electricItem.charge(getEnergyStored(), machineTier, false, false);
                 removeEnergy(chargedBy);
                 return chargedBy > 0L;
