@@ -316,6 +316,16 @@ public class TextFieldWidget2 extends Widget {
                 }
                 return true;
             }
+            if(keyCode == Keyboard.KEY_DELETE && text.length() > 0) {
+                if (cursorPos != cursorPos2) {
+                    replaceMarkedText(null);
+                } else if(cursorPos < text.length()) {
+                    String t1 = text.substring(0, cursorPos);
+                    String t2 = text.substring(cursorPos + 1);
+                    text = t1 + t2;
+                    cursorPos2 = cursorPos;
+                }
+            }
             if (charTyped != Character.MIN_VALUE && text.length() < maxLength) {
                 int min = Math.min(cursorPos, cursorPos2);
                 int max = Math.max(cursorPos, cursorPos2);
