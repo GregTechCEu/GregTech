@@ -317,12 +317,11 @@ public class ComponentRecipes {
                 .duration(600).EUt(100000).buildAndRegister();
 
         //Fluid Regulators----------------------------------------------------------------------------------------------
-        Material[] circuitTiers = new Material[]{Tier.Basic, Tier.Good, Tier.Advanced, Tier.Extreme,
-                Tier.Elite, Tier.Master, Tier.Ultimate, Tier.Super};
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ELECTRIC_PUMP_LV.getStackForm())
                 .input(circuit, Tier.Basic, 2)
+                .circuitMeta(1)
                 .outputs(FLUID_REGULATOR_LV.getStackForm())
                 .EUt(VA[LV])
                 .duration(400)
@@ -331,6 +330,7 @@ public class ComponentRecipes {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ELECTRIC_PUMP_MV.getStackForm())
                 .input(circuit, Tier.Good, 2)
+                .circuitMeta(1)
                 .outputs(FLUID_REGULATOR_MV.getStackForm())
                 .EUt(VA[MV])
                 .duration(350)
@@ -339,6 +339,7 @@ public class ComponentRecipes {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ELECTRIC_PUMP_HV.getStackForm())
                 .input(circuit, Tier.Advanced, 2)
+                .circuitMeta(1)
                 .outputs(FLUID_REGULATOR_HV.getStackForm())
                 .EUt(VA[HV])
                 .duration(300)
@@ -347,6 +348,7 @@ public class ComponentRecipes {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ELECTRIC_PUMP_EV.getStackForm())
                 .input(circuit, Tier.Extreme, 2)
+                .circuitMeta(1)
                 .outputs(FLUID_REGULATOR_EV.getStackForm())
                 .EUt(VA[EV])
                 .duration(250)
@@ -355,6 +357,7 @@ public class ComponentRecipes {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ELECTRIC_PUMP_IV.getStackForm())
                 .input(circuit, Tier.Elite, 2)
+                .circuitMeta(1)
                 .outputs(FLUID_REGULATOR_IV.getStackForm())
                 .EUt(VA[IV])
                 .duration(200)
@@ -363,6 +366,7 @@ public class ComponentRecipes {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ELECTRIC_PUMP_LUV.getStackForm())
                 .input(circuit, Tier.Master, 2)
+                .circuitMeta(1)
                 .outputs(FLUID_REGULATOR_LUV.getStackForm())
                 .EUt(VA[LuV])
                 .duration(150)
@@ -371,6 +375,7 @@ public class ComponentRecipes {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ELECTRIC_PUMP_ZPM.getStackForm())
                 .input(circuit, Tier.Ultimate, 2)
+                .circuitMeta(1)
                 .outputs(FLUID_REGULATOR_ZPM.getStackForm())
                 .EUt(VA[ZPM])
                 .duration(100)
@@ -379,6 +384,7 @@ public class ComponentRecipes {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ELECTRIC_PUMP_UV.getStackForm())
                 .input(circuit, Tier.Super, 2)
+                .circuitMeta(1)
                 .outputs(FLUID_REGULATOR_UV.getStackForm())
                 .EUt(VA[UV])
                 .duration(50)
