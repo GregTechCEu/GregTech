@@ -111,7 +111,7 @@ public class ToolUtility {
 
             if(fortuneLevel > 0){
                 if(fortuneLevel > 3) fortuneLevel = 3;
-                output.setCount((input.material.getProperty((PropertyKey.ORE)).getOreMultiplier() * multiplier) * Math.max(1, random.nextInt(fortuneLevel + 2) - 1));
+                output.setCount((input.material.getProperty((PropertyKey.ORE)).getOreMultiplier() * multiplier) * (random.nextFloat() <= (fortuneLevel / 3.0) ? 2 : 1));
                 if (output.getCount() == 0) output.setCount(1);
             }
             else{
