@@ -513,12 +513,14 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeEnumValue(conveyorMode);
+        packetBuffer.writeEnumValue(distributionMode);
     }
 
     @Override
     public void readInitialSyncData(PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
         this.conveyorMode = packetBuffer.readEnumValue(ConveyorMode.class);
+        this.distributionMode = packetBuffer.readEnumValue(DistributionMode.class);
     }
 
     @Override
