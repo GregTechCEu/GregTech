@@ -126,7 +126,7 @@ public class ElementMaterials {
                 .build();
 
         Cadmium = new Material.Builder(19, "cadmium")
-                .dust().fluid()
+                .dust()
                 .color(0x32323C).iconSet(SHINY)
                 .element(Elements.Cd)
                 .build();
