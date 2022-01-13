@@ -85,7 +85,7 @@ public class FuelRecipes {
 
         RecipeMaps.COMBUSTION_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(Toluene.getFluid(1))
-                .duration(41)
+                .duration(10)
                 .EUt((int) V[LV])
                 .buildAndRegister();
 
