@@ -243,6 +243,15 @@ public class ToolRecipeHandler {
                     "wXh", "X X", "fXx",
                     'X', new UnificationEntry(OrePrefix.plate, material));
         }
+
+        if (material.hasFlag(GENERATE_GEAR)) {
+            RecipeMaps.LATHE_RECIPES.recipeBuilder()
+                    .input(OrePrefix.gear, material)
+                    .output(OrePrefix.toolHeadBuzzSaw, material)
+                    .duration((int) material.getMass() * 4)
+                    .EUt(8 * getVoltageMultiplier(material))
+                    .buildAndRegister();
+        }
     }
 
     public static void processScrewdriverHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
