@@ -3,8 +3,7 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.capability.IResearchDataProvider;
-import gregtech.api.capability.impl.InventortyResearchDataProvider;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -17,21 +16,20 @@ import gregtech.client.utils.PipelineUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 
-public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IResearchDataProvider> {
-    private final ItemStackHandler dataStickInventory;
-    private final IResearchDataProvider researchDataProvider;
+public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable> {
+    private final NotifiableItemStackHandler dataStickInventory;
     private final int slotAmount;
 
     public MetaTileEntityDataHatch(ResourceLocation metaTileEntityId, int tier) {
-        super(metaTileEntityId, tier);
+        super(metaTileEntityId, tier, false);
         int[] invSizes = {1, 1, 1, 1, 4, 8, 16, 32, 64};
         this.slotAmount = invSizes[tier];
-        this.dataStickInventory = new ItemStackHandler(slotAmount+1);
-        this.researchDataProvider = new InventortyResearchDataProvider();
+        this.dataStickInventory = new NotifiableItemStackHandler(slotAmount+1, this, false);
+        dataStickInventory.onContentsChanged(2);
     }
 
     @Override
@@ -61,13 +59,13 @@ public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockPart implem
     }
 
     @Override
-    public MultiblockAbility<IResearchDataProvider> getAbility() {
+    public MultiblockAbility<IItemHandlerModifiable> getAbility() {
         return MultiblockAbility.RESEARCH_DATA;
     }
 
     @Override
-    public void registerAbilities(List<IResearchDataProvider> abilityList) {
-        abilityList.add(researchDataProvider);
+    public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
+        abilityList.add(dataStickInventory);
     }
 
     @Override
@@ -79,7 +77,6 @@ public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockPart implem
             overlay.renderSided(this.getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline, 0xffffff));
         }
     }
-
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {

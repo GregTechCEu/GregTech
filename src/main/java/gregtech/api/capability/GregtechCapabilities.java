@@ -19,9 +19,6 @@ public class GregtechCapabilities {
     @CapabilityInject(IEnergyContainer.class)
     public static Capability<IEnergyContainer> CAPABILITY_ENERGY_CONTAINER = null;
 
-    @CapabilityInject(IResearchDataProvider.class)
-    public static Capability<IResearchDataProvider> CAPABILITY_RESEARCH_PROVIDER = null;
-
     @CapabilityInject(IElectricItem.class)
     public static Capability<IElectricItem> CAPABILITY_ELECTRIC_ITEM = null;
 
