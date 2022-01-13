@@ -190,10 +190,7 @@ public class ClientProxy extends CommonProxy {
         UnificationEntry unificationEntry = OreDictUnifier.getUnificationEntry(itemStack);
         if (unificationEntry != null && unificationEntry.material != null) {
             chemicalFormula = unificationEntry.material.getChemicalFormula();
-
-            // Test for Fluids
-        } else if (ItemNBTUtils.hasTag(itemStack)) {
-
+        } else if (ItemNBTUtils.hasTag(itemStack)) { // Test for Fluids
             // Vanilla bucket
             chemicalFormula = FluidTooltipUtil.getFluidTooltip(ItemNBTUtils.getString(itemStack, "FluidName"));
 
@@ -204,11 +201,9 @@ public class ClientProxy extends CommonProxy {
                     chemicalFormula = FluidTooltipUtil.getFluidTooltip(FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY)));
                 }
             }
-
-            // Water buckets have a separate registry name from other buckets
-        } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) {
+        } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) { // Water buckets have a separate registry name from other buckets
             chemicalFormula = FluidTooltipUtil.getWaterTooltip();
-        } else if (itemStack.getItem() instanceof MetaOreDictItem){
+        } else if (itemStack.getItem() instanceof MetaOreDictItem) {
             MetaOreDictItem oreDictItem = (MetaOreDictItem) itemStack.getItem();
             Optional<String> oreDictName = OreDictUnifier.getOreDictionaryNames(itemStack).stream().findFirst();
             if (oreDictName.isPresent() && oreDictItem.FORMULA_TO_OREDICTITEM.containsKey(oreDictName.get())) {
