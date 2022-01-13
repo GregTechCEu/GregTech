@@ -22,14 +22,18 @@ import java.util.Map;
 
 public class MetaOreDictItem extends StandardMetaItem {
 
-    public static final Map<String, OreDictValueItem> FORMULA_TO_OREDICTITEM = new HashMap<>();
-    private static final Map<Short, OreDictValueItem> ITEMS = new HashMap<>();
+    public final Map<String, OreDictValueItem> FORMULA_TO_OREDICTITEM = new HashMap<>();
+    private final Map<Short, OreDictValueItem> ITEMS = new HashMap<>();
     private static final List<MaterialIconType> DISALLOWED_TYPES = ImmutableList.of(
             MaterialIconType.block, MaterialIconType.foilBlock, MaterialIconType.wire,
             MaterialIconType.ore, MaterialIconType.frameGt, MaterialIconType.pipeHuge,
             MaterialIconType.pipeLarge, MaterialIconType.pipeSide, MaterialIconType.pipeSmall,
             MaterialIconType.pipeMedium, MaterialIconType.pipeTiny);
     private static final ModelResourceLocation MISSING_LOCATION = new ModelResourceLocation("builtin/missing", "inventory");
+
+    public MetaOreDictItem() {
+        this((short) 0);
+    }
 
     public MetaOreDictItem(short metaItemOffset) {
         super(metaItemOffset);
@@ -86,7 +90,15 @@ public class MetaOreDictItem extends StandardMetaItem {
         }
     }
 
-    public static class OreDictValueItem {
+    public OreDictValueItem addOreDictItem(int id, String materialName, int rgb, MaterialIconSet materialIconSet, OrePrefix orePrefix) {
+        return this.addOreDictItem(id, materialName, rgb, materialIconSet, orePrefix, null);
+    }
+
+    public OreDictValueItem addOreDictItem(int id, String materialName, int materialRGB, MaterialIconSet materialIconSet, OrePrefix orePrefix, String chemicalFormula) {
+        return new OreDictValueItem(id, materialName, materialRGB, materialIconSet, orePrefix, chemicalFormula);
+    }
+
+    public class OreDictValueItem {
 
         private final String materialName;
         private final int materialRGB;
@@ -96,10 +108,6 @@ public class MetaOreDictItem extends StandardMetaItem {
 
         protected String chemicalFormula;
 
-        public OreDictValueItem(int id, String materialName, int rgb, MaterialIconSet materialIconSet, OrePrefix orePrefix) {
-            this(id, materialName, rgb, materialIconSet, orePrefix, null);
-        }
-
         public OreDictValueItem(int id, String materialName, int materialRGB, MaterialIconSet materialIconSet, OrePrefix orePrefix, String chemicalFormula) {
             this.id = (short) id;
             this.materialName = materialName;
@@ -107,8 +115,8 @@ public class MetaOreDictItem extends StandardMetaItem {
             this.materialIconSet = materialIconSet;
             this.orePrefix = orePrefix;
             this.chemicalFormula = chemicalFormula;
-            ITEMS.put(this.id, this);
-            FORMULA_TO_OREDICTITEM.put(calculateChemicalFormula(chemicalFormula), this);
+            MetaOreDictItem.this.ITEMS.put(this.id, this);
+            MetaOreDictItem.this.FORMULA_TO_OREDICTITEM.put(calculateChemicalFormula(chemicalFormula), this);
         }
 
         public String getOre() {

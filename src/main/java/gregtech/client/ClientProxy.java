@@ -208,10 +208,11 @@ public class ClientProxy extends CommonProxy {
             // Water buckets have a separate registry name from other buckets
         } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) {
             chemicalFormula = FluidTooltipUtil.getWaterTooltip();
-        } else {
+        } else if (itemStack.getItem() instanceof MetaOreDictItem){
+            MetaOreDictItem oreDictItem = (MetaOreDictItem) itemStack.getItem();
             Optional<String> oreDictName = OreDictUnifier.getOreDictionaryNames(itemStack).stream().findFirst();
-            if (oreDictName.isPresent() && MetaOreDictItem.FORMULA_TO_OREDICTITEM.containsKey(oreDictName.get())) {
-                MetaOreDictItem.OreDictValueItem material = MetaOreDictItem.FORMULA_TO_OREDICTITEM.get(oreDictName.get());
+            if (oreDictName.isPresent() && oreDictItem.FORMULA_TO_OREDICTITEM.containsKey(oreDictName.get())) {
+                MetaOreDictItem.OreDictValueItem material = oreDictItem.FORMULA_TO_OREDICTITEM.get(oreDictName.get());
                 if (material != null) {
                     chemicalFormula = material.getFormula();
                 }

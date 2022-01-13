@@ -1,11 +1,12 @@
 package gregtech.api.items.crafttweaker;
 
 import crafttweaker.annotations.ZenRegister;
-import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.ore.OrePrefix;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
+
+import static gregtech.common.items.MetaItems.CT_OREDICT_ITEM;
 
 @ZenClass("mods.gregtech.item.ItemRegistry")
 @ZenRegister
@@ -14,7 +15,13 @@ public class CTItemRegistry {
 
     @ZenMethod("registerItem")
     public static void registerItem(String name, short id, int rgb, String materialIconSet, String orePrefix) {
-        new MetaOreDictItem.OreDictValueItem(
+        CT_OREDICT_ITEM.addOreDictItem(
                 id, name, rgb, MaterialIconSet.ICON_SETS.get(materialIconSet), OrePrefix.getPrefix(orePrefix));
+    }
+
+    @ZenMethod("registerItem")
+    public static void registerItem(String name, short id, int rgb, String materialIconSet, String orePrefix, String chemicalFormula) {
+        CT_OREDICT_ITEM.addOreDictItem(
+                id, name, rgb, MaterialIconSet.ICON_SETS.get(materialIconSet), OrePrefix.getPrefix(orePrefix), chemicalFormula);
     }
 }
