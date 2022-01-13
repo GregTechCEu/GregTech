@@ -18,9 +18,12 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -161,6 +164,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
     @Override
     public void handleClientAction(int id, PacketBuffer buffer) {
         if (id == 1) {
+            ClickData clickData = ClickData.readFromBuf(buffer);
             ItemStack itemStack = gui.entityPlayer.inventory.getItemStack().copy();
             if (!itemStack.isEmpty()) {
                 itemStack.setCount(1);
@@ -170,7 +174,21 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                     fluidStackUpdater.accept(resultFluid);
                 }
             } else {
-                fluidStackUpdater.accept(null);
+                if (clickData.button == 2) {
+                    fluidStackUpdater.accept(null);
+                } else if (clickData.button == 0) {
+                    if (fluidStackSupplier.get() != null) {
+                        FluidStack fluid = fluidStackSupplier.get().copy();
+                        fluid.amount *= 2;
+                        fluidStackUpdater.accept(fluid);
+                    }
+                } else if (clickData.button == 1) {
+                    if (fluidStackSupplier.get() != null) {
+                        FluidStack fluid = fluidStackSupplier.get().copy();
+                        fluid.amount /= 2;
+                        fluidStackUpdater.accept(fluid);
+                    }
+                }
             }
         } else if (id == 2) {
             FluidStack fluidStack;
@@ -180,14 +198,43 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                 throw new RuntimeException(e);
             }
             fluidStackUpdater.accept(fluidStack);
+        } else if (id == 3) {
+            WheelData wheelData = WheelData.readFromBuf(buffer);
+            if (fluidStackSupplier.get() != null) {
+                int multiplier = wheelData.isCtrlClick ? 10 : 1;
+                multiplier *= wheelData.isShiftClick ? 100 : 1;
+                FluidStack currentFluid = fluidStackSupplier.get().copy();
+                int amount = wheelData.wheelDelta * multiplier;
+                currentFluid.amount = Math.max(1, currentFluid.amount + amount);
+                fluidStackUpdater.accept(currentFluid);
+            }
         }
     }
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY)) {
-            writeClientAction(1, buffer -> {
-            });
+            ClickData clickData = new ClickData(button,
+                    (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)),
+                    (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)),
+                    true);
+            writeClientAction(1, clickData::writeToBuf);
+            if (isClient && fluidStackUpdater != null) {
+                fluidStackUpdater.accept(null);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
+        if (isMouseOverElement(mouseX, mouseY)) {
+            WheelData wheelData = new WheelData(MathHelper.clamp(wheelDelta, -1, 1),
+                    (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)),
+                    (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)),
+                    true);
+            writeClientAction(3, wheelData::writeToBuf);
             if (isClient && fluidStackUpdater != null) {
                 fluidStackUpdater.accept(null);
             }
@@ -223,7 +270,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         if (isMouseOverElement(mouseX, mouseY)) {
             if (lastFluidStack != null) {
                 String fluidName = lastFluidStack.getLocalizedName();
-                drawHoveringText(ItemStack.EMPTY, Lists.newArrayList(fluidName), -1, mouseX, mouseY);
+                drawHoveringText(ItemStack.EMPTY, Lists.newArrayList(fluidName, String.valueOf(lastFluidStack.amount)), -1, mouseX, mouseY);
             }
         }
     }

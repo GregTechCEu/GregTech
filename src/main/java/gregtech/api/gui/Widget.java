@@ -275,7 +275,7 @@ public abstract class Widget {
     @SideOnly(Side.CLIENT)
     public void drawHoveringText(ItemStack itemStack, List<String> tooltip, int maxTextWidth, int mouseX, int mouseY) {
         Minecraft mc = Minecraft.getMinecraft();
-        GuiUtils.drawHoveringText(itemStack == null ? ItemStack.EMPTY : itemStack, tooltip, mouseX, mouseY,
+        GuiUtils.drawHoveringText(itemStack, tooltip, mouseX, mouseY,
                 sizes.getScreenWidth(),
                 sizes.getScreenHeight(), maxTextWidth, mc.fontRenderer);
         GlStateManager.disableLighting();
@@ -645,6 +645,42 @@ public abstract class Widget {
             boolean ctrlClick = buf.readBoolean();
             boolean isClient = buf.readBoolean();
             return new ClickData(button, shiftClick, ctrlClick, isClient);
+        }
+    }
+
+    public static final class WheelData {
+        public final int wheelDelta;
+        public final boolean isShiftClick;
+        public final boolean isCtrlClick;
+        public final boolean isClient;
+
+        public WheelData(int wheelDelta, boolean isShiftClick, boolean isCtrlClick) {
+            this.wheelDelta = wheelDelta;
+            this.isShiftClick = isShiftClick;
+            this.isCtrlClick = isCtrlClick;
+            this.isClient = false;
+        }
+
+        public WheelData(int wheelDelta, boolean isShiftClick, boolean isCtrlClick, boolean isClient) {
+            this.wheelDelta = wheelDelta;
+            this.isShiftClick = isShiftClick;
+            this.isCtrlClick = isCtrlClick;
+            this.isClient = isClient;
+        }
+
+        public void writeToBuf(PacketBuffer buf) {
+            buf.writeVarInt(wheelDelta);
+            buf.writeBoolean(isShiftClick);
+            buf.writeBoolean(isCtrlClick);
+            buf.writeBoolean(isClient);
+        }
+
+        public static WheelData readFromBuf(PacketBuffer buf) {
+            int button = buf.readVarInt();
+            boolean shiftClick = buf.readBoolean();
+            boolean ctrlClick = buf.readBoolean();
+            boolean isClient = buf.readBoolean();
+            return new WheelData(button, shiftClick, ctrlClick, isClient);
         }
     }
 
