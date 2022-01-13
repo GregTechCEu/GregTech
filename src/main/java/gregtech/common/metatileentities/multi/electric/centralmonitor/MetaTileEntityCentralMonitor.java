@@ -22,7 +22,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.BlockPosFace;
 import gregtech.client.renderer.ICubeRenderer;
@@ -146,7 +145,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                 continue;
             }
             for (EnumFacing facing : EnumFacing.VALUES) {
-                if (((TileEntityPipeBase<?,?>) tileEntityCable).isConnectionOpen(AttachmentType.PIPE, facing)) {
+                if (((TileEntityPipeBase<?,?>) tileEntityCable).isConnectionOpen(facing)) {
                     TileEntity tileEntity = world.getTileEntity(pos.offset(facing));
                     if (tileEntity instanceof MetaTileEntityHolder) {
                         MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();

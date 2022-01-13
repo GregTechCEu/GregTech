@@ -132,7 +132,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         // get open connections
         EnumSet<EnumFacing> openConnections = EnumSet.noneOf(EnumFacing.class);
         for (EnumFacing facing : EnumFacing.values()) {
-            if (pipe.isConnectionOpenAny(facing))
+            if (pipe.isConnectionOpen(facing))
                 openConnections.add(facing);
         }
 

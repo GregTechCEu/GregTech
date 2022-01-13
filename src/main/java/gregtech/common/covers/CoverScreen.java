@@ -27,7 +27,7 @@ public class CoverScreen extends CoverBehavior {
     }
 
     @Override
-    public boolean shouldRenderConnected() {
+    public boolean shouldAutoConnect() {
         return false;
     }
 }

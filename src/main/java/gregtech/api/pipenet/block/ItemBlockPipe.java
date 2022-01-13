@@ -1,9 +1,6 @@
 package gregtech.api.pipenet.block;
 
-import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.common.ConfigHolder;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
@@ -36,7 +33,7 @@ public class ItemBlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         if (superVal && !world.isRemote) {
             IPipeTile selfTile = (IPipeTile) world.getTileEntity(pos);
             if (selfTile != null && selfTile.getPipeBlock().canConnect(selfTile, side.getOpposite())) {
-                selfTile.setConnectionBlocked(AttachmentType.PIPE, side.getOpposite(), false, false);
+                selfTile.setConnectionBlocked(side.getOpposite(), false, false);
             }
         }
         return superVal;

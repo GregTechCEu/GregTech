@@ -18,7 +18,6 @@ import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
-import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
@@ -176,12 +175,12 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                         if (te instanceof IPipeTile) {
                             IPipeTile<?, ?> otherTile = (IPipeTile<?, ?>) te;
                             if (otherTile.getPipeType().getClass() != pipeTile.getPipeType().getClass()) {
-                                otherTile.setConnectionBlocked(AttachmentType.PIPE, facing.getOpposite(), true, true);
-                            } else if (!ConfigHolder.machines.gt6StylePipesCables || otherTile.isConnectionOpenAny(facing.getOpposite())) {
-                                pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, false, true);
+                                otherTile.setConnectionBlocked(facing.getOpposite(), true, true);
+                            } else if (!ConfigHolder.machines.gt6StylePipesCables || otherTile.isConnectionOpen(facing.getOpposite())) {
+                                pipeTile.setConnectionBlocked(facing, false, true);
                             }
                         } else if (!ConfigHolder.machines.gt6StylePipesCables) {
-                            pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, false, true);
+                            pipeTile.setConnectionBlocked(facing, false, true);
                         }
                     }
                 }
@@ -202,12 +201,12 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                 }
             }
             if (facing == null) throw new NullPointerException("Facing is null");
-            boolean open = pipeTile.isConnectionOpenAny(facing);
+            boolean open = pipeTile.isConnectionOpen(facing);
             boolean canConnect = canConnect(pipeTile, facing);
             if (!open && canConnect && state.getBlock() != blockIn)
-                pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, false, false);
+                pipeTile.setConnectionBlocked(facing, false, false);
             if (open && !canConnect)
-                pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, true, false);
+                pipeTile.setConnectionBlocked(facing, true, false);
             updateActiveNodeStatus(worldIn, pos, pipeTile);
             pipeTile.getCoverableImplementation().updateInputRedstoneSignals();
         }
@@ -331,8 +330,8 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (wrenchItem != null) {
             if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true)) {
                 if (!entityPlayer.world.isRemote) {
-                    boolean isOpen = pipeTile.isConnectionOpen(AttachmentType.PIPE, coverSide);
-                    pipeTile.setConnectionBlocked(AttachmentType.PIPE, coverSide, isOpen, false);
+                    boolean isOpen = pipeTile.isConnectionOpen(coverSide);
+                    pipeTile.setConnectionBlocked(coverSide, isOpen, false);
                     wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
                     IToolStats.onOtherUse(stack, world, pos);
                 }
@@ -464,21 +463,15 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         int connections = selfTile.getOpenConnections();
         float selfThickness = selfTile.getPipeType().getThickness();
         for (EnumFacing facing : EnumFacing.values()) {
-            if (selfTile.isConnectionOpenAny(facing)) {
+            if (selfTile.isConnectionOpen(facing)) {
                 TileEntity neighbourTile = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
                 if (neighbourTile instanceof IPipeTile) {
                     IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) neighbourTile;
-                    if (pipeTile.isConnectionOpenAny(facing.getOpposite()) && pipeTile.getPipeType().getThickness() < selfThickness) {
+                    if (pipeTile.isConnectionOpen(facing.getOpposite()) && pipeTile.getPipeType().getThickness() < selfThickness) {
                         connections |= 1 << (facing.getIndex() + 6);
                     }
                 }
             }
-            CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
-            if (cover != null && cover.shouldRenderConnected()) {
-                connections |= 1 << facing.getIndex();
-                connections |= 1 << (facing.getIndex() + 12);
-            }
-
         }
         return connections;
     }

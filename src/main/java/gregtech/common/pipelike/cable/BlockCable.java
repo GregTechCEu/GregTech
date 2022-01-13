@@ -4,12 +4,9 @@ import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.tool.ICutterItem;
-import gregtech.api.cover.CoverBehavior;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.toolitem.IToolStats;
-import gregtech.api.pipenet.block.ItemBlockPipe;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
-import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
@@ -35,7 +32,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -104,8 +100,8 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         if (cutterItem != null) {
             if (cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, true)) {
                 if (!entityPlayer.world.isRemote) {
-                    boolean isOpen = pipeTile.isConnectionOpen(AttachmentType.PIPE, coverSide);
-                    pipeTile.setConnectionBlocked(AttachmentType.PIPE, coverSide, isOpen, false);
+                    boolean isOpen = pipeTile.isConnectionOpen(coverSide);
+                    pipeTile.setConnectionBlocked(coverSide, isOpen, false);
                     cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, false);
                     IToolStats.onOtherUse(stack, world, pos);
                 }
