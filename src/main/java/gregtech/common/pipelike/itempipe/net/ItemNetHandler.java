@@ -3,6 +3,7 @@ package gregtech.common.pipelike.itempipe.net;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.*;
@@ -15,7 +16,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -26,11 +26,8 @@ public class ItemNetHandler implements IItemHandler {
     private final TileEntityItemPipeTickable pipe;
     private final World world;
     private final EnumFacing facing;
-    private final Map<BlockPos, EnumSet<EnumFacing>> simulatedTransfersGlobalRoundRobin = new HashMap<>();
+    private final Map<FacingPos, Integer> simulatedTransfersGlobalRoundRobin = new HashMap<>();
     private int simulatedTransfers = 0;
-    private boolean didSimulate = false;
-    private int simulatedAmount = 0;
-    private ItemStack simulatedItemStack = ItemStack.EMPTY;
 
     public ItemNetHandler(ItemPipeNet net, TileEntityItemPipe pipe, EnumFacing facing) {
         this.net = net;
@@ -50,25 +47,10 @@ public class ItemNetHandler implements IItemHandler {
         return net;
     }
 
-    public static void transferTo(Map<BlockPos, EnumSet<EnumFacing>> map, BlockPos pos, EnumFacing facing) {
-        map.computeIfAbsent(pos, key -> EnumSet.noneOf(EnumFacing.class)).add(facing);
-    }
-
-    public static boolean didTransferTo(Map<BlockPos, EnumSet<EnumFacing>> map, BlockPos pos, EnumFacing facing) {
-        EnumSet<EnumFacing> set = map.get(pos);
-        if (set == null)
-            return false;
-        return set.contains(facing);
-    }
-
     private void copyTransferred() {
         simulatedTransfers = pipe.getTransferredItems();
         simulatedTransfersGlobalRoundRobin.clear();
-        for (Map.Entry<BlockPos, EnumSet<EnumFacing>> entry : pipe.getTransferred().entrySet()) {
-            EnumSet<EnumFacing> copy = EnumSet.noneOf(EnumFacing.class);
-            copy.addAll(entry.getValue());
-            simulatedTransfersGlobalRoundRobin.put(entry.getKey(), copy);
-        }
+        simulatedTransfersGlobalRoundRobin.putAll(pipe.getTransferred());
     }
 
     @Nonnull
@@ -92,11 +74,6 @@ public class ItemNetHandler implements IItemHandler {
         CoverConveyor conveyor = (CoverConveyor) (pipeConveyor ? pipeCover : tileCover);
         if (conveyor.getConveyorMode() == (pipeConveyor ? CoverConveyor.ConveyorMode.IMPORT : CoverConveyor.ConveyorMode.EXPORT)) {
             boolean roundRobinGlobal = conveyor.getDistributionMode() == DistributionMode.ROUND_ROBIN_GLOBAL;
-
-            // disable enhanced round robin temporarily
-            if (roundRobinGlobal)
-                return stack;
-
             if (roundRobinGlobal || conveyor.getDistributionMode() == DistributionMode.ROUND_ROBIN_PRIO)
                 return insertRoundRobin(stack, simulate, roundRobinGlobal);
         }
@@ -132,15 +109,19 @@ public class ItemNetHandler implements IItemHandler {
             return insert(handlers.get(0), stack, simulate);
         List<ItemPipeNet.Inventory> handlersCopy = new ArrayList<>(handlers);
         int original = stack.getCount();
-        stack = global ? insertToHandlersEnhanced(handlersCopy, stack, handlers.size(), simulate) : insertToHandlers(handlersCopy, stack, simulate);
-        if (!stack.isEmpty() && handlersCopy.size() > 0)
-            stack = global ? insertToHandlersEnhanced(handlersCopy, stack, handlers.size(), simulate) : insertToHandlers(handlersCopy, stack, simulate);
-        ;
 
-        if (stack.getCount() != original) ;
-            //GTLog.logger.info("Inserted to {}/{} handlers. Start {}, End {}, sim {}", handlers.size() - handlersCopy.size(), handlers.size(), original, stack, simulate);
+        if (global) {
+            stack = insertToHandlersEnhanced(handlersCopy, stack, handlers.size(), simulate);
+        } else {
+            stack = insertToHandlers(handlersCopy, stack, simulate);
+            if (!stack.isEmpty() && handlersCopy.size() > 0)
+                stack = insertToHandlers(handlersCopy, stack, simulate);
+        }
 
-        if (simulate) {
+        if (stack.getCount() != original)
+            GTLog.logger.info("Inserted to {}/{} handlers. Start {}, End {}, sim {}", handlers.size() - handlersCopy.size(), handlers.size(), original, stack, simulate);
+
+        /*if (simulate) {
             if (stack.getCount() != original) {
                 simulatedItemStack = stack.copy();
                 simulatedItemStack.setCount(original - stack.getCount());
@@ -153,13 +134,13 @@ public class ItemNetHandler implements IItemHandler {
             ItemStack inserted = stack.copy();
             inserted.setCount(original - stack.getCount());
             if (!ItemStack.areItemStacksEqual(simulatedItemStack, inserted)) {
-                //GTLog.logger.error("Simulated item ({}) is not equal to actual item {}     -------------------------------------------", simulatedItemStack, inserted);
+                GTLog.logger.error("Simulated item ({}) is not equal to actual item {}     -------------------------------------------", simulatedItemStack, inserted);
             }
 
             didSimulate = false;
             simulatedItemStack = ItemStack.EMPTY;
             simulatedAmount = 0;
-        }
+        }*/
         return stack;
     }
 
@@ -194,7 +175,6 @@ public class ItemNetHandler implements IItemHandler {
             if (r < amount) {
                 inserted += (amount - r);
                 //GTLog.logger.info("  ins: {}, r {}, amount {}, c {}, m {}", (amount - r), r, amount, c, m);
-
             }
             if (r == 1 && c == 0 && amount == 1) {
                 m++;
@@ -211,63 +191,158 @@ public class ItemNetHandler implements IItemHandler {
         return remainder;
     }
 
-    /**
-     * Inserts items equally to all handlers
-     * if it couldn't insert all items, the handler will be removed
-     *
-     * @param copy     to insert to
-     * @param stack    to insert
-     * @param simulate simulate
-     * @return remainder
-     */
     private ItemStack insertToHandlersEnhanced(List<ItemPipeNet.Inventory> copy, ItemStack stack, int dest, boolean simulate) {
-        Iterator<ItemPipeNet.Inventory> handlerIterator = copy.listIterator();
-        int inserted = 0;
-        int count = /*didSimulate && simulatedAmount > 0 ? simulatedAmount : */stack.getCount();
-        int c = count / dest;
-        int m = c == 0 ? count % dest : 0;
-        while (handlerIterator.hasNext()) {
-            ItemPipeNet.Inventory handler = handlerIterator.next();
-            if (didTransferTo(handler, simulate)) {
+        GTLog.logger.info("Insert ERR {} to {} inventories, sim {}", stack, copy.size(), simulate);
+        LinkedList<EnhancedRoundRobinData> transferred = new LinkedList<>();
+        LinkedList<Integer> steps = new LinkedList<>();
+        int min = Integer.MAX_VALUE, max = 0;
+        ItemStack simStack;
+
+        // find inventories that are not full and get the amount that was inserted in total
+        for (ItemPipeNet.Inventory inv : copy) {
+            simStack = stack.copy();
+            int ins = stack.getCount() - insert(inv, simStack, true, true).getCount();
+            GTLog.logger.info(" - inserted {}", ins);
+            if (ins <= 0)
                 continue;
-            }
-            int amount = c;
-            if (m > 0) {
-                amount++;
-                m--;
-            }
-            amount = Math.min(amount, stack.getCount() - inserted);
-            if (amount == 0) break;
-            ItemStack toInsert = stack.copy();
-            toInsert.setCount(amount);
-            int r = insert(handler, toInsert, simulate).getCount();
-            if (r < amount) {
-                inserted += (amount - r);
-                //GTLog.logger.info("  ins: {}, r {}, amount {}, c {}, m {}", (amount - r), r, amount, c, m);
-                transferTo(handler, simulate);
-            }
-            if (r == 1 && c == 0 && amount == 1) {
-                m++;
-            }
+            int didTransfer = didTransferTo(inv, simulate);
+            EnhancedRoundRobinData data = new EnhancedRoundRobinData(inv, ins, didTransfer);
+            transferred.addLast(data);
 
-            if (r > 0)
-                handlerIterator.remove();
+            min = Math.min(min, didTransfer);
+            max = Math.max(max, didTransfer);
 
-            if (!handlerIterator.hasNext()) {
-                resetTransferred(simulate);
+            if (!steps.contains(didTransfer)) {
+                steps.add(didTransfer);
             }
         }
 
-        //GTLog.logger.info("  reamining {}, inserted {}, start {}", stack.getCount() - inserted, inserted, stack.getCount());
+        if (transferred.isEmpty() || steps.isEmpty())
+            return stack;
+
+        GTLog.logger.info(" - found {} insertables", transferred.size());
+
+        if (!simulate && min < Integer.MAX_VALUE) {
+            decrementBy(min);
+        }
+
+        transferred.sort(Comparator.comparingInt(data -> data.transferred));
+        steps.sort(Integer::compare);
+
+        if (transferred.get(0).transferred != steps.get(0)) {
+            GTLog.logger.error("ERROR: first step is not equal");
+            return stack;
+        }
+
+        int amount = stack.getCount();
+        int c = amount / transferred.size();
+        int m = amount % transferred.size();
+        List<EnhancedRoundRobinData> transferredCopy = new ArrayList<>(transferred);
+        int nextStep = steps.isEmpty() ? -1 : steps.pollFirst();
+
+
+        StringBuilder builder = new StringBuilder("TransferredData:[ ");
+        for (EnhancedRoundRobinData data : transferredCopy) {
+            builder.append(data.transferred).append(", ");
+        }
+        builder.delete(builder.length() - 2, builder.length())
+                .append("]");
+        GTLog.logger.info(builder);
+        GTLog.logger.info("Steps: " + steps);
+        GTLog.logger.info("First step {}", nextStep);
+
+        // equally distribute items over all inventories
+        // it takes into account how much was inserted in total
+        // f.e. if inv1 has 2 inserted and inv2 has 6 inserted, it will first try to insert 4 into inv1 so that both have 6 and then it will distribute the rest equally
+        outer:
+        while (amount > 0 && !transferredCopy.isEmpty()) {
+            Iterator<EnhancedRoundRobinData> iterator = transferredCopy.iterator();
+            int i = 0;
+            while (iterator.hasNext()) {
+                EnhancedRoundRobinData data = iterator.next();
+                if (nextStep > 0 && data.transferred >= nextStep)
+                    break;
+
+                int toInsert;
+                if (nextStep <= 0) {
+                    if (amount <= m) {
+                        //break outer;
+                        toInsert = 1;
+                    } else {
+                        toInsert = Math.min(c, amount);
+                    }
+                } else {
+                    toInsert = Math.min(amount, nextStep - data.transferred);
+                }
+                if (data.toTransfer + toInsert >= data.maxInsertable) {
+                    data.toTransfer = data.maxInsertable;
+                    iterator.remove();
+                } else {
+                    data.toTransfer += toInsert;
+                }
+
+                data.transferred += toInsert;
+
+                GTLog.logger.info(" - transfer {} to {}", toInsert, i);
+
+                if ((amount -= toInsert) == 0) {
+                    break outer;
+                }
+                i++;
+            }
+
+            for (EnhancedRoundRobinData data : transferredCopy) {
+                if (data.transferred < nextStep)
+                    continue outer;
+            }
+            if (steps.isEmpty()) {
+                if (nextStep >= 0) {
+                    GTLog.logger.info("Steps done");
+                    c = amount / transferredCopy.size();
+                    m = amount % transferredCopy.size();
+                    nextStep = -1;
+                }
+            } else {
+                nextStep = steps.pollFirst();
+                GTLog.logger.info("Next step {}", nextStep);
+            }
+        }
+
+        builder = new StringBuilder("ToInsert:[");
+        for (EnhancedRoundRobinData data : transferred) {
+            builder.append(data.toTransfer).append(", ");
+        }
+        builder.delete(builder.length() - 2, builder.length())
+                .append("]");
+        GTLog.logger.info(builder);
+
+        int inserted = 0;
+
+        // finally actually insert the item
+        for (EnhancedRoundRobinData data : transferred) {
+            ItemStack toInsert = stack.copy();
+            toInsert.setCount(data.toTransfer);
+            int ins = data.toTransfer - insert(data.inventory, toInsert, simulate).getCount();
+            if (ins != data.toTransfer) {
+                GTLog.logger.info("Could not insert the correct amount. Supposed {}, actual {}", data.toTransfer, ins);
+            }
+            inserted += ins;
+            transferTo(data.inventory, simulate, ins);
+        }
+
+        GTLog.logger.info("TotalInserted {}", inserted);
 
         ItemStack remainder = stack.copy();
         remainder.shrink(inserted);
-        //GTLog.logger.info("Return remainder {}, sim {}", remainder, simulate);
         return remainder;
     }
 
     public ItemStack insert(ItemPipeNet.Inventory handler, ItemStack stack, boolean simulate) {
-        int allowed = checkTransferable(pipe, handler.getProperties().getTransferRate(), stack.getCount(), simulate);
+        return insert(handler, stack, simulate, false);
+    }
+
+    public ItemStack insert(ItemPipeNet.Inventory handler, ItemStack stack, boolean simulate, boolean ignoreLimit) {
+        int allowed = ignoreLimit ? stack.getCount() : checkTransferable(pipe, handler.getProperties().getTransferRate(), stack.getCount(), simulate);
         if (allowed == 0) return stack;
         CoverBehavior pipeCover = getCoverOnPipe(handler.getPipePos(), handler.getFaceToHandler());
         CoverBehavior tileCover = getCoverOnNeighbour(handler.getPipePos(), handler.getFaceToHandler());
@@ -277,11 +352,11 @@ public class ItemNetHandler implements IItemHandler {
             return stack;
 
         if (pipeCover instanceof CoverRoboticArm && ((CoverRoboticArm) pipeCover).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT)
-            return insertOverRobotArm(handler.getHandler(world), (CoverRoboticArm) pipeCover, stack, simulate, allowed);
+            return insertOverRobotArm(handler.getHandler(world), (CoverRoboticArm) pipeCover, stack, simulate, allowed, ignoreLimit);
         if (tileCover instanceof CoverRoboticArm && ((CoverRoboticArm) tileCover).getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT)
-            return insertOverRobotArm(handler.getHandler(world), (CoverRoboticArm) tileCover, stack, simulate, allowed);
+            return insertOverRobotArm(handler.getHandler(world), (CoverRoboticArm) tileCover, stack, simulate, allowed, ignoreLimit);
 
-        return insert(handler.getHandler(world), stack, simulate, allowed);
+        return insert(handler.getHandler(world), stack, simulate, allowed, ignoreLimit);
     }
 
     public boolean checkExportCover(CoverBehavior cover, boolean onPipe, ItemStack stack) {
@@ -294,16 +369,18 @@ public class ItemNetHandler implements IItemHandler {
         return true;
     }
 
-    private ItemStack insert(IItemHandler handler, ItemStack stack, boolean simulate, int allowed) {
+    private ItemStack insert(IItemHandler handler, ItemStack stack, boolean simulate, int allowed, boolean ignoreLimit) {
         if (stack.getCount() == allowed) {
             ItemStack re = ItemHandlerHelper.insertItemStacked(handler, stack, simulate);
-            transfer(pipe, simulate, stack.getCount() - re.getCount());
+            if (!ignoreLimit)
+                transfer(pipe, simulate, stack.getCount() - re.getCount());
             return re;
         }
         ItemStack toInsert = stack.copy();
         toInsert.setCount(Math.min(allowed, stack.getCount()));
         int r = ItemHandlerHelper.insertItemStacked(handler, toInsert, simulate).getCount();
-        transfer(pipe, simulate, toInsert.getCount() - r);
+        if (!ignoreLimit)
+            transfer(pipe, simulate, toInsert.getCount() - r);
         ItemStack remainder = stack.copy();
         remainder.setCount(r + (stack.getCount() - toInsert.getCount()));
         return remainder;
@@ -328,7 +405,7 @@ public class ItemNetHandler implements IItemHandler {
         return null;
     }
 
-    public ItemStack insertOverRobotArm(IItemHandler handler, CoverRoboticArm arm, ItemStack stack, boolean simulate, int allowed) {
+    public ItemStack insertOverRobotArm(IItemHandler handler, CoverRoboticArm arm, ItemStack stack, boolean simulate, int allowed, boolean ignoreLimit) {
         int rate;
         boolean isStackSpecific = false;
         Object index = arm.getItemFilterContainer().matchItemStack(stack);
@@ -340,12 +417,12 @@ public class ItemNetHandler implements IItemHandler {
         int count;
         switch (arm.getTransferMode()) {
             case TRANSFER_ANY:
-                return insert(handler, stack, simulate, allowed);
+                return insert(handler, stack, simulate, allowed, ignoreLimit);
             case KEEP_EXACT:
                 count = rate - countStack(handler, stack, arm, isStackSpecific);
                 if (count <= 0) return stack;
                 count = Math.min(allowed, Math.min(stack.getCount(), count));
-                return insert(handler, stack, simulate, count);
+                return insert(handler, stack, simulate, count, ignoreLimit);
             case TRANSFER_EXACT:
                 int max = allowed + arm.getBuffer();
                 count = Math.min(max, Math.min(rate, stack.getCount()));
@@ -355,10 +432,10 @@ public class ItemNetHandler implements IItemHandler {
                 } else {
                     arm.clearBuffer();
                 }
-                if (insert(handler, stack, true, count).getCount() != stack.getCount() - count) {
+                if (insert(handler, stack, true, count, ignoreLimit).getCount() != stack.getCount() - count) {
                     return stack;
                 }
-                return insert(handler, stack, simulate, count);
+                return insert(handler, stack, simulate, count, ignoreLimit);
         }
         return stack;
     }
@@ -414,17 +491,23 @@ public class ItemNetHandler implements IItemHandler {
         return 64;
     }
 
-    private void transferTo(ItemPipeNet.Inventory handler, boolean simulate) {
+    private void transferTo(ItemPipeNet.Inventory handler, boolean simulate, int amount) {
         if (simulate)
-            transferTo(simulatedTransfersGlobalRoundRobin, handler.getPipePos(), handler.getFaceToHandler());
-        else
-            pipe.transferTo(handler.getPipePos(), handler.getFaceToHandler());
+            simulatedTransfersGlobalRoundRobin.merge(handler.toFacingPos(), amount, Integer::sum);
+        else {
+            pipe.getTransferred().merge(handler.toFacingPos(), amount, Integer::sum);
+            GTLog.logger.info("   - put {} at {}, {}", amount, handler.getPipePos(), handler.getFaceToHandler().getName());
+        }
     }
 
-    private boolean didTransferTo(ItemPipeNet.Inventory handler, boolean simulate) {
+    private boolean contains(ItemPipeNet.Inventory handler, boolean simulate) {
+        return simulate ? simulatedTransfersGlobalRoundRobin.containsKey(handler.toFacingPos()) : pipe.getTransferred().containsKey(handler.toFacingPos());
+    }
+
+    private int didTransferTo(ItemPipeNet.Inventory handler, boolean simulate) {
         if (simulate)
-            return didTransferTo(simulatedTransfersGlobalRoundRobin, handler.getPipePos(), handler.getFaceToHandler());
-        return pipe.didTransferTo(handler.getPipePos(), handler.getFaceToHandler());
+            return simulatedTransfersGlobalRoundRobin.getOrDefault(handler.toFacingPos(), 0);
+        return pipe.getTransferred().getOrDefault(handler.toFacingPos(), 0);
     }
 
     private void resetTransferred(boolean simulated) {
@@ -432,5 +515,26 @@ public class ItemNetHandler implements IItemHandler {
             simulatedTransfersGlobalRoundRobin.clear();
         else
             pipe.resetTransferred();
+    }
+
+    private void decrementBy(int amount) {
+        for (Map.Entry<FacingPos, Integer> entry : pipe.getTransferred().entrySet()) {
+            if (entry.getValue() < amount)
+                GTLog.logger.error("Value in map is lower than the decrement value");
+            entry.setValue(entry.getValue() - amount);
+        }
+    }
+
+    private static class EnhancedRoundRobinData {
+        private final ItemPipeNet.Inventory inventory;
+        private final int maxInsertable;
+        private int transferred;
+        private int toTransfer = 0;
+
+        private EnhancedRoundRobinData(ItemPipeNet.Inventory inventory, int maxInsertable, int transferred) {
+            this.maxInsertable = maxInsertable;
+            this.transferred = transferred;
+            this.inventory = inventory;
+        }
     }
 }

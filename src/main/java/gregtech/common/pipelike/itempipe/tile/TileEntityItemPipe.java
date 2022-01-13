@@ -2,12 +2,12 @@ package gregtech.common.pipelike.itempipe.tile;
 
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
+import gregtech.api.util.FacingPos;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -16,14 +16,13 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
 public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType, ItemPipeProperties> {
 
     private final EnumMap<EnumFacing, ItemNetHandler> handlers = new EnumMap<>(EnumFacing.class);
-    private final Map<BlockPos, EnumSet<EnumFacing>> transferred = new HashMap<>();
+    private final Map<FacingPos, Integer> transferred = new HashMap<>();
     private ItemNetHandler defaultHandler;
     // the ItemNetHandler can only be created on the server so we have a empty placeholder for the client
     private final IItemHandler clientCapability = new ItemStackHandler(0);
@@ -58,14 +57,14 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
             if (world.isRemote)
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(clientCapability);
 
-            ItemPipeNet net = getItemPipeNet();
+            /*ItemPipeNet net = getItemPipeNet();
             if(net != null)
-                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new ItemNetHandler(net, this, facing));
-            /*if (handlers.size() == 0)
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new ItemNetHandler(net, this, facing));*/
+            if (handlers.size() == 0)
                 initHandlers();
-            checkNetwork();*/
-            //return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(handlers.getOrDefault(facing, defaultHandler));
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(clientCapability);
+            checkNetwork();
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(handlers.getOrDefault(facing, defaultHandler));
+            //return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(clientCapability);
         }
         return super.getCapabilityInternal(capability, facing);
     }
@@ -97,19 +96,11 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
         return currentPipeNet;
     }
 
-    public void transferTo(BlockPos pos, EnumFacing facing) {
-        ItemNetHandler.transferTo(transferred, pos, facing);
-    }
-
-    public boolean didTransferTo(BlockPos pos, EnumFacing facing) {
-        return ItemNetHandler.didTransferTo(transferred, pos, facing);
-    }
-
     public void resetTransferred() {
         transferred.clear();
     }
 
-    public Map<BlockPos, EnumSet<EnumFacing>> getTransferred() {
+    public Map<FacingPos, Integer> getTransferred() {
         return transferred;
     }
 }
