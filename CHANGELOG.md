@@ -1,5 +1,36 @@
 ## Changelog
 
+### 2.0.4
+BETA RELEASE
+
+* Add support for Galacticraft dimensions and GTCEu veins
+* Add extruder recipes using dust for polymers (Polyethylene, PTFE, etc)
+* Change the gem texture for Quartzite and Certus Quartz
+* Add the ability to name GT machines, and display the name as a "name tag" rendered in-world
+* Fix Hammer and Hammering Enchant not respecting Nether/End ores, not using proper fortune calculations, and dropping ore blocks for non-stone ores
+* Fix crash with LittleTiles and Ore Blocks
+* Fix Drills mining 2 blocks at a time when in single block mode
+* Fix issue with multiblocks not being able to run when missing some output hatch types in rare situations
+* Fix EnergyNet issues, where power could seemingly get "stuck" and allowed machines to be powered "wirelessly"
+* Adjust GT loot values
+* Fix recipe conflicts in the Ore Washer
+* Add Lathe recipes for Buzzsaw Blades
+* Fix recipe conflicts with Fluid Regulators
+* Fix Multiblock Autobuild not replacing blocks like Grass, Leaves, Snow, etc
+* Fix Nichrome Mixer recipe conflict
+* Fix Radon chemical reactor recipe
+* Fix Toluene fuel burn time
+* Fix some Arc Furnace recipes being too high of an EU/t
+* Fix buffers voiding items when broken
+* Swap the ore vein weights of Cassiterite and Copper-Tin veins, to make Cassiterite more common
+* Many small autogen recipe tweaks (fix arcing blocks just giving blocks still, redo lens lathe recipes, more gem ore byproducts)
+* Slightly rebalance the Pump (machine)
+* Cut Rock Breaker EU/t costs (tiers are still the same)
+* Fix logging warnings about Hassium missing flags
+* Fix crash with some multiblock structures (none available in CEu, but possible from addons or MBT)
+* Recipe cleanups of some duplicate recipes (glowstone, redstone, etc)
+* Add UHV+ components, for addons to utilize
+
 ### 2.0.3
 BETA RELEASE
 

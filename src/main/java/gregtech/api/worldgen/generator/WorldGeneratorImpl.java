@@ -1,5 +1,6 @@
 package gregtech.api.worldgen.generator;
 
+import com.google.common.collect.ImmutableSet;
 import gregtech.common.ConfigHolder;
 import gregtech.common.worldgen.WorldGenRubberTree;
 import net.minecraft.init.Biomes;
@@ -17,24 +18,25 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import static net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType.*;
 
 public class WorldGeneratorImpl implements IWorldGenerator {
 
-    private static final List<EventType> ORE_EVENT_TYPES = Arrays.asList(
-            COAL, DIAMOND, GOLD, IRON, LAPIS, REDSTONE, QUARTZ, EMERALD);
+    public static final WorldGeneratorImpl INSTANCE = new WorldGeneratorImpl();
+
+    private static final Set<EventType> ORE_EVENT_TYPES = ImmutableSet.of(COAL, DIAMOND, GOLD, IRON, LAPIS, REDSTONE, QUARTZ, EMERALD);
     public static final int GRID_SIZE_X = 3;
     public static final int GRID_SIZE_Z = 3;
+
+    private WorldGeneratorImpl() { }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onOreGenerate(OreGenEvent.GenerateMinable event) {
         EventType eventType = event.getType();
-        if (ConfigHolder.worldgen.disableVanillaOres &&
-                ORE_EVENT_TYPES.contains(eventType)) {
+        if (ConfigHolder.worldgen.disableVanillaOres && ORE_EVENT_TYPES.contains(eventType)) {
             event.setResult(Result.DENY);
         }
     }
@@ -65,11 +67,12 @@ public class WorldGeneratorImpl implements IWorldGenerator {
     private static void generateRubberTree(Random random, long seed, Chunk chunk, double baseScale) {
         random.setSeed(seed);
         Biome[] biomes = new Biome[4];
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        int seaLevel = chunk.getWorld().getSeaLevel();
         for (int i = 0; i < 4; i++) {
             int x = chunk.x * 16 + 8 + (i & 0x1) * 15;
             int z = chunk.z * 16 + 8 + ((i & 0x2) >>> 1) * 15;
-            BlockPos pos = new BlockPos(x, chunk.getWorld().getSeaLevel(), z);
-            biomes[i] = chunk.getWorld().getBiomeProvider().getBiome(pos, Biomes.PLAINS);
+            biomes[i] = chunk.getWorld().getBiomeProvider().getBiome(pos.setPos(x, seaLevel, z), Biomes.PLAINS);
         }
         int rubberTrees = 0;
         for (Biome biome : biomes) {
@@ -83,13 +86,11 @@ public class WorldGeneratorImpl implements IWorldGenerator {
         rubberTrees = (int) Math.round(rubberTrees * baseScale);
         rubberTrees /= 2;
         if (rubberTrees > 0 && random.nextInt(100) < rubberTrees) {
-            WorldGenRubberTree gen = new WorldGenRubberTree(false);
             for (int j = 0; j < rubberTrees; j++) {
-                if (!gen.generate(chunk.getWorld(), random, new BlockPos(
-                        chunk.x * 16 + random.nextInt(16),
-                        chunk.getWorld().getSeaLevel(),
-                        chunk.z * 16 + random.nextInt(16))))
+                pos.setPos(chunk.x * 16 + random.nextInt(16), seaLevel, chunk.z * 16 + random.nextInt(16));
+                if (!WorldGenRubberTree.WORLD_GEN_INSTANCE.generateImpl(chunk.getWorld(), random, pos)) {
                     rubberTrees -= 3;
+                }
             }
         }
     }

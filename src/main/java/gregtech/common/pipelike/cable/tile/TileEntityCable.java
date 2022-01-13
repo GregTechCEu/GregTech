@@ -100,9 +100,23 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
                 return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(clientCapability);
             if (handlers.size() == 0)
                 initHandlers();
+            checkNetwork();
             return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(handlers.getOrDefault(facing, defaultHandler));
         }
         return super.getCapabilityInternal(capability, facing);
+    }
+
+
+    public void checkNetwork() {
+        if(defaultHandler != null) {
+            EnergyNet current = getEnergyNet();
+            if(defaultHandler.getNet() != current) {
+                defaultHandler.updateNetwork(current);
+                for (EnergyNetHandler handler : handlers.values()) {
+                    handler.updateNetwork(current);
+                }
+            }
+        }
     }
 
     private EnergyNet getEnergyNet() {

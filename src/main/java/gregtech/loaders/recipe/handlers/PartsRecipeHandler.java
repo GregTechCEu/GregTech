@@ -125,6 +125,14 @@ public class PartsRecipeHandler {
                     .duration((int) material.getMass())
                     .EUt(24)
                     .buildAndRegister();
+
+        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                .input(dust, material)
+                .notConsumable(MetaItems.SHAPE_EXTRUDER_FOIL)
+                .output(foilPrefix, material, 4)
+                .duration((int) material.getMass())
+                .EUt(24)
+                .buildAndRegister();
     }
 
     public static void processFineWire(OrePrefix fineWirePrefix, Material material, IngotProperty property) {
@@ -233,12 +241,17 @@ public class PartsRecipeHandler {
     public static void processLens(OrePrefix lensPrefix, Material material, GemProperty property) {
         ItemStack stack = OreDictUnifier.get(lensPrefix, material);
 
-        RecipeMaps.LATHE_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, material)
-                .outputs(stack, OreDictUnifier.get(OrePrefix.dustSmall, material))
-                .duration((int) (material.getMass() / 2L))
-                .EUt(16)
-                .buildAndRegister();
+        LATHE_RECIPES.recipeBuilder()
+                .input(plate, material)
+                .output(lens, material)
+                .output(dustSmall, material)
+                .duration(1200).EUt(120).buildAndRegister();
+
+        LATHE_RECIPES.recipeBuilder()
+                .input(gemExquisite, material)
+                .output(lens, material)
+                .output(dust, material, 2)
+                .duration(2400).EUt(30).buildAndRegister();
 
         if (material == Materials.Diamond) { // override Diamond Lens to be LightBlue
             OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.LightBlue);
@@ -266,13 +279,6 @@ public class PartsRecipeHandler {
                     .duration(40)
                     .EUt(VA[ULV])
                     .buildAndRegister();
-        }
-
-        if (material.hasFlag(MORTAR_GRINDABLE)) {
-            ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, material);
-            ModHandler.addShapedRecipe(String.format("plate_to_dust_%s", material),
-                    dustStack, "X", "m",
-                    'X', new UnificationEntry(OrePrefix.plate, material));
         }
     }
 
