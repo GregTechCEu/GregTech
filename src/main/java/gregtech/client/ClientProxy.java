@@ -5,6 +5,7 @@ import codechicken.lib.util.ItemNBTUtils;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.GTValues;
+import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
@@ -49,6 +50,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.ColorizerFoliage;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.ClientCommandHandler;
@@ -72,10 +74,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
@@ -124,7 +123,7 @@ public class ClientProxy extends CommonProxy {
         if (!GTValues.isModLoaded(GTValues.MODID_CTM)) {
             Minecraft.getMinecraft().metadataSerializer.registerMetadataSectionType(new MetadataSectionCTM.Serializer(), MetadataSectionCTM.class);
             MinecraftForge.EVENT_BUS.register(CustomTextureModelHandler.INSTANCE);
-            ((SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(CustomTextureModelHandler.INSTANCE);
+            ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(CustomTextureModelHandler.INSTANCE);
         }
 
         KeyBinds.initBinds();
@@ -192,7 +191,7 @@ public class ClientProxy extends CommonProxy {
         if (unificationEntry != null && unificationEntry.material != null) {
             chemicalFormula = unificationEntry.material.getChemicalFormula();
 
-        // Test for Fluids
+            // Test for Fluids
         } else if (ItemNBTUtils.hasTag(itemStack)) {
 
             // Vanilla bucket
@@ -206,13 +205,22 @@ public class ClientProxy extends CommonProxy {
                 }
             }
 
-        // Water buckets have a separate registry name from other buckets
+            // Water buckets have a separate registry name from other buckets
         } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) {
             chemicalFormula = FluidTooltipUtil.getWaterTooltip();
+        } else {
+            Optional<String> oreDictName = OreDictUnifier.getOreDictionaryNames(itemStack).stream().findFirst();
+            if (oreDictName.isPresent() && MetaOreDictItem.FORMULA_TO_OREDICTITEM.containsKey(oreDictName.get())) {
+                MetaOreDictItem.OreDictValueItem material = MetaOreDictItem.FORMULA_TO_OREDICTITEM.get(oreDictName.get());
+                if (material != null) {
+                    chemicalFormula = material.getFormula();
+                }
+            }
         }
         if (chemicalFormula != null && !chemicalFormula.isEmpty()) {
             event.getToolTip().add(1, ChatFormatting.YELLOW.toString() + chemicalFormula);
         }
+
     }
 
     private static final String[] clearRecipes = new String[]{
