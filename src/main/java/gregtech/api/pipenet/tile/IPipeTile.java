@@ -18,7 +18,7 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     BlockPos getPipePos();
 
     default long getTickTimer() {
-        return getPipeWorld().getWorldTime();
+        return getPipeWorld().getTotalWorldTime();
     }
 
     BlockPipe<PipeType, NodeDataType, ?> getPipeBlock();
