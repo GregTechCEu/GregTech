@@ -244,9 +244,9 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return autoAbilities(true, true);
     }
 
-    public TraceabilityPredicate autoAbilities(boolean checkMaintainer, boolean checkMuffler) {
+    public TraceabilityPredicate autoAbilities(boolean checkMaintenance, boolean checkMuffler) {
         TraceabilityPredicate predicate = new TraceabilityPredicate();
-        if (checkMaintainer && hasMaintenanceMechanics()) {
+        if (checkMaintenance && hasMaintenanceMechanics()) {
             predicate = predicate.or(abilities(MultiblockAbility.MAINTENANCE_HATCH)
                     .setMinGlobalLimited(ConfigHolder.machines.enableMaintenance ? 1 : 0).setMaxGlobalLimited(1));
         }
@@ -379,8 +379,12 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         T capabilityResult = super.getCapability(capability, side);
-        if (capabilityResult == null && capability == GregtechTileCapabilities.CAPABILITY_MAINTENANCE)
-            return (T) this;
-        return capabilityResult;
+        if (capabilityResult != null) return capabilityResult;
+        if (capability == GregtechTileCapabilities.CAPABILITY_MAINTENANCE) {
+            if (this.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
+                return GregtechTileCapabilities.CAPABILITY_MAINTENANCE.cast(this);
+            }
+        }
+        return null;
     }
 }
