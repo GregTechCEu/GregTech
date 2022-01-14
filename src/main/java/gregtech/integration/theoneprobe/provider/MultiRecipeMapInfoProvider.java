@@ -26,7 +26,7 @@ public class MultiRecipeMapInfoProvider extends CapabilityInfoProvider<IMultiple
 
     @Override
     protected void addProbeInfo(@Nonnull IMultipleRecipeMaps iMultipleRecipeMaps, IProbeInfo iProbeInfo, TileEntity tileEntity, EnumFacing enumFacing) {
-        if (!(tileEntity instanceof IMultipleRecipeMaps)) return;
+        if (iMultipleRecipeMaps.getAvailableRecipeMaps().length == 1) return;
         iProbeInfo.text(TextStyleClass.INFO + I18n.format("gregtech.multiblock.multiple_recipemaps.header"));
         for (RecipeMap<?> recipeMap : iMultipleRecipeMaps.getAvailableRecipeMaps()) {
             if (recipeMap.equals(iMultipleRecipeMaps.getCurrentRecipeMap())) {
