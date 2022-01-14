@@ -117,7 +117,7 @@ public class PartsRecipeHandler {
                 .circuitMeta(1)
                 .buildAndRegister();
 
-        if (material.hasFlag(NO_SMASHING))
+        if (material.hasFlag(NO_SMASHING)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                     .input(ingot, material)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_FOIL)
@@ -126,13 +126,14 @@ public class PartsRecipeHandler {
                     .EUt(24)
                     .buildAndRegister();
 
-        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(dust, material)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_FOIL)
-                .output(foilPrefix, material, 4)
-                .duration((int) material.getMass())
-                .EUt(24)
-                .buildAndRegister();
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(dust, material)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_FOIL)
+                    .output(foilPrefix, material, 4)
+                    .duration((int) material.getMass())
+                    .EUt(24)
+                    .buildAndRegister();
+        }
     }
 
     public static void processFineWire(OrePrefix fineWirePrefix, Material material, IngotProperty property) {
