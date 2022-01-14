@@ -407,7 +407,7 @@ public class SecondDegreeMaterials {
                 .fluid()
                 .color(0xFFB132)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(NitricAcid, 1, HydrochloricAcid, 1)
+                .components(NitricAcid, 1, HydrochloricAcid, 2)
                 .build();
 
         PlatinumSludgeResidue = new Material.Builder(2057, "platinum_sludge_residue")
