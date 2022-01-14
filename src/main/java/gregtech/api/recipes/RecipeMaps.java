@@ -227,9 +227,10 @@ public class RecipeMaps {
                             .fluidInputs(Materials.SolderingAlloy.getFluid(Math.max(1, (GTValues.L / 2) * ((CircuitAssemblerRecipeBuilder) recipeBuilder).getSolderMultiplier())))
                             .buildAndRegister();
 
+                    // Don't call buildAndRegister as we are mutating the original recipe and already in the middle of a buildAndRegister call.
+                    // Adding a second call will result in duplicate recipe generation attempts
                     recipeBuilder
-                            .fluidInputs(Materials.Tin.getFluid(Math.max(1, GTValues.L * ((CircuitAssemblerRecipeBuilder) recipeBuilder).getSolderMultiplier())))
-                            .buildAndRegister();
+                            .fluidInputs(Materials.Tin.getFluid(Math.max(1, GTValues.L * ((CircuitAssemblerRecipeBuilder) recipeBuilder).getSolderMultiplier())));
                 }
             });
 
@@ -299,10 +300,12 @@ public class RecipeMaps {
                             .duration((int) (recipeBuilder.duration * 1.5))
                             .buildAndRegister();
 
+                    // Don't call buildAndRegister as we are mutating the original recipe and already in the middle of a buildAndRegister call.
+                    // Adding a second call will result in duplicate recipe generation attempts
                     recipeBuilder
                             .fluidInputs(Materials.Lubricant.getFluid(Math.max(1, Math.min(250, recipeBuilder.duration * recipeBuilder.EUt / 1280))))
-                            .duration(Math.max(1, recipeBuilder.duration))
-                            .buildAndRegister();
+                            .duration(Math.max(1, recipeBuilder.duration));
+
                 }
             });
 
