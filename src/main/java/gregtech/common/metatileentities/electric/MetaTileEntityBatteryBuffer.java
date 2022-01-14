@@ -24,7 +24,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -183,8 +185,10 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();
-        list.add(new TextComponentTranslation(I18n.format("gregtech.battery_buffer.average_input", GTUtility.formatNumbers(energyContainer.getInputPerSec() / 20))));
-        list.add(new TextComponentTranslation(I18n.format("gregtech.battery_buffer.average_output", GTUtility.formatNumbers(energyContainer.getOutputPerSec() / 20))));
+        list.add(new TextComponentTranslation("gregtech.battery_buffer.average_input",
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getInputPerSec() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))));
+        list.add(new TextComponentTranslation("gregtech.battery_buffer.average_output",
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getOutputPerSec() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))));
         return list;
     }
 }

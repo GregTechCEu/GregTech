@@ -3383,8 +3383,8 @@ gregtech.machine.battery_buffer.max.4.name=MAX Voltage 4x Battery Buffer
 gregtech.machine.battery_buffer.max.8.name=MAX Voltage 8x Battery Buffer
 gregtech.machine.battery_buffer.max.16.name=MAX Voltage 16x Battery Buffer
 
-gregtech.battery_buffer.average_input=Average input: §e%s§r EU/t
-gregtech.battery_buffer.average_output=Average output: §e%s§r EU/t
+gregtech.battery_buffer.average_input=Average input: %s EU/t
+gregtech.battery_buffer.average_output=Average output: %s EU/t
 
 # Transformers
 gregtech.machine.transformer.tooltip_tool_usage=Use Soft Hammer to invert (Starts as Transform Down)
@@ -4237,7 +4237,7 @@ gregtech.multiblock.pattern.single=§6Only this block can be used§r
 gregtech.multiblock.pattern.location_end=§cVery End§r
 gregtech.multiblock.pattern.replaceable_air=Replaceable by Air
 
-gregtech.multiblock.blast_furnace.max_temperature=Heat Capacity: §c%sK
+gregtech.multiblock.blast_furnace.max_temperature=Heat Capacity: %s
 gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s
 gregtech.multiblock.multi_furnace.heating_coil_discount=Heating Coil EU Boost: %sx
 gregtech.multiblock.distillation_tower.distilling_fluid=Distilling %s
