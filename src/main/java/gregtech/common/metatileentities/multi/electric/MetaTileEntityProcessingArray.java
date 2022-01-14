@@ -136,8 +136,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     @Override
-    public TraceabilityPredicate autoAbilities(boolean checkEnergyIn, boolean checkMaintainer, boolean checkItemIn, boolean checkItemOut, boolean checkFluidIn, boolean checkFluidOut, boolean checkMuffler) {
-        TraceabilityPredicate predicate = super.autoAbilities(checkMaintainer, checkMuffler)
+    public TraceabilityPredicate autoAbilities(boolean checkEnergyIn, boolean checkMaintenance, boolean checkItemIn, boolean checkItemOut, boolean checkFluidIn, boolean checkFluidOut, boolean checkMuffler) {
+        TraceabilityPredicate predicate = super.autoAbilities(checkMaintenance, checkMuffler)
                 .or(checkEnergyIn ? abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(4).setPreviewCount(1) : new TraceabilityPredicate());
 
         predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setPreviewCount(1));
