@@ -31,6 +31,7 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE, MoveType.HORIZONTAL)
             .setSound(GTSounds.ARC)
             .onRecipeBuild(recipeBuilder -> {
+                recipeBuilder.invalidateOnBuildAction();
                 if (recipeBuilder.getFluidInputs().isEmpty()) {
                     recipeBuilder.fluidInputs(Materials.Oxygen.getFluid(recipeBuilder.duration));
                 }
@@ -200,6 +201,7 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
             .setSound(GTValues.FOOLS.get() ? GTSounds.SCIENCE : GTSounds.CHEMICAL_REACTOR)
             .onRecipeBuild(recipeBuilder -> {
+                recipeBuilder.invalidateOnBuildAction();
                 RecipeMaps.LARGE_CHEMICAL_RECIPES.recipeBuilder()
                         .inputs(recipeBuilder.getInputs().toArray(new CountableIngredient[0]))
                         .fluidInputs(recipeBuilder.getFluidInputs())
@@ -218,12 +220,16 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_CIRCUIT_ASSEMBLER, ProgressWidget.MoveType.HORIZONTAL)
             .setSound(GTSounds.ASSEMBLER)
             .onRecipeBuild(recipeBuilder -> {
+                recipeBuilder.invalidateOnBuildAction();
                 if (recipeBuilder.getFluidInputs().isEmpty()) {
-                    recipeBuilder.copy()
+                    recipeBuilder
+                            .copy()
                             .fluidInputs(Materials.SolderingAlloy.getFluid(Math.max(1, (GTValues.L / 2) * ((CircuitAssemblerRecipeBuilder) recipeBuilder).getSolderMultiplier())))
                             .buildAndRegister();
 
-                    recipeBuilder.fluidInputs(Materials.Tin.getFluid(Math.max(1, GTValues.L * ((CircuitAssemblerRecipeBuilder) recipeBuilder).getSolderMultiplier())))
+                    recipeBuilder
+                            .copy()
+                            .fluidInputs(Materials.Tin.getFluid(Math.max(1, GTValues.L * ((CircuitAssemblerRecipeBuilder) recipeBuilder).getSolderMultiplier())))
                             .buildAndRegister();
                 }
             });
@@ -279,18 +285,24 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_SLICE, MoveType.HORIZONTAL)
             .setSound(GTSounds.CUT)
             .onRecipeBuild(recipeBuilder -> {
+                recipeBuilder.invalidateOnBuildAction();
                 if (recipeBuilder.getFluidInputs().isEmpty()) {
-                    recipeBuilder.copy()
+
+                    recipeBuilder
+                            .copy()
                             .fluidInputs(Materials.Water.getFluid(Math.max(4, Math.min(1000, recipeBuilder.duration * recipeBuilder.EUt / 320))))
                             .duration(recipeBuilder.duration * 2)
                             .buildAndRegister();
 
-                    recipeBuilder.copy()
+                    recipeBuilder
+                            .copy()
                             .fluidInputs(Materials.DistilledWater.getFluid(Math.max(3, Math.min(750, recipeBuilder.duration * recipeBuilder.EUt / 426))))
                             .duration((int) (recipeBuilder.duration * 1.5))
                             .buildAndRegister();
 
-                    recipeBuilder.fluidInputs(Materials.Lubricant.getFluid(Math.max(1, Math.min(250, recipeBuilder.duration * recipeBuilder.EUt / 1280))))
+                    recipeBuilder
+                            .copy()
+                            .fluidInputs(Materials.Lubricant.getFluid(Math.max(1, Math.min(250, recipeBuilder.duration * recipeBuilder.EUt / 1280))))
                             .duration(Math.max(1, recipeBuilder.duration))
                             .buildAndRegister();
                 }
