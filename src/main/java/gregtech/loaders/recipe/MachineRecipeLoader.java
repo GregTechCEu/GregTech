@@ -457,6 +457,7 @@ public class MachineRecipeLoader {
             ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(new ItemStack(Blocks.REDSTONE_TORCH))
                     .input(plate, material)
+                    .fluidInputs(solder)
                     .outputs(COVER_ACTIVITY_DETECTOR.getStackForm())
                     .EUt(16).duration(400)
                     .buildAndRegister();
