@@ -30,16 +30,20 @@ import java.util.List;
 @SuppressWarnings("unused")
 public abstract class MultiMapMultiblockController extends RecipeMapMultiblockController implements IMultipleRecipeMaps {
 
-    // index of the current selected recipe - used when the multi has multiple RecipeMaps
-    private int recipeMapIndex;
+    // array of possible recipes, specific to each multi - used when the multi has multiple RecipeMaps
+    private final RecipeMap<?>[] recipeMaps;
 
-    public MultiMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap) {
-        super(metaTileEntityId, recipeMap);
-        this.recipeMapIndex = 0;
+    // index of the current selected recipe - used when the multi has multiple RecipeMaps
+    private int recipeMapIndex = 0;
+
+    public MultiMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?>[] recipeMaps) {
+        super(metaTileEntityId, recipeMaps[0]);
+        this.recipeMaps = recipeMaps;
     }
 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (recipeMaps.length == 1) return true;
         if (!getWorld().isRemote) {
             if (!this.recipeMapWorkable.isActive()) {
                 int index;
@@ -60,7 +64,9 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
     }
 
     @Override
-    public abstract RecipeMap<?>[] getAvailableRecipeMaps();
+    public RecipeMap<?>[] getAvailableRecipeMaps() {
+        return recipeMaps;
+    }
 
     protected void setRecipeMapIndex(int index) {
         this.recipeMapIndex = index;
@@ -125,6 +131,8 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
 
     @Override
     protected void addExtraDisplayInfo(List<ITextComponent> textList) {
+        super.addExtraDisplayInfo(textList);
+        if (recipeMaps.length == 1) return;
         textList.add(new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.header")
                 .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                         new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.tooltip")))));
@@ -133,12 +141,12 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
                 .setStyle(new Style().setColor(TextFormatting.AQUA)
                         .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                 new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.tooltip")))));
-
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
+        if (recipeMaps.length == 1) return;
         tooltip.add(I18n.format("gregtech.multiblock.multiple_recipemaps_recipes.tooltip", this.recipeMapsToString()));
     }
 
@@ -192,6 +200,7 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         T capabilityResult = super.getCapability(capability, side);
         if (capabilityResult == null && capability == GregtechTileCapabilities.CAPABILITY_MULTIPLE_RECIPEMAPS) {
+            if (recipeMaps.length == 1) return null;
             return GregtechTileCapabilities.CAPABILITY_MULTIPLE_RECIPEMAPS.cast(this);
         }
         return capabilityResult;
