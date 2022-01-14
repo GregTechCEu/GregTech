@@ -45,7 +45,7 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
             } catch (IOException exception) {
                 throw new RuntimeException(exception);
             }
-            recipeResolver.fillCraftinGrid(ingredients);
+            recipeResolver.fillCraftingGrid(ingredients);
         }
     }
 

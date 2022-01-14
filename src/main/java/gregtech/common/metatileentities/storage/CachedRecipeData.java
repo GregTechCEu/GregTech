@@ -26,19 +26,12 @@ public class CachedRecipeData {
 
     public short attemptMatchRecipe() {
         short itemsFound = 0;
-        if (recipe == null) {
-            return 511;
-        }
         this.requiredItems.clear();
-        boolean allItemsFound = true;
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             if (getIngredientEquivalent(i))
                 itemsFound += 1 << i; //ingredient was found, and indicate in the short of this fact
-            else {
-                allItemsFound = false;
-            }
         }
-        if (!allItemsFound) {
+        if (itemsFound != CraftingRecipeLogic.ALL_INGREDIENTS_PRESENT) {
             requiredItems.clear();
         }
         return itemsFound;
@@ -105,5 +98,9 @@ public class CachedRecipeData {
 
     public void setRecipe(IRecipe newRecipe) {
         this.recipe = newRecipe;
+    }
+
+    public IRecipe getRecipe() {
+        return recipe;
     }
 }

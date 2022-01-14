@@ -38,7 +38,8 @@ public class CraftingRecipeLogic {
     private final CraftingRecipeMemory recipeMemory;
     private IRecipe cachedRecipe = null;
     private int itemsCrafted = 0;
-    private short tintLocation = 511;
+    public static short ALL_INGREDIENTS_PRESENT = 511;
+    private short tintLocation = ALL_INGREDIENTS_PRESENT;
 
     public CraftingRecipeLogic(ICraftingStorage craftingStorage) {
         this.world = craftingStorage.getWorld();
@@ -65,10 +66,10 @@ public class CraftingRecipeLogic {
     }
 
     public void clearCraftingGrid() {
-        fillCraftinGrid(Collections.emptyMap());
+        fillCraftingGrid(Collections.emptyMap());
     }
 
-    public void fillCraftinGrid(Map<Integer, ItemStack> ingredients) {
+    public void fillCraftingGrid(Map<Integer, ItemStack> ingredients) {
         for (int i = 0; i < craftingGrid.getSlots(); i++) {
             craftingGrid.setStackInSlot(i, ingredients.getOrDefault(i + 1, ItemStack.EMPTY));
         }
@@ -156,7 +157,7 @@ public class CraftingRecipeLogic {
     }
 
     public boolean isRecipeValid() {
-        return cachedRecipeData.attemptMatchRecipe() == 511;
+        return cachedRecipeData.getRecipe() != null && cachedRecipeData.attemptMatchRecipe() == ALL_INGREDIENTS_PRESENT;
     }
 
     private void updateCurrentRecipe() {
@@ -175,7 +176,12 @@ public class CraftingRecipeLogic {
     public void update() {
         //update item sources every tick for fast tinting updates
         itemSources.update();
-        tintLocation = getCachedRecipeData().attemptMatchRecipe();
+        if (getCachedRecipeData().getRecipe() != null) {
+            tintLocation = getCachedRecipeData().attemptMatchRecipe();
+        }
+        else {
+            tintLocation = ALL_INGREDIENTS_PRESENT;
+        }
         if (hasCraftingGridUpdated()) {
             updateCurrentRecipe();
         }
