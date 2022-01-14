@@ -221,7 +221,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 recipeFluidMap.computeIfAbsent(fluidKey, k -> new HashSet<>()).add(recipe);
             }
         } else if (ConfigHolder.misc.debug) {
-            GTLog.logger.debug("Recipe: " + recipe.toString() + " is a duplicate and was not added");
+            GTLog.logger.warn("Recipe: {} for Recipe Map {} is a duplicate and was not added", recipe.toString(), this.unlocalizedName);
         }
     }
 
