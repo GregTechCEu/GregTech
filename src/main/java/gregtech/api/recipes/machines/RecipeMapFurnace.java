@@ -21,7 +21,7 @@ public class RecipeMapFurnace extends RecipeMap<SimpleRecipeBuilder> {
     @Override
     @Nullable
     public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, MatchingMode mode, boolean exactVoltage) {
-        Recipe normalRecipe = super.findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, mode);
+        Recipe normalRecipe = super.findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, mode, exactVoltage);
         if (normalRecipe != null || inputs.size() == 0)
             return normalRecipe;
 

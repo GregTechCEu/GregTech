@@ -29,7 +29,7 @@ public class RecipeMapFluidCanner extends RecipeMap<SimpleRecipeBuilder> {
     @Override
     @Nullable
     public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, MatchingMode mode, boolean exactVoltage) {
-        Recipe recipe = super.findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, mode);
+        Recipe recipe = super.findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, mode, exactVoltage);
         if (recipe != null) return recipe;
 
         for (ItemStack input : inputs) {
