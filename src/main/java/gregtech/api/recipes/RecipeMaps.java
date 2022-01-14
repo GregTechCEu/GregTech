@@ -228,7 +228,6 @@ public class RecipeMaps {
                             .buildAndRegister();
 
                     recipeBuilder
-                            .copy()
                             .fluidInputs(Materials.Tin.getFluid(Math.max(1, GTValues.L * ((CircuitAssemblerRecipeBuilder) recipeBuilder).getSolderMultiplier())))
                             .buildAndRegister();
                 }
@@ -301,7 +300,6 @@ public class RecipeMaps {
                             .buildAndRegister();
 
                     recipeBuilder
-                            .copy()
                             .fluidInputs(Materials.Lubricant.getFluid(Math.max(1, Math.min(250, recipeBuilder.duration * recipeBuilder.EUt / 1280))))
                             .duration(Math.max(1, recipeBuilder.duration))
                             .buildAndRegister();
