@@ -686,5 +686,11 @@ public class ReactorRecipes {
                 .input(dust, Potassium)
                 .fluidOutputs(SodiumPotassium.getFluid(1000))
                 .duration(300).EUt(VA[LV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, Sodium)
+                .fluidInputs(Chlorine.getFluid(1000))
+                .output(dust, Salt, 2)
+                .duration(200).EUt(VA[LV]).buildAndRegister();
     }
 }
