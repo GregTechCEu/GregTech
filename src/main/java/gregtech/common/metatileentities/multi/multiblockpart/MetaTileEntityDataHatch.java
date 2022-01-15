@@ -28,7 +28,7 @@ public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockNotifiableP
         super(metaTileEntityId, tier, false);
         int[] invSizes = {1, 1, 1, 1, 4, 8, 16, 32, 64};
         this.slotAmount = invSizes[tier];
-        this.dataStickInventory = new NotifiableItemStackHandler(slotAmount+1, this, false);
+        this.dataStickInventory = new NotifiableItemStackHandler(slotAmount+1, getController(), false);
         dataStickInventory.onContentsChanged(2);
     }
 
