@@ -3899,7 +3899,7 @@ gregtech.machine.fluid_drilling_rig.hv.name=Advanced Fluid Drilling Rig
 gregtech.machine.fluid_drilling_rig.ev.name=Advanced Fluid Drilling Rig II
 gregtech.machine.fluid_drilling_rig.description=Drills fluids from veins under bedrock.
 gregtech.machine.fluid_drilling_rig.production=Production Multiplier: §e%sx§7
-gregtech.machine.fluid_drilling_rig.energy=Requires %s§7 power. Each overclock increases production by §e25%%§7.
+gregtech.machine.fluid_drilling_rig.energy=Requires %s§7 power. Overclocks up to %s§7. Each overclock increases production by §e25%%§7.
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
