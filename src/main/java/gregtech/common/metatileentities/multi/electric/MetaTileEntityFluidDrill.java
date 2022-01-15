@@ -201,7 +201,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
 
     public int getDepletionChance() {
         if (this.tier == GTValues.MV)
-            return 4;
+            return 8;
         if (this.tier == GTValues.HV)
             return 16;
         if (this.tier == GTValues.EV)
@@ -235,8 +235,13 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
         return MetaTileEntity.addFluidsToFluidHandler(outputFluidInventory, simulate, Collections.singletonList(stack));
     }
 
+    public int getEnergyTier() {
+        int minVoltage = Math.max(this.tier, GTUtility.getTierByVoltage(energyContainer.getInputVoltage()));
+        return Math.min(minVoltage, this.tier + 1); // prevents infinite fluid production
+    }
+
     public boolean drainEnergy(boolean simulate) {
-        long energyToDrain = GTValues.VA[Math.max(this.tier, GTUtility.getTierByVoltage(energyContainer.getInputVoltage()))];
+        long energyToDrain = GTValues.VA[getEnergyTier()];
         long resultEnergy = energyContainer.getEnergyStored() - energyToDrain;
         if (resultEnergy >= 0L && resultEnergy <= energyContainer.getEnergyCapacity()) {
             if (!simulate)

@@ -251,7 +251,7 @@ public class TricorderBehavior implements IItemBehaviour {
             list.add(new TextComponentTranslation("behavior.tricorder.divider"));
             Fluid fluid = BedrockFluidVeinHandler.getFluid(world, pos.getX() / 16, pos.getZ() / 16);//-# to only read
             if (fluid != null) {
-                FluidStack stack = new FluidStack(fluid, BedrockFluidVeinHandler.getFluidRateInChunk(world, pos.getX() / 16, pos.getZ() / 16));
+                FluidStack stack = new FluidStack(fluid, BedrockFluidVeinHandler.getFluidAmountInChunk(world, pos.getX() / 16, pos.getZ() / 16));
                 list.add(new TextComponentTranslation("behavior.tricorder.bedrock_fluid.amount",
                         new TextComponentTranslation(fluid.getLocalizedName(stack)).setStyle(new Style().setColor(TextFormatting.GOLD)),
                         new TextComponentTranslation(GTUtility.formatNumbers(stack.amount)).setStyle(new Style().setColor(TextFormatting.YELLOW))

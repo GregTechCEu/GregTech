@@ -103,9 +103,9 @@ public class FluidDrillLogic {
     private int getFluidRate() {
         int rate;
         if (BedrockFluidVeinHandler.isChunkDepleted(metaTileEntity.getWorld(), getChunkX(), getChunkZ()))
-            rate = BedrockFluidVeinHandler.getDepletedFluidRate(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
+            rate = BedrockFluidVeinHandler.getDepletedFluidProduction(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
         else
-            rate = (int) Math.floor(BedrockFluidVeinHandler.getFluidRateInChunk(metaTileEntity.getWorld(), getChunkX(), getChunkZ()) * coefficient);
+            rate = (int) Math.floor(BedrockFluidVeinHandler.getFluidProductionInChunk(metaTileEntity.getWorld(), getChunkX(), getChunkZ()) * coefficient);
 
         return rate * metaTileEntity.getRigMultiplier();
     }
@@ -141,7 +141,7 @@ public class FluidDrillLogic {
     }
 
     public void setCoefficient() {
-        this.coefficient = 0.5F + 0.25F * (Math.max(metaTileEntity.getTier(), voltageTier) - metaTileEntity.getTier());
+        this.coefficient = 0.5F + 0.25F * (metaTileEntity.getEnergyTier() - metaTileEntity.getTier());
     }
 
     private int getChunkX() {
