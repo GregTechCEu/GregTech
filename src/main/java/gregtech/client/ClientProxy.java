@@ -193,10 +193,7 @@ public class ClientProxy extends CommonProxy {
             MetaOreDictItem oreDictItem = (MetaOreDictItem) itemStack.getItem();
             Optional<String> oreDictName = OreDictUnifier.getOreDictionaryNames(itemStack).stream().findFirst();
             if (oreDictName.isPresent() && oreDictItem.OREDICT_TO_FORMULA.containsKey(oreDictName.get())) {
-                String foundFormula = oreDictItem.OREDICT_TO_FORMULA.get(oreDictName.get());
-                if (foundFormula != null) {
-                    chemicalFormula = foundFormula;
-                }
+                chemicalFormula = oreDictItem.OREDICT_TO_FORMULA.get(oreDictName.get());
             }
         } else if (unificationEntry != null && unificationEntry.material != null) {
             chemicalFormula = unificationEntry.material.getChemicalFormula();
