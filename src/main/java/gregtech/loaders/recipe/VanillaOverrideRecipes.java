@@ -828,7 +828,7 @@ public class VanillaOverrideRecipes {
         createShovelRecipe("golden_shovel", new ItemStack(Items.GOLDEN_SHOVEL), Materials.Gold);
         createPickaxeRecipe("golden_pickaxe", new ItemStack(Items.GOLDEN_PICKAXE), Materials.Gold);
         createAxeRecipe("golden_axe", new ItemStack(Items.GOLDEN_AXE), Materials.Gold);
-        createSwordRecipe("golden_sword", new ItemStack(Items.IRON_SWORD), Materials.Gold);
+        createSwordRecipe("golden_sword", new ItemStack(Items.GOLDEN_SWORD), Materials.Gold);
         createHoerecipe("golden_hoe", new ItemStack(Items.GOLDEN_HOE), Materials.Gold);
         createHelmetRecipe("golden_helmet", new ItemStack(Items.GOLDEN_HELMET), Materials.Gold);
         createChestplateRecipe("golden_chestplate", new ItemStack(Items.GOLDEN_CHESTPLATE), Materials.Gold);
@@ -838,7 +838,7 @@ public class VanillaOverrideRecipes {
         createShovelRecipe("diamond_shovel", new ItemStack(Items.DIAMOND_SHOVEL), Materials.Diamond);
         createPickaxeRecipe("diamond_pickaxe", new ItemStack(Items.DIAMOND_PICKAXE), Materials.Diamond);
         createAxeRecipe("diamond_axe", new ItemStack(Items.DIAMOND_AXE), Materials.Diamond);
-        createSwordRecipe("diamond_sword", new ItemStack(Items.IRON_SWORD), Materials.Diamond);
+        createSwordRecipe("diamond_sword", new ItemStack(Items.DIAMOND_SWORD), Materials.Diamond);
         createHoerecipe("diamond_hoe", new ItemStack(Items.DIAMOND_HOE), Materials.Diamond);
         createHelmetRecipe("diamond_helmet", new ItemStack(Items.DIAMOND_HELMET), Materials.Diamond);
         createChestplateRecipe("diamond_chestplate", new ItemStack(Items.DIAMOND_CHESTPLATE), Materials.Diamond);
