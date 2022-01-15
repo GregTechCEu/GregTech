@@ -105,12 +105,11 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
     public void addInformation(ItemStack itemStack, List<String> lines) {
         IItemBehaviour.super.addInformation(itemStack, lines);
 
-        // TODO Reimplement when Fluid Rigs are added
-        //if (tier >= GTValues.HV) {
-        //    lines.add(I18n.format("metaitem.prospector.tooltip.fluids", radius));
-        //} else {
+        if (tier >= GTValues.HV) {
+            lines.add(I18n.format("metaitem.prospector.tooltip.fluids", radius));
+        } else {
             lines.add(I18n.format("metaitem.prospector.tooltip.ores", radius));
-        //}
+        }
     }
 
     @Override

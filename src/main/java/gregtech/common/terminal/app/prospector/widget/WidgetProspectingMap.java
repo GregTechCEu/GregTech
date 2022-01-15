@@ -118,8 +118,9 @@ public class WidgetProspectingMap extends Widget {
                 case FLUID_PROSPECTING_MODE:
                     BedrockFluidVeinHandler.FluidVeinWorldEntry fStack = BedrockFluidVeinHandler.getFluidVeinWorldEntry(world, chunk.x, chunk.z);
                     if (fStack != null && fStack.getVein() != null) {
-                        packet.addBlock(0, 2, 0, fStack.getCurrentFluidAmount() + "");
-                        packet.addBlock(0, 1, 0, fStack.getVein().getStoredFluid().getName());
+                        packet.addBlock(0, 2, 0, BedrockFluidVeinHandler.getFluidAmountInChunk(world, chunk.x, chunk.z) +
+                                " / " + BedrockFluidVeinHandler.getFluidProductionInChunk(world, chunk.x, chunk.z));
+                        packet.addBlock(0, 1, 0, BedrockFluidVeinHandler.getFluid(world, chunk.x, chunk.z).getName());
                     }
                     break;
                 default:
