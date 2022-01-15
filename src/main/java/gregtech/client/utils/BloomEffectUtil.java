@@ -28,8 +28,7 @@ public class BloomEffectUtil {
 
     public static BlockRenderLayer BLOOM;
     private static Framebuffer BLOOM_FBO;
-    private static List<Runnable> RENDER_DYNAMICS;
-    private static Map<ICustomRenderFast, List<Consumer<BufferBuilder>>> RENDER_FAST;
+    private static Map<IBloomRenderFast, List<Consumer<BufferBuilder>>> RENDER_FAST;
 
     public static BlockRenderLayer getRealBloomLayer(){
         return Shaders.isOptiFineShaderPackLoaded() ? BlockRenderLayer.CUTOUT : BLOOM;
@@ -38,7 +37,6 @@ public class BloomEffectUtil {
     public static void init() {
         BLOOM = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[]{String.class}, "Bloom");
         RENDER_FAST = Maps.newHashMap();
-        RENDER_DYNAMICS = Lists.newLinkedList();
     }
 
     public static void initBloomRenderLayer(BufferBuilder[] worldRenderers) {
@@ -50,17 +48,11 @@ public class BloomEffectUtil {
         mc.profiler.endStartSection("BTLayer");
         if (Shaders.isOptiFineShaderPackLoaded()) {
             int result =  renderglobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
-            RENDER_DYNAMICS.clear();
             RENDER_FAST.clear();
             return result;
         } else if (!ConfigHolder.client.shader.emissiveTexturesBloom) {
             GlStateManager.depthMask(true);
             renderglobal.renderBlockLayer(BloomEffectUtil.BLOOM, partialTicks, pass, entity);
-            // render dynamics
-            if (!RENDER_DYNAMICS.isEmpty()) {
-                RENDER_DYNAMICS.forEach(Runnable::run);
-                RENDER_DYNAMICS.clear();
-            }
 
             // render fast
             if (!RENDER_FAST.isEmpty()) {
@@ -96,18 +88,11 @@ public class BloomEffectUtil {
             BLOOM_FBO.setFramebufferFilter(GL_LINEAR);
         }
 
-        BLOOM_FBO.framebufferClear();
-        BLOOM_FBO.bindFramebuffer(true);
 
-        // render to BLOOM BUFFER
+
         GlStateManager.depthMask(true);
-        renderglobal.renderBlockLayer(BloomEffectUtil.BLOOM, partialTicks, pass, entity);
 
-        // render dynamics
-        if (!RENDER_DYNAMICS.isEmpty()) {
-            RENDER_DYNAMICS.forEach(Runnable::run);
-            RENDER_DYNAMICS.clear();
-        }
+        fbo.bindFramebuffer(true);
 
         // render fast
         if (!RENDER_FAST.isEmpty()) {
@@ -117,15 +102,21 @@ public class BloomEffectUtil {
                 list.forEach(consumer->consumer.accept(buffer));
                 handler.postDraw(buffer);
             });
-            RENDER_FAST.clear();
         }
+
+        // render to BLOOM BUFFER
+        BLOOM_FBO.framebufferClear();
+        BLOOM_FBO.bindFramebuffer(false);
+
+        renderglobal.renderBlockLayer(BloomEffectUtil.BLOOM, partialTicks, pass, entity);
+
         GlStateManager.depthMask(false);
 
         // fast render bloom layer to main fbo
         BLOOM_FBO.bindFramebufferTexture();
         Shaders.renderFullImageInFBO(fbo, Shaders.IMAGE_F, null);
 
-        // reset next layer's render state and render
+        // reset transparent layer render state and render
         OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, fbo.framebufferObject);
         GlStateManager.enableBlend();
         mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -142,15 +133,20 @@ public class BloomEffectUtil {
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         // render bloom effect to fbo
+        BloomEffect.strength = (float) ConfigHolder.client.shader.strength;
+        BloomEffect.baseBrightness = (float) ConfigHolder.client.shader.baseBrightness;
+        BloomEffect.highBrightnessThreshold = (float) ConfigHolder.client.shader.highBrightnessThreshold;
+        BloomEffect.lowBrightnessThreshold = (float) ConfigHolder.client.shader.lowBrightnessThreshold;
+        BloomEffect.step = (float) ConfigHolder.client.shader.step;
         switch (ConfigHolder.client.shader.bloomStyle) {
             case 0:
-                BloomEffect.renderLOG(BLOOM_FBO, fbo, (float) ConfigHolder.client.shader.strength);
+                BloomEffect.renderLOG(BLOOM_FBO, fbo);
                 break;
             case 1:
-                BloomEffect.renderUnity(BLOOM_FBO, fbo, (float) ConfigHolder.client.shader.strength);
+                BloomEffect.renderUnity(BLOOM_FBO, fbo);
                 break;
             case 2:
-                BloomEffect.renderUnreal(BLOOM_FBO, fbo, (float) ConfigHolder.client.shader.strength);
+                BloomEffect.renderUnreal(BLOOM_FBO, fbo);
                 break;
             default:
                 GlStateManager.depthMask(false);
@@ -164,6 +160,54 @@ public class BloomEffectUtil {
         GlStateManager.disableBlend();
         Shaders.renderFullImageInFBO(fbo, Shaders.IMAGE_F, null);
 
+
+
+        //********** render custom bloom ************
+
+        // render fast
+        if (!RENDER_FAST.isEmpty()) {
+            BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+            RENDER_FAST.forEach((handler, list)->{
+                GlStateManager.depthMask(true);
+
+                BLOOM_FBO.framebufferClear();
+                BLOOM_FBO.bindFramebuffer(true);
+
+                handler.preDraw(buffer);
+                list.forEach(consumer->consumer.accept(buffer));
+                handler.postDraw(buffer);
+
+                GlStateManager.depthMask(false);
+
+                // blend bloom + transparent
+                fbo.bindFramebufferTexture();
+                GlStateManager.enableBlend();
+                GlStateManager.blendFunc(GL11.GL_DST_ALPHA, GL11.GL_ZERO);
+                Shaders.renderFullImageInFBO(BLOOM_FBO, Shaders.IMAGE_F, null);
+                GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+                switch (handler.customBloomStyle()) {
+                    case 0:
+                        BloomEffect.renderLOG(BLOOM_FBO, fbo);
+                        break;
+                    case 1:
+                        BloomEffect.renderUnity(BLOOM_FBO, fbo);
+                        break;
+                    case 2:
+                        BloomEffect.renderUnreal(BLOOM_FBO, fbo);
+                        break;
+                    default:
+                        GlStateManager.disableBlend();
+                        return;
+                }
+
+                // render bloom blend result to fbo
+                GlStateManager.disableBlend();
+                Shaders.renderFullImageInFBO(fbo, Shaders.IMAGE_F, null);
+            });
+            RENDER_FAST.clear();
+        }
+
         return result;
     }
 
@@ -171,18 +215,25 @@ public class BloomEffectUtil {
         return BLOOM_FBO;
     }
 
-    public static void requestRenderDynamic(Runnable render) {
-        if (render != null) {
-            RENDER_DYNAMICS.add(render);
-        }
+    public static void requestCustomBloom(IBloomRenderFast handler, Consumer<BufferBuilder> render) {
+        RENDER_FAST.computeIfAbsent(handler, (x)->Lists.newLinkedList()).add(render);
     }
 
-    public static void requestRenderFast(ICustomRenderFast handler, Consumer<BufferBuilder> render) {
-        if (render != null && handler != null) {
-            if (!RENDER_FAST.containsKey(handler)) {
-                RENDER_FAST.put(handler, Lists.newLinkedList());
-            }
-            RENDER_FAST.get(handler).add(render);
-        }
+    public interface IBloomRenderFast extends ICustomRenderFast {
+
+        /**
+         * Custom Bloom Style.
+         *
+         * @return
+         * 0 - Simple Gaussian Blur Bloom
+         * <p>
+         *  1 - Unity Bloom
+         * </p>
+         * <p>
+         * 2 - Unreal Bloom
+         * </p>
+         */
+         int customBloomStyle();
+
     }
 }

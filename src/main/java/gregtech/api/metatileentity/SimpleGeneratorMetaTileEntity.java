@@ -5,13 +5,15 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IActiveOutputSide;
-import gregtech.api.capability.impl.*;
+import gregtech.api.capability.impl.EnergyContainerHandler;
+import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.FuelRecipeLogic;
+import gregtech.api.capability.impl.RecipeLogicEnergy;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
@@ -23,56 +25,44 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Function;
 
-public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity implements IActiveOutputSide {
-
-    protected IItemHandler outputItemInventory;
-    protected IFluidHandler outputFluidInventory;
-
-    protected boolean ignoreOutputs;
+public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity implements IActiveOutputSide, IVoidable {
 
     private static final int FONT_HEIGHT = 9; // Minecraft's FontRenderer FONT_HEIGHT value
 
-    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier) {
-        this(metaTileEntityId, recipeMap, renderer, tier, false);
-    }
-
-    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier, boolean ignoreOutputs) {
-        this(metaTileEntityId, recipeMap, renderer, tier, GTUtility.generatorTankSizeFunction, ignoreOutputs);
+    public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
+                                         Function<Integer, Integer> tankScalingFunction) {
+        this(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction, false);
     }
 
     public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier,
-                                         Function<Integer, Integer> tankScalingFunction, boolean ignoreOutputs) {
-        super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction);
-        this.ignoreOutputs = ignoreOutputs;
+                                         Function<Integer, Integer> tankScalingFunction, boolean handlesRecipeOutputs) {
+        super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction, handlesRecipeOutputs);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new SimpleGeneratorMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), getTankScalingFunction(), ignoreOutputs);
+        return new SimpleGeneratorMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), getTankScalingFunction(), handlesRecipeOutputs);
     }
 
     @Override
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
-        final FuelRecipeLogic result = new FuelRecipeLogic(this, recipeMap, () -> energyContainer, ignoreOutputs);
+        final FuelRecipeLogic result = new FuelRecipeLogic(this, recipeMap, () -> energyContainer);
         result.enableOverclockVoltage();
         return result;
     }
 
     @Override
-    protected void initializeInventory() {
-        super.initializeInventory();
-        this.outputItemInventory = new ItemHandlerProxy(new NotifiableItemStackHandler(0, this, true), exportItems);
-        this.outputFluidInventory = new FluidHandlerProxy(new FluidTankList(false), exportFluids);
+    protected FluidTankList createExportFluidHandler() {
+        if (handlesRecipeOutputs)
+            return super.createExportFluidHandler();
+        return new FluidTankList(false);
     }
 
     @Override
@@ -111,9 +101,8 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
 
 
         ModularUI.Builder builder;
-        if (ignoreOutputs) builder = workableRecipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
+        if (handlesRecipeOutputs) builder = workableRecipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
         else builder = workableRecipeMap.createUITemplateNoOutputs(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset);
-
         builder.widget(new LabelWidget(6, 6, getMetaFullName()))
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);
 
@@ -168,7 +157,17 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     }
 
     @Override
+    protected long getMaxInputOutputAmperage() {
+        return 1L;
+    }
+
+    @Override
     protected boolean isEnergyEmitter() {
         return true;
+    }
+
+    @Override
+    public boolean canVoidRecipeOutputs() {
+        return !handlesRecipeOutputs;
     }
 }

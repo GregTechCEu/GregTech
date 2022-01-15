@@ -95,7 +95,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
     @Override
     public int getDefaultPaintingColor() {
-        return Materials.Bronze.getMaterialRGB();
+        return 0xFFFFFF;
     }
 
     @Override

@@ -20,7 +20,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
 import static gregtech.api.GTValues.*;
-import static gregtech.api.items.OreDictNames.*;
+import static gregtech.api.items.OreDictNames.cobblestone;
+import static gregtech.api.items.OreDictNames.stoneCobble;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
@@ -442,7 +443,7 @@ public class VanillaStandardRecipes {
                 .circuitMeta(3)
                 .duration(300).EUt(4).buildAndRegister();
 
-        ModHandler.addShapedRecipe("sticky_resin_torch", new ItemStack(Blocks.TORCH, 3), "X", "Y", 'X', MetaItems.RUBBER_DROP, 'Y', new UnificationEntry(OrePrefix.stick, Materials.Wood));
+        ModHandler.addShapedRecipe("sticky_resin_torch", new ItemStack(Blocks.TORCH, 3), "X", "Y", 'X', MetaItems.STICKY_RESIN, 'Y', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_sulfur", new ItemStack(Blocks.TORCH, 2), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Sulfur), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_phosphorus", new ItemStack(Blocks.TORCH, 6), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Phosphorus), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_coke", new ItemStack(Blocks.TORCH, 8), "C", "S", 'C', new UnificationEntry(OrePrefix.gem, Materials.Coke), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
@@ -632,7 +633,7 @@ public class VanillaStandardRecipes {
      */
     private static void redstoneRecipes() {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(MetaItems.RUBBER_DROP.getStackForm())
+                .inputs(MetaItems.STICKY_RESIN.getStackForm())
                 .inputs(new ItemStack(Blocks.PISTON))
                 .outputs(new ItemStack(Blocks.STICKY_PISTON))
                 .duration(100).EUt(4).buildAndRegister();
@@ -913,7 +914,7 @@ public class VanillaStandardRecipes {
         ALLOY_SMELTER_RECIPES.recipeBuilder().input(ingot, Iron, 31).notConsumable(SHAPE_MOLD_ANVIL).outputs(new ItemStack(Blocks.ANVIL)).duration(512).EUt(16).buildAndRegister();
         ALLOY_SMELTER_RECIPES.recipeBuilder().input(ingot, WroughtIron, 31).notConsumable(SHAPE_MOLD_ANVIL).outputs(new ItemStack(Blocks.ANVIL)).duration(512).EUt(16).buildAndRegister();
 
-        ModHandler.addSmeltingRecipe(new ItemStack(Items.SLIME_BALL), RUBBER_DROP.getStackForm());
+        ModHandler.addSmeltingRecipe(new ItemStack(Items.SLIME_BALL), STICKY_RESIN.getStackForm());
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.STRING, 3))

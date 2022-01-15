@@ -45,8 +45,7 @@ import java.util.stream.Collectors;
 public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private static final Map<String, RecipeMap<?>> RECIPE_MAP_REGISTRY = new HashMap<>();
-    @ZenProperty
-    public static final IChanceFunction chanceFunction = (chance, boostPerTier, tier) -> chance + (boostPerTier * tier);
+    public IChanceFunction chanceFunction = (chance, boostPerTier, tier) -> chance + (boostPerTier * tier);
 
     public final String unlocalizedName;
 
@@ -113,7 +112,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return RECIPE_MAP_REGISTRY.get(unlocalizedName);
     }
 
-    public static IChanceFunction getChanceFunction() {
+    @ZenMethod
+    public IChanceFunction getChanceFunction() {
         return chanceFunction;
     }
 
@@ -151,6 +151,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public RecipeMap<R> setSound(SoundEvent sound) {
         this.sound = sound;
+        return this;
+    }
+
+    @ZenMethod("setChanceFunction")
+    public RecipeMap<R> setChanceFunction(IChanceFunction function) {
+        chanceFunction = function;
         return this;
     }
 

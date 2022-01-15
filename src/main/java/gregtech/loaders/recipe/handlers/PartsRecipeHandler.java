@@ -254,10 +254,18 @@ public class PartsRecipeHandler {
                         "h", "P", "P", 'P', new UnificationEntry(plate, material));
             }
 
-            BENDER_RECIPES.recipeBuilder().EUt(VA[LV]).duration((int) material.getMass() * 2)
+            BENDER_RECIPES.recipeBuilder().EUt(96).duration((int) material.getMass() * 2)
                     .input(plate, material, 2)
                     .output(doublePrefix, material)
                     .circuitMeta(2)
+                    .buildAndRegister();
+
+            BENDER_RECIPES.recipeBuilder()
+                    .input(ingot, material, 2)
+                    .circuitMeta(2)
+                    .output(doublePrefix, material)
+                    .duration((int) material.getMass() * 2)
+                    .EUt(96)
                     .buildAndRegister();
         }
     }
@@ -396,16 +404,19 @@ public class PartsRecipeHandler {
                 GTUtility.copyAmount(2, stickStack),
                 "s", "X", 'X', new UnificationEntry(OrePrefix.stickLong, material));
 
-        ModHandler.addShapedRecipe(String.format("stick_long_gem_flawless_%s", material.toString()),
-                stickStack,
-                "sf",
-                "G ",
-                'G', new UnificationEntry(OrePrefix.gemFlawless, material));
+        if(material.hasProperty(PropertyKey.GEM)) {
+            ModHandler.addShapedRecipe(String.format("stick_long_gem_flawless_%s", material.toString()),
+                    stickStack,
+                    "sf",
+                    "G ",
+                    'G', new UnificationEntry(OrePrefix.gemFlawless, material));
 
-        ModHandler.addShapedRecipe(String.format("stick_long_gem_exquisite_%s", material.toString()),
-                GTUtility.copyAmount(2, stickStack),
-                "sf", "G ",
-                'G', new UnificationEntry(OrePrefix.gemExquisite, material));
+            ModHandler.addShapedRecipe(String.format("stick_long_gem_exquisite_%s", material.toString()),
+                    GTUtility.copyAmount(2, stickStack),
+                    "sf", "G ",
+                    'G', new UnificationEntry(OrePrefix.gemExquisite, material));
+
+        }
 
         ModHandler.addShapedRecipe(String.format("stick_long_stick_%s", material.toString()), stack,
                 "ShS",

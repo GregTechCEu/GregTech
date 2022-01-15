@@ -286,7 +286,7 @@ public class AppPageWidget extends TerminalDialogWidget {
         String localizedName = I18n.format(application.getUnlocalizedName());
         drawStringSized(localizedName, x + 100, y + 14, fColor, store.darkMode, 2, false);
         if (isMouseOver(x + 100, y + 14, fr.getStringWidth(localizedName) * 2, fr.FONT_HEIGHT * 2, mouseX, mouseY)) {
-            drawHoveringText(null, Collections.singletonList("("+application.getRegistryName()+")"), 200, mouseX, mouseY);
+            drawHoveringText(ItemStack.EMPTY, Collections.singletonList("("+application.getRegistryName()+")"), 200, mouseX, mouseY);
         }
         for (int i = 0; i < description.size(); i++) {
             fr.drawString(description.get(i), x + 100, y + 35 + i * fr.FONT_HEIGHT, fColor, store.darkMode);

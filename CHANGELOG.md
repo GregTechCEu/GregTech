@@ -1,5 +1,72 @@
 ## Changelog
 
+### 2.0.2
+BETA RELEASE
+* Fix crash on null Fluid with some mods (and add better logging)
+* Fix Rubber Trees being too tall/too short in some cases
+* Buff Garnet Sand Centrifuge recipe
+* Fix Crafting Recipe for the Terminal
+* Fix ULPIC's being needed in MV but requiring HV to craft
+* Fix Rubber Trees not giving Sticky Resin
+* Fix some Stone Types having higher harvest levels than the other ores
+* Clean up Cable covering recipes, add cable Unpacking recipes
+* Fix Surface Rock placement being poor
+    * Rocks now cannot spawn as far from the vein center
+    * A rock is guaranteed to spawn in the center of a chunk with a vein in it
+* Fix drum overlay being improperly tinted
+* Fix a few veins (Sulfur, Cassiterite) being too limited on their height range, making them very rare
+* Fix Crafting Station recipe not allowing non-Vanilla Wood Planks
+* Remove Argon Plasma Arc Furnace recipes
+* Add a few new configs:
+    * `harderBrickRecipes`: Harder recipes for Bricks, Coke Bricks, and Firebricks (default false)
+    * `plateWrenches`: Use Plates to make Wrenches instead of Ingots (default false)
+    * `harderEBFControllerRecipe`: Use Electric Furnaces instead of Furnaces in the EBF recipe (default false)
+* Fix a few minor problems in the Terminal
+* Fix some invalid Crafting recipes, add logging
+
+### 2.0.1
+BETA RELEASE
+* Add Cosmetic Blocks for Marble, Basalt, Red Granite, etc (all stone types)
+* Add missing Gearbox casings, fix textures
+* Fix missing resource warnings
+* Remove Abandoned Bases (to return in a future release, reworked)
+* Compress Audio files, shrinking .jar size by ~2.5MB
+* Remove some unused configs
+* Redo World Accelerator Recipe
+* Fix some crashes with AOE mining
+* Fix NPE in Fluid Pipes
+* Add missing UV Battery Buffer, and UHV Charger and Battery Buffer
+* Redo Central Monitor component recipes
+* Fix server crash with Pipe Hitboxes
+* Fix Vanadiumsteel requiring an HV mixer (now MV)
+* Fix Fusion Ring effect playing when Fusion Reactor is deformed
+* Cleanup Sulfuric/Nitric/Phosphoric Acid recipes
+* Fix surface rocks using any Ore from the vein instead of the designated one
+* Remove config for World Accelerator to accelerate GT machines
+* Fix rare Stack Overflow in some GT inventories
+* Adjust bloom config defaults
+* Fix PipeNet desync on world unload
+* Fix Divide By Zero issue in Creative Tank/Chest
+* Fix Singleblock Steam generators outputting Distilled Water
+* Fix Crafting Station being improperly colored
+* Redo Rotor Holder recipes
+* Fix minor lang issues
+* Rework Circuit Board recipes slightly
+* Rework Material Fluid registration
+* Allow Dusts to Fluid Extract, and be Arc Furnaced to Ingots in some situations
+* Add tooltip to Boiler about when it explodes
+* Rework Energy Hatch recipes
+* Fix desyncs with "Allow Input from Output Side" setting on Machines and similar chat messages
+* Move ASMD Assembler recipes to IV
+* Separate Fusion Ring config from normal bloom settings
+* Rework Rubber Tree leaf biome coloring, sapling item model,
+log top texture, leaf shape, generating in wrong biomes, generating too frequently
+* Add config to increase/reduce Rubber Tree spawnrate in their allowed biomes (Forest, Jungle, Swamp)
+
+### 2.0.0
+ALPHA RELEASE
+* For a full changelog, see https://github.com/GregTechCEu/GregTech/blob/master/CHANGELOG-GTCEU.md
+
 ### 1.17.0
 * Fix many small GUI issues (#1574) - dan
 * Add clarification tooltips to blocks in the multiblock preview (#1584) - ALongStringOfNumbers

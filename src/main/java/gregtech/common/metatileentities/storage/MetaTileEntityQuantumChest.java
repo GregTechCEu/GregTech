@@ -60,7 +60,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     private long itemsStoredInside = 0L;
     private boolean autoOutputItems;
     private EnumFacing outputFacing;
-    private boolean allowInputFromOutputSide = true;
+    private boolean allowInputFromOutputSide = false;
     private static final String NBT_ITEMSTACK = "ItemStack";
     private static final String NBT_PARTIALSTACK = "PartialStack";
     private static final String NBT_ITEMCOUNT = "ItemAmount";

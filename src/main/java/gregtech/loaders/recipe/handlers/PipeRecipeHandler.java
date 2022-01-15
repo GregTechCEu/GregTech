@@ -131,9 +131,11 @@ public class PipeRecipeHandler {
                 .EUt(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
 
-        ModHandler.addShapedRecipe(String.format("huge_%s_pipe", material.toString()),
-                pipeStack, "XhX", "X X", "XwX",
-                'X', new UnificationEntry(OrePrefix.plateDouble, material));
+        if (OrePrefix.plateDouble.doGenerateItem(material)) {
+            ModHandler.addShapedRecipe(String.format("huge_%s_pipe", material.toString()),
+                    pipeStack, "XhX", "X X", "XwX",
+                    'X', new UnificationEntry(OrePrefix.plateDouble, material));
+        }
     }
 
     private static void processPipeQuadruple(OrePrefix pipePrefix, Material material, FluidPipeProperties property) {

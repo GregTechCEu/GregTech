@@ -324,7 +324,7 @@ public class MetaItem1 extends StandardMetaItem {
         FIRECLAY_BRICK = addItem(352, "brick.fireclay");
         COKE_OVEN_BRICK = addItem(353, "brick.coke");
 
-        if (!ConfigHolder.recipes.hardMiscRecipes)
+        if (!ConfigHolder.recipes.harderBrickRecipes)
             COMPRESSED_CLAY.setInvisible();
 
         // Boules: ID 361-370
@@ -364,7 +364,7 @@ public class MetaItem1 extends StandardMetaItem {
         }
 
         // Plant/Rubber Related: ID 438-445
-        RUBBER_DROP = addItem(438, "rubber_drop").setBurnValue(200);
+        STICKY_RESIN = addItem(438, "rubber_drop").setBurnValue(200);
         PLANT_BALL = addItem(439, "plant_ball").setBurnValue(75);
         BIO_CHAFF = addItem(440, "bio_chaff").setBurnValue(200);
 
@@ -592,5 +592,8 @@ public class MetaItem1 extends StandardMetaItem {
                 GLASS_LENSES.put(color, addItem(820 + i, String.format("glass_lens.%s", color.toString())));
             }
         }
+
+        // Misc 1000+
+        NAN_CERTIFICATE = addItem(1000, "nan.certificate").setRarity(EnumRarity.EPIC);
     }
 }

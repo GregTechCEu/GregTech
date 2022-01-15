@@ -1,11 +1,12 @@
 package gregtech.loaders.recipe;
 
-import gregtech.common.ConfigHolder;
+import gregtech.api.recipes.ModHandler;
+import static gregtech.api.unification.material.MarkerMaterials.Tier;
+import gregtech.api.unification.stack.UnificationEntry;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLY_LINE_RECIPES;
-import static gregtech.api.unification.material.MarkerMaterials.Tier.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.items.MetaItems.*;
@@ -14,337 +15,212 @@ import static gregtech.common.metatileentities.MetaTileEntities.*;
 public class MetaTileEntityMachineRecipeLoader {
 
     public static void init() {
-        if (ConfigHolder.recipes.harderEnergyHatches) {
 
-            // Energy Output Hatches
+        // Energy Output Hatches
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[ULV])
-                    .input(spring, Lead)
-                    .input(circuit, Primitive, 2)
-                    .input(VOLTAGE_COIL_ULV, 2)
-                    .input(rotor, Lead)
-                    .fluidInputs(Lubricant.getFluid(2000))
-                    .output(ENERGY_OUTPUT_HATCH[ULV])
-                    .duration(200).EUt(VA[ULV]).buildAndRegister();
+        ModHandler.addShapedRecipe(true, "dynamo_hatch.ulv", ENERGY_OUTPUT_HATCH[ULV].getStackForm(),
+                " V ", "SHS", "   ",
+                'S', new UnificationEntry(spring, Lead),
+                'V', VOLTAGE_COIL_ULV.getStackForm(),
+                'H', HULL[ULV].getStackForm());
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[LV])
-                    .input(spring, Tin)
-                    .input(circuit, Basic, 2)
-                    .input(VOLTAGE_COIL_LV, 2)
-                    .input(ELECTRIC_PUMP_LV)
-                    .fluidInputs(Lubricant.getFluid(2000))
-                    .output(ENERGY_OUTPUT_HATCH[LV])
-                    .duration(200).EUt(VA[LV]).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[ULV])
+                .input(spring, Lead, 2)
+                .input(VOLTAGE_COIL_ULV)
+                .output(ENERGY_OUTPUT_HATCH[ULV])
+                .duration(200).EUt(VA[ULV]).buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[MV])
-                    .input(spring, Copper)
-                    .input(INDUCTOR, 2)
-                    .input(VOLTAGE_COIL_MV, 2)
-                    .input(ELECTRIC_PUMP_MV)
-                    .fluidInputs(Lubricant.getFluid(2000))
-                    .output(ENERGY_OUTPUT_HATCH[MV])
-                    .duration(200).EUt(VA[MV]).buildAndRegister();
+        ModHandler.addShapedRecipe(true, "dynamo_hatch.lv", ENERGY_OUTPUT_HATCH[LV].getStackForm(),
+                " V ", "SHS", "   ",
+                'S', new UnificationEntry(spring, Tin),
+                'V', VOLTAGE_COIL_LV.getStackForm(),
+                'H', HULL[LV].getStackForm());
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[HV])
-                    .input(spring, Gold)
-                    .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(VOLTAGE_COIL_HV, 2)
-                    .input(ELECTRIC_PUMP_HV)
-                    .fluidInputs(Helium.getFluid(1000))
-                    .output(ENERGY_OUTPUT_HATCH[HV])
-                    .duration(200).EUt(VA[HV]).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[LV])
+                .input(spring, Tin, 2)
+                .input(VOLTAGE_COIL_LV)
+                .output(ENERGY_OUTPUT_HATCH[LV])
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[HV])
-                    .input(spring, Gold)
-                    .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(VOLTAGE_COIL_HV, 2)
-                    .input(ELECTRIC_PUMP_HV)
-                    .fluidInputs(SodiumPotassium.getFluid(1000))
-                    .output(ENERGY_OUTPUT_HATCH[HV])
-                    .duration(200).EUt(VA[HV]).buildAndRegister();
+        ModHandler.addShapedRecipe(true, "dynamo_hatch.mv", ENERGY_OUTPUT_HATCH[MV].getStackForm(),
+                " V ", "SHS", " P ",
+                'P', ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(),
+                'S', new UnificationEntry(spring, Copper),
+                'V', VOLTAGE_COIL_MV.getStackForm(),
+                'H', HULL[MV].getStackForm());
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[EV])
-                    .input(spring, Aluminium)
-                    .input(LOW_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(VOLTAGE_COIL_EV, 2)
-                    .input(ELECTRIC_PUMP_EV)
-                    .fluidInputs(Helium.getFluid(2000))
-                    .output(ENERGY_OUTPUT_HATCH[EV])
-                    .duration(200).EUt(VA[EV]).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[MV])
+                .input(spring, Copper, 2)
+                .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT)
+                .input(VOLTAGE_COIL_MV)
+                .output(ENERGY_OUTPUT_HATCH[MV])
+                .duration(200).EUt(VA[MV]).buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[EV])
-                    .input(spring, Aluminium)
-                    .input(LOW_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(VOLTAGE_COIL_EV, 2)
-                    .input(ELECTRIC_PUMP_EV)
-                    .fluidInputs(SodiumPotassium.getFluid(2000))
-                    .output(ENERGY_OUTPUT_HATCH[EV])
-                    .duration(200).EUt(VA[EV]).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[HV])
+                .input(spring, Gold, 2)
+                .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_HV)
+                .fluidInputs(SodiumPotassium.getFluid(1000))
+                .output(ENERGY_OUTPUT_HATCH[HV])
+                .duration(200).EUt(VA[HV]).buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[IV])
-                    .input(spring, Tungsten)
-                    .input(POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(VOLTAGE_COIL_IV, 2)
-                    .input(ELECTRIC_PUMP_IV)
-                    .fluidInputs(Helium.getFluid(3000))
-                    .output(ENERGY_OUTPUT_HATCH[IV])
-                    .duration(200).EUt(VA[IV]).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[EV])
+                .input(spring, Aluminium, 2)
+                .input(LOW_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_EV)
+                .fluidInputs(SodiumPotassium.getFluid(2000))
+                .output(ENERGY_OUTPUT_HATCH[EV])
+                .duration(200).EUt(VA[EV]).buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[IV])
-                    .input(spring, Tungsten)
-                    .input(POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(VOLTAGE_COIL_IV, 2)
-                    .input(ELECTRIC_PUMP_IV)
-                    .fluidInputs(SodiumPotassium.getFluid(3000))
-                    .output(ENERGY_OUTPUT_HATCH[IV])
-                    .duration(200).EUt(VA[IV]).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[IV])
+                .input(spring, Tungsten, 2)
+                .input(POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_IV)
+                .fluidInputs(SodiumPotassium.getFluid(3000))
+                .output(ENERGY_OUTPUT_HATCH[IV])
+                .duration(200).EUt(VA[IV]).buildAndRegister();
 
-            ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .input(HULL[LuV])
-                    .input(spring, YttriumBariumCuprate, 2)
-                    .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(circuit, Master, 2)
-                    .input(VOLTAGE_COIL_LUV, 2)
-                    .input(ELECTRIC_PUMP_LUV)
-                    .fluidInputs(Helium.getFluid(6000))
-                    .fluidInputs(SolderingAlloy.getFluid(720))
-                    .output(ENERGY_OUTPUT_HATCH[LuV])
-                    .duration(400).EUt(VA[LuV]).buildAndRegister();
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(HULL[LuV])
+                .input(spring, YttriumBariumCuprate, 4)
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(circuit, Tier.Master)
+                .input(VOLTAGE_COIL_LUV, 2)
+                .fluidInputs(SodiumPotassium.getFluid(6000))
+                .fluidInputs(SolderingAlloy.getFluid(720))
+                .output(ENERGY_OUTPUT_HATCH[LuV])
+                .duration(400).EUt(VA[LuV]).buildAndRegister();
 
-            ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .input(HULL[LuV])
-                    .input(spring, YttriumBariumCuprate, 2)
-                    .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(circuit, Master, 2)
-                    .input(VOLTAGE_COIL_LUV, 2)
-                    .input(ELECTRIC_PUMP_LUV)
-                    .fluidInputs(SodiumPotassium.getFluid(6000))
-                    .fluidInputs(SolderingAlloy.getFluid(720))
-                    .output(ENERGY_OUTPUT_HATCH[LuV])
-                    .duration(400).EUt(VA[LuV]).buildAndRegister();
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(HULL[ZPM])
+                .input(spring, VanadiumGallium, 4)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(circuit, Tier.Ultimate)
+                .input(VOLTAGE_COIL_ZPM, 2)
+                .fluidInputs(SodiumPotassium.getFluid(8000))
+                .fluidInputs(SolderingAlloy.getFluid(1440))
+                .output(ENERGY_OUTPUT_HATCH[ZPM])
+                .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
-            ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .input(HULL[ZPM])
-                    .input(spring, VanadiumGallium, 4)
-                    .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(circuit, Ultimate, 2)
-                    .input(VOLTAGE_COIL_ZPM, 2)
-                    .input(ELECTRIC_PUMP_ZPM)
-                    .fluidInputs(Helium.getFluid(6000))
-                    .fluidInputs(SolderingAlloy.getFluid(1440))
-                    .output(ENERGY_OUTPUT_HATCH[ZPM])
-                    .duration(600).EUt(VA[ZPM]).buildAndRegister();
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(HULL[UV])
+                .input(spring, NiobiumTitanium, 4)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(circuit, Tier.Super)
+                .input(VOLTAGE_COIL_UV, 2)
+                .fluidInputs(SodiumPotassium.getFluid(10000))
+                .fluidInputs(SolderingAlloy.getFluid(2880))
+                .output(ENERGY_OUTPUT_HATCH[UV])
+                .duration(800).EUt(VA[UV]).buildAndRegister();
 
-            ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .input(HULL[ZPM])
-                    .input(spring, VanadiumGallium, 4)
-                    .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(circuit, Ultimate, 2)
-                    .input(VOLTAGE_COIL_ZPM, 2)
-                    .input(ELECTRIC_PUMP_ZPM)
-                    .fluidInputs(SodiumPotassium.getFluid(6000))
-                    .fluidInputs(SolderingAlloy.getFluid(1440))
-                    .output(ENERGY_OUTPUT_HATCH[ZPM])
-                    .duration(600).EUt(VA[ZPM]).buildAndRegister();
+        // Energy Input Hatches
 
-            ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .input(HULL[UV])
-                    .input(spring, NiobiumTitanium, 4)
-                    .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(circuit, Super, 2)
-                    .input(VOLTAGE_COIL_UV, 2)
-                    .input(ELECTRIC_PUMP_UV)
-                    .fluidInputs(Helium.getFluid(12000))
-                    .fluidInputs(SolderingAlloy.getFluid(2880))
-                    .output(ENERGY_OUTPUT_HATCH[UV])
-                    .duration(800).EUt(VA[UV]).buildAndRegister();
+        ModHandler.addShapedRecipe(true, "energy_hatch.ulv", ENERGY_INPUT_HATCH[ULV].getStackForm(),
+                " V ", "CHC", "   ",
+                'C', new UnificationEntry(cableGtSingle, RedAlloy),
+                'V', VOLTAGE_COIL_ULV.getStackForm(),
+                'H', HULL[ULV].getStackForm());
 
-            ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .input(HULL[UV])
-                    .input(spring, NiobiumTitanium, 4)
-                    .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(circuit, Super, 2)
-                    .input(VOLTAGE_COIL_UV, 2)
-                    .input(ELECTRIC_PUMP_UV)
-                    .fluidInputs(SodiumPotassium.getFluid(12000))
-                    .fluidInputs(SolderingAlloy.getFluid(2880))
-                    .output(ENERGY_OUTPUT_HATCH[UV])
-                    .duration(800).EUt(VA[UV]).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[ULV])
+                .input(cableGtSingle, RedAlloy, 2)
+                .input(VOLTAGE_COIL_ULV)
+                .output(ENERGY_INPUT_HATCH[ULV])
+                .duration(200).EUt(VA[ULV]).buildAndRegister();
 
-            // Energy Input Hatches
+        ModHandler.addShapedRecipe(true, "energy_hatch.lv", ENERGY_INPUT_HATCH[LV].getStackForm(),
+                " V ", "CHC", "   ",
+                'C', new UnificationEntry(cableGtSingle, Tin),
+                'V', VOLTAGE_COIL_LV.getStackForm(),
+                'H', HULL[LV].getStackForm());
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[ULV])
-                    .input(cableGtSingle, Lead, 2)
-                    .input(circuit, Primitive)
-                    .input(VOLTAGE_COIL_ULV, 2)
-                    .input(rotor, Lead)
-                    .fluidInputs(Lubricant.getFluid(2000))
-                    .output(ENERGY_INPUT_HATCH[ULV])
-                    .duration(200).EUt(VA[ULV]).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[LV])
+                .input(cableGtSingle, Tin, 2)
+                .input(VOLTAGE_COIL_LV)
+                .output(ENERGY_INPUT_HATCH[LV])
+                .duration(200).EUt(VA[LV]).buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[LV])
-                    .input(cableGtSingle, Tin, 2)
-                    .input(circuit, Basic)
-                    .input(VOLTAGE_COIL_LV, 2)
-                    .input(ELECTRIC_PUMP_LV)
-                    .fluidInputs(Lubricant.getFluid(2000))
-                    .output(ENERGY_INPUT_HATCH[LV])
-                    .duration(200).EUt(VA[LV]).buildAndRegister();
+        ModHandler.addShapedRecipe(true, "energy_hatch.mv", ENERGY_INPUT_HATCH[MV].getStackForm(),
+                " V ", "CHC", " P ",
+                'C', new UnificationEntry(cableGtSingle, Copper),
+                'P', ULTRA_LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(),
+                'V', VOLTAGE_COIL_MV.getStackForm(),
+                'H', HULL[MV].getStackForm());
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[MV])
-                    .input(cableGtSingle, Copper)
-                    .input(INDUCTOR, 2)
-                    .input(VOLTAGE_COIL_MV, 2)
-                    .input(ELECTRIC_PUMP_MV)
-                    .fluidInputs(Lubricant.getFluid(2000))
-                    .output(ENERGY_INPUT_HATCH[MV])
-                    .duration(200).EUt(VA[MV]).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[MV])
+                .input(cableGtSingle, Copper, 2)
+                .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT)
+                .input(VOLTAGE_COIL_MV)
+                .output(ENERGY_INPUT_HATCH[MV])
+                .duration(200).EUt(VA[MV]).buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[HV])
-                    .input(cableGtSingle, Gold)
-                    .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(VOLTAGE_COIL_HV, 2)
-                    .input(ELECTRIC_PUMP_HV)
-                    .fluidInputs(Helium.getFluid(1000))
-                    .output(ENERGY_INPUT_HATCH[HV])
-                    .duration(200).EUt(VA[HV]).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[HV])
+                .input(cableGtSingle, Gold, 2)
+                .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_HV)
+                .fluidInputs(SodiumPotassium.getFluid(1000))
+                .output(ENERGY_INPUT_HATCH[HV])
+                .duration(200).EUt(VA[HV]).buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[HV])
-                    .input(cableGtSingle, Gold)
-                    .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(VOLTAGE_COIL_HV, 2)
-                    .input(ELECTRIC_PUMP_HV)
-                    .fluidInputs(SodiumPotassium.getFluid(1000))
-                    .output(ENERGY_INPUT_HATCH[HV])
-                    .duration(200).EUt(VA[HV]).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[EV])
+                .input(cableGtSingle, Aluminium, 2)
+                .input(LOW_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_EV)
+                .fluidInputs(SodiumPotassium.getFluid(2000))
+                .output(ENERGY_INPUT_HATCH[EV])
+                .duration(200).EUt(VA[EV]).buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[EV])
-                    .input(cableGtSingle, Aluminium)
-                    .input(LOW_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(VOLTAGE_COIL_EV, 2)
-                    .input(ELECTRIC_PUMP_EV)
-                    .fluidInputs(Helium.getFluid(2000))
-                    .output(ENERGY_INPUT_HATCH[EV])
-                    .duration(200).EUt(VA[EV]).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[IV])
+                .input(cableGtSingle, Tungsten, 2)
+                .input(POWER_INTEGRATED_CIRCUIT, 2)
+                .input(VOLTAGE_COIL_IV)
+                .fluidInputs(SodiumPotassium.getFluid(3000))
+                .output(ENERGY_INPUT_HATCH[IV])
+                .duration(200).EUt(VA[IV]).buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[EV])
-                    .input(cableGtSingle, Aluminium)
-                    .input(LOW_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(VOLTAGE_COIL_EV, 2)
-                    .input(ELECTRIC_PUMP_EV)
-                    .fluidInputs(SodiumPotassium.getFluid(2000))
-                    .output(ENERGY_INPUT_HATCH[EV])
-                    .duration(200).EUt(VA[EV]).buildAndRegister();
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(HULL[LuV])
+                .input(cableGtSingle, NiobiumTitanium, 4)
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(circuit, Tier.Master)
+                .input(VOLTAGE_COIL_LUV, 2)
+                .fluidInputs(SodiumPotassium.getFluid(6000))
+                .fluidInputs(SolderingAlloy.getFluid(720))
+                .output(ENERGY_INPUT_HATCH[LuV])
+                .duration(400).EUt(VA[LuV]).buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[IV])
-                    .input(cableGtSingle, Tungsten)
-                    .input(POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(VOLTAGE_COIL_IV, 2)
-                    .input(ELECTRIC_PUMP_IV)
-                    .fluidInputs(Helium.getFluid(3000))
-                    .output(ENERGY_INPUT_HATCH[IV])
-                    .duration(200).EUt(VA[IV]).buildAndRegister();
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(HULL[ZPM])
+                .input(cableGtSingle, VanadiumGallium, 4)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(circuit, Tier.Ultimate)
+                .input(VOLTAGE_COIL_ZPM, 2)
+                .fluidInputs(SodiumPotassium.getFluid(8000))
+                .fluidInputs(SolderingAlloy.getFluid(1440))
+                .output(ENERGY_INPUT_HATCH[ZPM])
+                .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[IV])
-                    .input(cableGtSingle, Tungsten)
-                    .input(POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(VOLTAGE_COIL_IV, 2)
-                    .input(ELECTRIC_PUMP_IV)
-                    .fluidInputs(SodiumPotassium.getFluid(3000))
-                    .output(ENERGY_INPUT_HATCH[IV])
-                    .duration(200).EUt(VA[IV]).buildAndRegister();
-
-            ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .input(HULL[LuV])
-                    .input(cableGtSingle, NiobiumTitanium, 2)
-                    .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(circuit, Master, 2)
-                    .input(VOLTAGE_COIL_LUV, 2)
-                    .input(ELECTRIC_PUMP_LUV)
-                    .fluidInputs(Helium.getFluid(6000))
-                    .fluidInputs(SolderingAlloy.getFluid(720))
-                    .output(ENERGY_INPUT_HATCH[LuV])
-                    .duration(400).EUt(VA[LuV]).buildAndRegister();
-
-            ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .input(HULL[LuV])
-                    .input(cableGtSingle, NiobiumTitanium, 2)
-                    .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(circuit, Master, 2)
-                    .input(VOLTAGE_COIL_LUV, 2)
-                    .input(ELECTRIC_PUMP_LUV)
-                    .fluidInputs(SodiumPotassium.getFluid(6000))
-                    .fluidInputs(SolderingAlloy.getFluid(720))
-                    .output(ENERGY_INPUT_HATCH[LuV])
-                    .duration(400).EUt(VA[LuV]).buildAndRegister();
-
-            ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .input(HULL[ZPM])
-                    .input(cableGtDouble, VanadiumGallium, 2)
-                    .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(circuit, Ultimate, 2)
-                    .input(VOLTAGE_COIL_ZPM, 2)
-                    .input(ELECTRIC_PUMP_ZPM)
-                    .fluidInputs(Helium.getFluid(6000))
-                    .fluidInputs(SolderingAlloy.getFluid(1440))
-                    .output(ENERGY_INPUT_HATCH[ZPM])
-                    .duration(600).EUt(VA[ZPM]).buildAndRegister();
-
-            ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .input(HULL[ZPM])
-                    .input(cableGtDouble, VanadiumGallium, 2)
-                    .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(circuit, Ultimate, 2)
-                    .input(VOLTAGE_COIL_ZPM, 2)
-                    .input(ELECTRIC_PUMP_ZPM)
-                    .fluidInputs(SodiumPotassium.getFluid(6000))
-                    .fluidInputs(SolderingAlloy.getFluid(1440))
-                    .output(ENERGY_INPUT_HATCH[ZPM])
-                    .duration(600).EUt(VA[ZPM]).buildAndRegister();
-
-            ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .input(HULL[UV])
-                    .input(cableGtDouble, YttriumBariumCuprate, 2)
-                    .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(circuit, Super, 2)
-                    .input(VOLTAGE_COIL_UV, 2)
-                    .input(ELECTRIC_PUMP_UV)
-                    .fluidInputs(Helium.getFluid(12000))
-                    .fluidInputs(SolderingAlloy.getFluid(2880))
-                    .output(ENERGY_INPUT_HATCH[UV])
-                    .duration(800).EUt(VA[UV]).buildAndRegister();
-
-            ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                    .input(HULL[UV])
-                    .input(cableGtDouble, YttriumBariumCuprate, 2)
-                    .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                    .input(circuit, Super, 2)
-                    .input(VOLTAGE_COIL_UV, 2)
-                    .input(ELECTRIC_PUMP_UV)
-                    .fluidInputs(SodiumPotassium.getFluid(12000))
-                    .fluidInputs(SolderingAlloy.getFluid(2880))
-                    .output(ENERGY_INPUT_HATCH[UV])
-                    .duration(800).EUt(VA[UV]).buildAndRegister();
-
-        }
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(HULL[UV])
+                .input(cableGtSingle, YttriumBariumCuprate, 4)
+                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(circuit, Tier.Super)
+                .input(VOLTAGE_COIL_UV, 2)
+                .fluidInputs(SodiumPotassium.getFluid(10000))
+                .fluidInputs(SolderingAlloy.getFluid(2880))
+                .output(ENERGY_INPUT_HATCH[UV])
+                .duration(800).EUt(VA[UV]).buildAndRegister();
 
         // Adjustable Transformers
 
@@ -644,7 +520,7 @@ public class MetaTileEntityMachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[EV])
                 .input(frameGt, Titanium, 4)
-                .input(circuit, Extreme, 4)
+                .input(circuit, Tier.Extreme, 4)
                 .input(ELECTRIC_MOTOR_EV, 4)
                 .input(ELECTRIC_PUMP_EV, 4)
                 .input(CONVEYOR_MODULE_EV, 4)
@@ -655,7 +531,7 @@ public class MetaTileEntityMachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[IV])
                 .input(frameGt, TungstenSteel, 4)
-                .input(circuit, Elite, 4)
+                .input(circuit, Tier.Elite, 4)
                 .input(ELECTRIC_MOTOR_IV, 4)
                 .input(ELECTRIC_PUMP_IV, 4)
                 .input(CONVEYOR_MODULE_IV, 4)
@@ -666,7 +542,7 @@ public class MetaTileEntityMachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[LuV])
                 .input(frameGt, HSSS, 4)
-                .input(circuit, Master, 4)
+                .input(circuit, Tier.Master, 4)
                 .input(ELECTRIC_MOTOR_LUV, 4)
                 .input(ELECTRIC_PUMP_LUV, 4)
                 .input(CONVEYOR_MODULE_LUV, 4)

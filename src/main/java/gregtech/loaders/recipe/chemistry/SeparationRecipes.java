@@ -5,7 +5,6 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.blocks.wood.BlockGregLog;
 import gregtech.common.items.MetaItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -24,7 +23,7 @@ import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.items.MetaItems.PLANT_BALL;
-import static gregtech.common.items.MetaItems.RUBBER_DROP;
+import static gregtech.common.items.MetaItems.STICKY_RESIN;
 
 public class SeparationRecipes {
 
@@ -105,15 +104,15 @@ public class SeparationRecipes {
         }
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(400).EUt(5)
-                .input(RUBBER_DROP)
+                .input(STICKY_RESIN)
                 .output(dust, RawRubber, 3)
                 .chancedOutput(PLANT_BALL, 1000, 850)
                 .fluidOutputs(Glue.getFluid(100))
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(20)
-                .inputs(MetaBlocks.LOG.getItem(BlockGregLog.LogVariant.RUBBER_WOOD))
-                .chancedOutput(RUBBER_DROP, 5000, 1200)
+                .inputs(new ItemStack(MetaBlocks.RUBBER_LOG))
+                .chancedOutput(STICKY_RESIN, 5000, 1200)
                 .chancedOutput(PLANT_BALL, 3750, 900)
                 .chancedOutput(dust, Carbon, 2500, 600)
                 .chancedOutput(dust, Wood, 2500, 700)
@@ -362,7 +361,7 @@ public class SeparationRecipes {
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .input(dust, Graphite)
                 .output(dust, Carbon, 4)
-                .duration(100).EUt(26).buildAndRegister();
+                .duration(100).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(AceticAcid.getFluid(2000))
@@ -437,19 +436,6 @@ public class SeparationRecipes {
                 .fluidOutputs(Water.getFluid(5000))
                 .fluidOutputs(Hydrogen.getFluid(6000))
                 .duration(480).EUt(VA[MV]).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, SodiumHydroxide, 3)
-                .output(dust, Sodium)
-                .fluidOutputs(Oxygen.getFluid(1000))
-                .fluidOutputs(Hydrogen.getFluid(1000))
-                .duration(360).EUt(60).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
-                .fluidInputs(HydrochloricAcid.getFluid(1000))
-                .fluidOutputs(Hydrogen.getFluid(1000))
-                .fluidOutputs(Chlorine.getFluid(1000))
-                .duration(360).EUt(30).buildAndRegister();
 
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()

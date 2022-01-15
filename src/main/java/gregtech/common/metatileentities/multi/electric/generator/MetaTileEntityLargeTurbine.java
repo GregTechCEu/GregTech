@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IRotorHolder;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
+import gregtech.api.metatileentity.IVoidable;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.FuelMultiblockController;
@@ -31,7 +32,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntityLargeTurbine extends FuelMultiblockController implements ITieredMetaTileEntity {
+public class MetaTileEntityLargeTurbine extends FuelMultiblockController implements ITieredMetaTileEntity, IVoidable {
 
     public final int tier;
 
@@ -80,6 +81,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
      * @return true if turbine is formed and it's face is free and contains
      * only air blocks in front of rotor holder
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isRotorFaceFree() {
         IRotorHolder rotorHolder = getRotorHolder();
         if (rotorHolder != null)
@@ -200,5 +202,10 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
     @Override
     public int getTier() {
         return tier;
+    }
+
+    @Override
+    public boolean canVoidRecipeOutputs() {
+        return true;
     }
 }

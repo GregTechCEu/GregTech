@@ -181,6 +181,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.multiblock.large_boiler.rate_tooltip", (int) (boilerType.steamPerTick() * 20 * boilerType.runtimeBoost(20) / 20.0), boilerType.steamPerTick()));
         tooltip.add(I18n.format("gregtech.multiblock.large_boiler.heat_time_tooltip", boilerType.getTicksToBoiling() / 20.0));
+        tooltip.add(I18n.format("gregtech.multiblock.large_boiler.explosion_tooltip"));
     }
 
     @Override

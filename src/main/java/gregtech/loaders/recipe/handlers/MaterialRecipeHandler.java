@@ -203,9 +203,15 @@ public class MaterialRecipeHandler {
         }
 
         if (!material.hasFlag(NO_SMASHING) && material.hasProperty(PropertyKey.TOOL)) {
-            ModHandler.addShapedRecipe(String.format("wrench_%s", material.toString()),
-                    MetaItems.WRENCH.getStackForm(material),
-                    "IhI", "III", " I ", 'I', new UnificationEntry(ingotPrefix, material));
+            if (ConfigHolder.recipes.plateWrenches && material.hasFlag(GENERATE_PLATE)) {
+                ModHandler.addShapedRecipe(String.format("wrench_%s", material.toString()),
+                        MetaItems.WRENCH.getStackForm(material),
+                        "PhP", "PPP", " P ", 'P', new UnificationEntry(OrePrefix.plate, material));
+            } else {
+                ModHandler.addShapedRecipe(String.format("wrench_%s", material.toString()),
+                        MetaItems.WRENCH.getStackForm(material),
+                        "IhI", "III", " I ", 'I', new UnificationEntry(ingotPrefix, material));
+            }
         }
 
         if (material.hasFlag(GENERATE_ROD)) {

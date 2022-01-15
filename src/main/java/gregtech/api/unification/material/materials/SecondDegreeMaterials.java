@@ -158,14 +158,14 @@ public class SecondDegreeMaterials {
                 .build();
 
         GraniteBlack = new Material.Builder(2019, "granite_black")
-                .dust(3)
+                .dust(1)
                 .color(0x0A0A0A).iconSet(ROUGH)
                 .flags(NO_SMASHING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 4, Biotite, 1)
                 .build();
 
         GraniteRed = new Material.Builder(2020, "granite_red")
-                .dust(3)
+                .dust(1)
                 .color(0xFF0080).iconSet(ROUGH)
                 .flags(NO_SMASHING)
                 .components(Aluminium, 2, PotassiumFeldspar, 1, Oxygen, 3)
@@ -294,7 +294,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         Andesite = new Material.Builder(2039, "andesite")
-                .dust()
+                .dust(1)
                 .color(0xBEBEBE).iconSet(ROUGH)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Asbestos, 4, Saltpeter, 1)
@@ -447,7 +447,7 @@ public class SecondDegreeMaterials {
         RhodiumPlatedPalladium = new Material.Builder(2062, "rhodium_plated_palladium")
                 .ingot().fluid()
                 .color(0xDAC5C5).iconSet(SHINY)
-                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
+                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE, GENERATE_SMALL_GEAR)
                 .components(Palladium, 3, Rhodium, 1)
                 .toolStats(12.0f, 3.0f, 1024, 33)
                 .blastTemp(4500, GasTier.HIGH, VA[IV], 1200)

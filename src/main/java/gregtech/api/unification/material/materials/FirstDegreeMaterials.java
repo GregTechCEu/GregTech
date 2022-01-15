@@ -490,7 +490,7 @@ public class FirstDegreeMaterials {
         Sapphire = new Material.Builder(314, "sapphire")
                 .gem().ore()
                 .color(0x6464C8).iconSet(GEM_VERTICAL)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
                 .components(Aluminium, 2, Oxygen, 3)
                 .toolStats(7.5f, 4.0f, 256, 15)
                 .build();
@@ -645,7 +645,7 @@ public class FirstDegreeMaterials {
         WroughtIron = new Material.Builder(335, "wrought_iron")
                 .ingot().fluid()
                 .color(0xC8B4B4).iconSet(METALLIC)
-                .flags(EXT_METAL, GENERATE_GEAR, GENERATE_FOIL, GENERATE_ROUND, MORTAR_GRINDABLE, GENERATE_RING, GENERATE_LONG_ROD, DISABLE_DECOMPOSITION, BLAST_FURNACE_CALCITE_TRIPLE)
+                .flags(EXT_METAL, GENERATE_GEAR, GENERATE_FOIL, GENERATE_ROUND, MORTAR_GRINDABLE, GENERATE_RING, GENERATE_LONG_ROD, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION, BLAST_FURNACE_CALCITE_TRIPLE)
                 .components(Iron, 1)
                 .toolStats(6.0f, 3.5f, 384, 21)
                 .fluidPipeProperties(2387, 30, true)
@@ -697,7 +697,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Graphite = new Material.Builder(341, "graphite")
-                .ingot().ore().fluid()
+                .ore()
                 .color(0x808080)
                 .flags(NO_SMELTING, FLAMMABLE, DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
@@ -923,7 +923,6 @@ public class FirstDegreeMaterials {
         SodiumHydroxide = new Material.Builder(377, "sodium_hydroxide")
                 .dust(1)
                 .color(0x003380)
-                .flags(DISABLE_DECOMPOSITION)
                 .components(Sodium, 1, Oxygen, 1, Hydrogen, 1)
                 .build();
 
@@ -1180,7 +1179,6 @@ public class FirstDegreeMaterials {
 
         HydrochloricAcid = new Material.Builder(419, "hydrochloric_acid")
                 .fluid()
-                .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 1, Chlorine, 1)
                 .build();
 

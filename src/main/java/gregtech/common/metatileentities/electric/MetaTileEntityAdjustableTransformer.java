@@ -40,6 +40,7 @@ public class MetaTileEntityAdjustableTransformer extends MetaTileEntityTransform
     public MetaTileEntityAdjustableTransformer(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
         this.ampIndex = 2;
+        reinitializeEnergyContainer();
     }
 
     @Override

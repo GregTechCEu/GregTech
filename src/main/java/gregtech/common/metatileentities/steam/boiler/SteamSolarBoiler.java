@@ -46,6 +46,11 @@ public class SteamSolarBoiler extends SteamBoiler {
     }
 
     @Override
+    protected int getCoolDownRate() {
+        return 3;
+    }
+
+    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return createUITemplate(entityPlayer)
                 .progressBar(() -> checkCanSeeSun() ? 1.0 : 0.0, 114, 44, 20, 20,

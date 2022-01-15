@@ -37,6 +37,8 @@ public class VanillaOverrideRecipes {
             miscRecipes();
         if (ConfigHolder.recipes.hardDyeRecipes)
             dyeRecipes();
+        if (ConfigHolder.recipes.harderBrickRecipes)
+            ModHandler.removeFurnaceSmelting(new ItemStack(Items.CLAY_BALL, 1, GTValues.W));
         removeCompressionRecipes();
         toolArmorRecipes();
 
@@ -630,7 +632,7 @@ public class VanillaOverrideRecipes {
                 'S', new ItemStack(Items.STRING),
                 'P', new ItemStack(Items.PAPER),
                 'L', new ItemStack(Items.LEATHER),
-                'G', MetaItems.RUBBER_DROP.getStackForm().copy()
+                'G', MetaItems.STICKY_RESIN.getStackForm().copy()
         );
 
         ModHandler.removeRecipeByName(new ResourceLocation("brewing_stand"));
@@ -713,8 +715,6 @@ public class VanillaOverrideRecipes {
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:polished_granite"));
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:polished_diorite"));
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:polished_andesite"));
-
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.CLAY_BALL, 1, GTValues.W));
     }
 
     /**

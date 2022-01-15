@@ -15,15 +15,13 @@ import org.lwjgl.opengl.GL13;
 public class BloomEffect {
     private static Framebuffer[] BUFFERS_D;
     private static Framebuffer[] BUFFERS_U;
+    public static float strength = (float) ConfigHolder.client.shader.strength;
+    public static float baseBrightness = (float) ConfigHolder.client.shader.baseBrightness;
+    public static float highBrightnessThreshold = (float) ConfigHolder.client.shader.highBrightnessThreshold;
+    public static float lowBrightnessThreshold = (float) ConfigHolder.client.shader.lowBrightnessThreshold;
+    public static float step = (float) ConfigHolder.client.shader.step;
 
-    public static void renderLOG(Framebuffer highLightFBO, Framebuffer backgroundFBO, float strength) {
-        PingPongBuffer.updateSize(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
-        BlurEffect.updateSize(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
-        highLightFBO.bindFramebufferTexture();
-        blend(BlurEffect.renderBlur1((float) ConfigHolder.client.shader.step), backgroundFBO, strength);
-    }
-
-    private static void blend(Framebuffer bloom, Framebuffer backgroundFBO, float strength) {
+    private static void blend(Framebuffer bloom, Framebuffer backgroundFBO) {
         // bind main fbo
         GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
         GlStateManager.enableTexture2D();
@@ -39,9 +37,9 @@ public class BloomEffect {
             uniformCache.glUniform1I("buffer_a", 0);
             uniformCache.glUniform1I("buffer_b", 1);
             uniformCache.glUniform1F("intensive", strength);
-            uniformCache.glUniform1F("base", (float) ConfigHolder.client.shader.baseBrightness);
-            uniformCache.glUniform1F("threshold_up", (float) ConfigHolder.client.shader.highBrightnessThreshold);
-            uniformCache.glUniform1F("threshold_down", (float) ConfigHolder.client.shader.lowBrightnessThreshold);
+            uniformCache.glUniform1F("base", baseBrightness);
+            uniformCache.glUniform1F("threshold_up", highBrightnessThreshold);
+            uniformCache.glUniform1F("threshold_down", lowBrightnessThreshold);
         });
 
         GlStateManager.setActiveTexture(GL13.GL_TEXTURE1);
@@ -93,7 +91,14 @@ public class BloomEffect {
         PingPongBuffer.updateSize(lastWidth, lastHeight);
     }
 
-    public static void renderUnity(Framebuffer highLightFBO, Framebuffer backgroundFBO, float strength) {
+    public static void renderLOG(Framebuffer highLightFBO, Framebuffer backgroundFBO) {
+        PingPongBuffer.updateSize(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
+        BlurEffect.updateSize(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
+        highLightFBO.bindFramebufferTexture();
+        blend(BlurEffect.renderBlur1(step), backgroundFBO);
+    }
+
+    public static void renderUnity(Framebuffer highLightFBO, Framebuffer backgroundFBO) {
         cleanUP(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
 
         renderDownSampling(highLightFBO, BUFFERS_D[0]);
@@ -113,7 +118,7 @@ public class BloomEffect {
         GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
         GlStateManager.bindTexture(0);
 
-        blend(PingPongBuffer.getCurrentBuffer(false), backgroundFBO, strength);
+        blend(PingPongBuffer.getCurrentBuffer(false), backgroundFBO);
     }
 
     private static void renderDownSampling(Framebuffer U, Framebuffer D) {
@@ -137,13 +142,12 @@ public class BloomEffect {
         });
     }
 
-    public static void renderUnreal(Framebuffer highLightFBO, Framebuffer backgroundFBO, float strength) {
+    public static void renderUnreal(Framebuffer highLightFBO, Framebuffer backgroundFBO) {
         cleanUP(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
 
         // blur all mips
         int[] kernelSizeArray = new int[]{3, 5, 7, 9, 11};
         highLightFBO.bindFramebufferTexture();
-        final float step = (float) ConfigHolder.client.shader.step;
         for (int i = 0; i < BUFFERS_D.length; i++) {
             Framebuffer buffer_h = BUFFERS_D[i];
             int kernel = kernelSizeArray[i];
@@ -183,7 +187,7 @@ public class BloomEffect {
             GlStateManager.bindTexture(0);
         }
 
-        blend(BUFFERS_D[0], backgroundFBO, 1);
+        blend(BUFFERS_D[0], backgroundFBO);
     }
 
 }

@@ -93,13 +93,13 @@ public class HardwareSlotWidget extends WidgetGroup {
     public void drawInForeground(int mouseX, int mouseY) {
         if (hardware != null && isMouseOverElement(mouseX, mouseY)) {
             if (!hardware.hasHW()) {
-                drawHoveringText(null, Collections.singletonList(hardware.getLocalizedName()), 300, mouseX, mouseY);
+                drawHoveringText(ItemStack.EMPTY, Collections.singletonList(hardware.getLocalizedName()), 300, mouseX, mouseY);
             } else {
                 String info = hardware.addInformation();
                 if (info == null) {
-                    drawHoveringText(null, Arrays.asList(hardware.getLocalizedName(), I18n.format("terminal.hardware.tip.remove")), 300, mouseX, mouseY);
+                    drawHoveringText(ItemStack.EMPTY, Arrays.asList(hardware.getLocalizedName(), I18n.format("terminal.hardware.tip.remove")), 300, mouseX, mouseY);
                 } else {
-                    drawHoveringText(null, Arrays.asList(String.format("%s (%s)", hardware.getLocalizedName(), info), I18n.format("terminal.hardware.tip.remove")), 300, mouseX, mouseY);
+                    drawHoveringText(ItemStack.EMPTY, Arrays.asList(String.format("%s (%s)", hardware.getLocalizedName(), info), I18n.format("terminal.hardware.tip.remove")), 300, mouseX, mouseY);
                 }
             }
         }

@@ -6,13 +6,18 @@ import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconType;
+import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.IMaterialProperty;
+import gregtech.api.unification.material.properties.PlasmaProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.function.TriConsumer;
 import gregtech.common.ConfigHolder;
+import gregtech.common.MetaFluids;
 import net.minecraft.client.resources.I18n;
+import net.minecraftforge.fluids.Fluid;
 import org.apache.commons.lang3.Validate;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -504,7 +509,7 @@ public class OrePrefix {
     }
 
     public boolean doGenerateItem(Material material) {
-        return !material.isHidden() && !isSelfReferencing && generationCondition != null && !isIgnored(material) && generationCondition.test(material);
+        return !material.isHidden() && !isSelfReferencing && !isIgnored(material) && (generationCondition == null || generationCondition.test(material));
     }
 
     public void setGenerationCondition(@Nullable Predicate<Material> in) {
@@ -531,6 +536,23 @@ public class OrePrefix {
         }
         if (material != null) {
             generatedMaterials.add(material);
+            if (material.isHidden() && (material.hasFluid() || material.hasProperty(PropertyKey.PLASMA))) {
+                FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);
+                if (fluidProperty != null && fluidProperty.getFluid() == null) {
+                    int temperature = fluidProperty.getFluidTemperature();
+                    Fluid fluid = MetaFluids.registerFluid(material, MetaFluids.FluidType.NORMAL, temperature, fluidProperty.hasBlock());
+                    fluidProperty.setFluid(fluid);
+                    FluidTooltipUtil.registerTooltip(fluid, material.getChemicalFormula());
+                }
+
+                PlasmaProperty plasmaProperty = material.getProperty(PropertyKey.PLASMA);
+                if (plasmaProperty != null && plasmaProperty.getPlasma() == null) {
+                    int baseTemperature = fluidProperty == null ? 0 : fluidProperty.getFluidTemperature();
+                    Fluid fluid = MetaFluids.registerFluid(material, MetaFluids.FluidType.PLASMA, baseTemperature + 30000, false);
+                    plasmaProperty.setPlasma(fluid);
+                    FluidTooltipUtil.registerTooltip(fluid, material.getChemicalFormula());
+                }
+            }
         }
     }
 

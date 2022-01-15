@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -39,11 +40,11 @@ public class RecyclingRecipes {
             ItemStack itemStack = entry.getKey();
             ItemMaterialInfo materialInfo = entry.getValue();
             ArrayList<MaterialStack> materialStacks = new ArrayList<>(materialInfo.getMaterials());
-            registerRecyclingRecipes(itemStack, materialStacks, false);
+            registerRecyclingRecipes(itemStack, materialStacks, false, null);
         }
     }
 
-    public static void registerRecyclingRecipes(ItemStack input, List<MaterialStack> components, boolean ignoreArcSmelting) {
+    public static void registerRecyclingRecipes(ItemStack input, List<MaterialStack> components, boolean ignoreArcSmelting, @Nullable OrePrefix prefix) {
 
         // Gather the valid Materials for use in recycling recipes.
         // - Filter out Materials that cannot create a Dust
@@ -61,8 +62,12 @@ public class RecyclingRecipes {
         // Calculate the voltage multiplier based on if a Material has a Blast Property
         int voltageMultiplier = calculateVoltageMultiplier(components);
 
-        registerMaceratorRecycling(input, components, voltageMultiplier);
-        registerExtractorRecycling(input, components, voltageMultiplier);
+        if (prefix != OrePrefix.dust) {
+            registerMaceratorRecycling(input, components, voltageMultiplier);
+        }
+        if (prefix != null) {
+            registerExtractorRecycling(input, components, voltageMultiplier, prefix);
+        }
         if (ignoreArcSmelting) return;
 
         if (components.size() == 1) {
@@ -78,7 +83,7 @@ public class RecyclingRecipes {
                 return;
             }
         }
-        registerArcRecycling(input, components, voltageMultiplier);
+        registerArcRecycling(input, components, voltageMultiplier, prefix);
     }
 
     private static void registerMaceratorRecycling(ItemStack input, List<MaterialStack> materials, int multiplier) {
@@ -102,7 +107,30 @@ public class RecyclingRecipes {
                 .buildAndRegister();
     }
 
-    private static void registerExtractorRecycling(ItemStack input, List<MaterialStack> materials, int multiplier) {
+    private static void registerExtractorRecycling(ItemStack input, List<MaterialStack> materials, int multiplier, @Nullable OrePrefix prefix) {
+
+        // Handle simple materials separately
+        if (prefix != null && prefix.secondaryMaterials.isEmpty()) {
+            MaterialStack ms = OreDictUnifier.getMaterial(input);
+            if (ms == null || ms.material == null) {
+                return;
+            }
+            Material m = ms.material;
+            if (m.hasProperty(PropertyKey.INGOT) && m.getProperty(PropertyKey.INGOT).getMacerateInto() != m) {
+                m = m.getProperty(PropertyKey.INGOT).getMacerateInto();
+            }
+            if (!m.hasProperty(PropertyKey.FLUID) || (prefix == OrePrefix.dust && m.hasProperty(PropertyKey.BLAST))) {
+                return;
+            }
+            RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                    .inputs(input.copy())
+                    .fluidOutputs(m.getFluid((int) (ms.amount * L / M)))
+                    .duration((int) Math.max(1, ms.amount * ms.material.getMass() / M))
+                    .EUt(GTValues.VA[GTValues.LV] * multiplier)
+                    .buildAndRegister();
+
+            return;
+        }
 
         // Find the first Material which can create a Fluid.
         // If no Material in the list can create a Fluid, return.
@@ -131,14 +159,18 @@ public class RecyclingRecipes {
         // Null check the Item before adding it to the Builder.
         // - Try to output an Ingot, otherwise output a Dust.
         if (itemMs != null) {
-            OrePrefix prefix = itemMs.material.hasProperty(PropertyKey.INGOT) ? OrePrefix.ingot : OrePrefix.dust;
-            extractorBuilder.output(prefix, itemMs.material, (int) (itemMs.amount / M));
+            OrePrefix outputPrefix = itemMs.material.hasProperty(PropertyKey.INGOT) ? OrePrefix.ingot : OrePrefix.dust;
+            extractorBuilder.output(outputPrefix, itemMs.material, (int) (itemMs.amount / M));
         }
 
         extractorBuilder.buildAndRegister();
     }
 
-    private static void registerArcRecycling(ItemStack input, List<MaterialStack> materials, int multiplier) {
+    private static void registerArcRecycling(ItemStack input, List<MaterialStack> materials, int multiplier, @Nullable OrePrefix prefix) {
+        // Block dusts from being arc'd instead of EBF'd
+        if (prefix == OrePrefix.dust && OreDictUnifier.getMaterial(input).material.hasProperty(PropertyKey.BLAST)) {
+            return;
+        }
 
         // Filter down the materials list.
         // - Map to the Arc Smelting result as defined below

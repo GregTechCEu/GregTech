@@ -65,6 +65,11 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
         return isHighPressure ? 40 : 45;
     }
 
+    @Override
+    protected int getCoolDownRate() {
+        return 1;
+    }
+
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         T result = super.getCapability(capability, side);
         if (result != null)

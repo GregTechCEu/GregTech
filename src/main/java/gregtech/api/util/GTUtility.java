@@ -861,9 +861,11 @@ public class GTUtility {
     /**
      * Alternative function for tank sizes, takes a tier input and returns the corresponding size
      * <p>
-     * This function is meant for use with generators, and always returns 16000
+     * This function is meant for use with generators
      */
-    public static final Function<Integer, Integer> generatorTankSizeFunction = tier -> 16000;
+    public static final Function<Integer, Integer> steamGeneratorTankSizeFunction = tier -> Math.min(16000 * (1 << (tier - 1)), 64000);
+
+    public static final Function<Integer, Integer> genericGeneratorTankSizeFunction = tier -> Math.min(4000 * (1 << (tier - 1)), 16000);
 
     public static String romanNumeralString(int num) {
 

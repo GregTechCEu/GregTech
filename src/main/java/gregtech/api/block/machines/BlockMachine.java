@@ -95,7 +95,8 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Nullable
     @Override
     public String getHarvestTool(@Nonnull IBlockState state) {
-        return ((IExtendedBlockState) state).getValue(HARVEST_TOOL);
+        String value = ((IExtendedBlockState) state).getValue(HARVEST_TOOL);
+        return value == null ? "wrench" : value; //safety check for mods who don't handle state properly
     }
 
     @Override

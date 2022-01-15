@@ -2514,6 +2514,8 @@ cover.smart_item_filter.matching_mode.default=По умолчанию
 cover.smart_item_filter.matching_mode.ignore_fluid=Игнорировать жидкости
 cover.smart_item_filter.matching_mode.description=§eПо умолчанию§r - будет фильтровать предметы и жидкости по определенным критериям. /n§eИгнорировать жидкостиs§r - будет фильтровать только предметы.
 
+behavior.prospector.not_enough_energy=Ошибка анализа: Недостаточно энергии!
+
 metaitem.tool.matchbox.tooltip=This is not a Car
 metaitem.energy_crystal.tooltip=Reusable Battery
 metaitem.lapotron_crystal.tooltip=Reusable Battery

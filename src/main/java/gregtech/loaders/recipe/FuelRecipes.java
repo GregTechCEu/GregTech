@@ -3,6 +3,7 @@ package gregtech.loaders.recipe;
 import gregtech.api.recipes.RecipeMaps;
 
 import static gregtech.api.GTValues.LV;
+import static gregtech.api.GTValues.EV;
 import static gregtech.api.GTValues.V;
 import static gregtech.api.unification.material.Materials.*;
 
@@ -99,12 +100,6 @@ public class FuelRecipes {
         //gas turbine fuels
         RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
                 .fluidInputs(NaturalGas.getFluid(8))
-                .duration(5)
-                .EUt((int) V[LV])
-                .buildAndRegister();
-
-        RecipeMaps.GAS_TURBINE_FUELS.recipeBuilder()
-                .fluidInputs(Hydrogen.getFluid(8))
                 .duration(5)
                 .EUt((int) V[LV])
                 .buildAndRegister();
@@ -270,36 +265,36 @@ public class FuelRecipes {
         RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(Helium.getPlasma(1))
                 .fluidOutputs(Helium.getFluid(1))
-                .duration(2560)
-                .EUt((int) V[LV])
+                .duration(40)
+                .EUt((int) V[EV])
                 .buildAndRegister();
 
         RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(Oxygen.getPlasma(1))
                 .fluidOutputs(Oxygen.getFluid(1))
-                .duration(3072)
-                .EUt((int) V[LV])
+                .duration(48)
+                .EUt((int) V[EV])
                 .buildAndRegister();
 
         RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(Nitrogen.getPlasma(1))
                 .fluidOutputs(Nitrogen.getFluid(1))
-                .duration(4096)
-                .EUt((int) V[LV])
+                .duration(64)
+                .EUt((int) V[EV])
                 .buildAndRegister();
 
         RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(Iron.getPlasma(1))
                 .fluidOutputs(Iron.getFluid(1))
-                .duration(6144)
-                .EUt((int) V[LV])
+                .duration(96)
+                .EUt((int) V[EV])
                 .buildAndRegister();
 
         RecipeMaps.PLASMA_GENERATOR_FUELS.recipeBuilder()
                 .fluidInputs(Nickel.getPlasma(1))
                 .fluidOutputs(Nickel.getFluid(1))
-                .duration(12288)
-                .EUt((int) V[LV])
+                .duration(192)
+                .EUt((int) V[EV])
                 .buildAndRegister();
     }
 }

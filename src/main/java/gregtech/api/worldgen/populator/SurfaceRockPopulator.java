@@ -90,36 +90,50 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
      */
     @Override
     public void populateChunk(World world, int chunkX, int chunkZ, Random random, OreDepositDefinition definition, GridEntryInfo gridEntryInfo) {
-        int stonesCount = random.nextInt(2);
-        if (stonesCount > 0 && world.getWorldType() != WorldType.FLAT) {
+        int stonesCount = random.nextInt(2) + 1;
+        if (world.getWorldType() != WorldType.FLAT) {
             if (findUndergroundMaterials(gridEntryInfo.getGeneratedBlocks(definition, chunkX, chunkZ)).isEmpty())
                 return;
+
+            int baseX = chunkX * 16 + 8;
+            int baseZ = chunkZ * 16 + 8;
+
             for (int i = 0; i < stonesCount; i++) {
-                int randomX = chunkX * 16 + 8 + random.nextInt(16);
-                int randomZ = chunkZ * 16 + 8 + random.nextInt(16);
-                BlockPos topBlockPos = world.getTopSolidOrLiquidBlock(new BlockPos(randomX, 0, randomZ));
-                Block blockAtPos = world.getBlockState(topBlockPos).getBlock();
-
-                //Checks if the block is a replaceable feature like grass, snow layers, or Air. Liquids are replaceable, so
-                // exclude one deep liquid blocks, for looks
-                if (!blockAtPos.isReplaceable(world, topBlockPos) || world.getBlockState(topBlockPos).getMaterial().isLiquid()) {
-                    continue;
-                }
-
-                //Checks if the block below has a solid top. This method is also used to check what blocks redstone can
-                //be placed on.
-                if (!world.isSideSolid(topBlockPos.down(), EnumFacing.UP)) {
-                    continue;
-                }
-
-                setStoneBlock(world, topBlockPos);
+                int randomX = baseX + random.nextInt(8);
+                int randomZ = baseZ + random.nextInt(8);
+                generateSurfaceRock(world, randomX, randomZ);
             }
+            // guarantee a surface rock in the center of the vein
+            generateSurfaceRock(world, gridEntryInfo.getCenterPos(definition));
         }
 
         //Log if all Surface Rock generation attempts were failed
-        if (failedGenerationCounter == stonesCount && stonesCount > 0 && world.getWorldType() != WorldType.FLAT) {
+        if (failedGenerationCounter == stonesCount && world.getWorldType() != WorldType.FLAT) {
             GTLog.logger.debug("Failed to generate surface rocks for vein {} at chunk with position: x: {}, z: {}", definition.getDepositName(), chunkX, chunkZ);
         }
+    }
+
+    public void generateSurfaceRock(World world, int x, int z) {
+        generateSurfaceRock(world, new BlockPos(x, 0, z));
+    }
+
+    public void generateSurfaceRock(World world, BlockPos pos) {
+        BlockPos topBlockPos = world.getTopSolidOrLiquidBlock(pos);
+        Block blockAtPos = world.getBlockState(topBlockPos).getBlock();
+
+        //Checks if the block is a replaceable feature like grass, snow layers, or Air. Liquids are replaceable, so
+        // exclude one deep liquid blocks, for looks
+        if (!blockAtPos.isReplaceable(world, topBlockPos) || world.getBlockState(topBlockPos).getMaterial().isLiquid()) {
+            return;
+        }
+
+        //Checks if the block below has a solid top. This method is also used to check what blocks redstone can
+        //be placed on.
+        if (!world.isSideSolid(topBlockPos.down(), EnumFacing.UP)) {
+            return;
+        }
+
+        setStoneBlock(world, topBlockPos);
     }
 
     public Material getMaterial() {

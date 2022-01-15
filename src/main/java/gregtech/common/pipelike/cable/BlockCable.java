@@ -7,6 +7,7 @@ import gregtech.api.capability.tool.ICutterItem;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.toolitem.IToolStats;
+import gregtech.api.pipenet.block.ItemBlockPipe;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -34,6 +35,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -133,6 +135,15 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     @Override
     public boolean canPipeConnectToBlock(IPipeTile<Insulation, WireProperties> selfTile, EnumFacing side, TileEntity tile) {
         return tile != null && tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, side.getOpposite()) != null;
+    }
+
+    @Override
+    public boolean isHoldingPipe(EntityPlayer player) {
+        if (player == null) {
+            return false;
+        }
+        ItemStack stack = player.getHeldItemMainhand();
+        return stack != ItemStack.EMPTY && stack.getItem() instanceof ItemBlockCable;
     }
 
     @Override

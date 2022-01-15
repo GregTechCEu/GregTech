@@ -114,6 +114,10 @@ public class ConfigHolder {
         @Config.Comment({"Whether to disable Rubber Tree world generation.", "Default: false"})
         public boolean disableRubberTreeGeneration = false;
 
+        @Config.Comment({"Multiplier for the chance to spawn a Rubber Tree on any given roll. Higher values make Rubber Trees more common.", "Default: 1.0"})
+        @Config.RangeDouble(min = 0)
+        public double rubberTreeRateIncrease = 1.0;
+
         @Config.Comment({"Whether to increase number of rolls for dungeon chests. Increases dungeon loot drastically.", "Default: true"})
         public boolean increaseDungeonLoot = true;
 
@@ -128,9 +132,6 @@ public class ConfigHolder {
 
         @Config.Comment({"Change the recipe of Rods in the Lathe to 1 Rod and 2 Small Piles of Dust, instead of 2 Rods.", "Default: false"})
         public boolean harderRods = false;
-
-        @Config.Comment({"Enable more challenging recipes for Energy Input and Dynamo Hatches.", "Default: false"})
-        public boolean harderEnergyHatches = false;
 
         @Config.Comment({"Whether to make Glass related recipes harder. Default: true"})
         public boolean hardGlassRecipes = true;
@@ -175,6 +176,15 @@ public class ConfigHolder {
 
         @Config.Comment({"Whether to remove Vanilla Block Recipes from the Crafting Table.", "Default: false"})
         public boolean removeVanillaBlockRecipes = false;
+
+        @Config.Comment({"Whether to make crafting recipes for Bricks, Firebricks, and Coke Bricks harder.", "Default: false"})
+        public boolean harderBrickRecipes = false;
+
+        @Config.Comment({"Whether to make the recipe for the EBF Controller harder.", "Default: false"})
+        public boolean harderEBFControllerRecipe = false;
+
+        @Config.Comment({"Whether Wrenches should require Plates instead of Ingots to craft.", "Default: false"})
+        public boolean plateWrenches = false;
     }
 
     public static class CompatibilityOptions {
@@ -300,6 +310,10 @@ public class ConfigHolder {
 
         public static class ShaderOptions {
 
+            @Config.Comment("Bloom config options for the fusion reactor.")
+            @Config.Name("Fusion Reactor")
+            public FusionBloom fusionBloom = new FusionBloom();
+
             @Config.Comment({"Whether to use shader programs.", "Default: true"})
             public boolean useShader = true;
 
@@ -332,12 +346,40 @@ public class ConfigHolder {
 
             @Config.Comment({"Bloom Strength", "OUTPUT = BACKGROUND + BLOOM * {strength} * (base + LT + (1 - BACKGROUND_BRIGHTNESS)*(HT-LT)))", "Default: 2"})
             @Config.RangeDouble(min = 0)
-            public double strength = 2;
+            public double strength = 1.5;
 
             @Config.Comment({"Blur Step (bloom range)", "Default: 1"})
             @Config.RangeDouble(min = 0)
             public double step = 1;
         }
+    }
+
+    public static class FusionBloom {
+        @Config.Comment({"Whether to use shader programs.", "Default: true"})
+        public boolean useShader = true;
+
+        @Config.Comment({"Bloom Strength", "OUTPUT = BACKGROUND + BLOOM * {strength} * (base + LT + (1 - BACKGROUND_BRIGHTNESS)*(HT-LT)))", "Default: 2"})
+        @Config.RangeDouble(min = 0)
+        public double strength = 1.5;
+
+        @Config.Comment({"Bloom Algorithm", "0 - Simple Gaussian Blur Bloom (Fast)", "1 - Unity Bloom", "2 - Unreal Bloom", "Default: 2"})
+        @Config.RangeInt(min = 0, max = 2)
+        @Config.SlidingOption
+        public int bloomStyle = 1;
+
+        @Config.Comment({"The brightness after bloom should not exceed this value. It can be used to limit the brightness of highlights " +
+                "(e.g., daytime).", "OUTPUT = BACKGROUND + BLOOM * strength * (base + LT + (1 - BACKGROUND_BRIGHTNESS)*({HT}-LT)))", "This value should be greater than lowBrightnessThreshold.", "Default: 0.5"})
+        @Config.RangeDouble(min = 0)
+        public double highBrightnessThreshold = 1.3;
+
+        @Config.Comment({"The brightness after bloom should not smaller than this value. It can be used to limit the brightness of dusky parts " +
+                "(e.g., night/caves).", "OUTPUT = BACKGROUND + BLOOM * strength * (base + {LT} + (1 - BACKGROUND_BRIGHTNESS)*(HT-{LT})))", "This value should be smaller than highBrightnessThreshold.", "Default: 0.2"})
+        @Config.RangeDouble(min = 0)
+        public double lowBrightnessThreshold = 0.3;
+
+        @Config.Comment({"The base brightness of the bloom.", "It is similar to strength", "This value should be smaller than highBrightnessThreshold.", "OUTPUT = BACKGROUND + BLOOM * strength * ({base} + LT + (1 - BACKGROUND_BRIGHTNESS)*(HT-LT)))", "Default: 0.1"})
+        @Config.RangeDouble(min = 0)
+        public double baseBrightness = 0;
     }
 
     public static class ToolOptions {
