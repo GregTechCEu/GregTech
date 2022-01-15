@@ -188,7 +188,17 @@ public class ClientProxy extends CommonProxy {
 
         // Test for Items
         UnificationEntry unificationEntry = OreDictUnifier.getUnificationEntry(itemStack);
-        if (unificationEntry != null && unificationEntry.material != null) {
+
+        if (itemStack.getItem() instanceof MetaOreDictItem) { // Test for OreDictItems
+            MetaOreDictItem oreDictItem = (MetaOreDictItem) itemStack.getItem();
+            Optional<String> oreDictName = OreDictUnifier.getOreDictionaryNames(itemStack).stream().findFirst();
+            if (oreDictName.isPresent() && oreDictItem.OREDICT_TO_FORMULA.containsKey(oreDictName.get())) {
+                String foundFormula = oreDictItem.OREDICT_TO_FORMULA.get(oreDictName.get());
+                if (foundFormula != null) {
+                    chemicalFormula = foundFormula;
+                }
+            }
+        } else if (unificationEntry != null && unificationEntry.material != null) {
             chemicalFormula = unificationEntry.material.getChemicalFormula();
         } else if (ItemNBTUtils.hasTag(itemStack)) { // Test for Fluids
             // Vanilla bucket
@@ -203,20 +213,11 @@ public class ClientProxy extends CommonProxy {
             }
         } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) { // Water buckets have a separate registry name from other buckets
             chemicalFormula = FluidTooltipUtil.getWaterTooltip();
-        } else if (itemStack.getItem() instanceof MetaOreDictItem) {
-            MetaOreDictItem oreDictItem = (MetaOreDictItem) itemStack.getItem();
-            Optional<String> oreDictName = OreDictUnifier.getOreDictionaryNames(itemStack).stream().findFirst();
-            if (oreDictName.isPresent() && oreDictItem.FORMULA_TO_OREDICTITEM.containsKey(oreDictName.get())) {
-                MetaOreDictItem.OreDictValueItem material = oreDictItem.FORMULA_TO_OREDICTITEM.get(oreDictName.get());
-                if (material != null) {
-                    chemicalFormula = material.getFormula();
-                }
-            }
         }
+
         if (chemicalFormula != null && !chemicalFormula.isEmpty()) {
             event.getToolTip().add(1, ChatFormatting.YELLOW.toString() + chemicalFormula);
         }
-
     }
 
     private static final String[] clearRecipes = new String[]{
