@@ -85,6 +85,7 @@ public class MetaOreDictItem extends StandardMetaItem {
         }
     }
 
+    @SuppressWarnings("unused")
     public OreDictValueItem addOreDictItem(int id, String materialName, int rgb, MaterialIconSet materialIconSet, OrePrefix orePrefix) {
         return this.addOreDictItem(id, materialName, rgb, materialIconSet, orePrefix, null);
     }
