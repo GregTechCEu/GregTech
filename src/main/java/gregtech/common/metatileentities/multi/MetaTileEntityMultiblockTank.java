@@ -4,7 +4,6 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
@@ -14,7 +13,6 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -33,11 +31,9 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidTank;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
@@ -53,18 +49,9 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     }
 
     protected void initializeAbilities() {
-        this.importFluids = new FluidTankList(true, makeFluidTanks());
+        this.importFluids = new FluidTankList(true, new FluidTank(this.capacity));
         this.exportFluids = importFluids;
         this.fluidInventory = new FluidHandlerProxy(this.importFluids, this.exportFluids);
-    }
-
-    @Nonnull
-    private List<FluidTank> makeFluidTanks() {
-        List<FluidTank> fluidTankList = new ArrayList<>(1);
-        fluidTankList.add(new FilteredFluidHandler(capacity).setFillPredicate(
-                fluidStack -> isMetal || (!fluidStack.getFluid().isGaseous() && fluidStack.getFluid().getTemperature() <= 325)
-        ));
-        return fluidTankList;
     }
 
     @Override
