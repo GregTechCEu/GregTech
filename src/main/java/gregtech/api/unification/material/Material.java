@@ -12,6 +12,7 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
@@ -263,7 +264,7 @@ public class Material implements Comparable<Material> {
 
     @ZenGetter("camelCaseName")
     public String toCamelCaseString() {
-        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, toString());
+        return GTUtility.lowerUnderscoreToUpperCamel(toString());
     }
 
     @ZenGetter("unlocalizedName")
@@ -890,6 +891,8 @@ public class Material implements Comparable<Material> {
 
         private MaterialInfo(int metaItemSubId, String name) {
             this.metaItemSubId = metaItemSubId;
+            if (!GTUtility.toLowerCaseUnderscore(GTUtility.lowerUnderscoreToUpperCamel(name)).equals(name))
+                throw new IllegalStateException("Cannot add materials with names like 'materialnumber'! Use 'material_number' instead.");
             this.name = name;
         }
 

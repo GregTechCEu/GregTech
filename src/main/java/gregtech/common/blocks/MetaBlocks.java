@@ -295,7 +295,7 @@ public class MetaBlocks {
 
                 if (!blocksToGenerate.containsKey(metaBlockID)) {
                     Material[] materials = new Material[16];
-                    Arrays.fill(materials, Materials._NULL);
+                    Arrays.fill(materials, Materials.NULL);
                     blocksToGenerate.put(metaBlockID, materials);
                 }
 

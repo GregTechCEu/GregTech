@@ -41,7 +41,7 @@ public class PropertyMaterial extends PropertyHelper<Material> {
         if (this.allowedValues.contains(material)) {
             return Optional.of(material);
         }
-        return Optional.of(Materials._NULL);
+        return Optional.of(Materials.NULL);
     }
 
     @Nonnull
