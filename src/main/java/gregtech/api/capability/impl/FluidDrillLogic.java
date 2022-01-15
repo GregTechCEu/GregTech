@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
+import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidDrill;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -15,7 +16,7 @@ import javax.annotation.Nonnull;
 public class FluidDrillLogic {
 
     private static final int MAX_PROGRESS = 20;
-    private int currentProgress = 0;
+    private int progressTime = 0;
 
     private final MetaTileEntityFluidDrill metaTileEntity;
 
@@ -25,9 +26,9 @@ public class FluidDrillLogic {
     private boolean isDone = false;
     protected boolean isInventoryFull;
 
-    private Fluid veinFluid;
+    private boolean hasNotEnoughEnergy;
 
-    private int voltageTier;
+    private Fluid veinFluid;
     private float coefficient;
 
     public FluidDrillLogic(MetaTileEntityFluidDrill metaTileEntity) {
@@ -72,10 +73,10 @@ public class FluidDrillLogic {
             return;
         }
 
-        currentProgress++;
-        if (currentProgress % MAX_PROGRESS != 0)
+        progressTime++;
+        if (progressTime % MAX_PROGRESS != 0)
             return;
-        currentProgress = 0;
+        progressTime = 1;
 
         int rate = getFluidRate();
 
@@ -116,11 +117,19 @@ public class FluidDrillLogic {
      */
     protected boolean checkCanMine() {
         if (!metaTileEntity.drainEnergy(true)) {
-            if (isActive()) {
-                setActive(false);
-                setWasActiveAndNeedsUpdate(true);
+            if (progressTime >= 2) {
+                if (ConfigHolder.machines.recipeProgressLowEnergy)
+                    this.progressTime = 1;
+                else
+                    this.progressTime = Math.max(1, progressTime - 2);
+
+                hasNotEnoughEnergy = true;
             }
             return false;
+        }
+
+        if (this.hasNotEnoughEnergy && metaTileEntity.getEnergyInputPerSecond() > 19L * GTValues.VA[metaTileEntity.getEnergyTier()]) {
+            this.hasNotEnoughEnergy = false;
         }
 
         if (metaTileEntity.fillTanks(new FluidStack(veinFluid, getFluidRate()), true)) {
@@ -128,6 +137,7 @@ public class FluidDrillLogic {
             return true;
         }
         this.isInventoryFull = true;
+
         if (isActive()) {
             setActive(false);
             setWasActiveAndNeedsUpdate(true);
@@ -135,12 +145,7 @@ public class FluidDrillLogic {
         return false;
     }
 
-    public void setVoltageTier(int tier) {
-        this.voltageTier = tier;
-        setCoefficient();
-    }
-
-    public void setCoefficient() {
+    public void updateCoefficient() {
         this.coefficient = 0.5F + 0.25F * (metaTileEntity.getEnergyTier() - metaTileEntity.getTier());
     }
 
@@ -165,10 +170,12 @@ public class FluidDrillLogic {
      * @param active the new state of the rig's activity: true to change to active, else false
      */
     public void setActive(boolean active) {
-        this.isActive = active;
-        this.metaTileEntity.markDirty();
-        if (metaTileEntity.getWorld() != null && !metaTileEntity.getWorld().isRemote) {
-            this.metaTileEntity.writeCustomData(GregtechDataCodes.IS_WORKING, buf -> buf.writeBoolean(active));
+        if (this.isActive != active) {
+            this.isActive = active;
+            this.metaTileEntity.markDirty();
+            if (metaTileEntity.getWorld() != null && !metaTileEntity.getWorld().isRemote) {
+                this.metaTileEntity.writeCustomData(GregtechDataCodes.IS_WORKING, buf -> buf.writeBoolean(active));
+            }
         }
     }
 
@@ -194,15 +201,19 @@ public class FluidDrillLogic {
      * @return whether the rig is currently working
      */
     public boolean isWorking() {
-        return isActive && isWorkingEnabled;
+        return isActive && !hasNotEnoughEnergy && isWorkingEnabled;
     }
 
     /**
      *
      * @return the current progress towards producing fluid of the rig
      */
-    public int getCurrentProgress() {
-        return this.currentProgress;
+    public int getProgressTime() {
+        return this.progressTime;
+    }
+
+    public double getProgressPercent() {
+        return getProgressTime() / (MAX_PROGRESS * 1.0);
     }
 
     /**
@@ -222,7 +233,7 @@ public class FluidDrillLogic {
         data.setBoolean("isWorkingEnabled", this.isWorkingEnabled);
         data.setBoolean("wasActiveAndNeedsUpdate", this.wasActiveAndNeedsUpdate);
         data.setBoolean("isDone", isDone);
-        data.setInteger("currentProgress",currentProgress);
+        data.setInteger("progressTime", progressTime);
         data.setBoolean("isInventoryFull", isInventoryFull);
         return data;
     }
@@ -236,7 +247,7 @@ public class FluidDrillLogic {
         setWorkingEnabled(data.getBoolean("isWorkingEnabled"));
         setWasActiveAndNeedsUpdate(data.getBoolean("wasActiveAndNeedsUpdate"));
         this.isDone = data.getBoolean("isDone");
-        this.currentProgress = data.getInteger("currentProgress");
+        this.progressTime = data.getInteger("progressTime");
         this.isInventoryFull = data.getBoolean("isInventoryFull");
     }
 
@@ -248,7 +259,7 @@ public class FluidDrillLogic {
         buf.writeBoolean(this.isActive);
         buf.writeBoolean(this.isWorkingEnabled);
         buf.writeBoolean(this.wasActiveAndNeedsUpdate);
-        buf.writeInt(this.currentProgress);
+        buf.writeInt(this.progressTime);
         buf.writeBoolean(this.isInventoryFull);
     }
 
@@ -260,7 +271,7 @@ public class FluidDrillLogic {
         setActive(buf.readBoolean());
         setWorkingEnabled(buf.readBoolean());
         setWasActiveAndNeedsUpdate(buf.readBoolean());
-        this.currentProgress = buf.readInt();
+        this.progressTime = buf.readInt();
         this.isInventoryFull = buf.readBoolean();
     }
 

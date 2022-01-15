@@ -68,7 +68,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
         this.inputFluidInventory = new FluidTankList(true, getAbilities(MultiblockAbility.IMPORT_FLUIDS));
         this.outputFluidInventory = new FluidTankList(true, getAbilities(MultiblockAbility.EXPORT_FLUIDS));
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
-        this.minerLogic.setVoltageTier(GTUtility.getTierByVoltage(this.energyContainer.getInputVoltage()));
+        this.minerLogic.updateCoefficient();
     }
 
     private void resetTileAbilities() {
@@ -163,7 +163,8 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
 
         } else if (minerLogic.isActive()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
-            textList.add(new TextComponentTranslation("gregtech.multiblock.progress", getProgress() / getMaxProgress() * 100));
+            int currentProgress = (int) (minerLogic.getProgressPercent() * 100);
+            textList.add(new TextComponentTranslation("gregtech.multiblock.progress", currentProgress));
         } else {
             textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
         }
@@ -240,6 +241,10 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
         return Math.min(minVoltage, this.tier + 1); // prevents infinite fluid production
     }
 
+    public long getEnergyInputPerSecond() {
+        return energyContainer.getInputPerSec();
+    }
+
     public boolean drainEnergy(boolean simulate) {
         long energyToDrain = GTValues.VA[getEnergyTier()];
         long resultEnergy = energyContainer.getEnergyStored() - energyToDrain;
@@ -288,7 +293,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
 
     @Override
     public int getProgress() {
-        return minerLogic.getCurrentProgress();
+        return minerLogic.getProgressTime();
     }
 
     @Override
@@ -300,6 +305,8 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_WORKABLE)
             return GregtechTileCapabilities.CAPABILITY_WORKABLE.cast(this);
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE)
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         return super.getCapability(capability, side);
     }
 }
