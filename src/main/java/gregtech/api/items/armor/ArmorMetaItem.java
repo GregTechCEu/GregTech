@@ -203,7 +203,7 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
     @Override
     public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack, @Nonnull Enchantment enchantment) {
         EntityEquipmentSlot slot = this.getEquipmentSlot(stack);
-        if(slot == null) {
+        if(slot == null || enchantment.type == null) {
             return false;
         }
 

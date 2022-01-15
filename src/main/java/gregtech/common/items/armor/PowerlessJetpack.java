@@ -38,11 +38,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpack {
 
-    private static final List<Recipe> FUELS = RecipeMaps.COMBUSTION_GENERATOR_FUELS.getRecipeList();
+    private static final Collection<Recipe> FUELS = RecipeMaps.COMBUSTION_GENERATOR_FUELS.getRecipeList();
 
     public static final List<Fluid> FUELS_FORBIDDEN = Arrays.asList(Materials.Oil.getFluid(), Materials.SulfuricLightFuel.getFluid());
 

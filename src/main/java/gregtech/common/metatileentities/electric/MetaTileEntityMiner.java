@@ -15,6 +15,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
@@ -40,9 +41,10 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner, IControllable, ISoundCreator {
+public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner, IControllable, ISoundCreator, IDataInfoProvider {
 
     private final ItemStackHandler chargerInventory;
 
@@ -206,9 +208,9 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
             this.minerLogic.checkBlocksToMine();
 
-            playerIn.sendMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius()));
+            playerIn.sendMessage(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
         } else {
-            playerIn.sendMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.errorradius"));
+            playerIn.sendMessage(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.errorradius")));
         }
         return true;
     }
@@ -290,5 +292,11 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     @Override
     public boolean canCreateSound() {
         return this.minerLogic.isActive();
+    }
+
+    @Nonnull
+    @Override
+    public List<ITextComponent> getDataInfo() {
+        return Collections.singletonList(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
     }
 }

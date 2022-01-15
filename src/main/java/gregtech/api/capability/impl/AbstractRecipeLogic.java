@@ -184,12 +184,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     protected boolean canFitNewOutputs() {
         // if the output is full check if the output changed so we can process recipes results again.
-        if (this.isOutputsFull && !hasNotifiedOutputs()) return false;
-        else {
-            this.isOutputsFull = false;
-            metaTileEntity.getNotifiedItemOutputList().clear();
-            metaTileEntity.getNotifiedFluidOutputList().clear();
+        if (this.isOutputsFull && !hasNotifiedOutputs()) {
+            if (!hasNotifiedInputs() && checkPreviousRecipe()) {
+                return false;
+            }
         }
+        this.isOutputsFull = false;
+        metaTileEntity.getNotifiedItemOutputList().clear();
+        metaTileEntity.getNotifiedFluidOutputList().clear();
         return true;
     }
 

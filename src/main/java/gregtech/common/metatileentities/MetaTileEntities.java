@@ -444,7 +444,7 @@ public class MetaTileEntities {
         MAGIC_ENERGY_ABSORBER = registerMetaTileEntity(984, new MetaTileEntityMagicEnergyAbsorber(gregtechId("magic_energy_absorber")));
 
         // Hulls, IDs 985-999
-        int endPos = GTValues.HT ? HULL.length - 1 : Math.min(HULL.length - 1, GTValues.UV + 2);
+        int endPos = GTValues.HT ? HULL.length : Math.min(HULL.length - 1, GTValues.UV + 2);
         for (int i = 0; i < endPos; i++) {
             HULL[i] = new MetaTileEntityHull(gregtechId("hull." + GTValues.VN[i].toLowerCase()), i);
             registerMetaTileEntity(985 + i, HULL[i]);

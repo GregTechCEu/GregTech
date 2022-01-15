@@ -128,7 +128,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public boolean showDurabilityBar(ItemStack stack) {
+    public boolean showDurabilityBar(@Nonnull ItemStack stack) {
         T item = getItem(stack);
         if (item != null && item.getDurabilityManager() != null) {
             return item.getDurabilityManager().showsDurabilityBar(stack);
@@ -138,7 +138,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public double getDurabilityForDisplay(ItemStack stack) {
+    public double getDurabilityForDisplay(@Nonnull ItemStack stack) {
         T item = getItem(stack);
         if (item != null && item.getDurabilityManager() != null) {
             return item.getDurabilityManager().getDurabilityForDisplay(stack);
@@ -154,7 +154,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public int getRGBDurabilityForDisplay(ItemStack stack) {
+    public int getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
         //always color durability bar as item internal damage
         double internalDamage = getItemDamage(stack) / (getMaxItemDamage(stack) * 1.0);
         return MathHelper.hsvToRGB(Math.max(0.0F, (float) (1.0 - internalDamage)) / 3.0F, 1.0F, 1.0F);
@@ -412,7 +412,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt) {
         ICapabilityProvider capabilityProvider = super.initCapabilities(stack, nbt);
         if (capabilityProvider != null && capabilityProvider.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null)) {
             IElectricItem electricItem = capabilityProvider.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
@@ -427,6 +427,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         return capabilityProvider;
     }
 
+    @Nonnull
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         if (stack.getItemDamage() >= metaItemOffset) {

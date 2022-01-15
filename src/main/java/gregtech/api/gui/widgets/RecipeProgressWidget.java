@@ -3,12 +3,15 @@ package gregtech.api.gui.widgets;
 import gregtech.api.GTValues;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.integration.jei.recipe.RecipeMapCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.DoubleSupplier;
 
 public class RecipeProgressWidget extends ProgressWidget {
@@ -37,7 +40,14 @@ public class RecipeProgressWidget extends ProgressWidget {
             return false;
         if (isMouseOverElement(mouseX, mouseY) && RecipeMapCategory.getCategoryMap().containsKey(recipeMap)) {
             // Since categories were even registered at all, we know JEI is active.
-            GTJeiPlugin.jeiRuntime.getRecipesGui().showCategories(Collections.singletonList(RecipeMapCategory.getCategoryMap().get(recipeMap).getUid()));
+            List<String> categoryID = new ArrayList<>();
+            if(recipeMap == RecipeMaps.FURNACE_RECIPES) {
+                categoryID.add("minecraft.smelting");
+            }
+            else {
+                categoryID.add(RecipeMapCategory.getCategoryMap().get(recipeMap).getUid());
+            }
+            GTJeiPlugin.jeiRuntime.getRecipesGui().showCategories(categoryID);
             return true;
         }
         return false;

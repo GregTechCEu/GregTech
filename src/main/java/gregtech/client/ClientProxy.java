@@ -8,7 +8,6 @@ import gregtech.api.GTValues;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
-import gregtech.client.renderer.handler.SurfaceRockRenderer;
 import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
@@ -111,7 +110,7 @@ public class ClientProxy extends CommonProxy {
             state.getValue(BlockColored.COLOR).colorValue;
 
     public static final IBlockColor SURFACE_ROCK_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
-            state.getValue(((BlockSurfaceRock) state.getBlock()).variantProperty).getMaterialRGB();
+            tintIndex == 1 ? state.getValue(((BlockSurfaceRock) state.getBlock()).variantProperty).getMaterialRGB() : -1;
 
     public static final IBlockColor RUBBER_LEAVES_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
             ColorizerFoliage.getFoliageColorBirch();
@@ -132,7 +131,6 @@ public class ClientProxy extends CommonProxy {
         CableRenderer.preInit();
         FluidPipeRenderer.preInit();
         ItemPipeRenderer.preInit();
-        SurfaceRockRenderer.preInit();
         MetaEntities.initRenderers();
         TextureUtils.addIconRegister(MetaFluids::registerSprites);
     }
@@ -176,7 +174,6 @@ public class ClientProxy extends CommonProxy {
         }
         MetaBlocks.COMPRESSED.values().stream().distinct().forEach(c -> c.onTextureStitch(event));
         MetaBlocks.FRAMES.values().stream().distinct().forEach(f -> f.onTextureStitch(event));
-        MetaBlocks.SURFACE_ROCK.values().stream().distinct().forEach(c -> c.onTextureStitch(event));
         MetaBlocks.ORES.forEach(o -> o.onTextureStitch(event));
     }
 
@@ -211,7 +208,7 @@ public class ClientProxy extends CommonProxy {
             chemicalFormula = FluidTooltipUtil.getWaterTooltip();
         }
         if (chemicalFormula != null && !chemicalFormula.isEmpty()) {
-            event.getToolTip().add(1, ChatFormatting.YELLOW.toString() + chemicalFormula);
+            event.getToolTip().add(1, ChatFormatting.YELLOW + chemicalFormula);
         }
     }
 

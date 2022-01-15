@@ -12,6 +12,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.CHEMICAL_RECIPES;
+import static gregtech.api.recipes.RecipeMaps.LARGE_CHEMICAL_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 
@@ -200,6 +201,7 @@ public class ReactorRecipes {
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(Methanol.getFluid(1000))
                 .fluidInputs(AceticAcid.getFluid(1000))
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(MethylAcetate.getFluid(1000))
                 .fluidOutputs(Water.getFluid(1000))
                 .duration(240).EUt(VA[LV]).buildAndRegister();
@@ -406,6 +408,7 @@ public class ReactorRecipes {
                 .fluidInputs(HypochlorousAcid.getFluid(1000))
                 .fluidInputs(Ammonia.getFluid(1000))
                 .fluidOutputs(Water.getFluid(1000))
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(Monochloramine.getFluid(1000))
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
@@ -626,13 +629,13 @@ public class ReactorRecipes {
                 .fluidOutputs(Methanol.getFluid(1000))
                 .duration(264).EUt(60).buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder()
+        LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .input(ingot, Plutonium239, 8)
                 .input(dust, Uranium238)
                 .fluidInputs(Air.getFluid(10000))
                 .output(dust, Plutonium239, 8)
                 .fluidOutputs(Radon.getFluid(1000))
-                .duration(100000).EUt(VA[ULV]).buildAndRegister();
+                .duration(4000).EUt(VA[HV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(Items.PAPER)
@@ -683,5 +686,11 @@ public class ReactorRecipes {
                 .input(dust, Potassium)
                 .fluidOutputs(SodiumPotassium.getFluid(1000))
                 .duration(300).EUt(VA[LV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, Sodium)
+                .fluidInputs(Chlorine.getFluid(1000))
+                .output(dust, Salt, 2)
+                .duration(200).EUt(VA[LV]).buildAndRegister();
     }
 }

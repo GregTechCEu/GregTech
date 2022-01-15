@@ -43,7 +43,7 @@ public class SecondDegreeMaterials {
         Olivine = new Material.Builder(2004, "olivine")
                 .gem().ore(2, 1)
                 .color(0x96FF96).iconSet(RUBY)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_PLATE)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Magnesium, 2, Iron, 1, SiliconDioxide, 2)
                 .toolStats(7.5f, 3.0f, 312, 33)
                 .build();
@@ -51,7 +51,7 @@ public class SecondDegreeMaterials {
         Opal = new Material.Builder(2005, "opal")
                 .gem().ore()
                 .color(0x0000FF).iconSet(OPAL)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
                 .toolStats(7.5f, 3.0f, 312, 15)
                 .build();
@@ -59,7 +59,7 @@ public class SecondDegreeMaterials {
         Amethyst = new Material.Builder(2006, "amethyst")
                 .gem(3).ore()
                 .color(0xD232D2).iconSet(RUBY)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(SiliconDioxide, 4, Iron, 1)
                 .toolStats(7.5f, 3.0f, 312, 33)
                 .build();
@@ -121,7 +121,7 @@ public class SecondDegreeMaterials {
         CobaltBrass = new Material.Builder(2014, "cobalt_brass")
                 .ingot().fluid()
                 .color(0xB4B4A0).iconSet(METALLIC)
-                .flags(EXT2_METAL)
+                .flags(EXT2_METAL, GENERATE_GEAR)
                 .components(Brass, 7, Aluminium, 1, Cobalt, 1)
                 .toolStats(8.0f, 2.0f, 256, 21)
                 .itemPipeProperties(2048, 1)
@@ -137,7 +137,7 @@ public class SecondDegreeMaterials {
         GarnetRed = new Material.Builder(2016, "garnet_red")
                 .gem().ore(4, 1)
                 .color(0xC85050).iconSet(RUBY)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Pyrope, 3, Almandine, 5, Spessartine, 8)
                 .toolStats(7.5f, 3.0f, 156, 33)
                 .build();
@@ -145,7 +145,7 @@ public class SecondDegreeMaterials {
         GarnetYellow = new Material.Builder(2017, "garnet_yellow")
                 .gem().ore(4, 1)
                 .color(0xC8C850).iconSet(RUBY)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Andradite, 5, Grossular, 8, Uvarovite, 3)
                 .toolStats(7.5f, 3.0f, 156, 33)
                 .build();
@@ -271,7 +271,7 @@ public class SecondDegreeMaterials {
         VanadiumSteel = new Material.Builder(2036, "vanadium_steel")
                 .ingot(3).fluid()
                 .color(0xc0c0c0).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_FOIL)
+                .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Vanadium, 1, Chrome, 1, Steel, 7)
                 .toolStats(7.0f, 3.0f, 1920, 21)
                 .fluidPipeProperties(2073, 100, true)
@@ -407,7 +407,7 @@ public class SecondDegreeMaterials {
                 .fluid()
                 .color(0xFFB132)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(NitricAcid, 1, HydrochloricAcid, 1)
+                .components(NitricAcid, 1, HydrochloricAcid, 2)
                 .build();
 
         PlatinumSludgeResidue = new Material.Builder(2057, "platinum_sludge_residue")

@@ -44,6 +44,7 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
 
     @Override
     public int getParallelLimit() {
-        return (int) Math.max(1, Math.pow(4, getOverclockTier() - 1));
+        // parallel is limited by voltage
+        return Integer.MAX_VALUE;
     }
 }

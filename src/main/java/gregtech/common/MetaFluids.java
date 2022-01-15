@@ -223,7 +223,6 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.Ice, FluidType.NORMAL);
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-            if (material.isHidden()) continue;
             FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);
 
             if (fluidProperty != null && fluidProperty.getFluid() == null) {

@@ -85,7 +85,6 @@ public class BakedModelHandler {
         event.getModelRegistry().putObject(BlockOre.MODEL_LOCATION, OreBakedModel.INSTANCE);
         event.getModelRegistry().putObject(BlockCompressed.MODEL_LOCATION, CompressedBlockBakedModel.INSTANCE);
         event.getModelRegistry().putObject(BlockFrame.MODEL_LOCATION, FrameBakedModel.INSTANCE);
-        event.getModelRegistry().putObject(BlockSurfaceRock.MODEL_LOCATION, SurfaceRockBakedModel.INSTANCE);
     }
 
     private static class ModelBuiltInRenderer implements IBakedModel {

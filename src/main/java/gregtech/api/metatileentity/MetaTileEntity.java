@@ -21,11 +21,11 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.recipes.FluidKey;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.*;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
-import gregtech.client.utils.BloomEffectUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -1373,5 +1373,9 @@ public abstract class MetaTileEntity implements ICoverable {
             getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
                     explosionPower, true);
         }
+    }
+
+    public boolean doTickProfileMessage() {
+        return true;
     }
 }

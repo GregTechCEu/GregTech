@@ -199,9 +199,6 @@ public class ConfigHolder {
         @Config.Comment({"Whether to hide filled cells in JEI and creative search menu.", "Default: true"})
         public boolean hideFilledCellsInJEI = true;
 
-        @Config.Comment({"Whether to hide filled tanks in JEI and creative search menu.", "Default: true"})
-        public boolean hideFilledTanksInJEI = true;
-
         @Config.Comment({"Specifies priorities of mods in Ore Dictionary item registration.", "First ModID has highest priority, last has lowest. " +
                 "Unspecified ModIDs follow standard sorting, but always have lower priority than the last specified ModID.", "Default: [\"minecraft\", \"gregtech\"]"})
         public String[] modPriorities = {

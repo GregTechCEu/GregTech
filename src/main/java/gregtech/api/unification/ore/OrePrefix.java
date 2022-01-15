@@ -158,15 +158,15 @@ public class OrePrefix {
     // made of 2 Ingots.
     public static final OrePrefix toolHeadSaw = new OrePrefix("toolHeadSaw", M * 2, null, MaterialIconType.toolHeadSaw, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
     // made of 4 Ingots.
-    public static final OrePrefix toolHeadBuzzSaw = new OrePrefix("toolHeadBuzzSaw", M * 4, null, MaterialIconType.toolHeadBuzzSaw, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
+    public static final OrePrefix toolHeadBuzzSaw = new OrePrefix("toolHeadBuzzSaw", M * 4, null, MaterialIconType.toolHeadBuzzSaw, ENABLE_UNIFICATION, hasNoCraftingToolProperty.and(mat -> mat.hasFlag(GENERATE_PLATE)));
     // made of 1 Ingots.
-    public static final OrePrefix toolHeadScrewdriver = new OrePrefix("toolHeadScrewdriver", M, null, MaterialIconType.toolHeadScrewdriver, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
+    public static final OrePrefix toolHeadScrewdriver = new OrePrefix("toolHeadScrewdriver", M, null, MaterialIconType.toolHeadScrewdriver, ENABLE_UNIFICATION, hasNoCraftingToolProperty.and(mat -> mat.hasFlag(GENERATE_ROD)));
     // made of 4 Ingots.
-    public static final OrePrefix toolHeadDrill = new OrePrefix("toolHeadDrill", M * 4, null, MaterialIconType.toolHeadDrill, ENABLE_UNIFICATION, hasToolProperty);
+    public static final OrePrefix toolHeadDrill = new OrePrefix("toolHeadDrill", M * 4, null, MaterialIconType.toolHeadDrill, ENABLE_UNIFICATION, hasToolProperty.and(mat -> mat.hasFlag(GENERATE_PLATE)));
     // made of 2 Ingots.
-    public static final OrePrefix toolHeadChainsaw = new OrePrefix("toolHeadChainsaw", M * 2, null, MaterialIconType.toolHeadChainsaw, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
+    public static final OrePrefix toolHeadChainsaw = new OrePrefix("toolHeadChainsaw", M * 2, null, MaterialIconType.toolHeadChainsaw, ENABLE_UNIFICATION, hasNoCraftingToolProperty.and(mat -> mat.hasFlag(GENERATE_PLATE)));
     // made of 4 Ingots.
-    public static final OrePrefix toolHeadWrench = new OrePrefix("toolHeadWrench", M * 4, null, MaterialIconType.toolHeadWrench, ENABLE_UNIFICATION, hasNoCraftingToolProperty);
+    public static final OrePrefix toolHeadWrench = new OrePrefix("toolHeadWrench", M * 4, null, MaterialIconType.toolHeadWrench, ENABLE_UNIFICATION, hasNoCraftingToolProperty.and(mat -> mat.hasFlag(GENERATE_PLATE)));
     // made of 5 Ingots.
     public static final OrePrefix turbineBlade = new OrePrefix("turbineBlade", M * 10, null, MaterialIconType.turbineBlade, ENABLE_UNIFICATION, hasToolProperty.and(m -> m.hasFlags(GENERATE_BOLT_SCREW, GENERATE_PLATE) && !m.hasProperty(PropertyKey.GEM)));
 
@@ -420,7 +420,7 @@ public class OrePrefix {
     public final @Nullable
     MaterialIconType materialIconType;
 
-    public final long materialAmount;
+    private final long materialAmount;
 
     /**
      * Contains a default material type for self-referencing OrePrefix
@@ -477,7 +477,12 @@ public class OrePrefix {
         this.isMarkerPrefix = isMarkerPrefix;
     }
 
-    public long getMaterialAmount(Material material) {
+    public long getMaterialAmount(@Nullable Material material) {
+
+        if(material == null) {
+            return this.materialAmount;
+        }
+
         if (this == block) {
             //glowstone and nether quartz blocks use 4 gems (dusts)
             if (material == Materials.Glowstone ||
@@ -509,7 +514,7 @@ public class OrePrefix {
     }
 
     public boolean doGenerateItem(Material material) {
-        return !material.isHidden() && !isSelfReferencing && !isIgnored(material) && (generationCondition == null || generationCondition.test(material));
+        return !isSelfReferencing && !isIgnored(material) && (generationCondition == null || generationCondition.test(material));
     }
 
     public void setGenerationCondition(@Nullable Predicate<Material> in) {
@@ -536,7 +541,7 @@ public class OrePrefix {
         }
         if (material != null) {
             generatedMaterials.add(material);
-            if (material.isHidden() && (material.hasFluid() || material.hasProperty(PropertyKey.PLASMA))) {
+            if (material.hasFluid() || material.hasProperty(PropertyKey.PLASMA)) {
                 FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);
                 if (fluidProperty != null && fluidProperty.getFluid() == null) {
                     int temperature = fluidProperty.getFluidTemperature();
@@ -606,7 +611,7 @@ public class OrePrefix {
     }
 
     public boolean isIgnored(Material material) {
-        return ignoredMaterials.contains(material) || material.isHidden();
+        return ignoredMaterials.contains(material);
     }
 
     @ZenMethod
