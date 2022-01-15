@@ -13,10 +13,8 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.metatileentity.MTETrait;
-import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.TieredMetaTileEntity;
+import gregtech.api.metatileentity.*;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
 import net.minecraft.client.resources.I18n;
@@ -25,6 +23,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -33,9 +35,10 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements IControllable {
+public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements IControllable, IDataInfoProvider {
 
     private final int inventorySize;
     private boolean allowEnergyOutput = true;
@@ -176,5 +179,16 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
         if (data.hasKey("AllowEnergyOutput", NBT.TAG_ANY_NUMERIC)) {
             this.allowEnergyOutput = data.getBoolean("AllowEnergyOutput");
         }
+    }
+
+    @Nonnull
+    @Override
+    public List<ITextComponent> getDataInfo() {
+        List<ITextComponent> list = new ArrayList<>();
+        list.add(new TextComponentTranslation("gregtech.battery_buffer.average_input",
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getInputPerSec() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))));
+        list.add(new TextComponentTranslation("gregtech.battery_buffer.average_output",
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getOutputPerSec() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))));
+        return list;
     }
 }

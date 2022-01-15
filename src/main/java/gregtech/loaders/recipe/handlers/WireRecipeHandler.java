@@ -91,7 +91,7 @@ public class WireRecipeHandler {
         // Superconductors have no Cables, so exit early
         if (property.isSuperconductor()) return;
 
-        int cableAmount = (int) (wirePrefix.materialAmount * 2 / GTValues.M);
+        int cableAmount = (int) (wirePrefix.getMaterialAmount(material) * 2 / GTValues.M);
         OrePrefix cablePrefix = OrePrefix.getPrefix("cable" + wirePrefix.name().substring(4));
         int voltageTier = GTUtility.getTierByVoltage(property.getVoltage());
         int insulationAmount = INSULATION_AMOUNT.get(cablePrefix);

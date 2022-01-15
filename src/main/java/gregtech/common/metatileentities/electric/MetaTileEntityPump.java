@@ -55,7 +55,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     private static final Cuboid6 PIPE_CUBOID = new Cuboid6(6 / 16.0, 0.0, 6 / 16.0, 10 / 16.0, 1.0, 10 / 16.0);
     private static final int BASE_PUMP_RANGE = 32;
     private static final int EXTRA_PUMP_RANGE = 8;
-    private static final int PUMP_SPEED_BASE = 40;
+    private static final int PUMP_SPEED_BASE = 80;
 
     private final Deque<BlockPos> fluidSourceBlocks = new ArrayDeque<>();
     private final Deque<BlockPos> blocksToCheck = new ArrayDeque<>();
@@ -249,7 +249,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
                 exportFluids.fill(drainStack, true);
                 fluidHandler.drain(drainStack.amount, true);
                 this.fluidSourceBlocks.remove(fluidBlockPos);
-                energyContainer.changeEnergy(-GTValues.V[getTier()]);
+                energyContainer.changeEnergy(-GTValues.V[getTier()] * 2);
             }
         }
     }
@@ -260,21 +260,21 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         if (getWorld().isRemote) {
             return;
         }
-        //do not do anything without enough energy supplied
-        if (energyContainer.getEnergyStored() < GTValues.V[getTier()] * 4) {
-            return;
-        }
         pushFluidsIntoNearbyHandlers(getFrontFacing());
         fillContainerFromInternalTank(importItems, exportItems, 0, 0);
+
+        //do not do anything without enough energy supplied
+        if (energyContainer.getEnergyStored() < GTValues.V[getTier()] * 2) {
+            return;
+        }
         updateQueueState(getTier());
-        if (getOffsetTimer() % getPumpingCycleLength() == 0 && !fluidSourceBlocks.isEmpty() &&
-                energyContainer.getEnergyStored() >= GTValues.V[getTier()]) {
+        if (getOffsetTimer() % getPumpingCycleLength() == 0 && !fluidSourceBlocks.isEmpty()) {
             tryPumpFirstBlock();
         }
     }
 
     private int getPumpingCycleLength() {
-        return PUMP_SPEED_BASE / Math.max(1, getTier());
+        return PUMP_SPEED_BASE / (1 << (getTier() - 1));
     }
 
     @Override
@@ -292,9 +292,9 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        int maxPumpRange = getMaxPumpRange();
-        tooltip.add(I18n.format("gregtech.machine.pump.tooltip_range", maxPumpRange, maxPumpRange));
-        tooltip.add(I18n.format("gregtech.machine.pump.tooltip_speed", getPumpingCycleLength()));
+        tooltip.add(I18n.format("gregtech.machine.pump.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.pump.tooltip_rate", GTValues.V[getTier()] * 2, getPumpingCycleLength()));
+        tooltip.add(I18n.format("gregtech.machine.pump.tooltip_range", getMaxPumpRange(), getMaxPumpRange()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", exportFluids.getTankAt(0).getCapacity()));

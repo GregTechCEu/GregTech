@@ -18,7 +18,6 @@ import gregtech.common.blocks.BlockMachineCasing.MachineCasingType;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
-import gregtech.common.blocks.StoneBlock.ChiselingVariant;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
@@ -28,7 +27,6 @@ import gregtech.loaders.recipe.chemistry.ChemistryRecipes;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -453,6 +451,14 @@ public class MachineRecipeLoader {
                     .input(plate, material)
                     .fluidInputs(solder)
                     .outputs(COVER_ENERGY_DETECTOR.getStackForm())
+                    .EUt(16).duration(400)
+                    .buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .inputs(new ItemStack(Blocks.REDSTONE_TORCH))
+                    .input(plate, material)
+                    .fluidInputs(solder)
+                    .outputs(COVER_ACTIVITY_DETECTOR.getStackForm())
                     .EUt(16).duration(400)
                     .buildAndRegister();
 
@@ -906,36 +912,6 @@ public class MachineRecipeLoader {
                     .fluidInputs(Water.getFluid(100))
                     .outputs(mossStack.get(i))
                     .duration(50).EUt(16).buildAndRegister();
-        }
-    }
-
-    private static <T extends Enum<T> & IStringSerializable> void registerBrickRecipe(StoneBlock<T> stoneBlock, T normalVariant, T brickVariant) {
-        ModHandler.addShapedRecipe(stoneBlock.getRegistryName().getNamespace() + "_" + normalVariant + "_bricks",
-                stoneBlock.getItemVariant(brickVariant, ChiselingVariant.NORMAL, 4),
-                "XX", "XX", 'X',
-                stoneBlock.getItemVariant(normalVariant, ChiselingVariant.NORMAL));
-    }
-
-    private static <T extends Enum<T> & IStringSerializable> void registerChiselingRecipes(StoneBlock<T> stoneBlock) {
-        for (T variant : stoneBlock.getVariantValues()) {
-            boolean isBricksVariant = variant.getName().endsWith("_bricks");
-            if (!isBricksVariant) {
-                ModHandler.addSmeltingRecipe(stoneBlock.getItemVariant(variant, ChiselingVariant.CRACKED), stoneBlock.getItemVariant(variant, ChiselingVariant.NORMAL));
-                FORGE_HAMMER_RECIPES.recipeBuilder().duration(12).EUt(4)
-                        .inputs(stoneBlock.getItemVariant(variant, ChiselingVariant.NORMAL))
-                        .outputs(stoneBlock.getItemVariant(variant, ChiselingVariant.CRACKED))
-                        .buildAndRegister();
-            } else {
-                ModHandler.addSmeltingRecipe(stoneBlock.getItemVariant(variant, ChiselingVariant.NORMAL), stoneBlock.getItemVariant(variant, ChiselingVariant.CRACKED));
-            }
-            CHEMICAL_BATH_RECIPES.recipeBuilder().duration(12).EUt(4)
-                    .inputs(stoneBlock.getItemVariant(variant, !isBricksVariant ? ChiselingVariant.CRACKED : ChiselingVariant.NORMAL))
-                    .fluidInputs(Materials.Water.getFluid(144))
-                    .outputs(stoneBlock.getItemVariant(variant, ChiselingVariant.MOSSY))
-                    .buildAndRegister();
-            ModHandler.addShapelessRecipe(stoneBlock.getRegistryName().getPath() + "_chiseling_" + variant,
-                    stoneBlock.getItemVariant(variant, ChiselingVariant.CHISELED),
-                    stoneBlock.getItemVariant(variant, ChiselingVariant.NORMAL));
         }
     }
 

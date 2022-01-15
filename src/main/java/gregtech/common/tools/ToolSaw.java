@@ -28,6 +28,10 @@ public class ToolSaw extends ToolBase {
 
     @Override
     public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
+        if(enchantment.type == null) {
+            return false;
+        }
+
         return enchantment.type.canEnchantItem(Items.IRON_AXE);
     }
 

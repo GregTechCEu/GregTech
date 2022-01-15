@@ -1,16 +1,13 @@
 package gregtech.client.particle;
 
+import gregtech.api.util.GTLog;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ReportedException;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -22,10 +19,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
-import java.util.concurrent.Callable;
 
 /**
- * Created with IntelliJ IDEA.
+ * //TODO - One day switch to using GPU instances for rendering when particle is under pressure.
  *
  * @Author: KilaBash
  * @Date: 2021/08/31
@@ -36,21 +32,17 @@ public class GTParticleManager {
     public final static GTParticleManager INSTANCE = new GTParticleManager();
 
     private static World currentWorld = null;
-    private static ParticleManager particleManager = Minecraft.getMinecraft().effectRenderer;
+    private static final Minecraft mc = Minecraft.getMinecraft();
 
-    private final Map<IGTParticleHandler, ArrayDeque<GTParticle>[]> renderQueue = new HashMap<>();
+    private final Map<IGTParticleHandler, ArrayDeque<GTParticle>> renderQueueBack = new HashMap<>();
+    private final Map<IGTParticleHandler, ArrayDeque<GTParticle>> renderQueueFront = new HashMap<>();
     private final Queue<Tuple<IGTParticleHandler, GTParticle>> newParticleQueue = new ArrayDeque<>();
 
-    public void addEffect(Particle... particles) {
-        if (particleManager == null) {
-            particleManager = Minecraft.getMinecraft().effectRenderer;
-        }
-        for (Particle particle : particles) {
-            if (particle instanceof GTParticle && ((GTParticle) particle).getGLHandler() != null) {
-                newParticleQueue.add(new Tuple<>(((GTParticle) particle).getGLHandler(), (GTParticle)particle));
-            } else {
-                particleManager.addEffect(particle);
-            }
+    public void addEffect(GTParticle... particles) {
+        for (GTParticle particle : particles) {
+            if (particle.getGLHandler() != null) {
+                newParticleQueue.add(new Tuple<>(particle.getGLHandler(), particle));
+            } 
         }
     }
 
@@ -60,46 +52,61 @@ public class GTParticleManager {
             for (Tuple<IGTParticleHandler, GTParticle> handlerParticle = newParticleQueue.poll(); handlerParticle != null; handlerParticle = newParticleQueue.poll()) {
                 IGTParticleHandler handler = handlerParticle.getFirst();
                 GTParticle particle = handlerParticle.getSecond();
+                Map<IGTParticleHandler, ArrayDeque<GTParticle>> renderQueue = particle.getFXLayer() > 0 ? renderQueueFront : renderQueueBack;
                 if (!renderQueue.containsKey(handler)) {
-                    renderQueue.put(handler, new ArrayDeque[]{new ArrayDeque(), new ArrayDeque(), new ArrayDeque(), new ArrayDeque()});
+                    renderQueue.put(handler, new ArrayDeque<>());
                 }
-                ArrayDeque<GTParticle>[] arrayDeques = renderQueue.get(handler);
-                int layer = particle.getFXLayer();
-                if (arrayDeques[layer].size() > 6000) {
-                    arrayDeques[layer].removeFirst().setExpired();
+                ArrayDeque<GTParticle> arrayDeque = renderQueue.get(handler);
+                if (arrayDeque.size() > 6000) {
+                    arrayDeque.removeFirst().setExpired();
                 }
-                arrayDeques[layer].add(particle);
+                arrayDeque.add(particle);
             }
         }
     }
 
     private void updateEffectLayer() {
-        if (renderQueue.isEmpty()) return;
-        boolean empty = true;
-        for (ArrayDeque<GTParticle>[] array : renderQueue.values()) {
-            for (int layer = 0; layer < 4; ++layer) {
-                ArrayDeque<GTParticle> queue = array[layer];
-                if (!queue.isEmpty()) {
-                    empty = false;
-                    Iterator<GTParticle> iterator = queue.iterator();
-                    while (iterator.hasNext()) {
-                        Particle particle = iterator.next();
-                        tickParticle(particle);
-                        if (!particle.isAlive()) {
-                            iterator.remove();
-                        }
-                    }
-                }
-            }
+        if (!renderQueueBack.isEmpty()) {
+            updateQueue(renderQueueBack);
         }
-        if (empty) {
-            renderQueue.clear();
+        if (!renderQueueFront.isEmpty()) {
+            updateQueue(renderQueueFront);
         }
     }
 
-    public void clearAllEffects() {
-        renderQueue.clear();
-        newParticleQueue.clear();
+    private void updateQueue(Map<IGTParticleHandler, ArrayDeque<GTParticle>> renderQueue) {
+        Iterator<Map.Entry<IGTParticleHandler, ArrayDeque<GTParticle>>> entryIterator = renderQueue.entrySet().iterator();
+        while (entryIterator.hasNext()) {
+            Map.Entry<IGTParticleHandler, ArrayDeque<GTParticle>> entry = entryIterator.next();
+            Iterator<GTParticle> iterator = entry.getValue().iterator();
+            while (iterator.hasNext()) {
+                Particle particle = iterator.next();
+                tickParticle(particle);
+                if (!particle.isAlive()) {
+                    iterator.remove();
+                }
+            }
+            if (entry.getValue().isEmpty()) {
+                entryIterator.remove();
+            }
+        }
+    }
+
+    public void clearAllEffects(boolean cleanNewQueue) {
+        if (cleanNewQueue) {
+            for (Tuple<IGTParticleHandler, GTParticle> tuple : newParticleQueue) {
+                tuple.getSecond().setExpired();
+            }
+            newParticleQueue.clear();
+        }
+        for (ArrayDeque<GTParticle> particles : renderQueueBack.values()) {
+            particles.forEach(Particle::setExpired);
+        }
+        for (ArrayDeque<GTParticle> particles : renderQueueFront.values()) {
+            particles.forEach(Particle::setExpired);
+        }
+        renderQueueBack.clear();
+        renderQueueFront.clear();
     }
 
     private void tickParticle(final Particle particle) {
@@ -107,25 +114,13 @@ public class GTParticleManager {
             particle.onUpdate();
         }
         catch (Throwable throwable) {
-            CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Ticking Particle");
-            CrashReportCategory crashreportcategory = crashreport.makeCategory("Particle being ticked");
-            final int i = particle.getFXLayer();
-            crashreportcategory.addCrashSection("Particle", new Callable<String>() {
-                public String call() {
-                    return particle.toString();
-                }
-            });
-            crashreportcategory.addCrashSection("Particle Type", new Callable<String>() {
-                public String call() {
-                    return i == 0 ? "MISC_TEXTURE" : (i == 1 ? "TERRAIN_TEXTURE" : (i == 3 ? "ENTITY_PARTICLE_TEXTURE" : "Unknown - " + i));
-                }
-            });
-            throw new ReportedException(crashreport);
+            GTLog.logger.error("particle update error: {}", particle.toString(), throwable);
+            particle.setExpired();
         }
     }
 
     public void renderParticles(Entity entityIn, float partialTicks) {
-        if (renderQueue.isEmpty()) return;
+        if (renderQueueBack.isEmpty() && renderQueueFront.isEmpty()) return;
         float rotationX = ActiveRenderInfo.getRotationX();
         float rotationZ = ActiveRenderInfo.getRotationZ();
         float rotationYZ = ActiveRenderInfo.getRotationYZ();
@@ -142,75 +137,71 @@ public class GTParticleManager {
         Tessellator tessellator = Tessellator.getInstance();
         GlStateManager.disableLighting();
 
-        renderGlParticlesInLayer(tessellator, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+        renderGlParticlesInLayer(renderQueueBack, tessellator, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+
+        GlStateManager.depthMask(false);
+        renderGlParticlesInLayer(renderQueueFront, tessellator, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
 
         GlStateManager.depthMask(true);
         GlStateManager.disableBlend();
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
     }
 
-    private void renderGlParticlesInLayer(Tessellator tessellator, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
-        for (int layer = 0; layer < 4; layer++) {
-            for (IGTParticleHandler handler : renderQueue.keySet()) {
-                ArrayDeque<GTParticle> particles = renderQueue.get(handler)[layer];
-                if (particles.isEmpty()) continue;
-                BufferBuilder buffer = tessellator.getBuffer();
-                handler.preDraw(buffer);
-                for (final Particle particle : particles) {
+    private void renderGlParticlesInLayer(Map<IGTParticleHandler, ArrayDeque<GTParticle>> renderQueue, Tessellator tessellator, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
+        for (IGTParticleHandler handler : renderQueue.keySet()) {
+            ArrayDeque<GTParticle> particles = renderQueue.get(handler);
+            if (particles.isEmpty()) continue;
+            BufferBuilder buffer = tessellator.getBuffer();
+            handler.preDraw(buffer);
+            for (final GTParticle particle : particles) {
+                if (particle.shouldRendered(entityIn, partialTicks)) {
                     try {
                         particle.renderParticle(buffer, entityIn, partialTicks, rotationX, rotationXZ, rotationZ, rotationYZ, rotationXY);
                     }
                     catch (Throwable throwable) {
-                        CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Rendering Particle");
-                        CrashReportCategory crashreportcategory = crashreport.makeCategory("Particle being rendered");
-                        crashreportcategory.addCrashSection("Particle", new Callable<String>() {
-                            public String call() {
-                                return particle.toString();
-                            }
-                        });
-                        throw new ReportedException(crashreport);
+                        GTLog.logger.error("particle render error: {}", particle.toString(), throwable);
+                        particle.setExpired();
                     }
                 }
-                handler.postDraw(buffer);
             }
+            handler.postDraw(buffer);
         }
-    }
-
-    public String getStatistics() {
-        int g = 0;
-        for (ArrayDeque<GTParticle>[] array : renderQueue.values()) {
-            for (ArrayDeque<GTParticle> queue : array) {
-                g += queue.size();
-            }
-        }
-        return " GLFX: " + g;
     }
 
     public static void clientTick(TickEvent.ClientTickEvent event) {
-        Minecraft mc = Minecraft.getMinecraft();
         if (event.phase != TickEvent.Phase.END || mc.isGamePaused()) {
             return;
         }
 
         if (currentWorld != mc.world) {
+            INSTANCE.clearAllEffects(currentWorld != null);
             currentWorld = mc.world;
-            INSTANCE.clearAllEffects();
         }
 
-        if (mc.world != null) {
+        if (currentWorld != null) {
             INSTANCE.updateEffects();
         }
     }
 
     public static void renderWorld(RenderWorldLastEvent event) {
-        INSTANCE.renderParticles(Minecraft.getMinecraft().player, event.getPartialTicks());
+        Entity entity = mc.getRenderViewEntity();
+        INSTANCE.renderParticles(entity == null ? mc.player : entity, event.getPartialTicks());
     }
 
     public static void debugOverlay(RenderGameOverlayEvent.Text event) {
         if (event.getLeft().size() >= 5) {
             String particleTxt = event.getLeft().get(4);
-            particleTxt += "." + TextFormatting.GOLD + " BC-P: " + INSTANCE.getStatistics();
+            particleTxt += "." + TextFormatting.GOLD + " PARTICLE-BACK: " + INSTANCE.getStatistics(INSTANCE.renderQueueBack) + "PARTICLE-FRONt: " + INSTANCE.getStatistics(INSTANCE.renderQueueFront);
             event.getLeft().set(4, particleTxt);
         }
     }
+
+    public String getStatistics(Map<IGTParticleHandler, ArrayDeque<GTParticle>> renderQueue) {
+        int g = 0;
+        for (ArrayDeque<GTParticle> queue : renderQueue.values()) {
+            g += queue.size();
+        }
+        return " GLFX: " + g;
+    }
+
 }

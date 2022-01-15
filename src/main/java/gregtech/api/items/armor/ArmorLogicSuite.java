@@ -54,6 +54,9 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
     @Override
     public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
         IElectricItem item = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if(item == null) {
+            return new ArmorProperties(0, 0.0, 0);
+        }
         int damageLimit = Integer.MAX_VALUE;
         if (source.isUnblockable()) return new ArmorProperties(0, 0.0, 0);
         if (energyPerUse > 0) damageLimit = (int) Math.min(damageLimit, item.getCharge() * 1.0 / energyPerUse * 25.0);

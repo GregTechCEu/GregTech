@@ -1,36 +1,308 @@
 {
-  "tick.forge_hammer": {"category": "block", "sounds": [{"name": "gregtech:forge_hammer", "stream": false}]},
-  "tick.macerator": {"category": "block", "sounds": [{"name": "gregtech:macerator", "stream": false}]},
-  "tick.chemical_reactor": {"category": "block", "sounds": [{"name": "gregtech:chemical", "stream": false}]},
-  "tick.assembler": {"category": "block", "sounds": [{"name": "gregtech:assembler", "stream": false}]},
-  "tick.centrifuge": {"category": "block", "sounds": [{"name": "gregtech:centrifuge", "stream": false}]},
-  "tick.compressor": {"category": "block", "sounds": [{"name": "gregtech:compressor", "stream": false}]},
-  "tick.electrolyzer": {"category": "block", "sounds": [{"name": "gregtech:electrolyzer", "stream": false}]},
-  "tick.mixer": {"category": "block", "sounds": [{"name": "gregtech:mixer", "stream": false}]},
-  "tick.replicator": {"category": "block", "sounds": [{"name": "gregtech:replicator", "stream": false}]},
-  "tick.arc": {"category": "block", "sounds": [{"name": "gregtech:hum", "stream": false}]},
-  "tick.boiler": {"category": "block", "sounds": [{"name": "gregtech:boiling", "stream": false}]},
-  "tick.furnace": {"category": "block", "sounds": [{"name": "gregtech:heating", "stream": false}]},
-  "tick.cooling": {"category": "block", "sounds": [{"name": "gregtech:cooling", "stream": false}]},
-  "tick.fire": {"category": "block", "sounds": [{"name": "gregtech:fire", "stream": false}]},
-  "tick.bath": {"category": "block", "sounds": [{"name": "gregtech:bath", "stream": false}]},
-  "tick.motor": {"category": "block", "sounds": [{"name": "gregtech:motor", "stream": false}]},
-  "tick.cut": {"category": "block", "sounds": [{"name": "gregtech:cut", "stream": false}]},
-  "tick.turbine": {"category": "block", "sounds": [{"name": "gregtech:turbine", "stream": false}]},
-  "tick.combustion": {"category": "block", "sounds": [{"name": "gregtech:combustion", "stream": false}]},
-  "tick.miner": {"category": "block", "sounds": [{"name": "gregtech:miner", "stream": false}]},
-  "tick.science": {"category": "block", "sounds": [{"name": "gregtech:science", "stream": false}]},
-  "use.wrench": {"category": "block", "sounds": [{"name": "gregtech:wrench", "stream": false}]},
-  "use.soft_hammer": {"category": "block", "sounds": [{"name": "gregtech:soft_hammer", "stream": false}]},
-  "use.drill": {"category": "block", "sounds": [{"name": "gregtech:drill", "stream": false}]},
-  "use.plunger": {"category": "block", "sounds": [{"name": "gregtech:plunger", "stream": false}]},
-  "use.file": {"category": "block", "sounds": [{"name": "gregtech:file", "stream": false}]},
-  "use.saw": {"category": "block", "sounds": [{"name": "gregtech:saw", "stream": false}]},
-  "use.screwdriver": {"category": "block", "sounds": [{"name": "gregtech:screwdriver", "stream": false}]},
-  "use.chainsaw": {"category": "block", "sounds": [{"name": "gregtech:chainsaw", "stream": false}]},
-  "use.wirecutter": {"category": "block", "sounds": [{"name": "gregtech:wirecutter", "stream": false}]},
-  "use.spray_can": {"category": "block", "sounds": [{"name": "gregtech:spray_can", "stream": false}]},
-  "use.tricorder": {"category": "block", "sounds": [{"name": "gregtech:tricorder", "stream": false}]},
-  "use.mortar": {"category": "block", "sounds": [{"name": "gregtech:mortar", "stream": false}]},
-  "record.sus": {"category": "block", "sounds": [{"name": "gregtech:sus", "stream": false}]}
+  "tick.forge_hammer": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:forge_hammer",
+        "stream": false
+      }
+    ]
+  },
+  "tick.macerator": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:macerator",
+        "stream": false
+      }
+    ]
+  },
+  "tick.chemical_reactor": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:chemical",
+        "stream": false
+      }
+    ]
+  },
+  "tick.assembler": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:assembler",
+        "stream": false
+      }
+    ]
+  },
+  "tick.centrifuge": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:centrifuge",
+        "stream": false
+      }
+    ]
+  },
+  "tick.compressor": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:compressor",
+        "stream": false
+      }
+    ]
+  },
+  "tick.electrolyzer": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:electrolyzer",
+        "stream": false
+      }
+    ]
+  },
+  "tick.mixer": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:mixer",
+        "stream": false
+      }
+    ]
+  },
+  "tick.replicator": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:replicator",
+        "stream": false
+      }
+    ]
+  },
+  "tick.arc": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:hum",
+        "stream": false
+      }
+    ]
+  },
+  "tick.boiler": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:boiling",
+        "stream": false
+      }
+    ]
+  },
+  "tick.furnace": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:heating",
+        "stream": false
+      }
+    ]
+  },
+  "tick.cooling": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:cooling",
+        "stream": false
+      }
+    ]
+  },
+  "tick.fire": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:fire",
+        "stream": false
+      }
+    ]
+  },
+  "tick.bath": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:bath",
+        "stream": false
+      }
+    ]
+  },
+  "tick.motor": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:motor",
+        "stream": false
+      }
+    ]
+  },
+  "tick.cut": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:cut",
+        "stream": false
+      }
+    ]
+  },
+  "tick.turbine": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:turbine",
+        "stream": false
+      }
+    ]
+  },
+  "tick.combustion": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:combustion",
+        "stream": false
+      }
+    ]
+  },
+  "tick.miner": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:miner",
+        "stream": false
+      }
+    ]
+  },
+  "tick.science": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:science",
+        "stream": false
+      }
+    ]
+  },
+  "use.wrench": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:wrench",
+        "stream": false
+      }
+    ]
+  },
+  "use.soft_hammer": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:soft_hammer",
+        "stream": false
+      }
+    ]
+  },
+  "use.drill": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:drill",
+        "stream": false
+      }
+    ]
+  },
+  "use.plunger": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:plunger",
+        "stream": false
+      }
+    ]
+  },
+  "use.file": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:file",
+        "stream": false
+      }
+    ]
+  },
+  "use.saw": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:saw",
+        "stream": false
+      }
+    ]
+  },
+  "use.screwdriver": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:screwdriver",
+        "stream": false
+      }
+    ]
+  },
+  "use.chainsaw": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:chainsaw",
+        "stream": false
+      }
+    ]
+  },
+  "use.wirecutter": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:wirecutter",
+        "stream": false
+      }
+    ]
+  },
+  "use.spray_can": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:spray_can",
+        "stream": false
+      }
+    ]
+  },
+  "use.tricorder": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:tricorder",
+        "stream": false
+      }
+    ]
+  },
+  "use.mortar": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:mortar",
+        "stream": false
+      }
+    ]
+  },
+  "record.sus": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gregtech:sus",
+        "stream": false
+      }
+    ]
+  }
 }

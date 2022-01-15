@@ -60,8 +60,8 @@ public class EnergyNet extends PipeNet<WireProperties> {
     }
 
     @Override
-    protected void updateBlockedConnections(BlockPos nodePos, EnumFacing facing, boolean isBlocked) {
-        super.updateBlockedConnections(nodePos, facing, isBlocked);
+    protected void onConnectionsUpdate() {
+        super.onConnectionsUpdate();
         NET_DATA.clear();
     }
 

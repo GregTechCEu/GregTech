@@ -75,6 +75,16 @@ public class PartsRecipeHandler {
                     .duration(15)
                     .EUt(VA[MV])
                     .buildAndRegister();
+
+            if (material.hasFlag(NO_SMASHING)) {
+                RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                        .input(OrePrefix.dust, material)
+                        .notConsumable(MetaItems.SHAPE_EXTRUDER_BOLT)
+                        .outputs(GTUtility.copyAmount(8, boltStack))
+                        .duration(15)
+                        .EUt(VA[MV])
+                        .buildAndRegister();
+            }
         }
     }
 
@@ -107,7 +117,7 @@ public class PartsRecipeHandler {
                 .circuitMeta(1)
                 .buildAndRegister();
 
-        if (material.hasFlag(NO_SMASHING))
+        if (material.hasFlag(NO_SMASHING)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                     .input(ingot, material)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_FOIL)
@@ -115,6 +125,15 @@ public class PartsRecipeHandler {
                     .duration((int) material.getMass())
                     .EUt(24)
                     .buildAndRegister();
+
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(dust, material)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_FOIL)
+                    .output(foilPrefix, material, 4)
+                    .duration((int) material.getMass())
+                    .EUt(24)
+                    .buildAndRegister();
+        }
     }
 
     public static void processFineWire(OrePrefix fineWirePrefix, Material material, IngotProperty property) {
@@ -160,6 +179,16 @@ public class PartsRecipeHandler {
                     .duration((int) material.getMass() * 10)
                     .EUt(2 * voltageMultiplier)
                     .buildAndRegister();
+
+            if (material.hasFlag(NO_SMASHING)) {
+                RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                        .input(OrePrefix.dust, material, 4)
+                        .notConsumable(MetaItems.SHAPE_EXTRUDER_GEAR)
+                        .outputs(OreDictUnifier.get(gearPrefix, material))
+                        .duration((int) material.getMass() * 5)
+                        .EUt(8 * voltageMultiplier)
+                        .buildAndRegister();
+            }
         }
 
         if (material.hasFluid()) {
@@ -191,6 +220,16 @@ public class PartsRecipeHandler {
                         .notConsumable(MetaItems.SHAPE_MOLD_GEAR_SMALL.getStackForm())
                         .output(gearSmall, material)
                         .buildAndRegister();
+
+                if (material.hasFlag(NO_SMASHING)) {
+                    RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                            .input(OrePrefix.dust, material)
+                            .notConsumable(MetaItems.SHAPE_EXTRUDER_GEAR_SMALL)
+                            .outputs(stack)
+                            .duration((int) material.getMass())
+                            .EUt(material.getBlastTemperature() >= 2800 ? 256 : 64)
+                            .buildAndRegister();
+                }
             } else {
                 ModHandler.addShapedRecipe(String.format("gear_%s", material), stack,
                         "RPR", "PwP", "RPR",
@@ -203,12 +242,17 @@ public class PartsRecipeHandler {
     public static void processLens(OrePrefix lensPrefix, Material material, GemProperty property) {
         ItemStack stack = OreDictUnifier.get(lensPrefix, material);
 
-        RecipeMaps.LATHE_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, material)
-                .outputs(stack, OreDictUnifier.get(OrePrefix.dustSmall, material))
-                .duration((int) (material.getMass() / 2L))
-                .EUt(16)
-                .buildAndRegister();
+        LATHE_RECIPES.recipeBuilder()
+                .input(plate, material)
+                .output(lens, material)
+                .output(dustSmall, material)
+                .duration(1200).EUt(120).buildAndRegister();
+
+        LATHE_RECIPES.recipeBuilder()
+                .input(gemExquisite, material)
+                .output(lens, material)
+                .output(dust, material, 2)
+                .duration(2400).EUt(30).buildAndRegister();
 
         if (material == Materials.Diamond) { // override Diamond Lens to be LightBlue
             OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.LightBlue);
@@ -236,13 +280,6 @@ public class PartsRecipeHandler {
                     .duration(40)
                     .EUt(VA[ULV])
                     .buildAndRegister();
-        }
-
-        if (material.hasFlag(MORTAR_GRINDABLE)) {
-            ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, material);
-            ModHandler.addShapedRecipe(String.format("plate_to_dust_%s", material),
-                    dustStack, "X", "m",
-                    'X', new UnificationEntry(OrePrefix.plate, material));
         }
     }
 
@@ -302,6 +339,14 @@ public class PartsRecipeHandler {
                     OreDictUnifier.get(ringPrefix, material),
                     "h ", " X",
                     'X', new UnificationEntry(OrePrefix.stick, material));
+        } else {
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.dust, material)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_RING)
+                    .outputs(OreDictUnifier.get(ringPrefix, material, 4))
+                    .duration((int) material.getMass() * 2)
+                    .EUt(6 * getVoltageMultiplier(material))
+                    .buildAndRegister();
         }
     }
 
@@ -356,6 +401,16 @@ public class PartsRecipeHandler {
                 .duration((int) material.getMass() * 4)
                 .EUt(material.getBlastTemperature() >= 2800 ? 256 : 64)
                 .buildAndRegister();
+
+        if (material.hasFlag(NO_SMASHING)) {
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(dust, material, 4)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_ROTOR)
+                    .outputs(GTUtility.copy(stack))
+                    .duration((int) material.getMass() * 4)
+                    .EUt(material.getBlastTemperature() >= 2800 ? 256 : 64)
+                    .buildAndRegister();
+        }
     }
 
     public static void processStick(OrePrefix stickPrefix, Material material, DustProperty property) {
@@ -429,7 +484,7 @@ public class PartsRecipeHandler {
                 .EUt(16)
                 .buildAndRegister();
 
-        if (material.getProperties().hasProperty(PropertyKey.INGOT))
+        if (material.hasProperty(PropertyKey.INGOT)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                     .input(OrePrefix.ingot, material)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_ROD_LONG)
@@ -437,6 +492,17 @@ public class PartsRecipeHandler {
                     .duration((int) Math.max(material.getMass(), 1L))
                     .EUt(64)
                     .buildAndRegister();
+
+            if (material.hasFlag(NO_SMASHING)) {
+                RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                        .input(OrePrefix.dust, material)
+                        .notConsumable(MetaItems.SHAPE_EXTRUDER_ROD_LONG)
+                        .outputs(stack)
+                        .duration((int) Math.max(material.getMass(), 1L))
+                        .EUt(64)
+                        .buildAndRegister();
+            }
+        }
     }
 
     public static void processTurbine(OrePrefix toolPrefix, Material material, IngotProperty property) {

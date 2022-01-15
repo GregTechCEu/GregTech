@@ -41,7 +41,10 @@ import net.minecraft.network.play.client.CPacketPlayerDigging.Action;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.Tuple;
+import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -61,6 +64,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
@@ -73,6 +77,8 @@ import java.util.stream.Stream;
 import static gregtech.api.GTValues.V;
 
 public class GTUtility {
+
+    private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
     private static TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
 
@@ -984,4 +990,20 @@ public class GTUtility {
         }
         return result.toString();
     }
+
+  public static String formatNumbers(long number) {
+        return NUMBER_FORMAT.format(number);
+    }
+
+    public static String formatNumbers(double number) {
+        return NUMBER_FORMAT.format(number);
+    }
+
+    /**
+     * If pos of this world loaded
+     */
+    public static boolean isPosChunkLoaded(World world, BlockPos pos) {
+        return !world.getChunkProvider().provideChunk(pos.getX() >> 4, pos.getZ() >> 4).isEmpty();
+    }
+
 }

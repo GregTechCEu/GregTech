@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 
 public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
 
-    protected int totalContinuousRunningTime;
+    protected long totalContinuousRunningTime;
 
     public MultiblockFuelRecipeLogic(RecipeMapMultiblockController tileEntity) {
         super(tileEntity);
@@ -59,28 +59,22 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    public int getParallelLimit() {
-        return boostConsumption((int) (Math.max(1, Math.pow(4, getOverclockTier() - 1))));
-    }
-
-    @Override
     public void update() {
         super.update();
-        if (workingEnabled && progressTime > 0) {
-            if (totalContinuousRunningTime == Integer.MAX_VALUE)
-                totalContinuousRunningTime = 0;
-            else
-                totalContinuousRunningTime += 1;
+        if (workingEnabled && isActive && progressTime > 0) {
+                totalContinuousRunningTime ++;
         } else {
             totalContinuousRunningTime = 0;
         }
     }
 
-    protected int boostConsumption(int consumption) {
-        return consumption;
+    @Override
+    public int getParallelLimit() {
+        // parallel is limited by voltage
+        return Integer.MAX_VALUE;
     }
 
-    protected long boostProduction(int production) {
+    protected long boostProduction(long production) {
         return production;
     }
 

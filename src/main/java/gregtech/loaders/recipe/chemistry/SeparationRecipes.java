@@ -437,6 +437,13 @@ public class SeparationRecipes {
                 .fluidOutputs(Hydrogen.getFluid(6000))
                 .duration(480).EUt(VA[MV]).buildAndRegister();
 
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .input(dust, TungsticAcid, 7)
+                .output(dust, Tungsten)
+                .fluidOutputs(Hydrogen.getFluid(2000))
+                .fluidOutputs(Oxygen.getFluid(4000))
+                .duration(210).EUt(960).buildAndRegister();
+
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 1, GTValues.W))
@@ -525,14 +532,5 @@ public class SeparationRecipes {
                 .outputs(new ItemStack(Items.BOOK, 3))
                 .duration(300).EUt(2).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().duration(80).EUt(VA[LV])
-                .input(dust, Redstone)
-                .fluidOutputs(Redstone.getFluid(L))
-                .buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder().duration(80).EUt(VA[LV])
-                .input(dust, Glowstone)
-                .fluidOutputs(Glowstone.getFluid(L))
-                .buildAndRegister();
     }
 }
