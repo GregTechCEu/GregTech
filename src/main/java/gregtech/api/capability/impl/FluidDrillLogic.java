@@ -1,11 +1,11 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidDrill;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -23,6 +23,7 @@ public class FluidDrillLogic {
     private boolean isWorkingEnabled = true;
     private boolean wasActiveAndNeedsUpdate;
     private boolean isDone = false;
+    protected boolean isInventoryFull;
 
     private Fluid veinFluid;
 
@@ -57,7 +58,7 @@ public class FluidDrillLogic {
 
         // if the inventory is not full, drain energy etc. from the drill
         // the storages have already been checked earlier
-        if (!metaTileEntity.isInventoryFull()) {
+        if (!isInventoryFull) {
             // actually drain the energy
             metaTileEntity.drainEnergy(false);
 
@@ -82,19 +83,21 @@ public class FluidDrillLogic {
             metaTileEntity.fillTanks(new FluidStack(veinFluid, rate), false);
             depleteVein();
         } else {
-            metaTileEntity.setInventoryFull(true);
+            isInventoryFull = true;
             setActive(false);
             setWasActiveAndNeedsUpdate(true);
         }
     }
 
     private boolean acquireNewFluid() {
-        veinFluid = BedrockFluidVeinHandler.getFluid(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
-        return veinFluid != null;
+        this.veinFluid = BedrockFluidVeinHandler.getFluid(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
+        return this.veinFluid != null;
     }
 
     protected void depleteVein() {
-        BedrockFluidVeinHandler.depleteVein(coefficient, metaTileEntity.getWorld(), getChunkX(), getChunkZ());
+        // adjust depletion for rig multiplier
+        if (GTValues.RNG.nextInt(metaTileEntity.getDepletionChance()) == 0)
+            BedrockFluidVeinHandler.depleteVein(coefficient, metaTileEntity.getWorld(), getChunkX(), getChunkZ());
     }
 
     private int getFluidRate() {
@@ -121,10 +124,10 @@ public class FluidDrillLogic {
         }
 
         if (metaTileEntity.fillTanks(new FluidStack(veinFluid, getFluidRate()), true)) {
-            metaTileEntity.setInventoryFull(false);
+            this.isInventoryFull = false;
             return true;
         }
-        metaTileEntity.setInventoryFull(true);
+        this.isInventoryFull = true;
         if (isActive()) {
             setActive(false);
             setWasActiveAndNeedsUpdate(true);
@@ -138,7 +141,7 @@ public class FluidDrillLogic {
     }
 
     public void setCoefficient() {
-        this.coefficient = 0.5F + (voltageTier - metaTileEntity.getTier()) * 0.25F;
+        this.coefficient = 0.5F + 0.25F * (Math.max(metaTileEntity.getTier(), voltageTier) - metaTileEntity.getTier());
     }
 
     private int getChunkX() {
@@ -203,15 +206,24 @@ public class FluidDrillLogic {
     }
 
     /**
+     *
+     * @return whether the inventory is full
+     */
+    public boolean isInventoryFull() {
+        return this.isInventoryFull;
+    }
+
+    /**
      * writes all needed values to NBT
      * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#writeToNBT(NBTTagCompound)} method
      */
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound data) {
-        data.setTag("isActive", new NBTTagInt(this.isActive ? 1 : 0));
-        data.setTag("isWorkingEnabled", new NBTTagInt(this.isWorkingEnabled ? 1 : 0));
-        data.setTag("wasActiveAndNeedsUpdate", new NBTTagInt(this.wasActiveAndNeedsUpdate ? 1 : 0));
-        data.setTag("isDone", new NBTTagInt(isDone ? 1 : 0));
-        data.setTag("currentProgress", new NBTTagInt(currentProgress));
+        data.setBoolean("isActive", this.isActive);
+        data.setBoolean("isWorkingEnabled", this.isWorkingEnabled);
+        data.setBoolean("wasActiveAndNeedsUpdate", this.wasActiveAndNeedsUpdate);
+        data.setBoolean("isDone", isDone);
+        data.setInteger("currentProgress",currentProgress);
+        data.setBoolean("isInventoryFull", isInventoryFull);
         return data;
     }
 
@@ -220,11 +232,12 @@ public class FluidDrillLogic {
      * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#readFromNBT(NBTTagCompound)} method
      */
     public void readFromNBT(@Nonnull NBTTagCompound data) {
-        setActive(data.getInteger("isActive") != 0);
-        setWorkingEnabled(data.getInteger("isWorkingEnabled") != 0);
-        setWasActiveAndNeedsUpdate(data.getInteger("wasActiveAndNeedsUpdate") != 0);
-        this.isDone = data.getInteger("isDone") != 0;
+        setActive(data.getBoolean("isActive"));
+        setWorkingEnabled(data.getBoolean("isWorkingEnabled"));
+        setWasActiveAndNeedsUpdate(data.getBoolean("wasActiveAndNeedsUpdate"));
+        this.isDone = data.getBoolean("isDone");
         this.currentProgress = data.getInteger("currentProgress");
+        this.isInventoryFull = data.getBoolean("isInventoryFull");
     }
 
     /**
@@ -236,6 +249,7 @@ public class FluidDrillLogic {
         buf.writeBoolean(this.isWorkingEnabled);
         buf.writeBoolean(this.wasActiveAndNeedsUpdate);
         buf.writeInt(this.currentProgress);
+        buf.writeBoolean(this.isInventoryFull);
     }
 
     /**
@@ -247,6 +261,7 @@ public class FluidDrillLogic {
         setWorkingEnabled(buf.readBoolean());
         setWasActiveAndNeedsUpdate(buf.readBoolean());
         this.currentProgress = buf.readInt();
+        this.isInventoryFull = buf.readBoolean();
     }
 
     /**

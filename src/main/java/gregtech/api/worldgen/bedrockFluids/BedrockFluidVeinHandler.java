@@ -2,7 +2,7 @@ package gregtech.api.worldgen.bedrockFluids;
 
 import gregtech.api.GTValues;
 import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.packets.SPacketFluidVeinList;
+import gregtech.api.net.packets.CPacketFluidVeinList;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.XSTR;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
@@ -152,10 +152,10 @@ public class BedrockFluidVeinHandler {
             return;
         BedrockFluidDepositDefinition definition = info.getVein();
 
-        double averageDecrease = definition.getDepletionAmount() * coefficient;
+        double averageDecrease = definition.getDepletionChance() * definition.getDepletionAmount() * coefficient;
         int decrease = (int) Math.ceil(averageDecrease);
-        if (GTValues.RNG.nextFloat() >= (decrease - averageDecrease)) {
-            info.currentFluidAmount = Math.max(0, info.currentFluidAmount - decrease);
+        if (GTValues.RNG.nextFloat() < (decrease - averageDecrease)) {
+            info.currentFluidAmount = Math.max(0, info.currentFluidAmount - definition.getDepletionAmount());
             BedrockFluidVeinSaveData.setDirty();
         }
     }
@@ -213,7 +213,7 @@ public class BedrockFluidVeinHandler {
                 if (entry.getKey() != null && entry.getValue() != null)
                     packetMap.put(entry.getValue(), entry.getValue().getVein().getWeight());
             }
-            NetworkHandler.channel.sendToAll(new SPacketFluidVeinList(packetMap).toFMLPacket());
+            NetworkHandler.channel.sendToAll(new CPacketFluidVeinList(packetMap).toFMLPacket());
         }
     }
 

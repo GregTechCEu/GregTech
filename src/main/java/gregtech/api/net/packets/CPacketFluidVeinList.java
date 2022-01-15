@@ -14,11 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @NoArgsConstructor
-public class SPacketFluidVeinList implements IPacket {
+public class CPacketFluidVeinList implements IPacket {
 
     private Map<BedrockFluidVeinHandler.FluidVeinWorldEntry, Integer> map;
 
-    public SPacketFluidVeinList(HashMap<BedrockFluidVeinHandler.FluidVeinWorldEntry, Integer> map) {
+    public CPacketFluidVeinList(HashMap<BedrockFluidVeinHandler.FluidVeinWorldEntry, Integer> map) {
         this.map = map;
     }
 

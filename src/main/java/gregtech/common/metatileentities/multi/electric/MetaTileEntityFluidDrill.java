@@ -49,9 +49,6 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     private final FluidDrillLogic minerLogic;
     private final int tier;
 
-    private boolean isInventoryFull = false;
-
-
     protected IMultipleTankHandler inputFluidInventory;
     protected IMultipleTankHandler outputFluidInventory;
     protected IEnergyContainer energyContainer;
@@ -175,7 +172,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
             textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
         }
 
-        if (this.isInventoryFull)
+        if (minerLogic.isInventoryFull())
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
     }
 
@@ -195,6 +192,16 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     public int getRigMultiplier() {
         if (this.tier == GTValues.MV)
             return 1;
+        if (this.tier == GTValues.HV)
+            return 16;
+        if (this.tier == GTValues.EV)
+            return 64;
+        return 1;
+    }
+
+    public int getDepletionChance() {
+        if (this.tier == GTValues.MV)
+            return 4;
         if (this.tier == GTValues.HV)
             return 16;
         if (this.tier == GTValues.EV)
@@ -222,14 +229,6 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     @Override
     public void setWorkingEnabled(boolean isActivationAllowed) {
         this.minerLogic.setWorkingEnabled(isActivationAllowed);
-    }
-
-    public boolean isInventoryFull() {
-        return this.isInventoryFull;
-    }
-
-    public void setInventoryFull(boolean isFull) {
-        this.isInventoryFull = isFull;
     }
 
     public boolean fillTanks(FluidStack stack, boolean simulate) {
