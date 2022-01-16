@@ -62,10 +62,10 @@ public class ItemMagnetBehavior implements IItemBehaviour {
             double distance = MathHelper.sqrt(distanceX * distanceX + distanceZ * distanceZ);
             if (distance >= 0.7) {
                 if (!entityItem.cannotPickup()) {
-                    if (!drainEnergy(true, itemStack, (int) distance))
+                    if (!drainEnergy(true, itemStack, (long) distance))
                         return;
 
-                    drainEnergy(false, itemStack, (int) distance);
+                    drainEnergy(false, itemStack, (long) distance);
 
                     double directionX = distanceX / distance;
                     double directionY = distanceY / distance;
@@ -74,7 +74,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
                     entityItem.motionY = directionY * speed * 8;
                     entityItem.motionZ = directionZ * speed * 8;
                     entityItem.velocityChanged = true;
-                    entityItem.setPickupDelay(1);
+                    entityItem.setNoPickupDelay();
                 }
             } else if (!entityItem.cannotPickup()) {
                 ItemStack stack = entityItem.getItem();
@@ -84,6 +84,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
                     entityItem.setDead();
                 } else if (stack.getCount() > remainder.getCount()) {
                     entityItem.setItem(remainder);
+                    entityItem.setDefaultPickupDelay();
                 }
             }
         }
