@@ -163,8 +163,8 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 .where('S', selfPredicate())
                 .where('P', states(boilerType.pipeState))
                 .where('X', states(boilerType.fireboxState).setMinGlobalLimited(4)
-                        .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1))
-                        .or(abilities(MultiblockAbility.IMPORT_ITEMS).setMinGlobalLimited(1))
+                        .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setMaxGlobalLimited(2))
+                        .or(abilities(MultiblockAbility.IMPORT_ITEMS).setMaxGlobalLimited(1))
                         .or(autoAbilities())) // muffler, maintenance
                 .where('C', states(boilerType.casingState).setMinGlobalLimited(20)
                         .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1)))
