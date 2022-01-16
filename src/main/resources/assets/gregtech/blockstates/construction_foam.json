@@ -4,7 +4,7 @@
     "uvlock": true,
     "model": "gregtech:tinted_cube_all",
     "textures": {
-      "all": "gregtech:blocks/foam/foam"
+      "all": "gregtech:blocks/foam/construction_foam"
     }
   },
   "variants": {

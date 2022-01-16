@@ -53,7 +53,7 @@ public class RecipeMapFluidCanner extends RecipeMap<SimpleRecipeBuilder> {
                             .inputs(new CountableIngredient(new NBTIngredient(inputStack), 1))
                             .outputs(fluidHandlerItem.getContainer())
                             .fluidOutputs(containerFluid)
-                            .duration(Math.max(16, containerFluid.amount / 64)).EUt(4)
+                            .duration(Math.max(16, containerFluid.amount / 64)).EUt(1)
                             .build().getResult();
                 }
 
@@ -67,7 +67,7 @@ public class RecipeMapFluidCanner extends RecipeMap<SimpleRecipeBuilder> {
                                 .inputs(new CountableIngredient(new NBTIngredient(inputStack), 1))
                                 .fluidInputs(inputFluid)
                                 .outputs(fluidHandlerItem.getContainer())
-                                .duration(Math.max(16, inputFluid.amount / 64)).EUt(4)
+                                .duration(Math.max(16, inputFluid.amount / 64)).EUt(1)
                                 .build().getResult();
                     }
                 }

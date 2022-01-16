@@ -872,7 +872,7 @@ metaitem.plant_ball.name=Plant Ball
 metaitem.tool_parts_box.name=Tool Parts Box
 metaitem.tool_parts_box.tooltip=Contains some tool parts/nRight click to open
 metaitem.foam_sprayer.name=Foam Sprayer
-metaitem.foam_sprayer.tooltip=Sprays Construction Foam/nUse on a frame to foam connected frames/nFoam can be colored
+metaitem.foam_sprayer.tooltip=Sprays Construction Foam/nFoam can be colored
 metaitem.energium_dust.name=Energium Dust
 metaitem.compressed.clay.name=Compressed Clay
 metaitem.compressed.fireclay.name=Compressed Fireclay
@@ -2509,6 +2509,15 @@ gregtech.multiblock.tank.tooltip=Fill and drain through the controller or tank v
 gregtech.tank_valve.tooltip=Use to fill and drain multiblock tanks. Auto outputs when facing down.
 
 gregtech.machine.clipboard.name=Clipboard
+
+# Construction Foam
+tile.construction_foam_wet.name=Wet Construction Foam
+tile.construction_foam_wet.tooltip.1=Dries after some time
+tile.construction_foam_wet.tooltip.2=Can be colored with Sprays
+tile.construction_foam_wet.tooltip.3=Dry instantly with Sand or Hardening Spray
+tile.construction_foam_wet.tooltip.4=Produce with a Foam Sprayer
+tile.construction_foam.name=Construction Foam
+tile.construction_foam.tooltip.1=Dry construction foam
 
 # Asphalt
 tile.asphalt.asphalt.name=Asphalt
