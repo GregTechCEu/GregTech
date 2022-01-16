@@ -4304,7 +4304,8 @@ gregtech.command.util.hand.tool_stats=Tool Stats Class: %s
 gregtech.command.util.hand.not_a_player=This command is only usable by a player.
 gregtech.command.util.hand.no_item=You must hold something in mainhand before executing this command.
 gregtech.command.util.recipecheck.usage=Usage: /gregtech util recipecheck
-gregtech.command.util.recipecheck.begin=Starting recipe conflict check... (This might take a while!)
+gregtech.command.util.recipecheck.begin=Starting recipe conflict check...
+gregtech.command.util.recipecheck.end=Recipe conflict check found %d possible conflicts. Check the server log for more info
 
 gregtech.universal.clear_nbt_recipe.tooltip=§cThis will destroy all contents!
 
