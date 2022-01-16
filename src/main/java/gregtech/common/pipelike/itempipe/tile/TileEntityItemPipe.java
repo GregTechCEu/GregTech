@@ -114,5 +114,6 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
             handlers.put(entry.getKey(), entry.getValue());
         }
         defaultHandler = itemPipe.defaultHandler;
+        checkNetwork();
     }
 }
