@@ -50,42 +50,15 @@ public class CommandRecipeCheck extends CommandBase {
             GTLog.logger.info("[Recipe Checker] Checking recipe map " + recipeMap.getUnlocalizedName());
             GTLog.logger.info("[Recipe Checker] Iterating over " +recipeMap.getRecipeList().size() + " recipes");
             for (Recipe recipe : recipeMap.getRecipeList()) {
-            //if (recipeMap.getRecipeList().size() > 0) {Recipe recipe = (Recipe) recipeMap.getRecipeList().toArray()[0];
-                /*GTLog.logger.info("[Recipe Checker] Check recipe:");
-                for (CountableIngredient stack : recipe.getInputs()) {
-                    GTLog.logger.info(stack.toPrettyString());
-                }
-                for (FluidStack stack : recipe.getFluidInputs()) {
-                    GTLog.logger.info(stack.getUnlocalizedName() + " * " + stack.amount);
-                }
-                GTLog.logger.info("outputs:");
-                for (ItemStack stack : recipe.getOutputs()) {
-                    GTLog.logger.info(stack.toString());
-                }
-                for (Recipe.ChanceEntry stack : recipe.getChancedOutputs()) {
-                    GTLog.logger.info(stack.getItemStack().toString());
-                }
-                for (FluidStack stack : recipe.getFluidOutputs()) {
-                    GTLog.logger.info(stack.getUnlocalizedName() + " * " + stack.amount);
-                }
-                GTLog.logger.info("[Recipe Checker] Testing inputs...");*/
-                Recipe foundRecipe = recipeMap.findRecipe(Long.MAX_VALUE, recipe.getInputs().stream().map(ingredient -> {
-                        ItemStack[] stacks = ingredient.getIngredient().getMatchingStacks();
-                        if (stacks.length > 0) {
-                            ItemStack outStack = stacks[0].copy();
-                            outStack.setCount(Math.max(1, ingredient.getCount()) * 100);
-                            return outStack;
-                        }
-                        return null;
-                    }).filter(Objects::nonNull).collect(Collectors.toList()),
-                    recipe.getFluidInputs()
-                            .stream().map(stack -> new FluidStack(stack, stack.amount * 10000))
-                            .collect(Collectors.toList()),
-                    Integer.MAX_VALUE, MatchingMode.DEFAULT);
-                /*GTLog.logger.info("[Recipe Checker] Found: " + foundRecipe + " from " + recipe);
-                GTLog.logger.info("[Recipe Checker] Matched: " + (foundRecipe == recipe));*/
-                if (foundRecipe != recipe) {
-                    mismatchedRecipes.add(new MismatchEntry(recipe, foundRecipe, recipeMap));
+                MismatchEntry checkResult = checkRecipe(
+                        recipe,
+                        recipeMap,
+                        recipe.getFluidInputs()
+                                .stream().map(stack -> new FluidStack(stack, stack.amount * 10000))
+                                .collect(Collectors.toList()),
+                        recipe.getInputs(), 0);
+                if (checkResult != null) {
+                    mismatchedRecipes.add(checkResult);
                 }
             }
         }
@@ -101,6 +74,55 @@ public class CommandRecipeCheck extends CommandBase {
         }
 
         sender.sendMessage(new TextComponentTranslation("gregtech.command.util.recipecheck.end", mismatchedRecipes.size()));
+    }
+
+    /**
+     * Recursively check all combinations of item inputs until one is mismatched or there are no more
+     */
+    private MismatchEntry checkRecipe(Recipe recipe, RecipeMap<?> recipeMap, List<FluidStack> fluidInputs, List<CountableIngredient> itemInputs, int startIndex) {
+        // if we have not yet bottomed out the input list
+        if (startIndex < itemInputs.size()) {
+            CountableIngredient ingredient = itemInputs.get(startIndex);
+            ItemStack[] matchingStacks = ingredient.getIngredient().getMatchingStacks();
+            if (matchingStacks.length > 1) {
+                // check each possible input for this level
+                for (ItemStack stack : matchingStacks) {
+                    // shallow copy the input list to avoid editing it
+                    List<CountableIngredient> reducedIngredients = new ArrayList<>(itemInputs);
+                    // reduce the current level to only the current ItemStack
+                    reducedIngredients.set(startIndex, CountableIngredient.from(stack, ingredient.getCount()));
+                    // go one level deeper into the input list
+                    MismatchEntry checkResult = checkRecipe(recipe, recipeMap, fluidInputs, reducedIngredients, startIndex + 1);
+                    // only trigger the return chain if we found a mismatch, we want to continue the loop otherwise
+                    if (checkResult != null){
+                        return checkResult;
+                    }
+                }
+            }
+            else {
+                // go one level deeper into the input list
+                return checkRecipe(recipe, recipeMap, fluidInputs, itemInputs, startIndex + 1);
+            }
+        }
+        else {
+            // actually check the recipe
+            Recipe foundRecipe = recipeMap.findRecipe(Long.MAX_VALUE, recipe.getInputs().stream().map(ingredient -> {
+                        ItemStack[] stacks = ingredient.getIngredient().getMatchingStacks();
+                        if (stacks.length > 0) {
+                            ItemStack outStack = stacks[0].copy();
+                            outStack.setCount(Math.max(1, ingredient.getCount()) * 100);
+                            return outStack;
+                        }
+                        return null;
+                    }).filter(Objects::nonNull).collect(Collectors.toList()),
+                    fluidInputs, Integer.MAX_VALUE, MatchingMode.DEFAULT);
+            if (foundRecipe != recipe) {
+                return new MismatchEntry(recipe, foundRecipe, recipeMap);
+            }
+            return null;
+        }
+        // only hit when the stack reduction loop finishes without finding a conflict
+        return null;
     }
 
     public String prettyPrintRecipe(Recipe recipe) {
