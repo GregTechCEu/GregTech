@@ -32,7 +32,7 @@ public class MiscRecipeLoader {
 
         // Basic Terminal Recipe
         ModHandler.addShapedRecipe(true, "basic_terminal", TERMINAL.getStackForm(),
-                "SPS", "PBP", "PWP", 'S', new UnificationEntry(screw, WroughtIron), 'P', OreDictUnifier.get("paneGlass"), 'B', new ItemStack(Items.BOOK),
+                "SGS", "PBP", "PWP", 'S', new UnificationEntry(screw, WroughtIron), 'G', OreDictUnifier.get("paneGlass"), 'B', new ItemStack(Items.BOOK),
                                         'P', new UnificationEntry(plate, WroughtIron), 'W', new UnificationEntry(wireGtSingle, RedAlloy));
 
         // Potin Recipe
