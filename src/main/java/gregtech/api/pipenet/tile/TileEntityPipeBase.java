@@ -51,6 +51,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void transferDataFrom(IPipeTile<PipeType, NodeDataType> tileEntity) {
         this.pipeType = tileEntity.getPipeType();
         this.paintingColor = tileEntity.getPaintingColor();
+        this.openConnections = tileEntity.getOpenConnections();
         if (tileEntity instanceof TileEntityPipeBase) {
             this.updateEntries.addAll(((TileEntityPipeBase<?, ?>) tileEntity).updateEntries);
         }
@@ -269,7 +270,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
         if (compound.hasKey("Connections")) {
             openConnections = compound.getInteger("Connections");
-        } else {
+        } else if (compound.hasKey("BlockedConnectionsMap")) {
             openConnections = 0;
             NBTTagCompound blockedConnectionsTag = compound.getCompoundTag("BlockedConnectionsMap");
             for (String attachmentTypeKey : blockedConnectionsTag.getKeySet()) {

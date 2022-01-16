@@ -23,7 +23,8 @@ import java.util.*;
 public class ItemNetHandler implements IItemHandler {
 
     private ItemPipeNet net;
-    private final TileEntityItemPipeTickable pipe;
+    private TileEntityItemPipe pipe;
+    private TileEntityItemPipeTickable tickingPipe;
     private final World world;
     private final EnumFacing facing;
     private final Map<FacingPos, Integer> simulatedTransfersGlobalRoundRobin = new HashMap<>();
@@ -31,10 +32,7 @@ public class ItemNetHandler implements IItemHandler {
 
     public ItemNetHandler(ItemPipeNet net, TileEntityItemPipe pipe, EnumFacing facing) {
         this.net = net;
-        if (pipe instanceof TileEntityItemPipeTickable)
-            this.pipe = (TileEntityItemPipeTickable) pipe;
-        else
-            this.pipe = (TileEntityItemPipeTickable) pipe.setSupportsTicking();
+        this.pipe = pipe;
         this.facing = facing;
         this.world = pipe.getWorld();
     }
@@ -48,7 +46,7 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     private void copyTransferred() {
-        simulatedTransfers = pipe.getTransferredItems();
+        simulatedTransfers = tickingPipe.getTransferredItems();
         simulatedTransfersGlobalRoundRobin.clear();
         simulatedTransfersGlobalRoundRobin.putAll(pipe.getTransferred());
     }
@@ -57,6 +55,11 @@ public class ItemNetHandler implements IItemHandler {
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) return stack;
+        // only set pipe to ticking when something is inserted
+        if (tickingPipe == null) {
+            this.tickingPipe = (TileEntityItemPipeTickable) pipe.setSupportsTicking();
+            this.pipe = tickingPipe;
+        }
         copyTransferred();
         CoverBehavior pipeCover = getCoverOnPipe(pipe.getPipePos(), facing);
         CoverBehavior tileCover = getCoverOnNeighbour(pipe.getPipePos(), facing);
@@ -342,7 +345,7 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     public ItemStack insert(ItemPipeNet.Inventory handler, ItemStack stack, boolean simulate, boolean ignoreLimit) {
-        int allowed = ignoreLimit ? stack.getCount() : checkTransferable(pipe, handler.getProperties().getTransferRate(), stack.getCount(), simulate);
+        int allowed = ignoreLimit ? stack.getCount() : checkTransferable(handler.getProperties().getTransferRate(), stack.getCount(), simulate);
         if (allowed == 0) return stack;
         CoverBehavior pipeCover = getCoverOnPipe(handler.getPipePos(), handler.getFaceToHandler());
         CoverBehavior tileCover = getCoverOnNeighbour(handler.getPipePos(), handler.getFaceToHandler());
@@ -373,14 +376,14 @@ public class ItemNetHandler implements IItemHandler {
         if (stack.getCount() == allowed) {
             ItemStack re = ItemHandlerHelper.insertItemStacked(handler, stack, simulate);
             if (!ignoreLimit)
-                transfer(pipe, simulate, stack.getCount() - re.getCount());
+                transfer(simulate, stack.getCount() - re.getCount());
             return re;
         }
         ItemStack toInsert = stack.copy();
         toInsert.setCount(Math.min(allowed, stack.getCount()));
         int r = ItemHandlerHelper.insertItemStacked(handler, toInsert, simulate).getCount();
         if (!ignoreLimit)
-            transfer(pipe, simulate, toInsert.getCount() - r);
+            transfer(simulate, toInsert.getCount() - r);
         ItemStack remainder = stack.copy();
         remainder.setCount(r + (stack.getCount() - toInsert.getCount()));
         return remainder;
@@ -454,19 +457,19 @@ public class ItemNetHandler implements IItemHandler {
         return count;
     }
 
-    private int checkTransferable(TileEntityItemPipeTickable pipe, float rate, int amount, boolean simulate) {
+    private int checkTransferable(float rate, int amount, boolean simulate) {
         int max = (int) ((rate * 64) + 0.5);
         if (simulate)
             return Math.max(0, Math.min(max - simulatedTransfers, amount));
         else
-            return Math.max(0, Math.min(max - pipe.getTransferredItems(), amount));
+            return Math.max(0, Math.min(max - tickingPipe.getTransferredItems(), amount));
     }
 
-    private void transfer(TileEntityItemPipeTickable pipe, boolean simulate, int amount) {
+    private void transfer(boolean simulate, int amount) {
         if (simulate)
             simulatedTransfers += amount;
         else
-            pipe.transferItems(amount);
+            tickingPipe.transferItems(amount);
     }
 
     @Override

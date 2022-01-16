@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.itempipe.tile;
 
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
+import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.util.FacingPos;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
@@ -102,5 +103,16 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
 
     public Map<FacingPos, Integer> getTransferred() {
         return transferred;
+    }
+
+    @Override
+    public void transferDataFrom(IPipeTile<ItemPipeType, ItemPipeProperties> tileEntity) {
+        super.transferDataFrom(tileEntity);
+        TileEntityItemPipe itemPipe = (TileEntityItemPipe) tileEntity;
+        handlers.clear();
+        for (Map.Entry<EnumFacing, ItemNetHandler> entry : itemPipe.handlers.entrySet()) {
+            handlers.put(entry.getKey(), entry.getValue());
+        }
+        defaultHandler = itemPipe.defaultHandler;
     }
 }
