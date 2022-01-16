@@ -180,7 +180,8 @@ public interface IToolStats {
 
     default void onCraftingUse(ItemStack stack, EntityPlayer player) {
         if (ConfigHolder.client.toolCraftingSounds && stack.getItem() instanceof ToolMetaItem<?>) {
-            if (((ToolMetaItem<?>) stack.getItem()).canPlaySound(stack)) {
+            //noinspection ConstantConditions
+            if (((ToolMetaItem<?>) stack.getItem()).canPlaySound(stack) && player != null && player.getEntityWorld() != null) {
                 ((ToolMetaItem<?>) stack.getItem()).setCraftingSoundTime(stack);
                 player.getEntityWorld().playSound(null, player.getPosition(), ((ToolMetaItem<?>) stack.getItem()).getItem(stack).getSound(), SoundCategory.PLAYERS, 1, 1);
             }
