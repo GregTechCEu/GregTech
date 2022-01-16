@@ -1,6 +1,5 @@
 package gregtech.common.items.behaviors;
 
-import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
@@ -9,11 +8,9 @@ import gregtech.api.unification.material.Materials;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.tools.ToolUtility;
-import net.minecraft.block.BlockColored;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -28,7 +25,6 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
 import java.util.List;
 
 public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabilityManager, IItemBehaviour {
@@ -44,7 +40,9 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
     public ActionResult<ItemStack> onItemUse(@Nonnull EntityPlayer player, @Nonnull World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack itemStack = player.getHeldItem(hand);
 
-        if (!world.isRemote && player.isSneaking()) {
+        if (world.isRemote) return ActionResult.newResult(EnumActionResult.PASS, itemStack);
+
+        if (player.isSneaking()) {
             if (sprayerMode == SprayerMode.SINGLE_BLOCK)
                 sprayerMode = SprayerMode.LINE;
             else if (sprayerMode == SprayerMode.LINE)
@@ -65,14 +63,9 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
             IBlockState offsetState = world.getBlockState(offsetPos);
             EnumFacing sideHit = ToolUtility.getSideHit(world, pos, player);
 
-            ItemStack heldItem = player.getHeldItemOffhand();
-
-            EnumDyeColor color = getSprayColor(heldItem);
-            boolean placeDry = getPlaceDry(heldItem);
-
             // foam all connected frames
             if (world.getBlockState(pos).getBlock() instanceof BlockFrame) {
-                int blocksFoamed = foamFrameBlockPanel(world, pos, facing, sideHit, 5, 5, color, placeDry);
+                int blocksFoamed = foamFrameBlockPanel(world, pos, facing, sideHit, 5, 5);
                 if (!player.capabilities.isCreativeMode)
                     fluidHandlerItem.drain(FLUID_PER_BLOCK * blocksFoamed, true);
 
@@ -83,11 +76,11 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
             } else if (offsetState.getBlock().isReplaceable(world, offsetPos)) {
                 int blocksFoamed = 0;
                 if (sprayerMode == SprayerMode.SINGLE_BLOCK) {
-                    blocksFoamed = foamBlock(world, offsetPos, color, placeDry, false);
+                    blocksFoamed = foamBlock(world, offsetPos, false);
                 } else if (sprayerMode == SprayerMode.LINE) {
-                    blocksFoamed = foamReplaceableBlockPanel(world, offsetPos, facing, sideHit, 1, 1, 4, color, placeDry);
+                    blocksFoamed = foamReplaceableBlockPanel(world, offsetPos, facing, sideHit, 1, 1, 4);
                 } else if (sprayerMode == SprayerMode.PANEL) {
-                    blocksFoamed = foamReplaceableBlockPanel(world, offsetPos, facing, sideHit, 3, 3, 1, color, placeDry);
+                    blocksFoamed = foamReplaceableBlockPanel(world, offsetPos, facing, sideHit, 3, 3, 1);
                 }
 
                 if (!player.capabilities.isCreativeMode)
@@ -131,12 +124,12 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
         };
     }
 
-    private static int foamBlock(@Nonnull World world, BlockPos pos, EnumDyeColor color, boolean placeDry, boolean checkReplaceable) {
+    private static int foamBlock(@Nonnull World world, BlockPos pos, boolean checkReplaceable) {
         if (checkReplaceable && !world.getBlockState(pos).getBlock().isReplaceable(world, pos))
             return 0;
 
         //foaming air blocks doesn't cause updates of other blocks, so just proceed
-        world.setBlockState(pos, getFoamState(placeDry).withProperty(BlockColored.COLOR, color), 2);
+        world.setBlockState(pos, MetaBlocks.CONSTRUCTION_FOAM_WET.getDefaultState(), 2);
 
         //perform block physics updates
         IBlockState blockState = world.getBlockState(pos);
@@ -145,7 +138,7 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
         return 1;
     }
 
-    private static int foamReplaceableBlockPanel(@Nonnull World world, BlockPos pos, EnumFacing facing, EnumFacing sideHit, int rows, int cols, int length, EnumDyeColor color, boolean placeDry) {
+    private static int foamReplaceableBlockPanel(@Nonnull World world, BlockPos pos, EnumFacing facing, EnumFacing sideHit, int rows, int cols, int length) {
         int xSizeExtend = rows / 2;
         int ySizeExtend = cols / 2;
 
@@ -154,7 +147,7 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
             for (int x = -xSizeExtend; x <= xSizeExtend; x++) {
                 for (int y = -ySizeExtend; y <= ySizeExtend; y++) {
                     BlockPos offsetPos = rotate(pos, x, y, sideHit, facing).offset(sideHit, i);
-                    foamed += foamBlock(world, offsetPos, color, placeDry, true);
+                    foamed += foamBlock(world, offsetPos, true);
                 }
             }
         }
@@ -162,7 +155,7 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
     }
 
     @SuppressWarnings("SameParameterValue")
-    private static int foamFrameBlockPanel(@Nonnull World world, BlockPos pos, EnumFacing facing, EnumFacing sideHit, int rows, int cols, EnumDyeColor color, boolean placeDry) {
+    private static int foamFrameBlockPanel(@Nonnull World world, BlockPos pos, EnumFacing facing, EnumFacing sideHit, int rows, int cols) {
         int xSizeExtend = rows / 2;
         int ySizeExtend = cols / 2;
         int foamed = 0;
@@ -170,7 +163,7 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
             for (int y = -ySizeExtend; y <= ySizeExtend; y++) {
                 BlockPos offsetPos = rotate(pos, x, y, sideHit, facing);
                 if (world.getBlockState(offsetPos).getBlock() instanceof BlockFrame) {
-                    foamed += foamBlock(world, offsetPos, color, placeDry, false);
+                    foamed += foamBlock(world, offsetPos, false);
                 }
             }
         }
@@ -219,34 +212,6 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
         public String getTranslationKey() {
             return translationKey;
         }
-    }
-
-    private static List<IItemBehaviour> getItemBehaviors(@Nonnull ItemStack stack) {
-        if (stack.getItem() instanceof MetaItem)
-            return ((MetaItem<?>) stack.getItem()).getItem(stack).getBehaviours();
-        return Collections.emptyList();
-    }
-
-    private static EnumDyeColor getSprayColor(@Nonnull ItemStack stack) {
-        for (IItemBehaviour behaviour : getItemBehaviors(stack)) {
-            if (behaviour instanceof ColorSprayBehaviour)
-                return ((ColorSprayBehaviour) behaviour).getColor();
-        }
-        return EnumDyeColor.WHITE;
-    }
-
-    //todo
-    private static boolean getPlaceDry(@Nonnull ItemStack stack) {
-        for (IItemBehaviour behaviour : getItemBehaviors(stack)) {
-//            if (behaviour instanceof ColorSprayBehaviour)
-//                return true;
-        }
-        return false;
-    }
-
-    @Nonnull
-    private static IBlockState getFoamState(boolean isDry) {
-        return isDry ? MetaBlocks.CONSTRUCTION_FOAM.getDefaultState() : MetaBlocks.CONSTRUCTION_FOAM_WET.getDefaultState();
     }
 
     @Override

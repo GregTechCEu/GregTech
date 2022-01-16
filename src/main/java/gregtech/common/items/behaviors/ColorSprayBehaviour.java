@@ -1,7 +1,5 @@
 package gregtech.common.items.behaviors;
 
-import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.sound.GTSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockStainedGlass;
@@ -32,14 +30,6 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
 
     @Override
     public ActionResult<ItemStack> onItemUse(@Nonnull EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        // prevent spraying blocks with CF sprayer when in offhand
-        if (hand == EnumHand.OFF_HAND && player.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof MetaItem) {
-            for (IItemBehaviour behaviour : ((MetaItem<?>) player.getHeldItemOffhand().getItem()).getItem(player.getHeldItem(EnumHand.MAIN_HAND)).getBehaviours()) {
-                if (behaviour instanceof FoamSprayerBehavior)
-                    return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
-            }
-        }
-
         ItemStack stack = player.getHeldItem(hand);
         if (!player.canPlayerEdit(pos, facing, stack)) {
             return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
