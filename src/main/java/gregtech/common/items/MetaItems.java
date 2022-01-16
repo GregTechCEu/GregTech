@@ -484,6 +484,9 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem TRICORDER_SCANNER;
     public static MetaItem<?>.MetaValueItem DEBUG_SCANNER;
 
+    public static MetaItem<?>.MetaValueItem ITEM_MAGNET_LV;
+    public static MetaItem<?>.MetaValueItem ITEM_MAGNET_HV;
+
     public static MetaItem<?>.MetaValueItem WIRELESS;
     public static MetaItem<?>.MetaValueItem CAMERA;
     public static MetaItem<?>.MetaValueItem TERMINAL;

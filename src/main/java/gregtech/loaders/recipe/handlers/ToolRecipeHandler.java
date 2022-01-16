@@ -444,7 +444,7 @@ public class ToolRecipeHandler {
         registerFlintToolRecipes();
         registerMortarRecipes();
         registerSoftHammerRecipes();
-        registerScannerRecipes();
+        registerElectricRecipes();
     }
 
     private static void registerFlintToolRecipes() {
@@ -529,7 +529,7 @@ public class ToolRecipeHandler {
         }
     }
 
-    private static void registerScannerRecipes() {
+    private static void registerElectricRecipes() {
         for (MetaValueItem batteryItem : batteryItems[GTValues.LV]) {
             ModHandler.addShapedEnergyTransferRecipe("prospector_lv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_LV.getStackForm(),
                     batteryItem::isItemEqual, true, true,
@@ -539,6 +539,14 @@ public class ToolRecipeHandler {
                     'S', MetaItems.SENSOR_LV.getStackForm(),
                     'D', new UnificationEntry(OrePrefix.plate, Materials.Glass),
                     'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic),
+                    'B', batteryItem.getStackForm());
+
+            ModHandler.addShapedEnergyTransferRecipe("magnet_lv_" + batteryItem.unlocalizedName, MetaItems.ITEM_MAGNET_LV.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "MwM", "MBM", "CPC",
+                    'M', new UnificationEntry(OrePrefix.stick, Materials.SteelMagnetic),
+                    'P', new UnificationEntry(OrePrefix.plate, Materials.Steel),
+                    'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin),
                     'B', batteryItem.getStackForm());
         }
         for (MetaValueItem batteryItem : batteryItems[GTValues.MV]) {
@@ -561,6 +569,14 @@ public class ToolRecipeHandler {
                     'S', MetaItems.SENSOR_HV.getStackForm(),
                     'D', MetaItems.COVER_SCREEN.getStackForm(),
                     'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Advanced),
+                    'B', batteryItem.getStackForm());
+
+            ModHandler.addShapedEnergyTransferRecipe("magnet_hv_" + batteryItem.unlocalizedName, MetaItems.ITEM_MAGNET_HV.getStackForm(),
+                    batteryItem::isItemEqual, true, true,
+                    "MwM", "MBM", "CPC",
+                    'M', new UnificationEntry(OrePrefix.stick, Materials.NeodymiumMagnetic),
+                    'P', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel),
+                    'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold),
                     'B', batteryItem.getStackForm());
         }
         for (MetaValueItem batteryItem : batteryItems[GTValues.LuV]) {
