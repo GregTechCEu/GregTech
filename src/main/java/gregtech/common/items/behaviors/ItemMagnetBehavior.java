@@ -105,6 +105,9 @@ public class ItemMagnetBehavior implements IItemBehaviour {
                 return;
             }
         }
+        if (isMagnet(event.getPlayer().inventory.offHandInventory.get(0))) {
+            event.getEntityItem().setPickupDelay(60);
+        }
     }
 
     private boolean isMagnet(@Nonnull ItemStack stack) {
