@@ -1,7 +1,6 @@
 package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -9,7 +8,8 @@ import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.*;
+import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.TITANIUM_STABLE;
+import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.TUNGSTENSTEEL_ROBUST;
 import static gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType.ENGINE_INTAKE_CASING;
 import static gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType.EXTREME_ENGINE_INTAKE_CASING;
 import static gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType.*;
@@ -92,13 +92,6 @@ public class AssemblerRecipeLoader {
                 .input(dust, Redstone)
                 .input(FLUID_CELL)
                 .output(SPRAY_EMPTY)
-                .duration(200).EUt(VA[ULV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(plate, Tin, 6)
-                .input(SPRAY_EMPTY)
-                .input(paneGlass.name(), 1)
-                .output(FOAM_SPRAYER)
                 .duration(200).EUt(VA[ULV]).buildAndRegister();
 
         // Matches/lighters recipes

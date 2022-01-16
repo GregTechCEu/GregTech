@@ -11,11 +11,12 @@ import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockGlassCasing;
-import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.crafting.FacadeRecipe;
 import gregtech.common.items.MetaItems;
 import gregtech.loaders.recipe.handlers.ToolRecipeHandler;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -103,6 +104,8 @@ public class CraftingRecipeLoader {
 
         ModHandler.addShapedRecipe("universal_fluid_cell", FLUID_CELL_UNIVERSAL.getStackForm(), "C ", "  ", 'C', FLUID_CELL);
         ModHandler.addShapedRecipe("universal_fluid_cell_revert", FLUID_CELL.getStackForm(), "C ", "  ", 'C', FLUID_CELL_UNIVERSAL);
+
+        ModHandler.addShapedRecipe("foam_sprayer", FOAM_SPRAYER.getStackForm(), "PdS", "sPC", "SBL", 'P', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.Steel), 'S', new UnificationEntry(OrePrefix.screw, Materials.Iron), 'C', FLUID_CELL.getStackForm(), 'B', new ItemStack(Blocks.STONE_BUTTON), 'L', new UnificationEntry(OrePrefix.circuit, Tier.Basic));
 
         ///////////////////////////////////////////////////
         //               Shapes and Molds                //
