@@ -82,4 +82,22 @@ public class CountableIngredient {
                 ", count=" + count +
                 '}';
     }
+
+    public String toPrettyString() {
+        StringBuilder output = new StringBuilder();
+        if (ingredient instanceof OreIngredient) {
+            output.append("(OreDict) ");
+        }
+        output.append("{");
+        for (ItemStack stack : ingredient.getMatchingStacks()) {
+            output.append(stack.getItem().getRegistryName());
+            if (stack.getCount() != 1) {
+                output.append(" * ")
+                        .append(stack.getCount());
+            }
+        }
+        output.append("} * ")
+                .append(count);
+        return output.toString();
+    }
 }
