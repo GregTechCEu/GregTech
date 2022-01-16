@@ -84,7 +84,6 @@ public class ItemMagnetBehavior implements IItemBehaviour {
                     entityItem.setDead();
                 } else if (stack.getCount() > remainder.getCount()) {
                     entityItem.setItem(remainder);
-                    entityItem.setDefaultPickupDelay();
                 }
             }
         }
