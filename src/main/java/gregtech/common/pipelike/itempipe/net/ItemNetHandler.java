@@ -130,26 +130,6 @@ public class ItemNetHandler implements IItemHandler {
         if (stack.getCount() != original)
             GTLog.logger.info("Inserted to {}/{} handlers. Start {}, End {}, sim {}", handlers.size() - handlersCopy.size(), handlers.size(), original, stack, simulate);
 
-        /*if (simulate) {
-            if (stack.getCount() != original) {
-                simulatedItemStack = stack.copy();
-                simulatedItemStack.setCount(original - stack.getCount());
-                didSimulate = true;
-                simulatedAmount = original;
-            } else {
-                simulatedItemStack = ItemStack.EMPTY;
-            }
-        } else if (didSimulate) {
-            ItemStack inserted = stack.copy();
-            inserted.setCount(original - stack.getCount());
-            if (!ItemStack.areItemStacksEqual(simulatedItemStack, inserted)) {
-                GTLog.logger.error("Simulated item ({}) is not equal to actual item {}     -------------------------------------------", simulatedItemStack, inserted);
-            }
-
-            didSimulate = false;
-            simulatedItemStack = ItemStack.EMPTY;
-            simulatedAmount = 0;
-        }*/
         return stack;
     }
 
@@ -183,7 +163,6 @@ public class ItemNetHandler implements IItemHandler {
             int r = insert(handler, toInsert, simulate).getCount();
             if (r < amount) {
                 inserted += (amount - r);
-                //GTLog.logger.info("  ins: {}, r {}, amount {}, c {}, m {}", (amount - r), r, amount, c, m);
             }
             if (r == 1 && c == 0 && amount == 1) {
                 m++;
@@ -192,11 +171,9 @@ public class ItemNetHandler implements IItemHandler {
             if (r > 0)
                 handlerIterator.remove();
         }
-        //GTLog.logger.info("  reamining {}, inserted {}, start {}", stack.getCount() - inserted, inserted, stack.getCount());
 
         ItemStack remainder = stack.copy();
         remainder.setCount(count - inserted);
-        //GTLog.logger.info("Return remainder {}, sim {}", remainder, simulate);
         return remainder;
     }
 
@@ -204,7 +181,7 @@ public class ItemNetHandler implements IItemHandler {
         GTLog.logger.info("Insert ERR {} to {} inventories, sim {}", stack, copy.size(), simulate);
         LinkedList<EnhancedRoundRobinData> transferred = new LinkedList<>();
         LinkedList<Integer> steps = new LinkedList<>();
-        int min = Integer.MAX_VALUE, max = 0;
+        int min = Integer.MAX_VALUE;
         ItemStack simStack;
 
         // find inventories that are not full and get the amount that was inserted in total
@@ -219,7 +196,6 @@ public class ItemNetHandler implements IItemHandler {
             transferred.addLast(data);
 
             min = Math.min(min, didTransfer);
-            max = Math.max(max, didTransfer);
 
             if (!steps.contains(didTransfer)) {
                 steps.add(didTransfer);
@@ -269,7 +245,7 @@ public class ItemNetHandler implements IItemHandler {
             int i = 0;
             while (iterator.hasNext()) {
                 EnhancedRoundRobinData data = iterator.next();
-                if (nextStep > 0 && data.transferred >= nextStep)
+                if (nextStep >= 0 && data.transferred >= nextStep)
                     break;
 
                 int toInsert;

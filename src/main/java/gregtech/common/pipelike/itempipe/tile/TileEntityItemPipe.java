@@ -58,14 +58,10 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
             if (world.isRemote)
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(clientCapability);
 
-            /*ItemPipeNet net = getItemPipeNet();
-            if(net != null)
-                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new ItemNetHandler(net, this, facing));*/
             if (handlers.size() == 0)
                 initHandlers();
             checkNetwork();
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(handlers.getOrDefault(facing, defaultHandler));
-            //return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(clientCapability);
         }
         return super.getCapabilityInternal(capability, facing);
     }
