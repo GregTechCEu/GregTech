@@ -146,22 +146,26 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
     @SideOnly(Side.CLIENT)
     public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
         for (EnumFacing renderSide : EnumFacing.VALUES) {
-            // preserve the originals when not rotating the top and bottom
-            Matrix4 renderTranslation = translation.copy();
 
             ActivePredicate predicate = sprites.get(OverlayFace.bySide(renderSide, frontFacing));
             if (predicate != null) {
                 TextureAtlasSprite renderSprite = predicate.getSprite(isActive, isWorkingEnabled);
 
+                // preserve the original translation when not rotating the top and bottom
+                Matrix4 renderTranslation = translation.copy();
+
                 // Rotate the top and bottom faces to match front facing
                 Rotation rotation = new Rotation(0, 0, 1, 0);
                 if (renderSide == EnumFacing.UP || renderSide == EnumFacing.DOWN) {
+                    // rotate and translate the opposite direction when on the bottom
+                    boolean isUp = renderSide == EnumFacing.UP;
+
                     if (frontFacing == EnumFacing.WEST) {
-                        renderTranslation.translate(0, 0, 1);
-                        rotation = new Rotation(Math.PI / 2, 0, 1, 0);
+                        renderTranslation.translate((isUp ? 0 : 1), 0, (isUp ? 1 : 0));
+                        rotation = new Rotation((isUp ? 1 : -1) * (Math.PI / 2), 0, 1, 0);
                     } else if (frontFacing == EnumFacing.EAST) {
-                        renderTranslation.translate(1, 0, 0);
-                        rotation = new Rotation(-Math.PI / 2, 0, 1, 0);
+                        renderTranslation.translate((isUp ? 1 : 0), 0, (isUp ? 0 : 1));
+                        rotation = new Rotation((isUp ? -1 : 1) * Math.PI / 2, 0, 1, 0);
                     } else if (frontFacing == EnumFacing.NORTH) {
                         renderTranslation.translate(1, 0, 1);
                         rotation = new Rotation(Math.PI, 0, 1, 0);
