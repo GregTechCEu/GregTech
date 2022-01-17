@@ -47,8 +47,12 @@ public class SimpleFluidFilter extends FluidFilter {
             widgetGroup.accept((new PhantomFluidWidget(10 + 18 * (i % 3), 18 * (i / 3), 18, 18,
                     () -> getFluidInSlot(index),
                     (newFluid) -> setFluidInSlot(index, newFluid)))
-                    .setBackgroundTexture(GuiTextures.SLOT).showTip(true));
+                    .setBackgroundTexture(GuiTextures.SLOT).showTipSupplier(this::shouldShowTip));
         }
+    }
+
+    private boolean shouldShowTip() {
+        return showTip;
     }
 
     public void writeToNBT(NBTTagCompound tagCompound) {

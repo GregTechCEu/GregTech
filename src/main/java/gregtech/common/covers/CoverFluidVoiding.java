@@ -25,7 +25,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 public class CoverFluidVoiding extends CoverPump {
 
     protected final NullFluidTank nullFluidTank = new NullFluidTank();
-    protected final FluidFilterContainer fluidFilter;
+    protected FluidFilterContainer fluidFilter;
     protected boolean isWorkingAllowed = false;
 
     public CoverFluidVoiding(ICoverable coverHolder, EnumFacing attachedSide) {

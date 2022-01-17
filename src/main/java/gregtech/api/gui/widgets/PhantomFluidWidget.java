@@ -28,6 +28,7 @@ import org.lwjgl.input.Mouse;
 import javax.annotation.Nonnull;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -39,6 +40,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
 
     private Supplier<FluidStack> fluidStackSupplier;
     private Consumer<FluidStack> fluidStackUpdater;
+    private Supplier<Boolean> showTipSupplier;
     private boolean isClient;
     private boolean showTip;
     protected FluidStack lastFluidStack;
@@ -47,6 +49,14 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         super(new Position(xPosition, yPosition), new Size(width, height));
         this.fluidStackSupplier = fluidStackSupplier;
         this.fluidStackUpdater = fluidStackUpdater;
+    }
+
+    public PhantomFluidWidget(int xPosition, int yPosition, int width, int height, Supplier<FluidStack> fluidStackSupplier, Consumer<FluidStack> fluidStackUpdater, Supplier<Boolean> showTipSupplier) {
+        super(new Position(xPosition, yPosition), new Size(width, height));
+        this.fluidStackSupplier = fluidStackSupplier;
+        this.fluidStackUpdater = fluidStackUpdater;
+        this.showTipSupplier = showTipSupplier;
+        this.showTip = showTipSupplier.get();
     }
 
     private FluidStack drainFrom(Object ingredient) {
@@ -58,8 +68,14 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         }
         return null;
     }
+
     public PhantomFluidWidget showTip(boolean showTip) {
         this.showTip = showTip;
+        return this;
+    }
+
+    public PhantomFluidWidget showTipSupplier(Supplier<Boolean> showTipSupplier) {
+        this.showTipSupplier = showTipSupplier;
         return this;
     }
 
@@ -143,6 +159,10 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                 buffer.writeCompoundTag(currentStack.writeToNBT(new NBTTagCompound()));
             });
         }
+        if (showTipSupplier != null && showTip != showTipSupplier.get()) {
+            showTip = showTipSupplier.get();
+            writeUpdateInfo(2, buffer -> buffer.writeBoolean(showTip));
+        }
     }
 
     @Override
@@ -158,6 +178,8 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
             } else {
                 this.lastFluidStack = null;
             }
+        } else if (id == 2) {
+            this.showTip = buffer.readBoolean();
         }
     }
 
@@ -174,19 +196,21 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                     fluidStackUpdater.accept(resultFluid);
                 }
             } else {
-                if (clickData.button == 2) {
-                    fluidStackUpdater.accept(null);
-                } else if (clickData.button == 0) {
-                    if (fluidStackSupplier.get() != null) {
-                        FluidStack fluid = fluidStackSupplier.get().copy();
-                        fluid.amount *= 2;
-                        fluidStackUpdater.accept(fluid);
-                    }
-                } else if (clickData.button == 1) {
-                    if (fluidStackSupplier.get() != null) {
-                        FluidStack fluid = fluidStackSupplier.get().copy();
-                        fluid.amount /= 2;
-                        fluidStackUpdater.accept(fluid);
+                if (showTip) {
+                    if (clickData.button == 2) {
+                        fluidStackUpdater.accept(null);
+                    } else if (clickData.button == 0) {
+                        if (fluidStackSupplier.get() != null) {
+                            FluidStack fluid = fluidStackSupplier.get().copy();
+                            fluid.amount *= 2;
+                            fluidStackUpdater.accept(fluid);
+                        }
+                    } else if (clickData.button == 1) {
+                        if (fluidStackSupplier.get() != null) {
+                            FluidStack fluid = fluidStackSupplier.get().copy();
+                            fluid.amount /= 2;
+                            fluidStackUpdater.accept(fluid);
+                        }
                     }
                 }
             }
@@ -200,9 +224,9 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
             fluidStackUpdater.accept(fluidStack);
         } else if (id == 3) {
             WheelData wheelData = WheelData.readFromBuf(buffer);
-            if (fluidStackSupplier.get() != null) {
-                int multiplier = wheelData.isCtrlClick ? 10 : 1;
-                multiplier *= wheelData.isShiftClick ? 100 : 1;
+            if (fluidStackSupplier.get() != null && showTip) {
+                int multiplier = wheelData.isCtrlClick ? 100 : 1;
+                multiplier *= wheelData.isShiftClick ? 10 : 1;
                 FluidStack currentFluid = fluidStackSupplier.get().copy();
                 int amount = wheelData.wheelDelta * multiplier;
                 currentFluid.amount = Math.max(1, currentFluid.amount + amount);
@@ -214,11 +238,13 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY)) {
-            ClickData clickData = new ClickData(button,
-                    (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)),
-                    (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)),
-                    true);
-            writeClientAction(1, clickData::writeToBuf);
+            if (showTip) {
+                ClickData clickData = new ClickData(button,
+                        (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)),
+                        (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)),
+                        true);
+                writeClientAction(1, clickData::writeToBuf);
+            }
             if (isClient && fluidStackUpdater != null) {
                 fluidStackUpdater.accept(null);
             }
@@ -230,11 +256,13 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
     @Override
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
         if (isMouseOverElement(mouseX, mouseY)) {
-            WheelData wheelData = new WheelData(MathHelper.clamp(wheelDelta, -1, 1),
-                    (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)),
-                    (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)),
-                    true);
-            writeClientAction(3, wheelData::writeToBuf);
+            if (showTip) {
+                WheelData wheelData = new WheelData(MathHelper.clamp(wheelDelta, -1, 1),
+                        (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)),
+                        (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)),
+                        true);
+                writeClientAction(3, wheelData::writeToBuf);
+            }
             if (isClient && fluidStackUpdater != null) {
                 fluidStackUpdater.accept(null);
             }
@@ -270,7 +298,12 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         if (isMouseOverElement(mouseX, mouseY)) {
             if (lastFluidStack != null) {
                 String fluidName = lastFluidStack.getLocalizedName();
-                drawHoveringText(ItemStack.EMPTY, Lists.newArrayList(fluidName, String.valueOf(lastFluidStack.amount)), -1, mouseX, mouseY);
+                List<String> hoverStringList = new ArrayList<>();
+                hoverStringList.add(fluidName);
+                if (showTip) {
+                    hoverStringList.add(lastFluidStack.amount + " L");
+                }
+                drawHoveringText(ItemStack.EMPTY, hoverStringList, -1, mouseX, mouseY);
             }
         }
     }

@@ -13,6 +13,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
 
@@ -42,6 +43,11 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
                 onFilterSlotChange(true);
             }
         };
+    }
+
+    public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable, Supplier<Boolean> showTip) {
+        this(dirtyNotifiable);
+        filterWrapper.setTipSupplier(showTip);
     }
 
     public ItemStackHandler getFilterInventory() {

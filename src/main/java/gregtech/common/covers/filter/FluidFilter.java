@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 public abstract class FluidFilter {
 
     private IDirtyNotifiable dirtyNotifiable;
+    boolean showTip;
 
     public abstract boolean testFluid(FluidStack fluidStack);
 
@@ -29,5 +30,9 @@ public abstract class FluidFilter {
         if (dirtyNotifiable != null) {
             dirtyNotifiable.markAsDirty();
         }
+    }
+
+    public void setShowTip(boolean showTip){
+        this.showTip = showTip;
     }
 }

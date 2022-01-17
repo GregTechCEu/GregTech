@@ -7,12 +7,14 @@ import gregtech.api.util.IDirtyNotifiable;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class FluidFilterWrapper {
 
     private final IDirtyNotifiable dirtyNotifiable;
     private boolean isBlacklistFilter = false;
     private FluidFilter currentFluidFilter;
+    private Supplier<Boolean> showTipSupplier;
 
     public FluidFilterWrapper(IDirtyNotifiable dirtyNotifiable) {
         this.dirtyNotifiable = dirtyNotifiable;
@@ -21,7 +23,7 @@ public class FluidFilterWrapper {
     public void initUI(int y, Consumer<Widget> widgetGroup) {
         widgetGroup.accept(new ToggleButtonWidget(144, y, 18, 18, GuiTextures.BUTTON_BLACKLIST,
                 this::isBlacklistFilter, this::setBlacklistFilter).setTooltipText("cover.filter.blacklist"));
-        widgetGroup.accept(new WidgetGroupFluidFilter(y, this::getFluidFilter));
+        widgetGroup.accept(new WidgetGroupFluidFilter(y, this::getFluidFilter, shouldShowTip()));
     }
 
     public void setFluidFilter(FluidFilter fluidFilter) {
@@ -29,6 +31,14 @@ public class FluidFilterWrapper {
         if (currentFluidFilter != null) {
             currentFluidFilter.setDirtyNotifiable(dirtyNotifiable);
         }
+    }
+
+    private Supplier<Boolean> shouldShowTip() {
+        return showTipSupplier;
+    }
+
+    protected void setTipSupplier(Supplier<Boolean> supplier) {
+        this.showTipSupplier = supplier;
     }
 
     public FluidFilter getFluidFilter() {

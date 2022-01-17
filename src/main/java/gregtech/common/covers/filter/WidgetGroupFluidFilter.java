@@ -8,33 +8,39 @@ import java.util.function.Supplier;
 
 public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
 
-    private final Supplier<FluidFilter> itemFilterSupplier;
-    private FluidFilter itemFilter;
+    private final Supplier<FluidFilter> fluidFilterSupplier;
+    private final Supplier<Boolean> showTipSupplier;
+    private FluidFilter fluidFilter;
 
-    public WidgetGroupFluidFilter(int yPosition, Supplier<FluidFilter> itemFilterSupplier) {
+    public WidgetGroupFluidFilter(int yPosition, Supplier<FluidFilter> fluidFilterSupplier, Supplier<Boolean> showTipSupplier) {
         super(new Position(18 + 5, yPosition));
-        this.itemFilterSupplier = itemFilterSupplier;
+        this.fluidFilterSupplier = fluidFilterSupplier;
+        this.showTipSupplier = showTipSupplier;
     }
 
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        FluidFilter newItemFilter = itemFilterSupplier.get();
-        if (itemFilter != newItemFilter) {
+        FluidFilter newFluidFilter = fluidFilterSupplier.get();
+        if (fluidFilter != newFluidFilter) {
             clearAllWidgets();
-            this.itemFilter = newItemFilter;
-            if (itemFilter != null) {
-                this.itemFilter.initUI(this::addWidget);
+            this.fluidFilter = newFluidFilter;
+            if (fluidFilter != null) {
+                this.fluidFilter.initUI(this::addWidget);
             }
             writeUpdateInfo(2, buffer -> {
-                if (itemFilter != null) {
+                if (fluidFilter != null) {
                     buffer.writeBoolean(true);
-                    int filterId = FilterTypeRegistry.getIdForFluidFilter(itemFilter);
+                    int filterId = FilterTypeRegistry.getIdForFluidFilter(fluidFilter);
                     buffer.writeVarInt(filterId);
                 } else {
                     buffer.writeBoolean(false);
                 }
             });
+        }
+        if (fluidFilter != null && fluidFilter.showTip != showTipSupplier.get()) {
+            fluidFilter.showTip = showTipSupplier.get();
+            writeUpdateInfo(3, buffer -> buffer.writeBoolean(fluidFilter.showTip));
         }
     }
 
@@ -45,9 +51,11 @@ public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
             clearAllWidgets();
             if (buffer.readBoolean()) {
                 int filterId = buffer.readVarInt();
-                this.itemFilter = FilterTypeRegistry.createFluidFilterById(filterId);
-                this.itemFilter.initUI(this::addWidget);
+                this.fluidFilter = FilterTypeRegistry.createFluidFilterById(filterId);
+                this.fluidFilter.initUI(this::addWidget);
             }
+        } else if (id == 3) {
+            fluidFilter.showTip = buffer.readBoolean();
         }
     }
 }
