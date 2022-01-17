@@ -36,7 +36,7 @@ public class SecondDegreeMaterials {
         SaltWater = new Material.Builder(2003, "salt_water")
                 .fluid()
                 .color(0x0000C8)
-                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Salt, 1, Water, 1)
                 .build();
 
