@@ -78,9 +78,6 @@ public class PipeCoverableImplementation implements ICoverable {
         if (coverBehavior.shouldAutoConnect()) {
             holder.setConnectionBlocked(side, false, false);
         }
-        if (!coverBehavior.canPipePassThrough() && holder.isConnectionOpen(side)) {
-            holder.setConnectionBlocked(side, true, false);
-        }
         holder.notifyBlockUpdate();
         holder.markAsDirty();
         GTTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
