@@ -6,21 +6,29 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.PipelineUtil;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
-public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable> {
+public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable>, IDataInfoProvider {
     private final NotifiableItemStackHandler dataStickInventory;
     private final int slotAmount;
 
@@ -76,6 +84,20 @@ public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockNotifiableP
             overlay = Textures.DATA_ACCESS_HATCH;
             overlay.renderSided(this.getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline, 0xffffff));
         }
+    }
+
+    @Nonnull
+    @Override
+    public List<ITextComponent> getDataInfo() {
+        List<ITextComponent> textList = new ArrayList<>();
+        textList.add(new TextComponentString("Data for these recipes for these items conatined:"));
+        for (ItemStack stack : GTUtility.itemHandlerToList(dataStickInventory)) {
+            NBTTagCompound researchItemNBT = stack.getSubCompound("asslineOutput");
+            if (researchItemNBT != null) {
+                textList.add(new TextComponentString(LocalizationUtils.format(new ItemStack(researchItemNBT).getTranslationKey()))); // TODO get correct tranlations
+            }
+        }
+        return textList;
     }
 
     @Override
