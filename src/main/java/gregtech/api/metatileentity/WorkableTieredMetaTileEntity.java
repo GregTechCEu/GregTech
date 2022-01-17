@@ -131,28 +131,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
 
     protected boolean canInputFluid(FluidStack inputFluid) {
         RecipeMap<?> recipeMap = workable.getRecipeMap();
-        if (recipeMap.canInputFluidForce(inputFluid.getFluid()))
-            return true; //if recipe map forces input of given fluid, return true
-        Set<Recipe> matchingRecipes = null;
-        for (IFluidTank fluidTank : importFluids) {
-            FluidStack fluidInTank = fluidTank.getFluid();
-            if (fluidInTank != null) {
-                if (matchingRecipes == null) {
-                    //if we didn't have a list of recipes with any fluids, obtain it from first tank with fluid
-                    matchingRecipes = new HashSet<>(recipeMap.getRecipesForFluid(fluidInTank));
-                } else {
-                    //else, remove recipes that don't contain fluid in this tank from list
-                    matchingRecipes.removeIf(recipe -> !recipe.hasInputFluid(fluidInTank));
-                }
-            }
-        }
-        if (matchingRecipes == null) {
-            //if all tanks are empty, generally fluid can be inserted if there are recipes for it
-            return !recipeMap.getRecipesForFluid(inputFluid).isEmpty();
-        } else {
-            //otherwise, we can insert fluid only if one of recipes accept it as input
-            return matchingRecipes.stream().anyMatch(recipe -> recipe.hasInputFluid(inputFluid));
-        }
+        return recipeMap != null && recipeMap.acceptsFluid(inputFluid);
     }
 
     @Override

@@ -20,25 +20,37 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
+import gregtech.api.recipes.map.AbstractMapIngredient;
+import gregtech.api.recipes.map.MapFluidIngredient;
+import gregtech.api.recipes.map.MapItemIngredient;
+import gregtech.api.recipes.map.MapItemStackIngredient;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.oredict.OreDictionary;
+import scala.util.Either;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.*;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.DoubleSupplier;
+import java.util.function.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ZenClass("mods.gregtech.recipe.RecipeMap")
 @ZenRegister
@@ -63,6 +75,13 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private final Object2ObjectOpenHashMap<FluidKey, Set<Recipe>> recipeFluidMap = new Object2ObjectOpenHashMap<>();
     private final Object2ObjectOpenHashMap<ItemStackKey, Set<Recipe>> recipeItemMap = new Object2ObjectOpenHashMap<>();
+
+    private final Branch LOOKUP = new Branch();
+    private final List<Recipe> RECIPES_TO_COMPILE = new ObjectArrayList<>();
+    private final Set<AbstractMapIngredient> ROOT = new ObjectOpenHashSet<>();
+    private static final ItemStack[] EMPTY_ITEM = new ItemStack[0];
+    private static final FluidStack[] EMPTY_FLUID = new FluidStack[0];
+
 
     private static final Comparator<Recipe> RECIPE_DURATION_THEN_EU =
             Comparator.comparingInt(Recipe::getDuration)
@@ -201,6 +220,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
         Recipe recipe = validationResult.getResult();
         if (recipeSet.add(recipe)) {
+            compileRecipe(recipe);
+            /*
             for (CountableIngredient countableIngredient : recipe.getInputs()) {
                 ItemStack[] stacks = countableIngredient.getIngredient().getMatchingStacks();
                 for (ItemStack itemStack : stacks) {
@@ -219,9 +240,28 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     return v;
                 });
                 recipeFluidMap.computeIfAbsent(fluidKey, k -> new HashSet<>()).add(recipe);
-            }
+            }*/
         } else if (ConfigHolder.misc.debug) {
             GTLog.logger.warn("Recipe: {} for Recipe Map {} is a duplicate and was not added", recipe.toString(), this.unlocalizedName);
+        }
+    }
+
+    public void compileRecipe(Recipe recipe) {
+        if (recipe == null)
+            return;
+        boolean flag = false;
+        List<List<AbstractMapIngredient>> items = fromRecipe(recipe, true);
+
+        // Recipe r = recurseItemTreeFind(items, map, rr -> true);
+        // if (r != null) {
+        // Antimatter.LOGGER.warn("Recipe collision, adding both but only first is
+        // available.");
+        // }
+        if (recurseItemTreeAdd(recipe, items, LOOKUP, 0, 0)) {
+            items.forEach(t -> t.forEach(ing -> {
+                if (!ing.isSpecial())
+                    ROOT.add(ing);
+            }));
         }
     }
 
@@ -304,11 +344,163 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (minFluidInputs > 0 && GTUtility.amountOfNonNullElements(fluidInputs) < minFluidInputs) {
             return null;
         }
-        if (minInputs > 0 && GTUtility.amountOfNonEmptyStacks(inputs) < minInputs) {
+        //if (minInputs > 0 && GTUtility.amountOfNonEmptyStacks(inputs) < minInputs) {
+        //    return null;
+        //}
+        return find(inputs.stream().filter(t -> t != null && !t.isEmpty()).toArray(ItemStack[]::new), fluidInputs.stream().filter(t -> t != null).toArray(FluidStack[]::new), a -> a.matches(false, inputs, fluidInputs, matchingMode));
+    }
+
+    public boolean acceptsItem(ItemStack item) {
+        MapItemStackIngredient i = new MapItemStackIngredient(item, false);
+        MapItemIngredient j = new MapItemIngredient(item.getItem(), false);
+        if (ROOT.contains(i))
+            return true;
+        if (ROOT.contains(j))
+            return true;
+        return false;
+    }
+
+    public boolean acceptsFluid(FluidStack fluid) {
+        MapFluidIngredient i = new MapFluidIngredient(fluid, false);
+        if (ROOT.contains(i))
+            return true;
+        return false;
+    }
+
+    @Nullable
+    public Recipe find(@Nonnull ItemStack[] items, @Nonnull FluidStack[] fluids, @Nonnull Predicate<Recipe> canHandle) {
+        // First, check if items and fluids are valid.
+        if (items.length + fluids.length > Long.SIZE) {
             return null;
         }
-        return findByInputsAndFluids(voltage, inputs, fluidInputs, matchingMode, exactVoltage);
+        if (items.length == 0 && fluids.length == 0)
+            return null;
+        // Filter out empty fluids.
+
+        // Build input.
+        List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(items.length + fluids.length);
+        if (items.length > 0) {
+            buildFromItemStacks(list, uniqueItems(items));
+        }
+        if (fluids.length > 0) {
+            List<FluidStack> stack = new ObjectArrayList<>(fluids.length);
+            for (FluidStack f : fluids) {
+                if (!(f.amount == 0))
+                    stack.add(f);
+            }
+            if (stack.size() > 0)
+                buildFromFluidStacks(list, stack, false);
+        }
+        if (list.size() == 0)
+            return null;
+        // Find recipe.
+        // long current = System.nanoTime();
+        Recipe r = recurseItemTreeFind(list, LOOKUP, canHandle);
+        // Antimatter.LOGGER.info("Time to lookup (µs): " + ((System.nanoTime() -
+        // current) / 1000));
+
+        return r;
     }
+
+
+    // In the case of split stacks, merge the items, 2 aluminium dust in separate
+    // stacks -> 1 stack with additive count.
+    public static ItemStack[] uniqueItems(ItemStack[] input) {
+        List<ItemStack> list = new ObjectArrayList<>(input.length);
+        loop: for (ItemStack item : input) {
+            for (ItemStack obj : list) {
+                if (item.isItemEqual(obj)) {
+                    obj.grow(item.getCount());
+                    continue loop;
+                }
+            }
+            // Add a copy here or it might mutate the stack.
+            list.add(item.copy());
+        }
+        return list.toArray(new ItemStack[0]);
+    }
+    /**
+     * Recursively finds a recipe, top level. call this to find a recipe
+     *
+     * @param items the items part
+     * @param map   the root branch to search from.
+     * @return a recipe
+     */
+    Recipe recurseItemTreeFind(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
+                               @Nonnull Predicate<Recipe> canHandle) {
+        // Try each ingredient as a starting point, adding it to the skiplist.
+        for (int i = 0; i < items.size(); i++) {
+            Recipe r = recurseItemTreeFind(items, map, canHandle, i, 0, (1L << i));
+            if (r != null)
+                return r;
+        }
+        return null;
+    }
+
+    /**
+     * Recursively finds a recipe
+     *
+     * @param items     the items part
+     * @param map       the current branch of the tree
+     * @param canHandle predicate to test found recipe.
+     * @param index     the index of the wrapper to get
+     * @param count     how deep we are in recursion, < items.length
+     * @param skip      bitmap of items to skip, i.e. which items are used in the
+     *                  recursion.
+     * @return a recipe
+     */
+    Recipe recurseItemTreeFind(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
+                               @Nonnull Predicate<Recipe> canHandle, int index, int count, long skip) {
+        if (count == items.size())
+            return null;
+        List<AbstractMapIngredient> wr = items.get(index);
+        // Iterate over current level of nodes.
+        for (AbstractMapIngredient t : wr) {
+            Either<List<Recipe>, RecipeMap.Branch> result = map.NODES.get(t);
+            if (result != null) {
+                // Either return recipe or continue branch.
+                Recipe r = result.map(left -> {
+                    for (Recipe recipe : left) {
+                        if (canHandle.test(recipe)) {
+                            return recipe;
+                        }
+                    }
+                    return null;
+                }, right -> callback(items, right, canHandle, index, count, skip));
+                if (r != null)
+                    return r;
+            }
+            if (map.SPECIAL_NODES.size() > 0) {
+                // Iterate over special nodes.
+                for (Tuple<AbstractMapIngredient, Either<Recipe, Branch>> tuple : map.SPECIAL_NODES) {
+                    AbstractMapIngredient special = tuple.getFirst();
+                    if (special.equals(t)) {
+                        return tuple.getSecond().map(r -> canHandle.test(r) ? r : null,
+                                branch -> callback(items, branch, canHandle, index, count, skip));
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private Recipe callback(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
+                            Predicate<Recipe> canHandle, int index, int count, long skip) {
+        // We loop around items.size() if we reach the end.
+        int counter = (index + 1) % items.size();
+        while (counter != index) {
+            // Have we already used this ingredient? If so, skip this one.
+            if (((skip & (1L << counter)) == 0)) {
+                // Recursive call.
+                Recipe found = recurseItemTreeFind(items, map, canHandle, counter, count + 1, skip | (1L << counter));
+                if (found != null)
+                    return found;
+            }
+            counter = (counter + 1) % items.size();
+        }
+        return null;
+    }
+
 
     @Nullable
     private Recipe findByInputsAndFluids(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode, boolean exactVoltage) {
@@ -511,6 +703,140 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return new int[]{itemSlotsToLeft, itemSlotsToDown};
     }
 
+    /**
+     * Adds a recipe to the map. (recursive part)
+     *
+     * @param recipe      the recipe to add.
+     * @param ingredients list of input ingredients.
+     * @param map         the current place in the recursion.
+     * @param index       where in the ingredients list we are.
+     * @param count       how many added already.
+     */
+    boolean recurseItemTreeAdd(@Nonnull Recipe recipe, @Nonnull List<List<AbstractMapIngredient>> ingredients,
+                               @Nonnull Branch map, int index, int count) {
+        if (count >= ingredients.size())
+            return true;
+        if (index >= ingredients.size()) {
+            throw new RuntimeException("Index out of bounds for recurseItemTreeAdd, should not happen");
+        }
+        // Loop through NUMBER_OF_INGREDIENTS times.
+        List<AbstractMapIngredient> current = ingredients.get(index);
+        Either<List<Recipe>, Branch> r;
+        for (AbstractMapIngredient obj : current) {
+            if (!obj.isSpecial()) {
+                // Either add the recipe or create a branch.
+                r = map.NODES.compute(obj, (k, v) -> {
+                    if (count == ingredients.size() - 1) {
+                        if (v == null) {
+                            v = Either.left(new ObjectArrayList<>());
+                        }
+                        v.ifLeft(list -> list.add(recipe));
+                        return v;
+                    } else if (v == null) {
+                        Branch traverse = new Branch();
+                        v = Either.right(traverse);
+                    }
+                    return v;
+                });
+                // At the end, return.
+                if (count == ingredients.size() - 1)
+                    continue;
+                // If left was present before. Shouldn't be needed?
+                /*
+                 * if (r.left().isPresent()) { Utils.onInvalidData("COLLISION DETECTED!");
+                 * current.forEach(map.NODES::remove); return false; }
+                 */
+                // should always be present but this gives no warning.
+                if (r.right().map(
+                                m -> !recurseItemTreeAdd(recipe, ingredients, m, (index + 1) % ingredients.size(), count + 1))
+                        .orElse(false)) {
+                    current.forEach(map.NODES::remove);
+                    return false;
+                }
+            } else {
+                if (count == ingredients.size() - 1) {
+                    map.SPECIAL_NODES.add(new Tuple<>(obj, Either.left(recipe)));
+                } else {
+                    Branch branch = new Branch();
+                    boolean ok = recurseItemTreeAdd(recipe, ingredients, branch, (index + 1) % ingredients.size(),
+                            count + 1);
+                    if (!ok) {
+                        current.forEach(map.NODES::remove);
+                        return false;
+                    } else {
+                        map.SPECIAL_NODES.add(new Tuple<>(obj, Either.right(branch)));
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    protected void buildFromFluids(List<List<AbstractMapIngredient>> builder, List<FluidStack> ingredients,
+                                   boolean insideMap) {
+        for (FluidStack t : ingredients) {
+            builder.add(Collections.singletonList(new MapFluidIngredient(t, insideMap)));
+        }
+    }
+
+    protected void buildFromFluidStacks(List<List<AbstractMapIngredient>> builder, List<FluidStack> ingredients,
+                                        boolean insideMap) {
+        for (FluidStack t : ingredients) {
+            builder.add(Collections.singletonList(new MapFluidIngredient(t, insideMap)));
+        }
+    }
+
+    protected List<List<AbstractMapIngredient>> fromRecipe(Recipe r, boolean insideMap) {
+        List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(
+                (r.getInputs().size())
+                        + r.getFluidInputs().size());
+        if (r.getInputs().size() > 0) {
+            buildFromItems(list, r.getInputs(), insideMap);
+        }
+        if (r.getFluidInputs().size() > 0) {
+            buildFromFluids(list, r.getFluidInputs(), insideMap);
+        }
+        return list;
+    }
+
+    protected void buildFromItems(List<List<AbstractMapIngredient>> list, List<CountableIngredient> ingredients, boolean insideMap) {
+        for (CountableIngredient r : ingredients) {
+            Ingredient t = r.getIngredient();
+            if (!false) {
+                java.util.Optional<ResourceLocation> rl = java.util.Optional.empty();//MapTagIngredient.findCommonTag(t, tags);
+                if (rl.isPresent()) {
+                    list.add(Collections.singletonList(null));
+                } else {
+                    List<AbstractMapIngredient> inner = new ObjectArrayList<>(t.getMatchingStacks().length);
+                    for (ItemStack stack : t.getMatchingStacks()) {
+                        //if (r.ignoreNbt()) {
+                        //    inner.add(new MapItemIngredient(stack.getItem(), insideMap));
+                        //} else {
+                        inner.add(new MapItemStackIngredient(stack, insideMap));
+                        //}
+                    }
+                    list.add(inner);
+                }
+            } else {
+               // list.add(Collections.singletonList(new SpecialIngredientWrapper(t)));
+            }
+        }
+    }
+
+    protected void buildFromItemStacks(List<List<AbstractMapIngredient>> list, ItemStack[] ingredients) {
+        for (ItemStack t : ingredients) {
+            //OreDictionary.getOreIDs()
+            List<AbstractMapIngredient> ls = new ObjectArrayList<>(2);
+            ls.add(new MapItemIngredient(t.getItem(), false));
+            ls.add(new MapItemStackIngredient(t, false));
+            /*for (ResourceLocation rl : t.getItem().getTags()) {
+                ls.add(new MapTagIngredient(rl, false));
+            }*/
+            list.add(ls);
+        }
+    }
+
+
     protected RecipeMap<R> setSpecialTexture(int x, int y, int width, int height, TextureArea area) {
         this.specialTexturePosition = new int[]{x, y, width, height};
         this.specialTexture = area;
@@ -628,5 +954,209 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     @ZenRegister
     public interface IChanceFunction {
         int chanceFor(int chance, int boostPerTier, int boostTier);
+    }
+
+    protected static class Branch {
+
+        private Map<AbstractMapIngredient, Either<List<Recipe>, Branch>> NODES = new Object2ObjectOpenHashMap<>();
+
+        private final List<Tuple<AbstractMapIngredient, Either<Recipe, Branch>>> SPECIAL_NODES = new ObjectArrayList<>();
+
+        public Stream<Recipe> getRecipes(boolean filterHidden) {
+            Stream<Recipe> stream = NODES.values().stream()
+                    .flatMap(t -> t.map(Collection::stream, branch -> branch.getRecipes(filterHidden)));
+            if (SPECIAL_NODES.size() > 0) {
+                stream = Stream.concat(stream, SPECIAL_NODES.stream()
+                        .flatMap(t -> t.getSecond().map(Stream::of, branch -> branch.getRecipes(filterHidden))));
+            }
+            if (filterHidden)
+                stream = stream.filter(t -> !t.isHidden());
+            return stream;
+        }
+
+        public void clear() {
+            NODES = new Object2ObjectOpenHashMap<>();
+            SPECIAL_NODES.clear();
+        }
+
+        public void finish() {
+            // NODES.forEach((k,v) -> v.ifRight(Branch::finish));
+            // this.NODES = ImmutableMap.<AbstractMapIngredient, Either<List<Recipe>,
+            // Branch>>builder().putAll(NODES).build();
+        }
+    }
+
+
+    public abstract static class Either<L, R> {
+
+        private static final class Left<L, R> extends Either<L, R> {
+            private final L value;
+
+            public Left(final L value) {
+                this.value = value;
+            }
+
+            @Override
+            public <C, D> Either<C, D> mapBoth(final Function<? super L, ? extends C> f1, final Function<? super R, ? extends D> f2) {
+                return new Left<>(f1.apply(value));
+            }
+
+            @Override
+            public <T> T map(final Function<? super L, ? extends T> l, final Function<? super R, ? extends T> r) {
+                return l.apply(value);
+            }
+
+            @Override
+            public Either<L, R> ifLeft(Consumer<? super L> consumer) {
+                consumer.accept(value);
+                return this;
+            }
+
+            @Override
+            public Either<L, R> ifRight(Consumer<? super R> consumer) {
+                return this;
+            }
+
+            @Override
+            public java.util.Optional<L> left() {
+                return java.util.Optional.of(value);
+            }
+
+            @Override
+            public java.util.Optional<R> right() {
+                return java.util.Optional.empty();
+            }
+
+            @Override
+            public String toString() {
+                return "Left[" + value + "]";
+            }
+
+            @Override
+            public boolean equals(final Object o) {
+                if (this == o) {
+                    return true;
+                }
+                if (o == null || getClass() != o.getClass()) {
+                    return false;
+                }
+                final Left<?, ?> left = (Left<?, ?>) o;
+                return Objects.equals(value, left.value);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(value);
+            }
+        }
+
+        private static final class Right<L, R> extends Either<L, R> {
+            private final R value;
+
+            public Right(final R value) {
+                this.value = value;
+            }
+
+            @Override
+            public <C, D> Either<C, D> mapBoth(final Function<? super L, ? extends C> f1, final Function<? super R, ? extends D> f2) {
+                return new Right<>(f2.apply(value));
+            }
+
+            @Override
+            public <T> T map(final Function<? super L, ? extends T> l, final Function<? super R, ? extends T> r) {
+                return r.apply(value);
+            }
+
+            @Override
+            public Either<L, R> ifLeft(Consumer<? super L> consumer) {
+                return this;
+            }
+
+            @Override
+            public Either<L, R> ifRight(Consumer<? super R> consumer) {
+                consumer.accept(value);
+                return this;
+            }
+
+            @Override
+            public java.util.Optional<L> left() {
+                return java.util.Optional.empty();
+            }
+
+            @Override
+            public java.util.Optional<R> right() {
+                return java.util.Optional.of(value);
+            }
+
+            @Override
+            public String toString() {
+                return "Right[" + value + "]";
+            }
+
+            @Override
+            public boolean equals(final Object o) {
+                if (this == o) {
+                    return true;
+                }
+                if (o == null || getClass() != o.getClass()) {
+                    return false;
+                }
+                final Right<?, ?> right = (Right<?, ?>) o;
+                return Objects.equals(value, right.value);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(value);
+            }
+        }
+
+        private Either() {
+        }
+
+        public abstract <C, D> Either<C, D> mapBoth(final Function<? super L, ? extends C> f1, final Function<? super R, ? extends D> f2);
+
+        public abstract <T> T map(final Function<? super L, ? extends T> l, Function<? super R, ? extends T> r);
+
+        public abstract Either<L, R> ifLeft(final Consumer<? super L> consumer);
+
+        public abstract Either<L, R> ifRight(final Consumer<? super R> consumer);
+
+        public abstract java.util.Optional<L> left();
+
+        public abstract java.util.Optional<R> right();
+
+        public <T> Either<T, R> mapLeft(final Function<? super L, ? extends T> l) {
+            return map(t -> left(l.apply(t)), Either::right);
+        }
+
+        public <T> Either<L, T> mapRight(final Function<? super R, ? extends T> l) {
+            return map(Either::left, t -> right(l.apply(t)));
+        }
+
+        public static <L, R> Either<L, R> left(final L value) {
+            return new Left<>(value);
+        }
+
+        public static <L, R> Either<L, R> right(final R value) {
+            return new Right<>(value);
+        }
+
+        public L orThrow() {
+            return map(l -> l, r -> {
+                if (r instanceof Throwable) {
+                    throw new RuntimeException((Throwable) r);
+                }
+                throw new RuntimeException(r.toString());
+            });
+        }
+
+        public Either<R, L> swap() {
+            return map(Either::right, Either::left);
+        }
+
+        public <L2> Either<L2, R> flatMap(final Function<L, Either<L2, R>> function) {
+            return map(function, Either::right);
+        }
     }
 }
