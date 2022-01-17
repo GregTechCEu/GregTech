@@ -135,69 +135,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
 
     protected boolean canInputFluid(FluidStack inputFluid) {
         RecipeMap<?> recipeMap = workable.getRecipeMap();
-        if (recipeMap.canInputFluidForce(inputFluid.getFluid())) {
-            return true; // RecipeMap forces input
-        }
-        Collection<Recipe> inputCapableRecipes = recipeMap.getRecipesForFluid(inputFluid);
-        if (inputCapableRecipes.isEmpty()) {
-            // Fluid cannot be inputted anyway, short-circuit and inform that the fluid cannot be inputted
-            return false;
-        }
-        boolean hasEmpty = false;
-        Collection<FluidKey> fluids = null;
-        for (IFluidTank fluidTank : importFluids) {
-            FluidStack fluidInTank = fluidTank.getFluid();
-            if (fluidInTank != null) {
-                if (inputFluid.isFluidEqual(fluidInTank)) {
-                    // Both fluids are equal, short-circuit and inform that the fluid can be inputted
-                    return true;
-                } else {
-                    if (fluids == null) {
-                        // Avoid object allocation + array expansion as this is a hotspot
-                        if (fluidKeyCache == null) {
-                            fluids = new ObjectArraySet<>(new FluidKey[] { new FluidKey(fluidInTank) });
-                        } else {
-                            fluidKeyCache.clear();
-                            fluids = fluidKeyCache;
-                        }
-                    } else {
-                        fluids.add(new FluidKey(fluidInTank));
-                    }
-                }
-            } else {
-                hasEmpty = true;
-            }
-        }
-        if (!hasEmpty) {
-            // No empty slots to fill input in, inform that the fluid cannot be inputted
-            return false;
-        }
-        if (fluids == null) {
-            // There are empty slots to fill, and there are no other fluids, inform that the fluid can be inputted
-            return true;
-        }
-        for (FluidKey fluidKey : fluids) {
-            Collection<Recipe> iter = recipeMap.getRecipesForFluid(fluidKey);
-            Collection<Recipe> check;
-            // Iterate with the smaller collection as base
-            if (iter.size() > inputCapableRecipes.size()) {
-                check = iter;
-                iter = inputCapableRecipes;
-            } else {
-                check = inputCapableRecipes;
-            }
-            for (Recipe it : iter) {
-                for (Recipe ch : check) {
-                    // Check identity equality, fast-track instead of doing Recipe#equals' tedious checks
-                    if (it == ch) {
-                        // Recipe exists in both collections, inform that the fluid can be inputted
-                        return true;
-                    }
-                }
-            }
-        }
-        // Ultimatum
-        return false;
+        return recipeMap != null && recipeMap.acceptsFluid(inputFluid);
     }
 
     @Override
