@@ -166,12 +166,14 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     private void syncPipeConnections(EnumFacing side, IPipeTile<?, ?> pipe) {
-        boolean thisOpen = isConnectionOpen(side);
-        boolean neighbourOpen = pipe.isConnectionOpen(side.getOpposite());
-        if (thisOpen == neighbourOpen) {
+        EnumFacing oppositeSide = side.getOpposite();
+        boolean neighbourOpen = pipe.isConnectionOpen(oppositeSide);
+        if (isConnectionOpen(side) == neighbourOpen) {
             return;
         }
-        pipe.setConnectionBlocked(side.getOpposite(), neighbourOpen, true);
+        if (!neighbourOpen || pipe.getCoverableImplementation().getCoverAtSide(oppositeSide) == null) {
+            pipe.setConnectionBlocked(oppositeSide, neighbourOpen, true);
+        }
     }
 
     private void updateSideBlockedConnection(EnumFacing side, boolean blocked) {
