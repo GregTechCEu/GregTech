@@ -209,31 +209,9 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         return fluids;
     }
 
-    public int setFluidAuto(FluidStack stack, boolean fill) {
-        return setContainingFluid(stack, findChannel(stack), fill);
-    }
-
     public int setContainingFluid(FluidStack stack, int channel, boolean fill) {
-        if (channel < 0)
-            return stack == null ? 0 : stack.amount;
-        if (stack == null || stack.amount <= 0) {
-            getFluidTanks()[channel].setFluid(null);
-            return 0;
-        }
-        FluidTank tank = getFluidTanks()[channel];
-        FluidStack currentStack = tank.getFluid();
-        if (currentStack == null || currentStack.amount <= 0) {
-            checkAndDestroy(stack);
-        } else if (fill) {
-            int toFill = stack.amount;
-            if (toFill + currentStack.amount > tank.getCapacity())
-                toFill = tank.getCapacity() - currentStack.amount;
-            currentStack.amount += toFill;
-            return toFill;
-        }
-        stack.amount = Math.min(stack.amount, tank.getCapacity());
-        tank.setFluid(stack);
-        return stack.amount;
+        PipeTankList tankList = getTankList();
+        return tankList == null ? 0 : tankList.setContainingFluid(stack, channel, fill);
     }
 
     public void checkAndDestroy(FluidStack stack) {
@@ -334,7 +312,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     }
 
     public FluidPipeNet getFluidPipeNet() {
-        if(world == null || world.isRemote)
+        if (world == null || world.isRemote)
             return null;
         FluidPipeNet currentPipeNet = this.currentPipeNet.get();
         if (currentPipeNet != null && currentPipeNet.isValid() &&
@@ -391,7 +369,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                             new TextComponentTranslation(GTUtility.formatNumbers(this.getCapacityPerTank())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
                             new TextComponentTranslation(fluids[i].getFluid().getLocalizedName(fluids[i])).setStyle(new Style().setColor(TextFormatting.GOLD))
                     ));
-               }
+                }
             }
 
             if (allTanksEmpty)
