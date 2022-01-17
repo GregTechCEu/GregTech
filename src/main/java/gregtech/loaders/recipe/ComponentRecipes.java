@@ -205,7 +205,7 @@ public class ComponentRecipes {
                     .duration(100).EUt(VA[LV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(cableGtSingle, Copper)
+                    .input(cableGtSingle, Gold)
                     .input(pipeNormalFluid, StainlessSteel)
                     .input(screw, Steel)
                     .input(rotor, Steel)
