@@ -60,6 +60,12 @@ public class ItemNetHandler implements IItemHandler {
             this.tickingPipe = (TileEntityItemPipeTickable) pipe.setSupportsTicking();
             this.pipe = tickingPipe;
         }
+
+        if (net == null || pipe == null || pipe.isInvalid()) {
+            GTLog.logger.error("Can't insert! Pipe: {}, Net {}", pipe == null ? "null" : pipe.isInvalid() ? "invalid" : "valid", net == null ? "null" : "valid");
+            return stack;
+        }
+
         copyTransferred();
         CoverBehavior pipeCover = getCoverOnPipe(pipe.getPipePos(), facing);
         CoverBehavior tileCover = getCoverOnNeighbour(pipe.getPipePos(), facing);

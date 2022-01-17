@@ -108,12 +108,20 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
     @Override
     public void transferDataFrom(IPipeTile<ItemPipeType, ItemPipeProperties> tileEntity) {
         super.transferDataFrom(tileEntity);
+        if (getItemPipeNet() == null)
+            return;
         TileEntityItemPipe itemPipe = (TileEntityItemPipe) tileEntity;
-        handlers.clear();
-        for (Map.Entry<EnumFacing, ItemNetHandler> entry : itemPipe.handlers.entrySet()) {
-            handlers.put(entry.getKey(), entry.getValue());
+        if (!itemPipe.handlers.isEmpty() && itemPipe.defaultHandler != null) {
+            // take handlers from old pipe
+            handlers.clear();
+            for (Map.Entry<EnumFacing, ItemNetHandler> entry : itemPipe.handlers.entrySet()) {
+                handlers.put(entry.getKey(), entry.getValue());
+            }
+            defaultHandler = itemPipe.defaultHandler;
+            checkNetwork();
+        } else {
+            // create new handlers
+            initHandlers();
         }
-        defaultHandler = itemPipe.defaultHandler;
-        checkNetwork();
     }
 }
