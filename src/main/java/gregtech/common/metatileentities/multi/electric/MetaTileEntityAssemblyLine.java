@@ -30,6 +30,7 @@ import java.util.List;
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
+    private List<ItemStack> hatchDataCache;
     public MetaTileEntityAssemblyLine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.ASSEMBLY_LINE_RECIPES);
     }
@@ -84,7 +85,16 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                     }
                 }
             }
-            return validOutputs.contains(recipe.getProperty(ResearchItemProperty.getInstance(), null));
+            boolean canRun = false;
+            for (ItemStack stack: validOutputs) {
+                String stackStr = stack.toString();
+                String recipePropertyString = recipe.getOutputs().get(0).toString();
+                if (stackStr.equals(recipePropertyString)) {
+                    canRun = true;
+                    break;
+                }
+            }
+            return canRun;
         } else {
             return true;
         }

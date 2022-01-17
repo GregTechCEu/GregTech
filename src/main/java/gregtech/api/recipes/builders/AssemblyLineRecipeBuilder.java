@@ -4,10 +4,8 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.ResearchItemProperty;
 import gregtech.api.util.ValidationResult;
-import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -54,12 +52,8 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     }
 
     public ValidationResult<Recipe> build() {
-
-        //TODO: make stick needed for assline completion
-
-        Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs,
-                duration, EUt, hidden);
-
+        Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden);
+        recipe.setProperty(ResearchItemProperty.getInstance(), this.researchItem);
         return ValidationResult.newResult(finalizeAndValidate(), recipe);
     }
 
