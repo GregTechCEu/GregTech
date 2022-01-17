@@ -46,8 +46,6 @@ public class Textures {
     public static final DrumRenderer WOODEN_DRUM = new DrumRenderer("storage/drums/wooden_drum");
     public static final DrumRenderer DRUM = new DrumRenderer("storage/drums/drum");
     public static final SafeRenderer SAFE = new SafeRenderer("storage/safe");
-    public static final TankRenderer WOODEN_TANK = new TankRenderer("storage/tank/wooden");
-    public static final TankRenderer METAL_TANK = new TankRenderer("storage/tank/metal");
     public static final LargeTurbineRenderer LARGE_TURBINE_ROTOR_RENDERER = new LargeTurbineRenderer();
 
     // Simple Cube Renderers
@@ -143,7 +141,6 @@ public class Textures {
     public static final OrientedOverlayRenderer MIXER_OVERLAY = new OrientedOverlayRenderer("machines/mixer", FRONT, SIDE, TOP);
     public static final OrientedOverlayRenderer ORE_WASHER_OVERLAY = new OrientedOverlayRenderer("machines/ore_washer", FRONT, SIDE);
     public static final OrientedOverlayRenderer PACKER_OVERLAY = new OrientedOverlayRenderer("machines/packer", FRONT);
-    public static final OrientedOverlayRenderer UNPACKER_OVERLAY = new OrientedOverlayRenderer("machines/unpacker", FRONT);
     public static final OrientedOverlayRenderer POLARIZER_OVERLAY = new OrientedOverlayRenderer("machines/polarizer", FRONT, TOP);
     public static final OrientedOverlayRenderer LASER_ENGRAVER_OVERLAY = new OrientedOverlayRenderer("machines/laser_engraver", FRONT);
     public static final OrientedOverlayRenderer ROCK_BREAKER_OVERLAY = new OrientedOverlayRenderer("machines/rock_crusher", FRONT);
@@ -244,8 +241,6 @@ public class Textures {
     public static final SimpleOverlayRenderer COVER_INTERFACE_PROXY = new SimpleOverlayRenderer("cover/cover_interface_proxy");
     public static final SimpleOverlayRenderer COVER_INTERFACE_WIRELESS = new SimpleOverlayRenderer("cover/cover_interface_wireless");
 
-    public static final SimpleOverlayRenderer SURFACE_ROCK_TEXTURE = new SimpleOverlayRenderer("stones/surface_rock_stone");
-
     @SideOnly(Side.CLIENT)
     public static ThreadLocal<CubeRendererState> RENDER_STATE;
 
@@ -269,7 +264,7 @@ public class Textures {
 
     @SideOnly(Side.CLIENT)
     public static void renderFace(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite, BlockRenderLayer layer) {
-        CubeRendererState op =RENDER_STATE.get();
+        CubeRendererState op = RENDER_STATE.get();
         if (layer != null && op != null && op.layer != null && (op.layer != layer || !op.shouldSideBeRendered(face, bounds))) {
             return;
         }
