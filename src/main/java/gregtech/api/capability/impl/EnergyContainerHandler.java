@@ -131,30 +131,34 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         if (stackInSlot.isEmpty()) { // no stack to charge/discharge
             return false;
         }
+
         IElectricItem electricItem = stackInSlot.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem == null) { // stack in slot is not an electric item
             return false;
         }
-        int machineTier = GTUtility.getTierByVoltage(Math.max(getInputVoltage(), getOutputVoltage()));
-        if (machineTier != electricItem.getTier()) { // stack in slot is not the right voltage tier to charge/discharge
-            return false;
-        }
 
-        if (getEnergyCanBeInserted() > 0) { // if this container has energy...
-            double chargePercent = getEnergyStored() / (getEnergyCapacity() * 1.0);
-            // ...and we have less than 50% energy, and the item can discharge power...
-            if (chargePercent <= 0.5 && electricItem.canProvideChargeExternally()) {
-                // ...charge ourselves from the battery...
+        int machineTier = GTUtility.getTierByVoltage(Math.max(getInputVoltage(), getOutputVoltage()));
+        int chargeTier = Math.min(machineTier, electricItem.getTier());
+        double chargePercent = getEnergyStored() / (getEnergyCapacity() * 1.0);
+
+        // Check if the item is a battery (or similar), and if we can receive some amount of energy
+        if (electricItem.canProvideChargeExternally() && getEnergyCanBeInserted() > 0) {
+
+            // Drain from the battery if we are below half energy capacity, and if the tier matches
+            if (chargePercent <= 0.5 && chargeTier == machineTier) {
                 long dischargedBy = electricItem.discharge(getEnergyCanBeInserted(), machineTier, false, true, false);
                 addEnergy(dischargedBy);
                 return dischargedBy > 0L;
-
-            } else if (chargePercent >= 0.9) { // ...otherwise, if we have at least 90% power, charge the electric item
-                long chargedBy = electricItem.charge(getEnergyStored(), machineTier, false, false);
-                removeEnergy(chargedBy);
-                return chargedBy > 0L;
             }
         }
+
+        // Else, check if we have above 50% power
+        if (chargePercent > 0.5) {
+            long chargedBy = electricItem.charge(getEnergyStored(), chargeTier, false, false);
+            removeEnergy(chargedBy);
+            return chargedBy > 0;
+        }
+
         return false;
     }
 

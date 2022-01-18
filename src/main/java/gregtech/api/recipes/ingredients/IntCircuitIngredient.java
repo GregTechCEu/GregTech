@@ -50,12 +50,7 @@ public class IntCircuitIngredient extends Ingredient {
     }
 
     public static void adjustConfiguration(PlayerInventoryHolder holder, int amount) {
-        ItemStack stack = holder.getCurrentItem();
-        int configuration = IntCircuitIngredient.getCircuitConfiguration(stack);
-        configuration += amount;
-        configuration = MathHelper.clamp(configuration, 0, IntCircuitIngredient.CIRCUIT_MAX);
-        IntCircuitIngredient.setCircuitConfiguration(stack, configuration);
-
+        adjustConfiguration(holder.getCurrentItem(), amount);
         holder.markAsDirty();
     }
 
