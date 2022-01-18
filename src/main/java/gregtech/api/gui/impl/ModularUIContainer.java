@@ -3,6 +3,7 @@ package gregtech.api.gui.impl;
 import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
+import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.WidgetUIAccess;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.packets.CPacketUIClientAction;
@@ -160,6 +161,12 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
         return slotMap.values().stream()
                 .filter(it -> it.canMergeSlot(itemStack))
                 .filter(it -> it.getSlotLocationInfo().isPlayerInventory == fromContainer)
+                .filter(it -> {
+                    if (it.getHandle() instanceof SlotWidget.WidgetSlotItemHandler) {
+                        return ((SlotWidget.WidgetSlotItemHandler) it.getHandle()).canShiftClickInto();
+                    }
+                    return true;
+                })
                 .sorted(Comparator.comparing(s -> (fromContainer ? -1 : 1) * s.getHandle().slotNumber))
                 .collect(Collectors.toList());
     }
