@@ -80,7 +80,7 @@ public class BlockSurfaceRock extends DelayedStateBlock {
     @Override
     public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
         blockState.getValidStates().stream()
-                .filter(blockState -> blockState.getValue(variantProperty) != Materials._NULL)
+                .filter(blockState -> blockState.getValue(variantProperty) != Materials.NULL)
                 .forEach(blockState -> list.add(getItem(blockState)));
     }
 

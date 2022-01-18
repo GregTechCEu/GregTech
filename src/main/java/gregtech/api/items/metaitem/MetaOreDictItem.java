@@ -7,6 +7,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.SmallDigits;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -130,7 +131,7 @@ public class MetaOreDictItem extends StandardMetaItem {
         }
 
         public String getName() {
-            return materialName + '_' + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, orePrefix.name());
+            return materialName + '_' + GTUtility.toLowerCaseUnderscore(orePrefix.name());
         }
 
         protected String calculateChemicalFormula(String unformattedFormula) {
