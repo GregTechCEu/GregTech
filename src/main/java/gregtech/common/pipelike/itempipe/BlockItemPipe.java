@@ -100,11 +100,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     @Override
     public void getSubBlocks(@Nonnull CreativeTabs itemIn, @Nonnull NonNullList<ItemStack> items) {
         for (Material material : enabledMaterials.keySet()) {
-            for (ItemPipeType itemPipeType : ItemPipeType.values()) {
-                if (!itemPipeType.getOrePrefix().isIgnored(material)) {
-                    items.add(getItem(material));
-                }
-            }
+            items.add(getItem(material));
         }
     }
 

@@ -2305,6 +2305,11 @@ behavior.tricorder.debug_machine_invalid_null=invalid! MetaTileEntity == null!
 behavior.tricorder.debug_cpu_load=Average CPU load of ~%sns over %s ticks with worst time of %sns.
 behavior.tricorder.debug_lag_count=Caused %s Lag Spike Warnings (anything taking longer than %sms) on the Server.
 
+metaitem.item_magnet.lv.name=Low Voltage Item Magnet
+metaitem.item_magnet.hv.name=High Voltage Item Magnet
+behavior.item_magnet.enabled=Magnetic Field Enabled
+behavior.item_magnet.disabled=Magnetic Field Disabled
+
 metaitem.terminal.name=Terminal
 metaitem.terminal.tooltip=Sharp tools make good work
 metaitem.terminal.tooltip.creative=§bCreative Mode
@@ -2622,18 +2627,18 @@ tile.stone_bricks_square.concrete_dark.name=Square Dark Concrete Bricks
 # Steam machines
 gregtech.machine.steam_boiler.tooltip_produces=Produces %,dL of Steam per second
 
-gregtech.machine.steam_boiler_coal_bronze.name=Small Steam Coal Boiler
+gregtech.machine.steam_boiler_coal_bronze.name=Small Steam Solid Fuel Boiler
 gregtech.machine.steam_boiler_coal_bronze.tooltip=An early way to get Steam Power
-gregtech.machine.steam_boiler_coal_steel.name=High Pressure Steam Coal Boiler
-gregtech.machine.steam_boiler_coal_steel.tooltip=Faster than the Small Steam Coal Boiler
+gregtech.machine.steam_boiler_coal_steel.name=High Pressure Steam Solid Fuel Boiler
+gregtech.machine.steam_boiler_coal_steel.tooltip=Faster than the Small Steam Solid Fuel Boiler
 gregtech.machine.steam_boiler_solar_bronze.name=Steam Solar Boiler
 gregtech.machine.steam_boiler_solar_bronze.tooltip=Steam Power by Sun
 gregtech.machine.steam_boiler_solar_steel.name=High Pressure Steam Solar Boiler
 gregtech.machine.steam_boiler_solar_steel.tooltip=Steam Power by Sun
-gregtech.machine.steam_boiler_lava_bronze.name=Small Steam Lava Boiler
+gregtech.machine.steam_boiler_lava_bronze.name=Small Steam Liquid Boiler
 gregtech.machine.steam_boiler_lava_bronze.tooltip=A Boiler running off Lava
-gregtech.machine.steam_boiler_lava_steel.name=High Pressure Steam Lava Boiler
-gregtech.machine.steam_boiler_lava_steel.tooltip=Faster than Small Steam Lava Boiler
+gregtech.machine.steam_boiler_lava_steel.name=High Pressure Steam Liquid Boiler
+gregtech.machine.steam_boiler_lava_steel.tooltip=Faster than Small Steam Liquid Boiler
 
 gregtech.machine.steam_boiler.heat_amount=Heat Capacity: %s %%
 
@@ -4296,7 +4301,6 @@ gregtech.command.util.hand.electric=Electric Info: %d / %d EU - Tier: %d; Is Bat
 gregtech.command.util.hand.fluid=Fluid Info: %s %d / %d L; Can Fill: %s; Can Drain: %s
 gregtech.command.util.hand.material_meta_item=Ore Prefix: %s; Material: %s
 gregtech.command.util.hand.tool_stats=Tool Stats Class: %s
-gregtech.command.util.hand.meta_item=Meta Item Name: %s
 gregtech.command.util.hand.not_a_player=This command is only usable by a player.
 gregtech.command.util.hand.no_item=You must hold something in mainhand before executing this command.
 

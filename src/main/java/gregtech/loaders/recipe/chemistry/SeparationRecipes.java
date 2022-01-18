@@ -315,6 +315,12 @@ public class SeparationRecipes {
                 .output(dust, Electrum)
                 .buildAndRegister();
 
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(51).EUt(VA[LV])
+                .fluidInputs(SaltWater.getFluid(1000))
+                .output(dust, Salt, 2)
+                .fluidOutputs(Water.getFluid(1000))
+                .buildAndRegister();
+
         // Electrolyzer
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .input(dust, SodiumBisulfate, 7)

@@ -100,6 +100,10 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
         return getItem(getDefaultState().withProperty(variantProperty, material));
     }
 
+    public Material getGtMaterial(int meta) {
+        return variantProperty.getAllowedValues().get(meta);
+    }
+
     public IBlockState getBlock(Material material) {
         return getDefaultState().withProperty(variantProperty, material);
     }

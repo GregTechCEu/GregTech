@@ -484,6 +484,9 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem TRICORDER_SCANNER;
     public static MetaItem<?>.MetaValueItem DEBUG_SCANNER;
 
+    public static MetaItem<?>.MetaValueItem ITEM_MAGNET_LV;
+    public static MetaItem<?>.MetaValueItem ITEM_MAGNET_HV;
+
     public static MetaItem<?>.MetaValueItem WIRELESS;
     public static MetaItem<?>.MetaValueItem CAMERA;
     public static MetaItem<?>.MetaValueItem TERMINAL;
@@ -573,6 +576,9 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SUS_RECORD;
     public static MetaItem<?>.MetaValueItem NAN_CERTIFICATE;
 
+
+    public static MetaOreDictItem CT_OREDICT_ITEM;
+
     private static final List<OrePrefix> orePrefixes = new ArrayList<OrePrefix>() {{
         add(OrePrefix.dust);
         add(OrePrefix.dustSmall);
@@ -629,8 +635,8 @@ public final class MetaItems {
         first.setRegistryName("meta_item_1");
         MetaTool tool = new MetaTool();
         tool.setRegistryName("meta_tool");
-        MetaOreDictItem oreDictItem = new MetaOreDictItem((short) 0);
-        oreDictItem.setRegistryName("meta_oredict_item");
+        CT_OREDICT_ITEM = new MetaOreDictItem((short) 0);
+        CT_OREDICT_ITEM.setRegistryName("meta_oredict_item_ct");
         MetaArmor armor = new MetaArmor();
         armor.setRegistryName("gt_armor");
         for (OrePrefix prefix : orePrefixes) {
