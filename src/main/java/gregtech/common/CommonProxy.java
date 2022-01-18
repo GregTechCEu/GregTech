@@ -61,13 +61,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
-import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FRAME;
 import static gregtech.common.blocks.MetaBlocks.*;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
@@ -81,15 +76,6 @@ public class CommonProxy {
         registry.register(MACHINE);
 
         StoneType.init();
-
-        createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME), CommonProxy::createFrameBlock);
-        createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.DUST), CommonProxy::createSurfaceRockBlock);
-
-        createGeneratedBlock(
-                material -> (material.hasProperty(PropertyKey.INGOT) || material.hasProperty(PropertyKey.GEM))
-                        && !OrePrefix.block.isIgnored(material),
-                CommonProxy::createCompressedBlock);
-
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
 
@@ -170,61 +156,6 @@ public class CommonProxy {
         FRAMES.values().stream().distinct().forEach(registry::register);
         SURFACE_ROCK.values().stream().distinct().forEach(registry::register);
         ORES.forEach(registry::register);
-    }
-
-    /**
-     * Deterministically populates a category of MetaBlocks based on the unique registry ID of each qualifying Material.
-     *
-     * @param materialPredicate a filter for determining if a Material qualifies for generation in the category.
-     * @param blockGenerator    a function which accepts a Materials set to pack into a MetaBlock, and the ordinal this
-     *                          MetaBlock should have within its category.
-     */
-    protected static void createGeneratedBlock(Predicate<Material> materialPredicate,
-                                               BiConsumer<Material[], Integer> blockGenerator) {
-
-        Map<Integer, Material[]> blocksToGenerate = new TreeMap<>();
-
-        for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-            if (materialPredicate.test(material)) {
-                int id = material.getId();
-                int metaBlockID = id / 16;
-                int subBlockID = id % 16;
-
-                if (!blocksToGenerate.containsKey(metaBlockID)) {
-                    Material[] materials = new Material[16];
-                    Arrays.fill(materials, Materials.NULL);
-                    blocksToGenerate.put(metaBlockID, materials);
-                }
-
-                blocksToGenerate.get(metaBlockID)[subBlockID] = material;
-            }
-        }
-
-        blocksToGenerate.forEach((key, value) -> blockGenerator.accept(value, key));
-    }
-
-    private static void createCompressedBlock(Material[] materials, int index) {
-        BlockCompressed block = new BlockCompressed(materials);
-        block.setRegistryName("meta_block_compressed_" + index);
-        for (Material material : materials) {
-            COMPRESSED.put(material, block);
-        }
-    }
-
-    private static void createFrameBlock(Material[] materials, int index) {
-        BlockFrame block = new BlockFrame(materials);
-        block.setRegistryName("meta_block_frame_" + index);
-        for (Material m : materials) {
-            FRAMES.put(m, block);
-        }
-    }
-
-    private static void createSurfaceRockBlock(Material[] materials, int index) {
-        BlockSurfaceRock block = new BlockSurfaceRock(materials);
-        block.setRegistryName("meta_block_surface_rock_" + index);
-        for (Material material : materials) {
-            SURFACE_ROCK.put(material, block);
-        }
     }
 
     private static void createOreBlock(Material material) {

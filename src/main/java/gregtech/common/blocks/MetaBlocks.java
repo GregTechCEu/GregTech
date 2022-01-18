@@ -20,12 +20,12 @@ import gregtech.client.renderer.handler.MetaTileEntityTESR;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
+import gregtech.common.CommonProxy;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
 import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.blocks.wood.BlockRubberLeaves;
 import gregtech.common.blocks.wood.BlockRubberLog;
-import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.blocks.wood.BlockRubberSapling;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
@@ -220,6 +220,15 @@ public class MetaBlocks {
         PLANKS = new BlockGregPlanks();
         PLANKS.setRegistryName("planks");
 
+        createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME), MetaBlocks::createFrameBlock);
+        createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.DUST), MetaBlocks::createSurfaceRockBlock);
+
+        createGeneratedBlock(
+                material -> (material.hasProperty(PropertyKey.INGOT) || material.hasProperty(PropertyKey.GEM))
+                        && !OrePrefix.block.isIgnored(material),
+                MetaBlocks::createCompressedBlock);
+
+
         registerTileEntity();
 
         //not sure if that's a good place for that, but i don't want to make a dedicated method for that
@@ -227,6 +236,61 @@ public class MetaBlocks {
         Blocks.FIRE.setFireInfo(RUBBER_LOG, 5, 5);
         Blocks.FIRE.setFireInfo(RUBBER_LEAVES, 30, 60);
         Blocks.FIRE.setFireInfo(PLANKS, 5, 20);
+    }
+
+    /**
+     * Deterministically populates a category of MetaBlocks based on the unique registry ID of each qualifying Material.
+     *
+     * @param materialPredicate a filter for determining if a Material qualifies for generation in the category.
+     * @param blockGenerator    a function which accepts a Materials set to pack into a MetaBlock, and the ordinal this
+     *                          MetaBlock should have within its category.
+     */
+    protected static void createGeneratedBlock(Predicate<Material> materialPredicate,
+                                               BiConsumer<Material[], Integer> blockGenerator) {
+
+        Map<Integer, Material[]> blocksToGenerate = new TreeMap<>();
+
+        for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
+            if (materialPredicate.test(material)) {
+                int id = material.getId();
+                int metaBlockID = id / 16;
+                int subBlockID = id % 16;
+
+                if (!blocksToGenerate.containsKey(metaBlockID)) {
+                    Material[] materials = new Material[16];
+                    Arrays.fill(materials, Materials.NULL);
+                    blocksToGenerate.put(metaBlockID, materials);
+                }
+
+                blocksToGenerate.get(metaBlockID)[subBlockID] = material;
+            }
+        }
+
+        blocksToGenerate.forEach((key, value) -> blockGenerator.accept(value, key));
+    }
+
+    private static void createCompressedBlock(Material[] materials, int index) {
+        BlockCompressed block = new BlockCompressed(materials);
+        block.setRegistryName("meta_block_compressed_" + index);
+        for (Material material : materials) {
+            COMPRESSED.put(material, block);
+        }
+    }
+
+    private static void createFrameBlock(Material[] materials, int index) {
+        BlockFrame block = new BlockFrame(materials);
+        block.setRegistryName("meta_block_frame_" + index);
+        for (Material m : materials) {
+            FRAMES.put(m, block);
+        }
+    }
+
+    private static void createSurfaceRockBlock(Material[] materials, int index) {
+        BlockSurfaceRock block = new BlockSurfaceRock(materials);
+        block.setRegistryName("meta_block_surface_rock_" + index);
+        for (Material material : materials) {
+            SURFACE_ROCK.put(material, block);
+        }
     }
 
     public static void registerTileEntity() {
