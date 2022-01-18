@@ -88,11 +88,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     @Override
     public void getSubBlocks(@Nonnull CreativeTabs itemIn, @Nonnull NonNullList<ItemStack> items) {
         for (Material material : enabledMaterials.keySet()) {
-            for (FluidPipeType fluidPipeType : FluidPipeType.values()) {
-                if (!fluidPipeType.getOrePrefix().isIgnored(material)) {
-                    items.add(getItem(material));
-                }
-            }
+            items.add(getItem(material));
         }
     }
 
@@ -198,20 +194,20 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         if (selfTile instanceof TileEntityFluidPipe && sideTile instanceof TileEntityFluidPipe) {
             TileEntityFluidPipe selfPipe = (TileEntityFluidPipe) selfTile, sidePipe = (TileEntityFluidPipe) selfTile;
             // yes if one pipe is empty
-            if(selfPipe.areTanksEmpty() || sidePipe.areTanksEmpty())
+            if (selfPipe.areTanksEmpty() || sidePipe.areTanksEmpty())
                 return true;
             // get content of one pipe
             Set<FluidStack> fluids = new HashSet<>();
-            for(FluidTank tank : selfPipe.getFluidTanks()) {
+            for (FluidTank tank : selfPipe.getFluidTanks()) {
                 FluidStack fluid = tank.getFluid();
-                if(fluid != null && fluid.amount > 0) {
+                if (fluid != null && fluid.amount > 0) {
                     fluids.add(fluid);
                 }
             }
             // if a fluid of the side pipe is not in this pipe return false
-            for(FluidTank tank : sidePipe.getFluidTanks()) {
+            for (FluidTank tank : sidePipe.getFluidTanks()) {
                 FluidStack fluid = tank.getFluid();
-                if(fluid != null && fluid.amount > 0 && !fluids.contains(fluid)) {
+                if (fluid != null && fluid.amount > 0 && !fluids.contains(fluid)) {
                     return false;
                 }
             }
@@ -279,9 +275,9 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
             FluidPipeNet net = getWorldPipeNet(worldIn).getNetFromPos(pos);
             if (net != null) {
                 net.invalidateNetCapacity();
-                for(FluidTank tank : pipe.getTankList()) {
+                for (FluidTank tank : pipe.getTankList()) {
                     FluidStack fluid = tank.getFluid();
-                    if(fluid == null || fluid.amount <= 0)
+                    if (fluid == null || fluid.amount <= 0)
                         continue;
                     net.markDirty(tank.getFluid(), pos);
                 }

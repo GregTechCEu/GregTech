@@ -1,17 +1,20 @@
-package gregtech.common.command.util;
+package gregtech.common.command;
 
+import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.items.toolitem.ToolMetaItem.MetaToolValueItem;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.pipenet.block.material.BlockMaterialPipe;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.ClipboardUtil;
+import gregtech.common.blocks.BlockCompressed;
+import gregtech.common.blocks.BlockFrame;
+import net.minecraft.block.Block;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -19,15 +22,19 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.ClickEvent.Action;
+import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nonnull;
+import java.util.Set;
 
 public class CommandHand extends CommandBase {
     @Nonnull
@@ -82,27 +89,71 @@ public class CommandHand extends CommandBase {
             if (stackInHand.getItem() instanceof MetaItem) {
                 MetaItem<?> metaItem = (MetaItem<?>) stackInHand.getItem();
                 MetaValueItem metaValueItem = metaItem.getItem(stackInHand);
-                if (metaValueItem == null) {
-                    if (metaItem instanceof MetaPrefixItem) {
-                        Material material = ((MetaPrefixItem) metaItem).getMaterial(stackInHand);
-                        OrePrefix orePrefix = ((MetaPrefixItem) metaItem).getOrePrefix();
-                        String oreDictName = new UnificationEntry(orePrefix, material).toString();
-                        player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.material_meta_item", orePrefix.name(), material)
-                                .setStyle(new Style().setClickEvent(new ClickEvent(Action.OPEN_URL, oreDictName))));
-                    }
-                } else {
+                if (metaValueItem != null) {
                     if (metaValueItem instanceof ToolMetaItem.MetaToolValueItem) {
                         IToolStats toolStats = ((MetaToolValueItem) metaValueItem).getToolStats();
                         player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.tool_stats", toolStats.getClass().getName()));
                     }
-                    ClipboardUtil.copyToClipboard(player, metaValueItem.unlocalizedName);
-                    ClickEvent metaItemEvent = new ClickEvent(Action.OPEN_URL, metaValueItem.unlocalizedName);
-                    player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.meta_item", metaValueItem.unlocalizedName, metaValueItem)
-                            .setStyle(new Style().setClickEvent(metaItemEvent)));
+                    String id = metaValueItem.unlocalizedName;
+                    String ctId = "<metaitem:" + metaValueItem.unlocalizedName + ">";
+                    ClipboardUtil.copyToClipboard(player, ctId);
+                    player.sendMessage(new TextComponentString("MetaItem Id: ").appendSibling(new TextComponentString(id).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                            .setStyle(getCopyStyle(ctId, true)));
+
+                }
+            } else if (stackInHand.getItem() instanceof MachineItemBlock) {
+                MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(stackInHand);
+                if (mte != null) {
+                    String id = mte.metaTileEntityId.toString();
+                    if (mte.metaTileEntityId.getNamespace().equals("gregtech"))
+                        id = mte.metaTileEntityId.getPath();
+                    String ctId = "<metaitem:" + id + ">";
+                    ClipboardUtil.copyToClipboard(player, ctId);
+                    player.sendMessage(new TextComponentString("MetaItem Id: ").appendSibling(new TextComponentString(id).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                            .setStyle(getCopyStyle(ctId, true)));
+                }
+            } else {
+                Block block = Block.getBlockFromItem(stackInHand.getItem());
+                String id = null;
+                if (block instanceof BlockCompressed) {
+                    id = "block" + ((BlockCompressed) block).getGtMaterial(stackInHand.getMetadata()).toCamelCaseString();
+                } else if (block instanceof BlockFrame) {
+                    id = "frame" + ((BlockFrame) block).getGtMaterial(stackInHand.getMetadata()).toCamelCaseString();
+                } else if (block instanceof BlockMaterialPipe) {
+                    id = ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>) block).getItemMaterial(stackInHand).toCamelCaseString();
+                }
+
+                if (id != null) {
+                    String ctId = "<metaitem:" + id + ">";
+                    ClipboardUtil.copyToClipboard(player, ctId);
+                    player.sendMessage(new TextComponentString("MetaItem Id: ").appendSibling(new TextComponentString(id).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                            .setStyle(getCopyStyle(ctId, true)));
+                }
+            }
+
+            Set<String> oreDicts = OreDictUnifier.getOreDictionaryNames(stackInHand);
+            if (!oreDicts.isEmpty()) {
+                sender.sendMessage(new TextComponentString("\u00A73OreDict Entries:"));
+                for (String oreName : oreDicts) {
+                    player.sendMessage(new TextComponentString("    \u00A7e- \u00A7b" + oreName)
+                            .setStyle(getCopyStyle("<ore:" + oreName + ">", false)));
                 }
             }
         } else {
             throw new CommandException("gregtech.command.util.hand.not_a_player");
         }
+    }
+
+    public static Style getCopyStyle(String copyMessage, boolean alreadyCopied) {
+        Style style = new Style();
+        ClickEvent click = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/gt copy " + copyMessage);
+        style.setClickEvent(click);
+
+        String hoverMsg = alreadyCopied ? "\u00A76" + copyMessage + "\u00A7r was copied to clipboard. \nClick to copy again" : "Click to copy \u00A76" + copyMessage + "\u00A7r";
+
+        HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(hoverMsg));
+        style.setHoverEvent(hoverEvent);
+
+        return style;
     }
 }
