@@ -38,7 +38,7 @@ public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
                 }
             });
         }
-        if (fluidFilter != null && fluidFilter.showTip != showTipSupplier.get()) {
+        if (fluidFilter != null && showTipSupplier != null && fluidFilter.showTip != showTipSupplier.get()) {
             fluidFilter.showTip = showTipSupplier.get();
             writeUpdateInfo(3, buffer -> buffer.writeBoolean(fluidFilter.showTip));
         }

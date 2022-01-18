@@ -55,7 +55,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     protected int fluidLeftToTransferLastSecond;
     private CoverableFluidHandlerWrapper fluidHandlerWrapper;
     protected boolean isWorkingAllowed = true;
-    protected final FluidFilterContainer fluidFilter;
+    protected FluidFilterContainer fluidFilter;
     protected BucketMode bucketMode;
 
     public CoverPump(ICoverable coverHolder, EnumFacing attachedSide, int tier, int mbPerTick) {
