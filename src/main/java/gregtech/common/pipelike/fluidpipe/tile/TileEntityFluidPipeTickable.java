@@ -33,13 +33,19 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
     private PipeTankList pipeTankList;
     private EnumMap<EnumFacing, PipeTankList> tankLists = new EnumMap<>(EnumFacing.class);
     private FluidTank[] fluidTanks;
+    private long timer = 0L;
+    private final int offset = GTValues.RNG.nextInt(20);
+
+    public long getOffsetTimer() {
+        return timer + offset;
+    }
 
     @Nullable
     @Override
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             PipeTankList tankList = getTankList(facing);
-            if(facing == null || tankList == null)
+            if (facing == null || tankList == null)
                 return null;
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(tankList);
         }
@@ -48,10 +54,9 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
     @Override
     public void update() {
+        timer++;
         getCoverableImplementation().update();
-        if (!world.isRemote && world.getTotalWorldTime() % FREQUENCY == 0) {
-            FluidPipeNet net = getFluidPipeNet();
-
+        if (!world.isRemote && getOffsetTimer() % FREQUENCY == 0) {
             mLastReceivedFrom &= 63;
             if (mLastReceivedFrom == 63) {
                 mLastReceivedFrom = 0;
@@ -145,11 +150,12 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
     }
 
     public void receivedFrom(EnumFacing facing) {
-        mLastReceivedFrom |= (1 << facing.getIndex());
+        if (facing != null)
+            mLastReceivedFrom |= (1 << facing.getIndex());
     }
 
     public FluidStack getContainedFluid(int channel) {
-        if (channel < 0) return null;
+        if (channel < 0 || channel >= getFluidTanks().length) return null;
         return getFluidTanks()[channel].getFluid();
     }
 
@@ -163,7 +169,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             fluidTanks[i] = new FluidTank(getCapacityPerTank());
         }
         pipeTankList = new PipeTankList(this, null, fluidTanks);
-        for(EnumFacing facing : EnumFacing.VALUES) {
+        for (EnumFacing facing : EnumFacing.VALUES) {
             tankLists.put(facing, new PipeTankList(this, facing, fluidTanks));
         }
     }

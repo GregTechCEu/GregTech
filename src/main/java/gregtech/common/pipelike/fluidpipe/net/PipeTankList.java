@@ -19,7 +19,7 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
     private final TileEntityFluidPipeTickable pipe;
     private final FluidTank[] tanks;
     private IFluidTankProperties[] properties;
-    private EnumFacing facing;
+    private final EnumFacing facing;
 
     public PipeTankList(TileEntityFluidPipe pipe, EnumFacing facing, FluidTank... fluidTanks) {
         this.tanks = fluidTanks;
@@ -76,6 +76,7 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
             if (doFill) {
                 tank.setFluid(newFluid);
                 pipe.receivedFrom(facing);
+                pipe.checkAndDestroy(newFluid);
             }
             return newFluid.amount;
         }
