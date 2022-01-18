@@ -26,6 +26,7 @@ import org.apache.logging.log4j.message.FormattedMessage;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 
 public class CoverFluidRegulator extends CoverPump {
@@ -298,7 +299,7 @@ public class CoverFluidRegulator extends CoverPump {
             }
         })
                 .setCentered(true)
-                .setAllowedChars("0123456789")
+                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
                 .setMaxLength(10)
                 .setValidator(getTextFieldValidator(() -> transferMode == TransferMode.TRANSFER_EXACT ? maxFluidTransferRate : Integer.MAX_VALUE))
                 .setScale(0.6f));
