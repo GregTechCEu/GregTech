@@ -3,7 +3,6 @@ package gregtech.api.pipenet;
 import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GTLog;
-import gregtech.common.pipelike.fluidpipe.net.FluidNetWalker;
 import gregtech.common.pipelike.itempipe.net.ItemNetWalker;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;

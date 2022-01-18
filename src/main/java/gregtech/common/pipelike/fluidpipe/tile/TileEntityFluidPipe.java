@@ -42,21 +42,16 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Predicate;
 
-public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeType, FluidPipeProperties> implements IDataInfoProvider {
+public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeType, FluidPipeProperties> {
 
     public static final int FREQUENCY = 5;
     private static final Random random = new Random();
     private final EnumSet<EnumFacing> openConnections = EnumSet.noneOf(EnumFacing.class);
     private WeakReference<FluidPipeNet> currentPipeNet = new WeakReference<>(null);
-    private PipeTankList pipeTankList;
-    private FluidTank[] fluidTanks;
-    private List<Pair<IFluidHandler, Predicate<FluidStack>>> neighbourCache = new ArrayList<>();
+
 
     public TileEntityFluidPipe() {
     }
@@ -71,54 +66,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         return false;
     }
 
-    @Nullable
-    @Override
-    public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            PipeTankList tankList = getTankList();
-            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(tankList);
-        }
-        return super.getCapabilityInternal(capability, facing);
-    }
-
     protected EnumSet<EnumFacing> getOpenFaces() {
         return openConnections;
-    }
-
-    public List<Pair<IFluidHandler, Predicate<FluidStack>>> getNeighbourCache() {
-        return neighbourCache;
-    }
-
-    public List<Pair<IFluidHandler, Predicate<FluidStack>>> getNeighbourHandlers() {
-        List<Pair<IFluidHandler, Predicate<FluidStack>>> handlers = new ArrayList<>();
-        for (EnumFacing facing : getOpenFaces()) {
-            if (!isConnectionOpenAny(facing)) continue;
-            TileEntity tile = getWorld().getTileEntity(pos.offset(facing));
-            if (tile == null) continue;
-            IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite());
-            if (handler != null) {
-                ICoverable coverable = getCoverableImplementation();
-                CoverBehavior cover = coverable.getCoverAtSide(facing);
-                Predicate<FluidStack> filter = fluid -> true;
-                if (cover instanceof CoverPump && ((CoverPump) cover).getPumpMode() == CoverPump.PumpMode.IMPORT && ((CoverPump) cover).blocksInput()) {
-                    continue;
-                } else if (cover instanceof CoverFluidFilter) {
-                    CoverFluidFilter fluidFilter = (CoverFluidFilter) cover;
-                    if (fluidFilter.getFilterMode() == FluidFilterMode.FILTER_DRAIN || fluidFilter.getFilterMode() == FluidFilterMode.FILTER_BOTH)
-                        filter = fluidFilter::testFluidStack;
-                }
-                coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, facing.getOpposite());
-                if (coverable != null) {
-                    cover = coverable.getCoverAtSide(facing.getOpposite());
-                    if (cover instanceof CoverPump && ((CoverPump) cover).getPumpMode() == CoverPump.PumpMode.EXPORT && ((CoverPump) cover).blocksInput()) {
-                        continue;
-                    }
-                }
-                handlers.add(Pair.of(handler, filter));
-            }
-        }
-        neighbourCache = handlers;
-        return handlers;
     }
 
     public int getCapacityPerTank() {
@@ -145,95 +94,10 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     }
 
     @Override
-    public void setConnectionBlocked(AttachmentType attachmentType, EnumFacing side, boolean blocked, boolean fromNeighbor) {
-        int oldConnections = getOpenConnections();
-        super.setConnectionBlocked(attachmentType, side, blocked, fromNeighbor);
-        if (oldConnections != getOpenConnections()) {
-            checkNeighbours();
-            TileEntity te = world.getTileEntity(pos.offset(side));
-            if (!blocked && attachmentType == AttachmentType.PIPE && te instanceof TileEntityFluidPipe) {
-                FluidPipeNet net = getFluidPipeNet();
-                for (FluidTank tank : getFluidTanks()) {
-                    FluidStack fluid = tank.getFluid();
-                    if (fluid != null) {
-                        net.markDirty(fluid, pos);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
     public void transferDataFrom(IPipeTile<FluidPipeType, FluidPipeProperties> tileEntity) {
         super.transferDataFrom(tileEntity);
-        this.fluidTanks = ((TileEntityFluidPipe) tileEntity).fluidTanks;
-        pipeTankList = new PipeTankList(this, fluidTanks);
-    }
-
-    public FluidStack getContainedFluid(int channel) {
-        if (channel < 0) return null;
-        return getFluidTanks()[channel].getFluid();
-    }
-
-    public FluidStack findFluid(FluidStack stack) {
-        return getContainedFluid(findChannel(stack));
-    }
-
-    private void createTanksList() {
-        fluidTanks = new FluidTank[getNodeData().getTanks()];
-        for (int i = 0; i < getNodeData().getTanks(); i++) {
-            fluidTanks[i] = new FluidTank(getCapacityPerTank());
-        }
-        pipeTankList = new PipeTankList(this, fluidTanks);
-    }
-
-    public PipeTankList getTankList() {
-        if (pipeTankList == null || fluidTanks == null) {
-            createTanksList();
-        }
-        return pipeTankList;
-    }
-
-    public FluidTank[] getFluidTanks() {
-        if (pipeTankList == null || fluidTanks == null) {
-            createTanksList();
-        }
-        return fluidTanks;
-    }
-
-    public FluidStack[] getContainedFluids() {
-        FluidStack[] fluids = new FluidStack[getFluidTanks().length];
-        for (int i = 0; i < fluids.length; i++) {
-            fluids[i] = fluidTanks[i].getFluid();
-        }
-        return fluids;
-    }
-
-    public int setFluidAuto(FluidStack stack, boolean fill) {
-        return setContainingFluid(stack, findChannel(stack), fill);
-    }
-
-    public int setContainingFluid(FluidStack stack, int channel, boolean fill) {
-        if (channel < 0)
-            return stack == null ? 0 : stack.amount;
-        if (stack == null || stack.amount <= 0) {
-            getFluidTanks()[channel].setFluid(null);
-            return 0;
-        }
-        FluidTank tank = getFluidTanks()[channel];
-        FluidStack currentStack = tank.getFluid();
-        if (currentStack == null || currentStack.amount <= 0) {
-            checkAndDestroy(stack);
-        } else if (fill) {
-            int toFill = stack.amount;
-            if (toFill + currentStack.amount > tank.getCapacity())
-                toFill = tank.getCapacity() - currentStack.amount;
-            currentStack.amount += toFill;
-            return toFill;
-        }
-        stack.amount = Math.min(stack.amount, tank.getCapacity());
-        tank.setFluid(stack);
-        return stack.amount;
+        //this.fluidTanks = ((TileEntityFluidPipe) tileEntity).fluidTanks;
+        //pipeTankList = new PipeTankList(this, fluidTanks);
     }
 
     public void checkAndDestroy(FluidStack stack) {
@@ -242,40 +106,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         if (burning || leaking) {
             destroyPipe(burning, leaking);
         }
-    }
-
-    public boolean areTanksEmpty() {
-        for (FluidStack fluidStack : getContainedFluids())
-            if (fluidStack != null) {
-                if (fluidStack.amount <= 0) {
-                    setContainingFluid(null, findChannel(fluidStack), false);
-                    continue;
-                }
-                return false;
-            }
-        return true;
-    }
-
-    /**
-     * Finds a channel for the given fluid
-     *
-     * @param stack to find a channel fot
-     * @return channel
-     */
-    public int findChannel(FluidStack stack) {
-        if (getFluidTanks().length == 1) {
-            FluidStack channelStack = getContainedFluid(0);
-            return (channelStack == null || channelStack.amount <= 0 || channelStack.isFluidEqual(stack)) ? 0 : -1;
-        }
-        int emptyTank = -1;
-        for (int i = fluidTanks.length - 1; i >= 0; i--) {
-            FluidStack channelStack = getContainedFluid(i);
-            if (channelStack == null || channelStack.amount <= 0)
-                emptyTank = i;
-            else if (channelStack.isFluidEqual(stack))
-                return i;
-        }
-        return emptyTank;
     }
 
     public void destroyPipe(boolean isBurning, boolean isLeaking) {
@@ -290,46 +120,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
             world.setBlockToAir(pos);
         if (isLeaking && world.rand.nextInt(isBurning ? 3 : 7) == 0) {
             this.doExplosion(1.0f + GTValues.RNG.nextFloat());
-        }
-    }
-
-    @Nonnull
-    @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        NBTTagList list = new NBTTagList();
-        for (int i = 0; i < getFluidTanks().length; i++) {
-            FluidStack stack1 = getContainedFluid(i);
-            NBTTagCompound fluidTag = new NBTTagCompound();
-            if (stack1 == null || stack1.amount <= 0)
-                fluidTag.setBoolean("isNull", true);
-            else
-                stack1.writeToNBT(fluidTag);
-            list.appendTag(fluidTag);
-        }
-        nbt.setTag("Fluids", list);
-        NBTTagList faces = new NBTTagList();
-        for (EnumFacing facing : openConnections) {
-            faces.appendTag(new NBTTagByte((byte) facing.getIndex()));
-        }
-        nbt.setTag("Faces", faces);
-        return nbt;
-    }
-
-    @Override
-    public void readFromNBT(@Nonnull NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        NBTTagList list = (NBTTagList) nbt.getTag("Fluids");
-        createTanksList();
-        for (int i = 0; i < list.tagCount(); i++) {
-            NBTTagCompound tag = list.getCompoundTagAt(i);
-            if (!tag.getBoolean("isNull")) {
-                fluidTanks[i].setFluid(FluidStack.loadFluidStackFromNBT(tag));
-            }
-        }
-        NBTTagList faces = nbt.getTagList("Faces", Constants.NBT.TAG_BYTE);
-        for (int i = 0; i < faces.tagCount(); i++) {
-            openConnections.add(EnumFacing.byIndex(((NBTTagByte) faces.get(i)).getByte()));
         }
     }
 
@@ -370,33 +160,5 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                     direction.getYOffset() * 0.2 + rand.nextDouble() * 0.1,
                     direction.getZOffset() * 0.2 + rand.nextDouble() * 0.1);
         }
-    }
-
-    @Nonnull
-    @Override
-    public List<ITextComponent> getDataInfo() {
-        List<ITextComponent> list = new ArrayList<>();
-
-        FluidStack[] fluids = this.getContainedFluids();
-        if (fluids != null) {
-            boolean allTanksEmpty = true;
-            for (int i = 0; i < fluids.length; i++) {
-                if (fluids[i] != null) {
-                    if (fluids[i].getFluid() == null)
-                        continue;
-
-                    allTanksEmpty = false;
-                    list.add(new TextComponentTranslation("behavior.tricorder.tank", i,
-                            new TextComponentTranslation(GTUtility.formatNumbers(fluids[i].amount)).setStyle(new Style().setColor(TextFormatting.GREEN)),
-                            new TextComponentTranslation(GTUtility.formatNumbers(this.getCapacityPerTank())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
-                            new TextComponentTranslation(fluids[i].getFluid().getLocalizedName(fluids[i])).setStyle(new Style().setColor(TextFormatting.GOLD))
-                    ));
-               }
-            }
-
-            if (allTanksEmpty)
-                list.add(new TextComponentTranslation("behavior.tricorder.tanks_empty"));
-        }
-        return list;
     }
 }

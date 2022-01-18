@@ -9,12 +9,11 @@ import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.common.advancement.GTTriggers;
-import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
-import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -27,7 +26,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -42,10 +40,6 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipeProperties, WorldFluidPipeNet> {
-
-    static {
-        TickableWorldPipeNetEventHandler.registerTickablePipeNet(WorldFluidPipeNet::getWorldPipeNet);
-    }
 
     private final SortedMap<Material, FluidPipeProperties> enabledMaterials = new TreeMap<>();
 
@@ -97,16 +91,6 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public void updateTick(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand) {
-        super.updateTick(worldIn, pos, state, rand);
-        TileEntityFluidPipe pipeTile = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
-        if (pipeTile != null && !worldIn.isRemote) {
-            FluidPipeNet net = pipeTile.getFluidPipeNet();
-            net.invalidateNetCapacity();
-        }
-    }
-
-    @Override
     public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityLivingBase placer, @Nonnull ItemStack stack) {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
         TileEntityFluidPipe pipeTile = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
@@ -117,7 +101,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
 
     @Override
     public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
-        FluidPipeNet net = getWorldPipeNet(worldIn).getNetFromPos(pos);
+        /*FluidPipeNet net = getWorldPipeNet(worldIn).getNetFromPos(pos);
         TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
         // get and remove all fluids of the pipe from the net
         List<FluidStack> stacks = new ArrayList<>();
@@ -134,13 +118,13 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         for (EnumFacing facing : EnumFacing.values()) {
             if (pipe.isConnectionOpenAny(facing))
                 openConnections.add(facing);
-        }
+        }*/
 
         // destroy pipe
         super.breakBlock(worldIn, pos, state);
 
         // get neighbour fluid nets
-        Set<FluidPipeNet> nets = new HashSet<>();
+        /*Set<FluidPipeNet> nets = new HashSet<>();
         List<Pair<FluidPipeNet, TileEntityFluidPipe>> pairs = new ArrayList<>();
         for (EnumFacing facing : openConnections) {
             BlockPos pos1 = pos.offset(facing);
@@ -178,9 +162,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
                     }
                 }
             }
-        }
-        if (net != null) net.invalidateNetCapacity();
-        nets.forEach(FluidPipeNet::invalidateNetCapacity);
+        }*/
     }
 
     @Override
@@ -196,25 +178,25 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     @Override
     public boolean canPipesConnect(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side, IPipeTile<FluidPipeType, FluidPipeProperties> sideTile) {
         if (selfTile instanceof TileEntityFluidPipe && sideTile instanceof TileEntityFluidPipe) {
-            TileEntityFluidPipe selfPipe = (TileEntityFluidPipe) selfTile, sidePipe = (TileEntityFluidPipe) selfTile;
+            /*TileEntityFluidPipe selfPipe = (TileEntityFluidPipe) selfTile, sidePipe = (TileEntityFluidPipe) selfTile;
             // yes if one pipe is empty
-            if(selfPipe.areTanksEmpty() || sidePipe.areTanksEmpty())
+            if (selfPipe.areTanksEmpty() || sidePipe.areTanksEmpty())
                 return true;
             // get content of one pipe
             Set<FluidStack> fluids = new HashSet<>();
-            for(FluidTank tank : selfPipe.getFluidTanks()) {
+            for (FluidTank tank : selfPipe.getFluidTanks()) {
                 FluidStack fluid = tank.getFluid();
-                if(fluid != null && fluid.amount > 0) {
+                if (fluid != null && fluid.amount > 0) {
                     fluids.add(fluid);
                 }
             }
             // if a fluid of the side pipe is not in this pipe return false
-            for(FluidTank tank : sidePipe.getFluidTanks()) {
+            for (FluidTank tank : sidePipe.getFluidTanks()) {
                 FluidStack fluid = tank.getFluid();
-                if(fluid != null && fluid.amount > 0 && !fluids.contains(fluid)) {
+                if (fluid != null && fluid.amount > 0 && !fluids.contains(fluid)) {
                     return false;
                 }
-            }
+            }*/
             return true;
         }
         return false;
@@ -240,8 +222,10 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         if (entityIn instanceof EntityLivingBase && entityIn.world.getWorldTime() % 20 == 0L) {
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
             TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
+            if(!(pipe instanceof TileEntityFluidPipeTickable))
+                return;
             List<Integer> temps = new ArrayList<>();
-            for (FluidTank tank : pipe.getFluidTanks()) {
+            for (FluidTank tank : ((TileEntityFluidPipeTickable) pipe).getFluidTanks()) {
                 if (tank.getFluid() != null && tank.getFluid().amount > 0) {
                     temps.add(tank.getFluid().getFluid().getTemperature(tank.getFluid()));
                 }
@@ -267,32 +251,8 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
-        TileEntityFluidPipe pipe = null;
-        int oldConnections = 0;
-        if (!worldIn.isRemote) {
-            pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
-            oldConnections = pipe.getOpenConnections();
-        }
-        boolean r = super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
-        if (!worldIn.isRemote && oldConnections != pipe.getOpenConnections()) {
-            FluidPipeNet net = getWorldPipeNet(worldIn).getNetFromPos(pos);
-            if (net != null) {
-                net.invalidateNetCapacity();
-                for(FluidTank tank : pipe.getTankList()) {
-                    FluidStack fluid = tank.getFluid();
-                    if(fluid == null || fluid.amount <= 0)
-                        continue;
-                    net.markDirty(tank.getFluid(), pos);
-                }
-            }
-        }
-        return r;
-    }
-
-    @Override
     public TileEntityPipeBase<FluidPipeType, FluidPipeProperties> createNewTileEntity(boolean supportsTicking) {
-        return supportsTicking ? new TileEntityFluidPipeTickable() : new TileEntityFluidPipe();
+        return new TileEntityFluidPipeTickable(); // fluid pipes are always ticking
     }
 
     @Override
