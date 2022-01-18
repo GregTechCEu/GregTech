@@ -151,6 +151,9 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
             if (predicate != null) {
                 TextureAtlasSprite renderSprite = predicate.getSprite(isActive, isWorkingEnabled);
 
+                // preserve the original translation when not rotating the top and bottom
+                Matrix4 renderTranslation = translation.copy();
+
                 // Rotate the top and bottom faces to match front facing
                 Rotation rotation = new Rotation(0, 0, 1, 0);
                 if (renderSide == EnumFacing.UP || renderSide == EnumFacing.DOWN) {
@@ -158,29 +161,29 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
                     boolean isUp = renderSide == EnumFacing.UP;
 
                     if (frontFacing == EnumFacing.WEST) {
-                        translation.translate((isUp ? 0 : 1), 0, (isUp ? 1 : 0));
+                        renderTranslation.translate((isUp ? 0 : 1), 0, (isUp ? 1 : 0));
                         rotation = new Rotation((isUp ? 1 : -1) * (Math.PI / 2), 0, 1, 0);
                     } else if (frontFacing == EnumFacing.EAST) {
-                        translation.translate((isUp ? 1 : 0), 0, (isUp ? 0 : 1));
+                        renderTranslation.translate((isUp ? 1 : 0), 0, (isUp ? 0 : 1));
                         rotation = new Rotation((isUp ? -1 : 1) * Math.PI / 2, 0, 1, 0);
                     } else if (frontFacing == EnumFacing.NORTH) {
-                        translation.translate(1, 0, 1);
+                        renderTranslation.translate(1, 0, 1);
                         rotation = new Rotation(Math.PI, 0, 1, 0);
                     }
-                    translation = RenderUtil.adjustTrans(translation, renderSide, 1);
-                    translation.apply(rotation);
+                    renderTranslation = RenderUtil.adjustTrans(renderTranslation, renderSide, 1);
+                    renderTranslation.apply(rotation);
                 }
 
-                Textures.renderFace(renderState, translation, ArrayUtils.addAll(pipeline, rotation), renderSide, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
+                Textures.renderFace(renderState, renderTranslation, ArrayUtils.addAll(pipeline, rotation), renderSide, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
 
                 TextureAtlasSprite emissiveSprite = predicate.getEmissiveSprite(isActive, isWorkingEnabled);
                 if (emissiveSprite != null) {
                     if (ConfigHolder.client.machinesEmissiveTextures) {
                         IVertexOperation[] lightPipeline = ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240), rotation);
-                        Textures.renderFace(renderState, translation, lightPipeline, renderSide, bounds, emissiveSprite, BloomEffectUtil.getRealBloomLayer());
+                        Textures.renderFace(renderState, renderTranslation, lightPipeline, renderSide, bounds, emissiveSprite, BloomEffectUtil.getRealBloomLayer());
                     } else {
                         // have to still render both overlays or else textures will be broken
-                        Textures.renderFace(renderState, translation, ArrayUtils.addAll(pipeline, rotation), renderSide, bounds, emissiveSprite, BlockRenderLayer.CUTOUT_MIPPED);
+                        Textures.renderFace(renderState, renderTranslation, ArrayUtils.addAll(pipeline, rotation), renderSide, bounds, emissiveSprite, BlockRenderLayer.CUTOUT_MIPPED);
                     }
                 }
             }
