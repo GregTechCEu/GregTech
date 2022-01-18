@@ -28,6 +28,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -105,7 +106,7 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
                 IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                if (electricItem != null && getTier() >= electricItem.getTier()) {
+                if ((electricItem != null && getTier() >= electricItem.getTier()) || stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
                     return super.insertItem(slot, stack, simulate);
                 }
                 return stack;

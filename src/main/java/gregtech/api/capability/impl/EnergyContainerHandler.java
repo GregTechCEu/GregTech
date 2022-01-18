@@ -1,16 +1,20 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.function.Predicate;
@@ -133,10 +137,18 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         }
 
         IElectricItem electricItem = stackInSlot.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (electricItem == null) { // stack in slot is not an electric item
-            return false;
+        if (electricItem != null) {
+            return handleElectricItem(electricItem);
+        } else {
+            IEnergyStorage energyStorage = stackInSlot.getCapability(CapabilityEnergy.ENERGY, null);
+            if (energyStorage != null) {
+                return handleForgeEnergyItem(energyStorage);
+            }
         }
+        return false;
+    }
 
+    private boolean handleElectricItem(IElectricItem electricItem) {
         int machineTier = GTUtility.getTierByVoltage(Math.max(getInputVoltage(), getOutputVoltage()));
         int chargeTier = Math.min(machineTier, electricItem.getTier());
         double chargePercent = getEnergyStored() / (getEnergyCapacity() * 1.0);
@@ -158,7 +170,18 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
             removeEnergy(chargedBy);
             return chargedBy > 0;
         }
+        return false;
+    }
 
+    private boolean handleForgeEnergyItem(IEnergyStorage energyStorage) {
+        int machineTier = GTUtility.getTierByVoltage(Math.max(getInputVoltage(), getOutputVoltage()));
+        double chargePercent = getEnergyStored() / (getEnergyCapacity() * 1.0);
+
+        if (chargePercent > 0.5) {
+            int chargedBy = energyStorage.receiveEnergy((int) (GTValues.V[machineTier] * ConfigHolder.compat.energy.rfRatio), false);
+            removeEnergy(chargedBy);
+            return chargedBy > 0;
+        }
         return false;
     }
 
