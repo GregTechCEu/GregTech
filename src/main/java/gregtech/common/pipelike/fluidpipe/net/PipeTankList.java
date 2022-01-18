@@ -1,5 +1,6 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
+import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 import net.minecraft.util.EnumFacing;
@@ -81,7 +82,7 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
             return newFluid.amount;
         }
         if (currentFluid.isFluidEqual(resource)) {
-            int toAdd = Math.min(tank.getCapacity() - currentFluid.amount, resource.amount + currentFluid.amount);
+            int toAdd = Math.min(tank.getCapacity() - currentFluid.amount, resource.amount);
             if (toAdd > 0) {
                 if (doFill) {
                     currentFluid.amount += toAdd;

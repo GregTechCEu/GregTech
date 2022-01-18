@@ -1,9 +1,13 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.ICoverable;
 import gregtech.api.metatileentity.IDataInfoProvider;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
+import gregtech.common.covers.CoverFluidFilter;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -19,7 +23,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import org.apache.commons.lang3.tuple.MutableTriple;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -95,58 +100,100 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
     private void distributeFluid(int channel, FluidTank tank, FluidStack fluid) {
         // Tank, From, Amount to receive
-        List<MutableTriple<IFluidHandler, EnumFacing, Integer>> tTanks = new ArrayList<>();
+        List<Pair<IFluidHandler, Integer>> tanks = new ArrayList<>();
         int amount = fluid.amount;
+
+        FluidStack maxFluid = fluid.copy();
+        double availableCapacity = 0;
 
         for (byte aSide, i = 0, j = (byte) GTValues.RNG.nextInt(6); i < 6; i++) {
             // Get a list of tanks accepting fluids, and what side they're on
             aSide = (byte) ((i + j) % 6);
             EnumFacing facing = EnumFacing.VALUES[aSide];
-            if (!isConnectionOpenAny(facing))
+            if (!isConnectionOpenAny(facing) || (mLastReceivedFrom & (1 << aSide)) != 0)
                 continue;
             EnumFacing oppositeSide = facing.getOpposite();
 
-            TileEntity tile = world.getTileEntity(pos.offset(facing));
-            if (tile == null)
-                continue;
-            IFluidHandler fluidHandler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, oppositeSide);
+            IFluidHandler fluidHandler = getFluidHandlerAt(fluid, facing, oppositeSide);
             if (fluidHandler == null)
                 continue;
 
-            if ((mLastReceivedFrom & (1 << aSide)) == 0 /*&& check for filters here*/) {
-                if (fluidHandler.fill(fluid, false) > 0) {
-                    tTanks.add(new MutableTriple<>(fluidHandler, oppositeSide, 0));
-                }
-                fluid.amount = amount; // Because some mods do actually modify input fluid stack
+            int filled = fluidHandler.fill(maxFluid, false);
+
+            if (filled > 0) {
+                tanks.add(MutablePair.of(fluidHandler, filled));
+                availableCapacity += filled;
+            }
+            maxFluid.amount = amount; // Because some mods do actually modify input fluid stack
+        }
+
+        if (availableCapacity <= 0)
+            return;
+
+        // How much of this fluid is available for distribution?
+        final double maxAmount = Math.min(getCapacityPerTank() / 2, fluid.amount);
+
+        // Now distribute
+        for (Pair<IFluidHandler, Integer> pair : tanks) {
+            if (availableCapacity > maxAmount)
+                pair.setValue((int) Math.floor(pair.getValue() * maxAmount / availableCapacity)); // Distribue fluids based on percentage available space at destination
+            if (pair.getValue() == 0)
+                pair.setValue(1); // If the percent is not enough to give at least 1L, try to give 1L
+            else if (pair.getValue() < 0)
+                continue;
+
+            FluidStack toInsert = fluid.copy();
+            toInsert.amount = maxExtractable(tank, pair.getValue());
+
+            if (toInsert.amount == 0)
+                break;
+
+            int inserted = pair.getKey().fill(toInsert, true);
+            int extracted;
+            if (inserted > 0 && (extracted = extract(tank, inserted)) != inserted) {
+                GTLog.logger.error(" - could not extract the correct amount of channel {}. Should extract {} * {}, but extracted {} * {}", channel, fluid.getFluid().getName(), inserted, fluid.getFluid().getName(), extracted);
             }
         }
 
-        // How much of this fluid is available for distribution?
-        double tAmount = Math.max(1, Math.min(getCapacityPerTank() * 10, fluid.amount)), tNumTanks = tTanks.size();
-        FluidStack maxFluid = fluid.copy();
-        maxFluid.amount = Integer.MAX_VALUE;
+    }
 
-        double availableCapacity = 0;
-        // Calculate available capacity for distribution from all tanks
-        for (MutableTriple<IFluidHandler, EnumFacing, Integer> tEntry : tTanks) {
-            tEntry.right = tEntry.left.fill(maxFluid, false);
-            availableCapacity += tEntry.right;
+    private int maxExtractable(FluidTank tank, int toExtract) {
+        FluidStack fluid = tank.getFluid();
+        if (fluid == null || fluid.amount <= 0)
+            return 0;
+        return Math.min(toExtract, fluid.amount);
+    }
+
+    private int extract(FluidTank tank, int amount) {
+        FluidStack fluid = tank.getFluid();
+        if (fluid == null || fluid.amount <= 0)
+            return 0;
+        int extracted = Math.min(amount, fluid.amount);
+        fluid.amount -= extracted;
+        if (fluid.amount == 0) {
+            tank.setFluid(null);
         }
+        return extracted;
+    }
 
-        // Now distribute
-        for (MutableTriple<IFluidHandler, EnumFacing, Integer> tEntry : tTanks) {
-            if (availableCapacity > tAmount)
-                tEntry.right = (int) Math.floor(tEntry.right * tAmount / availableCapacity); // Distribue fluids based on percentage available space at destination
-            if (tEntry.right == 0)
-                tEntry.right = (int) Math.min(1, tAmount); // If the percent is not enough to give at least 1L, try to give 1L
-            if (tEntry.right <= 0) continue;
+    private IFluidHandler getFluidHandlerAt(FluidStack fluid, EnumFacing facing, EnumFacing oppositeSide) {
+        TileEntity tile = world.getTileEntity(pos.offset(facing));
+        if (tile == null)
+            return null;
+        IFluidHandler fluidHandler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, oppositeSide);
+        if (fluidHandler == null)
+            return null;
 
-            int tFilledAmount = tEntry.left.fill(getTankList().drainFromIndex(tEntry.right, false, channel), false);
-
-            if (tFilledAmount > 0)
-                tEntry.left.fill(getTankList().drainFromIndex(tFilledAmount, true, channel), true);
-        }
-
+        CoverBehavior cover = getCoverableImplementation().getCoverAtSide(facing);
+        if (cover instanceof CoverFluidFilter && !((CoverFluidFilter) cover).testFluidStack(fluid))
+            return null;
+        ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, oppositeSide);
+        if (coverable == null)
+            return fluidHandler;
+        cover = coverable.getCoverAtSide(oppositeSide);
+        if (cover instanceof CoverFluidFilter && !((CoverFluidFilter) cover).testFluidStack(fluid))
+            return null;
+        return fluidHandler;
     }
 
     public void receivedFrom(EnumFacing facing) {
