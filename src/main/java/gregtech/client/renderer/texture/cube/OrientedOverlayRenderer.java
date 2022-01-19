@@ -157,18 +157,15 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
                 // Rotate the top and bottom faces to match front facing
                 Rotation rotation = new Rotation(0, 0, 1, 0);
                 if (renderSide == EnumFacing.UP || renderSide == EnumFacing.DOWN) {
-                    // rotate and translate the opposite direction when on the bottom
-                    boolean isUp = renderSide == EnumFacing.UP;
-
-                    if (frontFacing == EnumFacing.WEST) {
-                        renderTranslation.translate((isUp ? 0 : 1), 0, (isUp ? 1 : 0));
-                        rotation = new Rotation((isUp ? 1 : -1) * (Math.PI / 2), 0, 1, 0);
-                    } else if (frontFacing == EnumFacing.EAST) {
-                        renderTranslation.translate((isUp ? 1 : 0), 0, (isUp ? 0 : 1));
-                        rotation = new Rotation((isUp ? -1 : 1) * Math.PI / 2, 0, 1, 0);
-                    } else if (frontFacing == EnumFacing.NORTH) {
+                    if (frontFacing == EnumFacing.NORTH) {
                         renderTranslation.translate(1, 0, 1);
                         rotation = new Rotation(Math.PI, 0, 1, 0);
+                    } else if (frontFacing == EnumFacing.EAST) {
+                        renderTranslation.translate(0, 0, 1);
+                        rotation = new Rotation(Math.PI / 2, 0, 1, 0);
+                    } else if (frontFacing == EnumFacing.WEST) {
+                        renderTranslation.translate(1, 0, 0);
+                        rotation = new Rotation(-Math.PI / 2, 0, 1, 0);
                     }
                     renderTranslation = RenderUtil.adjustTrans(renderTranslation, renderSide, 1);
                     renderTranslation.apply(rotation);
