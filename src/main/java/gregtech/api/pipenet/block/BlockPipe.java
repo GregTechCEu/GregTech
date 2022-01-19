@@ -314,8 +314,13 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (wrenchItem != null) {
             if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true)) {
                 if (!entityPlayer.world.isRemote) {
-                    boolean isOpen = pipeTile.isConnected(coverSide);
-                    pipeTile.setConnection(coverSide, !isOpen, false);
+                    if (entityPlayer.isSneaking() && pipeTile.canHaveBlockedFaces()) {
+                        boolean isBlocked = pipeTile.isFaceBlocked(coverSide);
+                        pipeTile.setFaceBlocked(coverSide, !isBlocked);
+                    } else {
+                        boolean isOpen = pipeTile.isConnected(coverSide);
+                        pipeTile.setConnection(coverSide, !isOpen, false);
+                    }
                     wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
                     IToolStats.onOtherUse(stack, world, pos);
                 }
@@ -420,7 +425,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (selfTile.getPipeWorld().getBlockState(selfTile.getPipePos().offset(facing)).getBlock() == Blocks.AIR)
             return false;
         CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
-        if(cover != null && !cover.canPipePassThrough()) {
+        if (cover != null && !cover.canPipePassThrough()) {
             return false;
         }
         TileEntity other = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
@@ -437,30 +442,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
     public abstract boolean canPipeConnectToBlock(IPipeTile<PipeType, NodeDataType> selfTile, EnumFacing side, @Nullable TileEntity tile);
 
-    /**
-     * This returns open connections purely for rendering
-     * Some covers don't open an actual connection. This makes them still render
-     *
-     * @param selfTile this pipe tile
-     * @return open connections
-     */
-    public int getVisualConnections(IPipeTile<PipeType, NodeDataType> selfTile) {
-        int connections = selfTile.getConnections();
-        float selfThickness = selfTile.getPipeType().getThickness();
-        for (EnumFacing facing : EnumFacing.values()) {
-            if (selfTile.isConnected(facing)) {
-                TileEntity neighbourTile = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
-                if (neighbourTile instanceof IPipeTile) {
-                    IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) neighbourTile;
-                    if (pipeTile.isConnected(facing.getOpposite()) && pipeTile.getPipeType().getThickness() < selfThickness) {
-                        connections |= 1 << (facing.getIndex() + 6);
-                    }
-                }
-            }
-        }
-        return connections;
-    }
-
     private List<IndexedCuboid6> getCollisionBox(IBlockAccess world, BlockPos pos, @Nullable Entity entityIn) {
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(world, pos);
         if (pipeTile == null) {
@@ -470,7 +451,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (pipeType == null) {
             return Collections.emptyList();
         }
-        int actualConnections = getVisualConnections(getPipeTileEntity(world, pos));
+        int actualConnections = getPipeTileEntity(world, pos).getVisualConnections();
         float thickness = pipeType.getThickness();
         ArrayList<IndexedCuboid6> result = new ArrayList<>();
         ICoverable coverable = pipeTile.getCoverableImplementation();

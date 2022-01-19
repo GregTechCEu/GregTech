@@ -22,9 +22,9 @@ import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
+import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.blocks.wood.BlockRubberLeaves;
 import gregtech.common.blocks.wood.BlockRubberLog;
-import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.blocks.wood.BlockRubberSapling;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
@@ -243,22 +243,22 @@ public class MetaBlocks {
             }
             if (material.hasProperty(PropertyKey.FLUID_PIPE)) {
                 for (BlockFluidPipe pipe : FLUID_PIPES) {
-                    if(!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
+                    if (!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
                         pipe.addPipeMaterial(material, material.getProperty(PropertyKey.FLUID_PIPE));
                     }
                 }
             }
             if (material.hasProperty(PropertyKey.ITEM_PIPE)) {
                 for (BlockItemPipe pipe : ITEM_PIPES) {
-                    if(!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
+                    if (!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
                         pipe.addPipeMaterial(material, material.getProperty(PropertyKey.ITEM_PIPE));
                     }
                 }
             }
         }
         for (BlockFluidPipe pipe : FLUID_PIPES) {
-            if(!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood) ||
-            !pipe.getItemPipeType(pipe.getItem(Materials.TreatedWood)).getOrePrefix().isIgnored(Materials.TreatedWood)) {
+            if (!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood) ||
+                    !pipe.getItemPipeType(pipe.getItem(Materials.TreatedWood)).getOrePrefix().isIgnored(Materials.TreatedWood)) {
                 pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(310, 5, false));
                 pipe.addPipeMaterial(Materials.TreatedWood, new FluidPipeProperties(310, 8, false));
             }
@@ -370,11 +370,11 @@ public class MetaBlocks {
     public static void registerItemModels() {
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE), stack -> MetaTileEntityRenderer.MODEL_LOCATION);
         for (BlockCable cable : CABLES)
-            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(cable), stack -> CableRenderer.MODEL_LOCATION);
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(cable), stack -> CableRenderer.INSTANCE.getModelLocation());
         for (BlockFluidPipe pipe : FLUID_PIPES)
-            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> FluidPipeRenderer.MODEL_LOCATION);
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> FluidPipeRenderer.INSTANCE.getModelLocation());
         for (BlockItemPipe pipe : ITEM_PIPES)
-            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> ItemPipeRenderer.MODEL_LOCATION);
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> ItemPipeRenderer.INSTANCE.getModelLocation());
         registerItemModel(BOILER_CASING);
         registerItemModel(BOILER_FIREBOX_CASING);
         registerItemModel(METAL_CASING);
@@ -442,15 +442,15 @@ public class MetaBlocks {
     public static void registerStateMappers() {
         ModelLoader.setCustomStateMapper(MACHINE, new SimpleStateMapper(MetaTileEntityRenderer.MODEL_LOCATION));
 
-        IStateMapper normalStateMapper = new SimpleStateMapper(CableRenderer.MODEL_LOCATION);
+        IStateMapper normalStateMapper = new SimpleStateMapper(CableRenderer.INSTANCE.getModelLocation());
         for (BlockCable cable : CABLES) {
             ModelLoader.setCustomStateMapper(cable, normalStateMapper);
         }
-        normalStateMapper = new SimpleStateMapper(FluidPipeRenderer.MODEL_LOCATION);
+        normalStateMapper = new SimpleStateMapper(FluidPipeRenderer.INSTANCE.getModelLocation());
         for (BlockFluidPipe pipe : FLUID_PIPES) {
             ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
         }
-        normalStateMapper = new SimpleStateMapper(ItemPipeRenderer.MODEL_LOCATION);
+        normalStateMapper = new SimpleStateMapper(ItemPipeRenderer.INSTANCE.getModelLocation());
         for (BlockItemPipe pipe : ITEM_PIPES) {
             ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
         }

@@ -12,12 +12,12 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.common.advancement.GTTriggers;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
-import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.common.tools.DamageValues;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -173,7 +173,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("deprecation")
     public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
-        return CableRenderer.BLOCK_RENDER_TYPE;
+        return CableRenderer.INSTANCE.getBlockRenderType();
     }
 
     @Override

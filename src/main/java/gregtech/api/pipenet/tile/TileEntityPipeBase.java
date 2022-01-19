@@ -115,7 +115,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Override
     public int getBlockedConnections() {
-        return blockedConnections;
+        return canHaveBlockedFaces() ? blockedConnections : 0;
     }
 
     @Override
@@ -154,7 +154,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (!getWorld().isRemote) {
             TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
             // block connections if Pipe Types do not match
-            if (!connected && tile instanceof IPipeTile && ((IPipeTile<?, ?>) tile).getPipeType().getClass() != this.getPipeType().getClass()) {
+            if (connected && tile instanceof IPipeTile && ((IPipeTile<?, ?>) tile).getPipeType().getClass() != this.getPipeType().getClass()) {
                 return;
             }
             connections = withSideConnection(connections, side, connected);
@@ -199,7 +199,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public void setFaceBlocked(EnumFacing side, boolean blocked) {
         if (!world.isRemote && canHaveBlockedFaces()) {
-            blockedConnections = withSideConnection(blockedConnections, side, !blocked);
+            blockedConnections = withSideConnection(blockedConnections, side, blocked);
             writeCustomData(UPDATE_BLOCKED_CONNECTIONS, buf -> {
                 buf.writeVarInt(blockedConnections);
             });
@@ -209,7 +209,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Override
     public boolean isFaceBlocked(EnumFacing side) {
-        return !canHaveBlockedFaces() && (blockedConnections & (1 << side.getIndex())) > 0;
+        return (blockedConnections & (1 << side.getIndex())) > 0;
     }
 
     @Override
@@ -227,6 +227,28 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     private int getCableMark() {
         return paintingColor == -1 ? 0 : paintingColor;
+    }
+
+    /**
+     * This returns open connections purely for rendering
+     *
+     * @return open connections
+     */
+    public int getVisualConnections() {
+        int connections = getConnections();
+        float selfThickness = getPipeType().getThickness();
+        for (EnumFacing facing : EnumFacing.values()) {
+            if (isConnected(facing)) {
+                TileEntity neighbourTile = world.getTileEntity(pos.offset(facing));
+                if (neighbourTile instanceof IPipeTile) {
+                    IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) neighbourTile;
+                    if (pipeTile.isConnected(facing.getOpposite()) && pipeTile.getPipeType().getThickness() < selfThickness) {
+                        connections |= 1 << (facing.getIndex() + 6);
+                    }
+                }
+            }
+        }
+        return connections;
     }
 
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
