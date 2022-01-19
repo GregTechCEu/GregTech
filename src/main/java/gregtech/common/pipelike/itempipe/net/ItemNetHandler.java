@@ -4,7 +4,6 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.util.FacingPos;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.*;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
@@ -62,7 +61,6 @@ public class ItemNetHandler implements IItemHandler {
         }
 
         if (net == null || pipe == null || pipe.isInvalid()) {
-            GTLog.logger.error("Can't insert! Pipe: {}, Net {}", pipe == null ? "null" : pipe.isInvalid() ? "invalid" : "valid", net == null ? "null" : "valid");
             return stack;
         }
 
@@ -127,9 +125,6 @@ public class ItemNetHandler implements IItemHandler {
                 stack = insertToHandlers(handlersCopy, stack, simulate);
         }
 
-        if (stack.getCount() != original)
-            GTLog.logger.info("Inserted to {}/{} handlers. Start {}, End {}, sim {}", handlers.size() - handlersCopy.size(), handlers.size(), original, stack, simulate);
-
         return stack;
     }
 
@@ -178,7 +173,6 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     private ItemStack insertToHandlersEnhanced(List<ItemPipeNet.Inventory> copy, ItemStack stack, int dest, boolean simulate) {
-        GTLog.logger.info("Insert ERR {} to {} inventories, sim {}", stack, copy.size(), simulate);
         LinkedList<EnhancedRoundRobinData> transferred = new LinkedList<>();
         LinkedList<Integer> steps = new LinkedList<>();
         int min = Integer.MAX_VALUE;
@@ -188,7 +182,6 @@ public class ItemNetHandler implements IItemHandler {
         for (ItemPipeNet.Inventory inv : copy) {
             simStack = stack.copy();
             int ins = stack.getCount() - insert(inv, simStack, true, true).getCount();
-            GTLog.logger.info(" - inserted {}", ins);
             if (ins <= 0)
                 continue;
             int didTransfer = didTransferTo(inv, simulate);
@@ -205,8 +198,6 @@ public class ItemNetHandler implements IItemHandler {
         if (transferred.isEmpty() || steps.isEmpty())
             return stack;
 
-        GTLog.logger.info(" - found {} insertables", transferred.size());
-
         if (!simulate && min < Integer.MAX_VALUE) {
             decrementBy(min);
         }
@@ -215,7 +206,6 @@ public class ItemNetHandler implements IItemHandler {
         steps.sort(Integer::compare);
 
         if (transferred.get(0).transferred != steps.get(0)) {
-            GTLog.logger.error("ERROR: first step is not equal");
             return stack;
         }
 
@@ -224,17 +214,6 @@ public class ItemNetHandler implements IItemHandler {
         int m = amount % transferred.size();
         List<EnhancedRoundRobinData> transferredCopy = new ArrayList<>(transferred);
         int nextStep = steps.isEmpty() ? -1 : steps.pollFirst();
-
-
-        StringBuilder builder = new StringBuilder("TransferredData:[ ");
-        for (EnhancedRoundRobinData data : transferredCopy) {
-            builder.append(data.transferred).append(", ");
-        }
-        builder.delete(builder.length() - 2, builder.length())
-                .append("]");
-        GTLog.logger.info(builder);
-        GTLog.logger.info("Steps: " + steps);
-        GTLog.logger.info("First step {}", nextStep);
 
         // equally distribute items over all inventories
         // it takes into account how much was inserted in total
@@ -268,8 +247,6 @@ public class ItemNetHandler implements IItemHandler {
 
                 data.transferred += toInsert;
 
-                GTLog.logger.info(" - transfer {} to {}", toInsert, i);
-
                 if ((amount -= toInsert) == 0) {
                     break outer;
                 }
@@ -282,24 +259,14 @@ public class ItemNetHandler implements IItemHandler {
             }
             if (steps.isEmpty()) {
                 if (nextStep >= 0) {
-                    GTLog.logger.info("Steps done");
                     c = amount / transferredCopy.size();
                     m = amount % transferredCopy.size();
                     nextStep = -1;
                 }
             } else {
                 nextStep = steps.pollFirst();
-                GTLog.logger.info("Next step {}", nextStep);
             }
         }
-
-        builder = new StringBuilder("ToInsert:[");
-        for (EnhancedRoundRobinData data : transferred) {
-            builder.append(data.toTransfer).append(", ");
-        }
-        builder.delete(builder.length() - 2, builder.length())
-                .append("]");
-        GTLog.logger.info(builder);
 
         int inserted = 0;
 
@@ -308,14 +275,9 @@ public class ItemNetHandler implements IItemHandler {
             ItemStack toInsert = stack.copy();
             toInsert.setCount(data.toTransfer);
             int ins = data.toTransfer - insert(data.inventory, toInsert, simulate).getCount();
-            if (ins != data.toTransfer) {
-                GTLog.logger.info("Could not insert the correct amount. Supposed {}, actual {}", data.toTransfer, ins);
-            }
             inserted += ins;
             transferTo(data.inventory, simulate, ins);
         }
-
-        GTLog.logger.info("TotalInserted {}", inserted);
 
         ItemStack remainder = stack.copy();
         remainder.shrink(inserted);
@@ -479,10 +441,9 @@ public class ItemNetHandler implements IItemHandler {
     private void transferTo(ItemPipeNet.Inventory handler, boolean simulate, int amount) {
         if (simulate)
             simulatedTransfersGlobalRoundRobin.merge(handler.toFacingPos(), amount, Integer::sum);
-        else {
+        else
             pipe.getTransferred().merge(handler.toFacingPos(), amount, Integer::sum);
-            GTLog.logger.info("   - put {} at {}, {}", amount, handler.getPipePos(), handler.getFaceToHandler().getName());
-        }
+
     }
 
     private boolean contains(ItemPipeNet.Inventory handler, boolean simulate) {
@@ -504,8 +465,6 @@ public class ItemNetHandler implements IItemHandler {
 
     private void decrementBy(int amount) {
         for (Map.Entry<FacingPos, Integer> entry : pipe.getTransferred().entrySet()) {
-            if (entry.getValue() < amount)
-                GTLog.logger.error("Value in map is lower than the decrement value");
             entry.setValue(entry.getValue() - amount);
         }
     }
