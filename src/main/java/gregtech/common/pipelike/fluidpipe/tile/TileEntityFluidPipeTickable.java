@@ -50,7 +50,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             PipeTankList tankList = getTankList(facing);
-            if (facing == null || tankList == null)
+            if (tankList == null)
                 return null;
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(tankList);
         }
@@ -106,7 +106,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             // Get a list of tanks accepting fluids, and what side they're on
             aSide = (byte) ((i + j) % 6);
             EnumFacing facing = EnumFacing.VALUES[aSide];
-            if (!isConnected(facing) || isFaceBlocked(facing) || (mLastReceivedFrom & (1 << aSide)) != 0)
+            if (!isConnected(facing) || (mLastReceivedFrom & (1 << aSide)) != 0)
                 continue;
             EnumFacing oppositeSide = facing.getOpposite();
 
@@ -224,7 +224,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         if (tankLists.isEmpty() || fluidTanks == null) {
             createTanksList();
         }
-        return tankLists.get(facing);
+        return tankLists.getOrDefault(facing, pipeTankList);
     }
 
     public FluidTank[] getFluidTanks() {
