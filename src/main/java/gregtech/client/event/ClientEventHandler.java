@@ -11,11 +11,9 @@ import gregtech.client.utils.DepthTextureUtil;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -72,8 +70,8 @@ public class ClientEventHandler {
     public static void onPlayerRender(RenderPlayerEvent.Pre event) {
         AbstractClientPlayer clientPlayer = (AbstractClientPlayer) event.getEntityPlayer();
         if (clientPlayer.hasPlayerInfo()) {
-            NetworkPlayerInfo playerInfo = ObfuscationReflectionHelper.getPrivateValue(AbstractClientPlayer.class, clientPlayer, 0);
-            Map<MinecraftProfileTexture.Type, ResourceLocation> playerTextures = ObfuscationReflectionHelper.getPrivateValue(NetworkPlayerInfo.class, playerInfo, 1);            UUID uuid = clientPlayer.getPersistentID();
+            Map<MinecraftProfileTexture.Type, ResourceLocation> playerTextures = clientPlayer.playerInfo.playerTextures;
+            UUID uuid = clientPlayer.getPersistentID();
             ResourceLocation defaultPlayerCape;
             if (!DEFAULT_CAPES.containsKey(uuid)) {
                 defaultPlayerCape = playerTextures.get(MinecraftProfileTexture.Type.CAPE);
