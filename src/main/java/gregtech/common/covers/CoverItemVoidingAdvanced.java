@@ -134,7 +134,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                         itemFilterContainer.setTransferStackSize(Integer.parseInt(val));
                 })
                         .setCentered(true)
-                        .setAllowedChars("0123456789")
+                        .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
                         .setMaxLength(4)
                         .setValidator(itemFilterContainer.getTextFieldValidator(() -> Integer.MAX_VALUE))
                         .setScale(0.9f)

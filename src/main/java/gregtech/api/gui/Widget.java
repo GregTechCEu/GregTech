@@ -464,13 +464,13 @@ public abstract class Widget {
         }
         tessellator.draw();
         GlStateManager.enableTexture2D();
-        GlStateManager.color(1,1,1,1);
+        GlStateManager.color(1, 1, 1, 1);
     }
 
     @SideOnly(Side.CLIENT)
     public static void drawSector(float x, float y, float r, int color, int segments, int from, int to) {
         if (from > to || from < 0 || color == 0) return;
-        if(to > segments) to = segments;
+        if (to > segments) to = segments;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         GlStateManager.enableBlend();

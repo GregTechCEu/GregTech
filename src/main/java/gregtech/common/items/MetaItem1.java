@@ -48,7 +48,7 @@ public class MetaItem1 extends StandardMetaItem {
         CREDIT_PLATINUM = addItem(4, "credit.platinum").setRarity(EnumRarity.RARE);
         CREDIT_OSMIUM = addItem(5, "credit.osmium").setRarity(EnumRarity.RARE);
         CREDIT_NAQUADAH = addItem(6, "credit.naquadah").setRarity(EnumRarity.EPIC);
-        CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium") .setRarity(EnumRarity.EPIC);
+        CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium").setRarity(EnumRarity.EPIC);
 
         COIN_GOLD_ANCIENT = addItem(8, "coin.gold.ancient")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, M / 4))).setRarity(EnumRarity.RARE);

@@ -12,7 +12,6 @@ import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.covers.filter.FluidFilterContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -25,10 +24,10 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 public class CoverFluidVoiding extends CoverPump {
 
     protected final NullFluidTank nullFluidTank = new NullFluidTank();
-    protected boolean isWorkingAllowed = false;
 
     public CoverFluidVoiding(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide, 0, Integer.MAX_VALUE);
+        this.isWorkingAllowed = false;
     }
 
     @Override
