@@ -1,4 +1,4 @@
-package gregtech.common.command.util;
+package gregtech.common.command;
 
 import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
