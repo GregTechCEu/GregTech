@@ -12,6 +12,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeBuilder> {
 
+    public static final String RESEARCH_NBT_TAG_NAME = "asslineOutput";
+
     protected ItemStack researchItem;
 
     public AssemblyLineRecipeBuilder() {
@@ -43,7 +45,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     }
 
     public AssemblyLineRecipeBuilder researchItem(MetaItem<?>.MetaValueItem researchItem) {
-        return researchItem(researchItem.getStackForm(1));
+        return researchItem(researchItem.getStackForm());
     }
 
     @Override
@@ -68,7 +70,7 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     public static NBTTagCompound generateResearchNBT(RecipeBuilder<?> recipeBuilder) {
         NBTTagCompound compound = new NBTTagCompound();
         if (!recipeBuilder.getOutputs().isEmpty()) {
-            compound.setTag("asslineOutput", recipeBuilder.getOutputs().get(0).serializeNBT());
+            compound.setTag(RESEARCH_NBT_TAG_NAME, recipeBuilder.getOutputs().get(0).serializeNBT());
         }
         return compound;
     }

@@ -9,6 +9,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
 import gregtech.api.recipes.recipeproperties.ResearchItemProperty;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
@@ -24,7 +25,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static gregtech.api.util.RelativeDirection.*;
@@ -74,28 +74,16 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
         if (recipe.hasProperty(ResearchItemProperty.getInstance())) {
             List<IItemHandlerModifiable> dataStickHandler = this.getAbilities(MultiblockAbility.RESEARCH_DATA);
-            List<ItemStack> validOutputs = new ArrayList<>();
             if (!dataStickHandler.isEmpty()) {
                 List<ItemStack> hatchDataList = GTUtility.itemHandlerToList(dataStickHandler.get(0));
                 for (ItemStack stack : hatchDataList) {
-                    NBTTagCompound researchItemNBT = stack.getSubCompound("asslineOutput");
-                    if (researchItemNBT != null) {
-                        validOutputs.add(new ItemStack(researchItemNBT));
+                    NBTTagCompound researchItemNBT = stack.getSubCompound(AssemblyLineRecipeBuilder.RESEARCH_NBT_TAG_NAME);
+                    if (researchItemNBT != null && new ItemStack(researchItemNBT).isItemEqual(recipe.getOutputs().get(0))) {
+                        return true;
                     }
                 }
             }
-            boolean canRun = false;
-            for (ItemStack stack: validOutputs) {
-                String stackStr = stack.toString();
-                String recipePropertyString = recipe.getOutputs().get(0).toString();
-                if (stackStr.equals(recipePropertyString)) {
-                    canRun = true;
-                    break;
-                }
-            }
-            return canRun;
-        } else {
-            return true;
         }
+        return false;
     }
 }

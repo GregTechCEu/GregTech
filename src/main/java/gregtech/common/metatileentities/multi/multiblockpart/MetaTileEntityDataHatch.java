@@ -14,8 +14,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.client.utils.PipelineUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,20 +27,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable>, IDataInfoProvider {
-    private final NotifiableItemStackHandler dataStickInventory;
+
     private final int slotAmount;
 
-    public MetaTileEntityDataHatch(ResourceLocation metaTileEntityId, int tier) {
+    public MetaTileEntityDataHatch(ResourceLocation metaTileEntityId, int tier, int slots) {
         super(metaTileEntityId, tier, false);
-        int[] invSizes = {1, 1, 1, 1, 4, 8, 16, 32, 64};
-        this.slotAmount = invSizes[tier];
-        this.dataStickInventory = new NotifiableItemStackHandler(slotAmount+1, getController(), false);
-        dataStickInventory.onContentsChanged(2);
+        this.slotAmount = slots;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityDataHatch(this.metaTileEntityId, this.getTier());
+        return new MetaTileEntityDataHatch(this.metaTileEntityId, this.getTier(), this.slotAmount);
     }
 
     @Override
@@ -60,7 +55,7 @@ public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockNotifiableP
         for (int y = 0; y < rowSize; y++) {
             for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
-                builder.slot(dataStickInventory, index, (88 - rowSize * 9 + x * 18) + xOffset, 18 + y * 18, GuiTextures.SLOT, GuiTextures.DATA_ORB_OVERLAY);
+                builder.slot(this.importItems, index, (88 - rowSize * 9 + x * 18) + xOffset, 18 + y * 18, GuiTextures.SLOT, GuiTextures.DATA_ORB_OVERLAY);
             }
         }
         return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7 + xOffset, 18 + 18 * rowSize + 12);
@@ -73,17 +68,20 @@ public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockNotifiableP
 
     @Override
     public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
-        abilityList.add(dataStickInventory);
+        abilityList.add(importItems);
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        SimpleOverlayRenderer overlay;
         if (this.shouldRenderOverlay()) {
-            overlay = Textures.DATA_ACCESS_HATCH;
-            overlay.renderSided(this.getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline, 0xffffff));
+            Textures.DATA_ACCESS_HATCH.renderSided(this.getFrontFacing(), renderState, translation, pipeline);
         }
+    }
+
+    @Override
+    protected IItemHandlerModifiable createImportItemHandler() {
+        return new NotifiableItemStackHandler(slotAmount, getController(), false);
     }
 
     @Nonnull
@@ -91,25 +89,12 @@ public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockNotifiableP
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> textList = new ArrayList<>();
         textList.add(new TextComponentString("Data for these recipes for these items conatined:"));
-        for (ItemStack stack : GTUtility.itemHandlerToList(dataStickInventory)) {
+        for (ItemStack stack : GTUtility.itemHandlerToList(importItems)) {
             NBTTagCompound researchItemNBT = stack.getSubCompound("asslineOutput");
             if (researchItemNBT != null) {
-                textList.add(new TextComponentString(LocalizationUtils.format(new ItemStack(researchItemNBT).getTranslationKey()))); // TODO get correct tranlations
+                textList.add(new TextComponentString(LocalizationUtils.format(new ItemStack(researchItemNBT).getTranslationKey()))); // TODO get correct translations
             }
         }
         return textList;
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
-        data.setTag("DataStickInventory", dataStickInventory.serializeNBT());
-        return data;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
-        this.dataStickInventory.deserializeNBT(data.getCompoundTag("DataStickInventory"));
     }
 }
