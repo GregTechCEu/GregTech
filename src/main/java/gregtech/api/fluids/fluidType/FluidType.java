@@ -4,6 +4,7 @@ import gregtech.api.unification.material.Material;
 import net.minecraftforge.fluids.Fluid;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,7 +50,7 @@ public abstract class FluidType {
         return this.name;
     }
 
-    @Nonnull
+    @Nullable
     public static FluidType getByName(@Nonnull String name) {
         return FLUID_TYPES.get(name);
     }

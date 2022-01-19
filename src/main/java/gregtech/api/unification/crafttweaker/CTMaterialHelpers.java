@@ -18,12 +18,15 @@ public class CTMaterialHelpers {
     }
 
     protected static FluidType validateFluidType(String fluidTypeName) {
-        if (fluidTypeName == null || fluidTypeName.equals("fluid") || fluidTypeName.equals("liquid")) return FluidTypes.LIQUID;
-        else if (fluidTypeName.equals("gas")) return FluidTypes.GAS;
-        else {
-            CraftTweakerAPI.logError("Fluid Type must be either \"liquid\" or \"gas\"!");
+        if (fluidTypeName == null || fluidTypeName.equals("fluid"))
+            return FluidTypes.LIQUID;
+
+        FluidType type = FluidType.getByName(fluidTypeName);
+        if (type == null) {
+            CraftTweakerAPI.logError("Fluid Type must be either \"liquid\" or \"gas\" or \"acid\"!");
             throw new IllegalArgumentException();
         }
+        return type;
     }
 
     protected static Material[] validateMaterialNames(String methodName, String... names) {
