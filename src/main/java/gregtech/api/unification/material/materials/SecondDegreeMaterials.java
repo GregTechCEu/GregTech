@@ -1,6 +1,7 @@
 package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
+import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -362,7 +363,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         Air = new Material.Builder(2050, "air")
-                .fluid(Material.FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0xA9D0F5)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Nitrogen, 78, Oxygen, 21, Argon, 9)
@@ -376,7 +377,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         NetherAir = new Material.Builder(2052, "nether_air")
-                .fluid(Material.FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0x4C3434)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(CarbonMonoxide, 78, HydrogenSulfide, 21, Neon, 9)
@@ -390,7 +391,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         EnderAir = new Material.Builder(2054, "ender_air")
-                .fluid(Material.FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0x283454)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(NitrogenDioxide, 78, Deuterium, 21, Xenon, 9)

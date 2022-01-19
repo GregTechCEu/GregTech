@@ -2,6 +2,7 @@ package gregtech.api.recipes.logic;
 
 import gregtech.Bootstrap;
 import gregtech.api.GTValues;
+import gregtech.api.fluids.MetaFluids;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;

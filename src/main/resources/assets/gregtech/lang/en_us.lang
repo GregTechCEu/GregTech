@@ -4120,6 +4120,7 @@ gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or 
 
 gregtech.fluid.click_to_empty=§7Click with a Fluid Container to §cempty §7the tank (Shift-click for a full stack).
 
+gregtech.fluid.generic=%s
 gregtech.fluid.plasma=%s Plasma
 gregtech.fluid.empty=Empty
 gregtech.fluid.amount=§9Amount: %,d/%,d L

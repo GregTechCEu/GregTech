@@ -1,13 +1,16 @@
 package gregtech.api.unification.crafttweaker;
 
 import crafttweaker.annotations.ZenRegister;
+import gregtech.api.fluids.fluidType.FluidType;
+import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.*;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenExpansion;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.*;
+import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.checkFrozen;
+import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidType;
 
 @ZenExpansion("mods.gregtech.material.Material")
 @ZenRegister
@@ -107,11 +110,11 @@ public class MaterialPropertyExpansion {
     @ZenMethod
     public static void addFluid(Material m, @Optional String fluidTypeName, @Optional boolean hasBlock) {
         if (checkFrozen("add a Fluid to a material")) return;
-        Material.FluidType type = validateFluidType(fluidTypeName);
+        FluidType type = validateFluidType(fluidTypeName);
         if (m.hasProperty(PropertyKey.FLUID)) {
-            m.getProperty(PropertyKey.FLUID).setIsGas(type == Material.FluidType.GAS);
+            m.getProperty(PropertyKey.FLUID).setIsGas(type == FluidTypes.GAS);
             m.getProperty(PropertyKey.FLUID).setHasBlock(hasBlock);
-        } else m.setProperty(PropertyKey.FLUID, new FluidProperty(type == Material.FluidType.GAS, hasBlock));
+        } else m.setProperty(PropertyKey.FLUID, new FluidProperty(type, hasBlock));
     }
 
     @ZenMethod

@@ -1,6 +1,7 @@
 package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
+import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -1034,7 +1035,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         CarbonDioxide = new Material.Builder(397, "carbon_dioxide")
-                .fluid(Material.FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0xA9D0F5)
                 .components(Carbon, 1, Oxygen, 2)
                 .build();
@@ -1047,13 +1048,13 @@ public class FirstDegreeMaterials {
                 .build();
 
         NitrogenDioxide = new Material.Builder(399, "nitrogen_dioxide")
-                .fluid(Material.FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0x85FCFF).iconSet(GAS)
                 .components(Nitrogen, 1, Oxygen, 2)
                 .build();
 
         HydrogenSulfide = new Material.Builder(400, "hydrogen_sulfide")
-                .fluid(Material.FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .components(Hydrogen, 2, Sulfur, 1)
                 .build();
 
@@ -1075,19 +1076,19 @@ public class FirstDegreeMaterials {
                 .build();
 
         SulfurTrioxide = new Material.Builder(404, "sulfur_trioxide")
-                .fluid(Material.FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0xA0A014)
                 .components(Sulfur, 1, Oxygen, 3)
                 .build();
 
         SulfurDioxide = new Material.Builder(405, "sulfur_dioxide")
-                .fluid(Material.FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0xC8C819)
                 .components(Sulfur, 1, Oxygen, 2)
                 .build();
 
         CarbonMonoxide = new Material.Builder(406, "carbon_monoxide")
-                .fluid(Material.FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0x0E4880)
                 .components(Carbon, 1, Oxygen, 1)
                 .build();
@@ -1099,7 +1100,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Ammonia = new Material.Builder(408, "ammonia")
-                .fluid(Material.FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0x3F3480)
                 .components(Nitrogen, 1, Hydrogen, 3)
                 .build();
@@ -1111,7 +1112,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         NitricOxide = new Material.Builder(410, "nitric_oxide")
-                .fluid(Material.FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0x7DC8F0)
                 .components(Nitrogen, 1, Oxygen, 1)
                 .build();
@@ -1124,7 +1125,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         UraniumHexafluoride = new Material.Builder(412, "uranium_hexafluoride")
-                .fluid(Material.FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0x42D126)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium238, 1, Fluorine, 6)
@@ -1132,7 +1133,7 @@ public class FirstDegreeMaterials {
                 .setFormula("UF6", true);
 
         EnrichedUraniumHexafluoride = new Material.Builder(413, "enriched_uranium_hexafluoride")
-                .fluid(Material.FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0x4BF52A)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium235, 1, Fluorine, 6)
@@ -1140,7 +1141,7 @@ public class FirstDegreeMaterials {
                 .setFormula("UF6", true);
 
         DepletedUraniumHexafluoride = new Material.Builder(414, "depleted_uranium_hexafluoride")
-                .fluid(Material.FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0x74BA66)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium238, 1, Fluorine, 6)
@@ -1148,7 +1149,7 @@ public class FirstDegreeMaterials {
                 .setFormula("UF6", true);
 
         NitrousOxide = new Material.Builder(415, "nitrous_oxide")
-                .fluid(Material.FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0x7DC8FF)
                 .components(Nitrogen, 2, Oxygen, 1)
                 .build();
@@ -1184,7 +1185,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Steam = new Material.Builder(420, "steam")
-                .fluid(Material.FluidType.GAS, true)
+                .fluid(FluidTypes.GAS, true)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
                 .fluidTemp(380)

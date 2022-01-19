@@ -3,6 +3,8 @@ package gregtech.api.unification.crafttweaker;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GregTechAPI;
+import gregtech.api.fluids.fluidType.FluidType;
+import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.stack.MaterialStack;
 
@@ -15,11 +17,11 @@ public class CTMaterialHelpers {
         return components == null || components.length == 0 ? ImmutableList.of() : ImmutableList.copyOf(components);
     }
 
-    protected static Material.FluidType validateFluidType(String fluidTypeName) {
-        if (fluidTypeName == null || fluidTypeName.equals("fluid")) return Material.FluidType.FLUID;
-        else if (fluidTypeName.equals("gas")) return Material.FluidType.GAS;
+    protected static FluidType validateFluidType(String fluidTypeName) {
+        if (fluidTypeName == null || fluidTypeName.equals("fluid") || fluidTypeName.equals("liquid")) return FluidTypes.LIQUID;
+        else if (fluidTypeName.equals("gas")) return FluidTypes.GAS;
         else {
-            CraftTweakerAPI.logError("Fluid Type must be either \"fluid\" or \"gas\"!");
+            CraftTweakerAPI.logError("Fluid Type must be either \"liquid\" or \"gas\"!");
             throw new IllegalArgumentException();
         }
     }

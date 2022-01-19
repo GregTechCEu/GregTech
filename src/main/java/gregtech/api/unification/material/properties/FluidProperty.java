@@ -1,6 +1,8 @@
 package gregtech.api.unification.material.properties;
 
 import com.google.common.base.Preconditions;
+import gregtech.api.fluids.fluidType.FluidType;
+import gregtech.api.fluids.fluidType.FluidTypes;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -15,12 +17,15 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
      */
     private Fluid fluid;
 
+    private FluidType fluidType;
+
     private boolean hasBlock;
     private boolean isGas;
     private int fluidTemperature = BASE_TEMP;
 
-    public FluidProperty(boolean isGas, boolean hasBlock) {
-        this.isGas = isGas;
+    public FluidProperty(FluidType fluidType, boolean hasBlock) {
+        this.fluidType = fluidType;
+        this.isGas = fluidType == FluidTypes.GAS;
         this.hasBlock = hasBlock;
     }
 
@@ -28,7 +33,7 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
      * Default values of: no Block, not Gas.
      */
     public FluidProperty() {
-        this(false, false);
+        this(FluidTypes.LIQUID, false);
     }
 
     public boolean isGas() {
@@ -71,6 +76,10 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
 
     public int getFluidTemperature() {
         return fluidTemperature;
+    }
+
+    public FluidType getFluidType() {
+        return this.fluidType;
     }
 
     @Override

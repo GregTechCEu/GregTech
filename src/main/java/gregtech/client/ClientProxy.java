@@ -4,6 +4,7 @@ import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.ItemNBTUtils;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.GTValues;
+import gregtech.api.fluids.MetaFluids;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
@@ -16,12 +17,18 @@ import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.*;
 import gregtech.api.util.input.KeyBinds;
+import gregtech.client.model.customtexture.CustomTextureModelHandler;
+import gregtech.client.model.customtexture.MetadataSectionCTM;
+import gregtech.client.renderer.handler.FacadeRenderer;
+import gregtech.client.renderer.handler.MetaTileEntityRenderer;
+import gregtech.client.renderer.pipe.CableRenderer;
+import gregtech.client.renderer.pipe.FluidPipeRenderer;
+import gregtech.client.renderer.pipe.ItemPipeRenderer;
+import gregtech.client.shader.Shaders;
 import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaEntities;
-import gregtech.common.MetaFluids;
 import gregtech.common.blocks.*;
-import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.common.items.MetaItems;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.state.IBlockState;
@@ -293,5 +300,4 @@ public class ClientProxy extends CommonProxy {
     public boolean isFancyGraphics() {
         return Minecraft.getMinecraft().gameSettings.fancyGraphics;
     }
-
 }

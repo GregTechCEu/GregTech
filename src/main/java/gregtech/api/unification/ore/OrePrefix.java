@@ -2,6 +2,8 @@ package gregtech.api.unification.ore;
 
 import com.google.common.base.Preconditions;
 import crafttweaker.annotations.ZenRegister;
+import gregtech.api.fluids.MetaFluids;
+import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -15,7 +17,6 @@ import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.function.TriConsumer;
 import gregtech.common.ConfigHolder;
-import gregtech.common.MetaFluids;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fluids.Fluid;
 import org.apache.commons.lang3.Validate;
@@ -545,7 +546,7 @@ public class OrePrefix {
                 FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);
                 if (fluidProperty != null && fluidProperty.getFluid() == null) {
                     int temperature = fluidProperty.getFluidTemperature();
-                    Fluid fluid = MetaFluids.registerFluid(material, MetaFluids.FluidType.NORMAL, temperature, fluidProperty.hasBlock());
+                    Fluid fluid = MetaFluids.registerFluid(material, FluidTypes.LIQUID, temperature, fluidProperty.hasBlock());
                     fluidProperty.setFluid(fluid);
                     List<String> tooltip = new ArrayList<>();
                     tooltip.add(material.getChemicalFormula());
@@ -557,8 +558,7 @@ public class OrePrefix {
                 PlasmaProperty plasmaProperty = material.getProperty(PropertyKey.PLASMA);
                 if (plasmaProperty != null && plasmaProperty.getPlasma() == null) {
                     int baseTemperature = fluidProperty == null ? 0 : fluidProperty.getFluidTemperature();
-                    baseTemperature = baseTemperature + 30000;
-                    Fluid fluid = MetaFluids.registerFluid(material, MetaFluids.FluidType.PLASMA, baseTemperature, false);
+                    Fluid fluid = MetaFluids.registerFluid(material, FluidTypes.PLASMA, baseTemperature + 30000, false);
                     plasmaProperty.setPlasma(fluid);
                     List<String> tooltip = new ArrayList<>();
                     tooltip.add(material.getChemicalFormula());
