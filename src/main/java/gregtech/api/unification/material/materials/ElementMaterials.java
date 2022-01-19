@@ -641,7 +641,7 @@ public class ElementMaterials {
                 .build();
 
         Sodium = new Material.Builder(101, "sodium")
-                .ingot().fluid()
+                .dust().fluid()
                 .color(0x000096).iconSet(METALLIC)
                 .element(Elements.Na)
                 .build();
