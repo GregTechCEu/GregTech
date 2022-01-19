@@ -14,6 +14,8 @@ public abstract class FluidFilter {
 
     public abstract boolean testFluid(FluidStack fluidStack);
 
+    public abstract int getFluidTransferLimit(FluidStack fluidStack);
+
     public abstract int getMaxOccupiedHeight();
 
     public abstract void initUI(Consumer<Widget> widgetGroup);
@@ -26,13 +28,13 @@ public abstract class FluidFilter {
         this.dirtyNotifiable = dirtyNotifiable;
     }
 
+    public abstract void configureFilterTanks(int amount);
+
+    public abstract void setMaxConfigurableFluidSize(int maxStackSize);
+
     public final void markDirty() {
         if (dirtyNotifiable != null) {
             dirtyNotifiable.markAsDirty();
         }
-    }
-
-    public void setShowTip(boolean showTip){
-        this.showTip = showTip;
     }
 }

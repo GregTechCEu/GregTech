@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -15,24 +16,39 @@ public class SimpleFluidFilter extends FluidFilter {
 
     private static final int MAX_FLUID_SLOTS = 9;
 
-    protected final FluidStack[] fluidFilterSlots;
+    protected final FluidTank[] fluidFilterTanks = new FluidTank[MAX_FLUID_SLOTS];
 
     public SimpleFluidFilter() {
-        this.fluidFilterSlots = new FluidStack[MAX_FLUID_SLOTS];
+        for (int i = 0; i < MAX_FLUID_SLOTS; ++i) {
+            fluidFilterTanks[i] = new FluidTank(1000) {
+                @Override
+                public void setFluid(@Nullable FluidStack fluid) {
+                    super.setFluid(fluid);
+                    SimpleFluidFilter.this.markDirty();
+                }
+            };
+        }
     }
 
-    @Nullable
-    public FluidStack getFluidInSlot(int slotIndex) {
-        return fluidFilterSlots[slotIndex];
+    @Override
+    public void configureFilterTanks(int amount) {
+        for (FluidTank fluidTank : fluidFilterTanks) {
+            if (fluidTank.getFluid() != null)
+                fluidTank.getFluid().amount = amount;
+        }
+        this.markDirty();
     }
 
-    public void setFluidInSlot(int slotIndex, FluidStack fluidStack) {
-        this.fluidFilterSlots[slotIndex] = fluidStack == null ? null : fluidStack.copy();
+    @Override
+    public void setMaxConfigurableFluidSize(int maxSize) {
+        for (FluidTank fluidTank : fluidFilterTanks) {
+            fluidTank.setCapacity(maxSize);
+        }
     }
 
     @Override
     public boolean testFluid(FluidStack fluidStack) {
-        return checkInputFluid(fluidFilterSlots, fluidStack);
+        return checkInputFluid(fluidFilterTanks, fluidStack);
     }
 
     @Override
@@ -43,10 +59,8 @@ public class SimpleFluidFilter extends FluidFilter {
     @Override
     public void initUI(Consumer<Widget> widgetGroup) {
         for (int i = 0; i < 9; ++i) {
-            int index = i;
             widgetGroup.accept((new PhantomFluidWidget(10 + 18 * (i % 3), 18 * (i / 3), 18, 18,
-                    () -> getFluidInSlot(index),
-                    (newFluid) -> setFluidInSlot(index, newFluid)))
+                    this.fluidFilterTanks[i]))
                     .setBackgroundTexture(GuiTextures.SLOT).showTipSupplier(this::shouldShowTip));
         }
     }
@@ -57,11 +71,11 @@ public class SimpleFluidFilter extends FluidFilter {
 
     public void writeToNBT(NBTTagCompound tagCompound) {
         NBTTagList filterSlots = new NBTTagList();
-        for (int i = 0; i < this.fluidFilterSlots.length; ++i) {
-            FluidStack fluidStack = this.fluidFilterSlots[i];
-            if (fluidStack != null) {
+        for (int i = 0; i < this.fluidFilterTanks.length; ++i) {
+            FluidTank fluidTank = this.fluidFilterTanks[i];
+            if (fluidTank.getFluid() != null) {
                 NBTTagCompound stackTag = new NBTTagCompound();
-                fluidStack.writeToNBT(stackTag);
+                fluidTank.getFluid().writeToNBT(stackTag);
                 stackTag.setInteger("Slot", i);
                 filterSlots.appendTag(stackTag);
             }
@@ -74,16 +88,28 @@ public class SimpleFluidFilter extends FluidFilter {
         for (NBTBase nbtBase : filterSlots) {
             NBTTagCompound stackTag = (NBTTagCompound) nbtBase;
             FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(stackTag);
-            this.fluidFilterSlots[stackTag.getInteger("Slot")] = fluidStack;
+            this.fluidFilterTanks[stackTag.getInteger("Slot")].setFluid(fluidStack);
         }
     }
 
-    public static boolean checkInputFluid(FluidStack[] fluidFilterSlots, FluidStack fluidStack) {
-        for (FluidStack filterStack : fluidFilterSlots) {
-            if (filterStack != null && filterStack.isFluidEqual(fluidStack)) {
+    public static boolean checkInputFluid(FluidTank[] fluidFilterTanks, FluidStack fluidStack) {
+        for (FluidTank fluidTank : fluidFilterTanks) {
+            if (fluidTank.getFluid() != null && fluidTank.getFluid().isFluidEqual(fluidStack)) {
                 return true;
             }
         }
         return false;
     }
+
+    @Override
+    public int getFluidTransferLimit(FluidStack fluidStack) {
+        int limit = 0;
+        for (FluidTank fluidTank : fluidFilterTanks) {
+            if (fluidTank.getFluid() != null && fluidTank.getFluid().isFluidEqual(fluidStack)) {
+                limit += fluidTank.getFluid().amount;
+            }
+        }
+        return limit;
+    }
+
 }

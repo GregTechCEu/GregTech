@@ -20,8 +20,8 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
     private final ItemStackHandler filterInventory;
     private final FluidFilterWrapper filterWrapper;
 
-    public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable) {
-        this.filterWrapper = new FluidFilterWrapper(dirtyNotifiable);
+    public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable, int capacity) {
+        this.filterWrapper = new FluidFilterWrapper(dirtyNotifiable, capacity);
         this.filterInventory = new ItemStackHandler(1) {
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
@@ -45,13 +45,27 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
         };
     }
 
-    public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable, Supplier<Boolean> showTip) {
-        this(dirtyNotifiable);
+    public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable, Supplier<Boolean> showTip, int maxSize) {
+        this(dirtyNotifiable, maxSize);
         filterWrapper.setTipSupplier(showTip);
+    }
+
+    public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable, Supplier<Boolean> showTip) {
+        this(dirtyNotifiable, 1000);
+        filterWrapper.setTipSupplier(showTip);
+    }
+
+    public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable) {
+        this(dirtyNotifiable, 1000);
+        filterWrapper.setTipSupplier(() -> false);
     }
 
     public ItemStackHandler getFilterInventory() {
         return filterInventory;
+    }
+
+    public FluidFilterWrapper getFilterWrapper() {
+        return filterWrapper;
     }
 
     public void initUI(int y, Consumer<Widget> widgetGroup) {

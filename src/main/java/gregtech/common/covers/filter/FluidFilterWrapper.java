@@ -15,6 +15,12 @@ public class FluidFilterWrapper {
     private boolean isBlacklistFilter = false;
     private FluidFilter currentFluidFilter;
     private Supplier<Boolean> showTipSupplier;
+    private int maxSize = 1000;
+
+    public FluidFilterWrapper(IDirtyNotifiable dirtyNotifiable, int maxSize) {
+        this.dirtyNotifiable = dirtyNotifiable;
+        this.maxSize = maxSize;
+    }
 
     public FluidFilterWrapper(IDirtyNotifiable dirtyNotifiable) {
         this.dirtyNotifiable = dirtyNotifiable;
@@ -30,6 +36,7 @@ public class FluidFilterWrapper {
         this.currentFluidFilter = fluidFilter;
         if (currentFluidFilter != null) {
             currentFluidFilter.setDirtyNotifiable(dirtyNotifiable);
+            currentFluidFilter.setMaxConfigurableFluidSize(maxSize);
         }
     }
 

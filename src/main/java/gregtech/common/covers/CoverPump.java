@@ -67,7 +67,11 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         this.pumpMode = PumpMode.EXPORT;
         this.distributionMode = DistributionMode.INSERT_FIRST;
         this.bucketMode = BucketMode.MILLI_BUCKET;
-        this.fluidFilter = new FluidFilterContainer(this);
+        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip);
+    }
+
+    protected boolean shouldShowTip() {
+        return false;
     }
 
     protected void setTransferRate(int transferRate) {

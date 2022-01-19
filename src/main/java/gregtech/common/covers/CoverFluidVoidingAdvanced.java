@@ -12,6 +12,7 @@ import gregtech.api.recipes.FluidKey;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.api.util.GTHashMaps;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.covers.filter.FluidFilter;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,9 +34,10 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     public CoverFluidVoidingAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
         this.voidingMode = VoidingMode.VOID_ANY;
-        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip);
+        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip, maxFluidTransferRate * 100);
     }
 
+    @Override
     protected boolean shouldShowTip() {
         return voidingMode != VoidingMode.VOID_ANY;
     }
@@ -63,13 +65,16 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
      */
     protected void voidOverflow(final IFluidHandler sourceHandler,
                                 final Predicate<FluidStack> fluidFilter,
-                                final int keepAmount) {
-        if (sourceHandler == null || fluidFilter == null || keepAmount <= 0)
+                                int keepAmount) {
+        if (sourceHandler == null || fluidFilter == null)
             return;
 
         HashMap<FluidKey, Integer> sourceFluids = GTHashMaps.fromFluidHandler(sourceHandler);
 
         for (FluidKey fluidKey : sourceFluids.keySet()) {
+            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null) {
+                keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(new FluidStack(fluidKey.getFluid(), 1));
+            }
             int amount;
             if ((amount = sourceFluids.getOrDefault(fluidKey, 0)) > keepAmount) {
                 // move the lesser of the remaining transfer limit and the difference in actual vs keep exact amount
@@ -109,7 +114,11 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         return voidingMode;
     }
 
-    private boolean checkVoidingMode() {
+    private boolean shouldDisplayAmountSlider() {
+        if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null) {
+            return false;
+        }
+
         return this.voidingMode == VoidingMode.VOID_OVERFLOW;
     }
 
@@ -133,7 +142,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
                 VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
                 .setTooltipHoverString("cover.voiding.voiding_mode.description"));
 
-        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::checkVoidingMode);
+        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
         stackSizeGroup.addWidget(new ImageWidget(110, 72, 38, 18, GuiTextures.DISPLAY));
 
         stackSizeGroup.addWidget(new IncrementButtonWidget(148, 72, 18, 18, 1, 10, 100, 1000, this::adjustTransferSize)
@@ -155,14 +164,14 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
             }
         })
                 .setCentered(true)
-                .setAllowedChars("0123456789")
+                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
                 .setMaxLength(10)
                 .setValidator(getTextFieldValidator(() -> Integer.MAX_VALUE))
                 .setScale(0.6f));
 
         stackSizeGroup.addWidget(new CycleButtonWidget(115, 35, 30, 20,
                 BucketMode.class, this::getBucketMode, mode -> {
-            if(mode != bucketMode) {
+            if (mode != bucketMode) {
                 setBucketMode(mode);
             }
         }));
@@ -186,12 +195,20 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("VoidingMode", voidingMode.ordinal());
         tagCompound.setInteger("TransferAmount", transferAmount);
+        tagCompound.setTag("filterv2", new NBTTagCompound());
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.voidingMode = VoidingMode.values()[tagCompound.getInteger("VoidingMode")];
+        //legacy NBT tag
+        if (!tagCompound.hasKey("filterv2") && tagCompound.hasKey("TransferAmount")) {
+            FluidFilter filter = getFluidFilterContainer().getFilterWrapper().getFluidFilter();
+            if (filter != null) {
+                filter.configureFilterTanks(tagCompound.getInteger("TransferAmount"));
+            }
+        }
         this.transferAmount = tagCompound.getInteger("TransferAmount");
     }
 

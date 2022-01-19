@@ -8,9 +8,9 @@ import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.util.Position;
-import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
 import gregtech.api.util.TextFormattingUtil;
+import gregtech.client.utils.RenderUtil;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -20,10 +20,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -36,6 +36,7 @@ import java.util.function.Supplier;
 
 public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhostIngredientTarget {
 
+    private FluidTank fluidTank = null;
     protected IGuiTexture backgroundTexture = GuiTextures.FLUID_SLOT;
 
     private Supplier<FluidStack> fluidStackSupplier;
@@ -51,12 +52,11 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         this.fluidStackUpdater = fluidStackUpdater;
     }
 
-    public PhantomFluidWidget(int xPosition, int yPosition, int width, int height, Supplier<FluidStack> fluidStackSupplier, Consumer<FluidStack> fluidStackUpdater, Supplier<Boolean> showTipSupplier) {
+    public PhantomFluidWidget(int xPosition, int yPosition, int width, int height, FluidTank fluidTank) {
         super(new Position(xPosition, yPosition), new Size(width, height));
-        this.fluidStackSupplier = fluidStackSupplier;
-        this.fluidStackUpdater = fluidStackUpdater;
-        this.showTipSupplier = showTipSupplier;
-        this.showTip = showTipSupplier.get();
+        this.fluidTank = fluidTank;
+        this.fluidStackSupplier = fluidTank::getFluid;
+        this.fluidStackUpdater = fluidTank::setFluid;
     }
 
     private FluidStack drainFrom(Object ingredient) {
@@ -202,13 +202,19 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                     } else if (clickData.button == 0) {
                         if (fluidStackSupplier.get() != null) {
                             FluidStack fluid = fluidStackSupplier.get().copy();
-                            fluid.amount *= 2;
+                            if (clickData.isShiftClick)
+                                fluid.amount = (fluid.amount + 1) / 2;
+                            else fluid.amount -= 1;
+                            fluid.amount = MathHelper.clamp(fluid.amount, 1, fluidTank.getCapacity());
                             fluidStackUpdater.accept(fluid);
                         }
                     } else if (clickData.button == 1) {
                         if (fluidStackSupplier.get() != null) {
                             FluidStack fluid = fluidStackSupplier.get().copy();
-                            fluid.amount /= 2;
+                            if (clickData.isShiftClick)
+                                fluid.amount *= 2;
+                            else fluid.amount += 1;
+                            fluid.amount = MathHelper.clamp(fluid.amount, 1, fluidTank.getCapacity());
                             fluidStackUpdater.accept(fluid);
                         }
                     }
@@ -224,12 +230,12 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
             fluidStackUpdater.accept(fluidStack);
         } else if (id == 3) {
             WheelData wheelData = WheelData.readFromBuf(buffer);
-            if (fluidStackSupplier.get() != null && showTip) {
+            if (fluidStackSupplier.get() != null && fluidStackUpdater != null && showTip) {
                 int multiplier = wheelData.isCtrlClick ? 100 : 1;
                 multiplier *= wheelData.isShiftClick ? 10 : 1;
                 FluidStack currentFluid = fluidStackSupplier.get().copy();
                 int amount = wheelData.wheelDelta * multiplier;
-                currentFluid.amount = Math.max(1, currentFluid.amount + amount);
+                currentFluid.amount = MathHelper.clamp(currentFluid.amount + amount, 1, fluidTank.getCapacity());
                 fluidStackUpdater.accept(currentFluid);
             }
         }
@@ -238,16 +244,11 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY)) {
-            if (showTip) {
-                ClickData clickData = new ClickData(button,
-                        (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)),
-                        (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)),
-                        true);
-                writeClientAction(1, clickData::writeToBuf);
-            }
-            if (isClient && fluidStackUpdater != null) {
-                fluidStackUpdater.accept(null);
-            }
+            ClickData clickData = new ClickData(button,
+                    (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)),
+                    (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)),
+                    true);
+            writeClientAction(1, clickData::writeToBuf);
             return true;
         }
         return false;
@@ -262,9 +263,6 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                         (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)),
                         true);
                 writeClientAction(3, wheelData::writeToBuf);
-            }
-            if (isClient && fluidStackUpdater != null) {
-                fluidStackUpdater.accept(null);
             }
             return true;
         }
@@ -281,7 +279,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         if (lastFluidStack != null) {
             GlStateManager.disableBlend();
             RenderUtil.drawFluidForGui(lastFluidStack, lastFluidStack.amount, pos.x + 1, pos.y + 1, size.width - 1, size.height - 1);
-            if(showTip) {
+            if (showTip) {
                 GlStateManager.pushMatrix();
                 GlStateManager.scale(0.5, 0.5, 1);
                 String s = TextFormattingUtil.formatLongToCompactString(lastFluidStack.amount, 4) + "L";
