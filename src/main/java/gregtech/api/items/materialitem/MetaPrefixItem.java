@@ -180,6 +180,10 @@ public class MetaPrefixItem extends StandardMetaItem {
         Material material = GregTechAPI.MATERIAL_REGISTRY.getObjectById(damage);
         if (prefix == null || material == null) return;
         addMaterialTooltip(lines, itemStack);
+
+        if(tooltipFlag.isAdvanced()) {
+            lines.add("MetaItem Id: " + prefix.name() + material.toCamelCaseString());
+        }
     }
 
     public Material getMaterial(ItemStack itemStack) {
