@@ -1,5 +1,52 @@
 ## Changelog
 
+### 2.0.5
+BETA RELEASE
+
+Featured Changes:
+
+* Item Magnets
+    * Similar to other mods, Item Magnets can bring dropped items towards you for a little bit of power
+    * Available at LV, and an upgraded form at HV, which has farther range and faster collection speed
+
+* Ore Dictionary Filter Overhaul
+    * Can now use expanded regex to filter items passed through
+    * New "Info" tooltip provided in the cover UI
+    * Added a "Test Slot," which can be provided an item to see if it matches your pattern (can use JEI "drag" ingredients)
+
+* Machine UI and Item Charging Improvements
+    * Machines now have a "Configurator Slot" which can be used to change the selected number of a Programmed Circuit
+    * Machine Charger Slot can now charge Electric Tools, as well as RF Tools
+    * Battery Buffer and Charger can now also charge RF tools
+    * New tooltips to explain what the Configurator and Charger slots do, as well as the GT logo and other misc UI improvements
+
+* Improvements to the `/gt util hand` command, now just `/gt hand`
+* Fix various Cable and Wire rendering issues
+* Fix Item Pipe Enhanced Round Robin voiding items occasionally
+* Fix Pipes and Cables not working properly with `gamerule doDaylightCycle` disabled
+* Fix Round Robin button not appearing on covers when the cover is placed on the block adjacent to a pipe
+* Added a config to disable Log -> Charcoal smelting recipes
+* Fix EBF UI not being openable
+* Fix dust -> foil extrusion recipes
+* Fix some missing recipes, like Alloy Smelter alloys and a few others
+* Fix issues relating to Dyed Lens OreDictionary entries
+* Fix Fueled Jetpack not always accepting fuel
+* Fix Machine top and bottom faces not rotating with the front face
+* Fix various instances of log spam with other mods, relating to crafting with tools
+* Fix the Sense voiding some sugar cane when used
+* Fix Diamond and Gold Swords having no recipes
+* Fix some multiblock parts not displaying if they can be shared between multiblocks
+* Fix MetaItem tooltip not appearing in some places when Advanced Tooltips is enabled
+* Fix HV pump recipe
+* Fix a few small chemical recipes, like Salt Water centrifuging, Aqua Regia composition, and Salt creation
+* Rework "Small Lava Boiler" into "Small Liquid Boiler," which can now also burn Creosote
+* Rebalance some fuels, move oils to combustion
+* Add a few extra slots to Autoclave, EBF, Chemical Bath, Fermenter
+* Internal: Add `SimpleCubeRenderer`, which renders a single texture across a full block
+* Internal: Redo `IMultipleRecipeMaps` API
+* Internal: Redo `MetaOreDictItem`
+* Internal: Fix Materials with names that end in numbers causing strange errors
+
 ### 2.0.4
 BETA RELEASE
 
