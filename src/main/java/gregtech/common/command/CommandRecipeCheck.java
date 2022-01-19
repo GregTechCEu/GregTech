@@ -1,8 +1,11 @@
 package gregtech.common.command;
 
+import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
@@ -11,7 +14,10 @@ import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
+import gregtech.common.blocks.BlockCompressed;
+import gregtech.common.blocks.BlockFrame;
 import gregtech.common.items.MetaItems;
+import net.minecraft.block.Block;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.item.ItemStack;
@@ -48,8 +54,6 @@ public class CommandRecipeCheck extends CommandBase {
 
         GTLog.logger.info("[Recipe Checker] Starting recipe conflict check...");
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            GTLog.logger.info("[Recipe Checker] Checking recipe map " + recipeMap.getUnlocalizedName());
-            GTLog.logger.info("[Recipe Checker] Iterating over " +recipeMap.getRecipeList().size() + " recipes");
             for (Recipe recipe : recipeMap.getRecipeList()) {
                 MismatchEntry checkResult = checkRecipe(
                         recipe,
@@ -214,7 +218,7 @@ public class CommandRecipeCheck extends CommandBase {
                     .append(",");
         }
         if (matchingStacks.length > 0) {
-            output.delete(output.lastIndexOf(", "), output.length());
+            output.delete(output.lastIndexOf(","), output.length());
         }
         output.append(" } * ")
                 .append(countableIngredient.getCount());
@@ -229,15 +233,37 @@ public class CommandRecipeCheck extends CommandBase {
                 if (metaItem instanceof MetaPrefixItem) {
                     Material material = ((MetaPrefixItem) metaItem).getMaterial(stack);
                     OrePrefix orePrefix = ((MetaPrefixItem) metaItem).getOrePrefix();
-                    return "(MetaItem) OrePrefix: " + orePrefix.name + ", Material: " + material;
+                    return "(MetaItem) OrePrefix: " + orePrefix.name + ", Material: " + material + " * " + stack.getCount();
                 }
             } else {
                 if (MetaItems.INTEGRATED_CIRCUIT.isItemEqual(stack)) {
                     return "Config circuit #" + IntCircuitIngredient.getCircuitConfiguration(stack);
                 }
-                return "(MetaItem) " + metaValueItem.unlocalizedName;
+                return "(MetaItem) " + metaValueItem.unlocalizedName + " * " + stack.getCount();
             }
-        }
+        } else if (stack.getItem() instanceof MachineItemBlock) {
+                MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(stack);
+                if (mte != null) {
+                    String id = mte.metaTileEntityId.toString();
+                    if (mte.metaTileEntityId.getNamespace().equals("gregtech"))
+                        id = mte.metaTileEntityId.getPath();
+                    return "(MetaTileEntity) " + id + " * " + stack.getCount();
+                }
+            } else {
+                Block block = Block.getBlockFromItem(stack.getItem());
+                String id = null;
+                if (block instanceof BlockCompressed) {
+                    id = "block" + ((BlockCompressed) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
+                } else if (block instanceof BlockFrame) {
+                    id = "frame" + ((BlockFrame) block).getGtMaterial(stack.getMetadata()).toCamelCaseString();
+                } else if (block instanceof BlockMaterialPipe) {
+                    id = ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>) block).getItemMaterial(stack).toCamelCaseString();
+                }
+
+                if (id != null) {
+                    return "(MetaBlock) " + id + " * " + stack.getCount();
+                }
+            }
         //noinspection ConstantConditions
         return stack.getItem().getRegistryName().toString() + " * " + stack.getCount() + " (Meta " + stack.getItemDamage() + ")";
     }
