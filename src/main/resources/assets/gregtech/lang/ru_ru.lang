@@ -2488,7 +2488,7 @@ gregtech.command.util.hand.tool_stats=Класс инструмента: %s
 gregtech.command.util.hand.meta_item=Название мета-предмета: %s
 gregtech.command.util.hand.not_a_player=Эта команда может использоваться только игроком.
 gregtech.command.util.hand.no_item=Перед выполнением этой команды, вы должны держать что-то в основной руке.
-gregtech.command.util.recipecheck.usage=Применение: /gregtech util recipecheck
+gregtech.command.util.recipecheck.usage=Применение: /gregtech recipecheck
 
 gregtech.machine.locked_safe.name=Закрытый сейф
 gregtech.machine.locked_safe.malfunctioning=§cСломан!
