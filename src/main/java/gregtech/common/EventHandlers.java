@@ -207,6 +207,7 @@ public class EventHandlers {
             }
         }
         CapesRegistry.loadWornCapeOnLogin(event.player);
+        CapesRegistry.detectNewCapes(event.player);
     }
 
     @SubscribeEvent

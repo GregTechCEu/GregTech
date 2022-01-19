@@ -209,4 +209,16 @@ public class CapesRegistry {
         }
     }
 
+    // Runs on login, and looks for any advancements that give the player a cape that the player doesn't already have.
+    public static void detectNewCapes(EntityPlayer player) {
+        if (player instanceof EntityPlayerMP) {
+            for (Map.Entry<Advancement, ResourceLocation> capeEntry : CAPE_ADVANCEMENTS.entrySet()) {
+                if ((UNLOCKED_CAPES.get(player.getPersistentID()) != null || !UNLOCKED_CAPES.get(player.getPersistentID()).contains(capeEntry)) &&
+                        ((EntityPlayerMP) player).getAdvancements().getProgress(capeEntry.getKey()).isDone()) {
+                    unlockCapeOnAdvancement(player, capeEntry.getKey());
+                }
+            }
+        }
+    }
+
 }
