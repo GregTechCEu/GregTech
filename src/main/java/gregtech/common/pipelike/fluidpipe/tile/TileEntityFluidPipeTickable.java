@@ -36,7 +36,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
     public byte mLastReceivedFrom = 0, oLastReceivedFrom = 0;
     private PipeTankList pipeTankList;
-    private EnumMap<EnumFacing, PipeTankList> tankLists = new EnumMap<>(EnumFacing.class);
+    private final EnumMap<EnumFacing, PipeTankList> tankLists = new EnumMap<>(EnumFacing.class);
     private FluidTank[] fluidTanks;
     private long timer = 0L;
     private final int offset = GTValues.RNG.nextInt(20);
@@ -80,17 +80,13 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                     continue;
                 }
 
-                //if (checkEnvironment(index, aBaseMetaTileEntity)) return;
-
                 if (shouldDistribute) {
                     distributeFluid(index, tank, fluid);
                     mLastReceivedFrom = 0;
                 }
             }
             oLastReceivedFrom = mLastReceivedFrom;
-
         }
-
     }
 
     @Override
@@ -206,10 +202,6 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         return getFluidTanks()[channel].getFluid();
     }
 
-    public FluidStack findFluid(FluidStack stack) {
-        return getContainedFluid(findChannel(stack));
-    }
-
     private void createTanksList() {
         fluidTanks = new FluidTank[getNodeData().getTanks()];
         for (int i = 0; i < getNodeData().getTanks(); i++) {
@@ -248,63 +240,6 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             fluids[i] = fluidTanks[i].getFluid();
         }
         return fluids;
-    }
-
-    /**
-     * Finds a channel for the given fluid
-     *
-     * @param stack to find a channel fot
-     * @return channel
-     */
-    public int findChannel(FluidStack stack) {
-        if (getFluidTanks().length == 1) {
-            FluidStack channelStack = getContainedFluid(0);
-            return (channelStack == null || channelStack.amount <= 0 || channelStack.isFluidEqual(stack)) ? 0 : -1;
-        }
-        int emptyTank = -1;
-        for (int i = fluidTanks.length - 1; i >= 0; i--) {
-            FluidStack channelStack = getContainedFluid(i);
-            if (channelStack == null || channelStack.amount <= 0)
-                emptyTank = i;
-            else if (channelStack.isFluidEqual(stack))
-                return i;
-        }
-        return emptyTank;
-    }
-
-    public int setContainingFluid(FluidStack stack, int channel, boolean fill) {
-        if (channel < 0)
-            return stack == null ? 0 : stack.amount;
-        if (stack == null || stack.amount <= 0) {
-            getFluidTanks()[channel].setFluid(null);
-            return 0;
-        }
-        FluidTank tank = getFluidTanks()[channel];
-        FluidStack currentStack = tank.getFluid();
-        if (currentStack == null || currentStack.amount <= 0) {
-            checkAndDestroy(stack);
-        } else if (fill) {
-            int toFill = stack.amount;
-            if (toFill + currentStack.amount > tank.getCapacity())
-                toFill = tank.getCapacity() - currentStack.amount;
-            currentStack.amount += toFill;
-            return toFill;
-        }
-        stack.amount = Math.min(stack.amount, tank.getCapacity());
-        tank.setFluid(stack);
-        return stack.amount;
-    }
-
-    public boolean areTanksEmpty() {
-        for (FluidStack fluidStack : getContainedFluids())
-            if (fluidStack != null) {
-                if (fluidStack.amount <= 0) {
-                    setContainingFluid(null, findChannel(fluidStack), false);
-                    continue;
-                }
-                return false;
-            }
-        return true;
     }
 
     @Nonnull
