@@ -33,6 +33,7 @@ public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockNotifiableP
     public MetaTileEntityDataHatch(ResourceLocation metaTileEntityId, int tier, int slots) {
         super(metaTileEntityId, tier, false);
         this.slotAmount = slots;
+        initializeInventory();
     }
 
     @Override
@@ -55,7 +56,8 @@ public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockNotifiableP
         for (int y = 0; y < rowSize; y++) {
             for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
-                builder.slot(this.importItems, index, (88 - rowSize * 9 + x * 18) + xOffset, 18 + y * 18, GuiTextures.SLOT, GuiTextures.DATA_ORB_OVERLAY);
+                builder.slot(this.importItems, index+1, (88 - rowSize * 9 + x * 18) + xOffset,
+                        18 + y * 18, GuiTextures.SLOT, GuiTextures.DATA_ORB_OVERLAY); // why tf do i need the +1
             }
         }
         return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7 + xOffset, 18 + 18 * rowSize + 12);
@@ -81,7 +83,7 @@ public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockNotifiableP
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new NotifiableItemStackHandler(slotAmount, getController(), false);
+        return new NotifiableItemStackHandler(slotAmount+1, getController(), false);
     }
 
     @Nonnull
