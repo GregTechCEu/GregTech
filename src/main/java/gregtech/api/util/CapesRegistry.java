@@ -15,6 +15,7 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -23,6 +24,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import scala.Tuple3;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -163,14 +165,23 @@ public class CapesRegistry {
             if (advObject != null) {
                 CAPE_ADVANCEMENTS.put(advObject, cape);
             }
+            if (ctRegisterCapes.containsKey(world.provider.getDimension())) {
+                for (Tuple<ResourceLocation, ResourceLocation> tuple : ctRegisterCapes.get(world.provider.getDimension())) {
+                    advObject = advManager.getAdvancement(tuple.getFirst());
+                    if (advObject != null) {
+                        CAPE_ADVANCEMENTS.put(advObject, tuple.getSecond());
+                    }
+                }
+            }
         }
     }
 
+    private static Map<Integer, List<Tuple<ResourceLocation, ResourceLocation>>> ctRegisterCapes = new HashMap<>();
+
     @Optional.Method(modid = GTValues.MODID_CT)
     @ZenMethod
-    public static void registerCape(ResourceLocation advancement, ResourceLocation cape, IWorld iWorld) {
-        World world = CraftTweakerMC.getWorld(iWorld);
-        registerCape(advancement, cape, world);
+    public static void registerCape(String advancement, String cape, int dim) {
+        ctRegisterCapes.computeIfAbsent(dim, d->new ArrayList<>()).add(new Tuple<>(new ResourceLocation(advancement), new ResourceLocation(cape)));
     }
 
     /**
