@@ -316,13 +316,13 @@ public class SecondDegreeMaterials {
                 .build();
 
         SulfuricNickelSolution = new Material.Builder(2043, "sulfuric_nickel_solution")
-                .fluid()
+                .fluid(FluidTypes.ACID)
                 .color(0x3EB640)
                 .components(Nickel, 1, Oxygen, 1, SulfuricAcid, 1)
                 .build();
 
         SulfuricCopperSolution = new Material.Builder(2044, "sulfuric_copper_solution")
-                .fluid()
+                .fluid(FluidTypes.ACID)
                 .color(0x48A5C0)
                 .components(Copper, 1, Oxygen, 1, SulfuricAcid, 1)
                 .build();
@@ -334,26 +334,25 @@ public class SecondDegreeMaterials {
                 .build();
 
         NitrationMixture = new Material.Builder(2046, "nitration_mixture")
-                .fluid()
+                .fluid(FluidTypes.ACID)
                 .color(0xE6E2AB)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(NitricAcid, 1, SulfuricAcid, 1)
                 .build();
 
         DilutedSulfuricAcid = new Material.Builder(2047, "diluted_sulfuric_acid")
-                .fluid()
+                .fluid(FluidTypes.ACID)
                 .color(0xC07820)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(SulfuricAcid, 2, Water, 1)
                 .build();
 
         DilutedHydrochloricAcid = new Material.Builder(2048, "diluted_hydrochloric_acid")
-                .fluid()
+                .fluid(FluidTypes.ACID)
                 .color(0x99A7A3)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(HydrochloricAcid, 1, Water, 1)
                 .build();
-
 
         Flint = new Material.Builder(2049, "flint")
                 .gem(1)
@@ -405,7 +404,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         AquaRegia = new Material.Builder(2056, "aqua_regia")
-                .fluid()
+                .fluid(FluidTypes.ACID)
                 .color(0xFFB132)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(NitricAcid, 1, HydrochloricAcid, 2)
@@ -440,7 +439,7 @@ public class SecondDegreeMaterials {
                 .setFormula("NH4Cl", true);
 
         AcidicOsmiumSolution = new Material.Builder(2061, "acidic_osmium_solution")
-                .fluid()
+                .fluid(FluidTypes.ACID)
                 .color(0xA3AA8A)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Osmium, 1, Oxygen, 4, Water, 1, HydrochloricAcid, 1)

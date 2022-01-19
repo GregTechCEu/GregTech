@@ -1059,18 +1059,18 @@ public class FirstDegreeMaterials {
                 .build();
 
         NitricAcid = new Material.Builder(401, "nitric_acid")
-                .fluid()
+                .fluid(FluidTypes.ACID)
                 .color(0xCCCC00)
                 .components(Hydrogen, 1, Nitrogen, 1, Oxygen, 3)
                 .build();
 
         SulfuricAcid = new Material.Builder(402, "sulfuric_acid")
-                .fluid()
+                .fluid(FluidTypes.ACID)
                 .components(Hydrogen, 2, Sulfur, 1, Oxygen, 4)
                 .build();
 
         PhosphoricAcid = new Material.Builder(403, "phosphoric_acid")
-                .fluid()
+                .fluid(FluidTypes.ACID)
                 .color(0xDCDC01)
                 .components(Hydrogen, 3, Phosphorus, 1, Oxygen, 4)
                 .build();
@@ -1094,7 +1094,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         HypochlorousAcid = new Material.Builder(407, "hypochlorous_acid")
-                .fluid()
+                .fluid(FluidTypes.ACID)
                 .color(0x6F8A91)
                 .components(Hydrogen, 1, Chlorine, 1, Oxygen, 1)
                 .build();
@@ -1106,7 +1106,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         HydrofluoricAcid = new Material.Builder(409, "hydrofluoric_acid")
-                .fluid()
+                .fluid(FluidTypes.ACID)
                 .color(0x0088AA)
                 .components(Hydrogen, 1, Fluorine, 1)
                 .build();
@@ -1336,7 +1336,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         FluoroantimonicAcid = new Material.Builder(438, "fluoroantimonic_acid")
-                .fluid()
+                .fluid(FluidTypes.ACID)
                 .components(Hydrogen, 2, Antimony, 1, Fluorine, 7)
                 .build();
 
