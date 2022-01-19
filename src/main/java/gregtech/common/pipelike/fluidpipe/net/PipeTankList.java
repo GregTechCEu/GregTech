@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
-import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 import net.minecraft.util.EnumFacing;
@@ -56,7 +55,7 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
     @Override
     public int fill(FluidStack resource, boolean doFill) {
         int channel;
-        if (resource == null || resource.amount <= 0 || (channel = findChannel(resource)) < 0)
+        if (pipe.isFaceBlocked(facing) || resource == null || resource.amount <= 0 || (channel = findChannel(resource)) < 0)
             return 0;
 
         return fill(resource, doFill, channel);
