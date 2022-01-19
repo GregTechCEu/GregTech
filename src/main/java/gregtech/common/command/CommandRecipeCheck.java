@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class CommandRecipeCheck extends CommandBase {
+
     @Nonnull
     @Override
     public String getName() {
@@ -54,6 +55,7 @@ public class CommandRecipeCheck extends CommandBase {
                         recipe,
                         recipeMap,
                         recipe.getFluidInputs()
+                                // multiply volume of fluids by 10000 to detect conflicts only occurring if batching the recipe
                                 .stream().map(stack -> new FluidStack(stack, stack.amount * 10000))
                                 .collect(Collectors.toList()),
                         recipe.getInputs(), 0);
@@ -105,17 +107,21 @@ public class CommandRecipeCheck extends CommandBase {
             }
         }
         else {
-            // actually check the recipe
+            // when at the bottom of the input list, actually check the recipe
             Recipe foundRecipe = recipeMap.findRecipe(Long.MAX_VALUE, recipe.getInputs().stream().map(ingredient -> {
+                        // transform the CountableIngredient into a List<ItemStack>
                         ItemStack[] stacks = ingredient.getIngredient().getMatchingStacks();
                         if (stacks.length > 0) {
                             ItemStack outStack = stacks[0].copy();
+                            // non-consumed inputs have a stack size of 0, correct that to 1
+                            // multiply amount of items by 100 to detect conflicts only occurring if batching the recipe
                             outStack.setCount(Math.max(1, ingredient.getCount()) * 100);
                             return outStack;
                         }
                         return null;
                     }).filter(Objects::nonNull).collect(Collectors.toList()),
                     fluidInputs, Integer.MAX_VALUE, MatchingMode.DEFAULT);
+            // checks whether the same object is returned
             if (foundRecipe != recipe) {
                 return new MismatchEntry(recipe, foundRecipe, recipeMap);
             }
@@ -201,9 +207,14 @@ public class CommandRecipeCheck extends CommandBase {
             output.append("(OreDict) ");
         }
         output.append("{");
-        for (ItemStack stack : countableIngredient.getIngredient().getMatchingStacks()) {
+        ItemStack[] matchingStacks = countableIngredient.getIngredient().getMatchingStacks();
+        for (ItemStack stack : matchingStacks) {
             output.append(" ")
-                    .append(prettyPrintItemStack(stack));
+                    .append(prettyPrintItemStack(stack))
+                    .append(",");
+        }
+        if (matchingStacks.length > 0) {
+            output.delete(output.lastIndexOf(", "), output.length());
         }
         output.append(" } * ")
                 .append(countableIngredient.getCount());
