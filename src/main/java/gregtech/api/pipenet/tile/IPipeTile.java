@@ -39,6 +39,17 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     void setConnection(EnumFacing side, boolean connected, boolean fromNeighbor);
 
+    // if a face is blocked it will still render as connected, but it won't be able to operate in that direction
+    default boolean canHaveBlockedFaces() {
+        return true;
+    }
+
+    int getBlockedConnections();
+
+    boolean isFaceBlocked(EnumFacing side);
+
+    void setFaceBlocked(EnumFacing side, boolean blocked);
+
     PipeType getPipeType();
 
     NodeDataType getNodeData();

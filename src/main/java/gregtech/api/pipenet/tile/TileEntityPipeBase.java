@@ -32,6 +32,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     protected final PipeCoverableImplementation coverableImplementation = new PipeCoverableImplementation(this);
     protected int paintingColor = -1;
     private int connections = 0;
+    private int blockedConnections = 0;
     private NodeDataType cachedNodeData;
     private BlockPipe<PipeType, NodeDataType, ?> pipeBlock;
     private PipeType pipeType = getPipeTypeClass().getEnumConstants()[0];
@@ -113,6 +114,11 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     @Override
+    public int getBlockedConnections() {
+        return blockedConnections;
+    }
+
+    @Override
     public int getPaintingColor() {
         return isPainted() ? paintingColor : getDefaultPaintingColor();
     }
@@ -191,6 +197,22 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     @Override
+    public void setFaceBlocked(EnumFacing side, boolean blocked) {
+        if (!world.isRemote && canHaveBlockedFaces()) {
+            blockedConnections = withSideConnection(blockedConnections, side, !blocked);
+            writeCustomData(UPDATE_BLOCKED_CONNECTIONS, buf -> {
+                buf.writeVarInt(blockedConnections);
+            });
+            markDirty();
+        }
+    }
+
+    @Override
+    public boolean isFaceBlocked(EnumFacing side) {
+        return !canHaveBlockedFaces() && (blockedConnections & (1 << side.getIndex())) > 0;
+    }
+
+    @Override
     public PipeType getPipeType() {
         return pipeType;
     }
@@ -253,6 +275,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         }
         compound.setInteger("PipeType", pipeType.ordinal());
         compound.setInteger("Connections", connections);
+        compound.setInteger("BlockedConnections", blockedConnections);
         if (isPainted()) {
             compound.setInteger("InsulationColor", paintingColor);
         }
@@ -280,6 +303,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
                 connections |= blockedConnections;
             }
         }
+        blockedConnections = compound.getInteger("BlockedConnections");
 
         if (compound.hasKey("InsulationColor")) {
             this.paintingColor = compound.getInteger("InsulationColor");
@@ -305,6 +329,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void writeInitialSyncData(PacketBuffer buf) {
         writePipeProperties(buf);
         buf.writeVarInt(connections);
+        buf.writeVarInt(blockedConnections);
         buf.writeInt(paintingColor);
         this.coverableImplementation.writeInitialSyncData(buf);
     }
@@ -313,6 +338,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void receiveInitialSyncData(PacketBuffer buf) {
         readPipeProperties(buf);
         this.connections = buf.readVarInt();
+        this.blockedConnections = buf.readVarInt();
         this.paintingColor = buf.readInt();
         this.coverableImplementation.readInitialSyncData(buf);
     }
@@ -329,6 +355,9 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             this.coverableImplementation.readCustomData(buf.readVarInt(), buf);
         } else if (discriminator == UPDATE_PIPE_TYPE) {
             readPipeProperties(buf);
+            scheduleChunkForRenderUpdate();
+        } else if (discriminator == UPDATE_BLOCKED_CONNECTIONS) {
+            this.blockedConnections = buf.readVarInt();
             scheduleChunkForRenderUpdate();
         }
     }

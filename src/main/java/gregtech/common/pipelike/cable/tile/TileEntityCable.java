@@ -46,6 +46,11 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         return false;
     }
 
+    @Override
+    public boolean canHaveBlockedFaces() {
+        return false;
+    }
+
     private void initHandlers() {
         EnergyNet net = getEnergyNet();
         if (net == null) {
