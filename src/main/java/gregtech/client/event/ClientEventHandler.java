@@ -1,20 +1,16 @@
 package gregtech.client.event;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
-import gregtech.api.items.armor.ArmorLogicSuite;
-import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.util.CapesRegistry;
+import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
-import gregtech.client.utils.DepthTextureUtil;
 import gregtech.client.renderer.handler.TerminalARRenderer;
 import gregtech.client.renderer.handler.ToolOverlayRenderer;
-import gregtech.common.items.armor.PowerlessJetpack;
+import gregtech.client.utils.DepthTextureUtil;
+import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.fml.common.Mod;
@@ -38,52 +34,29 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onPreWorldRender(TickEvent.RenderTickEvent event) {
         DepthTextureUtil.onPreWorldRender(event);
-        final Minecraft mc = Minecraft.getMinecraft();
-        if (mc.inGameHasFocus && mc.world != null && !mc.gameSettings.showDebugInfo && Minecraft.isGuiEnabled()) {
-            final ItemStack item = mc.player.inventory.armorItemInSlot(EntityEquipmentSlot.CHEST.getIndex());
-            if (item.getItem() instanceof ArmorMetaItem) {
-                ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) item.getItem()).getItem(item);
-                if (armorMetaValue.getArmorLogic() instanceof ArmorLogicSuite) {
-                    ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
-                    if (armorLogic.isNeedDrawHUD()) {
-                        armorLogic.drawHUD(item);
-                    }
-                } else if (armorMetaValue.getArmorLogic() instanceof PowerlessJetpack) {
-                    PowerlessJetpack armorLogic = (PowerlessJetpack) armorMetaValue.getArmorLogic();
-                    if (armorLogic.isNeedDrawHUD()) {
-                        armorLogic.drawHUD(item);
-                    }
-                }
-            }
-        }
     }
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
-//        GTParticleManager.clientTick(event);
+        GTParticleManager.clientTick(event);
         TerminalARRenderer.onClientTick(event);
-    }
-
-    @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-//        GTParticleManager.clientTick(event);
     }
 
     @SubscribeEvent
     public static void onRenderWorldLast(RenderWorldLastEvent event) {
         DepthTextureUtil.renderWorld(event);
-//        GTParticleManager.renderWorld(event);
         MultiblockPreviewRenderer.renderWorldLastEvent(event);
         BlockPosHighlightRenderer.renderWorldLastEvent(event);
         TerminalARRenderer.renderWorldLastEvent(event);
+        GTParticleManager.renderWorld(event);
     }
 
     @SubscribeEvent
     public static void onRenderGameOverlayPre(RenderGameOverlayEvent.Pre event) {
         TerminalARRenderer.renderGameOverlayEvent(event);
-//        if (ConfigHolder.debug && event instanceof RenderGameOverlayEvent.Text) {
-//            GTParticleManager.debugOverlay((RenderGameOverlayEvent.Text) event);
-//        }
+        if (ConfigHolder.misc.debug && event instanceof RenderGameOverlayEvent.Text) {
+            GTParticleManager.debugOverlay((RenderGameOverlayEvent.Text) event);
+        }
     }
 
     @SubscribeEvent

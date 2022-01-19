@@ -32,7 +32,7 @@ public class MiscRecipeLoader {
 
         // Basic Terminal Recipe
         ModHandler.addShapedRecipe(true, "basic_terminal", TERMINAL.getStackForm(),
-                "SPS", "PBP", "PWP", 'S', new UnificationEntry(screw, WroughtIron), 'P', OreDictUnifier.get("paneGlass"), 'B', new ItemStack(Items.BOOK),
+                "SGS", "PBP", "PWP", 'S', new UnificationEntry(screw, WroughtIron), 'G', OreDictUnifier.get("paneGlass"), 'B', new ItemStack(Items.BOOK),
                                         'P', new UnificationEntry(plate, WroughtIron), 'W', new UnificationEntry(wireGtSingle, RedAlloy));
 
         // Potin Recipe
@@ -83,70 +83,70 @@ public class MiscRecipeLoader {
                 .notConsumable(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.COBBLESTONE))
                 .duration(16)
-                .EUt(VA[LV])
+                .EUt(VA[ULV])
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(new ItemStack(Blocks.STONE, 1, 0))
                 .outputs(new ItemStack(Blocks.STONE, 1, 0))
                 .duration(16)
-                .EUt(VA[LV])
+                .EUt(VA[ULV])
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Andesite)
                 .output(stone, Andesite)
                 .duration(16)
-                .EUt(VA[MV])
+                .EUt(60)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Granite)
                 .output(stone, Granite)
                 .duration(16)
-                .EUt(VA[MV])
+                .EUt(60)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Diorite)
                 .output(stone, Diorite)
                 .duration(16)
-                .EUt(VA[MV])
+                .EUt(60)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(dust, Redstone)
                 .outputs(new ItemStack(Blocks.OBSIDIAN, 1))
                 .duration(16)
-                .EUt(VA[HV])
+                .EUt(240)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Marble)
                 .output(stone, Marble)
                 .duration(16)
-                .EUt(VA[HV])
+                .EUt(240)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Basalt)
                 .output(stone, Basalt)
                 .duration(16)
-                .EUt(VA[HV])
+                .EUt(240)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, GraniteRed)
                 .output(stone, GraniteRed)
                 .duration(16)
-                .EUt(VA[EV])
+                .EUt(960)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, GraniteBlack)
                 .output(stone, GraniteBlack)
                 .duration(16)
-                .EUt(VA[EV])
+                .EUt(960)
                 .buildAndRegister();
 
         // Jetpacks
@@ -379,5 +379,12 @@ public class MiscRecipeLoader {
         builder.copy().fluidInputs(DyeGreen.getFluid(dyeAmount))    .output(GLASS_LENSES.get(Color.Green))    .buildAndRegister();
         builder.copy().fluidInputs(DyeRed.getFluid(dyeAmount))      .output(GLASS_LENSES.get(Color.Red))      .buildAndRegister();
         builder.copy().fluidInputs(DyeBlack.getFluid(dyeAmount))    .output(GLASS_LENSES.get(Color.Black))    .buildAndRegister();
+
+        // NAN Certificate
+        EXTRUDER_RECIPES.recipeBuilder()
+                .input(block, Neutronium, 64)
+                .input(block, Neutronium, 64)
+                .output(NAN_CERTIFICATE)
+                .duration(Integer.MAX_VALUE).EUt(VA[ULV]).buildAndRegister();
     }
 }

@@ -9,7 +9,7 @@ import gregtech.api.gui.impl.ModularUIGuiHandler;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
-import gregtech.api.metatileentity.multiblock.IMultipleRecipeMaps;
+import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
@@ -48,10 +48,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -110,7 +107,7 @@ public class GTJeiPlugin implements IModPlugin {
                         .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay());
 
                 if (recipeMap.getSmallRecipeMap() != null) {
-                    List<Recipe> smallRecipes = recipeMap.getSmallRecipeMap().getRecipeList();
+                    Collection<Recipe> smallRecipes = recipeMap.getSmallRecipeMap().getRecipeList();
                     recipeStream = recipeStream.filter(recipe -> !smallRecipes.contains(recipe));
                 }
 
@@ -132,7 +129,7 @@ public class GTJeiPlugin implements IModPlugin {
                     AbstractRecipeLogic logic = (AbstractRecipeLogic) workableCapability;
                     if (metaTileEntity instanceof SteamMetaTileEntity) {
                         deferredCatalysts.computeIfAbsent(logic.getRecipeMap(), k -> new ArrayList<>()).add(metaTileEntity);
-                    } else if (metaTileEntity instanceof IMultipleRecipeMaps && ((IMultipleRecipeMaps) metaTileEntity).hasMultipleRecipeMaps()) {
+                    } else if (metaTileEntity instanceof IMultipleRecipeMaps) {
                         for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity).getAvailableRecipeMaps()) {
                             registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
                         }
@@ -169,18 +166,17 @@ public class GTJeiPlugin implements IModPlugin {
                 MetaTileEntities.THERMAL_CENTRIFUGE,
                 MetaTileEntities.CHEMICAL_BATH,
                 MetaTileEntities.ELECTROMAGNETIC_SEPARATOR,
-                MetaTileEntities.SIFTER,
-                MetaTileEntities.ORE_WASHER
+                MetaTileEntities.SIFTER
         };
         for (MetaTileEntity[] machine : machineLists) {
-            if (machine.length < 1 || machine[0] == null) continue;
-            registry.addRecipeCatalyst(machine[0].getStackForm(), oreByProductId);
+            if (machine.length < GTValues.LV + 1 || machine[GTValues.LV] == null) continue;
+            registry.addRecipeCatalyst(machine[GTValues.LV].getStackForm(), oreByProductId);
         }
 
         //Material Tree
         List<MaterialTree> materialTreeList = new CopyOnWriteArrayList<>();
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-            if (material.hasProperty(PropertyKey.DUST) && !material.isHidden()) {
+            if (material.hasProperty(PropertyKey.DUST)) {
                 materialTreeList.add(new MaterialTree(material));
             }
         }

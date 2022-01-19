@@ -18,18 +18,25 @@ import static gregtech.common.blocks.wood.BlockRubberLog.NATURAL;
 
 public class WorldGenRubberTree extends WorldGenerator {
 
-    public WorldGenRubberTree(boolean notify) {
+    public static final WorldGenRubberTree TREE_GROW_INSTANCE = new WorldGenRubberTree(true);
+    public static final WorldGenRubberTree WORLD_GEN_INSTANCE = new WorldGenRubberTree(false);
+
+    protected WorldGenRubberTree(boolean notify) {
         super(notify);
     }
 
     @Override
     public boolean generate(@Nonnull World world, @Nonnull Random random, BlockPos pos) {
-        BlockPos.MutableBlockPos cPos = new BlockPos.MutableBlockPos();
-        cPos.setPos(pos.getX() + 8, world.getHeight() - 1, pos.getZ() + 8);
-        while (world.isAirBlock(cPos) && cPos.getY() > 0)
-            cPos.setPos(cPos.getX(), cPos.getY() - 1, cPos.getZ());
-        cPos.setPos(cPos.getX(), cPos.getY() + 1, cPos.getZ());
-        return grow(world, cPos, random);
+        return generateImpl(world, random, new BlockPos.MutableBlockPos(pos));
+    }
+
+    public boolean generateImpl(@Nonnull World world, @Nonnull Random random, BlockPos.MutableBlockPos pos) {
+        pos.setPos(pos.getX() + 8, world.getHeight() - 1, pos.getZ() + 8);
+        while (pos.getY() > 0 && world.isAirBlock(pos)) {
+            pos.setY(pos.getY() - 1);
+        }
+        pos.setY(pos.getY() + 1);
+        return grow(world, pos, random);
     }
 
     public boolean grow(World world, BlockPos pos, Random random) {

@@ -1,5 +1,6 @@
 package gregtech.api.gui.widgets;
 
+import com.google.common.base.Preconditions;
 import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ISizeProvider;
@@ -12,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
@@ -25,6 +27,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.List;
 
 public class SlotWidget extends Widget implements INativeWidget {
 
@@ -35,6 +39,9 @@ public class SlotWidget extends Widget implements INativeWidget {
 
     protected IGuiTexture[] backgroundTexture;
     protected Runnable changeListener;
+
+    private String tooltipText;
+    private Object[] tooltipArgs;
 
     public SlotWidget(IInventory inventory, int slotIndex, int xPosition, int yPosition, boolean canTakeItems, boolean canPutItems) {
         super(new Position(xPosition, yPosition), new Size(18, 18));
@@ -47,7 +54,14 @@ public class SlotWidget extends Widget implements INativeWidget {
         super(new Position(xPosition, yPosition), new Size(18, 18));
         this.canTakeItems = canTakeItems;
         this.canPutItems = canPutItems;
-        this.slotReference = createSlot(itemHandler, slotIndex);
+        this.slotReference = createSlot(itemHandler, slotIndex, true);
+    }
+
+    public SlotWidget(IItemHandler itemHandler, int slotIndex, int xPosition, int yPosition, boolean canTakeItems, boolean canPutItems, boolean canShiftClickInto) {
+        super(new Position(xPosition, yPosition), new Size(18, 18));
+        this.canTakeItems = canTakeItems;
+        this.canPutItems = canPutItems;
+        this.slotReference = createSlot(itemHandler, slotIndex, canShiftClickInto);
     }
 
     @Override
@@ -60,13 +74,17 @@ public class SlotWidget extends Widget implements INativeWidget {
         return new WidgetSlot(inventory, index, 0, 0);
     }
 
-    protected Slot createSlot(IItemHandler itemHandler, int index) {
-        return new WidgetSlotItemHandler(itemHandler, index, 0, 0);
+    protected Slot createSlot(IItemHandler itemHandler, int index, boolean canShiftClickInto) {
+        return new WidgetSlotItemHandler(itemHandler, index, 0, 0, canShiftClickInto);
     }
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
         ((ISlotWidget) slotReference).setHover(isMouseOverElement(mouseX, mouseY) && isActive());
+        if (tooltipText != null && isMouseOverElement(mouseX, mouseY) && !slotReference.getHasStack()) {
+            List<String> hoverList = Arrays.asList(I18n.format(tooltipText, tooltipArgs).split("/n"));
+            drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
+        }
     }
 
     @Override
@@ -207,6 +225,13 @@ public class SlotWidget extends Widget implements INativeWidget {
         return this;
     }
 
+    public SlotWidget setTooltipText(String tooltipText, Object... args) {
+        Preconditions.checkNotNull(tooltipText, "tooltipText");
+        this.tooltipText = tooltipText;
+        this.tooltipArgs = args;
+        return this;
+    }
+
     @Override
     public SlotLocationInfo getSlotLocationInfo() {
         return locationInfo;
@@ -298,14 +323,15 @@ public class SlotWidget extends Widget implements INativeWidget {
         public boolean isEnabled() {
             return SlotWidget.this.isEnabled();
         }
-
     }
 
-    protected class WidgetSlotItemHandler extends SlotItemHandler implements ISlotWidget {
+    public class WidgetSlotItemHandler extends SlotItemHandler implements ISlotWidget {
         boolean isHover;
+        final boolean canShiftClickInto;
 
-        public WidgetSlotItemHandler(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+        public WidgetSlotItemHandler(IItemHandler itemHandler, int index, int xPosition, int yPosition, boolean canShiftClickInto) {
             super(itemHandler, index, xPosition, yPosition);
+            this.canShiftClickInto = canShiftClickInto;
         }
 
         @Override
@@ -352,5 +378,8 @@ public class SlotWidget extends Widget implements INativeWidget {
             return SlotWidget.this.isEnabled();
         }
 
+        public boolean canShiftClickInto() {
+            return canShiftClickInto;
+        }
     }
 }

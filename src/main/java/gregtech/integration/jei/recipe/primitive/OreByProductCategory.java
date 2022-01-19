@@ -31,12 +31,14 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
     protected final IDrawable slot;
     protected final IDrawable fluidSlot;
     protected final IDrawable arrowsBase;
+    protected final IDrawable arrowsDirectSmelt;
     protected final IDrawable arrowsChemBath;
     protected final IDrawable arrowsSeparator;
     protected final IDrawable arrowsSifter;
     protected final IDrawable icon;
     protected final List<Boolean> itemOutputExists = new ArrayList<>();
     protected final List<Boolean> fluidInputExists = new ArrayList<>();
+    protected boolean hasDirectSmelt;
     protected boolean hasChemBath;
     protected boolean hasSeparator;
     protected boolean hasSifter;
@@ -115,6 +117,8 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
         String baseloc = GTValues.MODID + ":textures/gui/arrows/";
         this.arrowsBase = guiHelper.drawableBuilder(new ResourceLocation(baseloc + "oreby-base.png"), 0, 0, 176, 166)
                 .setTextureSize(176, 166).build();
+        this.arrowsDirectSmelt = guiHelper.drawableBuilder(new ResourceLocation(baseloc + "oreby-smelt.png"), 0, 0, 176, 166)
+                .setTextureSize(176, 166).build();
         this.arrowsChemBath = guiHelper.drawableBuilder(new ResourceLocation(baseloc + "oreby-chem.png"), 0, 0, 176, 166)
                 .setTextureSize(176, 166).build();
         this.arrowsSeparator = guiHelper.drawableBuilder(new ResourceLocation(baseloc + "oreby-sep.png"), 0, 0, 176, 166)
@@ -155,6 +159,7 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
         itemStackGroup.set(ingredients);
         fluidStackGroup.set(ingredients);
 
+        hasDirectSmelt = recipeWrapper.hasDirectSmelt();
         hasChemBath = recipeWrapper.hasChemBath();
         hasSeparator = recipeWrapper.hasSeparator();
         hasSifter = recipeWrapper.hasSifter();
@@ -175,6 +180,9 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
     @Override
     public void drawExtras(@Nonnull Minecraft minecraft) {
         arrowsBase.draw(minecraft, 0, 0);
+        if (hasDirectSmelt) {
+            arrowsDirectSmelt.draw(minecraft, 0, 0);
+        }
         if (hasChemBath) {
             arrowsChemBath.draw(minecraft, 0, 0);
         }

@@ -9,8 +9,9 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
-import net.minecraft.block.BlockStaticLiquid;
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
@@ -18,8 +19,13 @@ import java.util.function.Supplier;
 
 public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
 
+    private boolean hasValidFluids;
+
     public MetaTileEntityRockBreaker(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier) {
         super(metaTileEntityId, recipeMap, renderer, tier, true);
+        if (getWorld() != null && !getWorld().isRemote) {
+            checkAdjacentFluids();
+        }
     }
 
     @Override
@@ -34,19 +40,56 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
         return result;
     }
 
-    protected boolean checkSidesValid(BlockStaticLiquid liquid) {
-        EnumFacing frontFacing = getFrontFacing();
-        for (EnumFacing side : EnumFacing.VALUES) {
-            if (side == frontFacing || side == EnumFacing.DOWN || side == EnumFacing.UP)
-                continue;
-
-            if (getWorld().getBlockState(getPos().offset(side)) == liquid.getDefaultState())
-                return true;
-        }
-        return false;
+    @Override
+    public void onNeighborChanged() {
+        super.onNeighborChanged();
+        checkAdjacentFluids();
     }
 
-    protected static class RockBreakerRecipeLogic extends RecipeLogicEnergy {
+    private void checkAdjacentFluids() {
+        boolean hasLava = false;
+        boolean hasWater = false;
+        for (EnumFacing side : EnumFacing.VALUES) {
+            if (hasLava && hasWater) {
+                break;
+            }
+
+            if (side == frontFacing || side.getAxis().isVertical()) {
+                continue;
+            }
+
+            Block block = getWorld().getBlockState(getPos().offset(side)).getBlock();
+            if (block == Blocks.FLOWING_LAVA || block == Blocks.LAVA) {
+                hasLava = true;
+            } else if (block == Blocks.FLOWING_WATER || block == Blocks.WATER) {
+                hasWater = true;
+            }
+        }
+        this.hasValidFluids = hasLava && hasWater;
+    }
+
+    @Override
+    public <T> void addNotifiedInput(T input) {
+        super.addNotifiedInput(input);
+        onNeighborChanged();
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setBoolean("hasValidFluids", hasValidFluids);
+        return data;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        if (data.hasKey("hasValidFluids")) {
+            this.hasValidFluids = data.getBoolean("hasValidFluids");
+        }
+    }
+
+    protected class RockBreakerRecipeLogic extends RecipeLogicEnergy {
 
         public RockBreakerRecipeLogic(MetaTileEntity metaTileEntity, RecipeMap<?> recipeMap, Supplier<IEnergyContainer> energyContainer) {
             super(metaTileEntity, recipeMap, energyContainer);
@@ -54,8 +97,7 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
 
         @Override
         protected boolean shouldSearchForRecipes() {
-            MetaTileEntityRockBreaker rockBreaker = (MetaTileEntityRockBreaker) getMetaTileEntity();
-            return super.shouldSearchForRecipes() && rockBreaker.checkSidesValid(Blocks.LAVA) && rockBreaker.checkSidesValid(Blocks.WATER);
+            return hasValidFluids && super.shouldSearchForRecipes();
         }
     }
 }

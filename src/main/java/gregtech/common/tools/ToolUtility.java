@@ -5,7 +5,9 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.TaskScheduler;
+import gregtech.common.blocks.BlockOre;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.state.IBlockState;
@@ -94,14 +96,22 @@ public class ToolUtility {
     }
 
     public static void applyHammerDrops(Random random, IBlockState blockState, List<ItemStack> drops, int fortuneLevel, EntityPlayer player) {
-        MaterialStack input = OreDictUnifier.getMaterial(new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState)));
-        if (input != null && input.material.hasProperty(PropertyKey.ORE) && !(player instanceof FakePlayer)) {
+        ItemStack inputStack;
+        if (blockState.getBlock() instanceof BlockOre) {
+            inputStack = drops.get(0);
+        } else {
+            inputStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
+        }
+        MaterialStack input = OreDictUnifier.getMaterial(inputStack);
+        if (input != null && input.material.hasProperty(PropertyKey.ORE) && GTUtility.isOre(blockState.getBlock()) && !(player instanceof FakePlayer)) {
             drops.clear();
+            OrePrefix prefix = OreDictUnifier.getPrefix(new ItemStack(blockState.getBlock()));
+            int multiplier = (prefix == OrePrefix.oreEndstone || prefix == OrePrefix.oreNetherrack) ? 2 : 1;
             ItemStack output = OreDictUnifier.get(OrePrefix.crushed, input.material);
 
             if(fortuneLevel > 0){
                 if(fortuneLevel > 3) fortuneLevel = 3;
-                output.setCount((input.material.getProperty((PropertyKey.ORE)).getOreMultiplier()) * Math.max(1, random.nextInt(fortuneLevel + 2) - 1));
+                output.setCount((input.material.getProperty((PropertyKey.ORE)).getOreMultiplier() * multiplier) * (random.nextFloat() <= (fortuneLevel / 3.0) ? 2 : 1));
                 if (output.getCount() == 0) output.setCount(1);
             }
             else{

@@ -4,10 +4,12 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.util.GTUtility;
 import gregtech.common.covers.CoverFluidFilter;
 import gregtech.common.covers.CoverPump;
 import gregtech.common.covers.FluidFilterMode;
@@ -24,6 +26,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -36,10 +42,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Random;
 import java.util.function.Predicate;
 
-public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeType, FluidPipeProperties> {
+public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeType, FluidPipeProperties> implements IDataInfoProvider {
 
     public static final int FREQUENCY = 5;
     private static final Random random = new Random();
@@ -361,5 +370,33 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                     direction.getYOffset() * 0.2 + rand.nextDouble() * 0.1,
                     direction.getZOffset() * 0.2 + rand.nextDouble() * 0.1);
         }
+    }
+
+    @Nonnull
+    @Override
+    public List<ITextComponent> getDataInfo() {
+        List<ITextComponent> list = new ArrayList<>();
+
+        FluidStack[] fluids = this.getContainedFluids();
+        if (fluids != null) {
+            boolean allTanksEmpty = true;
+            for (int i = 0; i < fluids.length; i++) {
+                if (fluids[i] != null) {
+                    if (fluids[i].getFluid() == null)
+                        continue;
+
+                    allTanksEmpty = false;
+                    list.add(new TextComponentTranslation("behavior.tricorder.tank", i,
+                            new TextComponentTranslation(GTUtility.formatNumbers(fluids[i].amount)).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                            new TextComponentTranslation(GTUtility.formatNumbers(this.getCapacityPerTank())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                            new TextComponentTranslation(fluids[i].getFluid().getLocalizedName(fluids[i])).setStyle(new Style().setColor(TextFormatting.GOLD))
+                    ));
+               }
+            }
+
+            if (allTanksEmpty)
+                list.add(new TextComponentTranslation("behavior.tricorder.tanks_empty"));
+        }
+        return list;
     }
 }

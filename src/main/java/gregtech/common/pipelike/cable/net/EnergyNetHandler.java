@@ -16,7 +16,7 @@ import java.util.Objects;
 
 public class EnergyNetHandler implements IEnergyContainer {
 
-    private final EnergyNet net;
+    private EnergyNet net;
     private final TileEntityCable cable;
     private final EnumFacing facing;
 
@@ -24,6 +24,14 @@ public class EnergyNetHandler implements IEnergyContainer {
         this.net = Objects.requireNonNull(net);
         this.cable = Objects.requireNonNull(cable);
         this.facing = facing;
+    }
+
+    public void updateNetwork(EnergyNet net) {
+        this.net = net;
+    }
+
+    public EnergyNet getNet() {
+        return net;
     }
 
     @Override

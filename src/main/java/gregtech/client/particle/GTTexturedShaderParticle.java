@@ -26,7 +26,6 @@ import static org.lwjgl.opengl.GL11.glGetInteger;
 public abstract class GTTexturedShaderParticle extends GTParticle {
     public GTTexturedShaderParticle(World worldIn, double posXIn, double posYIn, double posZIn) {
         super(worldIn, posXIn, posYIn, posZIn);
-        this.setTexturesPerRow(1f);
     }
 
     @Override

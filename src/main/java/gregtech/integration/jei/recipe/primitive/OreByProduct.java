@@ -61,7 +61,6 @@ public class OreByProduct implements IRecipeWrapper {
     );
 
     private static final ImmutableList<ItemStack> ALWAYS_MACHINES = ImmutableList.of(
-            new ItemStack(Blocks.FURNACE),
             MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
             MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
             MetaTileEntities.CENTRIFUGE[GTValues.LV].getStackForm(),
@@ -76,6 +75,7 @@ public class OreByProduct implements IRecipeWrapper {
     private final List<List<ItemStack>> inputs = new ArrayList<>();
     private final List<List<ItemStack>> outputs = new ArrayList<>();
     private final List<List<FluidStack>> fluidInputs = new ArrayList<>();
+    private boolean hasDirectSmelt = false;
     private boolean hasChemBath = false;
     private boolean hasSeparator = false;
     private boolean hasSifter = false;
@@ -109,6 +109,13 @@ public class OreByProduct implements IRecipeWrapper {
         List<ItemStack> simpleWashers = new ArrayList<>();
         simpleWashers.add(new ItemStack(Items.CAULDRON));
         simpleWashers.add(MetaTileEntities.ORE_WASHER[GTValues.LV].getStackForm());
+
+        if (!material.hasProperty(PropertyKey.BLAST)) {
+            addToInputs(new ItemStack(Blocks.FURNACE));
+            hasDirectSmelt = true;
+        } else {
+            addToInputs(ItemStack.EMPTY);
+        }
 
         for (ItemStack stack : ALWAYS_MACHINES) {
             addToInputs(stack);
@@ -147,25 +154,33 @@ public class OreByProduct implements IRecipeWrapper {
         // total number of inputs added
         currentSlot += 21;
 
-        // BASIC PROCESSING - always present
+        // BASIC PROCESSING
 
         // begin lots of logic duplication from OreRecipeHandler
         // direct smelt
-        ItemStack smeltingResult;
-        Material smeltingMaterial = property.getDirectSmeltResult() == null ? material : property.getDirectSmeltResult();
-        if (smeltingMaterial.hasProperty(PropertyKey.INGOT)) {
-            smeltingResult = OreDictUnifier.get(OrePrefix.ingot, smeltingMaterial);
-        } else if (smeltingMaterial.hasProperty(PropertyKey.GEM)) {
-            smeltingResult = OreDictUnifier.get(OrePrefix.gem, smeltingMaterial);
+        if (hasDirectSmelt) {
+            ItemStack smeltingResult;
+            Material smeltingMaterial = property.getDirectSmeltResult() == null ? material : property.getDirectSmeltResult();
+            if (smeltingMaterial.hasProperty(PropertyKey.INGOT)) {
+                smeltingResult = OreDictUnifier.get(OrePrefix.ingot, smeltingMaterial);
+            } else if (smeltingMaterial.hasProperty(PropertyKey.GEM)) {
+                smeltingResult = OreDictUnifier.get(OrePrefix.gem, smeltingMaterial);
+            } else {
+                smeltingResult = OreDictUnifier.get(OrePrefix.dust, smeltingMaterial);
+            }
+            smeltingResult.setCount(smeltingResult.getCount() * oreMultiplier);
+            addToOutputs(smeltingResult);
         } else {
-            smeltingResult = OreDictUnifier.get(OrePrefix.dust, smeltingMaterial);
+            addEmptyOutputs(1);
         }
-        smeltingResult.setCount(smeltingResult.getCount() * oreMultiplier);
-        addToOutputs(smeltingResult);
 
         // macerate ore -> crushed
         addToOutputs(material, OrePrefix.crushed, 2 * oreMultiplier);
-        addToOutputs(byproducts[0], OrePrefix.dust, 1);
+        if (!OreDictUnifier.get(OrePrefix.gem, byproducts[0]).isEmpty()) {
+            addToOutputs(byproducts[0], OrePrefix.gem, 1);
+        } else {
+            addToOutputs(byproducts[0], OrePrefix.dust, 1);
+        }
         addChance(1400, 850);
 
         // macerate crushed -> impure
@@ -211,7 +226,7 @@ public class OreByProduct implements IRecipeWrapper {
         addToOutputs(material, OrePrefix.dustPure, 1);
         addToOutputs(material, OrePrefix.dust, 1);
 
-        // ADVANCED PROCESSING - only on some materials
+        // ADVANCED PROCESSING
 
         // chem bath
         if (hasChemBath) {
@@ -305,6 +320,10 @@ public class OreByProduct implements IRecipeWrapper {
 
     public boolean hasChemBath() {
         return hasChemBath;
+    }
+
+    public boolean hasDirectSmelt() {
+        return hasDirectSmelt;
     }
 
     private void addToOutputs(Material material, OrePrefix prefix, int size) {

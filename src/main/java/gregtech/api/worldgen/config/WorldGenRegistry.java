@@ -21,12 +21,14 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
@@ -100,13 +102,23 @@ public class WorldGenRegistry {
         registerVeinPopulator("fluid_spring", FluidSpringPopulator::new);
         registerVeinPopulator("surface_block", SurfaceBlockPopulator::new);
 
-        WorldGeneratorImpl worldGenerator = new WorldGeneratorImpl();
-        GameRegistry.registerWorldGenerator(worldGenerator, 1);
-        MinecraftForge.ORE_GEN_BUS.register(worldGenerator);
+        GameRegistry.registerWorldGenerator(WorldGeneratorImpl.INSTANCE, 1);
+        MinecraftForge.ORE_GEN_BUS.register(WorldGeneratorImpl.INSTANCE);
         try {
             reinitializeRegisteredVeins();
         } catch (IOException | RuntimeException exception) {
             GTLog.logger.fatal("Failed to initialize worldgen registry.", exception);
+        }
+        if (GTValues.isModLoaded("galacticraftcore")) {
+            try {
+                Class<?> transformerHooksClass = Class.forName("micdoodle8.mods.galacticraft.core.TransformerHooks");
+                Field otherModGeneratorsWhitelistField = transformerHooksClass.getDeclaredField("otherModGeneratorsWhitelist");
+                otherModGeneratorsWhitelistField.setAccessible(true);
+                List<IWorldGenerator> otherModGeneratorsWhitelist = (List<IWorldGenerator>) otherModGeneratorsWhitelistField.get(null);
+                otherModGeneratorsWhitelist.add(WorldGeneratorImpl.INSTANCE);
+            } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
+                GTLog.logger.fatal("Failed to inject world generator into Galacticraft's whitelist.", e);
+            }
         }
     }
 

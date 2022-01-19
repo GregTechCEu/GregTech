@@ -13,6 +13,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.client.model.IModelSupplier;
+import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.model.modelfactories.BakedModelHandler;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityTESR;
@@ -44,7 +45,6 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.DefaultStateMapper;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.init.Blocks;
@@ -221,7 +221,6 @@ public class MetaBlocks {
 
         StoneType.init();
 
-        createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && (m.hasProperty(PropertyKey.INGOT) || m.hasProperty(PropertyKey.GEM)) && !OrePrefix.block.isIgnored(m), MetaBlocks::createCompressedBlock);
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME), MetaBlocks::createFrameBlock);
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.DUST), MetaBlocks::createSurfaceRockBlock);
 
@@ -231,7 +230,6 @@ public class MetaBlocks {
                 MetaBlocks::createCompressedBlock);
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-            if (material.isHidden()) continue;
 
             if (material.hasProperty(PropertyKey.ORE)) {
                 createOreBlock(material);
@@ -287,7 +285,6 @@ public class MetaBlocks {
         Map<Integer, Material[]> blocksToGenerate = new TreeMap<>();
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-            if (material.isHidden()) continue;
             if (materialPredicate.test(material)) {
                 int id = material.getId();
                 int metaBlockID = id / 16;
@@ -295,7 +292,7 @@ public class MetaBlocks {
 
                 if (!blocksToGenerate.containsKey(metaBlockID)) {
                     Material[] materials = new Material[16];
-                    Arrays.fill(materials, Materials._NULL);
+                    Arrays.fill(materials, Materials.NULL);
                     blocksToGenerate.put(metaBlockID, materials);
                 }
 
@@ -414,7 +411,6 @@ public class MetaBlocks {
 
         COMPRESSED.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
         FRAMES.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
-        SURFACE_ROCK.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
         ORES.forEach(IModelSupplier::onModelRegister);
     }
 
@@ -428,22 +424,6 @@ public class MetaBlocks {
                             statePropertiesToString(state.getProperties())));
         }
     }
-
-    @SideOnly(Side.CLIENT)
-    private static void registerItemModelWithFilteredProperties(Block block, IProperty<?>... filteredProperties) {
-        for (IBlockState state : block.getBlockState().getValidStates()) {
-            HashMap<IProperty<?>, Comparable<?>> stringProperties = new HashMap<>();
-            for (IProperty<?> property : filteredProperties) {
-                stringProperties.put(property, state.getValue(property));
-            }
-            //noinspection ConstantConditions
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block),
-                    block.getMetaFromState(state),
-                    new ModelResourceLocation(block.getRegistryName(),
-                            statePropertiesToString(stringProperties)));
-        }
-    }
-
 
     @SideOnly(Side.CLIENT)
     private static void registerItemModelWithOverride(Block block, Map<IProperty<?>, Comparable<?>> stateOverrides) {
@@ -460,48 +440,33 @@ public class MetaBlocks {
 
     @SideOnly(Side.CLIENT)
     public static void registerStateMappers() {
-        ModelLoader.setCustomStateMapper(MACHINE, new DefaultStateMapper() {
+        ModelLoader.setCustomStateMapper(MACHINE, new SimpleStateMapper(MetaTileEntityRenderer.MODEL_LOCATION));
+
+        IStateMapper normalStateMapper = new SimpleStateMapper(CableRenderer.MODEL_LOCATION);
+        for (BlockCable cable : CABLES) {
+            ModelLoader.setCustomStateMapper(cable, normalStateMapper);
+        }
+        normalStateMapper = new SimpleStateMapper(FluidPipeRenderer.MODEL_LOCATION);
+        for (BlockFluidPipe pipe : FLUID_PIPES) {
+            ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
+        }
+        normalStateMapper = new SimpleStateMapper(ItemPipeRenderer.MODEL_LOCATION);
+        for (BlockItemPipe pipe : ITEM_PIPES) {
+            ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
+        }
+        normalStateMapper = new SimpleStateMapper(BlockSurfaceRock.MODEL_LOCATION);
+        for (BlockSurfaceRock surfaceRock : new HashSet<>(SURFACE_ROCK.values())) {
+            ModelLoader.setCustomStateMapper(surfaceRock, normalStateMapper);
+        }
+
+        normalStateMapper = new StateMapperBase() {
             @Nonnull
             @Override
             protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
-                return MetaTileEntityRenderer.MODEL_LOCATION;
-            }
-        });
-
-        for (BlockCable cable : CABLES) {
-            ModelLoader.setCustomStateMapper(cable, new DefaultStateMapper() {
-                @Nonnull
-                @Override
-                protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
-                    return CableRenderer.MODEL_LOCATION;
-                }
-            });
-        }
-        for (BlockFluidPipe pipe : FLUID_PIPES) {
-            ModelLoader.setCustomStateMapper(pipe, new DefaultStateMapper() {
-                @Nonnull
-                @Override
-                protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
-                    return FluidPipeRenderer.MODEL_LOCATION;
-                }
-            });
-        }
-        for (BlockItemPipe pipe : ITEM_PIPES) {
-            ModelLoader.setCustomStateMapper(pipe, new DefaultStateMapper() {
-                @Nonnull
-                @Override
-                protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
-                    return ItemPipeRenderer.MODEL_LOCATION;
-                }
-            });
-        }
-
-        IStateMapper normalStateMapper = new StateMapperBase() {
-            @Override
-            protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
                 return new ModelResourceLocation(Block.REGISTRY.getNameForObject(state.getBlock()), "normal");
             }
         };
+
         ModelLoader.setCustomStateMapper(FOAM, normalStateMapper);
         ModelLoader.setCustomStateMapper(REINFORCED_FOAM, normalStateMapper);
         ModelLoader.setCustomStateMapper(PETRIFIED_FOAM, normalStateMapper);

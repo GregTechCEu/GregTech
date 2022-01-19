@@ -16,7 +16,6 @@ import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -30,6 +29,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +40,6 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     private final ArrayList<Short> generatedItems = new ArrayList<>();
     private final ArrayList<ItemStack> items = new ArrayList<>();
-    private final ArrayList<Short> hiddenItems = new ArrayList<>();
     private final OrePrefix prefix;
 
     public static final Map<OrePrefix, OrePrefix> purifyMap = new HashMap<OrePrefix, OrePrefix>() {{
@@ -56,9 +55,6 @@ public class MetaPrefixItem extends StandardMetaItem {
             short i = (short) GregTechAPI.MATERIAL_REGISTRY.getIDForObject(material);
             if (orePrefix != null && canGenerate(orePrefix, material)) {
                 generatedItems.add(i);
-            }
-            if (material.isHidden()) {
-                hiddenItems.add(i);
             }
         }
     }
@@ -96,6 +92,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         return orePrefix.doGenerateItem(material);
     }
 
+    @Nonnull
     @Override
     public String getItemStackDisplayName(ItemStack itemStack) {
         Material material = GregTechAPI.MATERIAL_REGISTRY.getObjectById(itemStack.getItemDamage());
@@ -143,7 +140,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     }
 
     @Override
-    public int getItemStackLimit(ItemStack stack) {
+    public int getItemStackLimit(@Nonnull ItemStack stack) {
         if (prefix == null)
             return 64;
         return prefix.maxStackSize;
@@ -151,19 +148,17 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
         super.getSubItems(tab, subItems);
         if (tab == GregTechAPI.TAB_GREGTECH_MATERIALS || tab == CreativeTabs.SEARCH) {
             for (short metadata : generatedItems) {
-                if (!hiddenItems.contains(metadata)) {
-                    subItems.add(new ItemStack(this, 1, metadata));
-                }
+                subItems.add(new ItemStack(this, 1, metadata));
             }
         }
     }
 
     @Override
-    public void onUpdate(ItemStack itemStack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+    public void onUpdate(@Nonnull ItemStack itemStack, @Nonnull World worldIn, @Nonnull Entity entityIn, int itemSlot, boolean isSelected) {
         super.onUpdate(itemStack, worldIn, entityIn, itemSlot, isSelected);
         if (generatedItems.contains((short) itemStack.getItemDamage()) && entityIn instanceof EntityLivingBase) {
             EntityLivingBase entity = (EntityLivingBase) entityIn;
@@ -179,7 +174,7 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack itemStack, @Nullable World worldIn, List<String> lines, ITooltipFlag tooltipFlag) {
+    public void addInformation(@Nonnull ItemStack itemStack, @Nullable World worldIn, @Nonnull List<String> lines, @Nonnull ITooltipFlag tooltipFlag) {
         super.addInformation(itemStack, worldIn, lines, tooltipFlag);
         int damage = itemStack.getItemDamage();
         Material material = GregTechAPI.MATERIAL_REGISTRY.getObjectById(damage);
@@ -197,11 +192,11 @@ public class MetaPrefixItem extends StandardMetaItem {
     }
 
     @Override
-    public int getItemBurnTime(ItemStack itemStack) {
+    public int getItemBurnTime(@Nonnull ItemStack itemStack) {
         int damage = itemStack.getItemDamage();
         Material material = GregTechAPI.MATERIAL_REGISTRY.getObjectById(damage);
         DustProperty property = material == null ? null : material.getProperty(PropertyKey.DUST);
-        if (property != null) return (int) (property.getBurnTime() * prefix.materialAmount / GTValues.M);
+        if (property != null) return (int) (property.getBurnTime() * prefix.getMaterialAmount(material) / GTValues.M);
         return super.getItemBurnTime(itemStack);
 
     }

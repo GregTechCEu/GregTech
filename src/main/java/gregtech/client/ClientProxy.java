@@ -4,10 +4,10 @@ import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.ItemNBTUtils;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.GTValues;
+import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
-import gregtech.client.renderer.handler.SurfaceRockRenderer;
 import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
@@ -43,6 +43,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.ColorizerFoliage;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.ClientCommandHandler;
@@ -58,10 +59,18 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
-    
+
     public static final IBlockColor COMPRESSED_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
             state.getValue(((BlockCompressed) state.getBlock()).variantProperty).getMaterialRGB();
 
@@ -90,7 +99,7 @@ public class ClientProxy extends CommonProxy {
             state.getValue(BlockColored.COLOR).colorValue;
 
     public static final IBlockColor SURFACE_ROCK_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
-            state.getValue(((BlockSurfaceRock) state.getBlock()).variantProperty).getMaterialRGB();
+            tintIndex == 1 ? state.getValue(((BlockSurfaceRock) state.getBlock()).variantProperty).getMaterialRGB() : -1;
 
     public static final IBlockColor RUBBER_LEAVES_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
             ColorizerFoliage.getFoliageColorBirch();
@@ -111,7 +120,6 @@ public class ClientProxy extends CommonProxy {
         CableRenderer.preInit();
         FluidPipeRenderer.preInit();
         ItemPipeRenderer.preInit();
-        SurfaceRockRenderer.preInit();
         MetaEntities.initRenderers();
         TextureUtils.addIconRegister(MetaFluids::registerSprites);
     }
@@ -154,7 +162,6 @@ public class ClientProxy extends CommonProxy {
         }
         MetaBlocks.COMPRESSED.values().stream().distinct().forEach(c -> c.onTextureStitch(event));
         MetaBlocks.FRAMES.values().stream().distinct().forEach(f -> f.onTextureStitch(event));
-        MetaBlocks.SURFACE_ROCK.values().stream().distinct().forEach(c -> c.onTextureStitch(event));
         MetaBlocks.ORES.forEach(o -> o.onTextureStitch(event));
     }
 
@@ -167,12 +174,16 @@ public class ClientProxy extends CommonProxy {
 
         // Test for Items
         UnificationEntry unificationEntry = OreDictUnifier.getUnificationEntry(itemStack);
-        if (unificationEntry != null && unificationEntry.material != null) {
+
+        if (itemStack.getItem() instanceof MetaOreDictItem) { // Test for OreDictItems
+            MetaOreDictItem oreDictItem = (MetaOreDictItem) itemStack.getItem();
+            Optional<String> oreDictName = OreDictUnifier.getOreDictionaryNames(itemStack).stream().findFirst();
+            if (oreDictName.isPresent() && oreDictItem.OREDICT_TO_FORMULA.containsKey(oreDictName.get())) {
+                chemicalFormula = oreDictItem.OREDICT_TO_FORMULA.get(oreDictName.get());
+            }
+        } else if (unificationEntry != null && unificationEntry.material != null) {
             chemicalFormula = unificationEntry.material.getChemicalFormula();
-
-            // Test for Fluids
-        } else if (ItemNBTUtils.hasTag(itemStack)) {
-
+        } else if (ItemNBTUtils.hasTag(itemStack)) { // Test for Fluids
             // Vanilla bucket
             chemicalFormula = FluidTooltipUtil.getFluidTooltip(ItemNBTUtils.getString(itemStack, "FluidName"));
 
@@ -183,13 +194,12 @@ public class ClientProxy extends CommonProxy {
                     chemicalFormula = FluidTooltipUtil.getFluidTooltip(FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY)));
                 }
             }
-
-            // Water buckets have a separate registry name from other buckets
-        } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) {
+        } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) { // Water buckets have a separate registry name from other buckets
             chemicalFormula = FluidTooltipUtil.getWaterTooltip();
         }
+
         if (chemicalFormula != null && !chemicalFormula.isEmpty()) {
-            event.getToolTip().add(1, ChatFormatting.YELLOW.toString() + chemicalFormula);
+            event.getToolTip().add(1, ChatFormatting.YELLOW + chemicalFormula);
         }
     }
 

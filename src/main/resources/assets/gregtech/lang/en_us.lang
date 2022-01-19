@@ -38,9 +38,11 @@ gregtech.top.fuel_min_consume=needs
 gregtech.top.fuel_name=Fuel:
 gregtech.top.fuel_none=No fuel
 
-gregtech.top.invalid_structure=§cInvalid Structure
+gregtech.top.invalid_structure=§cStructure Incomplete
 gregtech.top.valid_structure=§aStructure Formed
 gregtech.top.obstructed_structure=§cStructure Obstructed
+gregtech.top.maintenance_fixed=§aMaintenance Fine
+gregtech.top.maintenance_broken=§cNeeds Maintenance
 
 gregtech.multiblock.title=Multiblock Pattern
 gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
@@ -337,6 +339,11 @@ metaitem.electric.motor.iv.name=IV Electric Motor
 metaitem.electric.motor.luv.name=LuV Electric Motor
 metaitem.electric.motor.zpm.name=ZPM Electric Motor
 metaitem.electric.motor.uv.name=UV Electric Motor
+metaitem.electric.motor.uhv.name=UHV Electric Motor
+metaitem.electric.motor.uev.name=UEV Electric Motor
+metaitem.electric.motor.uiv.name=UIV Electric Motor
+metaitem.electric.motor.umv.name=UMV Electric Motor
+metaitem.electric.motor.uxv.name=UXV Electric Motor
 
 metaitem.electric.pump.lv.name=LV Electric Pump
 metaitem.electric.pump.lv.tooltip=1280 L/sec (as Cover)
@@ -354,22 +361,32 @@ metaitem.electric.pump.zpm.name=ZPM Electric Pump
 metaitem.electric.pump.zpm.tooltip=5,242,880 L/sec (as Cover)
 metaitem.electric.pump.uv.name=UV Electric Pump
 metaitem.electric.pump.uv.tooltip=20,971,520 L/sec (as Cover)
+metaitem.electric.pump.uhv.name=UHV Electric Pump
+metaitem.electric.pump.uhv.tooltip=20,971,520 L/sec (as Cover)
+metaitem.electric.pump.uev.name=UEV Electric Pump
+metaitem.electric.pump.uev.tooltip=20,971,520 L/sec (as Cover)
+metaitem.electric.pump.uiv.name=UIV Electric Pump
+metaitem.electric.pump.uiv.tooltip=20,971,520 L/sec (as Cover)
+metaitem.electric.pump.umv.name=UMV Electric Pump
+metaitem.electric.pump.umv.tooltip=20,971,520 L/sec (as Cover)
+metaitem.electric.pump.uxv.name=UXV Electric Pump
+metaitem.electric.pump.uxv.tooltip=20,971,520 L/sec (as Cover)
 
 metaitem.fluid.regulator.lv.name=LV Fluid Regulator
-metaitem.fluid.regulator.mv.name=MV Fluid Regulator
-metaitem.fluid.regulator.hv.name=HV Fluid Regulator
-metaitem.fluid.regulator.ev.name=EV Fluid Regulator
-metaitem.fluid.regulator.iv.name=IV Fluid Regulator
-metaitem.fluid.regulator.luv.name=LuV Fluid Regulator
-metaitem.fluid.regulator.zpm.name=ZPM Fluid Regulator
-metaitem.fluid.regulator.uv.name=UV Fluid Regulator
 metaitem.fluid.regulator.lv.tooltip=1280 L/sec (as Cover)
+metaitem.fluid.regulator.mv.name=MV Fluid Regulator
 metaitem.fluid.regulator.mv.tooltip=5120 L/sec (as Cover)
+metaitem.fluid.regulator.hv.name=HV Fluid Regulator
 metaitem.fluid.regulator.hv.tooltip=20,480 L/sec (as Cover)
+metaitem.fluid.regulator.ev.name=EV Fluid Regulator
 metaitem.fluid.regulator.ev.tooltip=81,920 L/sec (as Cover)
+metaitem.fluid.regulator.iv.name=IV Fluid Regulator
 metaitem.fluid.regulator.iv.tooltip=327,680 L/sec (as Cover)
+metaitem.fluid.regulator.luv.name=LuV Fluid Regulator
 metaitem.fluid.regulator.luv.tooltip=1,310,720 L/sec (as Cover)
+metaitem.fluid.regulator.zpm.name=ZPM Fluid Regulator
 metaitem.fluid.regulator.zpm.tooltip=5,242,880 L/sec (as Cover)
+metaitem.fluid.regulator.uv.name=UV Fluid Regulator
 metaitem.fluid.regulator.uv.tooltip=20,971,520 L/sec (as Cover)
 
 metaitem.conveyor.module.lv.name=LV Conveyor Module
@@ -388,6 +405,16 @@ metaitem.conveyor.module.zpm.name=ZPM Conveyor Module
 metaitem.conveyor.module.zpm.tooltip=16 Stacks every second (as Cover)
 metaitem.conveyor.module.uv.name=UV Conveyor Module
 metaitem.conveyor.module.uv.tooltip=16 Stacks every second (as Cover)
+metaitem.conveyor.module.uhv.name=UHV Conveyor Module
+metaitem.conveyor.module.uhv.tooltip=16 Stacks every second (as Cover)
+metaitem.conveyor.module.uev.name=UEV Conveyor Module
+metaitem.conveyor.module.uev.tooltip=16 Stacks every second (as Cover)
+metaitem.conveyor.module.uiv.name=UIV Conveyor Module
+metaitem.conveyor.module.uiv.tooltip=16 Stacks every second (as Cover)
+metaitem.conveyor.module.umv.name=UMV Conveyor Module
+metaitem.conveyor.module.umv.tooltip=16 Stacks every second (as Cover)
+metaitem.conveyor.module.uxv.name=UXV Conveyor Module
+metaitem.conveyor.module.uxv.tooltip=16 Stacks every second (as Cover)
 
 metaitem.electric.piston.lv.name=LV Electric Piston
 metaitem.electric.piston.mv.name=MV Electric Piston
@@ -397,6 +424,11 @@ metaitem.electric.piston.iv.name=IV Electric Piston
 metaitem.electric.piston.luv.name=LuV Electric Piston
 metaitem.electric.piston.zpm.name=ZPM Electric Piston
 metaitem.electric.piston.uv.name=UV Electric Piston
+metaitem.electric.piston.uhv.name=UHV Electric Piston
+metaitem.electric.piston.uev.name=UEV Electric Piston
+metaitem.electric.piston.uiv.name=UIV Electric Piston
+metaitem.electric.piston.umv.name=UMV Electric Piston
+metaitem.electric.piston.uxv.name=UXV Electric Piston
 
 metaitem.robot.arm.lv.name=LV Robot Arm
 metaitem.robot.arm.lv.tooltip=Inserts at specified rates (as Cover)
@@ -414,6 +446,16 @@ metaitem.robot.arm.zpm.name=ZPM Robot Arm
 metaitem.robot.arm.zpm.tooltip=Inserts at specified rates (as Cover)
 metaitem.robot.arm.uv.name=UV Robot Arm
 metaitem.robot.arm.uv.tooltip=Inserts at specified rates (as Cover)
+metaitem.robot.arm.uhv.name=UHV Robot Arm
+metaitem.robot.arm.uhv.tooltip=Inserts at specified rates (as Cover)
+metaitem.robot.arm.uev.name=UEV Robot Arm
+metaitem.robot.arm.uev.tooltip=Inserts at specified rates (as Cover)
+metaitem.robot.arm.uiv.name=UIV Robot Arm
+metaitem.robot.arm.uiv.tooltip=Inserts at specified rates (as Cover)
+metaitem.robot.arm.umv.name=UMV Robot Arm
+metaitem.robot.arm.umv.tooltip=Inserts at specified rates (as Cover)
+metaitem.robot.arm.uxv.name=UXV Robot Arm
+metaitem.robot.arm.uxv.tooltip=Inserts at specified rates (as Cover)
 
 metaitem.field.generator.lv.name=LV Field Generator
 metaitem.field.generator.mv.name=MV Field Generator
@@ -423,6 +465,11 @@ metaitem.field.generator.iv.name=IV Field Generator
 metaitem.field.generator.luv.name=LuV Field Generator
 metaitem.field.generator.zpm.name=ZPM Field Generator
 metaitem.field.generator.uv.name=UV Field Generator
+metaitem.field.generator.uhv.name=UHV Field Generator
+metaitem.field.generator.uev.name=UEV Field Generator
+metaitem.field.generator.uiv.name=UIV Field Generator
+metaitem.field.generator.umv.name=UMV Field Generator
+metaitem.field.generator.uxv.name=UXV Field Generator
 
 metaitem.emitter.lv.name=LV Emitter
 metaitem.emitter.mv.name=MV Emitter
@@ -432,6 +479,11 @@ metaitem.emitter.iv.name=IV Emitter
 metaitem.emitter.luv.name=LuV Emitter
 metaitem.emitter.zpm.name=ZPM Emitter
 metaitem.emitter.uv.name=UV Emitter
+metaitem.emitter.uhv.name=UHV Emitter
+metaitem.emitter.uev.name=UEV Emitter
+metaitem.emitter.uiv.name=UIV Emitter
+metaitem.emitter.umv.name=UMV Emitter
+metaitem.emitter.uxv.name=UXV Emitter
 
 metaitem.sensor.lv.name=LV Sensor
 metaitem.sensor.mv.name=MV Sensor
@@ -441,6 +493,11 @@ metaitem.sensor.iv.name=IV Sensor
 metaitem.sensor.luv.name=LuV Sensor
 metaitem.sensor.zpm.name=ZPM Sensor
 metaitem.sensor.uv.name=UV Sensor
+metaitem.sensor.uhv.name=UHV Sensor
+metaitem.sensor.uev.name=UEV Sensor
+metaitem.sensor.uiv.name=UIV Sensor
+metaitem.sensor.umv.name=UMV Sensor
+metaitem.sensor.uxv.name=UXV Sensor
 
 metaitem.tool.datastick.name=Data Stick
 metaitem.tool.datastick.tooltip=A Low Capacity Data Storage
@@ -712,6 +769,7 @@ metaitem.carbon.plate.name=Carbon Fiber Plate
 metaitem.neutron_reflector.name=Iridium Neutron Reflector
 metaitem.neutron_reflector.tooltip=Indestructible
 metaitem.duct_tape.name=BrainTech Aerospace Advanced Reinforced Duct Tape FAL-84
+metaitem.duct_tape.tooltip=If you can't fix it with this, use more of it!
 
 metaitem.component.grinder.diamond.name=Diamond Grinding Head
 metaitem.component.grinder.tungsten.name=Tungsten Grinding Head
@@ -1003,6 +1061,9 @@ metaarmor.energy_share.tooltip.guide=To change mode shift-right click when holdi
 metaitem.record.sus.name=Music Disc
 metaitem.record.sus.tooltip=§7Leonz - Among Us Drip
 
+metaitem.nan.certificate.name=Certificate of Not Being a Noob Anymore
+metaitem.nan.certificate.tooltip=Challenge Accepted!
+
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 
 gregtech.recipe_memory_widget.tooltip.1=§7Left click to automatically input this recipe into the crafting grid
@@ -1012,8 +1073,10 @@ cover.filter.blacklist.disabled=Whitelist
 cover.filter.blacklist.enabled=Blacklist
 
 cover.ore_dictionary_filter.title=Ore Dictionary Filter
-cover.ore_dictionary_filter.title1=Ore Dictionary Name
-cover.ore_dictionary_filter.title2=(use * for wildcard)
+cover.ore_dictionary_filter.info=§bAccepts complex expressions/n& = AND/n| = OR/n^ = XOR/n! = NOT/n( ) for priority/n* for wildcard/n§bExample:/n§6dust*Gold | (plate* & !*Double*)/nWill match all gold dusts of all sizes or all plates, but not double plates
+cover.ore_dictionary_filter.test_slot.info=Insert a item to test if it matches the filter expression
+cover.ore_dictionary_filter.matches=Item matches
+cover.ore_dictionary_filter.matches_not=Item does not match
 
 cover.fluid_filter.title=Fluid Filter
 cover.fluid_filter.mode.filter_fill=Filter Fill
@@ -1263,7 +1326,7 @@ material.hassium=Hassium
 material.holmium=Holmium
 material.hydrogen=Hydrogen
 material.helium=Helium
-material.helium3=Helium-3
+material.helium_3=Helium-3
 material.indium=Indium
 material.iodine=Iodine
 material.iridium=Iridium
@@ -1298,7 +1361,7 @@ material.palladium=Palladium
 material.phosphorus=Phosphorus
 material.platinum=Platinum
 material.plutonium=Plutonium 239
-material.plutonium241=Plutonium 241
+material.plutonium_241=Plutonium 241
 material.polonium=Polonium
 material.potassium=Potassium
 material.praseodymium=Praseodymium
@@ -1336,7 +1399,7 @@ material.trinium=Trinium
 material.tritium=Tritium
 material.tungsten=Tungsten
 material.uranium=Uranium 238
-material.uranium235=Uranium 235
+material.uranium_235=Uranium 235
 material.vanadium=Vanadium
 material.vibranium=Vibranium
 material.xenon=Xenon
@@ -1353,7 +1416,7 @@ material.diesel=Diesel
 material.glue=Glue
 material.gunpowder=Gunpowder
 material.lubricant=Lubricant
-material.mc_guffium239=Mc Guffium 239
+material.mc_guffium_239=Mc Guffium 239
 material.oil=Oil
 material.oilsands=Oilsands
 material.paper=Paper
@@ -2208,6 +2271,47 @@ metaitem.prospector.tooltip.ores=Scans Ores in a %s Chunk Radius
 metaitem.prospector.tooltip.fluids=Scans Ores and Fluids in a %s Chunk Radius
 behavior.prospector.not_enough_energy=Not Enough Energy!
 
+metaitem.tricorder_scanner.name=Portable Scanner
+metaitem.tricorder_scanner.tooltip=Tricorder
+metaitem.debug_scanner.name=Debug Scanner
+metaitem.debug_scanner.tooltip=Tricorder
+behavior.tricorder.position=----- X: %s Y: %s Z: %s D: %s -----
+behavior.tricorder.block_hardness=Hardness: %s Blast Resistance: %s
+behavior.tricorder.block_name=Name: %s MetaData: %s
+behavior.tricorder.divider==========================
+behavior.tricorder.tank=Tank %s: %s L / %s L %s
+behavior.tricorder.tanks_empty=All Tanks Empty
+behavior.tricorder.muffled=Muffled.
+behavior.tricorder.machine_disabled=Disabled.
+behavior.tricorder.machine_power_loss=Shut down due to power loss.
+behavior.tricorder.machine_progress=Progress/Load: %s / %s
+behavior.tricorder.energy_container_in=Max IN: %s (%s) EU at %s A
+behavior.tricorder.energy_container_out=Max OUT: %s (%s) EU at %s A
+behavior.tricorder.energy_container_storage=Energy: %s EU / %s EU
+behavior.tricorder.bedrock_fluid.amount=Fluid In Chunk: %s %s L
+behavior.tricorder.bedrock_fluid.nothing=Fluid In Chunk: §6Nothing§r
+behavior.tricorder.eut_per_sec=Last Second %s EU/t
+behavior.tricorder.amp_per_sec=Last Second %s A
+behavior.tricorder.workable_progress=Progress: %s s / %s s
+behavior.tricorder.workable_stored_energy=Stored Energy: %s EU / %s EU
+behavior.tricorder.workable_consumption=Probably Uses: %s EU/t at %s A
+behavior.tricorder.workable_production=Probably Produces: %s EU/t at %s A
+behavior.tricorder.multiblock_energy_input=Max Energy Income: %s EU/t Tier: %s
+behavior.tricorder.multiblock_energy_output=Max Energy Output: %s EU/t Tier: %s
+behavior.tricorder.multiblock_maintenance=Problems: %s
+behavior.tricorder.multiblock_parallel=Multi Processing: %s
+behavior.tricorder.debug_machine=Meta-ID: %s
+behavior.tricorder.debug_machine_valid= valid
+behavior.tricorder.debug_machine_invalid= invalid!
+behavior.tricorder.debug_machine_invalid_null=invalid! MetaTileEntity == null!
+behavior.tricorder.debug_cpu_load=Average CPU load of ~%sns over %s ticks with worst time of %sns.
+behavior.tricorder.debug_lag_count=Caused %s Lag Spike Warnings (anything taking longer than %sms) on the Server.
+
+metaitem.item_magnet.lv.name=Low Voltage Item Magnet
+metaitem.item_magnet.hv.name=High Voltage Item Magnet
+behavior.item_magnet.enabled=Magnetic Field Enabled
+behavior.item_magnet.disabled=Magnetic Field Disabled
+
 metaitem.terminal.name=Terminal
 metaitem.terminal.tooltip=Sharp tools make good work
 metaitem.terminal.tooltip.creative=§bCreative Mode
@@ -2525,18 +2629,20 @@ tile.stone_bricks_square.concrete_dark.name=Square Dark Concrete Bricks
 # Steam machines
 gregtech.machine.steam_boiler.tooltip_produces=Produces %,dL of Steam per second
 
-gregtech.machine.steam_boiler_coal_bronze.name=Small Steam Coal Boiler
+gregtech.machine.steam_boiler_coal_bronze.name=Small Steam Solid Fuel Boiler
 gregtech.machine.steam_boiler_coal_bronze.tooltip=An early way to get Steam Power
-gregtech.machine.steam_boiler_coal_steel.name=High Pressure Steam Coal Boiler
-gregtech.machine.steam_boiler_coal_steel.tooltip=Faster than the Small Steam Coal Boiler
+gregtech.machine.steam_boiler_coal_steel.name=High Pressure Steam Solid Fuel Boiler
+gregtech.machine.steam_boiler_coal_steel.tooltip=Faster than the Small Steam Solid Fuel Boiler
 gregtech.machine.steam_boiler_solar_bronze.name=Steam Solar Boiler
 gregtech.machine.steam_boiler_solar_bronze.tooltip=Steam Power by Sun
 gregtech.machine.steam_boiler_solar_steel.name=High Pressure Steam Solar Boiler
 gregtech.machine.steam_boiler_solar_steel.tooltip=Steam Power by Sun
-gregtech.machine.steam_boiler_lava_bronze.name=Small Steam Lava Boiler
+gregtech.machine.steam_boiler_lava_bronze.name=Small Steam Liquid Boiler
 gregtech.machine.steam_boiler_lava_bronze.tooltip=A Boiler running off Lava
-gregtech.machine.steam_boiler_lava_steel.name=High Pressure Steam Lava Boiler
-gregtech.machine.steam_boiler_lava_steel.tooltip=Faster than Small Steam Lava Boiler
+gregtech.machine.steam_boiler_lava_steel.name=High Pressure Steam Liquid Boiler
+gregtech.machine.steam_boiler_lava_steel.tooltip=Faster than Small Steam Liquid Boiler
+
+gregtech.machine.steam_boiler.heat_amount=Heat Capacity: %s %%
 
 gregtech.machine.steam_extractor_bronze.name=Steam Extractor
 gregtech.machine.steam_extractor_bronze.tooltip=Extracting your first Rubber
@@ -3284,6 +3390,9 @@ gregtech.machine.battery_buffer.max.4.name=MAX Voltage 4x Battery Buffer
 gregtech.machine.battery_buffer.max.8.name=MAX Voltage 8x Battery Buffer
 gregtech.machine.battery_buffer.max.16.name=MAX Voltage 16x Battery Buffer
 
+gregtech.battery_buffer.average_input=Average input: %s EU/t
+gregtech.battery_buffer.average_output=Average output: %s EU/t
+
 # Transformers
 gregtech.machine.transformer.tooltip_tool_usage=Use Soft Hammer to invert (Starts as Transform Down)
 gregtech.machine.transformer.tooltip_transform_down=Transform Down: §a%dA %dEU (%s§a)§7 -> §a%dA %dEU (%s§a)
@@ -3362,8 +3471,9 @@ gregtech.machine.charger.uxv.name=UXV Voltage Turbo Charger
 gregtech.machine.charger.max.name=MAX Voltage Turbo Charger
 
 # Pumps
+gregtech.machine.pump.tooltip=The best way to empty Oceans! Outputs to the front
 gregtech.machine.pump.tooltip_range=Pumping Area: %,dx%,d
-gregtech.machine.pump.tooltip_speed=Pumps Fluid every %,d ticks
+gregtech.machine.pump.tooltip_rate=%dEU/operation, %d ticks per bucket
 
 gregtech.machine.pump.lv.name=Basic Pump
 gregtech.machine.pump.mv.name=Advanced Pump
@@ -3747,8 +3857,7 @@ gregtech.machine.large_combustion_engine.name=Large Combustion Engine
 gregtech.machine.large_combustion_engine.tooltip.1=Produces up to §e%s§7 EU/t.
 gregtech.machine.large_combustion_engine.tooltip.2=Requires §e1000 L/hr§7 of Lubricant to run.
 gregtech.machine.large_combustion_engine.tooltip.boost_regular=Supply §e20 L/s§7 of Oxygen to produce up to §e%s§7 EU/t at §e2x§7 fuel consumption.
-gregtech.machine.large_combustion_engine.tooltip.boost_extreme.1=Supply §e20 L/s§7 of Oxygen to produce up to §e%s§7 EU/t at §e1x§7 fuel consumption.
-gregtech.machine.large_combustion_engine.tooltip.boost_extreme.2=Supply §e80 L/s§7 of Liquid Oxygen to produce up to §e%s§7 EU/t at §e1.33x§7 fuel consumption.
+gregtech.machine.large_combustion_engine.tooltip.boost_extreme=Supply §e80 L/s§7 of Liquid Oxygen to produce up to §e%s§7 EU/t at §e2x§7 fuel consumption.
 gregtech.machine.extreme_combustion_engine.name=Extreme Combustion Engine
 gregtech.machine.large_turbine.steam.name=Large Steam Turbine
 gregtech.machine.large_turbine.gas.name=Large Gas Turbine
@@ -4039,6 +4148,8 @@ gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
+gregtech.gui.charger_slot.tooltip=§fCharger Slot§r/n§7Draws power from %s batteries§r/n§7Charges %s tools and batteries
+gregtech.gui.configurator_slot.tooltip=§fConfigurator Slot§r/n§7Place a §6Programmed Circuit§7 in this slot to/n§7change its configured value./n§7Hold §6Shift§7 when clicking buttons to change by §65
 gregtech.gui.fluid_lock.tooltip.enabled=Fluid Locking Enabled
 gregtech.gui.fluid_lock.tooltip.disabled=Fluid Locking Disabled
 gregtech.gui.fluid_voiding_partial.tooltip.enabled=Fluid Voiding (Above %d%%) Enabled
@@ -4133,8 +4244,9 @@ gregtech.multiblock.pattern.clear_amount_1=§6Must have a clear 1x1x1 space in f
 gregtech.multiblock.pattern.clear_amount_3=§6Must have a clear 3x3x1 space in front§r
 gregtech.multiblock.pattern.single=§6Only this block can be used§r
 gregtech.multiblock.pattern.location_end=§cVery End§r
+gregtech.multiblock.pattern.replaceable_air=Replaceable by Air
 
-gregtech.multiblock.blast_furnace.max_temperature=Max Temperature: %sK
+gregtech.multiblock.blast_furnace.max_temperature=Heat Capacity: %s
 gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s
 gregtech.multiblock.multi_furnace.heating_coil_discount=Heating Coil EU Boost: %sx
 gregtech.multiblock.distillation_tower.distilling_fluid=Distilling %s
@@ -4173,8 +4285,8 @@ gregtech.multiblock.large_miner.invfull=Inventory Full!
 gregtech.multiblock.large_miner.needspower=Needs Power!
 gregtech.multiblock.large_miner.vent=Venting Blocked!
 gregtech.multiblock.large_miner.steam=Needs Steam!
-gregtech.multiblock.large_miner.radius=Radius: %d Blocks
-gregtech.multiblock.large_miner.errorradius=Cannot change radius while working!
+gregtech.multiblock.large_miner.radius=Radius: §a%d§r Blocks
+gregtech.multiblock.large_miner.errorradius=§cCannot change radius while working!
 gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
 
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
@@ -4193,7 +4305,6 @@ gregtech.command.util.hand.electric=Electric Info: %d / %d EU - Tier: %d; Is Bat
 gregtech.command.util.hand.fluid=Fluid Info: %s %d / %d L; Can Fill: %s; Can Drain: %s
 gregtech.command.util.hand.material_meta_item=Ore Prefix: %s; Material: %s
 gregtech.command.util.hand.tool_stats=Tool Stats Class: %s
-gregtech.command.util.hand.meta_item=Meta Item Name: %s
 gregtech.command.util.hand.not_a_player=This command is only usable by a player.
 gregtech.command.util.hand.no_item=You must hold something in mainhand before executing this command.
 

@@ -48,7 +48,7 @@ public class UnknownCompositionMaterials {
         Lubricant = new Material.Builder(1511, "lubricant")
                 .fluid().build();
 
-        McGuffium239 = new Material.Builder(1512, "mc_guffium239")
+        McGuffium239 = new Material.Builder(1512, "mc_guffium_239")
                 .fluid().build();
 
         IndiumConcentrate = new Material.Builder(1513, "indium_concentrate")
@@ -275,7 +275,7 @@ public class UnknownCompositionMaterials {
         Glowstone = new Material.Builder(1601, "glowstone")
                 .dust(1).fluid()
                 .color(0xFFFF00).iconSet(SHINY)
-                .flags(NO_SMASHING, GENERATE_PLATE, EXCLUDE_PLATE_COMPRESSOR_RECIPE)
+                .flags(NO_SMASHING, GENERATE_PLATE, EXCLUDE_PLATE_COMPRESSOR_RECIPE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .build();
 
         NetherStar = new Material.Builder(1602, "nether_star")

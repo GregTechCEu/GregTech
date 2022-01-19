@@ -56,8 +56,9 @@ public class MaterialProperties {
             oldList.forEach(p -> p.verifyProperty(this));
         } while (oldList.size() != propertyMap.size());
 
-        if (propertyMap.keySet().stream().noneMatch(baseTypes::contains))
-            throw new IllegalArgumentException("Material must have at least one of: " + baseTypes + " specified!");
+        //if (propertyMap.keySet().stream().noneMatch(baseTypes::contains)) {
+        //    throw new IllegalArgumentException("Material must have at least one of: " + baseTypes + " specified!");
+        //}
     }
 
     public void setMaterial(Material material) {

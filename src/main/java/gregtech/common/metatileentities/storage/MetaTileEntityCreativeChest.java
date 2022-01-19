@@ -31,6 +31,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
@@ -82,7 +83,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
             if (!value.isEmpty()) {
                 itemsPerCycle = Integer.parseInt(value);
             }
-        }).setAllowedChars("0123456789").setMaxLength(19).setValidator(getTextFieldValidator()));
+        }).setAllowedChars(TextFieldWidget2.NATURAL_NUMS).setMaxLength(19).setValidator(getTextFieldValidator()));
         builder.label(7, 28, "Items per cycle");
 
         builder.widget(new ImageWidget(7, 85, 154, 14, GuiTextures.DISPLAY));

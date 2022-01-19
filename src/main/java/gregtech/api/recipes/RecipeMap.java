@@ -45,8 +45,7 @@ import java.util.stream.Collectors;
 public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private static final Map<String, RecipeMap<?>> RECIPE_MAP_REGISTRY = new HashMap<>();
-    @ZenProperty
-    public static final IChanceFunction chanceFunction = (chance, boostPerTier, tier) -> chance + (boostPerTier * tier);
+    public IChanceFunction chanceFunction = (chance, boostPerTier, tier) -> chance + (boostPerTier * tier);
 
     public final String unlocalizedName;
 
@@ -113,7 +112,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return RECIPE_MAP_REGISTRY.get(unlocalizedName);
     }
 
-    public static IChanceFunction getChanceFunction() {
+    @ZenMethod
+    public IChanceFunction getChanceFunction() {
         return chanceFunction;
     }
 
@@ -151,6 +151,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public RecipeMap<R> setSound(SoundEvent sound) {
         this.sound = sound;
+        return this;
+    }
+
+    @ZenMethod("setChanceFunction")
+    public RecipeMap<R> setChanceFunction(IChanceFunction function) {
+        chanceFunction = function;
         return this;
     }
 
@@ -215,7 +221,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 recipeFluidMap.computeIfAbsent(fluidKey, k -> new HashSet<>()).add(recipe);
             }
         } else if (ConfigHolder.misc.debug) {
-            GTLog.logger.debug("Recipe: " + recipe.toString() + " is a duplicate and was not added");
+            GTLog.logger.warn("Recipe: {} for Recipe Map {} is a duplicate and was not added", recipe.toString(), this.unlocalizedName);
         }
     }
 
@@ -426,7 +432,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         int startInputsY = 33 - (int) (itemSlotsToDown / 2.0 * 18) + yOffset;
         boolean wasGroup = itemHandler.getSlots() + fluidHandler.getTanks() == 12;
         if (wasGroup) startInputsY -= 9;
-        if (itemHandler.getSlots() == 6 && fluidHandler.getTanks() == 2 && !isOutputs) startInputsY -= 9;
+        else if (itemHandler.getSlots() >= 6 && fluidHandler.getTanks() >= 2 && !isOutputs) startInputsY -= 9;
         for (int i = 0; i < itemSlotsToDown; i++) {
             for (int j = 0; j < itemSlotsToLeft; j++) {
                 int slotIndex = i * itemSlotsToLeft + j;
@@ -517,7 +523,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
 
-    public List<Recipe> getRecipeList() {
+    public Collection<Recipe> getRecipeList() {
         return Collections.unmodifiableList(new ArrayList<>(recipeSet));
     }
 

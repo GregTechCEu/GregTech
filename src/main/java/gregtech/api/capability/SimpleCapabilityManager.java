@@ -6,6 +6,7 @@ import gregtech.api.capability.tool.IScrewdriverItem;
 import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.capability.tool.IWrenchItem;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.worldgen.generator.GTWorldGenCapability;
 import net.minecraft.nbt.NBTBase;
@@ -44,6 +45,8 @@ public class SimpleCapabilityManager {
         registerCapabilityWithNoDefault(IActiveOutputSide.class);
         registerCapabilityWithNoDefault(IFuelable.class);
         registerCapabilityWithNoDefault(IMultiblockController.class);
+        registerCapabilityWithNoDefault(IMaintenance.class);
+        registerCapabilityWithNoDefault(IMultipleRecipeMaps.class);
         registerCapabilityWithNoDefault(AbstractRecipeLogic.class);
         registerCapabilityWithNoDefault(HardwareProvider.class);
 

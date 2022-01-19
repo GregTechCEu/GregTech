@@ -26,6 +26,7 @@ public class EnchantmentData {
 
     @ZenGetter("enchantment")
     @Method(modid = GTValues.MODID_CT)
+    @SuppressWarnings("unused")
     public IEnchantmentDefinition ctGetEnchantment() {
         return new MCEnchantmentDefinition(enchantment);
     }

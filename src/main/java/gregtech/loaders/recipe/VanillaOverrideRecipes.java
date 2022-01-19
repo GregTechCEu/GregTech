@@ -17,8 +17,12 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
+import java.util.Iterator;
+import java.util.Map;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
@@ -37,12 +41,21 @@ public class VanillaOverrideRecipes {
             miscRecipes();
         if (ConfigHolder.recipes.hardDyeRecipes)
             dyeRecipes();
-        if (ConfigHolder.recipes.harderBrickRecipes)
+        if (ConfigHolder.recipes.harderBrickRecipes) {
             ModHandler.removeFurnaceSmelting(new ItemStack(Items.CLAY_BALL, 1, GTValues.W));
+            ModHandler.removeRecipeByName("minecraft:brick_block");
+            ModHandler.addShapedRecipe("brick_from_water", new ItemStack(Blocks.BRICK_BLOCK, 2), "BBB", "BWB", "BBB",
+                    'B', new ItemStack(Items.BRICK),
+                    'W', new ItemStack(Items.WATER_BUCKET));
+        }
         removeCompressionRecipes();
         toolArmorRecipes();
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:tnt"));
+
+        if(ConfigHolder.recipes.harderCharcoalRecipe) {
+            removeCharcoalRecipes();
+        }
     }
 
     private static void woodRecipes() {
@@ -754,7 +767,6 @@ public class VanillaOverrideRecipes {
             ModHandler.removeRecipeByName("minecraft:lapis_block");
             ModHandler.removeRecipeByName("minecraft:lapis_lazuli");
             ModHandler.removeRecipeByName("minecraft:quartz_block");
-            ModHandler.removeRecipeByName("minecraft:brick_block");
             ModHandler.removeRecipeByName("minecraft:clay");
             ModHandler.removeRecipeByName("minecraft:nether_brick");
             ModHandler.removeRecipeByName("minecraft:glowstone");
@@ -824,7 +836,7 @@ public class VanillaOverrideRecipes {
         createShovelRecipe("golden_shovel", new ItemStack(Items.GOLDEN_SHOVEL), Materials.Gold);
         createPickaxeRecipe("golden_pickaxe", new ItemStack(Items.GOLDEN_PICKAXE), Materials.Gold);
         createAxeRecipe("golden_axe", new ItemStack(Items.GOLDEN_AXE), Materials.Gold);
-        createSwordRecipe("golden_sword", new ItemStack(Items.IRON_SWORD), Materials.Gold);
+        createSwordRecipe("golden_sword", new ItemStack(Items.GOLDEN_SWORD), Materials.Gold);
         createHoerecipe("golden_hoe", new ItemStack(Items.GOLDEN_HOE), Materials.Gold);
         createHelmetRecipe("golden_helmet", new ItemStack(Items.GOLDEN_HELMET), Materials.Gold);
         createChestplateRecipe("golden_chestplate", new ItemStack(Items.GOLDEN_CHESTPLATE), Materials.Gold);
@@ -834,7 +846,7 @@ public class VanillaOverrideRecipes {
         createShovelRecipe("diamond_shovel", new ItemStack(Items.DIAMOND_SHOVEL), Materials.Diamond);
         createPickaxeRecipe("diamond_pickaxe", new ItemStack(Items.DIAMOND_PICKAXE), Materials.Diamond);
         createAxeRecipe("diamond_axe", new ItemStack(Items.DIAMOND_AXE), Materials.Diamond);
-        createSwordRecipe("diamond_sword", new ItemStack(Items.IRON_SWORD), Materials.Diamond);
+        createSwordRecipe("diamond_sword", new ItemStack(Items.DIAMOND_SWORD), Materials.Diamond);
         createHoerecipe("diamond_hoe", new ItemStack(Items.DIAMOND_HOE), Materials.Diamond);
         createHelmetRecipe("diamond_helmet", new ItemStack(Items.DIAMOND_HELMET), Materials.Diamond);
         createChestplateRecipe("diamond_chestplate", new ItemStack(Items.DIAMOND_CHESTPLATE), Materials.Diamond);
@@ -971,5 +983,20 @@ public class VanillaOverrideRecipes {
         ModHandler.addShapedRecipe(regName, output, "P P", "PhP",
                 'P', new UnificationEntry(OrePrefix.plate, material)
         );
+    }
+
+    private static void removeCharcoalRecipes() {
+        Map<ItemStack, ItemStack> furnaceRecipes = FurnaceRecipes.instance().getSmeltingList();
+
+        Iterator<Map.Entry<ItemStack, ItemStack>> recipeIterator = furnaceRecipes.entrySet().iterator();
+
+        while(recipeIterator.hasNext()) {
+            Map.Entry<ItemStack, ItemStack> recipe = recipeIterator.next();
+            if(recipe.getValue().isItemEqual(new ItemStack(Items.COAL, 1, 1))) {
+                if(OreDictUnifier.getOreDictionaryNames(recipe.getKey()).contains("logWood")) {
+                    recipeIterator.remove();
+                }
+            }
+        }
     }
 }

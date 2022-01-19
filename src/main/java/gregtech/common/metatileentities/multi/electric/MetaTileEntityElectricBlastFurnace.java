@@ -59,8 +59,8 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         if (isStructureFormed()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.blast_furnace.max_temperature", blastFurnaceTemperature)
-                    .setStyle(new Style().setColor(TextFormatting.RED)));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.blast_furnace.max_temperature",
+                    new TextComponentTranslation(GTUtility.formatNumbers(blastFurnaceTemperature) + "K").setStyle(new Style().setColor(TextFormatting.RED))));
         }
         super.addDisplayText(textList);
     }
@@ -162,5 +162,14 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                 .sorted(Comparator.comparingInt(CoilType::getLevel))
                 .forEach(coilType -> shapeInfo.add(builder.where('C', MetaBlocks.WIRE_COIL.getState(coilType)).build()));
         return shapeInfo;
+    }
+
+    @Nonnull
+    @Override
+    public List<ITextComponent> getDataInfo() {
+        List<ITextComponent> list = super.getDataInfo();
+        list.add(new TextComponentTranslation("gregtech.multiblock.blast_furnace.max_temperature",
+                new TextComponentTranslation(GTUtility.formatNumbers(blastFurnaceTemperature) + "K").setStyle(new Style().setColor(TextFormatting.RED))));
+        return list;
     }
 }

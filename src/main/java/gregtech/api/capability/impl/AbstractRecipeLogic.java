@@ -184,12 +184,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     protected boolean canFitNewOutputs() {
         // if the output is full check if the output changed so we can process recipes results again.
-        if (this.isOutputsFull && !hasNotifiedOutputs()) return false;
-        else {
-            this.isOutputsFull = false;
-            metaTileEntity.getNotifiedItemOutputList().clear();
-            metaTileEntity.getNotifiedFluidOutputList().clear();
+        if (this.isOutputsFull && !hasNotifiedOutputs()) {
+            if (!hasNotifiedInputs() && checkPreviousRecipe()) {
+                return false;
+            }
         }
+        this.isOutputsFull = false;
+        metaTileEntity.getNotifiedItemOutputList().clear();
+        metaTileEntity.getNotifiedFluidOutputList().clear();
         return true;
     }
 
@@ -637,7 +639,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             if (recipe.getOutputs().size() > 0) {
                 this.itemOutputs = GTUtility.copyStackList(recipe.getOutputs().subList(0, 1));
             } else {
-                this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt))
+                this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt), recipeMap)
                         .stream()
                         .filter(is ->
                                 ItemStackHashStrategy.comparingAllButCount()
@@ -645,7 +647,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                         .collect(Collectors.toList()));
             }
         } else {
-            this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt)));
+            this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt), recipeMap));
         }
 
         if (this.wasActiveAndNeedsUpdate) {

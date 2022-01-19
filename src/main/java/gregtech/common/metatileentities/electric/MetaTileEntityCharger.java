@@ -16,6 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -51,7 +52,7 @@ public class MetaTileEntityCharger extends TieredMetaTileEntity {
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
                 IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                if (electricItem != null && getTier() >= electricItem.getTier()) {
+                if ((electricItem != null && getTier() >= electricItem.getTier()) || stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
                     return super.insertItem(slot, stack, simulate);
                 }
                 return stack;
