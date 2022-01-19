@@ -413,6 +413,7 @@ public class SecondDegreeMaterials {
         PlatinumSludgeResidue = new Material.Builder(2057, "platinum_sludge_residue")
                 .dust()
                 .color(0x827951)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 2, Gold, 3)
                 .build();
 
