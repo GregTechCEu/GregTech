@@ -1,6 +1,8 @@
 package gregtech.api.util;
 
 import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.minecraft.CraftTweakerMC;
+import crafttweaker.api.world.IWorld;
 import gregtech.api.GTValues;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.packets.SPacketNotifyCapeChange;
@@ -18,6 +20,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -153,7 +156,6 @@ public class CapesRegistry {
      * @param cape The ResourceLocation that points to the cape that can be unlocked through the advancement.
      * @param world The world that may contain the advancement used for getting a cape.
      */
-    @ZenMethod
     public static void registerCape(ResourceLocation advancement, ResourceLocation cape, World world) {
         if (!world.isRemote) {
             AdvancementManager advManager = ObfuscationReflectionHelper.getPrivateValue(World.class, world, "field_191951_C");
@@ -162,6 +164,13 @@ public class CapesRegistry {
                 CAPE_ADVANCEMENTS.put(advObject, cape);
             }
         }
+    }
+
+    @Optional.Method(modid = GTValues.MODID_CT)
+    @ZenMethod
+    public static void registerCape(ResourceLocation advancement, ResourceLocation cape, IWorld iWorld) {
+        World world = CraftTweakerMC.getWorld(iWorld);
+        registerCape(advancement, cape, world);
     }
 
     /**
