@@ -100,8 +100,8 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         if (cutterItem != null) {
             if (cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, true)) {
                 if (!entityPlayer.world.isRemote) {
-                    boolean isOpen = pipeTile.isConnectionOpen(coverSide);
-                    pipeTile.setConnectionBlocked(coverSide, isOpen, false);
+                    boolean isOpen = pipeTile.isConnected(coverSide);
+                    pipeTile.setConnection(coverSide, !isOpen, false);
                     cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, false);
                     IToolStats.onOtherUse(stack, world, pos);
                 }

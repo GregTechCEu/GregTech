@@ -55,6 +55,7 @@ public class GregtechDataCodes {
     public static final int SYNC_COVER_IMPLEMENTATION = -3;
     public static final int UPDATE_PIPE_TYPE = -4;
     public static final int UPDATE_PIPE_MATERIAL = -5;
+    public static final int UPDATE_BLOCKED_CONNECTIONS = -6;
     public static final int UPDATE_COVER_DATA_PIPE = 0;
     public static final int COVER_ATTACHED_PIPE = 1;
     public static final int COVER_REMOVED_PIPE = 2;

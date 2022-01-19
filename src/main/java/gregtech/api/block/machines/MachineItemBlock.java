@@ -58,7 +58,7 @@ public class MachineItemBlock extends ItemBlock {
             if (block instanceof BlockPipe) {
                 IPipeTile pipeTile = ((BlockPipe<?, ?, ?>) block).getPipeTileEntity(world, possiblePipe);
                 if (pipeTile != null && ((BlockPipe<?, ?, ?>) block).canPipeConnectToBlock(pipeTile, side.getOpposite(), world.getTileEntity(pos))) {
-                    pipeTile.setConnectionBlocked(side, false, false);
+                    pipeTile.setConnection(side, true, false);
                 }
             }
         }

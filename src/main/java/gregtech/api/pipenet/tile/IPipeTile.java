@@ -33,11 +33,11 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     int getDefaultPaintingColor();
 
-    int getOpenConnections();
+    int getConnections();
 
-    boolean isConnectionOpen(EnumFacing side);
+    boolean isConnected(EnumFacing side);
 
-    void setConnectionBlocked(EnumFacing side, boolean isBlocked, boolean fromNeighbor);
+    void setConnection(EnumFacing side, boolean connected, boolean fromNeighbor);
 
     PipeType getPipeType();
 

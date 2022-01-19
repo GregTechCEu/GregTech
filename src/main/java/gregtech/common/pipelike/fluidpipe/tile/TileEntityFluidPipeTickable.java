@@ -106,7 +106,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             // Get a list of tanks accepting fluids, and what side they're on
             aSide = (byte) ((i + j) % 6);
             EnumFacing facing = EnumFacing.VALUES[aSide];
-            if (!isConnectionOpenAny(facing) || (mLastReceivedFrom & (1 << aSide)) != 0)
+            if (!isConnected(facing) || (mLastReceivedFrom & (1 << aSide)) != 0)
                 continue;
             EnumFacing oppositeSide = facing.getOpposite();
 

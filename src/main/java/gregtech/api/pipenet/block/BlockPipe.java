@@ -157,7 +157,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public void updateTick(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand) {
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
         if (pipeTile != null) {
-            int activeConnections = pipeTile.getOpenConnections();
+            int activeConnections = pipeTile.getConnections();
             boolean isActiveNode = activeConnections != 0;
             getWorldPipeNet(worldIn).addNode(pos, createProperties(pipeTile), 0, activeConnections, isActiveNode);
             onActiveModeChange(worldIn, pos, isActiveNode, true);
@@ -185,12 +185,12 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                 }
             }
             if (facing == null) throw new NullPointerException("Facing is null");
-            boolean open = pipeTile.isConnectionOpen(facing);
+            boolean open = pipeTile.isConnected(facing);
             boolean canConnect = pipeTile.getCoverableImplementation().getCoverAtSide(facing) != null || canConnect(pipeTile, facing);
             if (!open && canConnect && state.getBlock() != blockIn)
-                pipeTile.setConnectionBlocked(facing, false, false);
+                pipeTile.setConnection(facing, true, false);
             if (open && !canConnect)
-                pipeTile.setConnectionBlocked(facing, true, false);
+                pipeTile.setConnection(facing, false, false);
             updateActiveNodeStatus(worldIn, pos, pipeTile);
             pipeTile.getCoverableImplementation().updateInputRedstoneSignals();
         }
@@ -218,7 +218,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public void updateActiveNodeStatus(World worldIn, BlockPos pos, IPipeTile<PipeType, NodeDataType> pipeTile) {
         PipeNet<NodeDataType> pipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
         if (pipeNet != null && pipeTile != null) {
-            int activeConnections = pipeTile.getOpenConnections(); //remove blocked connections
+            int activeConnections = pipeTile.getConnections(); //remove blocked connections
             boolean isActiveNodeNow = activeConnections != 0;
             boolean modeChanged = pipeNet.markNodeAsActive(pos, isActiveNodeNow);
             if (modeChanged) {
@@ -314,8 +314,8 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (wrenchItem != null) {
             if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true)) {
                 if (!entityPlayer.world.isRemote) {
-                    boolean isOpen = pipeTile.isConnectionOpen(coverSide);
-                    pipeTile.setConnectionBlocked(coverSide, isOpen, false);
+                    boolean isOpen = pipeTile.isConnected(coverSide);
+                    pipeTile.setConnection(coverSide, !isOpen, false);
                     wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
                     IToolStats.onOtherUse(stack, world, pos);
                 }
@@ -445,14 +445,14 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
      * @return open connections
      */
     public int getVisualConnections(IPipeTile<PipeType, NodeDataType> selfTile) {
-        int connections = selfTile.getOpenConnections();
+        int connections = selfTile.getConnections();
         float selfThickness = selfTile.getPipeType().getThickness();
         for (EnumFacing facing : EnumFacing.values()) {
-            if (selfTile.isConnectionOpen(facing)) {
+            if (selfTile.isConnected(facing)) {
                 TileEntity neighbourTile = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
                 if (neighbourTile instanceof IPipeTile) {
                     IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) neighbourTile;
-                    if (pipeTile.isConnectionOpen(facing.getOpposite()) && pipeTile.getPipeType().getThickness() < selfThickness) {
+                    if (pipeTile.isConnected(facing.getOpposite()) && pipeTile.getPipeType().getThickness() < selfThickness) {
                         connections |= 1 << (facing.getIndex() + 6);
                     }
                 }

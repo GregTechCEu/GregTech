@@ -158,14 +158,14 @@ public abstract class PipeNetWalker {
         // check for surrounding pipes and item handlers
         for (EnumFacing accessSide : EnumFacing.VALUES) {
             //skip sides reported as blocked by pipe network
-            if (!pipeTile.isConnectionOpen(accessSide))
+            if (!pipeTile.isConnected(accessSide))
                 continue;
 
             pos.setPos(currentPos).move(accessSide);
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof IPipeTile) {
                 IPipeTile<?, ?> otherPipe = (IPipeTile<?, ?>) tile;
-                if (!otherPipe.isConnectionOpen(accessSide.getOpposite()) || isWalked(otherPipe))
+                if (!otherPipe.isConnected(accessSide.getOpposite()) || isWalked(otherPipe))
                     continue;
                 if (isValidPipe(pipeTile, otherPipe, currentPos, accessSide)) {
                     pipes.add(accessSide);
