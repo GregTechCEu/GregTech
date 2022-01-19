@@ -19,6 +19,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import stanhebben.zenscript.annotations.ZenMethod;
 
 import java.io.File;
 import java.io.IOException;
@@ -148,6 +149,7 @@ public class CapesRegistry {
      * @param cape The ResourceLocation that points to the cape that can be unlocked through the advancement.
      * @param world The world that may contain the advancement used for getting a cape.
      */
+    @ZenMethod
     public static void registerCape(ResourceLocation advancement, ResourceLocation cape, World world) {
         if (!world.isRemote) {
             AdvancementManager advManager = ObfuscationReflectionHelper.getPrivateValue(World.class, world, "field_191951_C");
