@@ -3,6 +3,7 @@ package gregtech.common.command;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.toolitem.IToolStats;
@@ -11,6 +12,9 @@ import gregtech.api.items.toolitem.ToolMetaItem.MetaToolValueItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
@@ -89,7 +93,16 @@ public class CommandHand extends CommandBase {
             if (stackInHand.getItem() instanceof MetaItem) {
                 MetaItem<?> metaItem = (MetaItem<?>) stackInHand.getItem();
                 MetaValueItem metaValueItem = metaItem.getItem(stackInHand);
-                if (metaValueItem != null) {
+                if(metaItem instanceof MetaPrefixItem) {
+                    Material material = ((MetaPrefixItem) metaItem).getMaterial(stackInHand);
+                    OrePrefix orePrefix = ((MetaPrefixItem) metaItem).getOrePrefix();
+                    String oreDictName = new UnificationEntry(orePrefix, material).toString();
+                    String copyName = "<metaitem:" + oreDictName + ">";
+                    ClipboardUtil.copyToClipboard(player, copyName);
+                    player.sendMessage(new TextComponentString("MetaItem Id: ").appendSibling(new TextComponentString(oreDictName)
+                            .setStyle(new Style().setColor(TextFormatting.GREEN))).setStyle(getCopyStyle(copyName, true)));
+                }
+                else if (metaValueItem != null) {
                     if (metaValueItem instanceof ToolMetaItem.MetaToolValueItem) {
                         IToolStats toolStats = ((MetaToolValueItem) metaValueItem).getToolStats();
                         player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.tool_stats", toolStats.getClass().getName()));
