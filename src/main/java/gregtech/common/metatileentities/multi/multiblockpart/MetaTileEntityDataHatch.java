@@ -12,7 +12,6 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -20,6 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
@@ -94,7 +94,7 @@ public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockNotifiableP
         for (ItemStack stack : GTUtility.itemHandlerToList(importItems)) {
             NBTTagCompound researchItemNBT = stack.getSubCompound("asslineOutput");
             if (researchItemNBT != null) {
-                textList.add(new TextComponentString(LocalizationUtils.format(new ItemStack(researchItemNBT).getTranslationKey()))); // TODO get correct translations
+                textList.add(new TextComponentTranslation(new ItemStack(researchItemNBT).getTranslationKey())); // TODO get correct translations
             }
         }
         return textList;
