@@ -141,7 +141,7 @@ public abstract class CoverBehavior implements IUIHolder {
     /**
      * @return If the pipe this is placed on should render a connection to the cover
      */
-    public boolean shouldRenderConnected() {
+    public boolean shouldAutoConnect() {
         return true;
     }
 

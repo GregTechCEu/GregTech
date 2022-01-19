@@ -1,6 +1,5 @@
 package gregtech.api.pipenet;
 
-import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.fluidpipe.net.FluidNetWalker;
@@ -160,14 +159,14 @@ public abstract class PipeNetWalker {
         // check for surrounding pipes and item handlers
         for (EnumFacing accessSide : EnumFacing.VALUES) {
             //skip sides reported as blocked by pipe network
-            if (!pipeTile.isConnectionOpen(AttachmentType.PIPE, accessSide))
+            if (!pipeTile.isConnectionOpen(accessSide))
                 continue;
 
             pos.setPos(currentPos).move(accessSide);
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof IPipeTile) {
                 IPipeTile<?, ?> otherPipe = (IPipeTile<?, ?>) tile;
-                if (!otherPipe.isConnectionOpen(AttachmentType.PIPE, accessSide.getOpposite()) || isWalked(otherPipe))
+                if (!otherPipe.isConnectionOpen(accessSide.getOpposite()) || isWalked(otherPipe))
                     continue;
                 if (isValidPipe(pipeTile, otherPipe, currentPos, accessSide)) {
                     pipes.add(accessSide);

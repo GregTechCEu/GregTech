@@ -43,8 +43,8 @@ public class EnergyNet extends PipeNet<WireProperties> {
 
     public long getEnergyFluxPerSec() {
         World world = getWorldData();
-        if (world != null && !world.isRemote && (world.getWorldTime() - lastTime) >= 20) {
-            lastTime = world.getWorldTime();
+        if (world != null && !world.isRemote && (world.getTotalWorldTime() - lastTime) >= 20) {
+            lastTime = world.getTotalWorldTime();
             clearCache();
         }
         return lastEnergyFluxPerSec;

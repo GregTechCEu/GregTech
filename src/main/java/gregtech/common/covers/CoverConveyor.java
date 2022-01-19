@@ -18,6 +18,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.pipenet.tile.PipeCoverableImplementation;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.ItemStackKey;
@@ -47,7 +48,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     public final int tier;
     public final int maxItemTransferRate;
-    protected int transferRate;
+    private int transferRate;
     protected ConveyorMode conveyorMode;
     protected DistributionMode distributionMode;
     protected boolean blocksInput;
@@ -72,6 +73,19 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     protected void setTransferRate(int transferRate) {
         this.transferRate = transferRate;
         coverHolder.markDirty();
+
+        if (coverHolder.getWorld() != null && coverHolder.getWorld().isRemote) {
+            // tile at cover holder pos
+            TileEntity te = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
+            if (te instanceof TileEntityItemPipe) {
+                ((TileEntityItemPipe) te).resetTransferred();
+            }
+            // tile neighbour to holder pos at attached side
+            te = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
+            if (te instanceof TileEntityItemPipe) {
+                ((TileEntityItemPipe) te).resetTransferred();
+            }
+        }
     }
 
     protected void adjustTransferRate(int amount) {
@@ -473,8 +487,8 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                 .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
         primaryGroup.addWidget(new ToggleButtonWidget(130, 166, 20, 20, GuiTextures.BLOCKS_INPUT, () -> blocksInput, val -> blocksInput = val).setTooltipText("cover.conveyor.blocks_input"));
 
-        TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
-        if (coverTile instanceof TileEntityItemPipe) {
+        if (coverHolder.getWorld().getTileEntity(coverHolder.getPos()) instanceof TileEntityItemPipe ||
+                coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide)) instanceof TileEntityItemPipe) {
             final ImageCycleButtonWidget distributionModeButton = new ImageCycleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE, 3,
                     () -> distributionMode.ordinal(),
                     val -> setDistributionMode(DistributionMode.values()[val]))
@@ -513,12 +527,14 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
         packetBuffer.writeEnumValue(conveyorMode);
+        packetBuffer.writeEnumValue(distributionMode);
     }
 
     @Override
     public void readInitialSyncData(PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
         this.conveyorMode = packetBuffer.readEnumValue(ConveyorMode.class);
+        this.distributionMode = packetBuffer.readEnumValue(DistributionMode.class);
     }
 
     @Override

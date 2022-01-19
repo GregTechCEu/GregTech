@@ -18,7 +18,7 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     BlockPos getPipePos();
 
     default long getTickTimer() {
-        return getPipeWorld().getWorldTime();
+        return getPipeWorld().getTotalWorldTime();
     }
 
     BlockPipe<PipeType, NodeDataType, ?> getPipeBlock();
@@ -35,15 +35,9 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     int getOpenConnections();
 
-    TIntIntMap getOpenConnectionsMap();
+    boolean isConnectionOpen(EnumFacing side);
 
-    boolean isConnectionOpen(AttachmentType type, EnumFacing side);
-
-    default boolean isConnectionOpenAny(EnumFacing side) {
-        return (getOpenConnections() & 1 << side.getIndex()) > 0;
-    }
-
-    void setConnectionBlocked(AttachmentType type, EnumFacing side, boolean isBlocked, boolean fromNeighbor);
+    void setConnectionBlocked(EnumFacing side, boolean isBlocked, boolean fromNeighbor);
 
     PipeType getPipeType();
 

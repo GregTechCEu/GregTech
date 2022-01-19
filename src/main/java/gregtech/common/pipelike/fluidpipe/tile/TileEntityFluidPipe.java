@@ -6,7 +6,6 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
-import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.GTUtility;
@@ -92,7 +91,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     public List<Pair<IFluidHandler, Predicate<FluidStack>>> getNeighbourHandlers() {
         List<Pair<IFluidHandler, Predicate<FluidStack>>> handlers = new ArrayList<>();
         for (EnumFacing facing : getOpenFaces()) {
-            if (!isConnectionOpenAny(facing)) continue;
+            if (!isConnectionOpen(facing)) continue;
             TileEntity tile = getWorld().getTileEntity(pos.offset(facing));
             if (tile == null) continue;
             IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite());
@@ -128,7 +127,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     public void checkNeighbours() {
         openConnections.clear();
         for (EnumFacing facing : EnumFacing.values()) {
-            if (isConnectionOpen(AttachmentType.PIPE, facing)) {
+            if (isConnectionOpen(facing)) {
                 TileEntity tile = world.getTileEntity(pos.offset(facing));
                 if (tile == null || tile instanceof TileEntityFluidPipe) continue;
                 IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite());
@@ -145,13 +144,13 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     }
 
     @Override
-    public void setConnectionBlocked(AttachmentType attachmentType, EnumFacing side, boolean blocked, boolean fromNeighbor) {
+    public void setConnectionBlocked(EnumFacing side, boolean blocked, boolean fromNeighbor) {
         int oldConnections = getOpenConnections();
-        super.setConnectionBlocked(attachmentType, side, blocked, fromNeighbor);
+        super.setConnectionBlocked(side, blocked, fromNeighbor);
         if (oldConnections != getOpenConnections()) {
             checkNeighbours();
             TileEntity te = world.getTileEntity(pos.offset(side));
-            if (!blocked && attachmentType == AttachmentType.PIPE && te instanceof TileEntityFluidPipe) {
+            if (!blocked && te instanceof TileEntityFluidPipe) {
                 FluidPipeNet net = getFluidPipeNet();
                 for (FluidTank tank : getFluidTanks()) {
                     FluidStack fluid = tank.getFluid();
