@@ -221,7 +221,6 @@ public class MetaBlocks {
 
         StoneType.init();
 
-        createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && (m.hasProperty(PropertyKey.INGOT) || m.hasProperty(PropertyKey.GEM)) && !OrePrefix.block.isIgnored(m), MetaBlocks::createCompressedBlock);
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME), MetaBlocks::createFrameBlock);
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.DUST), MetaBlocks::createSurfaceRockBlock);
 
@@ -293,7 +292,7 @@ public class MetaBlocks {
 
                 if (!blocksToGenerate.containsKey(metaBlockID)) {
                     Material[] materials = new Material[16];
-                    Arrays.fill(materials, Materials._NULL);
+                    Arrays.fill(materials, Materials.NULL);
                     blocksToGenerate.put(metaBlockID, materials);
                 }
 

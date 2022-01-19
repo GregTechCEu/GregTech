@@ -17,8 +17,12 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
+import java.util.Iterator;
+import java.util.Map;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
@@ -48,6 +52,10 @@ public class VanillaOverrideRecipes {
         toolArmorRecipes();
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:tnt"));
+
+        if(ConfigHolder.recipes.harderCharcoalRecipe) {
+            removeCharcoalRecipes();
+        }
     }
 
     private static void woodRecipes() {
@@ -975,5 +983,20 @@ public class VanillaOverrideRecipes {
         ModHandler.addShapedRecipe(regName, output, "P P", "PhP",
                 'P', new UnificationEntry(OrePrefix.plate, material)
         );
+    }
+
+    private static void removeCharcoalRecipes() {
+        Map<ItemStack, ItemStack> furnaceRecipes = FurnaceRecipes.instance().getSmeltingList();
+
+        Iterator<Map.Entry<ItemStack, ItemStack>> recipeIterator = furnaceRecipes.entrySet().iterator();
+
+        while(recipeIterator.hasNext()) {
+            Map.Entry<ItemStack, ItemStack> recipe = recipeIterator.next();
+            if(recipe.getValue().isItemEqual(new ItemStack(Items.COAL, 1, 1))) {
+                if(OreDictUnifier.getOreDictionaryNames(recipe.getKey()).contains("logWood")) {
+                    recipeIterator.remove();
+                }
+            }
+        }
     }
 }

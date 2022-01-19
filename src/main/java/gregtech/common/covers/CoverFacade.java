@@ -111,7 +111,7 @@ public class CoverFacade extends CoverBehavior implements IFacadeCover {
     }
 
     @Override
-    public boolean shouldRenderConnected() {
+    public boolean shouldAutoConnect() {
         return false;
     }
 

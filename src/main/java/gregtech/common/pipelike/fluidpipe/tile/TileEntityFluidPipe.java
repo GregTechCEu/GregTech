@@ -6,7 +6,6 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
-import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.GTUtility;
@@ -77,7 +76,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     public void checkNeighbours() {
         openConnections.clear();
         for (EnumFacing facing : EnumFacing.values()) {
-            if (isConnectionOpen(AttachmentType.PIPE, facing)) {
+            if (isConnectionOpen(facing)) {
                 TileEntity tile = world.getTileEntity(pos.offset(facing));
                 if (tile == null || tile instanceof TileEntityFluidPipe) continue;
                 IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite());
@@ -91,13 +90,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                 }
             }
         }
-    }
-
-    @Override
-    public void transferDataFrom(IPipeTile<FluidPipeType, FluidPipeProperties> tileEntity) {
-        super.transferDataFrom(tileEntity);
-        //this.fluidTanks = ((TileEntityFluidPipe) tileEntity).fluidTanks;
-        //pipeTankList = new PipeTankList(this, fluidTanks);
     }
 
     public void checkAndDestroy(FluidStack stack) {

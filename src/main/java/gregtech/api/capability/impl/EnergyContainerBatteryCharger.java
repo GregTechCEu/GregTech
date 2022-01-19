@@ -5,8 +5,11 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.ArrayList;
@@ -26,7 +29,7 @@ public class EnergyContainerBatteryCharger extends EnergyContainerHandler {
         if (amperage <= 0 || voltage <= 0)
             return 0;
 
-        List<IElectricItem> batteries = getNonFullBatteries();
+        List<Object> batteries = getNonFullBatteries();
         long maxAmps = batteries.size() * 4L - amps;
         long usedAmps = Math.min(maxAmps, amperage);
         if (maxAmps <= 0)
@@ -47,8 +50,14 @@ public class EnergyContainerBatteryCharger extends EnergyContainerHandler {
             long energy = (usedAmps + internalAmps) * voltage;
             long distributed = energy / batteries.size();
 
-            for (IElectricItem electricItem : batteries) {
-                energy -= electricItem.charge(Math.min(distributed, GTValues.V[electricItem.getTier()] * 4L), getTier(), true, false);
+            for (Object item : batteries) {
+                if (item instanceof IElectricItem) {
+                    IElectricItem electricItem = (IElectricItem) item;
+                    energy -= electricItem.charge(Math.min(distributed, GTValues.V[electricItem.getTier()] * 4L), getTier(), true, false);
+                } else if (item instanceof IEnergyStorage) {
+                    IEnergyStorage energyStorage = (IEnergyStorage) item;
+                    energy -= energyStorage.receiveEnergy((int) (Math.min(distributed, GTValues.V[getTier()] * 4L) * ConfigHolder.compat.energy.rfRatio), false);
+                }
             }
 
             //Remove energy used and then transfer overflow energy into the internal buffer
@@ -74,15 +83,23 @@ public class EnergyContainerBatteryCharger extends EnergyContainerHandler {
         return energyStored;
     }
 
-    private List<IElectricItem> getNonFullBatteries() {
+    private List<Object> getNonFullBatteries() {
         IItemHandlerModifiable inventory = getInventory();
-        List<IElectricItem> batteries = new ArrayList<>();
+        List<Object> batteries = new ArrayList<>();
         for (int i = 0; i < inventory.getSlots(); i++) {
             ItemStack batteryStack = inventory.getStackInSlot(i);
             IElectricItem electricItem = getBatteryContainer(batteryStack);
-            if (electricItem == null) continue;
-            if (electricItem.getCharge() < electricItem.getMaxCharge()) {
-                batteries.add(electricItem);
+            if (electricItem != null) {
+                if (electricItem.getCharge() < electricItem.getMaxCharge()) {
+                    batteries.add(electricItem);
+                }
+            } else {
+                IEnergyStorage energyStorage = batteryStack.getCapability(CapabilityEnergy.ENERGY, null);
+                if (energyStorage != null) {
+                    if (energyStorage.getEnergyStored() < energyStorage.getMaxEnergyStored()) {
+                        batteries.add(energyStorage);
+                    }
+                }
             }
         }
         return batteries;
@@ -95,8 +112,14 @@ public class EnergyContainerBatteryCharger extends EnergyContainerHandler {
         for (int i = 0; i < inventory.getSlots(); i++) {
             ItemStack batteryStack = inventory.getStackInSlot(i);
             IElectricItem electricItem = getBatteryContainer(batteryStack);
-            if (electricItem == null) continue;
-            energyCapacity += electricItem.getMaxCharge();
+            if (electricItem != null) {
+                energyCapacity += electricItem.getMaxCharge();
+            } else {
+                IEnergyStorage energyStorage = batteryStack.getCapability(CapabilityEnergy.ENERGY, null);
+                if (energyStorage != null) {
+                    energyCapacity += energyStorage.getMaxEnergyStored() / ConfigHolder.compat.energy.rfRatio;
+                }
+            }
         }
         return energyCapacity;
     }
@@ -108,8 +131,14 @@ public class EnergyContainerBatteryCharger extends EnergyContainerHandler {
         for (int i = 0; i < inventory.getSlots(); i++) {
             ItemStack batteryStack = inventory.getStackInSlot(i);
             IElectricItem electricItem = getBatteryContainer(batteryStack);
-            if (electricItem == null) continue;
-            energyStored += electricItem.getCharge();
+            if (electricItem != null) {
+                energyStored += electricItem.getCharge();
+            } else {
+                IEnergyStorage energyStorage = batteryStack.getCapability(CapabilityEnergy.ENERGY, null);
+                if (energyStorage != null) {
+                    energyStored += energyStorage.getEnergyStored() / ConfigHolder.compat.energy.rfRatio;
+                }
+            }
         }
         return energyStored;
     }

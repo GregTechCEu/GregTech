@@ -296,7 +296,7 @@ public class ElementMaterials {
                 .element(Elements.He)
                 .build();
 
-        Helium3 = new Material.Builder(47, "helium3")
+        Helium3 = new Material.Builder(47, "helium_3")
                 .fluid(FluidType.GAS)
                 .element(Elements.He3)
                 .build();
@@ -526,7 +526,7 @@ public class ElementMaterials {
                 .element(Elements.Pu239)
                 .build();
 
-        Plutonium241 = new Material.Builder(82, "plutonium241")
+        Plutonium241 = new Material.Builder(82, "plutonium_241")
                 .ingot(3).fluid()
                 .color(0xFA4646).iconSet(SHINY)
                 .flags(EXT_METAL)
@@ -641,7 +641,7 @@ public class ElementMaterials {
                 .build();
 
         Sodium = new Material.Builder(101, "sodium")
-                .ingot().fluid()
+                .dust().fluid()
                 .color(0x000096).iconSet(METALLIC)
                 .element(Elements.Na)
                 .build();
@@ -747,7 +747,7 @@ public class ElementMaterials {
                 .toolStats(6.0f, 3.0f, 512, 21)
                 .build();
 
-        Uranium235 = new Material.Builder(117, "uranium235")
+        Uranium235 = new Material.Builder(117, "uranium_235")
                 .ingot(3).fluid()
                 .color(0x46FA46).iconSet(SHINY)
                 .flags(EXT_METAL)

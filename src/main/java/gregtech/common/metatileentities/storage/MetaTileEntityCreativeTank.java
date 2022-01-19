@@ -31,6 +31,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
 
@@ -77,7 +78,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
             if (!value.isEmpty()) {
                 mBPerCycle = Integer.parseInt(value);
             }
-        }).setAllowedChars("0123456789").setMaxLength(19).setValidator(getTextFieldValidator()));
+        }).setAllowedChars(TextFieldWidget2.NATURAL_NUMS).setMaxLength(19).setValidator(getTextFieldValidator()));
         builder.label(7, 28, "mB per cycle");
 
         builder.widget(new ImageWidget(7, 82, 154, 14, GuiTextures.DISPLAY));

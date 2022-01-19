@@ -82,11 +82,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     @Override
     public void getSubBlocks(@Nonnull CreativeTabs itemIn, @Nonnull NonNullList<ItemStack> items) {
         for (Material material : enabledMaterials.keySet()) {
-            for (FluidPipeType fluidPipeType : FluidPipeType.values()) {
-                if (!fluidPipeType.getOrePrefix().isIgnored(material)) {
-                    items.add(getItem(material));
-                }
-            }
+            items.add(getItem(material));
         }
     }
 
@@ -116,7 +112,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         // get open connections
         EnumSet<EnumFacing> openConnections = EnumSet.noneOf(EnumFacing.class);
         for (EnumFacing facing : EnumFacing.values()) {
-            if (pipe.isConnectionOpenAny(facing))
+            if (pipe.isConnectionOpen(facing))
                 openConnections.add(facing);
         }*/
 
@@ -219,7 +215,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     @Override
     public void onEntityCollision(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
         if (worldIn.isRemote) return;
-        if (entityIn instanceof EntityLivingBase && entityIn.world.getWorldTime() % 20 == 0L) {
+        if (entityIn instanceof EntityLivingBase && entityIn.world.getTotalWorldTime() % 20 == 0L) {
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
             TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
             if(!(pipe instanceof TileEntityFluidPipeTickable))

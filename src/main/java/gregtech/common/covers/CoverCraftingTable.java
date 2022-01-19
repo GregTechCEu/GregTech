@@ -55,7 +55,7 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
     }
 
     @Override
-    public boolean shouldRenderConnected() {
+    public boolean shouldAutoConnect() {
         return false;
     }
 

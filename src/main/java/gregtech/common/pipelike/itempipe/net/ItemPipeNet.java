@@ -4,6 +4,7 @@ import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
+import gregtech.api.util.FacingPos;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -48,6 +49,13 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
         NET_DATA.clear();
         ((ItemPipeNet) parentNet).NET_DATA.clear();
     }
+
+    @Override
+    protected void onConnectionsUpdate() {
+        super.onConnectionsUpdate();
+        NET_DATA.clear();
+    }
+
 
     @Override
     protected void writeNodeData(ItemPipeProperties nodeData, NBTTagCompound tagCompound) {
@@ -98,6 +106,10 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
             if (tile != null)
                 return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, faceToHandler.getOpposite());
             return null;
+        }
+
+        public FacingPos toFacingPos() {
+            return new FacingPos(pipePos, faceToHandler);
         }
     }
 }

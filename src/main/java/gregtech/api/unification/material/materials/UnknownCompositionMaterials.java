@@ -48,7 +48,7 @@ public class UnknownCompositionMaterials {
         Lubricant = new Material.Builder(1511, "lubricant")
                 .fluid().build();
 
-        McGuffium239 = new Material.Builder(1512, "mc_guffium239")
+        McGuffium239 = new Material.Builder(1512, "mc_guffium_239")
                 .fluid().build();
 
         IndiumConcentrate = new Material.Builder(1513, "indium_concentrate")

@@ -29,6 +29,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEnergyContainer {
 
@@ -85,7 +86,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
                 voltage = Long.parseLong(value);
                 setTier = 0;
             }
-        }).setAllowedChars("0123456789").setMaxLength(19).setValidator(getTextFieldValidator()));
+        }).setAllowedChars(TextFieldWidget2.NATURAL_NUMS).setMaxLength(19).setValidator(getTextFieldValidator()));
 
         builder.label(7, 74, "Amperage");
         builder.widget(new ClickButtonWidget(7, 87, 20, 20, "-", data -> amps = amps-- == -1 ? 0 : amps--));
