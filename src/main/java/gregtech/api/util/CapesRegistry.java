@@ -213,7 +213,7 @@ public class CapesRegistry {
     public static void detectNewCapes(EntityPlayer player) {
         if (player instanceof EntityPlayerMP) {
             for (Map.Entry<Advancement, ResourceLocation> capeEntry : CAPE_ADVANCEMENTS.entrySet()) {
-                if ((UNLOCKED_CAPES.get(player.getPersistentID()) != null || !UNLOCKED_CAPES.get(player.getPersistentID()).contains(capeEntry)) &&
+                if ((UNLOCKED_CAPES.get(player.getPersistentID()) == null || !UNLOCKED_CAPES.get(player.getPersistentID()).contains(capeEntry)) &&
                         ((EntityPlayerMP) player).getAdvancements().getProgress(capeEntry.getKey()).isDone()) {
                     unlockCapeOnAdvancement(player, capeEntry.getKey());
                 }

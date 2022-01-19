@@ -206,8 +206,8 @@ public class EventHandlers {
                 playerData.setTag(EntityPlayer.PERSISTED_NBT_TAG, data);
             }
         }
-        CapesRegistry.loadWornCapeOnLogin(event.player);
         CapesRegistry.detectNewCapes(event.player);
+        CapesRegistry.loadWornCapeOnLogin(event.player);
     }
 
     @SubscribeEvent
