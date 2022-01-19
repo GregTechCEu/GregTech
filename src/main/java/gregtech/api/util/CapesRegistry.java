@@ -1,5 +1,6 @@
 package gregtech.api.util;
 
+import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GTValues;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.packets.SPacketNotifyCapeChange;
@@ -19,12 +20,15 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+@ZenClass("mods.gregtech.util.CapesRegistry")
+@ZenRegister
 public class CapesRegistry {
 
     private static final Map<UUID, List<ResourceLocation>> UNLOCKED_CAPES = new HashMap<>();
