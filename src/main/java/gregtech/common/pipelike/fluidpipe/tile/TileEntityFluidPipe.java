@@ -32,7 +32,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     }
 
     public int getCapacityPerTank() {
-        return getNodeData().getThroughput() * 2 * FREQUENCY;
+        return getNodeData().getThroughput() * 20;
     }
 
     public void checkAndDestroy(FluidStack stack) {
