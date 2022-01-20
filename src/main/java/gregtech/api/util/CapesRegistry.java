@@ -74,7 +74,7 @@ public class CapesRegistry {
 
         NBTTagList wornCapesTag = new NBTTagList();
         for (Map.Entry<UUID, ResourceLocation> entry : WORN_CAPES.entrySet()) {
-            if(entry.getValue() == null)
+            if (entry.getValue() == null)
                 continue;
             String capeLocation = entry.getValue().toString();
 
@@ -139,6 +139,9 @@ public class CapesRegistry {
         registerCape(new ResourceLocation(GTValues.MODID, "steam/12_electronic_circuit"), Textures.RED_CAPE_TEXTURE, world);
         registerCape(new ResourceLocation(GTValues.MODID, "high_voltage/82_large_chemical_reactor"), Textures.YELLOW_CAPE_TEXTURE, world);
         registerCape(new ResourceLocation(GTValues.MODID, "ludicrous_voltage/60_fusion"), Textures.GREEN_CAPE_TEXTURE, world);
+        for (Tuple<ResourceLocation, ResourceLocation> tuple : ctRegisterCapes) {
+            registerCape(tuple.getFirst(), tuple.getSecond(), world);
+        }
     }
 
     /**
@@ -155,8 +158,8 @@ public class CapesRegistry {
      * Links an advancement with a cape, which allows a player to unlock it when they receive the advancement.
      * This should only be called on world load, since advancements are only accessible then.
      * @param advancement A ResourceLocation pointing to the advancement that is to be used for getting a cape.
-     * @param cape The ResourceLocation that points to the cape that can be unlocked through the advancement.
-     * @param world The world that may contain the advancement used for getting a cape.
+     * @param cape        The ResourceLocation that points to the cape that can be unlocked through the advancement.
+     * @param world       The world that may contain the advancement used for getting a cape.
      */
     public static void registerCape(ResourceLocation advancement, ResourceLocation cape, World world) {
         if (!world.isRemote) {
@@ -165,23 +168,15 @@ public class CapesRegistry {
             if (advObject != null) {
                 CAPE_ADVANCEMENTS.put(advObject, cape);
             }
-            if (ctRegisterCapes.containsKey(world.provider.getDimension())) {
-                for (Tuple<ResourceLocation, ResourceLocation> tuple : ctRegisterCapes.get(world.provider.getDimension())) {
-                    advObject = advManager.getAdvancement(tuple.getFirst());
-                    if (advObject != null) {
-                        CAPE_ADVANCEMENTS.put(advObject, tuple.getSecond());
-                    }
-                }
-            }
         }
     }
 
-    private static Map<Integer, List<Tuple<ResourceLocation, ResourceLocation>>> ctRegisterCapes = new HashMap<>();
+    private static List<Tuple<ResourceLocation, ResourceLocation>> ctRegisterCapes = new ArrayList<Tuple<ResourceLocation, ResourceLocation>>();
 
     @Optional.Method(modid = GTValues.MODID_CT)
     @ZenMethod
-    public static void registerCape(String advancement, String cape, int dim) {
-        ctRegisterCapes.computeIfAbsent(dim, d->new ArrayList<>()).add(new Tuple<>(new ResourceLocation(advancement), new ResourceLocation(cape)));
+    public static void registerCape(String advancement, String cape) {
+        ctRegisterCapes.add(new Tuple<>(new ResourceLocation(advancement), new ResourceLocation(cape)));
     }
 
     /**
@@ -239,7 +234,7 @@ public class CapesRegistry {
     public static void detectNewCapes(EntityPlayer player) {
         if (player instanceof EntityPlayerMP) {
             for (Map.Entry<Advancement, ResourceLocation> capeEntry : CAPE_ADVANCEMENTS.entrySet()) {
-                if ((UNLOCKED_CAPES.get(player.getPersistentID()) == null || !UNLOCKED_CAPES.get(player.getPersistentID()).contains(capeEntry)) &&
+                if ((UNLOCKED_CAPES.get(player.getPersistentID()) == null || !UNLOCKED_CAPES.get(player.getPersistentID()).contains(capeEntry.getValue())) &&
                         ((EntityPlayerMP) player).getAdvancements().getProgress(capeEntry.getKey()).isDone()) {
                     unlockCapeOnAdvancement(player, capeEntry.getKey());
                 }
