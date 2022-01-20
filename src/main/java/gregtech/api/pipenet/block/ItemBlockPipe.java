@@ -35,17 +35,17 @@ public class ItemBlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
             IPipeTile selfTile = (IPipeTile) world.getTileEntity(pos);
             if (selfTile == null) return superVal;
             if (selfTile.getPipeBlock().canConnect(selfTile, side.getOpposite())) {
-                selfTile.setConnectionBlocked(side.getOpposite(), false, false);
+                selfTile.setConnection(side.getOpposite(), true, false);
             }
             for (EnumFacing facing : EnumFacing.VALUES) {
                 TileEntity te = world.getTileEntity(pos.offset(facing));
                 if (te instanceof IPipeTile) {
                     IPipeTile otherPipe = ((IPipeTile) te);
-                    if (otherPipe.isConnectionOpen(facing.getOpposite())) {
+                    if (otherPipe.isConnected(facing.getOpposite())) {
                         if (otherPipe.getPipeBlock().canPipesConnect(otherPipe, facing.getOpposite(), selfTile)) {
-                            selfTile.setConnectionBlocked(facing, false, true);
+                            selfTile.setConnection(facing, true, true);
                         } else {
-                            otherPipe.setConnectionBlocked(facing.getOpposite(), true, true);
+                            otherPipe.setConnection(facing.getOpposite(), false, true);
                         }
                     }
                 }

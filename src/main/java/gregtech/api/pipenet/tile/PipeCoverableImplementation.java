@@ -76,7 +76,7 @@ public class PipeCoverableImplementation implements ICoverable {
             coverBehavior.writeInitialSyncData(buffer);
         });
         if (coverBehavior.shouldAutoConnect()) {
-            holder.setConnectionBlocked(side, false, false);
+            holder.setConnection(side, true, false);
         }
         holder.notifyBlockUpdate();
         holder.markAsDirty();
@@ -98,7 +98,7 @@ public class PipeCoverableImplementation implements ICoverable {
         }
         writeCustomData(COVER_REMOVED_PIPE, buffer -> buffer.writeByte(side.getIndex()));
         if (coverBehavior.shouldAutoConnect()) {
-            holder.setConnectionBlocked(side, true, false);
+            holder.setConnection(side, false, false);
         }
         holder.notifyBlockUpdate();
         holder.markAsDirty();

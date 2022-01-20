@@ -9,6 +9,7 @@ import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
+import gregtech.client.renderer.pipe.*;
 import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
@@ -26,9 +27,6 @@ import gregtech.common.MetaFluids;
 import gregtech.common.blocks.*;
 import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.common.items.MetaItems;
-import gregtech.client.renderer.pipe.CableRenderer;
-import gregtech.client.renderer.pipe.FluidPipeRenderer;
-import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -49,7 +47,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.ColorizerFoliage;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.ClientCommandHandler;
@@ -127,9 +124,9 @@ public class ClientProxy extends CommonProxy {
 
         KeyBinds.initBinds();
         MetaTileEntityRenderer.preInit();
-        CableRenderer.preInit();
-        FluidPipeRenderer.preInit();
-        ItemPipeRenderer.preInit();
+        CableRenderer.INSTANCE.preInit();
+        FluidPipeRenderer.INSTANCE.preInit();
+        ItemPipeRenderer.INSTANCE.preInit();
         MetaEntities.initRenderers();
         TextureUtils.addIconRegister(MetaFluids::registerSprites);
     }

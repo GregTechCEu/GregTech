@@ -157,7 +157,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public void updateTick(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand) {
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
         if (pipeTile != null) {
-            int activeConnections = pipeTile.getOpenConnections();
+            int activeConnections = pipeTile.getConnections();
             boolean isActiveNode = activeConnections != 0;
             getWorldPipeNet(worldIn).addNode(pos, createProperties(pipeTile), 0, activeConnections, isActiveNode);
             onActiveModeChange(worldIn, pos, isActiveNode, true);
@@ -185,12 +185,12 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                 }
             }
             if (facing == null) throw new NullPointerException("Facing is null");
-            boolean open = pipeTile.isConnectionOpen(facing);
+            boolean open = pipeTile.isConnected(facing);
             boolean canConnect = pipeTile.getCoverableImplementation().getCoverAtSide(facing) != null || canConnect(pipeTile, facing);
             if (!open && canConnect && state.getBlock() != blockIn)
-                pipeTile.setConnectionBlocked(facing, false, false);
+                pipeTile.setConnection(facing, true, false);
             if (open && !canConnect)
-                pipeTile.setConnectionBlocked(facing, true, false);
+                pipeTile.setConnection(facing, false, false);
             updateActiveNodeStatus(worldIn, pos, pipeTile);
             pipeTile.getCoverableImplementation().updateInputRedstoneSignals();
         }
@@ -218,7 +218,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public void updateActiveNodeStatus(World worldIn, BlockPos pos, IPipeTile<PipeType, NodeDataType> pipeTile) {
         PipeNet<NodeDataType> pipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
         if (pipeNet != null && pipeTile != null) {
-            int activeConnections = pipeTile.getOpenConnections(); //remove blocked connections
+            int activeConnections = pipeTile.getConnections(); //remove blocked connections
             boolean isActiveNodeNow = activeConnections != 0;
             boolean modeChanged = pipeNet.markNodeAsActive(pos, isActiveNodeNow);
             if (modeChanged) {
@@ -314,8 +314,13 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (wrenchItem != null) {
             if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true)) {
                 if (!entityPlayer.world.isRemote) {
-                    boolean isOpen = pipeTile.isConnectionOpen(coverSide);
-                    pipeTile.setConnectionBlocked(coverSide, isOpen, false);
+                    if (entityPlayer.isSneaking() && pipeTile.canHaveBlockedFaces()) {
+                        boolean isBlocked = pipeTile.isFaceBlocked(coverSide);
+                        pipeTile.setFaceBlocked(coverSide, !isBlocked);
+                    } else {
+                        boolean isOpen = pipeTile.isConnected(coverSide);
+                        pipeTile.setConnection(coverSide, !isOpen, false);
+                    }
                     wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
                     IToolStats.onOtherUse(stack, world, pos);
                 }
@@ -420,7 +425,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (selfTile.getPipeWorld().getBlockState(selfTile.getPipePos().offset(facing)).getBlock() == Blocks.AIR)
             return false;
         CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
-        if(cover != null && !cover.canPipePassThrough()) {
+        if (cover != null && !cover.canPipePassThrough()) {
             return false;
         }
         TileEntity other = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
@@ -437,30 +442,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
     public abstract boolean canPipeConnectToBlock(IPipeTile<PipeType, NodeDataType> selfTile, EnumFacing side, @Nullable TileEntity tile);
 
-    /**
-     * This returns open connections purely for rendering
-     * Some covers don't open an actual connection. This makes them still render
-     *
-     * @param selfTile this pipe tile
-     * @return open connections
-     */
-    public int getVisualConnections(IPipeTile<PipeType, NodeDataType> selfTile) {
-        int connections = selfTile.getOpenConnections();
-        float selfThickness = selfTile.getPipeType().getThickness();
-        for (EnumFacing facing : EnumFacing.values()) {
-            if (selfTile.isConnectionOpen(facing)) {
-                TileEntity neighbourTile = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
-                if (neighbourTile instanceof IPipeTile) {
-                    IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) neighbourTile;
-                    if (pipeTile.isConnectionOpen(facing.getOpposite()) && pipeTile.getPipeType().getThickness() < selfThickness) {
-                        connections |= 1 << (facing.getIndex() + 6);
-                    }
-                }
-            }
-        }
-        return connections;
-    }
-
     private List<IndexedCuboid6> getCollisionBox(IBlockAccess world, BlockPos pos, @Nullable Entity entityIn) {
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(world, pos);
         if (pipeTile == null) {
@@ -470,7 +451,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (pipeType == null) {
             return Collections.emptyList();
         }
-        int actualConnections = getVisualConnections(getPipeTileEntity(world, pos));
+        int actualConnections = getPipeTileEntity(world, pos).getVisualConnections();
         float thickness = pipeType.getThickness();
         ArrayList<IndexedCuboid6> result = new ArrayList<>();
         ICoverable coverable = pipeTile.getCoverableImplementation();
