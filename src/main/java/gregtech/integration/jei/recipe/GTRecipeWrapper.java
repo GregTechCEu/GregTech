@@ -1,7 +1,5 @@
 package gregtech.integration.jei.recipe;
 
-import crafttweaker.CraftTweakerAPI;
-import crafttweaker.mc1120.data.NBTConverter;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.recipes.CountableIngredient;
@@ -9,12 +7,11 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.crafttweaker.CTUtilities;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JEIHelpers;
@@ -33,6 +30,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
 public class GTRecipeWrapper extends AdvancedRecipeWrapper {
@@ -44,6 +42,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     private final Int2BooleanMap notConsumedFluidInput = new Int2BooleanOpenHashMap();
     private final RecipeMap<?> recipeMap;
     private final Recipe recipe;
+    private String lastCopiedRemoval;
 
     public GTRecipeWrapper(RecipeMap<?> recipeMap, Recipe recipe) {
         this.recipeMap = recipeMap;
@@ -145,13 +144,25 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     @Override
     public void initExtras() {
-        buttons.add(new JeiButton(180, 2, 10, 10)
+        BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isCreative() && GTValues.isModLoaded(GTValues.MODID_CT);
+        buttons.add(new JeiButton(166, 2, 10, 10)
                 .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
+                .setTooltipBuilder(lines -> {
+                    lines.add("Copies a CraftTweaker script, to remove this recipe, to the clipboard");
+                })
                 .setClickAction((minecraft, mouseX, mouseY, mouseButton) -> {
-                    outputRemoveLine();
+                    String recipeLine = CTRecipeHelper.getRecipeRemoveLine(recipeMap, recipe);
+                    String output = CTRecipeHelper.getFirstOutputString(recipe);
+                    if (!output.isEmpty()) {
+                        output = "// " + output + "\n";
+                    }
+                    String copyString = output + recipeLine + "\n";
+                    ClipboardUtil.copyToClipboard(copyString);
+                    Minecraft.getMinecraft().player.sendMessage(new TextComponentString("Copied [\u00A76" + recipeLine + "\u00A7r] to the clipboard"));
+                    this.lastCopiedRemoval = copyString;
                     return true;
                 })
-                .setActiveSupplier(() -> Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isCreative() && GTValues.isModLoaded(GTValues.MODID_CT)));
+                .setActiveSupplier(creativePlayerCtPredicate));
     }
 
     public Int2ObjectMap<ChanceEntry> getChanceOutputMap() {
@@ -170,101 +181,5 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (recipeMap == RecipeMaps.COKE_OVEN_RECIPES)
             return LINE_HEIGHT - 6; // fun hack TODO Make this easier to position
         return (recipe.getPropertyCount() + 3) * LINE_HEIGHT - 3;
-    }
-
-    private void outputRemoveLine() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("<recipemap:")
-                .append(recipeMap.unlocalizedName)
-                .append(">.findRecipe(")
-                .append(recipe.getEUt())
-                .append(", ");
-
-        if (recipe.getInputs().size() > 0) {
-            builder.append("[");
-            for (CountableIngredient ci : recipe.getInputs()) {
-                ItemStack itemStack = null;
-                String itemId = null;
-                for (ItemStack item : ci.getIngredient().getMatchingStacks()) {
-                    itemId = CTUtilities.getMetaItemId(item);
-                    if (itemId != null) {
-                        builder.append("<metaitem:")
-                                .append(itemId)
-                                .append(">");
-                        itemStack = item;
-                        break;
-                    } else if (itemStack == null) {
-                        itemStack = item;
-                    }
-                }
-                if (itemStack != null) {
-                    if (itemId == null) {
-                        if (itemStack.getItem().getRegistryName() == null) {
-                            GTLog.logger.info("Could not remove recipe {}, because of unregistered Item", builder);
-                            return;
-                        }
-                        builder.append("<")
-                                .append(itemStack.getItem().getRegistryName().toString())
-                                .append(":")
-                                .append(itemStack.getItemDamage())
-                                .append(">");
-                    }
-
-                    if (itemStack.serializeNBT().hasKey("tag")) {
-                        String nbt = NBTConverter.from(itemStack.serializeNBT().getCompoundTag("tag"), false).toString();
-                        if (nbt.length() > 0) {
-                            builder.append(".withTag(").append(nbt).append(")");
-                        }
-                    }
-                }
-
-                if (ci.getCount() != 1) {
-                    builder.append(" * ")
-                            .append(ci.getCount());
-                }
-                builder.append(", ");
-            }
-            builder.delete(builder.length() - 2, builder.length())
-                    .append("], ");
-        } else {
-            builder.append("null, ");
-        }
-
-        if (recipe.getFluidInputs().size() > 0) {
-            builder.append("[");
-            for (FluidStack fluidStack : recipe.getFluidInputs()) {
-                builder.append("<liquid:")
-                        .append(fluidStack.getFluid().getName())
-                        .append(">");
-
-                if (fluidStack.amount != 1) {
-                    builder.append(" * ")
-                            .append(fluidStack.amount);
-                }
-
-                builder.append(", ");
-            }
-            builder.delete(builder.length() - 2, builder.length())
-                    .append("]");
-        } else {
-            builder.append("null");
-        }
-
-
-        builder.append(").remove();");
-
-        String output = "";
-        if (recipe.getOutputs().size() > 0) {
-            output = recipe.getOutputs().get(0).getDisplayName() + " * " + recipe.getOutputs().get(0).getCount();
-        } else if (recipe.getFluidOutputs().size() > 0) {
-            output = recipe.getFluidOutputs().get(0).getLocalizedName() + " * " + recipe.getFluidOutputs().get(0).amount;
-        }
-
-        if (!output.isEmpty()) {
-            output = "// " + output + "\n";
-        }
-
-        ClipboardUtil.copyToClipboard(output + builder.toString() + "\n");
-        Minecraft.getMinecraft().player.sendMessage(new TextComponentString("Copied [\u00A76" + builder.toString() + "\u00A7r] to the clipboard"));
     }
 }

@@ -3,7 +3,9 @@ package gregtech.integration.jei.utils;
 import gregtech.api.gui.resources.IGuiTexture;
 import net.minecraft.client.Minecraft;
 
+import java.util.List;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 public class JeiButton {
 
@@ -14,6 +16,7 @@ public class JeiButton {
     private final int height;
     private ClickAction clickAction;
     private BooleanSupplier activeSupplier = () -> true;
+    private Consumer<List<String>> tooltipBuilder = null;
 
     public JeiButton(float x, float y, int width, int height) {
         this.x = x;
@@ -35,6 +38,17 @@ public class JeiButton {
     public JeiButton setActiveSupplier(BooleanSupplier activeSupplier) {
         this.activeSupplier = activeSupplier;
         return this;
+    }
+
+    public JeiButton setTooltipBuilder(Consumer<List<String>> tooltipBuilder) {
+        this.tooltipBuilder = tooltipBuilder;
+        return this;
+    }
+
+    public void buildTooltip(List<String> lines) {
+        if (tooltipBuilder != null) {
+            tooltipBuilder.accept(lines);
+        }
     }
 
     public boolean isHovering(int mouseX, int mouseY) {

@@ -1,25 +1,15 @@
 package gregtech.common.command;
 
-import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.items.toolitem.ToolMetaItem.MetaToolValueItem;
-import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.pipenet.block.material.BlockMaterialPipe;
-import gregtech.api.recipes.crafttweaker.CTUtilities;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
-import gregtech.common.blocks.BlockCompressed;
-import gregtech.common.blocks.BlockFrame;
-import net.minecraft.block.Block;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -102,8 +92,8 @@ public class CommandHand extends CommandBase {
                 }
             }
 
-            String id = CTUtilities.getMetaItemId(stackInHand);
-            if(id != null) {
+            String id = CTRecipeHelper.getMetaItemId(stackInHand);
+            if (id != null) {
                 String ctId = "<metaitem:" + id + ">";
                 ClipboardUtil.copyToClipboard(player, ctId);
                 player.sendMessage(new TextComponentString("MetaItem Id: ").appendSibling(new TextComponentString(id).setStyle(new Style().setColor(TextFormatting.GREEN)))
