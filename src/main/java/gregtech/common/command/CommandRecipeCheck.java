@@ -22,7 +22,9 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreIngredient;
 
@@ -70,16 +72,25 @@ public class CommandRecipeCheck extends CommandBase {
         }
 
         GTLog.logger.info("[Recipe Checker] Completed recipe check!");
-        GTLog.logger.info("[Recipe Checker] Found " + mismatchedRecipes.size() + " potential conflicts");
-        for (MismatchEntry mismatch : mismatchedRecipes) {
-            GTLog.logger.error(
-                    "\nIn map " + mismatch.recipeMap.getUnlocalizedName() +
-                    "\nTried: " + prettyPrintRecipe(mismatch.attempted) +
-                    "\nFound: " + prettyPrintRecipe(mismatch.found)
-            );
+        if (mismatchedRecipes.size() == 0) {
+            GTLog.logger.info("No recipe conflicts found!");
+        } else {
+            GTLog.logger.info("[Recipe Checker] Found " + mismatchedRecipes.size() + " potential conflicts");
+            for (MismatchEntry mismatch : mismatchedRecipes) {
+                GTLog.logger.error(
+                        "\nIn map " + mismatch.recipeMap.getUnlocalizedName() +
+                                "\nTried: " + prettyPrintRecipe(mismatch.attempted) +
+                                "\nFound: " + prettyPrintRecipe(mismatch.found)
+                );
+            }
         }
 
-        sender.sendMessage(new TextComponentTranslation("gregtech.command.util.recipecheck.end", mismatchedRecipes.size()));
+        if (mismatchedRecipes.size() == 0) {
+            sender.sendMessage(new TextComponentTranslation("gregtech.command.util.recipecheck.end_no_conflicts")
+                    .setStyle(new Style().setColor(TextFormatting.GREEN)));
+        } else {
+            sender.sendMessage(new TextComponentTranslation("gregtech.command.util.recipecheck.end", mismatchedRecipes.size()));
+        }
     }
 
     /**

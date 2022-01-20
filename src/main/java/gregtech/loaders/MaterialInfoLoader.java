@@ -248,7 +248,6 @@ public class MaterialInfoLoader {
         OreDictUnifier.registerOre(new ItemStack(Blocks.PACKED_ICE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Ice, M * 2)));
 
         OreDictUnifier.registerOre(new ItemStack(Items.BOOK, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Paper, M * 3)));
-        OreDictUnifier.registerOre(new ItemStack(Items.WRITTEN_BOOK, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Paper, M * 3)));
         OreDictUnifier.registerOre(new ItemStack(Items.WRITABLE_BOOK, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Paper, M * 3)));
         OreDictUnifier.registerOre(new ItemStack(Items.ENCHANTED_BOOK, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Paper, M * 3)));
         OreDictUnifier.registerOre(new ItemStack(Items.GOLDEN_APPLE, 1, 1), new ItemMaterialInfo(new MaterialStack(Materials.Gold, M * 72))); // block

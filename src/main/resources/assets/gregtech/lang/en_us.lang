@@ -4310,6 +4310,7 @@ gregtech.command.util.hand.no_item=You must hold something in mainhand before ex
 gregtech.command.util.recipecheck.usage=Usage: /gregtech recipecheck
 gregtech.command.util.recipecheck.begin=Starting recipe conflict check...
 gregtech.command.util.recipecheck.end=Recipe conflict check found %d possible conflicts. Check the server log for more info
+gregtech.command.util.recipecheck.end_no_conflicts=No recipe conflicts found!
 
 gregtech.universal.clear_nbt_recipe.tooltip=§cThis will destroy all contents!
 

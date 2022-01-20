@@ -83,7 +83,7 @@ public class RecyclingRecipes {
                 return;
             }
         }
-        registerArcRecycling(input, components, voltageMultiplier, prefix);
+        registerArcRecycling(input, components, prefix);
     }
 
     private static void registerMaceratorRecycling(ItemStack input, List<MaterialStack> materials, int multiplier) {
@@ -166,7 +166,7 @@ public class RecyclingRecipes {
         extractorBuilder.buildAndRegister();
     }
 
-    private static void registerArcRecycling(ItemStack input, List<MaterialStack> materials, int multiplier, @Nullable OrePrefix prefix) {
+    private static void registerArcRecycling(ItemStack input, List<MaterialStack> materials, @Nullable OrePrefix prefix) {
         // Block dusts from being arc'd instead of EBF'd
         if (prefix == OrePrefix.dust && OreDictUnifier.getMaterial(input).material.hasProperty(PropertyKey.BLAST)) {
             return;
@@ -180,7 +180,8 @@ public class RecyclingRecipes {
                         .duration(calculateDuration(Collections.singletonList(output)))
                         .EUt(GTValues.VA[GTValues.LV])
                         .buildAndRegister();
-            } else return;
+            }
+            return;
         }
 
         // Filter down the materials list.

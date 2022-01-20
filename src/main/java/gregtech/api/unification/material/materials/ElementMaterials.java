@@ -514,7 +514,7 @@ public class ElementMaterials {
         Platinum = new Material.Builder(80, "platinum")
                 .ingot().fluid(FluidType.GAS, true).ore()
                 .color(0xFFFFC8).iconSet(SHINY)
-                .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
+                .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_RING)
                 .element(Elements.Pt)
                 .cableProperties(GTValues.V[5], 2, 1)
                 .itemPipeProperties(512, 4.0f)
@@ -635,7 +635,7 @@ public class ElementMaterials {
         Silver = new Material.Builder(100, "silver")
                 .ingot().fluid().ore()
                 .color(0xDCDCFF).iconSet(SHINY)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FINE_WIRE)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FINE_WIRE, GENERATE_RING)
                 .element(Elements.Ag)
                 .cableProperties(GTValues.V[3], 1, 1)
                 .build();
