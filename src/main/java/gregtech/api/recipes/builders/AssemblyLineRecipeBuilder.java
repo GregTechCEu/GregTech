@@ -55,7 +55,8 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
 
     public ValidationResult<Recipe> build() {
         Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden);
-        recipe.setProperty(ResearchItemProperty.getInstance(), this.researchItem);
+        if (this.researchItem != null)
+            recipe.setProperty(ResearchItemProperty.getInstance(), this.researchItem);
         return ValidationResult.newResult(finalizeAndValidate(), recipe);
     }
 
