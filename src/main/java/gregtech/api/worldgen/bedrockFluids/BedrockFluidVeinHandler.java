@@ -1,10 +1,9 @@
 package gregtech.api.worldgen.bedrockFluids;
 
 import gregtech.api.GTValues;
-import gregtech.api.net.packets.SPacketFluidVeinList;
 import gregtech.api.net.NetworkHandler;
+import gregtech.api.net.packets.SPacketFluidVeinList;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.XSTR;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,6 +15,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -37,7 +38,8 @@ public class BedrockFluidVeinHandler {
      * @param chunkZ Z coordinate of desired chunk
      * @return The FluidVeinWorldInfo corresponding with the given chunk
      */
-    public static FluidVeinWorldEntry getFluidVeinWorldEntry(World world, int chunkX, int chunkZ) {
+    @Nullable
+    public static FluidVeinWorldEntry getFluidVeinWorldEntry(@Nonnull World world, int chunkX, int chunkZ) {
         if (world.isRemote)
             return null;
 
@@ -86,7 +88,7 @@ public class BedrockFluidVeinHandler {
      * @param chunkZ Z coordinate of desired chunk
      * @return rate of fluid in the given vein
      */
-    public static int getFluidRateInChunk(World world, int chunkX, int chunkZ) {
+    public static int getFluidRateInChunk(@Nonnull World world, int chunkX, int chunkZ) {
         if (world.isRemote)
             return 0;
 
@@ -104,14 +106,20 @@ public class BedrockFluidVeinHandler {
      * @param chunkZ Z coordinate of desired chunk
      * @return Fluid in given vein
      */
-    public static Fluid getFluid(World world, int chunkX, int chunkZ) {
+    @Nullable
+    public static Fluid getFluid(@Nonnull World world, int chunkX, int chunkZ) {
         if (world.isRemote)
             return null;
 
         FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
         if (info == null)
             return null;
-        return info.getVein().getStoredFluid();
+
+        BedrockFluidDepositDefinition definition = info.getVein();
+        if (definition == null)
+            return null;
+
+        return definition.getStoredFluid();
     }
 
     /**
@@ -122,7 +130,7 @@ public class BedrockFluidVeinHandler {
      * @param chunkZ Z coordinate of desired chunk
      * @return rate of fluid produced post depletion
      */
-    public static int getDepletedFluidRate(World world, int chunkX, int chunkZ) {
+    public static int getDepletedFluidRate(@Nonnull World world, int chunkX, int chunkZ) {
         if (world.isRemote)
             return 0;
 
@@ -139,7 +147,7 @@ public class BedrockFluidVeinHandler {
      * @param chunkX Chunk x
      * @param chunkZ Chunk z
      */
-    public static void depleteVein(World world, int chunkX, int chunkZ) {
+    public static void depleteVein(@Nonnull World world, int chunkX, int chunkZ) {
         if (world.isRemote)
             return;
 
@@ -170,7 +178,7 @@ public class BedrockFluidVeinHandler {
      * @param biome The biome type to check
      * @return The total weight associated with the dimension/biome pair
      */
-    public static int getTotalWeight(WorldProvider provider, Biome biome) {
+    public static int getTotalWeight(@Nonnull WorldProvider provider, Biome biome) {
         int dim = provider.getDimension();
         if (!totalWeightMap.containsKey(dim)) {
             totalWeightMap.put(dim, new HashMap<>());
@@ -253,7 +261,8 @@ public class BedrockFluidVeinHandler {
             return tag;
         }
 
-        public static FluidVeinWorldEntry readFromNBT(NBTTagCompound tag) {
+        @Nonnull
+        public static FluidVeinWorldEntry readFromNBT(@Nonnull NBTTagCompound tag) {
             FluidVeinWorldEntry info = new FluidVeinWorldEntry();
             info.maximumCapacity = tag.getInteger("maximumCapacity");
             info.currentFluidAmount = tag.getInteger("currentFluidAmount");
