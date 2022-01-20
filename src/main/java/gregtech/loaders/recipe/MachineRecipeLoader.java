@@ -203,23 +203,23 @@ public class MachineRecipeLoader {
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, Iron).input(dust, Coal, 2).output(ingot, Steel).output(dustTiny, DarkAsh, 2).duration(1800).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, Iron).input(gem, Charcoal, 2).output(ingot, Steel).output(dustTiny, DarkAsh, 2).duration(1800).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, Iron).input(dust, Charcoal, 2).output(ingot, Steel).output(dustTiny, DarkAsh, 2).duration(1800).buildAndRegister();
-        PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, Iron).input(gem, Coke).output(ingot, Steel).output(dustTiny, Ash).duration(1800).buildAndRegister();
-        PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, Iron).input(dust, Coke).output(ingot, Steel).output(dustTiny, Ash).duration(1800).buildAndRegister();
+        PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, Iron).input(gem, Coke).output(ingot, Steel).output(dustTiny, Ash).duration(1500).buildAndRegister();
+        PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, Iron).input(dust, Coke).output(ingot, Steel).output(dustTiny, Ash).duration(1500).buildAndRegister();
 
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(block, Iron).input(block, Coal, 2).output(block, Steel).output(dust, DarkAsh, 2).duration(16200).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(block, Iron).input(block, Charcoal, 2).output(block, Steel).output(dust, DarkAsh, 2).duration(16200).buildAndRegister();
-        PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(block, Iron).input(block, Coke).output(block, Steel).output(dust, Ash).duration(16200).buildAndRegister();
+        PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(block, Iron).input(block, Coke).output(block, Steel).output(dust, Ash).duration(13500).buildAndRegister();
 
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, WroughtIron).input(gem, Coal, 2).output(ingot, Steel).output(dustTiny, DarkAsh, 2).duration(800).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, WroughtIron).input(dust, Coal, 2).output(ingot, Steel).output(dustTiny, DarkAsh, 2).duration(800).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, WroughtIron).input(gem, Charcoal, 2).output(ingot, Steel).output(dustTiny, DarkAsh, 2).duration(800).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, WroughtIron).input(dust, Charcoal, 2).output(ingot, Steel).output(dustTiny, DarkAsh, 2).duration(800).buildAndRegister();
-        PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, WroughtIron).input(gem, Coke).output(ingot, Steel).output(dustTiny, Ash).duration(800).buildAndRegister();
-        PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, WroughtIron).input(dust, Coke).output(ingot, Steel).output(dustTiny, Ash).duration(800).buildAndRegister();
+        PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, WroughtIron).input(gem, Coke).output(ingot, Steel).output(dustTiny, Ash).duration(600).buildAndRegister();
+        PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, WroughtIron).input(dust, Coke).output(ingot, Steel).output(dustTiny, Ash).duration(600).buildAndRegister();
 
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(block, WroughtIron).input(block, Coal, 2).output(block, Steel).output(dust, DarkAsh, 2).duration(7200).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(block, WroughtIron).input(block, Charcoal, 2).output(block, Steel).output(dust, DarkAsh, 2).duration(7200).buildAndRegister();
-        PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(block, WroughtIron).input(block, Coke).output(block, Steel).output(dust, Ash).duration(7200).buildAndRegister();
+        PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(block, WroughtIron).input(block, Coke).output(block, Steel).output(dust, Ash).duration(5400).buildAndRegister();
     }
 
     private static void registerCokeOvenRecipes() {
@@ -603,7 +603,7 @@ public class MachineRecipeLoader {
         BLAST_RECIPES.recipeBuilder().duration(320).EUt(100).input(gem, Sapphire).output(nugget, Aluminium, 3).blastFurnaceTemp(1200).buildAndRegister();
         BLAST_RECIPES.recipeBuilder().duration(800).EUt(VA[HV]).input(dust, Magnesium, 2).fluidInputs(TitaniumTetrachloride.getFluid(1000)).outputs(OreDictUnifier.get(OrePrefix.ingotHot, Materials.Titanium), OreDictUnifier.get(OrePrefix.dust, Materials.MagnesiumChloride, 6)).blastFurnaceTemp(Materials.Titanium.getBlastTemperature() + 200).buildAndRegister();
         BLAST_RECIPES.recipeBuilder().duration(500).EUt(VA[MV]).input(ingot, Iron).fluidInputs(Oxygen.getFluid(200)).output(ingot, Steel).output(dustTiny, Ash).blastFurnaceTemp(1000).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(100).EUt(VA[MV]).input(ingot, WroughtIron).fluidInputs(Oxygen.getFluid(200)).output(ingot, Steel).output(dustTiny, Ash).blastFurnaceTemp(1000).buildAndRegister();
+        BLAST_RECIPES.recipeBuilder().duration(300).EUt(VA[MV]).input(ingot, WroughtIron).fluidInputs(Oxygen.getFluid(200)).output(ingot, Steel).output(dustTiny, Ash).blastFurnaceTemp(1000).buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder()
                 .input(dust, Ilmenite, 10)
