@@ -14,6 +14,7 @@ import gregtech.api.items.OreDictNames;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.*;
+import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -538,6 +539,15 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                         electricItem.getCharge(),
                         electricItem.getMaxCharge(),
                         GTValues.VNF[electricItem.getTier()]));
+            }
+        }
+
+        if (itemStack.getSubCompound(AssemblyLineRecipeBuilder.RESEARCH_NBT_TAG_NAME) != null) {
+            ItemStack dataStick = itemStack;
+            NBTTagCompound researchItemNBT = dataStick.getSubCompound(AssemblyLineRecipeBuilder.RESEARCH_NBT_TAG_NAME);
+            ItemStack researchItem = new ItemStack(researchItemNBT);
+            if (!researchItem.isEmpty() && researchItemNBT != null) {
+                lines.add(I18n.format("metaitem.tool.datastick.written_tooltip", researchItem.getDisplayName()));
             }
         }
 
