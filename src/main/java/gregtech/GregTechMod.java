@@ -9,6 +9,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
+import gregtech.api.recipes.ModHandler;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.recipes.RecipeMap;
@@ -174,6 +175,10 @@ public class GregTechMod {
     @Mod.EventHandler
     public void onPostInit(FMLPostInitializationEvent event) {
         proxy.onPostLoad();
+
+        if(ConfigHolder.compat.removeSmeltingForEBFMetals) {
+            ModHandler.removeSmeltingEBFMetals();
+        }
     }
 
     @Mod.EventHandler

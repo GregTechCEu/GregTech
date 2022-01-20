@@ -8,12 +8,14 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.DummyContainer;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.ShapedOreEnergyTransferRecipe;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.ConfigHolder;
@@ -737,5 +739,30 @@ public class ModHandler {
     public static ItemStack getSmeltingOutput(ItemStack input) {
         if (input.isEmpty()) return ItemStack.EMPTY;
         return OreDictUnifier.getUnificated(FurnaceRecipes.instance().getSmeltingResult(input));
+    }
+
+    public static void removeSmeltingEBFMetals() {
+
+        Map<ItemStack, ItemStack> furnaceList = FurnaceRecipes.instance().getSmeltingList();
+
+        Iterator<Map.Entry<ItemStack, ItemStack>> recipeIterator = furnaceList.entrySet().iterator();
+
+        while(recipeIterator.hasNext()) {
+            Map.Entry<ItemStack, ItemStack> recipe = recipeIterator.next();
+
+            ItemStack output = recipe.getValue();
+            MaterialStack ms = OreDictUnifier.getMaterial(output);
+
+            if(ms != null) {
+                Material material = ms.material;
+                if(material.hasProperty(PropertyKey.BLAST)) {
+                    recipeIterator.remove();
+                    if(ConfigHolder.misc.debug) {
+                        GTLog.logger.info("Removing Smelting Recipe for EBF material {}", LocalizationUtils.format(material.getUnlocalizedName()));
+                    }
+                }
+            }
+
+        }
     }
 }
