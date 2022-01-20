@@ -751,14 +751,20 @@ public class ModHandler {
             Map.Entry<ItemStack, ItemStack> recipe = recipeIterator.next();
 
             ItemStack output = recipe.getValue();
+            ItemStack input = recipe.getKey();
             MaterialStack ms = OreDictUnifier.getMaterial(output);
 
             if(ms != null) {
                 Material material = ms.material;
                 if(material.hasProperty(PropertyKey.BLAST)) {
-                    recipeIterator.remove();
-                    if(ConfigHolder.misc.debug) {
-                        GTLog.logger.info("Removing Smelting Recipe for EBF material {}", LocalizationUtils.format(material.getUnlocalizedName()));
+                    ItemStack dust = OreDictUnifier.get(OrePrefix.dust, material);
+                    ItemStack ingot = OreDictUnifier.get(OrePrefix.ingot, material);
+                    //Check if the inputs are actually dust -> ingot
+                    if(ingot.isItemEqual(output) && dust.isItemEqual(input)) {
+                        recipeIterator.remove();
+                        if(ConfigHolder.misc.debug) {
+                            GTLog.logger.info("Removing Smelting Recipe for EBF material {}", LocalizationUtils.format(material.getUnlocalizedName()));
+                        }
                     }
                 }
             }
