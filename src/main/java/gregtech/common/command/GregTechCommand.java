@@ -19,6 +19,7 @@ public class GregTechCommand extends CommandTreeBase {
     public GregTechCommand() {
         addSubcommand(new CommandWorldgen());
         addSubcommand(new CommandHand());
+        addSubcommand(new CommandRecipeCheck());
     }
 
     @Nonnull

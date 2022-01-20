@@ -177,36 +177,6 @@ public class MachineRecipeLoader {
                 .duration(128).EUt(VA[LV])
                 .buildAndRegister();
 
-        EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, Steel, 4)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
-                .output(FLUID_CELL_LARGE_STEEL)
-                .duration(256).EUt(VA[LV]).buildAndRegister();
-
-        EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, Aluminium, 4)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
-                .output(FLUID_CELL_LARGE_ALUMINIUM)
-                .duration(256).EUt(VA[MV]).buildAndRegister();
-
-        EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, StainlessSteel, 6)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
-                .output(FLUID_CELL_LARGE_STAINLESS_STEEL)
-                .duration(512).EUt(VA[MV]).buildAndRegister();
-
-        EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, Titanium, 6)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
-                .output(FLUID_CELL_LARGE_TITANIUM)
-                .duration(512).EUt(VA[HV]).buildAndRegister();
-
-        EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, TungstenSteel, 8)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
-                .output(FLUID_CELL_LARGE_TUNGSTEN_STEEL)
-                .duration(1024).EUt(VA[HV]).buildAndRegister();
-
         COMPRESSOR_RECIPES.recipeBuilder()
                 .input(OrePrefix.dust, Materials.NetherQuartz)
                 .output(OrePrefix.plate, Materials.NetherQuartz)
@@ -226,12 +196,6 @@ public class MachineRecipeLoader {
                 .input(COKE_OVEN_BRICK, 4)
                 .outputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.COKE_BRICKS))
                 .duration(300).EUt(2).buildAndRegister();
-
-        ALLOY_SMELTER_RECIPES.recipeBuilder()
-                .input("sand", 1)
-                .inputs(new ItemStack(Items.CLAY_BALL))
-                .output(COKE_OVEN_BRICK, 2)
-                .duration(200).EUt(VA[ULV]).buildAndRegister();
     }
 
     private static void registerPrimitiveBlastFurnaceRecipes() {
@@ -599,6 +563,35 @@ public class MachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(foil, StyreneButadieneRubber, 2).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(144)).output(DUCT_TAPE, 4).duration(100).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).input(foil, Polybenzimidazole).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(72)).output(DUCT_TAPE, 8).duration(100).buildAndRegister();
 
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plateDouble, Steel, 2)
+                .input(ring, Bronze, 2)
+                .output(FLUID_CELL_LARGE_STEEL)
+                .duration(200).EUt(VA[LV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plateDouble, Aluminium, 2)
+                .input(ring, Silver, 2)
+                .output(FLUID_CELL_LARGE_ALUMINIUM)
+                .duration(200).EUt(64).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plateDouble, StainlessSteel, 3)
+                .input(ring, Electrum, 3)
+                .output(FLUID_CELL_LARGE_STAINLESS_STEEL)
+                .duration(200).EUt(VA[MV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plateDouble, Titanium, 3)
+                .input(ring, RoseGold, 3)
+                .output(FLUID_CELL_LARGE_TITANIUM)
+                .duration(200).EUt(256).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plateDouble, TungstenSteel, 4)
+                .input(ring, Platinum, 4)
+                .output(FLUID_CELL_LARGE_TUNGSTEN_STEEL)
+                .duration(200).EUt(VA[HV]).buildAndRegister();
     }
 
     private static void registerBlastFurnaceRecipes() {

@@ -4,12 +4,14 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import codechicken.lib.vec.Rotation;
 import gregtech.api.GTValues;
 import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.cclop.LightMapOperation;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -144,20 +146,41 @@ public class OrientedOverlayRenderer implements ICubeRenderer {
     @SideOnly(Side.CLIENT)
     public void renderOrientedState(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 bounds, EnumFacing frontFacing, boolean isActive, boolean isWorkingEnabled) {
         for (EnumFacing renderSide : EnumFacing.VALUES) {
+
             ActivePredicate predicate = sprites.get(OverlayFace.bySide(renderSide, frontFacing));
             if (predicate != null) {
-
                 TextureAtlasSprite renderSprite = predicate.getSprite(isActive, isWorkingEnabled);
-                Textures.renderFace(renderState, translation, pipeline, renderSide, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
+
+                // preserve the original translation when not rotating the top and bottom
+                Matrix4 renderTranslation = translation.copy();
+
+                // Rotate the top and bottom faces to match front facing
+                Rotation rotation = new Rotation(0, 0, 1, 0);
+                if (renderSide == EnumFacing.UP || renderSide == EnumFacing.DOWN) {
+                    if (frontFacing == EnumFacing.NORTH) {
+                        renderTranslation.translate(1, 0, 1);
+                        rotation = new Rotation(Math.PI, 0, 1, 0);
+                    } else if (frontFacing == EnumFacing.EAST) {
+                        renderTranslation.translate(0, 0, 1);
+                        rotation = new Rotation(Math.PI / 2, 0, 1, 0);
+                    } else if (frontFacing == EnumFacing.WEST) {
+                        renderTranslation.translate(1, 0, 0);
+                        rotation = new Rotation(-Math.PI / 2, 0, 1, 0);
+                    }
+                    renderTranslation = RenderUtil.adjustTrans(renderTranslation, renderSide, 1);
+                    renderTranslation.apply(rotation);
+                }
+
+                Textures.renderFace(renderState, renderTranslation, ArrayUtils.addAll(pipeline, rotation), renderSide, bounds, renderSprite, BlockRenderLayer.CUTOUT_MIPPED);
 
                 TextureAtlasSprite emissiveSprite = predicate.getEmissiveSprite(isActive, isWorkingEnabled);
                 if (emissiveSprite != null) {
                     if (ConfigHolder.client.machinesEmissiveTextures) {
-                        IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
-                        Textures.renderFace(renderState, translation, lightPipeline, renderSide, bounds, emissiveSprite, BloomEffectUtil.getRealBloomLayer());
+                        IVertexOperation[] lightPipeline = ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240), rotation);
+                        Textures.renderFace(renderState, renderTranslation, lightPipeline, renderSide, bounds, emissiveSprite, BloomEffectUtil.getRealBloomLayer());
                     } else {
                         // have to still render both overlays or else textures will be broken
-                        Textures.renderFace(renderState, translation, pipeline, renderSide, bounds, emissiveSprite, BlockRenderLayer.CUTOUT_MIPPED);
+                        Textures.renderFace(renderState, renderTranslation, ArrayUtils.addAll(pipeline, rotation), renderSide, bounds, emissiveSprite, BlockRenderLayer.CUTOUT_MIPPED);
                     }
                 }
             }

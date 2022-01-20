@@ -413,6 +413,7 @@ public class SecondDegreeMaterials {
         PlatinumSludgeResidue = new Material.Builder(2057, "platinum_sludge_residue")
                 .dust()
                 .color(0x827951)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 2, Gold, 3)
                 .build();
 
@@ -463,7 +464,8 @@ public class SecondDegreeMaterials {
         Redstone = new Material.Builder(2064, "redstone")
                 .dust().ore(5, 1).fluid()
                 .color(0xC80000).iconSet(ROUGH)
-                .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
+                        EXCLUDE_PLATE_COMPRESSOR_RECIPE, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3)
                 .build();
     }

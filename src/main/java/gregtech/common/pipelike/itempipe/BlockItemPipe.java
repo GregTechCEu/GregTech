@@ -2,17 +2,16 @@ package gregtech.common.pipelike.itempipe;
 
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
-import gregtech.api.cover.CoverBehavior;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
+import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
-import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -133,7 +132,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("deprecation")
     public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
-        return ItemPipeRenderer.BLOCK_RENDER_TYPE;
+        return ItemPipeRenderer.INSTANCE.getBlockRenderType();
     }
 
 

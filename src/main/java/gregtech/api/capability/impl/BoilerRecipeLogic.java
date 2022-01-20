@@ -96,6 +96,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic {
                     if (FluidUtil.getFluidHandler(stack) != null) continue;
                     this.excessFuel += fuelBurnTime % 80;
                     int excessProgress = this.excessFuel / 80;
+                    this.excessFuel %= 80;
                     setMaxProgress(excessProgress + adjustBurnTimeForThrottle(boiler.boilerType.runtimeBoost(fuelBurnTime / 80)));
                     stack.shrink(1);
                     didStartRecipe = true;

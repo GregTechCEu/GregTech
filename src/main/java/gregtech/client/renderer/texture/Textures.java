@@ -246,6 +246,9 @@ public class Textures {
     public static final ResourceLocation RED_CAPE_TEXTURE = new ResourceLocation(GTValues.MODID, "textures/capes/redcape.png");
     public static final ResourceLocation YELLOW_CAPE_TEXTURE = new ResourceLocation(GTValues.MODID, "textures/capes/yellowcape.png");
     public static final ResourceLocation GREEN_CAPE_TEXTURE = new ResourceLocation(GTValues.MODID, "textures/capes/greencape.png");
+  
+    public static TextureAtlasSprite RESTRICTIVE_OVERLAY;
+    public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY;
 
     @SideOnly(Side.CLIENT)
     public static ThreadLocal<CubeRendererState> RENDER_STATE;
@@ -266,6 +269,9 @@ public class Textures {
         for (IIconRegister iconRegister : iconRegisters) {
             iconRegister.registerIcons(textureMap);
         }
+
+        RESTRICTIVE_OVERLAY = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_restrictive"));
+        PIPE_BLOCKED_OVERLAY = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_blocked"));
     }
 
     @SideOnly(Side.CLIENT)
