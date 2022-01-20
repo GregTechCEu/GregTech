@@ -1,5 +1,32 @@
 ## Changelog
 
+### 2.0.6
+BETA RELEASE
+
+Featured Changes:
+
+* Fluid Pipe Rework
+    * Fixes all instances of voiding and other random issues
+    * Fluid pipes can now have a side be "blocked" by shift-right-clicking with a Wrench on the Machine Grid
+    * Fluids in this new implementation currently slosh like GT5U
+    * Expect more changes to come to pipes in the coming updates
+
+* Unlockable Capes
+    * Capes can now be unlocked via Advancements in-game, and selected using a new Terminal app
+    * 4 capes are available now, unlocked from various advancements
+    * Capes can be added by addons or by CraftTweaker (documentation coming soon!)
+
+* Remove item pipe logging spam
+* Fix Large Boilers increasing item burn time over time
+* Fix Large Turbines not showing the fluid in their Hatches on login
+* Cables now act as "fuses" when overvolted, to protect your machines
+* Fix amperage averaging for cable burning
+* Add a new command `/gt recipecheck` which will look for and inform you of any potential recipe conflicts
+* Add new CT method to hide a multiblock preview from JEI
+* Fix all recipe conflicts in GT recipes
+* Fix treated wood pulp and plank localization
+* Misc changes (remove Sodium Ingot, change Platinum Sludge Residue from Electrolyzer to Centrifuge)
+
 ### 2.0.5
 BETA RELEASE
 
