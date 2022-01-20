@@ -182,14 +182,7 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void onTextureStitch(TextureStitchEvent.Pre event) {
-        event.getMap().registerSprite(MaterialIconType.block.getBlockPath(material.getMaterialIconSet()));
-        for (IBlockState state : this.getBlockState().getValidStates()) {
-            StoneType stoneType = state.getValue(STONE_TYPE);
-            // event.getMap().registerSprite(stoneType.backgroundTopTexture);
-            // event.getMap().registerSprite(stoneType.backgroundSideTexture);
-        }
-    }
+    public void onTextureStitch(TextureStitchEvent.Pre event) { }
 
     @Override
     @SideOnly(Side.CLIENT)
