@@ -121,7 +121,7 @@ public class ClickButtonWidget extends Widget {
         ClickData clickData = new ClickData(Mouse.getEventButton(), isShiftDown(), isCtrlDown());
         writeClientAction(1, clickData::writeToBuf);
         if (shouldClientCallback) {
-           onPressCallback.accept(clickData);
+           onPressCallback.accept(new ClickData(Mouse.getEventButton(), isShiftDown(), isCtrlDown(), true));
         }
         playButtonClickSound();
     }

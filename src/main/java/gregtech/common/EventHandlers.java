@@ -2,11 +2,11 @@ package gregtech.common;
 
 import gregtech.api.GTValues;
 import gregtech.api.enchants.EnchantmentHardHammer;
-import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.net.NetworkHandler;
+import gregtech.api.util.CapesRegistry;
 import gregtech.api.net.packets.CPacketKeysPressed;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
@@ -14,11 +14,9 @@ import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.Key;
 import gregtech.api.util.input.KeyBinds;
 import gregtech.common.items.MetaItems;
-import gregtech.common.items.armor.PowerlessJetpack;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.tools.ToolUtility;
-import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -38,6 +36,7 @@ import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -49,9 +48,6 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
@@ -122,29 +118,6 @@ public class EventHandlers {
 
     }
 
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public static void onRender(final TickEvent.RenderTickEvent event) {
-        final Minecraft mc = Minecraft.getMinecraft();
-        if (mc.inGameHasFocus && mc.world != null && !mc.gameSettings.showDebugInfo && Minecraft.isGuiEnabled()) {
-            final ItemStack item = mc.player.inventory.armorItemInSlot(EntityEquipmentSlot.CHEST.getIndex());
-            if (item.getItem() instanceof ArmorMetaItem) {
-                ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) item.getItem()).getItem(item);
-                if (armorMetaValue.getArmorLogic() instanceof ArmorLogicSuite) {
-                    ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
-                    if (armorLogic.isNeedDrawHUD()) {
-                        armorLogic.drawHUD(item);
-                    }
-                } else if (armorMetaValue.getArmorLogic() instanceof PowerlessJetpack) {
-                    PowerlessJetpack armorLogic = (PowerlessJetpack) armorMetaValue.getArmorLogic();
-                    if (armorLogic.isNeedDrawHUD()) {
-                        armorLogic.drawHUD(item);
-                    }
-                }
-            }
-        }
-    }
-
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onKeyInput(InputEvent.KeyInputEvent event) {
         if (ArmorUtils.SIDE.isClient()) {
@@ -209,6 +182,12 @@ public class EventHandlers {
     @SubscribeEvent
     public static void onWorldLoadEvent(WorldEvent.Load event) {
         VirtualTankRegistry.initializeStorage(event.getWorld());
+        CapesRegistry.checkAdvancements(event.getWorld());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerAdvancement(AdvancementEvent event) {
+        CapesRegistry.unlockCapeOnAdvancement(event.getEntityPlayer(), event.getAdvancement());
     }
 
     @SubscribeEvent
@@ -227,6 +206,8 @@ public class EventHandlers {
                 playerData.setTag(EntityPlayer.PERSISTED_NBT_TAG, data);
             }
         }
+        CapesRegistry.detectNewCapes(event.player);
+        CapesRegistry.loadWornCapeOnLogin(event.player);
     }
 
     @SubscribeEvent

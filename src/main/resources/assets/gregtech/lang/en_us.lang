@@ -4312,6 +4312,8 @@ gregtech.command.util.recipecheck.begin=Starting recipe conflict check...
 gregtech.command.util.recipecheck.end=Recipe conflict check found %d possible conflicts. Check the server log for more info
 gregtech.command.util.recipecheck.end_no_conflicts=No recipe conflicts found!
 
+gregtech.chat.cape=§5Congrats: you just unlocked a new cape! See the Cape Selector terminal app to use it.§r
+
 gregtech.universal.clear_nbt_recipe.tooltip=§cThis will destroy all contents!
 
 gregtech.cover.energy_detector.message_electricity_storage_normal=Monitoring Normal Electricity Storage
@@ -4350,6 +4352,8 @@ gregtech.terminal.app_name.store=App Store
 gregtech.terminal.app_name.multiblock_ar=Multiblock Helper
 gregtech.terminal.app_name.world_prospector=World Prospector
 gregtech.terminal.app_name.vtank_viewer=Virtual Tank Viewer
+gregtech.terminal.app_name.cape_selector=Cape Selector
+
 
 terminal.app_name.description=No description.
 terminal.app_name.tier=Tier %d
@@ -4361,6 +4365,8 @@ terminal.tutorials.description=Introduces all kinds of things, CT integration, t
 terminal.pong.description=A classic pong game, if you're really that bored of waiting for that tungstensteel.
 terminal.minesweeper.description=A classic minesweeper game, if you're in class.
 terminal.maze.description=A GTOS exclusive game finding you racing through an endless labyrinth to survive the Minotaur!
+terminal.cape_selector.description=An app that allows you to equip GT capes that you've unlocked through advancements.
+
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed

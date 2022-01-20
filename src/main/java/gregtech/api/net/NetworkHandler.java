@@ -37,6 +37,7 @@ public class NetworkHandler {
         registerPacket(CPacketRecoverMTE.class);
         registerPacket(CPacketKeysPressed.class);
         registerPacket(SPacketFluidVeinList.class);
+        registerPacket(SPacketNotifyCapeChange.class);
 
         initServer();
         if (FMLCommonHandler.instance().getSide().isClient()) {
@@ -61,6 +62,7 @@ public class NetworkHandler {
         registerClientExecutor(SPacketBlockParticle.class);
         registerClientExecutor(SPacketClipboard.class);
         registerClientExecutor(SPacketFluidVeinList.class);
+        registerClientExecutor(SPacketNotifyCapeChange.class);
     }
 
 

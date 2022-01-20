@@ -1,21 +1,26 @@
 package gregtech.client.event;
 
+import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+import gregtech.api.util.CapesRegistry;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
-import gregtech.client.utils.DepthTextureUtil;
 import gregtech.client.renderer.handler.TerminalARRenderer;
 import gregtech.client.renderer.handler.ToolOverlayRenderer;
+import gregtech.client.utils.DepthTextureUtil;
 import gregtech.common.ConfigHolder;
-import net.minecraftforge.client.event.DrawBlockHighlightEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderSpecificHandEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.Map;
+import java.util.UUID;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
@@ -57,5 +62,25 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onRenderSpecificHand(RenderSpecificHandEvent event) {
         TerminalARRenderer.renderHandEvent(event);
+    }
+
+    private static final Map<UUID, ResourceLocation> DEFAULT_CAPES = new Object2ObjectOpenHashMap<>();
+
+    @SubscribeEvent
+    public static void onPlayerRender(RenderPlayerEvent.Pre event) {
+        AbstractClientPlayer clientPlayer = (AbstractClientPlayer) event.getEntityPlayer();
+        if (clientPlayer.hasPlayerInfo()) {
+            Map<MinecraftProfileTexture.Type, ResourceLocation> playerTextures = clientPlayer.playerInfo.playerTextures;
+            UUID uuid = clientPlayer.getPersistentID();
+            ResourceLocation defaultPlayerCape;
+            if (!DEFAULT_CAPES.containsKey(uuid)) {
+                defaultPlayerCape = playerTextures.get(MinecraftProfileTexture.Type.CAPE);
+                DEFAULT_CAPES.put(uuid, defaultPlayerCape);
+            } else {
+                defaultPlayerCape = DEFAULT_CAPES.get(uuid);
+            }
+            ResourceLocation cape = CapesRegistry.getPlayerCape(uuid);
+            playerTextures.put(MinecraftProfileTexture.Type.CAPE, cape == null ? defaultPlayerCape : cape);
+        }
     }
 }

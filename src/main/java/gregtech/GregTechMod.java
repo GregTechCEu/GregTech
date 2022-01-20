@@ -16,6 +16,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
+import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBinds;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
@@ -189,11 +190,13 @@ public class GregTechMod {
     @Mod.EventHandler
     public void onServerLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new GregTechCommand());
+        CapesRegistry.load();
     }
 
     @Mod.EventHandler
     public static void onServerStopped(FMLServerStoppedEvent event) {
         VirtualTankRegistry.clearMaps();
+        CapesRegistry.clearMaps();
     }
 
 }
