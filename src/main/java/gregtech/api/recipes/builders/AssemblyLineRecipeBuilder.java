@@ -1,5 +1,6 @@
 package gregtech.api.recipes.builders;
 
+import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
@@ -15,6 +16,9 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     public static final String RESEARCH_NBT_TAG_NAME = "asslineOutput";
 
     protected ItemStack researchItem;
+
+    protected int scanningVoltage = GTValues.VA[GTValues.HV];
+    protected int scanningDuration = 40;
 
     public AssemblyLineRecipeBuilder() {
     }
@@ -37,6 +41,16 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
             return true;
         }
         return false;
+    }
+
+    public AssemblyLineRecipeBuilder researchItem(ItemStack researchItem, int voltage, int duration) {
+        this.scanningVoltage = voltage;
+        this.scanningDuration = duration;
+        return researchItem(researchItem);
+    }
+
+    public AssemblyLineRecipeBuilder researchItem(MetaItem<?>.MetaValueItem researchItem, int voltage, int duration) {
+        return researchItem(researchItem.getStackForm(), voltage, duration);
     }
 
     public AssemblyLineRecipeBuilder researchItem(ItemStack researchItem) {
@@ -78,5 +92,13 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
 
     public ItemStack getResearchItem() {
         return researchItem;
+    }
+
+    public int getScanningVoltage() {
+        return scanningVoltage;
+    }
+
+    public int getScanningDuration() {
+        return scanningDuration;
     }
 }

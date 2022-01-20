@@ -61,8 +61,8 @@ public class RecipeMaps {
                             .inputs(researchItem)
                             .input(MetaItems.TOOL_DATA_STICK)
                             .outputs(stickStack)
-                            .EUt(1920)
-                            .duration(40)
+                            .EUt(((AssemblyLineRecipeBuilder) recipeBuilder).getScanningVoltage())
+                            .duration(((AssemblyLineRecipeBuilder) recipeBuilder).getScanningDuration())
                             .buildAndRegister();
                 }
             });
