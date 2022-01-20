@@ -83,7 +83,7 @@ public class PlatGroupMetalsRecipes {
         //
         // Can also modify the PtCl2 electrolyzer recipe to keep a perfect Cl ratio.
         //
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV])
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(500).EUt(VA[HV])
                 .input(dust, PlatinumGroupSludge, 6)
                 .fluidInputs(AquaRegia.getFluid(1200))
                 .output(dust, PlatinumRaw, 3) // PtCl2
