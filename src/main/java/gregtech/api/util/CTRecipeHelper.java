@@ -2,16 +2,12 @@ package gregtech.api.util;
 
 import crafttweaker.mc1120.data.NBTConverter;
 import gregtech.api.block.machines.MachineItemBlock;
-import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import net.minecraft.block.Block;
@@ -27,11 +23,6 @@ public class CTRecipeHelper {
     public static String getMetaItemId(ItemStack item) {
         if (item.getItem() instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) item.getItem();
-            if (item.getItem() instanceof MetaPrefixItem) {
-                Material material = ((MetaPrefixItem) metaItem).getMaterial(item);
-                OrePrefix orePrefix = ((MetaPrefixItem) metaItem).getOrePrefix();
-                return new UnificationEntry(orePrefix, material).toString();
-            }
             return metaItem.getItem(item).unlocalizedName;
         }
         if (item.getItem() instanceof ItemBlock) {
