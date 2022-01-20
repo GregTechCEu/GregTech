@@ -2287,6 +2287,7 @@ behavior.tricorder.multiblock_energy_input=Max Energy Income: %s EU/t Tier: %s
 behavior.tricorder.multiblock_energy_output=Max Energy Output: %s EU/t Tier: %s
 behavior.tricorder.multiblock_maintenance=Problems: %s
 behavior.tricorder.multiblock_parallel=Multi Processing: %s
+behavior.tricorder.mulitblockpart.data_hatch.get_data=Data for these recipes for these items contained:
 behavior.tricorder.debug_machine=Meta-ID: %s
 behavior.tricorder.debug_machine_valid= valid
 behavior.tricorder.debug_machine_invalid= invalid!
@@ -3291,7 +3292,7 @@ gregtech.machine.scanner.umv.name=High-Tech Scanner IV
 gregtech.machine.scanner.uxv.name=Ultimate Scanner
 
 gregtech.machine.data_hatch.ev.name=Data Access Hatch
-gregtech.machine.data_hatch.luv.name=Advance Data Access Hatch
+gregtech.machine.data_hatch.luv.name=Advanced Data Access Hatch
 
 gregtech.machine.infinite_energy.name=Infinite GT Energy Unit Emitter
 gregtech.machine.infinite_energy.tooltip=§8You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§8 to use this
@@ -4198,7 +4199,7 @@ gregtech.recipe.eu_inverted=Generation: %,d EU/t
 gregtech.recipe.duration=Duration: %,.2f secs
 gregtech.recipe.amperage=Amperage: %,d
 gregtech.recipe.not_consumed=§bDoes not get consumed in the process
-gregtech.recipe.assline_scanner=§bProduces Data for the Assembly Line instead of Items
+gregtech.recipe.assline_scanner=§bWrites Assembly Line Construction Data instead of producing Items
 gregtech.recipe.chance=Chance: %s%% +%s%%/tier
 gregtech.recipe.temperature=Temperature: %,dK (%s)
 gregtech.recipe.explosive=Explosive: %s
@@ -4381,6 +4382,8 @@ gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
 gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
+
+gregrtec
 
 gregtech.command.usage=Usage: /gregtech <worldgen/util>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>

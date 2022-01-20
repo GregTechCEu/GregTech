@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
@@ -90,11 +91,11 @@ public class MetaTileEntityDataHatch extends MetaTileEntityMultiblockNotifiableP
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> textList = new ArrayList<>();
-        textList.add(new TextComponentString("Data for these recipes for these items conatined:"));
+        textList.add(new TextComponentTranslation("behavior.tricorder.mulitblockpart.data_hatch.get_data"));
         for (ItemStack stack : GTUtility.itemHandlerToList(importItems)) {
-            NBTTagCompound researchItemNBT = stack.getSubCompound("asslineOutput");
+            NBTTagCompound researchItemNBT = stack.getSubCompound(AssemblyLineRecipeBuilder.RESEARCH_NBT_TAG_NAME);
             if (researchItemNBT != null) {
-                textList.add(new TextComponentTranslation(new ItemStack(researchItemNBT).getTranslationKey())); // TODO get correct translations
+                textList.add(new TextComponentString(new ItemStack(researchItemNBT).getDisplayName())); // TODO get correct translations
             }
         }
         return textList;
