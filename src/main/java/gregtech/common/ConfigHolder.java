@@ -209,8 +209,8 @@ public class ConfigHolder {
                 "gregtech"
         };
 
-        @Config.Comment({"Whether Gregtech should remove smelting recipes from the vanilla furnace for ingots requiring the Electric Blast Furnace.", "Default: false"})
-        public boolean removeSmeltingForEBFMetals = false;
+        @Config.Comment({"Whether Gregtech should remove smelting recipes from the vanilla furnace for ingots requiring the Electric Blast Furnace.", "Default: true"})
+        public boolean removeSmeltingForEBFMetals = true;
 
         public static class EnergyCompatOptions {
 
