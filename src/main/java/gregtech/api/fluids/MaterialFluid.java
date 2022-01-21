@@ -24,6 +24,11 @@ public class MaterialFluid extends Fluid {
     }
 
     @Nonnull
+    public Material getMaterial() {
+        return this.material;
+    }
+
+    @Nonnull
     public FluidType getFluidType() {
         return this.fluidType;
     }
