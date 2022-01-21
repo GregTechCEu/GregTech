@@ -1,6 +1,7 @@
 package gregtech.client.renderer.pipe;
 
 import codechicken.lib.render.pipeline.ColourMultiplier;
+import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.GTValues;
@@ -45,7 +46,8 @@ public class CableRenderer extends PipeRenderer {
         }
 
         int insulationLevel = ((Insulation) pipeType).insulationLevel;
-
+        ColourMultiplier materialColor = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()));
+        IVertexOperation[] wireRenderOperation = {new IconTransformation(wireTexture), materialColor};
 
         if (insulationLevel != -1) {
             ColourMultiplier color = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(pipeTile == null ? 0x404040 : pipeTile.getPaintingColor()));
@@ -56,12 +58,12 @@ public class CableRenderer extends PipeRenderer {
                 return;
             }
 
-            renderContext.addOpenFaceRender(new IconTransformation(wireTexture))
+            renderContext.addOpenFaceRender(false, wireRenderOperation)
                     .addOpenFaceRender(false, new IconTransformation(insulationTextures[insulationLevel]), color)
                     .addSideRender(false, new IconTransformation(insulationTextures[5]), color);
         } else {
-            renderContext.addOpenFaceRender(new IconTransformation(wireTexture))
-                    .addSideRender(new IconTransformation(wireTexture));
+            renderContext.addOpenFaceRender(false, wireRenderOperation)
+                    .addSideRender(false, wireRenderOperation);
         }
     }
 
