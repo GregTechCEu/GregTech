@@ -547,15 +547,24 @@ public class OrePrefix {
                     int temperature = fluidProperty.getFluidTemperature();
                     Fluid fluid = MetaFluids.registerFluid(material, MetaFluids.FluidType.NORMAL, temperature, fluidProperty.hasBlock());
                     fluidProperty.setFluid(fluid);
-                    FluidTooltipUtil.registerTooltip(fluid, material.getChemicalFormula());
+                    List<String> tooltip = new ArrayList<>();
+                    tooltip.add(material.getChemicalFormula());
+                    tooltip.add(String.valueOf(temperature));
+                    tooltip.add(String.valueOf(fluid.isGaseous()));
+                    FluidTooltipUtil.registerTooltip(fluid, tooltip);
                 }
 
                 PlasmaProperty plasmaProperty = material.getProperty(PropertyKey.PLASMA);
                 if (plasmaProperty != null && plasmaProperty.getPlasma() == null) {
                     int baseTemperature = fluidProperty == null ? 0 : fluidProperty.getFluidTemperature();
-                    Fluid fluid = MetaFluids.registerFluid(material, MetaFluids.FluidType.PLASMA, baseTemperature + 30000, false);
+                    baseTemperature = baseTemperature + 30000;
+                    Fluid fluid = MetaFluids.registerFluid(material, MetaFluids.FluidType.PLASMA, baseTemperature, false);
                     plasmaProperty.setPlasma(fluid);
-                    FluidTooltipUtil.registerTooltip(fluid, material.getChemicalFormula());
+                    List<String> tooltip = new ArrayList<>();
+                    tooltip.add(material.getChemicalFormula());
+                    tooltip.add(String.valueOf(baseTemperature));
+                    tooltip.add(String.valueOf(fluid.isGaseous()));
+                    FluidTooltipUtil.registerTooltip(fluid, tooltip);
                 }
             }
         }

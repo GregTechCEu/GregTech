@@ -56,12 +56,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @SideOnly(Side.CLIENT)
@@ -166,8 +160,14 @@ public class ClientProxy extends CommonProxy {
     public static void addMaterialFormulaHandler(ItemTooltipEvent event) {
         ItemStack itemStack = event.getItemStack();
 
+        List<String> fluidTooltips;
+
         // Handles Item tooltips
         String chemicalFormula = null;
+
+        String temperature = null;
+
+        String isGas = null;
 
         // Test for Items
         UnificationEntry unificationEntry = OreDictUnifier.getUnificationEntry(itemStack);
@@ -182,21 +182,46 @@ public class ClientProxy extends CommonProxy {
             chemicalFormula = unificationEntry.material.getChemicalFormula();
         } else if (ItemNBTUtils.hasTag(itemStack)) { // Test for Fluids
             // Vanilla bucket
-            chemicalFormula = FluidTooltipUtil.getFluidTooltip(ItemNBTUtils.getString(itemStack, "FluidName"));
+            fluidTooltips = FluidTooltipUtil.getFluidTooltip(ItemNBTUtils.getString(itemStack, "FluidName"));
+
+            if(fluidTooltips != null) {
+                chemicalFormula = fluidTooltips.get(0);
+                temperature = fluidTooltips.get(1);
+                isGas = fluidTooltips.get(2);
+            }
 
             // GTCE Cells, Forestry cans, some other containers
             if (chemicalFormula == null) {
                 NBTTagCompound compound = itemStack.getTagCompound();
                 if (compound != null && compound.hasKey(FluidHandlerItemStack.FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
-                    chemicalFormula = FluidTooltipUtil.getFluidTooltip(FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY)));
+                    FluidStack fstack = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY));
+                    fluidTooltips = FluidTooltipUtil.getFluidTooltip(fstack);
+
+                    if(fluidTooltips != null) {
+                        chemicalFormula = fluidTooltips.get(0);
+                        temperature = fluidTooltips.get(1);
+                        isGas = fluidTooltips.get(2);
+                    }
                 }
             }
         } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) { // Water buckets have a separate registry name from other buckets
-            chemicalFormula = FluidTooltipUtil.getWaterTooltip();
+            fluidTooltips = FluidTooltipUtil.getWaterTooltip();
+            chemicalFormula = fluidTooltips.get(0);
+            temperature = fluidTooltips.get(1);
+            isGas = fluidTooltips.get(2);
         }
 
         if (chemicalFormula != null && !chemicalFormula.isEmpty()) {
             event.getToolTip().add(1, ChatFormatting.YELLOW + chemicalFormula);
+        }
+        if(temperature != null && !temperature.isEmpty()) {
+            event.getToolTip().add(1, LocalizationUtils.format("gregtech.fluid.temperature", Integer.parseInt(temperature)));
+        }
+
+        if(isGas != null && !isGas.isEmpty()) {
+            String result = Boolean.parseBoolean(isGas) ? LocalizationUtils.format("gregtech.fluid.state_gas") :
+                    LocalizationUtils.format("gregtech.fluid.state_liquid");
+            event.getToolTip().add(1, result);
         }
     }
 
