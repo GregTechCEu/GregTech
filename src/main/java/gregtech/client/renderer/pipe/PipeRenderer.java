@@ -177,10 +177,10 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     private int getPipeColor(Material material, int paintingColor) {
-        if (material == null) {
-            return paintingColor == -1 ? 0xFFFFFF : paintingColor;
+        if (paintingColor == -1) {
+            return material == null ? 0xFFFFFF : material.getMaterialRGB();
         }
-        return material.getMaterialRGB();
+        return paintingColor;
     }
 
     public void renderPipeBlock(CCRenderState renderState, PipeRenderContext renderContext) {
