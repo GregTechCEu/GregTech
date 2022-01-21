@@ -753,7 +753,7 @@ public class ModHandler {
 
         Iterator<Map.Entry<ItemStack, ItemStack>> recipeIterator = furnaceList.entrySet().iterator();
 
-        while(recipeIterator.hasNext()) {
+        outer: while(recipeIterator.hasNext()) {
             Map.Entry<ItemStack, ItemStack> recipe = recipeIterator.next();
 
             ItemStack output = recipe.getValue();
@@ -780,16 +780,16 @@ public class ModHandler {
                                 try {
                                     // Check for equality, if the stack added into FurnaceManager..
                                     // ..was a cached stack in an existing ActionAddFurnaceRecipe as well
-                                    if(actionAddFurnaceRecipe$output.get(aafr) != output) {
-                                        recipeIterator.remove();
+                                    if(actionAddFurnaceRecipe$output.get(aafr) == output) {
+                                        GTLog.logger.debug("Not removing Smelting Recipe for EBF material {} as it is added via CT", LocalizationUtils.format(material.getUnlocalizedName()));
+                                        continue outer;
                                     }
                                 } catch (IllegalAccessException e) {
                                     e.printStackTrace();
                                 }
                             }
-                        }else{
-                            recipeIterator.remove();
                         }
+                        recipeIterator.remove();
                         if(ConfigHolder.misc.debug) {
                             GTLog.logger.info("Removing Smelting Recipe for EBF material {}", LocalizationUtils.format(material.getUnlocalizedName()));
                         }
