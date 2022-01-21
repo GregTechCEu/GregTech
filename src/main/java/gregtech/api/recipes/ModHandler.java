@@ -743,6 +743,11 @@ public class ModHandler {
         return OreDictUnifier.getUnificated(FurnaceRecipes.instance().getSmeltingResult(input));
     }
 
+    /* Note: If a Furnace recipe is added through CT that is the exact same as one of the recipes that will be removed
+       then this recipe will not be added. Forge will prevent the duplicate smelting recipe from being added before we
+       remove the recipe added by another mod, therefore the CT recipe will fail. At this point, disable the config and
+       remove the recipes manually
+     */
     public static void removeSmeltingEBFMetals() {
 
         boolean isCTLoaded = GTValues.isModLoaded(GTValues.MODID_CT);
