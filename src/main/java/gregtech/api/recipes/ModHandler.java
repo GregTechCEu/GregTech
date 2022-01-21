@@ -781,7 +781,9 @@ public class ModHandler {
                                     // Check for equality, if the stack added into FurnaceManager..
                                     // ..was a cached stack in an existing ActionAddFurnaceRecipe as well
                                     if(actionAddFurnaceRecipe$output.get(aafr) == output) {
-                                        GTLog.logger.debug("Not removing Smelting Recipe for EBF material {} as it is added via CT", LocalizationUtils.format(material.getUnlocalizedName()));
+                                        if(ConfigHolder.misc.debug) {
+                                            GTLog.logger.info("Not removing Smelting Recipe for EBF material {} as it is added via CT", LocalizationUtils.format(material.getUnlocalizedName()));
+                                        }
                                         continue outer;
                                     }
                                 } catch (IllegalAccessException e) {
@@ -796,7 +798,6 @@ public class ModHandler {
                     }
                 }
             }
-
         }
     }
 }
