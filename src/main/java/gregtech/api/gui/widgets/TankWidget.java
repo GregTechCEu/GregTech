@@ -165,27 +165,42 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 Fluid fluid = lastFluidInTank.getFluid();
                 tooltips.add(fluid.getLocalizedName(lastFluidInTank));
 
+                tooltips.add(I18n.format("gregtech.fluid.amount", lastFluidInTank.amount, lastTankCapacity));
+
                 // Add chemical formula tooltip
                 List<String> formula = FluidTooltipUtil.getFluidTooltip(lastFluidInTank);
-                if (formula != null && !formula.isEmpty() && !formula.get(0).isEmpty())
-                    tooltips.add(ChatFormatting.YELLOW + formula.get(0));
+                if (formula != null && !formula.isEmpty()) {
+                    if(!formula.get(0).isEmpty()) {
+                        tooltips.add(ChatFormatting.YELLOW + formula.get(0));
+                    }
 
-                tooltips.add(I18n.format("gregtech.fluid.amount", lastFluidInTank.amount, lastTankCapacity));
-                tooltips.add(I18n.format("gregtech.fluid.temperature", fluid.getTemperature(lastFluidInTank)));
-                tooltips.add(I18n.format(fluid.isGaseous(lastFluidInTank) ? "gregtech.fluid.state_gas" : "gregtech.fluid.state_liquid"));
+                    if(!formula.get(1).isEmpty()) {
+                        tooltips.add( LocalizationUtils.format("gregtech.fluid.temperature", Integer.parseInt(formula.get(1))));
+                    }
+
+                    if(!formula.get(2).isEmpty()) {
+                        String result = Boolean.parseBoolean(formula.get(2)) ? LocalizationUtils.format("gregtech.fluid.state_gas") :
+                                LocalizationUtils.format("gregtech.fluid.state_liquid");
+                        tooltips.add(result);
+
+                    }
+                }
+
             } else {
                 tooltips.add(I18n.format("gregtech.fluid.empty"));
                 tooltips.add(I18n.format("gregtech.fluid.amount", 0, lastTankCapacity));
             }
-            if (allowClickFilling) {
+            if(allowClickEmptying && allowClickFilling) {
+                tooltips.add("");
+                tooltips.add(I18n.format("gregtech.fluid.click_combined"));
+            }
+            else if (allowClickFilling) {
                 tooltips.add(""); //add empty line to separate things
                 tooltips.add(I18n.format("gregtech.fluid.click_to_fill"));
-                tooltips.add(I18n.format("gregtech.fluid.click_to_fill.shift"));
             }
-            if (allowClickEmptying) {
+            else if (allowClickEmptying) {
                 tooltips.add(""); //add empty line to separate things
                 tooltips.add(I18n.format("gregtech.fluid.click_to_empty"));
-                tooltips.add(I18n.format("gregtech.fluid.click_to_empty.shift"));
             }
             drawHoveringText(ItemStack.EMPTY, tooltips, 300, mouseX, mouseY);
             GlStateManager.color(1.0f, 1.0f, 1.0f);

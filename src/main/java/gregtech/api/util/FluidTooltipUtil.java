@@ -1,6 +1,5 @@
 package gregtech.api.util;
 
-import com.google.common.collect.Lists;
 import gregtech.api.unification.material.Materials;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -26,12 +25,7 @@ public class FluidTooltipUtil {
      */
     public static boolean registerTooltip(Fluid fluid, String tooltip) {
         if (fluid != null && tooltip != null && !tooltip.trim().isEmpty()) {
-            if(tooltips.containsKey(fluid)) {
-                tooltips.get(fluid).add(tooltip);
-            }
-            else {
-                tooltips.put(fluid, Lists.newArrayList(tooltip));
-            }
+            tooltips.computeIfAbsent(fluid, k -> new ArrayList<>()).add(tooltip);
             return true;
         }
         return false;

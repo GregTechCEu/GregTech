@@ -214,14 +214,15 @@ public class ClientProxy extends CommonProxy {
         if (chemicalFormula != null && !chemicalFormula.isEmpty()) {
             event.getToolTip().add(1, ChatFormatting.YELLOW + chemicalFormula);
         }
-        if(temperature != null && !temperature.isEmpty()) {
-            event.getToolTip().add(1, LocalizationUtils.format("gregtech.fluid.temperature", Integer.parseInt(temperature)));
-        }
 
         if(isGas != null && !isGas.isEmpty()) {
             String result = Boolean.parseBoolean(isGas) ? LocalizationUtils.format("gregtech.fluid.state_gas") :
                     LocalizationUtils.format("gregtech.fluid.state_liquid");
             event.getToolTip().add(1, result);
+        }
+
+        if(temperature != null && !temperature.isEmpty()) {
+            event.getToolTip().add(1, LocalizationUtils.format("gregtech.fluid.temperature", Integer.parseInt(temperature)));
         }
     }
 

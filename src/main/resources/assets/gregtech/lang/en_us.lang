@@ -4123,11 +4123,10 @@ gregtech.recipe.explosive=Explosive: %s
 gregtech.recipe.eu_to_start=Energy To Start: %sEU
 gregtech.recipe.dimensions=Dimensions: %s
 
-gregtech.fluid.click_to_fill=§7Click with a empty fluid container to fill it from tank.
-gregtech.fluid.click_to_fill.shift=§7(Shift-clicking will fill all containers in your hand)
+gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
+gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
 
-gregtech.fluid.click_to_empty=§7Click with a filled fluid container to empty in into tank.
-gregtech.fluid.click_to_empty.shift=§7(Shift-clicking will empty all containers in your hand)
+gregtech.fluid.click_to_empty=§7Click with a Fluid Container to §cempty §7the tank (Shift-click for a full stack).
 
 gregtech.fluid.plasma=%s Plasma
 gregtech.fluid.empty=Empty
