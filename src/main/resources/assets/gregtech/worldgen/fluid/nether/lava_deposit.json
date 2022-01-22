@@ -8,7 +8,7 @@
   "depletion": {
     "amount": 1,
     "chance": 100,
-    "depleted_yield": 60
+    "depleted_yield": 30
   },
   "fluid": "lava",
   "dimension_filter": [

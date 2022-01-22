@@ -8,7 +8,7 @@
   "depletion": {
     "amount": 1,
     "chance": 100,
-    "depleted_yield": 80
+    "depleted_yield": 40
   },
   "fluid": "natural_gas",
   "dimension_filter": [

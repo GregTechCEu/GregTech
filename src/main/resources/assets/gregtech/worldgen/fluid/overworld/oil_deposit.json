@@ -8,7 +8,7 @@
   "depletion": {
     "amount": 1,
     "chance": 100,
-    "depleted_yield": 45
+    "depleted_yield": 25
   },
   "fluid": "oil",
   "biome_modifier": {

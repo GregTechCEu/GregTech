@@ -8,7 +8,7 @@
   "depletion": {
     "amount": 1,
     "chance": 100,
-    "depleted_yield": 40
+    "depleted_yield": 20
   },
   "fluid": "natural_gas"
 }
