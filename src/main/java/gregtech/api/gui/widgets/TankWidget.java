@@ -165,24 +165,28 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 Fluid fluid = lastFluidInTank.getFluid();
                 tooltips.add(fluid.getLocalizedName(lastFluidInTank));
 
+                // Amount Tooltip
                 tooltips.add(I18n.format("gregtech.fluid.amount", lastFluidInTank.amount, lastTankCapacity));
 
-                // Add chemical formula tooltip
+                // Add various tooltips from the material
                 List<String> formula = FluidTooltipUtil.getFluidTooltip(lastFluidInTank);
                 if (formula != null && !formula.isEmpty()) {
+
+                    // Chemical Formula Tooltip
                     if(!formula.get(0).isEmpty()) {
                         tooltips.add(ChatFormatting.YELLOW + formula.get(0));
                     }
 
+                    // Temperature Tooltip
                     if(!formula.get(1).isEmpty()) {
-                        tooltips.add( LocalizationUtils.format("gregtech.fluid.temperature", Integer.parseInt(formula.get(1))));
+                        tooltips.add(LocalizationUtils.format("gregtech.fluid.temperature", Integer.parseInt(formula.get(1))));
                     }
 
+                    // Fluid State Tooltip
                     if(!formula.get(2).isEmpty()) {
                         String result = Boolean.parseBoolean(formula.get(2)) ? LocalizationUtils.format("gregtech.fluid.state_gas") :
                                 LocalizationUtils.format("gregtech.fluid.state_liquid");
                         tooltips.add(result);
-
                     }
                 }
 
@@ -191,15 +195,15 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 tooltips.add(I18n.format("gregtech.fluid.amount", 0, lastTankCapacity));
             }
             if(allowClickEmptying && allowClickFilling) {
-                tooltips.add("");
+                tooltips.add(""); // Add an empty line to separate from the bottom material tooltips
                 tooltips.add(I18n.format("gregtech.fluid.click_combined"));
             }
             else if (allowClickFilling) {
-                tooltips.add(""); //add empty line to separate things
+                tooltips.add(""); // Add an empty line to separate from the bottom material tooltips
                 tooltips.add(I18n.format("gregtech.fluid.click_to_fill"));
             }
             else if (allowClickEmptying) {
-                tooltips.add(""); //add empty line to separate things
+                tooltips.add(""); // Add an empty line to separate from the bottom material tooltips
                 tooltips.add(I18n.format("gregtech.fluid.click_to_empty"));
             }
             drawHoveringText(ItemStack.EMPTY, tooltips, 300, mouseX, mouseY);
