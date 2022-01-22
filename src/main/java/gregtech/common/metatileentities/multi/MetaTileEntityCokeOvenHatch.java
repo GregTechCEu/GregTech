@@ -90,4 +90,9 @@ public class MetaTileEntityCokeOvenHatch extends MetaTileEntityMultiblockPart {
     public int getDefaultPaintingColor() {
         return 0xFFFFFF;
     }
+
+    @Override
+    public boolean canPartShare() {
+        return false;
+    }
 }
