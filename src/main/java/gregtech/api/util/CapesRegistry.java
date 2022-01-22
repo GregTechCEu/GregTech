@@ -45,9 +45,11 @@ public class CapesRegistry {
         unlockCape(UUID.fromString("aaf70ec1-ac70-494f-9966-ea5933712750"), Textures.GREGTECH_CAPE_TEXTURE); // Bruberu
         unlockCape(UUID.fromString("a24a9108-23d2-43fc-8db7-43f809d017db"), Textures.GREGTECH_CAPE_TEXTURE); // ALongString
         unlockCape(UUID.fromString("77e2129d-8f68-4025-9394-df946f1f3aee"), Textures.GREGTECH_CAPE_TEXTURE); // Brachy84
+        save();
     }
 
     public static ResourceLocation getPlayerCape(UUID uuid) {
+        GTLog.logger.info(uuid.toString());
         return WORN_CAPES.get(uuid);
     }
 
@@ -177,6 +179,7 @@ public class CapesRegistry {
 
     /**
      * Automatically gives a cape to a player, which may be used for a reward for something other than an advancement
+     * DOES NOT SAVE AUTOMATICALLY; PLEASE CALL SAVE AFTER THIS FUNCTION IS USED IF THIS DATA IS MEANT TO PERSIST.
      * @param uuid The UUID of the player to be given the cape.
      * @param cape The ResourceLocation that holds the cape used here.
      */
