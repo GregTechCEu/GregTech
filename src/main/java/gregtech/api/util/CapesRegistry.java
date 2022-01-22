@@ -1,8 +1,6 @@
 package gregtech.api.util;
 
 import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.minecraft.CraftTweakerMC;
-import crafttweaker.api.world.IWorld;
 import gregtech.api.GTValues;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.packets.SPacketNotifyCapeChange;
@@ -24,7 +22,6 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import scala.Tuple3;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -100,12 +97,10 @@ public class CapesRegistry {
         } catch (IOException exception) {
             GTLog.logger.error(exception);
         }
+        clearMaps();
         if (comp == null) {
-            UNLOCKED_CAPES.clear();
-            WORN_CAPES.clear();
             return;
         }
-        UNLOCKED_CAPES.clear();
         NBTTagList unlockedCapesTag = comp.getTagList("UnlockedCapesValList", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < unlockedCapesTag.tagCount(); i++) {
             NBTTagCompound tag = unlockedCapesTag.getCompoundTagAt(i);
@@ -122,7 +117,6 @@ public class CapesRegistry {
             UNLOCKED_CAPES.put(uuid, capes);
         }
 
-        WORN_CAPES.clear();
         NBTTagList wornCapesTag = comp.getTagList("WornCapesValList", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < wornCapesTag.tagCount(); i++) {
             NBTTagCompound tag = wornCapesTag.getCompoundTagAt(i);
@@ -132,6 +126,7 @@ public class CapesRegistry {
             UUID uuid = tag.getUniqueId("UUID");
             WORN_CAPES.put(uuid, new ResourceLocation(capeLocation));
         }
+        registerDevCapes();
     }
 
     public static void checkAdvancements(World world) {
