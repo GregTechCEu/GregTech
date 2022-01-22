@@ -183,19 +183,6 @@ public class BedrockFluidVeinHandler {
     }
 
     /**
-     * @param world  The world to test
-     * @param chunkX X coordinate of desired chunk
-     * @param chunkZ Z coordinate of desired chunk
-     * @return if the chunk is depleted of fluid
-     */
-    @SuppressWarnings("unused")
-    public static boolean isChunkDepleted(World world, int chunkX, int chunkZ) {
-        FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
-        if (info == null) return true;
-        return info.getOperationsRemaining() == 0;
-    }
-
-    /**
      * Gets the Fluid in a specific chunk's vein
      *
      * @param world  The world to test
