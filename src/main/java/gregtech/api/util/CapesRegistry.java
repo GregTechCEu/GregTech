@@ -1,8 +1,6 @@
 package gregtech.api.util;
 
 import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.minecraft.CraftTweakerMC;
-import crafttweaker.api.world.IWorld;
 import gregtech.api.GTValues;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.packets.SPacketNotifyCapeChange;
@@ -24,7 +22,6 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import scala.Tuple3;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -101,8 +98,7 @@ public class CapesRegistry {
             GTLog.logger.error(exception);
         }
         if (comp == null) {
-            UNLOCKED_CAPES.clear();
-            WORN_CAPES.clear();
+            registerDevCapes();
             return;
         }
         UNLOCKED_CAPES.clear();

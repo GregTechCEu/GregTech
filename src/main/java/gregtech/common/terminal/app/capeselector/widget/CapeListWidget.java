@@ -29,7 +29,7 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         if (capes == null) {
-            updateCapCandidates(CapesRegistry.getUnlockedCapes(uuid));
+            updateCapeCandidates(CapesRegistry.getUnlockedCapes(uuid));
             writeUpdateInfo(-1, buf -> {
                 buf.writeVarInt(capes.size());
                 capes.stream().map(ResourceLocation::toString).forEach(buf::writeString);
@@ -45,13 +45,13 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
             for (int i = 0; i < count; i++) {
                 capes.add(new ResourceLocation(buffer.readString(Short.MAX_VALUE)));
             }
-            updateCapCandidates(capes);
+            updateCapeCandidates(capes);
         } else {
             super.readUpdateInfo(id, buffer);
         }
     }
 
-    private void updateCapCandidates(List<ResourceLocation> capes) {
+    private void updateCapeCandidates(List<ResourceLocation> capes) {
         this.capes = capes;
         int xPosition = getSelfPosition().x;
         int yPosition = getSelfPosition().y;
