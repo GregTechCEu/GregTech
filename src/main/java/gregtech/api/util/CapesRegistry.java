@@ -99,6 +99,8 @@ public class CapesRegistry {
         }
         clearMaps();
         if (comp == null) {
+            registerDevCapes();
+            save();
             return;
         }
         NBTTagList unlockedCapesTag = comp.getTagList("UnlockedCapesValList", Constants.NBT.TAG_COMPOUND);
