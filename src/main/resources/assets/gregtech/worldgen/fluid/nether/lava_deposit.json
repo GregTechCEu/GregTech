@@ -2,7 +2,7 @@
   "weight": 65,
   "name": "Nether Lava Deposit",
   "rate": {
-    "min": 100,
+    "min": 200,
     "max": 425
   },
   "depletion": {

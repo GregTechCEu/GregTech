@@ -2,7 +2,7 @@
   "weight": 0,
   "name": "Overworld Salt Water Deposit",
   "rate": {
-    "min": 50,
+    "min": 75,
     "max": 200
   },
   "depletion": {

@@ -2,7 +2,7 @@
   "weight": 25,
   "name": "Overworld Light Oil Deposit",
   "rate": {
-    "min": 100,
+    "min": 350,
     "max": 625
   },
   "depletion": {

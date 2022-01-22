@@ -1,8 +1,8 @@
 {
   "weight": 15,
-  "name": "Overworld Heavy Oil Deposit",
+  "name": "Heavy Oil Deposit",
   "rate": {
-    "min": 100,
+    "min": 175,
     "max": 425
   },
   "depletion": {

@@ -28,7 +28,7 @@ public class BedrockFluidVeinHandler {
     private final static Map<Integer, HashMap<Integer, Integer>> totalWeightMap = new HashMap<>();
     public static HashMap<ChunkPosDimension, FluidVeinWorldEntry> veinCache = new HashMap<>();
 
-    private static final int veinChunkSize = 8; // veins are 8x8 chunk squares
+    private static final int VEIN_CHUNK_SIZE = 8; // veins are 8x8 chunk squares
 
     /**
      * Gets the FluidVeinWorldInfo object associated with the given chunk
@@ -43,15 +43,13 @@ public class BedrockFluidVeinHandler {
         if (world.isRemote)
             return null;
 
-        Random random = new XSTR(31 * 31 * chunkX + chunkZ * 31 + Long.hashCode(world.getSeed()));
-
-        ChunkPosDimension coords = new ChunkPosDimension(world.provider.getDimension(), chunkX / veinChunkSize, chunkZ / veinChunkSize);
+        ChunkPosDimension coords = new ChunkPosDimension(world.provider.getDimension(), chunkX / VEIN_CHUNK_SIZE, chunkZ / VEIN_CHUNK_SIZE);
 
         FluidVeinWorldEntry worldEntry = veinCache.get(coords);
         if (worldEntry == null) {
             BedrockFluidDepositDefinition definition = null;
 
-            int query = world.getChunk(chunkX / veinChunkSize, chunkZ / veinChunkSize).getRandomWithSeed(90210).nextInt();
+            int query = world.getChunk(chunkX / VEIN_CHUNK_SIZE, chunkZ / VEIN_CHUNK_SIZE).getRandomWithSeed(90210).nextInt();
 
             Biome biome = world.getBiomeForCoordsBody(new BlockPos(chunkX << 4, 64, chunkZ << 4));
             int totalWeight = getTotalWeight(world.provider, biome);
@@ -69,12 +67,15 @@ public class BedrockFluidVeinHandler {
                 }
             }
 
-            int capacity = 0;
-            if (definition != null) //todo scale capacity to be not 100% random
-                capacity = Math.min(definition.getMaximumProductionRate(),
-                        random.nextInt(definition.getMaximumProductionRate()) + definition.getMinimumProductionRate());
+            Random random = new XSTR(31L * 31 * chunkX + chunkZ * 31L + Long.hashCode(world.getSeed()));
 
-            worldEntry = new FluidVeinWorldEntry(definition, capacity, capacity);
+            int productionRate = 0;
+            if (definition != null) {
+                productionRate = random.nextInt(definition.getMaximumProductionRate() - definition.getMinimumProductionRate()) + definition.getMinimumProductionRate();
+                productionRate = Math.min(productionRate, definition.getMaximumProductionRate());
+            }
+
+            worldEntry = new FluidVeinWorldEntry(definition, productionRate, productionRate);
             veinCache.put(coords, worldEntry);
         }
         return worldEntry;
@@ -83,7 +84,7 @@ public class BedrockFluidVeinHandler {
     /**
      * gets the amount of fluid to be produced in a specific chunk
      *
-     * @param world the world to retrieve it from
+     * @param world  the world to retrieve it from
      * @param chunkX X coordinate of desired chunk
      * @param chunkZ Z coordinate of desired chunk
      * @return amount of fluid to produce from the vein

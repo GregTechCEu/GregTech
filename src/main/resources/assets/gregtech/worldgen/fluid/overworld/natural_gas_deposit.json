@@ -2,7 +2,7 @@
   "weight": 15,
   "name": "Overworld Natural Gas Deposit",
   "rate": {
-    "min": 75,
+    "min": 175,
     "max": 350
   },
   "depletion": {

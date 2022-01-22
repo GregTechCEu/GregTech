@@ -2,7 +2,7 @@
   "weight": 35,
   "name": "Nether Natural Gas Deposit",
   "rate": {
-    "min": 100,
+    "min": 300,
     "max": 600
   },
   "depletion": {
