@@ -370,11 +370,11 @@ public class Recipe {
         return outputs;
     }
 
-    public List<ItemStack> getResultItemOutputs(int maxOutputSlots, int tier, RecipeMap<?> recipeMap) {
+    // All Recipes this method is called for should be already trimmed, if required
+    public List<ItemStack> getResultItemOutputs(int tier, RecipeMap<?> recipeMap) {
         ArrayList<ItemStack> outputs = new ArrayList<>(GTUtility.copyStackList(getOutputs()));
         List<ChanceEntry> chancedOutputsList = getChancedOutputs();
         List<ItemStack> resultChanced = new ArrayList<>();
-        int maxChancedSlots = maxOutputSlots - outputs.size();
         for (ChanceEntry chancedOutput : chancedOutputsList) {
             int outputChance = recipeMap.getChanceFunction().chanceFor(chancedOutput.getChance(), chancedOutput.getBoostPerTier(), tier);
             if (GTValues.RNG.nextInt(Recipe.getMaxChancedValue()) <= outputChance) {
@@ -382,23 +382,62 @@ public class Recipe {
                 GTUtility.addStackToItemStackList(stackToAdd, resultChanced);
             }
         }
-        if (resultChanced.size() > maxChancedSlots) {
-            outputs.addAll(resultChanced.subList(0, Math.max(0, maxChancedSlots)));
-        } else {
-            outputs.addAll(resultChanced);
-        }
+
+        outputs.addAll(resultChanced);
+
         return outputs;
     }
 
-    public List<ItemStack> getAllItemOutputs(int maxOutputSlots) {
+    /**
+     * Returns the maximum possible recipe outputs from a recipe
+     * Takes into account any specific output limiters, ie macerator slots
+     *
+     * @param outputLimit The limit on the number of outputs
+     * @return A List of recipe outputs and chanced outputs
+     */
+    public Pair<List<ItemStack>, List<ChanceEntry>> getItemAndChanceOutputs(int outputLimit) {
         List<ItemStack> outputs = new ArrayList<>();
-        outputs.addAll(GTUtility.copyStackList(getOutputs()));
-        outputs.addAll(getChancedOutputs().stream().map(ChanceEntry::getItemStack).collect(Collectors.toList()));
-        if (outputs.size() > maxOutputSlots) {
-            outputs = outputs.subList(0, maxOutputSlots);
+        //outputs.addAll(GTUtility.copyStackList(getOutputs()));
+        //outputs.addAll(getChancedOutputs().stream().map(ChanceEntry::getItemStack).collect(Collectors.toList()));
+        int numChanced = outputLimit == -1 ? outputLimit : outputLimit - getOutputs().size() <= 0 ? -1 : outputLimit - getOutputs().size();
+
+
+        List<ChanceEntry> chancedOutputs = new ArrayList<>();
+
+        if(numChanced != -1) {
+            chancedOutputs = getChancedOutputs();
         }
-        return outputs;
+
+        // No limiting
+        if(outputLimit == -1) {
+            outputs.addAll(GTUtility.copyStackList(getOutputs()));
+            //outputs.addAll(chancedOutputs);
+        }
+        // If just the regular outputs would satisfy the outputLimit
+        else if(getOutputs().size() >= outputLimit) {
+            outputs.addAll(GTUtility.copyStackList(getOutputs()).subList(0, outputLimit));
+        }
+        // If the regular outputs and chanced outputs are required to satisfy the outputLimit
+        else if(!getOutputs().isEmpty() && (getOutputs().size() + chancedOutputs.size()) >= outputLimit) {
+            outputs.addAll(GTUtility.copyStackList(getOutputs()));
+            chancedOutputs = chancedOutputs.subList(0, Math.min(numChanced, chancedOutputs.size()));
+        }
+        // There are only chanced outputs to satisfy the outputLimit
+        else {
+            chancedOutputs = chancedOutputs.subList(0, Math.min(outputLimit, chancedOutputs.size()));
+        }
+
+        return Pair.of(outputs, chancedOutputs);
     }
+
+    public List<ItemStack> getAllItemOutputs() {
+        List<ItemStack> recipeOutputs = new ArrayList<>(this.outputs);
+
+        recipeOutputs.addAll(chancedOutputs.stream().map(ChanceEntry::getItemStack).collect(Collectors.toList()));
+
+        return recipeOutputs;
+    }
+
 
     public List<ChanceEntry> getChancedOutputs() {
         return chancedOutputs;
@@ -426,6 +465,11 @@ public class Recipe {
 
     public List<FluidStack> getFluidOutputs() {
         return fluidOutputs;
+    }
+
+    //TODO, consolidate into previous?
+    public List<FluidStack> getAllFluidOutputs(int outputLimit) {
+        return outputLimit == -1 ? fluidOutputs : fluidOutputs.subList(0, Math.min(fluidOutputs.size(), outputLimit));
     }
 
     public int getDuration() {

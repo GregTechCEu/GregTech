@@ -1,6 +1,7 @@
 package gregtech.api.recipes.logic;
 
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.*;
 import gregtech.api.util.*;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
@@ -47,19 +48,42 @@ public class ParallelLogic {
      * @param outputs        the item output inventory
      * @param fluidOutputs   the fluid output tanks
      * @param parallelAmount the maximum expected amount
+     * @param voidItems      If the result of the item parallel limiting should be ignored
+     * @param voidFluids     If the result of the fluid parallel limiting should be ignored
      * @return returns the amount of recipes that can be merged successfully into a given output inventory
      */
-    public static int limitByOutputMerging(Recipe recipe, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelAmount) {
-        if (recipe.getOutputs().size() > 0) {
-            parallelAmount = limitParallelByItems(recipe, new OverlayedItemHandler(outputs), parallelAmount);
-            if (parallelAmount == 0) {
+    public static int limitByOutputMerging(Recipe recipe, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelAmount, boolean voidItems, boolean voidFluids) {
+
+        int modifiedItemParallelAmount = Integer.MAX_VALUE;
+        int modifiedFluidParallelAmount = Integer.MAX_VALUE;
+
+        if(voidItems && voidFluids) {
+            return parallelAmount;
+        }
+
+        // Check both normal item outputs and chanced item outputs
+        if (recipe.getOutputs().size() > 0 || recipe.getChancedOutputs().size() > 0) {
+            modifiedItemParallelAmount = limitParallelByItems(recipe, new OverlayedItemHandler(outputs), parallelAmount);
+            if(voidItems) {
+                modifiedItemParallelAmount = parallelAmount;
+            }
+            else if (modifiedItemParallelAmount == 0) {
                 return 0;
             }
         }
+
         if (recipe.getFluidOutputs().size() > 0) {
-            parallelAmount = limitParallelByFluids(recipe, new OverlayedFluidHandler(fluidOutputs), parallelAmount);
+            modifiedFluidParallelAmount = limitParallelByFluids(recipe, new OverlayedFluidHandler(fluidOutputs), modifiedItemParallelAmount);
+
+            if(voidFluids) {
+                modifiedFluidParallelAmount = parallelAmount;
+            }
+            else if(modifiedFluidParallelAmount == 0) {
+                return 0;
+            }
         }
-        return parallelAmount;
+
+        return Math.min(modifiedFluidParallelAmount, modifiedItemParallelAmount);
     }
 
     /**
@@ -361,24 +385,30 @@ public class ParallelLogic {
         return minMultiplier;
     }
 
-    public static RecipeBuilder<?> doParallelRecipes(Recipe currentRecipe, RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids, IItemHandlerModifiable exportInventory, IMultipleTankHandler exportFluids, int parallelAmount, long maxVoltage, boolean trimOutputs, boolean canVoidRecipeOutputs) {
+    // At this point, the recipe is already trimmed according to the item and fluid output limit, so we just need to take care of voiding
+    public static RecipeBuilder<?> doParallelRecipes(Recipe currentRecipe, RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids, IItemHandlerModifiable exportInventory, IMultipleTankHandler exportFluids, int parallelAmount, long maxVoltage, MetaTileEntity mte) {
+
+        // First check if we are limited by recipe inputs. This can short circuit a lot of consecutive checking
         int multiplierByInputs = getMaxRecipeMultiplier(currentRecipe, importInventory, importFluids, parallelAmount);
         if (multiplierByInputs == 0) {
             return null;
         }
         RecipeBuilder<?> recipeBuilder = recipeMap.recipeBuilder();
 
+        boolean voidItems = mte.canVoidRecipeItemOutputs();
+        boolean voidFluids = mte.canVoidRecipeFluidOutputs();
+
+
         // Simulate the merging of the maximum amount of recipes
         // and limit by the amount we can successfully merge
         int limitByOutput = Integer.MAX_VALUE;
-        if(!canVoidRecipeOutputs) {
-            limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
-        }
+        limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs, voidItems, voidFluids);
+
         int limitByVoltage = Math.abs((int) (maxVoltage / currentRecipe.getEUt()));
         int parallelizable = Math.min(limitByVoltage, Math.min(multiplierByInputs, limitByOutput));
 
         if (parallelizable > 0) {
-            recipeBuilder.append(currentRecipe, parallelizable, false, trimOutputs);
+            recipeBuilder.append(currentRecipe, parallelizable, false);
         }
 
         return recipeBuilder;
@@ -395,7 +425,7 @@ public class ParallelLogic {
      * @param maxVoltage      The maximum voltage of the machine
      * @return A {@link RecipeBuilder} containing the recipes that can be performed in parallel, limited by the ingredients available, and the output space available.
      */
-    public static RecipeBuilder<?> appendItemRecipes(RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IItemHandlerModifiable exportInventory, int parallelAmount, long maxVoltage, boolean trimOutputs, boolean canVoidRecipeOutputs) {
+    public static RecipeBuilder<?> appendItemRecipes(RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IItemHandlerModifiable exportInventory, int parallelAmount, long maxVoltage, MetaTileEntity mte) {
         RecipeBuilder<?> recipeBuilder = null;
 
         OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(exportInventory);
@@ -434,7 +464,8 @@ public class ParallelLogic {
 
             //how much we can add to the output inventory
             int limitByOutput = Integer.MAX_VALUE;
-            if(!canVoidRecipeOutputs) {
+            if(!mte.canVoidRecipeItemOutputs()) {
+                // TODO, limit by chanced outputs as well as regular outputs. Need to change the method to simulate any chanced output for appended outputs
                 limitByOutput = limitParallelByItemsIncremental(recipeBuilder.getOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, ingredientRatio);
             }
 
@@ -442,7 +473,7 @@ public class ParallelLogic {
             int multiplierRecipeAmount = Math.min(ingredientRatio, limitByOutput);
 
             if (multiplierRecipeAmount > 0) {
-                recipeBuilder.append(matchingRecipe, multiplierRecipeAmount, true, trimOutputs);
+                recipeBuilder.append(matchingRecipe, multiplierRecipeAmount, true);
                 engagedItems += multiplierRecipeAmount;
             }
 

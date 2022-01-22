@@ -31,7 +31,7 @@ import java.util.stream.IntStream;
  */
 
 @SuppressWarnings("unchecked")
-public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
+public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected RecipeMap<R> recipeMap;
 
@@ -60,7 +60,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.fluidOutputs = new ArrayList<>(0);
     }
 
-    protected RecipeBuilder(Recipe recipe, RecipeMap<R> recipeMap) {
+    public RecipeBuilder(Recipe recipe, RecipeMap<R> recipeMap) {
         this.recipeMap = recipeMap;
         this.inputs = NonNullList.create();
         this.inputs.addAll(recipe.getInputs());
@@ -407,27 +407,6 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     /**
-     * Copies the first chanced outputs of a Recipe numberOfOperations times, so every chanced output
-     * gets an individual roll, instead of an all or nothing situation
-     *
-     * @param chancedOutputsFrom The original recipe before any parallel multiplication
-     * @param numberOfOperations The number of parallel operations that have been performed
-     */
-
-    public void trimmedChancedOutputsMultiply(Recipe chancedOutputsFrom, int numberOfOperations) {
-        Recipe.ChanceEntry entry = chancedOutputsFrom.getChancedOutputs().get(0);
-
-        int chance = entry.getChance();
-        int boost = entry.getBoostPerTier();
-
-        // Add individual chanced outputs per number of parallel operations performed, to mimic regular recipes.
-        // This is done instead of simply batching the chanced outputs by the number of parallel operations performed
-        IntStream.range(0, numberOfOperations).forEach(value -> {
-            this.chancedOutput(entry.getItemStack(), chance, boost);
-        });
-    }
-
-    /**
      * Appends the passed {@link Recipe} onto the inputs and outputs, multiplied by the amount specified by multiplier
      * The duration of the multiplied {@link Recipe} is also added to the current duration
      *
@@ -437,7 +416,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
      * @return the builder holding the multiplied recipe
      */
 
-    public R append(Recipe recipe, int multiplier, boolean multiplyDuration, boolean trimOutputs) {
+    public R append(Recipe recipe, int multiplier, boolean multiplyDuration) {
         for (Map.Entry<RecipeProperty<?>, Object> property : recipe.getPropertyValues()) {
             this.applyProperty(property.getKey().getKey(), property.getValue());
         }
@@ -455,16 +434,8 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.inputsIngredients(newRecipeInputs);
         this.fluidInputs(newFluidInputs);
 
-        if (trimOutputs) {
-            if (!outputItems.isEmpty()) {
-                this.outputs(outputItems.subList(0, 1));
-            } else if (recipe.getChancedOutputs().size() > 0) {
-                trimmedChancedOutputsMultiply(recipe, multiplier);
-            }
-        } else {
-            this.outputs(outputItems);
-            chancedOutputsMultiply(recipe, multiplier);
-        }
+        this.outputs(outputItems);
+        chancedOutputsMultiply(recipe, multiplier);
 
         this.fluidOutputs(outputFluids);
 
@@ -547,13 +518,18 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    public abstract R copy();
+    public R copy() {
+        return (R) new RecipeBuilder<>(this);
+    }
 
     protected EnumValidationResult finalizeAndValidate() {
         return validate();
     }
 
-    public abstract ValidationResult<Recipe> build();
+    public ValidationResult<Recipe> build() {
+        return ValidationResult.newResult(finalizeAndValidate(),
+                new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden));
+    }
 
     protected EnumValidationResult validate() {
         if (EUt == 0) {

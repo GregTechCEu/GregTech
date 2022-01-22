@@ -68,4 +68,8 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
         return false;
     }
 
+    @Override
+    public int getItemOutputLimit() {
+        return 1;
+    }
 }

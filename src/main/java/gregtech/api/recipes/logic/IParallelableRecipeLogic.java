@@ -2,6 +2,7 @@ package gregtech.api.recipes.logic;
 
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
@@ -34,7 +35,7 @@ public interface IParallelableRecipeLogic {
      * @param parallelLimit the maximum number of parallel recipes to be performed
      * @return the recipe builder with the parallelized recipe. returns null the recipe cant fit
      */
-    default RecipeBuilder<?> findMultipliedParallelRecipe(RecipeMap<?> recipeMap, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelLimit, long maxVoltage, boolean trimOutputs, boolean canVoidRecipeOutputs) {
+    default RecipeBuilder<?> findMultipliedParallelRecipe(RecipeMap<?> recipeMap, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelLimit, long maxVoltage, MetaTileEntity mte) {
         return ParallelLogic.doParallelRecipes(
                 currentRecipe,
                 recipeMap,
@@ -44,8 +45,7 @@ public interface IParallelableRecipeLogic {
                 fluidOutputs,
                 parallelLimit,
                 maxVoltage,
-                trimOutputs,
-                canVoidRecipeOutputs);
+                mte);
     }
 
     /**
@@ -56,26 +56,26 @@ public interface IParallelableRecipeLogic {
      * @param inputs        input item handler
      * @param outputs       output item handler
      * @param parallelLimit the maximum number of parallel recipes to be performed
-     * @return the recipe builder with the parallelized recipe. returns null the recipe cant fit
+     * @return the recipe builder with the parallelized recipe. returns null the recipe can't fit
      */
-    default RecipeBuilder<?> findAppendedParallelItemRecipe(RecipeMap<?> recipeMap, IItemHandlerModifiable inputs, IItemHandlerModifiable outputs, int parallelLimit, long maxVoltage, boolean trimOutputs, boolean canVoidRecipeOutputs) {
+    default RecipeBuilder<?> findAppendedParallelItemRecipe(RecipeMap<?> recipeMap, IItemHandlerModifiable inputs, IItemHandlerModifiable outputs, int parallelLimit, long maxVoltage, MetaTileEntity mte) {
         return ParallelLogic.appendItemRecipes(
                 recipeMap,
                 inputs,
                 outputs,
                 parallelLimit,
                 maxVoltage,
-                trimOutputs,
-                canVoidRecipeOutputs);
+                mte);
     }
 
+    // Recipes passed in here should be already trimmed
     default Recipe findParallelRecipe(AbstractRecipeLogic logic, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, long maxVoltage, int parallelLimit) {
         if (parallelLimit > 1) {
             RecipeBuilder<?> parallelBuilder = null;
             if (logic.getParallelLogicType() == ParallelLogicType.MULTIPLY) {
-                parallelBuilder = findMultipliedParallelRecipe(logic.getRecipeMap(), currentRecipe, inputs, fluidInputs, outputs, fluidOutputs, parallelLimit, maxVoltage, logic.trimOutputs(), logic.canVoidRecipeOutputs());
+                parallelBuilder = findMultipliedParallelRecipe(logic.getRecipeMap(), currentRecipe, inputs, fluidInputs, outputs, fluidOutputs, parallelLimit, maxVoltage, logic.getMetaTileEntity());
             } else if (logic.getParallelLogicType() == ParallelLogicType.APPEND_ITEMS) {
-                parallelBuilder = findAppendedParallelItemRecipe(logic.getRecipeMap(), inputs, outputs, parallelLimit, maxVoltage, logic.trimOutputs(), logic.canVoidRecipeOutputs());
+                parallelBuilder = findAppendedParallelItemRecipe(logic.getRecipeMap(), inputs, outputs, parallelLimit, maxVoltage, logic.getMetaTileEntity());
             }
             // if the builder returned is null, no recipe was found.
             if (parallelBuilder == null) {

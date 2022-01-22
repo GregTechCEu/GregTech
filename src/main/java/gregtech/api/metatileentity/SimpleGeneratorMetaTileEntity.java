@@ -167,7 +167,12 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     }
 
     @Override
-    public boolean canVoidRecipeOutputs() {
+    public boolean canVoidRecipeItemOutputs() {
+        return !handlesRecipeOutputs;
+    }
+
+    @Override
+    public boolean canVoidRecipeFluidOutputs() {
         return !handlesRecipeOutputs;
     }
 }

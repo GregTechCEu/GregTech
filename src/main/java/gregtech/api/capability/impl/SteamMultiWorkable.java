@@ -25,11 +25,6 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
     }
 
     @Override
-    public boolean trimOutputs() {
-        return true;
-    }
-
-    @Override
     public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
         int currentRecipeEU = builder.getEUt();
         int currentRecipeDuration = builder.getDuration() / getParallelLimit();

@@ -47,4 +47,13 @@ public class MetaTileEntityMacerator extends SimpleMachineMetaTileEntity {
             tooltip.add(I18n.format("gregtech.machine.macerator.tooltip1"));
         }
     }
+
+    public int getOutputAmount() {
+        return outputAmount;
+    }
+
+    @Override
+    public int getItemOutputLimit() {
+        return outputAmount;
+    }
 }

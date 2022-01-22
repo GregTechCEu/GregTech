@@ -210,6 +210,9 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     protected boolean prepareRecipeDistinct(Recipe recipe) {
+
+        recipe = trimRecipeOutputs(recipe);
+
         recipe = findParallelRecipe(
                 this,
                 recipe,
@@ -223,6 +226,10 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         if (recipe != null && setupAndConsumeRecipeInputs(recipe, currentDistinctInputBus)) {
             setupRecipe(recipe);
             return true;
+        }
+        else {
+            // Invalidate this here in case it was set in setupAndConsumeRecipeInputs, but merging failed
+            this.itemOutputs = null;
         }
 
         return false;

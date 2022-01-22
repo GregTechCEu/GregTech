@@ -155,6 +155,19 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         tooltip.add(I18n.format("gregtech.machine.parallel_limit", getMachineLimit()));
     }
 
+    @Override
+    public int getItemOutputLimit() {
+        ItemStack machineStack = ((ProcessingArrayWorkable) this.recipeMapWorkable).getMachineStack();
+
+        MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(machineStack);
+
+        if(mte instanceof MetaTileEntityMacerator) {
+            return ((MetaTileEntityMacerator) mte).getOutputAmount();
+        }
+
+        return -1;
+    }
+
     @SuppressWarnings("InnerClassMayBeStatic")
     protected class ProcessingArrayWorkable extends MultiblockRecipeLogic {
 
@@ -271,12 +284,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             );
         }
 
-        @Override
-        public boolean trimOutputs() {
-            MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(currentMachineStack);
-
-            //Clear the chanced outputs of LV and MV macerators, as they do not have the slots to get byproducts
-            return mte instanceof MetaTileEntityMacerator && machineTier < GTValues.HV;
+        private ItemStack getMachineStack() {
+            return currentMachineStack;
         }
     }
 }
