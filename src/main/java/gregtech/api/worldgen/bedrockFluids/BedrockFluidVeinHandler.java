@@ -221,7 +221,7 @@ public class BedrockFluidVeinHandler {
         if (definition == null || definition.getDepletionChance() == 0)
             return;
 
-        if (definition.getDepletionChance() == 100 || GTValues.RNG.nextInt(100 / definition.getDepletionChance()) == 0) {
+        if (definition.getDepletionChance() == 100 || GTValues.RNG.nextInt(100) <= definition.getDepletionChance()) {
             info.decreaseOperations(definition.getDepletionAmount());
             BedrockFluidVeinSaveData.setDirty();
         }
