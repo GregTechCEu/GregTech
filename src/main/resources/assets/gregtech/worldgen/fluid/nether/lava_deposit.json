@@ -2,8 +2,8 @@
   "weight": 65,
   "name": "Nether Lava Deposit",
   "yield": {
-    "min": 200,
-    "max": 425
+    "min": 125,
+    "max": 250
   },
   "depletion": {
     "amount": 1,

@@ -2,8 +2,8 @@
   "weight": 15,
   "name": "Heavy Oil Deposit",
   "yield": {
-    "min": 175,
-    "max": 425
+    "min": 100,
+    "max": 200
   },
   "depletion": {
     "amount": 1,

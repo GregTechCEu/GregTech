@@ -2,8 +2,8 @@
   "weight": 35,
   "name": "Nether Natural Gas Deposit",
   "yield": {
-    "min": 300,
-    "max": 600
+    "min": 150,
+    "max": 300
   },
   "depletion": {
     "amount": 1,

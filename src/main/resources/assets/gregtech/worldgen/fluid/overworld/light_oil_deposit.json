@@ -2,8 +2,8 @@
   "weight": 25,
   "name": "Overworld Light Oil Deposit",
   "yield": {
-    "min": 350,
-    "max": 625
+    "min": 175,
+    "max": 300
   },
   "depletion": {
     "amount": 1,
