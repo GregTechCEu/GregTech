@@ -315,7 +315,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     protected boolean prepareRecipe(Recipe recipe) {
 
-        //TODO, trim recipe here instead of in setupAndConsumeRecipeInputs so we don't have to change parallel logic
         recipe = trimRecipeOutputs(recipe);
 
         // Pass in the trimmed recipe to the parallel logic
