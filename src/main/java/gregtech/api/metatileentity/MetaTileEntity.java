@@ -1369,10 +1369,8 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public void doExplosion(float explosionPower) {
         getWorld().setBlockToAir(getPos());
-        if (ConfigHolder.machines.doExplosions) {
-            getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
-                    explosionPower, true);
-        }
+        getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
+                explosionPower, ConfigHolder.machines.doExplosions);
     }
 
     public boolean doTickProfileMessage() {
