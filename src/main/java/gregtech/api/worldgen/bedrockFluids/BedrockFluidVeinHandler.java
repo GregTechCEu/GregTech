@@ -164,7 +164,7 @@ public class BedrockFluidVeinHandler {
      */
     public static int getDepletedFluidYield(World world, int chunkX, int chunkZ) {
         FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
-        if (info == null) return 0;
+        if (info == null || info.getDefinition() == null) return 0;
         return info.getDefinition().getDepletedYield();
     }
 
@@ -206,7 +206,7 @@ public class BedrockFluidVeinHandler {
     @Nullable
     public static Fluid getFluidInChunk(World world, int chunkX, int chunkZ) {
         FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
-        if (info == null) return null;
+        if (info == null || info.getDefinition() == null) return null;
         return info.getDefinition().getStoredFluid();
     }
 
@@ -231,7 +231,7 @@ public class BedrockFluidVeinHandler {
         BedrockFluidDepositDefinition definition = info.getDefinition();
 
         // prevent division by zero, veins that never deplete don't need updating
-        if (definition.getDepletionChance() == 0)
+        if (definition == null || definition.getDepletionChance() == 0)
             return;
 
         if (definition.getDepletionChance() == 100 || GTValues.RNG.nextInt(100 / definition.getDepletionChance()) == 0) {
