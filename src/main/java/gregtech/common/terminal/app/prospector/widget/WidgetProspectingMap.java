@@ -118,6 +118,8 @@ public class WidgetProspectingMap extends Widget {
                 case FLUID_PROSPECTING_MODE:
                     BedrockFluidVeinHandler.FluidVeinWorldEntry fStack = BedrockFluidVeinHandler.getFluidVeinWorldEntry(world, chunk.x, chunk.z);
                     if (fStack != null && fStack.getDefinition() != null) {
+                        packet.addBlock(0, 3, 0, GTUtility.formatNumbers(100.0 * BedrockFluidVeinHandler.getOperationsRemaining(world, chunk.x, chunk.z)
+                                / BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS));
                         packet.addBlock(0, 2, 0, "" + BedrockFluidVeinHandler.getFluidYield(world, chunk.x, chunk.z));
                         packet.addBlock(0, 1, 0, BedrockFluidVeinHandler.getFluidInChunk(world, chunk.x, chunk.z).getName());
                     }
@@ -215,9 +217,11 @@ public class WidgetProspectingMap extends Widget {
             } else if(this.mode == 1){
                 tooltips.add(I18n.format("terminal.prospector.fluid"));
                 if (texture.map[cX][cZ] != null && !texture.map[cX][cZ].isEmpty()) {
-                    String name = FluidRegistry.getFluidStack(texture.map[cX][cZ].get((byte) 1),1).getLocalizedName();
                     if (texture.getSelected().equals("[all]") || texture.getSelected().equals(texture.map[cX][cZ].get((byte) 1))) {
-                        tooltips.add(name + " --- " + texture.map[cX][cZ].get((byte) 2));
+                        tooltips.add(I18n.format("terminal.prospector.fluid.info",
+                                FluidRegistry.getFluidStack(texture.map[cX][cZ].get((byte) 1),1).getLocalizedName(),
+                                texture.map[cX][cZ].get((byte) 2),
+                                texture.map[cX][cZ].get((byte) 3)));
                     }
                 }
             }
