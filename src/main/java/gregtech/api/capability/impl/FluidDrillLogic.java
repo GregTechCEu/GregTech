@@ -15,9 +15,8 @@ import javax.annotation.Nonnull;
 
 public class FluidDrillLogic {
 
-    private static final int MAX_PROGRESS = 20;
+    public static final int MAX_PROGRESS = 20;
 
-    private int maxProgress = -1;
     private int progressTime = 0;
 
     private final MetaTileEntityFluidDrill metaTileEntity;
@@ -74,12 +73,9 @@ public class FluidDrillLogic {
             return;
         }
 
-        if (maxProgress == -1)
-            maxProgress = getMaxProgress();
-
         // increase progress
         progressTime++;
-        if (progressTime % maxProgress != 0)
+        if (progressTime % MAX_PROGRESS != 0)
             return;
         progressTime = 1;
 
@@ -118,8 +114,13 @@ public class FluidDrillLogic {
         int remainingOperations = BedrockFluidVeinHandler.getOperationsRemaining(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
 
         int produced = Math.max(depletedYield, regularYield * remainingOperations / BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS);
+        produced *= metaTileEntity.getRigMultiplier();
 
-        return produced * metaTileEntity.getRigMultiplier();
+        // Overclocks produce 50% more fluid
+        if (isOverclocked()) {
+            produced = produced * 3 / 2;
+        }
+        return produced;
     }
 
     /**
@@ -220,24 +221,11 @@ public class FluidDrillLogic {
     }
 
     public double getProgressPercent() {
-        if (maxProgress == -1)
-            maxProgress = getMaxProgress();
-
-        return getProgressTime() / (maxProgress * 1.0);
+        return getProgressTime() * 1.0 / MAX_PROGRESS;
     }
 
-    public int getMaxProgress() {
-        int overclockAmount = metaTileEntity.getEnergyTier() - metaTileEntity.getTier();
-        // this should not be possible, but just in case
-        if (overclockAmount < 0)
-            return -1;
-
-        // save some division
-        if (overclockAmount == 0)
-            return MAX_PROGRESS;
-
-        // overclock the recipe
-        return (int) (MAX_PROGRESS / (ConfigHolder.machines.overclockDivisor * overclockAmount));
+    protected boolean isOverclocked() {
+        return metaTileEntity.getEnergyTier() > metaTileEntity.getTier();
     }
 
     /**

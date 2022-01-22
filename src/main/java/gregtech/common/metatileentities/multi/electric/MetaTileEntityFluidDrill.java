@@ -183,6 +183,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
         tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.production", getRigMultiplier()));
         tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.depletion", GTUtility.formatNumbers(100.0 / getDepletionChance())));
         tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.energy", GTValues.VNF[tier], GTValues.VNF[tier + 1]));
+        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.overclock"));
     }
 
     @Override
@@ -238,7 +239,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
 
     public int getEnergyTier() {
         int minVoltage = Math.max(this.tier, GTUtility.getTierByVoltage(energyContainer.getInputVoltage()));
-        return Math.min(minVoltage, this.tier + 1); // prevents infinite fluid production
+        return Math.min(minVoltage, this.tier + 1);
     }
 
     public long getEnergyInputPerSecond() {
@@ -298,7 +299,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
 
     @Override
     public int getMaxProgress() {
-        return Math.max(minerLogic.getMaxProgress(), 1); // 1 because of TOP
+        return FluidDrillLogic.MAX_PROGRESS;
     }
 
     @Override

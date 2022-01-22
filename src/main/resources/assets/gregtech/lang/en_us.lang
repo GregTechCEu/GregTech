@@ -3902,6 +3902,7 @@ gregtech.machine.fluid_drilling_rig.description=Drills fluids from veins under b
 gregtech.machine.fluid_drilling_rig.production=Production Multiplier: §e%sx§7
 gregtech.machine.fluid_drilling_rig.depletion=Depletion Rate: §b%s%%§7
 gregtech.machine.fluid_drilling_rig.energy=Requires %s§7 power. Overclocks up to %s§7.
+gregtech.machine.fluid_drilling_rig.overclock=Overclocking increases production by §d50%%§7.
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
