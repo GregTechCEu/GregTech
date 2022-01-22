@@ -174,10 +174,6 @@ public class GregTechMod {
     @Mod.EventHandler
     public void onPostInit(FMLPostInitializationEvent event) {
         proxy.onPostLoad();
-    }
-
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
         BedrockFluidVeinHandler.recalculateChances(true);
 
     }
