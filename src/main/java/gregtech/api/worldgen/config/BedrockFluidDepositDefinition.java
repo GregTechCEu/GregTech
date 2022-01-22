@@ -12,17 +12,17 @@ import javax.annotation.Nonnull;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class BedrockFluidDepositDefinition implements IWorldgenDefinition { //todo re-balance depletion rates of default veins
+public class BedrockFluidDepositDefinition implements IWorldgenDefinition {
 
     private final String depositName;
 
     private int weight; // weight value for determining which vein will appear
     private String assignedName; // vein name for JEI display
     private String description; // vein description for JEI display
-    private final int[] productionRates = new int[2]; // the [minimum, maximum) production rate
+    private final int[] yields = new int[2]; // the [minimum, maximum) yields
     private int depletionAmount; // amount of fluid the vein gets drained by
     private int depletionChance; // the chance [0, 100] that the vein will deplete by 1
-    private int depletedProductionRate; // production rate after the vein is depleted
+    private int depletedYield; // yield after the vein is depleted
 
     private Fluid storedFluid; // the fluid which the vein contains
 
@@ -37,9 +37,9 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition { //to
     public boolean initializeFromConfig(@Nonnull JsonObject configRoot) {
         // the weight value for determining which vein will appear
         this.weight = configRoot.get("weight").getAsInt();
-        // the [minimum, maximum) production rate of the vein
-        this.productionRates[0] = configRoot.get("rate").getAsJsonObject().get("min").getAsInt();
-        this.productionRates[1] = configRoot.get("rate").getAsJsonObject().get("max").getAsInt();
+        // the [minimum, maximum) yield of the vein
+        this.yields[0] = configRoot.get("yield").getAsJsonObject().get("min").getAsInt();
+        this.yields[1] = configRoot.get("yield").getAsJsonObject().get("max").getAsInt();
         // amount of fluid the vein gets depleted by
         this.depletionAmount = configRoot.get("depletion").getAsJsonObject().get("amount").getAsInt();
         // the chance [0, 100] that the vein will deplete by depletionAmount
@@ -61,9 +61,9 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition { //to
         if (configRoot.has("description")) {
             this.description = configRoot.get("description").getAsString();
         }
-        // production rate after the vein is depleted
-        if (configRoot.get("depletion").getAsJsonObject().has("depleted_production_rate")) {
-            this.depletedProductionRate = configRoot.get("depletion").getAsJsonObject().get("depleted_production_rate").getAsInt();
+        // yield after the vein is depleted
+        if (configRoot.get("depletion").getAsJsonObject().has("depleted_yield")) {
+            this.depletedYield = configRoot.get("depletion").getAsJsonObject().get("depleted_yield").getAsInt();
         }
         // additional weighting changes determined by biomes
         if (configRoot.has("biome_modifier")) {
@@ -95,16 +95,17 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition { //to
         return weight;
     }
 
-    public int[] getProductionRates() {
-        return productionRates;
+    @SuppressWarnings("unused")
+    public int[] getYields() {
+        return yields;
     }
 
-    public int getMinimumProductionRate() {
-        return productionRates[0];
+    public int getMinimumYield() {
+        return yields[0];
     }
 
-    public int getMaximumProductionRate() {
-        return productionRates[1];
+    public int getMaximumYield() {
+        return yields[1];
     }
 
     public int getDepletionAmount() {
@@ -115,8 +116,8 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition { //to
         return depletionChance;
     }
 
-    public int getDepletedProductionRate() {
-        return depletedProductionRate;
+    public int getDepletedYield() {
+        return depletedYield;
     }
 
     public Fluid getStoredFluid() {
@@ -139,9 +140,9 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition { //to
         BedrockFluidDepositDefinition objDeposit = (BedrockFluidDepositDefinition) obj;
         if (this.weight != objDeposit.getWeight())
             return false;
-        if (this.getMinimumProductionRate() != objDeposit.getMinimumProductionRate())
+        if (this.getMinimumYield() != objDeposit.getMinimumYield())
             return false;
-        if (this.getMaximumProductionRate() != objDeposit.getMaximumProductionRate())
+        if (this.getMaximumYield() != objDeposit.getMaximumYield())
             return false;
         if (this.depletionAmount != objDeposit.getDepletionAmount())
             return false;
@@ -157,7 +158,7 @@ public class BedrockFluidDepositDefinition implements IWorldgenDefinition { //to
                 (this.description != null && objDeposit.getDescription() == null) ||
                 (this.description != null && objDeposit.getDescription() != null && !this.description.equals(objDeposit.getDescription())))
             return false;
-        if (this.depletedProductionRate != objDeposit.getDepletedProductionRate())
+        if (this.depletedYield != objDeposit.getDepletedYield())
             return false;
         if ((this.biomeWeightModifier == null && objDeposit.getBiomeWeightModifier() != null) ||
                 (this.biomeWeightModifier != null && objDeposit.getBiomeWeightModifier() == null) ||

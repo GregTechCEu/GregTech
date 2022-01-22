@@ -68,7 +68,6 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
         this.inputFluidInventory = new FluidTankList(true, getAbilities(MultiblockAbility.IMPORT_FLUIDS));
         this.outputFluidInventory = new FluidTankList(true, getAbilities(MultiblockAbility.EXPORT_FLUIDS));
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
-        this.minerLogic.updateCoefficient();
     }
 
     private void resetTileAbilities() {
@@ -182,6 +181,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.description"));
         tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.production", getRigMultiplier()));
+        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.depletion", GTUtility.formatNumbers(100.0 / getDepletionChance())));
         tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.energy", GTValues.VNF[tier], GTValues.VNF[tier + 1]));
     }
 
@@ -202,11 +202,11 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
 
     public int getDepletionChance() {
         if (this.tier == GTValues.MV)
-            return 8;
+            return 1;
         if (this.tier == GTValues.HV)
-            return 16;
+            return 2;
         if (this.tier == GTValues.EV)
-            return 64;
+            return 8;
         return 1;
     }
 
@@ -298,7 +298,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
 
     @Override
     public int getMaxProgress() {
-        return 20;
+        return Math.max(minerLogic.getMaxProgress(), 1); // 1 because of TOP
     }
 
     @Override

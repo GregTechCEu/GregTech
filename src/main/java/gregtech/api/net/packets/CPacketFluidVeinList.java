@@ -50,7 +50,7 @@ public class CPacketFluidVeinList implements IPacket {
     public void executeClient(NetHandlerPlayClient handler) {
         BedrockFluidVeinHandler.veinList.clear();
         for (BedrockFluidVeinHandler.FluidVeinWorldEntry min : map.keySet()) {
-            BedrockFluidVeinHandler.veinList.put(min.getVein(), map.get(min));
+            BedrockFluidVeinHandler.veinList.put(min.getDefinition(), map.get(min));
         }
     }
 }

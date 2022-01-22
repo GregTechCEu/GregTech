@@ -16,6 +16,8 @@ import javax.annotation.Nonnull;
 public class FluidDrillLogic {
 
     private static final int MAX_PROGRESS = 20;
+
+    private int maxProgress = -1;
     private int progressTime = 0;
 
     private final MetaTileEntityFluidDrill metaTileEntity;
@@ -29,7 +31,6 @@ public class FluidDrillLogic {
     private boolean hasNotEnoughEnergy;
 
     private Fluid veinFluid;
-    private float coefficient;
 
     public FluidDrillLogic(MetaTileEntityFluidDrill metaTileEntity) {
         this.metaTileEntity = metaTileEntity;
@@ -49,19 +50,19 @@ public class FluidDrillLogic {
                 return; // stop if we still have no fluid
 
 
-        // Inactive drills do nothing
+        // drills that cannot work do nothing
         if (!this.isWorkingEnabled)
             return;
 
         // check if drilling is possible
-        if (!checkCanMine())
+        if (!checkCanDrain())
             return;
 
         // if the inventory is not full, drain energy etc. from the drill
         // the storages have already been checked earlier
         if (!isInventoryFull) {
             // actually drain the energy
-            metaTileEntity.drainEnergy(false);
+            consumeEnergy(false);
 
             // since energy is being consumed the rig is now active
             if (!this.isActive)
@@ -73,15 +74,19 @@ public class FluidDrillLogic {
             return;
         }
 
+        if (maxProgress == -1)
+            maxProgress = getMaxProgress();
+
+        // increase progress
         progressTime++;
-        if (progressTime % MAX_PROGRESS != 0)
+        if (progressTime % maxProgress != 0)
             return;
         progressTime = 1;
 
-        int rate = getFluidRate();
+        int amount = getFluidToProduce();
 
-        if (metaTileEntity.fillTanks(new FluidStack(veinFluid, rate), true)) {
-            metaTileEntity.fillTanks(new FluidStack(veinFluid, rate), false);
+        if (metaTileEntity.fillTanks(new FluidStack(veinFluid, amount), true)) {
+            metaTileEntity.fillTanks(new FluidStack(veinFluid, amount), false);
             depleteVein();
         } else {
             isInventoryFull = true;
@@ -90,33 +95,39 @@ public class FluidDrillLogic {
         }
     }
 
+    protected boolean consumeEnergy(boolean simulate) {
+        return metaTileEntity.drainEnergy(simulate);
+    }
+
     private boolean acquireNewFluid() {
-        this.veinFluid = BedrockFluidVeinHandler.getFluid(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
+        this.veinFluid = BedrockFluidVeinHandler.getFluidInChunk(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
         return this.veinFluid != null;
     }
 
     protected void depleteVein() {
-        // adjust depletion for rig multiplier
-        if (GTValues.RNG.nextInt(metaTileEntity.getDepletionChance()) == 0)
-            BedrockFluidVeinHandler.depleteVein(coefficient, metaTileEntity.getWorld(), getChunkX(), getChunkZ());
+        int chance = metaTileEntity.getDepletionChance();
+
+        // chance to deplete based on the rig
+        if (chance == 1 || GTValues.RNG.nextInt(chance) == 0)
+            BedrockFluidVeinHandler.depleteVein(metaTileEntity.getWorld(), getChunkX(), getChunkZ(), 0, false);
     }
 
-    private int getFluidRate() {
-        int rate;
-        if (BedrockFluidVeinHandler.isChunkDepleted(metaTileEntity.getWorld(), getChunkX(), getChunkZ()))
-            rate = BedrockFluidVeinHandler.getDepletedFluidProduction(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
-        else
-            rate = (int) Math.floor(BedrockFluidVeinHandler.getFluidProductionInChunk(metaTileEntity.getWorld(), getChunkX(), getChunkZ()) * coefficient);
+    private int getFluidToProduce() {
+        int depletedYield = BedrockFluidVeinHandler.getDepletedFluidYield(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
+        int regularYield = BedrockFluidVeinHandler.getFluidYield(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
+        int remainingOperations = BedrockFluidVeinHandler.getOperationsRemaining(metaTileEntity.getWorld(), getChunkX(), getChunkZ());
 
-        return rate * metaTileEntity.getRigMultiplier();
+        int produced = Math.max(depletedYield, regularYield * remainingOperations / BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS);
+
+        return produced * metaTileEntity.getRigMultiplier();
     }
 
     /**
      *
-     * @return true if the rig is able to mine, else false
+     * @return true if the rig is able to drain, else false
      */
-    protected boolean checkCanMine() {
-        if (!metaTileEntity.drainEnergy(true)) {
+    protected boolean checkCanDrain() {
+        if (!consumeEnergy(true)) {
             if (progressTime >= 2) {
                 if (ConfigHolder.machines.recipeProgressLowEnergy)
                     this.progressTime = 1;
@@ -132,7 +143,7 @@ public class FluidDrillLogic {
             this.hasNotEnoughEnergy = false;
         }
 
-        if (metaTileEntity.fillTanks(new FluidStack(veinFluid, getFluidRate()), true)) {
+        if (metaTileEntity.fillTanks(new FluidStack(veinFluid, getFluidToProduce()), true)) {
             this.isInventoryFull = false;
             return true;
         }
@@ -143,10 +154,6 @@ public class FluidDrillLogic {
             setWasActiveAndNeedsUpdate(true);
         }
         return false;
-    }
-
-    public void updateCoefficient() {
-        this.coefficient = 0.5F + 0.25F * (metaTileEntity.getEnergyTier() - metaTileEntity.getTier());
     }
 
     private int getChunkX() {
@@ -213,7 +220,24 @@ public class FluidDrillLogic {
     }
 
     public double getProgressPercent() {
-        return getProgressTime() / (MAX_PROGRESS * 1.0);
+        if (maxProgress == -1)
+            maxProgress = getMaxProgress();
+
+        return getProgressTime() / (maxProgress * 1.0);
+    }
+
+    public int getMaxProgress() {
+        int overclockAmount = metaTileEntity.getEnergyTier() - metaTileEntity.getTier();
+        // this should not be possible, but just in case
+        if (overclockAmount < 0)
+            return -1;
+
+        // save some division
+        if (overclockAmount == 0)
+            return MAX_PROGRESS;
+
+        // overclock the recipe
+        return (int) (MAX_PROGRESS / (ConfigHolder.machines.overclockDivisor * overclockAmount));
     }
 
     /**

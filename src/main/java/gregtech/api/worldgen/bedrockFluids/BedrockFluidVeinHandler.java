@@ -28,7 +28,9 @@ public class BedrockFluidVeinHandler {
     private final static Map<Integer, HashMap<Integer, Integer>> totalWeightMap = new HashMap<>();
     public static HashMap<ChunkPosDimension, FluidVeinWorldEntry> veinCache = new HashMap<>();
 
-    private static final int VEIN_CHUNK_SIZE = 8; // veins are 8x8 chunk squares
+    public static final int VEIN_CHUNK_SIZE = 8; // veins are 8x8 chunk squares
+
+    public static final int MAXIMUM_VEIN_OPERATIONS = 100_000;
 
     /**
      * Gets the FluidVeinWorldInfo object associated with the given chunk
@@ -69,111 +71,16 @@ public class BedrockFluidVeinHandler {
 
             Random random = new XSTR(31L * 31 * chunkX + chunkZ * 31L + Long.hashCode(world.getSeed()));
 
-            int productionRate = 0;
+            int maximumYield = 0;
             if (definition != null) {
-                productionRate = random.nextInt(definition.getMaximumProductionRate() - definition.getMinimumProductionRate()) + definition.getMinimumProductionRate();
-                productionRate = Math.min(productionRate, definition.getMaximumProductionRate());
+                maximumYield = random.nextInt(definition.getMaximumYield() - definition.getMinimumYield()) + definition.getMinimumYield();
+                maximumYield = Math.min(maximumYield, definition.getMaximumYield());
             }
 
-            worldEntry = new FluidVeinWorldEntry(definition, productionRate, productionRate);
+            worldEntry = new FluidVeinWorldEntry(definition, maximumYield, MAXIMUM_VEIN_OPERATIONS);
             veinCache.put(coords, worldEntry);
         }
         return worldEntry;
-    }
-
-    /**
-     * gets the amount of fluid to be produced in a specific chunk
-     *
-     * @param world  the world to retrieve it from
-     * @param chunkX X coordinate of desired chunk
-     * @param chunkZ Z coordinate of desired chunk
-     * @return amount of fluid to produce from the vein
-     */
-    public static int getFluidProductionInChunk(World world, int chunkX, int chunkZ) {
-        FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
-        if (info == null)
-            return 0;
-        return info.maximumCapacity;
-    }
-
-    /**
-     * Gets the current amount of fluid in a specific chunk's vein
-     *
-     * @param world  The world to test
-     * @param chunkX X coordinate of desired chunk
-     * @param chunkZ Z coordinate of desired chunk
-     * @return amount of fluid in the given vein
-     */
-    public static int getFluidAmountInChunk(@Nonnull World world, int chunkX, int chunkZ) {
-        FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
-        if (info == null)
-            return 0;
-        return info.currentFluidAmount;
-    }
-
-    public static boolean isChunkDepleted(@Nonnull World world, int chunkX, int chunkZ) {
-        FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
-        if (info == null)
-            return true;
-        return info.currentFluidAmount == 0;
-    }
-
-    /**
-     * Gets the Fluid in a specific chunk's vein
-     *
-     * @param world  The world to test
-     * @param chunkX X coordinate of desired chunk
-     * @param chunkZ Z coordinate of desired chunk
-     * @return Fluid in given vein
-     */
-    @Nullable
-    public static Fluid getFluid(@Nonnull World world, int chunkX, int chunkZ) {
-        FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
-        if (info == null)
-            return null;
-
-        BedrockFluidDepositDefinition definition = info.getVein();
-        if (definition == null)
-            return null;
-
-        return definition.getStoredFluid();
-    }
-
-    /**
-     * Gets the rate of fluid in the chunk after the vein is completely depleted
-     *
-     * @param world  The world to test
-     * @param chunkX X coordinate of desired chunk
-     * @param chunkZ Z coordinate of desired chunk
-     * @return rate of fluid produced post depletion
-     */
-    public static int getDepletedFluidProduction(@Nonnull World world, int chunkX, int chunkZ) {
-        FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
-        if (info == null)
-            return 0;
-        return info.getVein().getDepletedProductionRate();
-    }
-
-    /**
-     * Depletes fluid from a given chunk
-     *
-     * @param coefficient the depletion coefficient of the rig depleting the chunk
-     * @param world       World whose chunk to drain
-     * @param chunkX      Chunk x
-     * @param chunkZ      Chunk z
-     */
-    public static void depleteVein(float coefficient, @Nonnull World world, int chunkX, int chunkZ) {
-        FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
-        if (info == null || info.currentFluidAmount == 0)
-            return;
-        BedrockFluidDepositDefinition definition = info.getVein();
-
-        double averageDecrease = definition.getDepletionChance() * definition.getDepletionAmount() * coefficient;
-        int decrease = (int) Math.ceil(averageDecrease);
-        if (GTValues.RNG.nextFloat() < (decrease - averageDecrease)) {
-            info.currentFluidAmount = Math.max(0, info.currentFluidAmount - definition.getDepletionAmount());
-            BedrockFluidVeinSaveData.setDirty();
-        }
     }
 
     /**
@@ -227,45 +134,152 @@ public class BedrockFluidVeinHandler {
             HashMap<FluidVeinWorldEntry, Integer> packetMap = new HashMap<>();
             for (Map.Entry<ChunkPosDimension, FluidVeinWorldEntry> entry : BedrockFluidVeinHandler.veinCache.entrySet()) {
                 if (entry.getKey() != null && entry.getValue() != null)
-                    packetMap.put(entry.getValue(), entry.getValue().getVein().getWeight());
+                    packetMap.put(entry.getValue(), entry.getValue().getDefinition().getWeight());
             }
             NetworkHandler.channel.sendToAll(new CPacketFluidVeinList(packetMap).toFMLPacket());
         }
     }
 
-    public static class FluidVeinWorldEntry {
-        private BedrockFluidDepositDefinition vein;
-        private int maximumCapacity;
-        private int currentFluidAmount;
+    /**
+     * gets the fluid yield in a specific chunk
+     *
+     * @param world  the world to retrieve it from
+     * @param chunkX X coordinate of desired chunk
+     * @param chunkZ Z coordinate of desired chunk
+     * @return yield in the vein
+     */
+    public static int getFluidYield(World world, int chunkX, int chunkZ) {
+        FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
+        if (info == null) return 0;
+        return info.getFluidYield();
+    }
 
-        public FluidVeinWorldEntry(BedrockFluidDepositDefinition vein, int maximumCapacity, int currentFluidAmount) {
-            this.vein = vein;
-            this.maximumCapacity = maximumCapacity;
-            this.currentFluidAmount = currentFluidAmount;
+    /**
+     * Gets the yield of fluid in the chunk after the vein is completely depleted
+     *
+     * @param world  The world to test
+     * @param chunkX X coordinate of desired chunk
+     * @param chunkZ Z coordinate of desired chunk
+     * @return yield of fluid post depletion
+     */
+    public static int getDepletedFluidYield(World world, int chunkX, int chunkZ) {
+        FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
+        if (info == null) return 0;
+        return info.getDefinition().getDepletedYield();
+    }
+
+    /**
+     * Gets the current operations remaining in a specific chunk's vein
+     *
+     * @param world  The world to test
+     * @param chunkX X coordinate of desired chunk
+     * @param chunkZ Z coordinate of desired chunk
+     * @return amount of operations in the given chunk
+     */
+    public static int getOperationsRemaining(World world, int chunkX, int chunkZ) {
+        FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
+        if (info == null) return 0;
+        return info.getOperationsRemaining();
+    }
+
+    /**
+     * @param world  The world to test
+     * @param chunkX X coordinate of desired chunk
+     * @param chunkZ Z coordinate of desired chunk
+     * @return if the chunk is depleted of fluid
+     */
+    @SuppressWarnings("unused")
+    public static boolean isChunkDepleted(World world, int chunkX, int chunkZ) {
+        FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
+        if (info == null) return true;
+        return info.getOperationsRemaining() == 0;
+    }
+
+    /**
+     * Gets the Fluid in a specific chunk's vein
+     *
+     * @param world  The world to test
+     * @param chunkX X coordinate of desired chunk
+     * @param chunkZ Z coordinate of desired chunk
+     * @return Fluid in given chunk
+     */
+    @Nullable
+    public static Fluid getFluidInChunk(World world, int chunkX, int chunkZ) {
+        FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
+        if (info == null) return null;
+        return info.getDefinition().getStoredFluid();
+    }
+
+    /**
+     * Depletes fluid from a given chunk
+     *
+     * @param world           World whose chunk to drain
+     * @param chunkX          Chunk x
+     * @param chunkZ          Chunk z
+     * @param amount          the amount of fluid to deplete the vein by
+     * @param ignoreVeinStats whether to ignore the vein's depletion data, if false ignores amount
+     */
+    public static void depleteVein(World world, int chunkX, int chunkZ, int amount, boolean ignoreVeinStats) {
+        FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
+        if (info == null) return;
+
+        if (ignoreVeinStats) {
+            info.decreaseOperations(amount);
+            return;
         }
 
-        public FluidVeinWorldEntry(@Nonnull FluidVeinWorldEntry entry) {
-            this.vein = entry.getVein();
-            this.maximumCapacity = entry.maximumCapacity;
-            this.currentFluidAmount = entry.currentFluidAmount;
+        BedrockFluidDepositDefinition definition = info.getDefinition();
+
+        // prevent division by zero, veins that never deplete don't need updating
+        if (definition.getDepletionChance() == 0)
+            return;
+
+        if (definition.getDepletionChance() == 100 || GTValues.RNG.nextInt(100 / definition.getDepletionChance()) == 0) {
+            info.decreaseOperations(definition.getDepletionAmount());
+            BedrockFluidVeinSaveData.setDirty();
+        }
+    }
+
+    public static class FluidVeinWorldEntry {
+        private BedrockFluidDepositDefinition vein;
+        private int fluidYield;
+        private int operationsRemaining;
+
+        public FluidVeinWorldEntry(BedrockFluidDepositDefinition vein, int fluidYield, int operationsRemaining) {
+            this.vein = vein;
+            this.fluidYield = fluidYield;
+            this.operationsRemaining = operationsRemaining;
         }
 
         private FluidVeinWorldEntry() {
 
         }
 
-        public BedrockFluidDepositDefinition getVein() {
+        public BedrockFluidDepositDefinition getDefinition() {
             return this.vein;
         }
 
-        public int getCurrentFluidAmount() {
-            return this.currentFluidAmount;
+        public int getFluidYield() {
+            return this.fluidYield;
+        }
+
+        public int getOperationsRemaining() {
+            return this.operationsRemaining;
+        }
+
+        @SuppressWarnings("unused")
+        public void setOperationsRemaining(int amount) {
+            this.operationsRemaining = amount;
+        }
+
+        public void decreaseOperations(int amount) {
+            operationsRemaining = Math.max(0, operationsRemaining - amount);
         }
 
         public NBTTagCompound writeToNBT() {
             NBTTagCompound tag = new NBTTagCompound();
-            tag.setInteger("maximumCapacity", maximumCapacity);
-            tag.setInteger("currentFluidAmount", currentFluidAmount);
+            tag.setInteger("fluidYield", fluidYield);
+            tag.setInteger("operationsRemaining", operationsRemaining);
             if (vein != null) {
                 tag.setString("vein", vein.getDepositName());
             }
@@ -275,8 +289,8 @@ public class BedrockFluidVeinHandler {
         @Nonnull
         public static FluidVeinWorldEntry readFromNBT(@Nonnull NBTTagCompound tag) {
             FluidVeinWorldEntry info = new FluidVeinWorldEntry();
-            info.maximumCapacity = tag.getInteger("maximumCapacity");
-            info.currentFluidAmount = tag.getInteger("currentFluidAmount");
+            info.fluidYield = tag.getInteger("fluidYield");
+            info.operationsRemaining = tag.getInteger("operationsRemaining");
 
             if (tag.hasKey("vein")) {
                 String s = tag.getString("vein");
