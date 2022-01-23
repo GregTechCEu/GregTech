@@ -316,7 +316,7 @@ public class Material implements Comparable<Material> {
             throw new IllegalStateException("Cannot add properties to a Material when registry is frozen!");
         }
         properties.setProperty(key, property);
-        properties.ensureSet(key, true);
+        properties.verify();
     }
 
     public boolean isSolid() {
