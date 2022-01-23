@@ -2,15 +2,22 @@ package gregtech.client.particle;
 
 import codechicken.lib.vec.Cuboid6;
 import gregtech.api.util.GTLog;
+import gregtech.client.shader.postprocessing.BloomEffect;
+import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.RenderBufferHelper;
+import gregtech.client.utils.RenderUtil;
+import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
@@ -84,14 +91,7 @@ public class GTOverheatParticle extends GTParticle {
         if (index >= blackBodyColors.length - 1)
             return blackBodyColors[blackBodyColors.length - 1];
         int color = blackBodyColors[index];
-        return interpolateColors(color, blackBodyColors[index + 1], temperature % 200 / 200f);
-    }
-
-    private static int interpolateColors(int c1, int c2, float blend) {
-        int color = (int) (((c2 >> 16) & 0xFF) * blend + ((c1 >> 16) & 0xFF) * (1 - blend)) << 16;
-        color |= (int) (((c2 >> 8) & 0xFF) * blend + ((c1 >> 8) & 0xFF) * (1 - blend)) << 8;
-        color |= (int) ((c2 & 0xFF) * blend + (c1 & 0xFF) * (1 - blend));
-        return color;
+        return RenderUtil.colorInterpolator(color, blackBodyColors[index + 1]).apply(temperature % 200 / 200f);
     }
 
     protected final int meltTemp;
@@ -152,24 +152,60 @@ public class GTOverheatParticle extends GTParticle {
     public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
         if (insulated)
             return;
-        float red = (color >> 16) & 0xFF, green = (color >> 8) & 0xFF, blue = color & 0xFF;
-        red /= 255;
-        green /= 255;
-        blue /= 255;
 
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferbuilder = tessellator.getBuffer();
-        GlStateManager.pushMatrix();
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableBlend();
-        GlStateManager.translate(posX - interpPosX, posY - interpPosY, posZ - interpPosZ);
-        buffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        for (Cuboid6 cuboid : pipeBoxes) {
-            RenderBufferHelper.renderCubeFace(bufferbuilder, cuboid, red, green, blue, alpha);
-        }
-        tessellator.draw();
-        GlStateManager.popMatrix();
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
+        BloomEffectUtil.requestCustomBloom(RENDER_HANDLER, buffer1 -> {
+            float red = (color >> 16) & 0xFF, green = (color >> 8) & 0xFF, blue = color & 0xFF;
+            red /= 255;
+            green /= 255;
+            blue /= 255;
+
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder bufferbuilder = tessellator.getBuffer();
+            GlStateManager.pushMatrix();
+            GlStateManager.disableTexture2D();
+            GlStateManager.enableBlend();
+            GlStateManager.translate(posX - interpPosX, posY - interpPosY, posZ - interpPosZ);
+            buffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+            for (Cuboid6 cuboid : pipeBoxes) {
+                RenderBufferHelper.renderCubeFace(bufferbuilder, cuboid, red, green, blue, alpha);
+            }
+            tessellator.draw();
+            GlStateManager.popMatrix();
+            GlStateManager.enableTexture2D();
+            GlStateManager.disableBlend();
+        });
     }
+
+    static BloomEffectUtil.IBloomRenderFast RENDER_HANDLER = new BloomEffectUtil.IBloomRenderFast() {
+        @Override
+        public int customBloomStyle() {
+            return ConfigHolder.client.shader.fusionBloom.useShader ? ConfigHolder.client.shader.fusionBloom.bloomStyle : -1;
+        }
+
+        float lastBrightnessX;
+        float lastBrightnessY;
+
+        @Override
+        @SideOnly(Side.CLIENT)
+        public void preDraw(BufferBuilder buffer) {
+            BloomEffect.strength = (float) ConfigHolder.client.shader.fusionBloom.strength;
+            BloomEffect.baseBrightness = (float) ConfigHolder.client.shader.fusionBloom.baseBrightness;
+            BloomEffect.highBrightnessThreshold = (float) ConfigHolder.client.shader.fusionBloom.highBrightnessThreshold;
+            BloomEffect.lowBrightnessThreshold = (float) ConfigHolder.client.shader.fusionBloom.lowBrightnessThreshold;
+            BloomEffect.step = 1;
+
+            lastBrightnessX = OpenGlHelper.lastBrightnessX;
+            lastBrightnessY = OpenGlHelper.lastBrightnessY;
+            GlStateManager.color(1, 1, 1, 1);
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
+            GlStateManager.disableTexture2D();
+        }
+
+        @Override
+        @SideOnly(Side.CLIENT)
+        public void postDraw(BufferBuilder buffer) {
+            GlStateManager.enableTexture2D();
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
+        }
+    };
 }
