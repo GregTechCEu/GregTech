@@ -84,7 +84,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
         builder.widget(new TextFieldWidget2(9, 50, 152, 16, () -> String.valueOf(voltage), value -> {
             if (!value.isEmpty()) {
                 voltage = Long.parseLong(value);
-                setTier = 0;
+                setTier = GTUtility.getTierByVoltage(voltage);
             }
         }).setAllowedChars(TextFieldWidget2.NATURAL_NUMS).setMaxLength(19).setValidator(getTextFieldValidator()));
 
