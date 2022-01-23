@@ -1,0 +1,30 @@
+{
+  "section": "Primitive",
+  "title": "Primitive Blast Furnace",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "The §6Primitive Blast Furnace§r is the main multiblock of the Steam Age. It is used for making the first §1Steel§r, which is the main gateway to the §2LV§r age."
+      ]
+    },
+    {
+      "type": "slots",
+      "item_list": [
+        {
+          "id": "gregtech:machine",
+          "damage": 1000,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "Unlike other §3Gregtech§r Multiblocks, there are no multiblock parts that can be used in this structure. It is only composed of the controller and the Primitive Bricks."
+      ]
+    }
+  ],
+  "fixed": [],
+  "metatileentity": "primitive_blast_furnace.bronze"
+}
