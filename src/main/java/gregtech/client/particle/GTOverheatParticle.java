@@ -88,9 +88,9 @@ public class GTOverheatParticle extends GTParticle {
     }
 
     private static int interpolateColors(int c1, int c2, float blend) {
-        int color = (int) (((c1 >> 16) & 0xFF) * blend + ((c2 >> 16) & 0xFF) * (1 - blend)) << 16;
-        color |= (int) (((c1 >> 8) & 0xFF) * blend + ((c2 >> 8) & 0xFF) * (1 - blend)) << 8;
-        color |= (int) ((c1 & 0xFF) * blend + (c2 & 0xFF) * (1 - blend));
+        int color = (int) (((c2 >> 16) & 0xFF) * blend + ((c1 >> 16) & 0xFF) * (1 - blend)) << 16;
+        color |= (int) (((c2 >> 8) & 0xFF) * blend + ((c1 >> 8) & 0xFF) * (1 - blend)) << 8;
+        color |= (int) ((c2 & 0xFF) * blend + (c1 & 0xFF) * (1 - blend));
         return color;
     }
 
