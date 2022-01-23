@@ -20,6 +20,7 @@ import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.EnergyNetHandler;
 import gregtech.common.pipelike.cable.net.WorldENet;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -189,6 +190,8 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         this.temperature = temperature;
         if (!world.isRemote) {
             writeCustomData(100, buf -> buf.writeVarInt(temperature));
+            IBlockState blockState = getBlockType().getStateFromMeta(getBlockMetadata());
+            world.notifyBlockUpdate(getPos(), blockState, blockState, 3);
         } else {
             if (temperature <= 293) {
                 if (isParticleAlive())
@@ -200,6 +203,18 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
                 particle.setTemperature(temperature);
             }
         }
+    }
+
+    public int getMinTemp() {
+        return 293;
+    }
+
+    public int getTemperature() {
+        return temperature;
+    }
+
+    public int getMeltTemp() {
+        return meltTemp;
     }
 
     public void createParticle() {
