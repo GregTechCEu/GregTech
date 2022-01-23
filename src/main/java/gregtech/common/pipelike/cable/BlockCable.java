@@ -14,12 +14,10 @@ import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.common.advancement.GTTriggers;
-import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
 import gregtech.common.tools.DamageValues;
-import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -110,17 +108,6 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
             return 0;
         }
         return -1;
-    }
-
-    @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
-        if (!worldIn.isRemote) {
-            EnergyNet enet = getWorldPipeNet(worldIn).getNetFromPos(pos);
-            if (enet != null) {
-                enet.nodeNeighbourChanged(pos);
-            }
-        }
     }
 
     @Override

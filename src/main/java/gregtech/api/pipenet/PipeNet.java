@@ -47,8 +47,20 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
         return isValid;
     }
 
-    protected void onConnectionsUpdate() {
+    /**
+     * Is only called when connections changed of nodes. Nodes can ONLY connect to other nodes.
+     */
+    protected void onNodeConnectionsUpdate() {
         this.lastUpdate = System.currentTimeMillis();
+    }
+
+    /**
+     * Is called when any connection of any pipe in the net changes
+     */
+    protected void onPipeConnectionsUpdate() {
+    }
+
+    public void onNeighbourUpdate(BlockPos fromPos) {
     }
 
     public Map<BlockPos, Node<NodeDataType>> getAllNodes() {
@@ -70,7 +82,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
 
     protected void addNode(BlockPos nodePos, Node<NodeDataType> node) {
         addNodeSilently(nodePos, node);
-        onConnectionsUpdate();
+        onNodeConnectionsUpdate();
         worldData.markDirty();
     }
 
@@ -158,7 +170,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
                 uniteNetworks(pipeNetAtOffset);
             }
         }
-        onConnectionsUpdate();
+        onNodeConnectionsUpdate();
         worldData.markDirty();
     }
 
@@ -209,7 +221,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
                 }
             }
         }
-        onConnectionsUpdate();
+        onNodeConnectionsUpdate();
         worldData.markDirty();
     }
 
@@ -225,7 +237,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
         if (containsNode(nodePos) && getNodeAt(nodePos).isActive != isActive) {
             getNodeAt(nodePos).isActive = isActive;
             worldData.markDirty();
-            onConnectionsUpdate();
+            onNodeConnectionsUpdate();
             return true;
         }
         return false;
@@ -323,7 +335,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
             //if this energy net is empty now, remove it
             worldData.removePipeNet(this);
         }
-        onConnectionsUpdate();
+        onNodeConnectionsUpdate();
         worldData.markDirty();
     }
 
@@ -344,7 +356,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
      */
     protected void transferNodeData(Map<BlockPos, Node<NodeDataType>> transferredNodes, PipeNet<NodeDataType> parentNet) {
         transferredNodes.forEach(this::addNodeSilently);
-        onConnectionsUpdate();
+        onNodeConnectionsUpdate();
         worldData.markDirty();
     }
 

@@ -174,25 +174,31 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
     @Override
     public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
-        if (worldIn.isRemote || ConfigHolder.machines.gt6StylePipesCables) return;
-        IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
-        if (pipeTile != null) {
-            EnumFacing facing = null;
-            for (EnumFacing facing1 : EnumFacing.values()) {
-                if (GTUtility.arePosEqual(fromPos, pos.offset(facing1))) {
-                    facing = facing1;
-                    break;
+        if (worldIn.isRemote) return;
+        if (!ConfigHolder.machines.gt6StylePipesCables) {
+            IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
+            if (pipeTile != null) {
+                EnumFacing facing = null;
+                for (EnumFacing facing1 : EnumFacing.values()) {
+                    if (GTUtility.arePosEqual(fromPos, pos.offset(facing1))) {
+                        facing = facing1;
+                        break;
+                    }
                 }
+                if (facing == null) throw new NullPointerException("Facing is null");
+                boolean open = pipeTile.isConnected(facing);
+                boolean canConnect = pipeTile.getCoverableImplementation().getCoverAtSide(facing) != null || canConnect(pipeTile, facing);
+                if (!open && canConnect && state.getBlock() != blockIn)
+                    pipeTile.setConnection(facing, true, false);
+                if (open && !canConnect)
+                    pipeTile.setConnection(facing, false, false);
+                updateActiveNodeStatus(worldIn, pos, pipeTile);
+                pipeTile.getCoverableImplementation().updateInputRedstoneSignals();
             }
-            if (facing == null) throw new NullPointerException("Facing is null");
-            boolean open = pipeTile.isConnected(facing);
-            boolean canConnect = pipeTile.getCoverableImplementation().getCoverAtSide(facing) != null || canConnect(pipeTile, facing);
-            if (!open && canConnect && state.getBlock() != blockIn)
-                pipeTile.setConnection(facing, true, false);
-            if (open && !canConnect)
-                pipeTile.setConnection(facing, false, false);
-            updateActiveNodeStatus(worldIn, pos, pipeTile);
-            pipeTile.getCoverableImplementation().updateInputRedstoneSignals();
+        }
+        PipeNet<NodeDataType> net = getWorldPipeNet(worldIn).getNetFromPos(pos);
+        if (net != null) {
+            net.onNeighbourUpdate(fromPos);
         }
     }
 

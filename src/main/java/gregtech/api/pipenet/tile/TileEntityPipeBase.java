@@ -152,6 +152,9 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void setConnection(EnumFacing side, boolean connected, boolean fromNeighbor) {
         // fix desync between two connections. Can happen if a pipe side is blocked, and a new pipe is placed next to it.
         if (!getWorld().isRemote) {
+            if (isConnected(side) == connected) {
+                return;
+            }
             TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
             // block connections if Pipe Types do not match
             if (connected && tile instanceof IPipeTile && ((IPipeTile<?, ?>) tile).getPipeType().getClass() != this.getPipeType().getClass()) {
