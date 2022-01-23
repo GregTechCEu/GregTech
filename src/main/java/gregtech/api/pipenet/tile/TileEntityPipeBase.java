@@ -249,6 +249,9 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
                         connections |= 1 << (facing.getIndex() + 6);
                     }
                 }
+                if (getCoverableImplementation().getCoverAtSide(facing) != null) {
+                    connections |= 1 << (facing.getIndex() + 12);
+                }
             }
         }
         return connections;
