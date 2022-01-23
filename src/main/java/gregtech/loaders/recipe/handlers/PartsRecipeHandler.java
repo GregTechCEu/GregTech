@@ -248,11 +248,13 @@ public class PartsRecipeHandler {
                 .output(dustSmall, material)
                 .duration(1200).EUt(120).buildAndRegister();
 
-        LATHE_RECIPES.recipeBuilder()
-                .input(gemExquisite, material)
-                .output(lens, material)
-                .output(dust, material, 2)
-                .duration(2400).EUt(30).buildAndRegister();
+        if (!OreDictUnifier.get(gemExquisite, material).isEmpty()) {
+            LATHE_RECIPES.recipeBuilder()
+                    .input(gemExquisite, material)
+                    .output(lens, material)
+                    .output(dust, material, 2)
+                    .duration(2400).EUt(30).buildAndRegister();
+        }
 
         if (material == Materials.Diamond) { // override Diamond Lens to be LightBlue
             OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.LightBlue);
