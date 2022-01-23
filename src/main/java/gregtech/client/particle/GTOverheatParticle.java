@@ -127,6 +127,7 @@ public class GTOverheatParticle extends GTParticle {
             0xa9c5ff, // 19600 K
             0xa9c5ff, // 19800 K
             0xa8c5ff, // 20000 K
+            // color doesn't really change onwards
     };
 
     public static int getBlackBodyColor(int temperature) {
@@ -221,7 +222,7 @@ public class GTOverheatParticle extends GTParticle {
             GlStateManager.translate(posX - interpPosX, posY - interpPosY, posZ - interpPosZ);
             buffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
             for (Cuboid6 cuboid : pipeBoxes) {
-                RenderBufferHelper.renderCubeFace(bufferbuilder, cuboid, red, green, blue, alpha);
+                RenderBufferHelper.renderCubeFace(bufferbuilder, cuboid, red, green, blue, alpha, true);
             }
             tessellator.draw();
             GlStateManager.popMatrix();
@@ -242,10 +243,10 @@ public class GTOverheatParticle extends GTParticle {
         @Override
         @SideOnly(Side.CLIENT)
         public void preDraw(BufferBuilder buffer) {
-            BloomEffect.strength = 0.8f;//(float) ConfigHolder.client.shader.fusionBloom.strength;
-            BloomEffect.baseBrightness = 0;//(float) ConfigHolder.client.shader.fusionBloom.baseBrightness;
-            BloomEffect.highBrightnessThreshold = 1.3f;//(float) ConfigHolder.client.shader.fusionBloom.highBrightnessThreshold;
-            BloomEffect.lowBrightnessThreshold = 0.3f;//(float) ConfigHolder.client.shader.fusionBloom.lowBrightnessThreshold;
+            BloomEffect.strength = 1.0f;
+            BloomEffect.baseBrightness = 0;
+            BloomEffect.highBrightnessThreshold = 1.3f;
+            BloomEffect.lowBrightnessThreshold = 0.3f;
             BloomEffect.step = 1;
 
             lastBrightnessX = OpenGlHelper.lastBrightnessX;
