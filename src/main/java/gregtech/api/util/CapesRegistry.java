@@ -99,11 +99,11 @@ public class CapesRegistry {
         } catch (IOException exception) {
             GTLog.logger.error(exception);
         }
+        clearMaps();
         if (comp == null) {
             registerDevCapes();
             return;
         }
-        UNLOCKED_CAPES.clear();
         NBTTagList unlockedCapesTag = comp.getTagList("UnlockedCapesValList", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < unlockedCapesTag.tagCount(); i++) {
             NBTTagCompound tag = unlockedCapesTag.getCompoundTagAt(i);
@@ -120,7 +120,6 @@ public class CapesRegistry {
             UNLOCKED_CAPES.put(uuid, capes);
         }
 
-        WORN_CAPES.clear();
         NBTTagList wornCapesTag = comp.getTagList("WornCapesValList", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < wornCapesTag.tagCount(); i++) {
             NBTTagCompound tag = wornCapesTag.getCompoundTagAt(i);
@@ -130,6 +129,7 @@ public class CapesRegistry {
             UUID uuid = tag.getUniqueId("UUID");
             WORN_CAPES.put(uuid, new ResourceLocation(capeLocation));
         }
+        registerDevCapes();
     }
 
     public static void checkAdvancements(World world) {
