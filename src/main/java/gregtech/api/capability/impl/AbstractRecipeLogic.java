@@ -491,8 +491,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             return false;
 
         // check if the voltage to run at is higher than the recipe, and that it is not ULV tier
-        int tier = getOverclockingTier(getMaxVoltage());
-        return tier != 0 && tier > GTUtility.getTierByVoltage(recipeEUt);
+        int overclockTier = getOverclockingTier(getOverclockVoltage());
+        int recipeTier = GTUtility.getTierByVoltage(recipeEUt);
+
+        // Don't overclock if the machine is ULV.
+        // Do overclock if the overclock tier is greater than the recipe tier
+        return overclockTier != 0 && overclockTier > recipeTier;
     }
 
     /**
@@ -502,7 +506,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
     protected int[] performOverclocking(Recipe recipe, boolean negativeEU) {
-        int maxOverclocks = getOverclockingTier(getMaxVoltage()) - 1; // exclude ULV overclocking
+        int maxOverclocks = getOverclockingTier(getOverclockVoltage()) - 1; // exclude ULV overclocking
 
         return runOverclockingLogic(recipe, negativeEU, maxOverclocks);
     }
