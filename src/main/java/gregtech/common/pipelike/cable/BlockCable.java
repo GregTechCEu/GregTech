@@ -138,10 +138,6 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         return 0;
     }
 
-    private static int lic(int oldValue, int oldLow, int oldHigh, int newLow, int newHigh) {
-        return ((oldValue - oldLow) / (oldHigh - oldLow)) * (newHigh - newLow) + newLow;
-    }
-
     @Override
     public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         if (worldIn.isRemote) {
