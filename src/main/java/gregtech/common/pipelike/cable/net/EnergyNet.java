@@ -35,8 +35,7 @@ public class EnergyNet extends PipeNet<WireProperties> {
         return data;
     }
 
-    @Override
-    public void onNeighbourUpdate(BlockPos fromPos) {
+    public void onNeighbourStateChanged() {
         NET_DATA.clear();
     }
 
