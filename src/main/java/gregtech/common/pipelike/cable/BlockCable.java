@@ -124,6 +124,15 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
+    public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+        if (worldIn.isRemote) {
+            TileEntityCable cable = (TileEntityCable) getPipeTileEntity(worldIn, pos);
+            cable.killParticle();
+        }
+        super.breakBlock(worldIn, pos, state);
+    }
+
+    @Override
     public boolean canPipesConnect(IPipeTile<Insulation, WireProperties> selfTile, EnumFacing side, IPipeTile<Insulation, WireProperties> sideTile) {
         return selfTile instanceof TileEntityCable && sideTile instanceof TileEntityCable;
     }

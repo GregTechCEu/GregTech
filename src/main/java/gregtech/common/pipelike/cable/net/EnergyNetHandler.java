@@ -70,8 +70,10 @@ public class EnergyNetHandler implements IEnergyContainer {
 
             for (TileEntityCable cable : path.getPath()) {
                 if (cable.getMaxVoltage() < voltage) {
+                    int heat = (int) (Math.log(GTUtility.getTierByVoltage(voltage) - GTUtility.getTierByVoltage(cable.getMaxVoltage())) * 35 + 36.5);
                     for (TileEntityCable cable1 : path.getPath()) {
-                        burnCable(cable1.getWorld(), cable1.getPos());
+                        cable1.applyHeat(heat);
+                        //burnCable(cable1.getWorld(), cable1.getPos());
                     }
                     break outer;
                 }
@@ -88,7 +90,8 @@ public class EnergyNetHandler implements IEnergyContainer {
                 if(voltageTraveled <= 0)
                     break;
                 if(cable.incrementAmperage(amps, voltageTraveled)) {
-                    burnCable(cable.getWorld(), cable.getPos());
+                    //cable.applyHeat((int) (50 * tier / 3f));
+                    //burnCable(cable.getWorld(), cable.getPos());
                 }
             }
 

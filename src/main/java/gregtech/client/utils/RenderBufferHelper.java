@@ -1,5 +1,6 @@
 package gregtech.client.utils;
 
+import codechicken.lib.vec.Cuboid6;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
@@ -45,6 +46,10 @@ public class RenderBufferHelper {
 
         buffer.pos(minX, minY, maxZ).color(r, g, b, a).endVertex();
         buffer.pos(minX, maxY, maxZ).color(r, g, b, a).endVertex();
+    }
+
+    public static void renderCubeFace(BufferBuilder buffer, Cuboid6 cuboid, float r, float g, float b, float a) {
+        renderCubeFace(buffer, cuboid.min.x, cuboid.min.y, cuboid.min.z, cuboid.max.x, cuboid.max.y, cuboid.max.z, r, g, b, a);
     }
 
     public static void renderCubeFace(BufferBuilder buffer, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float r, float g, float b, float a) {
