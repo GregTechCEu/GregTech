@@ -65,34 +65,45 @@ public class EnergyNetHandler implements IEnergyContainer {
             EnumFacing facing = path.getFaceToHandler().getOpposite();
             if (dest == null || !dest.inputsEnergy(facing) || dest.getEnergyCanBeInserted() <= 0) continue;
             long v = voltage - path.getMaxLoss();
-            if(v <= 0)
+            if (v <= 0)
                 continue;
 
             for (TileEntityCable cable : path.getPath()) {
                 if (cable.getMaxVoltage() < voltage) {
-                    int heat = (int) (Math.log(GTUtility.getTierByVoltage(voltage) - GTUtility.getTierByVoltage(cable.getMaxVoltage())) * 35 + 36.5);
+                    int heat = (int) (Math.log(GTUtility.getTierByVoltage(voltage) - GTUtility.getTierByVoltage(cable.getMaxVoltage())) * 45 + 36.5);
+                    boolean cableBroken = false;
                     for (TileEntityCable cable1 : path.getPath()) {
                         cable1.applyHeat(heat);
-                        //burnCable(cable1.getWorld(), cable1.getPos());
+                        cableBroken |= cable1.isInvalid();
                     }
-                    break outer;
+                    if (cableBroken) {
+                        // a cable burned away (or insulation melted)
+                        break outer;
+                    }
+                    v = Math.min(cable.getMaxVoltage(), v); // limit transfer to cables max and void rest
                 }
             }
 
             long amps = dest.acceptEnergyFromNetwork(facing, v, amperage - amperesUsed);
-            if(amps == 0)
+            if (amps == 0)
                 continue;
             amperesUsed += amps;
 
             long voltageTraveled = voltage;
+            boolean cableBroken = false;
             for (TileEntityCable cable : path.getPath()) {
                 voltageTraveled -= cable.getNodeData().getLossPerBlock();
-                if(voltageTraveled <= 0)
+                if (voltageTraveled <= 0)
                     break;
-                if(cable.incrementAmperage(amps, voltageTraveled)) {
-                    //cable.applyHeat((int) (50 * tier / 3f));
-                    //burnCable(cable.getWorld(), cable.getPos());
+                if (cable.incrementAmperage(amps, voltageTraveled)) {
+                    cableBroken |= cable.isInvalid();
                 }
+            }
+
+            if (cableBroken) {
+                // a cable burned away (or insulation melted)
+                // recompute net data
+                break;
             }
 
             if (amperage == amperesUsed)

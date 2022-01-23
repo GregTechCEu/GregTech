@@ -9,7 +9,6 @@ import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.unification.material.properties.WireProperties;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.PerTickLongCounter;
 import gregtech.api.util.TaskScheduler;
@@ -89,6 +88,9 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         super.onLoad();
         if (!world.isRemote) {
             setTemperature(temperature);
+            if (temperature > 293) {
+                TaskScheduler.scheduleTask(world, this::update);
+            }
         }
     }
 
@@ -107,9 +109,10 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         int dif = (int) (averageAmperageCounter.getLast(world) - getMaxAmperage());
         if (dif > 0) {
             applyHeat(dif * 40);
+            return true;
         }
 
-        return getAverageAmperage() > getMaxAmperage();
+        return false;
     }
 
     public void applyHeat(int amount) {
@@ -130,19 +133,23 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     }
 
     private boolean update() {
-        if (temperature > 500 && GTValues.RNG.nextFloat() < 0.04) {
+        if (temperature > 500 && GTValues.RNG.nextFloat() < 0.08) {
             spawnSmoke();
         }
 
         if (heatQueue > 0) {
+            // if received heat from overvolting or overamping, add heat
             temperature += heatQueue;
             heatQueue = 0;
         } else {
+            // otherwise cool down
             temperature -= Math.pow(temperature - 293, 0.35);
         }
 
         if (temperature >= meltTemp) {
+            // cable melted
             world.setBlockState(pos, Blocks.FIRE.getDefaultState());
+            spawnSmoke();
             isTicking = false;
             return true;
         }
@@ -152,7 +159,8 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
             return false;
         }
 
-        if (getPipeType().insulationLevel >= 0 && temperature >= 2000 && GTValues.RNG.nextFloat() < 0.1) {
+        if (getPipeType().insulationLevel >= 0 && temperature >= 1500 && GTValues.RNG.nextFloat() < 0.1) {
+            // insulation melted
             spawnSmoke();
             uninsulate();
             isTicking = false;
@@ -166,14 +174,15 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         BlockCable newBlock = MetaBlocks.CABLES[index];
         world.setBlockState(pos, newBlock.getDefaultState());
         TileEntityCable newCable = (TileEntityCable) world.getTileEntity(pos);
-        newCable.setPipeData(newBlock, newBlock.getItemPipeType(null), getPipeMaterial());
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            if (isConnected(facing)) {
-                newCable.setConnection(facing, true, true);
+        if (newCable != null) { // should never be null
+            newCable.setPipeData(newBlock, newBlock.getItemPipeType(null), getPipeMaterial());
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                if (isConnected(facing)) {
+                    newCable.setConnection(facing, true, true);
+                }
             }
+            newCable.setTemperature(temperature);
         }
-        newCable.setTemperature(temperature);
-        //TaskScheduler.scheduleTask(world, newCable::update);
     }
 
     public void setTemperature(int temperature) {
@@ -186,15 +195,14 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
                     particle.setExpired();
             } else {
                 if (!isParticleAlive()) {
-                    createParticleWith();
+                    createParticle();
                 }
                 particle.setTemperature(temperature);
             }
         }
     }
 
-    public void createParticleWith() {
-        GTLog.logger.info("Creating Overheat particle at {}", pos);
+    public void createParticle() {
         particle = new GTOverheatParticle(world, pos, meltTemp, getPipeBoxes(), getPipeType().insulationLevel >= 0);
         GTParticleManager.INSTANCE.addEffect(particle);
     }
