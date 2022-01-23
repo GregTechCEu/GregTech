@@ -10,7 +10,6 @@ import gregtech.client.utils.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -166,7 +165,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 tooltips.add(fluid.getLocalizedName(lastFluidInTank));
 
                 // Amount Tooltip
-                tooltips.add(I18n.format("gregtech.fluid.amount", lastFluidInTank.amount, lastTankCapacity));
+                tooltips.add(LocalizationUtils.format("gregtech.fluid.amount", lastFluidInTank.amount, lastTankCapacity));
 
                 // Add various tooltips from the material
                 List<String> formula = FluidTooltipUtil.getFluidTooltip(lastFluidInTank);
@@ -191,20 +190,20 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 }
 
             } else {
-                tooltips.add(I18n.format("gregtech.fluid.empty"));
-                tooltips.add(I18n.format("gregtech.fluid.amount", 0, lastTankCapacity));
+                tooltips.add(LocalizationUtils.format("gregtech.fluid.empty"));
+                tooltips.add(LocalizationUtils.format("gregtech.fluid.amount", 0, lastTankCapacity));
             }
             if(allowClickEmptying && allowClickFilling) {
                 tooltips.add(""); // Add an empty line to separate from the bottom material tooltips
-                tooltips.add(I18n.format("gregtech.fluid.click_combined"));
+                tooltips.add(LocalizationUtils.format("gregtech.fluid.click_combined"));
             }
             else if (allowClickFilling) {
                 tooltips.add(""); // Add an empty line to separate from the bottom material tooltips
-                tooltips.add(I18n.format("gregtech.fluid.click_to_fill"));
+                tooltips.add(LocalizationUtils.format("gregtech.fluid.click_to_fill"));
             }
             else if (allowClickEmptying) {
                 tooltips.add(""); // Add an empty line to separate from the bottom material tooltips
-                tooltips.add(I18n.format("gregtech.fluid.click_to_empty"));
+                tooltips.add(LocalizationUtils.format("gregtech.fluid.click_to_empty"));
             }
             drawHoveringText(ItemStack.EMPTY, tooltips, 300, mouseX, mouseY);
             GlStateManager.color(1.0f, 1.0f, 1.0f);
