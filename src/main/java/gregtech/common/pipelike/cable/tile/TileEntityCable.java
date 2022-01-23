@@ -56,16 +56,8 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     protected GTOverheatParticle particle = null;
     protected int heatQueue;
     protected int temperature = 293;
-    private int meltTemp = 3000;
+    private final int meltTemp = 3000;
     private boolean isTicking = false;
-
-    @Override
-    public void setPipeData(BlockPipe<Insulation, WireProperties, ?> pipeBlock, Insulation insulation, Material pipeMaterial) {
-        super.setPipeData(pipeBlock, insulation, pipeMaterial);
-        if (pipeMaterial == Materials.RutheniumTriniumAmericiumNeutronate) {
-            meltTemp = 20000;
-        }
-    }
 
     @Override
     public Class<Insulation> getPipeTypeClass() {
