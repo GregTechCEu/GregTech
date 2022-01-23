@@ -1,6 +1,7 @@
 package gregtech.client.particle;
 
 import codechicken.lib.vec.Cuboid6;
+import gregtech.api.GTValues;
 import gregtech.client.shader.postprocessing.BloomEffect;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.RenderBufferHelper;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -181,8 +183,23 @@ public class GTOverheatParticle extends GTParticle {
 
     @Override
     public void onUpdate() {
-        if (!(world.getTileEntity(pos) instanceof TileEntityCable))
+        if (!(world.getTileEntity(pos) instanceof TileEntityCable)) {
             setExpired();
+            return;
+        }
+
+        if (temperature > 400 && GTValues.RNG.nextFloat() < 0.04) {
+            spawnSmoke();
+        }
+    }
+
+    private void spawnSmoke() {
+        float xPos = pos.getX() + 0.5F;
+        float yPos = pos.getY() + 0.9F;
+        float zPos = pos.getZ() + 0.5F;
+
+        float ySpd = 0.3F + 0.1F * GTValues.RNG.nextFloat();
+        world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos, yPos, zPos, 0, ySpd, 0);
     }
 
     @Override
@@ -225,10 +242,10 @@ public class GTOverheatParticle extends GTParticle {
         @Override
         @SideOnly(Side.CLIENT)
         public void preDraw(BufferBuilder buffer) {
-            BloomEffect.strength = (float) ConfigHolder.client.shader.fusionBloom.strength;
-            BloomEffect.baseBrightness = (float) ConfigHolder.client.shader.fusionBloom.baseBrightness;
-            BloomEffect.highBrightnessThreshold = (float) ConfigHolder.client.shader.fusionBloom.highBrightnessThreshold;
-            BloomEffect.lowBrightnessThreshold = (float) ConfigHolder.client.shader.fusionBloom.lowBrightnessThreshold;
+            BloomEffect.strength = 0.8f;//(float) ConfigHolder.client.shader.fusionBloom.strength;
+            BloomEffect.baseBrightness = 0;//(float) ConfigHolder.client.shader.fusionBloom.baseBrightness;
+            BloomEffect.highBrightnessThreshold = 1.3f;//(float) ConfigHolder.client.shader.fusionBloom.highBrightnessThreshold;
+            BloomEffect.lowBrightnessThreshold = 0.3f;//(float) ConfigHolder.client.shader.fusionBloom.lowBrightnessThreshold;
             BloomEffect.step = 1;
 
             lastBrightnessX = OpenGlHelper.lastBrightnessX;

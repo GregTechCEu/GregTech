@@ -8,6 +8,8 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.PerTickLongCounter;
@@ -25,7 +27,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -55,8 +56,16 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     protected GTOverheatParticle particle = null;
     protected int heatQueue;
     protected int temperature = 293;
-    private final int meltTemp = 3000;
+    private int meltTemp = 3000;
     private boolean isTicking = false;
+
+    @Override
+    public void setPipeData(BlockPipe<Insulation, WireProperties, ?> pipeBlock, Insulation insulation, Material pipeMaterial) {
+        super.setPipeData(pipeBlock, insulation, pipeMaterial);
+        if (pipeMaterial == Materials.RutheniumTriniumAmericiumNeutronate) {
+            meltTemp = 20000;
+        }
+    }
 
     @Override
     public Class<Insulation> getPipeTypeClass() {
@@ -118,41 +127,23 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
 
     public void applyHeat(int amount) {
         heatQueue += amount;
-        if (!world.isRemote && !isTicking && temperature + heatQueue >= 293) {
+        if (!world.isRemote && !isTicking && temperature + heatQueue > 293) {
             TaskScheduler.scheduleTask(world, this::update);
             isTicking = true;
         }
     }
 
-    private void spawnSmoke() {
-        float xPos = pos.getX() + 0.5F;
-        float yPos = pos.getY() + 0.9F;
-        float zPos = pos.getZ() + 0.5F;
-
-        float ySpd = 0.3F + 0.1F * GTValues.RNG.nextFloat();
-        world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos, yPos, zPos, 0, ySpd, 0);
-    }
-
     private boolean update() {
-        if (temperature > 500 && GTValues.RNG.nextFloat() < 0.08) {
-            spawnSmoke();
-        }
-
         if (heatQueue > 0) {
             // if received heat from overvolting or overamping, add heat
             temperature += heatQueue;
-            heatQueue = 0;
-        } else {
-            // otherwise cool down
-            temperature -= Math.pow(temperature - 293, 0.35);
         }
 
         if (temperature >= meltTemp) {
             // cable melted
             world.setBlockState(pos, Blocks.FIRE.getDefaultState());
-            spawnSmoke();
             isTicking = false;
-            return true;
+            return false;
         }
         writeCustomData(100, buf -> buf.writeVarInt(temperature));
         if (temperature <= 293) {
@@ -162,10 +153,16 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
 
         if (getPipeType().insulationLevel >= 0 && temperature >= 1500 && GTValues.RNG.nextFloat() < 0.1) {
             // insulation melted
-            spawnSmoke();
             uninsulate();
             isTicking = false;
             return false;
+        }
+
+        if (heatQueue == 0) {
+            // otherwise cool down
+            temperature -= Math.pow(temperature - 293, 0.35);
+        } else {
+            heatQueue = 0;
         }
         return true;
     }

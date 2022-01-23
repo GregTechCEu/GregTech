@@ -95,8 +95,10 @@ public class EnergyNetHandler implements IEnergyContainer {
                 voltageTraveled -= cable.getNodeData().getLossPerBlock();
                 if (voltageTraveled <= 0)
                     break;
-                if (cable.incrementAmperage(amps, voltageTraveled)) {
-                    cableBroken |= cable.isInvalid();
+                if (cable.isInvalid()) {
+                    cableBroken = true;
+                } else {
+                    cable.incrementAmperage(amps, voltageTraveled);
                 }
             }
 
