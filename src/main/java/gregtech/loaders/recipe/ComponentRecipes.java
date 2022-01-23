@@ -84,7 +84,7 @@ public class ComponentRecipes {
                 .input(cableGtSingle, NiobiumTitanium, 2)
                 .fluidInputs(SolderingAlloy.getFluid(L))
                 .fluidInputs(Lubricant.getFluid(250))
-                .output(ELECTRIC_MOTOR_LUV)
+                .output(ELECTRIC_MOTOR_LuV)
                 .duration(600).EUt(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -237,7 +237,7 @@ public class ComponentRecipes {
         }
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(ELECTRIC_MOTOR_LUV, 2)
+                .input(ELECTRIC_MOTOR_LuV, 2)
                 .input(plate, HSSS, 2)
                 .input(ring, HSSS, 4)
                 .input(round, HSSS, 16)
@@ -246,7 +246,7 @@ public class ComponentRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L))
                 .fluidInputs(Lubricant.getFluid(250))
                 .fluidInputs(StyreneButadieneRubber.getFluid(L * 8))
-                .output(CONVEYOR_MODULE_LUV)
+                .output(CONVEYOR_MODULE_LuV)
                 .duration(600).EUt(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -277,7 +277,7 @@ public class ComponentRecipes {
                 .duration(600).EUt(100000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(ELECTRIC_MOTOR_LUV)
+                .input(ELECTRIC_MOTOR_LuV)
                 .input(pipeSmallFluid, NiobiumTitanium)
                 .input(plate, HSSS, 2)
                 .input(screw, HSSS, 8)
@@ -286,7 +286,7 @@ public class ComponentRecipes {
                 .input(cableGtSingle, NiobiumTitanium, 2)
                 .fluidInputs(SolderingAlloy.getFluid(L))
                 .fluidInputs(Lubricant.getFluid(250))
-                .output(ELECTRIC_PUMP_LUV)
+                .output(ELECTRIC_PUMP_LuV)
                 .duration(600).EUt(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -364,7 +364,7 @@ public class ComponentRecipes {
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(ELECTRIC_PUMP_LUV.getStackForm())
+                .inputs(ELECTRIC_PUMP_LuV.getStackForm())
                 .input(circuit, Tier.Master, 2)
                 .circuitMeta(1)
                 .outputs(FLUID_REGULATOR_LUV.getStackForm())
@@ -374,7 +374,7 @@ public class ComponentRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ELECTRIC_PUMP_ZPM.getStackForm())
-                .input(circuit, Tier.Ultimate, 2)
+                .input(circuit, Tier.Super, 2)
                 .circuitMeta(1)
                 .outputs(FLUID_REGULATOR_ZPM.getStackForm())
                 .EUt(VA[ZPM])
@@ -383,7 +383,7 @@ public class ComponentRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(ELECTRIC_PUMP_UV.getStackForm())
-                .input(circuit, Tier.Super, 2)
+                .input(circuit, Tier.Ultimate, 2)
                 .circuitMeta(1)
                 .outputs(FLUID_REGULATOR_UV.getStackForm())
                 .EUt(VA[UV])
@@ -444,7 +444,7 @@ public class ComponentRecipes {
 
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(ELECTRIC_MOTOR_LUV)
+                .input(ELECTRIC_MOTOR_LuV)
                 .input(plate, HSSS, 4)
                 .input(ring, HSSS, 4)
                 .input(round, HSSS, 16)
@@ -544,7 +544,7 @@ public class ComponentRecipes {
                 .input(stickLong, HSSS, 4)
                 .input(gear, HSSS)
                 .input(gearSmall, HSSS, 3)
-                .input(ELECTRIC_MOTOR_LUV, 2)
+                .input(ELECTRIC_MOTOR_LuV, 2)
                 .input(ELECTRIC_PISTON_LUV)
                 .input(circuit, Tier.Master)
                 .input(circuit, Tier.Elite, 2)
@@ -552,7 +552,7 @@ public class ComponentRecipes {
                 .input(cableGtSingle, NiobiumTitanium, 4)
                 .fluidInputs(SolderingAlloy.getFluid(L * 4))
                 .fluidInputs(Lubricant.getFluid(250))
-                .output(ROBOT_ARM_LUV)
+                .output(ROBOT_ARM_LuV)
                 .duration(600).EUt(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -561,7 +561,7 @@ public class ComponentRecipes {
                 .input(gearSmall, Osmiridium, 3)
                 .input(ELECTRIC_MOTOR_ZPM, 2)
                 .input(ELECTRIC_PISTON_ZPM)
-                .input(circuit, Tier.Ultimate)
+                .input(circuit, Tier.Super)
                 .input(circuit, Tier.Master, 2)
                 .input(circuit, Tier.Elite, 4)
                 .input(cableGtSingle, VanadiumGallium, 4)
@@ -576,8 +576,8 @@ public class ComponentRecipes {
                 .input(gearSmall, Tritanium, 3)
                 .input(ELECTRIC_MOTOR_UV, 2)
                 .input(ELECTRIC_PISTON_UV)
-                .input(circuit, Tier.Super)
-                .input(circuit, Tier.Ultimate, 2)
+                .input(circuit, Tier.Ultimate)
+                .input(circuit, Tier.Super, 2)
                 .input(circuit, Tier.Master, 4)
                 .input(cableGtSingle, YttriumBariumCuprate, 4)
                 .fluidInputs(SolderingAlloy.getFluid(L * 12))
@@ -639,13 +639,13 @@ public class ComponentRecipes {
                 .input(frameGt, HSSS)
                 .input(plate, HSSS, 6)
                 .input(QUANTUM_STAR)
-                .input(EMITTER_LUV, 2)
+                .input(EMITTER_LuV, 2)
                 .input(circuit, Tier.Master, 2)
                 .input(wireFine, IndiumTinBariumTitaniumCuprate, 64)
                 .input(wireFine, IndiumTinBariumTitaniumCuprate, 64)
                 .input(cableGtSingle, NiobiumTitanium, 4)
                 .fluidInputs(SolderingAlloy.getFluid(L * 4))
-                .output(FIELD_GENERATOR_LUV)
+                .output(FIELD_GENERATOR_LuV)
                 .duration(600).EUt(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -653,7 +653,7 @@ public class ComponentRecipes {
                 .input(plate, NaquadahAlloy, 6)
                 .input(QUANTUM_STAR)
                 .input(EMITTER_ZPM, 2)
-                .input(circuit, Tier.Ultimate, 2)
+                .input(circuit, Tier.Super, 2)
                 .input(wireFine, UraniumRhodiumDinaquadide, 64)
                 .input(wireFine, UraniumRhodiumDinaquadide, 64)
                 .input(cableGtSingle, VanadiumGallium, 4)
@@ -666,7 +666,7 @@ public class ComponentRecipes {
                 .input(plate, Tritanium, 6)
                 .input(GRAVI_STAR)
                 .input(EMITTER_UV, 2)
-                .input(circuit, Tier.Super, 2)
+                .input(circuit, Tier.Ultimate, 2)
                 .input(wireFine, EnrichedNaquadahTriniumEuropiumDuranide, 64)
                 .input(wireFine, EnrichedNaquadahTriniumEuropiumDuranide, 64)
                 .input(cableGtSingle, YttriumBariumCuprate, 4)
@@ -726,7 +726,7 @@ public class ComponentRecipes {
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(frameGt, HSSS)
-                .input(ELECTRIC_MOTOR_LUV)
+                .input(ELECTRIC_MOTOR_LuV)
                 .input(plate, Ruridit, 4)
                 .input(QUANTUM_STAR)
                 .input(circuit, Tier.Master, 2)
@@ -734,7 +734,7 @@ public class ComponentRecipes {
                 .input(foil, Palladium, 32)
                 .input(cableGtSingle, NiobiumTitanium, 4)
                 .fluidInputs(SolderingAlloy.getFluid(L * 2))
-                .output(SENSOR_LUV)
+                .output(SENSOR_LuV)
                 .duration(600).EUt(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -742,7 +742,7 @@ public class ComponentRecipes {
                 .input(ELECTRIC_MOTOR_ZPM)
                 .input(plate, Osmiridium, 4)
                 .input(QUANTUM_STAR, 2)
-                .input(circuit, Tier.Ultimate, 2)
+                .input(circuit, Tier.Super, 2)
                 .input(foil, Trinium, 64)
                 .input(foil, Trinium, 32)
                 .input(cableGtSingle, VanadiumGallium, 4)
@@ -755,7 +755,7 @@ public class ComponentRecipes {
                 .input(ELECTRIC_MOTOR_UV)
                 .input(plate, Tritanium, 4)
                 .input(GRAVI_STAR)
-                .input(circuit, Tier.Super, 2)
+                .input(circuit, Tier.Ultimate, 2)
                 .input(foil, Naquadria, 64)
                 .input(foil, Naquadria, 32)
                 .input(cableGtSingle, YttriumBariumCuprate, 4)
@@ -819,7 +819,7 @@ public class ComponentRecipes {
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(frameGt, HSSS)
-                .input(ELECTRIC_MOTOR_LUV)
+                .input(ELECTRIC_MOTOR_LuV)
                 .input(stickLong, Ruridit, 4)
                 .input(QUANTUM_STAR)
                 .input(circuit, Tier.Master, 2)
@@ -827,7 +827,7 @@ public class ComponentRecipes {
                 .input(foil, Palladium, 32)
                 .input(cableGtSingle, NiobiumTitanium, 4)
                 .fluidInputs(SolderingAlloy.getFluid(L * 2))
-                .output(EMITTER_LUV)
+                .output(EMITTER_LuV)
                 .duration(600).EUt(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -835,7 +835,7 @@ public class ComponentRecipes {
                 .input(ELECTRIC_MOTOR_ZPM)
                 .input(stickLong, Osmiridium, 4)
                 .input(QUANTUM_STAR, 2)
-                .input(circuit, Tier.Ultimate, 2)
+                .input(circuit, Tier.Super, 2)
                 .input(foil, Trinium, 64)
                 .input(foil, Trinium, 32)
                 .input(cableGtSingle, VanadiumGallium, 4)
@@ -848,7 +848,7 @@ public class ComponentRecipes {
                 .input(ELECTRIC_MOTOR_UV)
                 .input(stickLong, Tritanium, 4)
                 .input(GRAVI_STAR)
-                .input(circuit, Tier.Super, 2)
+                .input(circuit, Tier.Ultimate, 2)
                 .input(foil, Naquadria, 64)
                 .input(foil, Naquadria, 32)
                 .input(cableGtSingle, YttriumBariumCuprate, 4)

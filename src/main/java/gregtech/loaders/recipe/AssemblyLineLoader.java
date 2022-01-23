@@ -6,7 +6,8 @@ import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLY_LINE_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.common.blocks.BlockFusionCasing.CasingType.*;
+import static gregtech.common.blocks.BlockFusionCasing.CasingType.FUSION_COIL;
+import static gregtech.common.blocks.BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL;
 import static gregtech.common.blocks.MetaBlocks.FUSION_CASING;
 import static gregtech.common.items.MetaItems.*;
 import static gregtech.common.metatileentities.MetaTileEntities.FUSION_REACTOR;
@@ -17,10 +18,10 @@ public class AssemblyLineLoader {
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputs(FUSION_CASING.getItemVariant(SUPERCONDUCTOR_COIL))
-                .input(circuit, Tier.Ultimate)
-                .input(circuit, Tier.Ultimate)
-                .input(circuit, Tier.Ultimate)
-                .input(circuit, Tier.Ultimate)
+                .input(circuit, Tier.Super)
+                .input(circuit, Tier.Super)
+                .input(circuit, Tier.Super)
+                .input(circuit, Tier.Super)
                 .input(plateDouble, Plutonium241)
                 .input(plateDouble, Osmiridium)
                 .input(FIELD_GENERATOR_IV, 2)
@@ -33,13 +34,13 @@ public class AssemblyLineLoader {
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputs(FUSION_CASING.getItemVariant(FUSION_COIL))
-                .input(circuit, Tier.Super)
-                .input(circuit, Tier.Super)
-                .input(circuit, Tier.Super)
-                .input(circuit, Tier.Super)
+                .input(circuit, Tier.Ultimate)
+                .input(circuit, Tier.Ultimate)
+                .input(circuit, Tier.Ultimate)
+                .input(circuit, Tier.Ultimate)
                 .input(plateDouble, Naquadria)
                 .input(plateDouble, Europium)
-                .input(FIELD_GENERATOR_LUV, 2)
+                .input(FIELD_GENERATOR_LuV, 2)
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 48)
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 48)
                 .input(wireGtSingle, UraniumRhodiumDinaquadide, 32)
@@ -50,10 +51,10 @@ public class AssemblyLineLoader {
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputs(FUSION_CASING.getItemVariant(FUSION_COIL))
-                .input(circuit, Tier.Infinite)
-                .input(circuit, Tier.Infinite)
-                .input(circuit, Tier.Infinite)
-                .input(circuit, Tier.Infinite)
+                .input(circuit, Tier.Ultra)
+                .input(circuit, Tier.Ultra)
+                .input(circuit, Tier.Ultra)
+                .input(circuit, Tier.Ultra)
                 .input(QUANTUM_STAR)
                 .input(plateDouble, Americium)
                 .input(FIELD_GENERATOR_ZPM, 2)

@@ -73,39 +73,39 @@
           "side": "gregtech:blocks/casings/voltage/uv/side"
         }
       },
-      "highly_ultimate_voltage": {
+      "ultra_high_voltage": {
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/uhv/bottom",
           "top": "gregtech:blocks/casings/voltage/uhv/top",
           "side": "gregtech:blocks/casings/voltage/uhv/side"
         }
       },
-      "extremely_ultimate_voltage": {
+      "overwhelming_voltage": {
         "textures": {
-          "bottom": "gregtech:blocks/casings/voltage/uev/bottom",
-          "top": "gregtech:blocks/casings/voltage/uev/top",
-          "side": "gregtech:blocks/casings/voltage/uev/side"
+          "bottom": "gregtech:blocks/casings/voltage/ov/bottom",
+          "top": "gregtech:blocks/casings/voltage/ov/top",
+          "side": "gregtech:blocks/casings/voltage/ov/side"
         }
       },
-      "insanely_ultimate_voltage": {
+      "overpowered_voltage": {
         "textures": {
-          "bottom": "gregtech:blocks/casings/voltage/uiv/bottom",
-          "top": "gregtech:blocks/casings/voltage/uiv/top",
-          "side": "gregtech:blocks/casings/voltage/uiv/side"
+          "bottom": "gregtech:blocks/casings/voltage/opv/bottom",
+          "top": "gregtech:blocks/casings/voltage/opv/top",
+          "side": "gregtech:blocks/casings/voltage/opv/side"
         }
       },
-      "mega_ultimate_voltage": {
+      "transcendent_voltage": {
         "textures": {
-          "bottom": "gregtech:blocks/casings/voltage/umv/bottom",
-          "top": "gregtech:blocks/casings/voltage/umv/top",
-          "side": "gregtech:blocks/casings/voltage/umv/side"
+          "bottom": "gregtech:blocks/casings/voltage/trv/bottom",
+          "top": "gregtech:blocks/casings/voltage/trv/top",
+          "side": "gregtech:blocks/casings/voltage/trv/side"
         }
       },
-      "extended_mega_ultimate_voltage": {
+      "godlike_voltage": {
         "textures": {
-          "bottom": "gregtech:blocks/casings/voltage/uxv/bottom",
-          "top": "gregtech:blocks/casings/voltage/uxv/top",
-          "side": "gregtech:blocks/casings/voltage/uxv/side"
+          "bottom": "gregtech:blocks/casings/voltage/gv/bottom",
+          "top": "gregtech:blocks/casings/voltage/gv/top",
+          "side": "gregtech:blocks/casings/voltage/gv/side"
         }
       },
       "maximum_voltage": {

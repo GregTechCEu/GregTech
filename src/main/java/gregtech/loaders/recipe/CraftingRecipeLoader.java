@@ -11,8 +11,8 @@ import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockGlassCasing;
-import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.crafting.FacadeRecipe;
 import gregtech.common.items.MetaItems;
 import gregtech.loaders.recipe.handlers.ToolRecipeHandler;
@@ -182,7 +182,7 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe("nano_leggings", MetaItems.NANO_LEGGINGS.getStackForm(), "PPP", "PEP", "PxP", 'P', MetaItems.CARBON_FIBER_PLATE.getStackForm(), 'E', MetaItems.ENERGIUM_CRYSTAL.getStackForm());
         ModHandler.addShapedRecipe("nano_boots", MetaItems.NANO_BOOTS.getStackForm(), "PxP", "PEP", 'P', MetaItems.CARBON_FIBER_PLATE.getStackForm(), 'E', MetaItems.ENERGIUM_CRYSTAL.getStackForm());
         ModHandler.addShapedRecipe("nano_chestplate_advanced", MetaItems.NANO_CHESTPLATE_ADVANCED.getStackForm(), "xJd", "PNP", "WCW", 'J', MetaItems.ELECTRIC_JETPACK_ADVANCED.getStackForm(), 'P', MetaItems.LOW_POWER_INTEGRATED_CIRCUIT.getStackForm(), 'N', MetaItems.NANO_CHESTPLATE.getStackForm(), 'W', new UnificationEntry(OrePrefix.wireGtQuadruple, Platinum), 'C', new UnificationEntry(OrePrefix.circuit, Tier.Elite));
-        ModHandler.addShapedRecipe("gravitation_engine", MetaItems.GRAVITATION_ENGINE.getStackForm(), "ESE", "POP", "ESE", 'E', MetaItems.EMITTER_LUV.getStackForm(), 'S', new UnificationEntry(OrePrefix.wireGtQuadruple, Osmium), 'P', new UnificationEntry(OrePrefix.plateDouble, Iridium), 'O', MetaItems.ENERGY_LAPOTRONIC_ORB.getStackForm());
+        ModHandler.addShapedRecipe("gravitation_engine", MetaItems.GRAVITATION_ENGINE.getStackForm(), "ESE", "POP", "ESE", 'E', MetaItems.EMITTER_LuV.getStackForm(), 'S', new UnificationEntry(OrePrefix.wireGtQuadruple, Osmium), 'P', new UnificationEntry(OrePrefix.plateDouble, Iridium), 'O', MetaItems.ENERGY_LAPOTRONIC_ORB.getStackForm());
     }
 
     private static void registerFacadeRecipe(Material material, int facadeAmount) {

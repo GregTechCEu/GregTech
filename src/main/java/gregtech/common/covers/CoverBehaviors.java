@@ -30,7 +30,7 @@ public class CoverBehaviors {
         registerBehavior(2, new ResourceLocation(GTValues.MODID, "conveyor.hv"), MetaItems.CONVEYOR_MODULE_HV, (tile, side) -> new CoverConveyor(tile, side, GTValues.HV, 64));
         registerBehavior(3, new ResourceLocation(GTValues.MODID, "conveyor.ev"), MetaItems.CONVEYOR_MODULE_EV, (tile, side) -> new CoverConveyor(tile, side, GTValues.EV, 3 * 64));
         registerBehavior(4, new ResourceLocation(GTValues.MODID, "conveyor.iv"), MetaItems.CONVEYOR_MODULE_IV, (tile, side) -> new CoverConveyor(tile, side, GTValues.IV, 8 * 64));
-        registerBehavior(5, new ResourceLocation(GTValues.MODID, "conveyor.luv"), MetaItems.CONVEYOR_MODULE_LUV, (tile, side) -> new CoverConveyor(tile, side, GTValues.LuV, 16 * 64));
+        registerBehavior(5, new ResourceLocation(GTValues.MODID, "conveyor.luv"), MetaItems.CONVEYOR_MODULE_LuV, (tile, side) -> new CoverConveyor(tile, side, GTValues.LuV, 16 * 64));
         registerBehavior(6, new ResourceLocation(GTValues.MODID, "conveyor.zpm"), MetaItems.CONVEYOR_MODULE_ZPM, (tile, side) -> new CoverConveyor(tile, side, GTValues.ZPM, 16 * 64));
         registerBehavior(7, new ResourceLocation(GTValues.MODID, "conveyor.uv"), MetaItems.CONVEYOR_MODULE_UV, (tile, side) -> new CoverConveyor(tile, side, GTValues.UV, 16 * 64));
 
@@ -39,7 +39,7 @@ public class CoverBehaviors {
         registerBehavior(12, new ResourceLocation(GTValues.MODID, "robotic_arm.hv"), MetaItems.ROBOT_ARM_HV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.HV, 64));
         registerBehavior(13, new ResourceLocation(GTValues.MODID, "robotic_arm.ev"), MetaItems.ROBOT_ARM_EV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.EV, 3 * 64));
         registerBehavior(14, new ResourceLocation(GTValues.MODID, "robotic_arm.iv"), MetaItems.ROBOT_ARM_IV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.IV, 8 * 64));
-        registerBehavior(15, new ResourceLocation(GTValues.MODID, "robotic_arm.luv"), MetaItems.ROBOT_ARM_LUV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.LuV, 16 * 64));
+        registerBehavior(15, new ResourceLocation(GTValues.MODID, "robotic_arm.luv"), MetaItems.ROBOT_ARM_LuV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.LuV, 16 * 64));
         registerBehavior(16, new ResourceLocation(GTValues.MODID, "robotic_arm.zpm"), MetaItems.ROBOT_ARM_ZPM, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.ZPM, 16 * 64));
         registerBehavior(17, new ResourceLocation(GTValues.MODID, "robotic_arm.uv"), MetaItems.ROBOT_ARM_UV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.UV, 16 * 64));
 
@@ -83,7 +83,7 @@ public class CoverBehaviors {
         registerBehavior(22, new ResourceLocation(GTValues.MODID, "pump.hv"), MetaItems.ELECTRIC_PUMP_HV, (tile, side) -> new CoverPump(tile, side, GTValues.HV, 1280 * 16));
         registerBehavior(23, new ResourceLocation(GTValues.MODID, "pump.ev"), MetaItems.ELECTRIC_PUMP_EV, (tile, side) -> new CoverPump(tile, side, GTValues.EV, 1280 * 64));
         registerBehavior(24, new ResourceLocation(GTValues.MODID, "pump.iv"), MetaItems.ELECTRIC_PUMP_IV, (tile, side) -> new CoverPump(tile, side, GTValues.IV, 1280 * 64 * 4));
-        registerBehavior(25, new ResourceLocation(GTValues.MODID, "pump.luv"), MetaItems.ELECTRIC_PUMP_LUV, (tile, side) -> new CoverPump(tile, side, GTValues.LuV, 1280 * 64 * 16));
+        registerBehavior(25, new ResourceLocation(GTValues.MODID, "pump.luv"), MetaItems.ELECTRIC_PUMP_LuV, (tile, side) -> new CoverPump(tile, side, GTValues.LuV, 1280 * 64 * 16));
         registerBehavior(26, new ResourceLocation(GTValues.MODID, "pump.zpm"), MetaItems.ELECTRIC_PUMP_ZPM, (tile, side) -> new CoverPump(tile, side, GTValues.ZPM, 1280 * 64 * 64));
         registerBehavior(27, new ResourceLocation(GTValues.MODID, "pump.uv"), MetaItems.ELECTRIC_PUMP_UV, (tile, side) -> new CoverPump(tile, side, GTValues.UV, 1280 * 64 * 64 * 4));
 
@@ -98,22 +98,22 @@ public class CoverBehaviors {
 
         // UHV+
         registerBehavior(68, new ResourceLocation(GTValues.MODID, "conveyor.uhv"), MetaItems.CONVEYOR_MODULE_UHV, (tile, side) -> new CoverConveyor(tile, side, GTValues.UHV, 16 * 64));
-        registerBehavior(69, new ResourceLocation(GTValues.MODID, "conveyor.uev"), MetaItems.CONVEYOR_MODULE_UEV, (tile, side) -> new CoverConveyor(tile, side, GTValues.UEV, 16 * 64));
-        registerBehavior(70, new ResourceLocation(GTValues.MODID, "conveyor.uiv"), MetaItems.CONVEYOR_MODULE_UIV, (tile, side) -> new CoverConveyor(tile, side, GTValues.UIV, 16 * 64));
-        registerBehavior(71, new ResourceLocation(GTValues.MODID, "conveyor.umv"), MetaItems.CONVEYOR_MODULE_UMV, (tile, side) -> new CoverConveyor(tile, side, GTValues.UMV, 16 * 64));
-        registerBehavior(72, new ResourceLocation(GTValues.MODID, "conveyor.uxv"), MetaItems.CONVEYOR_MODULE_UXV, (tile, side) -> new CoverConveyor(tile, side, GTValues.UXV, 16 * 64));
+        registerBehavior(69, new ResourceLocation(GTValues.MODID, "conveyor.ov"), MetaItems.CONVEYOR_MODULE_OV, (tile, side) -> new CoverConveyor(tile, side, GTValues.OV, 16 * 64));
+        registerBehavior(70, new ResourceLocation(GTValues.MODID, "conveyor.opv"), MetaItems.CONVEYOR_MODULE_OpV, (tile, side) -> new CoverConveyor(tile, side, GTValues.OpV, 16 * 64));
+        registerBehavior(71, new ResourceLocation(GTValues.MODID, "conveyor.trv"), MetaItems.CONVEYOR_MODULE_TrV, (tile, side) -> new CoverConveyor(tile, side, GTValues.TrV, 16 * 64));
+        registerBehavior(72, new ResourceLocation(GTValues.MODID, "conveyor.gv"), MetaItems.CONVEYOR_MODULE_GV, (tile, side) -> new CoverConveyor(tile, side, GTValues.GV, 16 * 64));
 
         registerBehavior(78, new ResourceLocation(GTValues.MODID, "robotic_arm.uhv"), MetaItems.ROBOT_ARM_UHV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.UHV, 16 * 64));
-        registerBehavior(79, new ResourceLocation(GTValues.MODID, "robotic_arm.uev"), MetaItems.ROBOT_ARM_UEV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.UEV, 16 * 64));
-        registerBehavior(80, new ResourceLocation(GTValues.MODID, "robotic_arm.uiv"), MetaItems.ROBOT_ARM_UIV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.UIV, 16 * 64));
-        registerBehavior(81, new ResourceLocation(GTValues.MODID, "robotic_arm.umv"), MetaItems.ROBOT_ARM_UMV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.UMV, 16 * 64));
-        registerBehavior(82, new ResourceLocation(GTValues.MODID, "robotic_arm.uxv"), MetaItems.ROBOT_ARM_UXV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.UXV, 16 * 64));
+        registerBehavior(79, new ResourceLocation(GTValues.MODID, "robotic_arm.ov"), MetaItems.ROBOT_ARM_OV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.OV, 16 * 64));
+        registerBehavior(80, new ResourceLocation(GTValues.MODID, "robotic_arm.opv"), MetaItems.ROBOT_ARM_OpV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.OpV, 16 * 64));
+        registerBehavior(81, new ResourceLocation(GTValues.MODID, "robotic_arm.trv"), MetaItems.ROBOT_ARM_TrV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.TrV, 16 * 64));
+        registerBehavior(82, new ResourceLocation(GTValues.MODID, "robotic_arm.gv"), MetaItems.ROBOT_ARM_GV, (tile, side) -> new CoverRoboticArm(tile, side, GTValues.GV, 16 * 64));
 
         registerBehavior(88, new ResourceLocation(GTValues.MODID, "pump.uhv"), MetaItems.ELECTRIC_PUMP_UHV, (tile, side) -> new CoverPump(tile, side, GTValues.UHV, 1280 * 64 * 64 * 4));
-        registerBehavior(89, new ResourceLocation(GTValues.MODID, "pump.uev"), MetaItems.ELECTRIC_PUMP_UEV, (tile, side) -> new CoverPump(tile, side, GTValues.UEV, 1280 * 64 * 64 * 4));
-        registerBehavior(90, new ResourceLocation(GTValues.MODID, "pump.uiv"), MetaItems.ELECTRIC_PUMP_UIV, (tile, side) -> new CoverPump(tile, side, GTValues.UIV, 1280 * 64 * 64 * 4));
-        registerBehavior(91, new ResourceLocation(GTValues.MODID, "pump.umv"), MetaItems.ELECTRIC_PUMP_UMV, (tile, side) -> new CoverPump(tile, side, GTValues.UMV, 1280 * 64 * 64 * 4));
-        registerBehavior(92, new ResourceLocation(GTValues.MODID, "pump.uxv"), MetaItems.ELECTRIC_PUMP_UXV, (tile, side) -> new CoverPump(tile, side, GTValues.UXV, 1280 * 64 * 64 * 4));
+        registerBehavior(89, new ResourceLocation(GTValues.MODID, "pump.ov"), MetaItems.ELECTRIC_PUMP_OV, (tile, side) -> new CoverPump(tile, side, GTValues.OV, 1280 * 64 * 64 * 4));
+        registerBehavior(90, new ResourceLocation(GTValues.MODID, "pump.opv"), MetaItems.ELECTRIC_PUMP_OpV, (tile, side) -> new CoverPump(tile, side, GTValues.OpV, 1280 * 64 * 64 * 4));
+        registerBehavior(91, new ResourceLocation(GTValues.MODID, "pump.trv"), MetaItems.ELECTRIC_PUMP_TrV, (tile, side) -> new CoverPump(tile, side, GTValues.TrV, 1280 * 64 * 64 * 4));
+        registerBehavior(92, new ResourceLocation(GTValues.MODID, "pump.gv"), MetaItems.ELECTRIC_PUMP_GV, (tile, side) -> new CoverPump(tile, side, GTValues.GV, 1280 * 64 * 64 * 4));
 
 
 

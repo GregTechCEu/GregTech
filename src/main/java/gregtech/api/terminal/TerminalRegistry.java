@@ -8,9 +8,9 @@ import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.terminal.app.VirtualTankApp;
-import gregtech.common.terminal.app.capeselector.CapeSelectorApp;
 import gregtech.common.terminal.app.appstore.AppStoreApp;
 import gregtech.common.terminal.app.batterymanager.BatteryManagerApp;
+import gregtech.common.terminal.app.capeselector.CapeSelectorApp;
 import gregtech.common.terminal.app.console.ConsoleApp;
 import gregtech.common.terminal.app.game.maze.MazeApp;
 import gregtech.common.terminal.app.game.minesweeper.MinesweeperApp;
@@ -93,7 +93,7 @@ public class TerminalRegistry {
                 .upgrade(1, MetaItems.SENSOR_HV.getStackForm(1))
                 .upgrade(2, MetaItems.SENSOR_EV.getStackForm(1))
                 .upgrade(3, MetaItems.SENSOR_IV.getStackForm(1))
-                .upgrade(4, MetaItems.SENSOR_LUV.getStackForm(1))
+                .upgrade(4, MetaItems.SENSOR_LuV.getStackForm(1))
                 .device(0, DeviceHardware.DEVICE.PROSPECTOR_LV)
                 .device(1, DeviceHardware.DEVICE.PROSPECTOR_LV)
                 .device(2, DeviceHardware.DEVICE.PROSPECTOR_LV)

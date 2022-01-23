@@ -861,7 +861,7 @@ public class CircuitRecipes {
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(VA[LuV])
                 .input(MULTILAYER_FIBER_BOARD, 16)
                 .input(PETRI_DISH)
-                .input(ELECTRIC_PUMP_LUV)
+                .input(ELECTRIC_PUMP_LuV)
                 .input(SENSOR_IV)
                 .input(circuit, Tier.Elite)
                 .input(foil, NiobiumTitanium, 16)

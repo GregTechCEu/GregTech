@@ -55,10 +55,10 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
         ZPM(makeName(GTValues.VOLTAGE_NAMES[7])),
         UV(makeName(GTValues.VOLTAGE_NAMES[8])),
         UHV(makeName(GTValues.VOLTAGE_NAMES[9])),
-        UEV(makeName(GTValues.VOLTAGE_NAMES[10])),
-        UIV(makeName(GTValues.VOLTAGE_NAMES[11])),
-        UMV(makeName(GTValues.VOLTAGE_NAMES[12])),
-        UXV(makeName(GTValues.VOLTAGE_NAMES[13])),
+        OV(makeName(GTValues.VOLTAGE_NAMES[10])),
+        OPV(makeName(GTValues.VOLTAGE_NAMES[11])),
+        TrV(makeName(GTValues.VOLTAGE_NAMES[12])),
+        GV(makeName(GTValues.VOLTAGE_NAMES[13])),
         MAX(makeName(GTValues.VOLTAGE_NAMES[14]));
 
         private final String name;

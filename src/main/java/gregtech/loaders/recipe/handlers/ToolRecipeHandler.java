@@ -583,9 +583,9 @@ public class ToolRecipeHandler {
             ModHandler.addShapedEnergyTransferRecipe("prospector_luv_" + batteryItem.unlocalizedName, MetaItems.PROSPECTOR_LUV.getStackForm(),
                     batteryItem::isItemEqual, true, true,
                     "EPS", "CDC", "PBP",
-                    'E', MetaItems.EMITTER_LUV.getStackForm(),
+                    'E', MetaItems.EMITTER_LuV.getStackForm(),
                     'P', new UnificationEntry(OrePrefix.plate, Materials.RhodiumPlatedPalladium),
-                    'S', MetaItems.SENSOR_LUV.getStackForm(),
+                    'S', MetaItems.SENSOR_LuV.getStackForm(),
                     'D', MetaItems.COVER_SCREEN.getStackForm(),
                     'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Master),
                     'B', batteryItem.getStackForm());

@@ -86,11 +86,11 @@ public class CraftingComponent {
                 {4, new UnificationEntry(OrePrefix.circuit, Tier.Extreme)},
                 {5, new UnificationEntry(OrePrefix.circuit, Tier.Elite)},
                 {6, new UnificationEntry(OrePrefix.circuit, Tier.Master)},
-                {7, new UnificationEntry(OrePrefix.circuit, Tier.Ultimate)},
-                {8, new UnificationEntry(OrePrefix.circuit, Tier.Super)},
-                {9, new UnificationEntry(OrePrefix.circuit, Tier.Infinite)},
-                {10, new UnificationEntry(OrePrefix.circuit, Tier.Ultra)},
-                {11, new UnificationEntry(OrePrefix.circuit, Tier.Insane)},
+                {7, new UnificationEntry(OrePrefix.circuit, Tier.Super)},
+                {8, new UnificationEntry(OrePrefix.circuit, Tier.Ultimate)},
+                {9, new UnificationEntry(OrePrefix.circuit, Tier.Ultra)},
+                {10, new UnificationEntry(OrePrefix.circuit, Tier.Insane)},
+                {11, new UnificationEntry(OrePrefix.circuit, Tier.Unreal)},
                 {12, new UnificationEntry(OrePrefix.circuit, Tier.Epic)},
                 {13, new UnificationEntry(OrePrefix.circuit, Tier.Legendary)},
                 {14, new UnificationEntry(OrePrefix.circuit, Tier.Maximum)}
@@ -105,11 +105,11 @@ public class CraftingComponent {
                 {3, new UnificationEntry(OrePrefix.circuit, Tier.Extreme)},
                 {4, new UnificationEntry(OrePrefix.circuit, Tier.Elite)},
                 {5, new UnificationEntry(OrePrefix.circuit, Tier.Master)},
-                {6, new UnificationEntry(OrePrefix.circuit, Tier.Ultimate)},
-                {7, new UnificationEntry(OrePrefix.circuit, Tier.Super)},
-                {8, new UnificationEntry(OrePrefix.circuit, Tier.Infinite)},
-                {9, new UnificationEntry(OrePrefix.circuit, Tier.Ultra)},
-                {10, new UnificationEntry(OrePrefix.circuit, Tier.Insane)},
+                {6, new UnificationEntry(OrePrefix.circuit, Tier.Super)},
+                {7, new UnificationEntry(OrePrefix.circuit, Tier.Ultimate)},
+                {8, new UnificationEntry(OrePrefix.circuit, Tier.Ultra)},
+                {9, new UnificationEntry(OrePrefix.circuit, Tier.Insane)},
+                {10, new UnificationEntry(OrePrefix.circuit, Tier.Unreal)},
                 {11, new UnificationEntry(OrePrefix.circuit, Tier.Epic)},
                 {12, new UnificationEntry(OrePrefix.circuit, Tier.Legendary)},
                 {13, new UnificationEntry(OrePrefix.circuit, Tier.Maximum)}
@@ -123,7 +123,7 @@ public class CraftingComponent {
                 {3, MetaItems.ELECTRIC_PUMP_HV.getStackForm()},
                 {4, MetaItems.ELECTRIC_PUMP_EV.getStackForm()},
                 {5, MetaItems.ELECTRIC_PUMP_IV.getStackForm()},
-                {6, MetaItems.ELECTRIC_PUMP_LUV.getStackForm()},
+                {6, MetaItems.ELECTRIC_PUMP_LuV.getStackForm()},
                 {7, MetaItems.ELECTRIC_PUMP_ZPM.getStackForm()},
                 {8, MetaItems.ELECTRIC_PUMP_UV.getStackForm()},
 
@@ -132,10 +132,10 @@ public class CraftingComponent {
         if (GTValues.HT) {
             PUMP.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.ELECTRIC_PUMP_UHV.getStackForm()},
-                    {10, MetaItems.ELECTRIC_PUMP_UEV.getStackForm()},
-                    {11, MetaItems.ELECTRIC_PUMP_UIV.getStackForm()},
-                    {12, MetaItems.ELECTRIC_PUMP_UMV.getStackForm()},
-                    {13, MetaItems.ELECTRIC_PUMP_UXV.getStackForm()},
+                    {10, MetaItems.ELECTRIC_PUMP_OV.getStackForm()},
+                    {11, MetaItems.ELECTRIC_PUMP_OpV.getStackForm()},
+                    {12, MetaItems.ELECTRIC_PUMP_TrV.getStackForm()},
+                    {13, MetaItems.ELECTRIC_PUMP_GV.getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -312,10 +312,10 @@ public class CraftingComponent {
 
         if (GTValues.HT) {
             CASING.appendIngredients(Stream.of(new Object[][]{
-                    {10, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UEV)},
-                    {11, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UIV)},
-                    {12, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UMV)},
-                    {13, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UXV)},
+                    {10, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.OV)},
+                    {11, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.OPV)},
+                    {12, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.TrV)},
+                    {13, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.GV)},
                     {14, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.MAX)},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
@@ -410,7 +410,7 @@ public class CraftingComponent {
                 {3, MetaItems.ELECTRIC_MOTOR_HV.getStackForm()},
                 {4, MetaItems.ELECTRIC_MOTOR_EV.getStackForm()},
                 {5, MetaItems.ELECTRIC_MOTOR_IV.getStackForm()},
-                {6, MetaItems.ELECTRIC_MOTOR_LUV.getStackForm()},
+                {6, MetaItems.ELECTRIC_MOTOR_LuV.getStackForm()},
                 {7, MetaItems.ELECTRIC_MOTOR_ZPM.getStackForm()},
                 {8, MetaItems.ELECTRIC_MOTOR_UV.getStackForm()},
 
@@ -419,10 +419,10 @@ public class CraftingComponent {
         if (GTValues.HT) {
             MOTOR.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.ELECTRIC_MOTOR_UHV.getStackForm()},
-                    {10, MetaItems.ELECTRIC_MOTOR_UEV.getStackForm()},
-                    {11, MetaItems.ELECTRIC_MOTOR_UIV.getStackForm()},
-                    {12, MetaItems.ELECTRIC_MOTOR_UMV.getStackForm()},
-                    {13, MetaItems.ELECTRIC_MOTOR_UXV.getStackForm()},
+                    {10, MetaItems.ELECTRIC_MOTOR_OV.getStackForm()},
+                    {11, MetaItems.ELECTRIC_MOTOR_OpV.getStackForm()},
+                    {12, MetaItems.ELECTRIC_MOTOR_TrV.getStackForm()},
+                    {13, MetaItems.ELECTRIC_MOTOR_GV.getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -447,7 +447,7 @@ public class CraftingComponent {
                 {3, MetaItems.SENSOR_HV.getStackForm()},
                 {4, MetaItems.SENSOR_EV.getStackForm()},
                 {5, MetaItems.SENSOR_IV.getStackForm()},
-                {6, MetaItems.SENSOR_LUV.getStackForm()},
+                {6, MetaItems.SENSOR_LuV.getStackForm()},
                 {7, MetaItems.SENSOR_ZPM.getStackForm()},
                 {8, MetaItems.SENSOR_UV.getStackForm()},
 
@@ -456,10 +456,10 @@ public class CraftingComponent {
         if (GTValues.HT) {
             SENSOR.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.SENSOR_UHV.getStackForm()},
-                    {10, MetaItems.SENSOR_UEV.getStackForm()},
-                    {11, MetaItems.SENSOR_UIV.getStackForm()},
-                    {12, MetaItems.SENSOR_UMV.getStackForm()},
-                    {13, MetaItems.SENSOR_UXV.getStackForm()},
+                    {10, MetaItems.SENSOR_OV.getStackForm()},
+                    {11, MetaItems.SENSOR_OpV.getStackForm()},
+                    {12, MetaItems.SENSOR_TrV.getStackForm()},
+                    {13, MetaItems.SENSOR_GV.getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -512,10 +512,10 @@ public class CraftingComponent {
         if (GTValues.HT) {
             PISTON.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.ELECTRIC_PISTON_UHV.getStackForm()},
-                    {10, MetaItems.ELECTRIC_PISTON_UEV.getStackForm()},
-                    {11, MetaItems.ELECTRIC_PISTON_UIV.getStackForm()},
-                    {12, MetaItems.ELECTRIC_PISTON_UMV.getStackForm()},
-                    {13, MetaItems.ELECTRIC_PISTON_UXV.getStackForm()},
+                    {10, MetaItems.ELECTRIC_PISTON_OV.getStackForm()},
+                    {11, MetaItems.ELECTRIC_PISTON_OpV.getStackForm()},
+                    {12, MetaItems.ELECTRIC_PISTON_TrV.getStackForm()},
+                    {13, MetaItems.ELECTRIC_PISTON_GV.getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -526,7 +526,7 @@ public class CraftingComponent {
                 {3, MetaItems.EMITTER_HV.getStackForm()},
                 {4, MetaItems.EMITTER_EV.getStackForm()},
                 {5, MetaItems.EMITTER_IV.getStackForm()},
-                {6, MetaItems.EMITTER_LUV.getStackForm()},
+                {6, MetaItems.EMITTER_LuV.getStackForm()},
                 {7, MetaItems.EMITTER_ZPM.getStackForm()},
                 {8, MetaItems.EMITTER_UV.getStackForm()},
 
@@ -535,10 +535,10 @@ public class CraftingComponent {
         if (GTValues.HT) {
             EMITTER.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.EMITTER_UHV.getStackForm()},
-                    {10, MetaItems.EMITTER_UEV.getStackForm()},
-                    {11, MetaItems.EMITTER_UIV.getStackForm()},
-                    {12, MetaItems.EMITTER_UMV.getStackForm()},
-                    {13, MetaItems.EMITTER_UXV.getStackForm()},
+                    {10, MetaItems.EMITTER_OV.getStackForm()},
+                    {11, MetaItems.EMITTER_OpV.getStackForm()},
+                    {12, MetaItems.EMITTER_TrV.getStackForm()},
+                    {13, MetaItems.EMITTER_GV.getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -549,7 +549,7 @@ public class CraftingComponent {
                 {3, MetaItems.CONVEYOR_MODULE_HV.getStackForm()},
                 {4, MetaItems.CONVEYOR_MODULE_EV.getStackForm()},
                 {5, MetaItems.CONVEYOR_MODULE_IV.getStackForm()},
-                {6, MetaItems.CONVEYOR_MODULE_LUV.getStackForm()},
+                {6, MetaItems.CONVEYOR_MODULE_LuV.getStackForm()},
                 {7, MetaItems.CONVEYOR_MODULE_ZPM.getStackForm()},
                 {8, MetaItems.CONVEYOR_MODULE_UV.getStackForm()},
 
@@ -558,10 +558,10 @@ public class CraftingComponent {
         if (GTValues.HT) {
             CONVEYOR.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.CONVEYOR_MODULE_UHV.getStackForm()},
-                    {10, MetaItems.CONVEYOR_MODULE_UEV.getStackForm()},
-                    {11, MetaItems.CONVEYOR_MODULE_UIV.getStackForm()},
-                    {12, MetaItems.CONVEYOR_MODULE_UMV.getStackForm()},
-                    {13, MetaItems.CONVEYOR_MODULE_UXV.getStackForm()},
+                    {10, MetaItems.CONVEYOR_MODULE_OV.getStackForm()},
+                    {11, MetaItems.CONVEYOR_MODULE_OpV.getStackForm()},
+                    {12, MetaItems.CONVEYOR_MODULE_TrV.getStackForm()},
+                    {13, MetaItems.CONVEYOR_MODULE_GV.getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -572,7 +572,7 @@ public class CraftingComponent {
                 {3, MetaItems.ROBOT_ARM_HV.getStackForm()},
                 {4, MetaItems.ROBOT_ARM_EV.getStackForm()},
                 {5, MetaItems.ROBOT_ARM_IV.getStackForm()},
-                {6, MetaItems.ROBOT_ARM_LUV.getStackForm()},
+                {6, MetaItems.ROBOT_ARM_LuV.getStackForm()},
                 {7, MetaItems.ROBOT_ARM_ZPM.getStackForm()},
                 {8, MetaItems.ROBOT_ARM_UV.getStackForm()},
 
@@ -581,10 +581,10 @@ public class CraftingComponent {
         if (GTValues.HT) {
             ROBOT_ARM.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.ROBOT_ARM_UHV.getStackForm()},
-                    {10, MetaItems.ROBOT_ARM_UEV.getStackForm()},
-                    {11, MetaItems.ROBOT_ARM_UIV.getStackForm()},
-                    {12, MetaItems.ROBOT_ARM_UMV.getStackForm()},
-                    {13, MetaItems.ROBOT_ARM_UXV.getStackForm()},
+                    {10, MetaItems.ROBOT_ARM_OV.getStackForm()},
+                    {11, MetaItems.ROBOT_ARM_OpV.getStackForm()},
+                    {12, MetaItems.ROBOT_ARM_TrV.getStackForm()},
+                    {13, MetaItems.ROBOT_ARM_GV.getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -667,7 +667,7 @@ public class CraftingComponent {
                 {3, MetaItems.FIELD_GENERATOR_HV.getStackForm()},
                 {4, MetaItems.FIELD_GENERATOR_EV.getStackForm()},
                 {5, MetaItems.FIELD_GENERATOR_IV.getStackForm()},
-                {6, MetaItems.FIELD_GENERATOR_LUV.getStackForm()},
+                {6, MetaItems.FIELD_GENERATOR_LuV.getStackForm()},
                 {7, MetaItems.FIELD_GENERATOR_ZPM.getStackForm()},
                 {8, MetaItems.FIELD_GENERATOR_UV.getStackForm()},
 
@@ -676,10 +676,10 @@ public class CraftingComponent {
         if (GTValues.HT) {
             FIELD_GENERATOR.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.FIELD_GENERATOR_UHV.getStackForm()},
-                    {10, MetaItems.FIELD_GENERATOR_UEV.getStackForm()},
-                    {11, MetaItems.FIELD_GENERATOR_UIV.getStackForm()},
-                    {12, MetaItems.FIELD_GENERATOR_UMV.getStackForm()},
-                    {13, MetaItems.FIELD_GENERATOR_UXV.getStackForm()},
+                    {10, MetaItems.FIELD_GENERATOR_OV.getStackForm()},
+                    {11, MetaItems.FIELD_GENERATOR_OpV.getStackForm()},
+                    {12, MetaItems.FIELD_GENERATOR_TrV.getStackForm()},
+                    {13, MetaItems.FIELD_GENERATOR_GV.getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -741,7 +741,7 @@ public class CraftingComponent {
                 {3, MetaItems.VOLTAGE_COIL_HV.getStackForm()},
                 {4, MetaItems.VOLTAGE_COIL_EV.getStackForm()},
                 {5, MetaItems.VOLTAGE_COIL_IV.getStackForm()},
-                {6, MetaItems.VOLTAGE_COIL_LUV.getStackForm()},
+                {6, MetaItems.VOLTAGE_COIL_LuV.getStackForm()},
                 {7, MetaItems.VOLTAGE_COIL_ZPM.getStackForm()},
                 {8, MetaItems.VOLTAGE_COIL_UV.getStackForm()},
                 {GTValues.FALLBACK, MetaItems.VOLTAGE_COIL_UV},
