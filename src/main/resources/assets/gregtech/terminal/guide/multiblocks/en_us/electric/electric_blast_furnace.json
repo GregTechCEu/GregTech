@@ -35,7 +35,7 @@
     {
       "type": "textbox",
       "content": [
-        "The §6Electric Blast Furnace§r can form with any combination of blocks above. For example, if the desired recipe does not deal with fluids, neither of the fluid related hatches are required.\n\nOverclocking the Blast Furnace is as simple as ensuring the the Multiblock has 2 Energy Inputs, so 4 Amps of energy can be recieved, which will ensure that the mutliblock runs at the tier above the energy inputs.\n\nFor the Blast Furnace specifically, the Muffler Hatch needs to be placed at the center of the top layer, and must face upwards."
+        "The §6Electric Blast Furnace§r can form with any combination of blocks above. For example, if the desired recipe does not deal with fluids, neither of the fluid related hatches are required.\n\nOverclocking the Blast Furnace is as simple as ensuring the the Multiblock has 2 Energy Inputs, so 4 Amps of energy can be received, which will ensure that the mutliblock runs at the tier above the energy inputs.\n\nFor the Blast Furnace specifically, the Muffler Hatch needs to be placed at the center of the top layer, and must face upwards."
       ]
     }
   ],
