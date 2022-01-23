@@ -29,10 +29,11 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable> {
- private boolean autoCollapse;
+    private boolean autoCollapse;
 
     private static final int[] INVENTORY_SIZES = {1, 4, 9, 16, 25, 36, 49};
 
@@ -140,6 +141,18 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                 }
             }
         }
+        ArrayList<ItemStack> inventoryContents = new ArrayList<>();
+        for (int i = 0; i < inventory.getSlots(); i++) {
+            ItemStack itemStack = inventory.getStackInSlot(i);
+            if (!itemStack.isEmpty()) {
+                inventory.setStackInSlot(i, ItemStack.EMPTY);
+                inventoryContents.add(itemStack);
+            }
+        }
+        for (int i = 0; i < inventoryContents.size(); i++) {
+            inventory.setStackInSlot(i, inventoryContents.get(i));
+        }
+
     }
 
     @Override
