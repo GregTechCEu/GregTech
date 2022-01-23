@@ -28,60 +28,34 @@ public class GTOverheatParticle extends GTParticle {
 
     /**
      * http://www.vendian.org/mncharity/dir3/blackbody/
-     * 1000 K  #ff3800
-     * 1200 K  #ff5300
-     * 1400 K  #ff6500
-     * 1600 K  #ff7300
-     * 1800 K  #ff7e00
-     * 2000 K  #ff8912
-     * 2200 K  #ff932c
-     * 2400 K  #ff9d3f
-     * 2600 K  #ffa54f
-     * 2800 K  #ffad5e
-     * 3000 K  #ffb46b
-     * 3200 K  #ffbb78
-     * 3400 K  #ffc184
-     * 3600 K  #ffc78f
-     * 3800 K  #ffcc99
-     * 4000 K  #ffd1a3
-     * 4200 K  #ffd5ad
-     * 4400 K  #ffd9b6
-     * 4600 K  #ffddbe
-     * 4800 K  #ffe1c6
-     * 5000 K  #ffe4ce
-     * 5200 K  #ffe8d5
-     * 5400 K  #ffebdc
-     * 5600 K  #ffeee3
-     * 5800 K  #fff0e9
-     * 6000 K  #fff3ef
      */
     public static final int[] blackBodyColors = {
-            0xFF3300,
-            0xFF5300,
-            0xFF6500,
-            0xFF7300,
-            0xFF7E00,
-            0xFF8912,
-            0xFF932C,
-            0xFF9D3F,
-            0xffa54f,
-            0xffad5e,
-            0xffb46b,
-            0xffbb78,
-            0xffc184,
-            0xffc78f,
-            0xffcc99,
-            0xffd1a3,
-            0xffd5ad,
-            0xffd9b6,
-            0xffddbe,
-            0xffe1c6,
-            0xffe4ce,
-            0xffe8d5,
-            0xffebdc,
-            0xffeee3,
-            0xfff0e9,
-            0xfff3ef
+            0xFF3300, // 1000K
+            0xFF5300, // 1200K
+            0xFF6500, // 1400K
+            0xFF7300, // 1600K
+            0xFF7E00, // 1800K
+            0xFF8912, // 2000K
+            0xFF932C, // 2200K
+            0xFF9D3F, // 2400K
+            0xffa54f, // 2600K
+            0xffad5e, // 2800K
+            0xffb46b, // 3000K
+            0xffbb78, // 3200K
+            0xffc184, // 3400K
+            0xffc78f, // 3600K
+            0xffcc99, // 3800K
+            0xffd1a3, // 4000K
+            0xffd5ad, // 4200K
+            0xffd9b6, // 4400K
+            0xffddbe, // 4600K
+            0xffe1c6, // 4800K
+            0xffe4ce, // 5000K
+            0xffe8d5, // 5200K
+            0xffebdc, // 5400K
+            0xffeee3, // 5600K
+            0xfff0e9, // 5800K
+            0xfff3ef  // 6000K
     };
 
     public static int getBlackBodyColor(int temperature) {

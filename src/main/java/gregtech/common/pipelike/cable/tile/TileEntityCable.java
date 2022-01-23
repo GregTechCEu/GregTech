@@ -55,7 +55,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     protected GTOverheatParticle particle = null;
     protected int heatQueue;
     protected int temperature = 293;
-    private final int meltTemp = 4000;
+    private final int meltTemp = 3000;
     private boolean isTicking = false;
 
     @Override
