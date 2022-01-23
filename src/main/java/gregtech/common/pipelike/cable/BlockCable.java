@@ -130,7 +130,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         if (tile instanceof TileEntityCable) {
             TileEntityCable cable = (TileEntityCable) tile;
             int temp = cable.getTemperature();
-            int minTemp = cable.getMinTemp();
+            int minTemp = cable.getDefaultTemp();
             if (temp > minTemp) {
                 return (temp - minTemp) * 15 / (cable.getMeltTemp() - minTemp);
             }

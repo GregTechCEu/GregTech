@@ -136,7 +136,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     private boolean update() {
         if (heatQueue > 0) {
             // if received heat from overvolting or overamping, add heat
-            temperature += heatQueue;
+            setTemperature(temperature + heatQueue);
         }
 
         if (temperature >= meltTemp) {
@@ -145,7 +145,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
             isTicking = false;
             return false;
         }
-        writeCustomData(100, buf -> buf.writeVarInt(temperature));
+
         if (temperature <= 293) {
             isTicking = false;
             return false;
@@ -160,7 +160,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
 
         if (heatQueue == 0) {
             // otherwise cool down
-            temperature -= Math.pow(temperature - 293, 0.35);
+            setTemperature((int) (temperature - Math.pow(temperature - 293, 0.35)));
         } else {
             heatQueue = 0;
         }
@@ -185,10 +185,9 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
 
     public void setTemperature(int temperature) {
         this.temperature = temperature;
+        world.checkLight(pos);
         if (!world.isRemote) {
             writeCustomData(100, buf -> buf.writeVarInt(temperature));
-            IBlockState blockState = getBlockType().getStateFromMeta(getBlockMetadata());
-            world.notifyBlockUpdate(getPos(), blockState, blockState, 3);
         } else {
             if (temperature <= 293) {
                 if (isParticleAlive())
@@ -202,7 +201,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         }
     }
 
-    public int getMinTemp() {
+    public int getDefaultTemp() {
         return 293;
     }
 
