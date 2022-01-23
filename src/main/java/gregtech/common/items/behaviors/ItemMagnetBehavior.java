@@ -52,6 +52,11 @@ public class ItemMagnetBehavior implements IItemBehaviour {
             return;
 
         EntityPlayer entityPlayer = (EntityPlayer) entity;
+
+        if(entityPlayer.isSpectator()) {
+            return;
+        }
+
         List<EntityItem> itemsInRange = entityPlayer.getEntityWorld().getEntitiesWithinAABB(EntityItem.class, getAreaBoundingBox(entityPlayer));
         for (EntityItem entityItem : itemsInRange) {
             if (entityItem.isDead) continue;
