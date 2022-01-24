@@ -8,8 +8,6 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.PerTickLongCounter;
@@ -22,7 +20,6 @@ import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.EnergyNetHandler;
 import gregtech.common.pipelike.cable.net.WorldENet;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -53,9 +50,9 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     private final IEnergyContainer clientCapability = IEnergyContainer.DEFAULT;
     private WeakReference<EnergyNet> currentEnergyNet = new WeakReference<>(null);
     @SideOnly(Side.CLIENT)
-    protected GTOverheatParticle particle = null;
-    protected int heatQueue;
-    protected int temperature = 293;
+    private GTOverheatParticle particle = null;
+    private int heatQueue;
+    private int temperature = 293;
     private final int meltTemp = 3000;
     private boolean isTicking = false;
 
