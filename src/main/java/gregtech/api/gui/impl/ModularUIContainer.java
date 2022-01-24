@@ -236,7 +236,7 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
 
     @Override
     public boolean canInteractWith(@Nonnull EntityPlayer playerIn) {
-        return true;
+        return playerIn == this.modularUI.entityPlayer && this.modularUI.holder.isValid();
     }
 
     @Override
