@@ -49,7 +49,6 @@ public class CapesRegistry {
     }
 
     public static ResourceLocation getPlayerCape(UUID uuid) {
-        GTLog.logger.info(uuid.toString());
         return WORN_CAPES.get(uuid);
     }
 
