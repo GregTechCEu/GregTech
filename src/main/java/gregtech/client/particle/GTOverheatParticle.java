@@ -234,7 +234,7 @@ public class GTOverheatParticle extends GTParticle {
     static BloomEffectUtil.IBloomRenderFast RENDER_HANDLER = new BloomEffectUtil.IBloomRenderFast() {
         @Override
         public int customBloomStyle() {
-            return ConfigHolder.client.shader.fusionBloom.useShader ? ConfigHolder.client.shader.fusionBloom.bloomStyle : -1;
+            return ConfigHolder.client.shader.heatEffectBloom.useShader ? ConfigHolder.client.shader.heatEffectBloom.bloomStyle : -1;
         }
 
         float lastBrightnessX;
@@ -243,10 +243,10 @@ public class GTOverheatParticle extends GTParticle {
         @Override
         @SideOnly(Side.CLIENT)
         public void preDraw(BufferBuilder buffer) {
-            BloomEffect.strength = 1.0f;
-            BloomEffect.baseBrightness = 0;
-            BloomEffect.highBrightnessThreshold = 1.3f;
-            BloomEffect.lowBrightnessThreshold = 0.3f;
+            BloomEffect.strength = (float) ConfigHolder.client.shader.heatEffectBloom.strength;
+            BloomEffect.baseBrightness = (float) ConfigHolder.client.shader.heatEffectBloom.baseBrightness;
+            BloomEffect.highBrightnessThreshold = (float) ConfigHolder.client.shader.heatEffectBloom.highBrightnessThreshold;
+            BloomEffect.lowBrightnessThreshold = (float) ConfigHolder.client.shader.heatEffectBloom.lowBrightnessThreshold;
             BloomEffect.step = 1;
 
             lastBrightnessX = OpenGlHelper.lastBrightnessX;
