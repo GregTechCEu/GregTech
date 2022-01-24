@@ -21,7 +21,7 @@ import java.util.List;
 public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTarget {
 
     public PhantomSlotWidget(IItemHandlerModifiable itemHandler, int slotIndex, int xPosition, int yPosition) {
-        super(itemHandler, slotIndex, xPosition, yPosition, false, true);
+        super(itemHandler, slotIndex, xPosition, yPosition, false, false);
     }
 
     @Override
