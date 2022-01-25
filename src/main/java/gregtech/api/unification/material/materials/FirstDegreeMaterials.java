@@ -1026,7 +1026,7 @@ public class FirstDegreeMaterials {
         TungstenCarbide = new Material.Builder(396, "tungsten_carbide")
                 .ingot().fluid()
                 .color(0x330066).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR)
+                .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Tungsten, 1, Carbon, 1)
                 .toolStats(12.0f, 4.0f, 1280, 21)
                 .fluidPipeProperties(7568, 125, true)
