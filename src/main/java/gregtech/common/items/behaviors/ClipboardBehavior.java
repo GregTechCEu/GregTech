@@ -64,7 +64,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 170, 238);
 
         builder.image(18, 8, 130, 14, GuiTextures.CLIPBOARD_TEXT_BOX);
-        builder.widget(new SimpleTextWidget(20, 10, "", 0xFFFFFF, () -> getTitle(holder), false).setCenter(false));
+        builder.widget(new SimpleTextWidget(20, 10, "", 0xFFFFFF, () -> getTitle(holder), true).setCenter(false));
 
 
         for (int i = 0; i < 8; i++) {
@@ -72,7 +72,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
             builder.widget(new ImageCycleButtonWidget(6, 37 + 20 * i, 15, 15, GuiTextures.CLIPBOARD_BUTTON, 4,
                     () -> getButtonState(holder, finalI), (x) -> setButton(holder, finalI, x)));
             builder.image(22, 38 + 20 * i, 140, 12, GuiTextures.CLIPBOARD_TEXT_BOX);
-            builder.widget(new SimpleTextWidget(24, 40 + 20 * i, "", 0xFFFFFF, () -> getString(holder, finalI), false).setCenter(false));
+            builder.widget(new SimpleTextWidget(24, 40 + 20 * i, "", 0xFFFFFF, () -> getString(holder, finalI), true).setCenter(false));
         }
 
         builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, -1))
