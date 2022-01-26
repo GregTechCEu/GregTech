@@ -15,4 +15,17 @@ public interface IVoidable {
         return -1;
     }
 
+    enum VoidingMode {
+        VOID_NONE("gregtech.gui.multiblock_no_voiding"),
+        VOID_ITEMS("gregtech.gui.multiblock_item_voiding"),
+        VOID_FLUIDS("gregtech.gui.multiblock_fluid_voiding"),
+        VOID_BOTH("gregtech.gui.multiblock_item_fluid_voiding");
+
+        public final String localeName;
+
+        VoidingMode(String name) {
+            this.localeName = name;
+        }
+    }
+
 }
