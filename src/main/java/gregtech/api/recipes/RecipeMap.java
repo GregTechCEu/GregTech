@@ -475,10 +475,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     protected TextureArea[] getOverlaysForSlot(boolean isOutput, boolean isFluid, boolean isLast) {
         TextureArea base = isFluid ? GuiTextures.FLUID_SLOT : GuiTextures.SLOT;
-        if (!isOutput && !isFluid && isLast && recipeBuilderSample instanceof IntCircuitRecipeBuilder) {
-            //automatically add int circuit overlay to last item input slot
-            return new TextureArea[]{base, GuiTextures.INT_CIRCUIT_OVERLAY};
-        }
         byte overlayKey = (byte) ((isOutput ? 2 : 0) + (isFluid ? 1 : 0) + (isLast ? 4 : 0));
         if (slotOverlays.containsKey(overlayKey)) {
             return new TextureArea[]{base, slotOverlays.get(overlayKey)};
