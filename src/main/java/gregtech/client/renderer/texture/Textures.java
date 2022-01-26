@@ -249,6 +249,19 @@ public class Textures {
   
     public static TextureAtlasSprite RESTRICTIVE_OVERLAY;
     public static TextureAtlasSprite PIPE_BLOCKED_OVERLAY;
+    public static TextureAtlasSprite PIPE_TINY;
+    public static TextureAtlasSprite PIPE_SMALL;
+    public static TextureAtlasSprite PIPE_NORMAL;
+    public static TextureAtlasSprite PIPE_LARGE;
+    public static TextureAtlasSprite PIPE_HUGE;
+    public static TextureAtlasSprite PIPE_QUADRUPLE;
+    public static TextureAtlasSprite PIPE_NONUPLE;
+    public static TextureAtlasSprite PIPE_SIDE;
+
+    public static TextureAtlasSprite PIPE_SMALL_WOOD;
+    public static TextureAtlasSprite PIPE_NORMAL_WOOD;
+    public static TextureAtlasSprite PIPE_LARGE_WOOD;
+    public static TextureAtlasSprite PIPE_SIDE_WOOD;
 
     @SideOnly(Side.CLIENT)
     public static ThreadLocal<CubeRendererState> RENDER_STATE;
@@ -272,6 +285,18 @@ public class Textures {
 
         RESTRICTIVE_OVERLAY = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_restrictive"));
         PIPE_BLOCKED_OVERLAY = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_blocked"));
+        PIPE_TINY = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_tiny_in"));
+        PIPE_SMALL = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_small_in"));
+        PIPE_NORMAL = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_normal_in"));
+        PIPE_LARGE = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_large_in"));
+        PIPE_HUGE = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_huge_in"));
+        PIPE_QUADRUPLE = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_quadruple_in"));
+        PIPE_NONUPLE = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_nonuple_in"));
+        PIPE_SIDE = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_side"));
+        PIPE_SMALL_WOOD = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_small_in_wood"));
+        PIPE_NORMAL_WOOD = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_normal_in_wood"));
+        PIPE_LARGE_WOOD = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_large_in_wood"));
+        PIPE_SIDE_WOOD = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_side_wood"));
     }
 
     @SideOnly(Side.CLIENT)
