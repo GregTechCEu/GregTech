@@ -148,49 +148,33 @@ public class Recipe {
     }
 
     public final boolean matches(boolean consumeIfSuccessful, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
-        return matches(consumeIfSuccessful, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs), MatchingMode.DEFAULT);
-    }
-
-    public boolean matches(boolean consumeIfSuccessful, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
-        return matches(consumeIfSuccessful, inputs, fluidInputs, MatchingMode.DEFAULT);
+        return matches(consumeIfSuccessful, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs));
     }
 
     /**
      * This methods aim to verify if the current recipe matches the given inputs according to matchingMode mode.
      *
-     * @param consumeIfSuccessful if true and matchingMode is equal to {@link MatchingMode#DEFAULT} will consume the inputs of the recipe.
+     * @param consumeIfSuccessful if true will consume the inputs of the recipe.
      * @param inputs              Items input or Collections.emptyList() if none.
      * @param fluidInputs         Fluids input or Collections.emptyList() if none.
-     * @param matchingMode        How this method should check if inputs matches according to {@link MatchingMode} description.
      * @return true if the recipe matches the given inputs false otherwise.
      */
-    public boolean matches(boolean consumeIfSuccessful, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
-        Pair<Boolean, Integer[]> fluids = null;
-        Pair<Boolean, Integer[]> items = null;
+    public boolean matches(boolean consumeIfSuccessful, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
+        Pair<Boolean, Integer[]> fluids;
+        Pair<Boolean, Integer[]> items;
 
-        if (matchingMode == MatchingMode.IGNORE_FLUIDS) {
-            if (getInputs().isEmpty()) {
-                return false;
-            }
-        } else {
-            fluids = matchesFluid(fluidInputs);
-            if (!fluids.getKey()) {
-                return false;
-            }
+
+        fluids = matchesFluid(fluidInputs);
+        if (!fluids.getKey()) {
+            return false;
         }
 
-        if (matchingMode == MatchingMode.IGNORE_ITEMS) {
-            if (getFluidInputs().isEmpty()) {
-                return false;
-            }
-        } else {
-            items = matchesItems(inputs);
-            if (!items.getKey()) {
-                return false;
-            }
+        items = matchesItems(inputs);
+        if (!items.getKey()) {
+            return false;
         }
 
-        if (consumeIfSuccessful && matchingMode == MatchingMode.DEFAULT) {
+        if (consumeIfSuccessful) {
             Integer[] fluidAmountInTank = fluids.getValue();
             Integer[] itemAmountInSlot = items.getValue();
             for (int i = 0; i < fluidAmountInTank.length; i++) {

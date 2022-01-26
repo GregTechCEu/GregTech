@@ -7,7 +7,6 @@ import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.CountableIngredient;
-import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
@@ -135,7 +134,7 @@ public class CommandRecipeCheck extends CommandBase {
                         }
                         return null;
                     }).filter(Objects::nonNull).collect(Collectors.toList()),
-                    fluidInputs, Integer.MAX_VALUE, MatchingMode.DEFAULT);
+                    fluidInputs, Integer.MAX_VALUE);
             // checks whether the same object is returned
             if (foundRecipe != recipe) {
                 return new MismatchEntry(recipe, foundRecipe, recipeMap);
