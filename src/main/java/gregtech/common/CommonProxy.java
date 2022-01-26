@@ -16,7 +16,6 @@ import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.CapesRegistry;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.advancement.GTTrigger;
