@@ -13,7 +13,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
 
@@ -33,13 +36,8 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
         return data;
     }
 
-    public void nodeNeighbourChanged(BlockPos pos) {
-        NET_DATA.clear();
-    }
-
     @Override
-    protected void updateBlockedConnections(BlockPos nodePos, EnumFacing facing, boolean isBlocked) {
-        super.updateBlockedConnections(nodePos, facing, isBlocked);
+    public void onNeighbourUpdate(BlockPos fromPos) {
         NET_DATA.clear();
     }
 
@@ -51,8 +49,7 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
     }
 
     @Override
-    protected void onConnectionsUpdate() {
-        super.onConnectionsUpdate();
+    protected void onPipeConnectionsUpdate() {
         NET_DATA.clear();
     }
 

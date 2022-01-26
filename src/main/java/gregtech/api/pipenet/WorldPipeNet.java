@@ -42,7 +42,7 @@ public abstract class WorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType>
     }
 
     protected void onWorldSet() {
-        this.pipeNets.forEach(PipeNet::onConnectionsUpdate);
+        this.pipeNets.forEach(PipeNet::onNodeConnectionsUpdate);
     }
 
     public void addNode(BlockPos nodePos, NodeDataType nodeData, int mark, int openConnections, boolean isActive) {
@@ -92,6 +92,7 @@ public abstract class WorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType>
         T pipeNet = getNetFromPos(nodePos);
         if (pipeNet != null) {
             pipeNet.updateBlockedConnections(nodePos, side, isBlocked);
+            pipeNet.onPipeConnectionsUpdate();
         }
     }
 
