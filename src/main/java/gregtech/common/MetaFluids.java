@@ -159,12 +159,12 @@ public class MetaFluids {
         // handle vanilla fluids
         Materials.Water.getProperty(PropertyKey.FLUID).setFluid(FluidRegistry.WATER);
         FluidTooltipUtil.registerTooltip(FluidRegistry.WATER, Materials.Water.getChemicalFormula());
-        FluidTooltipUtil.registerTooltip(FluidRegistry.WATER, String.valueOf(Materials.Water.getFluid().getTemperature()));
-        FluidTooltipUtil.registerTooltip(FluidRegistry.WATER, String.valueOf(Materials.Water.getFluid().isGaseous()));
+        FluidTooltipUtil.registerTooltip(FluidRegistry.WATER, String.valueOf(Materials.Water.getProperty(PropertyKey.FLUID).getFluidTemperature()));
+        FluidTooltipUtil.registerTooltip(FluidRegistry.WATER, String.valueOf(Materials.Water.getProperty(PropertyKey.FLUID).isGas()));
         Materials.Lava.getProperty(PropertyKey.FLUID).setFluid(FluidRegistry.LAVA);
         FluidTooltipUtil.registerTooltip(FluidRegistry.LAVA, Materials.Lava.getChemicalFormula());
-        FluidTooltipUtil.registerTooltip(FluidRegistry.LAVA, String.valueOf(Materials.Lava.getFluid().getTemperature()));
-        FluidTooltipUtil.registerTooltip(FluidRegistry.LAVA, String.valueOf(Materials.Lava.getFluid().isGaseous()));
+        FluidTooltipUtil.registerTooltip(FluidRegistry.LAVA, String.valueOf(Materials.Lava.getProperty(PropertyKey.FLUID).getFluidTemperature()));
+        FluidTooltipUtil.registerTooltip(FluidRegistry.LAVA, String.valueOf(Materials.Lava.getProperty(PropertyKey.FLUID).isGas()));
 
         //alternative names for forestry fluids
         setAlternativeFluidName(Materials.Ethanol, FluidType.NORMAL, "bio.ethanol");

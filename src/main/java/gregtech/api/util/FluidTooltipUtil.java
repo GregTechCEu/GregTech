@@ -1,6 +1,8 @@
 package gregtech.api.util;
 
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.PropertyKey;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -16,36 +18,26 @@ public class FluidTooltipUtil {
 
     /**
      * Used to register a tooltip to a Fluid.
-     * <p>
-     * Ignores a tooltip applied for Water, so that it will be handled correctly for the chemical formula.
      *
      * @param fluid   The fluid to register a tooltip for.
      * @param tooltip The tooltip.
-     * @return False if either parameter is null or if tooltip is empty, true otherwise.
      */
-    public static boolean registerTooltip(Fluid fluid, String tooltip) {
-        if (fluid != null && tooltip != null && !tooltip.trim().isEmpty()) {
+    public static void registerTooltip(Fluid fluid, String tooltip) {
+        if (fluid != null && tooltip != null) {
             tooltips.computeIfAbsent(fluid, k -> new ArrayList<>()).add(tooltip);
-            return true;
         }
-        return false;
     }
 
     /**
      * Used to register a tooltip to a Fluid.
-     * <p>
-     * Ignores a tooltip applied for Water, so that it will be handled correctly for the chemical formula.
      *
      * @param fluid   The fluid to register a tooltip for.
      * @param tooltip The tooltip.
-     * @return False if either parameter is null or if tooltip is empty, true otherwise.
      */
-    public static boolean registerTooltip(Fluid fluid, List<String> tooltip) {
+    public static void registerTooltip(Fluid fluid, List<String> tooltip) {
         if (fluid != null && tooltip != null && !tooltip.isEmpty()) {
             tooltips.put(fluid, tooltip);
-            return true;
         }
-        return false;
     }
 
     /**
@@ -55,8 +47,9 @@ public class FluidTooltipUtil {
      * @return The tooltip.
      */
     public static List<String> getFluidTooltip(Fluid fluid) {
-        if (fluid == null)
+        if (fluid == null) {
             return null;
+        }
 
         return tooltips.get(fluid);
     }
@@ -68,8 +61,9 @@ public class FluidTooltipUtil {
      * @return The tooltip.
      */
     public static List<String> getFluidTooltip(FluidStack stack) {
-        if (stack == null)
+        if (stack == null) {
             return null;
+        }
 
         return getFluidTooltip(stack.getFluid());
     }
@@ -81,24 +75,32 @@ public class FluidTooltipUtil {
      * @return The tooltip.
      */
     public static List<String> getFluidTooltip(String fluidName) {
-        if (fluidName == null || fluidName.isEmpty())
+        if (fluidName == null || fluidName.isEmpty()) {
             return null;
+        }
 
         return getFluidTooltip(FluidRegistry.getFluid(fluidName));
     }
 
     /**
      * A simple helper method to get the tooltip for Water, since it is an edge case of fluids.
-     *
-     * @return "H₂O"
      */
     public static List<String> getWaterTooltip() {
+        return getMaterialTooltip(Materials.Water);
+    }
+
+    /**
+     * A simple helper method to get the tooltip for Lava, since it is an edge case of fluids.
+     */
+    public static List<String> getLavaTooltip() {
+        return getMaterialTooltip(Materials.Lava);
+    }
+
+    private static List<String> getMaterialTooltip(Material m) {
         List<String> tooltip = new ArrayList<>();
-
-        tooltip.add(Materials.Water.getChemicalFormula());
-        tooltip.add(String.valueOf(Materials.Water.getFluid().getTemperature()));
-        tooltip.add(String.valueOf(Materials.Water.getFluid().isGaseous()));
-
+        tooltip.add(m.getChemicalFormula());
+        tooltip.add(String.valueOf(m.getProperty(PropertyKey.FLUID).getFluidTemperature()));
+        tooltip.add(String.valueOf(m.getProperty(PropertyKey.FLUID).isGas()));
         return tooltip;
     }
 }

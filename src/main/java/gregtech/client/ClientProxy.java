@@ -208,15 +208,16 @@ public class ClientProxy extends CommonProxy {
                     }
                 }
             }
-        } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) { // Water buckets have a separate registry name from other buckets
+        } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) { // Water and Lava buckets have a separate registry name from other buckets
             fluidTooltips = FluidTooltipUtil.getWaterTooltip();
             chemicalFormula = fluidTooltips.get(0);
             temperature = fluidTooltips.get(1);
             isGas = fluidTooltips.get(2);
-        }
-
-        if (chemicalFormula != null && !chemicalFormula.isEmpty()) {
-            event.getToolTip().add(1, ChatFormatting.YELLOW + chemicalFormula);
+        } else if (itemStack.getItem().equals(Items.LAVA_BUCKET)) {
+            fluidTooltips = FluidTooltipUtil.getLavaTooltip();
+            chemicalFormula = fluidTooltips.get(0);
+            temperature = fluidTooltips.get(1);
+            isGas = fluidTooltips.get(2);
         }
 
         if(isGas != null && !isGas.isEmpty()) {
@@ -227,6 +228,10 @@ public class ClientProxy extends CommonProxy {
 
         if(temperature != null && !temperature.isEmpty()) {
             event.getToolTip().add(1, LocalizationUtils.format("gregtech.fluid.temperature", Integer.parseInt(temperature)));
+        }
+
+        if (chemicalFormula != null && !chemicalFormula.isEmpty()) {
+            event.getToolTip().add(1, ChatFormatting.YELLOW + chemicalFormula);
         }
     }
 
