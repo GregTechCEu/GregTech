@@ -474,13 +474,13 @@ public class MaterialRecipeHandler {
                         .buildAndRegister();
             } else if (material.hasProperty(PropertyKey.GEM)) {
                 COMPRESSOR_RECIPES.recipeBuilder()
-                        .input(gem, material, 9)
+                        .input(gem, material, (int) (block.getMaterialAmount(material) / M))
                         .output(block, material)
                         .duration(300).EUt(2).buildAndRegister();
 
                 FORGE_HAMMER_RECIPES.recipeBuilder()
                         .input(block, material)
-                        .output(gem, material, 9)
+                        .output(gem, material, (int) (block.getMaterialAmount(material) / M))
                         .duration(100).EUt(24).buildAndRegister();
             }
         }
