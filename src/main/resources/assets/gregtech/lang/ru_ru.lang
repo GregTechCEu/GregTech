@@ -53,7 +53,6 @@ item.invalid.name=Недопустимый предмет
 fluid.empty=Пусто
 
 metaitem.generic.fluid_container.tooltip=%d/%dЛ %s
-metaitem.generic.fluid_container.tooltip_empty=Пусто
 metaitem.generic.electric_item.tooltip=%d/%d EU - Уровень §e%d
 metaitem.electric.discharge_mode.enabled=§eРежим разрядки Включен
 metaitem.electric.discharge_mode.disabled=§eРежим разрядки Выключен
