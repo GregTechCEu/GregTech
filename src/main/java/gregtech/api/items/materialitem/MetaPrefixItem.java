@@ -114,7 +114,6 @@ public class MetaPrefixItem extends StandardMetaItem {
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("ConstantConditions")
     public void registerModels() {
-        super.registerModels();
         TShortObjectHashMap<ModelResourceLocation> alreadyRegistered = new TShortObjectHashMap<>();
         for (short metaItem : metaItems.keySet()) {
             MaterialIconSet materialIconSet = GregTechAPI.MATERIAL_REGISTRY.getObjectById(metaItem).getMaterialIconSet();
@@ -147,7 +146,6 @@ public class MetaPrefixItem extends StandardMetaItem {
     @Override
     @SideOnly(Side.CLIENT)
     public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
-        super.getSubItems(tab, subItems);
         if (tab == GregTechAPI.TAB_GREGTECH_MATERIALS || tab == CreativeTabs.SEARCH) {
             for (MetaItem<?>.MetaValueItem enabledItem : metaItems.values()) {
                 if (!enabledItem.isVisible())
