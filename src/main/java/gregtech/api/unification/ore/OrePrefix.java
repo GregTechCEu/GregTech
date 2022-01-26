@@ -203,6 +203,7 @@ public class OrePrefix {
     public static final OrePrefix pipeSmallRestrictive = new OrePrefix("pipeSmallRestrictive", M, null, MaterialIconType.pipeSmall, ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeNormalRestrictive = new OrePrefix("pipeNormalRestrictive", M * 3, null, MaterialIconType.pipeMedium, ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeLargeRestrictive = new OrePrefix("pipeLargeRestrictive", M * 6, null, MaterialIconType.pipeLarge, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeHugeRestrictive = new OrePrefix("pipeHugeRestrictive", M * 12, null, MaterialIconType.pipeHuge, ENABLE_UNIFICATION, null);
 
     public static final OrePrefix wireGtHex = new OrePrefix("wireGtHex", M * 8, null, null, ENABLE_UNIFICATION, null);
     public static final OrePrefix wireGtOctal = new OrePrefix("wireGtOctal", M * 4, null, null, ENABLE_UNIFICATION, null);
@@ -382,6 +383,7 @@ public class OrePrefix {
         pipeSmallRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeNormalRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeLargeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
+        pipeHugeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
 
         cableGtSingle.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount));
         cableGtDouble.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount));
