@@ -209,6 +209,9 @@ public class ConfigHolder {
                 "gregtech"
         };
 
+        @Config.Comment({"Whether Gregtech should remove smelting recipes from the vanilla furnace for ingots requiring the Electric Blast Furnace.", "Default: true"})
+        public boolean removeSmeltingForEBFMetals = true;
+
         public static class EnergyCompatOptions {
 
             @Config.Comment({"Enable Native GTEU to Forge Energy (RF and alike) on GT Cables and Wires.", "Default: true"})
