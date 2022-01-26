@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "minecraft:cube_bottom_top",
+    "model": "gregtech:cube_bottom_top_tintindex",
     "textures": {
       "bottom": "gregtech:blocks/rendering_error",
       "top": "gregtech:blocks/rendering_error",

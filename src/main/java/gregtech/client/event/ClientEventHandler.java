@@ -1,6 +1,7 @@
 package gregtech.client.event;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+import gregtech.api.GTValues;
 import gregtech.api.util.CapesRegistry;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
@@ -10,9 +11,11 @@ import gregtech.client.renderer.handler.ToolOverlayRenderer;
 import gregtech.client.utils.DepthTextureUtil;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.*;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -81,6 +84,13 @@ public class ClientEventHandler {
             }
             ResourceLocation cape = CapesRegistry.getPlayerCape(uuid);
             playerTextures.put(MinecraftProfileTexture.Type.CAPE, cape == null ? defaultPlayerCape : cape);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onConfigChanged(ConfigChangedEvent.PostConfigChangedEvent event) {
+        if (GTValues.MODID.equals(event.getModID()) && event.isWorldRunning()) {
+            Minecraft.getMinecraft().renderGlobal.loadRenderers();
         }
     }
 }

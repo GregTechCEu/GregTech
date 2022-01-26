@@ -103,6 +103,10 @@ public class ClientProxy extends CommonProxy {
 
     public static final IItemColor RUBBER_LEAVES_ITEM_COLOR = (stack, tintIndex) -> ColorizerFoliage.getFoliageColorBirch();
 
+    public static final IBlockColor MACHINE_CASING_BLOCK_COLOR = (state, world, pos, tintIndex) -> ConfigHolder.client.defaultPaintingColor;
+
+    public static final IItemColor MACHINE_CASING_ITEM_COLOR = (stack, tintIndex) -> ConfigHolder.client.defaultPaintingColor;
+
     public void onPreLoad() {
         super.onPreLoad();
 
