@@ -428,8 +428,7 @@ public class OrganicChemistryMaterials {
                 .color(0x8FB51A)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 6, Hydrogen, 4, Chlorine, 1, Nitrogen, 1, Oxygen, 2)
-                .build()
-                .setFormula("");
+                .build();
 
         Chlorobenzene = new Material.Builder(1062, "chlorobenzene")
                 .fluid()
