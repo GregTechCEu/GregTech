@@ -33,7 +33,9 @@ public interface IParallelableRecipeLogic {
      * @param outputs       output item handler
      * @param fluidOutputs  output fluid handler
      * @param parallelLimit the maximum number of parallel recipes to be performed
-     * @return the recipe builder with the parallelized recipe. returns null the recipe cant fit
+     * @param maxVoltage    the voltage limit on the number of parallel recipes to be performed
+     * @param mte           the MetaTileEntity performing the parallel recipe
+     * @return the recipe builder with the parallelized recipe. returns null the recipe can't fit
      */
     default RecipeBuilder<?> findMultipliedParallelRecipe(RecipeMap<?> recipeMap, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelLimit, long maxVoltage, MetaTileEntity mte) {
         return ParallelLogic.doParallelRecipes(
@@ -56,6 +58,8 @@ public interface IParallelableRecipeLogic {
      * @param inputs        input item handler
      * @param outputs       output item handler
      * @param parallelLimit the maximum number of parallel recipes to be performed
+     * @param maxVoltage    the voltage limit on the number of parallel recipes to be performed
+     * @param mte           the MetaTileEntity performing the parallel recipe
      * @return the recipe builder with the parallelized recipe. returns null the recipe can't fit
      */
     default RecipeBuilder<?> findAppendedParallelItemRecipe(RecipeMap<?> recipeMap, IItemHandlerModifiable inputs, IItemHandlerModifiable outputs, int parallelLimit, long maxVoltage, MetaTileEntity mte) {
@@ -68,7 +72,7 @@ public interface IParallelableRecipeLogic {
                 mte);
     }
 
-    // Recipes passed in here should be already trimmed
+    // Recipes passed in here should be already trimmed, if desired
     default Recipe findParallelRecipe(AbstractRecipeLogic logic, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, long maxVoltage, int parallelLimit) {
         if (parallelLimit > 1) {
             RecipeBuilder<?> parallelBuilder = null;

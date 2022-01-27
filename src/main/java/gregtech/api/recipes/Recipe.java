@@ -371,6 +371,18 @@ public class Recipe {
     }
 
     // All Recipes this method is called for should be already trimmed, if required
+
+    /**
+     * Returns all outputs from the recipe.
+     * This is where Chanced Outputs for the recipe are calculated.
+     * The Recipe should be trimmed by calling {@link Recipe#getItemAndChanceOutputs(int)} before calling this method,
+     * if trimming is required.
+     *
+     * @param tier The Voltage Tier of the Recipe, used for chanced output calculation
+     * @param recipeMap The RecipeMap that the recipe is being performed upon, used for chanced output calculation
+     *
+     * @return A list of all resulting ItemStacks from the recipe, after chance has been applied to any chanced outputs
+     */
     public List<ItemStack> getResultItemOutputs(int tier, RecipeMap<?> recipeMap) {
         ArrayList<ItemStack> outputs = new ArrayList<>(GTUtility.copyStackList(getOutputs()));
         List<ChanceEntry> chancedOutputsList = getChancedOutputs();
@@ -389,16 +401,15 @@ public class Recipe {
     }
 
     /**
-     * Returns the maximum possible recipe outputs from a recipe
-     * Takes into account any specific output limiters, ie macerator slots
+     * Returns the maximum possible recipe outputs from a recipe, divided into regular and chanced outputs
+     * Takes into account any specific output limiters, ie macerator slots, to trim down the output list
+     * Trims from chanced outputs first, then regular outputs
      *
-     * @param outputLimit The limit on the number of outputs
-     * @return A List of recipe outputs and chanced outputs
+     * @param outputLimit The limit on the number of outputs, -1 for disabled.
+     * @return A Pair of recipe outputs and chanced outputs, limited by some factor
      */
     public Pair<List<ItemStack>, List<ChanceEntry>> getItemAndChanceOutputs(int outputLimit) {
         List<ItemStack> outputs = new ArrayList<>();
-        //outputs.addAll(GTUtility.copyStackList(getOutputs()));
-        //outputs.addAll(getChancedOutputs().stream().map(ChanceEntry::getItemStack).collect(Collectors.toList()));
         int numChanced = outputLimit == -1 ? outputLimit : outputLimit - getOutputs().size() <= 0 ? -1 : outputLimit - getOutputs().size();
 
 
@@ -411,7 +422,6 @@ public class Recipe {
         // No limiting
         if(outputLimit == -1) {
             outputs.addAll(GTUtility.copyStackList(getOutputs()));
-            //outputs.addAll(chancedOutputs);
         }
         // If just the regular outputs would satisfy the outputLimit
         else if(getOutputs().size() >= outputLimit) {
@@ -430,6 +440,11 @@ public class Recipe {
         return Pair.of(outputs, chancedOutputs);
     }
 
+    /**
+     * Returns a list of every possible ItemStack output from a recipe, including all possible chanced outputs.
+     *
+     * @return A List of ItemStack outputs from the recipe, including all chanced outputs
+     */
     public List<ItemStack> getAllItemOutputs() {
         List<ItemStack> recipeOutputs = new ArrayList<>(this.outputs);
 
@@ -467,7 +482,15 @@ public class Recipe {
         return fluidOutputs;
     }
 
-    //TODO, consolidate into previous?
+    /**
+     * Trims the list of fluid outputs based on some passed factor.
+     * Similar to {@link Recipe#getItemAndChanceOutputs(int)} but does not handle chanced fluid outputs
+     *
+     * @param outputLimit The limiting factor to trim the fluid outputs to, -1 for disabled.
+     *
+     * @return A trimmed List of fluid outputs.
+     */
+    // TODO, implement future chanced fluid outputs here
     public List<FluidStack> getAllFluidOutputs(int outputLimit) {
         return outputLimit == -1 ? fluidOutputs : fluidOutputs.subList(0, Math.min(fluidOutputs.size(), outputLimit));
     }

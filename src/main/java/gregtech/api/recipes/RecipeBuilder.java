@@ -24,6 +24,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -577,6 +578,19 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public List<ChanceEntry> getChancedOutputs() {
         return chancedOutputs;
+    }
+
+    /**
+     * Similar to {@link Recipe#getAllItemOutputs()}, returns the recipe outputs and all chanced outputs
+     *
+     * @return A List of ItemStacks composed of the recipe outputs and chanced outputs
+     */
+    public List<ItemStack> getAllItemOutputs() {
+        List<ItemStack> stacks = new ArrayList<>(getOutputs());
+
+        stacks.addAll(getChancedOutputs().stream().map(ChanceEntry::getItemStack).collect(Collectors.toList()));
+
+        return stacks;
     }
 
     public List<FluidStack> getFluidInputs() {

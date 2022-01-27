@@ -57,6 +57,7 @@ public class ParallelLogic {
         int modifiedItemParallelAmount = Integer.MAX_VALUE;
         int modifiedFluidParallelAmount = Integer.MAX_VALUE;
 
+        // If we are voiding both items and fluids, return the maximum number of parallels that can be performed from the inputs
         if(voidItems && voidFluids) {
             return parallelAmount;
         }
@@ -64,20 +65,24 @@ public class ParallelLogic {
         // Check both normal item outputs and chanced item outputs
         if (recipe.getOutputs().size() > 0 || recipe.getChancedOutputs().size() > 0) {
             modifiedItemParallelAmount = limitParallelByItems(recipe, new OverlayedItemHandler(outputs), parallelAmount);
+            // If we are voiding items, reset the item limit to the maximum number of parallels
             if(voidItems) {
                 modifiedItemParallelAmount = parallelAmount;
             }
+            // If we are not voiding, and cannot fit any items, return 0
             else if (modifiedItemParallelAmount == 0) {
                 return 0;
             }
         }
 
+        // TODO, check both regular and chanced fluid outputs when fluid outputs are implemented
         if (recipe.getFluidOutputs().size() > 0) {
             modifiedFluidParallelAmount = limitParallelByFluids(recipe, new OverlayedFluidHandler(fluidOutputs), modifiedItemParallelAmount);
-
+            // If we are voiding fluids, reset the fluid limit to the maximum number of parallels
             if(voidFluids) {
                 modifiedFluidParallelAmount = parallelAmount;
             }
+            // If we are not voiding, and cannot fit any fluids, return 0
             else if(modifiedFluidParallelAmount == 0) {
                 return 0;
             }
@@ -97,7 +102,7 @@ public class ParallelLogic {
         int minMultiplier = 0;
         int maxMultiplier = multiplier;
 
-        Map<ItemStackKey, Integer> recipeOutputs = GTHashMaps.fromItemStackCollection(recipe.getOutputs());
+        Map<ItemStackKey, Integer> recipeOutputs = GTHashMaps.fromItemStackCollection(recipe.getAllItemOutputs());
 
         while (minMultiplier != maxMultiplier) {
             overlayedItemHandler.reset();
@@ -401,7 +406,7 @@ public class ParallelLogic {
 
         // Simulate the merging of the maximum amount of recipes
         // and limit by the amount we can successfully merge
-        int limitByOutput = Integer.MAX_VALUE;
+        int limitByOutput;
         limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs, voidItems, voidFluids);
 
         int limitByVoltage = Math.abs((int) (maxVoltage / currentRecipe.getEUt()));
@@ -423,6 +428,7 @@ public class ParallelLogic {
      * @param exportInventory The {@link IItemHandlerModifiable} that contains the items to be used as outputs
      * @param parallelAmount  The maximum amount of recipes that can be performed at one time
      * @param maxVoltage      The maximum voltage of the machine
+     * @param mte             The MetaTileEntity performing the parallel recipe
      * @return A {@link RecipeBuilder} containing the recipes that can be performed in parallel, limited by the ingredients available, and the output space available.
      */
     public static RecipeBuilder<?> appendItemRecipes(RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IItemHandlerModifiable exportInventory, int parallelAmount, long maxVoltage, MetaTileEntity mte) {
@@ -465,8 +471,8 @@ public class ParallelLogic {
             //how much we can add to the output inventory
             int limitByOutput = Integer.MAX_VALUE;
             if(!mte.canVoidRecipeItemOutputs()) {
-                // TODO, limit by chanced outputs as well as regular outputs. Need to change the method to simulate any chanced output for appended outputs
-                limitByOutput = limitParallelByItemsIncremental(recipeBuilder.getOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, ingredientRatio);
+                // Limit by the number of recipe outputs and chanced outputs, to simulate cases where 100% chanced outputs were obtained
+                limitByOutput = limitParallelByItemsIncremental(recipeBuilder.getAllItemOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, ingredientRatio);
             }
 
             //amount to actually multiply the recipe by
