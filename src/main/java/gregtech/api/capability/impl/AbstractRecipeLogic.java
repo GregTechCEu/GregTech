@@ -452,20 +452,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         IMultipleTankHandler importFluids = getInputTank();
         IMultipleTankHandler exportFluids = getOutputTank();
 
-        List<ItemStack> combinedOutputs;
-
-
-        // If we performed parallel recipes, chanced outputs are already accounted for
-        // In addition, we have already trimmed outputs and chanced outputs at this time
-        if(parallelRecipesPerformed != 0) {
-            combinedOutputs = recipe.getAllItemOutputs();
-        }
-        else {
-            combinedOutputs = recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipeEUt), recipeMap);
-            // Store this early to prevent recalculating the chanced outputs
-            this.itemOutputs = GTUtility.copyStackList(combinedOutputs);
-        }
-        if (!metaTileEntity.canVoidRecipeItemOutputs() && !MetaTileEntity.addItemsToItemHandler(exportInventory, true, combinedOutputs)) {
+        // We have already trimmed outputs and chanced outputs at this time
+        // Set the outputs here so the chanced outputs calculated for attempted merge into output bus are not recalculated later
+        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipeEUt), getRecipeMap()));
+        if (!metaTileEntity.canVoidRecipeItemOutputs() && !MetaTileEntity.addItemsToItemHandler(exportInventory, true, this.itemOutputs)) {
             this.isOutputsFull = true;
             return false;
         }
@@ -692,12 +682,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         setMaxProgress(resultOverclock[1]);
         this.recipeEUt = resultOverclock[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getAllFluidOutputs(metaTileEntity.getFluidOutputLimit()));
-
-        // We already set the item outputs for non-parallel recipe previously, to check if the received chanced outputs could fit
-        // So only set the outputs here if we are in a parallel case
-        if(parallelRecipesPerformed != 0) {
-            this.itemOutputs = GTUtility.copyStackList(recipe.getAllItemOutputs());
-        }
 
         if (this.wasActiveAndNeedsUpdate) {
             this.wasActiveAndNeedsUpdate = false;
