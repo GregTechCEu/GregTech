@@ -106,7 +106,7 @@ public class MixerRecipes {
         MIXER_RECIPES.recipeBuilder().duration(160).EUt(VA[HV])
                 .input(dust, Beryllium)
                 .input(dust, Potassium, 4)
-                .fluidInputs(Oxygen.getFluid(5000))
+                .fluidInputs(Nitrogen.getFluid(5000))
                 .notConsumable(new IntCircuitIngredient(1))
                 .output(dust, EnderPearl, 10)
                 .buildAndRegister();

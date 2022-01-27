@@ -250,6 +250,7 @@ public class PolymerRecipes {
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(Propene.getFluid(1000))
                 .fluidInputs(Chlorine.getFluid(2000))
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
                 .fluidOutputs(AllylChloride.getFluid(1000))
                 .duration(160).EUt(VA[LV]).buildAndRegister();
