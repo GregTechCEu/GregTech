@@ -77,7 +77,7 @@ public class FluidDrillLogic {
         progressTime++;
         if (progressTime % MAX_PROGRESS != 0)
             return;
-        progressTime = 1;
+        progressTime = 0;
 
         int amount = getFluidToProduce();
 
