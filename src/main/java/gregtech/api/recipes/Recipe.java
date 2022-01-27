@@ -410,14 +410,27 @@ public class Recipe {
      */
     public Pair<List<ItemStack>, List<ChanceEntry>> getItemAndChanceOutputs(int outputLimit) {
         List<ItemStack> outputs = new ArrayList<>();
-        int numChanced = outputLimit == -1 ? outputLimit : outputLimit - getOutputs().size() <= 0 ? -1 : outputLimit - getOutputs().size();
+        int numChanced;
+
+        // If we are not trimming the outputs, don't trim the number of chanced outputs
+        if(outputLimit == -1) {
+            numChanced = -1;
+        }
+        // If the regular outputs can satisfy the output limit
+        else if(getOutputs().size() >= outputLimit) {
+            numChanced = 0;
+        }
+        // Else the number of chanced outputs is the remaining amount after all regular outputs have been processed.
+        else {
+            numChanced = outputLimit - getOutputs().size();
+        }
 
 
         List<ChanceEntry> chancedOutputs = new ArrayList<>();
 
-        if(numChanced != -1) {
-            chancedOutputs = getChancedOutputs();
-        }
+        // Initially populate the chanced output list
+        chancedOutputs = getChancedOutputs();
+
 
         // No limiting
         if(outputLimit == -1) {
@@ -425,7 +438,9 @@ public class Recipe {
         }
         // If just the regular outputs would satisfy the outputLimit
         else if(getOutputs().size() >= outputLimit) {
-            outputs.addAll(GTUtility.copyStackList(getOutputs()).subList(0, outputLimit));
+            outputs.addAll(GTUtility.copyStackList(getOutputs()).subList(0, Math.min(outputLimit, getOutputs().size())));
+            // clear the chanced outputs, as we are only getting regular outputs
+            chancedOutputs.clear();
         }
         // If the regular outputs and chanced outputs are required to satisfy the outputLimit
         else if(!getOutputs().isEmpty() && (getOutputs().size() + chancedOutputs.size()) >= outputLimit) {
@@ -433,8 +448,13 @@ public class Recipe {
             chancedOutputs = chancedOutputs.subList(0, Math.min(numChanced, chancedOutputs.size()));
         }
         // There are only chanced outputs to satisfy the outputLimit
-        else {
+        else if(getOutputs().isEmpty()) {
             chancedOutputs = chancedOutputs.subList(0, Math.min(outputLimit, chancedOutputs.size()));
+        }
+        // The number of outputs + chanced outputs is lower than the trim number, so just add everything
+        else {
+            outputs.addAll(GTUtility.copyStackList(getOutputs()));
+            // Chanced outputs are taken care of in the original copy
         }
 
         return Pair.of(outputs, chancedOutputs);
