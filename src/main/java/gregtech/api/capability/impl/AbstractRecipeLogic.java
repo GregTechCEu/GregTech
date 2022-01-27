@@ -13,6 +13,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
+import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -32,6 +33,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic {
 
@@ -356,8 +359,18 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         builder.fluidOutputs(recipeFluidOutputs);
 
+        Recipe finalizedRecipe = builder.build().getResult();
 
-        return builder.build().getResult();
+        if(currentRecipe.getRecipePropertyStorage().getSize() > 0) {
+            Set<Map.Entry<RecipeProperty<?>, Object>> properties = currentRecipe.getRecipePropertyStorage().getRecipeProperties();
+
+            for(Map.Entry<RecipeProperty<?>, Object> property : properties) {
+                finalizedRecipe.setProperty(property.getKey(), property.getValue());
+            }
+        }
+
+
+        return finalizedRecipe;
     }
 
 
