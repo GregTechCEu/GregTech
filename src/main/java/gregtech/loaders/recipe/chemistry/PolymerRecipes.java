@@ -369,7 +369,7 @@ public class PolymerRecipes {
                 .fluidInputs(Diaminobenzidine.getFluid(1000))
                 .fluidInputs(DiphenylIsophtalate.getFluid(1000))
                 .fluidOutputs(Phenol.getFluid(1000))
-                .fluidOutputs(Polybenzimidazole.getFluid(1000))
+                .fluidOutputs(Polybenzimidazole.getFluid(1008))
                 .buildAndRegister();
 
         // 3,3-Diaminobenzidine

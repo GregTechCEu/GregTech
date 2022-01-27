@@ -396,7 +396,8 @@ public class OrganicChemistryMaterials {
                 .color(0xD1D1D1)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 8, Hydrogen, 6, Oxygen, 4)
-                .build();
+                .build()
+                .setFormula("C6H4(CO2H)2", true);
 
         Dimethylbenzene = new Material.Builder(1058, "dimethylbenzene")
                 .fluid()
@@ -411,21 +412,24 @@ public class OrganicChemistryMaterials {
                 .color(0x337D59)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 12, Hydrogen, 14, Nitrogen, 4)
-                .build();
+                .build()
+                .setFormula("(C6H3(NH2)2)2", true);
 
         Dichlorobenzidine = new Material.Builder(1060, "dichlorobenzidine")
                 .fluid()
                 .color(0xA1DEA6)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 12, Hydrogen, 10, Chlorine, 2, Nitrogen, 2)
-                .build();
+                .build()
+                .setFormula("(C6H3Cl(NH2))2", true);
 
         Nitrochlorobenzene = new Material.Builder(1061, "nitrochlorobenzene")
                 .fluid()
                 .color(0x8FB51A)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 6, Hydrogen, 4, Chlorine, 1, Nitrogen, 1, Oxygen, 2)
-                .build();
+                .build()
+                .setFormula("");
 
         Chlorobenzene = new Material.Builder(1062, "chlorobenzene")
                 .fluid()
