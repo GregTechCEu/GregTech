@@ -42,7 +42,7 @@ public class WorldGenRegistry {
 
     public static final WorldGenRegistry INSTANCE = new WorldGenRegistry();
 
-    private static final int FLUID_VEIN_VERSION = 1;
+    private static final int FLUID_VEIN_VERSION = 2;
     private static final int ORE_VEIN_VERSION = 1;
 
     private WorldGenRegistry() {
@@ -169,28 +169,34 @@ public class WorldGenRegistry {
             extractJarVeinDefinitions(configPath, dimensionsFile);
         }
 
-        if (!Files.exists(jarFileExtractLock)) {
-            Files.createFile(jarFileExtractLock);
-            //create extraction lock since it doesn't exist
-            extractJarVeinDefinitions(configPath, jarFileExtractLock);
-            // Populate the config folder with the defaults from the mod jar
-            // only do Ores if the root folder is empty
-            if (!Files.list(worldgenRootPath.resolve(veinPath)).findFirst().isPresent()) {
-                extractJarVeinDefinitions(configPath, veinPath);
-            }
-            extractJarVeinDefinitions(configPath, bedrockVeinPath);
-        } else {
+        if (Files.exists(jarFileExtractLock)) {
             JsonObject extractLock = FileUtility.tryExtractFromFile(jarFileExtractLock);
             if (extractLock != null) {
-                JsonElement fluidVersion = extractLock.get("fluidVersion");
-                JsonElement veinVersion = extractLock.get("veinVersion");
-                if (fluidVersion.getAsInt() != FLUID_VEIN_VERSION) {
+                boolean needsUpdate = false;
+                if (extractLock.get("fluidVersion").getAsInt() != FLUID_VEIN_VERSION) {
                     extractJarVeinDefinitions(configPath, bedrockVeinPath);
+                    needsUpdate = true;
                 }
-                if (veinVersion.getAsInt() != ORE_VEIN_VERSION) {
+                if (extractLock.get("veinVersion").getAsInt() != ORE_VEIN_VERSION) {
                     extractJarVeinDefinitions(configPath, veinPath);
+                    needsUpdate = true;
+                }
+                // bump the version(s) on the lock file if needed
+                if (needsUpdate) {
+                    extractJarVeinDefinitions(configPath, jarFileExtractLock);
                 }
             }
+        } else {
+            // force an override here as needed for updating legacy config blocks
+            if (FLUID_VEIN_VERSION > 1) {
+                extractJarVeinDefinitions(configPath, bedrockVeinPath);
+            }
+            if (ORE_VEIN_VERSION > 1) {
+                extractJarVeinDefinitions(configPath, veinPath);
+            }
+            // create extraction lock since it doesn't exist
+            Files.createFile(jarFileExtractLock);
+            extractJarVeinDefinitions(configPath, jarFileExtractLock);
         }
 
         //attempt extraction if worldgen root directory is empty
