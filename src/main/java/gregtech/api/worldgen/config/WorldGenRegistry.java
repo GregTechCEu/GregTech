@@ -42,6 +42,9 @@ public class WorldGenRegistry {
 
     public static final WorldGenRegistry INSTANCE = new WorldGenRegistry();
 
+    private static final int FLUID_VEIN_VERSION = 1;
+    private static final int ORE_VEIN_VERSION = 1;
+
     private WorldGenRegistry() {
     }
 
@@ -142,9 +145,13 @@ public class WorldGenRegistry {
         Path worldgenRootPath = configPath.resolve("worldgen");
         // Lock file used to determine if the worldgen files need to be regenerated
         // This is used to ensure modifications to ore gen in modpacks are not overwritten
-        Path jarFileExtractLock = configPath.resolve("worldgen_extracted.txt");
+        Path jarFileExtractLock = configPath.resolve("worldgen_extracted.json");
         if (!Files.exists(worldgenRootPath))
             Files.createDirectories(worldgenRootPath);
+
+        // Remove the old extract lock file if it exists to remove clutter
+        Path jarFileExtractLockOLD = configPath.resolve("worldgen_extracted.txt");
+        Files.deleteIfExists(jarFileExtractLockOLD);
 
         // The folder where all physical veins are stored
         Path veinPath = worldgenRootPath.resolve("vein");
@@ -162,16 +169,35 @@ public class WorldGenRegistry {
             extractJarVeinDefinitions(configPath, dimensionsFile);
         }
 
-        //attempt extraction if file extraction lock is absent or worldgen root directory is empty
-        if (!Files.exists(jarFileExtractLock) || (!Files.list(worldgenRootPath.resolve(veinPath)).findFirst().isPresent()
-                && !Files.list(worldgenRootPath.resolve(bedrockVeinPath)).findFirst().isPresent())) {
-            if (!Files.exists(jarFileExtractLock)) {
-                //create extraction lock only if it doesn't exist
-                Files.createFile(jarFileExtractLock);
-                extractJarVeinDefinitions(configPath, jarFileExtractLock);
-            }
+        if (!Files.exists(jarFileExtractLock)) {
+            Files.createFile(jarFileExtractLock);
+            //create extraction lock since it doesn't exist
+            extractJarVeinDefinitions(configPath, jarFileExtractLock);
             // Populate the config folder with the defaults from the mod jar
+            // only do Ores if the root folder is empty
+            if (!Files.list(worldgenRootPath.resolve(veinPath)).findFirst().isPresent()) {
+                extractJarVeinDefinitions(configPath, veinPath);
+            }
+            extractJarVeinDefinitions(configPath, bedrockVeinPath);
+        } else {
+            JsonObject extractLock = FileUtility.tryExtractFromFile(jarFileExtractLock);
+            if (extractLock != null) {
+                JsonElement fluidVersion = extractLock.get("fluidVersion");
+                JsonElement veinVersion = extractLock.get("veinVersion");
+                if (fluidVersion.getAsInt() != FLUID_VEIN_VERSION) {
+                    extractJarVeinDefinitions(configPath, bedrockVeinPath);
+                }
+                if (veinVersion.getAsInt() != ORE_VEIN_VERSION) {
+                    extractJarVeinDefinitions(configPath, veinPath);
+                }
+            }
+        }
+
+        //attempt extraction if worldgen root directory is empty
+        if (!Files.list(worldgenRootPath.resolve(veinPath)).findFirst().isPresent()) {
             extractJarVeinDefinitions(configPath, veinPath);
+        }
+        if (!Files.list(worldgenRootPath.resolve(bedrockVeinPath)).findFirst().isPresent()) {
             extractJarVeinDefinitions(configPath, bedrockVeinPath);
         }
 
@@ -272,7 +298,7 @@ public class WorldGenRegistry {
         // The path of the named dimensions file in the config folder
         Path dimensionsRootPath = configPath.resolve("dimensions.json");
         // THe path of the lock file in the config folder
-        Path extractLockPath = configPath.resolve("worldgen_extracted.txt");
+        Path extractLockPath = configPath.resolve("worldgen_extracted.json");
         FileSystem zipFileSystem = null;
         try {
             URI sampleUri = WorldGenRegistry.class.getResource("/assets/gregtech/.gtassetsroot").toURI();
@@ -342,7 +368,7 @@ public class WorldGenRegistry {
             }
             // Attempts to extract lock txt file
             else if (targetPath.compareTo(extractLockPath) == 0) {
-                Path extractLockFile = worldgenJarRootPath.resolve("worldgen_extracted.txt");
+                Path extractLockFile = worldgenJarRootPath.resolve("worldgen_extracted.json");
 
                 Path worldgenPath = extractLockPath.resolve(worldgenJarRootPath.relativize(worldgenJarRootPath).toString());
                 Files.copy(extractLockFile, worldgenPath, StandardCopyOption.REPLACE_EXISTING);
