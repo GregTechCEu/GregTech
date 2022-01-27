@@ -2704,7 +2704,8 @@ gregtech.machine.block_breaker.lv.name=Basic Block Breaker
 gregtech.machine.block_breaker.mv.name=Advanced Block Breaker
 gregtech.machine.block_breaker.hv.name=Advanced Block Breaker II
 gregtech.machine.block_breaker.ev.name=Advanced Block Breaker III
-gregtech.machine.block_breaker.tooltip=Mines block on front face and collects its drops/nOnly works when powered with Redstone
+gregtech.machine.block_breaker.tooltip=Mines block on front face and collects its drops
+gregtech.machine.block_breaker.redstone=Only works when powered with Redstone
 gregtech.machine.block_breaker.consumption=Consumes §e%,d EU§7 per operation
 gregtech.machine.block_breaker.speed_bonus=Speed Bonus: §e%,d%%
 
