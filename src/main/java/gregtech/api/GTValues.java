@@ -90,7 +90,7 @@ public class GTValues {
             GOLD + "HV", DARK_PURPLE + "EV", DARK_BLUE + "IV",
             LIGHT_PURPLE + "LuV", WHITE + "ZPM", DARK_AQUA + "UV",
             DARK_RED + "UHV", GREEN + "UEV", DARK_GREEN + "UIV",
-            YELLOW + "UXV", BLUE + "\u03C3OpV\u03C3", RED + "\u03A9MAX\u03A9"};
+            YELLOW + "UXV", BLUE + "OpV", RED + "MAX"};
 
     /**
      * Color values for the voltages
