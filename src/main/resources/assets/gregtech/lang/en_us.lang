@@ -2500,6 +2500,10 @@ gregtech.tank_valve.tooltip=Use to fill and drain multiblock tanks. Auto outputs
 
 gregtech.machine.clipboard.name=Clipboard
 
+# Plascrete
+tile.cleanroom_casing.plascrete.name=Plascrete
+tile.cleanroom_casing.filter_casing.name=Filter Casing
+
 # Asphalt
 tile.asphalt.asphalt.name=Asphalt
 
@@ -4445,6 +4449,8 @@ gregtech.machine.fluid_drilling_rig.production=Production Multiplier: §e%sx§7
 gregtech.machine.fluid_drilling_rig.depletion=Depletion Rate: §b%s%%§7
 gregtech.machine.fluid_drilling_rig.energy=Requires %s§7 power. Overclocks up to %s§7.
 gregtech.machine.fluid_drilling_rig.overclock=Overclocking increases production by §d50%%§7.
+
+gregtech.machine.cleanroom.name=Cleanroom
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
