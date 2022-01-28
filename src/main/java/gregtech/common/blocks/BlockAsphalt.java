@@ -19,7 +19,6 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("pickaxe", 2);
         setDefaultState(getState(BlockType.ASPHALT));
     }
 
@@ -36,7 +35,7 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
         }
     }
 
-    public enum BlockType implements IStringSerializable {
+    public enum BlockType implements IStringSerializable, IStateHarvestLevel {
 
         ASPHALT("asphalt");
 
@@ -50,6 +49,11 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
         @Override
         public String getName() {
             return this.name;
+        }
+
+        @Override
+        public int getHarvestLevel(IBlockState state) {
+            return 0;
         }
     }
 }

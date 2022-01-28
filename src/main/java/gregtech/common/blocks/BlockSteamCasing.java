@@ -46,25 +46,37 @@ public class BlockSteamCasing extends VariantBlock<BlockSteamCasing.SteamCasingT
         }
     }
 
-    public enum SteamCasingType implements IStringSerializable {
+    public enum SteamCasingType implements IStringSerializable, IStateHarvestLevel {
 
-        BRONZE_HULL("bronze_hull"),
-        BRONZE_BRICKS_HULL("bronze_bricks_hull"),
-        STEEL_HULL("steel_hull"),
-        STEEL_BRICKS_HULL("steel_bricks_hull"),
-        PUMP_DECK("pump_deck"),
-        WOOD_WALL("wood_wall");
+        BRONZE_HULL("bronze_hull", 1),
+        BRONZE_BRICKS_HULL("bronze_bricks_hull", 1),
+        STEEL_HULL("steel_hull", 2),
+        STEEL_BRICKS_HULL("steel_bricks_hull", 2),
+        PUMP_DECK("pump_deck", 1),
+        WOOD_WALL("wood_wall", 0);
 
         private final String name;
+        private final int harvestLevel;
 
-        SteamCasingType(String name) {
+        SteamCasingType(String name, int harvestLevel) {
             this.name = name;
+            this.harvestLevel = harvestLevel;
         }
 
         @Override
         @Nonnull
         public String getName() {
             return name;
+        }
+
+        @Override
+        public int getHarvestLevel(IBlockState state) {
+            return harvestLevel;
+        }
+
+        @Override
+        public String getHarvestTool(IBlockState state) {
+            return "wrench";
         }
     }
 }
