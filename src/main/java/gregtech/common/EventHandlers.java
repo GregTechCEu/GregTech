@@ -131,13 +131,12 @@ public class EventHandlers {
         }
     }
 
-    // does not work. Event is never fired
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void onDestroySpeed(net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed event) {
         ItemStack item = event.getEntityPlayer().getHeldItemMainhand();
         String tool = event.getState().getBlock().getHarvestTool(event.getState());
-        if (tool != null && !item.isEmpty() && tool.equals("wrench") && item.getItem().getHarvestLevel(item, "pickaxe", event.getEntityPlayer(), event.getState()) >= 0) {
-            if (event.getNewSpeed() == 0) {
+        if (tool != null && !item.isEmpty() && tool.equals("wrench") && item.getItem().getToolClasses(item).contains("pickaxe")) {
+            if (event.getNewSpeed() <= 0) {
                 event.setNewSpeed(event.getOriginalSpeed() * 0.75f);
             } else {
                 event.setNewSpeed(event.getNewSpeed() * 0.75f);
