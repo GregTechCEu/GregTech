@@ -100,8 +100,8 @@ public class TerminalRegistry {
                 .device(3, DeviceHardware.DEVICE.PROSPECTOR_HV)
                 .device(4, DeviceHardware.DEVICE.PROSPECTOR_HV)
                 .build();
-        //TODO, Change when Fluid Prospector is re-enabled
-        /*AppRegistryBuilder.create(new ProspectorApp(1))
+
+        AppRegistryBuilder.create(new ProspectorApp(1))
                 .battery(GTValues.MV, 1000)
                 .upgrade(0, MetaItems.SENSOR_LV.getStackForm(1))
                 .upgrade(1, MetaItems.SENSOR_LV.getStackForm(2))
@@ -111,7 +111,7 @@ public class TerminalRegistry {
                 .upgrade(5, MetaItems.SENSOR_HV.getStackForm(3))
                 .upgrade(6, MetaItems.SENSOR_IV.getStackForm(1))
                 .device(DeviceHardware.DEVICE.PROSPECTOR_LV)
-                .build(); */
+                .build();
         AppRegistryBuilder.create(new MultiBlockPreviewARApp())
                 .battery(GTValues.LV, 128)
                 .device(DeviceHardware.DEVICE.CAMERA)
