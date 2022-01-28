@@ -14,11 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @NoArgsConstructor
-public class SPacketFluidVeinList implements IPacket {
+public class CPacketFluidVeinList implements IPacket {
 
     private Map<BedrockFluidVeinHandler.FluidVeinWorldEntry, Integer> map;
 
-    public SPacketFluidVeinList(HashMap<BedrockFluidVeinHandler.FluidVeinWorldEntry, Integer> map) {
+    public CPacketFluidVeinList(HashMap<BedrockFluidVeinHandler.FluidVeinWorldEntry, Integer> map) {
         this.map = map;
     }
 
@@ -50,7 +50,7 @@ public class SPacketFluidVeinList implements IPacket {
     public void executeClient(NetHandlerPlayClient handler) {
         BedrockFluidVeinHandler.veinList.clear();
         for (BedrockFluidVeinHandler.FluidVeinWorldEntry min : map.keySet()) {
-            BedrockFluidVeinHandler.veinList.put(min.getVein(), map.get(min));
+            BedrockFluidVeinHandler.veinList.put(min.getDefinition(), map.get(min));
         }
     }
 }
