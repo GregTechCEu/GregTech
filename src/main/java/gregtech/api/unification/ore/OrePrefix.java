@@ -233,8 +233,6 @@ public class OrePrefix {
     public static final OrePrefix circuit = new OrePrefix("circuit", -1, null, null, ENABLE_UNIFICATION, null);
     public static final OrePrefix component = new OrePrefix("component", -1, null, null, ENABLE_UNIFICATION, null);
 
-    public static final String DUST_REGULAR = "dustRegular";
-
     public static class Flags {
         public static final long ENABLE_UNIFICATION = 1;
         public static final long SELF_REFERENCING = 1 << 1;

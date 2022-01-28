@@ -75,7 +75,6 @@ public class MetaPrefixItem extends StandardMetaItem {
         if (prefix.getAlternativeOreName() != null) {
             OreDictUnifier.registerOre(item, prefix.getAlternativeOreName(), material);
         }
-        if (prefix.equals(OrePrefix.dust)) OreDictUnifier.registerOre(item, OrePrefix.DUST_REGULAR, material);
 
         if (material == Materials.Plutonium239) {
             OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString() + "239");
