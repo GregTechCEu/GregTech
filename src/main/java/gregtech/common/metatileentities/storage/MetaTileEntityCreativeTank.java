@@ -68,8 +68,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         builder.widget(new PhantomFluidWidget(36, 6, 18, 18,
                 () -> this.fluidTank.getFluid(), data -> {
             this.fluidTank.setFluid(data);
-        })
-                .showTip(false));
+        }).showTip(false));
         builder.label(7, 9, "Fluid");
         builder.widget(new ImageWidget(7, 45, 154, 14, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(9, 47, 152, 10, () -> String.valueOf(mBPerCycle), value -> {
