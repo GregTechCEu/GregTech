@@ -79,40 +79,40 @@ public class CraftingComponent {
          */
         CIRCUIT = new Component(Stream.of(new Object[][]{
 
-                {0, new UnificationEntry(OrePrefix.circuit, Tier.Primitive)},
-                {1, new UnificationEntry(OrePrefix.circuit, Tier.Basic)},
-                {2, new UnificationEntry(OrePrefix.circuit, Tier.Good)},
-                {3, new UnificationEntry(OrePrefix.circuit, Tier.Advanced)},
-                {4, new UnificationEntry(OrePrefix.circuit, Tier.Extreme)},
-                {5, new UnificationEntry(OrePrefix.circuit, Tier.Elite)},
-                {6, new UnificationEntry(OrePrefix.circuit, Tier.Master)},
-                {7, new UnificationEntry(OrePrefix.circuit, Tier.Super)},
-                {8, new UnificationEntry(OrePrefix.circuit, Tier.Ultimate)},
-                {9, new UnificationEntry(OrePrefix.circuit, Tier.Ultra)},
-                {10, new UnificationEntry(OrePrefix.circuit, Tier.Insane)},
-                {11, new UnificationEntry(OrePrefix.circuit, Tier.Unreal)},
-                {12, new UnificationEntry(OrePrefix.circuit, Tier.Epic)},
-                {13, new UnificationEntry(OrePrefix.circuit, Tier.Legendary)},
-                {14, new UnificationEntry(OrePrefix.circuit, Tier.Maximum)}
+                {0, new UnificationEntry(OrePrefix.circuit, Tier.ULV)},
+                {1, new UnificationEntry(OrePrefix.circuit, Tier.LV)},
+                {2, new UnificationEntry(OrePrefix.circuit, Tier.MV)},
+                {3, new UnificationEntry(OrePrefix.circuit, Tier.HV)},
+                {4, new UnificationEntry(OrePrefix.circuit, Tier.EV)},
+                {5, new UnificationEntry(OrePrefix.circuit, Tier.IV)},
+                {6, new UnificationEntry(OrePrefix.circuit, Tier.LuV)},
+                {7, new UnificationEntry(OrePrefix.circuit, Tier.ZPM)},
+                {8, new UnificationEntry(OrePrefix.circuit, Tier.UV)},
+                {9, new UnificationEntry(OrePrefix.circuit, Tier.UHV)},
+                {10, new UnificationEntry(OrePrefix.circuit, Tier.UEV)},
+                {11, new UnificationEntry(OrePrefix.circuit, Tier.UIV)},
+                {12, new UnificationEntry(OrePrefix.circuit, Tier.UXV)},
+                {13, new UnificationEntry(OrePrefix.circuit, Tier.OpV)},
+                {14, new UnificationEntry(OrePrefix.circuit, Tier.MAX)}
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         BETTER_CIRCUIT = new Component(Stream.of(new Object[][]{
 
-                {0, new UnificationEntry(OrePrefix.circuit, Tier.Basic)},
-                {1, new UnificationEntry(OrePrefix.circuit, Tier.Good)},
-                {2, new UnificationEntry(OrePrefix.circuit, Tier.Advanced)},
-                {3, new UnificationEntry(OrePrefix.circuit, Tier.Extreme)},
-                {4, new UnificationEntry(OrePrefix.circuit, Tier.Elite)},
-                {5, new UnificationEntry(OrePrefix.circuit, Tier.Master)},
-                {6, new UnificationEntry(OrePrefix.circuit, Tier.Super)},
-                {7, new UnificationEntry(OrePrefix.circuit, Tier.Ultimate)},
-                {8, new UnificationEntry(OrePrefix.circuit, Tier.Ultra)},
-                {9, new UnificationEntry(OrePrefix.circuit, Tier.Insane)},
-                {10, new UnificationEntry(OrePrefix.circuit, Tier.Unreal)},
-                {11, new UnificationEntry(OrePrefix.circuit, Tier.Epic)},
-                {12, new UnificationEntry(OrePrefix.circuit, Tier.Legendary)},
-                {13, new UnificationEntry(OrePrefix.circuit, Tier.Maximum)}
+                {0, new UnificationEntry(OrePrefix.circuit, Tier.LV)},
+                {1, new UnificationEntry(OrePrefix.circuit, Tier.MV)},
+                {2, new UnificationEntry(OrePrefix.circuit, Tier.HV)},
+                {3, new UnificationEntry(OrePrefix.circuit, Tier.EV)},
+                {4, new UnificationEntry(OrePrefix.circuit, Tier.IV)},
+                {5, new UnificationEntry(OrePrefix.circuit, Tier.LuV)},
+                {6, new UnificationEntry(OrePrefix.circuit, Tier.ZPM)},
+                {7, new UnificationEntry(OrePrefix.circuit, Tier.UV)},
+                {8, new UnificationEntry(OrePrefix.circuit, Tier.UHV)},
+                {9, new UnificationEntry(OrePrefix.circuit, Tier.UEV)},
+                {10, new UnificationEntry(OrePrefix.circuit, Tier.UIV)},
+                {11, new UnificationEntry(OrePrefix.circuit, Tier.UXV)},
+                {12, new UnificationEntry(OrePrefix.circuit, Tier.OpV)},
+                {13, new UnificationEntry(OrePrefix.circuit, Tier.MAX)}
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 

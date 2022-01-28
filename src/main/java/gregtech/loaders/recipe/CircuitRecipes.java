@@ -863,7 +863,7 @@ public class CircuitRecipes {
                 .input(PETRI_DISH)
                 .input(ELECTRIC_PUMP_LuV)
                 .input(SENSOR_IV)
-                .input(circuit, Tier.Elite)
+                .input(circuit, Tier.IV)
                 .input(foil, NiobiumTitanium, 16)
                 .fluidInputs(SterileGrowthMedium.getFluid(4000))
                 .output(WETWARE_BOARD, 16)
@@ -901,7 +901,7 @@ public class CircuitRecipes {
                 .input(BASIC_CIRCUIT_BOARD)
                 .input(component, Component.Resistor, 2)
                 .input(wireGtSingle, RedAlloy, 2)
-                .input(circuit, Tier.Primitive, 2)
+                .input(circuit, Tier.ULV, 2)
                 .output(ELECTRONIC_CIRCUIT_LV, 2)
                 .buildAndRegister();
 
@@ -916,7 +916,7 @@ public class CircuitRecipes {
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).duration(300)
                 .input(GOOD_CIRCUIT_BOARD)
-                .input(circuit, Tier.Basic, 2)
+                .input(circuit, Tier.LV, 2)
                 .input(component, Component.Diode, 2)
                 .input(wireGtSingle, Copper, 2)
                 .output(ELECTRONIC_CIRCUIT_MV, 2)
@@ -1422,7 +1422,7 @@ public class CircuitRecipes {
         // Data Orb
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ADVANCED_CIRCUIT_BOARD)
-                .input(circuit, Tier.Advanced, 2)
+                .input(circuit, Tier.HV, 2)
                 .input(RANDOM_ACCESS_MEMORY, 4)
                 .input(NOR_MEMORY_CHIP, 32)
                 .input(NAND_MEMORY_CHIP, 64)

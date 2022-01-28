@@ -1,6 +1,7 @@
 package gregtech.api.unification.material;
 
 import com.google.common.collect.HashBiMap;
+import gregtech.api.GTValues;
 import net.minecraft.item.EnumDyeColor;
 
 public class MarkerMaterials {
@@ -8,7 +9,7 @@ public class MarkerMaterials {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void register() {
         Color.Colorless.toString();
-        Tier.Primitive.toString();
+        Tier.ULV.toString();
         Empty.toString();
     }
 
@@ -83,22 +84,22 @@ public class MarkerMaterials {
      * Circuitry, batteries and other technical things
      */
     public static class Tier {
-        public static final Material Primitive = new MarkerMaterial("primitive");
-        public static final Material Basic = new MarkerMaterial("basic");
-        public static final Material Good = new MarkerMaterial("good");
-        public static final Material Advanced = new MarkerMaterial("advanced");
-        public static final Material Extreme = new MarkerMaterial("extreme");
-        public static final Material Elite = new MarkerMaterial("elite");
-        public static final Material Master = new MarkerMaterial("master");
-        public static final Material Super = new MarkerMaterial("super");
-        public static final Material Ultimate = new MarkerMaterial("ultimate");
-        public static final Material Ultra = new MarkerMaterial("ultra");
+        public static final Material ULV = new MarkerMaterial(GTValues.VN[GTValues.ULV].toLowerCase());
+        public static final Material LV = new MarkerMaterial(GTValues.VN[GTValues.LV].toLowerCase());
+        public static final Material MV = new MarkerMaterial(GTValues.VN[GTValues.MV].toLowerCase());
+        public static final Material HV = new MarkerMaterial(GTValues.VN[GTValues.HV].toLowerCase());
+        public static final Material EV = new MarkerMaterial(GTValues.VN[GTValues.EV].toLowerCase());
+        public static final Material IV = new MarkerMaterial(GTValues.VN[GTValues.IV].toLowerCase());
+        public static final Material LuV = new MarkerMaterial(GTValues.VN[GTValues.LuV].toLowerCase());
+        public static final Material ZPM = new MarkerMaterial(GTValues.VN[GTValues.ZPM].toLowerCase());
+        public static final Material UV = new MarkerMaterial(GTValues.VN[GTValues.UV].toLowerCase());
+        public static final Material UHV = new MarkerMaterial(GTValues.VN[GTValues.UHV].toLowerCase());
 
-        public static Material Insane = new MarkerMaterial("insane");
-        public static Material Unreal = new MarkerMaterial("unreal");
-        public static Material Epic = new MarkerMaterial("epic");
-        public static Material Legendary = new MarkerMaterial("legendary");
-        public static Material Maximum = new MarkerMaterial("maximum");
+        public static Material UEV = new MarkerMaterial(GTValues.VN[GTValues.UEV].toLowerCase());
+        public static Material UIV = new MarkerMaterial(GTValues.VN[GTValues.UIV].toLowerCase());
+        public static Material UXV = new MarkerMaterial(GTValues.VN[GTValues.UXV].toLowerCase());
+        public static Material OpV = new MarkerMaterial(GTValues.VN[GTValues.OpV].toLowerCase());
+        public static Material MAX = new MarkerMaterial(GTValues.VN[GTValues.MAX].toLowerCase());
     }
 
     public static class Component {

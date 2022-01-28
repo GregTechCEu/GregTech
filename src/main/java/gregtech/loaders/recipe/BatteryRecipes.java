@@ -303,7 +303,7 @@ public class BatteryRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(gem, Lapotron)
-                .input(circuit, Tier.Advanced, 2)
+                .input(circuit, Tier.HV, 2)
                 .output(LAPOTRON_CRYSTAL)
                 .duration(600).EUt(VA[EV]).buildAndRegister();
 
@@ -329,7 +329,7 @@ public class BatteryRecipes {
         ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(80000).duration(1000)
                 .input(EXTREME_CIRCUIT_BOARD)
                 .input(plate, Europium, 8)
-                .input(circuit, Tier.Master, 4)
+                .input(circuit, Tier.LuV, 4)
                 .input(ENERGY_LAPOTRONIC_ORB)
                 .input(FIELD_GENERATOR_IV)
                 .input(HIGH_POWER_INTEGRATED_CIRCUIT, 16)
@@ -348,7 +348,7 @@ public class BatteryRecipes {
         ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(100000).duration(1200)
                 .input(ELITE_CIRCUIT_BOARD)
                 .input(plateDouble, Europium, 8)
-                .input(circuit, Tier.Super, 4)
+                .input(circuit, Tier.ZPM, 4)
                 .input(ENERGY_LAPOTRONIC_ORB_CLUSTER)
                 .input(FIELD_GENERATOR_LuV)
                 .input(HIGH_POWER_INTEGRATED_CIRCUIT, 32)
@@ -386,7 +386,7 @@ public class BatteryRecipes {
         // Ultimate Battery
         ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(300000).duration(2000)
                 .input(plateDouble, Darmstadtium, 16)
-                .input(circuit, Tier.Ultra, 4)
+                .input(circuit, Tier.UHV, 4)
                 .input(ENERGY_CLUSTER, 16)
                 .input(FIELD_GENERATOR_UV, 4)
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT_WAFER, 64)

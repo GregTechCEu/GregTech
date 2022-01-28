@@ -24,7 +24,6 @@ import net.minecraftforge.fluids.FluidStack;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
-import static gregtech.api.unification.material.MarkerMaterials.Tier.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.items.MetaItems.*;
@@ -173,7 +172,7 @@ public class MiscRecipeLoader {
 
         // QuarkTech Suite
         ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
-                .input(circuit, Master, 2)
+                .input(circuit, MarkerMaterials.Tier.LuV, 2)
                 .input(wireGtQuadruple, Tungsten, 5)
                 .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
                 .inputs(SENSOR_IV.getStackForm())
@@ -187,7 +186,7 @@ public class MiscRecipeLoader {
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
-                .input(circuit, Master, 2)
+                .input(circuit, MarkerMaterials.Tier.LuV, 2)
                 .input(wireGtQuadruple, Tungsten, 8)
                 .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
                 .inputs(EMITTER_IV.getStackForm(2))
@@ -201,7 +200,7 @@ public class MiscRecipeLoader {
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
-                .input(circuit, Master, 2)
+                .input(circuit, MarkerMaterials.Tier.LuV, 2)
                 .input(wireGtQuadruple, Tungsten, 7)
                 .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
                 .inputs(ELECTRIC_MOTOR_IV.getStackForm(4))
@@ -215,7 +214,7 @@ public class MiscRecipeLoader {
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
-                .input(circuit, Master, 2)
+                .input(circuit, MarkerMaterials.Tier.LuV, 2)
                 .input(wireGtQuadruple, Tungsten, 4)
                 .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
                 .inputs(ELECTRIC_PISTON_IV.getStackForm(2))
@@ -235,7 +234,7 @@ public class MiscRecipeLoader {
                 .input(wireGtQuadruple, Osmium, 6)
                 .input(plateDouble, Iridium, 4)
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
-                .input(circuit, Super)
+                .input(circuit, MarkerMaterials.Tier.ZPM)
                 .input(plateDense, RhodiumPlatedPalladium, 2)
                 .inputs(ENERGY_LAPOTRONIC_ORB_CLUSTER.getStackForm())
                 .inputs(FIELD_GENERATOR_LuV.getStackForm(2))
@@ -256,7 +255,7 @@ public class MiscRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[HV])
                 .inputs(MetaItems.COVER_SCREEN.getStackForm())
                 .inputs((ItemStack) CraftingComponent.HULL.getIngredient(3))
-                .input(circuit, MarkerMaterials.Tier.Advanced, 2)
+                .input(circuit, MarkerMaterials.Tier.HV, 2)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(MetaTileEntities.CENTRAL_MONITOR.getStackForm())
                 .buildAndRegister();
@@ -264,7 +263,7 @@ public class MiscRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[HV])
                 .inputs(MetaItems.COVER_SCREEN.getStackForm())
                 .input(plate, Aluminium)
-                .input(circuit, MarkerMaterials.Tier.Good)
+                .input(circuit, MarkerMaterials.Tier.MV)
                 .input(screw, StainlessSteel, 4)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(COVER_DIGITAL_INTERFACE.getStackForm())
@@ -279,7 +278,7 @@ public class MiscRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
                 .inputs(MetaItems.COVER_SCREEN.getStackForm())
-                .input(circuit, MarkerMaterials.Tier.Basic)
+                .input(circuit, MarkerMaterials.Tier.LV)
                 .input(wireFine, Copper, 2)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(PLUGIN_TEXT.getStackForm())
@@ -287,7 +286,7 @@ public class MiscRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
                 .inputs(MetaItems.COVER_SCREEN.getStackForm())
-                .input(circuit, MarkerMaterials.Tier.Basic)
+                .input(circuit, MarkerMaterials.Tier.LV)
                 .input(wireFine, Silver, 2)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(PLUGIN_ONLINE_PIC.getStackForm())
@@ -295,7 +294,7 @@ public class MiscRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
                 .inputs(MetaItems.COVER_SCREEN.getStackForm())
-                .input(circuit, MarkerMaterials.Tier.Basic)
+                .input(circuit, MarkerMaterials.Tier.LV)
                 .input(wireFine, Gold, 2)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(PLUGIN_FAKE_GUI.getStackForm())
@@ -303,7 +302,7 @@ public class MiscRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
                 .inputs(MetaItems.COVER_SCREEN.getStackForm())
-                .input(circuit, MarkerMaterials.Tier.Advanced)
+                .input(circuit, MarkerMaterials.Tier.HV)
                 .input(wireFine, Aluminium, 2)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(PLUGIN_ADVANCED_MONITOR.getStackForm())
@@ -311,7 +310,7 @@ public class MiscRecipeLoader {
 
         // terminal
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
-                .input(circuit, Good, 4)
+                .input(circuit, MarkerMaterials.Tier.MV, 4)
                 .input(EMITTER_MV, 2)
                 .input(SENSOR_MV, 2)
                 .input(plate, StainlessSteel)
@@ -324,7 +323,7 @@ public class MiscRecipeLoader {
                 .input(EMITTER_LV)
                 .input(lens, Glass)
                 .input(lens, Diamond)
-                .input(circuit, Basic, 4)
+                .input(circuit, MarkerMaterials.Tier.LV, 4)
                 .fluidInputs(SolderingAlloy.getFluid(L))
                 .outputs(CAMERA.getStackForm())
                 .buildAndRegister();

@@ -538,7 +538,7 @@ public class ToolRecipeHandler {
                     'P', new UnificationEntry(OrePrefix.plate, Materials.Steel),
                     'S', MetaItems.SENSOR_LV.getStackForm(),
                     'D', new UnificationEntry(OrePrefix.plate, Materials.Glass),
-                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.LV),
                     'B', batteryItem.getStackForm());
 
             ModHandler.addShapedEnergyTransferRecipe("magnet_lv_" + batteryItem.unlocalizedName, MetaItems.ITEM_MAGNET_LV.getStackForm(),
@@ -557,7 +557,7 @@ public class ToolRecipeHandler {
                     'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium),
                     'S', MetaItems.SENSOR_MV.getStackForm(),
                     'D', MetaItems.COVER_SCREEN.getStackForm(),
-                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Advanced),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.HV),
                     'B', batteryItem.getStackForm());
         }
         for (MetaValueItem batteryItem : batteryItems[GTValues.HV]) {
@@ -568,7 +568,7 @@ public class ToolRecipeHandler {
                     'P', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel),
                     'S', MetaItems.SENSOR_HV.getStackForm(),
                     'D', MetaItems.COVER_SCREEN.getStackForm(),
-                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Advanced),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.HV),
                     'B', batteryItem.getStackForm());
 
             ModHandler.addShapedEnergyTransferRecipe("magnet_hv_" + batteryItem.unlocalizedName, MetaItems.ITEM_MAGNET_HV.getStackForm(),
@@ -587,7 +587,7 @@ public class ToolRecipeHandler {
                     'P', new UnificationEntry(OrePrefix.plate, Materials.RhodiumPlatedPalladium),
                     'S', MetaItems.SENSOR_LuV.getStackForm(),
                     'D', MetaItems.COVER_SCREEN.getStackForm(),
-                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Master),
+                    'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.LuV),
                     'B', batteryItem.getStackForm());
         }
     }
