@@ -95,6 +95,7 @@ public class MetaBlocks {
     public static BlockWarningSign WARNING_SIGN;
     public static BlockWarningSign1 WARNING_SIGN_1;
     public static BlockHermeticCasing HERMETIC_CASING;
+    public static BlockCleanroomCasing CLEANROOM_CASING;
 
     public static BlockAsphalt ASPHALT;
 
@@ -172,6 +173,8 @@ public class MetaBlocks {
         WARNING_SIGN_1.setRegistryName("warning_sign_1");
         HERMETIC_CASING = new BlockHermeticCasing();
         HERMETIC_CASING.setRegistryName("hermetic_casing");
+        CLEANROOM_CASING = new BlockCleanroomCasing();
+        CLEANROOM_CASING.setRegistryName("cleanroom_casing");
 
         ASPHALT = new BlockAsphalt();
         ASPHALT.setRegistryName("asphalt");
@@ -328,6 +331,7 @@ public class MetaBlocks {
         registerItemModel(WARNING_SIGN);
         registerItemModel(WARNING_SIGN_1);
         registerItemModel(HERMETIC_CASING);
+        registerItemModel(CLEANROOM_CASING);
         registerItemModel(ASPHALT);
         registerItemModel(STONE_SMOOTH);
         registerItemModel(STONE_COBBLE);
