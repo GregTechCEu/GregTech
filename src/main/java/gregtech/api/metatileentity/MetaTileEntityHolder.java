@@ -289,8 +289,8 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     @Override
     public void onLoad() {
         super.onLoad();
-        if(metaTileEntity != null) {
-            if(!getWorld().isRemote) {
+        if(metaTileEntity != null && world != null) {
+            if(!world.isRemote) {
                 TaskScheduler.scheduleTask(getWorld(), () -> {
                     metaTileEntity.onLoad();
                     return false;

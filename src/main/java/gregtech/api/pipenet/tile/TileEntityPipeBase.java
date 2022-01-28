@@ -343,13 +343,15 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public void onLoad() {
         super.onLoad();
-        if (!world.isRemote) {
-            TaskScheduler.scheduleTask(world, () -> {
+        if(world != null) {
+            if (!world.isRemote) {
+                TaskScheduler.scheduleTask(world, () -> {
+                    this.coverableImplementation.onLoad();
+                    return false;
+                });
+            } else {
                 this.coverableImplementation.onLoad();
-                return false;
-            });
-        } else {
-            this.coverableImplementation.onLoad();
+            }
         }
     }
 
