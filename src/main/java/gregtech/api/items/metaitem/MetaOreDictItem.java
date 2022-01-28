@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -57,17 +56,6 @@ public class MetaOreDictItem extends StandardMetaItem {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerModels() {
-        ModelLoader.setCustomMeshDefinition(this, itemStack -> {
-            short itemDamage = formatRawItemDamage((short) itemStack.getItemDamage());
-            if (specialItemsModels.containsKey(itemDamage)) {
-                int modelIndex = getModelIndex(itemStack);
-                return specialItemsModels.get(itemDamage)[modelIndex];
-            }
-            if (metaItemsModels.containsKey(itemDamage)) {
-                return metaItemsModels.get(itemDamage);
-            }
-            return MISSING_LOCATION;
-        });
         TIntObjectHashMap<ModelResourceLocation> alreadyRegistered = new TIntObjectHashMap<>();
         for (Map.Entry<Short, OreDictValueItem> metaItem : ITEMS.entrySet()) {
             OrePrefix prefix = metaItem.getValue().orePrefix;

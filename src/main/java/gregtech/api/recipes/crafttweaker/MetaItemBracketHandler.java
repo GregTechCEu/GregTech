@@ -48,16 +48,6 @@ public class MetaItemBracketHandler implements IBracketHandler {
     public static void rebuildComponentRegistry() {
         metaItemNames.clear();
         for (MetaItem<?> item : MetaItem.getMetaItems()) {
-            if (item instanceof MetaPrefixItem) {
-                MetaPrefixItem metaPrefixItem = ((MetaPrefixItem) item);
-                OrePrefix prefix = metaPrefixItem.getOrePrefix();
-                for (ItemStack entry : ((MetaPrefixItem) item).getEntries()) {
-                    MaterialStack material = OreDictUnifier.getMaterial(entry);
-                    if (material != null) {
-                        metaItemNames.put(prefix.name() + OreDictUnifier.getMaterial(entry).material.toCamelCaseString(), entry);
-                    } else GTLog.logger.error("Material in entry {} is null!", entry.toString());
-                }
-            }
             for (MetaValueItem entry : item.getAllItems()) {
                 if (!entry.unlocalizedName.equals("meta_item")) {
                     metaItemNames.put(entry.unlocalizedName, entry.getStackForm());

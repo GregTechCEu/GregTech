@@ -88,7 +88,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     private final Map<String, T> names = new Object2ObjectOpenHashMap<>();
     protected final Short2ObjectMap<ModelResourceLocation> metaItemsModels = new Short2ObjectOpenHashMap<>();
     protected final Short2ObjectMap<ModelResourceLocation[]> specialItemsModels = new Short2ObjectOpenHashMap<>();
-    private static final ModelResourceLocation MISSING_LOCATION = new ModelResourceLocation("builtin/missing", "inventory");
+    protected static final ModelResourceLocation MISSING_LOCATION = new ModelResourceLocation("builtin/missing", "inventory");
 
     protected final short metaItemOffset;
 
@@ -125,7 +125,10 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             }
             metaItemsModels.put((short) (metaItemOffset + itemMetaKey), new ModelResourceLocation(resourceLocation, "inventory"));
         }
+    }
 
+    @SideOnly(Side.CLIENT)
+    public void registerTextureMesh() {
         ModelLoader.setCustomMeshDefinition(this, itemStack -> {
             short itemDamage = formatRawItemDamage((short) itemStack.getItemDamage());
             if (specialItemsModels.containsKey(itemDamage)) {

@@ -1,5 +1,7 @@
 package gregtech.integration.jei.recipe;
 
+import gregtech.api.GTValues;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
@@ -8,25 +10,30 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.util.CTRecipeHelper;
+import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTUtility;
+import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JEIHelpers;
+import gregtech.integration.jei.utils.JeiButton;
 import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
 import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
-import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
-public class GTRecipeWrapper implements IRecipeWrapper {
+public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     private static final int LINE_HEIGHT = 10;
 
@@ -35,6 +42,7 @@ public class GTRecipeWrapper implements IRecipeWrapper {
     private final Int2BooleanMap notConsumedFluidInput = new Int2BooleanOpenHashMap();
     private final RecipeMap<?> recipeMap;
     private final Recipe recipe;
+    private String lastCopiedRemoval;
 
     public GTRecipeWrapper(RecipeMap<?> recipeMap, Recipe recipe) {
         this.recipeMap = recipeMap;
@@ -120,6 +128,7 @@ public class GTRecipeWrapper implements IRecipeWrapper {
 
     @Override
     public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+        super.drawInfo(minecraft, recipeWidth, recipeHeight, mouseX, mouseY);
         int yPosition = recipeHeight - getPropertyListHeight();
         if (!recipe.hasProperty(PrimitiveProperty.getInstance())) {
             minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", Math.abs((long) recipe.getEUt()) * recipe.getDuration()), 0, yPosition, 0x111111);
@@ -131,6 +140,29 @@ public class GTRecipeWrapper implements IRecipeWrapper {
                 propertyEntry.getKey().drawInfo(minecraft, 0, yPosition += LINE_HEIGHT, 0x111111, propertyEntry.getValue());
             }
         }
+    }
+
+    @Override
+    public void initExtras() {
+        BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isCreative() && GTValues.isModLoaded(GTValues.MODID_CT);
+        buttons.add(new JeiButton(166, 2, 10, 10)
+                .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
+                .setTooltipBuilder(lines -> {
+                    lines.add("Copies a CraftTweaker script, to remove this recipe, to the clipboard");
+                })
+                .setClickAction((minecraft, mouseX, mouseY, mouseButton) -> {
+                    String recipeLine = CTRecipeHelper.getRecipeRemoveLine(recipeMap, recipe);
+                    String output = CTRecipeHelper.getFirstOutputString(recipe);
+                    if (!output.isEmpty()) {
+                        output = "// " + output + "\n";
+                    }
+                    String copyString = output + recipeLine + "\n";
+                    ClipboardUtil.copyToClipboard(copyString);
+                    Minecraft.getMinecraft().player.sendMessage(new TextComponentString("Copied [\u00A76" + recipeLine + "\u00A7r] to the clipboard"));
+                    this.lastCopiedRemoval = copyString;
+                    return true;
+                })
+                .setActiveSupplier(creativePlayerCtPredicate));
     }
 
     public Int2ObjectMap<ChanceEntry> getChanceOutputMap() {
@@ -146,7 +178,8 @@ public class GTRecipeWrapper implements IRecipeWrapper {
     }
 
     private int getPropertyListHeight() {
-        if (recipeMap == RecipeMaps.COKE_OVEN_RECIPES) return LINE_HEIGHT - 6; // fun hack TODO Make this easier to position
+        if (recipeMap == RecipeMaps.COKE_OVEN_RECIPES)
+            return LINE_HEIGHT - 6; // fun hack TODO Make this easier to position
         return (recipe.getPropertyCount() + 3) * LINE_HEIGHT - 3;
     }
 }
