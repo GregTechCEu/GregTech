@@ -543,12 +543,11 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         if (fluidHandler != null) {
             IFluidTankProperties fluidTankProperties = fluidHandler.getTankProperties()[0];
             FluidStack fluid = fluidTankProperties.getContents();
-            if (fluid != null) {
-                lines.add(I18n.format("metaitem.generic.fluid_container.tooltip",
-                        fluid.amount,
-                        fluidTankProperties.getCapacity(),
-                        fluid.getLocalizedName()));
-            } else lines.add(I18n.format("metaitem.generic.fluid_container.tooltip_empty"));
+
+            lines.add(I18n.format("metaitem.generic.fluid_container.tooltip",
+                    fluid == null ? 0 : fluid.amount,
+                    fluidTankProperties.getCapacity(),
+                    fluid == null ? "" : fluid.getLocalizedName()));
         }
 
         for (IItemBehaviour behaviour : getBehaviours(itemStack)) {

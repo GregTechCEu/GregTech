@@ -28,7 +28,6 @@ gregtech.multiblock.large_boiler.description=大型锅炉是一种使用水和�
 gregtech.multiblock.large_turbine.description=大型涡轮是一种使用蒸汽、燃气或等离子体转动涡轮转子来发电的多方块结构. 转子效率和转子转速影响能量的输出.
 metaitem.dust.tooltip.purify=扔进盛有水的炼药锅进行清洗
 metaitem.generic.fluid_container.tooltip=%d/%d升 %s
-metaitem.generic.fluid_container.tooltip_empty=空
 metaitem.generic.electric_item.tooltip=%d/%d EU - 等级§e%d
 metaitem.int_circuit.configuration=配置: == %d
 item.invalid.name=无效物品

@@ -76,7 +76,6 @@ fluid.empty=Empty
 gregtech.tooltip.hold_shift=Hold §aShift§7 for more info
 
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
-metaitem.generic.fluid_container.tooltip_empty=§9No Fluids Contained
 metaitem.generic.electric_item.tooltip=%,d/%,d EU - Tier %s
 metaitem.electric.discharge_mode.enabled=§eDischarge Mode Enabled
 metaitem.electric.discharge_mode.disabled=§eDischarge Mode Disabled
