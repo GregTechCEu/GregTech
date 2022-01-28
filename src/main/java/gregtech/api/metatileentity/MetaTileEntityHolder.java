@@ -9,6 +9,7 @@ import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.packets.CPacketRecoverMTE;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TaskScheduler;
 import gregtech.client.particle.GTNameTagParticle;
 import gregtech.client.particle.GTParticleManager;
 import net.minecraft.block.state.IBlockState;
@@ -76,7 +77,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         return metaTileEntity;
     }
 
-    protected void setRawMetaTileEntity(MetaTileEntity metaTileEntity){
+    protected void setRawMetaTileEntity(MetaTileEntity metaTileEntity) {
         this.metaTileEntity = metaTileEntity;
         this.metaTileEntity.holder = this;
     }
@@ -158,7 +159,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
                 world.setBlockToAir(pos);
             }
         }
-        
+
         if (this.needToUpdateLightning) {
             getWorld().checkLight(getPos());
             this.needToUpdateLightning = false;
@@ -288,8 +289,15 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     @Override
     public void onLoad() {
         super.onLoad();
-        if (metaTileEntity != null) {
-            metaTileEntity.onLoad();
+        if (metaTileEntity != null && world != null) {
+            if (!world.isRemote) {
+                TaskScheduler.scheduleTask(world, () -> {
+                    metaTileEntity.onLoad();
+                    return false;
+                });
+            } else {
+                metaTileEntity.onLoad();
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.SyncedTileEntityBase;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.util.TaskScheduler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -342,7 +343,16 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public void onLoad() {
         super.onLoad();
-        this.coverableImplementation.onLoad();
+        if (world != null) {
+            if (!world.isRemote) {
+                TaskScheduler.scheduleTask(world, () -> {
+                    this.coverableImplementation.onLoad();
+                    return false;
+                });
+            } else {
+                this.coverableImplementation.onLoad();
+            }
+        }
     }
 
     protected void writePipeProperties(PacketBuffer buf) {
