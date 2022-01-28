@@ -88,7 +88,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     private final Map<String, T> names = new Object2ObjectOpenHashMap<>();
     protected final Short2ObjectMap<ModelResourceLocation> metaItemsModels = new Short2ObjectOpenHashMap<>();
     protected final Short2ObjectMap<ModelResourceLocation[]> specialItemsModels = new Short2ObjectOpenHashMap<>();
-    private static final ModelResourceLocation MISSING_LOCATION = new ModelResourceLocation("builtin/missing", "inventory");
+    protected static final ModelResourceLocation MISSING_LOCATION = new ModelResourceLocation("builtin/missing", "inventory");
 
     protected final short metaItemOffset;
 
