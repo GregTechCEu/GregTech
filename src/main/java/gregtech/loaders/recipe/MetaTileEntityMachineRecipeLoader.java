@@ -567,25 +567,25 @@ public class MetaTileEntityMachineRecipeLoader {
                 .duration(400).EUt(VA[MV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[HV])
-                .input(frameGt, Titanium, 4)
-                .input(circuit, Tier.Advanced, 4)
-                .input(ELECTRIC_MOTOR_HV, 4)
-                .input(ELECTRIC_PUMP_HV, 4)
-                .input(gear, BlueSteel, 4)
-                .circuitMeta(2)
-                .output(FLUID_DRILLING_RIG)
-                .duration(400).EUt(VA[HV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[EV])
-                .input(frameGt, TungstenSteel, 4)
+                .input(frameGt, Titanium, 4)
                 .input(circuit, Tier.Extreme, 4)
                 .input(ELECTRIC_MOTOR_EV, 4)
                 .input(ELECTRIC_PUMP_EV, 4)
                 .input(gear, TungstenCarbide, 4)
                 .circuitMeta(2)
-                .output(ADVANCED_FLUID_DRILLING_RIG)
+                .output(FLUID_DRILLING_RIG)
                 .duration(400).EUt(VA[EV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[LuV])
+                .input(frameGt, TungstenSteel, 4)
+                .input(circuit, Tier.Master, 4)
+                .input(ELECTRIC_MOTOR_LUV, 4)
+                .input(ELECTRIC_PUMP_LUV, 4)
+                .input(gear, Osmiridium, 4)
+                .circuitMeta(2)
+                .output(ADVANCED_FLUID_DRILLING_RIG)
+                .duration(400).EUt(VA[LuV]).buildAndRegister();
     }
 }
