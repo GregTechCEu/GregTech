@@ -9,6 +9,7 @@ import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.packets.CPacketRecoverMTE;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TaskScheduler;
 import gregtech.client.particle.GTNameTagParticle;
 import gregtech.client.particle.GTParticleManager;
 import net.minecraft.block.state.IBlockState;
@@ -288,8 +289,15 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     @Override
     public void onLoad() {
         super.onLoad();
-        if (metaTileEntity != null) {
-            metaTileEntity.onLoad();
+        if(metaTileEntity != null) {
+            if(!getWorld().isRemote) {
+                TaskScheduler.scheduleTask(getWorld(), () -> {
+                    metaTileEntity.onLoad();
+                    return false;
+                });
+            } else {
+                metaTileEntity.onLoad();
+            }
         }
     }
 
