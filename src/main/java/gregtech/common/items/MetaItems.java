@@ -672,6 +672,7 @@ public final class MetaItems {
     public static void registerColors() {
         for (MetaItem<?> item : ITEMS) {
             item.registerColor();
+            item.registerTextureMesh();
         }
     }
 

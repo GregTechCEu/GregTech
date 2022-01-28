@@ -28,7 +28,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -135,18 +134,6 @@ public class MetaPrefixItem extends StandardMetaItem {
             ResourceLocation defaultLocation = OrePrefix.ingot.materialIconType.getItemModelPath(defaultIcon);
             ModelBakery.registerItemVariants(this, defaultLocation);
         }
-
-        ModelLoader.setCustomMeshDefinition(this, itemStack -> {
-            short itemDamage = formatRawItemDamage((short) itemStack.getItemDamage());
-            if (specialItemsModels.containsKey(itemDamage)) {
-                int modelIndex = getModelIndex(itemStack);
-                return specialItemsModels.get(itemDamage)[modelIndex];
-            }
-            if (metaItemsModels.containsKey(itemDamage)) {
-                return metaItemsModels.get(itemDamage);
-            }
-            return MISSING_LOCATION;
-        });
     }
 
     @Override

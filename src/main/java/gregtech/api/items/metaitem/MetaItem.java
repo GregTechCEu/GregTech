@@ -125,7 +125,10 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             }
             metaItemsModels.put((short) (metaItemOffset + itemMetaKey), new ModelResourceLocation(resourceLocation, "inventory"));
         }
+    }
 
+    @SideOnly(Side.CLIENT)
+    public void registerTextureMesh() {
         ModelLoader.setCustomMeshDefinition(this, itemStack -> {
             short itemDamage = formatRawItemDamage((short) itemStack.getItemDamage());
             if (specialItemsModels.containsKey(itemDamage)) {
