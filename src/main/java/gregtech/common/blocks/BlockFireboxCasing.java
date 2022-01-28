@@ -19,7 +19,6 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("wrench", 2);
         setDefaultState(getState(FireboxCasingType.BRONZE_FIREBOX));
     }
 
@@ -42,17 +41,19 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
         return false;
     }
 
-    public enum FireboxCasingType implements IStringSerializable {
+    public enum FireboxCasingType implements IStringSerializable, IStateHarvestLevel {
 
-        BRONZE_FIREBOX("bronze_firebox"),
-        STEEL_FIREBOX("steel_firebox"),
-        TITANIUM_FIREBOX("titanium_firebox"),
-        TUNGSTENSTEEL_FIREBOX("tungstensteel_firebox");
+        BRONZE_FIREBOX("bronze_firebox", 1),
+        STEEL_FIREBOX("steel_firebox", 2),
+        TITANIUM_FIREBOX("titanium_firebox", 2),
+        TUNGSTENSTEEL_FIREBOX("tungstensteel_firebox", 3);
 
         private final String name;
+        private final int harvestLevel;
 
-        FireboxCasingType(String name) {
+        FireboxCasingType(String name, int harvestLevel) {
             this.name = name;
+            this.harvestLevel = harvestLevel;
         }
 
         @Nonnull
@@ -61,6 +62,15 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
             return this.name;
         }
 
+        @Override
+        public int getHarvestLevel(IBlockState state) {
+            return harvestLevel;
+        }
+
+        @Override
+        public String getHarvestTool(IBlockState state) {
+            return "wrench";
+        }
     }
 
 }

@@ -17,7 +17,6 @@ public class BlockFusionCasing extends VariantActiveBlock<BlockFusionCasing.Casi
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("wrench", 2);
         setDefaultState(getState(CasingType.SUPERCONDUCTOR_COIL));
     }
 
@@ -26,24 +25,36 @@ public class BlockFusionCasing extends VariantActiveBlock<BlockFusionCasing.Casi
         return false;
     }
 
-    public enum CasingType implements IStringSerializable {
+    public enum CasingType implements IStringSerializable, IStateHarvestLevel {
 
-        SUPERCONDUCTOR_COIL("superconductor_coil"),
-        FUSION_COIL("fusion_coil"),
-        FUSION_CASING("fusion_casing"),
-        FUSION_CASING_MK2("fusion_casing_mk2"),
-        FUSION_CASING_MK3("fusion_casing_mk3");
+        SUPERCONDUCTOR_COIL("superconductor_coil", 2),
+        FUSION_COIL("fusion_coil", 2),
+        FUSION_CASING("fusion_casing", 2),
+        FUSION_CASING_MK2("fusion_casing_mk2", 3),
+        FUSION_CASING_MK3("fusion_casing_mk3", 3);
 
         private final String name;
+        private final int harvestLevel;
 
-        CasingType(String name) {
+        CasingType(String name, int harvestLevel) {
             this.name = name;
+            this.harvestLevel = harvestLevel;
         }
 
         @Nonnull
         @Override
         public String getName() {
             return this.name;
+        }
+
+        @Override
+        public int getHarvestLevel(IBlockState state) {
+            return harvestLevel;
+        }
+
+        @Override
+        public String getHarvestTool(IBlockState state) {
+            return "wrench";
         }
     }
 }

@@ -34,6 +34,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class BlockOre extends Block implements IBlockOre, IModelSupplier {
 
@@ -48,7 +49,7 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
         setSoundType(SoundType.STONE);
         setHardness(3.0f);
         setResistance(5.0f);
-        this.material = material;
+        this.material = Objects.requireNonNull(material, "Material in BlockOre can not be null!");
         STONE_TYPE = PropertyStoneType.create("stone_type", allowedValues);
         initBlockState();
     }
@@ -96,18 +97,8 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
 
     @Override
     public int getHarvestLevel(IBlockState state) {
-        StoneType stoneType = state.getValue(STONE_TYPE);
-        if (material != null) {
-            DustProperty matProp = material.getProperty(PropertyKey.DUST);
-            if (matProp != null) {
-                int toolQuality = matProp.getHarvestLevel();
-                DustProperty stoneProp = stoneType.stoneMaterial.getProperty(PropertyKey.DUST);
-                if (stoneProp != null) {
-                    return Math.max(stoneProp.getHarvestLevel(), toolQuality > 1 ? toolQuality - 1 : toolQuality);
-                }
-            }
-        }
-        return 1;
+        // this is save because ore blocks and stone types only generate for materials with dust property
+        return Math.max(state.getValue(STONE_TYPE).stoneMaterial.getBlockHarvestLevel(), material.getBlockHarvestLevel());
     }
 
     @Nonnull

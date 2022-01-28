@@ -17,7 +17,7 @@ public class BlockStoneWindmillB extends VariantBlock<BlockStoneWindmillB.BlockT
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
-        setHarvestLevel("pickaxe", 2);
+        setHarvestLevel("pickaxe", 1);
         setDefaultState(getState(BlockType.BLACK_GRANITE));
     }
 

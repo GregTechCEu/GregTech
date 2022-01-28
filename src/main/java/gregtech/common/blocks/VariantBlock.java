@@ -29,6 +29,13 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
 
     public VariantBlock(Material materialIn) {
         super(materialIn);
+        if(VALUES.length > 0 && VALUES[0] instanceof IStateHarvestLevel) {
+            for (T t : VALUES) {
+                IStateHarvestLevel stateHarvestLevel = (IStateHarvestLevel) t;
+                IBlockState state = getState(t);
+                setHarvestLevel(stateHarvestLevel.getHarvestTool(state), stateHarvestLevel.getHarvestLevel(state), state);
+            }
+        }
         setCreativeTab(GregTechAPI.TAB_GREGTECH);
     }
 

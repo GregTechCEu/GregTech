@@ -66,12 +66,8 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
 
     @Override
     public int getHarvestLevel(IBlockState state) {
-        Material material = state.getValue(variantProperty);
-        DustProperty prop = material.getProperty(PropertyKey.DUST);
-        if (prop != null) {
-            return material.getHarvestLevel();
-        }
-        return 0;
+        // this is save because compressed blocks only generate for materials with dust property
+        return state.getValue(variantProperty).getBlockHarvestLevel();
     }
 
     @Override
