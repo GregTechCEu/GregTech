@@ -1,4 +1,4 @@
-package gregtech.common.blocks;
+package gregtech.api.block;
 
 import net.minecraft.block.state.IBlockState;
 

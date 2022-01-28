@@ -1,4 +1,4 @@
-package gregtech.common.blocks;
+package gregtech.api.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;

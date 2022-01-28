@@ -1,4 +1,4 @@
-package gregtech.common.blocks;
+package gregtech.api.block;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.util.GTUtility;

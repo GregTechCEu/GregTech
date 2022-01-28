@@ -5,8 +5,6 @@ import gregtech.api.GregTechAPI;
 import gregtech.client.model.IModelSupplier;
 import gregtech.client.model.SimpleStateMapper;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.info.MaterialIconType;
-import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.IBlockOre;
