@@ -665,6 +665,7 @@ public final class MetaItems {
         MinecraftForge.EVENT_BUS.register(MetaItems.class);
         for (MetaItem<?> item : ITEMS) {
             item.registerModels();
+            item.registerTextureMesh();
         }
     }
 
@@ -672,7 +673,6 @@ public final class MetaItems {
     public static void registerColors() {
         for (MetaItem<?> item : ITEMS) {
             item.registerColor();
-            item.registerTextureMesh();
         }
     }
 

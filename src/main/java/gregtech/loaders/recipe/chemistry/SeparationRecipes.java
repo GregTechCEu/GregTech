@@ -487,10 +487,25 @@ public class SeparationRecipes {
                 .fluidOutputs(SeedOil.getFluid(6))
                 .buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(2)
-                .inputs(new ItemStack(Items.FISH, 1, GTValues.W))
-                .fluidOutputs(FishOil.getFluid(50))
-                .build();
+        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
+                .inputs(new ItemStack(Items.FISH))
+                .fluidOutputs(FishOil.getFluid(40))
+                .buildAndRegister();
+
+        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
+                .inputs(new ItemStack(Items.FISH, 1, 1))
+                .fluidOutputs(FishOil.getFluid(60))
+                .buildAndRegister();
+
+        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
+                .inputs(new ItemStack(Items.FISH, 1, 2))
+                .fluidOutputs(FishOil.getFluid(70))
+                .buildAndRegister();
+
+        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
+                .inputs(new ItemStack(Items.FISH, 1, 3))
+                .fluidOutputs(FishOil.getFluid(30))
+                .buildAndRegister();
 
         EXTRACTOR_RECIPES.recipeBuilder().duration(600).EUt(28)
                 .input(dust, Quartzite)
