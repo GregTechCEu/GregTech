@@ -312,10 +312,10 @@ public class CraftingComponent {
 
         if (GTValues.HT) {
             CASING.appendIngredients(Stream.of(new Object[][]{
-                    {10, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.OV)},
-                    {11, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.OPV)},
-                    {12, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.TrV)},
-                    {13, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.GV)},
+                    {10, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UEV)},
+                    {11, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UIV)},
+                    {12, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.UXV)},
+                    {13, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.OpV)},
                     {14, MetaBlocks.MACHINE_CASING.getItemVariant(BlockMachineCasing.MachineCasingType.MAX)},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
