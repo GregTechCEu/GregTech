@@ -286,7 +286,7 @@ public class VanillaStandardRecipes {
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .inputs(CountableIngredient.from("wool", 1))
-                .outputs(new ItemStack(Items.STRING, 3))
+                .outputs(new ItemStack(Items.STRING, 2))
                 .chancedOutput(new ItemStack(Items.STRING, 1), 2000, 800)
                 .duration(400)
                 .buildAndRegister();
@@ -958,6 +958,7 @@ public class VanillaStandardRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.STRING, 3))
+                .notConsumable(new IntCircuitIngredient(1))
                 .outputs(new ItemStack(Blocks.WOOL, 1, 0))
                 .duration(100).EUt(4).buildAndRegister();
 
