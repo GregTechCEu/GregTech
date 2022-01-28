@@ -32,6 +32,7 @@ public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
 
     @Override
     public boolean applyProperty(String key, Object value) {
+        super.applyProperty(key, value);
         if (key.equals(FusionEUToStartProperty.KEY)) {
             this.EUToStart(((Number) value).longValue());
             return true;

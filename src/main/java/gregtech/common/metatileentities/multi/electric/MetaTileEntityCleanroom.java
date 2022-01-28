@@ -6,9 +6,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.TraceabilityPredicate;
@@ -26,7 +24,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implements IDataInfoProvider {
+public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implements ICleanroom, IDataInfoProvider {
 
     public static final int MIN_DIAMETER = 5;
     public static final int MAX_DIAMETER = 15;
@@ -104,7 +102,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             center[i] = I;
         }
 
-        TraceabilityPredicate casing = states(getCasingState()).setMinGlobalLimited(40).or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3)).or(autoAbilities());
+        TraceabilityPredicate casing = states(getCasingState()).setMinGlobalLimited(40)
+                .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3))
+                .or(autoAbilities());
 
         // layer the slices one behind the next
         return FactoryBlockPattern.start()
@@ -176,5 +176,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     protected ICubeRenderer getFrontOverlay() {
         return Textures.CLEANROOM_OVERLAY;
+    }
+
+    @Override
+    public CleanroomType getType() {
+        return CleanroomType.CLEANROOM;
     }
 }
