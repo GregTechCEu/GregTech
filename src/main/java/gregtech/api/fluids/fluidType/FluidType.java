@@ -1,13 +1,24 @@
 package gregtech.api.fluids.fluidType;
 
+import crafttweaker.annotations.ZenRegister;
+import crafttweaker.api.liquid.ILiquidStack;
+import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
+import gregtech.api.util.GTLog;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fml.common.Optional;
+import stanhebben.zenscript.annotations.ZenClass;
+import stanhebben.zenscript.annotations.ZenGetter;
+import stanhebben.zenscript.annotations.ZenMethod;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
+@ZenClass()
+@ZenRegister
 public abstract class FluidType {
 
     private static final Map<String, FluidType> FLUID_TYPES = new HashMap<>();
@@ -29,7 +40,7 @@ public abstract class FluidType {
     }
 
     public String getNameForMaterial(@Nonnull Material material) {
-        return this.prefix + "." + material.toString() + "." + this.suffix;
+        return this.prefix + "." + material + "." + this.suffix;
     }
 
     public static void setFluidProperties(@Nonnull FluidType fluidType, @Nonnull Fluid fluid) {
@@ -38,19 +49,35 @@ public abstract class FluidType {
 
     protected abstract void setFluidProperties(@Nonnull Fluid fluid);
 
+    @ZenMethod
+    @Optional.Method(modid = GTValues.MODID_CT)
+    public static void setFluidPropertiesCT(FluidType fluidType, @Nonnull ILiquidStack liquidStack) {
+        Material material = GregTechAPI.MATERIAL_REGISTRY.getObject(liquidStack.getName());
+        if (material == null) {
+            GTLog.logger.warn("LiquidStack {} does not have a FluidProperty!", liquidStack.getName());
+            return;
+        }
+
+        fluidType.setFluidProperties(material.getFluid());
+    }
+
+    @ZenGetter
     public String getLocalization() {
         return this.localization;
     }
 
+    @ZenGetter
     public String getPrefix() {
         return this.prefix;
     }
 
+    @ZenGetter
     public String getName() {
         return this.name;
     }
 
     @Nullable
+    @ZenMethod
     public static FluidType getByName(@Nonnull String name) {
         return FLUID_TYPES.get(name);
     }
