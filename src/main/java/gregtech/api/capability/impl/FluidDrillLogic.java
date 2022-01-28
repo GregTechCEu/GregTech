@@ -255,9 +255,9 @@ public class FluidDrillLogic {
      * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#readFromNBT(NBTTagCompound)} method
      */
     public void readFromNBT(@Nonnull NBTTagCompound data) {
-        setActive(data.getBoolean("isActive"));
-        setWorkingEnabled(data.getBoolean("isWorkingEnabled"));
-        setWasActiveAndNeedsUpdate(data.getBoolean("wasActiveAndNeedsUpdate"));
+        this.isActive = data.getBoolean("isActive");
+        this.isWorkingEnabled = data.getBoolean("isWorkingEnabled");
+        this.wasActiveAndNeedsUpdate = data.getBoolean("wasActiveAndNeedsUpdate");
         this.isDone = data.getBoolean("isDone");
         this.progressTime = data.getInteger("progressTime");
         this.isInventoryFull = data.getBoolean("isInventoryFull");

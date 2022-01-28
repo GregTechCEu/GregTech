@@ -52,7 +52,6 @@ public class NetworkHandler {
         registerServerExecutor(CPacketPluginSynced.class);
         registerServerExecutor(CPacketRecoverMTE.class);
         registerServerExecutor(CPacketKeysPressed.class);
-        registerServerExecutor(CPacketFluidVeinList.class);
     }
 
     // Register packets as "received on client" here
