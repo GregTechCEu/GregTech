@@ -247,6 +247,11 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         return overclock;
     }
 
+    @Override
+    public long getOverclockVoltage() {
+        return getMaxVoltage();
+    }
+
     protected Tuple<Integer, Double> getMaintenanceValues() {
         MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ? (MultiblockWithDisplayBase) metaTileEntity : null;
         int numMaintenanceProblems = displayBase == null || !displayBase.hasMaintenanceMechanics() || !ConfigHolder.machines.enableMaintenance ? 0 : displayBase.getNumMaintenanceProblems();
