@@ -107,10 +107,36 @@ public class EventHandlers {
             int level = EnchantmentHelper.getEnchantmentLevel(EnchantmentHardHammer.INSTANCE, event.getHarvester().getHeldItemMainhand());
             if (level > 0) {
                 ToolUtility.applyHammerDrops(event.getWorld().rand, event.getState(), event.getDrops(), EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, event.getHarvester().getHeldItemMainhand()), event.getHarvester());
-
             }
         }
+    }
 
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onHarvestCheck(net.minecraftforge.event.entity.player.PlayerEvent.HarvestCheck event) {
+        if (event.canHarvest()) {
+            ItemStack item = event.getEntityPlayer().getHeldItemMainhand();
+            String tool = event.getTargetBlock().getBlock().getHarvestTool(event.getTargetBlock());
+            if ("wrench".equals(tool))
+                tool = "pickaxe";
+            int harvestLevel = event.getTargetBlock().getBlock().getHarvestLevel(event.getTargetBlock());
+            if (tool != null && !item.isEmpty() && harvestLevel > item.getItem().getHarvestLevel(item, tool, event.getEntityPlayer(), event.getTargetBlock())) {
+                event.setCanHarvest(false);
+            }
+        }
+    }
+
+    // does not work. Event is never fired
+    @SubscribeEvent
+    public static void onDestroySpeed(net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed event) {
+        ItemStack item = event.getEntityPlayer().getHeldItemMainhand();
+        String tool = event.getState().getBlock().getHarvestTool(event.getState());
+        if (tool != null && !item.isEmpty() && tool.equals("wrench") && item.getItem().getHarvestLevel(item, "pickaxe", event.getEntityPlayer(), event.getState()) >= 0) {
+            if (event.getNewSpeed() == 0) {
+                event.setNewSpeed(event.getOriginalSpeed() * 0.75f);
+            } else {
+                event.setNewSpeed(event.getNewSpeed() * 0.75f);
+            }
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
@@ -146,12 +172,12 @@ public class EventHandlers {
 
         ArmorMetaItem<?> armorMetaItem = (ArmorMetaItem<?>) stack.getItem();
         if (armorMetaItem.getItem(stack).isItemEqual(MetaItems.NIGHTVISION_GOGGLES.getStackForm()) ||
-            armorMetaItem.getItem(stack).isItemEqual(MetaItems.NANO_HELMET.getStackForm()) ||
-            armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_HELMET.getStackForm())) {
+                armorMetaItem.getItem(stack).isItemEqual(MetaItems.NANO_HELMET.getStackForm()) ||
+                armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_HELMET.getStackForm())) {
             event.getEntityLiving().removePotionEffect(MobEffects.NIGHT_VISION);
         }
         if (armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_CHESTPLATE.getStackForm()) ||
-            armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_CHESTPLATE_ADVANCED.getStackForm())) {
+                armorMetaItem.getItem(stack).isItemEqual(MetaItems.QUANTUM_CHESTPLATE_ADVANCED.getStackForm())) {
             event.getEntity().isImmuneToFire = false;
         }
 
@@ -200,7 +226,7 @@ public class EventHandlers {
 
     @SubscribeEvent
     public static void onFurnaceFuelBurnTime(FurnaceFuelBurnTimeEvent event) {
-        if(ItemStack.areItemStacksEqual(event.getItemStack(), FluidUtil.getFilledBucket(Materials.Creosote.getFluid(1000)))) {
+        if (ItemStack.areItemStacksEqual(event.getItemStack(), FluidUtil.getFilledBucket(Materials.Creosote.getFluid(1000)))) {
             event.setBurnTime(6400);
         }
     }
