@@ -97,9 +97,11 @@ public class ClientProxy extends CommonProxy {
 
     public static final IItemColor RUBBER_LEAVES_ITEM_COLOR = (stack, tintIndex) -> ColorizerFoliage.getFoliageColorBirch();
 
-    public static final IBlockColor MACHINE_CASING_BLOCK_COLOR = (state, world, pos, tintIndex) -> ConfigHolder.client.defaultPaintingColor;
+    public static final IBlockColor MACHINE_CASING_BLOCK_COLOR = (state, world, pos, tintIndex) ->
+        state.getBlock() instanceof BlockMachineCasing && MetaBlocks.MACHINE_CASING.getMetaFromState(state) == 0 ? 0xFFFFFF : ConfigHolder.client.defaultPaintingColor;
 
-    public static final IItemColor MACHINE_CASING_ITEM_COLOR = (stack, tintIndex) -> ConfigHolder.client.defaultPaintingColor;
+    public static final IItemColor MACHINE_CASING_ITEM_COLOR = (stack, tintIndex) ->
+        stack.getItemDamage() == 0 && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockMachineCasing ? 0xFFFFFF : ConfigHolder.client.defaultPaintingColor;
 
     public void onPreLoad() {
         super.onPreLoad();
