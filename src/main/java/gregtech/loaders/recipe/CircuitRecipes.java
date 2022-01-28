@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
+import gregtech.api.metatileentity.multiblock.CleanroomType;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.MarkerMaterials.Component;
@@ -985,6 +986,7 @@ public class CircuitRecipes {
                 .input(component, Component.Transistor, 2)
                 .input(wireFine, Copper, 2)
                 .output(MICROPROCESSOR_LV, 3)
+                .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
         // Microprocessor LV SoC
@@ -994,6 +996,7 @@ public class CircuitRecipes {
                 .input(wireFine, Copper, 2)
                 .input(bolt, Tin, 2)
                 .output(MICROPROCESSOR_LV, 6)
+                .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
         // T3: Processor ===============================================================================================
