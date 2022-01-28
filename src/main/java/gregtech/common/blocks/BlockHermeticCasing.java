@@ -12,9 +12,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class HermeticCasings extends VariantBlock<HermeticCasings.HermeticCasingsType> {
+public class BlockHermeticCasing extends VariantBlock<BlockHermeticCasing.HermeticCasingsType> {
 
-    public HermeticCasings() {
+    public BlockHermeticCasing() {
         super(Material.IRON);
         setTranslationKey("hermetic_casing");
         setHardness(2.0f);

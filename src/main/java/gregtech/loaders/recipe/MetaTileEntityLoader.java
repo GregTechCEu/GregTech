@@ -36,7 +36,7 @@ import static gregtech.common.blocks.BlockSteamCasing.SteamCasingType.*;
 import static gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType.*;
 import static gregtech.common.blocks.BlockWarningSign.SignType.*;
 import static gregtech.common.blocks.BlockWireCoil.CoilType.CUPRONICKEL;
-import static gregtech.common.blocks.HermeticCasings.HermeticCasingsType.*;
+import static gregtech.common.blocks.BlockHermeticCasing.HermeticCasingsType.*;
 import static gregtech.loaders.recipe.CraftingComponent.*;
 
 public class MetaTileEntityLoader {
