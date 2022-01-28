@@ -21,6 +21,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+
 @SideOnly(Side.CLIENT)
 public class FakeModularGui implements IRenderContext {
     public final ModularUI modularUI;
@@ -179,7 +182,9 @@ public class FakeModularGui implements IRenderContext {
             GlStateManager.pushMatrix();
             GlStateManager.color(1.0f, 1.0f, 1.0f);
             GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             widget.drawInBackground(mouseX, mouseY, partialTicks, this);
+            GlStateManager.disableBlend();
             GlStateManager.popMatrix();
         }
     }
