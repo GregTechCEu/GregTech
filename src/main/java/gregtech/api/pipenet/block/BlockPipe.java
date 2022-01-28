@@ -382,7 +382,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (worldIn.isRemote) {
             return getClientCollisionRayTrace(worldIn, pos, start, end);
         }
-        return RayTracer.rayTraceCuboidsClosest(start, end, pos, FULL_CUBE_COLLISION);
+        return RayTracer.rayTraceCuboidsClosest(start, end, pos, getCollisionBox(worldIn, pos, null));
     }
 
     @SideOnly(Side.CLIENT)
