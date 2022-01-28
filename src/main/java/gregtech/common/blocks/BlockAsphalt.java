@@ -37,14 +37,21 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
         }
     }
 
+    @Override
+    public boolean hasCustomBreakingProgress(IBlockState state) {
+        return super.hasCustomBreakingProgress(state);
+    }
+
     public enum BlockType implements IStringSerializable, IStateHarvestLevel {
 
-        ASPHALT("asphalt");
+        ASPHALT("asphalt", 1);
 
         private final String name;
+        private final int harvestLevel;
 
-        BlockType(String name) {
+        BlockType(String name, int harvestLevel) {
             this.name = name;
+            this.harvestLevel = harvestLevel;
         }
 
         @Nonnull
@@ -55,7 +62,7 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
 
         @Override
         public int getHarvestLevel(IBlockState state) {
-            return 0;
+            return harvestLevel;
         }
     }
 }
