@@ -77,7 +77,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         return metaTileEntity;
     }
 
-    protected void setRawMetaTileEntity(MetaTileEntity metaTileEntity){
+    protected void setRawMetaTileEntity(MetaTileEntity metaTileEntity) {
         this.metaTileEntity = metaTileEntity;
         this.metaTileEntity.holder = this;
     }
@@ -159,7 +159,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
                 world.setBlockToAir(pos);
             }
         }
-        
+
         if (this.needToUpdateLightning) {
             getWorld().checkLight(getPos());
             this.needToUpdateLightning = false;
@@ -289,15 +289,8 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     @Override
     public void onLoad() {
         super.onLoad();
-        if(metaTileEntity != null && world != null) {
-            if(!world.isRemote) {
-                TaskScheduler.scheduleTask(getWorld(), () -> {
-                    metaTileEntity.onLoad();
-                    return false;
-                });
-            } else {
-                metaTileEntity.onLoad();
-            }
+        if (metaTileEntity != null) {
+            metaTileEntity.onLoad();
         }
     }
 
