@@ -23,9 +23,6 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
 
     public MetaTileEntityRockBreaker(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, ICubeRenderer renderer, int tier) {
         super(metaTileEntityId, recipeMap, renderer, tier, true);
-        if (getWorld() != null && !getWorld().isRemote) {
-            checkAdjacentFluids();
-        }
     }
 
     @Override
@@ -47,6 +44,10 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
     }
 
     private void checkAdjacentFluids() {
+        if (getWorld() == null || getWorld().isRemote) {
+            hasValidFluids = false;
+            return;
+        }
         boolean hasLava = false;
         boolean hasWater = false;
         for (EnumFacing side : EnumFacing.VALUES) {
