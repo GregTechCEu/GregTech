@@ -165,10 +165,10 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_ZPM;
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_UV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_UHV;
-    public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_OV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_UEV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_UIV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_UXV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_OpV;
-    public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_TrV;
-    public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_GV;
 
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_LV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_MV;
@@ -179,10 +179,10 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_ZPM;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_UV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_UHV;
-    public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_OV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_UEV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_UIV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_UXV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_OpV;
-    public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_TrV;
-    public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_GV;
 
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_LV;
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_MV;
@@ -206,10 +206,10 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_ZPM;
     public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_UV;
     public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_UHV;
-    public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_OV;
+    public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_UEV;
+    public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_UIV;
+    public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_UXV;
     public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_OpV;
-    public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_TrV;
-    public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_GV;
 
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_LV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_MV;
@@ -220,10 +220,10 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_ZPM;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_UV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_UHV;
-    public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_OV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_UEV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_UIV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_UXV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_OpV;
-    public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_TrV;
-    public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_GV;
 
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_LV;
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_MV;
@@ -234,10 +234,10 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_ZPM;
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_UV;
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_UHV;
-    public static MetaItem<?>.MetaValueItem ROBOT_ARM_OV;
+    public static MetaItem<?>.MetaValueItem ROBOT_ARM_UEV;
+    public static MetaItem<?>.MetaValueItem ROBOT_ARM_UIV;
+    public static MetaItem<?>.MetaValueItem ROBOT_ARM_UXV;
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_OpV;
-    public static MetaItem<?>.MetaValueItem ROBOT_ARM_TrV;
-    public static MetaItem<?>.MetaValueItem ROBOT_ARM_GV;
 
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_LV;
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_MV;
@@ -248,10 +248,10 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_ZPM;
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_UV;
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_UHV;
-    public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_OV;
+    public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_UEV;
+    public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_UIV;
+    public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_UXV;
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_OpV;
-    public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_TrV;
-    public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_GV;
 
     public static MetaItem<?>.MetaValueItem EMITTER_LV;
     public static MetaItem<?>.MetaValueItem EMITTER_MV;
@@ -262,10 +262,10 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem EMITTER_ZPM;
     public static MetaItem<?>.MetaValueItem EMITTER_UV;
     public static MetaItem<?>.MetaValueItem EMITTER_UHV;
-    public static MetaItem<?>.MetaValueItem EMITTER_OV;
+    public static MetaItem<?>.MetaValueItem EMITTER_UEV;
+    public static MetaItem<?>.MetaValueItem EMITTER_UIV;
+    public static MetaItem<?>.MetaValueItem EMITTER_UXV;
     public static MetaItem<?>.MetaValueItem EMITTER_OpV;
-    public static MetaItem<?>.MetaValueItem EMITTER_TrV;
-    public static MetaItem<?>.MetaValueItem EMITTER_GV;
 
     public static MetaItem<?>.MetaValueItem SENSOR_LV;
     public static MetaItem<?>.MetaValueItem SENSOR_MV;
@@ -276,10 +276,10 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SENSOR_ZPM;
     public static MetaItem<?>.MetaValueItem SENSOR_UV;
     public static MetaItem<?>.MetaValueItem SENSOR_UHV;
-    public static MetaItem<?>.MetaValueItem SENSOR_OV;
+    public static MetaItem<?>.MetaValueItem SENSOR_UEV;
+    public static MetaItem<?>.MetaValueItem SENSOR_UIV;
+    public static MetaItem<?>.MetaValueItem SENSOR_UXV;
     public static MetaItem<?>.MetaValueItem SENSOR_OpV;
-    public static MetaItem<?>.MetaValueItem SENSOR_TrV;
-    public static MetaItem<?>.MetaValueItem SENSOR_GV;
 
     public static MetaItem<?>.MetaValueItem TOOL_DATA_STICK;
     public static MetaItem<?>.MetaValueItem TOOL_DATA_ORB;

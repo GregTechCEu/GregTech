@@ -132,10 +132,10 @@ public class CraftingComponent {
         if (GTValues.HT) {
             PUMP.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.ELECTRIC_PUMP_UHV.getStackForm()},
-                    {10, MetaItems.ELECTRIC_PUMP_OV.getStackForm()},
-                    {11, MetaItems.ELECTRIC_PUMP_OpV.getStackForm()},
-                    {12, MetaItems.ELECTRIC_PUMP_TrV.getStackForm()},
-                    {13, MetaItems.ELECTRIC_PUMP_GV.getStackForm()},
+                    {10, MetaItems.ELECTRIC_PUMP_UEV.getStackForm()},
+                    {11, MetaItems.ELECTRIC_PUMP_UIV.getStackForm()},
+                    {12, MetaItems.ELECTRIC_PUMP_UXV.getStackForm()},
+                    {13, MetaItems.ELECTRIC_PUMP_OpV.getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -419,10 +419,10 @@ public class CraftingComponent {
         if (GTValues.HT) {
             MOTOR.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.ELECTRIC_MOTOR_UHV.getStackForm()},
-                    {10, MetaItems.ELECTRIC_MOTOR_OV.getStackForm()},
-                    {11, MetaItems.ELECTRIC_MOTOR_OpV.getStackForm()},
-                    {12, MetaItems.ELECTRIC_MOTOR_TrV.getStackForm()},
-                    {13, MetaItems.ELECTRIC_MOTOR_GV.getStackForm()},
+                    {10, MetaItems.ELECTRIC_MOTOR_UEV.getStackForm()},
+                    {11, MetaItems.ELECTRIC_MOTOR_UIV.getStackForm()},
+                    {12, MetaItems.ELECTRIC_MOTOR_UXV.getStackForm()},
+                    {13, MetaItems.ELECTRIC_MOTOR_OpV.getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -456,10 +456,10 @@ public class CraftingComponent {
         if (GTValues.HT) {
             SENSOR.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.SENSOR_UHV.getStackForm()},
-                    {10, MetaItems.SENSOR_OV.getStackForm()},
-                    {11, MetaItems.SENSOR_OpV.getStackForm()},
-                    {12, MetaItems.SENSOR_TrV.getStackForm()},
-                    {13, MetaItems.SENSOR_GV.getStackForm()},
+                    {10, MetaItems.SENSOR_UEV.getStackForm()},
+                    {11, MetaItems.SENSOR_UIV.getStackForm()},
+                    {12, MetaItems.SENSOR_UXV.getStackForm()},
+                    {13, MetaItems.SENSOR_OpV.getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -512,10 +512,10 @@ public class CraftingComponent {
         if (GTValues.HT) {
             PISTON.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.ELECTRIC_PISTON_UHV.getStackForm()},
-                    {10, MetaItems.ELECTRIC_PISTON_OV.getStackForm()},
-                    {11, MetaItems.ELECTRIC_PISTON_OpV.getStackForm()},
-                    {12, MetaItems.ELECTRIC_PISTON_TrV.getStackForm()},
-                    {13, MetaItems.ELECTRIC_PISTON_GV.getStackForm()},
+                    {10, MetaItems.ELECTRIC_PISTON_UEV.getStackForm()},
+                    {11, MetaItems.ELECTRIC_PISTON_UIV.getStackForm()},
+                    {12, MetaItems.ELECTRIC_PISTON_UXV.getStackForm()},
+                    {13, MetaItems.ELECTRIC_PISTON_OpV.getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -535,10 +535,10 @@ public class CraftingComponent {
         if (GTValues.HT) {
             EMITTER.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.EMITTER_UHV.getStackForm()},
-                    {10, MetaItems.EMITTER_OV.getStackForm()},
-                    {11, MetaItems.EMITTER_OpV.getStackForm()},
-                    {12, MetaItems.EMITTER_TrV.getStackForm()},
-                    {13, MetaItems.EMITTER_GV.getStackForm()},
+                    {10, MetaItems.EMITTER_UEV.getStackForm()},
+                    {11, MetaItems.EMITTER_UIV.getStackForm()},
+                    {12, MetaItems.EMITTER_UXV.getStackForm()},
+                    {13, MetaItems.EMITTER_OpV.getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -558,10 +558,10 @@ public class CraftingComponent {
         if (GTValues.HT) {
             CONVEYOR.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.CONVEYOR_MODULE_UHV.getStackForm()},
-                    {10, MetaItems.CONVEYOR_MODULE_OV.getStackForm()},
-                    {11, MetaItems.CONVEYOR_MODULE_OpV.getStackForm()},
-                    {12, MetaItems.CONVEYOR_MODULE_TrV.getStackForm()},
-                    {13, MetaItems.CONVEYOR_MODULE_GV.getStackForm()},
+                    {10, MetaItems.CONVEYOR_MODULE_UEV.getStackForm()},
+                    {11, MetaItems.CONVEYOR_MODULE_UIV.getStackForm()},
+                    {12, MetaItems.CONVEYOR_MODULE_UXV.getStackForm()},
+                    {13, MetaItems.CONVEYOR_MODULE_OpV.getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -581,10 +581,10 @@ public class CraftingComponent {
         if (GTValues.HT) {
             ROBOT_ARM.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.ROBOT_ARM_UHV.getStackForm()},
-                    {10, MetaItems.ROBOT_ARM_OV.getStackForm()},
-                    {11, MetaItems.ROBOT_ARM_OpV.getStackForm()},
-                    {12, MetaItems.ROBOT_ARM_TrV.getStackForm()},
-                    {13, MetaItems.ROBOT_ARM_GV.getStackForm()},
+                    {10, MetaItems.ROBOT_ARM_UEV.getStackForm()},
+                    {11, MetaItems.ROBOT_ARM_UIV.getStackForm()},
+                    {12, MetaItems.ROBOT_ARM_UXV.getStackForm()},
+                    {13, MetaItems.ROBOT_ARM_OpV.getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
@@ -676,10 +676,10 @@ public class CraftingComponent {
         if (GTValues.HT) {
             FIELD_GENERATOR.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaItems.FIELD_GENERATOR_UHV.getStackForm()},
-                    {10, MetaItems.FIELD_GENERATOR_OV.getStackForm()},
-                    {11, MetaItems.FIELD_GENERATOR_OpV.getStackForm()},
-                    {12, MetaItems.FIELD_GENERATOR_TrV.getStackForm()},
-                    {13, MetaItems.FIELD_GENERATOR_GV.getStackForm()},
+                    {10, MetaItems.FIELD_GENERATOR_UEV.getStackForm()},
+                    {11, MetaItems.FIELD_GENERATOR_UIV.getStackForm()},
+                    {12, MetaItems.FIELD_GENERATOR_UXV.getStackForm()},
+                    {13, MetaItems.FIELD_GENERATOR_OpV.getStackForm()},
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 

@@ -71,16 +71,16 @@ public class GTValues {
     public static final int UV = 8;
 
     public static final int UHV = 9;
-    public static final int OV = 10;
-    public static final int OpV = 11;
-    public static final int TrV = 12;
-    public static final int GV = 13;
+    public static final int UEV = 10;
+    public static final int UIV = 11;
+    public static final int UXV = 12;
+    public static final int OpV = 13;
     public static final int MAX = 14;
 
     /**
      * The short names for the voltages, used for registration primarily
      */
-    public static final String[] VN = new String[]{"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV", "OV", "OpV", "TrV", "GV", "MAX"};
+    public static final String[] VN = new String[]{"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV", "UEV", "UIV", "UXV", "OpV", "MAX"};
 
     /**
      * The short names for the voltages, formatted for text
@@ -89,8 +89,8 @@ public class GTValues {
             DARK_GRAY + "ULV", GRAY + "LV", AQUA + "MV",
             GOLD + "HV", DARK_PURPLE + "EV", DARK_BLUE + "IV",
             LIGHT_PURPLE + "LuV", WHITE + "ZPM", DARK_AQUA + "UV",
-            DARK_RED + "UHV", GREEN + "OV", DARK_GREEN + "OpV",
-            YELLOW + "TrV", BLUE + "\u03C3GV\u03C3", RED + "\u03A9MAX\u03A9"};
+            DARK_RED + "UHV", GREEN + "UEV", DARK_GREEN + "UIV",
+            YELLOW + "UXV", BLUE + "\u03C3OpV\u03C3", RED + "\u03A9MAX\u03A9"};
 
     /**
      * Color values for the voltages
@@ -101,7 +101,7 @@ public class GTValues {
      * The long names for the voltages
      */
     public static final String[] VOLTAGE_NAMES = new String[]{"Ultra Low Voltage", "Low Voltage", "Medium Voltage", "High Voltage", "Extreme Voltage", "Insane Voltage", "Ludicrous Voltage", "ZPM Voltage", "Ultimate Voltage",
-            "Ultra High Voltage", "Overwhelming Voltage", "Overpowered Voltage", "Transcendent Voltage", "Godlike Voltage", "Maximum Voltage"};
+            "Ultra High Voltage", "Ultra Excessive Voltage", "Ultra Immense Voltage", "Ultra Extreme Voltage", "Overpowered Voltage", "Maximum Voltage"};
 
     /**
      * ModID strings, since they are quite common parameters
