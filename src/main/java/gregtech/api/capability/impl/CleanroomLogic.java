@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
+import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.common.ConfigHolder;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -11,7 +12,6 @@ import net.minecraft.network.PacketBuffer;
 import javax.annotation.Nonnull;
 
 public class CleanroomLogic {
-
 
     public static final int MAX_PROGRESS = 1200; // One real-life minute
 
@@ -39,6 +39,10 @@ public class CleanroomLogic {
      */
     public void performDrilling() {
         if (metaTileEntity.getWorld().isRemote) return;
+
+        if (ConfigHolder.machines.enableMaintenance && ((MultiblockWithDisplayBase) metaTileEntity).hasMaintenanceMechanics() && ((MultiblockWithDisplayBase) metaTileEntity).getNumMaintenanceProblems() > 5) {
+            return;
+        }
 
         // drills that cannot work do nothing
         if (!this.isWorkingEnabled)
@@ -145,11 +149,17 @@ public class CleanroomLogic {
     }
 
     public int getMaxProgress() {
+        MultiblockWithDisplayBase displayBase = (MultiblockWithDisplayBase) metaTileEntity;
+        if (!ConfigHolder.machines.enableMaintenance || !displayBase.hasMaintenanceMechanics())
+            return MAX_PROGRESS;
+
+        int duration = MAX_PROGRESS;
         if (isOverclocked()) {
             // isOverclocked() checks division by zero
-            return (int) (MAX_PROGRESS / (ConfigHolder.machines.overclockDivisor * getTierDifference()));
+            duration = (int) (MAX_PROGRESS / (ConfigHolder.machines.overclockDivisor * getTierDifference()));
         }
-        return MAX_PROGRESS;
+
+        return duration + displayBase.getNumMaintenanceProblems() * duration;
     }
 
     public double getProgressPercent() {
