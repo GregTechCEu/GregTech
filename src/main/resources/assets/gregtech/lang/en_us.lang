@@ -4439,6 +4439,13 @@ gregtech.machine.fluid_drilling_rig.energy=Requires %s§7 power. Overclocks up t
 gregtech.machine.fluid_drilling_rig.overclock=Overclocking increases production by §d50%%§7.
 
 gregtech.machine.cleanroom.name=Cleanroom
+gregtech.multiblock.cleanroom.size=Size: %sx%sx%s (WxHxD)
+gregtech.multiblock.cleanroom.size_modify_width=Structure Width:
+gregtech.multiblock.cleanroom.size_modify_height=Structure Height:
+gregtech.multiblock.cleanroom.size_modify_depth=Structure Depth:
+gregtech.multiblock.cleanroom.size_explanation=Changes the amount of blocks between the center and walls.
+gregtech.multiblock.cleanroom.clean_state=Status: §aCLEAN
+gregtech.multiblock.cleanroom.dirty_state=Status: §4CONTAMINATED
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power

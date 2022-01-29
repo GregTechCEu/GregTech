@@ -1,6 +1,6 @@
 package gregtech.api.metatileentity.multiblock;
 
-public interface ICleanroom {
+public interface ICleanroomProvider {
 
     CleanroomType getType();
 }
