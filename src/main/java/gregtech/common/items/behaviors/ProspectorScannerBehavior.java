@@ -57,11 +57,12 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
             } else if (getNextMode() == WidgetProspectingMap.FLUID_PROSPECTING_MODE && this.tier >= FLUID_PROSPECTION_THRESHOLD) {
                 incrementMode();
                 if (!world.isRemote) player.sendMessage(new TextComponentTranslation("metaitem.prospector.mode.fluid"));
-            } else if (!world.isRemote && checkCanUseScanner(heldItem, player, true)) {
-                PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
-                holder.openUI();
-            } else if (!world.isRemote) player.sendMessage(new TextComponentTranslation("behavior.prospector.not_enough_energy"));
-        }
+            }
+        } else if (!world.isRemote && checkCanUseScanner(heldItem, player, true)) {
+            PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
+            holder.openUI();
+        } else if (!world.isRemote) player.sendMessage(new TextComponentTranslation("behavior.prospector.not_enough_energy"));
+
         return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
     }
 
