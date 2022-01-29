@@ -7,10 +7,14 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.multiblock.CleanroomType;
+import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
+import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
+import gregtech.api.recipes.recipeproperties.CleanroomProperty;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -244,7 +248,18 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return {@code true} if the recipe can progress, else false
      */
     protected boolean canProgressRecipe() {
-        return true;
+        if (previousRecipe == null)
+            return true;
+
+        CleanroomType requiredType = previousRecipe.getProperty(CleanroomProperty.getInstance(), null);
+        if (requiredType == null)
+            return true;
+
+        ICleanroomProvider cleanroomProvider = ((ICleanroomReceiver) getMetaTileEntity()).getCleanroom();
+        if (cleanroomProvider == null)
+            return false;
+
+        return cleanroomProvider.isClean() && requiredType == cleanroomProvider.getType();
     }
 
     /**
@@ -294,8 +309,16 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe the recipe to check
      * @return true if the recipe is allowed to be used, else false
      */
-    protected boolean checkRecipe(Recipe recipe) {
-        return true;
+    protected boolean checkRecipe(@Nonnull Recipe recipe) {
+        CleanroomType requiredType = recipe.getProperty(CleanroomProperty.getInstance(), null);
+        if (requiredType == null)
+            return true;
+
+        ICleanroomProvider cleanroomProvider = ((ICleanroomReceiver) getMetaTileEntity()).getCleanroom();
+        if (cleanroomProvider == null)
+            return false;
+
+        return cleanroomProvider.isClean() && requiredType == cleanroomProvider.getType();
     }
 
     /**

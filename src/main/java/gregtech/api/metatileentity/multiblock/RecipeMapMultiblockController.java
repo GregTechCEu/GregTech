@@ -18,7 +18,6 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.recipeproperties.CleanroomProperty;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFireboxCasing;
@@ -94,15 +93,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
      * will start it's processing.
      */
     public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
-        CleanroomType requiredType = recipe.getProperty(CleanroomProperty.getInstance(), null);
-        if (requiredType == null)
-            return true;
-
-        ICleanroomProvider cleanroomProvider = getCleanroom();
-        if (cleanroomProvider == null)
-            return false;
-
-        return cleanroomProvider.isClean() && requiredType == cleanroomProvider.getType();
+        return true;
     }
 
     @Override
