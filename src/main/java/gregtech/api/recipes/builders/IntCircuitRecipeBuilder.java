@@ -11,6 +11,8 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.ValidationResult;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import javax.annotation.Nonnull;
+
 public class IntCircuitRecipeBuilder extends RecipeBuilder<IntCircuitRecipeBuilder> {
 
     protected int circuitMeta = -1;
@@ -27,7 +29,7 @@ public class IntCircuitRecipeBuilder extends RecipeBuilder<IntCircuitRecipeBuild
     }
 
     @Override
-    public boolean applyProperty(String key, Object value) {
+    public boolean applyProperty(@Nonnull String key, Object value) {
         super.applyProperty(key, value);
         if (key.equals("circuit") && value instanceof Number) {
             this.circuitMeta = ((Number) value).intValue();

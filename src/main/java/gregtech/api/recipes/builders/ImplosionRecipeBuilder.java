@@ -14,6 +14,8 @@ import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import stanhebben.zenscript.annotations.ZenMethod;
 
+import javax.annotation.Nonnull;
+
 public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder> {
 
     protected int explosivesAmount;
@@ -37,7 +39,7 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
     }
 
     @Override
-    public boolean applyProperty(String key, Object value) {
+    public boolean applyProperty(@Nonnull String key, Object value) {
         super.applyProperty(key, value);
         if (key.equals(ImplosionExplosiveProperty.KEY)) {
             explosivesAmount((int) value);

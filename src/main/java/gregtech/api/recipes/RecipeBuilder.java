@@ -15,6 +15,7 @@ import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ValidationResult;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -25,6 +26,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -103,6 +105,9 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R cleanroom(CleanroomType cleanroom) {
+        if (!ConfigHolder.machines.enableCleanroom)
+            return (R) this;
+
         if (cleanroom == null) {
             GTLog.logger.error("Cleanroom cannot be null", new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;
@@ -111,7 +116,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    public boolean applyProperty(String key, Object value) {
+    public boolean applyProperty(@Nonnull String key, Object value) {
         if (key.equals(CleanroomProperty.KEY)) {
             this.cleanroom((CleanroomType) value);
             return true;
@@ -594,7 +599,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             onBuildAction.accept(this);
 
         ValidationResult<Recipe> validationResult = build();
-        if (cleanroom != null) {
+        if (ConfigHolder.machines.enableCleanroom && cleanroom != null) {
             Recipe recipe = validationResult.getResult();
             if (!recipe.setProperty(CleanroomProperty.getInstance(), cleanroom)) {
                 validationResult = ValidationResult.newResult(EnumValidationResult.INVALID, validationResult.getResult());
