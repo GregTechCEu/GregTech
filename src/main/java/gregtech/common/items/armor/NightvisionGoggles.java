@@ -29,7 +29,7 @@ public class NightvisionGoggles extends ArmorLogicSuite {
     @Override
     public void onArmorTick(World world, @Nonnull EntityPlayer player, @Nonnull ItemStack itemStack) {
         IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if(item == null) {
+        if (item == null) {
             return;
         }
         NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);

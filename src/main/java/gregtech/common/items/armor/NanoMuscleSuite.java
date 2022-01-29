@@ -36,7 +36,7 @@ public class NanoMuscleSuite extends ArmorLogicSuite implements IStepAssist {
     @Override
     public void onArmorTick(World world, EntityPlayer player, @Nonnull ItemStack itemStack) {
         IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if(item == null) {
+        if (item == null) {
             return;
         }
         NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);

@@ -77,7 +77,7 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
 
     @Override
     public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
-        if(enchantment.type == null) {
+        if (enchantment.type == null) {
             return false;
         }
         return enchantment.type.canEnchantItem(Items.IRON_PICKAXE);

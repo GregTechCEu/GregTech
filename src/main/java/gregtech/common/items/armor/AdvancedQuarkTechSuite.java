@@ -194,7 +194,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
         int damageLimit = Integer.MAX_VALUE;
         IElectricItem item = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if(item == null) {
+        if (item == null) {
             return new ArmorProperties(0, 0, damageLimit);
         }
         if (energyPerUse > 0) {

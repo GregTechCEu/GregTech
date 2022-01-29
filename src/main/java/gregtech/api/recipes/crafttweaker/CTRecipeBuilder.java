@@ -194,7 +194,7 @@ public class CTRecipeBuilder {
 
         @Override
         public boolean apply(@Nullable ItemStack itemStack) {
-            if(itemStack == null) {
+            if (itemStack == null) {
                 return false;
             }
             itemStack = itemStack.copy();
