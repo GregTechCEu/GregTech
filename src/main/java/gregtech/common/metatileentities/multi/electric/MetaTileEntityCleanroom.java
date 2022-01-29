@@ -4,10 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.IMufflerHatch;
-import gregtech.api.capability.IWorkable;
+import gregtech.api.capability.*;
 import gregtech.api.capability.impl.CleanroomLogic;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.gui.Widget;
@@ -332,7 +329,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
         reinitializeStructurePattern();
         checkStructurePattern();
-        writeCustomData(557, buf -> {
+        writeCustomData(GregtechDataCodes.UPDATE_STRUCTURE_SIZE, buf -> {
             buf.writeInt(width);
             buf.writeInt(depth);
             buf.writeInt(height);
@@ -437,7 +434,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 557) {
+        if (dataId == GregtechDataCodes.UPDATE_STRUCTURE_SIZE) {
             this.width = buf.readInt();
             this.depth = buf.readInt();
             this.height = buf.readInt();
