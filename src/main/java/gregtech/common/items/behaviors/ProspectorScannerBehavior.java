@@ -16,11 +16,13 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import org.jline.reader.Widget;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -42,21 +44,27 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
     public ProspectorScannerBehavior(int radius, int tier) {
         this.radius = radius + 1;
         this.tier = tier;
-        this.mode = 0;
     }
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player, EnumHand hand) {
         ItemStack heldItem = player.getHeldItem(hand);
+
         if (!world.isRemote) {
+            // add Mode NBT if missing;  do this at item construction?
+            if (!heldItem.getTagCompound().hasKey("Mode")) {
+                setMode(heldItem, 0);
+            }
             if (player.isSneaking()) {
-                if (getNextMode() == WidgetProspectingMap.ORE_PROSPECTING_MODE) {
-                    if (this.tier >= FLUID_PROSPECTION_THRESHOLD)
-                        incrementMode();
-                    player.sendMessage(new TextComponentTranslation("metaitem.prospector.mode.ores"));
-                } else if (getNextMode() == WidgetProspectingMap.FLUID_PROSPECTING_MODE && this.tier >= FLUID_PROSPECTION_THRESHOLD) {
-                    incrementMode();
-                    player.sendMessage(new TextComponentTranslation("metaitem.prospector.mode.fluid"));
+                int mode = getMode(heldItem);
+                int nextMode = getNextMode(mode);
+                if (nextMode != mode) {
+                    setMode(heldItem, nextMode);
+                    if (nextMode == WidgetProspectingMap.ORE_PROSPECTING_MODE) {
+                        player.sendMessage(new TextComponentTranslation("metaitem.prospector.mode.ores"));
+                    } else if (nextMode == WidgetProspectingMap.FLUID_PROSPECTING_MODE) {
+                        player.sendMessage(new TextComponentTranslation("metaitem.prospector.mode.fluid"));
+                    }
                 }
             } else if (checkCanUseScanner(heldItem, player, true)) {
                 PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
@@ -68,12 +76,19 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
     }
 
-    private int getNextMode() {
-        return (this.mode + 1) % 2;
+    private int getNextMode(int mode) {
+        if (this.tier >= FLUID_PROSPECTION_THRESHOLD) {
+            return (mode + 1) % 2;
+        }
+        return 0;
     }
 
-    private void incrementMode() {
-        this.mode = getNextMode();
+    private int getMode(ItemStack stack) {
+        return stack.getTagCompound().getInteger("Mode");
+    }
+
+    private void setMode(ItemStack stack, int mode) {
+        stack.setTagInfo("Mode", new NBTTagInt(mode));
     }
 
     private boolean checkCanUseScanner(ItemStack stack, @Nonnull EntityPlayer player, boolean simulate) {
@@ -92,6 +107,10 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
     public ModularUI createUI(PlayerInventoryHolder holder, @Nonnull EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 332, 200);
         this.widgetOreList = new WidgetOreList(32 * radius - 6, 18, 332 - 32 * radius, 176);
+
+        ItemStack item = holder.getCurrentItem();
+        int mode = this.getMode(item);
+
         builder.widget(this.widgetOreList);
         builder.widget(new WidgetProspectingMap(6, 18, radius, this.widgetOreList, mode, 1));
         return builder.label(6, 6, getTranslationKey()).build(holder, entityPlayer);

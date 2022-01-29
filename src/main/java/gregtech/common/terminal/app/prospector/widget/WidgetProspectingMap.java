@@ -53,6 +53,7 @@ public class WidgetProspectingMap extends Widget {
         this.mode = mode;
         this.scanTick = scanTick;
         oreList = widgetOreList;
+
         if (oreList != null) {
             oreList.onSelected = name->{
                 if (texture != null) {
@@ -198,7 +199,8 @@ public class WidgetProspectingMap extends Widget {
                     (cX + 1) * 16 + this.getPosition().x,
                     (cZ + 1) * 16 + this.getPosition().y,
                     new Color(0x4B6C6C6C, true).getRGB());
-            if (this.mode == 0) { // draw ore
+
+            if (this.mode == ORE_PROSPECTING_MODE) { // draw ore
                 tooltips.add(I18n.format("terminal.prospector.ore"));
                 HashMap<String, Integer> oreInfo = new HashMap<>();
                 for (int i = 0; i < 16; i++) {
@@ -214,7 +216,7 @@ public class WidgetProspectingMap extends Widget {
                     }
                 }
                 oreInfo.forEach((name, count)->tooltips.add(name + " --- " + count));
-            } else if(this.mode == 1){
+            } else if(this.mode == FLUID_PROSPECTING_MODE){
                 tooltips.add(I18n.format("terminal.prospector.fluid"));
                 if (texture.map[cX][cZ] != null && !texture.map[cX][cZ].isEmpty()) {
                     if (texture.getSelected().equals("[all]") || texture.getSelected().equals(texture.map[cX][cZ].get((byte) 1))) {
