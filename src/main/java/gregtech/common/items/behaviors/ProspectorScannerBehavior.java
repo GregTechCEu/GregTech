@@ -22,7 +22,6 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import org.jline.reader.Widget;
 
 import javax.annotation.Nonnull;
 import java.util.List;
