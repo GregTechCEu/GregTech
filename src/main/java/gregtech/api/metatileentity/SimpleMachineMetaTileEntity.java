@@ -487,6 +487,9 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         String key = this.metaTileEntityId.getPath().split("\\.")[0];
-        tooltip.add(1, I18n.format(String.format("gregtech.machine.%s.tooltip", key)));
+        String mainKey = String.format("gregtech.machine.%s.tooltip", key);
+        if (I18n.hasKey(mainKey)) {
+            tooltip.add(1, mainKey);
+        }
     }
 }
