@@ -26,6 +26,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockCleanroomCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -167,7 +168,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 .aisle(frontBack)
                 .where('S', selfPredicate())
                 .where('B', casing)
-                .where('X', casing.or(doorPredicate().setMaxGlobalLimited(8).setPreviewCount(0)))
+                .where('X', casing.or(doorPredicate().setMaxGlobalLimited(8).setPreviewCount(0))
+                        .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_ITEM).setPreviewCount(1))
+                        .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_FLUID).setPreviewCount(1))
+                        .or(metaTileEntities(MetaTileEntities.HULL).setMaxGlobalLimited(5).setPreviewCount(1))
+                        .or(metaTileEntities(MetaTileEntities.DIODES).setMaxGlobalLimited(5).setPreviewCount(1)))
                 .where('F', states(getFilterState()))
                 .where(' ', innerPredicate())
                 .build();
@@ -378,6 +383,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     @Override
     public void setWorkingEnabled(boolean isActivationAllowed) {
+        if (!isActivationAllowed) // pausing sets not clean
+            setClean(false);
         this.minerLogic.setWorkingEnabled(isActivationAllowed);
     }
 
