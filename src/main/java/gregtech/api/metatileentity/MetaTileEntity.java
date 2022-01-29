@@ -348,10 +348,7 @@ public abstract class MetaTileEntity implements ICoverable {
         EnumActionResult coverResult = coverBehavior == null ? EnumActionResult.PASS :
                 coverBehavior.onRightClick(playerIn, hand, result);
         if (coverResult != EnumActionResult.PASS) {
-            if (coverResult == EnumActionResult.SUCCESS) {
-                return true;
-            }
-            return false;
+            return coverResult == EnumActionResult.SUCCESS;
         }
         return onRightClick(playerIn, hand, result.sideHit, result);
     }

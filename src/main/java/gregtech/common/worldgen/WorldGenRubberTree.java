@@ -26,7 +26,7 @@ public class WorldGenRubberTree extends WorldGenerator {
     }
 
     @Override
-    public boolean generate(@Nonnull World world, @Nonnull Random random, BlockPos pos) {
+    public boolean generate(@Nonnull World world, @Nonnull Random random, @Nonnull BlockPos pos) {
         return generateImpl(world, random, new BlockPos.MutableBlockPos(pos));
     }
 

@@ -169,7 +169,7 @@ public class MiscRecipeLoader {
                 .buildAndRegister();
 
         // QuarkTech Suite
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt((int) GTValues.VA[GTValues.IV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
                 .input(circuit, Master, 2)
                 .input(wireGtQuadruple, Tungsten, 5)
                 .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
@@ -183,7 +183,7 @@ public class MiscRecipeLoader {
                 .outputs(QUANTUM_HELMET.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt((int) GTValues.VA[GTValues.IV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
                 .input(circuit, Master, 2)
                 .input(wireGtQuadruple, Tungsten, 8)
                 .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
@@ -197,7 +197,7 @@ public class MiscRecipeLoader {
                 .outputs(QUANTUM_CHESTPLATE.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt((int) GTValues.VA[GTValues.IV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
                 .input(circuit, Master, 2)
                 .input(wireGtQuadruple, Tungsten, 7)
                 .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
@@ -211,7 +211,7 @@ public class MiscRecipeLoader {
                 .outputs(QUANTUM_LEGGINGS.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt((int) GTValues.VA[GTValues.IV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
                 .input(circuit, Master, 2)
                 .input(wireGtQuadruple, Tungsten, 4)
                 .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
@@ -225,7 +225,7 @@ public class MiscRecipeLoader {
                 .outputs(QUANTUM_BOOTS.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(1000).EUt((int) GTValues.VA[GTValues.LuV])
+        ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(1000).EUt(GTValues.VA[GTValues.LuV])
                 .inputs(QUANTUM_CHESTPLATE.getStackForm())
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
                 .input(wireFine, NiobiumTitanium, 64)
