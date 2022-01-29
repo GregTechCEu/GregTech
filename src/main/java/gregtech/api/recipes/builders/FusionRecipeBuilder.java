@@ -9,6 +9,8 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.ValidationResult;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import javax.annotation.Nonnull;
+
 public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
 
     private long EUToStart;
@@ -31,7 +33,7 @@ public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
     }
 
     @Override
-    public boolean applyProperty(String key, Object value) {
+    public boolean applyProperty(@Nonnull String key, Object value) {
         super.applyProperty(key, value);
         if (key.equals(FusionEUToStartProperty.KEY)) {
             this.EUToStart(((Number) value).longValue());

@@ -9,6 +9,8 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.ValidationResult;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import javax.annotation.Nonnull;
+
 public class BlastRecipeBuilder extends RecipeBuilder<BlastRecipeBuilder> {
 
     private int blastFurnaceTemp;
@@ -32,7 +34,7 @@ public class BlastRecipeBuilder extends RecipeBuilder<BlastRecipeBuilder> {
     }
 
     @Override
-    public boolean applyProperty(String key, Object value) {
+    public boolean applyProperty(@Nonnull String key, Object value) {
         super.applyProperty(key, value);
         if (key.equals(TemperatureProperty.KEY)) {
             this.blastFurnaceTemp(((Number) value).intValue());

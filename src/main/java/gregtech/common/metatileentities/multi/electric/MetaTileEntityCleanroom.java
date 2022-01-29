@@ -21,15 +21,19 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockCleanroomCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.HoverEvent;
@@ -481,5 +485,12 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         this.height = buf.readInt();
         this.isClean = buf.readBoolean();
         this.minerLogic.receiveInitialSyncData(buf);
+    }
+
+    @Override
+    public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
+        if (ConfigHolder.machines.enableCleanroom) {
+            super.getSubItems(creativeTab, subItems);
+        }
     }
 }
