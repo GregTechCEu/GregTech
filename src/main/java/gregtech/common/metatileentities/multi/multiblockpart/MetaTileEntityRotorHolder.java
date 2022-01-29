@@ -282,6 +282,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         super.writeToNBT(data);
         data.setTag("inventory", inventory.serializeNBT());
         data.setInteger("currentSpeed", currentSpeed);
+        data.setBoolean("Spinning", isRotorSpinning);
+        data.setBoolean("FrontFree", frontFaceFree);
         return data;
     }
 
@@ -290,6 +292,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         super.readFromNBT(data);
         this.inventory.deserializeNBT(data.getCompoundTag("inventory"));
         this.currentSpeed = data.getInteger("currentSpeed");
+        this.isRotorSpinning = data.getBoolean("Spinning");
+        this.frontFaceFree = data.getBoolean("FrontFree");
     }
 
     @Override
