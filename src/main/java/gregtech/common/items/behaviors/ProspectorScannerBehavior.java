@@ -48,22 +48,19 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
     @Override
     public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player, EnumHand hand) {
         ItemStack heldItem = player.getHeldItem(hand);
-        if (!world.isRemote) {
-            if (player.isSneaking()) {
-                if (getNextMode() == WidgetProspectingMap.ORE_PROSPECTING_MODE) {
-                    if (this.tier >= FLUID_PROSPECTION_THRESHOLD)
-                        incrementMode();
-                    player.sendMessage(new TextComponentTranslation("metaitem.prospector.mode.ores"));
-                } else if (getNextMode() == WidgetProspectingMap.FLUID_PROSPECTING_MODE && this.tier >= FLUID_PROSPECTION_THRESHOLD) {
+        if (player.isSneaking()) {
+            if (getNextMode() == WidgetProspectingMap.ORE_PROSPECTING_MODE) {
+                if (this.tier >= FLUID_PROSPECTION_THRESHOLD) {
                     incrementMode();
-                    player.sendMessage(new TextComponentTranslation("metaitem.prospector.mode.fluid"));
                 }
-            } else if (checkCanUseScanner(heldItem, player, true)) {
+                if (!world.isRemote) player.sendMessage(new TextComponentTranslation("metaitem.prospector.mode.ores"));
+            } else if (getNextMode() == WidgetProspectingMap.FLUID_PROSPECTING_MODE && this.tier >= FLUID_PROSPECTION_THRESHOLD) {
+                incrementMode();
+                if (!world.isRemote) player.sendMessage(new TextComponentTranslation("metaitem.prospector.mode.fluid"));
+            } else if (!world.isRemote && checkCanUseScanner(heldItem, player, true)) {
                 PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
                 holder.openUI();
-            } else {
-                player.sendMessage(new TextComponentTranslation("behavior.prospector.not_enough_energy"));
-            }
+            } else if (!world.isRemote) player.sendMessage(new TextComponentTranslation("behavior.prospector.not_enough_energy"));
         }
         return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
     }
