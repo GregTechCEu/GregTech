@@ -126,6 +126,8 @@ public class MetaTileEntities {
     public static final MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[4];
     public static final MetaTileEntityWorldAccelerator[] WORLD_ACCELERATOR = new MetaTileEntityWorldAccelerator[8]; // no ULV, no MAX
     public static MetaTileEntityMachineHatch MACHINE_HATCH;
+    public static MetaTileEntityPassthroughHatchItem PASSTHROUGH_HATCH_ITEM;
+    public static MetaTileEntityPassthroughHatchFluid PASSTHROUGH_HATCH_FLUID;
     // Used for addons if they wish to disable certain tiers of machines
     private static final Map<String, Boolean> MID_TIER = new HashMap<>();
     private static final Map<String, Boolean> HIGH_TIER = new HashMap<>();
@@ -602,7 +604,9 @@ public class MetaTileEntities {
 
         // 1399 and 1400 are taken by the EV 4A hatches, and are grouped near the other registration rather than here
 
-        // Free Range: 1405-1509
+        PASSTHROUGH_HATCH_ITEM = registerMetaTileEntity(1401, new MetaTileEntityPassthroughHatchItem(gregtechId("passthrough_hatch_item"), 3));
+        PASSTHROUGH_HATCH_FLUID = registerMetaTileEntity(1402, new MetaTileEntityPassthroughHatchFluid(gregtechId("passthrough_hatch_fluid"), 3));
+        // Free Range: 1403-1509
 
         // Buffers, IDs 1510-1512
         BUFFER[0] = registerMetaTileEntity(1510, new MetaTileEntityBuffer(gregtechId("buffer.lv"), 1));
