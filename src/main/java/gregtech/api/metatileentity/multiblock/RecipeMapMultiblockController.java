@@ -18,6 +18,7 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.recipeproperties.CleanroomProperty;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFireboxCasing;
@@ -36,9 +37,11 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
-public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider {
+public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider, ICleanroomReceiver {
 
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
@@ -52,6 +55,8 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected IEnergyContainer energyContainer;
 
     private boolean isDistinct = false;
+
+    private ICleanroomProvider cleanroom;
 
     public RecipeMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap) {
         super(metaTileEntityId);
@@ -88,8 +93,16 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
      * Performs extra checks for validity of given recipe before multiblock
      * will start it's processing.
      */
-    public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
-        return true;
+    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
+        CleanroomType requiredType = recipe.getProperty(CleanroomProperty.getInstance(), null);
+        if (requiredType == null)
+            return true;
+
+        ICleanroomProvider cleanroomProvider = getCleanroom();
+        if (cleanroomProvider == null)
+            return false;
+
+        return cleanroomProvider.isClean() && requiredType == cleanroomProvider.getType();
     }
 
     @Override
@@ -365,5 +378,15 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         }
 
         return list;
+    }
+
+    @Override
+    public ICleanroomProvider getCleanroom() {
+        return this.cleanroom;
+    }
+
+    @Override
+    public void setCleanroom(ICleanroomProvider provider) {
+        this.cleanroom = provider;
     }
 }
