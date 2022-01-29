@@ -5,7 +5,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.*;
-import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
@@ -13,6 +12,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity implements ISoundCreator, IDataInfoProvider {
+public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity implements IDataInfoProvider {
 
     protected final RecipeLogicEnergy workable;
     protected final RecipeMap<?> recipeMap;
@@ -57,10 +57,6 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         this.tankScalingFunction = tankScalingFunction;
         initializeInventory();
         reinitializeEnergyContainer();
-    }
-
-    public boolean canCreateSound() {
-        return workable.isActive();
     }
 
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
@@ -173,11 +169,8 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     }
 
     @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
-        if (getWorld() != null && getWorld().isRemote) {
-            this.setupSound(this.workable.getRecipeMap().getSound(), this.getPos());
-        }
+    public SoundEvent getSound() {
+        return workable.getRecipeMap().getSound();
     }
 
     @Nonnull

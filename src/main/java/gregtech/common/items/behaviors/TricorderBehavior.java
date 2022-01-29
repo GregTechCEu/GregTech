@@ -8,7 +8,6 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTUtility;
@@ -145,11 +144,9 @@ public class TricorderBehavior implements IItemBehaviour {
                 list.add(new TextComponentTranslation("behavior.tricorder.tanks_empty"));
 
             // sound muffling
-            if (metaTileEntity instanceof ISoundCreator) {
-                energyCost += 500;
-                if (metaTileEntity.isMuffled())
-                    list.add(new TextComponentTranslation("behavior.tricorder.muffled").setStyle(new Style().setColor(TextFormatting.GREEN)));
-            }
+            energyCost += 500;
+            if (metaTileEntity.isMuffled())
+                list.add(new TextComponentTranslation("behavior.tricorder.muffled").setStyle(new Style().setColor(TextFormatting.GREEN)));
 
             // workable progress info
             IWorkable workable = metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, null);
