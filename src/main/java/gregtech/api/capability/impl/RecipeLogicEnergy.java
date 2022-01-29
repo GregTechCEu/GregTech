@@ -2,7 +2,12 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
+import gregtech.api.metatileentity.multiblock.CleanroomType;
+import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.recipeproperties.CleanroomProperty;
 
 import java.util.function.Supplier;
 
@@ -46,4 +51,19 @@ public class RecipeLogicEnergy extends AbstractRecipeLogic {
                 energyContainer.get().getOutputVoltage());
     }
 
+    @Override
+    protected boolean checkRecipe(Recipe recipe) {
+        if (!super.checkRecipe(recipe))
+            return false;
+
+        CleanroomType requiredType = recipe.getProperty(CleanroomProperty.getInstance(), null);
+        if (requiredType == null)
+            return true;
+
+        ICleanroomProvider cleanroomProvider = ((WorkableTieredMetaTileEntity) getMetaTileEntity()).getCleanroom();
+        if (cleanroomProvider == null)
+            return false;
+
+        return cleanroomProvider.isClean() && requiredType == cleanroomProvider.getType();
+    }
 }

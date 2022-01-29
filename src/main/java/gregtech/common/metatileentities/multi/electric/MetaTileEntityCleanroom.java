@@ -3,15 +3,25 @@ package gregtech.common.metatileentities.multi.electric;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IMufflerHatch;
+import gregtech.api.capability.IWorkable;
+import gregtech.api.capability.impl.CleanroomLogic;
+import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockCleanroomCasing;
@@ -21,15 +31,17 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.HoverEvent;
+import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implements ICleanroomProvider, IDataInfoProvider {
+public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implements ICleanroomProvider, IWorkable, IDataInfoProvider {
 
     public static final int MIN_DIAMETER = 5;
     public static final int MAX_DIAMETER = 15;
@@ -39,18 +51,48 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     private boolean isClean;
 
+    private IEnergyContainer energyContainer;
+
+    private final CleanroomLogic minerLogic;
+
     public MetaTileEntityCleanroom(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
-    }
-
-    @Override
-    protected void updateFormedValid() {
-
+        this.minerLogic = new CleanroomLogic(this, GTValues.LV);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
         return new MetaTileEntityCleanroom(metaTileEntityId);
+    }
+
+    protected void initializeAbilities() {
+        this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
+    }
+
+    private void resetTileAbilities() {
+        this.energyContainer = new EnergyContainerList(new ArrayList<>());
+    }
+
+    @Override
+    protected void formStructure(PatternMatchContext context) {
+        super.formStructure(context);
+        initializeAbilities();
+    }
+
+    @Override
+    public void invalidateStructure() {
+        super.invalidateStructure();
+        resetTileAbilities();
+        this.isClean = false;
+    }
+
+    @Override
+    protected void updateFormedValid() {
+        this.minerLogic.performDrilling();
+        if (!getWorld().isRemote && this.minerLogic.wasActiveAndNeedsUpdate()) {
+            this.minerLogic.setWasActiveAndNeedsUpdate(false);
+            this.minerLogic.setActive(false);
+        }
     }
 
     @Override
@@ -142,7 +184,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     }
 
     // protected to allow easy addition of addon "cleanrooms"
-    protected static IBlockState getFilterState() {
+    protected IBlockState getFilterState() {
         return MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.FILTER_CASING);
     }
 
@@ -155,17 +197,31 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Nonnull
     protected TraceabilityPredicate innerPredicate() {
         return new TraceabilityPredicate(blockWorldState -> {
+            // all non-MetaTileEntities are allowed inside by default
             TileEntity tileEntity = blockWorldState.getTileEntity();
             if (!(tileEntity instanceof MetaTileEntityHolder))
                 return true;
 
             MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
-//            if (!(metaTileEntity instanceof ICleanroomReceiver))
-//                return true;
-//
-//            ICleanroomReceiver cleanroomReceiver = (ICleanroomReceiver) metaTileEntity;
-//            if (!cleanroomReceiver.hasCleanroom())
-//                cleanroomReceiver.setCleanroom(this); TODO
+
+            // blacklisted machines: mufflers, all generators, other cleanrooms
+            if (metaTileEntity instanceof IMufflerHatch)
+                return false;
+            if (metaTileEntity instanceof SimpleGeneratorMetaTileEntity)
+                return false;
+            if (metaTileEntity instanceof FuelMultiblockController)
+                return false;
+            if (metaTileEntity instanceof ICleanroomProvider)
+                return false;
+
+            // the machine does not need a cleanroom, so do nothing more
+            if (!(metaTileEntity instanceof ICleanroomReceiver))
+                return true;
+
+            // give the machine this cleanroom
+            ICleanroomReceiver cleanroomReceiver = (ICleanroomReceiver) metaTileEntity;
+            if (cleanroomReceiver.getCleanroom() == null)
+                cleanroomReceiver.setCleanroom(this);
             return true;
         });
     }
@@ -207,7 +263,31 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                     new TextComponentTranslation("gregtech.multiblock.cleanroom.size_explanation")
                             .setStyle(new Style().setColor(TextFormatting.GRAY)))));
             textList.add(buttonText);
+            return;
+        }
+
+        if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
+            long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
+            String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(maxVoltage)];
+            textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
+        }
+
+        if (!minerLogic.isWorkingEnabled()) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
+
+        } else if (minerLogic.isActive()) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
+            int currentProgress = getProgressPercent();
+            textList.add(new TextComponentTranslation("gregtech.multiblock.progress", currentProgress));
         } else {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
+        }
+
+        if (!drainEnergy(true)) {
+            textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
+        }
+
+        if (isStructureFormed()) {
             if (isClean)
                 textList.add(new TextComponentTranslation("gregtech.multiblock.cleanroom.clean_state"));
             else
@@ -247,7 +327,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
         reinitializeStructurePattern();
         checkStructurePattern();
-        writeCustomData(557, buf->{
+        writeCustomData(557, buf -> {
             buf.writeInt(width);
             buf.writeInt(depth);
             buf.writeInt(height);
@@ -257,60 +337,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     protected boolean withinBounds(int size) {
         return size >= MIN_DIAMETER && size <= MAX_DIAMETER;
     }
-    @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
-        super.receiveCustomData(dataId, buf);
-        if (dataId == 557) {
-            this.width = buf.readInt();
-            this.depth = buf.readInt();
-            this.height = buf.readInt();
-            this.reinitializeStructurePattern();
-        }
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound data) {
-        data.setInteger("width", this.width);
-        data.setInteger("depth", this.depth);
-        data.setInteger("height", this.height);
-        return super.writeToNBT(data);
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
-        this.width = data.hasKey("width") ? data.getInteger("width") : this.width;
-        this.depth = data.hasKey("depth") ? data.getInteger("depth") : this.depth;
-        this.height = data.hasKey("height") ? data.getInteger("height") : this.height;
-        reinitializeStructurePattern();
-    }
-
-    @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
-        buf.writeInt(this.width);
-        buf.writeInt(this.depth);
-        buf.writeInt(this.height);
-    }
-
-    @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
-        this.width = buf.readInt();
-        this.depth = buf.readInt();
-        this.height = buf.readInt();
-    }
-
-    @Nonnull
-    @Override
-    public List<ITextComponent> getDataInfo() {
-        return new ArrayList<>(); //TODO
-    }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), /*recipeMapWorkable.isActive()*/ false, /*recipeMapWorkable.isWorkingEnabled()*/ true); //TODO
+        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.minerLogic.isActive(), this.minerLogic.isWorkingEnabled());
     }
 
     @Nonnull
@@ -322,5 +353,129 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Override
     public CleanroomType getType() {
         return CleanroomType.CLEANROOM;
+    }
+
+    @Override
+    public void setClean(boolean isClean) {
+        this.isClean = isClean;
+    }
+
+    @Override
+    public boolean isClean() {
+        return this.isClean;
+    }
+
+    @Nonnull
+    @Override
+    public List<ITextComponent> getDataInfo() {
+        return new ArrayList<>(); //TODO
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return this.minerLogic.isWorkingEnabled();
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isActivationAllowed) {
+        this.minerLogic.setWorkingEnabled(isActivationAllowed);
+    }
+
+    @Override
+    public int getProgress() {
+        return minerLogic.getProgressTime();
+    }
+
+    @Override
+    public int getMaxProgress() {
+        if (getWorld().isRemote)
+            return CleanroomLogic.MAX_PROGRESS;
+        return minerLogic.getMaxProgress();
+    }
+
+    public int getProgressPercent() {
+        return (int) (minerLogic.getProgressPercent() * 100);
+    }
+
+    @Override
+    public int getEnergyTier() {
+        return Math.max(GTValues.LV, GTUtility.getTierByVoltage(energyContainer.getInputVoltage()));
+    }
+
+    @Override
+    public long getEnergyInputPerSecond() {
+        return energyContainer.getInputPerSec();
+    }
+
+    public boolean drainEnergy(boolean simulate) {
+        long energyToDrain = GTValues.VA[getEnergyTier()];
+        long resultEnergy = energyContainer.getEnergyStored() - energyToDrain;
+        if (resultEnergy >= 0L && resultEnergy <= energyContainer.getEnergyCapacity()) {
+            if (!simulate)
+                energyContainer.changeEnergy(-energyToDrain);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_WORKABLE)
+            return GregtechTileCapabilities.CAPABILITY_WORKABLE.cast(this);
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE)
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        return super.getCapability(capability, side);
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == 557) {
+            this.width = buf.readInt();
+            this.depth = buf.readInt();
+            this.height = buf.readInt();
+            this.reinitializeStructurePattern();
+        }
+        this.minerLogic.receiveCustomData(dataId, buf);
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setInteger("width", this.width);
+        data.setInteger("depth", this.depth);
+        data.setInteger("height", this.height);
+        data.setBoolean("isClean", this.isClean);
+        return this.minerLogic.writeToNBT(data);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        this.width = data.hasKey("width") ? data.getInteger("width") : this.width;
+        this.depth = data.hasKey("depth") ? data.getInteger("depth") : this.depth;
+        this.height = data.hasKey("height") ? data.getInteger("height") : this.height;
+        this.isClean = data.getBoolean("isClean");
+        this.minerLogic.readFromNBT(data);
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeInt(this.width);
+        buf.writeInt(this.depth);
+        buf.writeInt(this.height);
+        buf.writeBoolean(isClean);
+        this.minerLogic.writeInitialSyncData(buf);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.width = buf.readInt();
+        this.depth = buf.readInt();
+        this.height = buf.readInt();
+        this.isClean = buf.readBoolean();
+        this.minerLogic.receiveInitialSyncData(buf);
     }
 }

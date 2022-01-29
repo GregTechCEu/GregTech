@@ -140,6 +140,7 @@ public class CircuitRecipes {
                 .input(dust, IndiumGalliumPhosphide, 2)
                 .fluidInputs(RedAlloy.getFluid(L * 2))
                 .output(HIGH_POWER_INTEGRATED_CIRCUIT_WAFER)
+                .cleanroom(CleanroomType.CLEANROOM)
                 .duration(1200).EUt(VA[IV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
