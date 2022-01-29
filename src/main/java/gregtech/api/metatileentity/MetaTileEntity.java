@@ -828,6 +828,8 @@ public abstract class MetaTileEntity implements ICoverable {
         } else if (dataId == UPDATE_IS_FRAGILE) {
             this.isFragile = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
+        } else if (dataId == UPDATE_SOUND_MUFFLED) {
+            this.muffled = buf.readBoolean();
         }
     }
 
@@ -1342,6 +1344,9 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public final void toggleMuffled() {
         muffled = !muffled;
+        if (!getWorld().isRemote) {
+            writeCustomData(UPDATE_SOUND_MUFFLED, buf -> buf.writeBoolean(muffled));
+        }
     }
 
     public boolean isMuffled() {
