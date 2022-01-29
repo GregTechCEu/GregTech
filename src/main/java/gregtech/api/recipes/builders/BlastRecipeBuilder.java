@@ -35,12 +35,11 @@ public class BlastRecipeBuilder extends RecipeBuilder<BlastRecipeBuilder> {
 
     @Override
     public boolean applyProperty(@Nonnull String key, Object value) {
-        super.applyProperty(key, value);
         if (key.equals(TemperatureProperty.KEY)) {
             this.blastFurnaceTemp(((Number) value).intValue());
             return true;
         }
-        return true;
+        return super.applyProperty(key, value);
     }
 
     public BlastRecipeBuilder blastFurnaceTemp(int blastFurnaceTemp) {

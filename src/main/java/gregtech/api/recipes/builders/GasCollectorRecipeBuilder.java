@@ -54,7 +54,7 @@ public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeB
             }
             return true;
         }
-        return false;
+        return super.applyProperty(key, value);
     }
 
     public GasCollectorRecipeBuilder dimension(int dimensionID) {
