@@ -11,6 +11,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
@@ -95,7 +96,7 @@ public class TraceabilityPredicate {
      * Add tooltips for candidates. They are shown in JEI Pages.
      */
     public TraceabilityPredicate addTooltips(String... tips) {
-        if (tips.length > 0) {
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT && tips.length > 0) {
             List<String> tooltips = Arrays.stream(tips).collect(Collectors.toList());
             common.forEach(predicate -> {
                 if (predicate.candidates == null) return;
@@ -227,6 +228,7 @@ public class TraceabilityPredicate {
 
         public final Predicate<BlockWorldState> predicate;
 
+        @SideOnly(Side.CLIENT)
         private List<String> toolTips;
 
         public int minGlobalCount = -1;
