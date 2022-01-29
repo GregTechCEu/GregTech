@@ -14,7 +14,7 @@ public class TextureCache {
     private File cacheDirectory = new File(Minecraft.getMinecraft().gameDir, "opframe_cache");
     private File index = new File(cacheDirectory, "index");
 
-    private Map<String, CacheEntry> entries = new HashMap<String, CacheEntry>();
+    private Map<String, CacheEntry> entries = new HashMap<>();
 
     public TextureCache() {
         if (!cacheDirectory.exists()) {
@@ -32,7 +32,7 @@ public class TextureCache {
             out.write(data);
             saved = true;
         } catch (IOException e) {
-            DownloadThread.LOGGER.error("Failed to save cache entry {}", e, url);
+            DownloadThread.LOGGER.error("Failed to save cache entry {}", url, e);
         } finally {
             IOUtils.closeQuietly(out);
         }
@@ -49,7 +49,7 @@ public class TextureCache {
     private void loadIndex() {
         if (index.exists()) {
             Map<String, CacheEntry> previousEntries = entries;
-            entries = new HashMap<String, CacheEntry>();
+            entries = new HashMap<>();
             DataInputStream in = null;
             try {
                 in = new DataInputStream(new GZIPInputStream(new FileInputStream(index)));

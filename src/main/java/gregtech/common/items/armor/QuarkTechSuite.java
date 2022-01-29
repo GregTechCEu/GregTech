@@ -222,6 +222,9 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
     public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
         int damageLimit = Integer.MAX_VALUE;
         IElectricItem item = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if(item == null) {
+            return new ArmorProperties(0, 0, damageLimit);
+        }
         if (energyPerUse > 0) {
             damageLimit = (int) Math.min(damageLimit, 25.0D * item.getCharge() / (energyPerUse * 100.0D));
         }
@@ -246,6 +249,9 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
     @Override
     public void damageArmor(EntityLivingBase entity, @Nonnull ItemStack itemStack, DamageSource source, int damage, EntityEquipmentSlot equipmentSlot) {
         IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if(item == null) {
+            return;
+        }
         item.discharge(energyPerUse / 100L * damage, item.getTier(), true, false, false);
     }
 

@@ -168,7 +168,7 @@ public class CapesRegistry {
         }
     }
 
-    private static List<Tuple<ResourceLocation, ResourceLocation>> ctRegisterCapes = new ArrayList<Tuple<ResourceLocation, ResourceLocation>>();
+    private static List<Tuple<ResourceLocation, ResourceLocation>> ctRegisterCapes = new ArrayList<>();
 
     @Optional.Method(modid = GTValues.MODID_CT)
     @ZenMethod

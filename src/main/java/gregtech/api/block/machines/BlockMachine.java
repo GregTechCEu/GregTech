@@ -488,6 +488,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public boolean canEntityDestroy(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull Entity entity) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
+        if(metaTileEntity == null) {
+            return super.canEntityDestroy(state, world, pos, entity);
+        }
         return !((entity instanceof EntityWither || entity instanceof EntityWitherSkull) && metaTileEntity.getWitherProof());
     }
 }
