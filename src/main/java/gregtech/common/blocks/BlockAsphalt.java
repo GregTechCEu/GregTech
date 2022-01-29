@@ -37,11 +37,6 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
         }
     }
 
-    @Override
-    public boolean hasCustomBreakingProgress(IBlockState state) {
-        return super.hasCustomBreakingProgress(state);
-    }
-
     public enum BlockType implements IStringSerializable, IStateHarvestLevel {
 
         ASPHALT("asphalt", 1);
