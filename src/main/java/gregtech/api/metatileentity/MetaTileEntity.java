@@ -1294,7 +1294,7 @@ public abstract class MetaTileEntity implements ICoverable {
     }
 
     public void invalidate() {
-        if (getWorld().isRemote) {
+        if (getWorld() != null && getWorld().isRemote) {
             GTSoundManager.stopTileSound(getPos());
         }
     }
