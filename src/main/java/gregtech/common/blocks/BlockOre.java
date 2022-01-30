@@ -63,6 +63,7 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
         return net.minecraft.block.material.Material.ROCK;
     }
 
+    @Nonnull
     @Override
     protected final BlockStateContainer createBlockState() {
         return new BlockStateContainer(this);

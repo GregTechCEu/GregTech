@@ -11,6 +11,7 @@ public class GregtechDataCodes {
     public static final int COVER_REMOVED_MTE = -6;
     public static final int UPDATE_COVER_DATA_MTE = -7;
     public static final int UPDATE_IS_FRAGILE = -8;
+    public static final int UPDATE_SOUND_MUFFLED = -9;
 
     public static final int UPDATE_OUTPUT_FACING = 100;
     public static final int UPDATE_AUTO_OUTPUT_ITEMS = 101;

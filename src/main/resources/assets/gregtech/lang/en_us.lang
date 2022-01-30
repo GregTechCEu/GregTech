@@ -716,23 +716,23 @@ metaitem.circuit.mainframe.tooltip=Amazing Computation Speed!/n§eIV-tier
 
 # T4: Nano
 metaitem.circuit.nano_processor.name=Nanoprocessor
-metaitem.circuit.nano_processor.tooltip=Smaller than ever/n§aHV-tier
+metaitem.circuit.nano_processor.tooltip=Smaller than ever/n§bHV-tier
 metaitem.circuit.nano_assembly.name=Nanoprocessor Assembly
-metaitem.circuit.nano_assembly.tooltip=Smaller than ever/n§aEV-tier
+metaitem.circuit.nano_assembly.tooltip=Smaller than ever/n§bEV-tier
 metaitem.circuit.nano_computer.name=Nano Supercomputer
-metaitem.circuit.nano_computer.tooltip=Smaller than ever/n§aIV-tier
+metaitem.circuit.nano_computer.tooltip=Smaller than ever/n§bIV-tier
 metaitem.circuit.nano_mainframe.name=Nanoprocessor Mainframe
-metaitem.circuit.nano_mainframe.tooltip=Smaller than ever/n§aLuV-tier
+metaitem.circuit.nano_mainframe.tooltip=Smaller than ever/n§bLuV-tier
 
 # T5: Quantum
 metaitem.circuit.quantum_processor.name=Quantumprocessor
-metaitem.circuit.quantum_processor.tooltip=Quantum Computing comes to life!/n§bEV-tier
+metaitem.circuit.quantum_processor.tooltip=Quantum Computing comes to life!/n§aEV-tier
 metaitem.circuit.quantum_assembly.name=Quantumprocessor Assembly
-metaitem.circuit.quantum_assembly.tooltip=Quantum Computing comes to life!/n§bIV-tier
+metaitem.circuit.quantum_assembly.tooltip=Quantum Computing comes to life!/n§aIV-tier
 metaitem.circuit.quantum_computer.name=Quantum Supercomputer
-metaitem.circuit.quantum_computer.tooltip=Quantum Computing comes to life!/n§bLuV-tier
+metaitem.circuit.quantum_computer.tooltip=Quantum Computing comes to life!/n§aLuV-tier
 metaitem.circuit.quantum_mainframe.name=Quantumprocessor Mainframe
-metaitem.circuit.quantum_mainframe.tooltip=Quantum Computing comes to life!/n§bZPM-tier
+metaitem.circuit.quantum_mainframe.tooltip=Quantum Computing comes to life!/n§aZPM-tier
 
 # T6: Crystal
 metaitem.circuit.crystal_processor.name=Crystal Processor
@@ -746,13 +746,13 @@ metaitem.circuit.crystal_mainframe.tooltip=Taking Advantage of Crystal Engraving
 
 # T7: Wetware
 metaitem.circuit.wetware_processor.name=Wetware Processor
-metaitem.circuit.wetware_processor.tooltip=You have a feeling like it's watching you/n§5LuV-tier
+metaitem.circuit.wetware_processor.tooltip=You have a feeling like it's watching you/n§4LuV-tier
 metaitem.circuit.wetware_assembly.name=Wetware Assembly
-metaitem.circuit.wetware_assembly.tooltip=Can run Minecraft/n§5ZPM-tier
+metaitem.circuit.wetware_assembly.tooltip=Can run Minecraft/n§4ZPM-tier
 metaitem.circuit.wetware_computer.name=Wetware Supercomputer
-metaitem.circuit.wetware_computer.tooltip=Ultimate fusion of Flesh and Machine/n§5UV-tier
+metaitem.circuit.wetware_computer.tooltip=Ultimate fusion of Flesh and Machine/n§4UV-tier
 metaitem.circuit.wetware_mainframe.name=Wetware Mainframe
-metaitem.circuit.wetware_mainframe.tooltip=The best Man has ever seen/n§5UHV-tier
+metaitem.circuit.wetware_mainframe.tooltip=The best Man has ever seen/n§4UHV-tier
 
 metaitem.stem_cells.name=Stem Cells
 metaitem.stem_cells.tooltip=Raw Intelligence

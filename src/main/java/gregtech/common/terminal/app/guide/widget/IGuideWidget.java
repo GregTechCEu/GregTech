@@ -13,11 +13,17 @@ import java.util.function.Consumer;
 
 public interface IGuideWidget {
     String getRegistryName();
+
     JsonObject getConfig();
+
     boolean isFixed();
+
     Widget updateOrCreateStreamWidget(int x, int y, int pageWidth, JsonObject config);
+
     Widget updateOrCreateFixedWidget(int x, int y, int width, int height, JsonObject config);
+
     void setPage(GuidePageWidget page);
+
     default void updateValue(String field){
         JsonObject config = getConfig();
         if (config != null && config.has(field)) {
@@ -38,10 +44,15 @@ public interface IGuideWidget {
             }
         }
     }
+
     String getRef();
+
     JsonObject getTemplate(boolean isFixed);
+
     void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate);
+
     void setStroke(int color);
+
     default void onFixedPositionSizeChanged(Position position, Size size) {
         updateOrCreateFixedWidget(0,0,0,0,null);
     }

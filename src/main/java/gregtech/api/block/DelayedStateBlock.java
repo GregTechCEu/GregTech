@@ -5,6 +5,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class allows lazy initialization of block state of block
  * Useful when you need some parameters from constructor to construct a BlockStateContainer
@@ -16,6 +18,7 @@ public abstract class DelayedStateBlock extends Block {
         super(materialIn);
     }
 
+    @Nonnull
     @Override
     protected final BlockStateContainer createBlockState() {
         return new BlockStateContainer(this);

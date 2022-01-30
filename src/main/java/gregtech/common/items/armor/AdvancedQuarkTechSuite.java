@@ -132,7 +132,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     @Override
     public void addInfo(ItemStack itemStack, List<String> lines) {
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(itemStack);
-        String state = "";
+        String state;
         if (data.hasKey("canShare")) {
             state = data.getBoolean("canShare") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled");
         } else {
@@ -194,6 +194,9 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
         int damageLimit = Integer.MAX_VALUE;
         IElectricItem item = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (item == null) {
+            return new ArmorProperties(0, 0, damageLimit);
+        }
         if (energyPerUse > 0) {
             damageLimit = (int) Math.min(damageLimit, 25.0D * item.getCharge() / (energyPerUse * 250.0D));
         }

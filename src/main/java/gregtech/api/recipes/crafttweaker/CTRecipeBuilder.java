@@ -194,6 +194,9 @@ public class CTRecipeBuilder {
 
         @Override
         public boolean apply(@Nullable ItemStack itemStack) {
+            if (itemStack == null) {
+                return false;
+            }
             itemStack = itemStack.copy();
             //because CT is dump enough to compare stack sizes by default...
             itemStack.setCount(ingredient.getAmount());

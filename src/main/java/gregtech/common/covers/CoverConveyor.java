@@ -18,7 +18,6 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.pipenet.tile.PipeCoverableImplementation;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.ItemStackKey;

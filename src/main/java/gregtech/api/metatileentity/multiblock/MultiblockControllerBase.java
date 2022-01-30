@@ -10,6 +10,7 @@ import gregtech.api.capability.IMultiblockController;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pattern.*;
+import gregtech.api.sound.GTSoundManager;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -303,6 +304,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         super.receiveCustomData(dataId, buf);
         if (dataId == STRUCTURE_FORMED) {
             this.structureFormed = buf.readBoolean();
+            if (!structureFormed) {
+                GTSoundManager.stopTileSound(getPos());
+            }
         }
     }
 
