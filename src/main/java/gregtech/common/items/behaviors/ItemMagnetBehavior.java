@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
@@ -29,7 +30,6 @@ public class ItemMagnetBehavior implements IItemBehaviour {
 
     private final int range;
     private final float speed;
-    private boolean isActive;
 
     public ItemMagnetBehavior(int range, float speed) {
         this.range = range;
@@ -40,15 +40,38 @@ public class ItemMagnetBehavior implements IItemBehaviour {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, @Nonnull EntityPlayer player, EnumHand hand) {
         if (!player.world.isRemote && player.isSneaking()) {
-            this.isActive = !this.isActive;
-            player.sendMessage(new TextComponentTranslation(isActive ? "behavior.item_magnet.enabled" : "behavior.item_magnet.disabled"));
+            player.sendMessage(new TextComponentTranslation(toggleActive(player.getHeldItem(hand)) ? "behavior.item_magnet.enabled" : "behavior.item_magnet.disabled"));
         }
         return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
     }
 
+    private boolean isActive(ItemStack stack) {
+        if (stack == ItemStack.EMPTY || stack == null) {
+            return false;
+        }
+        NBTTagCompound tag = stack.getTagCompound();
+        if (tag == null) {
+            return false;
+        }
+        if (tag.hasKey("IsActive")) {
+            return tag.getBoolean("IsActive");
+        }
+        return false;
+    }
+
+    private boolean toggleActive(ItemStack stack) {
+        boolean isActive = isActive(stack);
+        if (!stack.hasTagCompound()) {
+            stack.setTagCompound(new NBTTagCompound());
+        }
+        //noinspection ConstantConditions
+        stack.getTagCompound().setBoolean("IsActive", !isActive);
+        return !isActive;
+    }
+
     @Override
     public void onUpdate(ItemStack itemStack, Entity entity) {
-        if (!isActive || !(entity instanceof EntityPlayer) || entity.getEntityWorld().isRemote)
+        if (!isActive(itemStack) || !(entity instanceof EntityPlayer) || entity.getEntityWorld().isRemote)
             return;
 
         EntityPlayer entityPlayer = (EntityPlayer) entity;
@@ -96,7 +119,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
 
     @SubscribeEvent
     public void onItemToss(@Nonnull ItemTossEvent event) {
-        if (!isActive || event.getPlayer() == null)
+        if (!isActive(event.getEntityItem().getItem()) || event.getPlayer() == null)
             return;
 
         ItemStack stack = event.getEntityItem().getItem();
@@ -135,6 +158,6 @@ public class ItemMagnetBehavior implements IItemBehaviour {
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
         IItemBehaviour.super.addInformation(itemStack, lines);
-        lines.add(I18n.format(isActive ? "behavior.item_magnet.enabled" : "behavior.item_magnet.disabled"));
+        lines.add(I18n.format(isActive(itemStack) ? "behavior.item_magnet.enabled" : "behavior.item_magnet.disabled"));
     }
 }
