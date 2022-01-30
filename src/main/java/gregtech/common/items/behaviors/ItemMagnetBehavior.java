@@ -128,12 +128,12 @@ public class ItemMagnetBehavior implements IItemBehaviour {
         }
 
         for (ItemStack itemStack : event.getPlayer().inventory.mainInventory) {
-            if (isMagnet(itemStack)) {
+            if (isMagnet(itemStack) && isActive(itemStack)) {
                 event.getEntityItem().setPickupDelay(60);
                 return;
             }
         }
-        if (isMagnet(event.getPlayer().inventory.offHandInventory.get(0))) {
+        if (isMagnet(event.getPlayer().inventory.offHandInventory.get(0)) && isActive(event.getPlayer().inventory.offHandInventory.get(0))) {
             event.getEntityItem().setPickupDelay(60);
         }
     }
