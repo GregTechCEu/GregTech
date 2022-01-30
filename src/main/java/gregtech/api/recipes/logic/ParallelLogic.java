@@ -465,6 +465,11 @@ public class ParallelLogic {
                 throw new IllegalStateException(
                         String.format("Got recipe with null ingredient %s", matchingRecipe));
 
+
+            // Trim the recipe outputs here if required
+            matchingRecipe = matchingRecipe.trimRecipeOutputs(matchingRecipe, recipeMap, mte.getItemOutputLimit(), mte.getFluidOutputLimit());
+
+
             //equivalent of getting the max ratio from the inputs from Parallel logic
             int ingredientRatio = Math.min(parallelAmount - engagedItems, currentInputItem.getCount() / Math.max(matchingRecipe.getInputs().get(0).getCount(), 1));
 

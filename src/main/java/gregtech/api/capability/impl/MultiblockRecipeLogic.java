@@ -211,7 +211,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     protected boolean prepareRecipeDistinct(Recipe recipe) {
 
-        recipe = trimRecipeOutputs(recipe);
+        recipe = recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(), metaTileEntity.getFluidOutputLimit());
 
         recipe = findParallelRecipe(
                 this,

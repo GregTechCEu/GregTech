@@ -10,10 +10,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
-import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -28,13 +26,10 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic {
 
@@ -318,7 +313,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     protected boolean prepareRecipe(Recipe recipe) {
 
-        recipe = trimRecipeOutputs(recipe);
+        recipe = recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(), metaTileEntity.getFluidOutputLimit());
 
         // Pass in the trimmed recipe to the parallel logic
         recipe = findParallelRecipe(
@@ -341,48 +336,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
         return false;
     }
-
-    /**
-     * Trims the recipe outputs, chanced outputs, and fluid outputs based on the performing MetaTileEntity's trim limit.
-     *
-     * @param currentRecipe The recipe to perform the output trimming upon
-     *
-     * @return A new Recipe whose outputs have been trimmed.
-     */
-    protected Recipe trimRecipeOutputs(Recipe currentRecipe) {
-        RecipeBuilder<?> builder = new RecipeBuilder<>(currentRecipe, recipeMap);
-
-        builder.clearOutputs();
-        builder.clearChancedOutput();
-        builder.clearFluidOutputs();
-
-        // Chanced outputs are removed in this if they cannot fit the limit
-        Pair<List<ItemStack>, List<Recipe.ChanceEntry>> recipeOutputs = currentRecipe.getItemAndChanceOutputs(this.metaTileEntity.getItemOutputLimit());
-
-        // Add the trimmed chanced outputs and outputs
-        builder.chancedOutputs(recipeOutputs.getRight());
-        builder.outputs(recipeOutputs.getLeft());
-
-        List<FluidStack> recipeFluidOutputs = currentRecipe.getAllFluidOutputs(this.metaTileEntity.getFluidOutputLimit());
-
-        // Add the trimmed fluid outputs
-        builder.fluidOutputs(recipeFluidOutputs);
-
-        Recipe finalizedRecipe = builder.build().getResult();
-
-        // Add any RecipeProperties from the original recipe onto the trimmed recipe
-        if(currentRecipe.getRecipePropertyStorage().getSize() > 0) {
-            Set<Map.Entry<RecipeProperty<?>, Object>> properties = currentRecipe.getRecipePropertyStorage().getRecipeProperties();
-
-            for(Map.Entry<RecipeProperty<?>, Object> property : properties) {
-                finalizedRecipe.setProperty(property.getKey(), property.getValue());
-            }
-        }
-
-
-        return finalizedRecipe;
-    }
-
 
     /**
      * DO NOT use the parallelLimit field directly, EVER

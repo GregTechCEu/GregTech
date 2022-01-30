@@ -87,6 +87,62 @@ public class Recipe {
         this.hashCode = makeHashCode();
     }
 
+    public Recipe copy() {
+
+        // Create a new Recipe object
+        Recipe newRecipe =  new Recipe(this.inputs, this.outputs, this.chancedOutputs, this.fluidInputs, this.fluidOutputs, this.duration, this.EUt, this.hidden);
+
+        // Apply Properties from the original recipe onto the new one
+        if(this.recipePropertyStorage.getSize() > 0) {
+            for(Map.Entry<RecipeProperty<?>, Object> property : getRecipePropertyStorage().getRecipeProperties()) {
+                newRecipe.setProperty(property.getKey(), property.getValue());
+            }
+        }
+
+        return newRecipe;
+    }
+
+    /**
+     * Trims the recipe outputs, chanced outputs, and fluid outputs based on the performing MetaTileEntity's trim limit.
+     *
+     * @param currentRecipe The recipe to perform the output trimming upon
+     * @param recipeMap     The RecipeMap that the recipe is from
+     * @param itemTrimLimit The Limit to which item outputs should be trimmed to, -1 for no trimming
+     * @param fluidTrimLimit The Limit to which fluid outputs should be trimmed to, -1 for no trimming
+     *
+     * @return A new Recipe whose outputs have been trimmed.
+     */
+    public Recipe trimRecipeOutputs(Recipe currentRecipe, RecipeMap<?> recipeMap, int itemTrimLimit, int fluidTrimLimit) {
+
+        // Fast return early if no trimming desired
+        if(itemTrimLimit == -1 && fluidTrimLimit == -1) {
+            return currentRecipe;
+        }
+
+
+        currentRecipe = currentRecipe.copy();
+        RecipeBuilder<?> builder = new RecipeBuilder<>(currentRecipe, recipeMap);
+
+        builder.clearOutputs();
+        builder.clearChancedOutput();
+        builder.clearFluidOutputs();
+
+        // Chanced outputs are removed in this if they cannot fit the limit
+        Pair<List<ItemStack>, List<Recipe.ChanceEntry>> recipeOutputs = currentRecipe.getItemAndChanceOutputs(itemTrimLimit);
+
+        // Add the trimmed chanced outputs and outputs
+        builder.chancedOutputs(recipeOutputs.getRight());
+        builder.outputs(recipeOutputs.getLeft());
+
+        List<FluidStack> recipeFluidOutputs = currentRecipe.getAllFluidOutputs(fluidTrimLimit);
+
+        // Add the trimmed fluid outputs
+        builder.fluidOutputs(recipeFluidOutputs);
+
+
+        return builder.build().getResult();
+    }
+
     public final boolean matches(boolean consumeIfSuccessful, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode matchingMode) {
         return matches(consumeIfSuccessful, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs), matchingMode);
     }
@@ -410,26 +466,11 @@ public class Recipe {
      */
     public Pair<List<ItemStack>, List<ChanceEntry>> getItemAndChanceOutputs(int outputLimit) {
         List<ItemStack> outputs = new ArrayList<>();
-        int numChanced;
-
-        // If we are not trimming the outputs, don't trim the number of chanced outputs
-        if(outputLimit == -1) {
-            numChanced = -1;
-        }
-        // If the regular outputs can satisfy the output limit
-        else if(getOutputs().size() >= outputLimit) {
-            numChanced = 0;
-        }
-        // Else the number of chanced outputs is the remaining amount after all regular outputs have been processed.
-        else {
-            numChanced = outputLimit - getOutputs().size();
-        }
 
 
-        List<ChanceEntry> chancedOutputs = new ArrayList<>();
 
-        // Initially populate the chanced output list
-        chancedOutputs = getChancedOutputs();
+        // Create an entry for the chanced outputs, and initially populate it
+        List<ChanceEntry> chancedOutputs = new ArrayList<>(getChancedOutputs());
 
 
         // No limiting
@@ -445,6 +486,10 @@ public class Recipe {
         // If the regular outputs and chanced outputs are required to satisfy the outputLimit
         else if(!getOutputs().isEmpty() && (getOutputs().size() + chancedOutputs.size()) >= outputLimit) {
             outputs.addAll(GTUtility.copyStackList(getOutputs()));
+
+            // Calculate the number of chanced outputs after adding all the regular outputs
+            int numChanced = outputLimit - getOutputs().size();
+
             chancedOutputs = chancedOutputs.subList(0, Math.min(numChanced, chancedOutputs.size()));
         }
         // There are only chanced outputs to satisfy the outputLimit
