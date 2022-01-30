@@ -1291,6 +1291,9 @@ public abstract class MetaTileEntity implements ICoverable {
      * tile entity will still get getDrops called after this, if player broke block
      */
     public void onRemoval() {
+    }
+
+    public void invalidate() {
         if (getWorld().isRemote) {
             GTSoundManager.stopTileSound(getPos());
         }
