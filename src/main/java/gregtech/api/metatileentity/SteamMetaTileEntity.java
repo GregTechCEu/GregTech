@@ -45,7 +45,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
 
     @Override
     public boolean isActive() {
-        return workableHandler.isActive();
+        return workableHandler.isActive() && workableHandler.isWorkingEnabled();
     }
 
     @SideOnly(Side.CLIENT)

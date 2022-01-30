@@ -284,7 +284,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
     @Override
     public boolean isActive() {
-        return minerLogic.isActive();
+        return minerLogic.isActive() && isWorkingEnabled();
     }
 
     @Nonnull

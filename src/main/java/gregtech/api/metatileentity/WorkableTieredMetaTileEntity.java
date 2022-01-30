@@ -165,7 +165,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     }
 
     public boolean isActive() {
-        return workable.isActive();
+        return workable.isActive() && workable.isWorkingEnabled();
     }
 
     @Override
