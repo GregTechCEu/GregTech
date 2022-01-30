@@ -134,6 +134,14 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     }
 
     @Override
+    public void invalidate() {
+        if (metaTileEntity != null) {
+            metaTileEntity.invalidate();
+        }
+        super.invalidate();
+    }
+
+    @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         Object metaTileEntityValue = metaTileEntity == null ? null : metaTileEntity.getCoverCapability(capability, facing);
         return metaTileEntityValue != null || super.hasCapability(capability, facing);

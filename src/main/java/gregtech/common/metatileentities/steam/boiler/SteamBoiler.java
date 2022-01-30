@@ -15,7 +15,6 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTUtility;
@@ -29,10 +28,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -50,7 +46,7 @@ import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 
-public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreator, IDataInfoProvider {
+public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoProvider {
 
     private static final EnumFacing[] STEAM_PUSH_DIRECTIONS = ArrayUtils.add(EnumFacing.HORIZONTALS, EnumFacing.UP);
 
@@ -84,7 +80,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     }
 
     @Override
-    public boolean canCreateSound() {
+    public boolean isActive() {
         return isBurning;
     }
 
@@ -315,11 +311,8 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     }
 
     @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
-        if (getWorld() != null && getWorld().isRemote) {
-            this.setupSound(GTSounds.BOILER, this.getPos());
-        }
+    public SoundEvent getSound() {
+        return GTSounds.BOILER;
     }
 
     @Override
