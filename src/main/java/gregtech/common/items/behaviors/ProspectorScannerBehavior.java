@@ -127,12 +127,12 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
     public void addInformation(ItemStack itemStack, List<String> lines) {
         IItemBehaviour.super.addInformation(itemStack, lines);
 
-        if (tier >= GTValues.HV) {
+        if (tier >= FLUID_PROSPECTION_THRESHOLD) {
             lines.add(I18n.format("metaitem.prospector.tooltip.fluids", radius));
+            lines.add(I18n.format(getMode(itemStack) == WidgetProspectingMap.ORE_PROSPECTING_MODE ? "metaitem.prospector.mode.ores" : "metaitem.prospector.mode.fluid"));
         } else {
             lines.add(I18n.format("metaitem.prospector.tooltip.ores", radius));
         }
-        lines.add(I18n.format(getMode(itemStack) == WidgetProspectingMap.ORE_PROSPECTING_MODE ? "metaitem.prospector.mode.ores" : "metaitem.prospector.mode.fluid"));
     }
 
     @Override
