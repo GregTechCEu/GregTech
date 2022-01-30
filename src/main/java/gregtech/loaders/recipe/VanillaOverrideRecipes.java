@@ -977,27 +977,27 @@ public class VanillaOverrideRecipes {
         );
 
         // Remove a bunch of processing recipes for tools and armor, since we have significantly better options
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_HELMET));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_CHESTPLATE));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_LEGGINGS));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_BOOTS));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_HORSE_ARMOR));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_PICKAXE));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_SHOVEL));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_AXE));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_SWORD));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_HOE));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_HELMET, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_CHESTPLATE, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_LEGGINGS, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_BOOTS, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_HORSE_ARMOR, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_PICKAXE, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_SHOVEL, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_AXE, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_SWORD, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.IRON_HOE, 1, W));
 
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_HELMET));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_CHESTPLATE));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_LEGGINGS));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_BOOTS));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_HORSE_ARMOR));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_PICKAXE));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_SHOVEL));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_AXE));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_SWORD));
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_HOE));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_HELMET, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_CHESTPLATE, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_LEGGINGS, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_BOOTS, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_HORSE_ARMOR, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_PICKAXE, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_SHOVEL, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_AXE, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_SWORD, 1, W));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.GOLDEN_HOE, 1, W));
     }
 
     private static void createShovelRecipe(String regName, ItemStack output, Material material) {
