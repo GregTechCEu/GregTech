@@ -92,6 +92,10 @@ public class WoodMachineRecipes {
 
                 ModHandler.addShapedRecipe(slabStack.getDisplayName() + "_saw", GTUtility.copyAmount(2, slabStack), "sS", 'S', GTUtility.copyAmount(1, plankStack));
             }
+
+            if (ConfigHolder.recipes.harderCharcoalRecipe) {
+                ModHandler.removeFurnaceSmelting(stack);
+            }
         }
     }
 
