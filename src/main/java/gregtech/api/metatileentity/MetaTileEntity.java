@@ -106,8 +106,6 @@ public abstract class MetaTileEntity implements ICoverable {
 
     protected boolean muffled = false;
 
-    @SideOnly(Side.CLIENT)
-    private ISound activeSound;
     private int playSoundCooldown = 0;
 
     public MetaTileEntity(ResourceLocation metaTileEntityId) {
@@ -665,12 +663,11 @@ public abstract class MetaTileEntity implements ICoverable {
             if (--playSoundCooldown > 0) {
                 return;
             }
-            activeSound = GTSoundManager.startTileSound(sound.getSoundName(), 1.0F, getPos());
+            GTSoundManager.startTileSound(sound.getSoundName(), 1.0F, getPos());
             playSoundCooldown = 20;
-        } else if (activeSound != null) {
+        } else {
             GTSoundManager.stopTileSound(getPos());
             playSoundCooldown = 0;
-            activeSound = null;
         }
     }
 
@@ -860,6 +857,9 @@ public abstract class MetaTileEntity implements ICoverable {
             getHolder().scheduleChunkForRenderUpdate();
         } else if (dataId == UPDATE_SOUND_MUFFLED) {
             this.muffled = buf.readBoolean();
+            if (muffled) {
+                GTSoundManager.stopTileSound(getPos());
+            }
         }
     }
 
