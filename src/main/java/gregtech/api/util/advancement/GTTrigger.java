@@ -34,7 +34,7 @@ public abstract class GTTrigger<T extends GTInstance> implements ICriterionTrigg
         GTListeners<T> gtListener = listeners.get(playerAdvancementsIn);
 
         if (gtListener == null) {
-            gtListener = new GTListeners<T>(playerAdvancementsIn);
+            gtListener = new GTListeners<>(playerAdvancementsIn);
             listeners.put(playerAdvancementsIn, gtListener);
         }
 

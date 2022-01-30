@@ -43,7 +43,7 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
 
     abstract int getTier();
 
-    abstract MetaItem.MetaValueItem getPowerUnit();
+    abstract MetaItem<?>.MetaValueItem getPowerUnit();
 
     @Override
     public int getToolDamagePerBlockBreak(ItemStack stack) {
@@ -77,6 +77,9 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
 
     @Override
     public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
+        if (enchantment.type == null) {
+            return false;
+        }
         return enchantment.type.canEnchantItem(Items.IRON_PICKAXE);
     }
 

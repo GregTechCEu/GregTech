@@ -60,6 +60,9 @@ public class NanoSaberBehavior extends ToggleEnergyConsumerBehavior implements I
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        if (enchantment.type == null) {
+            return false;
+        }
         return enchantment != Enchantments.UNBREAKING &&
                 enchantment != Enchantments.MENDING &&
                 enchantment.type.canEnchantItem(Items.IRON_SWORD);
