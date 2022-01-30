@@ -51,7 +51,7 @@ public class BlockRubberLog extends BlockLog {
         Random rand = world instanceof World ? ((World) world).rand : RANDOM;
         if (state.getValue(NATURAL)) {
             double chance = rand.nextDouble();
-            int amount  = chance <= 0.95D ? 1 : 0;
+            int amount  = chance <= 0.85D ? 1 : 0;
             if(amount != 0) {
                 drops.add(MetaItems.STICKY_RESIN.getStackForm());
             }
