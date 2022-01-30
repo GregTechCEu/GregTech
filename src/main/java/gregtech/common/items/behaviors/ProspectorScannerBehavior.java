@@ -72,7 +72,7 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
     }
 
     private int getMode(ItemStack stack) {
-        if (stack == ItemStack.EMPTY || stack == null) {
+        if (stack == ItemStack.EMPTY) {
             return 0;
         }
         NBTTagCompound tag = stack.getTagCompound();

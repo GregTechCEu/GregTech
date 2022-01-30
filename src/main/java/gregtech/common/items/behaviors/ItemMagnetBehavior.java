@@ -46,7 +46,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
     }
 
     private boolean isActive(ItemStack stack) {
-        if (stack == ItemStack.EMPTY || stack == null) {
+        if (stack == ItemStack.EMPTY) {
             return false;
         }
         NBTTagCompound tag = stack.getTagCompound();
@@ -119,7 +119,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
 
     @SubscribeEvent
     public void onItemToss(@Nonnull ItemTossEvent event) {
-        if (!isActive(event.getEntityItem().getItem()) || event.getPlayer() == null)
+        if (event.getPlayer() == null)
             return;
 
         ItemStack stack = event.getEntityItem().getItem();
