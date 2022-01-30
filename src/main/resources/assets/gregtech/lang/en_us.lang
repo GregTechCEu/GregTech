@@ -2264,8 +2264,8 @@ gregtech.block.surface_rock.underground_materials=Underground Materials: %s
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
 metaitem.prospector.luv.name=Electric Prospector's Scanner (LuV)
-metaitem.prospector.mode.ores=Ore Prospection Mode
-metaitem.prospector.mode.fluid=Fluid Prospection Mode
+metaitem.prospector.mode.ores=§aOre Prospection Mode
+metaitem.prospector.mode.fluid=§bFluid Prospection Mode
 metaitem.prospector.tooltip.ores=Scans Ores in a %s Chunk Radius
 metaitem.prospector.tooltip.fluids=Scans Ores and Fluids in a %s Chunk Radius
 behavior.prospector.not_enough_energy=Not Enough Energy!
@@ -2309,8 +2309,8 @@ behavior.tricorder.debug_lag_count=Caused %s Lag Spike Warnings (anything taking
 
 metaitem.item_magnet.lv.name=Low Voltage Item Magnet
 metaitem.item_magnet.hv.name=High Voltage Item Magnet
-behavior.item_magnet.enabled=Magnetic Field Enabled
-behavior.item_magnet.disabled=Magnetic Field Disabled
+behavior.item_magnet.enabled=§aMagnetic Field Enabled
+behavior.item_magnet.disabled=§cMagnetic Field Disabled
 
 metaitem.terminal.name=Terminal
 metaitem.terminal.tooltip=Sharp tools make good work

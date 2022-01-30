@@ -56,11 +56,11 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
                 if (nextMode == WidgetProspectingMap.FLUID_PROSPECTING_MODE) {
                     if (tier >= FLUID_PROSPECTION_THRESHOLD) {
                         setMode(stack, nextMode);
-                        player.sendMessage(new TextComponentTranslation("metaitem.prospector.mode.fluid"));
+                        player.sendStatusMessage(new TextComponentTranslation("metaitem.prospector.mode.fluid"), true);
                     }
                 } else {
                     setMode(stack, nextMode);
-                    player.sendMessage(new TextComponentTranslation("metaitem.prospector.mode.ores"));
+                    player.sendStatusMessage(new TextComponentTranslation("metaitem.prospector.mode.ores"), true);
                 }
             } else if (checkCanUseScanner(heldItem, player, true)) {
                 new PlayerInventoryHolder(player, hand).openUI();
@@ -132,6 +132,7 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         } else {
             lines.add(I18n.format("metaitem.prospector.tooltip.ores", radius));
         }
+        lines.add(I18n.format(getMode(itemStack) == WidgetProspectingMap.ORE_PROSPECTING_MODE ? "metaitem.prospector.mode.ores" : "metaitem.prospector.mode.fluid"));
     }
 
     @Override

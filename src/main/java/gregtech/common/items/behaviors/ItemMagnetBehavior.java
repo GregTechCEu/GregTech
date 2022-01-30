@@ -40,7 +40,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, @Nonnull EntityPlayer player, EnumHand hand) {
         if (!player.world.isRemote && player.isSneaking()) {
-            player.sendMessage(new TextComponentTranslation(toggleActive(player.getHeldItem(hand)) ? "behavior.item_magnet.enabled" : "behavior.item_magnet.disabled"));
+            player.sendStatusMessage(new TextComponentTranslation(toggleActive(player.getHeldItem(hand)) ? "behavior.item_magnet.enabled" : "behavior.item_magnet.disabled"), true);
         }
         return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
     }
