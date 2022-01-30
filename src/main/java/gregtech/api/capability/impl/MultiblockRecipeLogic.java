@@ -227,10 +227,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             setupRecipe(recipe);
             return true;
         }
-        else {
-            // Invalidate this here in case it was set in setupAndConsumeRecipeInputs, but merging failed
-            this.itemOutputs = null;
-        }
 
         return false;
     }

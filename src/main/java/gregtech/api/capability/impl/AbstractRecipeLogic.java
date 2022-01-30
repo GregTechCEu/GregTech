@@ -330,10 +330,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             setupRecipe(recipe);
             return true;
         }
-        else {
-            // Invalidate this here in case it was stored early in setupAndConsumeRecipeInputs, but the merging failed
-            this.itemOutputs = null;
-        }
         return false;
     }
 
@@ -406,9 +402,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         IMultipleTankHandler exportFluids = getOutputTank();
 
         // We have already trimmed outputs and chanced outputs at this time
-        // Set the outputs here so the chanced outputs calculated for attempted merge into output bus are not recalculated later
-        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipeEUt), getRecipeMap()));
-        if (!metaTileEntity.canVoidRecipeItemOutputs() && !MetaTileEntity.addItemsToItemHandler(exportInventory, true, this.itemOutputs)) {
+        // Attempt to merge all outputs + chanced outputs into the output bus, to prevent voiding chanced outputs
+        if (!metaTileEntity.canVoidRecipeItemOutputs() && !MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
@@ -635,6 +630,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         setMaxProgress(resultOverclock[1]);
         this.recipeEUt = resultOverclock[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getAllFluidOutputs(metaTileEntity.getFluidOutputLimit()));
+        this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipeEUt), getRecipeMap()));
 
         if (this.wasActiveAndNeedsUpdate) {
             this.wasActiveAndNeedsUpdate = false;
