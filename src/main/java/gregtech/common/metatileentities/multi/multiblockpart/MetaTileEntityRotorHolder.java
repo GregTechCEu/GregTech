@@ -91,7 +91,11 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
             return;
 
         if (getOffsetTimer() % 20 == 0) {
-            this.frontFaceFree = checkTurbineFaceFree();
+            boolean isFrontFree = checkTurbineFaceFree();
+            if (isFrontFree != this.frontFaceFree) {
+                this.frontFaceFree = isFrontFree;
+                writeCustomData(GregtechDataCodes.FRONT_FACE_FREE, buf -> buf.writeBoolean(this.frontFaceFree));
+            }
         }
 
         MetaTileEntityLargeTurbine controller = (MetaTileEntityLargeTurbine) getController();
@@ -278,6 +282,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         super.writeToNBT(data);
         data.setTag("inventory", inventory.serializeNBT());
         data.setInteger("currentSpeed", currentSpeed);
+        data.setBoolean("Spinning", isRotorSpinning);
+        data.setBoolean("FrontFree", frontFaceFree);
         return data;
     }
 
@@ -286,6 +292,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         super.readFromNBT(data);
         this.inventory.deserializeNBT(data.getCompoundTag("inventory"));
         this.currentSpeed = data.getInteger("currentSpeed");
+        this.isRotorSpinning = data.getBoolean("Spinning");
+        this.frontFaceFree = data.getBoolean("FrontFree");
     }
 
     @Override
@@ -294,6 +302,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         if (dataId == GregtechDataCodes.IS_ROTOR_LOOPING) {
             this.isRotorSpinning = buf.readBoolean();
             scheduleRenderUpdate();
+        } else if (dataId == GregtechDataCodes.FRONT_FACE_FREE) {
+            this.frontFaceFree = buf.readBoolean();
         }
     }
 
@@ -302,6 +312,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isRotorSpinning);
         buf.writeInt(rotorColor);
+        buf.writeBoolean(frontFaceFree);
     }
 
     @Override
@@ -309,6 +320,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         super.receiveInitialSyncData(buf);
         this.isRotorSpinning = buf.readBoolean();
         this.rotorColor = buf.readInt();
+        this.frontFaceFree = buf.readBoolean();
         getHolder().scheduleChunkForRenderUpdate();
     }
 
