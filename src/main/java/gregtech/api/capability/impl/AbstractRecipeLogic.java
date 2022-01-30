@@ -643,7 +643,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             if (recipe.getOutputs().size() > 0) {
                 this.itemOutputs = GTUtility.copyStackList(recipe.getOutputs().subList(0, 1));
             } else {
-                this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt), recipeMap)
+                this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt), getRecipeMap())
                         .stream()
                         .filter(is ->
                                 ItemStackHashStrategy.comparingAllButCount()
@@ -651,7 +651,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                         .collect(Collectors.toList()));
             }
         } else {
-            this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt), recipeMap));
+            this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt), getRecipeMap()));
         }
 
         if (this.wasActiveAndNeedsUpdate) {
