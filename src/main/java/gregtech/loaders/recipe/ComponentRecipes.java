@@ -4,6 +4,7 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.stack.UnificationEntry;
+import net.minecraft.init.Items;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -389,6 +390,40 @@ public class ComponentRecipes {
                 .EUt(VA[UV])
                 .duration(50)
                 .buildAndRegister();
+
+        //Voiding Covers Start-----------------------------------------------------------------------------------------
+
+        ModHandler.addShapedRecipe(true, "cover_item_voiding", COVER_ITEM_VOIDING.getStackForm(), "SDS", "dPw", " E ", 'S', new UnificationEntry(screw, Steel), 'D', COVER_ITEM_DETECTOR.getStackForm(), 'P', new UnificationEntry(pipeNormalItem, Brass), 'E', Items.ENDER_PEARL);
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(screw, Steel, 2)
+                .inputs(COVER_ITEM_DETECTOR.getStackForm())
+                .input(pipeNormalItem, Brass)
+                .input(Items.ENDER_PEARL)
+                .outputs(COVER_ITEM_VOIDING.getStackForm())
+                .duration(100).EUt(VA[LV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(COVER_ITEM_VOIDING)
+                .input(circuit, Tier.Good, 1)
+                .outputs(COVER_ITEM_VOIDING_ADVANCED.getStackForm())
+                .duration(100).EUt(VA[LV]).buildAndRegister();
+
+        ModHandler.addShapedRecipe(true, "cover_fluid_voiding", COVER_FLUID_VOIDING.getStackForm(), "SDS", "dPw", " E ", 'S', new UnificationEntry(screw, Steel), 'D', COVER_FLUID_DETECTOR.getStackForm(), 'P', new UnificationEntry(pipeNormalFluid, Bronze), 'E', Items.ENDER_PEARL);
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(screw, Steel, 2)
+                .inputs(COVER_FLUID_DETECTOR.getStackForm())
+                .input(pipeNormalFluid, Bronze)
+                .input(Items.ENDER_PEARL)
+                .outputs(COVER_FLUID_VOIDING.getStackForm())
+                .duration(100).EUt(VA[LV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(COVER_FLUID_VOIDING)
+                .input(circuit, Tier.Good, 1)
+                .outputs(COVER_FLUID_VOIDING_ADVANCED.getStackForm())
+                .duration(100).EUt(VA[LV]).buildAndRegister();
 
         //Pistons Start-------------------------------------------------------------------------------------------------
         ModHandler.addShapedRecipe(true, "electric_piston_lv", ELECTRIC_PISTON_LV.getStackForm(), "PPP", "CRR", "CMG", 'P', new UnificationEntry(plate, Steel), 'C', new UnificationEntry(cableGtSingle, Tin), 'R', new UnificationEntry(stick, Steel), 'G', new UnificationEntry(gearSmall, Steel), 'M', ELECTRIC_MOTOR_LV.getStackForm());
