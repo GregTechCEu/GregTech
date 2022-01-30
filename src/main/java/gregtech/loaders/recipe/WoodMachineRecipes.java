@@ -7,6 +7,7 @@ import gregtech.api.util.world.DummyWorld;
 import gregtech.common.ConfigHolder;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -94,7 +95,10 @@ public class WoodMachineRecipes {
             }
 
             if (ConfigHolder.recipes.harderCharcoalRecipe) {
-                ModHandler.removeFurnaceSmelting(stack);
+                ItemStack outputStack = FurnaceRecipes.instance().getSmeltingResult(stack);
+                if (stack != ItemStack.EMPTY && stack.getItem() == Items.COAL && stack.getItemDamage() == 1) {
+                    ModHandler.removeFurnaceSmelting(stack);
+                }
             }
         }
     }
