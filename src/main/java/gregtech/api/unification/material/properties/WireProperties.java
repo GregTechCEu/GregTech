@@ -119,6 +119,10 @@ public class WireProperties implements IMaterialProperty<WireProperties> {
         this.isSuperconductor = isSuperconductor;
     }
 
+    public void setWireFromDust(boolean wireFromDust) {
+        this.wireFromDust = wireFromDust;
+    }
+
     @Override
     public void verifyProperty(MaterialProperties properties) {
         if (!isWireFromDust()) {
