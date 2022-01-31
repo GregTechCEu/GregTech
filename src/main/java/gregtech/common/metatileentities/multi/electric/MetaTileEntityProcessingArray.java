@@ -26,7 +26,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.electric.MetaTileEntityMacerator;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -161,11 +160,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
         MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(machineStack);
 
-        if(mte instanceof MetaTileEntityMacerator) {
-            return ((MetaTileEntityMacerator) mte).getOutputAmount();
-        }
+        return mte.getItemOutputLimit();
 
-        return -1;
     }
 
     @SuppressWarnings("InnerClassMayBeStatic")
