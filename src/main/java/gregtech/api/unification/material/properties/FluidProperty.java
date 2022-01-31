@@ -17,13 +17,13 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
      */
     private Fluid fluid;
 
-    private FluidType fluidType;
+    private final FluidType fluidType;
 
     private boolean hasBlock;
     private boolean isGas;
     private int fluidTemperature = BASE_TEMP;
 
-    public FluidProperty(FluidType fluidType, boolean hasBlock) {
+    public FluidProperty(@Nonnull FluidType fluidType, boolean hasBlock) {
         this.fluidType = fluidType;
         this.isGas = fluidType == FluidTypes.GAS;
         this.hasBlock = hasBlock;
@@ -78,6 +78,7 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
         return fluidTemperature;
     }
 
+    @Nonnull
     public FluidType getFluidType() {
         return this.fluidType;
     }

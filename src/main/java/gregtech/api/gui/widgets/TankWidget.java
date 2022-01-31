@@ -1,6 +1,7 @@
 package gregtech.api.gui.widgets;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
+import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
@@ -183,9 +184,9 @@ public class TankWidget extends Widget implements IIngredientSlot {
 
                     // Fluid State Tooltip
                     if(!formula.get(2).isEmpty()) {
-                        String result = Boolean.parseBoolean(formula.get(2)) ? LocalizationUtils.format("gregtech.fluid.state_gas") :
-                                LocalizationUtils.format("gregtech.fluid.state_liquid");
-                        tooltips.add(result);
+                        FluidType type = FluidType.getByName(formula.get(2));
+                        if (type != null)
+                            tooltips.add(1, LocalizationUtils.format(type.getToolTipLocalization()));
                     }
                 }
 

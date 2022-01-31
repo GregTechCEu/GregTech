@@ -5,6 +5,7 @@ import codechicken.lib.util.ItemNBTUtils;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.MetaFluids;
+import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
@@ -15,7 +16,9 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.api.util.*;
+import gregtech.api.util.FluidTooltipUtil;
+import gregtech.api.util.LocalizationUtils;
+import gregtech.api.util.ModCompatibility;
 import gregtech.api.util.input.KeyBinds;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
@@ -62,7 +65,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import paulscode.sound.SoundSystemConfig;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
@@ -178,7 +182,7 @@ public class ClientProxy extends CommonProxy {
 
         String temperature = null;
 
-        String isGas = null;
+        String state = null;
 
         // Test for Items
         UnificationEntry unificationEntry = OreDictUnifier.getUnificationEntry(itemStack);
@@ -198,7 +202,7 @@ public class ClientProxy extends CommonProxy {
             if(fluidTooltips != null) {
                 chemicalFormula = fluidTooltips.get(0);
                 temperature = fluidTooltips.get(1);
-                isGas = fluidTooltips.get(2);
+                state = fluidTooltips.get(2);
             }
 
             // GTCE Cells, Forestry cans, some other containers
@@ -211,7 +215,7 @@ public class ClientProxy extends CommonProxy {
                     if(fluidTooltips != null) {
                         chemicalFormula = fluidTooltips.get(0);
                         temperature = fluidTooltips.get(1);
-                        isGas = fluidTooltips.get(2);
+                        state = fluidTooltips.get(2);
                     }
                 }
             }
@@ -219,18 +223,18 @@ public class ClientProxy extends CommonProxy {
             fluidTooltips = FluidTooltipUtil.getWaterTooltip();
             chemicalFormula = fluidTooltips.get(0);
             temperature = fluidTooltips.get(1);
-            isGas = fluidTooltips.get(2);
+            state = fluidTooltips.get(2);
         } else if (itemStack.getItem().equals(Items.LAVA_BUCKET)) {
             fluidTooltips = FluidTooltipUtil.getLavaTooltip();
             chemicalFormula = fluidTooltips.get(0);
             temperature = fluidTooltips.get(1);
-            isGas = fluidTooltips.get(2);
+            state = fluidTooltips.get(2);
         }
 
-        if(isGas != null && !isGas.isEmpty()) {
-            String result = Boolean.parseBoolean(isGas) ? LocalizationUtils.format("gregtech.fluid.state_gas") :
-                    LocalizationUtils.format("gregtech.fluid.state_liquid");
-            event.getToolTip().add(1, result);
+        if(state != null && !state.isEmpty()) {
+            FluidType type = FluidType.getByName(state);
+            if (type != null)
+                event.getToolTip().add(1, LocalizationUtils.format(type.getToolTipLocalization()));
         }
 
         if(temperature != null && !temperature.isEmpty()) {

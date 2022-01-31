@@ -76,6 +76,9 @@ public abstract class FluidType {
         return this.name;
     }
 
+    @ZenGetter
+    public abstract String getToolTipLocalization();
+
     @Nullable
     @ZenMethod
     public static FluidType getByName(@Nonnull String name) {

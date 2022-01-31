@@ -62,15 +62,23 @@ public class MetaFluids {
                 int temperature = fluidProperty.getFluidTemperature();
                 Fluid fluid = registerFluid(material, fluidProperty.getFluidType(), temperature, fluidProperty.hasBlock());
                 fluidProperty.setFluid(fluid);
-                FluidTooltipUtil.registerTooltip(fluid, material.getChemicalFormula());
+                List<String> tooltip = new ArrayList<>();
+                tooltip.add(material.getChemicalFormula());
+                tooltip.add(String.valueOf(temperature));
+                tooltip.add(fluidProperty.getFluidType().getName());
+                FluidTooltipUtil.registerTooltip(fluid, tooltip);
             }
 
             PlasmaProperty plasmaProperty = material.getProperty(PropertyKey.PLASMA);
             if (plasmaProperty != null && plasmaProperty.getPlasma() == null) {
-                int baseTemperature = fluidProperty == null ? 0 : fluidProperty.getFluidTemperature();
-                Fluid fluid = registerFluid(material, FluidTypes.PLASMA, baseTemperature + 30000, false);
+                int temperature = fluidProperty == null ? 0 : fluidProperty.getFluidTemperature();
+                Fluid fluid = registerFluid(material, FluidTypes.PLASMA, temperature + 30000, false);
                 plasmaProperty.setPlasma(fluid);
-                FluidTooltipUtil.registerTooltip(fluid, material.getChemicalFormula());
+                List<String> tooltip = new ArrayList<>();
+                tooltip.add(material.getChemicalFormula());
+                tooltip.add(String.valueOf(temperature));
+                tooltip.add(FluidTypes.PLASMA.getName());
+                FluidTooltipUtil.registerTooltip(fluid, tooltip);
             }
         }
     }
