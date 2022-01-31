@@ -495,7 +495,7 @@ public class PolymerRecipes {
                 .output(dust, AmmoniumSulfate, 15)
                 .buildAndRegister();
 
-        ARC_FURNACE_RECIPES.recipeBuilder().EUt(VA[MV]).duration(1000)
+        BLAST_RECIPES.recipeBuilder().EUt(VA[MV]).duration(1000).blastFurnaceTemp(533)
                 .input(dust, Caprolactam, 19)
                 .fluidInputs(Nitrogen.getFluid(1000))
                 .output(ingot, Polycaprolactam, 19)
