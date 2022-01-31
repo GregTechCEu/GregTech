@@ -12,6 +12,7 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.integration.jei.utils.render.FluidStackTextRenderer;
 import gregtech.integration.jei.utils.render.ItemStackTextRenderer;
 import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
@@ -31,6 +32,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,6 +43,8 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     private final ItemStackHandler importItems, exportItems;
     private final FluidTankList importFluids, exportFluids;
     private final IDrawable backgroundDrawable;
+    private Object iconIngredient;
+    private IDrawable icon;
 
     private static final int FONT_HEIGHT = 9;
     private static final HashMap<RecipeMap<?>, RecipeMapCategory> categoryMap = new HashMap<>();
@@ -74,6 +78,25 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     @Nonnull
     public String getTitle() {
         return recipeMap.getLocalizedName();
+    }
+
+    @Nullable
+    @Override
+    public IDrawable getIcon() {
+        if (icon != null) {
+            return icon;
+        } else if (iconIngredient != null) {
+            // cache the icon drawable for less gc pressure
+            return icon = GTJeiPlugin.guiHelper.createDrawableIngredient(iconIngredient);
+        }
+        // JEI will automatically populate the icon as the first registered catalyst if null
+        return null;
+    }
+
+    public void setIcon(Object icon) {
+        if (iconIngredient == null) {
+            iconIngredient = icon;
+        }
     }
 
     @Override

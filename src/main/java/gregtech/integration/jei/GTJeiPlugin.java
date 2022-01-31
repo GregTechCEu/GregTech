@@ -58,6 +58,7 @@ public class GTJeiPlugin implements IModPlugin {
 
     public static IIngredientRegistry ingredientRegistry;
     public static IJeiRuntime jeiRuntime;
+    public static IGuiHelper guiHelper;
 
     @Override
     public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
@@ -75,6 +76,7 @@ public class GTJeiPlugin implements IModPlugin {
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
+        guiHelper = registry.getJeiHelpers().getGuiHelper();
         registry.addRecipeCategories(new IntCircuitCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new MultiblockInfoCategory(registry.getJeiHelpers()));
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
@@ -118,7 +120,6 @@ public class GTJeiPlugin implements IModPlugin {
             }
         }
 
-        Map<RecipeMap<?>, List<MetaTileEntity>> deferredCatalysts = new HashMap<>();
         for (ResourceLocation metaTileEntityId : GregTechAPI.MTE_REGISTRY.getKeys()) {
             MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
             assert metaTileEntity != null;
@@ -127,9 +128,7 @@ public class GTJeiPlugin implements IModPlugin {
 
                 if (workableCapability instanceof AbstractRecipeLogic) {
                     AbstractRecipeLogic logic = (AbstractRecipeLogic) workableCapability;
-                    if (metaTileEntity instanceof SteamMetaTileEntity) {
-                        deferredCatalysts.computeIfAbsent(logic.getRecipeMap(), k -> new ArrayList<>()).add(metaTileEntity);
-                    } else if (metaTileEntity instanceof IMultipleRecipeMaps) {
+                    if (metaTileEntity instanceof IMultipleRecipeMaps) {
                         for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity).getAvailableRecipeMaps()) {
                             registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
                         }
@@ -137,11 +136,6 @@ public class GTJeiPlugin implements IModPlugin {
                         registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
                     }
                 }
-            }
-        }
-        for (Map.Entry<RecipeMap<?>, List<MetaTileEntity>> deferredMetaTileEntities : deferredCatalysts.entrySet()) {
-            for (MetaTileEntity mte : deferredMetaTileEntities.getValue()) {
-                registerRecipeMapCatalyst(registry, deferredMetaTileEntities.getKey(), mte);
             }
         }
 
@@ -238,9 +232,16 @@ public class GTJeiPlugin implements IModPlugin {
         registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
         if (recipeMap instanceof RecipeMapFurnace) {
             registry.addRecipeCatalyst(metaTileEntity.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
+            return;
         }
         if (recipeMap.getSmallRecipeMap() != null) {
             registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.getSmallRecipeMap().unlocalizedName);
+            return;
+        }
+        RecipeMapCategory category = RecipeMapCategory.getCategoryMap().get(recipeMap);
+        // don't allow a Steam Machine to be a JEI tab icon
+        if (category != null && !(metaTileEntity instanceof SteamMetaTileEntity)) {
+            category.setIcon(metaTileEntity.getStackForm());
         }
     }
 }
