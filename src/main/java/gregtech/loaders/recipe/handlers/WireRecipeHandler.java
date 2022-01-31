@@ -64,8 +64,9 @@ public class WireRecipeHandler {
 
 
     public static void processWireSingle(OrePrefix wirePrefix, Material material, WireProperties property) {
+        OrePrefix prefix = property.isWireFromDust() ? OrePrefix.dust : OrePrefix.ingot;
         EXTRUDER_RECIPES.recipeBuilder()
-                .input(ingot, material)
+                .input(prefix, material)
                 .notConsumable(SHAPE_EXTRUDER_WIRE)
                 .output(wireGtSingle, material, 2)
                 .duration((int) material.getMass() * 2)
@@ -73,7 +74,7 @@ public class WireRecipeHandler {
                 .buildAndRegister();
 
         WIREMILL_RECIPES.recipeBuilder()
-                .input(ingot, material)
+                .input(prefix, material)
                 .output(wireGtSingle, material, 2)
                 .duration((int) material.getMass())
                 .EUt(getVoltageMultiplier(material))

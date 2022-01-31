@@ -704,11 +704,11 @@ public class FirstDegreeMaterials {
                 .build();
 
         Graphene = new Material.Builder(342, "graphene")
-                .ingot().fluid()
+                .dust()
                 .color(0x808080).iconSet(SHINY)
-                .flags(GENERATE_FOIL, DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
-                .cableProperties(GTValues.V[5], 1, 1)
+                .cableProperties(GTValues.V[5], 1, 1, false, true)
                 .build();
 
         TungsticAcid = new Material.Builder(343, "tungstic_acid")

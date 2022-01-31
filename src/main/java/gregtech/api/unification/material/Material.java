@@ -779,13 +779,22 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder cableProperties(long voltage, int amperage, int loss) {
-            cableProperties((int) voltage, amperage, loss, false);
+            cableProperties((int) voltage, amperage, loss, false, false);
             return this;
         }
 
         public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon) {
-            properties.ensureSet(PropertyKey.INGOT);
-            properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, isSuperCon));
+            cableProperties(voltage, amperage, loss, isSuperCon, false);
+            return this;
+        }
+
+        public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon, boolean wireFromDust) {
+            if (!wireFromDust) {
+                properties.ensureSet(PropertyKey.INGOT);
+            } else {
+                properties.ensureSet(PropertyKey.DUST);
+            }
+            properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, isSuperCon, wireFromDust));
             return this;
         }
 
