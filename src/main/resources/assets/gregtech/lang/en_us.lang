@@ -1935,6 +1935,12 @@ material.blue_alloy=Blue Alloy
 material.lapotron=Lapotron
 material.aluminium_sulfite=Aluminium Sulfite
 
+material.cyclohexane=Cyclohexane
+material.cyclohexanoxime=Cyclohexanoxime
+material.caprolactam=Caprolactam
+material.nitrosyl_chloride=Nitrosyl Chloride
+material.ammonium_sulfate=Ammonium Sulfate
+
 item.nether_quartz.oreNetherrack=Nether Quartz Ore
 item.gunpowder.dustTiny=Tiny Pile of Gunpowder
 item.gunpowder.dustSmall=Small Pile of Gunpowder
