@@ -492,7 +492,7 @@ public class ElementMaterials {
                 .build();
 
         Palladium = new Material.Builder(77, "palladium")
-                .ingot().fluid(FluidTypes.LIQUID).ore()
+                .ingot().fluid().ore()
                 .color(0x808080).iconSet(SHINY)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
                 .element(Elements.Pd)
@@ -512,7 +512,7 @@ public class ElementMaterials {
                 .build();
 
         Platinum = new Material.Builder(80, "platinum")
-                .ingot().fluid(FluidTypes.GAS, true).ore()
+                .ingot().fluid().ore()
                 .color(0xFFFFC8).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_RING)
                 .element(Elements.Pt)

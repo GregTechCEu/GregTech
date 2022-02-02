@@ -557,8 +557,8 @@ public class OrePrefix {
 
                 PlasmaProperty plasmaProperty = material.getProperty(PropertyKey.PLASMA);
                 if (plasmaProperty != null && plasmaProperty.getPlasma() == null) {
-                    int baseTemperature = fluidProperty == null ? 0 : fluidProperty.getFluidTemperature();
-                    Fluid fluid = MetaFluids.registerFluid(material, FluidTypes.PLASMA, baseTemperature + 30000, false);
+                    int baseTemperature = (fluidProperty == null ? 0 : fluidProperty.getFluidTemperature()) + 30000;
+                    Fluid fluid = MetaFluids.registerFluid(material, FluidTypes.PLASMA, baseTemperature, false);
                     plasmaProperty.setPlasma(fluid);
                     List<String> tooltip = new ArrayList<>();
                     tooltip.add(material.getChemicalFormula());

@@ -404,7 +404,7 @@ public class Material implements Comparable<Material> {
         /**
          * Add a {@link FluidProperty} to this Material.
          *
-         * @param type     The {@link FluidType} of this Material, either Fluid or Gas.
+         * @param type     The {@link FluidType} of this Material.
          * @param hasBlock If true, create a Fluid Block for this Material.
          * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
          */
