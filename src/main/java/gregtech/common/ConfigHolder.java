@@ -98,6 +98,11 @@ public class ConfigHolder {
 
         @Config.Comment({"Whether to enable the cleanroom, required for various recipes.", "Default: true"})
         public boolean enableCleanroom = true;
+
+        @Config.Comment({"Whether multiblocks are able to run cleanroom recipes outside the cleanroom.",
+                "This does nothing is B:enableCleanroom is false.",
+                "Default: false"})
+        public boolean cleanMultiblocks = false;
     }
 
     public static class WorldGenOptions {
