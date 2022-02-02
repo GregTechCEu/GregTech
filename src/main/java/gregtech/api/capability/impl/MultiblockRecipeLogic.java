@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.common.ConfigHolder;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -229,17 +230,17 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
+    protected int[] runOverclockingLogic(RecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int maxOverclocks) {
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
         int[] overclock = null;
         if (maintenanceValues.getSecond() != 1.0)
-            overclock = overclockRecipe(recipe.getRecipePropertyStorage(), recipe.getEUt(), negativeEU, getMaxVoltage(),
-                    (int) Math.round(recipe.getDuration() * maintenanceValues.getSecond()), maxOverclocks);
+            overclock = runOverclockingLogic(propertyStorage, recipeEUt, getMaxVoltage(),
+                    (int) Math.round(recipeDuration * maintenanceValues.getSecond()), maxOverclocks);
 
         if (overclock == null)
-            overclock = overclockRecipe(recipe.getRecipePropertyStorage(), recipe.getEUt(), negativeEU, getMaxVoltage(), recipe.getDuration(), maxOverclocks);
+            overclock = runOverclockingLogic(propertyStorage, recipeEUt, getMaxVoltage(), recipeDuration, maxOverclocks);
 
         if (maintenanceValues.getFirst() > 0)
             overclock[1] = (int) (overclock[1] * (1 + 0.1 * maintenanceValues.getFirst()));

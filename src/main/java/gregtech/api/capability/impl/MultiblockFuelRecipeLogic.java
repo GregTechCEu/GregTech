@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
+import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.common.ConfigHolder;
 
 import javax.annotation.Nonnull;
@@ -20,7 +21,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
+    protected int[] runOverclockingLogic(RecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int recipeDuration, int maxOverclocks) {
         // apply maintenance penalties
         MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ? (MultiblockWithDisplayBase) metaTileEntity : null;
         int numMaintenanceProblems = displayBase == null ? 0 : displayBase.getNumMaintenanceProblems();
@@ -30,10 +31,13 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
             IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
             double durationMultiplier = hatch.getDurationMultiplier();
             if (durationMultiplier != 1.0) {
-                overclock = new int[]{recipe.getEUt() * -1, (int) Math.round(recipe.getDuration() / durationMultiplier)};
+                overclock = new int[]{recipeEUt * -1, (int) Math.round(recipeDuration / durationMultiplier)};
             }
         }
-        if (overclock == null) overclock = new int[]{recipe.getEUt() * -1, recipe.getDuration()};
+        if (overclock == null) {
+            overclock = new int[]{recipeEUt * -1, recipeDuration};
+        }
+
         overclock[1] = (int) (overclock[1] * (1 - 0.1 * numMaintenanceProblems));
 
         // no overclocking happens other than parallelization,

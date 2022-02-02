@@ -18,8 +18,8 @@ public class HeatingCoilRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected int[] overclockRecipe(@Nonnull RecipePropertyStorage propertyStorage, int recipeEUt, boolean negativeEU, long maxVoltage, int duration, int maxOverclocks) {
-        return heatingCoilOverclockingLogic(recipeEUt * (negativeEU ? -1 : 1),
+    protected int[] runOverclockingLogic(@Nonnull RecipePropertyStorage propertyStorage, int recipeEUt, long maxVoltage, int duration, int maxOverclocks) {
+        return heatingCoilOverclockingLogic(Math.abs(recipeEUt),
                 maxVoltage,
                 duration,
                 maxOverclocks,
