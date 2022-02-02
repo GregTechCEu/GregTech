@@ -198,8 +198,8 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder cableProperties(long voltage, int amperage, int loss, @Optional boolean isSuperCon, @Optional boolean wireFromDust) {
-        backingBuilder.cableProperties(voltage, amperage, loss, isSuperCon, wireFromDust);
+    public CTMaterialBuilder cableProperties(long voltage, int amperage, int loss, @Optional boolean isSuperCon) {
+        backingBuilder.cableProperties(voltage, amperage, loss, isSuperCon);
         return this;
     }
 

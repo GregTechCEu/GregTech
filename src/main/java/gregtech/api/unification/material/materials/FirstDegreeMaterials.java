@@ -708,7 +708,7 @@ public class FirstDegreeMaterials {
                 .color(0x808080).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
-                .cableProperties(GTValues.V[5], 1, 1, false, true)
+                .cableProperties(GTValues.V[5], 1, 1)
                 .build();
 
         TungsticAcid = new Material.Builder(343, "tungstic_acid")
