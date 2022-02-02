@@ -27,6 +27,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -37,9 +38,12 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,11 +59,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     private IEnergyContainer energyContainer;
 
-    private final CleanroomLogic minerLogic;
+    private final CleanroomLogic cleanroomLogic;
 
     public MetaTileEntityCleanroom(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
-        this.minerLogic = new CleanroomLogic(this, GTValues.LV);
+        this.cleanroomLogic = new CleanroomLogic(this, GTValues.LV);
     }
 
     @Override
@@ -90,10 +94,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     @Override
     protected void updateFormedValid() {
-        this.minerLogic.performDrilling();
-        if (!getWorld().isRemote && this.minerLogic.wasActiveAndNeedsUpdate()) {
-            this.minerLogic.setWasActiveAndNeedsUpdate(false);
-            this.minerLogic.setActive(false);
+        this.cleanroomLogic.performDrilling();
+        if (!getWorld().isRemote && this.cleanroomLogic.wasActiveAndNeedsUpdate()) {
+            this.cleanroomLogic.setWasActiveAndNeedsUpdate(false);
+            this.cleanroomLogic.setActive(false);
         }
     }
 
@@ -278,10 +282,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
         }
 
-        if (!minerLogic.isWorkingEnabled()) {
+        if (!cleanroomLogic.isWorkingEnabled()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
 
-        } else if (minerLogic.isActive()) {
+        } else if (cleanroomLogic.isActive()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
             int currentProgress = getProgressPercent();
             textList.add(new TextComponentTranslation("gregtech.multiblock.progress", currentProgress));
@@ -345,9 +349,26 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     }
 
     @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.1"));
+        tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.2"));
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.3"));
+            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.4"));
+            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.5"));
+            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.6"));
+            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.7"));
+            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.8"));
+        } else {
+            tooltip.add(I18n.format("gregtech.tooltip.hold_shift"));
+        }
+    }
+
+    @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.minerLogic.isActive(), this.minerLogic.isWorkingEnabled());
+        this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.cleanroomLogic.isActive(), this.cleanroomLogic.isWorkingEnabled());
     }
 
     @Nonnull
@@ -379,30 +400,30 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     @Override
     public boolean isWorkingEnabled() {
-        return this.minerLogic.isWorkingEnabled();
+        return this.cleanroomLogic.isWorkingEnabled();
     }
 
     @Override
     public void setWorkingEnabled(boolean isActivationAllowed) {
         if (!isActivationAllowed) // pausing sets not clean
             setClean(false);
-        this.minerLogic.setWorkingEnabled(isActivationAllowed);
+        this.cleanroomLogic.setWorkingEnabled(isActivationAllowed);
     }
 
     @Override
     public int getProgress() {
-        return minerLogic.getProgressTime();
+        return cleanroomLogic.getProgressTime();
     }
 
     @Override
     public int getMaxProgress() {
         if (getWorld().isRemote)
             return CleanroomLogic.MAX_PROGRESS;
-        return minerLogic.getMaxProgress();
+        return cleanroomLogic.getMaxProgress();
     }
 
     public int getProgressPercent() {
-        return (int) (minerLogic.getProgressPercent() * 100);
+        return (int) (cleanroomLogic.getProgressPercent() * 100);
     }
 
     @Override
@@ -447,7 +468,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             this.height = buf.readInt();
             this.reinitializeStructurePattern();
         }
-        this.minerLogic.receiveCustomData(dataId, buf);
+        this.cleanroomLogic.receiveCustomData(dataId, buf);
     }
 
     @Override
@@ -457,7 +478,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         data.setInteger("depth", this.depth);
         data.setInteger("height", this.height);
         data.setBoolean("isClean", this.isClean);
-        return this.minerLogic.writeToNBT(data);
+        return this.cleanroomLogic.writeToNBT(data);
     }
 
     @Override
@@ -467,7 +488,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         this.depth = data.hasKey("depth") ? data.getInteger("depth") : this.depth;
         this.height = data.hasKey("height") ? data.getInteger("height") : this.height;
         this.isClean = data.getBoolean("isClean");
-        this.minerLogic.readFromNBT(data);
+        this.cleanroomLogic.readFromNBT(data);
     }
 
     @Override
@@ -477,7 +498,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         buf.writeInt(this.depth);
         buf.writeInt(this.height);
         buf.writeBoolean(isClean);
-        this.minerLogic.writeInitialSyncData(buf);
+        this.cleanroomLogic.writeInitialSyncData(buf);
     }
 
     @Override
@@ -487,7 +508,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         this.depth = buf.readInt();
         this.height = buf.readInt();
         this.isClean = buf.readBoolean();
-        this.minerLogic.receiveInitialSyncData(buf);
+        this.cleanroomLogic.receiveInitialSyncData(buf);
     }
 
     @Override
