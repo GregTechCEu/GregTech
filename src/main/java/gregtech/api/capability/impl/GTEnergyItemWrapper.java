@@ -35,14 +35,14 @@ public class GTEnergyItemWrapper implements IElectricItem {
 
     @Override
     public long charge(long amount, int chargerTier, boolean ignoreTransferLimit, boolean simulate) {
-        int max = Math.min(FeCompat.nativeToFe(amount), energyStorage.getMaxEnergyStored() - energyStorage.getEnergyStored());
-        return FeCompat.nativeToEu(energyStorage.receiveEnergy(max, simulate));
+        if (amount <= 0) return 0;
+        return FeCompat.nativeToEu(energyStorage.receiveEnergy(FeCompat.nativeToFe(amount), simulate));
     }
 
     @Override
     public long discharge(long amount, int dischargerTier, boolean ignoreTransferLimit, boolean externally, boolean simulate) {
-        int max = Math.min(FeCompat.nativeToFe(amount), energyStorage.getEnergyStored());
-        return FeCompat.nativeToEu(energyStorage.extractEnergy(max, simulate));
+        if (amount <= 0) return 0;
+        return FeCompat.nativeToEu(energyStorage.extractEnergy(FeCompat.nativeToFe(amount), simulate));
     }
 
     @Override

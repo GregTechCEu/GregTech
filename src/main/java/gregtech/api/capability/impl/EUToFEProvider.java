@@ -6,17 +6,15 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nonnull;
 
-public class EUToFEProvider extends CapabilityCompatProvider implements INBTSerializable<NBTTagLong> {
+public class EUToFEProvider extends CapabilityCompatProvider {
 
     /**
      * Internally used FE Buffer so that a very large packet of EU is not partially destroyed
@@ -45,16 +43,6 @@ public class EUToFEProvider extends CapabilityCompatProvider implements INBTSeri
         return energyStorage != null ?
                 GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(new GTEnergyWrapper(energyStorage)) :
                 null;
-    }
-
-    @Override
-    public NBTTagLong serializeNBT() {
-        return new NBTTagLong(feBuffer);
-    }
-
-    @Override
-    public void deserializeNBT(NBTTagLong nbtTagLong) {
-        this.feBuffer = nbtTagLong.getLong();
     }
 
     public class GTEnergyWrapper implements IEnergyContainer {
