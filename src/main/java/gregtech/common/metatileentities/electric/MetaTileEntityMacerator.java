@@ -48,10 +48,6 @@ public class MetaTileEntityMacerator extends SimpleMachineMetaTileEntity {
         }
     }
 
-    public int getOutputAmount() {
-        return outputAmount;
-    }
-
     @Override
     public int getItemOutputLimit() {
         return outputAmount;

@@ -64,26 +64,32 @@ public class ParallelLogic {
 
         // Check both normal item outputs and chanced item outputs
         if (recipe.getOutputs().size() > 0 || recipe.getChancedOutputs().size() > 0) {
-            modifiedItemParallelAmount = limitParallelByItems(recipe, new OverlayedItemHandler(outputs), parallelAmount);
             // If we are voiding items, reset the item limit to the maximum number of parallels
             if(voidItems) {
                 modifiedItemParallelAmount = parallelAmount;
             }
+            else {
+                modifiedItemParallelAmount = limitParallelByItems(recipe, new OverlayedItemHandler(outputs), parallelAmount);
+            }
+
             // If we are not voiding, and cannot fit any items, return 0
-            else if (modifiedItemParallelAmount == 0) {
+            if (modifiedItemParallelAmount == 0 && !voidItems) {
                 return 0;
             }
         }
 
         // TODO, check both regular and chanced fluid outputs when fluid outputs are implemented
         if (recipe.getFluidOutputs().size() > 0) {
-            modifiedFluidParallelAmount = limitParallelByFluids(recipe, new OverlayedFluidHandler(fluidOutputs), modifiedItemParallelAmount);
             // If we are voiding fluids, reset the fluid limit to the maximum number of parallels
             if(voidFluids) {
                 modifiedFluidParallelAmount = parallelAmount;
             }
+            else {
+                modifiedFluidParallelAmount = limitParallelByFluids(recipe, new OverlayedFluidHandler(fluidOutputs), modifiedItemParallelAmount);
+            }
+
             // If we are not voiding, and cannot fit any fluids, return 0
-            else if(modifiedFluidParallelAmount == 0) {
+            if(modifiedFluidParallelAmount == 0 && !voidFluids) {
                 return 0;
             }
         }
