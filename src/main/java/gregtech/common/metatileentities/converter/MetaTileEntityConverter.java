@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.converter;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
@@ -11,9 +12,10 @@ import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.TieredMetaTileEntity;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
 import gregtech.common.tools.DamageValues;
@@ -31,6 +33,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -39,19 +42,24 @@ import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.SYNC_TILE_MODE;
 
-public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMetaTileEntity {
+public class MetaTileEntityConverter extends TieredMetaTileEntity {
 
     private final ConverterTrait converterTrait;
 
-    private final int tier;
     private final int slots;
 
     public MetaTileEntityConverter(ResourceLocation metaTileEntityId, int tier, int amps) {
-        super(metaTileEntityId);
-        this.tier = tier;
+        super(metaTileEntityId, tier);
         this.slots = amps;
-        converterTrait = new ConverterTrait(this, tier, amps, true);
+        this.converterTrait = new ConverterTrait(this, tier, amps, true);
         initializeInventory();
+        reinitializeEnergyContainer();
+    }
+
+    @Override
+    protected void reinitializeEnergyContainer() {
+        if (converterTrait == null) return;
+        this.energyContainer = converterTrait.getEnergyEUContainer();
     }
 
     @Override
@@ -103,7 +111,7 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityConverter(metaTileEntityId, tier, slots);
+        return new MetaTileEntityConverter(metaTileEntityId, getTier(), slots);
     }
 
     @Override
@@ -120,7 +128,8 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.VOLTAGE_CASINGS[getTier()].render(renderState, translation, pipeline);
+        IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
+        Textures.VOLTAGE_CASINGS[getTier()].render(renderState, translation, colouredPipeline);
         if (converterTrait.isFeToEu()) {
             for (EnumFacing facing : EnumFacing.values()) {
                 if (facing == frontFacing)
@@ -140,7 +149,7 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
 
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(Textures.VOLTAGE_CASINGS[getTier()].getParticleSprite(), getPaintingColor());
+        return Pair.of(Textures.VOLTAGE_CASINGS[getTier()].getParticleSprite(), getPaintingColorForRendering());
     }
 
     @Override
@@ -198,11 +207,6 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
     }
 
     @Override
-    public int getTier() {
-        return tier;
-    }
-
-    @Override
     public boolean isValidFrontFacing(EnumFacing facing) {
         return true;
     }
@@ -214,7 +218,17 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
         tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_tool_usage"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", slots));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", converterTrait.getEnergyEUContainer().getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", FeCompat.toFe(voltage * amps, true), amps, voltage, GTValues.VNF[tier]));
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VNF[tier], FeCompat.toFe(voltage * amps, false)));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", FeCompat.toFe(voltage * amps, true), amps, voltage, GTValues.VNF[getTier()]));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VNF[getTier()], FeCompat.toFe(voltage * amps, false)));
+    }
+
+    @Override
+    protected long getMaxInputOutputAmperage() {
+        return converterTrait.getBaseAmps();
+    }
+
+    @Override
+    protected boolean isEnergyEmitter() {
+        return converterTrait.isFeToEu();
     }
 }
