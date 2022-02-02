@@ -161,14 +161,14 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
     public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
         if (tab == CreativeTabs.SEARCH) {
             blockState.getValidStates().stream().filter(state -> state.getValue(STONE_TYPE).shouldBeDroppedAsItem).forEach(blockState -> list.add(getItem(blockState)));
-        } else if (tab == GregTechAPI.TAB_GREGTECH_ORES) {
+        } else if (tab == GregTechAPI.TAB_GREGTECH_ORES && getRegistryName() != null && getRegistryName().getPath().endsWith("_0")) {
             list.add(getItem(getDefaultState()));
         }
     }
 
     @Override
     public boolean canRenderInLayer(@Nonnull IBlockState state, @Nonnull BlockRenderLayer layer) {
-        return layer == BlockRenderLayer.CUTOUT_MIPPED || (material.getProperty(PropertyKey.ORE).isEmissive() && layer == BloomEffectUtil.getRealBloomLayer()) ;
+        return layer == BlockRenderLayer.CUTOUT_MIPPED || (material.getProperty(PropertyKey.ORE).isEmissive() && layer == BloomEffectUtil.getRealBloomLayer());
     }
 
     private BlockStateContainer createStateContainer() {
@@ -182,7 +182,8 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void onTextureStitch(TextureStitchEvent.Pre event) { }
+    public void onTextureStitch(TextureStitchEvent.Pre event) {
+    }
 
     @Override
     @SideOnly(Side.CLIENT)
