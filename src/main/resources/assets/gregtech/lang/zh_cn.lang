@@ -3320,11 +3320,11 @@ gregtech.machine.scanner.umv.name=高科技扫描机 IV
 gregtech.machine.scanner.uxv.name=终极扫描机
 
 gregtech.machine.infinite_energy.name=无限 GT 能量输出器
-gregtech.machine.infinite_energy.tooltip=§8你只需要§o§c创§6§c造§e§c模§a§c式§8来使用它
+gregtech.machine.infinite_energy.tooltip=§8你只需要§o§c创§o§6造§o§e模§o§a式§o§8来使用它
 gregtech.machine.creative_chest.name=创造量子箱
-gregtech.machine.creative_chest.tooltip=§8你只需要§o§c创§6§c造§e§c模§a§c式§8来使用它
+gregtech.machine.creative_chest.tooltip=§8你只需要§o§c创§o§6造§o§e模§o§a式§o§8来使用它
 gregtech.machine.creative_tank.name=创造量子储罐
-gregtech.machine.creative_tank.tooltip=§8你只需要§o§c创§6§c造§e§c模§a§c式§8来使用它
+gregtech.machine.creative_tank.tooltip=§8你只需要§o§c创§o§6造§o§e模§o§a式§o§8来使用它
 
 
 # Machine hulls
