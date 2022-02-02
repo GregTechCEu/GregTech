@@ -187,14 +187,15 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
-        return standardOverclockingLogic((isHighPressure ? recipe.getEUt() * 2 : recipe.getEUt()) * (negativeEU ? -1 : 1),
-                getMaxVoltage(),
-                isHighPressure ? recipe.getDuration() : recipe.getDuration() * 2,
-                getOverclockingDurationDivisor(),
-                getOverclockingVoltageMultiplier(),
-                maxOverclocks
-        );
+    protected int[] calculateOverclock(@Nonnull Recipe recipe) {
+
+        //EUt, Duration
+        int[] result = new int[2];
+
+        result[0] = isHighPressure ? recipe.getEUt() * 2 : recipe.getEUt();
+        result[1] = isHighPressure ? recipe.getDuration() : recipe.getDuration() * 2;
+
+        return result;
     }
 
     @Override
