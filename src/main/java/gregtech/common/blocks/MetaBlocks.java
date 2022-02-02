@@ -13,6 +13,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.client.model.IModelSupplier;
+import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.model.modelfactories.BakedModelHandler;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityTESR;
@@ -21,9 +22,9 @@ import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
+import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.blocks.wood.BlockRubberLeaves;
 import gregtech.common.blocks.wood.BlockRubberLog;
-import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.blocks.wood.BlockRubberSapling;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
@@ -44,7 +45,6 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.DefaultStateMapper;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.init.Blocks;
@@ -79,7 +79,7 @@ public class MetaBlocks {
     public static BlockMachine MACHINE;
     public static final BlockCable[] CABLES = new BlockCable[10];
     public static final BlockFluidPipe[] FLUID_PIPES = new BlockFluidPipe[7];
-    public static final BlockItemPipe[] ITEM_PIPES = new BlockItemPipe[6];
+    public static final BlockItemPipe[] ITEM_PIPES = new BlockItemPipe[8];
 
     public static BlockBoilerCasing BOILER_CASING;
     public static BlockFireboxCasing BOILER_FIREBOX_CASING;
@@ -92,7 +92,7 @@ public class MetaBlocks {
     public static BlockWireCoil WIRE_COIL;
     public static BlockFusionCasing FUSION_CASING;
     public static BlockWarningSign WARNING_SIGN;
-    public static HermeticCasings HERMETIC_CASING;
+    public static BlockHermeticCasing HERMETIC_CASING;
 
     public static BlockAsphalt ASPHALT;
 
@@ -166,7 +166,7 @@ public class MetaBlocks {
         FUSION_CASING.setRegistryName("fusion_casing");
         WARNING_SIGN = new BlockWarningSign();
         WARNING_SIGN.setRegistryName("warning_sign");
-        HERMETIC_CASING = new HermeticCasings();
+        HERMETIC_CASING = new BlockHermeticCasing();
         HERMETIC_CASING.setRegistryName("hermetic_casing");
 
         ASPHALT = new BlockAsphalt();
@@ -221,7 +221,6 @@ public class MetaBlocks {
 
         StoneType.init();
 
-        createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && (m.hasProperty(PropertyKey.INGOT) || m.hasProperty(PropertyKey.GEM)) && !OrePrefix.block.isIgnored(m), MetaBlocks::createCompressedBlock);
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME), MetaBlocks::createFrameBlock);
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.DUST), MetaBlocks::createSurfaceRockBlock);
 
@@ -231,7 +230,6 @@ public class MetaBlocks {
                 MetaBlocks::createCompressedBlock);
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-            if (material.isHidden()) continue;
 
             if (material.hasProperty(PropertyKey.ORE)) {
                 createOreBlock(material);
@@ -245,22 +243,22 @@ public class MetaBlocks {
             }
             if (material.hasProperty(PropertyKey.FLUID_PIPE)) {
                 for (BlockFluidPipe pipe : FLUID_PIPES) {
-                    if(!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
+                    if (!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
                         pipe.addPipeMaterial(material, material.getProperty(PropertyKey.FLUID_PIPE));
                     }
                 }
             }
             if (material.hasProperty(PropertyKey.ITEM_PIPE)) {
                 for (BlockItemPipe pipe : ITEM_PIPES) {
-                    if(!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
+                    if (!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
                         pipe.addPipeMaterial(material, material.getProperty(PropertyKey.ITEM_PIPE));
                     }
                 }
             }
         }
         for (BlockFluidPipe pipe : FLUID_PIPES) {
-            if(!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood) ||
-            !pipe.getItemPipeType(pipe.getItem(Materials.TreatedWood)).getOrePrefix().isIgnored(Materials.TreatedWood)) {
+            if (!pipe.getItemPipeType(pipe.getItem(Materials.Wood)).getOrePrefix().isIgnored(Materials.Wood) ||
+                    !pipe.getItemPipeType(pipe.getItem(Materials.TreatedWood)).getOrePrefix().isIgnored(Materials.TreatedWood)) {
                 pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(310, 5, false));
                 pipe.addPipeMaterial(Materials.TreatedWood, new FluidPipeProperties(310, 8, false));
             }
@@ -287,7 +285,6 @@ public class MetaBlocks {
         Map<Integer, Material[]> blocksToGenerate = new TreeMap<>();
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-            if (material.isHidden()) continue;
             if (materialPredicate.test(material)) {
                 int id = material.getId();
                 int metaBlockID = id / 16;
@@ -295,7 +292,7 @@ public class MetaBlocks {
 
                 if (!blocksToGenerate.containsKey(metaBlockID)) {
                     Material[] materials = new Material[16];
-                    Arrays.fill(materials, Materials._NULL);
+                    Arrays.fill(materials, Materials.NULL);
                     blocksToGenerate.put(metaBlockID, materials);
                 }
 
@@ -373,11 +370,11 @@ public class MetaBlocks {
     public static void registerItemModels() {
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE), stack -> MetaTileEntityRenderer.MODEL_LOCATION);
         for (BlockCable cable : CABLES)
-            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(cable), stack -> CableRenderer.MODEL_LOCATION);
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(cable), stack -> CableRenderer.INSTANCE.getModelLocation());
         for (BlockFluidPipe pipe : FLUID_PIPES)
-            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> FluidPipeRenderer.MODEL_LOCATION);
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> FluidPipeRenderer.INSTANCE.getModelLocation());
         for (BlockItemPipe pipe : ITEM_PIPES)
-            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> ItemPipeRenderer.MODEL_LOCATION);
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> ItemPipeRenderer.INSTANCE.getModelLocation());
         registerItemModel(BOILER_CASING);
         registerItemModel(BOILER_FIREBOX_CASING);
         registerItemModel(METAL_CASING);
@@ -414,7 +411,6 @@ public class MetaBlocks {
 
         COMPRESSED.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
         FRAMES.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
-        SURFACE_ROCK.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
         ORES.forEach(IModelSupplier::onModelRegister);
     }
 
@@ -428,22 +424,6 @@ public class MetaBlocks {
                             statePropertiesToString(state.getProperties())));
         }
     }
-
-    @SideOnly(Side.CLIENT)
-    private static void registerItemModelWithFilteredProperties(Block block, IProperty<?>... filteredProperties) {
-        for (IBlockState state : block.getBlockState().getValidStates()) {
-            HashMap<IProperty<?>, Comparable<?>> stringProperties = new HashMap<>();
-            for (IProperty<?> property : filteredProperties) {
-                stringProperties.put(property, state.getValue(property));
-            }
-            //noinspection ConstantConditions
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block),
-                    block.getMetaFromState(state),
-                    new ModelResourceLocation(block.getRegistryName(),
-                            statePropertiesToString(stringProperties)));
-        }
-    }
-
 
     @SideOnly(Side.CLIENT)
     private static void registerItemModelWithOverride(Block block, Map<IProperty<?>, Comparable<?>> stateOverrides) {
@@ -460,48 +440,33 @@ public class MetaBlocks {
 
     @SideOnly(Side.CLIENT)
     public static void registerStateMappers() {
-        ModelLoader.setCustomStateMapper(MACHINE, new DefaultStateMapper() {
+        ModelLoader.setCustomStateMapper(MACHINE, new SimpleStateMapper(MetaTileEntityRenderer.MODEL_LOCATION));
+
+        IStateMapper normalStateMapper = new SimpleStateMapper(CableRenderer.INSTANCE.getModelLocation());
+        for (BlockCable cable : CABLES) {
+            ModelLoader.setCustomStateMapper(cable, normalStateMapper);
+        }
+        normalStateMapper = new SimpleStateMapper(FluidPipeRenderer.INSTANCE.getModelLocation());
+        for (BlockFluidPipe pipe : FLUID_PIPES) {
+            ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
+        }
+        normalStateMapper = new SimpleStateMapper(ItemPipeRenderer.INSTANCE.getModelLocation());
+        for (BlockItemPipe pipe : ITEM_PIPES) {
+            ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
+        }
+        normalStateMapper = new SimpleStateMapper(BlockSurfaceRock.MODEL_LOCATION);
+        for (BlockSurfaceRock surfaceRock : new HashSet<>(SURFACE_ROCK.values())) {
+            ModelLoader.setCustomStateMapper(surfaceRock, normalStateMapper);
+        }
+
+        normalStateMapper = new StateMapperBase() {
             @Nonnull
             @Override
             protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
-                return MetaTileEntityRenderer.MODEL_LOCATION;
-            }
-        });
-
-        for (BlockCable cable : CABLES) {
-            ModelLoader.setCustomStateMapper(cable, new DefaultStateMapper() {
-                @Nonnull
-                @Override
-                protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
-                    return CableRenderer.MODEL_LOCATION;
-                }
-            });
-        }
-        for (BlockFluidPipe pipe : FLUID_PIPES) {
-            ModelLoader.setCustomStateMapper(pipe, new DefaultStateMapper() {
-                @Nonnull
-                @Override
-                protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
-                    return FluidPipeRenderer.MODEL_LOCATION;
-                }
-            });
-        }
-        for (BlockItemPipe pipe : ITEM_PIPES) {
-            ModelLoader.setCustomStateMapper(pipe, new DefaultStateMapper() {
-                @Nonnull
-                @Override
-                protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
-                    return ItemPipeRenderer.MODEL_LOCATION;
-                }
-            });
-        }
-
-        IStateMapper normalStateMapper = new StateMapperBase() {
-            @Override
-            protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
                 return new ModelResourceLocation(Block.REGISTRY.getNameForObject(state.getBlock()), "normal");
             }
         };
+
         ModelLoader.setCustomStateMapper(FOAM, normalStateMapper);
         ModelLoader.setCustomStateMapper(REINFORCED_FOAM, normalStateMapper);
         ModelLoader.setCustomStateMapper(PETRIFIED_FOAM, normalStateMapper);
@@ -540,6 +505,12 @@ public class MetaBlocks {
             Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(ORE_BLOCK_COLOR, block);
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler(ORE_ITEM_COLOR, block);
         });
+
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(MACHINE_CASING_BLOCK_COLOR, MACHINE_CASING);
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(MACHINE_CASING_ITEM_COLOR, MACHINE_CASING);
+
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(MACHINE_CASING_BLOCK_COLOR, HERMETIC_CASING);
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(MACHINE_CASING_ITEM_COLOR, HERMETIC_CASING);
     }
 
     public static void registerOreDict() {

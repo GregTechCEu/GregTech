@@ -6,6 +6,7 @@ import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.enchants.EnchantmentEnderDamage;
 import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
@@ -299,6 +300,10 @@ public class CommonProxy {
     public void onPostLoad() {
         GTRecipeManager.postLoad();
         TerminalRegistry.init();
+
+        if(ConfigHolder.compat.removeSmeltingForEBFMetals) {
+            ModHandler.removeSmeltingEBFMetals();
+        }
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {

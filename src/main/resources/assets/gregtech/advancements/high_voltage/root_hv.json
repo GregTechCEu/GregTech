@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.root_hv.name"
     },
     "icon": {
-      "item": "gregtech:machine",
-      "data": 1002
+      "item": "gregtech:meta_ingot",
+      "data": 323
     },
     "frame": "goal",
     "background": "gregtech:textures/blocks/casings/solid/machine_casing_clean_stainless_steel.png"

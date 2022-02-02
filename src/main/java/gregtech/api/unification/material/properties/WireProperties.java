@@ -14,15 +14,22 @@ public class WireProperties implements IMaterialProperty<WireProperties> {
     private int lossPerBlock;
     private boolean isSuperconductor;
 
+    private boolean wireFromDust;
+
     public WireProperties(int voltage, int baseAmperage, int lossPerBlock) {
-        this(voltage, baseAmperage, lossPerBlock, false);
+        this(voltage, baseAmperage, lossPerBlock, false, false);
     }
 
     public WireProperties(int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon) {
+        this(voltage, baseAmperage, lossPerBlock, isSuperCon, false);
+    }
+
+    public WireProperties(int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon, boolean wireFromDust) {
         this.voltage = voltage;
         this.amperage = baseAmperage;
         this.lossPerBlock = isSuperCon ? 0 : lossPerBlock;
         this.isSuperconductor = isSuperCon;
+        this.wireFromDust = wireFromDust;
     }
 
     /**
@@ -96,6 +103,14 @@ public class WireProperties implements IMaterialProperty<WireProperties> {
     }
 
     /**
+     * If Wires of this material should be made from a Dust instead of an Ingot.
+     * Intended for things like Graphene.
+     */
+    public boolean isWireFromDust() {
+        return wireFromDust;
+    }
+
+    /**
      * Sets the current wire to a superconductor wire
      *
      * @param isSuperconductor The new wire superconductor status
@@ -104,14 +119,22 @@ public class WireProperties implements IMaterialProperty<WireProperties> {
         this.isSuperconductor = isSuperconductor;
     }
 
+    public void setWireFromDust(boolean wireFromDust) {
+        this.wireFromDust = wireFromDust;
+    }
+
     @Override
     public void verifyProperty(MaterialProperties properties) {
-        properties.ensureSet(PropertyKey.INGOT, true);
+        if (!isWireFromDust()) {
+            properties.ensureSet(PropertyKey.INGOT, true);
 
-        // Ensure all Materials with Cables and voltage tier IV or above have a Foil for recipe generation
-        Material thisMaterial = properties.getMaterial();
-        if (!isSuperconductor && voltage >= GTValues.V[GTValues.IV] && !thisMaterial.hasFlag(GENERATE_FOIL)) {
-            thisMaterial.addFlags(GENERATE_FOIL);
+            // Ensure all Materials with Cables and voltage tier IV or above have a Foil for recipe generation
+            Material thisMaterial = properties.getMaterial();
+            if (!isSuperconductor && voltage >= GTValues.V[GTValues.IV] && !thisMaterial.hasFlag(GENERATE_FOIL)) {
+                thisMaterial.addFlags(GENERATE_FOIL);
+            }
+        } else {
+            properties.ensureSet(PropertyKey.DUST, true);
         }
     }
 

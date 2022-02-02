@@ -43,7 +43,7 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
 
     abstract int getTier();
 
-    abstract MetaItem.MetaValueItem getPowerUnit();
+    abstract MetaItem<?>.MetaValueItem getPowerUnit();
 
     @Override
     public int getToolDamagePerBlockBreak(ItemStack stack) {
@@ -77,6 +77,9 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
 
     @Override
     public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
+        if (enchantment.type == null) {
+            return false;
+        }
         return enchantment.type.canEnchantItem(Items.IRON_PICKAXE);
     }
 
@@ -95,24 +98,31 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
         return (tool != null && (tool.equals("pickaxe") || tool.equals("shovel"))) ||
-                block.getMaterial() == Material.ROCK ||
-                block.getMaterial() == Material.IRON ||
-                block.getMaterial() == Material.ANVIL ||
-                block.getMaterial() == Material.SAND ||
-                block.getMaterial() == Material.GRASS ||
-                block.getMaterial() == Material.GROUND ||
-                block.getMaterial() == Material.SNOW ||
-                block.getMaterial() == Material.CLAY ||
-                block.getMaterial() == Material.GLASS;
+                       block.getMaterial() == Material.ROCK ||
+                       block.getMaterial() == Material.IRON ||
+                       block.getMaterial() == Material.ANVIL ||
+                       block.getMaterial() == Material.SAND ||
+                       block.getMaterial() == Material.GRASS ||
+                       block.getMaterial() == Material.GROUND ||
+                       block.getMaterial() == Material.SNOW ||
+                       block.getMaterial() == Material.CLAY ||
+                       block.getMaterial() == Material.GLASS ||
+                       block.getMaterial() == Material.PACKED_ICE;
     }
 
     public boolean canAOEMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
-        return (tool != null && (tool.equals("hammer") || tool.equals("pickaxe"))) ||
-                block.getMaterial() == Material.ROCK ||
-                block.getMaterial() == Material.GLASS ||
-                block.getMaterial() == Material.ICE ||
-                block.getMaterial() == Material.PACKED_ICE;
+        return (tool != null && (tool.equals("pickaxe") || tool.equals("shovel"))) ||
+                       block.getMaterial() == Material.ROCK ||
+                       block.getMaterial() == Material.IRON ||
+                       block.getMaterial() == Material.ANVIL ||
+                       block.getMaterial() == Material.SAND ||
+                       block.getMaterial() == Material.GRASS ||
+                       block.getMaterial() == Material.GROUND ||
+                       block.getMaterial() == Material.SNOW ||
+                       block.getMaterial() == Material.CLAY ||
+                       block.getMaterial() == Material.GLASS ||
+                       block.getMaterial() == Material.PACKED_ICE;
     }
 
     @Override
@@ -167,15 +177,18 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
                 // try to find lowest pos
                 Vec3i towardsVec = RelativeDirection.FRONT.applyVec3i(facing);
 
-                // Find the relative downwards offset
-                for (int i = 1; i <= max; i++) {
-                    BlockPos currentPos = startPos.add(multiplyVec(downVec, i));
+                if (max != 1) {
+                    // Find the relative downwards offset
+                    for (int i = 1; i <= max; i++) {
+                        BlockPos currentPos = startPos.add(multiplyVec(downVec, i));
 
-                    BlockPos forwardPos = currentPos.add(towardsVec);
-                    IBlockState state = player.world.getBlockState(forwardPos);
-                    if (!state.getBlock().isAir(state, player.world, forwardPos)) {
-                        startPos = currentPos;
-                        break;
+                        BlockPos forwardPos = currentPos.add(towardsVec);
+                        IBlockState state = player.world.getBlockState(forwardPos);
+                        if (!state.getBlock()
+                                .isAir(state, player.world, forwardPos)) {
+                            startPos = currentPos;
+                            break;
+                        }
                     }
                 }
 

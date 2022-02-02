@@ -163,6 +163,11 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_LUV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_ZPM;
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_UV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_UHV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_UEV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_UIV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_UMV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_UXV;
 
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_LV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_MV;
@@ -172,8 +177,11 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_LUV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_ZPM;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_UV;
-
-    public static final MetaItem<?>.MetaValueItem[] PUMPS = new MetaValueItem[8];
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_UHV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_UEV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_UIV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_UMV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_UXV;
 
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_LV;
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_MV;
@@ -183,8 +191,6 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_LUV;
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_ZPM;
     public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_UV;
-
-    public static final MetaItem<?>.MetaValueItem[] FLUID_REGULATORS = new MetaValueItem[8];
 
     public static MetaItem<?>.MetaValueItem FLUID_FILTER;
 
@@ -198,6 +204,11 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_LUV;
     public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_ZPM;
     public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_UV;
+    public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_UHV;
+    public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_UEV;
+    public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_UIV;
+    public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_UMV;
+    public static MetaItem<?>.MetaValueItem CONVEYOR_MODULE_UXV;
 
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_LV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_MV;
@@ -207,6 +218,11 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_LUV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_ZPM;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_UV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_UHV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_UEV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_UIV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_UMV;
+    public static MetaItem<?>.MetaValueItem ELECTRIC_PISTON_UXV;
 
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_LV;
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_MV;
@@ -216,6 +232,11 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_LUV;
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_ZPM;
     public static MetaItem<?>.MetaValueItem ROBOT_ARM_UV;
+    public static MetaItem<?>.MetaValueItem ROBOT_ARM_UHV;
+    public static MetaItem<?>.MetaValueItem ROBOT_ARM_UEV;
+    public static MetaItem<?>.MetaValueItem ROBOT_ARM_UIV;
+    public static MetaItem<?>.MetaValueItem ROBOT_ARM_UMV;
+    public static MetaItem<?>.MetaValueItem ROBOT_ARM_UXV;
 
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_LV;
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_MV;
@@ -225,6 +246,11 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_LUV;
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_ZPM;
     public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_UV;
+    public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_UHV;
+    public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_UEV;
+    public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_UIV;
+    public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_UMV;
+    public static MetaItem<?>.MetaValueItem FIELD_GENERATOR_UXV;
 
     public static MetaItem<?>.MetaValueItem EMITTER_LV;
     public static MetaItem<?>.MetaValueItem EMITTER_MV;
@@ -234,6 +260,11 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem EMITTER_LUV;
     public static MetaItem<?>.MetaValueItem EMITTER_ZPM;
     public static MetaItem<?>.MetaValueItem EMITTER_UV;
+    public static MetaItem<?>.MetaValueItem EMITTER_UHV;
+    public static MetaItem<?>.MetaValueItem EMITTER_UEV;
+    public static MetaItem<?>.MetaValueItem EMITTER_UIV;
+    public static MetaItem<?>.MetaValueItem EMITTER_UMV;
+    public static MetaItem<?>.MetaValueItem EMITTER_UXV;
 
     public static MetaItem<?>.MetaValueItem SENSOR_LV;
     public static MetaItem<?>.MetaValueItem SENSOR_MV;
@@ -243,6 +274,11 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SENSOR_LUV;
     public static MetaItem<?>.MetaValueItem SENSOR_ZPM;
     public static MetaItem<?>.MetaValueItem SENSOR_UV;
+    public static MetaItem<?>.MetaValueItem SENSOR_UHV;
+    public static MetaItem<?>.MetaValueItem SENSOR_UEV;
+    public static MetaItem<?>.MetaValueItem SENSOR_UIV;
+    public static MetaItem<?>.MetaValueItem SENSOR_UMV;
+    public static MetaItem<?>.MetaValueItem SENSOR_UXV;
 
     public static MetaItem<?>.MetaValueItem TOOL_DATA_STICK;
     public static MetaItem<?>.MetaValueItem TOOL_DATA_ORB;
@@ -431,7 +467,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem BOTTLE_PURPLE_DRINK;
 
     public static MetaItem<?>.MetaValueItem PLANT_BALL;
-    public static MetaItem<?>.MetaValueItem RUBBER_DROP;
+    public static MetaItem<?>.MetaValueItem STICKY_RESIN;
     public static MetaItem<?>.MetaValueItem ENERGIUM_DUST;
 
     public static MetaItem<?>.MetaValueItem POWER_UNIT_LV;
@@ -444,6 +480,13 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem PROSPECTOR_LV;
     public static MetaItem<?>.MetaValueItem PROSPECTOR_HV;
     public static MetaItem<?>.MetaValueItem PROSPECTOR_LUV;
+
+    public static MetaItem<?>.MetaValueItem TRICORDER_SCANNER;
+    public static MetaItem<?>.MetaValueItem DEBUG_SCANNER;
+
+    public static MetaItem<?>.MetaValueItem ITEM_MAGNET_LV;
+    public static MetaItem<?>.MetaValueItem ITEM_MAGNET_HV;
+
     public static MetaItem<?>.MetaValueItem WIRELESS;
     public static MetaItem<?>.MetaValueItem CAMERA;
     public static MetaItem<?>.MetaValueItem TERMINAL;
@@ -531,6 +574,10 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem GRAVITATION_ENGINE;
 
     public static MetaItem<?>.MetaValueItem SUS_RECORD;
+    public static MetaItem<?>.MetaValueItem NAN_CERTIFICATE;
+
+
+    public static MetaOreDictItem CT_OREDICT_ITEM;
 
     private static final List<OrePrefix> orePrefixes = new ArrayList<OrePrefix>() {{
         add(OrePrefix.dust);
@@ -588,8 +635,8 @@ public final class MetaItems {
         first.setRegistryName("meta_item_1");
         MetaTool tool = new MetaTool();
         tool.setRegistryName("meta_tool");
-        MetaOreDictItem oreDictItem = new MetaOreDictItem((short) 0);
-        oreDictItem.setRegistryName("meta_oredict_item");
+        CT_OREDICT_ITEM = new MetaOreDictItem((short) 0);
+        CT_OREDICT_ITEM.setRegistryName("meta_oredict_item_ct");
         MetaArmor armor = new MetaArmor();
         armor.setRegistryName("gt_armor");
         for (OrePrefix prefix : orePrefixes) {
@@ -618,6 +665,7 @@ public final class MetaItems {
         MinecraftForge.EVENT_BUS.register(MetaItems.class);
         for (MetaItem<?> item : ITEMS) {
             item.registerModels();
+            item.registerTextureMesh();
         }
     }
 

@@ -41,7 +41,10 @@ import net.minecraft.network.play.client.CPacketPlayerDigging.Action;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.Tuple;
+import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -61,6 +64,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
@@ -73,6 +77,8 @@ import java.util.stream.Stream;
 import static gregtech.api.GTValues.V;
 
 public class GTUtility {
+
+    private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
     private static TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
 
@@ -760,10 +766,10 @@ public class GTUtility {
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
             if (valueItem != null) {
                 List<IItemBehaviour> behaviourList = valueItem.getBehaviours();
-                for(IItemBehaviour behaviour : behaviourList) {
-                    if(behaviour instanceof CoverPlaceBehavior)
+                for (IItemBehaviour behaviour : behaviourList) {
+                    if (behaviour instanceof CoverPlaceBehavior)
                         return canPlaceCover == null || canPlaceCover.apply(((CoverPlaceBehavior) behaviour).coverDefinition);
-                    if(behaviour instanceof CrowbarBehaviour)
+                    if (behaviour instanceof CrowbarBehaviour)
                         return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
                 }
             }
@@ -861,9 +867,11 @@ public class GTUtility {
     /**
      * Alternative function for tank sizes, takes a tier input and returns the corresponding size
      * <p>
-     * This function is meant for use with generators, and always returns 16000
+     * This function is meant for use with generators
      */
-    public static final Function<Integer, Integer> generatorTankSizeFunction = tier -> 16000;
+    public static final Function<Integer, Integer> steamGeneratorTankSizeFunction = tier -> Math.min(16000 * (1 << (tier - 1)), 64000);
+
+    public static final Function<Integer, Integer> genericGeneratorTankSizeFunction = tier -> Math.min(4000 * (1 << (tier - 1)), 16000);
 
     public static String romanNumeralString(int num) {
 
@@ -920,13 +928,12 @@ public class GTUtility {
     /**
      * Checks whether a machine is not a multiblock and has a recipemap not present in a blacklist
      *
-     *
      * @param machineStack the ItemStack containing the machine to check the validity of
      * @return whether the machine is valid or not
      */
     public static boolean isMachineValidForMachineHatch(ItemStack machineStack, String[] recipeMapBlacklist) {
 
-        if(machineStack == null || machineStack.isEmpty()) {
+        if (machineStack == null || machineStack.isEmpty()) {
             return false;
         }
 
@@ -939,11 +946,64 @@ public class GTUtility {
 
     /**
      * Attempts to find a passed in RecipeMap unlocalized name in a list of names
+     *
      * @param unlocalizedName The unlocalized name of a RecipeMap
      * @return {@code true} If the RecipeMap is in the config blacklist
      */
     public static boolean findMachineInBlacklist(String unlocalizedName, String[] recipeMapBlacklist) {
         return Arrays.asList(recipeMapBlacklist).contains(unlocalizedName);
+    }
+
+    /**
+     * Does almost the same thing as .to(LOWER_UNDERSCORE, string), but it also inserts underscores between words and numbers.
+     *
+     * @param string Any string with ASCII characters.
+     * @return A string that is all lowercase, with underscores inserted before word/number boundaries: "maragingSteel300" -> "maraging_steel_300"
+     */
+    public static String toLowerCaseUnderscore(String string) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < string.length(); i++) {
+            if (i != 0 && (Character.isUpperCase(string.charAt(i)) || (
+                    Character.isDigit(string.charAt(i - 1)) ^ Character.isDigit(string.charAt(i)))))
+                result.append("_");
+            result.append(Character.toLowerCase(string.charAt(i)));
+        }
+        return result.toString();
+    }
+
+    /**
+     * Does almost the same thing as LOWER_UNDERSCORE.to(UPPER_CAMEL, string), but it also removes underscores before numbers.
+     *
+     * @param string Any string with ASCII characters.
+     * @return A string that is all lowercase, with underscores inserted before word/number boundaries: "maraging_steel_300" -> "maragingSteel300"
+     */
+    public static String lowerUnderscoreToUpperCamel(String string) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < string.length(); i++) {
+            if (string.charAt(i) == '_')
+                continue;
+            if (i == 0 || string.charAt(i - 1) == '_') {
+                result.append(Character.toUpperCase(string.charAt(i)));
+            } else {
+                result.append(string.charAt(i));
+            }
+        }
+        return result.toString();
+    }
+
+  public static String formatNumbers(long number) {
+        return NUMBER_FORMAT.format(number);
+    }
+
+    public static String formatNumbers(double number) {
+        return NUMBER_FORMAT.format(number);
+    }
+
+    /**
+     * If pos of this world loaded
+     */
+    public static boolean isPosChunkLoaded(World world, BlockPos pos) {
+        return !world.getChunkProvider().provideChunk(pos.getX() >> 4, pos.getZ() >> 4).isEmpty();
     }
 
 }

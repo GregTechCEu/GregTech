@@ -158,6 +158,9 @@ public class ConfigHolder {
         @Config.Comment({"Whether to make coloring blocks like Concrete or Glass harder.", "Default: false"})
         public boolean hardDyeRecipes = false;
 
+        @Config.Comment({"Whether to remove charcoal smelting recipes from the vanilla furnace.", "Default: true"})
+        public boolean harderCharcoalRecipe = true;
+
         @Config.Comment({"Whether to make the Flint and Steel recipe require steel parts.", "Default: true."})
         public boolean flintAndSteelRequireSteel = true;
 
@@ -176,6 +179,15 @@ public class ConfigHolder {
 
         @Config.Comment({"Whether to remove Vanilla Block Recipes from the Crafting Table.", "Default: false"})
         public boolean removeVanillaBlockRecipes = false;
+
+        @Config.Comment({"Whether to make crafting recipes for Bricks, Firebricks, and Coke Bricks harder.", "Default: false"})
+        public boolean harderBrickRecipes = false;
+
+        @Config.Comment({"Whether to make the recipe for the EBF Controller harder.", "Default: false"})
+        public boolean harderEBFControllerRecipe = false;
+
+        @Config.Comment({"Whether Wrenches should require Plates instead of Ingots to craft.", "Default: false"})
+        public boolean plateWrenches = false;
     }
 
     public static class CompatibilityOptions {
@@ -190,15 +202,15 @@ public class ConfigHolder {
         @Config.Comment({"Whether to hide filled cells in JEI and creative search menu.", "Default: true"})
         public boolean hideFilledCellsInJEI = true;
 
-        @Config.Comment({"Whether to hide filled tanks in JEI and creative search menu.", "Default: true"})
-        public boolean hideFilledTanksInJEI = true;
-
         @Config.Comment({"Specifies priorities of mods in Ore Dictionary item registration.", "First ModID has highest priority, last has lowest. " +
                 "Unspecified ModIDs follow standard sorting, but always have lower priority than the last specified ModID.", "Default: [\"minecraft\", \"gregtech\"]"})
         public String[] modPriorities = {
                 "minecraft",
                 "gregtech"
         };
+
+        @Config.Comment({"Whether Gregtech should remove smelting recipes from the vanilla furnace for ingots requiring the Electric Blast Furnace.", "Default: true"})
+        public boolean removeSmeltingForEBFMetals = true;
 
         public static class EnergyCompatOptions {
 

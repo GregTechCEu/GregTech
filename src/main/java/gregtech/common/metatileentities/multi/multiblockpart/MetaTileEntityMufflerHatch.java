@@ -128,8 +128,10 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.muffler_hatch.tooltip"));
         tooltip.add(I18n.format("gregtech.muffler.recovery_tooltip", recoveryChance));
+        tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
     @Override

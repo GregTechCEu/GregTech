@@ -236,12 +236,12 @@ public class Recipe {
 
     private int makeHashCode() {
         int hash = Objects.hash(EUt, duration);
-        hash += hashInputs() * 7;
-        hash += hashOutputs() * 11;
-        hash += hashChancedOutputs() * 13;
-        hash += hashFluidList(this.fluidInputs) * 17;
-        hash += hashFluidList(this.fluidOutputs) * 19;
-        hash += hashRecipeProperties() * 23;
+        hash = 31 * hash + hashInputs();
+        hash = 41 * hash + hashOutputs();
+        hash = 31 * hash + hashChancedOutputs();
+        hash = 31 * hash + hashFluidList(this.fluidInputs);
+        hash = 41 * hash + hashFluidList(this.fluidOutputs);
+        hash = 31 * hash + hashRecipeProperties();
         return hash;
     }
 
@@ -254,8 +254,7 @@ public class Recipe {
         int hash = 0;
         for (CountableIngredient countableIngredient : this.inputs) {
             for (ItemStack is : countableIngredient.getIngredient().getMatchingStacks()) {
-                hash += ItemStackHashStrategy.comparingAllButCount().hashCode(is);
-                hash += countableIngredient.getCount();
+                hash = 31 * hash + ItemStackHashStrategy.comparingAll().hashCode(is);
             }
         }
         return hash;
@@ -277,7 +276,7 @@ public class Recipe {
     private int hashOutputs() {
         int hash = 0;
         for (ItemStack is : this.outputs) {
-            hash += hashStrategy.hashCode(is);
+            hash = 31 * hash + hashStrategy.hashCode(is);
         }
         return hash;
     }
@@ -295,9 +294,9 @@ public class Recipe {
     private int hashChancedOutputs() {
         int hash = 0;
         for (ChanceEntry chanceEntry : this.chancedOutputs) {
-            hash += hashStrategy.hashCode(chanceEntry.itemStack);
-            hash += chanceEntry.chance;
-            hash += chanceEntry.boostPerTier;
+            hash = 31 * hash + hashStrategy.hashCode(chanceEntry.itemStack);
+            hash = 31 * hash + chanceEntry.chance;
+            hash = 31 * hash + chanceEntry.boostPerTier;
         }
         return hash;
     }
@@ -315,7 +314,8 @@ public class Recipe {
     public int hashFluidList(List<FluidStack> fluids) {
         int hash = 0;
         for (FluidStack fluidStack : fluids) {
-            hash += new FluidKey(fluidStack).hashCode();
+            hash = 31 * hash + new FluidKey(fluidStack).hashCode();
+            hash = 31 * hash + fluidStack.amount;
         }
         return hash;
     }
@@ -343,7 +343,7 @@ public class Recipe {
     private int hashRecipeProperties() {
         int hash = 0;
         for (Map.Entry<RecipeProperty<?>, Object> propertyObjectEntry : this.recipePropertyStorage.getRecipeProperties()) {
-            hash += propertyObjectEntry.getKey().hashCode();
+            hash = 31 * hash + propertyObjectEntry.getKey().hashCode();
         }
         return hash;
     }
@@ -379,13 +379,13 @@ public class Recipe {
         return outputs;
     }
 
-    public List<ItemStack> getResultItemOutputs(int maxOutputSlots, int tier) {
+    public List<ItemStack> getResultItemOutputs(int maxOutputSlots, int tier, RecipeMap<?> recipeMap) {
         ArrayList<ItemStack> outputs = new ArrayList<>(GTUtility.copyStackList(getOutputs()));
         List<ChanceEntry> chancedOutputsList = getChancedOutputs();
         List<ItemStack> resultChanced = new ArrayList<>();
         int maxChancedSlots = maxOutputSlots - outputs.size();
         for (ChanceEntry chancedOutput : chancedOutputsList) {
-            int outputChance = RecipeMap.getChanceFunction().chanceFor(chancedOutput.getChance(), chancedOutput.getBoostPerTier(), tier);
+            int outputChance = recipeMap.getChanceFunction().chanceFor(chancedOutput.getChance(), chancedOutput.getBoostPerTier(), tier);
             if (GTValues.RNG.nextInt(Recipe.getMaxChancedValue()) <= outputChance) {
                 ItemStack stackToAdd = chancedOutput.getItemStack();
                 GTUtility.addStackToItemStackList(stackToAdd, resultChanced);

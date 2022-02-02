@@ -12,6 +12,8 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
 import net.minecraft.enchantment.Enchantment;
@@ -156,7 +158,12 @@ public class Material implements Comparable<Material> {
         FluidProperty prop = getProperty(PropertyKey.FLUID);
         if (prop == null)
             throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a Fluid!");
-        return prop.getFluid();
+
+        Fluid fluid = prop.getFluid();
+        if (fluid == null)
+            GTLog.logger.warn("Material {} Fluid was null!", this);
+
+        return fluid;
     }
 
     public FluidStack getFluid(int amount) {
@@ -257,7 +264,7 @@ public class Material implements Comparable<Material> {
 
     @ZenGetter("camelCaseName")
     public String toCamelCaseString() {
-        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, toString());
+        return GTUtility.lowerUnderscoreToUpperCamel(toString());
     }
 
     @ZenGetter("unlocalizedName")
@@ -309,7 +316,7 @@ public class Material implements Comparable<Material> {
             throw new IllegalStateException("Cannot add properties to a Material when registry is frozen!");
         }
         properties.setProperty(key, property);
-        properties.ensureSet(key, true);
+        properties.verify();
     }
 
     public boolean isSolid() {
@@ -325,14 +332,6 @@ public class Material implements Comparable<Material> {
         flags.verify(this);
         this.chemicalFormula = calculateChemicalFormula();
         calculateDecompositionType();
-    }
-
-    public boolean isHidden() {
-        return this.materialInfo.isHidden;
-    }
-
-    public void setHidden(boolean hidden) {
-        this.materialInfo.isHidden = hidden;
     }
 
     /**
@@ -364,6 +363,8 @@ public class Material implements Comparable<Material> {
          * @since GTCEu 2.0.0
          */
         public Builder(int id, String name) {
+            if (name.charAt(name.length() - 1) == '_')
+                throw new IllegalArgumentException("Material name cannot end with a '_'!");
             materialInfo = new MaterialInfo(id, name);
             properties = new MaterialProperties();
             flags = new MaterialFlags();
@@ -668,11 +669,6 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder setHidden() {
-            this.materialInfo.isHidden = true;
-            return this;
-        }
-
         public Builder toolStats(float speed, float damage, int durability, int enchantability) {
             return toolStats(speed, damage, durability, enchantability, false);
         }
@@ -783,13 +779,22 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder cableProperties(long voltage, int amperage, int loss) {
-            cableProperties((int) voltage, amperage, loss, false);
+            cableProperties((int) voltage, amperage, loss, false, false);
             return this;
         }
 
         public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon) {
-            properties.ensureSet(PropertyKey.INGOT);
-            properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, isSuperCon));
+            cableProperties(voltage, amperage, loss, isSuperCon, false);
+            return this;
+        }
+
+        public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon, boolean wireFromDust) {
+            if (!wireFromDust) {
+                properties.ensureSet(PropertyKey.INGOT);
+            } else {
+                properties.ensureSet(PropertyKey.DUST);
+            }
+            properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, isSuperCon, wireFromDust));
             return this;
         }
 
@@ -874,14 +879,10 @@ public class Material implements Comparable<Material> {
          */
         private Element element;
 
-        /**
-         * Field used to hide Materials from JEI, but keep them generated.
-         * Allows GTCEu to generate all elements without needing to use all of them.
-         */
-        private boolean isHidden = false;
-
         private MaterialInfo(int metaItemSubId, String name) {
             this.metaItemSubId = metaItemSubId;
+            if (!GTUtility.toLowerCaseUnderscore(GTUtility.lowerUnderscoreToUpperCamel(name)).equals(name))
+                throw new IllegalStateException("Cannot add materials with names like 'materialnumber'! Use 'material_number' instead.");
             this.name = name;
         }
 

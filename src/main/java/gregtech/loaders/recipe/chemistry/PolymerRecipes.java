@@ -250,6 +250,7 @@ public class PolymerRecipes {
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(Propene.getFluid(1000))
                 .fluidInputs(Chlorine.getFluid(2000))
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
                 .fluidOutputs(AllylChloride.getFluid(1000))
                 .duration(160).EUt(VA[LV]).buildAndRegister();
@@ -369,7 +370,7 @@ public class PolymerRecipes {
                 .fluidInputs(Diaminobenzidine.getFluid(1000))
                 .fluidInputs(DiphenylIsophtalate.getFluid(1000))
                 .fluidOutputs(Phenol.getFluid(1000))
-                .fluidOutputs(Polybenzimidazole.getFluid(1000))
+                .fluidOutputs(Polybenzimidazole.getFluid(1008))
                 .buildAndRegister();
 
         // 3,3-Diaminobenzidine

@@ -23,7 +23,7 @@ import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.items.MetaItems.PLANT_BALL;
-import static gregtech.common.items.MetaItems.RUBBER_DROP;
+import static gregtech.common.items.MetaItems.STICKY_RESIN;
 
 public class SeparationRecipes {
 
@@ -61,7 +61,7 @@ public class SeparationRecipes {
                 .input(OrePrefix.ore, Oilsands)
                 .chancedOutput(new ItemStack(Blocks.SAND), 5000, 5000)
                 .fluidOutputs(Oil.getFluid(500))
-                .duration(1000).EUt(5).buildAndRegister();
+                .duration(200).EUt(5).buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(144).EUt(5)
                 .inputs(new ItemStack(Items.NETHER_WART))
@@ -104,7 +104,7 @@ public class SeparationRecipes {
         }
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(400).EUt(5)
-                .input(RUBBER_DROP)
+                .input(STICKY_RESIN)
                 .output(dust, RawRubber, 3)
                 .chancedOutput(PLANT_BALL, 1000, 850)
                 .fluidOutputs(Glue.getFluid(100))
@@ -112,7 +112,7 @@ public class SeparationRecipes {
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(20)
                 .inputs(new ItemStack(MetaBlocks.RUBBER_LOG))
-                .chancedOutput(RUBBER_DROP, 5000, 1200)
+                .chancedOutput(STICKY_RESIN, 5000, 1200)
                 .chancedOutput(PLANT_BALL, 3750, 900)
                 .chancedOutput(dust, Carbon, 2500, 600)
                 .chancedOutput(dust, Wood, 2500, 700)
@@ -253,7 +253,7 @@ public class SeparationRecipes {
                 .fluidOutputs(Oxygen.getFluid(1000))
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(1600).EUt(VA[LV])
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(1600).EUt(VA[MV])
                 .fluidInputs(NetherAir.getFluid(10000))
                 .fluidOutputs(CarbonMonoxide.getFluid(3900))
                 .fluidOutputs(SulfurDioxide.getFluid(1000))
@@ -286,7 +286,7 @@ public class SeparationRecipes {
                 .chancedOutput(dustTiny, Ilmenite, 5000, 500)
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(5)
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(5)
                 .input(dust, Oilsands)
                 .fluidOutputs(Oil.getFluid(1000))
                 .buildAndRegister();
@@ -313,6 +313,12 @@ public class SeparationRecipes {
                 .input(dust, Electrotine, 8)
                 .output(dust, Redstone)
                 .output(dust, Electrum)
+                .buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(51).EUt(VA[LV])
+                .fluidInputs(SaltWater.getFluid(1000))
+                .output(dust, Salt, 2)
+                .fluidOutputs(Water.getFluid(1000))
                 .buildAndRegister();
 
         // Electrolyzer
@@ -437,6 +443,13 @@ public class SeparationRecipes {
                 .fluidOutputs(Hydrogen.getFluid(6000))
                 .duration(480).EUt(VA[MV]).buildAndRegister();
 
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .input(dust, TungsticAcid, 7)
+                .output(dust, Tungsten)
+                .fluidOutputs(Hydrogen.getFluid(2000))
+                .fluidOutputs(Oxygen.getFluid(4000))
+                .duration(210).EUt(960).buildAndRegister();
+
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 1, GTValues.W))
@@ -474,10 +487,25 @@ public class SeparationRecipes {
                 .fluidOutputs(SeedOil.getFluid(6))
                 .buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(2)
-                .inputs(new ItemStack(Items.FISH, 1, GTValues.W))
-                .fluidOutputs(FishOil.getFluid(50))
-                .build();
+        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
+                .inputs(new ItemStack(Items.FISH))
+                .fluidOutputs(FishOil.getFluid(40))
+                .buildAndRegister();
+
+        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
+                .inputs(new ItemStack(Items.FISH, 1, 1))
+                .fluidOutputs(FishOil.getFluid(60))
+                .buildAndRegister();
+
+        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
+                .inputs(new ItemStack(Items.FISH, 1, 2))
+                .fluidOutputs(FishOil.getFluid(70))
+                .buildAndRegister();
+
+        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
+                .inputs(new ItemStack(Items.FISH, 1, 3))
+                .fluidOutputs(FishOil.getFluid(30))
+                .buildAndRegister();
 
         EXTRACTOR_RECIPES.recipeBuilder().duration(600).EUt(28)
                 .input(dust, Quartzite)
@@ -525,14 +553,5 @@ public class SeparationRecipes {
                 .outputs(new ItemStack(Items.BOOK, 3))
                 .duration(300).EUt(2).buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().duration(80).EUt(VA[LV])
-                .input(dust, Redstone)
-                .fluidOutputs(Redstone.getFluid(L))
-                .buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder().duration(80).EUt(VA[LV])
-                .input(dust, Glowstone)
-                .fluidOutputs(Glowstone.getFluid(L))
-                .buildAndRegister();
     }
 }

@@ -5,6 +5,7 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.IWorkable;
+import gregtech.api.metatileentity.IVoidable;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
@@ -183,12 +184,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     protected boolean canFitNewOutputs() {
         // if the output is full check if the output changed so we can process recipes results again.
-        if (this.isOutputsFull && !hasNotifiedOutputs()) return false;
-        else {
-            this.isOutputsFull = false;
-            metaTileEntity.getNotifiedItemOutputList().clear();
-            metaTileEntity.getNotifiedFluidOutputList().clear();
+        if (this.isOutputsFull && !hasNotifiedOutputs()) {
+            if (!hasNotifiedInputs() && checkPreviousRecipe()) {
+                return false;
+            }
         }
+        this.isOutputsFull = false;
+        metaTileEntity.getNotifiedItemOutputList().clear();
+        metaTileEntity.getNotifiedFluidOutputList().clear();
         return true;
     }
 
@@ -264,6 +267,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     public boolean canVoidRecipeOutputs() {
+        if (metaTileEntity instanceof IVoidable)
+            return ((IVoidable) metaTileEntity).canVoidRecipeOutputs();
         return false;
     }
 
@@ -411,11 +416,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         IMultipleTankHandler importFluids = getInputTank();
         IMultipleTankHandler exportFluids = getOutputTank();
 
-        if (!canVoidRecipeOutputs() && !MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs(exportInventory.getSlots()))) {
-            this.isOutputsFull = true;
-            return false;
-        }
-        if (!canVoidRecipeOutputs() && !MetaTileEntity.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
+        if (!canVoidRecipeOutputs() &&
+                (!MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs(exportInventory.getSlots())) ||
+                 !MetaTileEntity.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs()))) {
             this.isOutputsFull = true;
             return false;
         }
@@ -488,8 +491,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             return false;
 
         // check if the voltage to run at is higher than the recipe, and that it is not ULV tier
-        int tier = getOverclockingTier(getMaxVoltage());
-        return tier != 0 && tier > GTUtility.getTierByVoltage(recipeEUt);
+        int overclockTier = getOverclockingTier(getOverclockVoltage());
+        int recipeTier = GTUtility.getTierByVoltage(recipeEUt);
+
+        // Don't overclock if the machine is ULV.
+        // Do overclock if the overclock tier is greater than the recipe tier
+        return overclockTier != 0 && overclockTier > recipeTier;
     }
 
     /**
@@ -499,7 +506,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
     protected int[] performOverclocking(Recipe recipe, boolean negativeEU) {
-        int maxOverclocks = getOverclockingTier(getMaxVoltage()) - 1; // exclude ULV overclocking
+        int maxOverclocks = getOverclockingTier(getOverclockVoltage()) - 1; // exclude ULV overclocking
 
         return runOverclockingLogic(recipe, negativeEU, maxOverclocks);
     }
@@ -636,7 +643,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             if (recipe.getOutputs().size() > 0) {
                 this.itemOutputs = GTUtility.copyStackList(recipe.getOutputs().subList(0, 1));
             } else {
-                this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt))
+                this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt), getRecipeMap())
                         .stream()
                         .filter(is ->
                                 ItemStackHashStrategy.comparingAllButCount()
@@ -644,7 +651,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                         .collect(Collectors.toList()));
             }
         } else {
-            this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt)));
+            this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), GTUtility.getTierByVoltage(recipeEUt), getRecipeMap()));
         }
 
         if (this.wasActiveAndNeedsUpdate) {

@@ -14,20 +14,29 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import javax.annotation.Nonnull;
 import java.util.Random;
 
+import static gregtech.common.blocks.wood.BlockRubberLog.NATURAL;
+
 public class WorldGenRubberTree extends WorldGenerator {
 
-    public WorldGenRubberTree(boolean notify) {
+    public static final WorldGenRubberTree TREE_GROW_INSTANCE = new WorldGenRubberTree(true);
+    public static final WorldGenRubberTree WORLD_GEN_INSTANCE = new WorldGenRubberTree(false);
+
+    protected WorldGenRubberTree(boolean notify) {
         super(notify);
     }
 
     @Override
-    public boolean generate(@Nonnull World world, @Nonnull Random random, BlockPos pos) {
-        BlockPos.MutableBlockPos cPos = new BlockPos.MutableBlockPos();
-        cPos.setPos(pos.getX() + 8, world.getHeight() - 1, pos.getZ() + 8);
-        while (world.isAirBlock(cPos) && cPos.getY() > 0)
-            cPos.setPos(cPos.getX(), cPos.getY() - 1, cPos.getZ());
-        cPos.setPos(cPos.getX(), cPos.getY() + 1, cPos.getZ());
-        return grow(world, cPos, random);
+    public boolean generate(@Nonnull World world, @Nonnull Random random, @Nonnull BlockPos pos) {
+        return generateImpl(world, random, new BlockPos.MutableBlockPos(pos));
+    }
+
+    public boolean generateImpl(@Nonnull World world, @Nonnull Random random, BlockPos.MutableBlockPos pos) {
+        pos.setPos(pos.getX() + 8, world.getHeight() - 1, pos.getZ() + 8);
+        while (pos.getY() > 0 && world.isAirBlock(pos)) {
+            pos.setY(pos.getY() - 1);
+        }
+        pos.setY(pos.getY() + 1);
+        return grow(world, pos, random);
     }
 
     public boolean grow(World world, BlockPos pos, Random random) {
@@ -39,17 +48,18 @@ public class WorldGenRubberTree extends WorldGenerator {
         if (event.getResult() == Event.Result.DENY) {
             return false;
         }
-        IBlockState woodBlock = MetaBlocks.RUBBER_LOG.getDefaultState();
+        IBlockState woodBlock = MetaBlocks.RUBBER_LOG.getDefaultState().withProperty(NATURAL, true);
         IBlockState leaves = MetaBlocks.RUBBER_LEAVES.getDefaultState();
         int height = getGrowHeight(world, pos);
         if (height < 2)
             return false;
         height -= random.nextInt(height / 2 + 1);
+        height = Math.max(5, height);
         BlockPos.MutableBlockPos tmpPos = new BlockPos.MutableBlockPos();
         for (int cHeight = 0; cHeight < height; cHeight++) {
             BlockPos cPos = pos.up(cHeight);
             setBlockAndNotifyAdequately(world, cPos, woodBlock);
-            if (height < 4 || (height < 7 && cHeight > 1) || cHeight > 2) {
+            if ((height < 7 && cHeight > 1) || cHeight > 2) {
                 for (int cx = pos.getX() - 2; cx <= pos.getX() + 2; cx++) {
                     for (int cz = pos.getZ() - 2; cz <= pos.getZ() + 2; cz++) {
                         int chance = Math.max(1, cHeight + 4 - height);
@@ -85,7 +95,7 @@ public class WorldGenRubberTree extends WorldGenerator {
             return 0;
         int height = 1;
         pos = pos.up();
-        while (world.isAirBlock(pos) && height < 8) {
+        while (world.isAirBlock(pos) && height < 7) {
             pos = pos.up();
             height++;
         }

@@ -33,13 +33,16 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityWitherSkull;
+import net.minecraft.init.Enchantments;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -50,6 +53,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorldNameable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -95,7 +99,8 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Nullable
     @Override
     public String getHarvestTool(@Nonnull IBlockState state) {
-        return ((IExtendedBlockState) state).getValue(HARVEST_TOOL);
+        String value = ((IExtendedBlockState) state).getValue(HARVEST_TOOL);
+        return value == null ? "wrench" : value; //safety check for mods who don't handle state properly
     }
 
     @Override
@@ -238,6 +243,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         MetaTileEntityHolder holder = (MetaTileEntityHolder) worldIn.getTileEntity(pos);
         MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
         if (holder != null && sampleMetaTileEntity != null) {
+            if (stack.hasDisplayName()) {
+                holder.setCustomName(stack.getDisplayName());
+            }
             MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity);
             if (stack.hasTagCompound()) {
                 //noinspection ConstantConditions
@@ -282,6 +290,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         //only set item tag if it's not empty, so newly created items will stack with dismantled
         if (!tagCompound.isEmpty())
             itemStack.setTagCompound(tagCompound);
+        if (metaTileEntity.getHolder().hasCustomName()) {
+            itemStack.setStackDisplayName(metaTileEntity.getHolder().getName());
+        }
         drops.add(itemStack);
         metaTileEntity.getDrops(drops, harvesters.get());
     }
@@ -477,6 +488,9 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public boolean canEntityDestroy(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull Entity entity) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
+        if(metaTileEntity == null) {
+            return super.canEntityDestroy(state, world, pos, entity);
+        }
         return !((entity instanceof EntityWither || entity instanceof EntityWitherSkull) && metaTileEntity.getWitherProof());
     }
 }

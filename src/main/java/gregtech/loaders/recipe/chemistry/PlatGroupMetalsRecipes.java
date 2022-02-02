@@ -59,8 +59,8 @@ public class PlatGroupMetalsRecipes {
         // HNO3 + HCl -> [HNO3 + HCl]
         MIXER_RECIPES.recipeBuilder().duration(30).EUt(VA[LV])
                 .fluidInputs(NitricAcid.getFluid(1000))
-                .fluidInputs(HydrochloricAcid.getFluid(1000))
-                .fluidOutputs(AquaRegia.getFluid(2000))
+                .fluidInputs(HydrochloricAcid.getFluid(2000))
+                .fluidOutputs(AquaRegia.getFluid(3000))
                 .buildAndRegister();
 
         // Platinum Group Sludge Break-Down
@@ -74,16 +74,18 @@ public class PlatGroupMetalsRecipes {
         // Cl: Perfectly Conserved
         //
         // If modified, this is how much 1 of each product will change the above losses by:
-        // Pt:    167L of Cl
+        // Pt:    266L of Cl
+        //
+        // These numbers are not correct:
         // Pd:    200L of N, 600L of H
         // Ru/Rh: 667L of O
         // Ir/Os: 620L of O, 100L of H
         //
         // Can also modify the PtCl2 electrolyzer recipe to keep a perfect Cl ratio.
         //
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV])
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(500).EUt(VA[HV])
                 .input(dust, PlatinumGroupSludge, 6)
-                .fluidInputs(AquaRegia.getFluid(1000))
+                .fluidInputs(AquaRegia.getFluid(1200))
                 .output(dust, PlatinumRaw, 3) // PtCl2
                 .output(dust, PalladiumRaw, 3) // PdNH3
                 .output(dust, InertMetalMixture, 2) // RhRuO4
@@ -97,7 +99,7 @@ public class PlatGroupMetalsRecipes {
         ELECTROLYZER_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
                 .input(dust, PlatinumRaw, 3)
                 .output(dust, Platinum)
-                .fluidOutputs(Chlorine.getFluid(500))
+                .fluidOutputs(Chlorine.getFluid(800))
                 .buildAndRegister();
 
 

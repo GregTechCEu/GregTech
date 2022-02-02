@@ -1,14 +1,21 @@
 package gregtech.loaders.recipe.handlers;
 
+import com.google.common.collect.ImmutableMap;
+import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.GTUtility;
 import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.Map;
 
 import static gregtech.api.recipes.RecipeMaps.PACKER_RECIPES;
 import static gregtech.api.unification.ore.OrePrefix.*;
@@ -19,6 +26,14 @@ public class WireCombiningHandler {
             wireGtSingle, wireGtDouble, wireGtQuadruple, wireGtOctal, wireGtHex
     };
 
+    private static final Map<OrePrefix, OrePrefix> cableToWireMap = ImmutableMap.of(
+            cableGtSingle, wireGtSingle,
+            cableGtDouble, wireGtDouble,
+            cableGtQuadruple, wireGtQuadruple,
+            cableGtOctal, wireGtOctal,
+            cableGtHex, wireGtHex
+    );
+
     public static void register() {
 
         // Generate Wire Packer/Unpacker recipes TODO Move into generateWireCombining?
@@ -27,6 +42,11 @@ public class WireCombiningHandler {
         // Generate manual recipes for combining Wires/Cables
         for (OrePrefix wirePrefix : WIRE_DOUBLING_ORDER) {
             wirePrefix.addProcessingHandler(PropertyKey.WIRE, WireCombiningHandler::generateWireCombiningRecipe);
+        }
+
+        // Generate Cable -> Wire recipes in the unpacker
+        for (OrePrefix cablePrefix : cableToWireMap.keySet()) {
+            cablePrefix.addProcessingHandler(PropertyKey.WIRE, WireCombiningHandler::processCableStripping);
         }
     }
 
@@ -74,5 +94,14 @@ public class WireCombiningHandler {
                     .outputs(OreDictUnifier.get(WIRE_DOUBLING_ORDER[0], material, (int) Math.pow(2, i)))
                     .buildAndRegister();
         }
+    }
+
+    private static void processCableStripping(OrePrefix prefix, Material material, WireProperties property) {
+        PACKER_RECIPES.recipeBuilder()
+                .input(prefix, material)
+                .output(cableToWireMap.get(prefix), material)
+                .output(plate, Materials.Rubber, (int) (prefix.secondaryMaterials.get(0).amount / GTValues.M))
+                .duration(100).EUt(GTValues.VA[GTValues.ULV])
+                .buildAndRegister();
     }
 }

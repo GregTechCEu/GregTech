@@ -44,7 +44,7 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
                 .aisle("XXX", "XXX", "XXX")
                 .aisle("XXX", "X#X", "XXX")
                 .aisle("XXX", "XYX", "XXX")
-                .where('X', states(getCasingState()).or(metaTileEntities(MetaTileEntities.COKE_OVEN_HATCH)))
+                .where('X', states(getCasingState()).or(metaTileEntities(MetaTileEntities.COKE_OVEN_HATCH).setMaxGlobalLimited(5)))
                 .where('#', air())
                 .where('Y', selfPredicate())
                 .build();

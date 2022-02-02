@@ -88,7 +88,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     private final Map<String, T> names = new Object2ObjectOpenHashMap<>();
     protected final Short2ObjectMap<ModelResourceLocation> metaItemsModels = new Short2ObjectOpenHashMap<>();
     protected final Short2ObjectMap<ModelResourceLocation[]> specialItemsModels = new Short2ObjectOpenHashMap<>();
-    private static final ModelResourceLocation MISSING_LOCATION = new ModelResourceLocation("builtin/missing", "inventory");
+    protected static final ModelResourceLocation MISSING_LOCATION = new ModelResourceLocation("builtin/missing", "inventory");
 
     protected final short metaItemOffset;
 
@@ -125,7 +125,10 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             }
             metaItemsModels.put((short) (metaItemOffset + itemMetaKey), new ModelResourceLocation(resourceLocation, "inventory"));
         }
+    }
 
+    @SideOnly(Side.CLIENT)
+    public void registerTextureMesh() {
         ModelLoader.setCustomMeshDefinition(this, itemStack -> {
             short itemDamage = formatRawItemDamage((short) itemStack.getItemDamage());
             if (specialItemsModels.containsKey(itemDamage)) {
@@ -543,16 +546,19 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         if (fluidHandler != null) {
             IFluidTankProperties fluidTankProperties = fluidHandler.getTankProperties()[0];
             FluidStack fluid = fluidTankProperties.getContents();
-            if (fluid != null) {
-                lines.add(I18n.format("metaitem.generic.fluid_container.tooltip",
-                        fluid.amount,
-                        fluidTankProperties.getCapacity(),
-                        fluid.getLocalizedName()));
-            } else lines.add(I18n.format("metaitem.generic.fluid_container.tooltip_empty"));
+
+            lines.add(I18n.format("metaitem.generic.fluid_container.tooltip",
+                    fluid == null ? 0 : fluid.amount,
+                    fluidTankProperties.getCapacity(),
+                    fluid == null ? "" : fluid.getLocalizedName()));
         }
 
         for (IItemBehaviour behaviour : getBehaviours(itemStack)) {
             behaviour.addInformation(itemStack, lines);
+        }
+
+        if (tooltipFlag.isAdvanced()) {
+            lines.add("MetaItem Id: " + item.unlocalizedName);
         }
     }
 
@@ -562,7 +568,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return;
         }
         Instant start = Instant.now();
-        Instant end = Instant.now().plusSeconds((long)((currentCharge * 1.0) / GTValues.V[tier] / 20));
+        Instant end = Instant.now().plusSeconds((long) ((currentCharge * 1.0) / GTValues.V[tier] / 20));
         Duration duration = Duration.between(start, end);
         double percentRemaining = currentCharge * 1.0 / maxCharge * 100; // used for color
 
@@ -695,6 +701,11 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                 throw new IllegalArgumentException("Cannot add null OreDictName.");
             }
             OreDictionary.registerOre(oreDictName.name(), getStackForm());
+            return this;
+        }
+
+        public MetaValueItem setInvisible(boolean isVisible) {
+            this.visible = isVisible;
             return this;
         }
 

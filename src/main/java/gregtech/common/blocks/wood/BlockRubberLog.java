@@ -4,17 +4,11 @@ import gregtech.api.GregTechAPI;
 import gregtech.common.items.MetaItems;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -56,7 +50,7 @@ public class BlockRubberLog extends BlockLog {
     public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, IBlockState state, int fortune) {
         Random rand = world instanceof World ? ((World) world).rand : RANDOM;
         if (state.getValue(NATURAL)) {
-            drops.add(MetaItems.RUBBER_DROP.getStackForm(1 + rand.nextInt(2)));
+            drops.add(MetaItems.STICKY_RESIN.getStackForm(1 + rand.nextInt(2)));
         }
         drops.add(new ItemStack(this));
     }

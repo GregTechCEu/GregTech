@@ -1,13 +1,10 @@
 package gregtech.api.metatileentity.multiblock;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
@@ -16,7 +13,7 @@ import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.metatileentity.sound.ISoundCreator;
+import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
@@ -26,35 +23,22 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFireboxCasing;
 import gregtech.common.blocks.VariantActiveBlock;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.HoverEvent;
-import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Stream;
+import javax.annotation.Nonnull;
+import java.util.*;
 
-public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements ISoundCreator, IMultipleRecipeMaps {
+public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider {
 
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
@@ -69,18 +53,10 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     private boolean isDistinct = false;
 
-    // array of possible recipes, specific to each multi - used when the multi has multiple RecipeMaps
-    protected RecipeMap<?>[] recipeMaps;
-
-    // index of the current selected recipe - used when the multi has multiple RecipeMaps
-    private int recipeMapIndex;
-
     public RecipeMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap) {
         super(metaTileEntityId);
         this.recipeMap = recipeMap;
         this.recipeMapWorkable = new MultiblockRecipeLogic(this);
-        this.recipeMapIndex = 0;
-        this.recipeMaps = null;
         resetTileAbilities();
     }
 
@@ -212,16 +188,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 textList.add(buttonText);
             }
 
-            if (hasMultipleRecipeMaps()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.header")
-                        .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.tooltip")))));
-
-                textList.add(new TextComponentTranslation("recipemap." + this.recipeMaps[this.recipeMapIndex].getUnlocalizedName() + ".name")
-                        .setStyle(new Style().setColor(TextFormatting.AQUA)
-                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.tooltip")))));
-            }
+            addExtraDisplayInfo(textList);
 
             if (!recipeMapWorkable.isWorkingEnabled()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
@@ -243,11 +210,11 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         }
     }
 
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
-        if (this.hasMultipleRecipeMaps())
-            tooltip.add(I18n.format("gregtech.multiblock.multiple_recipemaps_recipes.tooltip", this.recipeMapsToString()));
+    /**
+     * Used for when you want a Multiblock to have extra info in the text, but not put that info after
+     * the working status, progress percent, etc.
+     */
+    protected void addExtraDisplayInfo(List<ITextComponent> textList) {
     }
 
     @Override
@@ -262,56 +229,41 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     public TraceabilityPredicate autoAbilities(boolean checkEnergyIn,
-                                               boolean checkMaintainer,
+                                               boolean checkMaintenance,
                                                boolean checkItemIn,
                                                boolean checkItemOut,
                                                boolean checkFluidIn,
                                                boolean checkFluidOut,
                                                boolean checkMuffler) {
-        TraceabilityPredicate predicate = super.autoAbilities(checkMaintainer, checkMuffler)
+        TraceabilityPredicate predicate = super.autoAbilities(checkMaintenance, checkMuffler)
                 .or(checkEnergyIn ? abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3).setPreviewCount(1) : new TraceabilityPredicate());
 
-        boolean checkedItemsIn = false;
-        boolean checkedItemsOut = false;
-        boolean checkedFluidsIn = false;
-        boolean checkedFluidsOut = false;
-
-        for (RecipeMap<?> recipeMap : getAvailableRecipeMaps()) {
-            if (!checkedItemsIn && checkItemIn) {
-                if (recipeMap.getMinInputs() > 0) {
-                    checkedItemsIn = true;
-                    predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
-                } else if (recipeMap.getMaxInputs() > 0) {
-                    checkedItemsIn = true;
-                    predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setPreviewCount(1));
-                }
+        if (checkItemIn) {
+            if (recipeMap.getMinInputs() > 0) {
+                predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
+            } else if (recipeMap.getMaxInputs() > 0) {
+                predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setPreviewCount(1));
             }
-            if (!checkedItemsOut && checkItemOut) {
-                if (recipeMap.getMinOutputs() > 0) {
-                    checkedItemsOut = true;
-                    predicate = predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
-                } else if (recipeMap.getMaxOutputs() > 0) {
-                    checkedItemsOut = true;
-                    predicate = predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS).setPreviewCount(1));
-                }
+        }
+        if (checkItemOut) {
+            if (recipeMap.getMinOutputs() > 0) {
+                predicate = predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1));
+            } else if (recipeMap.getMaxOutputs() > 0) {
+                predicate = predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS).setPreviewCount(1));
             }
-            if (!checkedFluidsIn && checkFluidIn) {
-                if (recipeMap.getMinFluidInputs() > 0) {
-                    checkedFluidsIn = true;
-                    predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(recipeMap.getMinFluidInputs()));
-                } else if (recipeMap.getMaxFluidInputs() > 0) {
-                    checkedFluidsIn = true;
-                    predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setPreviewCount(1));
-                }
+        }
+        if (checkFluidIn) {
+            if (recipeMap.getMinFluidInputs() > 0) {
+                predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(recipeMap.getMinFluidInputs()));
+            } else if (recipeMap.getMaxFluidInputs() > 0) {
+                predicate = predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setPreviewCount(1));
             }
-            if (!checkedFluidsOut && checkFluidOut) {
-                if (recipeMap.getMinFluidOutputs() > 0) {
-                    checkedFluidsOut = true;
-                    predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(recipeMap.getMinFluidOutputs()));
-                } else if (recipeMap.getMaxFluidOutputs() > 0) {
-                    checkedFluidsOut = true;
-                    predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setPreviewCount(1));
-                }
+        }
+        if (checkFluidOut) {
+            if (recipeMap.getMinFluidOutputs() > 0) {
+                predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(recipeMap.getMinFluidOutputs()));
+            } else if (recipeMap.getMaxFluidOutputs() > 0) {
+                predicate = predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setPreviewCount(1));
             }
         }
         return predicate;
@@ -327,7 +279,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setBoolean("isDistinct", isDistinct);
-        data.setTag("RecipeMapIndex", new NBTTagInt(recipeMapIndex));
         return data;
     }
 
@@ -335,39 +286,18 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         isDistinct = data.getBoolean("isDistinct");
-        recipeMapIndex = data.getInteger("RecipeMapIndex");
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isDistinct);
-        buf.writeByte(recipeMapIndex);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         isDistinct = buf.readBoolean();
-        recipeMapIndex = buf.readByte();
-    }
-
-    @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
-        super.receiveCustomData(dataId, buf);
-        if (dataId == GregtechDataCodes.RECIPE_MAP_INDEX) {
-            recipeMapIndex = buf.readInt();
-            scheduleRenderUpdate();
-        }
-    }
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        T capabilityResult = super.getCapability(capability, side);
-        if (capabilityResult == null && capability == GregtechTileCapabilities.MULTIPLE_RECIPEMAPS) {
-            return (T) this;
-        }
-        return capabilityResult;
     }
 
     public boolean canBeDistinct() {
@@ -389,78 +319,51 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         }
     }
 
-
     @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
-        if (getWorld() != null && getWorld().isRemote) {
-            this.setupSound(recipeMap.getSound(), this.getPos());
-        }
+    public SoundEvent getSound() {
+        return recipeMap.getSound();
     }
 
-    public boolean canCreateSound() {
-        return recipeMapWorkable.isActive();
-    }
-
-
+    @Nonnull
     @Override
-    public RecipeMap<?>[] getAvailableRecipeMaps() {
-        return hasMultipleRecipeMaps() ? this.recipeMaps : new RecipeMap<?>[]{this.recipeMap};
-    }
-
-    @Override
-    public int getRecipeMapIndex() {
-        return recipeMapIndex;
-    }
-
-    @Override
-    public void addRecipeMaps(RecipeMap<?>... recipeMaps) {
-        if (hasMultipleRecipeMaps())
-            this.recipeMaps = Stream.concat(Arrays.stream(this.recipeMaps), Arrays.stream(recipeMaps)).toArray(RecipeMap<?>[]::new);
-    }
-
-    @Override
-    public void setRecipeMapIndex(int index) {
-        this.recipeMapIndex = index;
-        if (!getWorld().isRemote) {
-            writeCustomData(GregtechDataCodes.RECIPE_MAP_INDEX, buf -> buf.writeInt(index));
-            markDirty();
-        }
-    }
-
-    @Override
-    public RecipeMap<?> getCurrentRecipeMap() {
-        return recipeMaps[recipeMapIndex];
-    }
-
-    @SideOnly(Side.CLIENT)
-    public String recipeMapsToString() {
-        StringBuilder recipeMapsString = new StringBuilder();
-        for(int i = 0; i < recipeMaps.length; i++) {
-            recipeMapsString.append(recipeMaps[i].getLocalizedName());
-            if(recipeMaps.length - 1 != i)
-                recipeMapsString.append(", "); // For delimiting
-        }
-        return recipeMapsString.toString();
-    }
-
-    @Override
-    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!getWorld().isRemote && this.hasMultipleRecipeMaps()) {
-            if (!this.recipeMapWorkable.isActive()) {
-                int index;
-                if (playerIn.isSneaking()) // cycle recipemaps backwards
-                    index = (recipeMapIndex - 1 < 0 ? recipeMaps.length - 1 : recipeMapIndex - 1) % recipeMaps.length;
-                else // cycle recipemaps forwards
-                    index = (recipeMapIndex + 1) % recipeMaps.length;
-
-                setRecipeMapIndex(index);
-                this.recipeMapWorkable.forceRecipeRecheck();
-            } else {
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.switch_message"));
-            }
+    public List<ITextComponent> getDataInfo() {
+        List<ITextComponent> list = new ArrayList<>();
+        if (recipeMapWorkable.getMaxProgress() > 0) {
+            list.add(new TextComponentTranslation("behavior.tricorder.workable_progress",
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getProgress() / 20)).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getMaxProgress() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))
+            ));
         }
 
-        return true; // return true here on the client to keep the GUI closed
+        list.add(new TextComponentTranslation("behavior.tricorder.energy_container_storage",
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyStored())).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW))
+        ));
+
+        if (recipeMapWorkable.getRecipeEUt() > 0) {
+            list.add(new TextComponentTranslation("behavior.tricorder.workable_consumption",
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt())).setStyle(new Style().setColor(TextFormatting.RED)),
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
+            ));
+        }
+
+        list.add(new TextComponentTranslation("behavior.tricorder.multiblock_energy_input",
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getInputVoltage())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                new TextComponentTranslation(GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getInputVoltage())]).setStyle(new Style().setColor(TextFormatting.YELLOW))
+        ));
+
+        if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics()) {
+            list.add(new TextComponentTranslation("behavior.tricorder.multiblock_maintenance",
+                    new TextComponentTranslation(GTUtility.formatNumbers(getNumMaintenanceProblems())).setStyle(new Style().setColor(TextFormatting.RED))
+            ));
+        }
+
+        if (recipeMapWorkable.getParallelLimit() > 1) {
+            list.add(new TextComponentTranslation("behavior.tricorder.multiblock_parallel",
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getParallelLimit())).setStyle(new Style().setColor(TextFormatting.GREEN))
+            ));
+        }
+
+        return list;
     }
 }

@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -31,12 +32,10 @@ import java.util.Map;
 @SideOnly(Side.CLIENT)
 public class FrameBakedModel implements IBakedModel {
 
-    public static final FrameBakedModel INSTANCE = new FrameBakedModel();
-
     private final Map<MaterialIconSet, Map<EnumFacing, BakedQuad>> materialFaces;
     private final ThreadLocal<TextureAtlasSprite> particle;
 
-    private FrameBakedModel() {
+    public FrameBakedModel() {
         this.materialFaces = new Object2ObjectOpenHashMap<>();
         this.particle = ThreadLocal.withInitial(() -> Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite());
     }
@@ -102,7 +101,8 @@ public class FrameBakedModel implements IBakedModel {
 
     @Override
     public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-        return Pair.of(this, ModelFactory.getBlockTransform(cameraTransformType).getMatrix());
+        TRSRTransformation blockTransform = ModelFactory.getBlockTransform(cameraTransformType);
+        return blockTransform == null ? IBakedModel.super.handlePerspective(cameraTransformType) : Pair.of(this, blockTransform.getMatrix());
     }
 
     @Override

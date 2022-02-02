@@ -17,6 +17,7 @@ import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
 
 import static gregtech.api.GTValues.*;
+import static gregtech.api.unification.material.info.MaterialFlags.NO_SMASHING;
 
 public class PipeRecipeHandler {
 
@@ -39,6 +40,7 @@ public class PipeRecipeHandler {
         OrePrefix.pipeSmallRestrictive.addProcessingHandler(PropertyKey.ITEM_PIPE, PipeRecipeHandler::processRestrictivePipe);
         OrePrefix.pipeNormalRestrictive.addProcessingHandler(PropertyKey.ITEM_PIPE, PipeRecipeHandler::processRestrictivePipe);
         OrePrefix.pipeLargeRestrictive.addProcessingHandler(PropertyKey.ITEM_PIPE, PipeRecipeHandler::processRestrictivePipe);
+        OrePrefix.pipeHugeRestrictive.addProcessingHandler(PropertyKey.ITEM_PIPE, PipeRecipeHandler::processRestrictivePipe);
     }
 
     private static void processRestrictivePipe(OrePrefix pipePrefix, Material material, ItemPipeProperties property) {
@@ -46,6 +48,7 @@ public class PipeRecipeHandler {
         if (pipePrefix == OrePrefix.pipeSmallRestrictive) unrestrictive = OrePrefix.pipeSmallItem;
         else if (pipePrefix == OrePrefix.pipeNormalRestrictive) unrestrictive = OrePrefix.pipeNormalItem;
         else if (pipePrefix == OrePrefix.pipeLargeRestrictive) unrestrictive = OrePrefix.pipeLargeItem;
+        else if (pipePrefix == OrePrefix.pipeHugeRestrictive) unrestrictive = OrePrefix.pipeHugeItem;
         else return;
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
@@ -71,6 +74,16 @@ public class PipeRecipeHandler {
                 .EUt(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
 
+        if (material.hasFlag(NO_SMASHING)) {
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.dust, material, 1)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_TINY)
+                    .outputs(GTUtility.copyAmount(2, pipeStack))
+                    .duration((int) (material.getMass()))
+                    .EUt(6 * getVoltageMultiplier(material))
+                    .buildAndRegister();
+        }
+
         ModHandler.addShapedRecipe(String.format("tiny_%s_pipe", material.toString()),
                 GTUtility.copyAmount(8, pipeStack), "XXX", "h w", "XXX",
                 'X', new UnificationEntry(OrePrefix.plate, material));
@@ -85,6 +98,16 @@ public class PipeRecipeHandler {
                 .duration((int) (material.getMass()))
                 .EUt(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
+
+        if (material.hasFlag(NO_SMASHING)) {
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.dust, material, 1)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_SMALL)
+                    .outputs(pipeStack)
+                    .duration((int) (material.getMass()))
+                    .EUt(6 * getVoltageMultiplier(material))
+                    .buildAndRegister();
+        }
 
         ModHandler.addShapedRecipe(String.format("small_%s_pipe", material.toString()),
                 GTUtility.copyAmount(6, pipeStack), "XwX", "X X", "XhX",
@@ -101,6 +124,16 @@ public class PipeRecipeHandler {
                 .EUt(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
 
+        if (material.hasFlag(NO_SMASHING)) {
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.dust, material, 3)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_NORMAL)
+                    .outputs(pipeStack)
+                    .duration((int) material.getMass() * 3)
+                    .EUt(6 * getVoltageMultiplier(material))
+                    .buildAndRegister();
+        }
+
         ModHandler.addShapedRecipe(String.format("medium_%s_pipe", material.toString()),
                 GTUtility.copyAmount(2, pipeStack), "XXX", "w h", "XXX",
                 'X', new UnificationEntry(OrePrefix.plate, material));
@@ -115,6 +148,16 @@ public class PipeRecipeHandler {
                 .duration((int) material.getMass() * 6)
                 .EUt(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
+
+        if (material.hasFlag(NO_SMASHING)) {
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.dust, material, 6)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_LARGE)
+                    .outputs(pipeStack)
+                    .duration((int) material.getMass() * 6)
+                    .EUt(6 * getVoltageMultiplier(material))
+                    .buildAndRegister();
+        }
 
         ModHandler.addShapedRecipe(String.format("large_%s_pipe", material.toString()),
                 pipeStack, "XhX", "X X", "XwX",
@@ -131,9 +174,21 @@ public class PipeRecipeHandler {
                 .EUt(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
 
-        ModHandler.addShapedRecipe(String.format("huge_%s_pipe", material.toString()),
-                pipeStack, "XhX", "X X", "XwX",
-                'X', new UnificationEntry(OrePrefix.plateDouble, material));
+        if (material.hasFlag(NO_SMASHING)) {
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.dust, material, 12)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_HUGE)
+                    .outputs(pipeStack)
+                    .duration((int) material.getMass() * 24)
+                    .EUt(6 * getVoltageMultiplier(material))
+                    .buildAndRegister();
+        }
+
+        if (OrePrefix.plateDouble.doGenerateItem(material)) {
+            ModHandler.addShapedRecipe(String.format("huge_%s_pipe", material.toString()),
+                    pipeStack, "XhX", "X X", "XwX",
+                    'X', new UnificationEntry(OrePrefix.plateDouble, material));
+        }
     }
 
     private static void processPipeQuadruple(OrePrefix pipePrefix, Material material, FluidPipeProperties property) {

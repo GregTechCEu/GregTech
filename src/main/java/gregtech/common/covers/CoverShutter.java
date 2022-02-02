@@ -47,7 +47,7 @@ public class CoverShutter extends CoverBehavior {
     }
 
     @Override
-    public boolean shouldRenderConnected() {
+    public boolean shouldAutoConnect() {
         return false;
     }
 }

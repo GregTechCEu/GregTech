@@ -6,9 +6,9 @@ import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
 import gregtech.api.metatileentity.multiblock.FuelMultiblockController;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
-import gregtech.common.ConfigHolder;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -29,16 +29,8 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
     }
 
     @Override
-    public boolean canVoidRecipeOutputs() {
-        return true;
-    }
-
-    @Override
     protected void updateRecipeProgress() {
         if (canRecipeProgress) {
-            if (!isActive)
-                setActive(true);
-
             // turbines can void energy
             drawEnergy(recipeEUt, false);
             //as recipe starts with progress on 1 this has to be > only not => to compensate for it
@@ -49,8 +41,12 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
     }
 
     public FluidStack getInputFluidStack() {
-        if (previousRecipe == null)
-            return null;
+        // Previous Recipe is always null on first world load, so try to acquire a new recipe
+        if (previousRecipe == null) {
+            Recipe recipe = findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank(), MatchingMode.DEFAULT);
+
+            return recipe == null ? null : getInputTank().drain(new FluidStack(recipe.getFluidInputs().get(0).getFluid(), Integer.MAX_VALUE), false);
+        }
         FluidStack fuelStack = previousRecipe.getFluidInputs().get(0);
         return getInputTank().drain(new FluidStack(fuelStack.getFluid(), Integer.MAX_VALUE), false);
     }
@@ -64,14 +60,14 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
     }
 
     @Override
-    protected long boostProduction(int production) {
+    protected long boostProduction(long production) {
         IRotorHolder rotorHolder = ((MetaTileEntityLargeTurbine) metaTileEntity).getRotorHolder();
         if (rotorHolder != null && rotorHolder.hasRotor()) {
             int maxSpeed = rotorHolder.getMaxRotorHolderSpeed();
             int currentSpeed = rotorHolder.getRotorSpeed();
             if (currentSpeed >= maxSpeed)
                 return production;
-            return (int) (production * Math.pow(1.0 * currentSpeed / maxSpeed, 2));
+            return (long) (production * Math.pow(1.0 * currentSpeed / maxSpeed, 2));
         }
         return 0;
     }
@@ -94,8 +90,11 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
             parallel = MathHelper.ceil((turbineMaxVoltage - excessVoltage) /
                             (Math.abs(recipe.getEUt()) * holderEfficiency));
 
-            if (getInputFluidStack().amount < recipeFluidStack.amount * parallel)
+            // Null check fluid here, since it can return null on first join into world or first form
+            FluidStack inputFluid = getInputFluidStack();
+            if(inputFluid == null || getInputFluidStack().amount < recipeFluidStack.amount * parallel) {
                 return false;
+            }
 
             //this is necessary to prevent over-consumption of fuel
             excessVoltage += (int) (parallel * Math.abs(recipe.getEUt()) * holderEfficiency - turbineMaxVoltage);
@@ -117,8 +116,8 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
 
     @Override
     public void invalidate() {
-        super.invalidate();
         excessVoltage = 0;
+        super.invalidate();
     }
 
     public void updateTanks() {

@@ -107,6 +107,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
     private BlockPos selected;
     private final List<TraceabilityPredicate.SimplePredicate> predicates;
+    private TraceabilityPredicate father;
 
     public MultiblockInfoRecipeWrapper(MultiblockControllerBase controller) {
         this.controller = controller;
@@ -147,6 +148,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         if (Mouse.getEventDWheel() == 0 || lastWrapper != this) {
             selected = null;
             this.predicates.clear();
+            this.father = null;
             lastWrapper = this;
             this.nextLayerButton.x = border.getWidth() - (ICON_SIZE + RIGHT_PADDING);
             this.buttonPreviousPattern.x = border.getWidth() - ((2 * ICON_SIZE) + RIGHT_PADDING + 1);
@@ -235,6 +237,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                     recipeLayout.getItemStacks().set(i + MAX_PARTS, ItemStack.EMPTY);
                 }
                 predicates.clear();
+                this.father = null;
             }
         }
     }
@@ -326,14 +329,14 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                 worldState.update(renderer.world, rayTraceResult.getBlockPos(), new PatternMatchContext(), new HashMap<>(), new HashMap<>(), predicates);
                 for (TraceabilityPredicate.SimplePredicate common : predicates.common) {
                     if (common.test(worldState)) {
-                        predicateTips = common.getToolTips();
+                        predicateTips = common.getToolTips(predicates);
                         break;
                     }
                 }
                 if (predicateTips == null) {
                     for (TraceabilityPredicate.SimplePredicate limit : predicates.limited) {
                         if (limit.test(worldState)) {
-                            predicateTips = limit.getToolTips();
+                            predicateTips = limit.getToolTips(predicates);
                             break;
                         }
                     }
@@ -379,6 +382,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                         recipeLayout.getItemStacks().set(i + MAX_PARTS, ItemStack.EMPTY);
                     }
                     predicates.clear();
+                    this.father = null;
                     return true;
                 }
                 return false;
@@ -389,11 +393,14 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                     recipeLayout.getItemStacks().set(i + MAX_PARTS, ItemStack.EMPTY);
                 }
                 predicates.clear();
+                this.father = null;
                 this.selected = selected;
                 TraceabilityPredicate predicate = patterns[currentRendererPage].predicateMap.get(this.selected);
                 if (predicate!= null) {
                     predicates.addAll(predicate.common);
                     predicates.addAll(predicate.limited);
+                    predicates.removeIf(p -> p.candidates == null);
+                    this.father = predicate;
                     setItemStackGroup();
                 }
                 return true;
@@ -409,9 +416,10 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             itemStackGroup.init(i + MAX_PARTS, true, 5 + (i / 6) * SLOT_SIZE, (i % 6) * SLOT_SIZE + 10);
             itemStackGroup.set(i + MAX_PARTS, predicates.get(i).getCandidates());
         }
+
         itemStackGroup.addTooltipCallback((slotIndex, input, itemStack, tooltip)->{
             if (slotIndex >= MAX_PARTS && slotIndex < MAX_PARTS + predicates.size()) {
-                tooltip.addAll(predicates.get(slotIndex - MAX_PARTS).getToolTips());
+                tooltip.addAll(predicates.get(slotIndex - MAX_PARTS).getToolTips(father));
             }
         });
     }

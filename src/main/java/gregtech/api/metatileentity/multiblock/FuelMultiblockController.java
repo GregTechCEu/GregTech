@@ -14,6 +14,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.HoverEvent;
 
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class FuelMultiblockController extends RecipeMapMultiblockController {
@@ -22,7 +24,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
         super(metaTileEntityId, recipeMap);
         this.recipeMapWorkable = new MultiblockFuelRecipeLogic(this);
         this.recipeMapWorkable.enableOverclockVoltage();
-        this.recipeMapWorkable.setOverclockTier((int) tier);
+        this.recipeMapWorkable.setOverclockTier(tier);
     }
 
     @Override
@@ -66,5 +68,42 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                 textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
             }
         }
+    }
+
+    @Nonnull
+    @Override
+    public List<ITextComponent> getDataInfo() {
+        List<ITextComponent> list = new ArrayList<>();
+        if (recipeMapWorkable.getMaxProgress() > 0) {
+            list.add(new TextComponentTranslation("behavior.tricorder.workable_progress",
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getProgress() / 20)).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getMaxProgress() / 20)).setStyle(new Style().setColor(TextFormatting.YELLOW))
+            ));
+        }
+
+        list.add(new TextComponentTranslation("behavior.tricorder.energy_container_storage",
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyStored())).setStyle(new Style().setColor(TextFormatting.GREEN)),
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getEnergyCapacity())).setStyle(new Style().setColor(TextFormatting.YELLOW))
+        ));
+
+        if (recipeMapWorkable.getRecipeEUt() < 0) {
+            list.add(new TextComponentTranslation("behavior.tricorder.workable_production",
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt() * -1)).setStyle(new Style().setColor(TextFormatting.RED)),
+                    new TextComponentTranslation(GTUtility.formatNumbers(recipeMapWorkable.getRecipeEUt() == 0 ? 0 : 1)).setStyle(new Style().setColor(TextFormatting.RED))
+            ));
+        }
+
+        list.add(new TextComponentTranslation("behavior.tricorder.multiblock_energy_output",
+                new TextComponentTranslation(GTUtility.formatNumbers(energyContainer.getOutputVoltage())).setStyle(new Style().setColor(TextFormatting.YELLOW)),
+                new TextComponentTranslation(GTValues.VN[GTUtility.getTierByVoltage(energyContainer.getOutputVoltage())]).setStyle(new Style().setColor(TextFormatting.YELLOW))
+        ));
+
+        if (ConfigHolder.machines.enableMaintenance && hasMaintenanceMechanics()) {
+            list.add(new TextComponentTranslation("behavior.tricorder.multiblock_maintenance",
+                    new TextComponentTranslation(GTUtility.formatNumbers(getNumMaintenanceProblems())).setStyle(new Style().setColor(TextFormatting.RED))
+            ));
+        }
+
+        return list;
     }
 }

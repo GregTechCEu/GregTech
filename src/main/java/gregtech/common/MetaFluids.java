@@ -19,10 +19,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 public class MetaFluids {
@@ -162,7 +159,12 @@ public class MetaFluids {
         // handle vanilla fluids
         Materials.Water.getProperty(PropertyKey.FLUID).setFluid(FluidRegistry.WATER);
         FluidTooltipUtil.registerTooltip(FluidRegistry.WATER, Materials.Water.getChemicalFormula());
+        FluidTooltipUtil.registerTooltip(FluidRegistry.WATER, String.valueOf(Materials.Water.getProperty(PropertyKey.FLUID).getFluidTemperature()));
+        FluidTooltipUtil.registerTooltip(FluidRegistry.WATER, String.valueOf(Materials.Water.getProperty(PropertyKey.FLUID).isGas()));
         Materials.Lava.getProperty(PropertyKey.FLUID).setFluid(FluidRegistry.LAVA);
+        FluidTooltipUtil.registerTooltip(FluidRegistry.LAVA, Materials.Lava.getChemicalFormula());
+        FluidTooltipUtil.registerTooltip(FluidRegistry.LAVA, String.valueOf(Materials.Lava.getProperty(PropertyKey.FLUID).getFluidTemperature()));
+        FluidTooltipUtil.registerTooltip(FluidRegistry.LAVA, String.valueOf(Materials.Lava.getProperty(PropertyKey.FLUID).isGas()));
 
         //alternative names for forestry fluids
         setAlternativeFluidName(Materials.Ethanol, FluidType.NORMAL, "bio.ethanol");
@@ -223,22 +225,30 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.Ice, FluidType.NORMAL);
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
-            if (material.isHidden()) continue;
             FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);
 
             if (fluidProperty != null && fluidProperty.getFluid() == null) {
                 int temperature = fluidProperty.getFluidTemperature();
                 Fluid fluid = registerFluid(material, FluidType.NORMAL, temperature, fluidProperty.hasBlock());
                 fluidProperty.setFluid(fluid);
-                FluidTooltipUtil.registerTooltip(fluid, material.getChemicalFormula());
+                List<String> tooltip = new ArrayList<>();
+                tooltip.add(material.getChemicalFormula());
+                tooltip.add(String.valueOf(temperature));
+                tooltip.add(String.valueOf(fluid.isGaseous()));
+                FluidTooltipUtil.registerTooltip(fluid, tooltip);
             }
 
             PlasmaProperty plasmaProperty = material.getProperty(PropertyKey.PLASMA);
             if (plasmaProperty != null && plasmaProperty.getPlasma() == null) {
                 int baseTemperature = fluidProperty == null ? 0 : fluidProperty.getFluidTemperature();
-                Fluid fluid = registerFluid(material, FluidType.PLASMA, baseTemperature + 30000, false);
+                baseTemperature = baseTemperature + 30000;
+                Fluid fluid = registerFluid(material, FluidType.PLASMA, baseTemperature, false);
                 plasmaProperty.setPlasma(fluid);
-                FluidTooltipUtil.registerTooltip(fluid, material.getChemicalFormula());
+                List<String> tooltip = new ArrayList<>();
+                tooltip.add(material.getChemicalFormula());
+                tooltip.add(String.valueOf(baseTemperature));
+                tooltip.add(String.valueOf(fluid.isGaseous()));
+                FluidTooltipUtil.registerTooltip(fluid, tooltip);
             }
         }
     }

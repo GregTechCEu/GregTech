@@ -106,7 +106,7 @@ public class MixerRecipes {
         MIXER_RECIPES.recipeBuilder().duration(160).EUt(VA[HV])
                 .input(dust, Beryllium)
                 .input(dust, Potassium, 4)
-                .fluidInputs(Oxygen.getFluid(5000))
+                .fluidInputs(Nitrogen.getFluid(5000))
                 .notConsumable(new IntCircuitIngredient(1))
                 .output(dust, EnderPearl, 10)
                 .buildAndRegister();
@@ -311,8 +311,8 @@ public class MixerRecipes {
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(500).EUt(VA[MV])
-                .input(dust, Chrome, 4)
-                .input(dust, Nickel)
+                .input(dust, Nickel, 4)
+                .input(dust, Chrome)
                 .notConsumable(new IntCircuitIngredient(2))
                 .output(dust, Nichrome, 5)
                 .buildAndRegister();
@@ -338,7 +338,7 @@ public class MixerRecipes {
                 .input(dust, Nickel)
                 .input(dust, Manganese)
                 .input(dust, Chrome)
-                .notConsumable(new IntCircuitIngredient(2))
+                .notConsumable(new IntCircuitIngredient(3))
                 .output(dust, StainlessSteel, 9)
                 .buildAndRegister();
 

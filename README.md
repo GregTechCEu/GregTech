@@ -43,9 +43,15 @@ Remember: Every contribution counts.
 Found a bug? Please let us know by creating an Issue with the bug template. 
 Something is missing? Thought about a cool feature idea? Of course there's a template for that.  We'll have a look!
 Know how to mod or at least code? Then don't hesitate and jump to Discord channel, contact the Maintainer to discuss possible contribution.
-Anything else? Sure come to [Discord](https://discord.gg/7FJM6fVjR5).
+Anything else? Sure come to [Discord](https://discord.gg/bWSWuYvURP).
 
 ## Credited Works
 Heating Coil Textures are from the **[GregTech: New Horizons Modpack](https://www.curseforge.com/minecraft/modpacks/gt-new-horizons)**.
 
 Primitive Water Pump is from the **[Impact: GregTech Edition Modpack](https://gtimpact.space/)**.
+
+Ender Fluid Link Cover is from **[TecTech](https://github.com/Technus/TecTech)**.
+
+Steam Grinder is from **[GregTech++](https://www.curseforge.com/minecraft/mc-mods/gregtech-gt-gtplusplus)**.
+
+See something we forgot to credit? Reach out to us on Discord, or open an issue and ask for appropriate credit, we will happily mark it here

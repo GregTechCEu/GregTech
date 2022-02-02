@@ -82,10 +82,9 @@ public class BakedModelHandler {
             ModelBuiltInRenderer bakedModel = new ModelBuiltInRenderer(tuple.getSecond());
             event.getModelRegistry().putObject(resourceLocation, bakedModel);
         }
-        event.getModelRegistry().putObject(BlockOre.MODEL_LOCATION, OreBakedModel.INSTANCE);
-        event.getModelRegistry().putObject(BlockCompressed.MODEL_LOCATION, CompressedBlockBakedModel.INSTANCE);
-        event.getModelRegistry().putObject(BlockFrame.MODEL_LOCATION, FrameBakedModel.INSTANCE);
-        event.getModelRegistry().putObject(BlockSurfaceRock.MODEL_LOCATION, SurfaceRockBakedModel.INSTANCE);
+        event.getModelRegistry().putObject(BlockOre.MODEL_LOCATION, new OreBakedModel());
+        event.getModelRegistry().putObject(BlockCompressed.MODEL_LOCATION,  new CompressedBlockBakedModel());
+        event.getModelRegistry().putObject(BlockFrame.MODEL_LOCATION,  new FrameBakedModel());
     }
 
     private static class ModelBuiltInRenderer implements IBakedModel {

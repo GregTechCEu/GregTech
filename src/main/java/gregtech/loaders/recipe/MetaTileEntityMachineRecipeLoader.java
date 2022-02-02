@@ -1,12 +1,12 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.recipes.ModHandler;
-import static gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.stack.UnificationEntry;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLY_LINE_RECIPES;
+import static gregtech.api.unification.material.MarkerMaterials.Tier;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.items.MetaItems.*;
@@ -19,8 +19,7 @@ public class MetaTileEntityMachineRecipeLoader {
         // Energy Output Hatches
 
         ModHandler.addShapedRecipe(true, "dynamo_hatch.ulv", ENERGY_OUTPUT_HATCH[ULV].getStackForm(),
-                " V ", "SHS", " P ",
-                'P', new UnificationEntry(circuit, Tier.Primitive),
+                " V ", "SHS", "   ",
                 'S', new UnificationEntry(spring, Lead),
                 'V', VOLTAGE_COIL_ULV.getStackForm(),
                 'H', HULL[ULV].getStackForm());
@@ -28,14 +27,12 @@ public class MetaTileEntityMachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[ULV])
                 .input(spring, Lead, 2)
-                .input(circuit, Tier.Primitive)
                 .input(VOLTAGE_COIL_ULV)
                 .output(ENERGY_OUTPUT_HATCH[ULV])
                 .duration(200).EUt(VA[ULV]).buildAndRegister();
 
         ModHandler.addShapedRecipe(true, "dynamo_hatch.lv", ENERGY_OUTPUT_HATCH[LV].getStackForm(),
-                " V ", "SHS", " P ",
-                'P', new UnificationEntry(circuit, Tier.Basic),
+                " V ", "SHS", "   ",
                 'S', new UnificationEntry(spring, Tin),
                 'V', VOLTAGE_COIL_LV.getStackForm(),
                 'H', HULL[LV].getStackForm());
@@ -43,7 +40,6 @@ public class MetaTileEntityMachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[LV])
                 .input(spring, Tin, 2)
-                .input(circuit, Tier.Basic)
                 .input(VOLTAGE_COIL_LV)
                 .output(ENERGY_OUTPUT_HATCH[LV])
                 .duration(200).EUt(VA[LV]).buildAndRegister();
@@ -66,7 +62,7 @@ public class MetaTileEntityMachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[HV])
                 .input(spring, Gold, 2)
-                .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(LOW_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(VOLTAGE_COIL_HV)
                 .fluidInputs(SodiumPotassium.getFluid(1000))
                 .output(ENERGY_OUTPUT_HATCH[HV])
@@ -75,7 +71,7 @@ public class MetaTileEntityMachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[EV])
                 .input(spring, Aluminium, 2)
-                .input(LOW_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(POWER_INTEGRATED_CIRCUIT, 2)
                 .input(VOLTAGE_COIL_EV)
                 .fluidInputs(SodiumPotassium.getFluid(2000))
                 .output(ENERGY_OUTPUT_HATCH[EV])
@@ -84,7 +80,7 @@ public class MetaTileEntityMachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[IV])
                 .input(spring, Tungsten, 2)
-                .input(POWER_INTEGRATED_CIRCUIT, 2)
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(VOLTAGE_COIL_IV)
                 .fluidInputs(SodiumPotassium.getFluid(3000))
                 .output(ENERGY_OUTPUT_HATCH[IV])
@@ -126,31 +122,27 @@ public class MetaTileEntityMachineRecipeLoader {
         // Energy Input Hatches
 
         ModHandler.addShapedRecipe(true, "energy_hatch.ulv", ENERGY_INPUT_HATCH[ULV].getStackForm(),
-                " V ", "CHC", " P ",
+                " V ", "CHC", "   ",
                 'C', new UnificationEntry(cableGtSingle, RedAlloy),
-                'P', new UnificationEntry(circuit, Tier.Primitive),
                 'V', VOLTAGE_COIL_ULV.getStackForm(),
                 'H', HULL[ULV].getStackForm());
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[ULV])
                 .input(cableGtSingle, RedAlloy, 2)
-                .input(circuit, Tier.Primitive)
                 .input(VOLTAGE_COIL_ULV)
                 .output(ENERGY_INPUT_HATCH[ULV])
                 .duration(200).EUt(VA[ULV]).buildAndRegister();
 
         ModHandler.addShapedRecipe(true, "energy_hatch.lv", ENERGY_INPUT_HATCH[LV].getStackForm(),
-                " V ", "CHC", " P ",
+                " V ", "CHC", "   ",
                 'C', new UnificationEntry(cableGtSingle, Tin),
-                'P', new UnificationEntry(circuit, Tier.Basic),
                 'V', VOLTAGE_COIL_LV.getStackForm(),
                 'H', HULL[LV].getStackForm());
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[LV])
                 .input(cableGtSingle, Tin, 2)
-                .input(circuit, Tier.Basic)
                 .input(VOLTAGE_COIL_LV)
                 .output(ENERGY_INPUT_HATCH[LV])
                 .duration(200).EUt(VA[LV]).buildAndRegister();
@@ -173,7 +165,7 @@ public class MetaTileEntityMachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[HV])
                 .input(cableGtSingle, Gold, 2)
-                .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(LOW_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(VOLTAGE_COIL_HV)
                 .fluidInputs(SodiumPotassium.getFluid(1000))
                 .output(ENERGY_INPUT_HATCH[HV])
@@ -182,7 +174,7 @@ public class MetaTileEntityMachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[EV])
                 .input(cableGtSingle, Aluminium, 2)
-                .input(LOW_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(POWER_INTEGRATED_CIRCUIT, 2)
                 .input(VOLTAGE_COIL_EV)
                 .fluidInputs(SodiumPotassium.getFluid(2000))
                 .output(ENERGY_INPUT_HATCH[EV])
@@ -191,7 +183,7 @@ public class MetaTileEntityMachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(HULL[IV])
                 .input(cableGtSingle, Tungsten, 2)
-                .input(POWER_INTEGRATED_CIRCUIT, 2)
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(VOLTAGE_COIL_IV)
                 .fluidInputs(SodiumPotassium.getFluid(3000))
                 .output(ENERGY_INPUT_HATCH[IV])
@@ -532,7 +524,8 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_MOTOR_EV, 4)
                 .input(ELECTRIC_PUMP_EV, 4)
                 .input(CONVEYOR_MODULE_EV, 4)
-                .input(gear, Tungsten, 2)
+                .input(gear, Tungsten, 4)
+                .circuitMeta(1)
                 .output(BASIC_LARGE_MINER)
                 .duration(400).EUt(VA[EV]).buildAndRegister();
 
@@ -543,7 +536,8 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_MOTOR_IV, 4)
                 .input(ELECTRIC_PUMP_IV, 4)
                 .input(CONVEYOR_MODULE_IV, 4)
-                .input(gear, Ultimet, 2)
+                .input(gear, Iridium, 4)
+                .circuitMeta(1)
                 .output(LARGE_MINER)
                 .duration(400).EUt(VA[IV]).buildAndRegister();
 
@@ -554,8 +548,44 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_MOTOR_LUV, 4)
                 .input(ELECTRIC_PUMP_LUV, 4)
                 .input(CONVEYOR_MODULE_LUV, 4)
-                .input(gear, Ruridit, 2)
+                .input(gear, Ruridit, 4)
+                .circuitMeta(1)
                 .output(ADVANCED_LARGE_MINER)
+                .duration(400).EUt(VA[LuV]).buildAndRegister();
+
+        // Multiblock Fluid Drills
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[MV])
+                .input(frameGt, Steel, 4)
+                .input(circuit, Tier.Good, 4)
+                .input(ELECTRIC_MOTOR_MV, 4)
+                .input(ELECTRIC_PUMP_MV, 4)
+                .input(gear, VanadiumSteel, 4)
+                .circuitMeta(2)
+                .output(BASIC_FLUID_DRILLING_RIG)
+                .duration(400).EUt(VA[MV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[EV])
+                .input(frameGt, Titanium, 4)
+                .input(circuit, Tier.Extreme, 4)
+                .input(ELECTRIC_MOTOR_EV, 4)
+                .input(ELECTRIC_PUMP_EV, 4)
+                .input(gear, TungstenCarbide, 4)
+                .circuitMeta(2)
+                .output(FLUID_DRILLING_RIG)
+                .duration(400).EUt(VA[EV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[LuV])
+                .input(frameGt, TungstenSteel, 4)
+                .input(circuit, Tier.Master, 4)
+                .input(ELECTRIC_MOTOR_LUV, 4)
+                .input(ELECTRIC_PUMP_LUV, 4)
+                .input(gear, Osmiridium, 4)
+                .circuitMeta(2)
+                .output(ADVANCED_FLUID_DRILLING_RIG)
                 .duration(400).EUt(VA[LuV]).buildAndRegister();
     }
 }

@@ -31,17 +31,9 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE, MoveType.HORIZONTAL)
             .setSound(GTSounds.ARC)
             .onRecipeBuild(recipeBuilder -> {
+                recipeBuilder.invalidateOnBuildAction();
                 if (recipeBuilder.getFluidInputs().isEmpty()) {
                     recipeBuilder.fluidInputs(Materials.Oxygen.getFluid(recipeBuilder.duration));
-                    int plasmaAmount = (int) Math.max(1L, recipeBuilder.duration / (Materials.Argon.getMass() * 16L));
-                    RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
-                            .inputsIngredients(recipeBuilder.getInputs())
-                            .outputs(recipeBuilder.getOutputs())
-                            .duration(Math.max(1, recipeBuilder.duration / 16))
-                            .EUt(recipeBuilder.EUt / 3)
-                            .fluidInputs(Materials.Argon.getPlasma(plasmaAmount))
-                            .fluidOutputs(Materials.Argon.getFluid(plasmaAmount))
-                            .buildAndRegister();
                 }
             });
 
@@ -70,7 +62,7 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> AUTOCLAVE_RECIPES = new RecipeMap<>("autoclave", 1, 1, 1, 1, 1, 1, 0, 0, new SimpleRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> AUTOCLAVE_RECIPES = new RecipeMap<>("autoclave", 1, 2, 1, 2, 1, 1, 0, 1, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.DUST_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.CRYSTAL_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_CRYSTALLIZATION, MoveType.HORIZONTAL)
@@ -91,11 +83,12 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<IntCircuitRecipeBuilder> BENDER_RECIPES = new RecipeMap<>("bender", 2, 2, 1, 1, 0, 0, 0, 0, new IntCircuitRecipeBuilder(), false)
             .setSlotOverlay(false, false, false, GuiTextures.BENDER_OVERLAY)
+            .setSlotOverlay(false, false, true, GuiTextures.INT_CIRCUIT_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_BENDING, MoveType.HORIZONTAL)
             .setSound(GTSounds.MOTOR);
 
     @ZenProperty
-    public static final RecipeMap<BlastRecipeBuilder> BLAST_RECIPES = new RecipeMap<>("electric_blast_furnace", 1, 3, 1, 2, 0, 1, 0, 1, new BlastRecipeBuilder(), false)
+    public static final RecipeMap<BlastRecipeBuilder> BLAST_RECIPES = new RecipeMap<>("electric_blast_furnace", 1, 3, 1, 3, 0, 1, 0, 1, new BlastRecipeBuilder(), false)
             .setSound(GTSounds.FURNACE);
 
     /**
@@ -177,7 +170,10 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_BATH_RECIPES = new RecipeMap<>("chemical_bath", 1, 1, 1, 3, 1, 1, 0, 0, new SimpleRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_BATH_RECIPES = new RecipeMap<>("chemical_bath", 1, 1, 1, 6, 1, 1, 0, 1, new SimpleRecipeBuilder(), false)
+            .setSlotOverlay(false, false, true, GuiTextures.BREWER_OVERLAY)
+            .setSlotOverlay(true, false, false, GuiTextures.DUST_OVERLAY)
+            .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.CIRCULAR)
             .setSound(GTSounds.BATH);
 
@@ -206,6 +202,7 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
             .setSound(GTValues.FOOLS.get() ? GTSounds.SCIENCE : GTSounds.CHEMICAL_REACTOR)
             .onRecipeBuild(recipeBuilder -> {
+                recipeBuilder.invalidateOnBuildAction();
                 RecipeMaps.LARGE_CHEMICAL_RECIPES.recipeBuilder()
                         .inputs(recipeBuilder.getInputs().toArray(new CountableIngredient[0]))
                         .fluidInputs(recipeBuilder.getFluidInputs())
@@ -224,13 +221,17 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_CIRCUIT_ASSEMBLER, ProgressWidget.MoveType.HORIZONTAL)
             .setSound(GTSounds.ASSEMBLER)
             .onRecipeBuild(recipeBuilder -> {
+                recipeBuilder.invalidateOnBuildAction();
                 if (recipeBuilder.getFluidInputs().isEmpty()) {
-                    recipeBuilder.copy()
+                    recipeBuilder
+                            .copy()
                             .fluidInputs(Materials.SolderingAlloy.getFluid(Math.max(1, (GTValues.L / 2) * ((CircuitAssemblerRecipeBuilder) recipeBuilder).getSolderMultiplier())))
                             .buildAndRegister();
 
-                    recipeBuilder.fluidInputs(Materials.Tin.getFluid(Math.max(1, GTValues.L * ((CircuitAssemblerRecipeBuilder) recipeBuilder).getSolderMultiplier())))
-                            .buildAndRegister();
+                    // Don't call buildAndRegister as we are mutating the original recipe and already in the middle of a buildAndRegister call.
+                    // Adding a second call will result in duplicate recipe generation attempts
+                    recipeBuilder
+                            .fluidInputs(Materials.Tin.getFluid(Math.max(1, GTValues.L * ((CircuitAssemblerRecipeBuilder) recipeBuilder).getSolderMultiplier())));
                 }
             });
 
@@ -285,20 +286,27 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_SLICE, MoveType.HORIZONTAL)
             .setSound(GTSounds.CUT)
             .onRecipeBuild(recipeBuilder -> {
+                recipeBuilder.invalidateOnBuildAction();
                 if (recipeBuilder.getFluidInputs().isEmpty()) {
-                    recipeBuilder.copy()
+
+                    recipeBuilder
+                            .copy()
                             .fluidInputs(Materials.Water.getFluid(Math.max(4, Math.min(1000, recipeBuilder.duration * recipeBuilder.EUt / 320))))
                             .duration(recipeBuilder.duration * 2)
                             .buildAndRegister();
 
-                    recipeBuilder.copy()
+                    recipeBuilder
+                            .copy()
                             .fluidInputs(Materials.DistilledWater.getFluid(Math.max(3, Math.min(750, recipeBuilder.duration * recipeBuilder.EUt / 426))))
                             .duration((int) (recipeBuilder.duration * 1.5))
                             .buildAndRegister();
 
-                    recipeBuilder.fluidInputs(Materials.Lubricant.getFluid(Math.max(1, Math.min(250, recipeBuilder.duration * recipeBuilder.EUt / 1280))))
-                            .duration(Math.max(1, recipeBuilder.duration))
-                            .buildAndRegister();
+                    // Don't call buildAndRegister as we are mutating the original recipe and already in the middle of a buildAndRegister call.
+                    // Adding a second call will result in duplicate recipe generation attempts
+                    recipeBuilder
+                            .fluidInputs(Materials.Lubricant.getFluid(Math.max(1, Math.min(250, recipeBuilder.duration * recipeBuilder.EUt / 1280))))
+                            .duration(Math.max(1, recipeBuilder.duration));
+
                 }
             });
 
@@ -338,6 +346,7 @@ public class RecipeMaps {
             .setSlotOverlay(false, true, GuiTextures.BEAKER_OVERLAY_1)
             .setSlotOverlay(true, true, GuiTextures.BEAKER_OVERLAY_4)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
+            .setSlotOverlay(false, false, GuiTextures.INT_CIRCUIT_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
             .setSound(GTSounds.BOILER);
 
@@ -444,7 +453,9 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> FERMENTING_RECIPES = new RecipeMap<>("fermenter", 0, 0, 0, 0, 1, 1, 1, 1, new SimpleRecipeBuilder().EUt(2), false)
+    public static final RecipeMap<SimpleRecipeBuilder> FERMENTING_RECIPES = new RecipeMap<>("fermenter", 0, 1, 0, 1, 1, 1, 1, 1, new SimpleRecipeBuilder().EUt(2), false)
+            .setSlotOverlay(false, false, true, GuiTextures.DUST_OVERLAY)
+            .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
             .setSound(GTSounds.CHEMICAL_REACTOR);
 
@@ -465,6 +476,7 @@ public class RecipeMaps {
     public static final RecipeMap<IntCircuitRecipeBuilder> FLUID_HEATER_RECIPES = new RecipeMap<>("fluid_heater", 1, 1, 0, 0, 1, 1, 1, 1, new IntCircuitRecipeBuilder(), false)
             .setSlotOverlay(false, true, GuiTextures.HEATING_OVERLAY_1)
             .setSlotOverlay(true, true, GuiTextures.HEATING_OVERLAY_2)
+            .setSlotOverlay(false, false, GuiTextures.INT_CIRCUIT_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
             .setSound(GTSounds.BOILER);
 
@@ -672,7 +684,7 @@ public class RecipeMaps {
 
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> PACKER_RECIPES = new RecipeMap<>("packer", 2, 2, 1, 2, 0, 0, 0, 0, new SimpleRecipeBuilder().EUt(12).duration(10), false)
+    public static final RecipeMap<SimpleRecipeBuilder> PACKER_RECIPES = new RecipeMap<>("packer", 1, 2, 1, 2, 0, 0, 0, 0, new SimpleRecipeBuilder().EUt(12).duration(10), false)
             .setSlotOverlay(false, false, true, GuiTextures.BOX_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.BOXED_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_UNPACKER, MoveType.HORIZONTAL)

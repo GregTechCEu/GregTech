@@ -89,6 +89,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.duration = recipeBuilder.duration;
         this.EUt = recipeBuilder.EUt;
         this.hidden = recipeBuilder.hidden;
+        this.onBuildAction = recipeBuilder.onBuildAction;
     }
 
     public boolean applyProperty(String key, Object value) {
@@ -121,7 +122,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputs(CountableIngredient.from(oredict, count));
     }
 
-    public R input(Enum oredict, int count) {
+    public R input(Enum<?> oredict, int count) {
         return inputs(CountableIngredient.from(oredict.name(), count));
     }
 
@@ -538,6 +539,11 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected R onBuild(Consumer<RecipeBuilder<?>> consumer) {
         this.onBuildAction = consumer;
+        return (R) this;
+    }
+
+    protected R invalidateOnBuildAction() {
+        this.onBuildAction = null;
         return (R) this;
     }
 

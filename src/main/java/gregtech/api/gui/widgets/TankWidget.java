@@ -10,7 +10,6 @@ import gregtech.client.utils.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -165,27 +164,46 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 Fluid fluid = lastFluidInTank.getFluid();
                 tooltips.add(fluid.getLocalizedName(lastFluidInTank));
 
-                // Add chemical formula tooltip
-                String formula = FluidTooltipUtil.getFluidTooltip(lastFluidInTank);
-                if (formula != null && !formula.isEmpty())
-                    tooltips.add(ChatFormatting.YELLOW.toString() + formula);
+                // Amount Tooltip
+                tooltips.add(LocalizationUtils.format("gregtech.fluid.amount", lastFluidInTank.amount, lastTankCapacity));
 
-                tooltips.add(I18n.format("gregtech.fluid.amount", lastFluidInTank.amount, lastTankCapacity));
-                tooltips.add(I18n.format("gregtech.fluid.temperature", fluid.getTemperature(lastFluidInTank)));
-                tooltips.add(I18n.format(fluid.isGaseous(lastFluidInTank) ? "gregtech.fluid.state_gas" : "gregtech.fluid.state_liquid"));
+                // Add various tooltips from the material
+                List<String> formula = FluidTooltipUtil.getFluidTooltip(lastFluidInTank);
+                if (formula != null && !formula.isEmpty()) {
+
+                    // Chemical Formula Tooltip
+                    if(!formula.get(0).isEmpty()) {
+                        tooltips.add(ChatFormatting.YELLOW + formula.get(0));
+                    }
+
+                    // Temperature Tooltip
+                    if(!formula.get(1).isEmpty()) {
+                        tooltips.add(LocalizationUtils.format("gregtech.fluid.temperature", Integer.parseInt(formula.get(1))));
+                    }
+
+                    // Fluid State Tooltip
+                    if(!formula.get(2).isEmpty()) {
+                        String result = Boolean.parseBoolean(formula.get(2)) ? LocalizationUtils.format("gregtech.fluid.state_gas") :
+                                LocalizationUtils.format("gregtech.fluid.state_liquid");
+                        tooltips.add(result);
+                    }
+                }
+
             } else {
-                tooltips.add(I18n.format("gregtech.fluid.empty"));
-                tooltips.add(I18n.format("gregtech.fluid.amount", 0, lastTankCapacity));
+                tooltips.add(LocalizationUtils.format("gregtech.fluid.empty"));
+                tooltips.add(LocalizationUtils.format("gregtech.fluid.amount", 0, lastTankCapacity));
             }
-            if (allowClickFilling) {
-                tooltips.add(""); //add empty line to separate things
-                tooltips.add(I18n.format("gregtech.fluid.click_to_fill"));
-                tooltips.add(I18n.format("gregtech.fluid.click_to_fill.shift"));
+            if(allowClickEmptying && allowClickFilling) {
+                tooltips.add(""); // Add an empty line to separate from the bottom material tooltips
+                tooltips.add(LocalizationUtils.format("gregtech.fluid.click_combined"));
             }
-            if (allowClickEmptying) {
-                tooltips.add(""); //add empty line to separate things
-                tooltips.add(I18n.format("gregtech.fluid.click_to_empty"));
-                tooltips.add(I18n.format("gregtech.fluid.click_to_empty.shift"));
+            else if (allowClickFilling) {
+                tooltips.add(""); // Add an empty line to separate from the bottom material tooltips
+                tooltips.add(LocalizationUtils.format("gregtech.fluid.click_to_fill"));
+            }
+            else if (allowClickEmptying) {
+                tooltips.add(""); // Add an empty line to separate from the bottom material tooltips
+                tooltips.add(LocalizationUtils.format("gregtech.fluid.click_to_empty"));
             }
             drawHoveringText(ItemStack.EMPTY, tooltips, 300, mouseX, mouseY);
             GlStateManager.color(1.0f, 1.0f, 1.0f);

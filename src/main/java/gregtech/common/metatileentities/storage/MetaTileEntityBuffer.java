@@ -20,6 +20,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
@@ -130,5 +131,10 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
         tooltip.add(I18n.format("gregtech.machine.buffer.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.buffer.inventory", (int)Math.pow(tier + 2, 2)));
         tooltip.add(I18n.format("gregtech.machine.buffer.tanks", tier + 2));
+    }
+
+    @Override
+    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+        clearInventory(itemBuffer, itemStackHandler);
     }
 }

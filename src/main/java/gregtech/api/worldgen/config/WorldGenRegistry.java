@@ -21,12 +21,14 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
@@ -39,6 +41,9 @@ import java.util.stream.Collectors;
 public class WorldGenRegistry {
 
     public static final WorldGenRegistry INSTANCE = new WorldGenRegistry();
+
+    private static final int FLUID_VEIN_VERSION = 2;
+    private static final int ORE_VEIN_VERSION = 1;
 
     private WorldGenRegistry() {
     }
@@ -100,13 +105,23 @@ public class WorldGenRegistry {
         registerVeinPopulator("fluid_spring", FluidSpringPopulator::new);
         registerVeinPopulator("surface_block", SurfaceBlockPopulator::new);
 
-        WorldGeneratorImpl worldGenerator = new WorldGeneratorImpl();
-        GameRegistry.registerWorldGenerator(worldGenerator, 1);
-        MinecraftForge.ORE_GEN_BUS.register(worldGenerator);
+        GameRegistry.registerWorldGenerator(WorldGeneratorImpl.INSTANCE, 1);
+        MinecraftForge.ORE_GEN_BUS.register(WorldGeneratorImpl.INSTANCE);
         try {
             reinitializeRegisteredVeins();
         } catch (IOException | RuntimeException exception) {
             GTLog.logger.fatal("Failed to initialize worldgen registry.", exception);
+        }
+        if (GTValues.isModLoaded("galacticraftcore")) {
+            try {
+                Class<?> transformerHooksClass = Class.forName("micdoodle8.mods.galacticraft.core.TransformerHooks");
+                Field otherModGeneratorsWhitelistField = transformerHooksClass.getDeclaredField("otherModGeneratorsWhitelist");
+                otherModGeneratorsWhitelistField.setAccessible(true);
+                List<IWorldGenerator> otherModGeneratorsWhitelist = (List<IWorldGenerator>) otherModGeneratorsWhitelistField.get(null);
+                otherModGeneratorsWhitelist.add(WorldGeneratorImpl.INSTANCE);
+            } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
+                GTLog.logger.fatal("Failed to inject world generator into Galacticraft's whitelist.", e);
+            }
         }
     }
 
@@ -130,9 +145,13 @@ public class WorldGenRegistry {
         Path worldgenRootPath = configPath.resolve("worldgen");
         // Lock file used to determine if the worldgen files need to be regenerated
         // This is used to ensure modifications to ore gen in modpacks are not overwritten
-        Path jarFileExtractLock = configPath.resolve("worldgen_extracted.txt");
+        Path jarFileExtractLock = configPath.resolve("worldgen_extracted.json");
         if (!Files.exists(worldgenRootPath))
             Files.createDirectories(worldgenRootPath);
+
+        // Remove the old extract lock file if it exists to remove clutter
+        Path jarFileExtractLockOLD = configPath.resolve("worldgen_extracted.txt");
+        Files.deleteIfExists(jarFileExtractLockOLD);
 
         // The folder where all physical veins are stored
         Path veinPath = worldgenRootPath.resolve("vein");
@@ -150,16 +169,41 @@ public class WorldGenRegistry {
             extractJarVeinDefinitions(configPath, dimensionsFile);
         }
 
-        //attempt extraction if file extraction lock is absent or worldgen root directory is empty
-        if (!Files.exists(jarFileExtractLock) || (!Files.list(worldgenRootPath.resolve(veinPath)).findFirst().isPresent()
-                && !Files.list(worldgenRootPath.resolve(bedrockVeinPath)).findFirst().isPresent())) {
-            if (!Files.exists(jarFileExtractLock)) {
-                //create extraction lock only if it doesn't exist
-                Files.createFile(jarFileExtractLock);
-                extractJarVeinDefinitions(configPath, jarFileExtractLock);
+        if (Files.exists(jarFileExtractLock)) {
+            JsonObject extractLock = FileUtility.tryExtractFromFile(jarFileExtractLock);
+            if (extractLock != null) {
+                boolean needsUpdate = false;
+                if (extractLock.get("fluidVersion").getAsInt() != FLUID_VEIN_VERSION) {
+                    extractJarVeinDefinitions(configPath, bedrockVeinPath);
+                    needsUpdate = true;
+                }
+                if (extractLock.get("veinVersion").getAsInt() != ORE_VEIN_VERSION) {
+                    extractJarVeinDefinitions(configPath, veinPath);
+                    needsUpdate = true;
+                }
+                // bump the version(s) on the lock file if needed
+                if (needsUpdate) {
+                    extractJarVeinDefinitions(configPath, jarFileExtractLock);
+                }
             }
-            // Populate the config folder with the defaults from the mod jar
+        } else {
+            // force an override here as needed for updating legacy config blocks
+            if (FLUID_VEIN_VERSION > 1) {
+                extractJarVeinDefinitions(configPath, bedrockVeinPath);
+            }
+            if (ORE_VEIN_VERSION > 1) {
+                extractJarVeinDefinitions(configPath, veinPath);
+            }
+            // create extraction lock since it doesn't exist
+            Files.createFile(jarFileExtractLock);
+            extractJarVeinDefinitions(configPath, jarFileExtractLock);
+        }
+
+        //attempt extraction if worldgen root directory is empty
+        if (!Files.list(worldgenRootPath.resolve(veinPath)).findFirst().isPresent()) {
             extractJarVeinDefinitions(configPath, veinPath);
+        }
+        if (!Files.list(worldgenRootPath.resolve(bedrockVeinPath)).findFirst().isPresent()) {
             extractJarVeinDefinitions(configPath, bedrockVeinPath);
         }
 
@@ -260,7 +304,7 @@ public class WorldGenRegistry {
         // The path of the named dimensions file in the config folder
         Path dimensionsRootPath = configPath.resolve("dimensions.json");
         // THe path of the lock file in the config folder
-        Path extractLockPath = configPath.resolve("worldgen_extracted.txt");
+        Path extractLockPath = configPath.resolve("worldgen_extracted.json");
         FileSystem zipFileSystem = null;
         try {
             URI sampleUri = WorldGenRegistry.class.getResource("/assets/gregtech/.gtassetsroot").toURI();
@@ -330,7 +374,7 @@ public class WorldGenRegistry {
             }
             // Attempts to extract lock txt file
             else if (targetPath.compareTo(extractLockPath) == 0) {
-                Path extractLockFile = worldgenJarRootPath.resolve("worldgen_extracted.txt");
+                Path extractLockFile = worldgenJarRootPath.resolve("worldgen_extracted.json");
 
                 Path worldgenPath = extractLockPath.resolve(worldgenJarRootPath.relativize(worldgenJarRootPath).toString());
                 Files.copy(extractLockFile, worldgenPath, StandardCopyOption.REPLACE_EXISTING);

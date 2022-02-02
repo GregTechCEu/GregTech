@@ -83,7 +83,7 @@ public class RecyclingRecipes {
                 return;
             }
         }
-        registerArcRecycling(input, components, voltageMultiplier, prefix);
+        registerArcRecycling(input, components, prefix);
     }
 
     private static void registerMaceratorRecycling(ItemStack input, List<MaterialStack> materials, int multiplier) {
@@ -166,9 +166,21 @@ public class RecyclingRecipes {
         extractorBuilder.buildAndRegister();
     }
 
-    private static void registerArcRecycling(ItemStack input, List<MaterialStack> materials, int multiplier, @Nullable OrePrefix prefix) {
+    private static void registerArcRecycling(ItemStack input, List<MaterialStack> materials, @Nullable OrePrefix prefix) {
         // Block dusts from being arc'd instead of EBF'd
         if (prefix == OrePrefix.dust && OreDictUnifier.getMaterial(input).material.hasProperty(PropertyKey.BLAST)) {
+            return;
+        } else if (prefix == OrePrefix.block) {
+            MaterialStack ms = OreDictUnifier.getMaterial(input);
+            if (ms != null && !ms.material.hasProperty(PropertyKey.GEM)) {
+                ItemStack output = OreDictUnifier.get(OrePrefix.ingot, ms.material.getProperty(PropertyKey.INGOT).getArcSmeltInto(), 9);
+                RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
+                        .inputs(input.copy())
+                        .outputs(output)
+                        .duration(calculateDuration(Collections.singletonList(output)))
+                        .EUt(GTValues.VA[GTValues.LV])
+                        .buildAndRegister();
+            }
             return;
         }
 
@@ -195,7 +207,7 @@ public class RecyclingRecipes {
                 .inputs(input.copy())
                 .outputs(outputs)
                 .duration(calculateDuration(outputs))
-                .EUt(GTValues.VA[GTValues.LV] * multiplier)
+                .EUt(GTValues.VA[GTValues.LV])
                 .buildAndRegister();
     }
 
@@ -394,10 +406,10 @@ public class RecyclingRecipes {
     private static void splitStacks(List<Tuple<ItemStack, MaterialStack>> list, ItemStack originalStack, UnificationEntry entry) {
         int amount = originalStack.getCount();
         while (amount > 64) {
-            list.add(new Tuple<>(GTUtility.copyAmount(64, originalStack), new MaterialStack(entry.material, entry.orePrefix.materialAmount * 64)));
+            list.add(new Tuple<>(GTUtility.copyAmount(64, originalStack), new MaterialStack(entry.material, entry.orePrefix.getMaterialAmount(entry.material) * 64)));
             amount -= 64;
         }
-        list.add(new Tuple<>(GTUtility.copyAmount(amount, originalStack), new MaterialStack(entry.material, entry.orePrefix.materialAmount * amount)));
+        list.add(new Tuple<>(GTUtility.copyAmount(amount, originalStack), new MaterialStack(entry.material, entry.orePrefix.getMaterialAmount(entry.material) * amount)));
     }
 
     private static final List<OrePrefix> DUST_ORDER = ImmutableList.of(OrePrefix.dust, OrePrefix.dustSmall, OrePrefix.dustTiny);
@@ -405,7 +417,7 @@ public class RecyclingRecipes {
 
     private static void shrinkStacks(List<Tuple<ItemStack, MaterialStack>> list, ItemStack originalStack, UnificationEntry entry) {
         Material material = entry.material;
-        long materialAmount = originalStack.getCount() * entry.orePrefix.materialAmount;
+        long materialAmount = originalStack.getCount() * entry.orePrefix.getMaterialAmount(material);
 
         //noinspection ConstantConditions
         final List<OrePrefix> chosenList = material.hasProperty(PropertyKey.INGOT) ? INGOT_ORDER : DUST_ORDER;
@@ -415,11 +427,11 @@ public class RecyclingRecipes {
         for (OrePrefix prefix : chosenList) {
 
             // Current prefix too large to "compact" into
-            if (materialAmount / prefix.materialAmount == 0) continue;
+            if (materialAmount / prefix.getMaterialAmount(material) == 0) continue;
 
-            long newAmount = materialAmount / prefix.materialAmount;
-            tempList.put(prefix, new MaterialStack(material, newAmount * prefix.materialAmount));
-            materialAmount = materialAmount % prefix.materialAmount;
+            long newAmount = materialAmount / prefix.getMaterialAmount(material);
+            tempList.put(prefix, new MaterialStack(material, newAmount * prefix.getMaterialAmount(material)));
+            materialAmount = materialAmount % prefix.getMaterialAmount(material);
         }
 
         // Split the "highest level" stack (either Blocks or Dusts) if needed, as it is
@@ -427,7 +439,7 @@ public class RecyclingRecipes {
         if (tempList.containsKey(chosenList.get(0))) {
             OrePrefix prefix = chosenList.get(0);
             MaterialStack ms = tempList.get(prefix);
-            splitStacks(list, OreDictUnifier.get(chosenList.get(0), ms.material, (int) (ms.amount / prefix.materialAmount)), new UnificationEntry(prefix, material));
+            splitStacks(list, OreDictUnifier.get(chosenList.get(0), ms.material, (int) (ms.amount / prefix.getMaterialAmount(material))), new UnificationEntry(prefix, material));
         }
 
         OrePrefix mediumPrefix = chosenList.get(1); // dustSmall or ingot
@@ -438,20 +450,20 @@ public class RecyclingRecipes {
         // Try to compact the two "lower form" prefixes into one stack, if it doesn't exceed stack size
         if (mediumMS != null && smallestMS != null) {
             long singleStackAmount = mediumMS.amount + smallestMS.amount;
-            if (singleStackAmount / smallestPrefix.materialAmount <= 64) {
-                list.add(new Tuple<>(OreDictUnifier.get(smallestPrefix, material, (int) (singleStackAmount / smallestPrefix.materialAmount)), new MaterialStack(material, singleStackAmount)));
+            if (singleStackAmount / smallestPrefix.getMaterialAmount(material) <= 64) {
+                list.add(new Tuple<>(OreDictUnifier.get(smallestPrefix, material, (int) (singleStackAmount / smallestPrefix.getMaterialAmount(material))), new MaterialStack(material, singleStackAmount)));
                 return;
             }
         }
 
         // Otherwise simply add the stacks to the List if they exist
         if (mediumMS != null) list.add(new Tuple<>(
-                OreDictUnifier.get(mediumPrefix, material, (int) (mediumMS.amount / mediumPrefix.materialAmount)),
+                OreDictUnifier.get(mediumPrefix, material, (int) (mediumMS.amount / mediumPrefix.getMaterialAmount(material))),
                 new MaterialStack(material, mediumMS.amount)
         ));
 
         if (smallestMS != null) list.add(new Tuple<>(
-                OreDictUnifier.get(smallestPrefix, material, (int) (smallestMS.amount / smallestPrefix.materialAmount)),
+                OreDictUnifier.get(smallestPrefix, material, (int) (smallestMS.amount / smallestPrefix.getMaterialAmount(material))),
                 new MaterialStack(material, smallestMS.amount)
         ));
     }

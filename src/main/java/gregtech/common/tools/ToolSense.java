@@ -52,8 +52,7 @@ public class ToolSense extends ToolBase {
                                 blockState.getMaterial() == Material.LEAVES ||
                                 blockState.getMaterial() == Material.VINE) {
 
-                            player.world.playEvent(2001, offsetPos, Block.getStateId(blockState));
-                            player.world.setBlockToAir(offsetPos);
+                            player.world.destroyBlock(offsetPos, true);
                             toolMetaItem.damageItem(stack, player, damagePerBlockBreak, false);
                         }
                     }

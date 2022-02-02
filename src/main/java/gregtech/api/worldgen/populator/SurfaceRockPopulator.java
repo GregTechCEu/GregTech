@@ -19,6 +19,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -90,39 +91,77 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
      */
     @Override
     public void populateChunk(World world, int chunkX, int chunkZ, Random random, OreDepositDefinition definition, GridEntryInfo gridEntryInfo) {
-        int stonesCount = random.nextInt(2);
-        if (stonesCount > 0 && world.getWorldType() != WorldType.FLAT) {
+        int stonesCount = random.nextInt(2) + 1;
+        if (world.getWorldType() != WorldType.FLAT) {
             if (findUndergroundMaterials(gridEntryInfo.getGeneratedBlocks(definition, chunkX, chunkZ)).isEmpty())
                 return;
+
+            int baseX = chunkX * 16 + 8;
+            int baseZ = chunkZ * 16 + 8;
+
             for (int i = 0; i < stonesCount; i++) {
-                int randomX = chunkX * 16 + 8 + random.nextInt(16);
-                int randomZ = chunkZ * 16 + 8 + random.nextInt(16);
-                BlockPos topBlockPos = world.getTopSolidOrLiquidBlock(new BlockPos(randomX, 0, randomZ));
-                Block blockAtPos = world.getBlockState(topBlockPos).getBlock();
+                int randomX = baseX + random.nextInt(8);
+                int randomZ = baseZ + random.nextInt(8);
 
-                //Checks if the block is a replaceable feature like grass, snow layers, or Air. Liquids are replaceable, so
-                // exclude one deep liquid blocks, for looks
-                if (!blockAtPos.isReplaceable(world, topBlockPos) || world.getBlockState(topBlockPos).getMaterial().isLiquid()) {
-                    continue;
-                }
+                generateSurfaceRock(world, new BlockPos(randomX, 0, randomZ));
 
-                //Checks if the block below has a solid top. This method is also used to check what blocks redstone can
-                //be placed on.
-                if (!world.isSideSolid(topBlockPos.down(), EnumFacing.UP)) {
-                    continue;
-                }
-
-                setStoneBlock(world, topBlockPos);
             }
+            // guarantee a surface rock in the center of the vein
+            generateSurfaceRock(world, gridEntryInfo.getCenterPos(definition));
         }
 
         //Log if all Surface Rock generation attempts were failed
-        if (failedGenerationCounter == stonesCount && stonesCount > 0 && world.getWorldType() != WorldType.FLAT) {
+        if (failedGenerationCounter == stonesCount && world.getWorldType() != WorldType.FLAT) {
             GTLog.logger.debug("Failed to generate surface rocks for vein {} at chunk with position: x: {}, z: {}", definition.getDepositName(), chunkX, chunkZ);
         }
     }
 
+    public void generateSurfaceRock(World world, BlockPos pos) {
+        BlockPos topBlockPos = findSpawnHeight(world, pos);
+        if(topBlockPos.getY() <= 20) { // don't generate below y20
+            return;
+        }
+        Block blockAtPos = world.getBlockState(topBlockPos).getBlock();
+
+        if(topBlockPos.getY() >= world.provider.getActualHeight()) {
+            return;
+        }
+        //Checks if the block is a replaceable feature like grass, snow layers, or Air. Liquids are replaceable, so
+        // exclude one deep liquid blocks, for looks
+        if (!blockAtPos.isReplaceable(world, topBlockPos) || world.getBlockState(topBlockPos).getMaterial().isLiquid()) {
+            return;
+        }
+
+        setStoneBlock(world, topBlockPos);
+    }
+
     public Material getMaterial() {
         return material;
+    }
+
+    public static BlockPos findSpawnHeight(World world, BlockPos pos) {
+        Chunk chunk = world.getChunk(pos);
+        BlockPos.PooledMutableBlockPos blockpos = BlockPos.PooledMutableBlockPos.retain();
+        blockpos.setPos(pos.getX(), chunk.getTopFilledSegment() + 16, pos.getZ());
+        int airBlocks = 0;
+        while (blockpos.getY() > 20) {
+            blockpos.move(EnumFacing.DOWN);
+            IBlockState state = chunk.getBlockState(blockpos);
+            if(state.getMaterial() == net.minecraft.block.material.Material.AIR ||
+                    state.getMaterial() == net.minecraft.block.material.Material.LEAVES ||
+                    state.getMaterial() == net.minecraft.block.material.Material.VINE ||
+                    state.getBlock().isFoliage(world, blockpos)) {
+                airBlocks++;
+            } else {
+                if(airBlocks >= 10 && state.isSideSolid(world, blockpos, EnumFacing.UP)) {
+                    blockpos.move(EnumFacing.UP);
+                    break;
+                }
+                airBlocks = 0;
+            }
+        }
+        pos = blockpos.toImmutable();
+        blockpos.release();
+        return pos;
     }
 }

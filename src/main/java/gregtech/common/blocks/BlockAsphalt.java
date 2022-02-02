@@ -29,7 +29,7 @@ public class BlockAsphalt extends VariantBlock<BlockAsphalt.BlockType> {
     }
 
     @Override
-    public void onEntityWalk(World worldIn, BlockPos pos, Entity entityIn) {
+    public void onEntityWalk(@Nonnull World worldIn, @Nonnull BlockPos pos, Entity entityIn) {
         if ((entityIn.motionX != 0 || entityIn.motionZ != 0) && !entityIn.isInWater() && !entityIn.isSneaking()) {
             entityIn.motionX *= 1.3;
             entityIn.motionZ *= 1.3;

@@ -64,7 +64,7 @@ public class FirstDegreeMaterials {
         BlueTopaz = new Material.Builder(257, "blue_topaz")
                 .gem(3).ore(2, 1)
                 .color(0x7B96DC).iconSet(GEM_HORIZONTAL)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6)
                 .toolStats(7.0f, 3.0f, 256, 15)
                 .build();
@@ -206,7 +206,7 @@ public class FirstDegreeMaterials {
         Electrum = new Material.Builder(277, "electrum")
                 .ingot().fluid()
                 .color(0xFFFF64).iconSet(SHINY)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FINE_WIRE)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FINE_WIRE, GENERATE_RING)
                 .components(Silver, 1, Gold, 1)
                 .itemPipeProperties(1024, 2)
                 .cableProperties(GTValues.V[3], 2, 2)
@@ -215,7 +215,7 @@ public class FirstDegreeMaterials {
         Emerald = new Material.Builder(278, "emerald")
                 .gem().ore(2, 1)
                 .color(0x50FF50).iconSet(EMERALD)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_PLATE, GENERATE_LENS)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_LENS)
                 .components(Beryllium, 3, Aluminium, 2, Silicon, 6, Oxygen, 18)
                 .toolStats(10.0f, 2.0f, 368, 15)
                 .build();
@@ -236,7 +236,7 @@ public class FirstDegreeMaterials {
         GreenSapphire = new Material.Builder(281, "green_sapphire")
                 .gem().ore()
                 .color(0x64C882).iconSet(GEM_HORIZONTAL)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Oxygen, 3)
                 .toolStats(8.0f, 3.0f, 368, 15)
                 .build();
@@ -390,7 +390,7 @@ public class FirstDegreeMaterials {
         RoseGold = new Material.Builder(301, "rose_gold")
                 .ingot().fluid()
                 .color(0xFFE61E).iconSet(SHINY)
-                .flags(EXT2_METAL)
+                .flags(EXT2_METAL, GENERATE_RING)
                 .components(Copper, 1, Gold, 4)
                 .toolStats(14.0f, 2.0f, 152, 33)
                 .addDefaultEnchant(Enchantments.SMITE, 4)
@@ -401,7 +401,7 @@ public class FirstDegreeMaterials {
         BlackBronze = new Material.Builder(302, "black_bronze")
                 .ingot().fluid()
                 .color(0x64327D)
-                .flags(EXT2_METAL)
+                .flags(EXT2_METAL, GENERATE_GEAR)
                 .components(Gold, 1, Silver, 1, Copper, 3)
                 .toolStats(12.0f, 2.0f, 256, 21)
                 .addDefaultEnchant(Enchantments.SMITE, 2)
@@ -468,7 +468,7 @@ public class FirstDegreeMaterials {
         Ruby = new Material.Builder(311, "ruby")
                 .gem().ore()
                 .color(0xFF6464).iconSet(RUBY)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
                 .components(Chrome, 1, Aluminium, 2, Oxygen, 3)
                 .toolStats(8.5f, 3.0f, 256, 33)
                 .build();
@@ -490,7 +490,7 @@ public class FirstDegreeMaterials {
         Sapphire = new Material.Builder(314, "sapphire")
                 .gem().ore()
                 .color(0x6464C8).iconSet(GEM_VERTICAL)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
                 .components(Aluminium, 2, Oxygen, 3)
                 .toolStats(7.5f, 4.0f, 256, 15)
                 .build();
@@ -596,7 +596,7 @@ public class FirstDegreeMaterials {
         Topaz = new Material.Builder(329, "topaz")
                 .gem(3).ore()
                 .color(0xFF8000).iconSet(GEM_HORIZONTAL)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Silicon, 1, Fluorine, 1, Hydrogen, 2)
                 .toolStats(7.0f, 2.0f, 256, 15)
                 .build();
@@ -645,7 +645,7 @@ public class FirstDegreeMaterials {
         WroughtIron = new Material.Builder(335, "wrought_iron")
                 .ingot().fluid()
                 .color(0xC8B4B4).iconSet(METALLIC)
-                .flags(EXT_METAL, GENERATE_GEAR, GENERATE_FOIL, GENERATE_ROUND, MORTAR_GRINDABLE, GENERATE_RING, GENERATE_LONG_ROD, DISABLE_DECOMPOSITION, BLAST_FURNACE_CALCITE_TRIPLE)
+                .flags(EXT_METAL, GENERATE_GEAR, GENERATE_FOIL, GENERATE_ROUND, MORTAR_GRINDABLE, GENERATE_RING, GENERATE_LONG_ROD, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION, BLAST_FURNACE_CALCITE_TRIPLE)
                 .components(Iron, 1)
                 .toolStats(6.0f, 3.5f, 384, 21)
                 .fluidPipeProperties(2387, 30, true)
@@ -704,16 +704,17 @@ public class FirstDegreeMaterials {
                 .build();
 
         Graphene = new Material.Builder(342, "graphene")
-                .ingot().fluid()
+                .dust()
                 .color(0x808080).iconSet(SHINY)
-                .flags(GENERATE_FOIL, DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
-                .cableProperties(GTValues.V[5], 1, 1)
+                .cableProperties(GTValues.V[5], 1, 1, false, true)
                 .build();
 
         TungsticAcid = new Material.Builder(343, "tungstic_acid")
                 .dust()
                 .color(0xBCC800).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Tungsten, 1, Oxygen, 4)
                 .build();
 
@@ -1025,7 +1026,7 @@ public class FirstDegreeMaterials {
         TungstenCarbide = new Material.Builder(396, "tungsten_carbide")
                 .ingot().fluid()
                 .color(0x330066).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_FOIL)
+                .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_GEAR, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Tungsten, 1, Carbon, 1)
                 .toolStats(12.0f, 4.0f, 1280, 21)
                 .fluidPipeProperties(7568, 125, true)

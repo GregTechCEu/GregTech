@@ -48,7 +48,7 @@ public class OreDictionaryLoader {
 
         OreDictUnifier.registerOre(OreDictUnifier.get(OrePrefix.dust, Materials.MetalMixture), OrePrefix.dye, Color.Brown);
 
-        OreDictUnifier.registerOre(OreDictUnifier.get(OrePrefix.craftingLens, Materials.Glass), OrePrefix.craftingLens, MarkerMaterials.Color.White);
+        OreDictUnifier.registerOre(OreDictUnifier.get(OrePrefix.lens, Materials.Glass), OrePrefix.craftingLens, MarkerMaterials.Color.White);
 
         OreDictUnifier.registerOre(new ItemStack(Blocks.COAL_ORE), OrePrefix.ore, Materials.Coal);
         OreDictUnifier.registerOre(new ItemStack(Blocks.IRON_ORE), OrePrefix.ore, Materials.Iron);
@@ -72,19 +72,14 @@ public class OreDictionaryLoader {
         OreDictUnifier.registerOre(new ItemStack(Items.IRON_INGOT), OrePrefix.ingot, Materials.Iron);
         OreDictUnifier.registerOre(new ItemStack(Items.PAPER), OrePrefix.plate, Materials.Paper);
         OreDictUnifier.registerOre(new ItemStack(Items.SUGAR), OrePrefix.dust, Materials.Sugar);
-        OreDictUnifier.registerOre(new ItemStack(Items.SUGAR), OrePrefix.DUST_REGULAR, Materials.Sugar);
         OreDictUnifier.registerOre(new ItemStack(Items.STICK), OrePrefix.stick, Materials.Wood);
         OreDictUnifier.registerOre(new ItemStack(Items.REDSTONE), OrePrefix.dust, Materials.Redstone);
-        OreDictUnifier.registerOre(new ItemStack(Items.REDSTONE), OrePrefix.DUST_REGULAR, Materials.Redstone);
         OreDictUnifier.registerOre(new ItemStack(Items.GUNPOWDER), OrePrefix.dust, Materials.Gunpowder);
-        OreDictUnifier.registerOre(new ItemStack(Items.GUNPOWDER), OrePrefix.DUST_REGULAR, Materials.Gunpowder);
         OreDictUnifier.registerOre(new ItemStack(Items.GLOWSTONE_DUST), OrePrefix.dust, Materials.Glowstone);
-        OreDictUnifier.registerOre(new ItemStack(Items.GLOWSTONE_DUST), OrePrefix.DUST_REGULAR, Materials.Glowstone);
+        OreDictUnifier.registerOre(new ItemStack(Blocks.GLOWSTONE), OrePrefix.block, Materials.Glowstone);
         OreDictUnifier.registerOre(new ItemStack(Items.DYE, 1, 15), OrePrefix.dust, Materials.Bone);
-        OreDictUnifier.registerOre(new ItemStack(Items.DYE, 1, 15), OrePrefix.DUST_REGULAR, Materials.Bone);
         OreDictUnifier.registerOre(new ItemStack(Items.BONE), OrePrefix.stick, Materials.Bone);
         OreDictUnifier.registerOre(new ItemStack(Items.BLAZE_POWDER), OrePrefix.dust, Materials.Blaze);
-        OreDictUnifier.registerOre(new ItemStack(Items.BLAZE_POWDER), OrePrefix.DUST_REGULAR, Materials.Blaze);
         OreDictUnifier.registerOre(new ItemStack(Items.BLAZE_ROD), OrePrefix.stick, Materials.Blaze);
         OreDictUnifier.registerOre(new ItemStack(Blocks.IRON_BLOCK), OrePrefix.block, Materials.Iron);
         OreDictUnifier.registerOre(new ItemStack(Blocks.GOLD_BLOCK), OrePrefix.block, Materials.Gold);

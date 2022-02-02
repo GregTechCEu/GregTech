@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
+import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -15,13 +16,15 @@ import java.util.Iterator;
 
 public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
 
-    private final TileEntityFluidPipe pipe;
+    private final TileEntityFluidPipeTickable pipe;
     private final FluidTank[] tanks;
     private IFluidTankProperties[] properties;
+    private final EnumFacing facing;
 
-    public PipeTankList(TileEntityFluidPipe pipe, FluidTank... fluidTanks) {
+    public PipeTankList(TileEntityFluidPipe pipe, EnumFacing facing, FluidTank... fluidTanks) {
         this.tanks = fluidTanks;
-        this.pipe = pipe;
+        this.pipe = (TileEntityFluidPipeTickable) pipe;
+        this.facing = facing;
     }
 
     @Override
@@ -52,22 +55,43 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
     @Override
     public int fill(FluidStack resource, boolean doFill) {
         int channel;
-        if (resource == null || resource.amount <= 0 || (channel = findChannel(resource)) < 0)
+        if (pipe.isFaceBlocked(facing) || resource == null || resource.amount <= 0 || (channel = findChannel(resource)) < 0)
             return 0;
+
+        return fill(resource, doFill, channel);
+    }
+
+    private int fullCapacity() {
+        return tanks.length * pipe.getCapacityPerTank();
+    }
+
+    private int fill(FluidStack resource, boolean doFill, int channel) {
+        if (channel >= tanks.length) return 0;
         FluidTank tank = tanks[channel];
-        int space = tank.getCapacity() - (tank.getFluid() == null ? 0 : tank.getFluid().amount);
-        FluidStack copy = resource.copy();
-        if (resource.amount <= space) {
-            copy.amount = resource.amount;
-        } else if (space < tank.getCapacity() / 2) {
-            space = (int) FluidNetWalker.getSpaceFor(pipe.getWorld(), pipe.getPos(), resource, resource.amount);
-            if (space <= 0)
-                return 0;
-            copy.amount = space;
-        } else {
-            copy.amount = space;
+        FluidStack currentFluid = tank.getFluid();
+
+        if (currentFluid == null || currentFluid.amount <= 0) {
+            FluidStack newFluid = resource.copy();
+            newFluid.amount = Math.min(pipe.getCapacityPerTank(), newFluid.amount);
+            if (doFill) {
+                tank.setFluid(newFluid);
+                pipe.receivedFrom(facing);
+                pipe.checkAndDestroy(newFluid);
+            }
+            return newFluid.amount;
         }
-        return pipe.getFluidPipeNet().fill(copy, pipe.getPos(), doFill);
+        if (currentFluid.isFluidEqual(resource)) {
+            int toAdd = Math.min(tank.getCapacity() - currentFluid.amount, resource.amount);
+            if (toAdd > 0) {
+                if (doFill) {
+                    currentFluid.amount += toAdd;
+                    pipe.receivedFrom(facing);
+                }
+                return toAdd;
+            }
+        }
+
+        return 0;
     }
 
     @Nullable
@@ -78,10 +102,34 @@ public class PipeTankList implements IFluidHandler, Iterable<FluidTank> {
 
     @Nullable
     public FluidStack drainInternal(FluidStack resource, boolean doDrain) {
-        if (resource == null || resource.amount <= 0)
+        int channel;
+        if (resource == null || resource.amount <= 0 || (channel = findChannel(resource)) < 0)
             return null;
-        FluidStack drained = resource.copy();
-        drained.amount = pipe.getFluidPipeNet().drain(resource, pipe.getPos(), false, doDrain);
+        return drainFromIndex(resource.amount, doDrain, channel);
+    }
+
+    public final FluidStack drainFromIndex(int maxDrain, boolean doDrain, int channel) {
+        if (channel < 0 || channel >= tanks.length)
+            return null;
+        FluidStack fluid = tanks[channel].getFluid();
+        if (fluid == null)
+            return null;
+
+        int used = maxDrain;
+        if (fluid.amount < used)
+            used = fluid.amount;
+
+        if (doDrain) {
+            fluid.amount -= used;
+        }
+
+        FluidStack drained = fluid.copy();
+        drained.amount = used;
+
+        if (fluid.amount <= 0) {
+            tanks[channel].setFluid(null);
+        }
+
         return drained;
     }
 

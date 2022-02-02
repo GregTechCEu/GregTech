@@ -24,6 +24,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -36,15 +37,14 @@ import java.util.*;
 @SideOnly(Side.CLIENT)
 public class OreBakedModel implements IBakedModel {
 
-    public static final OreBakedModel INSTANCE = new OreBakedModel();
+    private static IBakedModel model;
 
     private final Map<StoneType, TextureAtlasSprite> stoneTypeModels;
     private final Table<StoneType, EnumFacing, BakedQuad> cacheBottom;
     private final Table<MaterialIconSet, EnumFacing, BakedQuad[]> cacheTop;
     private final ThreadLocal<TextureAtlasSprite> particle;
-    private static IBakedModel model;
 
-   private OreBakedModel() {
+   public OreBakedModel() {
        this.stoneTypeModels = new Object2ObjectOpenHashMap<>();
        this.cacheBottom = Tables.newCustomTable(Maps.newHashMap(), () -> Maps.newEnumMap(EnumFacing.class));
        this.cacheTop = Tables.newCustomTable(Maps.newHashMap(), () -> Maps.newEnumMap(EnumFacing.class));
@@ -124,7 +124,8 @@ public class OreBakedModel implements IBakedModel {
 
     @Override
     public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-        return Pair.of(this, ModelFactory.getBlockTransform(cameraTransformType).getMatrix());
+        TRSRTransformation blockTransform = ModelFactory.getBlockTransform(cameraTransformType);
+        return blockTransform == null ? IBakedModel.super.handlePerspective(cameraTransformType) : Pair.of(this, blockTransform.getMatrix());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe;
 
+import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.MarkerMaterials.Component;
@@ -95,10 +96,10 @@ public class CircuitRecipes {
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.LightBlue).output(CENTRAL_PROCESSING_UNIT_WAFER, 8).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(VA[IV]).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.LightBlue).output(CENTRAL_PROCESSING_UNIT_WAFER, 16).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[MV]).input(SILICON_WAFER).notConsumable(craftingLens, Color.Magenta).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER).buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Magenta).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 4).buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Magenta).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 8).buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(VA[IV]).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Magenta).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 16).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[MV]).input(SILICON_WAFER).notConsumable(craftingLens, Color.Blue).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Blue).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 4).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Blue).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 8).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(VA[IV]).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Blue).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 16).buildAndRegister();
 
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[MV]).input(SILICON_WAFER).notConsumable(craftingLens, Color.Orange).output(LOW_POWER_INTEGRATED_CIRCUIT_WAFER).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Orange).output(LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 4).buildAndRegister();
@@ -234,6 +235,12 @@ public class CircuitRecipes {
                 .output(GLASS_TUBE)
                 .duration(160).EUt(16).buildAndRegister();
 
+        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+                .fluidInputs(Glass.getFluid(GTValues.L))
+                .notConsumable(SHAPE_MOLD_BALL)
+                .output(GLASS_TUBE)
+                .duration(200).EUt(24).buildAndRegister();
+
         FORMING_PRESS_RECIPES.recipeBuilder()
                 .input(dust, Glass)
                 .notConsumable(SHAPE_MOLD_BALL)
@@ -244,42 +251,42 @@ public class CircuitRecipes {
         ModHandler.addShapedRecipe("resistor_wire", RESISTOR.getStackForm(2),
                 "SPS", "WCW", " P ",
                 'P', new ItemStack(Items.PAPER),
-                'S', RUBBER_DROP.getStackForm(),
+                'S', STICKY_RESIN.getStackForm(),
                 'W', new UnificationEntry(wireGtSingle, Copper),
                 'C', new UnificationEntry(dust, Coal));
 
         ModHandler.addShapedRecipe("resistor_wire_fine", RESISTOR.getStackForm(2),
                 "SPS", "WCW", " P ",
                 'P', new ItemStack(Items.PAPER),
-                'S', RUBBER_DROP.getStackForm(),
+                'S', STICKY_RESIN.getStackForm(),
                 'W', new UnificationEntry(wireFine, Copper),
                 'C', new UnificationEntry(dust, Coal));
 
         ModHandler.addShapedRecipe("resistor_wire_charcoal", RESISTOR.getStackForm(2),
                 "SPS", "WCW", " P ",
                 'P', new ItemStack(Items.PAPER),
-                'S', RUBBER_DROP.getStackForm(),
+                'S', STICKY_RESIN.getStackForm(),
                 'W', new UnificationEntry(wireGtSingle, Copper),
                 'C', new UnificationEntry(dust, Charcoal));
 
         ModHandler.addShapedRecipe("resistor_wire_fine_charcoal", RESISTOR.getStackForm(2),
                 "SPS", "WCW", " P ",
                 'P', new ItemStack(Items.PAPER),
-                'S', RUBBER_DROP.getStackForm(),
+                'S', STICKY_RESIN.getStackForm(),
                 'W', new UnificationEntry(wireFine, Copper),
                 'C', new UnificationEntry(dust, Charcoal));
 
         ModHandler.addShapedRecipe("resistor_wire_carbon", RESISTOR.getStackForm(2),
                 "SPS", "WCW", " P ",
                 'P', new ItemStack(Items.PAPER),
-                'S', RUBBER_DROP.getStackForm(),
+                'S', STICKY_RESIN.getStackForm(),
                 'W', new UnificationEntry(wireGtSingle, Copper),
                 'C', new UnificationEntry(dust, Carbon));
 
         ModHandler.addShapedRecipe("resistor_wire_fine_carbon", RESISTOR.getStackForm(2),
                 "SPS", "WCW", " P ",
                 'P', new ItemStack(Items.PAPER),
-                'S', RUBBER_DROP.getStackForm(),
+                'S', STICKY_RESIN.getStackForm(),
                 'W', new UnificationEntry(wireFine, Copper),
                 'C', new UnificationEntry(dust, Carbon));
 
@@ -628,13 +635,13 @@ public class CircuitRecipes {
         // Coated Board
         ModHandler.addShapedRecipe("coated_board", COATED_BOARD.getStackForm(3),
                 "RRR", "PPP", "RRR",
-                'R', RUBBER_DROP.getStackForm(),
+                'R', STICKY_RESIN.getStackForm(),
                 'P', new UnificationEntry(plate, Wood));
 
         ModHandler.addShapelessRecipe("coated_board_1x", COATED_BOARD.getStackForm(),
                 new UnificationEntry(plate, Wood),
-                RUBBER_DROP.getStackForm(),
-                RUBBER_DROP.getStackForm());
+                STICKY_RESIN.getStackForm(),
+                STICKY_RESIN.getStackForm());
 
         ModHandler.addShapedRecipe("basic_circuit_board", BASIC_CIRCUIT_BOARD.getStackForm(),
                 "WWW", "WBW", "WWW",

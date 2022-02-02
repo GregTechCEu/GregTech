@@ -145,7 +145,7 @@ public class CustomTextureModel implements IModel {
 
     @Override
     @Nonnull
-    public IModel retexture(ImmutableMap<String, String> textures) {
+    public IModel retexture(@Nonnull ImmutableMap<String, String> textures) {
         try {
             CustomTextureModel ret = deepCopy(getVanillaParent().retexture(textures), null, null);
             ret.modelInfo.textures.putAll(textures);

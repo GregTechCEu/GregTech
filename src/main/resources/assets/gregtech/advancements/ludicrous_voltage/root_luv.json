@@ -8,7 +8,7 @@
     },
     "icon": {
       "item": "gregtech:machine",
-      "data": 1018
+      "data": 1019
     },
     "frame": "challenge",
     "background": "gregtech:textures/blocks/casings/solid/machine_casing_inert_ptfe.png"
@@ -20,7 +20,7 @@
         "items": [
           {
             "item": "gregtech:machine",
-            "data": 1018
+            "data": 1019
           }
         ]
       }

@@ -7,6 +7,7 @@ import stanhebben.zenscript.annotations.ZenGetter;
 
 @ZenClass("mods.gregtech.recipe.ChancedEntry")
 @ZenRegister
+@SuppressWarnings("unused")
 public class ChancedEntry {
 
     private final IItemStack output;

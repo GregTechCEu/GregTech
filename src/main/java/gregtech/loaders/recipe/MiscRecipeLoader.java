@@ -32,7 +32,7 @@ public class MiscRecipeLoader {
 
         // Basic Terminal Recipe
         ModHandler.addShapedRecipe(true, "basic_terminal", TERMINAL.getStackForm(),
-                "SPS", "PBP", "PWP", 'S', new UnificationEntry(screw, WroughtIron), 'P', OreDictUnifier.get("paneGlass"), 'B', new ItemStack(Items.BOOK),
+                "SGS", "PBP", "PWP", 'S', new UnificationEntry(screw, WroughtIron), 'G', OreDictUnifier.get("paneGlass"), 'B', new ItemStack(Items.BOOK),
                                         'P', new UnificationEntry(plate, WroughtIron), 'W', new UnificationEntry(wireGtSingle, RedAlloy));
 
         // Potin Recipe
@@ -83,70 +83,70 @@ public class MiscRecipeLoader {
                 .notConsumable(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.COBBLESTONE))
                 .duration(16)
-                .EUt(VA[LV])
+                .EUt(VA[ULV])
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(new ItemStack(Blocks.STONE, 1, 0))
                 .outputs(new ItemStack(Blocks.STONE, 1, 0))
                 .duration(16)
-                .EUt(VA[LV])
+                .EUt(VA[ULV])
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Andesite)
                 .output(stone, Andesite)
                 .duration(16)
-                .EUt(VA[MV])
+                .EUt(60)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Granite)
                 .output(stone, Granite)
                 .duration(16)
-                .EUt(VA[MV])
+                .EUt(60)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Diorite)
                 .output(stone, Diorite)
                 .duration(16)
-                .EUt(VA[MV])
+                .EUt(60)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(dust, Redstone)
                 .outputs(new ItemStack(Blocks.OBSIDIAN, 1))
                 .duration(16)
-                .EUt(VA[HV])
+                .EUt(240)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Marble)
                 .output(stone, Marble)
                 .duration(16)
-                .EUt(VA[HV])
+                .EUt(240)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Basalt)
                 .output(stone, Basalt)
                 .duration(16)
-                .EUt(VA[HV])
+                .EUt(240)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, GraniteRed)
                 .output(stone, GraniteRed)
                 .duration(16)
-                .EUt(VA[EV])
+                .EUt(960)
                 .buildAndRegister();
 
         RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, GraniteBlack)
                 .output(stone, GraniteBlack)
                 .duration(16)
-                .EUt(VA[EV])
+                .EUt(960)
                 .buildAndRegister();
 
         // Jetpacks
@@ -169,7 +169,7 @@ public class MiscRecipeLoader {
                 .buildAndRegister();
 
         // QuarkTech Suite
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt((int) GTValues.VA[GTValues.IV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
                 .input(circuit, Master, 2)
                 .input(wireGtQuadruple, Tungsten, 5)
                 .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
@@ -183,7 +183,7 @@ public class MiscRecipeLoader {
                 .outputs(QUANTUM_HELMET.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt((int) GTValues.VA[GTValues.IV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
                 .input(circuit, Master, 2)
                 .input(wireGtQuadruple, Tungsten, 8)
                 .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
@@ -197,7 +197,7 @@ public class MiscRecipeLoader {
                 .outputs(QUANTUM_CHESTPLATE.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt((int) GTValues.VA[GTValues.IV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
                 .input(circuit, Master, 2)
                 .input(wireGtQuadruple, Tungsten, 7)
                 .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
@@ -211,7 +211,7 @@ public class MiscRecipeLoader {
                 .outputs(QUANTUM_LEGGINGS.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt((int) GTValues.VA[GTValues.IV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
                 .input(circuit, Master, 2)
                 .input(wireGtQuadruple, Tungsten, 4)
                 .inputs(ENERGY_LAPOTRONIC_ORB.getStackForm())
@@ -225,7 +225,7 @@ public class MiscRecipeLoader {
                 .outputs(QUANTUM_BOOTS.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(1000).EUt((int) GTValues.VA[GTValues.LuV])
+        ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(1000).EUt(GTValues.VA[GTValues.LuV])
                 .inputs(QUANTUM_CHESTPLATE.getStackForm())
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
                 .input(wireFine, NiobiumTitanium, 64)
@@ -346,6 +346,19 @@ public class MiscRecipeLoader {
                     .buildAndRegister();
         }
 
+        // Glass Fluid Extraction
+        EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.GLASS))
+                .fluidOutputs(Glass.getFluid(L))
+                .duration(20).EUt(30).buildAndRegister();
+
+        // Glass Plate in Alloy Smelter
+        ALLOY_SMELTER_RECIPES.recipeBuilder()
+                .input(dust, Glass, 2)
+                .notConsumable(SHAPE_MOLD_PLATE.getStackForm())
+                .output(plate, Glass)
+                .duration(40).EUt(6).buildAndRegister();
+
         // Dyed Lens Recipes
         RecipeBuilder<?> builder = CHEMICAL_BATH_RECIPES.recipeBuilder().EUt(VA[HV]).duration(200).input(craftingLens, Glass);
         final int dyeAmount = 288;
@@ -366,5 +379,12 @@ public class MiscRecipeLoader {
         builder.copy().fluidInputs(DyeGreen.getFluid(dyeAmount))    .output(GLASS_LENSES.get(Color.Green))    .buildAndRegister();
         builder.copy().fluidInputs(DyeRed.getFluid(dyeAmount))      .output(GLASS_LENSES.get(Color.Red))      .buildAndRegister();
         builder.copy().fluidInputs(DyeBlack.getFluid(dyeAmount))    .output(GLASS_LENSES.get(Color.Black))    .buildAndRegister();
+
+        // NAN Certificate
+        EXTRUDER_RECIPES.recipeBuilder()
+                .input(block, Neutronium, 64)
+                .input(block, Neutronium, 64)
+                .output(NAN_CERTIFICATE)
+                .duration(Integer.MAX_VALUE).EUt(VA[ULV]).buildAndRegister();
     }
 }

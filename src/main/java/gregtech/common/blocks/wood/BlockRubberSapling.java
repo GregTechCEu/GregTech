@@ -3,15 +3,10 @@ package gregtech.common.blocks.wood;
 import gregtech.api.GregTechAPI;
 import gregtech.common.worldgen.WorldGenRubberTree;
 import net.minecraft.block.BlockBush;
-import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -92,7 +87,7 @@ public class BlockRubberSapling extends BlockBush implements IGrowable {
 
     @Override
     public void grow(@Nonnull World worldIn, @Nonnull Random rand, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
-        new WorldGenRubberTree(true).grow(worldIn, pos, rand);
+        WorldGenRubberTree.TREE_GROW_INSTANCE.grow(worldIn, pos, rand);
     }
 
     @Override

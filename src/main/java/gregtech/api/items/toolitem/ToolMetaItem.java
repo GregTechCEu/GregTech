@@ -128,7 +128,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public boolean showDurabilityBar(ItemStack stack) {
+    public boolean showDurabilityBar(@Nonnull ItemStack stack) {
         T item = getItem(stack);
         if (item != null && item.getDurabilityManager() != null) {
             return item.getDurabilityManager().showsDurabilityBar(stack);
@@ -138,7 +138,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public double getDurabilityForDisplay(ItemStack stack) {
+    public double getDurabilityForDisplay(@Nonnull ItemStack stack) {
         T item = getItem(stack);
         if (item != null && item.getDurabilityManager() != null) {
             return item.getDurabilityManager().getDurabilityForDisplay(stack);
@@ -154,7 +154,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public int getRGBDurabilityForDisplay(ItemStack stack) {
+    public int getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
         //always color durability bar as item internal damage
         double internalDamage = getItemDamage(stack) / (getMaxItemDamage(stack) * 1.0);
         return MathHelper.hsvToRGB(Math.max(0.0F, (float) (1.0 - internalDamage)) / 3.0F, 1.0F, 1.0F);
@@ -170,12 +170,13 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public boolean hasContainerItem(ItemStack stack) {
+    public boolean hasContainerItem(@Nonnull ItemStack stack) {
         return true;
     }
 
+    @Nonnull
     @Override
-    public ItemStack getContainerItem(ItemStack stack) {
+    public ItemStack getContainerItem(@Nonnull ItemStack stack) {
         stack = stack.copy();
         stack.setCount(1);
         T metaToolValueItem = getItem(stack);
@@ -307,7 +308,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
+    public boolean onLeftClickEntity(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull Entity entity) {
         //cancel attack if broken or out of charge
         T metaToolValueItem = getItem(stack);
         if (metaToolValueItem != null) {
@@ -412,7 +413,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt) {
         ICapabilityProvider capabilityProvider = super.initCapabilities(stack, nbt);
         if (capabilityProvider != null && capabilityProvider.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null)) {
             IElectricItem electricItem = capabilityProvider.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
@@ -427,6 +428,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         return capabilityProvider;
     }
 
+    @Nonnull
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         if (stack.getItemDamage() >= metaItemOffset) {
@@ -443,7 +445,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack itemStack, @Nullable World worldIn, List<String> lines, ITooltipFlag tooltipFlag) {
+    public void addInformation(@Nonnull ItemStack itemStack, @Nullable World worldIn, @Nonnull List<String> lines, @Nonnull ITooltipFlag tooltipFlag) {
         T item = getItem(itemStack);
         if (item == null) {
             return;
@@ -462,17 +464,17 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public boolean isEnchantable(ItemStack stack) {
+    public boolean isEnchantable(@Nonnull ItemStack stack) {
         return true;
     }
 
     @Override
-    public int getItemEnchantability(ItemStack stack) {
+    public int getItemEnchantability(@Nonnull ItemStack stack) {
         return getToolMaterial(stack).getProperty(PropertyKey.TOOL).getToolEnchantability();
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+    public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack, @Nonnull Enchantment enchantment) {
         T metaToolValueItem = getItem(stack);
         if (metaToolValueItem != null && metaToolValueItem.toolStats != null) {
             return metaToolValueItem.toolStats.canApplyEnchantment(stack, enchantment);

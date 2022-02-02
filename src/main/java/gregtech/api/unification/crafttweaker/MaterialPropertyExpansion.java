@@ -131,7 +131,7 @@ public class MaterialPropertyExpansion {
         if (checkFrozen("add an Ore to a material")) return;
         oreMultiplier = oreMultiplier == 0 ? 1 : oreMultiplier;
         byproductMultiplier = byproductMultiplier == 0 ? 1 : byproductMultiplier;
-        if (!m.hasProperty(PropertyKey.ORE)) {
+        if (m.hasProperty(PropertyKey.ORE)) {
             m.getProperty(PropertyKey.ORE).setOreMultiplier(oreMultiplier);
             m.getProperty(PropertyKey.ORE).setByProductMultiplier(byproductMultiplier);
             m.getProperty(PropertyKey.ORE).setEmissive(emissive);
@@ -168,13 +168,14 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
-    public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock, @Optional boolean isSuperCon) {
+    public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock, @Optional boolean isSuperCon, @Optional boolean wireFromDust) {
         if (checkFrozen("add Wires to a material")) return;
         if (m.hasProperty(PropertyKey.WIRE)) {
             m.getProperty(PropertyKey.WIRE).setVoltage(voltage);
             m.getProperty(PropertyKey.WIRE).setAmperage(baseAmperage);
             m.getProperty(PropertyKey.WIRE).setLossPerBlock(lossPerBlock);
             m.getProperty(PropertyKey.WIRE).setSuperconductor(isSuperCon);
-        } else m.setProperty(PropertyKey.WIRE, new WireProperties(voltage, baseAmperage, lossPerBlock, isSuperCon));
+            m.getProperty(PropertyKey.WIRE).setWireFromDust(wireFromDust);
+        } else m.setProperty(PropertyKey.WIRE, new WireProperties(voltage, baseAmperage, lossPerBlock, isSuperCon, wireFromDust));
     }
 }

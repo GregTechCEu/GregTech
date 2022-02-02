@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -44,6 +45,10 @@ public class SteamCoalBoiler extends SteamBoiler implements IFuelable {
     protected void tryConsumeNewFuel() {
         ItemStack fuelInSlot = importItems.extractItem(0, 1, true);
         if (fuelInSlot.isEmpty()) return;
+        // Prevent consuming buckets with burn time
+        if(FluidUtil.getFluidHandler(fuelInSlot) != null) {
+            return;
+        }
         int burnTime = TileEntityFurnace.getItemBurnTime(fuelInSlot);
         if (burnTime <= 0) return;
         importItems.extractItem(0, 1, false);
@@ -57,6 +62,11 @@ public class SteamCoalBoiler extends SteamBoiler implements IFuelable {
     @Override
     protected int getCooldownInterval() {
         return isHighPressure ? 40 : 45;
+    }
+
+    @Override
+    protected int getCoolDownRate() {
+        return 1;
     }
 
     @Override

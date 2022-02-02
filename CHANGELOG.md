@@ -1,5 +1,258 @@
 ## Changelog
 
+### 2.1.1
+BETA RELEASE
+
+* Overhaul Sound System
+    * Muffling machines now no longer requires a world reload, and works immediately
+    * Sounds will no longer stop working entirely after some amount of time
+    * Machines running sound are now more performant
+* Fix crash with Prospector Tool on servers
+* Fix covers on pipes not being able to open UIs
+* Fix issues with Large Turbines on servers
+* Fix some GT blocks having their textures broken after changing Resource Packs / using F3+T
+* Fix log spam in some situations with Fluid Pipes
+* Fix Rock Breaker NPE on load, causing the machine to occasionally disappear
+* Fix crash using Macerators in PA/APA
+* Fix Prospector Tool and Item Magnets not saving their state between world loads
+* Fix ULV Casing getting colored by the default machine color config
+* Fix lag when playing a GT record
+* Fix some Furnace recipe removal errors
+* Adjust some circuit tier tooltips to better match the circuit theme's color
+* Slightly tweak the Wool maceration/assembling recipes
+* Internal: Pipes no longer have textures bound to IconSets. Removes approximately 288 textures from the Atlas
+* Internal: Rename `HermeticCasings.class` -> `BlockHermeticCasing.class`
+
+### 2.1.0
+BETA RELEASE
+
+Featured Changes:
+
+* Fluid Rigs
+    * New Multiblocks capable of draining Fluids from in-world data
+    * Each 8x8 chunk area of a Dimension can have a Fluid Vein in it (not in-world)
+    * Rigs at MV, EV, and LuV for harvesting these fluids
+    * "Veins" can be specified similarly to Ore Veins in the config JSON files
+
+* CraftTweaker Changes
+    * In Creative Mode, there is now a button on a RecipeMap JEI Page to copy the CT script to remove that recipe to the clipboard
+    * Fix IconSet changes not working in CraftTweaker
+    * Fix rare issues with adding properties to materials in CraftTweaker
+
+* Fix Fluid Pipes having half the intended transfer rate
+* Fix issues with pipe/cable connections with GT6StylePipesCables OFF
+* Fix power transfer in cables randomly failing
+* Fix Z-Fighting with covers on pipes and cables
+* Fix issues with painting Pipes and Cables
+* Fix rendering and performance issues with the Clipboard
+* Fix Overclock Button not working in some cases
+* Fix machine default color not applying to Machine Casings, Hermetic Casings
+* Fix issues with changing machine default color in-game
+* Fix Item Magnets working in Spectator Mode
+* Fix Coke Oven Hatch being sharable between Coke Ovens
+* Fix crash with Tricorders when scanning dimensions with no fluid veins
+* Fix Creative Energy Emitter tier button not updating from a manually entered voltage
+* Fix issues with UI's staying open after TileEntities are removed
+* Fix Compressor and Forge Hammer recipes sometimes using the wrong amount of items for Blocks (Glowstone, Quartz, etc)
+* Fix Large Boilers burning for too long with fluid fuels
+* Fix circuit overlay in Assembling Machine
+* Fix Block Breaker, Coke Oven Hatch tooltips
+* Fix Large Fluid Cells not showing their fluid capacity in the tooltip
+* Move PGS processing to Centrifuge
+* Fix various issues with Solar Panel covers
+* Remove `dustRegular` OreDict, as its need is no more with the new Ore Dictionary Filter
+* Fix a few recipe problems (Fish Oil, Ender Pearl dust Mixer using O over N, Propene + Cl conflict, PBI fluid output amount)
+* Add Huge Item and Huge Restrictive Item Pipes
+* Add Fluid Temperature and State tooltips to more places
+* Add Config to automatically remove Furnace smelting recipes for EBF Metals added by other mods (excluding CraftTweaker)
+* Add Advancement for Primitive Pump
+* Rebalance Steel Processing (PBF is slightly slower, as is EBF, drastically reduce Oxygen amount for EBF)
+* Buff Oilsands processing time
+* Fix Beacon recipe with harder recipe configs enabled
+* Add many, many new harder recipes to the harder recipe configs
+* Add many new Vanilla item recycling recipes
+* Change behavior of machine explosions with the config off
+* Internal: Converted MetaPrefix item to use `MetaValueItem` instead of its own handwoven Map
+
+### 2.0.6
+BETA RELEASE
+
+Featured Changes:
+
+* Fluid Pipe Rework
+    * Fixes all instances of voiding and other random issues
+    * Fluid pipes can now have a side be "blocked" by shift-right-clicking with a Wrench on the Machine Grid
+    * Fluids in this new implementation currently slosh like GT5U
+    * Expect more changes to come to pipes in the coming updates
+
+* Unlockable Capes
+    * Capes can now be unlocked via Advancements in-game, and selected using a new Terminal app
+    * 4 capes are available now, unlocked from various advancements
+    * Capes can be added by addons or by CraftTweaker (documentation coming soon!)
+
+* Remove item pipe logging spam
+* Fix Large Boilers increasing item burn time over time
+* Fix Large Turbines not showing the fluid in their Hatches on login
+* Cables now act as "fuses" when overvolted, to protect your machines
+* Fix amperage averaging for cable burning
+* Add a new command `/gt recipecheck` which will look for and inform you of any potential recipe conflicts
+* Add new CT method to hide a multiblock preview from JEI
+* Fix all recipe conflicts in GT recipes
+* Fix treated wood pulp and plank localization
+* Misc changes (remove Sodium Ingot, change Platinum Sludge Residue from Electrolyzer to Centrifuge)
+
+### 2.0.5
+BETA RELEASE
+
+Featured Changes:
+
+* Item Magnets
+    * Similar to other mods, Item Magnets can bring dropped items towards you for a little bit of power
+    * Available at LV, and an upgraded form at HV, which has farther range and faster collection speed
+
+* Ore Dictionary Filter Overhaul
+    * Can now use expanded regex to filter items passed through
+    * New "Info" tooltip provided in the cover UI
+    * Added a "Test Slot," which can be provided an item to see if it matches your pattern (can use JEI "drag" ingredients)
+
+* Machine UI and Item Charging Improvements
+    * Machines now have a "Configurator Slot" which can be used to change the selected number of a Programmed Circuit
+    * Machine Charger Slot can now charge Electric Tools, as well as RF Tools
+    * Battery Buffer and Charger can now also charge RF tools
+    * New tooltips to explain what the Configurator and Charger slots do, as well as the GT logo and other misc UI improvements
+
+* Improvements to the `/gt util hand` command, now just `/gt hand`
+* Fix various Cable and Wire rendering issues
+* Fix Item Pipe Enhanced Round Robin voiding items occasionally
+* Fix Pipes and Cables not working properly with `gamerule doDaylightCycle` disabled
+* Fix Round Robin button not appearing on covers when the cover is placed on the block adjacent to a pipe
+* Added a config to disable Log -> Charcoal smelting recipes
+* Fix EBF UI not being openable
+* Fix dust -> foil extrusion recipes
+* Fix some missing recipes, like Alloy Smelter alloys and a few others
+* Fix issues relating to Dyed Lens OreDictionary entries
+* Fix Fueled Jetpack not always accepting fuel
+* Fix Machine top and bottom faces not rotating with the front face
+* Fix various instances of log spam with other mods, relating to crafting with tools
+* Fix the Sense voiding some sugar cane when used
+* Fix Diamond and Gold Swords having no recipes
+* Fix some multiblock parts not displaying if they can be shared between multiblocks
+* Fix MetaItem tooltip not appearing in some places when Advanced Tooltips is enabled
+* Fix HV pump recipe
+* Fix a few small chemical recipes, like Salt Water centrifuging, Aqua Regia composition, and Salt creation
+* Rework "Small Lava Boiler" into "Small Liquid Boiler," which can now also burn Creosote
+* Rebalance some fuels, move oils to combustion
+* Add a few extra slots to Autoclave, EBF, Chemical Bath, Fermenter
+* Internal: Add `SimpleCubeRenderer`, which renders a single texture across a full block
+* Internal: Redo `IMultipleRecipeMaps` API
+* Internal: Redo `MetaOreDictItem`
+* Internal: Fix Materials with names that end in numbers causing strange errors
+
+### 2.0.4
+BETA RELEASE
+
+* Add support for Galacticraft dimensions and GTCEu veins
+* Add extruder recipes using dust for polymers (Polyethylene, PTFE, etc)
+* Change the gem texture for Quartzite and Certus Quartz
+* Add the ability to name GT machines, and display the name as a "name tag" rendered in-world
+* Fix Hammer and Hammering Enchant not respecting Nether/End ores, not using proper fortune calculations, and dropping ore blocks for non-stone ores
+* Fix crash with LittleTiles and Ore Blocks
+* Fix Drills mining 2 blocks at a time when in single block mode
+* Fix issue with multiblocks not being able to run when missing some output hatch types in rare situations
+* Fix EnergyNet issues, where power could seemingly get "stuck" and allowed machines to be powered "wirelessly"
+* Adjust GT loot values
+* Fix recipe conflicts in the Ore Washer
+* Add Lathe recipes for Buzzsaw Blades
+* Fix recipe conflicts with Fluid Regulators
+* Fix Multiblock Autobuild not replacing blocks like Grass, Leaves, Snow, etc
+* Fix Nichrome Mixer recipe conflict
+* Fix Radon chemical reactor recipe
+* Fix Toluene fuel burn time
+* Fix some Arc Furnace recipes being too high of an EU/t
+* Fix buffers voiding items when broken
+* Swap the ore vein weights of Cassiterite and Copper-Tin veins, to make Cassiterite more common
+* Many small autogen recipe tweaks (fix arcing blocks just giving blocks still, redo lens lathe recipes, more gem ore byproducts)
+* Slightly rebalance the Pump (machine)
+* Cut Rock Breaker EU/t costs (tiers are still the same)
+* Fix logging warnings about Hassium missing flags
+* Fix crash with some multiblock structures (none available in CEu, but possible from addons or MBT)
+* Recipe cleanups of some duplicate recipes (glowstone, redstone, etc)
+* Add UHV+ components, for addons to utilize
+
+### 2.0.3
+BETA RELEASE
+
+Featured Changes:
+
+* Portable Scanner (Tricorder):
+    * A new tool available at early MV, useful for scanning many things, like:
+        * Machines: Can be scanned to see their current progress, energy stored, fluids stored internally, etc.
+        * Generators: Can be scanned to see all the above, as well as their Power Production
+        * Cables: Can be scanned to see EU/t at that point (including losses), amperage, and more
+    * Can also be used to see performance data of Machines, showing the nanoseconds of CPU time they are taking on average
+    * Additionally, along comes a Debug Scanner, which shows more advanced details, useful for developers and pack authors
+
+* Surface Rock reworks:
+    * Surface rocks properly spawn in the Nether
+    * Model has been redone once again
+    * Surface rocks can now always be broken by a bare hand
+    * Surface rocks can be right-clicked to be "picked up" (drop their Tiny Dusts)
+    * A few fixes for Surface Blocks, which can be specified in JSON ore veins
+    
+* Fix Various Mod Compatibility Problems:
+    * Fix crash with the Terminal Hardware Manager and some mods (like Building Gadgets)
+    * Fix crash with NuclearCraft in rare situations
+    * Fix NuclearCraft GTCE compat config being required off (config can now safely be enabled if you desire)
+
+* Change pipe/cable hitbox to "full" when holding a Pipe or Cable in your hand, and pressing SHIFT
+* Fix many generator bugs (like Singleblock Generators occasionally outputting multiple amps)
+* Fix Small Coal Boilers consuming Buckets when using Bucket Fuels
+* Fix crash when using `addOre()` on a material in CraftTweaker
+* Fix crash when running the PA with only 1 machine
+* Fix a few default vein spawn heights to make them more accurate to their weight (copper-tin vein, mineral sands vein)
+* Nerf Small Boiler cooldown rates slightly
+* Fix Stainless Steel Gearbox recipe
+* Add a few Glass-related recipes (Fluid Extract Glass Block, Fluid Solidify Glass Tubes)
+* Fix some wrong Advancement triggers
+* Fix double plate bender recipes
+* Change Wooden Barrel to use Sticky Resin instead of Slimeball
+* Fix Coke Oven allowing any number of Coke Oven Hatches
+* Add ability for custom Chance Functions per RecipeMap
+* Fix a few inconsistencies in the Ore Byproduct Page
+* Fix Hammering Enchant being allowed on Axes and some other tools
+* Fix Crafting Station dupe exploit
+* Fix some issues with the LCE and ECE
+* Add TOP info for Maintenance Status for Multiblocks
+* Fix Activity Detector Covers missing recipes
+* Significantly improve the performance of the Rock Breaker (about 16x more performant after changes)
+* Fix `harderBrickRecipes` config making Brick Blocks require a Compressor
+* Fix recipe conflict with Methanol
+* Fix Electric and Steam Furnaces not properly working when clicking on the Progress Bar
+
+### 2.0.2
+BETA RELEASE
+* Fix crash on null Fluid with some mods (and add better logging)
+* Fix Rubber Trees being too tall/too short in some cases
+* Buff Garnet Sand Centrifuge recipe
+* Fix Crafting Recipe for the Terminal
+* Fix ULPIC's being needed in MV but requiring HV to craft
+* Fix Rubber Trees not giving Sticky Resin
+* Fix some Stone Types having higher harvest levels than the other ores
+* Clean up Cable covering recipes, add cable Unpacking recipes
+* Fix Surface Rock placement being poor
+    * Rocks now cannot spawn as far from the vein center
+    * A rock is guaranteed to spawn in the center of a chunk with a vein in it
+* Fix drum overlay being improperly tinted
+* Fix a few veins (Sulfur, Cassiterite) being too limited on their height range, making them very rare
+* Fix Crafting Station recipe not allowing non-Vanilla Wood Planks
+* Remove Argon Plasma Arc Furnace recipes
+* Add a few new configs:
+    * `harderBrickRecipes`: Harder recipes for Bricks, Coke Bricks, and Firebricks (default false)
+    * `plateWrenches`: Use Plates to make Wrenches instead of Ingots (default false)
+    * `harderEBFControllerRecipe`: Use Electric Furnaces instead of Furnaces in the EBF recipe (default false)
+* Fix a few minor problems in the Terminal
+* Fix some invalid Crafting recipes, add logging
+
 ### 2.0.1
 BETA RELEASE
 * Add Cosmetic Blocks for Marble, Basalt, Red Granite, etc (all stone types)

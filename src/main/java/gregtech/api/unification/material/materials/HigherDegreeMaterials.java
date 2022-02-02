@@ -75,7 +75,7 @@ public class HigherDegreeMaterials {
                 .dust(1).ore()
                 .color(0xC86400).iconSet(SAND)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
-                .components(GarnetRed, 1, GarnetYellow, 1)
+                .components(Almandine, 1, Andradite, 1, Grossular, 1, Pyrope, 1, Spessartine, 1, Uvarovite, 1)
                 .build();
 
         HSSG = new Material.Builder(2516, "hssg")
@@ -131,7 +131,7 @@ public class HigherDegreeMaterials {
                 .build();
 
         Granite = new Material.Builder(2523, "granite")
-                .dust()
+                .dust(1)
                 .color(0xCFA18C).iconSet(ROUGH)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 4, Redrock, 1)
@@ -152,7 +152,7 @@ public class HigherDegreeMaterials {
                 .build();
 
         Diorite = new Material.Builder(2526, "diorite")
-                .dust()
+                .dust(1)
                 .iconSet(ROUGH)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Mirabilite, 2, Clay, 7)

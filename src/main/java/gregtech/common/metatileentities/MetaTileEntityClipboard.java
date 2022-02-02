@@ -64,7 +64,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     @Override
     public void update() {
         super.update();
-        if (guiCache == null || guiContainerCache == null) {
+        if (guiContainerCache == null) {
             createFakeGui();
             scheduleRenderUpdate();
         }
@@ -208,6 +208,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
                 world.removeTileEntity(pos);
                 world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+                this.scheduleRenderUpdate();
             }
         }
         return true;
