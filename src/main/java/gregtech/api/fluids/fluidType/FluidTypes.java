@@ -9,13 +9,13 @@ import stanhebben.zenscript.annotations.ZenProperty;
 public class FluidTypes {
 
     @ZenProperty
-    public static final FluidType LIQUID = new FluidTypeLiquid("liquid", "", "", "gregtech.fluid.generic");
+    public static final FluidType LIQUID = new FluidTypeLiquid("liquid", null, null, "gregtech.fluid.generic");
 
     @ZenProperty
-    public static final FluidType ACID = new FluidTypeAcid("acid", "", "", "gregtech.fluid.generic");
+    public static final FluidType ACID = new FluidTypeAcid("acid", null, null, "gregtech.fluid.generic");
 
     @ZenProperty
-    public static final FluidType GAS = new FluidTypeGas("gas", "", "", "gregtech.fluid.generic");
+    public static final FluidType GAS = new FluidTypeGas("gas", null, null, "gregtech.fluid.generic");
 
     @ZenProperty
     public static final FluidType PLASMA = new FluidTypePlasma("plasma", "plasma", "", "gregtech.fluid.plasma");
