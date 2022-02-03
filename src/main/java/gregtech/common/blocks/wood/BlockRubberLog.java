@@ -50,9 +50,7 @@ public class BlockRubberLog extends BlockLog {
     public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, IBlockState state, int fortune) {
         Random rand = world instanceof World ? ((World) world).rand : RANDOM;
         if (state.getValue(NATURAL)) {
-            double chance = rand.nextDouble();
-            int amount  = chance <= 0.85D ? 1 : 0;
-            if(amount != 0) {
+            if(rand.nextDouble() <= .85D) {
                 drops.add(MetaItems.STICKY_RESIN.getStackForm());
             }
         }
