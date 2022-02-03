@@ -8,6 +8,8 @@ import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 
 import javax.annotation.Nonnull;
 
+import static gregtech.api.recipes.logic.OverclockingLogic.standardOverclockingLogic;
+
 /**
  * Recipe Logic for a Multiblock that does not require power.
  */

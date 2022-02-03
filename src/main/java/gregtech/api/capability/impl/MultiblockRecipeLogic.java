@@ -20,6 +20,8 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gregtech.api.recipes.logic.OverclockingLogic.standardOverclockingLogic;
+
 public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     // Used for distinct mode
