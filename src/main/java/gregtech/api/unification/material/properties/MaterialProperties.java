@@ -26,6 +26,10 @@ public class MaterialProperties {
     public <T extends IMaterialProperty<T>> T getProperty(PropertyKey<T> key) {
         return key.cast(propertyMap.get(key));
     }
+    
+    public Map<PropertyKey<? extends IMaterialProperty<?>>, IMaterialProperty<?>> getPropertyKeyMap() {
+        return propertyMap;
+    }
 
     public <T extends IMaterialProperty<T>> boolean hasProperty(PropertyKey<T> key) {
         return propertyMap.get(key) != null;
