@@ -16,6 +16,7 @@ import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
+import gregtech.client.utils.TrackedDummyWorld;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.VariantActiveBlock;
 import net.minecraft.block.Block;
@@ -75,7 +76,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             if (getOffsetTimer() % 20 == 0 || isFirstTick()) {
                 checkStructurePattern();
             }
-            if (isStructureFormed()) {
+            if (isStructureFormed() && !(getWorld() instanceof TrackedDummyWorld)) {
                 updateFormedValid();
             }
         }
