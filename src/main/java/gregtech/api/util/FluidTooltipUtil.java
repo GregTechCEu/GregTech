@@ -7,7 +7,10 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FluidTooltipUtil {
 
@@ -100,7 +103,7 @@ public class FluidTooltipUtil {
         List<String> tooltip = new ArrayList<>();
         tooltip.add(m.getChemicalFormula());
         tooltip.add(String.valueOf(m.getProperty(PropertyKey.FLUID).getFluidTemperature()));
-        tooltip.add(String.valueOf(m.getProperty(PropertyKey.FLUID).isGas()));
+        tooltip.add(String.valueOf(m.getProperty(PropertyKey.FLUID).getFluidType().getName()));
         return tooltip;
     }
 }
