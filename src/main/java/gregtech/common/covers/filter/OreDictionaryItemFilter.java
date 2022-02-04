@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -126,7 +125,6 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
                 }))
         );
-
         widgetGroup.accept(new OreDictFilterTestSlot(36, 1)
                 .setListener(stack -> {
                     testStack = stack;
