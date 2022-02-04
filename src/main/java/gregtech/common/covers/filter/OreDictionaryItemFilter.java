@@ -126,13 +126,12 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
                 }))
         );
-        if (FMLCommonHandler.instance().getSide().isClient()) {
-            widgetGroup.accept(new OreDictFilterTestSlot(36, 1)
-                    .setListener(stack -> {
-                        testStack = stack;
-                        updateTestMsg();
-                    }));
-        }
+
+        widgetGroup.accept(new OreDictFilterTestSlot(36, 1)
+                .setListener(stack -> {
+                    testStack = stack;
+                    updateTestMsg();
+                }));
     }
 
     private void updateTestMsg() {
