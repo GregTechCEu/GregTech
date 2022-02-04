@@ -538,7 +538,7 @@ public class MetaBlocks {
         for (BlockOre blockOre : ORES) {
             Material material = blockOre.material;
             for (StoneType stoneType : blockOre.STONE_TYPE.getAllowedValues()) {
-                if (stoneType == null || !stoneType.shouldBeDroppedAsItem) continue;
+                if (stoneType == null) continue;
                 ItemStack normalStack = blockOre.getItem(blockOre.getDefaultState()
                         .withProperty(blockOre.STONE_TYPE, stoneType));
                 OreDictUnifier.registerOre(normalStack, stoneType.processingPrefix, material);

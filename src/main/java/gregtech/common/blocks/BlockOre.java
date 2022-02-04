@@ -2,13 +2,13 @@ package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.client.model.IModelSupplier;
-import gregtech.client.model.SimpleStateMapper;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.IBlockOre;
+import gregtech.client.model.IModelSupplier;
+import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.blocks.properties.PropertyStoneType;
 import net.minecraft.block.Block;
@@ -159,16 +159,16 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
 
     @Override
     public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
-        if (tab == CreativeTabs.SEARCH) {
-            blockState.getValidStates().stream().filter(state -> state.getValue(STONE_TYPE).shouldBeDroppedAsItem).forEach(blockState -> list.add(getItem(blockState)));
-        } else if (tab == GregTechAPI.TAB_GREGTECH_ORES) {
-            list.add(getItem(getDefaultState()));
+        if (tab == CreativeTabs.SEARCH || tab == GregTechAPI.TAB_GREGTECH_ORES) {
+            blockState.getValidStates().stream()
+                    .filter(state -> state.getValue(STONE_TYPE).shouldBeDroppedAsItem)
+                    .forEach(blockState -> list.add(getItem(blockState)));
         }
     }
 
     @Override
     public boolean canRenderInLayer(@Nonnull IBlockState state, @Nonnull BlockRenderLayer layer) {
-        return layer == BlockRenderLayer.CUTOUT_MIPPED || (material.getProperty(PropertyKey.ORE).isEmissive() && layer == BloomEffectUtil.getRealBloomLayer()) ;
+        return layer == BlockRenderLayer.CUTOUT_MIPPED || (material.getProperty(PropertyKey.ORE).isEmissive() && layer == BloomEffectUtil.getRealBloomLayer());
     }
 
     private BlockStateContainer createStateContainer() {
@@ -182,7 +182,8 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void onTextureStitch(TextureStitchEvent.Pre event) { }
+    public void onTextureStitch(TextureStitchEvent.Pre event) {
+    }
 
     @Override
     @SideOnly(Side.CLIENT)
