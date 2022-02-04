@@ -11,6 +11,7 @@ import gregtech.api.util.Size;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 
+import java.awt.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -98,6 +99,14 @@ public class ColorWidget extends WidgetGroup {
     public ColorWidget setColorSupplier(Supplier<Integer> colorSupplier, boolean isClient) {
         this.colorSupplier = colorSupplier;
         this.isClient = isClient;
+        return this;
+    }
+
+    public ColorWidget setStartColor(int color) {
+        setRed((color >> 16) & 0xFF);
+        setGreen((color >> 8) & 0xFF);
+        setBlue(color & 0xFF);
+        setAlpha((color >> 24) & 0xFF);
         return this;
     }
 

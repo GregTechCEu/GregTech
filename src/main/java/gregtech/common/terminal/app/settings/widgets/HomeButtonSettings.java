@@ -53,13 +53,13 @@ public class HomeButtonSettings extends AbstractWidgetGroup {
                     }
                     TextFieldWidget textFieldWidget = new TextFieldWidget(230, y, 80, 20, TerminalTheme.COLOR_B_3, null, null)
                             .setMaxStringLength(Integer.MAX_VALUE)
-                            .setTextResponder(arg->{
-                                if(arg != null && home.getActions()[i] != null) {
+                            .setTextResponder(arg -> {
+                                if (arg != null && home.getActions()[i] != null) {
                                     home.getActions()[i].setValue(arg);
                                 }
                                 home.saveConfig();
-                            },true)
-                            .setValidator(s->true);
+                            }, true)
+                            .setValidator(s -> true);
                     if (pair != null && pair.getValue() != null) {
                         textFieldWidget.setCurrentString(pair.getValue());
                     } else {
@@ -67,19 +67,19 @@ public class HomeButtonSettings extends AbstractWidgetGroup {
                     }
 
                     this.addWidget(new SelectorWidget(120, y, 100, 20, candidates, -1,
-                            ()->{
+                            () -> {
                                 Pair<SystemCall, String> _pair = home.getActions()[i];
                                 if (_pair != null) {
                                     return _pair.getKey().getTranslateKey();
                                 }
                                 return "terminal.system_call.null";
                             }, true)
-                            .setIsUp(true)
+                            .setIsUp(i > 3)
                             .setHoverText(I18n.format(doubleClick == 1 ? "terminal.settings.home.double_click" : "terminal.settings.home.click") + (ctrl == 1 ? "+Ctrl" : "") + (shift == 1 ? "+Shift" : ""))
-                            .setOnChanged(selected->{
+                            .setOnChanged(selected -> {
                                 SystemCall action = SystemCall.getFromName(selected);
                                 if (action != null) {
-                                    if(home.getActions()[i] == null) {
+                                    if (home.getActions()[i] == null) {
                                         home.getActions()[i] = new MutablePair<>(action, null);
                                     } else {
                                         home.getActions()[i] = new MutablePair<>(action, home.getActions()[i].getValue());
@@ -88,6 +88,15 @@ public class HomeButtonSettings extends AbstractWidgetGroup {
                                     home.getActions()[i] = null;
                                 }
                                 home.saveConfig();
+                            })
+                            .setOnShowChange(isShow -> {
+                                if (isShow) {
+                                    for (Widget widget : widgets) {
+                                        if (widget instanceof SelectorWidget) {
+                                            ((SelectorWidget) widget).hide();
+                                        }
+                                    }
+                                }
                             })
                             .setColors(TerminalTheme.COLOR_B_2.getColor(), TerminalTheme.COLOR_F_1.getColor(), TerminalTheme.COLOR_B_2.getColor())
                             .setBackground(TerminalTheme.COLOR_6));
@@ -102,7 +111,7 @@ public class HomeButtonSettings extends AbstractWidgetGroup {
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
-            if(widget.isVisible() && widget.isActive() && widget.mouseClicked(mouseX, mouseY, button)) {
+            if (widget.isVisible() && widget.isActive() && widget.mouseClicked(mouseX, mouseY, button)) {
                 mouseX = -10000;
                 mouseY = -10000;
             }
