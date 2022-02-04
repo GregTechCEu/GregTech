@@ -1,6 +1,5 @@
 package gregtech.api.unification.material;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
@@ -12,8 +11,8 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.stack.MaterialStack;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
 import net.minecraft.enchantment.Enchantment;
@@ -133,6 +132,10 @@ public class Material implements Comparable<Material> {
 
     public boolean hasFlags(MaterialFlag... flags) {
         return Arrays.stream(flags).allMatch(this::hasFlag);
+    }
+
+    public boolean hasAnyOfFlags(MaterialFlag... flags) {
+        return Arrays.stream(flags).anyMatch(this::hasFlag);
     }
 
     protected void calculateDecompositionType() {
