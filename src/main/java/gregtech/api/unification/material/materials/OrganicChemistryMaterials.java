@@ -101,7 +101,7 @@ public class OrganicChemistryMaterials {
                 .ingot(1).fluid()
                 .color(0xC8C8C8)
                 .flags(GENERATE_FOIL, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
-                .components(Carbon, 1, Hydrogen, 2)
+                .components(Carbon, 2, Hydrogen, 4)
                 .fluidPipeProperties(350, 60, true)
                 .build();
 
