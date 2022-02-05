@@ -171,22 +171,25 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 // Add various tooltips from the material
                 List<String> formula = FluidTooltipUtil.getFluidTooltip(lastFluidInTank);
                 if (formula != null && !formula.isEmpty()) {
+                    String state = formula.get(2);
+                    String temperature = formula.get(1);
+                    String chemicalFormula = formula.get(0);
 
-                    // Chemical Formula Tooltip
-                    if(!formula.get(0).isEmpty()) {
-                        tooltips.add(ChatFormatting.YELLOW + formula.get(0));
-                    }
-
-                    // Temperature Tooltip
-                    if(!formula.get(1).isEmpty()) {
-                        tooltips.add(LocalizationUtils.format("gregtech.fluid.temperature", Integer.parseInt(formula.get(1))));
-                    }
-
-                    // Fluid State Tooltip
-                    if(!formula.get(2).isEmpty()) {
-                        FluidType type = FluidType.getByName(formula.get(2));
+                    // state
+                    if (state != null && !state.isEmpty()) {
+                        FluidType type = FluidType.getByName(state);
                         if (type != null)
                             tooltips.add(1, LocalizationUtils.format(type.getToolTipLocalization()));
+                    }
+
+                    // temperature
+                    if (temperature != null && !temperature.isEmpty()) {
+                        tooltips.add(1, LocalizationUtils.format("gregtech.fluid.temperature", Integer.parseInt(temperature)));
+                    }
+
+                    // chemical formula
+                    if (chemicalFormula != null && !chemicalFormula.isEmpty()) {
+                        tooltips.add(1, ChatFormatting.YELLOW + chemicalFormula);
                     }
                 }
 

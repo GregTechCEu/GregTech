@@ -13,7 +13,6 @@ import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.PlasmaProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.stack.MaterialStack;
-import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.function.TriConsumer;
 import gregtech.common.ConfigHolder;
@@ -548,11 +547,6 @@ public class OrePrefix {
                     int temperature = fluidProperty.getFluidTemperature();
                     Fluid fluid = MetaFluids.registerFluid(material, FluidTypes.LIQUID, temperature, fluidProperty.hasBlock());
                     fluidProperty.setFluid(fluid);
-                    List<String> tooltip = new ArrayList<>();
-                    tooltip.add(material.getChemicalFormula());
-                    tooltip.add(String.valueOf(temperature));
-                    tooltip.add(String.valueOf(fluid.isGaseous()));
-                    FluidTooltipUtil.registerTooltip(fluid, tooltip);
                 }
 
                 PlasmaProperty plasmaProperty = material.getProperty(PropertyKey.PLASMA);
@@ -560,11 +554,6 @@ public class OrePrefix {
                     int baseTemperature = (fluidProperty == null ? 0 : fluidProperty.getFluidTemperature()) + 30000;
                     Fluid fluid = MetaFluids.registerFluid(material, FluidTypes.PLASMA, baseTemperature, false);
                     plasmaProperty.setPlasma(fluid);
-                    List<String> tooltip = new ArrayList<>();
-                    tooltip.add(material.getChemicalFormula());
-                    tooltip.add(String.valueOf(baseTemperature));
-                    tooltip.add(String.valueOf(fluid.isGaseous()));
-                    FluidTooltipUtil.registerTooltip(fluid, tooltip);
                 }
             }
         }

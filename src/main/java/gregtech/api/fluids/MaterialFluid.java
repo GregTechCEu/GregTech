@@ -2,6 +2,7 @@ package gregtech.api.fluids;
 
 import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.unification.material.Material;
+import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
@@ -11,6 +12,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MaterialFluid extends Fluid {
 
@@ -21,6 +24,14 @@ public class MaterialFluid extends Fluid {
         super(fluidName, texture, texture, GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
         this.material = material;
         this.fluidType = fluidType;
+    }
+
+    public void registerFluidTooltip() {
+        List<String> tooltip = new ArrayList<>();
+        tooltip.add(material.getChemicalFormula());
+        tooltip.add(String.valueOf(temperature));
+        tooltip.add(fluidType.getName());
+        FluidTooltipUtil.registerTooltip(this, tooltip);
     }
 
     @Nonnull

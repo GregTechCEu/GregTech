@@ -62,11 +62,6 @@ public class MetaFluids {
                 int temperature = fluidProperty.getFluidTemperature();
                 Fluid fluid = registerFluid(material, fluidProperty.getFluidType(), temperature, fluidProperty.hasBlock());
                 fluidProperty.setFluid(fluid);
-                List<String> tooltip = new ArrayList<>();
-                tooltip.add(material.getChemicalFormula());
-                tooltip.add(String.valueOf(temperature));
-                tooltip.add(fluidProperty.getFluidType().getName());
-                FluidTooltipUtil.registerTooltip(fluid, tooltip);
             }
 
             PlasmaProperty plasmaProperty = material.getProperty(PropertyKey.PLASMA);
@@ -74,11 +69,6 @@ public class MetaFluids {
                 int temperature = (fluidProperty == null ? 0 : fluidProperty.getFluidTemperature()) + 30000;
                 Fluid fluid = registerFluid(material, FluidTypes.PLASMA, temperature, false);
                 plasmaProperty.setPlasma(fluid);
-                List<String> tooltip = new ArrayList<>();
-                tooltip.add(material.getChemicalFormula());
-                tooltip.add(String.valueOf(temperature));
-                tooltip.add(FluidTypes.PLASMA.getName());
-                FluidTooltipUtil.registerTooltip(fluid, tooltip);
             }
         }
     }
@@ -204,7 +194,6 @@ public class MetaFluids {
 
         // if the material is still not registered by this point, register it
         if (fluid == null) {
-
             // determine texture for use
             ResourceLocation textureLocation;
             if (fluidType.equals(FluidTypes.PLASMA)) {
@@ -226,6 +215,7 @@ public class MetaFluids {
 
             // set properties and register
             FluidType.setFluidProperties(fluidType, fluid);
+            ((MaterialFluid) fluid).registerFluidTooltip();
             FluidRegistry.registerFluid(fluid);
         }
 
