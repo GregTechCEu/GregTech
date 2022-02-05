@@ -1,6 +1,5 @@
 package gregtech.api.unification.material;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
@@ -12,8 +11,8 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.stack.MaterialStack;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
 import net.minecraft.enchantment.Enchantment;
@@ -213,7 +212,7 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null)
             return materialInfo.element.getProtons();
         if (materialInfo.componentList.isEmpty())
-            return Math.max(1, Elements.get("Technetium").getProtons());
+            return Math.max(1, Elements.Tc.getProtons());
         long totalProtons = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {
             totalAmount += material.amount;
@@ -227,7 +226,7 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null)
             return materialInfo.element.getNeutrons();
         if (materialInfo.componentList.isEmpty())
-            return Elements.get("Technetium").getNeutrons();
+            return Elements.Tc.getNeutrons();
         long totalNeutrons = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {
             totalAmount += material.amount;
@@ -242,7 +241,7 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null)
             return materialInfo.element.getMass();
         if (materialInfo.componentList.size() <= 0)
-            return Elements.get("Technetium").getMass();
+            return Elements.Tc.getMass();
         long totalMass = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {
             totalAmount += material.amount;

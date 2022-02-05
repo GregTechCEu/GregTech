@@ -1,5 +1,6 @@
 package gregtech.api.unification;
 
+import com.google.common.base.CaseFormat;
 import crafttweaker.annotations.ZenRegister;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -164,6 +165,6 @@ public class Elements {
 
     @ZenMethod
     public static Element get(String name) {
-        return elements.get(name);
+        return elements.get(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name));
     }
 }
