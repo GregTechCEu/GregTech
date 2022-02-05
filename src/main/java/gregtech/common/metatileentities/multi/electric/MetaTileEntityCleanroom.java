@@ -176,7 +176,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 .aisle(frontBack)
                 .where('S', selfPredicate())
                 .where('B', casing)
-                .where('X', casing.or(states(MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS)).setPreviewCount(5))
+                .where('X', casing.or(states(MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS)).setPreviewCount(0))
                         .or(doorPredicate().setMaxGlobalLimited(8).setPreviewCount(0))
                         .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_ITEM).setPreviewCount(1))
                         .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_FLUID).setPreviewCount(1))

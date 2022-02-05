@@ -94,7 +94,7 @@ public class SecondDegreeMaterials {
         BlackSteel = new Material.Builder(2011, "black_steel")
                 .ingot().fluid()
                 .color(0x646464).iconSet(METALLIC)
-                .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR)
+                .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_FRAME)
                 .components(Nickel, 1, BlackBronze, 1, Steel, 3)
                 .toolStats(6.5f, 6.5f, 768, 21)
                 .cableProperties(GTValues.V[4], 3, 2)
