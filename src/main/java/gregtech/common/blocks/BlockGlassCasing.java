@@ -67,7 +67,8 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
 
         TEMPERED_GLASS("tempered_glass"),
         FUSION_GLASS("fusion_glass"),
-        LAMINATED_GLASS("laminated_glass");
+        LAMINATED_GLASS("laminated_glass"),
+        CLEANROOM_GLASS("cleanroom_glass");
 
         private final String name;
 
