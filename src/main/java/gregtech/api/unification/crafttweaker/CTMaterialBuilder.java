@@ -17,7 +17,7 @@ import stanhebben.zenscript.annotations.ZenConstructor;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateComponentList;
-import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidType;
+import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidTypeNoPlasma;
 
 @ZenClass("mods.gregtech.material.MaterialBuilder")
 @ZenRegister
@@ -40,7 +40,7 @@ public class CTMaterialBuilder {
 
     @ZenMethod
     public CTMaterialBuilder fluid(@Optional String type, @Optional boolean hasBlock) {
-        backingBuilder.fluid(validateFluidType(type), hasBlock);
+        backingBuilder.fluid(validateFluidTypeNoPlasma(type), hasBlock);
         return this;
     }
 

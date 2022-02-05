@@ -23,7 +23,23 @@ public class CTMaterialHelpers {
 
         FluidType type = FluidType.getByName(fluidTypeName);
         if (type == null) {
-            CraftTweakerAPI.logError("Fluid Type must be either \"liquid\" or \"gas\" or \"acid\"!");
+            CraftTweakerAPI.logError("Fluid Type must be either \"liquid\", \"gas\", \"plasma\", or \"acid\"!");
+            throw new IllegalArgumentException();
+        }
+        return type;
+    }
+
+    protected static FluidType validateFluidTypeNoPlasma(String fluidTypeName) {
+        if (fluidTypeName == null || fluidTypeName.equals("fluid"))
+            return FluidTypes.LIQUID;
+
+        FluidType type = FluidType.getByName(fluidTypeName);
+        if (type == null) {
+            CraftTweakerAPI.logError("Fluid Type must be either \"liquid\", \"gas\", or \"acid\"!");
+            throw new IllegalArgumentException();
+        }
+        if (type == FluidTypes.PLASMA) {
+            CraftTweakerAPI.logError("Fluid Type cannot be \"plasma\". Use the plasma method instead.");
             throw new IllegalArgumentException();
         }
         return type;
