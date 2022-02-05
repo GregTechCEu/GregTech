@@ -137,6 +137,7 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.NaquadahEnriched, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.Naquadria, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.Ice, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.UUMatter, FluidTypes.LIQUID);
     }
 
     /**
