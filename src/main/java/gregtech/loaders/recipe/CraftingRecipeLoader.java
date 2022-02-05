@@ -10,12 +10,14 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.BlockCleanroomCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockGregPlanks;
 import gregtech.common.crafting.FacadeRecipe;
 import gregtech.common.items.MetaItems;
 import gregtech.loaders.recipe.handlers.ToolRecipeHandler;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -103,6 +105,8 @@ public class CraftingRecipeLoader {
 
         ModHandler.addShapedRecipe("universal_fluid_cell", FLUID_CELL_UNIVERSAL.getStackForm(), "C ", "  ", 'C', FLUID_CELL);
         ModHandler.addShapedRecipe("universal_fluid_cell_revert", FLUID_CELL.getStackForm(), "C ", "  ", 'C', FLUID_CELL_UNIVERSAL);
+
+        ModHandler.addShapedRecipe("filter_casing", MetaBlocks.CLEANROOM_CASING.getItemVariant(BlockCleanroomCasing.CasingType.FILTER_CASING, 2), "BBB", "III", "MFR", 'B', new ItemStack(Blocks.IRON_BARS), 'I', ITEM_FILTER.getStackForm(), 'M', ELECTRIC_MOTOR_MV.getStackForm(), 'F', new UnificationEntry(OrePrefix.frameGt, Steel), 'R', new UnificationEntry(OrePrefix.rotor, Steel));
 
         ///////////////////////////////////////////////////
         //               Shapes and Molds                //
