@@ -256,6 +256,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         return list;
     }
 
+    @Nullable
     @Override
     public ICleanroomProvider getCleanroom() {
         return this.cleanroom;
