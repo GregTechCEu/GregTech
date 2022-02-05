@@ -207,7 +207,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         return new TraceabilityPredicate(blockWorldState -> blockWorldState.getBlockState().getBlock() instanceof BlockDoor);
     }
 
-    // protected to allow easy addition of addon "cleanrooms"
     @Nonnull
     protected TraceabilityPredicate innerPredicate() {
         return new TraceabilityPredicate(blockWorldState -> {
@@ -218,14 +217,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
             MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
 
-            // blacklisted machines: mufflers, all generators, other cleanrooms
-            if (metaTileEntity instanceof IMufflerHatch)
-                return false;
-            if (metaTileEntity instanceof SimpleGeneratorMetaTileEntity)
-                return false;
-            if (metaTileEntity instanceof FuelMultiblockController)
-                return false;
+            // always ban other cleanrooms, can cause problems otherwise
             if (metaTileEntity instanceof ICleanroomProvider)
+                return false;
+
+            if (isMachineBanned(metaTileEntity))
                 return false;
 
             // the machine does not need a cleanroom, so do nothing more
@@ -238,6 +234,18 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 cleanroomReceiver.setCleanroom(this);
             return true;
         });
+    }
+
+    protected boolean isMachineBanned(MetaTileEntity metaTileEntity) {
+        // blacklisted machines: mufflers and all generators
+        if (metaTileEntity instanceof IMufflerHatch)
+            return true;
+        if (metaTileEntity instanceof SimpleGeneratorMetaTileEntity)
+            return true;
+        if (metaTileEntity instanceof FuelMultiblockController)
+            return true;
+
+        return false;
     }
 
     @Override
