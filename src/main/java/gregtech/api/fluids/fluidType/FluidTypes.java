@@ -18,5 +18,5 @@ public class FluidTypes {
     public static final FluidType GAS = new FluidTypeGas("gas", null, null, "gregtech.fluid.generic");
 
     @ZenProperty
-    public static final FluidType PLASMA = new FluidTypePlasma("plasma", "plasma", "", "gregtech.fluid.plasma");
+    public static final FluidType PLASMA = new FluidTypePlasma("plasma", "plasma", null, "gregtech.fluid.plasma");
 }
