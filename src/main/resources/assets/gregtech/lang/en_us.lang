@@ -1934,6 +1934,7 @@ material.electrotine=Electrotine
 material.blue_alloy=Blue Alloy
 material.lapotron=Lapotron
 material.aluminium_sulfite=Aluminium Sulfite
+material.uu_matter=UU-Matter
 
 item.nether_quartz.oreNetherrack=Nether Quartz Ore
 item.gunpowder.dustTiny=Tiny Pile of Gunpowder
