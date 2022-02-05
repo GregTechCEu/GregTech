@@ -7,6 +7,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.recipeproperties.ImplosionExplosiveProperty;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
@@ -131,6 +132,8 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         super.drawInfo(minecraft, recipeWidth, recipeHeight, mouseX, mouseY);
         int yPosition = recipeHeight - getPropertyListHeight();
         if (!recipe.hasProperty(PrimitiveProperty.getInstance())) {
+            if (recipe.hasProperty(ImplosionExplosiveProperty.getInstance()))
+                yPosition += LINE_HEIGHT;
             minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", Math.abs((long) recipe.getEUt()) * recipe.getDuration()), 0, yPosition, 0x111111);
             minecraft.fontRenderer.drawString(I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted", Math.abs(recipe.getEUt()), JEIHelpers.getMinTierForVoltage(recipe.getEUt())), 0, yPosition += LINE_HEIGHT, 0x111111);
         } else yPosition -= LINE_HEIGHT * 2;
