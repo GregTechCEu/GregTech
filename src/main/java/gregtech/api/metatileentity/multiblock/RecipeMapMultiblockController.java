@@ -36,6 +36,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -371,6 +372,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         return list;
     }
 
+    @Nullable
     @Override
     public ICleanroomProvider getCleanroom() {
         return this.cleanroom;
