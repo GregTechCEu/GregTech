@@ -163,7 +163,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             center[i] = I;
         }
 
-        TraceabilityPredicate casing = states(getCasingState()).setMinGlobalLimited(40)
+        TraceabilityPredicate casing = states(getCasingState()).setMinGlobalLimited(width * height * depth * 3 / 5)
                 .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3))
                 .or(autoAbilities());
 
@@ -372,6 +372,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.6"));
             tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.7"));
             tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.8"));
+            tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.9"));
         } else {
             tooltip.add(I18n.format("gregtech.tooltip.hold_shift"));
         }
