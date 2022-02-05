@@ -24,6 +24,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockCleanroomCasing;
+import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.BlockDoor;
@@ -175,7 +176,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 .aisle(frontBack)
                 .where('S', selfPredicate())
                 .where('B', casing)
-                .where('X', casing.or(doorPredicate().setMaxGlobalLimited(8).setPreviewCount(0))
+                .where('X', casing.or(states(MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS)).setPreviewCount(5))
+                        .or(doorPredicate().setMaxGlobalLimited(8).setPreviewCount(0))
                         .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_ITEM).setPreviewCount(1))
                         .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_FLUID).setPreviewCount(1))
                         .or(metaTileEntities(MetaTileEntities.HULL).setMaxGlobalLimited(5).setPreviewCount(1))

@@ -2446,6 +2446,7 @@ tile.fusion_casing.fusion_casing_mk3.name=Fusion Machine Casing MK III
 tile.transparent_casing.tempered_glass.name=Tempered Glass
 tile.transparent_casing.fusion_glass.name=Fusion Glass
 tile.transparent_casing.laminated_glass.name=Laminated Glass
+tile.transparent_casing.cleanroom_glass.name=Cleanroom Glass
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
@@ -2500,7 +2501,7 @@ gregtech.tank_valve.tooltip=Use to fill and drain multiblock tanks. Auto outputs
 
 gregtech.machine.clipboard.name=Clipboard
 
-# Plascrete
+# Cleanroom Casings
 tile.cleanroom_casing.plascrete.name=Plascrete
 tile.cleanroom_casing.filter_casing.name=Filter Casing
 
