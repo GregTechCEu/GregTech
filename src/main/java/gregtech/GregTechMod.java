@@ -47,6 +47,7 @@ import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.relauncher.Side;
+import paulscode.sound.SoundSystemConfig;
 
 import static gregtech.api.GregTechAPI.*;
 
@@ -72,6 +73,12 @@ public class GregTechMod {
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
         NetworkHandler.init();
+
+        // Set the sound limit based on configured value
+        // Do not run on dedicated servers
+        if (event.getSide() == Side.CLIENT) {
+            SoundSystemConfig.setNumberNormalChannels(ConfigHolder.client.maxNumSounds);
+        }
 
         /* Start UI Factory Registration */
         UI_FACTORY_REGISTRY.unfreeze();
