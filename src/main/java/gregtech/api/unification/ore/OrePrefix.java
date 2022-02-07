@@ -235,7 +235,7 @@ public class OrePrefix {
 
     public static class Conditions {
         public static final Predicate<Material> hasToolProperty = mat -> mat.hasProperty(PropertyKey.TOOL);
-        public static final Predicate<Material> hasNoCraftingToolProperty = mat -> mat.hasProperty(PropertyKey.TOOL) && !mat.getProperty(PropertyKey.TOOL).getShouldIgnoreCraftingTools();
+        public static final Predicate<Material> hasNoCraftingToolProperty = hasToolProperty.and(mat -> !mat.getProperty(PropertyKey.TOOL).getShouldIgnoreCraftingTools());
         public static final Predicate<Material> hasOreProperty = mat -> mat.hasProperty(PropertyKey.ORE);
         public static final Predicate<Material> hasGemProperty = mat -> mat.hasProperty(PropertyKey.GEM);
         public static final Predicate<Material> hasDustProperty = mat -> mat.hasProperty(PropertyKey.DUST);
