@@ -15,6 +15,7 @@ import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -29,6 +30,7 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -205,6 +207,9 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                             if (clickData.isShiftClick)
                                 fluid.amount = (fluid.amount + 1) / 2;
                             else fluid.amount -= 1;
+                            if (fluid.amount < 0) {
+                                fluid.amount = Integer.MAX_VALUE / 2;
+                            }
                             fluid.amount = MathHelper.clamp(fluid.amount, 1, fluidTank.getCapacity());
                             fluidStackUpdater.accept(fluid);
                         }
@@ -214,12 +219,14 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                             if (clickData.isShiftClick)
                                 fluid.amount *= 2;
                             else fluid.amount += 1;
+                            if (fluid.amount < 0) {
+                                fluid.amount = Integer.MAX_VALUE;
+                            }
                             fluid.amount = MathHelper.clamp(fluid.amount, 1, fluidTank.getCapacity());
                             fluidStackUpdater.accept(fluid);
                         }
                     }
-                }
-                else {
+                } else {
                     fluidStackUpdater.accept(null);
                 }
             }
@@ -303,6 +310,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                 hoverStringList.add(fluidName);
                 if (showTip) {
                     hoverStringList.add(lastFluidStack.amount + " L");
+                    hoverStringList.addAll(Arrays.asList(I18n.format("cover.fluid_filter.config_amount").split("/n")));
                 }
                 drawHoveringText(ItemStack.EMPTY, hoverStringList, -1, mouseX, mouseY);
             }

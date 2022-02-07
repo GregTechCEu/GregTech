@@ -102,6 +102,7 @@ public class CoverFluidRegulator extends CoverPump {
      * @param sourceHandler source(s) to move fluids from
      * @param destHandler   destination(s) to move fluids to
      * @param fluidFilter   a predicate which determines what fluids may be moved
+     * @param keepAmount    the desired amount in milliBuckets of a particular fluid in the destination
      * @return the total amount in milliBuckets of all fluids transferred from source to dest by this method
      */
     protected int doKeepExact(final int transferLimit,

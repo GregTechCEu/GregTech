@@ -1081,6 +1081,7 @@ cover.ore_dictionary_filter.matches=Item matches
 cover.ore_dictionary_filter.matches_not=Item does not match
 
 cover.fluid_filter.title=Fluid Filter
+cover.fluid_filter.config_amount=Scroll wheel up increases amount, down decreases./nShift[x10],Ctrl[x100]/nRight click increases amount, left click decreases./nHold shift to double/halve.
 cover.fluid_filter.mode.filter_fill=Filter Fill
 cover.fluid_filter.mode.filter_drain=Filter Drain
 cover.fluid_filter.mode.filter_both=Filter Fill & Drain

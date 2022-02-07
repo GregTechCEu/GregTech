@@ -13,7 +13,6 @@ import gregtech.api.util.GTFluidUtils;
 import gregtech.api.util.GTHashMaps;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilter;
-import gregtech.common.covers.filter.FluidFilterContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
@@ -34,7 +33,6 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     public CoverFluidVoidingAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
         this.voidingMode = VoidingMode.VOID_ANY;
-        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip, maxFluidTransferRate * 100);
     }
 
     @Override
