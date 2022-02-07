@@ -414,6 +414,7 @@ public class ReactorRecipes {
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(2))
                 .fluidInputs(Ammonia.getFluid(1000))
                 .fluidInputs(Methanol.getFluid(2000))
                 .fluidOutputs(Water.getFluid(2000))
