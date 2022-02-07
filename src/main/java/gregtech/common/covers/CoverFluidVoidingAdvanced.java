@@ -70,7 +70,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         HashMap<FluidKey, Integer> sourceFluids = GTHashMaps.fromFluidHandler(sourceHandler);
 
         for (FluidKey fluidKey : sourceFluids.keySet()) {
-            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null) {
+            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null && voidingMode != VoidingMode.VOID_ANY) {
                 keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(new FluidStack(fluidKey.getFluid(), 1));
             }
             int amount;
