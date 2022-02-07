@@ -33,7 +33,7 @@ public class ReactorRecipes {
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
+                .notConsumable(new IntCircuitIngredient(3))
                 .fluidInputs(Propene.getFluid(2000))
                 .fluidOutputs(Methane.getFluid(1000))
                 .fluidOutputs(Isoprene.getFluid(1000))
