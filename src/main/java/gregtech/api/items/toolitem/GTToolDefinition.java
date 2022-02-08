@@ -32,8 +32,8 @@ public interface GTToolDefinition {
         String string = getToolTag(stack).getString("Material");
         Material material = GregTechAPI.MaterialRegistry.get(string);
         if (material == null) {
-            GTLog.logger.error("Attempt to get {} as a tool material, but material does not exist. Using Darmstadtium instead.", string);
-            material = Materials.Darmstadtium;
+            GTLog.logger.error("Attempt to get {} as a tool material, but material does not exist. Using Neutronium instead.", string);
+            material = Materials.Neutronium;
         }
         return material;
     }
@@ -42,8 +42,8 @@ public interface GTToolDefinition {
         Material material = getToolMaterial(stack);
         ToolProperty property = material.getProperty(PropertyKey.TOOL);
         if (property == null) {
-            GTLog.logger.error("Tool property for {} does not exist. Using Darmstadtium's tool property instead.", material.getId());
-            property = Materials.Darmstadtium.getProperty(PropertyKey.TOOL);
+            GTLog.logger.error("Tool property for {} does not exist. Using Neutronium's tool property instead.", material.getId());
+            property = Materials.Neutronium.getProperty(PropertyKey.TOOL);
         }
         return property;
     }
