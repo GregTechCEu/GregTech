@@ -21,6 +21,7 @@ public class OrganicChemistryMaterials {
         Nitrobenzene = new Material.Builder(1001, "nitrobenzene")
                 .fluid(Material.FluidType.GAS)
                 .color(0x704936)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 6, Hydrogen, 5, Nitrogen, 1, Oxygen, 2)
                 .build();
 
