@@ -217,7 +217,7 @@ public class OrganicChemistryMaterials {
                 .fluid(Material.FluidType.GAS)
                 .color(0xCF5005)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Carbon, 2, Hydrogen, 8)
+                .components(Carbon, 4, Hydrogen, 8)
                 .build();
 
         Butane = new Material.Builder(1031, "butane")
