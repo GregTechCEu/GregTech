@@ -1,10 +1,8 @@
 package gregtech.api.unification.material.properties;
 
-import gregtech.api.enchants.EnchantmentData;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.enchantment.Enchantment;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ToolProperty implements IMaterialProperty<ToolProperty> {
 
@@ -46,7 +44,7 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
      * <p>
      * Default: none.
      */
-    public final List<EnchantmentData> toolEnchantments = new ArrayList<>();
+    private final Object2IntMap<Enchantment> enchantments = new Object2IntArrayMap<>();
 
     public ToolProperty(float toolSpeed, float toolAttackDamage, int toolDurability, int toolEnchantability, boolean ignoreCraftingTools) {
         this.toolSpeed = toolSpeed;
@@ -107,12 +105,16 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
         this.ignoreCraftingTools = ignore;
     }
 
+    public Object2IntMap<Enchantment> getEnchantments() {
+        return enchantments;
+    }
+
     @Override
     public void verifyProperty(MaterialProperties properties) {
         if (!properties.hasProperty(PropertyKey.GEM)) properties.ensureSet(PropertyKey.INGOT, true);
     }
 
     public void addEnchantmentForTools(Enchantment enchantment, int level) {
-        toolEnchantments.add(new EnchantmentData(enchantment, level));
+        enchantments.put(enchantment, level);
     }
 }

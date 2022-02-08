@@ -6,6 +6,8 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.util.GTLog;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundEvent;
@@ -62,6 +64,10 @@ public interface GTToolDefinition {
 
     default int getMaterialEnchantability(ItemStack stack) {
         return getToolProperty(stack).getToolEnchantability();
+    }
+
+    default Object2IntMap<Enchantment> getMaterialEnchantments(ItemStack stack) {
+        return getToolProperty(stack).getEnchantments();
     }
 
     @SideOnly(Side.CLIENT)
