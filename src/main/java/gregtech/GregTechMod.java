@@ -104,6 +104,9 @@ public class GregTechMod {
             MinecraftForge.EVENT_BUS.register(this);
         }
 
+        // Fire Post-Material event, intended for when Materials need to be iterated over in-full before freezing
+        MinecraftForge.EVENT_BUS.post(new PostMaterialEvent());
+
         // Freeze Material Registry before processing Items, Blocks, and Fluids
         MATERIAL_REGISTRY.freeze();
         /* End Material Registration */

@@ -69,6 +69,13 @@ public class GregTechAPI {
         }
     }
 
+    public static class PostMaterialEvent extends GenericEvent<Material> {
+
+        public PostMaterialEvent() {
+            super(Material.class);
+        }
+    }
+
     @ZenClass("mods.gregtech.material.MaterialRegistry")
     @ZenRegister
     public static class MaterialRegistry extends GTControlledRegistry<String, Material> {
