@@ -1,7 +1,13 @@
 package gregtech.api.items.toolitem;
 
+import appeng.api.implementations.items.IAEWrench;
+import buildcraft.api.tools.IToolWrench;
+import cofh.api.item.IToolHammer;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import crazypants.enderio.api.tool.ITool;
+import forestry.api.arboriculture.IToolGrafter;
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -13,22 +19,29 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockWeb;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 
@@ -37,7 +50,13 @@ import static gregtech.api.items.armor.IArmorLogic.*;
 /**
  * Backing of every variation of a GT Tool
  */
-public interface GTToolDefinition {
+@Optional.InterfaceList({
+        @Optional.Interface(modid = GTValues.MODID_APPENG, iface = "appeng.api.implementations.items.IAEWrench"),
+        @Optional.Interface(modid = GTValues.MODID_BC, iface = "buildcraft.api.tools.IToolWrench"),
+        @Optional.Interface(modid = GTValues.MODID_COFH, iface = "cofh.api.item.IToolHammer"),
+        @Optional.Interface(modid = GTValues.MODID_EIO, iface = "crazypants.enderio.api.tool.ITool"),
+        @Optional.Interface(modid = GTValues.MODID_FR, iface = "forestry.api.arboriculture.IToolGrafter")})
+public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, ITool, IToolGrafter {
 
     String getDomain();
 
@@ -172,7 +191,17 @@ public interface GTToolDefinition {
     // Item.class methods
     default float definition$getDestroySpeed(ItemStack stack, IBlockState state) {
         for (String type : get().getToolClasses(stack)) {
-            if (state.getBlock().isToolEffective(type, state)) {
+            if (type.equals("sword")) {
+                Block block = state.getBlock();
+                if (block instanceof BlockWeb) {
+                    return 15F;
+                } else if (getEffectiveBlocks().contains(block)) {
+                    return getTotalToolSpeed(stack);
+                } else {
+                    net.minecraft.block.material.Material material = state.getMaterial();
+                    return material != net.minecraft.block.material.Material.PLANTS && material != net.minecraft.block.material.Material.VINE && material != net.minecraft.block.material.Material.CORAL && material != net.minecraft.block.material.Material.LEAVES && material != net.minecraft.block.material.Material.GOURD ? 1.0F : 1.5F;
+                }
+            } else if (state.getBlock().isToolEffective(type, state)) {
                 return getTotalToolSpeed(stack);
             }
         }
@@ -199,14 +228,98 @@ public interface GTToolDefinition {
     default Multimap<String, AttributeModifier> definition$getAttributeModifiers(EntityEquipmentSlot equipmentSlot, ItemStack stack) {
         Multimap<String, AttributeModifier> multimap = HashMultimap.create();
         if (equipmentSlot == EntityEquipmentSlot.MAINHAND) {
-            multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", getTotalAttackDamage(stack), 0));
-            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", getToolStats().getAttackSpeed(stack), 0));
+            multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", getTotalAttackDamage(stack), 0));
+            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", getToolStats().getAttackSpeed(stack), 0));
         }
         return multimap;
     }
 
     default int getHarvestLevel(ItemStack stack, String toolClass, @javax.annotation.Nullable net.minecraft.entity.player.EntityPlayer player, @javax.annotation.Nullable IBlockState blockState) {
         return get().getToolClasses(stack).contains(toolClass) ? getTotalHarvestLevel(stack) : -1;
+    }
+
+    // Extended Interfaces
+
+    // IAEWrench
+    /**
+     * Check if the wrench can be used.
+     *
+     * @param player wrenching player
+     * @param pos    of block.
+     * @return true if wrench can be used
+     */
+    @Override
+    default boolean canWrench(ItemStack wrench, EntityPlayer player, BlockPos pos) {
+        return getToolClasses().contains("wrench");
+    }
+
+    // IToolWrench
+    /*** Called to ensure that the wrench can be used.
+     *
+     * @param player - The player doing the wrenching
+     * @param hand - Which hand was holding the wrench
+     * @param wrench - The item stack that holds the wrench
+     * @param rayTrace - The object that is being wrenched
+     *
+     * @return true if wrenching is allowed, false if not */
+    @Override
+    default boolean canWrench(EntityPlayer player, EnumHand hand, ItemStack wrench, RayTraceResult rayTrace) {
+        return getToolClasses().contains("wrench");
+    }
+
+    /*** Callback after the wrench has been used. This can be used to decrease durability or for other purposes.
+     *
+     * @param player - The player doing the wrenching
+     * @param hand - Which hand was holding the wrench
+     * @param wrench - The item stack that holds the wrench
+     * @param rayTrace - The object that is being wrenched */
+    @Override
+    default void wrenchUsed(EntityPlayer player, EnumHand hand, ItemStack wrench, RayTraceResult rayTrace) { }
+
+    // IToolHammer
+    @Override
+    default boolean isUsable(ItemStack item, EntityLivingBase user, BlockPos pos) {
+        return getToolClasses().contains("wrench");
+    }
+
+    @Override
+    default boolean isUsable(ItemStack item, EntityLivingBase user, Entity entity) {
+        return getToolClasses().contains("wrench");
+    }
+
+    @Override
+    default void toolUsed(ItemStack item, EntityLivingBase user, BlockPos pos) { }
+
+    @Override
+    default void toolUsed(ItemStack item, EntityLivingBase user, Entity entity) { }
+
+    // ITool
+    @Override
+    default boolean canUse(@Nonnull EnumHand stack, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) {
+        return getToolClasses().contains("wrench");
+    }
+
+    @Override
+    default void used(@Nonnull EnumHand stack, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) { }
+
+    // IHideFacades
+    @Override
+    default boolean shouldHideFacades(@Nonnull ItemStack stack, @Nonnull EntityPlayer player) {
+        return getToolClasses().contains("wrench");
+    }
+
+    // IToolGrafter
+    /**
+     * Called by leaves to determine the increase in sapling droprate.
+     *
+     * @param stack ItemStack containing the grafter.
+     * @param world Minecraft world the player and the target block inhabit.
+     * @param pos   Coordinate of the broken leaf block.
+     * @return Float representing the factor the usual drop chance is to be multiplied by.
+     */
+    @Override
+    default float getSaplingModifier(ItemStack stack, World world, EntityPlayer player, BlockPos pos) {
+        return getToolClasses().contains("grafter") ? 100F : 1.0F;
     }
 
 }
