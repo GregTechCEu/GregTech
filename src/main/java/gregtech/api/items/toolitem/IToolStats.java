@@ -8,11 +8,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
 import java.util.List;
 
 /**
