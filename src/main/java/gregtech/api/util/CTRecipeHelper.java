@@ -2,12 +2,15 @@ package gregtech.api.util;
 
 import crafttweaker.mc1120.data.NBTConverter;
 import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import net.minecraft.block.Block;
@@ -43,7 +46,46 @@ public class CTRecipeHelper {
                 return ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>) block).getItemMaterial(item).toCamelCaseString();
             }
         }
+        return null;
+    }
 
+    @Nullable
+    public static Material getMaterial(ItemStack item) {
+        if (item.getItem() instanceof MetaPrefixItem) {
+            return ((MetaPrefixItem) item.getItem()).getMaterial(item);
+        }
+        if (item.getItem() instanceof ItemBlock) {
+            Block block = ((ItemBlock) item.getItem()).getBlock();
+            if (block instanceof BlockCompressed) {
+                return ((BlockCompressed) block).getGtMaterial(item.getMetadata());
+            }
+            if (block instanceof BlockFrame) {
+                return ((BlockFrame) block).getGtMaterial(item.getMetadata());
+            }
+            if (block instanceof BlockMaterialPipe) {
+                return ((BlockMaterialPipe<?, ?, ?>) block).getItemMaterial(item);
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public static OrePrefix getOrePrefix(ItemStack item) {
+        if (item.getItem() instanceof MetaPrefixItem) {
+            return ((MetaPrefixItem) item.getItem()).getOrePrefix();
+        }
+        if (item.getItem() instanceof ItemBlock) {
+            Block block = ((ItemBlock) item.getItem()).getBlock();
+            if (block instanceof BlockCompressed) {
+                return OrePrefix.block;
+            }
+            if (block instanceof BlockFrame) {
+                return OrePrefix.frameGt;
+            }
+            if (block instanceof BlockMaterialPipe) {
+                return ((BlockMaterialPipe<?, ?, ?>) block).getPrefix();
+            }
+        }
         return null;
     }
 

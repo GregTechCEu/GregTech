@@ -74,13 +74,14 @@ public class CommandHand extends CommandBase {
                 for (IFluidTankProperties properties : fluidHandlerItem.getTankProperties()) {
                     FluidStack contents = properties.getContents();
                     String fluidName = contents == null ? "empty" : contents.getFluid().getName();
-                    ClickEvent fluidClickEvent = new ClickEvent(Action.OPEN_URL, fluidName);
                     player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.fluid",
-                            fluidName,
                             contents == null ? 0 : contents.amount,
                             properties.getCapacity(),
-                            Boolean.toString(properties.canFill()), Boolean.toString(properties.canDrain()))
-                            .setStyle(new Style().setClickEvent(fluidClickEvent)));
+                            Boolean.toString(properties.canFill()), Boolean.toString(properties.canDrain())));
+                    if (contents != null) {
+                        player.sendMessage(new TextComponentString("Fluid Id: ").appendSibling(new TextComponentString(fluidName).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                                .setStyle(getCopyStyle("<liquid:" + fluidName + ">", false)));
+                    }
                 }
             }
 
@@ -101,18 +102,17 @@ public class CommandHand extends CommandBase {
                         IToolStats toolStats = ((MetaToolValueItem) metaValueItem).getToolStats();
                         player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.tool_stats", toolStats.getClass().getName()));
                     }
-                    // material item info
-                    if (metaItem instanceof MetaPrefixItem) {
-                        Material material = ((MetaPrefixItem) metaItem).getMaterial(stackInHand);
-                        if (material != null) {
-                            player.sendMessage(new TextComponentString("Material Id: ").appendSibling(new TextComponentString(material.toString()).setStyle(new Style().setColor(TextFormatting.GREEN)))
-                                    .setStyle(getCopyStyle("<material:" + material.toString() + ">", false)));
-                        }
-                        OrePrefix orePrefix = ((MetaPrefixItem) metaItem).getOrePrefix();
-                        if (orePrefix != null) {
-                            player.sendMessage(new TextComponentString("Ore prefix: ").appendSibling(new TextComponentString(orePrefix.name).setStyle(new Style().setColor(TextFormatting.GREEN)))
-                                    .setStyle(getCopyStyle(orePrefix.name, false)));
-                        }
+                    // material info
+                    Material material = CTRecipeHelper.getMaterial(stackInHand);
+                    if (material != null) {
+                        player.sendMessage(new TextComponentString("Material Id: ").appendSibling(new TextComponentString(material.toString()).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                                .setStyle(getCopyStyle("<material:" + material.toString() + ">", false)));
+                    }
+                    // ore prefix info
+                    OrePrefix orePrefix = CTRecipeHelper.getOrePrefix(stackInHand);
+                    if (orePrefix != null) {
+                        player.sendMessage(new TextComponentString("Ore prefix: ").appendSibling(new TextComponentString(orePrefix.name).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                                .setStyle(getCopyStyle(orePrefix.name, false)));
                     }
                 }
             }
