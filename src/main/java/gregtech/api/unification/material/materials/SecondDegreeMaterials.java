@@ -442,7 +442,7 @@ public class SecondDegreeMaterials {
                 .fluid()
                 .color(0xA3AA8A)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Osmium, 1, Oxygen, 4, Water, 1, HydrochloricAcid, 1)
+                .components(Osmium, 1, Oxygen, 4, Water, 1, HydrochloricAcid, 2)
                 .build();
 
         RhodiumPlatedPalladium = new Material.Builder(2062, "rhodium_plated_palladium")

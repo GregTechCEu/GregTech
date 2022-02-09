@@ -3,8 +3,7 @@ package gregtech.loaders.recipe.chemistry;
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.ore.OrePrefix.crushedPurified;
-import static gregtech.api.unification.ore.OrePrefix.dust;
+import static gregtech.api.unification.ore.OrePrefix.*;
 
 public class PlatGroupMetalsRecipes {
 
@@ -17,42 +16,42 @@ public class PlatGroupMetalsRecipes {
                 .input(crushedPurified, Chalcopyrite)
                 .fluidInputs(NitricAcid.getFluid(100))
                 .output(dust, PlatinumGroupSludge, 2)
-                .fluidOutputs(SulfuricCopperSolution.getFluid(1000))
+                .fluidOutputs(SulfuricCopperSolution.getFluid(500))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
                 .input(crushedPurified, Chalcocite)
                 .fluidInputs(NitricAcid.getFluid(100))
                 .output(dust, PlatinumGroupSludge, 2)
-                .fluidOutputs(SulfuricCopperSolution.getFluid(1000))
+                .fluidOutputs(SulfuricCopperSolution.getFluid(500))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
                 .input(crushedPurified, Bornite)
                 .fluidInputs(NitricAcid.getFluid(100))
                 .output(dust, PlatinumGroupSludge, 2)
-                .fluidOutputs(SulfuricCopperSolution.getFluid(1000))
+                .fluidOutputs(SulfuricCopperSolution.getFluid(500))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
                 .input(crushedPurified, Tetrahedrite)
                 .fluidInputs(NitricAcid.getFluid(100))
                 .output(dust, PlatinumGroupSludge, 2)
-                .fluidOutputs(SulfuricCopperSolution.getFluid(1000))
+                .fluidOutputs(SulfuricCopperSolution.getFluid(500))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
                 .input(crushedPurified, Pentlandite)
                 .fluidInputs(NitricAcid.getFluid(100))
                 .output(dust, PlatinumGroupSludge, 2)
-                .fluidOutputs(SulfuricNickelSolution.getFluid(1000))
+                .fluidOutputs(SulfuricNickelSolution.getFluid(500))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(50).EUt(VA[LV])
                 .input(crushedPurified, Cooperite)
                 .fluidInputs(NitricAcid.getFluid(100))
                 .output(dust, PlatinumGroupSludge, 4)
-                .fluidOutputs(SulfuricNickelSolution.getFluid(1000))
+                .fluidOutputs(SulfuricNickelSolution.getFluid(500))
                 .buildAndRegister();
 
         // Aqua Regia
@@ -90,7 +89,7 @@ public class PlatGroupMetalsRecipes {
                 .output(dust, PalladiumRaw, 3) // PdNH3
                 .output(dust, InertMetalMixture, 2) // RhRuO4
                 .output(dust, RarestMetalMixture) // IrOsO4(H2O)
-                .output(dust, PlatinumSludgeResidue, 2)
+                .output(dustSmall, PlatinumSludgeResidue, 2)
                 .buildAndRegister();
 
 
@@ -119,7 +118,7 @@ public class PlatGroupMetalsRecipes {
                 .input(dust, InertMetalMixture, 6)
                 .fluidInputs(SulfuricAcid.getFluid(1500))
                 .fluidOutputs(RhodiumSulfate.getFluid(500))
-                .output(dust, RutheniumTetroxide, 5)
+                .output(dust, RutheniumTetroxide, 3)
                 .fluidOutputs(Hydrogen.getFluid(3000))
                 .buildAndRegister();
 
@@ -144,14 +143,14 @@ public class PlatGroupMetalsRecipes {
                 .input(dust, RarestMetalMixture, 7)
                 .fluidInputs(HydrochloricAcid.getFluid(4000))
                 .output(dust, IridiumMetalResidue, 5)
-                .fluidOutputs(AcidicOsmiumSolution.getFluid(2000))
+                .fluidOutputs(AcidicOsmiumSolution.getFluid(500))
                 .fluidOutputs(Hydrogen.getFluid(3000))
                 .buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder().duration(400).EUt(VA[MV])
-                .fluidInputs(AcidicOsmiumSolution.getFluid(2000))
+                .fluidInputs(AcidicOsmiumSolution.getFluid(1000))
                 .output(dust, OsmiumTetroxide, 5)
-                .fluidOutputs(HydrochloricAcid.getFluid(1000))
+                .fluidOutputs(HydrochloricAcid.getFluid(2000))
                 .fluidOutputs(Water.getFluid(1000))
                 .buildAndRegister();
 
@@ -165,7 +164,7 @@ public class PlatGroupMetalsRecipes {
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[MV])
                 .input(dust, IridiumMetalResidue, 5)
                 .output(dust, IridiumChloride, 4)
-                .output(dust, PlatinumSludgeResidue)
+                .output(dustSmall, PlatinumSludgeResidue, 2)
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
