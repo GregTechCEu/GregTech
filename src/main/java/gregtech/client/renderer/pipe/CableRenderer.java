@@ -46,24 +46,30 @@ public class CableRenderer extends PipeRenderer {
         }
 
         int insulationLevel = ((Insulation) pipeType).insulationLevel;
-        ColourMultiplier materialColor = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()));
-        IVertexOperation[] wireRenderOperation = {new IconTransformation(wireTexture), materialColor};
+        IVertexOperation wireRender = new IconTransformation(wireTexture);
+        ColourMultiplier wireColor = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()));
+        ColourMultiplier insulationColor = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(0x404040));
+        if (pipeTile != null) {
+            if (pipeTile.getPaintingColor() != pipeTile.getDefaultPaintingColor()) {
+                wireColor.colour = GTUtility.convertRGBtoOpaqueRGBA_CL(pipeTile.getPaintingColor());
+            }
+            insulationColor.colour = GTUtility.convertRGBtoOpaqueRGBA_CL(pipeTile.getPaintingColor());
+        }
 
         if (insulationLevel != -1) {
-            ColourMultiplier color = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(pipeTile == null ? 0x404040 : pipeTile.getPaintingColor()));
 
             if ((renderContext.getConnections() & 63) == 0) {
                 // render only insulation when cable has no connections
-                renderContext.addOpenFaceRender(false, new IconTransformation(insulationTextures[5]), color);
+                renderContext.addOpenFaceRender(false, new IconTransformation(insulationTextures[5]), insulationColor);
                 return;
             }
 
-            renderContext.addOpenFaceRender(false, wireRenderOperation)
-                    .addOpenFaceRender(false, new IconTransformation(insulationTextures[insulationLevel]), color)
-                    .addSideRender(false, new IconTransformation(insulationTextures[5]), color);
+            renderContext.addOpenFaceRender(false, wireRender, wireColor)
+                    .addOpenFaceRender(false, new IconTransformation(insulationTextures[insulationLevel]), insulationColor)
+                    .addSideRender(false, new IconTransformation(insulationTextures[5]), insulationColor);
         } else {
-            renderContext.addOpenFaceRender(false, wireRenderOperation)
-                    .addSideRender(false, wireRenderOperation);
+            renderContext.addOpenFaceRender(false, wireRender, wireColor)
+                    .addSideRender(false, wireRender, wireColor);
         }
     }
 
