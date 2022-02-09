@@ -78,6 +78,11 @@ public class Material implements Comparable<Material> {
         return chemicalFormula;
     }
 
+    @ZenGetter
+    public Boolean isPolymer() {
+        return materialInfo.polymer;
+    }
+
     @ZenMethod
     public Material setFormula(String formula) {
         return setFormula(formula, false);
@@ -571,6 +576,11 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        public Builder polymer() {
+            this.materialInfo.polymer = true;
+            return this;
+        }
+
         public Builder burnTime(int burnTime) {
             DustProperty prop = properties.getProperty(PropertyKey.DUST);
             if (prop == null) {
@@ -894,6 +904,11 @@ public class Material implements Comparable<Material> {
          * Default: none.
          */
         private Element element;
+
+        /**
+         * If the material is considered a Polymer for special naming
+         */
+        private boolean polymer = false;
 
         private MaterialInfo(int metaItemSubId, String name) {
             this.metaItemSubId = metaItemSubId;
