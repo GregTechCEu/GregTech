@@ -581,10 +581,49 @@ public class OrePrefix {
     public String getLocalNameForItem(Material material) {
         String specifiedUnlocalized = "item." + material.toString() + "." + this.name;
         if (LocalizationUtils.hasKey(specifiedUnlocalized)) return LocalizationUtils.format(specifiedUnlocalized);
-        String unlocalized = "item.material.oreprefix." + this.name;
+        String unlocalized = findUnlocalizedName(material);
         String matLocalized = material.getLocalizedName();
         String formatted = LocalizationUtils.format(unlocalized, matLocalized);
         return formatted.equals(unlocalized) ? matLocalized : formatted;
+    }
+
+    private String findUnlocalizedName(Material material) {
+
+        String name = "";
+
+        // Avoid NPE from Materials.NULL
+        if(!material.getUnlocalizedName().equals("material.null") && material.isPolymer()) {
+            if(this.equals(plate)) {
+                name = "item.material.oreprefix.platePolymer";
+            }
+            else if(this.equals(dust)) {
+                name = "item.material.oreprefix.dustPolymer";
+            }
+            else if(this.equals(dustSmall)) {
+                name = "item.material.oreprefix.dustSmallPolymer";
+            }
+            else if(this.equals(dustTiny)) {
+                name = "item.material.oreprefix.dustTinyPolymer";
+            }
+            else if(this.equals(nugget)) {
+                name = "item.material.oreprefix.nuggetPolymer";
+            }
+            else if(this.equals(ingot)) {
+                name = "item.material.oreprefix.ingotPolymer";
+            }
+            else if(this.equals(foil)) {
+                name = "item.material.oreprefix.foilPolymer";
+            }
+            else if(this.equals(plateDouble)) {
+                name = "item.material.oreprefix.plateDoublePolymer";
+            }
+            else if(this.equals(plateDense)) {
+                name = "item.material.oreprefix.plateDensePolymer";
+            }
+        }
+
+
+        return name.isEmpty() ? String.format("item.material.oreprefix.%s", this.name) : name;
     }
 
     public boolean isIgnored(Material material) {
