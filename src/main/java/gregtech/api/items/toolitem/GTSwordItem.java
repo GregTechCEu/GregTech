@@ -21,15 +21,17 @@ public class GTSwordItem extends ItemSword implements GTToolDefinition {
 
     private final String domain, id;
 
+    private final int tier;
     private final IToolStats toolStats;
     private final Set<String> toolClasses;
     private final SoundEvent sound;
     private final Set<Block> effectiveBlocks;
 
-    protected GTSwordItem(String domain, String id, IToolStats toolStats, SoundEvent sound, Set<String> toolClasses, Set<Block> effectiveBlocks) {
+    protected GTSwordItem(String domain, String id, int tier, IToolStats toolStats, SoundEvent sound, Set<String> toolClasses, Set<Block> effectiveBlocks) {
         super(ToolMaterial.STONE);
         this.domain = domain;
         this.id = id;
+        this.tier = tier;
         this.toolStats = toolStats;
         this.sound = sound;
         this.toolClasses = Collections.unmodifiableSet(toolClasses);
@@ -47,13 +49,18 @@ public class GTSwordItem extends ItemSword implements GTToolDefinition {
     }
 
     @Override
-    public IToolStats getToolStats() {
-        return toolStats;
+    public boolean isElectric() {
+        return tier > -1;
     }
 
     @Override
-    public Set<String> getToolClasses() {
-        return toolClasses;
+    public int getElectricTier() {
+        return tier;
+    }
+
+    @Override
+    public IToolStats getToolStats() {
+        return toolStats;
     }
 
     @Nullable
@@ -99,12 +106,12 @@ public class GTSwordItem extends ItemSword implements GTToolDefinition {
 
     @Override
     public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
-        return getTotalHarvestLevel(stack);
+        return definition$getHarvestLevel(stack, toolClass, player, blockState);
     }
 
     @Override
     public Set<String> getToolClasses(ItemStack stack) {
-        return getToolClasses();
+        return toolClasses;
     }
 
     @Override

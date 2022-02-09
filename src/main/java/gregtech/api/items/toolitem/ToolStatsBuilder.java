@@ -20,6 +20,7 @@ public class ToolStatsBuilder {
     private float efficiency = 4F;
     private BiPredicate<ItemStack, Enchantment> canApplyEnchantment;
     private float attackSpeed = 0F;
+    private boolean sneakBypassUse = false;
 
     public ToolStatsBuilder onToolCrafted(BiConsumer<ItemStack, EntityPlayer> onToolCrafted) {
         this.onToolCrafted = onToolCrafted;
@@ -98,6 +99,11 @@ public class ToolStatsBuilder {
         return this;
     }
 
+    public ToolStatsBuilder sneakBypassUse() {
+        this.sneakBypassUse = true;
+        return this;
+    }
+
     public IToolStats build() {
         return new IToolStats() {
 
@@ -110,6 +116,7 @@ public class ToolStatsBuilder {
             private float efficiency = ToolStatsBuilder.this.efficiency;
             private BiPredicate<ItemStack, Enchantment> canApplyEnchantment = ToolStatsBuilder.this.canApplyEnchantment;
             private float attackSpeed = ToolStatsBuilder.this.attackSpeed;
+            private boolean sneakBypassUse = ToolStatsBuilder.this.sneakBypassUse;
 
             @Override
             public void onToolCrafted(ItemStack stack, EntityPlayer player) {
@@ -164,6 +171,10 @@ public class ToolStatsBuilder {
                 return attackSpeed;
             }
 
+            @Override
+            public boolean doesSneakBypassUse() {
+                return sneakBypassUse;
+            }
         };
     }
 

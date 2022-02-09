@@ -1,6 +1,7 @@
 package gregtech.common.items;
 
 import gregtech.api.items.toolitem.GTToolDefinition;
+import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,10 @@ public class ToolItems {
 
     public static void init() {
 
+    }
+
+    public static void registerColors() {
+        TOOLS.forEach(tool -> Minecraft.getMinecraft().getItemColors().registerItemColorHandler(tool::getColor, tool.get()));
     }
 
 }
