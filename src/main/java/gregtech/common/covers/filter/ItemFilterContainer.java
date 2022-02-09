@@ -103,9 +103,8 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
                     if (val != null && !val.isEmpty())
                         setTransferStackSize(Integer.parseInt(val));
                 })
-                        .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
+                        .setNumbersOnly(1, Integer.MAX_VALUE)
                         .setMaxLength(4)
-                        .setValidator(getTextFieldValidator(() -> Integer.MAX_VALUE))
                         .setScale(0.9f)
         );
 

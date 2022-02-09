@@ -136,7 +136,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
         this.fluidFilter.initUI(20, primaryGroup::addWidget);
 
-        primaryGroup.addWidget(new CycleButtonWidget(92, 54, 75, 18,
+        primaryGroup.addWidget(new CycleButtonWidget(92, 14, 75, 18,
                 VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
                 .setTooltipHoverString("cover.voiding.voiding_mode.description"));
 
@@ -162,9 +162,8 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
             }
         })
                 .setCentered(true)
-                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
+                .setNumbersOnly(1, Integer.MAX_VALUE)
                 .setMaxLength(10)
-                .setValidator(getTextFieldValidator(() -> Integer.MAX_VALUE))
                 .setScale(0.6f));
 
         stackSizeGroup.addWidget(new CycleButtonWidget(115, 35, 30, 20,
@@ -193,20 +192,12 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("VoidingMode", voidingMode.ordinal());
         tagCompound.setInteger("TransferAmount", transferAmount);
-        tagCompound.setTag("filterv2", new NBTTagCompound());
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.voidingMode = VoidingMode.values()[tagCompound.getInteger("VoidingMode")];
-        //legacy NBT tag
-        if (!tagCompound.hasKey("filterv2") && tagCompound.hasKey("TransferAmount")) {
-            FluidFilter filter = getFluidFilterContainer().getFilterWrapper().getFluidFilter();
-            if (filter != null) {
-                filter.configureFilterTanks(tagCompound.getInteger("TransferAmount"));
-            }
-        }
         this.transferAmount = tagCompound.getInteger("TransferAmount");
     }
 

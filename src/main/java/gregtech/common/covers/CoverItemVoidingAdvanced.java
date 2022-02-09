@@ -46,19 +46,6 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         }
     }
 
-    void voidAny(IItemHandler myItemHandler) {
-        for (int srcIndex = 0; srcIndex < myItemHandler.getSlots(); srcIndex++) {
-            ItemStack sourceStack = myItemHandler.extractItem(srcIndex, Integer.MAX_VALUE, true);
-            if (sourceStack.isEmpty()) {
-                continue;
-            }
-            if (!itemFilterContainer.testItemStack(sourceStack)) {
-                continue;
-            }
-            myItemHandler.extractItem(srcIndex, Integer.MAX_VALUE, false);
-        }
-    }
-
     protected void voidExact(IItemHandler myItemHandler) {
         Map<Object, GroupItemInfo> sourceItemAmounts = countInventoryItemsByMatchSlot(myItemHandler);
         Iterator<Object> iterator = sourceItemAmounts.keySet().iterator();
@@ -134,9 +121,8 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                         itemFilterContainer.setTransferStackSize(Integer.parseInt(val));
                 })
                         .setCentered(true)
-                        .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
+                        .setNumbersOnly(1, Integer.MAX_VALUE)
                         .setMaxLength(4)
-                        .setValidator(itemFilterContainer.getTextFieldValidator(() -> Integer.MAX_VALUE))
                         .setScale(0.9f)
         );
 
