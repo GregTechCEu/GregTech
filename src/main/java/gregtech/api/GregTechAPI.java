@@ -13,6 +13,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.BaseCreativeTab;
 import gregtech.api.util.GTControlledRegistry;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.IBlockOre;
 import gregtech.common.items.MetaItems;
 import net.minecraft.util.ResourceLocation;
@@ -22,7 +23,6 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,12 +80,27 @@ public class GregTechAPI {
     @ZenRegister
     public static class MaterialRegistry extends GTControlledRegistry<String, Material> {
 
+        private boolean isRegistryClosed = false;
+
         private MaterialRegistry() {
             super(Short.MAX_VALUE);
         }
 
         public void register(Material value) {
             register(value.getId(), value.toString(), value);
+        }
+
+        @Override
+        public void register(int id, String key, Material value) {
+            if (isRegistryClosed) {
+                GTLog.logger.error("Materials cannot be registered in the PostMaterialEvent! Must be added in the MaterialEvent. Skipping material {}...", key);
+                return;
+            }
+            super.register(id, key, value);
+        }
+
+        public void closeRegistry() {
+            this.isRegistryClosed = true;
         }
 
         @ZenMethod

@@ -105,6 +105,8 @@ public class GregTechMod {
         }
 
         // Fire Post-Material event, intended for when Materials need to be iterated over in-full before freezing
+        // Block entirely new Materials from being added in the Post event
+        MATERIAL_REGISTRY.closeRegistry();
         MinecraftForge.EVENT_BUS.post(new PostMaterialEvent());
 
         // Freeze Material Registry before processing Items, Blocks, and Fluids
