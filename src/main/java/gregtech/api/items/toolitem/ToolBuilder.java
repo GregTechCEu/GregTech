@@ -15,12 +15,18 @@ public abstract class ToolBuilder<T extends GTToolDefinition> {
     protected final Set<String> toolClasses = new ObjectOpenHashSet<>();
     protected final Set<Block> effectiveBlocks = new ObjectOpenHashSet<>();
 
+    protected int tier = -1;
     protected IToolStats toolStats;
     protected SoundEvent sound;
 
     public ToolBuilder(String domain, String id) {
         this.domain = domain;
         this.id = id;
+    }
+
+    public ToolBuilder<T> electric(int tier) {
+        this.tier = tier;
+        return this;
     }
 
     public ToolBuilder<T> toolStats(IToolStats toolStats) {

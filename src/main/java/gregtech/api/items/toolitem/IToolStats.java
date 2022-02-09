@@ -60,6 +60,11 @@ public interface IToolStats {
         return 1.0f;
     }
 
+    /**
+     * @return True if sneaking doesn't use the Block
+     */
+    boolean doesSneakBypassUse();
+
     boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment);
 
     /**
