@@ -2,12 +2,15 @@ package gregtech.common.command;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.items.toolitem.ToolMetaItem.MetaToolValueItem;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
 import net.minecraft.command.CommandBase;
@@ -81,23 +84,37 @@ public class CommandHand extends CommandBase {
                 }
             }
 
-            if (stackInHand.getItem() instanceof MetaItem) {
-                MetaItem<?> metaItem = (MetaItem<?>) stackInHand.getItem();
-                MetaValueItem metaValueItem = metaItem.getItem(stackInHand);
-                if (metaValueItem != null) {
-                    if (metaValueItem instanceof ToolMetaItem.MetaToolValueItem) {
-                        IToolStats toolStats = ((MetaToolValueItem) metaValueItem).getToolStats();
-                        player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.tool_stats", toolStats.getClass().getName()));
-                    }
-                }
-            }
-
             String id = CTRecipeHelper.getMetaItemId(stackInHand);
             if (id != null) {
                 String ctId = "<metaitem:" + id + ">";
                 ClipboardUtil.copyToClipboard(player, ctId);
                 player.sendMessage(new TextComponentString("MetaItem Id: ").appendSibling(new TextComponentString(id).setStyle(new Style().setColor(TextFormatting.GREEN)))
                         .setStyle(getCopyStyle(ctId, true)));
+            }
+
+            if (stackInHand.getItem() instanceof MetaItem) {
+                MetaItem<?> metaItem = (MetaItem<?>) stackInHand.getItem();
+                MetaValueItem metaValueItem = metaItem.getItem(stackInHand);
+                if (metaValueItem != null) {
+                    // tool info
+                    if (metaValueItem instanceof ToolMetaItem.MetaToolValueItem) {
+                        IToolStats toolStats = ((MetaToolValueItem) metaValueItem).getToolStats();
+                        player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.tool_stats", toolStats.getClass().getName()));
+                    }
+                    // material item info
+                    if (metaItem instanceof MetaPrefixItem) {
+                        Material material = ((MetaPrefixItem) metaItem).getMaterial(stackInHand);
+                        if (material != null) {
+                            player.sendMessage(new TextComponentString("Material Id: ").appendSibling(new TextComponentString(material.toString()).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                                    .setStyle(getCopyStyle("<material:" + material.toString() + ">", false)));
+                        }
+                        OrePrefix orePrefix = ((MetaPrefixItem) metaItem).getOrePrefix();
+                        if (orePrefix != null) {
+                            player.sendMessage(new TextComponentString("Ore prefix: ").appendSibling(new TextComponentString(orePrefix.name).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                                    .setStyle(getCopyStyle(orePrefix.name, false)));
+                        }
+                    }
+                }
             }
 
             Set<String> oreDicts = OreDictUnifier.getOreDictionaryNames(stackInHand);
