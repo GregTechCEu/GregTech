@@ -50,6 +50,7 @@ public class OreDictFilterTestSlot extends Widget implements IGhostIngredientTar
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY)) {
             // this is only called on client, so this is fine
