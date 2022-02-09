@@ -9,6 +9,8 @@ import crazypants.enderio.api.tool.ITool;
 import forestry.api.arboriculture.IToolGrafter;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.IElectricItem;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -34,7 +36,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.Optional;
@@ -62,9 +66,11 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
 
     String getId();
 
-    IToolStats getToolStats();
+    boolean isElectric();
 
-    Set<String> getToolClasses();
+    int getElectricTier();
+
+    IToolStats getToolStats();
 
     @Nullable
     SoundEvent getSound();
@@ -184,7 +190,7 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
     }
 
     @SideOnly(Side.CLIENT)
-    default int getColorIndex(ItemStack stack, int tintIndex) {
+    default int getColor(ItemStack stack, int tintIndex) {
         return tintIndex % 2 == 1 ? getToolMaterial(stack).getMaterialRGB() : 0xFFFFFF;
     }
 
@@ -234,8 +240,32 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
         return multimap;
     }
 
-    default int getHarvestLevel(ItemStack stack, String toolClass, @javax.annotation.Nullable net.minecraft.entity.player.EntityPlayer player, @javax.annotation.Nullable IBlockState blockState) {
+    default int definition$getHarvestLevel(ItemStack stack, String toolClass, @javax.annotation.Nullable net.minecraft.entity.player.EntityPlayer player, @javax.annotation.Nullable IBlockState blockState) {
         return get().getToolClasses(stack).contains(toolClass) ? getTotalHarvestLevel(stack) : -1;
+    }
+
+    default boolean definition$canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity, EntityLivingBase attacker) {
+        return get().getToolClasses(stack).contains("axe");
+    }
+
+    default boolean definition$doesSneakBypassUse(@Nonnull ItemStack stack, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
+        return getToolStats().doesSneakBypassUse();
+    }
+
+    default double definition$getDurabilityForDisplay(@Nonnull ItemStack stack) {
+        // Prioritize showing electricity
+        if (stack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null)) {
+            IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+            //noinspection ConstantConditions
+            return 1.0 - (electricItem.getCharge() / (electricItem.getMaxCharge() * 1.0));
+        }
+        // Show actual durability otherwise
+        return getItemDamage(stack) / (getMaxItemDamage(stack) * 1.0);
+    }
+
+    default int definition$getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
+        double internalDamage = getItemDamage(stack) / (getMaxItemDamage(stack) * 1.0);
+        return MathHelper.hsvToRGB(Math.max(0.0F, (float) (1.0 - internalDamage)) / 3.0F, 1.0F, 1.0F);
     }
 
     // Extended Interfaces
@@ -250,7 +280,7 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
      */
     @Override
     default boolean canWrench(ItemStack wrench, EntityPlayer player, BlockPos pos) {
-        return getToolClasses().contains("wrench");
+        return get().getToolClasses(wrench).contains("wrench");
     }
 
     // IToolWrench
@@ -264,7 +294,7 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
      * @return true if wrenching is allowed, false if not */
     @Override
     default boolean canWrench(EntityPlayer player, EnumHand hand, ItemStack wrench, RayTraceResult rayTrace) {
-        return getToolClasses().contains("wrench");
+        return get().getToolClasses(wrench).contains("wrench");
     }
 
     /*** Callback after the wrench has been used. This can be used to decrease durability or for other purposes.
@@ -279,12 +309,12 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
     // IToolHammer
     @Override
     default boolean isUsable(ItemStack item, EntityLivingBase user, BlockPos pos) {
-        return getToolClasses().contains("wrench");
+        return get().getToolClasses(item).contains("wrench");
     }
 
     @Override
     default boolean isUsable(ItemStack item, EntityLivingBase user, Entity entity) {
-        return getToolClasses().contains("wrench");
+        return get().getToolClasses(item).contains("wrench");
     }
 
     @Override
@@ -295,17 +325,17 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
 
     // ITool
     @Override
-    default boolean canUse(@Nonnull EnumHand stack, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) {
-        return getToolClasses().contains("wrench");
+    default boolean canUse(@Nonnull EnumHand hand, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) {
+        return get().getToolClasses(player.getHeldItem(hand)).contains("wrench");
     }
 
     @Override
-    default void used(@Nonnull EnumHand stack, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) { }
+    default void used(@Nonnull EnumHand hand, @Nonnull EntityPlayer player, @Nonnull BlockPos pos) { }
 
     // IHideFacades
     @Override
     default boolean shouldHideFacades(@Nonnull ItemStack stack, @Nonnull EntityPlayer player) {
-        return getToolClasses().contains("wrench");
+        return get().getToolClasses(stack).contains("wrench");
     }
 
     // IToolGrafter
@@ -319,7 +349,7 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
      */
     @Override
     default float getSaplingModifier(ItemStack stack, World world, EntityPlayer player, BlockPos pos) {
-        return getToolClasses().contains("grafter") ? 100F : 1.0F;
+        return get().getToolClasses(stack).contains("grafter") ? 100F : 1.0F;
     }
 
 }

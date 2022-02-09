@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -24,17 +25,19 @@ import java.util.Set;
  */
 public class GTToolItem extends ItemTool implements GTToolDefinition {
 
-    private final String domain, id;
+    protected final String domain, id;
 
-    private final IToolStats toolStats;
-    private final Set<String> toolClasses;
-    private final SoundEvent sound;
-    private final Set<Block> effectiveBlocks;
+    protected final int tier;
+    protected final IToolStats toolStats;
+    protected final Set<String> toolClasses;
+    protected final SoundEvent sound;
+    protected final Set<Block> effectiveBlocks;
 
-    protected GTToolItem(String domain, String id, IToolStats toolStats, SoundEvent sound, Set<String> toolClasses, Set<Block> effectiveBlocks) {
+    protected GTToolItem(String domain, String id, int tier, IToolStats toolStats, SoundEvent sound, Set<String> toolClasses, Set<Block> effectiveBlocks) {
         super(0F, 0F, ToolMaterial.STONE, effectiveBlocks);
         this.domain = domain;
         this.id = id;
+        this.tier = tier;
         this.toolStats = toolStats;
         this.sound = sound;
         this.toolClasses = Collections.unmodifiableSet(toolClasses);
@@ -52,13 +55,18 @@ public class GTToolItem extends ItemTool implements GTToolDefinition {
     }
 
     @Override
-    public IToolStats getToolStats() {
-        return toolStats;
+    public boolean isElectric() {
+        return tier > -1;
     }
 
     @Override
-    public Set<String> getToolClasses() {
-        return toolClasses;
+    public int getElectricTier() {
+        return tier;
+    }
+
+    @Override
+    public IToolStats getToolStats() {
+        return toolStats;
     }
 
     @Nullable
@@ -104,12 +112,22 @@ public class GTToolItem extends ItemTool implements GTToolDefinition {
 
     @Override
     public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState) {
-        return getTotalHarvestLevel(stack);
+        return definition$getHarvestLevel(stack, toolClass, player, blockState);
     }
 
     @Override
     public Set<String> getToolClasses(ItemStack stack) {
-        return getToolClasses();
+        return toolClasses;
+    }
+
+    @Override
+    public boolean canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity, EntityLivingBase attacker) {
+        return definition$canDisableShield(stack, shield, entity, attacker);
+    }
+
+    @Override
+    public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
+        return definition$doesSneakBypassUse(stack, world, pos, player);
     }
 
     public static class Builder extends ToolBuilder<GTToolItem> {
@@ -124,7 +142,7 @@ public class GTToolItem extends ItemTool implements GTToolDefinition {
 
         @Override
         public GTToolItem build() {
-            return new GTToolItem(domain, id, toolStats, sound, toolClasses, effectiveBlocks);
+            return new GTToolItem(domain, id, tier, toolStats, sound, toolClasses, effectiveBlocks);
         }
 
     }
