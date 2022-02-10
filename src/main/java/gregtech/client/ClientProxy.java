@@ -2,10 +2,8 @@ package gregtech.client;
 
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.ItemNBTUtils;
-import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.MetaFluids;
-import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
@@ -17,7 +15,6 @@ import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
-import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.ModCompatibility;
 import gregtech.api.util.input.KeyBinds;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
@@ -50,6 +47,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.ColorizerFoliage;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -65,6 +63,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import paulscode.sound.SoundSystemConfig;
 
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -172,17 +172,11 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
-    public static void addMaterialFormulaHandler(ItemTooltipEvent event) {
+    public static void addMaterialFormulaHandler(@Nonnull ItemTooltipEvent event) {
         ItemStack itemStack = event.getItemStack();
 
-        List<String> fluidTooltips;
-
         // Handles Item tooltips
-        String chemicalFormula = null;
-
-        String temperature = null;
-
-        String state = null;
+        List<String> tooltips = new ArrayList<>();
 
         // Test for Items
         UnificationEntry unificationEntry = OreDictUnifier.getUnificationEntry(itemStack);
@@ -191,58 +185,33 @@ public class ClientProxy extends CommonProxy {
             MetaOreDictItem oreDictItem = (MetaOreDictItem) itemStack.getItem();
             Optional<String> oreDictName = OreDictUnifier.getOreDictionaryNames(itemStack).stream().findFirst();
             if (oreDictName.isPresent() && oreDictItem.OREDICT_TO_FORMULA.containsKey(oreDictName.get())) {
-                chemicalFormula = oreDictItem.OREDICT_TO_FORMULA.get(oreDictName.get());
+                tooltips.add(TextFormatting.YELLOW + oreDictItem.OREDICT_TO_FORMULA.get(oreDictName.get()));
             }
         } else if (unificationEntry != null && unificationEntry.material != null) {
-            chemicalFormula = unificationEntry.material.getChemicalFormula();
+            tooltips.add(TextFormatting.YELLOW + unificationEntry.material.getChemicalFormula());
         } else if (ItemNBTUtils.hasTag(itemStack)) { // Test for Fluids
             // Vanilla bucket
-            fluidTooltips = FluidTooltipUtil.getFluidTooltip(ItemNBTUtils.getString(itemStack, "FluidName"));
-
-            if(fluidTooltips != null) {
-                chemicalFormula = fluidTooltips.get(0);
-                temperature = fluidTooltips.get(1);
-                state = fluidTooltips.get(2);
-            }
+            tooltips = FluidTooltipUtil.getFluidTooltip(ItemNBTUtils.getString(itemStack, "FluidName"));
 
             // GTCE Cells, Forestry cans, some other containers
-            if (chemicalFormula == null) {
+            if (tooltips != null && tooltips.size() > 2 && tooltips.get(2) == null) {
                 NBTTagCompound compound = itemStack.getTagCompound();
                 if (compound != null && compound.hasKey(FluidHandlerItemStack.FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
                     FluidStack fstack = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY));
-                    fluidTooltips = FluidTooltipUtil.getFluidTooltip(fstack);
-
-                    if(fluidTooltips != null) {
-                        chemicalFormula = fluidTooltips.get(0);
-                        temperature = fluidTooltips.get(1);
-                        state = fluidTooltips.get(2);
-                    }
+                    tooltips = FluidTooltipUtil.getFluidTooltip(fstack);
                 }
             }
         } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) { // Water and Lava buckets have a separate registry name from other buckets
-            fluidTooltips = FluidTooltipUtil.getWaterTooltip();
-            chemicalFormula = fluidTooltips.get(0);
-            temperature = fluidTooltips.get(1);
-            state = fluidTooltips.get(2);
+            tooltips = FluidTooltipUtil.getWaterTooltip();
         } else if (itemStack.getItem().equals(Items.LAVA_BUCKET)) {
-            fluidTooltips = FluidTooltipUtil.getLavaTooltip();
-            chemicalFormula = fluidTooltips.get(0);
-            temperature = fluidTooltips.get(1);
-            state = fluidTooltips.get(2);
+            tooltips = FluidTooltipUtil.getLavaTooltip();
         }
 
-        if(state != null && !state.isEmpty()) {
-            FluidType type = FluidType.getByName(state);
-            if (type != null)
-                event.getToolTip().add(1, LocalizationUtils.format(type.getToolTipLocalization()));
-        }
-
-        if(temperature != null && !temperature.isEmpty()) {
-            event.getToolTip().add(1, LocalizationUtils.format("gregtech.fluid.temperature", Integer.parseInt(temperature)));
-        }
-
-        if (chemicalFormula != null && !chemicalFormula.isEmpty()) {
-            event.getToolTip().add(1, ChatFormatting.YELLOW + chemicalFormula);
+        if (tooltips != null) {
+            for (String s : tooltips) {
+                if (s.isEmpty()) continue;
+                event.getToolTip().add(s);
+            }
         }
     }
 

@@ -20,7 +20,7 @@ public class FluidTypeLiquid extends FluidType {
     }
 
     @Override
-    public String getToolTipLocalization() {
+    public String getUnlocalizedTooltip() {
         return TOOLTIP_NAME;
     }
 }

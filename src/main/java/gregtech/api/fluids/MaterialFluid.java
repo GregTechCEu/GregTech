@@ -12,8 +12,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MaterialFluid extends Fluid {
 
@@ -27,11 +25,7 @@ public class MaterialFluid extends Fluid {
     }
 
     public void registerFluidTooltip() {
-        List<String> tooltip = new ArrayList<>();
-        tooltip.add(material.getChemicalFormula());
-        tooltip.add(String.valueOf(temperature));
-        tooltip.add(fluidType.getName());
-        FluidTooltipUtil.registerTooltip(this, tooltip);
+        FluidTooltipUtil.registerTooltip(this, FluidTooltipUtil.getMaterialTooltip(material));
     }
 
     @Nonnull

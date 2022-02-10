@@ -16,6 +16,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
@@ -75,8 +76,10 @@ public class MetaFluids {
 
     private static void handleVanillaFluids() {
         Materials.Water.getProperty(PropertyKey.FLUID).setFluid(FluidRegistry.WATER);
-        FluidTooltipUtil.registerTooltip(FluidRegistry.WATER, Materials.Water.getChemicalFormula());
+        FluidTooltipUtil.registerTooltip(FluidRegistry.WATER, TextFormatting.YELLOW + Materials.Water.getChemicalFormula());
         Materials.Lava.getProperty(PropertyKey.FLUID).setFluid(FluidRegistry.LAVA);
+        if (!Materials.Lava.getChemicalFormula().isEmpty())
+            FluidTooltipUtil.registerTooltip(FluidRegistry.LAVA, TextFormatting.YELLOW + Materials.Lava.getChemicalFormula());
     }
 
     private static void addAlternativeNames() {

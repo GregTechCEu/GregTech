@@ -1,7 +1,10 @@
 package gregtech.api.fluids.fluidType;
 
+import gregtech.api.util.LocalizationUtils;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class FluidTypeAcid extends FluidTypeLiquid {
 
@@ -12,7 +15,14 @@ public class FluidTypeAcid extends FluidTypeLiquid {
     }
 
     @Override
-    public String getToolTipLocalization() {
+    public String getUnlocalizedTooltip() {
         return TOOLTIP_NAME;
+    }
+
+    @Override
+    public List<String> getAdditionalTooltips() {
+        List<String> tooltips = super.getAdditionalTooltips();
+        tooltips.add(LocalizationUtils.format("gregtech.fluid.type_acid.tooltip"));
+        return tooltips;
     }
 }

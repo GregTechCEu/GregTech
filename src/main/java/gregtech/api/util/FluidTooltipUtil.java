@@ -3,10 +3,12 @@ package gregtech.api.util;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,6 +90,7 @@ public class FluidTooltipUtil {
     /**
      * A simple helper method to get the tooltip for Water, since it is an edge case of fluids.
      */
+    @Nonnull
     public static List<String> getWaterTooltip() {
         return getMaterialTooltip(Materials.Water);
     }
@@ -95,15 +98,19 @@ public class FluidTooltipUtil {
     /**
      * A simple helper method to get the tooltip for Lava, since it is an edge case of fluids.
      */
+    @Nonnull
     public static List<String> getLavaTooltip() {
         return getMaterialTooltip(Materials.Lava);
     }
 
-    private static List<String> getMaterialTooltip(Material m) {
+    @Nonnull
+    public static List<String> getMaterialTooltip(@Nonnull Material material) {
         List<String> tooltip = new ArrayList<>();
-        tooltip.add(m.getChemicalFormula());
-        tooltip.add(String.valueOf(m.getProperty(PropertyKey.FLUID).getFluidTemperature()));
-        tooltip.add(String.valueOf(m.getProperty(PropertyKey.FLUID).getFluidType().getName()));
+        if (!material.getChemicalFormula().isEmpty())
+            tooltip.add(TextFormatting.YELLOW + material.getChemicalFormula());
+        tooltip.add(LocalizationUtils.format("gregtech.fluid.temperature", material.getProperty(PropertyKey.FLUID).getFluidTemperature()));
+        tooltip.add(LocalizationUtils.format(material.getProperty(PropertyKey.FLUID).getFluidType().getUnlocalizedTooltip()));
+        tooltip.addAll(material.getProperty(PropertyKey.FLUID).getFluidType().getAdditionalTooltips());
         return tooltip;
     }
 }

@@ -4128,6 +4128,7 @@ gregtech.fluid.temperature=§cTemperature: %,d K
 gregtech.fluid.state_gas=§aState: Gaseous
 gregtech.fluid.state_liquid=§aState: Liquid
 gregtech.fluid.state_plasma=§aState: Plasma
+gregtech.fluid.type_acid.tooltip=§6Acidic! Handle with care!
 gregtech.gui.fuel_amount=Fuel Amount:
 gregtech.gui.fluid_amount=Fluid Amount:
 gregtech.gui.toggle_view.disabled=Toggle View (Fluids)
