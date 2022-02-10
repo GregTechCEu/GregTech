@@ -127,15 +127,15 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.Diesel, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.Biomass, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.Ethanol, FluidTypes.LIQUID);
-        setMaterialFluidTexture(Materials.SulfuricAcid, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.SulfuricAcid, FluidTypes.ACID);
         setMaterialFluidTexture(Materials.Milk, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.McGuffium239, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.Glue, FluidTypes.LIQUID);
-        setMaterialFluidTexture(Materials.HydrochloricAcid, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.HydrochloricAcid, FluidTypes.ACID);
         setMaterialFluidTexture(Materials.LeadZincSolution, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.NaturalGas, FluidTypes.GAS);
         setMaterialFluidTexture(Materials.Blaze, FluidTypes.LIQUID);
-        setMaterialFluidTexture(Materials.FluoroantimonicAcid, FluidTypes.LIQUID);
+        setMaterialFluidTexture(Materials.FluoroantimonicAcid, FluidTypes.ACID);
         setMaterialFluidTexture(Materials.Naquadah, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.NaquadahEnriched, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.Naquadria, FluidTypes.LIQUID);

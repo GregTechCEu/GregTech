@@ -1180,7 +1180,7 @@ public class FirstDegreeMaterials {
         Neodymium.getProperty(PropertyKey.INGOT).setMagneticMaterial(NeodymiumMagnetic);
 
         HydrochloricAcid = new Material.Builder(419, "hydrochloric_acid")
-                .fluid()
+                .fluid(FluidTypes.ACID)
                 .components(Hydrogen, 1, Chlorine, 1)
                 .build();
 
