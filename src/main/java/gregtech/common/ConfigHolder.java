@@ -487,6 +487,11 @@ public class ConfigHolder {
         @Config.RangeInt(min = 0, max = 14)
         public int voltageTierAdvImpeller = 3;
 
+        @Config.Comment({"Random chance for electric tools to take actual damage", "Default: 10%"})
+        @Config.RangeInt(min = 0, max = 100)
+        @Config.SlidingOption
+        public int rngDamageElectricTools = 10;
+
         @Config.Comment("Armor HUD Location")
         public ArmorHud armorHud = new ArmorHud();
     }
