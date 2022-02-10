@@ -75,6 +75,10 @@ public interface IToolStats {
      */
     boolean canMineBlock(IBlockState block, ItemStack stack);
 
+    default ItemStack getBrokenStack() {
+        return ItemStack.EMPTY;
+    }
+
     default void onBlockDestroyed(ItemStack stack, World world, IBlockState state, BlockPos pos, EntityLivingBase entity) {
     }
 

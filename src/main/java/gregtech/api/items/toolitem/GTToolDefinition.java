@@ -19,24 +19,30 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
+import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWeb;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentDurability;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -252,20 +258,89 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
         return getToolStats().doesSneakBypassUse();
     }
 
-    default double definition$getDurabilityForDisplay(@Nonnull ItemStack stack) {
-        // Prioritize showing electricity
-        if (stack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null)) {
-            IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-            //noinspection ConstantConditions
-            return 1.0 - (electricItem.getCharge() / (electricItem.getMaxCharge() * 1.0));
-        }
-        // Show actual durability otherwise
-        return getItemDamage(stack) / (getMaxItemDamage(stack) * 1.0);
+    default boolean definition$shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack) {
+        return oldStack.getItem() != newStack.getItem();
     }
 
-    default int definition$getRGBDurabilityForDisplay(@Nonnull ItemStack stack) {
-        double internalDamage = getItemDamage(stack) / (getMaxItemDamage(stack) * 1.0);
-        return MathHelper.hsvToRGB(Math.max(0.0F, (float) (1.0 - internalDamage)) / 3.0F, 1.0F, 1.0F);
+    /**
+     * Damages the tool appropriately
+     *
+     * @param stack  ItemStack that holds the tool
+     * @param entity Entity that has damaged this ItemStack
+     * @param damage Damage the ItemStack will be taking
+     * @return The original ItemStack, or if it breaks and if the tool has a defined broken ItemStack, returns that.
+     *         However, it is up to the caller to sort out how the player receives the broken ItemStack.
+     */
+    default ItemStack damageItem(ItemStack stack, EntityLivingBase entity, int damage) {
+        if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).capabilities.isCreativeMode) {
+            if (isElectric()) {
+                int electricDamage = damage * ConfigHolder.machines.energyUsageMultiplier;
+                IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                if (electricItem != null) {
+                    long newCharge = electricItem.getCharge() - electricDamage;
+                    electricItem.discharge(electricDamage, getElectricTier(), true, false, false);
+                    if (newCharge > 0 || entity.getRNG().nextInt(100) > ConfigHolder.tools.rngDamageElectricTools) {
+                        return stack;
+                    }
+                } else {
+                    throw new IllegalStateException("Electric tool does not have an attached electric item capability.");
+                }
+            }
+            int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
+            int negated = 0;
+            for (int k = 0; i > 0 && k < damage; k++) {
+                if (EnchantmentDurability.negateDamage(stack, i, entity.getRNG())) {
+                    negated++;
+                }
+            }
+            damage -= negated;
+            if (damage <= 0) {
+                return stack;
+            }
+            int newDurability = definition$getItemDamage(stack) - damage;
+            if (entity instanceof EntityPlayerMP) {
+                CriteriaTriggers.ITEM_DURABILITY_CHANGED.trigger((EntityPlayerMP) entity, stack, newDurability);
+            }
+            if (newDurability < 0) {
+                definition$setItemDamage(stack, 0);
+                entity.renderBrokenItemStack(stack);
+                stack.shrink(1);
+                if (entity instanceof EntityPlayer) {
+                    EntityPlayer entityplayer = (EntityPlayer) entity;
+                    entityplayer.addStat(StatList.getObjectBreakStats(stack.getItem()));
+                    ItemStack brokenStack = getToolStats().getBrokenStack();
+                    return brokenStack == ItemStack.EMPTY ? stack : brokenStack;
+                }
+            } else {
+                definition$setItemDamage(stack, newDurability);
+            }
+        }
+        return stack;
+    }
+
+    default int definition$getMaxDamage(ItemStack stack) {
+        NBTTagCompound toolTag = getToolTag(stack);
+        if (toolTag.hasKey("MaxDurability", Constants.NBT.TAG_INT)) {
+            return toolTag.getInteger("MaxDurability");
+        }
+        int maxDurability = getMaterialDurability(stack);
+        toolTag.setInteger("MaxDurability", maxDurability);
+        return maxDurability;
+    }
+
+    default int definition$getItemDamage(ItemStack stack) {
+        NBTTagCompound toolTag = getToolTag(stack);
+        if (toolTag.hasKey("Durability", Constants.NBT.TAG_INT)) {
+            return toolTag.getInteger("Durability");
+        }
+        int durability = stack.getMaxDamage();
+        toolTag.setInteger("Durability", durability);
+        return durability;
+    }
+
+    default void definition$setItemDamage(ItemStack stack, int durability) {
+        NBTTagCompound toolTag = getToolTag(stack);
+        toolTag.setInteger("Durability", durability);
     }
 
     // Extended Interfaces
