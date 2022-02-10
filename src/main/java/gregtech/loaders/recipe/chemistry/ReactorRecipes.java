@@ -21,12 +21,14 @@ public class ReactorRecipes {
     public static void init() {
 
         CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidInputs(Isoprene.getFluid(144))
                 .fluidInputs(Air.getFluid(2000))
                 .output(dust, RawRubber)
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidInputs(Isoprene.getFluid(144))
                 .fluidInputs(Oxygen.getFluid(2000))
                 .output(dust, RawRubber, 3)
