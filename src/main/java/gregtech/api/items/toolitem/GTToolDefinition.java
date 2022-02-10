@@ -309,7 +309,7 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
                     EntityPlayer entityplayer = (EntityPlayer) entity;
                     entityplayer.addStat(StatList.getObjectBreakStats(stack.getItem()));
                     ItemStack brokenStack = getToolStats().getBrokenStack();
-                    return brokenStack == ItemStack.EMPTY ? stack : brokenStack;
+                    return brokenStack == ItemStack.EMPTY ? stack : brokenStack.copy();
                 }
             } else {
                 definition$setItemDamage(stack, newDurability);
