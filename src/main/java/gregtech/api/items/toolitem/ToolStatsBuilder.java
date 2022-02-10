@@ -21,6 +21,7 @@ public class ToolStatsBuilder {
     private BiPredicate<ItemStack, Enchantment> canApplyEnchantment;
     private float attackSpeed = 0F;
     private boolean sneakBypassUse = false;
+    private ItemStack brokenStack = ItemStack.EMPTY;
 
     public ToolStatsBuilder onToolCrafted(BiConsumer<ItemStack, EntityPlayer> onToolCrafted) {
         this.onToolCrafted = onToolCrafted;
@@ -104,19 +105,25 @@ public class ToolStatsBuilder {
         return this;
     }
 
+    public ToolStatsBuilder brokenStack(ItemStack brokenStack) {
+        this.brokenStack = brokenStack;
+        return this;
+    }
+
     public IToolStats build() {
         return new IToolStats() {
 
             private final BiConsumer<ItemStack, EntityPlayer> onToolCrafted = ToolStatsBuilder.this.onToolCrafted;
-            private int damagePerBlockBreak = ToolStatsBuilder.this.damagePerBlockBreak;
-            private int damagePerCraft = ToolStatsBuilder.this.damagePerCraft;
-            private int damagePerAttack = ToolStatsBuilder.this.damagePerAttack;
-            private int baseQuality = ToolStatsBuilder.this.baseQuality;
-            private float attackDamage = ToolStatsBuilder.this.attackDamage;
-            private float efficiency = ToolStatsBuilder.this.efficiency;
-            private BiPredicate<ItemStack, Enchantment> canApplyEnchantment = ToolStatsBuilder.this.canApplyEnchantment;
-            private float attackSpeed = ToolStatsBuilder.this.attackSpeed;
-            private boolean sneakBypassUse = ToolStatsBuilder.this.sneakBypassUse;
+            private final int damagePerBlockBreak = ToolStatsBuilder.this.damagePerBlockBreak;
+            private final int damagePerCraft = ToolStatsBuilder.this.damagePerCraft;
+            private final int damagePerAttack = ToolStatsBuilder.this.damagePerAttack;
+            private final int baseQuality = ToolStatsBuilder.this.baseQuality;
+            private final float attackDamage = ToolStatsBuilder.this.attackDamage;
+            private final float efficiency = ToolStatsBuilder.this.efficiency;
+            private final BiPredicate<ItemStack, Enchantment> canApplyEnchantment = ToolStatsBuilder.this.canApplyEnchantment;
+            private final float attackSpeed = ToolStatsBuilder.this.attackSpeed;
+            private final boolean sneakBypassUse = ToolStatsBuilder.this.sneakBypassUse;
+            private final ItemStack brokenStack = ToolStatsBuilder.this.brokenStack;
 
             @Override
             public void onToolCrafted(ItemStack stack, EntityPlayer player) {
@@ -174,6 +181,11 @@ public class ToolStatsBuilder {
             @Override
             public boolean doesSneakBypassUse() {
                 return sneakBypassUse;
+            }
+
+            @Override
+            public ItemStack getBrokenStack() {
+                return brokenStack;
             }
         };
     }
