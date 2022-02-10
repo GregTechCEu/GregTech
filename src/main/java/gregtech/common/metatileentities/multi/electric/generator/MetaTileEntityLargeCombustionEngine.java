@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.multi.electric.generator;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
@@ -122,7 +123,10 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 .where('G', states(getGearboxState()))
                 .where('C', states(getCasingState()).setMinGlobalLimited(3).or(autoAbilities(false, true, true, true, true, true, true)))
                 .where('D', metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.OUTPUT_ENERGY).stream()
-                        .filter(mte -> ((MetaTileEntityEnergyHatch) mte).getEnergyInOut() >= GTValues.V[tier])
+                        .filter(mte -> {
+                            IEnergyContainer container = mte.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
+                            return container != null && container.getOutputVoltage() * container.getOutputAmperage() >= GTValues.V[tier];
+                        })
                         .toArray(MetaTileEntity[]::new))
                         .addTooltip("gregtech.multiblock.pattern.error.limited.1", GTValues.VN[tier]))
                 .where('A', states(getIntakeState()).addTooltips("gregtech.multiblock.pattern.clear_amount_1"))
