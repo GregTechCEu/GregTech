@@ -152,6 +152,7 @@ public class ClientProxy extends CommonProxy {
         MetaBlocks.registerStateMappers();
         MetaBlocks.registerItemModels();
         MetaItems.registerModels();
+        ToolItems.registerModels();
     }
 
     @SubscribeEvent
