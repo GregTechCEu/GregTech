@@ -6,13 +6,10 @@ import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.impl.ModularUIContainer;
-import gregtech.api.items.IToolItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.ToolMetaItem;
@@ -22,7 +19,6 @@ import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
 import gregtech.common.items.behaviors.CrowbarBehaviour;
 import net.minecraft.block.Block;
@@ -365,39 +361,6 @@ public class GTUtility {
             mc.getConnection().sendPacket(new CPacketPlayerDigging(Action.START_DESTROY_BLOCK, pos, mc.objectMouseOver.sideHit));
         }
         return wasRemovedByPlayer;
-    }
-
-    /**
-     * Applies specific amount of damage to item, either to durable items (which implement IDamagableItem)
-     * or to electric items, which have capability IElectricItem
-     * Damage amount is equal to EU amount used for electric items
-     *
-     * @return if damage was applied successfully
-     */
-    //TODO get rid of that
-    public static boolean doDamageItem(ItemStack itemStack, int vanillaDamage, boolean simulate) {
-        Item item = itemStack.getItem();
-        if (item instanceof IToolItem) {
-            //if item implements IDamagableItem, it manages it's own durability itself
-            IToolItem damagableItem = (IToolItem) item;
-            return damagableItem.damageItem(itemStack, null, vanillaDamage, simulate);
-
-        } else if (itemStack.hasCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null)) {
-            //if we're using electric item, use default energy multiplier for textures
-            IElectricItem capability = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-            int energyNeeded = vanillaDamage * ConfigHolder.machines.energyUsageMultiplier;
-            //noinspection ConstantConditions
-            return capability.discharge(energyNeeded, Integer.MAX_VALUE, true, false, simulate) == energyNeeded;
-
-        } else if (itemStack.isItemStackDamageable()) {
-            if (!simulate && itemStack.attemptDamageItem(vanillaDamage, new Random(), null)) {
-                //if we can't accept more damage, just shrink stack and mark it as broken
-                //actually we would play broken animation here, but we don't have an entity who holds item
-                itemStack.shrink(1);
-            }
-            return true;
-        }
-        return false;
     }
 
     public static void writeItems(IItemHandler handler, String tagName, NBTTagCompound tag) {
