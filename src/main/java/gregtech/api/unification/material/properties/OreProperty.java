@@ -3,7 +3,6 @@ package gregtech.api.unification.material.properties;
 import gregtech.api.unification.material.Material;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -143,7 +142,6 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
         this.washedAmount = washedAmount;
     }
 
-    @Nonnull
     public Pair<Material, Integer> getWashedIn() {
         return Pair.of(this.washedIn, this.washedAmount);
     }
