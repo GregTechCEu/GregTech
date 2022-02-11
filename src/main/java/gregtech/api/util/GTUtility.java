@@ -62,7 +62,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.text.NumberFormat;
@@ -181,28 +180,6 @@ public class GTUtility {
 
     public static int convertOpaqueRGBA_MCtoRGB(int alphaColor) {
         return alphaColor & 0xFFFFFF;
-    }
-
-    public static void setItem(ItemStack itemStack, ItemStack newStack) {
-        try {
-            Field itemField = Arrays.stream(ItemStack.class.getDeclaredFields())
-                    .filter(field -> field.getType() == Item.class)
-                    .findFirst().orElseThrow(ReflectiveOperationException::new);
-            itemField.setAccessible(true);
-            //replace item field instance
-            itemField.set(itemStack, newStack.getItem());
-            //set damage then
-            itemStack.setItemDamage(newStack.getItemDamage());
-            itemStack.setTagCompound(newStack.getTagCompound());
-
-            Method forgeInit = ItemStack.class.getDeclaredMethod("forgeInit");
-            forgeInit.setAccessible(true);
-            //reinitialize forge capabilities and delegate reference
-            forgeInit.invoke(itemStack);
-        } catch (ReflectiveOperationException exception) {
-            //should be impossible, actually
-            throw new RuntimeException(exception);
-        }
     }
 
     /**
