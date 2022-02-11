@@ -1,8 +1,10 @@
 package gregtech.api.items.toolitem;
 
 import com.google.common.collect.Multimap;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
@@ -42,6 +44,10 @@ public class GTToolItem extends ItemTool implements GTToolDefinition {
         this.sound = sound;
         this.toolClasses = Collections.unmodifiableSet(toolClasses);
         this.effectiveBlocks = effectiveBlocks;
+        setMaxStackSize(1);
+        setCreativeTab(CreativeTabs.TOOLS);
+        setTranslationKey("gt.tool." + id + ".name");
+        setRegistryName(domain, id);
     }
 
     @Override
@@ -78,6 +84,11 @@ public class GTToolItem extends ItemTool implements GTToolDefinition {
     @Override
     public Set<Block> getEffectiveBlocks() {
         return effectiveBlocks;
+    }
+
+    @Override
+    public String getItemStackDisplayName(ItemStack stack) {
+        return LocalizationUtils.format(getTranslationKey(), getToolMaterial(stack).getLocalizedName());
     }
 
     @Override
