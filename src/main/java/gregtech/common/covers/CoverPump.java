@@ -5,6 +5,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.google.common.math.IntMath;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -165,6 +166,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         return "cover.pump.title";
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     @Override
     public ModularUI createUI(EntityPlayer player) {
         WidgetGroup primaryGroup = new WidgetGroup();
@@ -182,7 +184,9 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         TextFieldWidget2 textField = new TextFieldWidget2(45, 26, 60, 20, () -> bucketMode == BucketMode.BUCKET ? Integer.toString(transferRate / 1000) : Integer.toString(transferRate), val -> {
             if (val != null && !val.isEmpty()) {
                 int amount = Integer.parseInt(val);
-                amount *= this.bucketMode == BucketMode.BUCKET ? 1000 : 1;
+                if (this.bucketMode == BucketMode.BUCKET) {
+                    amount = IntMath.saturatedMultiply(amount, 1000);
+                }
                 setTransferRate(amount);
             }
         })
@@ -194,7 +198,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
 
         primaryGroup.addWidget(new CycleButtonWidget(106, 20, 30, 20,
                 BucketMode.class, this::getBucketMode, mode -> {
-            if(mode != bucketMode) {
+            if (mode != bucketMode) {
                 setBucketMode(mode);
             }
         }));
