@@ -14,6 +14,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,6 +94,18 @@ public class ToolItems {
                     }
                 } else {
                     event.getEntityPlayer().setHeldItem(event.getHand(), brokenStack);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
+        if (event.player != null && !event.player.world.isRemote) {
+            for (int i = 0; i < event.craftMatrix.getSizeInventory(); i++) {
+                Item item = event.craftMatrix.getStackInSlot(i).getItem();
+                if (item instanceof GTToolDefinition) {
+                    ((GTToolDefinition) item).playSound(event.player);
                 }
             }
         }
