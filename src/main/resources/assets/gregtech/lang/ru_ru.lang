@@ -2463,9 +2463,6 @@ cover.smart_item_filter.filtering_mode.electrolyzer=Электролизер
 cover.smart_item_filter.filtering_mode.centrifuge=Центрифуга
 cover.smart_item_filter.filtering_mode.sifter=Просеиватель
 cover.smart_item_filter.filtering_mode.description=Выберите машину для которой будут/не будут фильтроваться предметы для роботической руки.
-cover.smart_item_filter.matching_mode.default=По умолчанию
-cover.smart_item_filter.matching_mode.ignore_fluid=Игнорировать жидкости
-cover.smart_item_filter.matching_mode.description=§eПо умолчанию§r - будет фильтровать предметы и жидкости по определенным критериям. /n§eИгнорировать жидкостиs§r - будет фильтровать только предметы.
 
 behavior.prospector.not_enough_energy=Ошибка анализа: Недостаточно энергии!
 

@@ -1099,9 +1099,6 @@ cover.smart_item_filter.filtering_mode.electrolyzer=电解机
 cover.smart_item_filter.filtering_mode.centrifuge=离心机
 cover.smart_item_filter.filtering_mode.sifter=筛选器
 cover.smart_item_filter.filtering_mode.description=挑选机这个智能滤镜用于过滤
-cover.smart_item_filter.matching_mode.default=默认
-cover.smart_item_filter.matching_mode.ignore_fluid=忽略流体
-cover.smart_item_filter.matching_mode.description=§e默认§r - 如果您没有提供任何流体，将匹配两个物品/流体标准的配方. /n§e忽略液体§r - 就会只对物品匹配配方.
 
 cover.conveyor.title=传送带覆盖板配置 (%s)
 cover.conveyor.transfer_rate=§7物品/秒
