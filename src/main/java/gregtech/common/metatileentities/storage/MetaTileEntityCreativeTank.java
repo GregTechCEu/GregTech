@@ -43,8 +43,6 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     private boolean active = false;
 
-    private final List<Character> ALLOWED_CHARS = Lists.newArrayList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-
     public MetaTileEntityCreativeTank(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 15, -1);
     }
@@ -70,15 +68,14 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         builder.widget(new PhantomFluidWidget(36, 6, 18, 18,
                 () -> this.fluidTank.getFluid(), data -> {
             this.fluidTank.setFluid(data);
-        })
-                .showTip(false).setBackgroundTexture(GuiTextures.SLOT_DARKENED));
+        }).showTip(false));
         builder.label(7, 9, "Fluid");
         builder.widget(new ImageWidget(7, 45, 154, 14, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(9, 47, 152, 10, () -> String.valueOf(mBPerCycle), value -> {
             if (!value.isEmpty()) {
                 mBPerCycle = Integer.parseInt(value);
             }
-        }).setAllowedChars(TextFieldWidget2.NATURAL_NUMS).setMaxLength(19).setValidator(getTextFieldValidator()));
+        }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
         builder.label(7, 28, "mB per cycle");
 
         builder.widget(new ImageWidget(7, 82, 154, 14, GuiTextures.DISPLAY));
@@ -86,7 +83,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
             if (!value.isEmpty()) {
                 ticksPerCycle = Integer.parseInt(value);
             }
-        }).setMaxLength(10).setNumbersOnly(1, Integer.MAX_VALUE));
+        }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
         builder.label(7, 65, "Ticks per cycle");
 
 
@@ -135,24 +132,6 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         ticksPerCycle = data.getInteger("TicksPerCycle");
         active = data.getBoolean("Active");
         super.readFromNBT(data);
-    }
-
-    public Function<String, String> getTextFieldValidator() {
-        return val -> {
-            if (val.isEmpty()) {
-                return "0";
-            }
-            long num;
-            try {
-                num = Long.parseLong(val);
-            } catch (NumberFormatException ignored) {
-                return "0";
-            }
-            if (num < 0) {
-                return "0";
-            }
-            return val;
-        };
     }
 
     @Override
