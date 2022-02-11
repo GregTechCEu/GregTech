@@ -1,7 +1,19 @@
 package gregtech.common.items;
 
+import gregtech.api.GTValues;
 import gregtech.api.items.toolitem.GTToolDefinition;
+import gregtech.api.items.toolitem.GTToolItem;
+import gregtech.api.sound.GTSounds;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +61,16 @@ public class ToolItems {
     public static GTToolDefinition SCREWDRIVER_LV;
 
     public static void init() {
+        MinecraftForge.EVENT_BUS.register(ToolItems.class);
+        WRENCH = GTToolItem.Builder.of(GTValues.MODID, "wrench")
+                .toolStats(b -> b.damagePerCraft(8).usedForAttacking())
+                .sound(GTSounds.WRENCH_TOOL)
+                .build();
+        TOOLS.add(WRENCH);
+    }
 
+    public static void registerModels() {
+        TOOLS.forEach(tool -> ModelLoader.setCustomModelResourceLocation(tool.get(), 0, new ModelResourceLocation(tool.get().getRegistryName(), "inventory")));
     }
 
     public static void registerColors() {
