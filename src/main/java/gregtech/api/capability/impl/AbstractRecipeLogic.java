@@ -92,7 +92,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     protected abstract boolean drawEnergy(int recipeEUt, boolean simulate);
 
-    abstract long getMaxVoltage();
+    protected abstract long getMaxVoltage();
 
     protected IItemHandlerModifiable getInputInventory() {
         return metaTileEntity.getImportItems();
