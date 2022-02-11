@@ -32,6 +32,7 @@ import gregtech.common.command.GregTechCommand;
 import gregtech.common.covers.CoverBehaviors;
 import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.ToolItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.worldgen.LootTableHelper;
 import gregtech.integration.jei.recipe.primitive.OreByProduct;
@@ -116,6 +117,7 @@ public class GregTechMod {
 
         MetaBlocks.init();
         MetaItems.init();
+        ToolItems.init();
         MetaFluids.init();
 
         GTSounds.registerSounds();
