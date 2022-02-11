@@ -56,4 +56,25 @@ public class ToolItems {
         TOOLS.forEach(tool -> Minecraft.getMinecraft().getItemColors().registerItemColorHandler(tool::getColor, tool.get()));
     }
 
+    // Handle returning broken stacks
+    @SubscribeEvent
+    public static void onPlayerDestroyItem(PlayerDestroyItemEvent event) {
+        Item item = event.getOriginal().getItem();
+        if (item instanceof GTToolDefinition) {
+            GTToolDefinition def = (GTToolDefinition) item;
+            ItemStack brokenStack = def.getToolStats().getBrokenStack();
+            if (!brokenStack.isEmpty()) {
+                brokenStack = brokenStack.copy();
+                if (event.getHand() == null) {
+                    // Special-case container items?
+                    if (!event.getEntityPlayer().addItemStackToInventory(brokenStack)) {
+                        event.getEntityPlayer().dropItem(brokenStack, true);
+                    }
+                } else {
+                    event.getEntityPlayer().setHeldItem(event.getHand(), brokenStack);
+                }
+            }
+        }
+    }
+
 }
