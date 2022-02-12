@@ -126,15 +126,6 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
     }
 
     private static boolean isModLoaded(String modid) {
-        boolean isLoaded = Loader.instance().getIndexedModList().containsKey(modid);
-        if (isLoaded) return true;
-        try {
-            Class.forName(modid);
-            return true;
-        } catch (ClassNotFoundException ignored) {
-        } catch (NoClassDefFoundError noClassDefFoundError) {
-            return true;
-        }
-        return false
+        return Loader.instance().getIndexedModList().containsKey(modid);
     }
 }
