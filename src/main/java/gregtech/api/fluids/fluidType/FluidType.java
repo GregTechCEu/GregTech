@@ -5,6 +5,7 @@ import crafttweaker.api.liquid.ILiquidStack;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTLog;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.Optional;
@@ -19,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@ZenClass()
+@ZenClass("mods.gregtech.material.FluidType")
 @ZenRegister
 public abstract class FluidType {
 
@@ -65,7 +66,7 @@ public abstract class FluidType {
     @Optional.Method(modid = GTValues.MODID_CT)
     public static void setFluidPropertiesCT(FluidType fluidType, @Nonnull ILiquidStack liquidStack) {
         Material material = GregTechAPI.MATERIAL_REGISTRY.getObject(liquidStack.getName());
-        if (material == null) {
+        if (material == null || !material.hasProperty(PropertyKey.FLUID)) {
             GTLog.logger.warn("LiquidStack {} does not have a FluidProperty!", liquidStack.getName());
             return;
         }

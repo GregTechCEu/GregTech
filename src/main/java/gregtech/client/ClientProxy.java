@@ -5,10 +5,6 @@ import codechicken.lib.util.ItemNBTUtils;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.MetaFluids;
 import gregtech.api.items.metaitem.MetaOreDictItem;
-import gregtech.client.model.customtexture.CustomTextureModelHandler;
-import gregtech.client.model.customtexture.MetadataSectionCTM;
-import gregtech.client.renderer.handler.MetaTileEntityRenderer;
-import gregtech.client.renderer.pipe.*;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.info.MaterialIconSet;
@@ -24,7 +20,6 @@ import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
-import gregtech.client.shader.Shaders;
 import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaEntities;
@@ -194,7 +189,7 @@ public class ClientProxy extends CommonProxy {
             tooltips = FluidTooltipUtil.getFluidTooltip(ItemNBTUtils.getString(itemStack, "FluidName"));
 
             // GTCE Cells, Forestry cans, some other containers
-            if (tooltips != null && tooltips.size() > 2 && tooltips.get(2) == null) {
+            if (tooltips == null || tooltips.size() == 0) {
                 NBTTagCompound compound = itemStack.getTagCompound();
                 if (compound != null && compound.hasKey(FluidHandlerItemStack.FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
                     FluidStack fstack = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY));
