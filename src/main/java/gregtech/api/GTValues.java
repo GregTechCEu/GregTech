@@ -165,4 +165,11 @@ public class GTValues {
         String[] yearMonthDay = LocalDate.now().toString().split("-");
         return yearMonthDay[1].equals("04") && yearMonthDay[2].equals("01");
     };
+
+    /**
+     * set true if running tests
+     *
+     * used to force the use of server or client side only methods to prevent test failures
+     */
+    public static boolean IS_TEST = false;
 }

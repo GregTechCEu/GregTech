@@ -1,5 +1,6 @@
 package gregtech.api.util;
 
+import gregtech.api.GTValues;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -21,7 +22,7 @@ public class LocalizationUtils {
      * @return the localized string.
      */
     public static String format(String localisationKey, Object... substitutions) {
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER || GTValues.IS_TEST) {
             return net.minecraft.util.text.translation.I18n.translateToLocalFormatted(localisationKey, substitutions);
         } else {
             return net.minecraft.client.resources.I18n.format(localisationKey, substitutions);

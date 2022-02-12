@@ -49,8 +49,8 @@ public class MetaFluids {
         registerIconFluidSprites();
 
         // handle vanilla fluids
-        addNonStandardMaterialFluidTooltip(Materials.Water, FluidRegistry.WATER);
-        addNonStandardMaterialFluidTooltip(Materials.Lava, FluidRegistry.LAVA);
+        handleNonMaterialFluids(Materials.Water, FluidRegistry.WATER);
+        handleNonMaterialFluids(Materials.Lava, FluidRegistry.LAVA);
 
         // alternative names for forestry fluids
         addAlternativeNames();
@@ -76,7 +76,7 @@ public class MetaFluids {
         }
     }
 
-    public static void addNonStandardMaterialFluidTooltip(@Nonnull Material material, @Nonnull Fluid fluid) {
+    public static void handleNonMaterialFluids(@Nonnull Material material, @Nonnull Fluid fluid) {
         material.getProperty(PropertyKey.FLUID).setFluid(fluid);
         List<String> tooltip = new ArrayList<>();
         if (!material.getChemicalFormula().isEmpty()) {
