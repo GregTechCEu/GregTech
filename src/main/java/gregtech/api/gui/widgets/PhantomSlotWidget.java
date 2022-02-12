@@ -25,7 +25,7 @@ public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTar
     private boolean clearSlotOnRightClick;
 
     public PhantomSlotWidget(IItemHandlerModifiable itemHandler, int slotIndex, int xPosition, int yPosition) {
-        super(itemHandler, slotIndex, xPosition, yPosition, false, true);
+        super(itemHandler, slotIndex, xPosition, yPosition, false, false);
     }
 
     public PhantomSlotWidget setClearSlotOnRightClick(boolean clearSlotOnRightClick) {

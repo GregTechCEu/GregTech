@@ -98,7 +98,7 @@ public class GTUtility {
     public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest, boolean fixTools) {
         for (int i = 0; i < src.getSlots(); i++) {
             ItemStack itemStack = src.getStackInSlot(i);
-            if (itemStack.getItem() instanceof ToolMetaItem) {
+            if (fixTools && itemStack.getItem() instanceof ToolMetaItem) {
                 ItemStack toolStack = itemStack.copy();
                 NBTTagCompound toolStats = toolStack.getTagCompound().getCompoundTag("GT.ToolStats");
                 toolStats.setInteger("Dmg", 0);
