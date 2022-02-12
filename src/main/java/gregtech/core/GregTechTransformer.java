@@ -135,6 +135,6 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
         } catch (NoClassDefFoundError noClassDefFoundError) {
             isLoaded = true;
         }
-        return false
+        return false;
     }
 }
