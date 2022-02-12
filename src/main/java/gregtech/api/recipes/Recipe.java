@@ -502,6 +502,10 @@ public class Recipe {
         return recipePropertyStorage.getSize();
     }
 
+    public int getUnhiddenPropertyCount() {
+        return (int) recipePropertyStorage.getRecipeProperties().stream().filter((property) -> !property.getKey().isHidden()).count();
+    }
+
     public RecipePropertyStorage getRecipePropertyStorage() {
         return recipePropertyStorage;
     }
