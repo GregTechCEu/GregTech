@@ -45,6 +45,7 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
@@ -233,7 +234,7 @@ public class CommonProxy {
         OrePrefix.runMaterialHandlers();
         GTRecipeManager.loadLatest();
 
-        if (GTValues.isModLoaded(GTValues.MODID_CT)) {
+        if (Loader.isModLoaded(GTValues.MODID_CT)) {
             MetaItemBracketHandler.rebuildComponentRegistry();
         }
     }
@@ -307,7 +308,7 @@ public class CommonProxy {
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {
-        if(GTValues.isModLoaded(GTValues.MODID_JEI) && event.getSide() == Side.CLIENT) {
+        if(Loader.isModLoaded(GTValues.MODID_JEI) && event.getSide() == Side.CLIENT) {
             GTJeiPlugin.setupInputHandler();
         }
     }

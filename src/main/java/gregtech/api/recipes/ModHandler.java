@@ -38,6 +38,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
@@ -757,7 +758,7 @@ public class ModHandler {
      */
     public static void removeSmeltingEBFMetals() {
 
-        boolean isCTLoaded = GTValues.isModLoaded(GTValues.MODID_CT);
+        boolean isCTLoaded = Loader.isModLoaded(GTValues.MODID_CT);
 
         Field actionAddFurnaceRecipe$output = null;
 
