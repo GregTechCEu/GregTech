@@ -1,6 +1,5 @@
 package gregtech.core;
 
-import gregtech.api.GTValues;
 import gregtech.common.ConfigHolder;
 import gregtech.core.util.TargetClassVisitor;
 import gregtech.core.visitors.*;
@@ -70,7 +69,7 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 return classWriter.toByteArray();
             }
             case BlockVisitor.TARGET_CLASS_NAME:{
-                if (!GTValues.isModLoaded("team.chisel.ctm.CTM")) {
+                if (!isModLoaded("team.chisel.ctm.CTM")) {
                     ClassReader classReader = new ClassReader(basicClass);
                     ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
                     ClassNode classNode = new ClassNode();
@@ -124,5 +123,18 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
             }
         }
         return basicClass;
+    }
+
+    private static boolean isModLoaded(String modid) {
+        boolean isLoaded = Loader.instance().getIndexedModList().containsKey(modid);
+        if (isLoaded) return true;
+        try {
+            Class.forName(modid);
+            return true;
+        } catch (ClassNotFoundException ignored) {
+        } catch (NoClassDefFoundError noClassDefFoundError) {
+            return true;
+        }
+        return false
     }
 }
