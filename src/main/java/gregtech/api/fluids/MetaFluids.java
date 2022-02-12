@@ -13,6 +13,7 @@ import gregtech.api.unification.material.properties.PlasmaProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
@@ -48,7 +49,8 @@ public class MetaFluids {
         registerIconFluidSprites();
 
         // handle vanilla fluids
-        handleVanillaFluids();
+        addNonStandardMaterialFluidTooltip(Materials.Water, FluidRegistry.WATER);
+        addNonStandardMaterialFluidTooltip(Materials.Lava, FluidRegistry.LAVA);
 
         // alternative names for forestry fluids
         addAlternativeNames();
@@ -74,12 +76,16 @@ public class MetaFluids {
         }
     }
 
-    private static void handleVanillaFluids() {
-        Materials.Water.getProperty(PropertyKey.FLUID).setFluid(FluidRegistry.WATER);
-        FluidTooltipUtil.registerTooltip(FluidRegistry.WATER, TextFormatting.YELLOW + Materials.Water.getChemicalFormula());
-        Materials.Lava.getProperty(PropertyKey.FLUID).setFluid(FluidRegistry.LAVA);
-        if (!Materials.Lava.getChemicalFormula().isEmpty())
-            FluidTooltipUtil.registerTooltip(FluidRegistry.LAVA, TextFormatting.YELLOW + Materials.Lava.getChemicalFormula());
+    public static void addNonStandardMaterialFluidTooltip(@Nonnull Material material, @Nonnull Fluid fluid) {
+        material.getProperty(PropertyKey.FLUID).setFluid(fluid);
+        List<String> tooltip = new ArrayList<>();
+        if (!material.getChemicalFormula().isEmpty()) {
+            tooltip.add(TextFormatting.YELLOW + material.getChemicalFormula());
+        }
+        tooltip.add(LocalizationUtils.format("gregtech.fluid.temperature", material.getProperty(PropertyKey.FLUID).getFluidTemperature()));
+        tooltip.add(LocalizationUtils.format(material.getProperty(PropertyKey.FLUID).getFluidType().getUnlocalizedTooltip()));
+        tooltip.addAll(material.getProperty(PropertyKey.FLUID).getFluidType().getAdditionalTooltips());
+        FluidTooltipUtil.registerTooltip(fluid, tooltip);
     }
 
     private static void addAlternativeNames() {
