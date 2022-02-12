@@ -180,6 +180,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     private int getPropertyListHeight() {
         if (recipeMap == RecipeMaps.COKE_OVEN_RECIPES)
             return LINE_HEIGHT - 6; // fun hack TODO Make this easier to position
-        return (recipe.getPropertyCount() + 3) * LINE_HEIGHT - 3;
+        return (recipe.getUnhiddenPropertyCount() + 3) * LINE_HEIGHT - 3;
     }
 }
