@@ -189,8 +189,11 @@ public class ConfigHolder {
                 "Useful for mods like TerraFirmaCraft.", "Default: false"})
         public boolean generateLowQualityGems = false;
 
-        @Config.Comment({"Whether to remove Block/Ingot compression and decompression in the Crafting Table.", "Default: false"})
+        @Config.Comment({"Whether to remove Block/Ingot compression and decompression in the Crafting Table for GTCEu and Vanilla materials.", "Default: false"})
         public boolean disableManualCompression = false;
+
+        @Config.Comment({"Whether to remove Block/Ingot compression and decompression in the Crafting Table for non-GTCEu materials.", "Default: false"})
+        public boolean disableManualCompressionForOtherMaterials = false;
 
         @Config.Comment({"Whether to remove Vanilla Block Recipes from the Crafting Table.", "Default: false"})
         public boolean removeVanillaBlockRecipes = false;

@@ -26,5 +26,6 @@ public class GTRecipeManager {
 
     public static void postLoad() {
         WoodMachineRecipes.postInit();
+        CompressedBlockRecipes.postInit();
     }
 }
