@@ -344,12 +344,17 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         builder.widget(new AdvancedTextWidget(11, 19, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(156)
                 .setClickHandler(this::handleDisplayClick));
-        // Temporary Texture
-        builder.widget(new CycleButtonWidget(142, 121 - 16, 26, 18,
-                VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
-                .setTooltipHoverString(LocalizationUtils.format("gregtech.gui.multiblock_voiding_description")));
+        if(shouldShowVoidingModeButton()) {
+            builder.widget(new CycleButtonWidget(142, 121 - 16, 26, 18,
+                    VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
+                    .setTooltipHoverString(LocalizationUtils.format("gregtech.gui.multiblock_voiding_description")));
+        }
         builder.bindPlayerInventory(entityPlayer.inventory, 134);
         return builder;
+    }
+
+    protected boolean shouldShowVoidingModeButton() {
+        return true;
     }
 
     protected VoidingMode getVoidingMode() {
