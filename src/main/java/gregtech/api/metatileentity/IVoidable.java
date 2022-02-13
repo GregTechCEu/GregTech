@@ -1,5 +1,9 @@
 package gregtech.api.metatileentity;
 
+import net.minecraft.util.IStringSerializable;
+
+import javax.annotation.Nonnull;
+
 public interface IVoidable {
 
     boolean canVoidRecipeItemOutputs();
@@ -15,7 +19,7 @@ public interface IVoidable {
         return -1;
     }
 
-    enum VoidingMode {
+    enum VoidingMode implements IStringSerializable {
         VOID_NONE("gregtech.gui.multiblock_no_voiding"),
         VOID_ITEMS("gregtech.gui.multiblock_item_voiding"),
         VOID_FLUIDS("gregtech.gui.multiblock_fluid_voiding"),
@@ -25,6 +29,12 @@ public interface IVoidable {
 
         VoidingMode(String name) {
             this.localeName = name;
+        }
+
+        @Nonnull
+        @Override
+        public String getName() {
+            return localeName;
         }
     }
 

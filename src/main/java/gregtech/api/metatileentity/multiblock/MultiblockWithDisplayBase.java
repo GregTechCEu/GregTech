@@ -8,13 +8,14 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.common.ConfigHolder;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -344,11 +345,15 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                 .setMaxWidthLimit(156)
                 .setClickHandler(this::handleDisplayClick));
         // Temporary Texture
-        builder.widget(new ImageCycleButtonWidget(144, 121 - 18, 18, 18, GuiTextures.BUTTON_VOID, 4,
-                () -> this.voidingMode.ordinal(), (newMode) -> this.setVoidingMode(VoidingMode.values()[newMode]))
-                .setTooltipHoverString((ordinal) -> VoidingMode.values()[ordinal].localeName));
+        builder.widget(new CycleButtonWidget(142, 121 - 16, 26, 18,
+                VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
+                .setTooltipHoverString(LocalizationUtils.format("gregtech.gui.multiblock_voiding_description")));
         builder.bindPlayerInventory(entityPlayer.inventory, 134);
         return builder;
+    }
+
+    protected VoidingMode getVoidingMode() {
+        return voidingMode;
     }
 
     private void setVoidingMode(VoidingMode mode) {
