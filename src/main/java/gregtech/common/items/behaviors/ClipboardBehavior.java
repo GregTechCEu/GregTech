@@ -238,16 +238,15 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
 
     @Override
     public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {
+        if (!world.isRemote && facing.getAxis() != EnumFacing.Axis.Y) {
             ItemStack heldItem = player.getHeldItem(hand).copy();
             heldItem.setCount(1); // don't place multiple items at a time
-            EnumFacing playerFacing = player.getHorizontalFacing();
             // Make sure it's the right block
-            Block testBlock = world.getBlockState(pos).getBlock();
-            IBlockState testState = testBlock.getDefaultState();
-            if (!testBlock.isAir(world.getBlockState(pos), world, pos) && testState.isSideSolid(world, pos, playerFacing)) {
+            IBlockState testState = world.getBlockState(pos);
+            Block testBlock = testState.getBlock();
+            if (!testBlock.isAir(world.getBlockState(pos), world, pos) && testState.isSideSolid(world, pos, facing)) {
                 // Step away from the block so you don't replace it, and then give it our fun blockstate
-                BlockPos shiftedPos = pos.offset(playerFacing.getOpposite());
+                BlockPos shiftedPos = pos.offset(facing);
                 Block shiftedBlock = world.getBlockState(shiftedPos).getBlock();
                 if (shiftedBlock.isAir(world.getBlockState(shiftedPos), world, shiftedPos)) {
                     IBlockState state = MACHINE.getDefaultState();
@@ -259,7 +258,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
                     if (holder != null) {
                         MetaTileEntityClipboard clipboard = (MetaTileEntityClipboard) holder.setMetaTileEntity(CLIPBOARD_TILE, heldItem);
                         if (clipboard != null) {
-                            clipboard.setFrontFacing(playerFacing);
+                            clipboard.setFrontFacing(facing.getOpposite());
                             clipboard.setClipboard(heldItem);
                             ItemStack returnedStack = player.getHeldItem(hand);
                             if (!player.isCreative()) {
@@ -271,6 +270,6 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
                 }
             }
         }
-        return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
+        return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
     }
 }
