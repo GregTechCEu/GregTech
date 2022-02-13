@@ -245,14 +245,14 @@ public class OrganicChemistryMaterials {
                 .fluid()
                 .color(0xEEC6AF)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Carbon, 3, Oxygen, 6, Hydrogen, 2)
+                .components(Carbon, 3, Hydrogen, 6, Oxygen, 2)
                 .build();
 
         Ethenone = new Material.Builder(1035, "ethenone")
                 .fluid()
                 .color(0x141446)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Carbon, 3, Oxygen, 6, Hydrogen, 2)
+                .components(Carbon, 2, Hydrogen, 2, Oxygen, 1)
                 .build();
 
         Tetranitromethane = new Material.Builder(1036, "tetranitromethane")
