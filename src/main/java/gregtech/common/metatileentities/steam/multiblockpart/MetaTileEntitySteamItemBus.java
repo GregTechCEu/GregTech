@@ -91,6 +91,7 @@ public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus implements
                         GuiTextures.SLOT_STEAM.get(IS_STEEL));
             }
         }
+        builder.shouldColor(false);
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT_STEAM.get(IS_STEEL), 7, 83);
         return builder.build(getHolder(), entityPlayer);
     }
