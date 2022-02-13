@@ -2810,7 +2810,7 @@ gregtech.machine.arc_furnace.uxv.tooltip=Short Circuit Heater
 gregtech.machine.arc_furnace.opv.name=Legendary Arc Furnace
 gregtech.machine.arc_furnace.opv.tooltip=Short Circuit Heater
 
-# Assembler TODO
+# Assembler
 gregtech.machine.assembler.lv.name=Basic Assembling Machine
 gregtech.machine.assembler.lv.tooltip=Avengers, Assemble!
 gregtech.machine.assembler.mv.name=Advanced Assembling Machine
@@ -2820,11 +2820,11 @@ gregtech.machine.assembler.hv.tooltip=Avengers, Assemble!
 gregtech.machine.assembler.ev.name=Advanced Assembling Machine III
 gregtech.machine.assembler.ev.tooltip=Avengers, Assemble!
 gregtech.machine.assembler.iv.name=Elite Assembling Machine
-gregtech.machine.assembler.iv.tooltip=
+gregtech.machine.assembler.iv.tooltip=NOT a Crafting Table
 gregtech.machine.assembler.luv.name=Elite Assembling Machine II
-gregtech.machine.assembler.luv.tooltip=
+gregtech.machine.assembler.luv.tooltip=NOT a Crafting Table
 gregtech.machine.assembler.zpm.name=Elite Assembling Machine III
-gregtech.machine.assembler.zpm.tooltip=
+gregtech.machine.assembler.zpm.tooltip=NOT a Crafting Table
 gregtech.machine.assembler.uv.name=Ultimate Assembling Machine
 gregtech.machine.assembler.uv.tooltip=Assembly Constructor
 gregtech.machine.assembler.uhv.name=Epic Assembling Machine
@@ -3092,7 +3092,7 @@ gregtech.machine.cutter.uxv.tooltip=Object Divider
 gregtech.machine.cutter.opv.name=Legendary Cutting Machine
 gregtech.machine.cutter.opv.tooltip=Object Divider
 
-# Distillery TODO
+# Distillery
 gregtech.machine.distillery.lv.name=Basic Distillery
 gregtech.machine.distillery.lv.tooltip=Extracting most relevant Parts of Fluids
 gregtech.machine.distillery.mv.name=Advanced Distillery
@@ -3102,11 +3102,11 @@ gregtech.machine.distillery.hv.tooltip=Extracting most relevant Parts of Fluids
 gregtech.machine.distillery.ev.name=Advanced Distillery III
 gregtech.machine.distillery.ev.tooltip=Extracting most relevant Parts of Fluids
 gregtech.machine.distillery.iv.name=Elite Distillery
-gregtech.machine.distillery.iv.tooltip=
+gregtech.machine.distillery.iv.tooltip=Condensation Separator
 gregtech.machine.distillery.luv.name=Elite Distillery II
-gregtech.machine.distillery.luv.tooltip=
+gregtech.machine.distillery.luv.tooltip=Condensation Separator
 gregtech.machine.distillery.zpm.name=Elite Distillery III
-gregtech.machine.distillery.zpm.tooltip=
+gregtech.machine.distillery.zpm.tooltip=Condensation Separator
 gregtech.machine.distillery.uv.name=Ultimate Distillery
 gregtech.machine.distillery.uv.tooltip=Fraction Splitter
 gregtech.machine.distillery.uhv.name=Epic Distillery
@@ -3148,7 +3148,7 @@ gregtech.machine.electrolyzer.uxv.tooltip=Atomic Ionizer
 gregtech.machine.electrolyzer.opv.name=Legendary Electrolyzer
 gregtech.machine.electrolyzer.opv.tooltip=Atomic Ionizer
 
-# Electromagnetic Separator TODO
+# Electromagnetic Separator
 gregtech.machine.electromagnetic_separator.lv.name=Basic Electromagnetic Separator
 gregtech.machine.electromagnetic_separator.lv.tooltip=Separating the magnetic Ores from the rest
 gregtech.machine.electromagnetic_separator.mv.name=Advanced Electromagnetic Separator
@@ -3158,11 +3158,11 @@ gregtech.machine.electromagnetic_separator.hv.tooltip=Separating the magnetic Or
 gregtech.machine.electromagnetic_separator.ev.name=Advanced Electromagnetic Separator III
 gregtech.machine.electromagnetic_separator.ev.tooltip=Separating the magnetic Ores from the rest
 gregtech.machine.electromagnetic_separator.iv.name=Elite Electromagnetic Separator
-gregtech.machine.electromagnetic_separator.iv.tooltip=
+gregtech.machine.electromagnetic_separator.iv.tooltip=EM Categorizer
 gregtech.machine.electromagnetic_separator.luv.name=Elite Electromagnetic Separator II
-gregtech.machine.electromagnetic_separator.luv.tooltip=
+gregtech.machine.electromagnetic_separator.luv.tooltip=EM Categorizer
 gregtech.machine.electromagnetic_separator.zpm.name=Elite Electromagnetic Separator III
-gregtech.machine.electromagnetic_separator.zpm.tooltip=
+gregtech.machine.electromagnetic_separator.zpm.tooltip=EM Categorizer
 gregtech.machine.electromagnetic_separator.uv.name=Ultimate Electromagnetic Separator
 gregtech.machine.electromagnetic_separator.uv.tooltip=EMF Dispeller
 gregtech.machine.electromagnetic_separator.uhv.name=Epic Electromagnetic Separator
@@ -3248,19 +3248,19 @@ gregtech.machine.fermenter.luv.tooltip=Fermentation Hastener
 gregtech.machine.fermenter.zpm.name=Elite Fermenter III
 gregtech.machine.fermenter.zpm.tooltip=Fermentation Hastener
 gregtech.machine.fermenter.uv.name=Ultimate Fermenter
-gregtech.machine.fermenter.uv.tooltip=
+gregtech.machine.fermenter.uv.tooltip=Respiration Controller
 gregtech.machine.fermenter.uhv.name=Epic Fermenter
-gregtech.machine.fermenter.uhv.tooltip=
+gregtech.machine.fermenter.uhv.tooltip=Respiration Controller
 gregtech.machine.fermenter.uev.name=Epic Fermenter II
-gregtech.machine.fermenter.uev.tooltip=
+gregtech.machine.fermenter.uev.tooltip=Respiration Controller
 gregtech.machine.fermenter.uiv.name=Epic Fermenter III
-gregtech.machine.fermenter.uiv.tooltip=
+gregtech.machine.fermenter.uiv.tooltip=Respiration Controller
 gregtech.machine.fermenter.uxv.name=Epic Fermenter IV
-gregtech.machine.fermenter.uxv.tooltip=
+gregtech.machine.fermenter.uxv.tooltip=Respiration Controller
 gregtech.machine.fermenter.opv.name=Legendary Fermenter
-gregtech.machine.fermenter.opv.tooltip=
+gregtech.machine.fermenter.opv.tooltip=Respiration Controller
 
-# Fluid Heater TODO
+# Fluid Heater
 gregtech.machine.fluid_heater.lv.name=Basic Fluid Heater
 gregtech.machine.fluid_heater.lv.tooltip=Heating up your Fluids
 gregtech.machine.fluid_heater.mv.name=Advanced Fluid Heater
@@ -3276,19 +3276,19 @@ gregtech.machine.fluid_heater.luv.tooltip=Heat Infuser
 gregtech.machine.fluid_heater.zpm.name=Elite Fluid Heater III
 gregtech.machine.fluid_heater.zpm.tooltip=Heat Infuser
 gregtech.machine.fluid_heater.uv.name=Ultimate Fluid Heater
-gregtech.machine.fluid_heater.uv.tooltip=
+gregtech.machine.fluid_heater.uv.tooltip=Thermal Imbuer
 gregtech.machine.fluid_heater.uhv.name=Epic Fluid Heater
-gregtech.machine.fluid_heater.uhv.tooltip=
+gregtech.machine.fluid_heater.uhv.tooltip=Thermal Imbuer
 gregtech.machine.fluid_heater.uev.name=Epic Fluid Heater II
-gregtech.machine.fluid_heater.uev.tooltip=
+gregtech.machine.fluid_heater.uev.tooltip=Thermal Imbuer
 gregtech.machine.fluid_heater.uiv.name=Epic Fluid Heater III
-gregtech.machine.fluid_heater.uiv.tooltip=
+gregtech.machine.fluid_heater.uiv.tooltip=Thermal Imbuer
 gregtech.machine.fluid_heater.uxv.name=Epic Fluid Heater IV
-gregtech.machine.fluid_heater.uxv.tooltip=
+gregtech.machine.fluid_heater.uxv.tooltip=Thermal Imbuer
 gregtech.machine.fluid_heater.opv.name=Legendary Fluid Heater
-gregtech.machine.fluid_heater.opv.tooltip=
+gregtech.machine.fluid_heater.opv.tooltip=Thermal Imbuer
 
-# Fluid Solidifier TODO
+# Fluid Solidifier
 gregtech.machine.fluid_solidifier.lv.name=Basic Fluid Solidifier
 gregtech.machine.fluid_solidifier.lv.tooltip=Cools Fluids down to form Solids
 gregtech.machine.fluid_solidifier.mv.name=Advanced Fluid Solidifier
@@ -3298,11 +3298,11 @@ gregtech.machine.fluid_solidifier.hv.tooltip=Cools Fluids down to form Solids
 gregtech.machine.fluid_solidifier.ev.name=Advanced Fluid Solidifier III
 gregtech.machine.fluid_solidifier.ev.tooltip=Cools Fluids down to form Solids
 gregtech.machine.fluid_solidifier.iv.name=Elite Fluid Solidifier
-gregtech.machine.fluid_solidifier.iv.tooltip=
+gregtech.machine.fluid_solidifier.iv.tooltip=Not an Ice Machine
 gregtech.machine.fluid_solidifier.luv.name=Elite Fluid Solidifier II
-gregtech.machine.fluid_solidifier.luv.tooltip=
+gregtech.machine.fluid_solidifier.luv.tooltip=Not an Ice Machine
 gregtech.machine.fluid_solidifier.zpm.name=Elite Fluid Solidifier III
-gregtech.machine.fluid_solidifier.zpm.tooltip=
+gregtech.machine.fluid_solidifier.zpm.tooltip=Not an Ice Machine
 gregtech.machine.fluid_solidifier.uv.name=Ultimate Fluid Solidifier
 gregtech.machine.fluid_solidifier.uv.tooltip=Fluid Petrificator
 gregtech.machine.fluid_solidifier.uhv.name=Epic Fluid Solidifier
@@ -3316,7 +3316,7 @@ gregtech.machine.fluid_solidifier.uxv.tooltip=Fluid Petrificator
 gregtech.machine.fluid_solidifier.opv.name=Legendary Fluid Solidifier
 gregtech.machine.fluid_solidifier.opv.tooltip=Fluid Petrificator
 
-# Forge Hammer TODO
+# Forge Hammer
 gregtech.machine.forge_hammer.lv.name=Basic Forge Hammer
 gregtech.machine.forge_hammer.lv.tooltip=Stop, Hammertime!
 gregtech.machine.forge_hammer.mv.name=Advanced Forge Hammer
@@ -3326,11 +3326,11 @@ gregtech.machine.forge_hammer.hv.tooltip=Stop, Hammertime!
 gregtech.machine.forge_hammer.ev.name=Advanced Forge Hammer III
 gregtech.machine.forge_hammer.ev.tooltip=Stop, Hammertime!
 gregtech.machine.forge_hammer.iv.name=Elite Forge Hammer
-gregtech.machine.forge_hammer.iv.tooltip=
+gregtech.machine.forge_hammer.iv.tooltip=Plate Forger
 gregtech.machine.forge_hammer.luv.name=Elite Forge Hammer II
-gregtech.machine.forge_hammer.luv.tooltip=
+gregtech.machine.forge_hammer.luv.tooltip=Plate Forger
 gregtech.machine.forge_hammer.zpm.name=Elite Forge Hammer III
-gregtech.machine.forge_hammer.zpm.tooltip=
+gregtech.machine.forge_hammer.zpm.tooltip=Plate Forger
 gregtech.machine.forge_hammer.uv.name=Ultimate Forge Hammer
 gregtech.machine.forge_hammer.uv.tooltip=Impact Modulator
 gregtech.machine.forge_hammer.uhv.name=Epic Forge Hammer
@@ -3344,7 +3344,7 @@ gregtech.machine.forge_hammer.uxv.tooltip=Impact Modulator
 gregtech.machine.forge_hammer.opv.name=Legendary Forge Hammer
 gregtech.machine.forge_hammer.opv.tooltip=Impact Modulator
 
-# Forming Press TODO
+# Forming Press
 gregtech.machine.forming_press.lv.name=Basic Forming Press
 gregtech.machine.forming_press.lv.tooltip=Imprinting Images into things
 gregtech.machine.forming_press.mv.name=Advanced Forming Press
@@ -3354,11 +3354,11 @@ gregtech.machine.forming_press.hv.tooltip=Imprinting Images into things
 gregtech.machine.forming_press.ev.name=Advanced Forming Press III
 gregtech.machine.forming_press.ev.tooltip=Imprinting Images into things
 gregtech.machine.forming_press.iv.name=Elite Forming Press
-gregtech.machine.forming_press.iv.tooltip=
+gregtech.machine.forming_press.iv.tooltip=Object Layerer
 gregtech.machine.forming_press.luv.name=Elite Forming Press II
-gregtech.machine.forming_press.luv.tooltip=
+gregtech.machine.forming_press.luv.tooltip=Object Layerer
 gregtech.machine.forming_press.zpm.name=Elite Forming Press III
-gregtech.machine.forming_press.zpm.tooltip=
+gregtech.machine.forming_press.zpm.tooltip=Object Layerer
 gregtech.machine.forming_press.uv.name=Ultimate Forming Press
 gregtech.machine.forming_press.uv.tooltip=Surface Shifter
 gregtech.machine.forming_press.uhv.name=Epic Forming Press
