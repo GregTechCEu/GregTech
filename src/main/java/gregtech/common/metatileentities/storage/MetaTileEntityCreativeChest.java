@@ -2,7 +2,6 @@ package gregtech.common.metatileentities.storage;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -20,9 +19,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -31,7 +28,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.function.Function;
-import java.util.regex.Pattern;
 
 public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
@@ -77,14 +73,14 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 209)
                 .bindPlayerInventory(entityPlayer.inventory, 126);
         builder.widget(new PhantomSlotWidget(handler, 0, 36, 6).setBackgroundTexture(GuiTextures.SLOT_DARKENED).setChangeListener(this::markDirty));
-        builder.label(7, 9, "Item");
+        builder.label(7, 9, "gregtech.creative.chest.item");
         builder.widget(new ImageWidget(7, 48, 154, 14, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(9, 50, 152, 10, () -> String.valueOf(itemsPerCycle), value -> {
             if (!value.isEmpty()) {
                 itemsPerCycle = Integer.parseInt(value);
             }
         }).setAllowedChars(TextFieldWidget2.NATURAL_NUMS).setMaxLength(19).setValidator(getTextFieldValidator()));
-        builder.label(7, 28, "Items per cycle");
+        builder.label(7, 28, "gregtech.creative.chest.ipc");
 
         builder.widget(new ImageWidget(7, 85, 154, 14, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(9, 87, 152, 10, () -> String.valueOf(ticksPerCycle), value -> {
@@ -92,10 +88,10 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
                 ticksPerCycle = Integer.parseInt(value);
             }
         }).setMaxLength(10).setNumbersOnly(1, Integer.MAX_VALUE));
-        builder.label(7, 65, "Ticks per cycle");
+        builder.label(7, 65, "gregtech.creative.chest.tpc");
 
 
-        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> active = value, "Not active", "Active"));
+        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> active = value, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
 
         return builder.build(getHolder(), entityPlayer);
     }
