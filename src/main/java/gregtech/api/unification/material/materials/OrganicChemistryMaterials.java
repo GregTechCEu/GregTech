@@ -151,9 +151,8 @@ public class OrganicChemistryMaterials {
         Monochloramine = new Material.Builder(1020, "monochloramine")
                 .fluid(Material.FluidType.GAS)
                 .color(0x3F9F80)
-                .components(Hydrogen, 1, HydrochloricAcid, 1)
-                .build()
-                .setFormula("NH2Cl", true);
+                .components(Nitrogen, 1, Hydrogen, 2, Chlorine, 1)
+                .build();
 
         Chloroform = new Material.Builder(1021, "chloroform")
                 .fluid()
@@ -185,7 +184,7 @@ public class OrganicChemistryMaterials {
         AllylChloride = new Material.Builder(1025, "allyl_chloride")
                 .fluid()
                 .color(0x87DEAA)
-                .components(Carbon, 2, Methane, 1, HydrochloricAcid, 1)
+                .components(Carbon, 3, Hydrogen, 5, Chlorine, 1)
                 .build();
 
         Isoprene = new Material.Builder(1026, "isoprene")
