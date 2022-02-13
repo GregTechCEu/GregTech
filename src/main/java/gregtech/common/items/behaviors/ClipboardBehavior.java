@@ -60,7 +60,15 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
                     .setTextColor(TEXT_COLOR));
         }
 
-        builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, -1))
+        for (TextFieldWidget2 textField : textFields) {
+            builder.widget(textField.setOnFocus(textField2 -> textFields.forEach(textField3 -> {
+                if (textField3 != textField2) {
+                    textField3.unFocus();
+                }
+            })));
+        }
+
+        builder.widget(new ClickButtonWidget(38, 231, 16, 16, "", (x) -> incrPageNum(holder, -1))
                 .setButtonTexture(GuiTextures.BUTTON_LEFT).setShouldClientCallback(true));
         builder.widget(new ClickButtonWidget(132, 231, 16, 16, "", (x) -> incrPageNum(holder, 1))
                 .setButtonTexture(GuiTextures.BUTTON_RIGHT).setShouldClientCallback(true));
