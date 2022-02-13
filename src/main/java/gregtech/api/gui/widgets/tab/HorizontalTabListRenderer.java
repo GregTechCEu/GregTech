@@ -1,7 +1,6 @@
 package gregtech.api.gui.widgets.tab;
 
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import net.minecraft.client.renderer.GlStateManager;
@@ -24,9 +23,8 @@ public class HorizontalTabListRenderer extends TabListRenderer {
         boolean isTopLine = verticalLocation == VerticalLocation.TOP;
         int tabYPosition = isTopLine ? (0 - TAB_HEIGHT + TAB_Y_OFFSET) : (guiHeight - TAB_Y_OFFSET);
         int currentXOffset = 0;
-        ModularUIGui mGui = gui.getModularUIGui();
         for (int tabIndex = 0; tabIndex < tabInfos.size(); tabIndex++) {
-            GlStateManager.color(mGui.getRColorForOverlay(), mGui.getGColorForOverlay(), mGui.getBColorForOverlay(), 1.0F);
+            GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
             boolean isTabSelected = tabIndex == selectedTabIndex;
             boolean isTabFirst = tabIndex == 0;
             TextureArea tabTexture = getTabTexture(isTabSelected, isTabFirst, isTopLine, startLeft);

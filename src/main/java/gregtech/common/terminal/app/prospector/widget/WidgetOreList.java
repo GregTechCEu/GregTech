@@ -127,12 +127,11 @@ public class WidgetOreList extends DraggableScrollableWidgetGroup {
         if (selected != null) {
             drawSolidRect(selected.getPosition().x, selected.getPosition().y, selected.getSize().width, 18, 0x4BFFFFFF);
         }
-        ModularUIGui mGui = gui.getModularUIGui();
         for (Widget widget : widgets) {
             if (widget.isVisible()) {
                 widget.drawInBackground(mouseX, mouseY, partialTicks, context);
 
-                GlStateManager.color(mGui.getRColorForOverlay(), mGui.getGColorForOverlay(), mGui.getBColorForOverlay(), 1.0F);
+                GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
             }
         }
         return true;

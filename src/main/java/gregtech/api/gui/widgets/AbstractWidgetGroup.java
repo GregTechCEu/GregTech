@@ -3,7 +3,6 @@ package gregtech.api.gui.widgets;
 import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
-import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
 import gregtech.api.util.GTLog;
@@ -19,8 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
-
-import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarget, IIngredientSlot {
 
@@ -283,12 +280,11 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-        ModularUIGui mGui = gui.getModularUIGui();
-        GlStateManager.color(mGui.getRColorForOverlay(), mGui.getGColorForOverlay(), mGui.getBColorForOverlay(), 1.0F);
+        GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
         for (Widget widget : widgets) {
             if (widget.isVisible()) {
                 widget.drawInBackground(mouseX, mouseY, partialTicks, context);
-                GlStateManager.color(mGui.getRColorForOverlay(), mGui.getGColorForOverlay(), mGui.getBColorForOverlay(), 1.0F);
+                GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
             }
         }
     }

@@ -1,7 +1,6 @@
 package gregtech.api.gui.widgets.tab;
 
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import net.minecraft.client.renderer.GlStateManager;
@@ -24,8 +23,7 @@ public class VerticalTabListRenderer extends TabListRenderer {
         boolean isLeftLine = verticalLocation == HorizontalLocation.LEFT;
         int tabXPosition = isLeftLine ? (0 - TAB_HEIGHT + TAB_Y_OFFSET) : (guiWidth - TAB_Y_OFFSET);
         int currentYPosition = 0;
-        ModularUIGui mGui = gui.getModularUIGui();
-        GlStateManager.color(mGui.getRColorForOverlay(), mGui.getGColorForOverlay(), mGui.getBColorForOverlay(), 1.0F);
+        GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
         for (int tabIndex = 0; tabIndex < tabInfos.size(); tabIndex++) {
             boolean isTabSelected = tabIndex == selectedTabIndex;
             boolean isTabFirst = tabIndex == 0;
@@ -34,7 +32,7 @@ public class VerticalTabListRenderer extends TabListRenderer {
             //noinspection SuspiciousNameCombination
             tabInfos.get(tabIndex).renderTab(tabTexture, offset.x + tabXPosition, offset.y + finalPosY, TAB_HEIGHT, TAB_WIDTH, isTabSelected);
             currentYPosition += (TAB_WIDTH + SPACE_BETWEEN_TABS);
-            GlStateManager.color(mGui.getRColorForOverlay(), mGui.getGColorForOverlay(), mGui.getBColorForOverlay(), 1.0F);
+            GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
         }
     }
 
