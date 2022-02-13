@@ -111,7 +111,7 @@ public class TerminalRegistry {
                 .upgrade(1, MetaItems.SENSOR_HV.getStackForm(3))
                 .upgrade(2, MetaItems.SENSOR_EV.getStackForm(1))
                 .upgrade(3, MetaItems.SENSOR_IV.getStackForm(1))
-                .upgrade(4, MetaItems.SENSOR_LUV.getStackForm(1))
+                .upgrade(4, MetaItems.SENSOR_LuV.getStackForm(1))
                 .device(DeviceHardware.DEVICE.PROSPECTOR_HV)
                 .build();
         AppRegistryBuilder.create(new MultiBlockPreviewARApp())
