@@ -68,9 +68,9 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
             })));
         }
 
-        builder.widget(new ClickButtonWidget(38, 231, 16, 16, "", (x) -> incrPageNum(holder, -1))
+        builder.widget(new ClickButtonWidget(38, 231, 16, 16, "", (x) -> incrPageNum(holder, x.isShiftClick ? -10 : -1))
                 .setButtonTexture(GuiTextures.BUTTON_LEFT).setShouldClientCallback(true));
-        builder.widget(new ClickButtonWidget(132, 231, 16, 16, "", (x) -> incrPageNum(holder, 1))
+        builder.widget(new ClickButtonWidget(132, 231, 16, 16, "", (x) -> incrPageNum(holder, x.isShiftClick ? 10 : 1))
                 .setButtonTexture(GuiTextures.BUTTON_RIGHT).setShouldClientCallback(true));
         builder.widget(new SimpleTextWidget(93, 240, "", TEXT_COLOR,
                 () -> (getPageNum(holder) + 1) + " / " + MAX_PAGES, true));
@@ -94,9 +94,9 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
             builder.widget(new SimpleTextWidget(24, 40 + 20 * i, "", TEXT_COLOR, () -> getString(holder, finalI), true).setCenter(false));
         }
 
-        builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, -1))
+        builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, x.isShiftClick ? -10 : -1))
                 .setButtonTexture(GuiTextures.BUTTON_LEFT).setShouldClientCallback(true));
-        builder.widget(new ClickButtonWidget(124, 200, 16, 16, "", (x) -> incrPageNum(holder, 1))
+        builder.widget(new ClickButtonWidget(124, 200, 16, 16, "", (x) -> incrPageNum(holder, x.isShiftClick ? 10 : 1))
                 .setButtonTexture(GuiTextures.BUTTON_RIGHT).setShouldClientCallback(true));
         builder.widget(new SimpleTextWidget(85, 208, "", TEXT_COLOR,
                 () -> (getPageNum(holder) + 1) + " / " + MAX_PAGES, true));
