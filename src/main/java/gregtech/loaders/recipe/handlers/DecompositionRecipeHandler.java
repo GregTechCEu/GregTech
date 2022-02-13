@@ -13,7 +13,6 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static gregtech.api.GTValues.LV;
 import static gregtech.api.GTValues.VA;
@@ -36,8 +35,8 @@ public class DecompositionRecipeHandler {
                 material.hasFlag(DISABLE_DECOMPOSITION) ||
                 material.getMaterialComponents().size() > 6) return;
 
-        ArrayList<ItemStack> outputs = new ArrayList<>();
-        ArrayList<FluidStack> fluidOutputs = new ArrayList<>();
+        List<ItemStack> outputs = new ArrayList<>();
+        List<FluidStack> fluidOutputs = new ArrayList<>();
         int totalInputAmount = 0;
 
         //compute outputs
@@ -84,8 +83,8 @@ public class DecompositionRecipeHandler {
                     reducedFluidOutputs.add(reducedFluidStack);
                 }
 
-                outputs = (ArrayList<ItemStack>) reducedOutputs;
-                fluidOutputs = (ArrayList<FluidStack>) reducedFluidOutputs;
+                outputs = reducedOutputs;
+                fluidOutputs = reducedFluidOutputs;
                 totalInputAmount /= highestDivisor;
             }
         }
@@ -96,8 +95,7 @@ public class DecompositionRecipeHandler {
         if (material.hasFlag(DECOMPOSITION_BY_ELECTROLYZING)) {
             builder = RecipeMaps.ELECTROLYZER_RECIPES.recipeBuilder()
                     .duration(((int) material.getProtons() * totalInputAmount * 2))
-                    .EUt(getElectrolyzingVoltage(material.getMaterialComponents().stream()
-                            .map(s -> s.material).collect(Collectors.toList())));
+                    .EUt(material.getMaterialComponents().size() <= 2 ? VA[LV] : 2 * VA[LV]);
         } else {
             builder = RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
                     .duration((int) Math.ceil(material.getMass() * totalInputAmount * 1.5))
@@ -126,16 +124,7 @@ public class DecompositionRecipeHandler {
     }
 
     private static int getSmallestMaterialAmount(List<Integer> materialAmounts) {
-        return materialAmounts.stream().min(Integer::compare).get();
-    }
-
-    //todo think something better with this
-    private static int getElectrolyzingVoltage(List<Material> components) {
-        //Binary compound materials require 30 EU/t
-        if (components.size() <= 2) {
-            return VA[LV];
-        }
-        return 2 * VA[LV];
+        return materialAmounts.stream().min(Integer::compare).orElse(0);
     }
 
 }

@@ -32,12 +32,10 @@ import java.util.Map;
 @SideOnly(Side.CLIENT)
 public class CompressedBlockBakedModel implements IBakedModel {
 
-    public static final CompressedBlockBakedModel INSTANCE = new CompressedBlockBakedModel();
-
     private final Map<MaterialIconSet, Map<EnumFacing, BakedQuad>> materialFaces;
     private final ThreadLocal<TextureAtlasSprite> particle;
 
-    private CompressedBlockBakedModel() {
+    public CompressedBlockBakedModel() {
         this.materialFaces = new Object2ObjectOpenHashMap<>();
         this.particle = ThreadLocal.withInitial(() -> Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite());
     }

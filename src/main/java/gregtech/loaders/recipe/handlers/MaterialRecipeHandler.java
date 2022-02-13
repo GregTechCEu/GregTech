@@ -87,7 +87,7 @@ public class MaterialRecipeHandler {
             }
 
         } else if (mat.hasProperty(PropertyKey.INGOT)) {
-            if (!mat.hasFlags(FLAMMABLE, NO_SMELTING)) {
+            if (!mat.hasAnyOfFlags(FLAMMABLE, NO_SMELTING)) {
 
                 boolean hasHotIngot = OrePrefix.ingotHot.doGenerateItem(mat);
                 ItemStack ingotStack = OreDictUnifier.get(hasHotIngot ? OrePrefix.ingotHot : OrePrefix.ingot, mat);

@@ -142,7 +142,6 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
         this.washedAmount = washedAmount;
     }
 
-    @Nullable
     public Pair<Material, Integer> getWashedIn() {
         return Pair.of(this.washedIn, this.washedAmount);
     }

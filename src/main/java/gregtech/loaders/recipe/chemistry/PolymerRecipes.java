@@ -300,6 +300,7 @@ public class PolymerRecipes {
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidInputs(HydrochloricAcid.getFluid(1000))
                 .fluidInputs(Acetone.getFluid(1000))
                 .fluidInputs(Phenol.getFluid(2000))

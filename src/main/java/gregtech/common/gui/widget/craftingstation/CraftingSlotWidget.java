@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.gui.ingredient.IRecipeTransferHandlerWidget;
 import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.common.metatileentities.storage.CraftingRecipeResolver;
+import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,15 +20,15 @@ import java.util.Map.Entry;
 
 public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHandlerWidget {
 
-    private final CraftingRecipeResolver recipeResolver;
+    private final CraftingRecipeLogic recipeResolver;
     private boolean canTakeStack = false;
 
-    public CraftingSlotWidget(CraftingRecipeResolver recipeResolver, int slotIndex, int xPosition, int yPosition) {
+    public CraftingSlotWidget(CraftingRecipeLogic recipeResolver, int slotIndex, int xPosition, int yPosition) {
         super(createInventory(recipeResolver), slotIndex, xPosition, yPosition, true, false);
         this.recipeResolver = recipeResolver;
     }
 
-    private static IInventory createInventory(CraftingRecipeResolver resolver) {
+    private static IInventory createInventory(CraftingRecipeLogic resolver) {
         return resolver == null ? new InventoryCraftResult() : resolver.getCraftingResultInventory();
     }
 
@@ -45,7 +45,7 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
             } catch (IOException exception) {
                 throw new RuntimeException(exception);
             }
-            recipeResolver.setCraftingGrid(ingredients);
+            recipeResolver.fillCraftingGrid(ingredients);
         }
     }
 
@@ -55,7 +55,7 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
         if (recipeResolver == null) {
             return;
         }
-        boolean isRecipeValid = recipeResolver.checkRecipeValid();
+        boolean isRecipeValid = recipeResolver.isRecipeValid();
         if (isRecipeValid != canTakeStack) {
             this.canTakeStack = isRecipeValid;
             writeUpdateInfo(1, buf -> buf.writeBoolean(canTakeStack));
@@ -83,15 +83,12 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
         if (recipeResolver == null) {
             return canTakeStack;
         }
-        return recipeResolver.checkRecipeValid();
+        return recipeResolver.isRecipeValid();
     }
 
     @Override
     public ItemStack onItemTake(EntityPlayer thePlayer, ItemStack stack, boolean simulate) {
         if (recipeResolver == null) {
-            return canTakeStack ? stack : ItemStack.EMPTY;
-        }
-        if (!recipeResolver.checkRecipeValid()) {
             return ItemStack.EMPTY;
         }
         recipeResolver.handleItemCraft(stack, thePlayer, simulate);

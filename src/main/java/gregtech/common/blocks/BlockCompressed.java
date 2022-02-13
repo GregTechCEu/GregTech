@@ -74,6 +74,7 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
         return 0;
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
@@ -130,6 +131,7 @@ public final class BlockCompressed extends DelayedStateBlock implements IModelSu
         return net.minecraft.block.material.Material.ROCK;
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("deprecation")
     public MapColor getMapColor(@Nonnull IBlockState state, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {

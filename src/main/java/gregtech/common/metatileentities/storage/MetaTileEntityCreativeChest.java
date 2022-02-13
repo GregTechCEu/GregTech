@@ -72,14 +72,17 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 209)
                 .bindPlayerInventory(entityPlayer.inventory, 126);
-        builder.widget(new PhantomSlotWidget(handler, 0, 36, 6).setBackgroundTexture(GuiTextures.SLOT_DARKENED).setChangeListener(this::markDirty));
+        builder.widget(new PhantomSlotWidget(handler, 0, 36, 6)
+                .setClearSlotOnRightClick(true)
+                .setBackgroundTexture(GuiTextures.SLOT)
+                .setChangeListener(this::markDirty));
         builder.label(7, 9, "gregtech.creative.chest.item");
         builder.widget(new ImageWidget(7, 48, 154, 14, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(9, 50, 152, 10, () -> String.valueOf(itemsPerCycle), value -> {
             if (!value.isEmpty()) {
                 itemsPerCycle = Integer.parseInt(value);
             }
-        }).setAllowedChars(TextFieldWidget2.NATURAL_NUMS).setMaxLength(19).setValidator(getTextFieldValidator()));
+        }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
         builder.label(7, 28, "gregtech.creative.chest.ipc");
 
         builder.widget(new ImageWidget(7, 85, 154, 14, GuiTextures.DISPLAY));
@@ -87,7 +90,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
             if (!value.isEmpty()) {
                 ticksPerCycle = Integer.parseInt(value);
             }
-        }).setMaxLength(10).setNumbersOnly(1, Integer.MAX_VALUE));
+        }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
         builder.label(7, 65, "gregtech.creative.chest.tpc");
 
 
@@ -135,24 +138,6 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         itemsPerCycle = data.getInteger("ItemsPerCycle");
         ticksPerCycle = data.getInteger("TicksPerCycle");
         active = data.getBoolean("Active");
-    }
-
-    public Function<String, String> getTextFieldValidator() {
-        return val -> {
-            if (val.isEmpty()) {
-                return "0";
-            }
-            long num;
-            try {
-                num = Long.parseLong(val);
-            } catch (NumberFormatException ignored) {
-                return "0";
-            }
-            if (num < 0) {
-                return "0";
-            }
-            return val;
-        };
     }
 
     @Override

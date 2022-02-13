@@ -2,15 +2,15 @@ package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.capability.impl.*;
 import gregtech.api.metatileentity.MTETrait;
-import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.recipes.RecipeMap;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.FluidTank;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockWithDisplayBase implements ISoundCreator {
+public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockWithDisplayBase {
 
     protected PrimitiveRecipeLogic recipeMapWorkable;
 
@@ -61,15 +61,8 @@ public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockW
     }
 
     @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
-        if (getWorld() != null && getWorld().isRemote) {
-            this.setupSound(recipeMapWorkable.getRecipeMap().getSound(), this.getPos());
-        }
-    }
-
-    public boolean canCreateSound() {
-        return recipeMapWorkable.isActive();
+    public SoundEvent getSound() {
+        return recipeMapWorkable.getRecipeMap().getSound();
     }
 
     @Override

@@ -301,7 +301,7 @@
     "sounds": [
       {
         "name": "gregtech:sus",
-        "stream": false
+        "stream": true
       }
     ]
   }

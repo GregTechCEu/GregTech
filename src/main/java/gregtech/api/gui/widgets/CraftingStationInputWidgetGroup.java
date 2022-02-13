@@ -4,16 +4,16 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
-import gregtech.common.metatileentities.storage.CraftingRecipeResolver;
+import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class CraftingStationInputWidgetGroup extends AbstractWidgetGroup {
-    protected CraftingRecipeResolver recipeResolver;
+    protected CraftingRecipeLogic recipeResolver;
     protected short tintLocations;
     public static final int LIGHT_RED = 0x66FF0000;
 
-    public CraftingStationInputWidgetGroup(int x, int y, ItemStackHandler craftingGrid, CraftingRecipeResolver recipeResolver) {
+    public CraftingStationInputWidgetGroup(int x, int y, ItemStackHandler craftingGrid, CraftingRecipeLogic recipeResolver) {
         super(new Position(x, y));
 
         //crafting grid
@@ -46,18 +46,10 @@ public class CraftingStationInputWidgetGroup extends AbstractWidgetGroup {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        short newTintLocations = getTintLocations();
+        short newTintLocations = recipeResolver.getTintLocations();
         if (tintLocations != newTintLocations) {
             this.tintLocations = newTintLocations;
             writeUpdateInfo(2, buffer -> buffer.writeShort(tintLocations));
-        }
-    }
-
-    private short getTintLocations() {
-        if(recipeResolver.getCachedRecipeData() != null) {
-            return recipeResolver.getCachedRecipeData().attemptMatchRecipe();
-        } else {
-            return 511;
         }
     }
 

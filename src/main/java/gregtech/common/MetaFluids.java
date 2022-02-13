@@ -223,6 +223,7 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.NaquadahEnriched, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Naquadria, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Ice, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.UUMatter, FluidType.NORMAL);
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
             FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);

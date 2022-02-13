@@ -35,10 +35,10 @@ public class HardHammerBehavior implements IItemBehaviour {
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity instanceof MetaTileEntityHolder) {
             MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
-            metaTileEntity.toggleMuffled();
             player.sendMessage(metaTileEntity.isMuffled() ?
                     new TextComponentTranslation("gregtech.machine.muffle.off") :
                     new TextComponentTranslation("gregtech.machine.muffle.on"));
+            metaTileEntity.toggleMuffled();
             GTUtility.doDamageItem(stack, cost, false);
             IToolStats.onOtherUse(stack, world, pos);
             return EnumActionResult.SUCCESS;

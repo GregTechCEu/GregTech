@@ -16,11 +16,13 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -35,14 +37,12 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
 
     private final int radius;
     private final int tier;
-    private int mode;
 
     private WidgetOreList widgetOreList;
 
     public ProspectorScannerBehavior(int radius, int tier) {
         this.radius = radius + 1;
         this.tier = tier;
-        this.mode = 0;
     }
 
     @Override
@@ -50,17 +50,20 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         ItemStack heldItem = player.getHeldItem(hand);
         if (!world.isRemote) {
             if (player.isSneaking()) {
-                if (getNextMode() == WidgetProspectingMap.ORE_PROSPECTING_MODE) {
-                    if (this.tier >= FLUID_PROSPECTION_THRESHOLD)
-                        incrementMode();
-                    player.sendMessage(new TextComponentTranslation("metaitem.prospector.mode.ores"));
-                } else if (getNextMode() == WidgetProspectingMap.FLUID_PROSPECTING_MODE && this.tier >= FLUID_PROSPECTION_THRESHOLD) {
-                    incrementMode();
-                    player.sendMessage(new TextComponentTranslation("metaitem.prospector.mode.fluid"));
+                ItemStack stack = player.getHeldItem(hand);
+                int mode = getMode(stack);
+                int nextMode = getNextMode(mode);
+                if (nextMode == WidgetProspectingMap.FLUID_PROSPECTING_MODE) {
+                    if (tier >= FLUID_PROSPECTION_THRESHOLD) {
+                        setMode(stack, nextMode);
+                        player.sendStatusMessage(new TextComponentTranslation("metaitem.prospector.mode.fluid"), true);
+                    }
+                } else {
+                    setMode(stack, nextMode);
+                    player.sendStatusMessage(new TextComponentTranslation("metaitem.prospector.mode.ores"), true);
                 }
             } else if (checkCanUseScanner(heldItem, player, true)) {
-                PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
-                holder.openUI();
+                new PlayerInventoryHolder(player, hand).openUI();
             } else {
                 player.sendMessage(new TextComponentTranslation("behavior.prospector.not_enough_energy"));
             }
@@ -68,12 +71,30 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
     }
 
-    private int getNextMode() {
-        return (this.mode + 1) % 2;
+    private int getMode(ItemStack stack) {
+        if (stack == ItemStack.EMPTY) {
+            return 0;
+        }
+        NBTTagCompound tag = stack.getTagCompound();
+        if (tag == null) {
+            return 0;
+        }
+        if (tag.hasKey("Mode", Constants.NBT.TAG_INT)) {
+            return tag.getInteger("Mode");
+        }
+        return 0;
     }
 
-    private void incrementMode() {
-        this.mode = getNextMode();
+    private int getNextMode(int mode) {
+        return mode == WidgetProspectingMap.ORE_PROSPECTING_MODE ? 1 : 0;
+    }
+
+    private void setMode(ItemStack stack, int mode) {
+        if (!stack.hasTagCompound()) {
+            stack.setTagCompound(new NBTTagCompound());
+        }
+        //noinspection ConstantConditions
+        stack.getTagCompound().setInteger("Mode", mode);
     }
 
     private boolean checkCanUseScanner(ItemStack stack, @Nonnull EntityPlayer player, boolean simulate) {
@@ -90,6 +111,7 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
 
     @Override
     public ModularUI createUI(PlayerInventoryHolder holder, @Nonnull EntityPlayer entityPlayer) {
+        int mode = getMode(entityPlayer.getHeldItem(EnumHand.MAIN_HAND));
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 332, 200);
         this.widgetOreList = new WidgetOreList(32 * radius - 6, 18, 332 - 32 * radius, 176);
         builder.widget(this.widgetOreList);
@@ -105,8 +127,9 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
     public void addInformation(ItemStack itemStack, List<String> lines) {
         IItemBehaviour.super.addInformation(itemStack, lines);
 
-        if (tier >= GTValues.HV) {
+        if (tier >= FLUID_PROSPECTION_THRESHOLD) {
             lines.add(I18n.format("metaitem.prospector.tooltip.fluids", radius));
+            lines.add(I18n.format(getMode(itemStack) == WidgetProspectingMap.ORE_PROSPECTING_MODE ? "metaitem.prospector.mode.ores" : "metaitem.prospector.mode.fluid"));
         } else {
             lines.add(I18n.format("metaitem.prospector.tooltip.ores", radius));
         }
