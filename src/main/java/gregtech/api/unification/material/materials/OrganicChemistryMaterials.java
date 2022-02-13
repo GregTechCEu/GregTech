@@ -238,7 +238,7 @@ public class OrganicChemistryMaterials {
                 .fluid()
                 .color(0xE1B380)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Carbon, 4, Oxygen, 6, Hydrogen, 2)
+                .components(Carbon, 4, Hydrogen, 6, Oxygen, 2)
                 .build();
 
         MethylAcetate = new Material.Builder(1034, "methyl_acetate")
