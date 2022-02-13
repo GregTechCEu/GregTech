@@ -27,8 +27,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gregtech.api.gui.impl.ModularUIGui.*;
-
 public class TankWidget extends Widget implements IIngredientSlot {
 
     public final IFluidTank fluidTank;
@@ -149,7 +147,6 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 GlStateManager.popMatrix();
             }
             GlStateManager.enableBlend();
-            GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
         }
         if (overlayTexture != null) {
             overlayTexture.draw(pos.x, pos.y, size.width, size.height);

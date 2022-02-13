@@ -5,6 +5,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.net.packets.SPacketUIWidgetUpdate;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -25,11 +26,9 @@ import java.util.Set;
 public class ModularUIGui extends GuiContainer implements IRenderContext {
 
     private final ModularUI modularUI;
-    public static final float rColorForOverlay = 1;
-    public static final float gColorForOverlay = 1;
-    public static final float bColorForOverlay = 1;
 
     public static final float FRAMES_PER_TICK = 1/3f;
+
     private float lastUpdate;
 
     public int dragSplittingLimit;
@@ -205,7 +204,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.pushMatrix();
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
+        GlStateManager.color(getRColorForOverlay(), getGColorForOverlay(), getBColorForOverlay(), 1.0F);
         GlStateManager.enableBlend();
         GlStateManager.popMatrix();
         modularUI.backgroundPath.draw(guiLeft, guiTop, xSize, ySize);
@@ -214,7 +213,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
             GlStateManager.pushMatrix();
             GlStateManager.enableBlend();
             widget.drawInBackground(mouseX, mouseY, partialTicks,this);
-            GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
+            GlStateManager.color(getRColorForOverlay(), getGColorForOverlay(), getBColorForOverlay(), 1.0F);
             GlStateManager.popMatrix();
         });
     }
@@ -302,4 +301,15 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
         super.keyTyped(typedChar, keyCode);
     }
 
+    public float getRColorForOverlay() {
+        return modularUI.shouldColor ? ((ConfigHolder.client.defaultUIColor & 0xFF0000) >> 16) / 255.0f : 1.0f;
+    }
+
+    public float getGColorForOverlay() {
+        return modularUI.shouldColor ? ((ConfigHolder.client.defaultUIColor & 0xFF00) >> 8) / 255.0f : 1.0f;
+    }
+
+    public float getBColorForOverlay() {
+        return modularUI.shouldColor ? (ConfigHolder.client.defaultUIColor & 0xFF) / 255.0f : 1.0f;
+    }
 }

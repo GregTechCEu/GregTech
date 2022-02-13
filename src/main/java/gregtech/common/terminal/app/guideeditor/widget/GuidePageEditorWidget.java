@@ -1,6 +1,5 @@
 package gregtech.common.terminal.app.guideeditor.widget;
 
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import gregtech.api.gui.GuiTextures;
@@ -18,9 +17,6 @@ import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
-
-import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class GuidePageEditorWidget extends GuidePageWidget {
     private Widget selected;
@@ -362,7 +358,6 @@ public class GuidePageEditorWidget extends GuidePageWidget {
             customPositionSizeWidget.drawInBackground(mouseX, mouseY, partialTicks, context);
             toolButtons.drawInBackground(mouseX, mouseY, partialTicks, context);
         }
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
         return true;
     }
 

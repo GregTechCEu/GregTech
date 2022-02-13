@@ -285,7 +285,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
 
     public ModularUI.Builder createUITemplate(EntityPlayer player) {
         return ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(isHighPressure), 176, 166)
-                .label(6, 6, getMetaFullName())
+                .label(6, 6, getMetaFullName()).shouldColor(false)
                 .widget(new ProgressWidget(this::getTemperaturePercent, 96, 26, 10, 54)
                         .setProgressBar(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure),
                                 GuiTextures.PROGRESS_BAR_BOILER_HEAT,

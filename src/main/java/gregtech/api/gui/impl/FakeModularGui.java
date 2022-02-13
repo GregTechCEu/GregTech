@@ -177,10 +177,11 @@ public class FakeModularGui implements IRenderContext {
     }
 
     public void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        ModularUIGui gui = modularUI.getModularUIGui();
+        GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
         for (Widget widget : modularUI.guiWidgets.values()) {
             GlStateManager.pushMatrix();
-            GlStateManager.color(1.0f, 1.0f, 1.0f);
+            GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay());
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             widget.drawInBackground(mouseX, mouseY, partialTicks, this);

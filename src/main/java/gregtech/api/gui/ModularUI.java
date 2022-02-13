@@ -42,6 +42,7 @@ public final class ModularUI implements ISizeProvider {
     private ModularUIGui modularUIGui;
 
     public boolean isJEIHandled;
+    public boolean shouldColor = true;
 
     /**
      * UIHolder of this modular UI
@@ -157,7 +158,7 @@ public final class ModularUI implements ISizeProvider {
     }
 
     /**
-     * Simple builder for  ModularUI objects
+     * Simple builder for ModularUI objects
      */
     public static class Builder {
 
@@ -168,6 +169,7 @@ public final class ModularUI implements ISizeProvider {
         private final int width;
         private final int height;
         private int nextFreeWidgetId = 0;
+        private boolean shouldColor = true;
 
         public Builder(IGuiTexture background, int width, int height) {
             Preconditions.checkNotNull(background);
@@ -259,9 +261,15 @@ public final class ModularUI implements ISizeProvider {
             return this;
         }
 
+        public Builder shouldColor(boolean color) {
+            shouldColor = color;
+            return this;
+        }
+
         public ModularUI build(IUIHolder holder, EntityPlayer player) {
-            return new ModularUI(widgets.build(), openListeners.build(), closeListeners.build(), background, width, height, holder, player);
+            ModularUI ui = new ModularUI(widgets.build(), openListeners.build(), closeListeners.build(), background, width, height, holder, player);
+            ui.shouldColor = this.shouldColor;
+            return ui;
         }
     }
-
 }

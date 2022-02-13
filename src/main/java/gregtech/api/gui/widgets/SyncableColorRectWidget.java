@@ -4,12 +4,9 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.network.PacketBuffer;
 
 import java.util.function.Supplier;
-
-import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class SyncableColorRectWidget extends Widget {
 
@@ -72,7 +69,6 @@ public class SyncableColorRectWidget extends Widget {
             }
         }
         drawSolidRect(position.x + borderWidth, position.y + borderWidth, size.width - 2*borderWidth, size.height - 2*borderWidth, color);
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override

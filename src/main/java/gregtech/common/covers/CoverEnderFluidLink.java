@@ -152,7 +152,8 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         widgetGroup.addWidget(new ImageWidget(147, 19, 16, 16)
                 .setImage(GuiTextures.INFO_ICON)
                 .setPredicate(() -> isColorTemp)
-                .setTooltip("cover.ender_fluid_link.incomplete_hex"));
+                .setTooltip("cover.ender_fluid_link.incomplete_hex")
+                .setIgnoreColor(true));
         widgetGroup.addWidget(new CycleButtonWidget(10, 42, 75, 18,
                 CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode));
         widgetGroup.addWidget(new CycleButtonWidget(92, 42, 75, 18,
