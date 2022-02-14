@@ -689,5 +689,18 @@ public class ReactorRecipes {
                 .fluidInputs(Chlorine.getFluid(1000))
                 .output(dust, Salt, 2)
                 .duration(200).EUt(VA[LV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(Propene.getFluid(1000))
+                .fluidInputs(Hydrogen.getFluid(2000))
+                .fluidInputs(CarbonMonoxide.getFluid(1000))
+                .fluidOutputs(Butraldehyde.getFluid(1000))
+                .duration(200).EUt(VA[HV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(Butraldehyde.getFluid(1000))
+                .fluidInputs(PolyvinylAcetate.getFluid(1000))
+                .fluidOutputs(PolyvinylButyral.getFluid(1000))
+                .duration(400).EUt(VA[HV]).buildAndRegister();
     }
 }

@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static gregtech.api.GTValues.*;
+
 public class CraftingComponent {
 
     public static Component CIRCUIT;
@@ -321,23 +323,28 @@ public class CraftingComponent {
         /*
         Glass: Steam-MV
         Tempered: HV, EV
-        Something new: IV, LuV
+        Laminated Glass: IV, LuV
         Fusion: ZPM, UV
         Some gregicality thing: UHV+
          */
         GLASS = new Component(Stream.of(new Object[][]{
 
                 {GTValues.FALLBACK, new ItemStack(Blocks.GLASS, 1, GTValues.W)},
-                {4, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                {ULV, Blocks.GLASS},
+                {LV, Blocks.GLASS},
+                {MV, Blocks.GLASS},
+                {HV, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
                         BlockGlassCasing.CasingType.TEMPERED_GLASS)},
-                {5, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                {EV, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
                         BlockGlassCasing.CasingType.TEMPERED_GLASS)},
-                {6, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
-                        BlockGlassCasing.CasingType.TEMPERED_GLASS)},
-                {7, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
-                        BlockGlassCasing.CasingType.TEMPERED_GLASS)},
-                {8, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
-                        BlockGlassCasing.CasingType.TEMPERED_GLASS)}
+                {IV, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.LAMINATED_GLASS)},
+                {LuV, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.LAMINATED_GLASS)},
+                {ZPM, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.FUSION_GLASS)},
+                {UV, MetaBlocks.TRANSPARENT_CASING.getItemVariant(
+                        BlockGlassCasing.CasingType.FUSION_GLASS)}
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 

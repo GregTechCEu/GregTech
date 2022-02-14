@@ -60,7 +60,8 @@ public class BlockGlassCasing extends VariantActiveBlock<BlockGlassCasing.Casing
     public enum CasingType implements IStringSerializable {
 
         TEMPERED_GLASS("tempered_glass"),
-        FUSION_GLASS("fusion_glass");
+        FUSION_GLASS("fusion_glass"),
+        LAMINATED_GLASS("laminated_glass");
 
         private final String name;
 

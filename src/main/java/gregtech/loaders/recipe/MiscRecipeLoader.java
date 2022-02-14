@@ -426,5 +426,11 @@ public class MiscRecipeLoader {
                 .output(dust, Carbon)
                 .fluidOutputs(Water.getFluid(1000))
                 .duration(100).EUt(VA[LV]).buildAndRegister();
+
+        FORMING_PRESS_RECIPES.recipeBuilder()
+                .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.TEMPERED_GLASS, 2))
+                .input(plate, PolyvinylButyral)
+                .outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.LAMINATED_GLASS))
+                .duration(200).EUt(VA[HV]).buildAndRegister();
     }
 }
