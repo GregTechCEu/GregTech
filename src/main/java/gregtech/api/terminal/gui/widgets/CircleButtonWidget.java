@@ -3,16 +3,15 @@ package gregtech.api.terminal.gui.widgets;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -120,7 +119,7 @@ public class CircleButtonWidget extends Widget {
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
         if (hoverText != null && hoverText.length > 0 && this.isMouseOverElement(mouseX, mouseY)) {
-           this.drawHoveringText(ItemStack.EMPTY, Arrays.stream(hoverText).map(I18n::format).collect(Collectors.toList()), 300, mouseX, mouseY);
+           this.drawHoveringText(ItemStack.EMPTY, Arrays.stream(hoverText).map(LocalizationUtils::format).collect(Collectors.toList()), 300, mouseX, mouseY);
         }
     }
 

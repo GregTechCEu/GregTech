@@ -5,7 +5,7 @@ import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.GTUtility;
-import net.minecraft.client.resources.I18n;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -47,6 +47,6 @@ public class HardHammerBehavior implements IItemBehaviour {
     }
 
     public void addInformation(ItemStack itemStack, List<String> lines) {
-        lines.add(I18n.format("behaviour.hammer"));
+        lines.add(LocalizationUtils.format("behaviour.hammer"));
     }
 }

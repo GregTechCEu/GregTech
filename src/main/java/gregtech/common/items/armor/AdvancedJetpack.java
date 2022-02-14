@@ -5,8 +5,8 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.input.EnumKey;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -117,7 +117,7 @@ public class AdvancedJetpack extends Jetpack {
         if (data != null) {
             if (data.hasKey("hover")) {
                 String status = data.getBoolean("hover") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
-                this.HUD.newString(I18n.format("metaarmor.hud.hover_mode", I18n.format(status)));
+                this.HUD.newString(LocalizationUtils.format("metaarmor.hud.hover_mode", LocalizationUtils.format(status)));
             }
         }
         this.HUD.draw();

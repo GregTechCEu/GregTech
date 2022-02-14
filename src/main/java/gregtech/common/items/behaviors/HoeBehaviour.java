@@ -2,10 +2,10 @@ package gregtech.common.items.behaviors;
 
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
@@ -58,6 +58,6 @@ public class HoeBehaviour implements IItemBehaviour {
 
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
-        lines.add(I18n.format("behaviour.hoe"));
+        lines.add(LocalizationUtils.format("behaviour.hoe"));
     }
 }

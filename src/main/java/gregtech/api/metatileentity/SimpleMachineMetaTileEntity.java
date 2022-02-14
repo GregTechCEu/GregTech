@@ -18,10 +18,10 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -485,6 +485,6 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         String key = this.metaTileEntityId.getPath().split("\\.")[0];
-        tooltip.add(1, I18n.format(String.format("gregtech.machine.%s.tooltip", key)));
+        tooltip.add(1, LocalizationUtils.format(String.format("gregtech.machine.%s.tooltip", key)));
     }
 }

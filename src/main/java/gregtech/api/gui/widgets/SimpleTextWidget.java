@@ -2,12 +2,12 @@ package gregtech.api.gui.widgets;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.network.PacketBuffer;
 
 import java.util.Collections;
@@ -92,7 +92,7 @@ public class SimpleTextWidget extends Widget {
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-        String text = formatLocale.isEmpty() ? (I18n.hasKey(lastText) ? I18n.format(lastText) : lastText) : I18n.format(formatLocale, lastText);
+        String text = formatLocale.isEmpty() ? (LocalizationUtils.hasKey(lastText) ? LocalizationUtils.format(lastText) : lastText) : LocalizationUtils.format(formatLocale, lastText);
         List<String> texts;
         if (this.width > 0) {
             texts = Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(text, (int) (width * (1 / scale)));

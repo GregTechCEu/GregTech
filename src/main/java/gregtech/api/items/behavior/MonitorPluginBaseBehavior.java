@@ -11,10 +11,10 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.net.packets.CPacketPluginSynced;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.util.IDirtyNotifiable;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import io.netty.buffer.Unpooled;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -236,6 +236,6 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
 
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
-        lines.add(I18n.format("metaitem.plugin.tooltips.1"));
+        lines.add(LocalizationUtils.format("metaitem.plugin.tooltips.1"));
     }
 }

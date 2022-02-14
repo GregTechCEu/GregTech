@@ -19,6 +19,7 @@ import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.sound.GTSounds;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.cube.OrientedOverlayRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -28,7 +29,6 @@ import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.electric.MetaTileEntityMacerator;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -152,7 +152,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.parallel_limit", getMachineLimit()));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.parallel_limit", getMachineLimit()));
     }
 
     @SuppressWarnings("InnerClassMayBeStatic")

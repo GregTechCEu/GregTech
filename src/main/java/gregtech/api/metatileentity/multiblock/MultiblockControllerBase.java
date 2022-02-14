@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pattern.*;
 import gregtech.api.sound.GTSoundManager;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -21,7 +22,6 @@ import gregtech.common.blocks.VariantActiveBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -328,7 +328,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.multiblock.universal.controller_information", I18n.format(getMetaFullName())));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.multiblock.universal.controller_information", LocalizationUtils.format(getMetaFullName())));
     }
 
     @Override
@@ -374,7 +374,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @SideOnly(Side.CLIENT)
     public String[] getDescription() {
         String key = String.format("gregtech.multiblock.%s.description", metaTileEntityId.getPath());
-        return I18n.hasKey(key) ? new String[]{I18n.format(key)} : new String[0];
+        return LocalizationUtils.hasKey(key) ? new String[]{LocalizationUtils.format(key)} : new String[0];
     }
 
     @Override

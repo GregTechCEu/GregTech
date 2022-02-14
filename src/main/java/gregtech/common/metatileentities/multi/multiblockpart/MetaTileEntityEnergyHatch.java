@@ -11,10 +11,10 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -102,23 +102,23 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
 
         if (isExportHatch) {
             if (amperage > 2) {
-                tooltip.add(I18n.format("gregtech.machine.energy_hatch.output_hi_amp.tooltip"));
+                tooltip.add(LocalizationUtils.format("gregtech.machine.energy_hatch.output_hi_amp.tooltip"));
             } else {
-                tooltip.add(I18n.format("gregtech.machine.energy_hatch.output.tooltip"));
+                tooltip.add(LocalizationUtils.format("gregtech.machine.energy_hatch.output.tooltip"));
             }
-            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), tierName));
-            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", energyContainer.getOutputAmperage()));
+            tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), tierName));
+            tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.amperage_out_till", energyContainer.getOutputAmperage()));
         } else {
             if (amperage > 2) {
-                tooltip.add(I18n.format("gregtech.machine.energy_hatch.input_hi_amp.tooltip"));
+                tooltip.add(LocalizationUtils.format("gregtech.machine.energy_hatch.input_hi_amp.tooltip"));
             } else {
-                tooltip.add(I18n.format("gregtech.machine.energy_hatch.input.tooltip"));
+                tooltip.add(LocalizationUtils.format("gregtech.machine.energy_hatch.input.tooltip"));
             }
-            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), tierName));
-            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", energyContainer.getInputAmperage()));
+            tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), tierName));
+            tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.amperage_in_till", energyContainer.getInputAmperage()));
         }
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.universal.enabled"));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.enabled"));
     }
 
     @Override

@@ -1,6 +1,6 @@
 package gregtech.api.pattern;
 
-import net.minecraft.client.resources.I18n;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -49,6 +49,6 @@ public class PatternError {
             }
         }
         builder.append("...");
-        return I18n.format("gregtech.multiblock.pattern.error", builder.toString(), worldState.pos);
+        return LocalizationUtils.format("gregtech.multiblock.pattern.error", builder.toString(), worldState.pos);
     }
 }

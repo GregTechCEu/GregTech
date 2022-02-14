@@ -11,15 +11,11 @@ import gregtech.api.terminal.gui.widgets.TreeListWidget;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.menu.IMenuComponent;
 import gregtech.api.terminal.util.TreeNode;
-import gregtech.api.util.FileUtility;
-import gregtech.api.util.GTLog;
-import gregtech.api.util.Position;
-import gregtech.api.util.Size;
+import gregtech.api.util.*;
 import gregtech.common.terminal.app.guide.widget.GuidePageWidget;
 import gregtech.common.terminal.component.SearchComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.io.File;
@@ -154,14 +150,14 @@ public abstract class GuideApp<T> extends AbstractApplication implements
             return true;
         } else {
             TreeNode<String, T> node = stack.peek();
-            if (!node.isLeaf() && I18n.format(node.getKey()).toLowerCase().contains(regex)) {
+            if (!node.isLeaf() && LocalizationUtils.format(node.getKey()).toLowerCase().contains(regex)) {
                 find.accept((Stack<TreeNode<String, T>>) stack.clone());
             } else if (node.isLeaf()) {
                 String name = itemName(node.getContent());
                 if (name == null) {
                     name = node.getKey();
                 }
-                if (I18n.format(name).toLowerCase().contains(regex)) {
+                if (LocalizationUtils.format(name).toLowerCase().contains(regex)) {
                     find.accept((Stack<TreeNode<String, T>>) stack.clone());
                 }
             }

@@ -28,7 +28,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -279,7 +278,7 @@ public class ClientProxy extends CommonProxy {
                                             return;
                                     }
                                 }
-                                event.getToolTip().add(I18n.format("gregtech.universal.clear_nbt_recipe.tooltip"));
+                                event.getToolTip().add(LocalizationUtils.format("gregtech.universal.clear_nbt_recipe.tooltip"));
                                 break;
                             }
                         }

@@ -14,9 +14,9 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -96,7 +96,7 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.machine_hatch.processing_array"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.machine_hatch.processing_array"));
 
     }
 

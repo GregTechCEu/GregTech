@@ -7,9 +7,9 @@ import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.OreDictFilterTestSlot;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.OreDictExprFilter;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -118,7 +118,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
                     GlStateManager.pushMatrix();
                     GlStateManager.translate(widget.getPosition().x, widget.getPosition().y, 0);
                     GlStateManager.colorMask(true, true, true, true);
-                    Widget.drawText(I18n.format(testMsg), 22, 6.5f, 0.75f, color, false);
+                    Widget.drawText(LocalizationUtils.format(testMsg), 22, 6.5f, 0.75f, color, false);
                     color |= (140 & 0xFF) << 24;
                     Widget.drawGradientRect(0, 0, 18, 18, color, color);
                     GlStateManager.popMatrix();

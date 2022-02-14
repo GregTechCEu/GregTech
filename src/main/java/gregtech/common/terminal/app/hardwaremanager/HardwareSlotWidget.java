@@ -5,7 +5,7 @@ import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalOSWidget;
-import net.minecraft.client.resources.I18n;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -97,9 +97,9 @@ public class HardwareSlotWidget extends WidgetGroup {
             } else {
                 String info = hardware.addInformation();
                 if (info == null) {
-                    drawHoveringText(ItemStack.EMPTY, Arrays.asList(hardware.getLocalizedName(), I18n.format("terminal.hardware.tip.remove")), 300, mouseX, mouseY);
+                    drawHoveringText(ItemStack.EMPTY, Arrays.asList(hardware.getLocalizedName(), LocalizationUtils.format("terminal.hardware.tip.remove")), 300, mouseX, mouseY);
                 } else {
-                    drawHoveringText(ItemStack.EMPTY, Arrays.asList(String.format("%s (%s)", hardware.getLocalizedName(), info), I18n.format("terminal.hardware.tip.remove")), 300, mouseX, mouseY);
+                    drawHoveringText(ItemStack.EMPTY, Arrays.asList(String.format("%s (%s)", hardware.getLocalizedName(), info), LocalizationUtils.format("terminal.hardware.tip.remove")), 300, mouseX, mouseY);
                 }
             }
         }

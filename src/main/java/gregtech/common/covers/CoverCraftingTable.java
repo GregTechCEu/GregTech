@@ -12,6 +12,7 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.storage.ICraftingStorage;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
@@ -20,7 +21,6 @@ import gregtech.common.inventory.itemsource.sources.InventoryItemSource;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -126,7 +126,7 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
     public ModularUI createUI(EntityPlayer player) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 221)
                 .bindPlayerInventory(player.inventory, 139);
-        builder.label(5, 5, I18n.format("metaitem.cover.crafting.name"));
+        builder.label(5, 5, LocalizationUtils.format("metaitem.cover.crafting.name"));
 
         builder.widget(MetaTileEntityWorkbench.createWorkbenchTab(recipeLogic, craftingGrid, recipeMemory, toolInventory, internalInventory));
 

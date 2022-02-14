@@ -13,6 +13,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JEIHelpers;
 import gregtech.integration.jei.utils.JeiButton;
@@ -23,7 +24,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fluids.FluidStack;
@@ -112,9 +112,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (entry != null) {
             double chance = entry.getChance() / 100.0;
             double boost = entry.getBoostPerTier() / 100.0;
-            tooltip.add(I18n.format("gregtech.recipe.chance", chance, boost));
+            tooltip.add(LocalizationUtils.format("gregtech.recipe.chance", chance, boost));
         } else if (notConsumed) {
-            tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
+            tooltip.add(LocalizationUtils.format("gregtech.recipe.not_consumed"));
         }
     }
 
@@ -122,7 +122,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         boolean notConsumed = input && recipe.isNotConsumedInput(ingredient);
 
         if (notConsumed) {
-            tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
+            tooltip.add(LocalizationUtils.format("gregtech.recipe.not_consumed"));
         }
     }
 
@@ -131,10 +131,10 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         super.drawInfo(minecraft, recipeWidth, recipeHeight, mouseX, mouseY);
         int yPosition = recipeHeight - getPropertyListHeight();
         if (!recipe.hasProperty(PrimitiveProperty.getInstance())) {
-            minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", Math.abs((long) recipe.getEUt()) * recipe.getDuration()), 0, yPosition, 0x111111);
-            minecraft.fontRenderer.drawString(I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted", Math.abs(recipe.getEUt()), JEIHelpers.getMinTierForVoltage(recipe.getEUt())), 0, yPosition += LINE_HEIGHT, 0x111111);
+            minecraft.fontRenderer.drawString(LocalizationUtils.format("gregtech.recipe.total", Math.abs((long) recipe.getEUt()) * recipe.getDuration()), 0, yPosition, 0x111111);
+            minecraft.fontRenderer.drawString(LocalizationUtils.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted", Math.abs(recipe.getEUt()), JEIHelpers.getMinTierForVoltage(recipe.getEUt())), 0, yPosition += LINE_HEIGHT, 0x111111);
         } else yPosition -= LINE_HEIGHT * 2;
-        minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", recipe.getDuration() / 20f), 0, yPosition += LINE_HEIGHT, 0x111111);
+        minecraft.fontRenderer.drawString(LocalizationUtils.format("gregtech.recipe.duration", recipe.getDuration() / 20f), 0, yPosition += LINE_HEIGHT, 0x111111);
         for (Map.Entry<RecipeProperty<?>, Object> propertyEntry : recipe.getPropertyValues()) {
             if (!propertyEntry.getKey().isHidden()) {
                 propertyEntry.getKey().drawInfo(minecraft, 0, yPosition += LINE_HEIGHT, 0x111111, propertyEntry.getValue());

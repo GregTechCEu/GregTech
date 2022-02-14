@@ -6,7 +6,7 @@ import gregtech.api.items.IToolItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
 import gregtech.api.util.GTUtility;
-import net.minecraft.client.resources.I18n;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -63,7 +63,7 @@ public class PlungerBehaviour implements IItemBehaviour, IItemCapabilityProvider
 
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
-        lines.addAll(Arrays.asList(I18n.format("behavior.plunger.description").split("/n")));
+        lines.addAll(Arrays.asList(LocalizationUtils.format("behavior.plunger.description").split("/n")));
     }
 
     @Override

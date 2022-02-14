@@ -12,13 +12,13 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.BlockUtility;
 import gregtech.api.util.GregFakePlayer;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -258,10 +258,10 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.block_breaker.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.block_breaker.redstone"));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getInventorySize()));
-        tooltip.add(I18n.format("gregtech.machine.block_breaker.speed_bonus", (int) (getEfficiencyMultiplier() * 100)));
-        tooltip.add(I18n.format("gregtech.machine.block_breaker.consumption", getEnergyPerBlockBreak()));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.block_breaker.tooltip"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.block_breaker.redstone"));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.item_storage_capacity", getInventorySize()));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.block_breaker.speed_bonus", (int) (getEfficiencyMultiplier() * 100)));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.block_breaker.consumption", getEnergyPerBlockBreak()));
     }
 }

@@ -8,10 +8,10 @@ import gregtech.api.terminal.gui.widgets.AnimaWidgetGroup;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.menu.IMenuComponent;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.items.behaviors.TerminalBehaviour;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -71,10 +71,10 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
      */
     @SideOnly(Side.CLIENT)
     public String getDescription() {
-        if (I18n.hasKey("terminal." + getRegistryName() + ".description")) {
-            return I18n.format("terminal." + getRegistryName() + ".description").replaceAll("\\\\n", "\n");
+        if (LocalizationUtils.hasKey("terminal." + getRegistryName() + ".description")) {
+            return LocalizationUtils.format("terminal." + getRegistryName() + ".description").replaceAll("\\\\n", "\n");
         }
-        return I18n.format("terminal.app_name.description");
+        return LocalizationUtils.format("terminal.app_name.description");
     }
 
     /**
@@ -104,10 +104,10 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
      */
     @SideOnly(Side.CLIENT)
     public String getTierInformation(int tier) {
-        if (I18n.hasKey("terminal." + name + ".tier." + tier)) {
-            return I18n.format("terminal." + name + ".tier." + tier);
+        if (LocalizationUtils.hasKey("terminal." + name + ".tier." + tier)) {
+            return LocalizationUtils.format("terminal." + name + ".tier." + tier);
         }
-        return I18n.format("terminal.app_name.tier", tier);
+        return LocalizationUtils.format("terminal.app_name.tier", tier);
     }
 
     /**

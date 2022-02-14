@@ -3,6 +3,7 @@ package gregtech.integration.jei.multiblock;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.util.LocalizationUtils;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.IModRegistry;
@@ -11,7 +12,6 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.gui.recipes.RecipeLayout;
-import net.minecraft.client.resources.I18n;
 
 import javax.annotation.Nonnull;
 import java.util.LinkedList;
@@ -49,7 +49,7 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
     @Nonnull
     @Override
     public String getTitle() {
-        return I18n.format("gregtech.multiblock.title");
+        return LocalizationUtils.format("gregtech.multiblock.title");
     }
 
     @Nonnull

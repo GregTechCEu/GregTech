@@ -2,9 +2,9 @@ package gregtech.common.blocks;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.item.ItemStack;
@@ -42,19 +42,19 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         IBlockState stackState = itemBlock.getBlockState(itemStack);
         CoilType coilType = getState(stackState);
 
-        lines.add(I18n.format("tile.wire_coil.tooltip_heat", coilType.coilTemperature));
+        lines.add(LocalizationUtils.format("tile.wire_coil.tooltip_heat", coilType.coilTemperature));
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
             int coilTier = coilType.ordinal();
-            lines.add(I18n.format("tile.wire_coil.tooltip_smelter"));
-            lines.add(I18n.format("tile.wire_coil.tooltip_parallel_smelter", coilType.level * 32));
-            lines.add(I18n.format("tile.wire_coil.tooltip_energy_smelter", Math.max(1, 16 / coilType.energyDiscount)));
-            lines.add(I18n.format("tile.wire_coil.tooltip_pyro"));
-            lines.add(I18n.format("tile.wire_coil.tooltip_speed_pyro", coilTier == 0 ? 75 : 50 * (coilTier + 1)));
-            lines.add(I18n.format("tile.wire_coil.tooltip_cracking"));
-            lines.add(I18n.format("tile.wire_coil.tooltip_energy_cracking", 100 - 5 * coilTier));
+            lines.add(LocalizationUtils.format("tile.wire_coil.tooltip_smelter"));
+            lines.add(LocalizationUtils.format("tile.wire_coil.tooltip_parallel_smelter", coilType.level * 32));
+            lines.add(LocalizationUtils.format("tile.wire_coil.tooltip_energy_smelter", Math.max(1, 16 / coilType.energyDiscount)));
+            lines.add(LocalizationUtils.format("tile.wire_coil.tooltip_pyro"));
+            lines.add(LocalizationUtils.format("tile.wire_coil.tooltip_speed_pyro", coilTier == 0 ? 75 : 50 * (coilTier + 1)));
+            lines.add(LocalizationUtils.format("tile.wire_coil.tooltip_cracking"));
+            lines.add(LocalizationUtils.format("tile.wire_coil.tooltip_energy_cracking", 100 - 5 * coilTier));
         } else {
-            lines.add(I18n.format("gregtech.tooltip.hold_shift"));
+            lines.add(LocalizationUtils.format("gregtech.tooltip.hold_shift"));
         }
     }
 

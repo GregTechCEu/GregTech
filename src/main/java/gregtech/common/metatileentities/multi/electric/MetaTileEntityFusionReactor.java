@@ -17,6 +17,7 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -36,7 +37,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -279,8 +279,8 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.fusion_reactor.capacity", calculateEnergyStorageFactor(16) / 1000000L));
-        tooltip.add(I18n.format("gregtech.machine.fusion_reactor.overclocking"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.fusion_reactor.capacity", calculateEnergyStorageFactor(16) / 1000000L));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.fusion_reactor.overclocking"));
     }
 
     @Nonnull

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.BooleanConfigurator;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.ColorConfigurator;
 import gregtech.common.terminal.app.guideeditor.widget.configurator.NumberConfigurator;
@@ -14,7 +15,6 @@ import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,7 +86,7 @@ public class TextBoxWidget extends GuideWidget {
         int wrapWidth = getSize().width * font.FONT_HEIGHT / fontSize;
         if (content != null) {
             for (String textLine : content) {
-                this.textLines.addAll(font.listFormattedStringToWidth(I18n.format(textLine), wrapWidth));
+                this.textLines.addAll(font.listFormattedStringToWidth(LocalizationUtils.format(textLine), wrapWidth));
             }
         }
         this.setSize(new Size(this.getSize().width, this.textLines.size() * (fontSize + space)));

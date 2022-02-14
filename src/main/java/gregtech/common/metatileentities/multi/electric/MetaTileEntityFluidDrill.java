@@ -20,12 +20,12 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -179,11 +179,11 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.description"));
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.production", getRigMultiplier()));
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.depletion", GTUtility.formatNumbers(100.0 / getDepletionChance())));
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.energy", GTValues.VNF[tier], GTValues.VNF[tier + 1]));
-        tooltip.add(I18n.format("gregtech.machine.fluid_drilling_rig.overclock"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.fluid_drilling_rig.description"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.fluid_drilling_rig.production", getRigMultiplier()));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.fluid_drilling_rig.depletion", GTUtility.formatNumbers(100.0 / getDepletionChance())));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.fluid_drilling_rig.energy", GTValues.VNF[tier], GTValues.VNF[tier + 1]));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.fluid_drilling_rig.overclock"));
     }
 
     @Override

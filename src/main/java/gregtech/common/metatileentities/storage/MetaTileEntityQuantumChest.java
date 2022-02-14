@@ -18,10 +18,10 @@ import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -165,8 +165,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.quantum_chest.capacity", maxStoredItems));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.quantum_chest.tooltip"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.quantum_chest.capacity", maxStoredItems));
 
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null) {
@@ -181,9 +181,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 count = tempStack.getCount();
             }
             if (translationKey != null) {
-                tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip.item",
-                        I18n.format(translationKey)));
-                tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip.count", count));
+                tooltip.add(LocalizationUtils.format("gregtech.machine.quantum_chest.tooltip.item",
+                        LocalizationUtils.format(translationKey)));
+                tooltip.add(LocalizationUtils.format("gregtech.machine.quantum_chest.tooltip.count", count));
             }
         }
     }

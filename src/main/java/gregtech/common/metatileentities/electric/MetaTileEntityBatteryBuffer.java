@@ -15,9 +15,9 @@ import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.*;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -160,11 +160,11 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         String tierName = GTValues.VNF[getTier()];
 
-        tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", inventorySize));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), tierName));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), tierName));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", energyContainer.getInputAmperage()));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", energyContainer.getOutputAmperage()));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.item_storage_capacity", inventorySize));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), tierName));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), tierName));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.amperage_in_till", energyContainer.getInputAmperage()));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.amperage_out_till", energyContainer.getOutputAmperage()));
     }
 
     @Override

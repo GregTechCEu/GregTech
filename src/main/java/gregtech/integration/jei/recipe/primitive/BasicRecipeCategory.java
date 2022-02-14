@@ -1,13 +1,13 @@
 package gregtech.integration.jei.recipe.primitive;
 
 import gregtech.api.GTValues;
+import gregtech.api.util.LocalizationUtils;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.api.recipe.IRecipeWrapperFactory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,7 +22,7 @@ public abstract class BasicRecipeCategory<T, W extends IRecipeWrapper> implement
 
     public BasicRecipeCategory(String uniqueName, String localKey, IDrawable background, IGuiHelper guiHelper) {
         this.uniqueName = uniqueName;
-        this.localizedName = I18n.format(localKey);
+        this.localizedName = LocalizationUtils.format(localKey);
         this.background = background;
     }
 

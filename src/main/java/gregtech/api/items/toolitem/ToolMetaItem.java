@@ -30,7 +30,6 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.tools.DamageValues;
 import gregtech.common.tools.ToolWrench;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentDurability;
@@ -454,11 +453,11 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         Material primaryMaterial = getToolMaterial(itemStack);
         int maxInternalDamage = getMaxItemDamage(itemStack);
         if (toolStats.isUsingDurability(itemStack) && maxInternalDamage > 0) {
-            lines.add(I18n.format("metaitem.tool.tooltip.durability", maxInternalDamage - getItemDamage(itemStack), maxInternalDamage));
+            lines.add(LocalizationUtils.format("metaitem.tool.tooltip.durability", maxInternalDamage - getItemDamage(itemStack), maxInternalDamage));
         }
-        lines.add(I18n.format("metaitem.tool.tooltip.primary_material", primaryMaterial.getLocalizedName(), getHarvestLevel(itemStack)));
-        lines.add(I18n.format("metaitem.tool.tooltip.attack_damage", toolStats.getBaseDamage(itemStack) + primaryMaterial.getHarvestLevel()));
-        lines.add(I18n.format("metaitem.tool.tooltip.mining_speed", getToolDigSpeed(itemStack)));
+        lines.add(LocalizationUtils.format("metaitem.tool.tooltip.primary_material", primaryMaterial.getLocalizedName(), getHarvestLevel(itemStack)));
+        lines.add(LocalizationUtils.format("metaitem.tool.tooltip.attack_damage", toolStats.getBaseDamage(itemStack) + primaryMaterial.getHarvestLevel()));
+        lines.add(LocalizationUtils.format("metaitem.tool.tooltip.mining_speed", getToolDigSpeed(itemStack)));
         super.addInformation(itemStack, worldIn, lines, tooltipFlag);
         toolStats.addInformation(itemStack, lines, tooltipFlag.isAdvanced());
     }

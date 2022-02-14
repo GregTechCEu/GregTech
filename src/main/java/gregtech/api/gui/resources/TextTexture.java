@@ -1,9 +1,9 @@
 package gregtech.api.gui.resources;
 
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,7 +24,7 @@ public class TextTexture implements IGuiTexture{
         this.color = color;
         this.type = TextType.NORMAL;
         if (FMLCommonHandler.instance().getSide().isClient()) {
-            this.text = I18n.format(text);
+            this.text = LocalizationUtils.format(text);
             texts = Collections.singletonList(this.text);
         }
     }

@@ -31,12 +31,12 @@ import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -183,18 +183,18 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     public String[] getDescription() {
-        return new String[]{I18n.format("gregtech.machine.miner.multi.description")};
+        return new String[]{LocalizationUtils.format("gregtech.machine.miner.multi.description")};
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.miner.multi.modes"));
-        tooltip.add(I18n.format("gregtech.machine.miner.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.miner.multi.tooltip", this.minerLogic.getCurrentRadius() / CHUNK_LENGTH, this.minerLogic.getCurrentRadius() / CHUNK_LENGTH));
-        tooltip.add(I18n.format("gregtech.machine.miner.multi.production"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.miner.multi.modes"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.miner.tooltip"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.miner.multi.tooltip", this.minerLogic.getCurrentRadius() / CHUNK_LENGTH, this.minerLogic.getCurrentRadius() / CHUNK_LENGTH));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.miner.multi.production"));
         //small ore: tooltip.add(I18n.format("gregtech.machine.miner.multi.production", getRomanNumeralString()));
-        tooltip.add(I18n.format("gregtech.machine.miner.fluid_usage", getDrillingFluidConsumePerTick(), I18n.format(DrillingFluid.getFluid().getUnlocalizedName())));
-        tooltip.add(I18n.format("gregtech.machine.miner.overclock", GTValues.VNF[this.tier], GTValues.VNF[this.tier + 1]));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.miner.fluid_usage", getDrillingFluidConsumePerTick(), LocalizationUtils.format(DrillingFluid.getFluid().getUnlocalizedName())));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.miner.overclock", GTValues.VNF[this.tier], GTValues.VNF[this.tier + 1]));
     }
 
 
@@ -427,6 +427,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
-        return Collections.singletonList(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
+        return Collections.singletonList(new TextComponentTranslation(LocalizationUtils.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
     }
 }

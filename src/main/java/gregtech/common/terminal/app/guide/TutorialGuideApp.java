@@ -2,7 +2,7 @@ package gregtech.common.terminal.app.guide;
 
 import com.google.gson.JsonObject;
 import gregtech.api.gui.resources.ItemStackTexture;
-import net.minecraft.client.resources.I18n;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.init.Items;
 
 public class TutorialGuideApp extends GuideApp<String> {
@@ -13,7 +13,7 @@ public class TutorialGuideApp extends GuideApp<String> {
 
     @Override
     protected String itemName(String item) {
-        return I18n.format(item);
+        return LocalizationUtils.format(item);
     }
 
     @Override

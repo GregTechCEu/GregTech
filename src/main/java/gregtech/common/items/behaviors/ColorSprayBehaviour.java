@@ -1,11 +1,11 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.sound.GTSounds;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
@@ -66,7 +66,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
         int remainingUses = getUsesLeft(itemStack);
-        lines.add(I18n.format("behaviour.paintspray." + this.color.getTranslationKey() + ".tooltip"));
-        lines.add(I18n.format("behaviour.paintspray.uses", remainingUses));
+        lines.add(LocalizationUtils.format("behaviour.paintspray." + this.color.getTranslationKey() + ".tooltip"));
+        lines.add(LocalizationUtils.format("behaviour.paintspray.uses", remainingUses));
     }
 }

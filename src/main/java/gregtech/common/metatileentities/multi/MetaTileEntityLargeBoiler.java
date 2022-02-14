@@ -17,10 +17,10 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.sound.GTSounds;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.common.blocks.BlockFireboxCasing;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -173,15 +173,15 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
 
     @Override
     public String[] getDescription() {
-        return new String[]{I18n.format("gregtech.multiblock.large_boiler.description")};
+        return new String[]{LocalizationUtils.format("gregtech.multiblock.large_boiler.description")};
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.multiblock.large_boiler.rate_tooltip", (int) (boilerType.steamPerTick() * 20 * boilerType.runtimeBoost(20) / 20.0), boilerType.steamPerTick()));
-        tooltip.add(I18n.format("gregtech.multiblock.large_boiler.heat_time_tooltip", boilerType.getTicksToBoiling() / 20.0));
-        tooltip.add(I18n.format("gregtech.multiblock.large_boiler.explosion_tooltip"));
+        tooltip.add(LocalizationUtils.format("gregtech.multiblock.large_boiler.rate_tooltip", (int) (boilerType.steamPerTick() * 20 * boilerType.runtimeBoost(20) / 20.0), boilerType.steamPerTick()));
+        tooltip.add(LocalizationUtils.format("gregtech.multiblock.large_boiler.heat_time_tooltip", boilerType.getTicksToBoiling() / 20.0));
+        tooltip.add(LocalizationUtils.format("gregtech.multiblock.large_boiler.explosion_tooltip"));
     }
 
     @Override

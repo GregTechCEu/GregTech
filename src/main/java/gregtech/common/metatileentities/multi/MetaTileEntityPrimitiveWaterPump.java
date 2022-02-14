@@ -12,13 +12,13 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Materials;
 import gregtech.common.blocks.BlockSteamCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
@@ -154,9 +154,9 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
     @Override
     public String[] getDescription() {
         return Stream.of(
-                new String[]{I18n.format("gregtech.multiblock.primitive_water_pump.description")},
-                I18n.format("gregtech.multiblock.primitive_water_pump.extra1").split("/n"),
-                I18n.format("gregtech.multiblock.primitive_water_pump.extra2").split("/n")
+                new String[]{LocalizationUtils.format("gregtech.multiblock.primitive_water_pump.description")},
+                LocalizationUtils.format("gregtech.multiblock.primitive_water_pump.extra1").split("/n"),
+                LocalizationUtils.format("gregtech.multiblock.primitive_water_pump.extra2").split("/n")
         ).flatMap(Stream::of).toArray(String[]::new);
     }
 }

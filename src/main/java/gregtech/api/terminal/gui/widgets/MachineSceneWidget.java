@@ -9,6 +9,7 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.scene.FBOWorldSceneRenderer;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.api.terminal.os.TerminalTheme;
@@ -16,7 +17,6 @@ import gregtech.api.util.BlockPosFace;
 import gregtech.client.utils.RenderUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -324,7 +324,7 @@ public class MachineSceneWidget extends WidgetGroup {
         }
         drawBorder(x + 1, y + 1, width - 2, height - 2, 0xff000000, 1);
         if (mte != null) {
-            drawStringSized(I18n.format(mte.getMetaFullName()), x + width / 2f, y + 10, -1, true, 1, true);
+            drawStringSized(LocalizationUtils.format(mte.getMetaFullName()), x + width / 2f, y + 10, -1, true, 1, true);
         }
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
         currentMouseX = mouseX;

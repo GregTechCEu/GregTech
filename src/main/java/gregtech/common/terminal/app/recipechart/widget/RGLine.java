@@ -14,9 +14,9 @@ import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalTheme;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec2f;
@@ -51,7 +51,7 @@ public class RGLine extends WidgetGroup {
             infoGroup.addWidget(new SlotWidget(handler, 0, 0, 0, false, false).setBackgroundTexture(new ColorRectTexture(0)));
             MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(catalyst);
             if (mte instanceof SimpleMachineMetaTileEntity) {
-                infoGroup.addWidget(new LabelWidget(9, -10, I18n.format("terminal.recipe_chart.tier") + GTValues.VN[((SimpleMachineMetaTileEntity) mte).getTier()],  -1).setXCentered(true).setShadow(true));
+                infoGroup.addWidget(new LabelWidget(9, -10, LocalizationUtils.format("terminal.recipe_chart.tier") + GTValues.VN[((SimpleMachineMetaTileEntity) mte).getTier()],  -1).setXCentered(true).setShadow(true));
             }
         }
 

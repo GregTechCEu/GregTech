@@ -6,7 +6,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMap;
-import net.minecraft.client.resources.I18n;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -147,7 +147,7 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         if (recipeMaps.length == 1) return;
-        tooltip.add(I18n.format("gregtech.multiblock.multiple_recipemaps_recipes.tooltip", this.recipeMapsToString()));
+        tooltip.add(LocalizationUtils.format("gregtech.multiblock.multiple_recipemaps_recipes.tooltip", this.recipeMapsToString()));
     }
 
     @SideOnly(Side.CLIENT)

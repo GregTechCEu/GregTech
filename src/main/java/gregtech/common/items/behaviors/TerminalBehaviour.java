@@ -12,8 +12,8 @@ import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.terminal.os.TerminalOSWidget;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.common.terminal.hardware.BatteryHardware;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -90,11 +90,11 @@ public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubIte
     public void addInformation(ItemStack itemStack, List<String> lines) {
         HardwareProvider provider = itemStack.getCapability(GregtechCapabilities.CAPABILITY_HARDWARE_PROVIDER, null);
         if (isCreative(itemStack)) {
-            lines.add(I18n.format("metaitem.terminal.tooltip.creative"));
+            lines.add(LocalizationUtils.format("metaitem.terminal.tooltip.creative"));
         }
         if (provider != null) {
             List<Hardware> hardware = provider.getHardware();
-            lines.add(I18n.format("metaitem.terminal.tooltip.hardware", hardware.size()));
+            lines.add(LocalizationUtils.format("metaitem.terminal.tooltip.hardware", hardware.size()));
             for (Hardware hw : hardware) {
                 String info = hw.addInformation();
                 if (info == null) {

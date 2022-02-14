@@ -1,9 +1,9 @@
 package gregtech.common.blocks;
 
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.ItemStack;
@@ -40,9 +40,9 @@ public class BlockSteamCasing extends VariantBlock<BlockSteamCasing.SteamCasingT
         if (getState(stack).ordinal() == 4) {
             super.addInformation(stack, player, tooltip, advanced);
         } else if (getState(stack).ordinal() < 2) {
-            tooltip.add(I18n.format("tile.steam_casing.bronze.tooltip"));
+            tooltip.add(LocalizationUtils.format("tile.steam_casing.bronze.tooltip"));
         } else {
-            tooltip.add(I18n.format("tile.steam_casing.steel.tooltip"));
+            tooltip.add(LocalizationUtils.format("tile.steam_casing.steel.tooltip"));
         }
     }
 

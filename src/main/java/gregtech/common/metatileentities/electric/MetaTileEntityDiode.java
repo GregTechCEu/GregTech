@@ -12,10 +12,10 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
 import gregtech.common.tools.DamageValues;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -146,9 +146,9 @@ public class MetaTileEntityDiode extends TieredMetaTileEntity {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.diode.tooltip_general"));
-        tooltip.add(I18n.format("gregtech.machine.diode.tooltip_tool_usage"));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in",
+        tooltip.add(LocalizationUtils.format("gregtech.machine.diode.tooltip_general"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.diode.tooltip_tool_usage"));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.voltage_in",
                 energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
     }
 }

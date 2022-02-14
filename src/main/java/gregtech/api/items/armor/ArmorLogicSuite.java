@@ -7,7 +7,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorMetaItem.ArmorMetaValueItem;
 import gregtech.api.items.metaitem.ElectricStats;
-import net.minecraft.client.resources.I18n;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -92,7 +92,7 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
     public void addInfo(ItemStack itemStack, List<String> lines) {
         int armor = (int) Math.round(20.0F * this.getAbsorption(itemStack) * this.getDamageAbsorption());
         if (armor > 0)
-            lines.add(I18n.format("attribute.modifier.plus.0", armor, I18n.format("attribute.name.generic.armor")));
+            lines.add(LocalizationUtils.format("attribute.modifier.plus.0", armor, LocalizationUtils.format("attribute.name.generic.armor")));
     }
 
     public ActionResult<ItemStack> onRightClick(World world, EntityPlayer player, EnumHand hand) {
@@ -150,7 +150,7 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
         if (cont == null) return;
         if (cont.getCharge() == 0) return;
         float energyMultiplier = cont.getCharge() * 100.0F / cont.getMaxCharge();
-        this.HUD.newString(I18n.format("metaarmor.hud.energy_lvl", String.format("%.1f", energyMultiplier) + "%"));
+        this.HUD.newString(LocalizationUtils.format("metaarmor.hud.energy_lvl", String.format("%.1f", energyMultiplier) + "%"));
     }
 
     public int getEnergyPerUse() {

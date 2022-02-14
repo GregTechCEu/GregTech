@@ -5,13 +5,13 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.function.FloatConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
 
@@ -23,7 +23,7 @@ import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class SliderWidget extends Widget {
 
-    public static final BiFunction<String, Float, String> DEFAULT_TEXT_SUPPLIER = (name, value) -> I18n.format(name, value.intValue());
+    public static final BiFunction<String, Float, String> DEFAULT_TEXT_SUPPLIER = (name, value) -> LocalizationUtils.format(name, value.intValue());
 
     private int sliderWidth = 8;
     private TextureArea backgroundArea = GuiTextures.SLIDER_BACKGROUND;

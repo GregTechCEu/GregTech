@@ -20,8 +20,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.sound.GTSounds;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -154,10 +154,10 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.machine.miner.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.miner.usage", getWorkingArea(this.minerLogic.getMaximumRadius()), getWorkingArea(this.minerLogic.getMaximumRadius()), this.minerLogic.getSpeed() / 20, this.energyPerTick));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.miner.tooltip"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.miner.usage", getWorkingArea(this.minerLogic.getMaximumRadius()), getWorkingArea(this.minerLogic.getMaximumRadius()), this.minerLogic.getSpeed() / 20, this.energyPerTick));
     }
 
     @Override
@@ -204,9 +204,9 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
             this.minerLogic.checkBlocksToMine();
 
-            playerIn.sendMessage(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
+            playerIn.sendMessage(new TextComponentTranslation(LocalizationUtils.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
         } else {
-            playerIn.sendMessage(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.errorradius")));
+            playerIn.sendMessage(new TextComponentTranslation(LocalizationUtils.format("gregtech.multiblock.large_miner.errorradius")));
         }
         return true;
     }
@@ -290,6 +290,6 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
-        return Collections.singletonList(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
+        return Collections.singletonList(new TextComponentTranslation(LocalizationUtils.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
     }
 }

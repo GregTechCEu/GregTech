@@ -3,6 +3,7 @@ package gregtech.integration.jei;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.worldgen.config.FillerConfigUtils;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.filler.BlockFiller;
@@ -18,7 +19,6 @@ import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.Biome;
@@ -285,8 +285,8 @@ public class GTOreInfo implements IRecipeWrapper {
         else if (slotIndex == 1) {
             //Only add the special tooltip to the Material rock piles
             if (veinPopulator instanceof SurfaceRockPopulator) {
-                tooltip.add(I18n.format("gregtech.jei.ore.surface_rock_1"));
-                tooltip.add(I18n.format("gregtech.jei.ore.surface_rock_2"));
+                tooltip.add(LocalizationUtils.format("gregtech.jei.ore.surface_rock_1"));
+                tooltip.add(LocalizationUtils.format("gregtech.jei.ore.surface_rock_2"));
             }
         } else {
             if (blockFiller instanceof LayeredBlockFiller) {
@@ -324,9 +324,9 @@ public class GTOreInfo implements IRecipeWrapper {
             if (!(entry.getValue() == weight)) {
                 //Cannot Spawn
                 if (entry.getValue() <= 0) {
-                    tooltip.add(I18n.format("gregtech.jei.ore.biome_weighting_no_spawn", entry.getKey().getBiomeName()));
+                    tooltip.add(LocalizationUtils.format("gregtech.jei.ore.biome_weighting_no_spawn", entry.getKey().getBiomeName()));
                 } else {
-                    tooltip.add(I18n.format("gregtech.jei.ore.biome_weighting", entry.getKey().getBiomeName(), entry.getValue()));
+                    tooltip.add(LocalizationUtils.format("gregtech.jei.ore.biome_weighting", entry.getKey().getBiomeName(), entry.getValue()));
                 }
             }
         }
@@ -347,7 +347,7 @@ public class GTOreInfo implements IRecipeWrapper {
             if (entry.getEntries() != null && !entry.getEntries().isEmpty()) {
                 Pair<Integer, FillerEntry> entryWithWeight = entry.getEntries().get(slotIndex - 2);
                 weight = Math.round((entryWithWeight.getKey() / (double) totalWeight) * 100);
-                tooltip.add(I18n.format("gregtech.jei.ore.ore_weight", weight));
+                tooltip.add(LocalizationUtils.format("gregtech.jei.ore.ore_weight", weight));
             }
         }
 
@@ -360,23 +360,23 @@ public class GTOreInfo implements IRecipeWrapper {
         switch (slotIndex) {
             // cases are offset by 2, being the "Ore Input" and the Surface Indicator
             case 2: {
-                tooltip.add(I18n.format("gregtech.jei.ore.primary_1"));
-                tooltip.add(I18n.format("gregtech.jei.ore.primary_2", filler.getPrimaryLayers()));
+                tooltip.add(LocalizationUtils.format("gregtech.jei.ore.primary_1"));
+                tooltip.add(LocalizationUtils.format("gregtech.jei.ore.primary_2", filler.getPrimaryLayers()));
                 break;
             }
             case 3: {
-                tooltip.add(I18n.format("gregtech.jei.ore.secondary_1"));
-                tooltip.add(I18n.format("gregtech.jei.ore.secondary_2", filler.getSecondaryLayers()));
+                tooltip.add(LocalizationUtils.format("gregtech.jei.ore.secondary_1"));
+                tooltip.add(LocalizationUtils.format("gregtech.jei.ore.secondary_2", filler.getSecondaryLayers()));
                 break;
             }
             case 4: {
-                tooltip.add(I18n.format("gregtech.jei.ore.between_1"));
-                tooltip.add(I18n.format("gregtech.jei.ore.between_2", filler.getBetweenLayers()));
+                tooltip.add(LocalizationUtils.format("gregtech.jei.ore.between_1"));
+                tooltip.add(LocalizationUtils.format("gregtech.jei.ore.between_2", filler.getBetweenLayers()));
                 break;
             }
             case 5: {
-                tooltip.add(I18n.format("gregtech.jei.ore.sporadic_1"));
-                tooltip.add(I18n.format("gregtech.jei.ore.sporadic_2"));
+                tooltip.add(LocalizationUtils.format("gregtech.jei.ore.sporadic_1"));
+                tooltip.add(LocalizationUtils.format("gregtech.jei.ore.sporadic_2"));
                 break;
             }
         }

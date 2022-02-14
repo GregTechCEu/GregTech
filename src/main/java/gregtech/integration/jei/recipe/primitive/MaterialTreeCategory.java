@@ -7,6 +7,7 @@ import gregtech.api.recipes.recipeproperties.TemperatureProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.integration.jei.utils.render.DrawableRegistry;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
@@ -17,7 +18,6 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -150,9 +150,9 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
         materialName = recipeWrapper.getMaterialName();
         materialFormula = recipeWrapper.getMaterialFormula();
         materialBFTemp = recipeWrapper.getBlastTemp();
-        materialAvgM = I18n.format("gregtech.jei.materials.average_mass", recipeWrapper.getAvgM());
-        materialAvgP = I18n.format("gregtech.jei.materials.average_protons", recipeWrapper.getAvgP());
-        materialAvgN = I18n.format("gregtech.jei.materials.average_neutrons", recipeWrapper.getAvgN());
+        materialAvgM = LocalizationUtils.format("gregtech.jei.materials.average_mass", recipeWrapper.getAvgM());
+        materialAvgP = LocalizationUtils.format("gregtech.jei.materials.average_protons", recipeWrapper.getAvgP());
+        materialAvgN = LocalizationUtils.format("gregtech.jei.materials.average_neutrons", recipeWrapper.getAvgN());
     }
 
     @Nonnull

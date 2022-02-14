@@ -15,9 +15,9 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -129,9 +129,9 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.muffler_hatch.tooltip"));
-        tooltip.add(I18n.format("gregtech.muffler.recovery_tooltip", recoveryChance));
-        tooltip.add(I18n.format("gregtech.universal.enabled"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.muffler_hatch.tooltip"));
+        tooltip.add(LocalizationUtils.format("gregtech.muffler.recovery_tooltip", recoveryChance));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.enabled"));
     }
 
     @Override

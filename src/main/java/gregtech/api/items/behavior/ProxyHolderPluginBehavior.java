@@ -1,7 +1,7 @@
 package gregtech.api.items.behavior;
 
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import net.minecraft.client.resources.I18n;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
@@ -25,7 +25,7 @@ public abstract class ProxyHolderPluginBehavior extends MonitorPluginBaseBehavio
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
         super.addInformation(itemStack, lines);
-        lines.add(I18n.format("metaitem.plugin.proxy.tooltips.1"));
+        lines.add(LocalizationUtils.format("metaitem.plugin.proxy.tooltips.1"));
     }
 
     public void onHolderPosUpdated(BlockPos pos) {

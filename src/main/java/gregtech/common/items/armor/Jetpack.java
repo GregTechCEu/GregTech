@@ -5,8 +5,8 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.input.EnumKey;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -110,8 +110,8 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
         NBTTagCompound data = item.getTagCompound();
         if (data != null) {
             if (data.hasKey("hover")) {
-                String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled"));
-                String result = I18n.format("metaarmor.hud.hover_mode", status);
+                String status = (data.getBoolean("hover") ? LocalizationUtils.format("metaarmor.hud.status.enabled") : LocalizationUtils.format("metaarmor.hud.status.disabled"));
+                String result = LocalizationUtils.format("metaarmor.hud.hover_mode", status);
                 this.HUD.newString(result);
             }
         }
@@ -124,12 +124,12 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
         super.addInfo(itemStack, lines);
         NBTTagCompound data = itemStack.getTagCompound();
         if (data != null) {
-            String status = I18n.format("metaarmor.hud.status.disabled");
+            String status = LocalizationUtils.format("metaarmor.hud.status.disabled");
             if (data.hasKey("hover")) {
                 if (data.getBoolean("hover"))
-                    status = I18n.format("metaarmor.hud.status.enabled");
+                    status = LocalizationUtils.format("metaarmor.hud.status.enabled");
             }
-            lines.add(I18n.format("metaarmor.hud.hover_mode", status));
+            lines.add(LocalizationUtils.format("metaarmor.hud.hover_mode", status));
         }
     }
 

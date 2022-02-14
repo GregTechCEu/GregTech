@@ -10,11 +10,11 @@ import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -145,6 +145,6 @@ public class MetaTileEntityCrate extends MetaTileEntity {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", inventorySize));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.item_storage_capacity", inventorySize));
     }
 }

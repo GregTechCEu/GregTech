@@ -1,8 +1,8 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.common.items.behaviors.ModeSwitchBehavior.ILocalizationKey;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -61,8 +61,8 @@ public class ModeSwitchBehavior<T extends Enum<T> & ILocalizationKey> implements
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
         T currentMode = getModeFromItemStack(itemStack);
-        lines.add(I18n.format("metaitem.behavior.mode_switch.tooltip"));
-        lines.add(I18n.format("metaitem.behavior.mode_switch.current_mode", I18n.format(currentMode.getUnlocalizedName())));
+        lines.add(LocalizationUtils.format("metaitem.behavior.mode_switch.tooltip"));
+        lines.add(LocalizationUtils.format("metaitem.behavior.mode_switch.current_mode", LocalizationUtils.format(currentMode.getUnlocalizedName())));
     }
 
     public interface ILocalizationKey {

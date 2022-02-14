@@ -4,10 +4,10 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.SizedTextureArea;
 import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.function.BooleanConsumer;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
@@ -89,7 +89,7 @@ public class ImageCycleButtonWidget extends Widget {
         } else if (isHovered) {
             long timeSinceHover = System.currentTimeMillis() - hoverStartTime;
             if (timeSinceHover > 1000L && tooltipHoverString != null) {
-                List<String> hoverList = Arrays.asList(I18n.format(tooltipHoverString.apply(currentOption)).split("/n"));
+                List<String> hoverList = Arrays.asList(LocalizationUtils.format(tooltipHoverString.apply(currentOption)).split("/n"));
                 drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
             }
         }

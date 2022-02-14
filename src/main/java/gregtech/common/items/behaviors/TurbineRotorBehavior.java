@@ -6,7 +6,7 @@ import gregtech.api.items.metaitem.stats.IItemMaxStackSizeProvider;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
-import net.minecraft.client.resources.I18n;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -57,8 +57,8 @@ public class TurbineRotorBehavior extends AbstractMaterialPartBehavior implement
     @Override
     public void addInformation(ItemStack stack, List<String> lines) {
         super.addInformation(stack, lines);
-        lines.add(I18n.format("metaitem.tool.tooltip.rotor.efficiency", getRotorEfficiency(stack)));
-        lines.add(I18n.format("metaitem.tool.tooltip.rotor.power", getRotorPower(stack)));
+        lines.add(LocalizationUtils.format("metaitem.tool.tooltip.rotor.efficiency", getRotorEfficiency(stack)));
+        lines.add(LocalizationUtils.format("metaitem.tool.tooltip.rotor.power", getRotorPower(stack)));
     }
 
     @Nullable

@@ -6,10 +6,10 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.SizedTextureArea;
 import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.function.BooleanConsumer;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
@@ -71,7 +71,7 @@ public class ToggleButtonWidget extends Widget {
         if (isMouseOverElement(mouseX, mouseY) && tooltipText != null) {
             String postfix = isPressed ? ".enabled" : ".disabled";
             String tooltipHoverString = tooltipText + postfix;
-            List<String> hoverList = Arrays.asList(I18n.format(tooltipHoverString, tooltipArgs).split("/n"));
+            List<String> hoverList = Arrays.asList(LocalizationUtils.format(tooltipHoverString, tooltipArgs).split("/n"));
             drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
         }
     }

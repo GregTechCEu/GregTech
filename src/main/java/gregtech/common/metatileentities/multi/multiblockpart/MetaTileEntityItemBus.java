@@ -11,10 +11,10 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -113,10 +113,10 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         if (this.isExportHatch)
-            tooltip.add(I18n.format("gregtech.machine.item_bus.export.tooltip"));
+            tooltip.add(LocalizationUtils.format("gregtech.machine.item_bus.export.tooltip"));
         else
-            tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getInventorySize()));
-        tooltip.add(I18n.format("gregtech.universal.enabled"));
+            tooltip.add(LocalizationUtils.format("gregtech.machine.item_bus.import.tooltip"));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.item_storage_capacity", getInventorySize()));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.enabled"));
     }
 }

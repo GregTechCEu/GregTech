@@ -12,10 +12,10 @@ import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.ColorWidget;
 import gregtech.api.terminal.gui.widgets.TreeListWidget;
 import gregtech.api.terminal.util.FileTree;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -198,7 +198,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                 .setBackground(new ColorRectTexture(0x4f000000));
         if (!dir.isDirectory()) {
             if (!dir.mkdirs()) {
-                return dialog.addInfo(I18n.format("terminal.dialog.error_path") + dir.getPath()).addOkButton(null);
+                return dialog.addInfo(LocalizationUtils.format("terminal.dialog.error_path") + dir.getPath()).addOkButton(null);
             }
         }
         AtomicReference<File> selected = new AtomicReference<>();

@@ -13,6 +13,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
@@ -20,7 +21,6 @@ import gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType;
 import gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -31,7 +31,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -94,12 +93,12 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.large_combustion_engine.tooltip.1", GTValues.V[tier]));
-        tooltip.add(I18n.format("gregtech.machine.large_combustion_engine.tooltip.2"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.large_combustion_engine.tooltip.1", GTValues.V[tier]));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.large_combustion_engine.tooltip.2"));
         if (isExtreme) {
-            tooltip.add(I18n.format("gregtech.machine.large_combustion_engine.tooltip.boost_extreme", GTValues.V[tier] * 4));
+            tooltip.add(LocalizationUtils.format("gregtech.machine.large_combustion_engine.tooltip.boost_extreme", GTValues.V[tier] * 4));
         } else {
-            tooltip.add(I18n.format("gregtech.machine.large_combustion_engine.tooltip.boost_regular", GTValues.V[tier] * 3));
+            tooltip.add(LocalizationUtils.format("gregtech.machine.large_combustion_engine.tooltip.boost_regular", GTValues.V[tier] * 3));
         }
     }
 

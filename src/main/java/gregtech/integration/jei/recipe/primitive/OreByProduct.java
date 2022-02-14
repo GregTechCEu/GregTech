@@ -11,6 +11,7 @@ import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.MetaTileEntities;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -18,7 +19,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -302,7 +302,7 @@ public class OreByProduct implements IRecipeWrapper {
             ChanceEntry entry = chances.get(slotIndex);
             double chance = entry.getChance() / 100.0;
             double boost = entry.getBoostPerTier() / 100.0;
-            tooltip.add(I18n.format("gregtech.recipe.chance", chance, boost));
+            tooltip.add(LocalizationUtils.format("gregtech.recipe.chance", chance, boost));
         }
     }
 

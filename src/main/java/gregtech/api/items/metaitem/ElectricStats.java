@@ -8,7 +8,7 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemMaxStackSizeProvider;
-import net.minecraft.client.resources.I18n;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -118,7 +118,7 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem != null && electricItem.canProvideChargeExternally()) {
             addTotalChargeTooltip(lines, electricItem.getMaxCharge(), electricItem.getTier());
-            lines.add(I18n.format("metaitem.electric.discharge_mode.tooltip"));
+            lines.add(LocalizationUtils.format("metaitem.electric.discharge_mode.tooltip"));
         }
     }
 
@@ -139,7 +139,7 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
             chargeTime = duration.toHours();
             unit = "hr";
         }
-        tooltip.add(I18n.format("metaitem.battery.charge_time", chargeTime, unit, GTValues.VNF[tier]));
+        tooltip.add(LocalizationUtils.format("metaitem.battery.charge_time", chargeTime, unit, GTValues.VNF[tier]));
     }
 
     private static boolean isInDischargeMode(ItemStack itemStack) {

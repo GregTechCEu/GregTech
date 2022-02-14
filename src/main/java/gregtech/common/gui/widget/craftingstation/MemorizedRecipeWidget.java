@@ -3,11 +3,11 @@ package gregtech.common.gui.widget.craftingstation;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory.MemorizedRecipe;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
@@ -54,8 +54,8 @@ public class MemorizedRecipeWidget extends SlotWidget {
             ((ISlotWidget) slotReference).setHover(false);
             GlStateManager.disableDepth();
             List<String> tooltip = getItemToolTip(slotReference.getStack());
-            tooltip.add(I18n.format("gregtech.recipe_memory_widget.tooltip.1"));
-            tooltip.add(I18n.format("gregtech.recipe_memory_widget.tooltip.2"));
+            tooltip.add(LocalizationUtils.format("gregtech.recipe_memory_widget.tooltip.1"));
+            tooltip.add(LocalizationUtils.format("gregtech.recipe_memory_widget.tooltip.2"));
             drawHoveringText(slotReference.getStack(), tooltip, -1, mouseX, mouseY);
             GlStateManager.enableDepth();
         }

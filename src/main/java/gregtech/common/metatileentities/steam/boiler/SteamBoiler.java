@@ -18,11 +18,11 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -307,7 +307,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.steam_boiler.tooltip_produces", getBaseSteamOutput()));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.steam_boiler.tooltip_produces", getBaseSteamOutput()));
     }
 
     @Override

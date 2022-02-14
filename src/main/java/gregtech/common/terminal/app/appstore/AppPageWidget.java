@@ -12,6 +12,7 @@ import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
@@ -19,7 +20,6 @@ import gregtech.common.items.behaviors.TerminalBehaviour;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -181,7 +181,7 @@ public class AppPageWidget extends TerminalDialogWidget {
                 if (isRemote()) {
                     TerminalDialogWidget.showInfoDialog(store.getOs(),
                             "terminal.dialog.notice",
-                            I18n.format("terminal.store.miss", missStack.getDisplayName(), missStack.getCount()))
+                                    LocalizationUtils.format("terminal.store.miss", missStack.getDisplayName(), missStack.getCount()))
                             .setClientSide().open();
                 }
             }
@@ -283,7 +283,7 @@ public class AppPageWidget extends TerminalDialogWidget {
         FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
         List<String> description = fr.listFormattedStringToWidth(application.getDescription(), 210);
         int fColor = store.darkMode ? -1 : 0xff333333;
-        String localizedName = I18n.format(application.getUnlocalizedName());
+        String localizedName = LocalizationUtils.format(application.getUnlocalizedName());
         drawStringSized(localizedName, x + 100, y + 14, fColor, store.darkMode, 2, false);
         if (isMouseOver(x + 100, y + 14, fr.getStringWidth(localizedName) * 2, fr.FONT_HEIGHT * 2, mouseX, mouseY)) {
             drawHoveringText(ItemStack.EMPTY, Collections.singletonList("("+application.getRegistryName()+")"), 200, mouseX, mouseY);

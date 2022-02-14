@@ -22,12 +22,12 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.GTToolTypes;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.gui.widget.among_us.FixWiringTaskWidget;
 import gregtech.common.inventory.handlers.TapeItemStackHandler;
 import gregtech.common.items.MetaItems;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -449,6 +449,6 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.universal.disabled"));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.disabled"));
     }
 }

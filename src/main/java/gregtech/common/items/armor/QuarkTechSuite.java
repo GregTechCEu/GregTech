@@ -5,10 +5,10 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.input.EnumKey;
 import gregtech.common.items.MetaItems;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -290,18 +290,18 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
             NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);
             boolean nv = nbtData.getBoolean("Nightvision");
             if (nv) {
-                lines.add(I18n.format("metaarmor.message.nightvision.enabled"));
+                lines.add(LocalizationUtils.format("metaarmor.message.nightvision.enabled"));
             } else {
-                lines.add(I18n.format("metaarmor.message.nightvision.disabled"));
+                lines.add(LocalizationUtils.format("metaarmor.message.nightvision.disabled"));
             }
-            lines.add(I18n.format("metaarmor.tooltip.poitons"));
+            lines.add(LocalizationUtils.format("metaarmor.tooltip.poitons"));
         } else if (SLOT == EntityEquipmentSlot.CHEST) {
-            lines.add(I18n.format("metaarmor.tooltip.burning"));
+            lines.add(LocalizationUtils.format("metaarmor.tooltip.burning"));
         } else if (SLOT == EntityEquipmentSlot.LEGS) {
-            lines.add(I18n.format("metaarmor.tooltip.speed"));
+            lines.add(LocalizationUtils.format("metaarmor.tooltip.speed"));
         } else if (SLOT == EntityEquipmentSlot.FEET) {
-            lines.add(I18n.format("metaarmor.tooltip.stepassist"));
-            lines.add(I18n.format("metaarmor.tooltip.falldamage"));
+            lines.add(LocalizationUtils.format("metaarmor.tooltip.stepassist"));
+            lines.add(LocalizationUtils.format("metaarmor.tooltip.falldamage"));
         }
     }
 }

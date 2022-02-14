@@ -4,6 +4,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
@@ -124,7 +125,7 @@ public class TraceabilityPredicate {
      */
     public TraceabilityPredicate addTooltip(String langKey, Object... data) {
         if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-            addTooltips(I18n.format(langKey, data));
+            addTooltips(LocalizationUtils.format(langKey, data));
         }
         return this;
     }
@@ -261,32 +262,32 @@ public class TraceabilityPredicate {
         public List<String> getToolTips(TraceabilityPredicate predicates) {
             List<String> result = new ArrayList<>();
             if (toolTips != null) {
-                toolTips.forEach(tip -> result.add(I18n.format(tip)));
+                toolTips.forEach(tip -> result.add(LocalizationUtils.format(tip)));
             }
             if (minGlobalCount == maxGlobalCount && maxGlobalCount != -1) {
-                result.add(I18n.format("gregtech.multiblock.pattern.error.limited_exact", minGlobalCount));
+                result.add(LocalizationUtils.format("gregtech.multiblock.pattern.error.limited_exact", minGlobalCount));
             } else if (minGlobalCount != maxGlobalCount && minGlobalCount != -1 && maxGlobalCount != -1) {
-                result.add(I18n.format("gregtech.multiblock.pattern.error.limited_within", minGlobalCount, maxGlobalCount));
+                result.add(LocalizationUtils.format("gregtech.multiblock.pattern.error.limited_within", minGlobalCount, maxGlobalCount));
             } else {
                 if (minGlobalCount != -1) {
-                    result.add(I18n.format("gregtech.multiblock.pattern.error.limited.1", minGlobalCount));
+                    result.add(LocalizationUtils.format("gregtech.multiblock.pattern.error.limited.1", minGlobalCount));
                 }
                 if (maxGlobalCount != -1) {
-                    result.add(I18n.format("gregtech.multiblock.pattern.error.limited.0", maxGlobalCount));
+                    result.add(LocalizationUtils.format("gregtech.multiblock.pattern.error.limited.0", maxGlobalCount));
                 }
             }
             if (minLayerCount != -1) {
-                result.add(I18n.format("gregtech.multiblock.pattern.error.limited.3", minLayerCount));
+                result.add(LocalizationUtils.format("gregtech.multiblock.pattern.error.limited.3", minLayerCount));
             }
             if (maxLayerCount != -1) {
-                result.add(I18n.format("gregtech.multiblock.pattern.error.limited.2", maxLayerCount));
+                result.add(LocalizationUtils.format("gregtech.multiblock.pattern.error.limited.2", maxLayerCount));
             }
             if (predicates == null) return result;
             if (predicates.isSingle) {
-                result.add(I18n.format("gregtech.multiblock.pattern.single"));
+                result.add(LocalizationUtils.format("gregtech.multiblock.pattern.single"));
             }
             if (predicates.hasAir) {
-                result.add(I18n.format("gregtech.multiblock.pattern.replaceable_air"));
+                result.add(LocalizationUtils.format("gregtech.multiblock.pattern.replaceable_air"));
             }
             return result;
         }
@@ -356,7 +357,7 @@ public class TraceabilityPredicate {
             if (type == 1) number = predicate.minGlobalCount;
             if (type == 2) number = predicate.maxLayerCount;
             if (type == 3) number = predicate.minLayerCount;
-            return I18n.format("gregtech.multiblock.pattern.error.limited." + type, number);
+            return LocalizationUtils.format("gregtech.multiblock.pattern.error.limited." + type, number);
         }
     }
 

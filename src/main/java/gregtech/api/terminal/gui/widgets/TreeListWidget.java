@@ -4,13 +4,13 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.terminal.util.TreeNode;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
@@ -152,7 +152,7 @@ public class TreeListWidget<K, T> extends Widget {
                     drawSolidRect(x, sY, width, ITEM_HEIGHT, 0x7f000000);
                 }
                 int textW = Math.max(width - 10 * node.dimension, 10);
-                List<String> list = fr.listFormattedStringToWidth(I18n.format(name), textW);
+                List<String> list = fr.listFormattedStringToWidth(LocalizationUtils.format(name), textW);
                 fr.drawString(list.get(Math.abs((tick / 20) % list.size())), sX, sY + 2, 0xff000000);
             }
         });

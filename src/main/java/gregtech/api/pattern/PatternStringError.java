@@ -1,6 +1,7 @@
 package gregtech.api.pattern;
 
-import net.minecraft.client.resources.I18n;
+
+import gregtech.api.util.LocalizationUtils;
 
 public class PatternStringError extends PatternError{
     public final String translateKey;
@@ -11,6 +12,6 @@ public class PatternStringError extends PatternError{
 
     @Override
     public String getErrorInfo() {
-        return I18n.format(translateKey);
+        return LocalizationUtils.format(translateKey);
     }
 }

@@ -6,8 +6,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.ICubeRenderer;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -39,12 +39,12 @@ public class MetaTileEntityMacerator extends SimpleMachineMetaTileEntity {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VNF[getTier()]));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         if (getTier() > GTValues.MV) {
-            tooltip.add(I18n.format("gregtech.machine.macerator.tooltip2"));
+            tooltip.add(LocalizationUtils.format("gregtech.machine.macerator.tooltip2"));
         } else {
-            tooltip.add(I18n.format("gregtech.machine.macerator.tooltip1"));
+            tooltip.add(LocalizationUtils.format("gregtech.machine.macerator.tooltip1"));
         }
     }
 }

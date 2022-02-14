@@ -5,8 +5,8 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.input.EnumKey;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -134,15 +134,15 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(itemStack);
         String state;
         if (data.hasKey("canShare")) {
-            state = data.getBoolean("canShare") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled");
+            state = data.getBoolean("canShare") ? LocalizationUtils.format("metaarmor.hud.status.enabled") : LocalizationUtils.format("metaarmor.hud.status.disabled");
         } else {
-            state = I18n.format("metaarmor.hud.status.disabled");
+            state = LocalizationUtils.format("metaarmor.hud.status.disabled");
         }
-        lines.add(I18n.format("metaarmor.energy_share.tooltip", state));
-        lines.add(I18n.format("metaarmor.energy_share.tooltip.guide"));
+        lines.add(LocalizationUtils.format("metaarmor.energy_share.tooltip", state));
+        lines.add(LocalizationUtils.format("metaarmor.energy_share.tooltip.guide"));
         if (data.hasKey("hover")) {
-            String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled"));
-            lines.add(I18n.format("metaarmor.hud.hover_mode", status));
+            String status = (data.getBoolean("hover") ? LocalizationUtils.format("metaarmor.hud.status.enabled") : LocalizationUtils.format("metaarmor.hud.status.disabled"));
+            lines.add(LocalizationUtils.format("metaarmor.hud.hover_mode", status));
         }
         super.addInfo(itemStack, lines);
     }
@@ -178,12 +178,12 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
         if (data != null) {
             if (data.hasKey("canShare")) {
                 String status = data.getBoolean("canShare") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
-                this.HUD.newString(I18n.format("mataarmor.hud.supply_mode", I18n.format(status)));
+                this.HUD.newString(LocalizationUtils.format("mataarmor.hud.supply_mode", LocalizationUtils.format(status)));
             }
 
             if (data.hasKey("hover")) {
                 String status = data.getBoolean("hover") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
-                this.HUD.newString(I18n.format("metaarmor.hud.hover_mode", I18n.format(status)));
+                this.HUD.newString(LocalizationUtils.format("metaarmor.hud.hover_mode", LocalizationUtils.format(status)));
             }
         }
         this.HUD.draw();

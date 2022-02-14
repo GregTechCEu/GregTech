@@ -3,7 +3,7 @@ package gregtech.common.items.behaviors;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import net.minecraft.client.resources.I18n;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -55,7 +55,7 @@ public class ToggleEnergyConsumerBehavior implements IItemBehaviour {
 
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
-        lines.add(I18n.format("behavior.toggle_energy_consumer.tooltip"));
+        lines.add(LocalizationUtils.format("behavior.toggle_energy_consumer.tooltip"));
     }
 
     public boolean isItemActive(ItemStack itemStack) {

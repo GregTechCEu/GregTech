@@ -5,13 +5,13 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.recipes.KeySharedStack;
 import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.inventory.IItemInfo;
 import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.IItemList.InsertMode;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -67,7 +67,7 @@ public class ItemListSlotWidget extends Widget {
             ItemStack itemStack = itemInfo.getItemStackKey().getItemStackRaw();
             List<String> tooltip = getItemToolTip(itemStack);
             int totalItemStored = itemInfo.getTotalItemAmount();
-            String itemStoredText = I18n.format("gregtech.item_list.item_stored", totalItemStored);
+            String itemStoredText = LocalizationUtils.format("gregtech.item_list.item_stored", totalItemStored);
             tooltip.add(TextFormatting.GRAY + itemStoredText);
             drawHoveringText(itemStack, tooltip, -1, mouseX, mouseY);
         }

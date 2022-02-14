@@ -9,7 +9,6 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.LocalizationUtils;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
@@ -74,8 +73,8 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
         Material material = getPartMaterial(stack);
         int maxDurability = getPartMaxDurability(stack);
         int damage = getPartDamage(stack);
-        lines.add(I18n.format("metaitem.tool.tooltip.durability", maxDurability - damage, maxDurability));
-        lines.add(I18n.format("metaitem.tool.tooltip.primary_material", material.getLocalizedName(), material.getHarvestLevel()));
+        lines.add(LocalizationUtils.format("metaitem.tool.tooltip.durability", maxDurability - damage, maxDurability));
+        lines.add(LocalizationUtils.format("metaitem.tool.tooltip.primary_material", material.getLocalizedName(), material.getHarvestLevel()));
     }
 
     @Override

@@ -11,8 +11,8 @@ import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.input.EnumKey;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -122,13 +122,13 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
                 if (prop[0].getContents() != null) {
                     if (prop[0].getContents().amount == 0) return;
                     String formated = String.format("%.1f", (prop[0].getContents().amount * 100.0F / prop[0].getCapacity()));
-                    this.HUD.newString(I18n.format("metaarmor.hud.fuel_lvl", formated + "%"));
+                    this.HUD.newString(LocalizationUtils.format("metaarmor.hud.fuel_lvl", formated + "%"));
                     NBTTagCompound data = item.getTagCompound();
 
                     if (data != null) {
                         if (data.hasKey("hover")) {
-                            String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled"));
-                            String result = I18n.format("metaarmor.hud.hover_mode", status);
+                            String status = (data.getBoolean("hover") ? LocalizationUtils.format("metaarmor.hud.status.enabled") : LocalizationUtils.format("metaarmor.hud.status.disabled"));
+                            String result = LocalizationUtils.format("metaarmor.hud.hover_mode", status);
                             this.HUD.newString(result);
                         }
                     }
@@ -285,12 +285,12 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
         public void addInformation(ItemStack itemStack, List<String> lines) {
             IItemBehaviour.super.addInformation(itemStack, lines);
             NBTTagCompound data = GTUtility.getOrCreateNbtCompound(itemStack);
-            String status = I18n.format("metaarmor.hud.status.disabled");
+            String status = LocalizationUtils.format("metaarmor.hud.status.disabled");
             if (data.hasKey("hover")) {
                 if (data.getBoolean("hover"))
-                    status = I18n.format("metaarmor.hud.status.enabled");
+                    status = LocalizationUtils.format("metaarmor.hud.status.enabled");
             }
-            lines.add(I18n.format("metaarmor.hud.hover_mode", status));
+            lines.add(LocalizationUtils.format("metaarmor.hud.hover_mode", status));
         }
 
         @Override

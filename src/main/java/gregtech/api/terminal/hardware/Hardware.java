@@ -2,9 +2,7 @@ package gregtech.api.terminal.hardware;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.gui.resources.TextureArea;
-import gregtech.common.items.behaviors.TerminalBehaviour;
-import net.minecraft.client.resources.I18n;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
@@ -24,7 +22,7 @@ public abstract class Hardware  {
 
     @SideOnly(Side.CLIENT)
     public String getLocalizedName() {
-        return I18n.format("terminal.hw." + getRegistryName());
+        return LocalizationUtils.format("terminal.hw." + getRegistryName());
     }
 
     @SideOnly(Side.CLIENT)

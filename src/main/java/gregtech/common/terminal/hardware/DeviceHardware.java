@@ -4,8 +4,8 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.terminal.hardware.Hardware;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.common.items.MetaItems;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
@@ -26,7 +26,7 @@ public class DeviceHardware extends Hardware {
     @SideOnly(Side.CLIENT)
     @Override
     public String getLocalizedName() {
-        return I18n.format("terminal.hw.device") + " " + slot;
+        return LocalizationUtils.format("terminal.hw.device") + " " + slot;
     }
 
     @Override
@@ -122,7 +122,7 @@ public class DeviceHardware extends Hardware {
 
         @Override
         public String getLocalizedName() {
-            return I18n.format("terminal.hw.device");
+            return LocalizationUtils.format("terminal.hw.device");
         }
 
         @Override

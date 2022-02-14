@@ -13,6 +13,7 @@ import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.scene.ImmediateWorldSceneRenderer;
 import gregtech.client.utils.TrackedDummyWorld;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
@@ -35,7 +36,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
 import net.minecraft.item.EnumRarity;
@@ -357,7 +357,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     private void drawMultiblockName(int recipeWidth) {
-        String localizedName = I18n.format(controller.getMetaFullName());
+        String localizedName = LocalizationUtils.format(controller.getMetaFullName());
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         List<String> lines = fontRenderer.listFormattedStringToWidth(localizedName, recipeWidth - 10);
         for (int i = 0; i < lines.size(); i++) {
@@ -428,7 +428,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
         if (drawInfoIcon) {
-            return Arrays.asList(I18n.format("gregtech.multiblock.preview.zoom"), I18n.format("gregtech.multiblock.preview.rotate"), I18n.format("gregtech.multiblock.preview.select"));
+            return Arrays.asList(LocalizationUtils.format("gregtech.multiblock.preview.zoom"), LocalizationUtils.format("gregtech.multiblock.preview.rotate"), LocalizationUtils.format("gregtech.multiblock.preview.select"));
         } else if (tooltipBlockStack != null && !tooltipBlockStack.isEmpty() && !Mouse.isButtonDown(0)) {
             Minecraft minecraft = Minecraft.getMinecraft();
             ITooltipFlag flag = minecraft.gameSettings.advancedItemTooltips ? TooltipFlags.ADVANCED : TooltipFlags.NORMAL;

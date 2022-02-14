@@ -27,7 +27,6 @@ import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
@@ -525,8 +524,8 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         T item = getItem(itemStack);
         if (item == null) return;
         String unlocalizedTooltip = "metaitem." + item.unlocalizedName + ".tooltip";
-        if (I18n.hasKey(unlocalizedTooltip)) {
-            lines.addAll(Arrays.asList(I18n.format(unlocalizedTooltip).split("/n")));
+        if (LocalizationUtils.hasKey(unlocalizedTooltip)) {
+            lines.addAll(Arrays.asList(LocalizationUtils.format(unlocalizedTooltip).split("/n")));
         }
 
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
@@ -534,7 +533,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             if (electricItem.canProvideChargeExternally()) {
                 addDischargeItemTooltip(lines, electricItem.getMaxCharge(), electricItem.getCharge(), electricItem.getTier());
             } else {
-                lines.add(I18n.format("metaitem.generic.electric_item.tooltip",
+                lines.add(LocalizationUtils.format("metaitem.generic.electric_item.tooltip",
                         electricItem.getCharge(),
                         electricItem.getMaxCharge(),
                         GTValues.VNF[electricItem.getTier()]));
@@ -547,7 +546,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             IFluidTankProperties fluidTankProperties = fluidHandler.getTankProperties()[0];
             FluidStack fluid = fluidTankProperties.getContents();
 
-            lines.add(I18n.format("metaitem.generic.fluid_container.tooltip",
+            lines.add(LocalizationUtils.format("metaitem.generic.fluid_container.tooltip",
                     fluid == null ? 0 : fluid.amount,
                     fluidTankProperties.getCapacity(),
                     fluid == null ? "" : fluid.getLocalizedName()));
@@ -564,7 +563,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     private static void addDischargeItemTooltip(List<String> tooltip, long maxCharge, long currentCharge, int tier) {
         if (currentCharge == 0) { // do not display when empty
-            tooltip.add(I18n.format("metaitem.generic.electric_item.tooltip", currentCharge, maxCharge, GTValues.VNF[tier]));
+            tooltip.add(LocalizationUtils.format("metaitem.generic.electric_item.tooltip", currentCharge, maxCharge, GTValues.VNF[tier]));
             return;
         }
         Instant start = Instant.now();
@@ -584,7 +583,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             timeRemaining = duration.toHours();
             unit = "hr";
         }
-        tooltip.add(I18n.format("metaitem.battery.charge_detailed", currentCharge, maxCharge, GTValues.VNF[tier],
+        tooltip.add(LocalizationUtils.format("metaitem.battery.charge_detailed", currentCharge, maxCharge, GTValues.VNF[tier],
                 percentRemaining < 30 ? 'c' : percentRemaining < 60 ? 'e' : 'a',
                 timeRemaining, unit));
     }

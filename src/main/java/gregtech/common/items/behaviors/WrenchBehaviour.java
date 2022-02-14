@@ -1,11 +1,9 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.items.toolitem.IToolStats;
-import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.GTUtility;
-import net.minecraft.client.resources.I18n;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -45,6 +43,6 @@ public class WrenchBehaviour implements IItemBehaviour {
 
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
-        lines.add(I18n.format("behaviour.wrench"));
+        lines.add(LocalizationUtils.format("behaviour.wrench"));
     }
 }

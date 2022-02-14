@@ -12,10 +12,10 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -128,9 +128,9 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.buffer.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.buffer.inventory", (int)Math.pow(tier + 2, 2)));
-        tooltip.add(I18n.format("gregtech.machine.buffer.tanks", tier + 2));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.buffer.tooltip"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.buffer.inventory", (int)Math.pow(tier + 2, 2)));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.buffer.tanks", tier + 2));
     }
 
     @Override

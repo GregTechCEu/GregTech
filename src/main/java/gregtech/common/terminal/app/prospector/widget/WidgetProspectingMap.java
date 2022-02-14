@@ -5,6 +5,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.net.packets.PacketProspecting;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
@@ -12,7 +13,6 @@ import gregtech.common.terminal.app.prospector.ProspectingTexture;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -199,7 +199,7 @@ public class WidgetProspectingMap extends Widget {
                     (cZ + 1) * 16 + this.getPosition().y,
                     new Color(0x4B6C6C6C, true).getRGB());
             if (this.mode == 0) { // draw ore
-                tooltips.add(I18n.format("terminal.prospector.ore"));
+                tooltips.add(LocalizationUtils.format("terminal.prospector.ore"));
                 HashMap<String, Integer> oreInfo = new HashMap<>();
                 for (int i = 0; i < 16; i++) {
                     for (int j = 0; j < 16; j++) {
@@ -215,10 +215,10 @@ public class WidgetProspectingMap extends Widget {
                 }
                 oreInfo.forEach((name, count)->tooltips.add(name + " --- " + count));
             } else if(this.mode == 1){
-                tooltips.add(I18n.format("terminal.prospector.fluid"));
+                tooltips.add(LocalizationUtils.format("terminal.prospector.fluid"));
                 if (texture.map[cX][cZ] != null && !texture.map[cX][cZ].isEmpty()) {
                     if (texture.getSelected().equals("[all]") || texture.getSelected().equals(texture.map[cX][cZ].get((byte) 1))) {
-                        tooltips.add(I18n.format("terminal.prospector.fluid.info",
+                        tooltips.add(LocalizationUtils.format("terminal.prospector.fluid.info",
                                 FluidRegistry.getFluidStack(texture.map[cX][cZ].get((byte) 1),1).getLocalizedName(),
                                 texture.map[cX][cZ].get((byte) 2),
                                 texture.map[cX][cZ].get((byte) 3)));

@@ -4,7 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import net.minecraft.client.resources.I18n;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -158,6 +158,6 @@ public class ItemMagnetBehavior implements IItemBehaviour {
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
         IItemBehaviour.super.addInformation(itemStack, lines);
-        lines.add(I18n.format(isActive(itemStack) ? "behavior.item_magnet.enabled" : "behavior.item_magnet.disabled"));
+        lines.add(LocalizationUtils.format(isActive(itemStack) ? "behavior.item_magnet.enabled" : "behavior.item_magnet.disabled"));
     }
 }

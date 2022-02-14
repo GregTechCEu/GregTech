@@ -5,11 +5,11 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.SizedTextureArea;
 import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
@@ -108,7 +108,7 @@ public class IncrementButtonWidget extends Widget {
         } else if (isHovered) {
             long timeSinceHover = System.currentTimeMillis() - hoverStartTime;
             if (timeSinceHover > 750L && tooltip != null) {
-                List<String> hoverList = Arrays.asList(I18n.format(tooltip).split("/n"));
+                List<String> hoverList = Arrays.asList(LocalizationUtils.format(tooltip).split("/n"));
                 drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
             }
         }

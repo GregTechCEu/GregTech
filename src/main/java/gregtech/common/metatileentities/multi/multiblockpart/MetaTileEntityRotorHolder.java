@@ -14,12 +14,12 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.advancement.GTTriggers;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -73,9 +73,9 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.rotor_holder.tooltip1"));
-        tooltip.add(I18n.format("gregtech.machine.rotor_holder.tooltip2"));
-        tooltip.add(I18n.format("gregtech.universal.disabled"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.rotor_holder.tooltip1"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.rotor_holder.tooltip2"));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.disabled"));
     }
 
     @Override

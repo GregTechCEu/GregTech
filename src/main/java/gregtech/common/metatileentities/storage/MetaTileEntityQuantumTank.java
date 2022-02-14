@@ -18,11 +18,11 @@ import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
 import gregtech.api.gui.widgets.PhantomTankWidget;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -223,14 +223,14 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.quantum_tank.capacity", maxFluidCapacity));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.quantum_tank.tooltip"));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.quantum_tank.capacity", maxFluidCapacity));
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null && compound.hasKey(FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
             FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FLUID_NBT_KEY));
             if (fluidStack != null) {
-                tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip.name", fluidStack.getLocalizedName()));
-                tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip.count", fluidStack.amount));
+                tooltip.add(LocalizationUtils.format("gregtech.machine.quantum_tank.tooltip.name", fluidStack.getLocalizedName()));
+                tooltip.add(LocalizationUtils.format("gregtech.machine.quantum_tank.tooltip.count", fluidStack.amount));
             }
         }
     }

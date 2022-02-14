@@ -16,6 +16,7 @@ import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.BlockPosFace;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.covers.CoverDigitalInterface;
 import gregtech.common.gui.widget.WidgetARGB;
@@ -28,7 +29,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -744,9 +744,9 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.multiblock.monitor_screen.tooltip.1"));
-        tooltip.add(I18n.format("gregtech.multiblock.monitor_screen.tooltip.2"));
-        tooltip.add(I18n.format("gregtech.multiblock.monitor_screen.tooltip.3"));
+        tooltip.add(LocalizationUtils.format("gregtech.multiblock.monitor_screen.tooltip.1"));
+        tooltip.add(LocalizationUtils.format("gregtech.multiblock.monitor_screen.tooltip.2"));
+        tooltip.add(LocalizationUtils.format("gregtech.multiblock.monitor_screen.tooltip.3"));
     }
 
     @Override

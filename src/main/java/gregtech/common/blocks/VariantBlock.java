@@ -2,12 +2,12 @@ package gregtech.common.blocks;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
@@ -72,16 +72,16 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack stack, @Nullable World player, List<String> tooltip, @Nonnull ITooltipFlag advanced) {
         //basic tooltip for all variant blocks
-        tooltip.add(I18n.format("tile.machine_casing.tooltip1"));
-        tooltip.add(I18n.format("tile.machine_casing.tooltip2"));
+        tooltip.add(LocalizationUtils.format("tile.machine_casing.tooltip1"));
+        tooltip.add(LocalizationUtils.format("tile.machine_casing.tooltip2"));
         //tier less tooltip like: tile.turbine_casing.tooltip
         String unlocalizedVariantTooltip = getTranslationKey() + ".tooltip";
-        if (I18n.hasKey(unlocalizedVariantTooltip))
-            tooltip.addAll(Arrays.asList(I18n.format(unlocalizedVariantTooltip).split("/n")));
+        if (LocalizationUtils.hasKey(unlocalizedVariantTooltip))
+            tooltip.addAll(Arrays.asList(LocalizationUtils.format(unlocalizedVariantTooltip).split("/n")));
         //item specific tooltip: tile.turbine_casing.bronze_gearbox.tooltip
         String unlocalizedTooltip = stack.getTranslationKey() + ".tooltip";
-        if (I18n.hasKey(unlocalizedTooltip))
-            tooltip.addAll(Arrays.asList(I18n.format(unlocalizedTooltip).split("/n")));
+        if (LocalizationUtils.hasKey(unlocalizedTooltip))
+            tooltip.addAll(Arrays.asList(LocalizationUtils.format(unlocalizedTooltip).split("/n")));
     }
 
     @Override

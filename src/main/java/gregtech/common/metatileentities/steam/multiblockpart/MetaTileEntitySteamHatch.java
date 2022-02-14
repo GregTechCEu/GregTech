@@ -17,12 +17,12 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -154,7 +154,7 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", INVENTORY_SIZE));
-        tooltip.add(I18n.format("gregtech.machine.steam.steam_hatch.tooltip"));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.fluid_storage_capacity", INVENTORY_SIZE));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.steam.steam_hatch.tooltip"));
     }
 }

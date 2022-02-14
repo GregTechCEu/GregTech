@@ -12,11 +12,11 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
 import gregtech.common.tools.DamageValues;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -175,9 +175,9 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
         long lowerAmperage = energyContainer.getInputAmperage();
         long higherAmperage = energyContainer.getOutputAmperage();
 
-        tooltip.add(I18n.format("gregtech.machine.transformer.tooltip_tool_usage"));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.machine.transformer.tooltip_transform_down", lowerAmperage, higherVoltage, higherTierName, higherAmperage, lowerVoltage, lowerTierName));
-        tooltip.add(I18n.format("gregtech.machine.transformer.tooltip_transform_up", higherAmperage, lowerVoltage, lowerTierName, lowerAmperage, higherVoltage, higherTierName));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.transformer.tooltip_tool_usage"));
+        tooltip.add(LocalizationUtils.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.transformer.tooltip_transform_down", lowerAmperage, higherVoltage, higherTierName, higherAmperage, lowerVoltage, lowerTierName));
+        tooltip.add(LocalizationUtils.format("gregtech.machine.transformer.tooltip_transform_up", higherAmperage, lowerVoltage, lowerTierName, lowerAmperage, higherVoltage, higherTierName));
     }
 }

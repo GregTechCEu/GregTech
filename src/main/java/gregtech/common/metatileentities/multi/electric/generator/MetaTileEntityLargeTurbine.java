@@ -14,9 +14,9 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -135,8 +135,8 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.multiblock.turbine.voltage_tooltip", GTValues.V[tier] * 2));
-        tooltip.add(I18n.format("gregtech.multiblock.turbine.efficiency_tooltip", GTValues.VNF[tier]));
+        tooltip.add(LocalizationUtils.format("gregtech.multiblock.turbine.voltage_tooltip", GTValues.V[tier] * 2));
+        tooltip.add(LocalizationUtils.format("gregtech.multiblock.turbine.efficiency_tooltip", GTValues.VNF[tier]));
     }
 
     @Override
@@ -161,7 +161,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
 
     @Override
     public String[] getDescription() {
-        return new String[]{I18n.format("gregtech.multiblock.large_turbine.description")};
+        return new String[]{LocalizationUtils.format("gregtech.multiblock.large_turbine.description")};
     }
 
     @Override

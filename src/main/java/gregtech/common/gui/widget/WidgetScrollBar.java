@@ -5,13 +5,13 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.SizedTextureArea;
 import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.network.PacketBuffer;
 
 import java.text.DecimalFormat;
@@ -85,7 +85,7 @@ public class WidgetScrollBar extends Widget {
         }
 
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-        String text = I18n.format(this.title);
+        String text = LocalizationUtils.format(this.title);
         text += ": " + new DecimalFormat("#.00").format(getValue());
         fontRenderer.drawString(text, position.x + size.width / 2 - fontRenderer.getStringWidth(text) / 2, position.y - 3 + size.height / 2 - fontRenderer.FONT_HEIGHT / 2, this.titleColor);
         GlStateManager.color(1.0F, 1.0F, 1.0F);

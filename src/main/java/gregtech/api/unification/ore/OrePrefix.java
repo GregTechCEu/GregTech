@@ -16,7 +16,6 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.function.TriConsumer;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaFluids;
-import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fluids.Fluid;
 import org.apache.commons.lang3.Validate;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -62,7 +61,7 @@ public class OrePrefix {
 
     public static final OrePrefix crushedCentrifuged = new OrePrefix("crushedCentrifuged", -1, null, MaterialIconType.crushedCentrifuged, ENABLE_UNIFICATION, hasOreProperty);
     public static final OrePrefix crushedPurified = new OrePrefix("crushedPurified", -1, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, hasOreProperty);
-    public static final OrePrefix crushed = new OrePrefix("crushed", -1, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.crushed.tooltip.purify")));
+    public static final OrePrefix crushed = new OrePrefix("crushed", -1, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(LocalizationUtils.format("metaitem.crushed.tooltip.purify")));
 
     // Introduced by Mekanism
     public static final OrePrefix shard = new OrePrefix("shard", -1, null, null, ENABLE_UNIFICATION, null);
@@ -94,9 +93,9 @@ public class OrePrefix {
     // 1/9th of a Dust.
     public static final OrePrefix dustTiny = new OrePrefix("dustTiny", M / 9, null, MaterialIconType.dustTiny, ENABLE_UNIFICATION, hasDustProperty);
     // Dust with impurities. 1 Unit of Main Material and 1/9 - 1/4 Unit of secondary Material
-    public static final OrePrefix dustImpure = new OrePrefix("dustImpure", M, null, MaterialIconType.dustImpure, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify")));
+    public static final OrePrefix dustImpure = new OrePrefix("dustImpure", M, null, MaterialIconType.dustImpure, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(LocalizationUtils.format("metaitem.dust.tooltip.purify")));
     // Pure Dust worth of one Ingot or Gem. Introduced by Alblaka.
-    public static final OrePrefix dustPure = new OrePrefix("dustPure", M, null, MaterialIconType.dustPure, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify")));
+    public static final OrePrefix dustPure = new OrePrefix("dustPure", M, null, MaterialIconType.dustPure, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(LocalizationUtils.format("metaitem.dust.tooltip.purify")));
     public static final OrePrefix dust = new OrePrefix("dust", M, null, MaterialIconType.dust, ENABLE_UNIFICATION, hasDustProperty);
 
     // A Nugget. Introduced by Eloraam

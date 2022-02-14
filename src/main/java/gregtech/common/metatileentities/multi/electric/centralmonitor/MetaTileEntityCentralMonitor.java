@@ -24,6 +24,7 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.BlockPosFace;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
@@ -39,7 +40,6 @@ import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -410,7 +410,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
 
     @Override
     public String[] getDescription() {
-        return new String[]{I18n.format("gregtech.multiblock.central_monitor.tooltip.1")};
+        return new String[]{LocalizationUtils.format("gregtech.multiblock.central_monitor.tooltip.1")};
     }
 
     @Override
@@ -587,10 +587,10 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.multiblock.central_monitor.tooltip.1"));
-        tooltip.add(I18n.format("gregtech.multiblock.central_monitor.tooltip.2", MAX_WIDTH, MAX_HEIGHT));
-        tooltip.add(I18n.format("gregtech.multiblock.central_monitor.tooltip.3"));
-        tooltip.add(I18n.format("gregtech.multiblock.central_monitor.tooltip.4", -ENERGY_COST));
+        tooltip.add(LocalizationUtils.format("gregtech.multiblock.central_monitor.tooltip.1"));
+        tooltip.add(LocalizationUtils.format("gregtech.multiblock.central_monitor.tooltip.2", MAX_WIDTH, MAX_HEIGHT));
+        tooltip.add(LocalizationUtils.format("gregtech.multiblock.central_monitor.tooltip.3"));
+        tooltip.add(LocalizationUtils.format("gregtech.multiblock.central_monitor.tooltip.4", -ENERGY_COST));
     }
 
     @Override

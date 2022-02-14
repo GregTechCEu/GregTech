@@ -5,8 +5,8 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.input.EnumKey;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -96,9 +96,9 @@ public class NightvisionGoggles extends ArmorLogicSuite {
             NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);
             boolean nv = nbtData.getBoolean("Nightvision");
             if (nv) {
-                lines.add(I18n.format("metaarmor.message.nightvision.enabled"));
+                lines.add(LocalizationUtils.format("metaarmor.message.nightvision.enabled"));
             } else {
-                lines.add(I18n.format("metaarmor.message.nightvision.disabled"));
+                lines.add(LocalizationUtils.format("metaarmor.message.nightvision.disabled"));
             }
         }
     }

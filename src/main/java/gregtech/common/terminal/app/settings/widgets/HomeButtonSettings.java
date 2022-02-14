@@ -11,9 +11,9 @@ import gregtech.api.terminal.os.SystemCall;
 import gregtech.api.terminal.os.TerminalHomeButtonWidget;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
-import net.minecraft.client.resources.I18n;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -75,7 +75,7 @@ public class HomeButtonSettings extends AbstractWidgetGroup {
                                 return "terminal.system_call.null";
                             }, true)
                             .setIsUp(true)
-                            .setHoverText(I18n.format(doubleClick == 1 ? "terminal.settings.home.double_click" : "terminal.settings.home.click") + (ctrl == 1 ? "+Ctrl" : "") + (shift == 1 ? "+Shift" : ""))
+                            .setHoverText(LocalizationUtils.format(doubleClick == 1 ? "terminal.settings.home.double_click" : "terminal.settings.home.click") + (ctrl == 1 ? "+Ctrl" : "") + (shift == 1 ? "+Shift" : ""))
                             .setOnChanged(selected->{
                                 SystemCall action = SystemCall.getFromName(selected);
                                 if (action != null) {

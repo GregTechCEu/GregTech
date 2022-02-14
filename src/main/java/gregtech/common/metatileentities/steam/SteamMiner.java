@@ -20,12 +20,12 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -160,7 +160,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.steam_miner.description",
+        tooltip.add(LocalizationUtils.format("gregtech.machine.steam_miner.description",
                 getWorkingArea(this.minerLogic.getMaximumRadius()), getWorkingArea(this.minerLogic.getMaximumRadius()), this.minerLogic.getSpeed() / 20));
     }
 
@@ -318,6 +318,6 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
-        return Collections.singletonList(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
+        return Collections.singletonList(new TextComponentTranslation(LocalizationUtils.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
     }
 }

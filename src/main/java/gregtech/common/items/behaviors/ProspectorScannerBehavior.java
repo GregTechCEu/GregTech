@@ -9,10 +9,10 @@ import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import gregtech.common.terminal.app.prospector.widget.WidgetProspectingMap;
 import gregtech.common.terminal.component.SearchComponent;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -128,10 +128,10 @@ public class ProspectorScannerBehavior implements IItemBehaviour, ItemUIFactory,
         IItemBehaviour.super.addInformation(itemStack, lines);
 
         if (tier >= FLUID_PROSPECTION_THRESHOLD) {
-            lines.add(I18n.format("metaitem.prospector.tooltip.fluids", radius));
-            lines.add(I18n.format(getMode(itemStack) == WidgetProspectingMap.ORE_PROSPECTING_MODE ? "metaitem.prospector.mode.ores" : "metaitem.prospector.mode.fluid"));
+            lines.add(LocalizationUtils.format("metaitem.prospector.tooltip.fluids", radius));
+            lines.add(LocalizationUtils.format(getMode(itemStack) == WidgetProspectingMap.ORE_PROSPECTING_MODE ? "metaitem.prospector.mode.ores" : "metaitem.prospector.mode.fluid"));
         } else {
-            lines.add(I18n.format("metaitem.prospector.tooltip.ores", radius));
+            lines.add(LocalizationUtils.format("metaitem.prospector.tooltip.ores", radius));
         }
     }
 

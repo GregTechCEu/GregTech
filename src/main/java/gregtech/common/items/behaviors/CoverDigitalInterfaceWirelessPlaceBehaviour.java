@@ -2,9 +2,9 @@ package gregtech.common.items.behaviors;
 
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -70,8 +70,8 @@ public class CoverDigitalInterfaceWirelessPlaceBehaviour extends CoverPlaceBehav
     public void addInformation(ItemStack itemStack, List<String> lines) {
         BlockPos pos = getRemotePos(itemStack);
         String binding = pos == null ? "---" : String.format("%d, %d, %d", pos.getX(), pos.getY(), pos.getZ());
-        lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.1"));
-        lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.2"));
-        lines.add(I18n.format("metaitem.cover.digital.wireless.tooltip.3", binding));
+        lines.add(LocalizationUtils.format("metaitem.cover.digital.wireless.tooltip.1"));
+        lines.add(LocalizationUtils.format("metaitem.cover.digital.wireless.tooltip.2"));
+        lines.add(LocalizationUtils.format("metaitem.cover.digital.wireless.tooltip.3", binding));
     }
 }

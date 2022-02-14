@@ -4,6 +4,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.Iterators;
 import gregtech.api.GTValues;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.common.items.MetaItems;
 import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.integration.jei.utils.render.CompositeDrawable;
@@ -23,7 +24,6 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -110,7 +110,7 @@ public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapp
 
     @Override
     public String getTitle() {
-        return I18n.format("metaitem.circuit.integrated.gui");
+        return LocalizationUtils.format("metaitem.circuit.integrated.gui");
     }
 
     @Override

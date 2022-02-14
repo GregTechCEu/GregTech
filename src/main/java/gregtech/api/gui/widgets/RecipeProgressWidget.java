@@ -4,10 +4,10 @@ import gregtech.api.GTValues;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.integration.jei.recipe.RecipeMapCategory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class RecipeProgressWidget extends ProgressWidget {
         super.drawInForeground(mouseX, mouseY);
         if (isMouseOverElement(mouseX, mouseY) && GTValues.isModLoaded(GTValues.MODID_JEI)) {
             Minecraft mc = Minecraft.getMinecraft();
-            GuiUtils.drawHoveringText(Collections.singletonList(I18n.format("gui.widget.recipeProgressWidget.default_tooltip")), mouseX, mouseY,
+            GuiUtils.drawHoveringText(Collections.singletonList(LocalizationUtils.format("gui.widget.recipeProgressWidget.default_tooltip")), mouseX, mouseY,
                     sizes.getScreenWidth(),
                     sizes.getScreenHeight(), HOVER_TEXT_WIDTH, mc.fontRenderer);
         }

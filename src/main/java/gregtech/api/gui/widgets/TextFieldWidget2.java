@@ -2,6 +2,7 @@ package gregtech.api.gui.widgets;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -9,7 +10,6 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -64,7 +64,7 @@ public class TextFieldWidget2 extends Widget {
     @Override
     public void initWidget() {
         if (isRemote()) {
-            this.localisedPostFix = I18n.hasKey(localisedPostFix) ? I18n.format(localisedPostFix) : localisedPostFix;
+            this.localisedPostFix = LocalizationUtils.hasKey(localisedPostFix) ? LocalizationUtils.format(localisedPostFix) : localisedPostFix;
         }
     }
 
@@ -488,7 +488,7 @@ public class TextFieldWidget2 extends Widget {
     public TextFieldWidget2 setPostFix(String postFix) {
         this.localisedPostFix = postFix;
         if (gui != null && gui.holder != null && isRemote()) {
-            this.localisedPostFix = I18n.hasKey(localisedPostFix) ? I18n.format(localisedPostFix) : localisedPostFix;
+            this.localisedPostFix = LocalizationUtils.hasKey(localisedPostFix) ? LocalizationUtils.format(localisedPostFix) : localisedPostFix;
         }
         return this;
     }

@@ -13,6 +13,7 @@ import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.terminal.os.menu.TerminalMenuWidget;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Position;
 import gregtech.client.utils.RenderUtil;
 import gregtech.api.util.Size;
@@ -21,7 +22,6 @@ import gregtech.common.terminal.app.settings.widgets.OsSettings;
 import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.common.terminal.hardware.DeviceHardware;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.network.PacketBuffer;
@@ -139,7 +139,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                         } else if (match instanceof BatteryHardware) {
                             IElectricItem energyItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
                             if (energyItem != null && energyItem.getCharge() <= 0) {
-                                tooltips.append(I18n.format("terminal.battery.low_energy"));
+                                tooltips.append(LocalizationUtils.format("terminal.battery.low_energy"));
                             } else {
                                 tooltips.append(String.format("%s (%s+)", name, info));
                             }
@@ -150,7 +150,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                     }
                     TerminalDialogWidget.showInfoDialog(this,
                             "terminal.component.error",
-                            I18n.format("terminal.os.hw_demand") + tooltips).setClientSide().open();
+                            LocalizationUtils.format("terminal.os.hw_demand") + tooltips).setClientSide().open();
                 }
                 return;
             }
