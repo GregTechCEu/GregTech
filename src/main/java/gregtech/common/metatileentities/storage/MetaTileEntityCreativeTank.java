@@ -31,7 +31,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 
 import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
 
@@ -69,14 +68,14 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
                 () -> this.fluidTank.getFluid(), data -> {
             this.fluidTank.setFluid(data);
         }).showTip(false));
-        builder.label(7, 9, "Fluid");
+        builder.label(7, 9, "gregtech.creative.tank.fluid");
         builder.widget(new ImageWidget(7, 45, 154, 14, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(9, 47, 152, 10, () -> String.valueOf(mBPerCycle), value -> {
             if (!value.isEmpty()) {
                 mBPerCycle = Integer.parseInt(value);
             }
         }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
-        builder.label(7, 28, "mB per cycle");
+        builder.label(7, 28, "gregtech.creative.tank.mbpc");
 
         builder.widget(new ImageWidget(7, 82, 154, 14, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(9, 84, 152, 10, () -> String.valueOf(ticksPerCycle), value -> {
@@ -84,10 +83,10 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
                 ticksPerCycle = Integer.parseInt(value);
             }
         }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
-        builder.label(7, 65, "Ticks per cycle");
+        builder.label(7, 65, "gregtech.creative.tank.tpc");
 
 
-        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> active = value, "Not active", "Active"));
+        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> active = value, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
 
         return builder.build(getHolder(), entityPlayer);
     }

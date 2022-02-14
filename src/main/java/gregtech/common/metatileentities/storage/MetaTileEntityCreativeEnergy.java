@@ -16,8 +16,8 @@ import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,7 +29,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.function.Function;
-import java.util.regex.Pattern;
 
 public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEnergyContainer {
 
@@ -79,7 +78,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
                     setTier = tier;
                     voltage = GTValues.V[setTier];
                 }));
-        builder.label(7, 32, "Voltage");
+        builder.label(7, 32, "gregtech.creative.energy.voltage");
         builder.widget(new ImageWidget(7, 44, 156, 20, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(9, 50, 152, 16, () -> String.valueOf(voltage), value -> {
             if (!value.isEmpty()) {
@@ -88,7 +87,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
             }
         }).setAllowedChars(TextFieldWidget2.NATURAL_NUMS).setMaxLength(19).setValidator(getTextFieldValidator()));
 
-        builder.label(7, 74, "Amperage");
+        builder.label(7, 74, "gregtech.creative.energy.amperage");
         builder.widget(new ClickButtonWidget(7, 87, 20, 20, "-", data -> amps = amps-- == -1 ? 0 : amps--));
         builder.widget(new ImageWidget(29, 87, 118, 20, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(31, 93, 114, 16, () -> String.valueOf(amps), value -> {
@@ -98,7 +97,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
         }).setMaxLength(10).setNumbersOnly(0, Integer.MAX_VALUE));
         builder.widget(new ClickButtonWidget(149, 87, 20, 20, "+", data -> amps++));
 
-        builder.widget(new CycleButtonWidget(7, 139, 162, 20, () -> active, value -> active = value, "Not active", "Active"));
+        builder.widget(new CycleButtonWidget(7, 139, 162, 20, () -> active, value -> active = value, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
 
         return builder.build(getHolder(), entityPlayer);
     }

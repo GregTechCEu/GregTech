@@ -1066,6 +1066,7 @@ metaitem.nan.certificate.tooltip=Challenge Accepted!
 metaitem.fertilizer.name=Fertilizer
 
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
+gui.widget.recipeProgressWidget.default_tooltip=Show Recipes
 
 gregtech.recipe_memory_widget.tooltip.1=§7Left click to automatically input this recipe into the crafting grid
 gregtech.recipe_memory_widget.tooltip.2=§7Shift click to lock/unlock this recipe
@@ -4320,6 +4321,20 @@ gregtech.cover.activity_detector.message_activity_inverted=Monitoring Inverted A
 
 gregtech.cover.activity_detector_advanced.message_activity_normal=Monitoring Normal Progress Status
 gregtech.cover.activity_detector_advanced.message_activity_inverted=Monitoring Inverted Progress Status
+
+gregtech.creative.chest.item=Item
+gregtech.creative.chest.ipc=Items per Cycle
+gregtech.creative.chest.tpc=Ticks per Cycle
+
+gregtech.creative.tank.fluid=Item
+gregtech.creative.tank.mbpc=mB per Cycle
+gregtech.creative.tank.tpc=Ticks per Cycle
+
+gregtech.creative.energy.amperage=Amperage
+gregtech.creative.energy.voltage=Voltage
+
+gregtech.creative.activity.on=Active
+gregtech.creative.activity.off=Not active
 
 gregtech.terminal.app_name.items=Item Guides
 gregtech.terminal.app_name.machines=Machine Guides
