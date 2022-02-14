@@ -536,7 +536,7 @@ public class Materials {
     public static Material Nitrobenzene;
     public static Material Cyclohexane;
     public static Material NitrosylChloride;
-    public static Material Cyclohexanoxime;
+    public static Material CyclohexanoneOxime;
     public static Material Caprolactam;
     public static Material PlatinumSludgeResidue;
     public static Material PalladiumRaw;
@@ -544,7 +544,6 @@ public class Materials {
     public static Material AmmoniumChloride;
     public static Material AcidicOsmiumSolution;
     public static Material RhodiumPlatedPalladium;
-    public static Material AmmoniumSulfate;
 
     /**
      * Not possible to determine exact Components

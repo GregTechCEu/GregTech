@@ -468,11 +468,5 @@ public class SecondDegreeMaterials {
                         EXCLUDE_PLATE_COMPRESSOR_RECIPE, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3)
                 .build();
-
-        AmmoniumSulfate = new Material.Builder(2065, "ammonium_sulfate")
-                .dust()
-                .color(0xF4F4F4).iconSet(SHINY)
-                .components(Ammonia, 2, SulfuricAcid, 1)
-                .build();
     }
 }

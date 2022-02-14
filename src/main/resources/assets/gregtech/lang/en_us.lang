@@ -1691,11 +1691,9 @@ material.ammonium_chloride=Ammonium Chloride
 material.acidic_osmium_solution=Acidic Osmium Solution
 material.rhodium_plated_palladium=Rhodium Plated Palladium
 material.cyclohexane=Cyclohexane
-material.cyclohexanoxime=Cyclohexanoxime
+material.cyclohexanone_oxime=Cyclohexanone Oxime
 material.caprolactam=Caprolactam
 material.nitrosyl_chloride=Nitrosyl Chloride
-material.ammonium_sulfate=Ammonium Sulfate
-
 
 # Unknown Composition Materials
 material.wood_gas=Wood Gas

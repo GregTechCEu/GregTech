@@ -473,33 +473,35 @@ public class PolymerRecipes {
 
     public static void polycaprolactamProcess() {
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(400)
-                .fluidInputs(Benzene.getFluid(1000), Hydrogen.getFluid(6000))
+                .fluidInputs(Benzene.getFluid(1000))
+                .fluidInputs(Hydrogen.getFluid(6000))
                 .fluidOutputs(Cyclohexane.getFluid(1000))
-                .notConsumable(new IntCircuitIngredient(1))
+                .notConsumable(dust, Nickel)
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(100)
-                .fluidInputs(Chlorine.getFluid(2000), NitricOxide.getFluid(2000))
-                .fluidOutputs(NitrosylChloride.getFluid(2000))
+                .fluidInputs(Chlorine.getFluid(1000))
+                .fluidInputs(NitricOxide.getFluid(1000))
+                .fluidOutputs(NitrosylChloride.getFluid(1000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[MV]).duration(100)
-                .fluidInputs(Cyclohexane.getFluid(1000), NitrosylChloride.getFluid(1000))
-                .output(dust, Cyclohexanoxime, 19)
+                .fluidInputs(Cyclohexane.getFluid(1000))
+                .fluidInputs(NitrosylChloride.getFluid(1000))
+                .output(dust, CyclohexanoneOxime, 19)
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(200)
-                .input(dust, Cyclohexanoxime, 19)
-                .fluidInputs(SulfuricAcid.getFluid(1000), Ammonia.getFluid(2000))
+                .input(dust, CyclohexanoneOxime, 19)
+                .fluidInputs(SulfuricAcid.getFluid(1000))
                 .output(dust, Caprolactam, 19)
-                .output(dust, AmmoniumSulfate, 15)
                 .buildAndRegister();
 
-        BLAST_RECIPES.recipeBuilder().EUt(VA[MV]).duration(1000).blastFurnaceTemp(533)
-                .input(dust, Caprolactam, 19)
+        BLAST_RECIPES.recipeBuilder().EUt(VA[MV]).duration(150).blastFurnaceTemp(533)
+                .input(dust, Caprolactam, 1)
                 .fluidInputs(Nitrogen.getFluid(1000))
-                .output(ingot, Polycaprolactam, 19)
+                .output(ingot, Polycaprolactam, 1)
                 .buildAndRegister();
 
     }
