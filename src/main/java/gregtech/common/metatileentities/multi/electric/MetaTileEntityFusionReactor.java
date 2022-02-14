@@ -357,7 +357,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         }
 
         @Override
-        public void deserializeNBT(NBTTagCompound compound) {
+        public void deserializeNBT(@Nonnull NBTTagCompound compound) {
             super.deserializeNBT(compound);
             heat = compound.getLong("Heat");
         }

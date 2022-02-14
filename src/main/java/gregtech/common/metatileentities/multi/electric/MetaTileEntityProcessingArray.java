@@ -31,6 +31,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -128,11 +129,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     @Override
-    public void onAttached(Object... data) {
-        reinitializeStructurePattern();
-        if (getWorld() != null && getWorld().isRemote) {
-            this.setupSound(GTSounds.ARC, this.getPos());
-        }
+    public SoundEvent getSound() {
+        return GTSounds.ARC;
     }
 
     @Override

@@ -15,7 +15,6 @@ import gregtech.common.items.MetaItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -286,9 +285,11 @@ public class VanillaStandardRecipes {
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .inputs(CountableIngredient.from("wool", 1))
-                .outputs(new ItemStack(Items.STRING, 3))
-                .chancedOutput(new ItemStack(Items.STRING, 1), 2000, 800)
-                .duration(400)
+                .outputs(new ItemStack(Items.STRING, 1))
+                .chancedOutput(new ItemStack(Items.STRING, 1), 9000, 0)
+                .chancedOutput(new ItemStack(Items.STRING, 1), 5000, 0)
+                .chancedOutput(new ItemStack(Items.STRING, 1), 2000, 0)
+                .duration(200)
                 .buildAndRegister();
     }
 
@@ -957,7 +958,8 @@ public class VanillaStandardRecipes {
         ModHandler.addSmeltingRecipe(new ItemStack(Items.SLIME_BALL), STICKY_RESIN.getStackForm());
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Items.STRING, 3))
+                .inputs(new ItemStack(Items.STRING, 4))
+                .notConsumable(new IntCircuitIngredient(4))
                 .outputs(new ItemStack(Blocks.WOOL, 1, 0))
                 .duration(100).EUt(4).buildAndRegister();
 

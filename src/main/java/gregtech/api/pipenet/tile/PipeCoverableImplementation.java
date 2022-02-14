@@ -346,7 +346,7 @@ public class PipeCoverableImplementation implements ICoverable {
 
     @Override
     public boolean isValid() {
-        return !holder.isValidTile();
+        return holder.isValidTile();
     }
 
     @Override

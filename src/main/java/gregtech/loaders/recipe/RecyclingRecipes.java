@@ -168,10 +168,10 @@ public class RecyclingRecipes {
 
     private static void registerArcRecycling(ItemStack input, List<MaterialStack> materials, @Nullable OrePrefix prefix) {
         // Block dusts from being arc'd instead of EBF'd
-        if (prefix == OrePrefix.dust && OreDictUnifier.getMaterial(input).material.hasProperty(PropertyKey.BLAST)) {
+        MaterialStack ms = OreDictUnifier.getMaterial(input);
+        if (prefix == OrePrefix.dust && ms != null && ms.material.hasProperty(PropertyKey.BLAST)) {
             return;
         } else if (prefix == OrePrefix.block) {
-            MaterialStack ms = OreDictUnifier.getMaterial(input);
             if (ms != null && !ms.material.hasProperty(PropertyKey.GEM)) {
                 ItemStack output = OreDictUnifier.get(OrePrefix.ingot, ms.material.getProperty(PropertyKey.INGOT).getArcSmeltInto(), 9);
                 RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()

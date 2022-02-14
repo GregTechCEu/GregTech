@@ -11,6 +11,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 public class TraceabilityPredicate {
 
     // Allow any block.
-    public static TraceabilityPredicate ANY =new TraceabilityPredicate((state)->true);
+    public static TraceabilityPredicate ANY = new TraceabilityPredicate((state) -> true);
     // Allow the air block.
     public static TraceabilityPredicate AIR = new TraceabilityPredicate(blockWorldState -> blockWorldState.getBlockState().getBlock().isAir(blockWorldState.getBlockState(), blockWorldState.getWorld(), blockWorldState.getPos()));
     // Allow all heating coils, and require them to have the same type.
@@ -41,8 +42,8 @@ public class TraceabilityPredicate {
             return true;
         }
         return false;
-    }, ()-> ArrayUtils.addAll(
-            Arrays.stream(BlockWireCoil.CoilType.values()).map(type->new BlockInfo(MetaBlocks.WIRE_COIL.getState(type), null)).toArray(BlockInfo[]::new)))
+    }, () -> ArrayUtils.addAll(
+            Arrays.stream(BlockWireCoil.CoilType.values()).map(type -> new BlockInfo(MetaBlocks.WIRE_COIL.getState(type), null)).toArray(BlockInfo[]::new)))
             .addTooltips("gregtech.multiblock.pattern.error.coils");
 
 
@@ -52,7 +53,8 @@ public class TraceabilityPredicate {
     protected boolean hasAir = false;
     protected boolean isSingle = true;
 
-    public TraceabilityPredicate() {}
+    public TraceabilityPredicate() {
+    }
 
     public TraceabilityPredicate(TraceabilityPredicate predicate) {
         common.addAll(predicate.common);
@@ -93,9 +95,11 @@ public class TraceabilityPredicate {
 
     /**
      * Add tooltips for candidates. They are shown in JEI Pages.
+     * Do NOT pass {@link I18n#format(String, Object...)} calls here! Everything is will be translated when it's needed.
+     * If you need parameters, use {@link #addTooltip(String, Object...)} instead.
      */
     public TraceabilityPredicate addTooltips(String... tips) {
-        if (tips.length > 0) {
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT && tips.length > 0) {
             List<String> tooltips = Arrays.stream(tips).collect(Collectors.toList());
             common.forEach(predicate -> {
                 if (predicate.candidates == null) return;
@@ -111,6 +115,16 @@ public class TraceabilityPredicate {
                 }
                 predicate.toolTips.addAll(tooltips);
             });
+        }
+        return this;
+    }
+
+    /**
+     * Note: This method does not translate dynamically!! Parameters can not be updated once set.
+     */
+    public TraceabilityPredicate addTooltip(String langKey, Object... data) {
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+            addTooltips(I18n.format(langKey, data));
         }
         return this;
     }
@@ -181,6 +195,7 @@ public class TraceabilityPredicate {
 
     /**
      * Sets the Minimum and Maximum limit to the passed value
+     *
      * @param limit The Maximum and Minimum limit
      */
     public TraceabilityPredicate setExactLimit(int limit) {
@@ -203,7 +218,7 @@ public class TraceabilityPredicate {
                 flag = true;
             }
         }
-        return flag || common.stream().anyMatch(predicate->predicate.test(blockWorldState));
+        return flag || common.stream().anyMatch(predicate -> predicate.test(blockWorldState));
     }
 
     public TraceabilityPredicate or(TraceabilityPredicate other) {
@@ -222,11 +237,12 @@ public class TraceabilityPredicate {
         return this;
     }
 
-    public static class SimplePredicate{
+    public static class SimplePredicate {
         public final Supplier<BlockInfo[]> candidates;
 
         public final Predicate<BlockWorldState> predicate;
 
+        @SideOnly(Side.CLIENT)
         private List<String> toolTips;
 
         public int minGlobalCount = -1;
@@ -245,7 +261,7 @@ public class TraceabilityPredicate {
         public List<String> getToolTips(TraceabilityPredicate predicates) {
             List<String> result = new ArrayList<>();
             if (toolTips != null) {
-                toolTips.forEach(tip->result.add(I18n.format(tip)));
+                toolTips.forEach(tip -> result.add(I18n.format(tip)));
             }
             if (minGlobalCount == maxGlobalCount && maxGlobalCount != -1) {
                 result.add(I18n.format("gregtech.multiblock.pattern.error.limited_exact", minGlobalCount));
@@ -306,7 +322,7 @@ public class TraceabilityPredicate {
         }
 
         public List<ItemStack> getCandidates() {
-            return candidates == null ? Collections.emptyList() : Arrays.stream(this.candidates.get()).filter(info -> info.getBlockState().getBlock() != Blocks.AIR).map(info->{
+            return candidates == null ? Collections.emptyList() : Arrays.stream(this.candidates.get()).filter(info -> info.getBlockState().getBlock() != Blocks.AIR).map(info -> {
                 IBlockState blockState = info.getBlockState();
                 MetaTileEntity metaTileEntity = info.getTileEntity() instanceof MetaTileEntityHolder ? ((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity() : null;
                 if (metaTileEntity != null) {

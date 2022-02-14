@@ -170,12 +170,13 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public boolean hasContainerItem(ItemStack stack) {
+    public boolean hasContainerItem(@Nonnull ItemStack stack) {
         return true;
     }
 
+    @Nonnull
     @Override
-    public ItemStack getContainerItem(ItemStack stack) {
+    public ItemStack getContainerItem(@Nonnull ItemStack stack) {
         stack = stack.copy();
         stack.setCount(1);
         T metaToolValueItem = getItem(stack);
@@ -307,7 +308,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
+    public boolean onLeftClickEntity(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull Entity entity) {
         //cancel attack if broken or out of charge
         T metaToolValueItem = getItem(stack);
         if (metaToolValueItem != null) {
@@ -444,7 +445,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack itemStack, @Nullable World worldIn, List<String> lines, ITooltipFlag tooltipFlag) {
+    public void addInformation(@Nonnull ItemStack itemStack, @Nullable World worldIn, @Nonnull List<String> lines, @Nonnull ITooltipFlag tooltipFlag) {
         T item = getItem(itemStack);
         if (item == null) {
             return;
@@ -463,17 +464,17 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     @Override
-    public boolean isEnchantable(ItemStack stack) {
+    public boolean isEnchantable(@Nonnull ItemStack stack) {
         return true;
     }
 
     @Override
-    public int getItemEnchantability(ItemStack stack) {
+    public int getItemEnchantability(@Nonnull ItemStack stack) {
         return getToolMaterial(stack).getProperty(PropertyKey.TOOL).getToolEnchantability();
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+    public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack, @Nonnull Enchantment enchantment) {
         T metaToolValueItem = getItem(stack);
         if (metaToolValueItem != null && metaToolValueItem.toolStats != null) {
             return metaToolValueItem.toolStats.canApplyEnchantment(stack, enchantment);

@@ -59,6 +59,7 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         return getMetaFromState(state);
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {

@@ -19,6 +19,7 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.sound.GTSoundManager;
 import gregtech.api.recipes.FluidKey;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.*;
@@ -28,6 +29,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -103,6 +105,8 @@ public abstract class MetaTileEntity implements ICoverable {
     protected List<IFluidHandler> notifiedFluidOutputList = new ArrayList<>();
 
     protected boolean muffled = false;
+
+    private int playSoundCooldown = 0;
 
     public MetaTileEntity(ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
@@ -348,10 +352,7 @@ public abstract class MetaTileEntity implements ICoverable {
         EnumActionResult coverResult = coverBehavior == null ? EnumActionResult.PASS :
                 coverBehavior.onRightClick(playerIn, hand, result);
         if (coverResult != EnumActionResult.PASS) {
-            if (coverResult == EnumActionResult.SUCCESS) {
-                return true;
-            }
-            return false;
+            return coverResult == EnumActionResult.SUCCESS;
         }
         return onRightClick(playerIn, hand, result.sideHit, result);
     }
@@ -634,6 +635,8 @@ public abstract class MetaTileEntity implements ICoverable {
             if (getOffsetTimer() % 5 == 0L) {
                 updateComparatorValue();
             }
+        } else {
+            updateSound();
         }
         if (getOffsetTimer() % 5 == 0L) {
             updateLightValue();
@@ -642,6 +645,27 @@ public abstract class MetaTileEntity implements ICoverable {
 
     protected boolean shouldUpdate(MTETrait trait) {
         return true;
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void updateSound() {
+        if (!ConfigHolder.machines.machineSounds || isMuffled()) {
+            return;
+        }
+        SoundEvent sound = getSound();
+        if (sound == null) {
+            return;
+        }
+        if (isValid() && isActive()) {
+            if (--playSoundCooldown > 0) {
+                return;
+            }
+            GTSoundManager.startTileSound(sound.getSoundName(), 1.0F, getPos());
+            playSoundCooldown = 20;
+        } else {
+            GTSoundManager.stopTileSound(getPos());
+            playSoundCooldown = 0;
+        }
     }
 
     public final ItemStack getStackForm(int amount) {
@@ -828,6 +852,11 @@ public abstract class MetaTileEntity implements ICoverable {
         } else if (dataId == UPDATE_IS_FRAGILE) {
             this.isFragile = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
+        } else if (dataId == UPDATE_SOUND_MUFFLED) {
+            this.muffled = buf.readBoolean();
+            if (muffled) {
+                GTSoundManager.stopTileSound(getPos());
+            }
         }
     }
 
@@ -1261,6 +1290,21 @@ public abstract class MetaTileEntity implements ICoverable {
     public void onRemoval() {
     }
 
+    public void invalidate() {
+        if (getWorld() != null && getWorld().isRemote) {
+            GTSoundManager.stopTileSound(getPos());
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public SoundEvent getSound() {
+        return null;
+    }
+
+    public boolean isActive() {
+        return false;
+    }
+
     public EnumFacing getFrontFacing() {
         return frontFacing;
     }
@@ -1342,6 +1386,9 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public final void toggleMuffled() {
         muffled = !muffled;
+        if (!getWorld().isRemote) {
+            writeCustomData(UPDATE_SOUND_MUFFLED, buf -> buf.writeBoolean(muffled));
+        }
     }
 
     public boolean isMuffled() {

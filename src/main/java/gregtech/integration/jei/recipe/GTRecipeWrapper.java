@@ -147,9 +147,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isCreative() && GTValues.isModLoaded(GTValues.MODID_CT);
         buttons.add(new JeiButton(166, 2, 10, 10)
                 .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
-                .setTooltipBuilder(lines -> {
-                    lines.add("Copies a CraftTweaker script, to remove this recipe, to the clipboard");
-                })
+                .setTooltipBuilder(lines -> lines.add("Copies a CraftTweaker script, to remove this recipe, to the clipboard"))
                 .setClickAction((minecraft, mouseX, mouseY, mouseButton) -> {
                     String recipeLine = CTRecipeHelper.getRecipeRemoveLine(recipeMap, recipe);
                     String output = CTRecipeHelper.getFirstOutputString(recipe);
@@ -180,6 +178,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     private int getPropertyListHeight() {
         if (recipeMap == RecipeMaps.COKE_OVEN_RECIPES)
             return LINE_HEIGHT - 6; // fun hack TODO Make this easier to position
-        return (recipe.getPropertyCount() + 3) * LINE_HEIGHT - 3;
+        return (recipe.getUnhiddenPropertyCount() + 3) * LINE_HEIGHT - 3;
     }
 }

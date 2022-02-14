@@ -162,9 +162,9 @@ public class MetaPrefixItem extends StandardMetaItem {
             EntityLivingBase entity = (EntityLivingBase) entityIn;
             if (worldIn.getTotalWorldTime() % 20 == 0) {
                 if (prefix.heatDamage != 0.0 && prefix.heatDamage > 0.0) {
-                    entity.attackEntityFrom(DamageSources.getHeatDamage(), prefix.heatDamage);
+                    entity.attackEntityFrom(DamageSources.getHeatDamage().setDamageBypassesArmor(), prefix.heatDamage);
                 } else if (prefix.heatDamage < 0.0) {
-                    entity.attackEntityFrom(DamageSources.getFrostDamage(), -prefix.heatDamage);
+                    entity.attackEntityFrom(DamageSources.getFrostDamage().setDamageBypassesArmor(), -prefix.heatDamage);
                 }
             }
         }

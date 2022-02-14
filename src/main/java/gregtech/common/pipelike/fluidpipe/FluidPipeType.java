@@ -8,11 +8,11 @@ import javax.annotation.Nonnull;
 
 public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
 
-    TINY_OPAQUE("tiny", 0.25f, 1, OrePrefix.pipeTinyFluid, true),
-    SMALL_OPAQUE("small", 0.375f, 2, OrePrefix.pipeSmallFluid, true),
-    NORMAL_OPAQUE("normal", 0.5f, 6, OrePrefix.pipeNormalFluid, true),
-    LARGE_OPAQUE("large", 0.75f, 12, OrePrefix.pipeLargeFluid, true),
-    HUGE_OPAQUE("huge", 0.875f, 24, OrePrefix.pipeHugeFluid, true),
+    TINY("tiny", 0.25f, 1, OrePrefix.pipeTinyFluid, true),
+    SMALL("small", 0.375f, 2, OrePrefix.pipeSmallFluid, true),
+    NORMAL("normal", 0.5f, 6, OrePrefix.pipeNormalFluid, true),
+    LARGE("large", 0.75f, 12, OrePrefix.pipeLargeFluid, true),
+    HUGE("huge", 0.875f, 24, OrePrefix.pipeHugeFluid, true),
 
     QUADRUPLE("quadruple", 0.95f, 6, OrePrefix.pipeQuadrupleFluid, true, 4),
     NONUPLE("nonuple", 0.95f, 2, OrePrefix.pipeNonupleFluid, true, 9);

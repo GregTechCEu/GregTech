@@ -1,5 +1,28 @@
 ## Changelog
 
+### 2.1.1
+BETA RELEASE
+
+* Overhaul Sound System
+    * Muffling machines now no longer requires a world reload, and works immediately
+    * Sounds will no longer stop working entirely after some amount of time
+    * Machines running sound are now more performant
+* Fix crash with Prospector Tool on servers
+* Fix covers on pipes not being able to open UIs
+* Fix issues with Large Turbines on servers
+* Fix some GT blocks having their textures broken after changing Resource Packs / using F3+T
+* Fix log spam in some situations with Fluid Pipes
+* Fix Rock Breaker NPE on load, causing the machine to occasionally disappear
+* Fix crash using Macerators in PA/APA
+* Fix Prospector Tool and Item Magnets not saving their state between world loads
+* Fix ULV Casing getting colored by the default machine color config
+* Fix lag when playing a GT record
+* Fix some Furnace recipe removal errors
+* Adjust some circuit tier tooltips to better match the circuit theme's color
+* Slightly tweak the Wool maceration/assembling recipes
+* Internal: Pipes no longer have textures bound to IconSets. Removes approximately 288 textures from the Atlas
+* Internal: Rename `HermeticCasings.class` -> `BlockHermeticCasing.class`
+
 ### 2.1.0
 BETA RELEASE
 
