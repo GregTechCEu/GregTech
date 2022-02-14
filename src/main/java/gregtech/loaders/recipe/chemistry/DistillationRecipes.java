@@ -1,8 +1,7 @@
 package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.unification.material.Materials;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
+import gregtech.common.items.MetaItems;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.DISTILLATION_RECIPES;
@@ -104,7 +103,7 @@ public class DistillationRecipes {
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(FermentedBiomass.getFluid(1000))
-                .outputs(new ItemStack(Items.DYE, 1, 15))
+                .output(MetaItems.FERTILIZER)
                 .fluidOutputs(AceticAcid.getFluid(25))
                 .fluidOutputs(Water.getFluid(375))
                 .fluidOutputs(Ethanol.getFluid(150))
@@ -115,10 +114,10 @@ public class DistillationRecipes {
                 .duration(75).EUt(180).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(Biomass.getFluid(600))
+                .fluidInputs(Biomass.getFluid(1000))
                 .output(dustSmall, Wood, 2)
-                .fluidOutputs(Ethanol.getFluid(240))
-                .fluidOutputs(Water.getFluid(240))
+                .fluidOutputs(Ethanol.getFluid(600))
+                .fluidOutputs(Water.getFluid(300))
                 .duration(32).EUt(400).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
