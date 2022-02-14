@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 public class AbstractRecipeLogicTest {
 
     @BeforeClass
-    public static void init() {
+    public static void bootstrap() {
         Bootstrap.perform();
     }
 

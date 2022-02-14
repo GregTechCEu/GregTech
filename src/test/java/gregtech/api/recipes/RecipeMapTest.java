@@ -19,7 +19,7 @@ import static org.junit.Assert.assertNotNull;
 public class RecipeMapTest {
 
     @BeforeClass
-    public static void init() {
+    public static void bootstrap() {
         Bootstrap.perform();
     }
 

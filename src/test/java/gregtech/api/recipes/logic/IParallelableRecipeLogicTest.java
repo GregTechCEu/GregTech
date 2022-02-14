@@ -43,7 +43,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
     private static boolean enableBonusOverride = false;
 
     @BeforeClass
-    public static void init() {
+    public static void bootstrap() {
         Bootstrap.perform();
     }
 

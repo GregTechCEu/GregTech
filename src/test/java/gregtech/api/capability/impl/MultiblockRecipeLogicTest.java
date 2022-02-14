@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
 public class MultiblockRecipeLogicTest {
 
     @BeforeClass
-    public static void init() {
+    public static void bootstrap() {
         Bootstrap.perform();
     }
 
