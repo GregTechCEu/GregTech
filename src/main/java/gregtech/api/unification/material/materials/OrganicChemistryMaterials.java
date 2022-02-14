@@ -184,8 +184,9 @@ public class OrganicChemistryMaterials {
         AllylChloride = new Material.Builder(1025, "allyl_chloride")
                 .fluid()
                 .color(0x87DEAA)
-                .components(Carbon, 3, Hydrogen, 5, Chlorine, 1)
-                .build();
+                .components(Carbon, 2, Methane, 1, HydrochloricAcid, 1)
+                .build()
+                .setFormula("C3H5Cl", true);
 
         Isoprene = new Material.Builder(1026, "isoprene")
                 .fluid()
