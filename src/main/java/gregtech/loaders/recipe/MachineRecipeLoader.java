@@ -867,7 +867,7 @@ public class MachineRecipeLoader {
 
     private static void registerSmoothRecipe(List<ItemStack> roughStack, List<ItemStack> smoothStack) {
         for (int i = 0; i < roughStack.size(); i++) {
-            ModHandler.addSmeltingRecipe(roughStack.get(i), smoothStack.get(i));
+            ModHandler.addSmeltingRecipe(roughStack.get(i), smoothStack.get(i), 0.1f);
 
             EXTRUDER_RECIPES.recipeBuilder()
                     .inputs(roughStack.get(i))
