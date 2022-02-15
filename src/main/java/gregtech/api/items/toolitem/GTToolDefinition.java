@@ -3,6 +3,7 @@ package gregtech.api.items.toolitem;
 import appeng.api.implementations.items.IAEWrench;
 import buildcraft.api.tools.IToolWrench;
 import cofh.api.item.IToolHammer;
+import com.google.common.base.CaseFormat;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import crazypants.enderio.api.tool.ITool;
@@ -40,12 +41,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
+import net.minecraft.util.CooldownTracker;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
@@ -83,8 +87,21 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
 
     Set<Block> getEffectiveBlocks();
 
+    Set<String> getOreDictNames();
+
     default Item get() {
         return (Item) this;
+    }
+
+    default ItemStack get(Material material) {
+        ItemStack stack = new ItemStack(get());
+        NBTTagCompound toolTag = getToolTag(stack);
+        toolTag.setString("Material", material.toString());
+        ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
+        toolTag.setInteger("MaxDurability", toolProperty.getToolDurability());
+        toolTag.setInteger("Durability", 0);
+        EnchantmentHelper.setEnchantments(toolProperty.getEnchantments(), stack);
+        return stack;
     }
 
     default NBTTagCompound getToolTag(ItemStack stack) {
@@ -92,7 +109,8 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
     }
 
     default Material getToolMaterial(ItemStack stack) {
-        String string = getToolTag(stack).getString("Material");
+        NBTTagCompound toolTag = getToolTag(stack);
+        String string = toolTag.getString("Material");
         Material material = GregTechAPI.MaterialRegistry.get(string);
         if (material == null) {
             GTLog.logger.error("Attempt to get {} as a tool material, but material does not exist. Using Neutronium instead.", string);
@@ -167,12 +185,12 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
 
     default int getTotalMaxDurability(ItemStack stack) {
         NBTTagCompound toolTag = getToolTag(stack);
-        if (toolTag.hasKey("Durability", Constants.NBT.TAG_INT)) {
-            return toolTag.getInteger("Durability");
+        if (toolTag.hasKey("MaxDurability", Constants.NBT.TAG_INT)) {
+            return toolTag.getInteger("MaxDurability");
         }
-        int durability = getToolProperty(stack).getToolDurability();
-        toolTag.setInteger("Durability", durability);
-        return durability;
+        int maxDurability = getToolProperty(stack).getToolDurability();
+        toolTag.setInteger("MaxDurability", maxDurability);
+        return maxDurability;
     }
 
     default int getTotalEnchantability(ItemStack stack) {
@@ -221,13 +239,13 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
     }
 
     default boolean definition$hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-        stack.damageItem(getToolStats().getToolDamagePerEntityAttack(stack), attacker);
+        damageItem(stack, attacker, getToolStats().getToolDamagePerEntityAttack(stack));
         return true;
     }
 
     default boolean definition$onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
         if (!worldIn.isRemote && (double) state.getBlockHardness(worldIn, pos) != 0.0D) {
-            stack.damageItem(getToolStats().getToolDamagePerBlockBreak(stack), entityLiving);
+            damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
         }
         return true;
     }
@@ -262,16 +280,38 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
         return oldStack.getItem() != newStack.getItem();
     }
 
+    default boolean definition$hasContainerItem(ItemStack stack) {
+        return true;
+    }
+
+    default ItemStack definition$getContainerItem(ItemStack stack) {
+        int damage = getToolStats().getToolDamagePerContainerCraft(stack);
+        if (damage > 0) {
+            EntityPlayer player = ForgeHooks.getCraftingPlayer();
+            damageItem(stack, player, damage);
+            playCraftingSound(player);
+            // We cannot simply return the copied stack here because Forge's bug
+            // Introduced here: https://github.com/MinecraftForge/MinecraftForge/pull/3388
+            // Causing PlayerDestroyItemEvent to never be fired under correct circumstances.
+            // While preliminarily fixing ItemStack being null in ForgeHooks#getContainerItem in the PR
+            // The semantics was misunderstood, any stack that are "broken" (damaged beyond maxDamage)
+            // Will be "empty" ItemStacks (while not == ItemStack.EMPTY, but isEmpty() == true)
+            // PlayerDestroyItemEvent will not be fired correctly because of this oversight.
+            if (stack.isEmpty()) { // Equal to listening to PlayerDestroyItemEvent
+                return getToolStats().getBrokenStack();
+            }
+        }
+        return stack.copy();
+    }
+
     /**
      * Damages the tool appropriately
      *
-     * @param stack  ItemStack that holds the tool
+     * @param stack  Tool ItemStack
      * @param entity Entity that has damaged this ItemStack
      * @param damage Damage the ItemStack will be taking
-     * @return The original ItemStack, or if it breaks and if the tool has a defined broken ItemStack, returns that.
-     *         However, it is up to the caller to sort out how the player receives the broken ItemStack.
      */
-    default ItemStack damageItem(ItemStack stack, EntityLivingBase entity, int damage) {
+    default void damageItem(ItemStack stack, EntityLivingBase entity, int damage) {
         if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).capabilities.isCreativeMode) {
             if (isElectric()) {
                 int electricDamage = damage * ConfigHolder.machines.energyUsageMultiplier;
@@ -279,68 +319,76 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
                 if (electricItem != null) {
                     long newCharge = electricItem.getCharge() - electricDamage;
                     electricItem.discharge(electricDamage, getElectricTier(), true, false, false);
-                    if (newCharge > 0 || entity.getRNG().nextInt(100) > ConfigHolder.tools.rngDamageElectricTools) {
-                        return stack;
+                    if (newCharge > 0 && entity.getRNG().nextInt(100) > ConfigHolder.tools.rngDamageElectricTools) {
+                        return;
                     }
                 } else {
                     throw new IllegalStateException("Electric tool does not have an attached electric item capability.");
                 }
             }
-            int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
+            int unbreakingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
             int negated = 0;
-            for (int k = 0; i > 0 && k < damage; k++) {
-                if (EnchantmentDurability.negateDamage(stack, i, entity.getRNG())) {
+            for (int k = 0; unbreakingLevel > 0 && k < damage; k++) {
+                if (EnchantmentDurability.negateDamage(stack, unbreakingLevel, entity.getRNG())) {
                     negated++;
                 }
             }
             damage -= negated;
             if (damage <= 0) {
-                return stack;
+                return;
             }
-            int newDurability = definition$getItemDamage(stack) - damage;
+            int newDurability = definition$getDamage(stack) + damage;
             if (entity instanceof EntityPlayerMP) {
                 CriteriaTriggers.ITEM_DURABILITY_CHANGED.trigger((EntityPlayerMP) entity, stack, newDurability);
             }
-            if (newDurability < 0) {
-                definition$setItemDamage(stack, 0);
-                entity.renderBrokenItemStack(stack);
-                stack.shrink(1);
+            definition$setDamage(stack, newDurability);
+            if (newDurability > definition$getMaxDamage(stack)) {
                 if (entity instanceof EntityPlayer) {
                     EntityPlayer entityplayer = (EntityPlayer) entity;
                     entityplayer.addStat(StatList.getObjectBreakStats(stack.getItem()));
-                    ItemStack brokenStack = getToolStats().getBrokenStack();
-                    return brokenStack == ItemStack.EMPTY ? stack : brokenStack.copy();
                 }
-            } else {
-                definition$setItemDamage(stack, newDurability);
+                entity.renderBrokenItemStack(stack);
+                stack.shrink(1);
             }
         }
-        return stack;
     }
 
-    default int definition$getMaxDamage(ItemStack stack) {
-        NBTTagCompound toolTag = getToolTag(stack);
-        if (toolTag.hasKey("MaxDurability", Constants.NBT.TAG_INT)) {
-            return toolTag.getInteger("MaxDurability");
-        }
-        int maxDurability = getMaterialDurability(stack);
-        toolTag.setInteger("MaxDurability", maxDurability);
-        return maxDurability;
+    default boolean definition$isDamaged(ItemStack stack) {
+        return definition$getDamage(stack) > 0;
     }
 
-    default int definition$getItemDamage(ItemStack stack) {
+    default int definition$getDamage(ItemStack stack) {
         NBTTagCompound toolTag = getToolTag(stack);
         if (toolTag.hasKey("Durability", Constants.NBT.TAG_INT)) {
             return toolTag.getInteger("Durability");
         }
-        int durability = stack.getMaxDamage();
-        toolTag.setInteger("Durability", durability);
-        return durability;
+        toolTag.setInteger("Durability", 0);
+        return 0;
     }
 
-    default void definition$setItemDamage(ItemStack stack, int durability) {
+    default int definition$getMaxDamage(ItemStack stack) {
+        return getTotalMaxDurability(stack);
+    }
+
+    default void definition$setDamage(ItemStack stack, int durability) {
         NBTTagCompound toolTag = getToolTag(stack);
         toolTag.setInteger("Durability", durability);
+    }
+
+    // Sound Playing
+    default void playCraftingSound(EntityPlayer player) {
+        if (ConfigHolder.client.toolCraftingSounds && getSound() != null) {
+            if (!player.getCooldownTracker().hasCooldown(get())) {
+                player.getCooldownTracker().setCooldown(get(), 10);
+                player.getEntityWorld().playSound(null, player.posX, player.posY, player.posZ, getSound(), SoundCategory.PLAYERS, 1F, 1F);
+            }
+        }
+    }
+
+    default void playSound(EntityPlayer player) {
+        if (ConfigHolder.client.toolUseSounds && getSound() != null) {
+            player.getEntityWorld().playSound(null, player.posX, player.posY, player.posZ, getSound(), SoundCategory.PLAYERS, 1F, 1F);
+        }
     }
 
     // Extended Interfaces
