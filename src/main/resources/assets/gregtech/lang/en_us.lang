@@ -1696,8 +1696,9 @@ material.cyclohexane=Cyclohexane
 material.cyclohexanone_oxime=Cyclohexanone Oxime
 material.caprolactam=Caprolactam
 material.nitrosyl_chloride=Nitrosyl Chloride
-material.butraldehyde=Butraldehyde
+material.butyraldehyde=Butyraldehyde
 material.polyvinyl_butyral=Polyvinyl Butyral
+
 
 # Unknown Composition Materials
 material.wood_gas=Wood Gas
@@ -1927,6 +1928,7 @@ material.insane=Insane
 material.epic=Epic
 material.legendary=Legendary
 material.maximum=Maximum
+
 
 # Item Renaming
 item.nether_quartz.oreNetherrack=Nether Quartz Ore

@@ -698,9 +698,9 @@ public class ReactorRecipes {
                 .duration(200).EUt(VA[HV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .fluidInputs(Butraldehyde.getFluid(1000))
-                .fluidInputs(PolyvinylAcetate.getFluid(1000))
-                .fluidOutputs(PolyvinylButyral.getFluid(1000))
+                .fluidInputs(Butraldehyde.getFluid(250))
+                .fluidInputs(PolyvinylAcetate.getFluid(144))
+                .fluidOutputs(PolyvinylButyral.getFluid(144))
                 .duration(400).EUt(VA[HV]).buildAndRegister();
     }
 }
