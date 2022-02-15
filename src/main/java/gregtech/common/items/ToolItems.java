@@ -86,26 +86,12 @@ public class ToolItems {
             GTToolDefinition def = (GTToolDefinition) item;
             ItemStack brokenStack = def.getToolStats().getBrokenStack();
             if (!brokenStack.isEmpty()) {
-                brokenStack = brokenStack.copy();
                 if (event.getHand() == null) {
-                    // Special-case container items?
                     if (!event.getEntityPlayer().addItemStackToInventory(brokenStack)) {
                         event.getEntityPlayer().dropItem(brokenStack, true);
                     }
                 } else {
                     event.getEntityPlayer().setHeldItem(event.getHand(), brokenStack);
-                }
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
-        if (event.player != null && !event.player.world.isRemote) {
-            for (int i = 0; i < event.craftMatrix.getSizeInventory(); i++) {
-                Item item = event.craftMatrix.getStackInSlot(i).getItem();
-                if (item instanceof GTToolDefinition) {
-                    ((GTToolDefinition) item).playSound(event.player);
                 }
             }
         }
