@@ -160,7 +160,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Coal = new Material.Builder(271, "coal")
-                .gem(1, 1600).ore() //default coal burn time in vanilla
+                .gem(1, 1600).ore(2, 1) //default coal burn time in vanilla
                 .color(0x464646).iconSet(LIGNITE)
                 .flags(FLAMMABLE, NO_SMELTING, NO_SMASHING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
