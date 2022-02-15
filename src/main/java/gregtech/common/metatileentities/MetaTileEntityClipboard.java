@@ -221,12 +221,11 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
             NonNullList<ItemStack> drops = NonNullList.create();
             getDrops(drops, player);
 
-            Block.spawnAsEntity(getWorld(), this.getPos(), drops.get(0));
+            Block.spawnAsEntity(getWorld(), pos, drops.get(0));
             this.dropAllCovers();
             this.onRemoval();
 
             world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
-            this.scheduleRenderUpdate();
         }
     }
 
