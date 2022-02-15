@@ -16,10 +16,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JEIHelpers;
 import gregtech.integration.jei.utils.JeiButton;
-import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
-import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import net.minecraft.client.Minecraft;
@@ -108,7 +104,14 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     public void addItemTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
         boolean notConsumed = input && isNotConsumedItem(slotIndex);
 
-        ChanceEntry entry = input ? null : recipe.getChancedOutputs().get(slotIndex - recipe.getInputs().size());
+        ChanceEntry entry;
+        if (input) {
+            entry = null;
+        } else if (recipe.getChancedOutputs().size() >= slotIndex) {
+            entry = recipe.getChancedOutputs().get(slotIndex - 1);
+        } else {
+            entry = null;
+        }
 
         if (entry != null) {
             double chance = entry.getChance() / 100.0;
