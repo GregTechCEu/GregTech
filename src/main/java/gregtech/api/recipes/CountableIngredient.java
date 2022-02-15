@@ -13,7 +13,7 @@ import net.minecraftforge.oredict.OreIngredient;
 
 import java.util.Arrays;
 
-public class CountableIngredient<C extends CountableIngredient<C>> {
+public class CountableIngredient {
 
     private final Ingredient ingredient;
     private final int count;
@@ -66,7 +66,7 @@ public class CountableIngredient<C extends CountableIngredient<C>> {
         return nonConsumable;
     }
 
-    public CountableIngredient<C> setNonConsumable() {
+    public CountableIngredient setNonConsumable() {
         this.nonConsumable = true;
         return this;
     }
