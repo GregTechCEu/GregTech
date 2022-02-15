@@ -72,7 +72,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
-            if (getOffsetTimer() % 20 == 0 || isFirstTick()) {
+            if (getOffsetTimer() % minimumOffsetInTicks() == 0 || isFirstTick()) {
                 checkStructurePattern();
             }
             if (isStructureFormed()) {
@@ -215,6 +215,13 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      */
     public boolean canShare() {
         return true;
+    }
+
+    /**
+     * Override to change the minimum time in ticks that pattern checker runs
+     */
+    public long minumumOffsetInTicks() {
+        return 20L;
     }
 
     /**
