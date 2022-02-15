@@ -2,7 +2,6 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Material.FluidType;
-import gregtech.api.unification.material.Materials;
 
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
@@ -281,7 +280,7 @@ public class UnknownCompositionMaterials {
         NetherStar = new Material.Builder(1602, "nether_star")
                 .gem(4)
                 .iconSet(NETHERSTAR)
-                .flags(NO_SMASHING, NO_SMELTING)
+                .flags(NO_SMASHING, NO_SMELTING, GENERATE_LENS)
                 .build();
 
         Endstone = new Material.Builder(1603, "endstone")
@@ -457,5 +456,6 @@ public class UnknownCompositionMaterials {
                 .flags(GENERATE_PLATE, FLAMMABLE, GENERATE_ROD, GENERATE_FRAME)
                 .build();
 
+        UUMatter = new Material.Builder(1649, "uu_matter").fluid().build();
     }
 }

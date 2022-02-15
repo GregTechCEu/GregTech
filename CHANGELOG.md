@@ -1,5 +1,79 @@
 ## Changelog
 
+### 2.1.1
+BETA RELEASE
+
+* Overhaul Sound System
+    * Muffling machines now no longer requires a world reload, and works immediately
+    * Sounds will no longer stop working entirely after some amount of time
+    * Machines running sound are now more performant
+* Fix crash with Prospector Tool on servers
+* Fix covers on pipes not being able to open UIs
+* Fix issues with Large Turbines on servers
+* Fix some GT blocks having their textures broken after changing Resource Packs / using F3+T
+* Fix log spam in some situations with Fluid Pipes
+* Fix Rock Breaker NPE on load, causing the machine to occasionally disappear
+* Fix crash using Macerators in PA/APA
+* Fix Prospector Tool and Item Magnets not saving their state between world loads
+* Fix ULV Casing getting colored by the default machine color config
+* Fix lag when playing a GT record
+* Fix some Furnace recipe removal errors
+* Adjust some circuit tier tooltips to better match the circuit theme's color
+* Slightly tweak the Wool maceration/assembling recipes
+* Internal: Pipes no longer have textures bound to IconSets. Removes approximately 288 textures from the Atlas
+* Internal: Rename `HermeticCasings.class` -> `BlockHermeticCasing.class`
+
+### 2.1.0
+BETA RELEASE
+
+Featured Changes:
+
+* Fluid Rigs
+    * New Multiblocks capable of draining Fluids from in-world data
+    * Each 8x8 chunk area of a Dimension can have a Fluid Vein in it (not in-world)
+    * Rigs at MV, EV, and LuV for harvesting these fluids
+    * "Veins" can be specified similarly to Ore Veins in the config JSON files
+
+* CraftTweaker Changes
+    * In Creative Mode, there is now a button on a RecipeMap JEI Page to copy the CT script to remove that recipe to the clipboard
+    * Fix IconSet changes not working in CraftTweaker
+    * Fix rare issues with adding properties to materials in CraftTweaker
+
+* Fix Fluid Pipes having half the intended transfer rate
+* Fix issues with pipe/cable connections with GT6StylePipesCables OFF
+* Fix power transfer in cables randomly failing
+* Fix Z-Fighting with covers on pipes and cables
+* Fix issues with painting Pipes and Cables
+* Fix rendering and performance issues with the Clipboard
+* Fix Overclock Button not working in some cases
+* Fix machine default color not applying to Machine Casings, Hermetic Casings
+* Fix issues with changing machine default color in-game
+* Fix Item Magnets working in Spectator Mode
+* Fix Coke Oven Hatch being sharable between Coke Ovens
+* Fix crash with Tricorders when scanning dimensions with no fluid veins
+* Fix Creative Energy Emitter tier button not updating from a manually entered voltage
+* Fix issues with UI's staying open after TileEntities are removed
+* Fix Compressor and Forge Hammer recipes sometimes using the wrong amount of items for Blocks (Glowstone, Quartz, etc)
+* Fix Large Boilers burning for too long with fluid fuels
+* Fix circuit overlay in Assembling Machine
+* Fix Block Breaker, Coke Oven Hatch tooltips
+* Fix Large Fluid Cells not showing their fluid capacity in the tooltip
+* Move PGS processing to Centrifuge
+* Fix various issues with Solar Panel covers
+* Remove `dustRegular` OreDict, as its need is no more with the new Ore Dictionary Filter
+* Fix a few recipe problems (Fish Oil, Ender Pearl dust Mixer using O over N, Propene + Cl conflict, PBI fluid output amount)
+* Add Huge Item and Huge Restrictive Item Pipes
+* Add Fluid Temperature and State tooltips to more places
+* Add Config to automatically remove Furnace smelting recipes for EBF Metals added by other mods (excluding CraftTweaker)
+* Add Advancement for Primitive Pump
+* Rebalance Steel Processing (PBF is slightly slower, as is EBF, drastically reduce Oxygen amount for EBF)
+* Buff Oilsands processing time
+* Fix Beacon recipe with harder recipe configs enabled
+* Add many, many new harder recipes to the harder recipe configs
+* Add many new Vanilla item recycling recipes
+* Change behavior of machine explosions with the config off
+* Internal: Converted MetaPrefix item to use `MetaValueItem` instead of its own handwoven Map
+
 ### 2.0.6
 BETA RELEASE
 

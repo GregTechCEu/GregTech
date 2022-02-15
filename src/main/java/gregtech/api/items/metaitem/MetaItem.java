@@ -88,7 +88,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     private final Map<String, T> names = new Object2ObjectOpenHashMap<>();
     protected final Short2ObjectMap<ModelResourceLocation> metaItemsModels = new Short2ObjectOpenHashMap<>();
     protected final Short2ObjectMap<ModelResourceLocation[]> specialItemsModels = new Short2ObjectOpenHashMap<>();
-    private static final ModelResourceLocation MISSING_LOCATION = new ModelResourceLocation("builtin/missing", "inventory");
+    protected static final ModelResourceLocation MISSING_LOCATION = new ModelResourceLocation("builtin/missing", "inventory");
 
     protected final short metaItemOffset;
 
@@ -125,7 +125,10 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             }
             metaItemsModels.put((short) (metaItemOffset + itemMetaKey), new ModelResourceLocation(resourceLocation, "inventory"));
         }
+    }
 
+    @SideOnly(Side.CLIENT)
+    public void registerTextureMesh() {
         ModelLoader.setCustomMeshDefinition(this, itemStack -> {
             short itemDamage = formatRawItemDamage((short) itemStack.getItemDamage());
             if (specialItemsModels.containsKey(itemDamage)) {
@@ -543,12 +546,11 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         if (fluidHandler != null) {
             IFluidTankProperties fluidTankProperties = fluidHandler.getTankProperties()[0];
             FluidStack fluid = fluidTankProperties.getContents();
-            if (fluid != null) {
-                lines.add(I18n.format("metaitem.generic.fluid_container.tooltip",
-                        fluid.amount,
-                        fluidTankProperties.getCapacity(),
-                        fluid.getLocalizedName()));
-            } else lines.add(I18n.format("metaitem.generic.fluid_container.tooltip_empty"));
+
+            lines.add(I18n.format("metaitem.generic.fluid_container.tooltip",
+                    fluid == null ? 0 : fluid.amount,
+                    fluidTankProperties.getCapacity(),
+                    fluid == null ? "" : fluid.getLocalizedName()));
         }
 
         for (IItemBehaviour behaviour : getBehaviours(itemStack)) {

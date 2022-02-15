@@ -174,25 +174,31 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
     @Override
     public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
-        if (worldIn.isRemote || ConfigHolder.machines.gt6StylePipesCables) return;
-        IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
-        if (pipeTile != null) {
-            EnumFacing facing = null;
-            for (EnumFacing facing1 : EnumFacing.values()) {
-                if (GTUtility.arePosEqual(fromPos, pos.offset(facing1))) {
-                    facing = facing1;
-                    break;
+        if (worldIn.isRemote) return;
+        if (!ConfigHolder.machines.gt6StylePipesCables) {
+            IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
+            if (pipeTile != null) {
+                EnumFacing facing = null;
+                for (EnumFacing facing1 : EnumFacing.values()) {
+                    if (GTUtility.arePosEqual(fromPos, pos.offset(facing1))) {
+                        facing = facing1;
+                        break;
+                    }
                 }
+                if (facing == null) throw new NullPointerException("Facing is null");
+                boolean open = pipeTile.isConnected(facing);
+                boolean canConnect = pipeTile.getCoverableImplementation().getCoverAtSide(facing) != null || canConnect(pipeTile, facing);
+                if (!open && canConnect && state.getBlock() != blockIn)
+                    pipeTile.setConnection(facing, true, false);
+                if (open && !canConnect)
+                    pipeTile.setConnection(facing, false, false);
+                updateActiveNodeStatus(worldIn, pos, pipeTile);
+                pipeTile.getCoverableImplementation().updateInputRedstoneSignals();
             }
-            if (facing == null) throw new NullPointerException("Facing is null");
-            boolean open = pipeTile.isConnected(facing);
-            boolean canConnect = pipeTile.getCoverableImplementation().getCoverAtSide(facing) != null || canConnect(pipeTile, facing);
-            if (!open && canConnect && state.getBlock() != blockIn)
-                pipeTile.setConnection(facing, true, false);
-            if (open && !canConnect)
-                pipeTile.setConnection(facing, false, false);
-            updateActiveNodeStatus(worldIn, pos, pipeTile);
-            pipeTile.getCoverableImplementation().updateInputRedstoneSignals();
+        }
+        PipeNet<NodeDataType> net = getWorldPipeNet(worldIn).getNetFromPos(pos);
+        if (net != null) {
+            net.onNeighbourUpdate(fromPos);
         }
     }
 
@@ -276,9 +282,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
         if (!(hit.cuboid6.data instanceof CoverSideData)) {
             switch (onPipeToolUsed(world, pos, itemStack, coverSide, pipeTile, entityPlayer)) {
-                case 1:
+                case SUCCESS:
                     return true;
-                case 0:
+                case FAIL:
                     return false;
             }
         }
@@ -309,7 +315,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
      * @return 1 if successfully used tool, 0 if failed to use tool,
      * -1 if ItemStack failed the capability check (no action done, continue checks).
      */
-    public int onPipeToolUsed(World world, BlockPos pos, ItemStack stack, EnumFacing coverSide, IPipeTile<PipeType, NodeDataType> pipeTile, EntityPlayer entityPlayer) {
+    public EnumActionResult onPipeToolUsed(World world, BlockPos pos, ItemStack stack, EnumFacing coverSide, IPipeTile<PipeType, NodeDataType> pipeTile, EntityPlayer entityPlayer) {
         IWrenchItem wrenchItem = stack.getCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
         if (wrenchItem != null) {
             if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true)) {
@@ -324,11 +330,11 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                     wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
                     IToolStats.onOtherUse(stack, world, pos);
                 }
-                return 1;
+                return EnumActionResult.SUCCESS;
             }
-            return 0;
+            return EnumActionResult.FAIL;
         }
-        return -1;
+        return EnumActionResult.PASS;
     }
 
     @Override

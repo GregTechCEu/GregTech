@@ -37,15 +37,14 @@ import java.util.*;
 @SideOnly(Side.CLIENT)
 public class OreBakedModel implements IBakedModel {
 
-    public static final OreBakedModel INSTANCE = new OreBakedModel();
+    private static IBakedModel model;
 
     private final Map<StoneType, TextureAtlasSprite> stoneTypeModels;
     private final Table<StoneType, EnumFacing, BakedQuad> cacheBottom;
     private final Table<MaterialIconSet, EnumFacing, BakedQuad[]> cacheTop;
     private final ThreadLocal<TextureAtlasSprite> particle;
-    private static IBakedModel model;
 
-   private OreBakedModel() {
+   public OreBakedModel() {
        this.stoneTypeModels = new Object2ObjectOpenHashMap<>();
        this.cacheBottom = Tables.newCustomTable(Maps.newHashMap(), () -> Maps.newEnumMap(EnumFacing.class));
        this.cacheTop = Tables.newCustomTable(Maps.newHashMap(), () -> Maps.newEnumMap(EnumFacing.class));

@@ -315,7 +315,7 @@ public class ElementMaterials {
         Iridium = new Material.Builder(50, "iridium")
                 .ingot(3).fluid()
                 .color(0xA1E4E4).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_FINE_WIRE)
+                .flags(EXT2_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .element(Elements.Ir)
                 .toolStats(7.0f, 3.0f, 2560, 21)
                 .fluidPipeProperties(3398, 140, true)

@@ -39,7 +39,7 @@ public class CompressedItemBlock extends ItemBlock {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         if(flagIn.isAdvanced()) {
             tooltip.add("MetaItem Id: block" + compressedBlock.getGtMaterial(stack.getMetadata()).toCamelCaseString());

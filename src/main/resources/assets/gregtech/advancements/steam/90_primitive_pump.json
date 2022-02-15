@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.steam.90_primitive_pump.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.steam.90_primitive_pump.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 1648
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 1648
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:steam/9_coke_oven"
+}

@@ -145,9 +145,8 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                 break;
 
             int inserted = pair.getKey().fill(toInsert, true);
-            int extracted;
-            if (inserted > 0 && (extracted = extract(tank, inserted)) != inserted) {
-                GTLog.logger.error(" - could not extract the correct amount of channel {}. Should extract {} * {}, but extracted {} * {}", channel, fluid.getFluid().getName(), inserted, fluid.getFluid().getName(), extracted);
+            if (inserted > 0) {
+                extract(tank, inserted);
             }
         }
 

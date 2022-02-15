@@ -6,6 +6,7 @@ import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.enchants.EnchantmentEnderDamage;
 import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.recipes.recipeproperties.TemperatureProperty;
@@ -14,7 +15,6 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.advancement.GTTrigger;
 import gregtech.common.advancement.GTTriggers;
@@ -299,8 +299,11 @@ public class CommonProxy {
 
     public void onPostLoad() {
         GTRecipeManager.postLoad();
-        CapesRegistry.registerDevCapes();
         TerminalRegistry.init();
+
+        if(ConfigHolder.compat.removeSmeltingForEBFMetals) {
+            ModHandler.removeSmeltingEBFMetals();
+        }
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {

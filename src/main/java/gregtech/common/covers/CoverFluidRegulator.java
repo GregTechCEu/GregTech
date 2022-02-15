@@ -1,5 +1,6 @@
 package gregtech.common.covers;
 
+import com.google.common.math.IntMath;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -270,6 +271,7 @@ public class CoverFluidRegulator extends CoverPump {
         return "cover.fluid_regulator.title";
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     @Override
     protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
         WidgetGroup filterGroup = new WidgetGroup();
@@ -293,7 +295,7 @@ public class CoverFluidRegulator extends CoverPump {
             if (val != null && !val.isEmpty()) {
                 int amount = Integer.parseInt(val);
                 if (this.bucketMode == BucketMode.BUCKET) {
-                    amount *= 1000;
+                    amount = IntMath.saturatedMultiply(amount, 1000);
                 }
                 setTransferAmount(amount);
             }

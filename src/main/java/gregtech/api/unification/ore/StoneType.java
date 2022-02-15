@@ -7,7 +7,6 @@ import gregtech.api.util.GTControlledRegistry;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
@@ -21,9 +20,6 @@ import java.util.function.Supplier;
 public class StoneType implements Comparable<StoneType> {
 
     public final String name;
-    public final String harvestTool;
-    public final ResourceLocation backgroundSideTexture;
-    public final ResourceLocation backgroundTopTexture;
 
     public final OrePrefix processingPrefix;
     public final Material stoneMaterial;
@@ -36,26 +32,19 @@ public class StoneType implements Comparable<StoneType> {
 
     public static final GTControlledRegistry<String, StoneType> STONE_TYPE_REGISTRY = new GTControlledRegistry<>(128);
 
-    public StoneType(int id, String name, ResourceLocation backgroundSideTexture, ResourceLocation backgroundTopTexture, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial, String harvestTool, Supplier<IBlockState> stone, Predicate<IBlockState> predicate, boolean shouldBeDroppedAsItem) {
+    public StoneType(int id, String name, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial, Supplier<IBlockState> stone, Predicate<IBlockState> predicate, boolean shouldBeDroppedAsItem) {
         Preconditions.checkArgument(
                 stoneMaterial.hasProperty(PropertyKey.DUST),
                 "Stone type must be made with a Material with the Dust Property!"
         );
         this.name = name;
-        this.backgroundSideTexture = backgroundSideTexture;
-        this.backgroundTopTexture = backgroundTopTexture;
         this.soundType = soundType;
         this.processingPrefix = processingPrefix;
         this.stoneMaterial = stoneMaterial;
-        this.harvestTool = harvestTool;
         this.stone = stone;
         this.predicate = predicate::test;
         this.shouldBeDroppedAsItem = shouldBeDroppedAsItem || ConfigHolder.worldgen.allUniqueStoneTypes;
         STONE_TYPE_REGISTRY.register(id, name, this);
-    }
-
-    public StoneType(int id, String name, ResourceLocation backgroundTexture, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial, String harvestTool, Supplier<IBlockState> stone, Predicate<IBlockState> predicate, boolean shouldBeDroppedAsItem) {
-        this(id, name, backgroundTexture, backgroundTexture, soundType, processingPrefix, stoneMaterial, harvestTool, stone, predicate, shouldBeDroppedAsItem);
     }
 
     @Override

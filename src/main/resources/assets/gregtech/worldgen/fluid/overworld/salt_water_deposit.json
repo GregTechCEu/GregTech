@@ -1,14 +1,14 @@
 {
   "weight": 0,
   "name": "Overworld Salt Water Deposit",
-  "rate": {
+  "yield": {
     "min": 50,
-    "max": 200
+    "max": 100
   },
   "depletion": {
     "amount": 1,
-    "chance": 5,
-    "depleted_production_rate": 25
+    "chance": 100,
+    "depleted_yield": 15
   },
   "fluid": "salt_water",
   "biome_modifier": {

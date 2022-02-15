@@ -1,7 +1,6 @@
 package gregtech.integration.jei.utils.render;
 
 import gregtech.api.recipes.Recipe.ChanceEntry;
-import gregtech.api.util.GTLog;
 import mezz.jei.plugins.vanilla.ingredients.item.ItemStackRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

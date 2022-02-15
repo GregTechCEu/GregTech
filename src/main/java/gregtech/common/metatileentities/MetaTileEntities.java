@@ -187,6 +187,9 @@ public class MetaTileEntities {
     public static MetaTileEntityLargeMiner ADVANCED_LARGE_MINER;
     public static MetaTileEntityProcessingArray PROCESSING_ARRAY;
     public static MetaTileEntityProcessingArray ADVANCED_PROCESSING_ARRAY;
+    public static MetaTileEntityFluidDrill BASIC_FLUID_DRILLING_RIG;
+    public static MetaTileEntityFluidDrill FLUID_DRILLING_RIG;
+    public static MetaTileEntityFluidDrill ADVANCED_FLUID_DRILLING_RIG;
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -494,6 +497,10 @@ public class MetaTileEntities {
 
         PROCESSING_ARRAY = registerMetaTileEntity(1030, new MetaTileEntityProcessingArray(gregtechId("processing_array"), 0));
         ADVANCED_PROCESSING_ARRAY = registerMetaTileEntity(1031, new MetaTileEntityProcessingArray(gregtechId("advanced_processing_array"), 1));
+
+        BASIC_FLUID_DRILLING_RIG = registerMetaTileEntity(1032, new MetaTileEntityFluidDrill(gregtechId("fluid_drilling_rig.mv"), 2));
+        FLUID_DRILLING_RIG = registerMetaTileEntity(1033, new MetaTileEntityFluidDrill(gregtechId("fluid_drilling_rig.hv"), 3));
+        ADVANCED_FLUID_DRILLING_RIG = registerMetaTileEntity(1034, new MetaTileEntityFluidDrill(gregtechId("fluid_drilling_rig.ev"), 4));
 
         // MISC MTE's START: IDs 1150-2000
 

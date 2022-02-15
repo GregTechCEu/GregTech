@@ -69,6 +69,6 @@ public enum Insulation implements IMaterialPipeType<WireProperties> {
 
     @Override
     public boolean isPaintable() {
-        return insulationLevel != -1;
+        return true;
     }
 }

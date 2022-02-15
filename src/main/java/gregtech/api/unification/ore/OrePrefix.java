@@ -203,6 +203,7 @@ public class OrePrefix {
     public static final OrePrefix pipeSmallRestrictive = new OrePrefix("pipeSmallRestrictive", M, null, MaterialIconType.pipeSmall, ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeNormalRestrictive = new OrePrefix("pipeNormalRestrictive", M * 3, null, MaterialIconType.pipeMedium, ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeLargeRestrictive = new OrePrefix("pipeLargeRestrictive", M * 6, null, MaterialIconType.pipeLarge, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeHugeRestrictive = new OrePrefix("pipeHugeRestrictive", M * 12, null, MaterialIconType.pipeHuge, ENABLE_UNIFICATION, null);
 
     public static final OrePrefix wireGtHex = new OrePrefix("wireGtHex", M * 8, null, null, ENABLE_UNIFICATION, null);
     public static final OrePrefix wireGtOctal = new OrePrefix("wireGtOctal", M * 4, null, null, ENABLE_UNIFICATION, null);
@@ -231,8 +232,6 @@ public class OrePrefix {
     // Introduced by Calclavia
     public static final OrePrefix circuit = new OrePrefix("circuit", -1, null, null, ENABLE_UNIFICATION, null);
     public static final OrePrefix component = new OrePrefix("component", -1, null, null, ENABLE_UNIFICATION, null);
-
-    public static final String DUST_REGULAR = "dustRegular";
 
     public static class Flags {
         public static final long ENABLE_UNIFICATION = 1;
@@ -382,6 +381,7 @@ public class OrePrefix {
         pipeSmallRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeNormalRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeLargeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
+        pipeHugeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
 
         cableGtSingle.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount));
         cableGtDouble.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount));
@@ -547,15 +547,24 @@ public class OrePrefix {
                     int temperature = fluidProperty.getFluidTemperature();
                     Fluid fluid = MetaFluids.registerFluid(material, MetaFluids.FluidType.NORMAL, temperature, fluidProperty.hasBlock());
                     fluidProperty.setFluid(fluid);
-                    FluidTooltipUtil.registerTooltip(fluid, material.getChemicalFormula());
+                    List<String> tooltip = new ArrayList<>();
+                    tooltip.add(material.getChemicalFormula());
+                    tooltip.add(String.valueOf(temperature));
+                    tooltip.add(String.valueOf(fluid.isGaseous()));
+                    FluidTooltipUtil.registerTooltip(fluid, tooltip);
                 }
 
                 PlasmaProperty plasmaProperty = material.getProperty(PropertyKey.PLASMA);
                 if (plasmaProperty != null && plasmaProperty.getPlasma() == null) {
                     int baseTemperature = fluidProperty == null ? 0 : fluidProperty.getFluidTemperature();
-                    Fluid fluid = MetaFluids.registerFluid(material, MetaFluids.FluidType.PLASMA, baseTemperature + 30000, false);
+                    baseTemperature = baseTemperature + 30000;
+                    Fluid fluid = MetaFluids.registerFluid(material, MetaFluids.FluidType.PLASMA, baseTemperature, false);
                     plasmaProperty.setPlasma(fluid);
-                    FluidTooltipUtil.registerTooltip(fluid, material.getChemicalFormula());
+                    List<String> tooltip = new ArrayList<>();
+                    tooltip.add(material.getChemicalFormula());
+                    tooltip.add(String.valueOf(baseTemperature));
+                    tooltip.add(String.valueOf(fluid.isGaseous()));
+                    FluidTooltipUtil.registerTooltip(fluid, tooltip);
                 }
             }
         }

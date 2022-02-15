@@ -13,6 +13,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.Key;
 import gregtech.api.util.input.KeyBinds;
+import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
@@ -188,6 +189,16 @@ public class EventHandlers {
     @SubscribeEvent
     public static void onPlayerAdvancement(AdvancementEvent event) {
         CapesRegistry.unlockCapeOnAdvancement(event.getEntityPlayer(), event.getAdvancement());
+    }
+
+    @SubscribeEvent
+    public static void onWorldUnloadEvent(WorldEvent.Unload event) {
+        BedrockFluidVeinSaveData.setDirty();
+    }
+
+    @SubscribeEvent
+    public static void onWorldSaveEvent(WorldEvent.Save event) {
+        BedrockFluidVeinSaveData.setDirty();
     }
 
     @SubscribeEvent

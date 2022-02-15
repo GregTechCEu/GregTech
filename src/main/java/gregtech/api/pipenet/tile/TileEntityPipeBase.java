@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.SyncedTileEntityBase;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.util.TaskScheduler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -152,6 +153,9 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void setConnection(EnumFacing side, boolean connected, boolean fromNeighbor) {
         // fix desync between two connections. Can happen if a pipe side is blocked, and a new pipe is placed next to it.
         if (!getWorld().isRemote) {
+            if (isConnected(side) == connected) {
+                return;
+            }
             TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
             // block connections if Pipe Types do not match
             if (connected && tile instanceof IPipeTile && ((IPipeTile<?, ?>) tile).getPipeType().getClass() != this.getPipeType().getClass()) {
@@ -245,6 +249,9 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
                     if (pipeTile.isConnected(facing.getOpposite()) && pipeTile.getPipeType().getThickness() < selfThickness) {
                         connections |= 1 << (facing.getIndex() + 6);
                     }
+                }
+                if (getCoverableImplementation().getCoverAtSide(facing) != null) {
+                    connections |= 1 << (facing.getIndex() + 12);
                 }
             }
         }

@@ -100,18 +100,20 @@ public class TerminalRegistry {
                 .device(3, DeviceHardware.DEVICE.PROSPECTOR_HV)
                 .device(4, DeviceHardware.DEVICE.PROSPECTOR_HV)
                 .build();
-        //TODO, Change when Fluid Prospector is re-enabled
-        /*AppRegistryBuilder.create(new ProspectorApp(1))
-                .battery(GTValues.MV, 1000)
-                .upgrade(0, MetaItems.SENSOR_LV.getStackForm(1))
-                .upgrade(1, MetaItems.SENSOR_LV.getStackForm(2))
-                .upgrade(2, MetaItems.SENSOR_MV.getStackForm(1))
-                .upgrade(3, MetaItems.SENSOR_MV.getStackForm(3))
-                .upgrade(4, MetaItems.SENSOR_HV.getStackForm(1))
-                .upgrade(5, MetaItems.SENSOR_HV.getStackForm(3))
-                .upgrade(6, MetaItems.SENSOR_IV.getStackForm(1))
-                .device(DeviceHardware.DEVICE.PROSPECTOR_LV)
-                .build(); */
+
+        AppRegistryBuilder.create(new ProspectorApp(1))
+                .battery(0, GTValues.MV, 1000)
+                .battery(1, GTValues.MV, 1000)
+                .battery(2, GTValues.HV, 1500)
+                .battery(3, GTValues.HV, 1500)
+                .battery(4, GTValues.HV, 1500)
+                .upgrade(0, MetaItems.SENSOR_HV.getStackForm(1))
+                .upgrade(1, MetaItems.SENSOR_HV.getStackForm(3))
+                .upgrade(2, MetaItems.SENSOR_EV.getStackForm(1))
+                .upgrade(3, MetaItems.SENSOR_IV.getStackForm(1))
+                .upgrade(4, MetaItems.SENSOR_LUV.getStackForm(1))
+                .device(DeviceHardware.DEVICE.PROSPECTOR_HV)
+                .build();
         AppRegistryBuilder.create(new MultiBlockPreviewARApp())
                 .battery(GTValues.LV, 128)
                 .device(DeviceHardware.DEVICE.CAMERA)

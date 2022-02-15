@@ -14,7 +14,6 @@ import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
-import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
@@ -27,6 +26,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -38,7 +38,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements ISoundCreator, IDataInfoProvider {
+public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider {
 
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
@@ -319,17 +319,9 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         }
     }
 
-
     @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
-        if (getWorld() != null && getWorld().isRemote) {
-            this.setupSound(recipeMap.getSound(), this.getPos());
-        }
-    }
-
-    public boolean canCreateSound() {
-        return recipeMapWorkable.isActive();
+    public SoundEvent getSound() {
+        return recipeMap.getSound();
     }
 
     @Nonnull

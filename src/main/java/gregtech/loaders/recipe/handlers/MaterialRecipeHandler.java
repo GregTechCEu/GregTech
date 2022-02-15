@@ -87,7 +87,7 @@ public class MaterialRecipeHandler {
             }
 
         } else if (mat.hasProperty(PropertyKey.INGOT)) {
-            if (!mat.hasFlags(FLAMMABLE, NO_SMELTING)) {
+            if (!mat.hasAnyOfFlags(FLAMMABLE, NO_SMELTING)) {
 
                 boolean hasHotIngot = OrePrefix.ingotHot.doGenerateItem(mat);
                 ItemStack ingotStack = OreDictUnifier.get(hasHotIngot ? OrePrefix.ingotHot : OrePrefix.ingot, mat);
@@ -474,13 +474,13 @@ public class MaterialRecipeHandler {
                         .buildAndRegister();
             } else if (material.hasProperty(PropertyKey.GEM)) {
                 COMPRESSOR_RECIPES.recipeBuilder()
-                        .input(gem, material, 9)
+                        .input(gem, material, (int) (block.getMaterialAmount(material) / M))
                         .output(block, material)
                         .duration(300).EUt(2).buildAndRegister();
 
                 FORGE_HAMMER_RECIPES.recipeBuilder()
                         .input(block, material)
-                        .output(gem, material, 9)
+                        .output(gem, material, (int) (block.getMaterialAmount(material) / M))
                         .duration(100).EUt(24).buildAndRegister();
             }
         }

@@ -1,0 +1,8 @@
+{
+  "_comment0": "This File exists to prevent custom oregen configurations from being overridden.",
+  "_comment1": "If this file is deleted, the oregen files will be regenerated from their defaults.",
+  "_comment2": "Modpack authors make sure this file is included in your modpack if you have customized ore generation",
+  "_comment3": "The below versions are used for when GT must forcefully override existing vein configurations, and should not be used by packs.",
+  "fluidVersion": 2,
+  "veinVersion": 1
+}

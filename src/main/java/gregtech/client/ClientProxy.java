@@ -9,7 +9,6 @@ import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.pipe.*;
-import gregtech.client.shader.Shaders;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.info.MaterialIconSet;
@@ -43,7 +42,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ColorizerFoliage;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -55,13 +53,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import paulscode.sound.SoundSystemConfig;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @SideOnly(Side.CLIENT)
@@ -103,8 +96,16 @@ public class ClientProxy extends CommonProxy {
 
     public static final IItemColor RUBBER_LEAVES_ITEM_COLOR = (stack, tintIndex) -> ColorizerFoliage.getFoliageColorBirch();
 
+    public static final IBlockColor MACHINE_CASING_BLOCK_COLOR = (state, world, pos, tintIndex) ->
+        state.getBlock() instanceof BlockMachineCasing && MetaBlocks.MACHINE_CASING.getMetaFromState(state) == 0 ? 0xFFFFFF : ConfigHolder.client.defaultPaintingColor;
+
+    public static final IItemColor MACHINE_CASING_ITEM_COLOR = (stack, tintIndex) ->
+        stack.getItemDamage() == 0 && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockMachineCasing ? 0xFFFFFF : ConfigHolder.client.defaultPaintingColor;
+
     public void onPreLoad() {
         super.onPreLoad();
+
+        SoundSystemConfig.setNumberNormalChannels(ConfigHolder.client.maxNumSounds);
 
         if (!GTValues.isModLoaded(GTValues.MODID_CTM)) {
             Minecraft.getMinecraft().metadataSerializer.registerMetadataSectionType(new MetadataSectionCTM.Serializer(), MetadataSectionCTM.class);
@@ -125,9 +126,6 @@ public class ClientProxy extends CommonProxy {
     public void onLoad() {
         KeyBinds.registerClient();
         super.onLoad();
-        if (ConfigHolder.misc.debug) {
-            ClientCommandHandler.instance.registerCommand(new Shaders.ShaderCommand());
-        }
         registerColors();
     }
 
@@ -166,8 +164,14 @@ public class ClientProxy extends CommonProxy {
     public static void addMaterialFormulaHandler(ItemTooltipEvent event) {
         ItemStack itemStack = event.getItemStack();
 
+        List<String> fluidTooltips;
+
         // Handles Item tooltips
         String chemicalFormula = null;
+
+        String temperature = null;
+
+        String isGas = null;
 
         // Test for Items
         UnificationEntry unificationEntry = OreDictUnifier.getUnificationEntry(itemStack);
@@ -182,17 +186,48 @@ public class ClientProxy extends CommonProxy {
             chemicalFormula = unificationEntry.material.getChemicalFormula();
         } else if (ItemNBTUtils.hasTag(itemStack)) { // Test for Fluids
             // Vanilla bucket
-            chemicalFormula = FluidTooltipUtil.getFluidTooltip(ItemNBTUtils.getString(itemStack, "FluidName"));
+            fluidTooltips = FluidTooltipUtil.getFluidTooltip(ItemNBTUtils.getString(itemStack, "FluidName"));
+
+            if(fluidTooltips != null) {
+                chemicalFormula = fluidTooltips.get(0);
+                temperature = fluidTooltips.get(1);
+                isGas = fluidTooltips.get(2);
+            }
 
             // GTCE Cells, Forestry cans, some other containers
             if (chemicalFormula == null) {
                 NBTTagCompound compound = itemStack.getTagCompound();
                 if (compound != null && compound.hasKey(FluidHandlerItemStack.FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
-                    chemicalFormula = FluidTooltipUtil.getFluidTooltip(FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY)));
+                    FluidStack fstack = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY));
+                    fluidTooltips = FluidTooltipUtil.getFluidTooltip(fstack);
+
+                    if(fluidTooltips != null) {
+                        chemicalFormula = fluidTooltips.get(0);
+                        temperature = fluidTooltips.get(1);
+                        isGas = fluidTooltips.get(2);
+                    }
                 }
             }
-        } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) { // Water buckets have a separate registry name from other buckets
-            chemicalFormula = FluidTooltipUtil.getWaterTooltip();
+        } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) { // Water and Lava buckets have a separate registry name from other buckets
+            fluidTooltips = FluidTooltipUtil.getWaterTooltip();
+            chemicalFormula = fluidTooltips.get(0);
+            temperature = fluidTooltips.get(1);
+            isGas = fluidTooltips.get(2);
+        } else if (itemStack.getItem().equals(Items.LAVA_BUCKET)) {
+            fluidTooltips = FluidTooltipUtil.getLavaTooltip();
+            chemicalFormula = fluidTooltips.get(0);
+            temperature = fluidTooltips.get(1);
+            isGas = fluidTooltips.get(2);
+        }
+
+        if(isGas != null && !isGas.isEmpty()) {
+            String result = Boolean.parseBoolean(isGas) ? LocalizationUtils.format("gregtech.fluid.state_gas") :
+                    LocalizationUtils.format("gregtech.fluid.state_liquid");
+            event.getToolTip().add(1, result);
+        }
+
+        if(temperature != null && !temperature.isEmpty()) {
+            event.getToolTip().add(1, LocalizationUtils.format("gregtech.fluid.temperature", Integer.parseInt(temperature)));
         }
 
         if (chemicalFormula != null && !chemicalFormula.isEmpty()) {

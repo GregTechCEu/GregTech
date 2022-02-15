@@ -84,16 +84,16 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
                     setTier = tier;
                     voltage = GTValues.V[setTier];
                 }));
-        builder.label(7, 32, "Voltage");
+        builder.label(7, 32, "gregtech.creative.energy.voltage");
         builder.widget(new ImageWidget(7, 44, 156, 20, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(9, 50, 152, 16, () -> String.valueOf(voltage), value -> {
             if (!value.isEmpty()) {
                 voltage = Long.parseLong(value);
-                setTier = 0;
+                setTier = GTUtility.getTierByVoltage(voltage);
             }
         }).setAllowedChars(TextFieldWidget2.NATURAL_NUMS).setMaxLength(19).setValidator(getTextFieldValidator()));
 
-        builder.label(7, 74, "Amperage");
+        builder.label(7, 74, "gregtech.creative.energy.amperage");
         builder.widget(new ClickButtonWidget(7, 87, 20, 20, "-", data -> amps = --amps == -1 ? 0 : amps));
         builder.widget(new ImageWidget(29, 87, 118, 20, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(31, 93, 114, 16, () -> String.valueOf(amps), value -> {
@@ -109,7 +109,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
 
         builder.dynamicLabel(7, 110, () -> "Energy I/O per sec: " + (source ? lastEnergyOutputPerSec : lastEnergyInputPerSec), 0x232323);
 
-        builder.widget(new CycleButtonWidget(7, 139, 77, 20, () -> active, value -> active = value, "Not active", "Active"));
+        builder.widget(new CycleButtonWidget(7, 139, 77, 20, () -> active, value -> active = value, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
         builder.widget(new CycleButtonWidget(85, 139, 77, 20, () -> source, value -> {
             source = value;
             if (source) {
@@ -121,7 +121,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
                 amps = Integer.MAX_VALUE;
                 setTier = 14;
             }
-        }, "Sink", "Source"));
+        }, "Sink", "Source")); //TODO: localisation
 
         return builder.build(getHolder(), entityPlayer);
     }

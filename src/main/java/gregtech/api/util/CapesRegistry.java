@@ -1,8 +1,6 @@
 package gregtech.api.util;
 
 import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.minecraft.CraftTweakerMC;
-import crafttweaker.api.world.IWorld;
 import gregtech.api.GTValues;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.packets.SPacketNotifyCapeChange;
@@ -24,7 +22,6 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import scala.Tuple3;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -48,6 +45,7 @@ public class CapesRegistry {
         unlockCape(UUID.fromString("aaf70ec1-ac70-494f-9966-ea5933712750"), Textures.GREGTECH_CAPE_TEXTURE); // Bruberu
         unlockCape(UUID.fromString("a24a9108-23d2-43fc-8db7-43f809d017db"), Textures.GREGTECH_CAPE_TEXTURE); // ALongString
         unlockCape(UUID.fromString("77e2129d-8f68-4025-9394-df946f1f3aee"), Textures.GREGTECH_CAPE_TEXTURE); // Brachy84
+        save();
     }
 
     public static ResourceLocation getPlayerCape(UUID uuid) {
@@ -100,12 +98,11 @@ public class CapesRegistry {
         } catch (IOException exception) {
             GTLog.logger.error(exception);
         }
+        clearMaps();
         if (comp == null) {
-            UNLOCKED_CAPES.clear();
-            WORN_CAPES.clear();
+            registerDevCapes();
             return;
         }
-        UNLOCKED_CAPES.clear();
         NBTTagList unlockedCapesTag = comp.getTagList("UnlockedCapesValList", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < unlockedCapesTag.tagCount(); i++) {
             NBTTagCompound tag = unlockedCapesTag.getCompoundTagAt(i);
@@ -122,7 +119,6 @@ public class CapesRegistry {
             UNLOCKED_CAPES.put(uuid, capes);
         }
 
-        WORN_CAPES.clear();
         NBTTagList wornCapesTag = comp.getTagList("WornCapesValList", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < wornCapesTag.tagCount(); i++) {
             NBTTagCompound tag = wornCapesTag.getCompoundTagAt(i);
@@ -132,6 +128,7 @@ public class CapesRegistry {
             UUID uuid = tag.getUniqueId("UUID");
             WORN_CAPES.put(uuid, new ResourceLocation(capeLocation));
         }
+        registerDevCapes();
     }
 
     public static void checkAdvancements(World world) {
@@ -171,7 +168,7 @@ public class CapesRegistry {
         }
     }
 
-    private static List<Tuple<ResourceLocation, ResourceLocation>> ctRegisterCapes = new ArrayList<Tuple<ResourceLocation, ResourceLocation>>();
+    private static List<Tuple<ResourceLocation, ResourceLocation>> ctRegisterCapes = new ArrayList<>();
 
     @Optional.Method(modid = GTValues.MODID_CT)
     @ZenMethod
@@ -181,6 +178,7 @@ public class CapesRegistry {
 
     /**
      * Automatically gives a cape to a player, which may be used for a reward for something other than an advancement
+     * DOES NOT SAVE AUTOMATICALLY; PLEASE CALL SAVE AFTER THIS FUNCTION IS USED IF THIS DATA IS MEANT TO PERSIST.
      * @param uuid The UUID of the player to be given the cape.
      * @param cape The ResourceLocation that holds the cape used here.
      */
