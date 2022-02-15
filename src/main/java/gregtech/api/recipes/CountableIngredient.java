@@ -21,7 +21,12 @@ public class CountableIngredient {
 
     public CountableIngredient(Ingredient ingredient, int count) {
         this.ingredient = ingredient;
-        this.count = count;
+        if (count <= 0) {
+            this.count = 1;
+            setNonConsumable();
+        } else {
+            this.count = count;
+        }
     }
 
     public static CountableIngredient from(ItemStack stack) {
