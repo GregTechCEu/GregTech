@@ -34,6 +34,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -592,10 +593,10 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-            if (blocksInput && conveyorMode == ConveyorMode.EXPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
+            if (conveyorMode == ConveyorMode.EXPORT && (blocksInput || manualImportExportMode == ManualImportExportMode.DISABLED)) {
                 return stack;
             }
-            if (!itemFilterContainer.testItemStack(stack) && manualImportExportMode == ManualImportExportMode.FILTERED) {
+            if (manualImportExportMode == ManualImportExportMode.FILTERED && !itemFilterContainer.testItemStack(stack)) {
                 return stack;
             }
             return super.insertItem(slot, stack, simulate);
@@ -607,14 +608,14 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (conveyorMode == ConveyorMode.IMPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
                 return ItemStack.EMPTY;
             }
-            ItemStack resultStack = super.extractItem(slot, amount, true);
-            if (!itemFilterContainer.testItemStack(resultStack) && manualImportExportMode == ManualImportExportMode.FILTERED) {
-                return ItemStack.EMPTY;
+            if(manualImportExportMode == ManualImportExportMode.FILTERED) {
+                ItemStack result = super.extractItem(slot, amount, true);
+                if(result.isEmpty() || !itemFilterContainer.testItemStack(result)) {
+                    return ItemStack.EMPTY;
+                }
+                return simulate ? result : super.extractItem(slot, amount, false);
             }
-            if (!simulate) {
-                super.extractItem(slot, amount, false);
-            }
-            return resultStack;
+            return super.extractItem(slot, amount, simulate);
         }
     }
 }

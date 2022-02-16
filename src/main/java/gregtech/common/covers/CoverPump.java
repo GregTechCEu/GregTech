@@ -397,7 +397,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
 
         @Override
         public int fill(FluidStack resource, boolean doFill) {
-            if (blocksInput && pumpMode == PumpMode.EXPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
+            if (pumpMode == PumpMode.EXPORT && (blocksInput || manualImportExportMode == ManualImportExportMode.DISABLED)) {
                 return 0;
             }
             if (!checkInputFluid(resource) && manualImportExportMode == ManualImportExportMode.FILTERED) {
@@ -412,7 +412,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
             if (pumpMode == PumpMode.IMPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
                 return null;
             }
-            if (!checkInputFluid(resource) && manualImportExportMode == ManualImportExportMode.FILTERED) {
+            if (manualImportExportMode == ManualImportExportMode.FILTERED && !checkInputFluid(resource)) {
                 return null;
             }
             return super.drain(resource, doDrain);
@@ -424,14 +424,14 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
             if (pumpMode == PumpMode.IMPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
                 return null;
             }
-            FluidStack result = super.drain(maxDrain, false);
-            if (!checkInputFluid(result) && manualImportExportMode == ManualImportExportMode.FILTERED) {
-                return null;
+            if(manualImportExportMode == ManualImportExportMode.FILTERED) {
+                FluidStack result = super.drain(maxDrain, false);
+                if(result == null || result.amount <= 0 || !checkInputFluid(result)) {
+                    return null;
+                }
+                return doDrain ? super.drain(maxDrain, true) : result;
             }
-            if (doDrain) {
-                super.drain(maxDrain, true);
-            }
-            return result;
+            return super.drain(maxDrain, doDrain);
         }
     }
 }
