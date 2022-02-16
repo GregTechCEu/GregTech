@@ -3,7 +3,6 @@ package gregtech.api.items.toolitem;
 import appeng.api.implementations.items.IAEWrench;
 import buildcraft.api.tools.IToolWrench;
 import cofh.api.item.IToolHammer;
-import com.google.common.base.CaseFormat;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import crazypants.enderio.api.tool.ITool;
@@ -41,7 +40,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
-import net.minecraft.util.CooldownTracker;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -70,7 +68,7 @@ import static gregtech.api.items.armor.IArmorLogic.*;
         @Optional.Interface(modid = GTValues.MODID_COFH, iface = "cofh.api.item.IToolHammer"),
         @Optional.Interface(modid = GTValues.MODID_EIO, iface = "crazypants.enderio.api.tool.ITool"),
         @Optional.Interface(modid = GTValues.MODID_FR, iface = "forestry.api.arboriculture.IToolGrafter")})
-public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, ITool, IToolGrafter {
+public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, IToolGrafter {
 
     String getDomain();
 
@@ -80,7 +78,7 @@ public interface GTToolDefinition extends IAEWrench, IToolWrench, IToolHammer, I
 
     int getElectricTier();
 
-    IToolStats getToolStats();
+    IGTToolDefinition getToolStats();
 
     @Nullable
     SoundEvent getSound();

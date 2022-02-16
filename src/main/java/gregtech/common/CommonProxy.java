@@ -7,7 +7,7 @@ import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.enchants.EnchantmentEnderDamage;
 import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.items.toolitem.GTToolDefinition;
+import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
@@ -208,7 +208,7 @@ public class CommonProxy {
             item.registerSubItems();
         }
 
-        for (GTToolDefinition tool : ToolItems.getAllTools()) {
+        for (IGTTool tool : ToolItems.getAllTools()) {
             registry.register(tool.get());
         }
 
@@ -290,6 +290,7 @@ public class CommonProxy {
         GTLog.logger.info("Registering ore dictionary...");
 
         MetaItems.registerOreDict();
+        ToolItems.registerOreDict();
         MetaBlocks.registerOreDict();
         OreDictionaryLoader.init();
         MaterialInfoLoader.init();
