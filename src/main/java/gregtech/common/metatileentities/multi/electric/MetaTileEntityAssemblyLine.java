@@ -19,6 +19,7 @@ import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCreativeDataHatch;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -52,7 +53,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 .where('O', abilities(MultiblockAbility.EXPORT_ITEMS).addTooltips("gregtech.multiblock.pattern.location_end"))
                 .where('Y', states(getCasingState()).or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3)))
                 .where('I', metaTileEntities(MetaTileEntities.ITEM_IMPORT_BUS[0]))
-                .where('G',abilities(MultiblockAbility.RESEARCH_DATA).or(states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.GRATE_CASING))))
+                .where('G', abilities(MultiblockAbility.RESEARCH_DATA).or(states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.GRATE_CASING))))
                 .where('A', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_CONTROL)))
                 .where('R', states(MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.TEMPERED_GLASS)))
                 .where('T', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_LINE_CASING)))
@@ -73,6 +74,12 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
         if (recipe.hasProperty(ResearchItemProperty.getInstance())) {
             List<IItemHandlerModifiable> dataStickHandler = this.getAbilities(MultiblockAbility.RESEARCH_DATA);
+            List<IMultiblockPart> dataHatches = this.getMultiblockParts();
+            for (IMultiblockPart hatch: dataHatches) {
+                if (hatch instanceof MetaTileEntityCreativeDataHatch) {
+                    return true;
+                }
+            }
             if (!dataStickHandler.isEmpty()) {
                 List<ItemStack> hatchDataList = GTUtility.itemHandlerToList(dataStickHandler.get(0));
                 for (ItemStack stack : hatchDataList) {

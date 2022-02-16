@@ -3294,6 +3294,9 @@ gregtech.machine.scanner.uxv.name=Ultimate Scanner
 
 gregtech.machine.data_hatch.ev.name=Data Access Hatch
 gregtech.machine.data_hatch.luv.name=Advanced Data Access Hatch
+gregtech.machine.creative_data_hatch.name=Creative Data Access Hatch
+gregtech.machine.creative_data_hatch.tooltip=§8You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§8 to use this
+
 
 gregtech.machine.infinite_energy.name=Infinite GT Energy Unit Emitter
 gregtech.machine.infinite_energy.tooltip=§8You just need §o§5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§r§8 to use this
