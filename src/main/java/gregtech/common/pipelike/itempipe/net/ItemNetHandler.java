@@ -13,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -293,27 +294,19 @@ public class ItemNetHandler implements IItemHandler {
         if (allowed == 0) return stack;
         CoverBehavior pipeCover = getCoverOnPipe(handler.getPipePos(), handler.getFaceToHandler());
         CoverBehavior tileCover = getCoverOnNeighbour(handler.getPipePos(), handler.getFaceToHandler());
-        if (pipeCover instanceof CoverRoboticArm && tileCover instanceof CoverRoboticArm)
-            return stack;
-        if (pipeCover != null && !checkExportCover(pipeCover, true, stack))
-            return stack;
-
-        if (pipeCover instanceof CoverRoboticArm && ((CoverRoboticArm) pipeCover).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT)
-            return insertOverRobotArm(handler.getHandler(world), (CoverRoboticArm) pipeCover, stack, simulate, allowed, ignoreLimit);
-        if (tileCover instanceof CoverRoboticArm && ((CoverRoboticArm) tileCover).getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT)
-            return insertOverRobotArm(handler.getHandler(world), (CoverRoboticArm) tileCover, stack, simulate, allowed, ignoreLimit);
-
-        return insert(handler.getHandler(world), stack, simulate, allowed, ignoreLimit);
-    }
-
-    public boolean checkExportCover(CoverBehavior cover, boolean onPipe, ItemStack stack) {
-        if (cover instanceof CoverItemFilter) {
-            CoverItemFilter filter = (CoverItemFilter) cover;
-            return (filter.getFilterMode() != ItemFilterMode.FILTER_BOTH &&
-                    (filter.getFilterMode() != ItemFilterMode.FILTER_INSERT || onPipe) &&
-                    (filter.getFilterMode() != ItemFilterMode.FILTER_EXTRACT || !onPipe)) || filter.testItemStack(stack);
+        IItemHandler handler1 = handler.getHandler(world);
+        if (pipeCover != null) {
+            handler1 = pipeCover.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, handler1);
         }
-        return true;
+
+        if (pipeCover instanceof CoverRoboticArm && ((CoverRoboticArm) pipeCover).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT) {
+            return insertOverRobotArm(handler1, (CoverRoboticArm) pipeCover, stack, simulate, allowed, ignoreLimit);
+        }
+        if (tileCover instanceof CoverRoboticArm && ((CoverRoboticArm) tileCover).getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT) {
+            return insertOverRobotArm(handler1, (CoverRoboticArm) tileCover, stack, simulate, allowed, ignoreLimit);
+        }
+
+        return insert(handler1, stack, simulate, allowed, ignoreLimit);
     }
 
     private ItemStack insert(IItemHandler handler, ItemStack stack, boolean simulate, int allowed, boolean ignoreLimit) {

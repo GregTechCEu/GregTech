@@ -130,8 +130,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         }
 
         public int fill(FluidStack resource, boolean doFill) {
-            FluidFilterMode filterMode = getFilterMode();
-            if (filterMode == FluidFilterMode.FILTER_DRAIN || !fluidFilter.testFluidStack(resource)) {
+            if (getFilterMode() == FluidFilterMode.FILTER_DRAIN || !fluidFilter.testFluidStack(resource)) {
                 return 0;
             }
             return super.fill(resource, doFill);

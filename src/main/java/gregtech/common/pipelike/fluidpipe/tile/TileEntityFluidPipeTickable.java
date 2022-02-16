@@ -110,7 +110,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                 continue;
             EnumFacing oppositeSide = facing.getOpposite();
 
-            IFluidHandler fluidHandler = getFluidHandlerAt(fluid, facing, oppositeSide);
+            IFluidHandler fluidHandler = getFluidHandlerAt(facing, oppositeSide);
             if (fluidHandler == null)
                 continue;
 
@@ -171,29 +171,26 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         return extracted;
     }
 
-    private IFluidHandler getFluidHandlerAt(FluidStack fluid, EnumFacing facing, EnumFacing oppositeSide) {
+    private IFluidHandler getFluidHandlerAt(EnumFacing facing, EnumFacing oppositeSide) {
         TileEntity tile = world.getTileEntity(pos.offset(facing));
-        if (tile == null)
+        if (tile == null) {
             return null;
+        }
         IFluidHandler fluidHandler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, oppositeSide);
-        if (fluidHandler == null)
+        if (fluidHandler == null) {
             return null;
-
+        }
         CoverBehavior cover = getCoverableImplementation().getCoverAtSide(facing);
-        if (cover instanceof CoverFluidFilter && !((CoverFluidFilter) cover).testFluidStack(fluid))
-            return null;
-        ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, oppositeSide);
-        if (coverable == null)
-            return fluidHandler;
-        cover = coverable.getCoverAtSide(oppositeSide);
-        if (cover instanceof CoverFluidFilter && !((CoverFluidFilter) cover).testFluidStack(fluid))
-            return null;
+        if (cover != null) {
+            fluidHandler = cover.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, fluidHandler);
+        }
         return fluidHandler;
     }
 
     public void receivedFrom(EnumFacing facing) {
-        if (facing != null)
+        if (facing != null) {
             mLastReceivedFrom |= (1 << facing.getIndex());
+        }
     }
 
     public FluidStack getContainedFluid(int channel) {
