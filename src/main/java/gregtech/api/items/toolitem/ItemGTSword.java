@@ -1,42 +1,34 @@
 package gregtech.api.items.toolitem;
 
 import com.google.common.collect.Multimap;
-import gregtech.api.util.LocalizationUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTool;
+import net.minecraft.item.ItemSword;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Set;
 
-/**
- * GT-styled ItemTool (generic tool item).
- *
- * Use this class if your tool isn't specialized (e.g. {@link GTSwordItem})
- */
-public class GTToolItem extends ItemTool implements GTToolDefinition {
+public class ItemGTSword extends ItemSword implements IGTTool {
 
-    protected final String domain, id;
+    private final String domain, id;
 
-    protected final int tier;
-    protected final IToolStats toolStats;
-    protected final Set<String> toolClasses;
-    protected final SoundEvent sound;
-    protected final Set<Block> effectiveBlocks;
+    private final int tier;
+    private final IGTToolDefinition toolStats;
+    private final Set<String> toolClasses;
+    private final SoundEvent sound;
+    private final Set<Block> effectiveBlocks;
 
-    protected GTToolItem(String domain, String id, int tier, IToolStats toolStats, SoundEvent sound, Set<String> toolClasses, Set<Block> effectiveBlocks) {
-        super(0F, 0F, ToolMaterial.STONE, effectiveBlocks);
+    protected ItemGTSword(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, Set<String> toolClasses, Set<Block> effectiveBlocks) {
+        super(ToolMaterial.STONE);
         this.domain = domain;
         this.id = id;
         this.tier = tier;
@@ -44,10 +36,6 @@ public class GTToolItem extends ItemTool implements GTToolDefinition {
         this.sound = sound;
         this.toolClasses = Collections.unmodifiableSet(toolClasses);
         this.effectiveBlocks = effectiveBlocks;
-        setMaxStackSize(1);
-        setCreativeTab(CreativeTabs.TOOLS);
-        setTranslationKey("gt.tool." + id + ".name");
-        setRegistryName(domain, id);
     }
 
     @Override
@@ -71,7 +59,7 @@ public class GTToolItem extends ItemTool implements GTToolDefinition {
     }
 
     @Override
-    public IToolStats getToolStats() {
+    public IGTToolDefinition getToolStats() {
         return toolStats;
     }
 
@@ -87,8 +75,8 @@ public class GTToolItem extends ItemTool implements GTToolDefinition {
     }
 
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
-        return LocalizationUtils.format(getTranslationKey(), getToolMaterial(stack).getLocalizedName());
+    public Set<String> getOreDictNames() {
+        return Collections.emptySet();
     }
 
     @Override
@@ -132,30 +120,8 @@ public class GTToolItem extends ItemTool implements GTToolDefinition {
     }
 
     @Override
-    public boolean canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity, EntityLivingBase attacker) {
-        return definition$canDisableShield(stack, shield, entity, attacker);
-    }
-
-    @Override
-    public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
-        return definition$doesSneakBypassUse(stack, world, pos, player);
-    }
-
-    public static class Builder extends ToolBuilder<GTToolItem> {
-
-        public static Builder of(String domain, String id) {
-            return new Builder(domain, id);
-        }
-
-        public Builder(String domain, String id) {
-            super(domain, id);
-        }
-
-        @Override
-        public GTToolItem build() {
-            return new GTToolItem(domain, id, tier, toolStats, sound, toolClasses, effectiveBlocks);
-        }
-
+    public boolean canHarvestBlock(IBlockState blockIn, ItemStack stack) {
+        return getToolClasses(stack).stream().anyMatch(s -> blockIn.getBlock().isToolEffective(s, blockIn)) || super.canHarvestBlock(blockIn, stack);
     }
 
 }

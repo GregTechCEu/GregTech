@@ -1,5 +1,6 @@
 package gregtech.api.items.toolitem;
 
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.util.SoundEvent;
@@ -8,15 +9,16 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
-public abstract class ToolBuilder<T extends GTToolDefinition> {
+public abstract class ToolBuilder<T extends IGTTool> {
 
     protected final String domain, id;
 
-    protected final Set<String> toolClasses = new ObjectOpenHashSet<>();
+    protected final Set<String> toolClasses = new ObjectArraySet<>();
+    protected final Set<String> oreDicts = new ObjectArraySet<>();
     protected final Set<Block> effectiveBlocks = new ObjectOpenHashSet<>();
 
     protected int tier = -1;
-    protected IToolStats toolStats;
+    protected IGTToolDefinition toolStats;
     protected SoundEvent sound;
 
     public ToolBuilder(String domain, String id) {
@@ -29,13 +31,13 @@ public abstract class ToolBuilder<T extends GTToolDefinition> {
         return this;
     }
 
-    public ToolBuilder<T> toolStats(IToolStats toolStats) {
+    public ToolBuilder<T> toolStats(IGTToolDefinition toolStats) {
         this.toolStats = toolStats;
         return this;
     }
 
-    public ToolBuilder<T> toolStats(UnaryOperator<ToolStatsBuilder> builder) {
-        this.toolStats = builder.apply(new ToolStatsBuilder()).build();
+    public ToolBuilder<T> toolStats(UnaryOperator<TooDefinitionBuilder> builder) {
+        this.toolStats = builder.apply(new TooDefinitionBuilder()).build();
         return this;
     }
 
@@ -44,8 +46,13 @@ public abstract class ToolBuilder<T extends GTToolDefinition> {
         return this;
     }
 
-    public ToolBuilder<T> effectiveBlocks(String... tools) {
+    public ToolBuilder<T> toolClasses(String... tools) {
         Collections.addAll(toolClasses, tools);
+        return this;
+    }
+
+    public ToolBuilder<T> oreDicts(String... ores) {
+        Collections.addAll(oreDicts, ores);
         return this;
     }
 
