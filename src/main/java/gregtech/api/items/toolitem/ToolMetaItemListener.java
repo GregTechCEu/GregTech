@@ -13,15 +13,11 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import java.util.List;
 
 @EventBusSubscriber(modid = GTValues.MODID)
 public class ToolMetaItemListener {
@@ -90,25 +86,6 @@ public class ToolMetaItemListener {
 
     private static int durabilityToXp(int durability) {
         return durability / 2;
-    }
-
-    @SubscribeEvent
-    public static void onHarvestDrops(BlockEvent.HarvestDropsEvent event) {
-        EntityPlayer harvester = event.getHarvester();
-        List<ItemStack> drops = event.getDrops();
-        if (harvester == null)
-            return;
-        ItemStack stackInHand = harvester.getHeldItem(EnumHand.MAIN_HAND);
-        if (stackInHand.isEmpty() || !(stackInHand.getItem() instanceof ToolMetaItem<?>))
-            return;
-
-        ToolMetaItem<? extends MetaToolValueItem> toolMetaItem = (ToolMetaItem<?>) stackInHand.getItem();
-        boolean isRecursiveCall = harvesting.get() == DUMMY_OBJECT;
-        if (!isRecursiveCall) {
-            harvesting.set(DUMMY_OBJECT);
-            toolMetaItem.onBlockDropsHarvested(stackInHand, event.getWorld(), event.getPos(), event.getState(), harvester, drops);
-            harvesting.set(null);
-        }
     }
 
 }
