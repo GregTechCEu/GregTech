@@ -4326,7 +4326,7 @@ gregtech.creative.chest.item=Item
 gregtech.creative.chest.ipc=Items per Cycle
 gregtech.creative.chest.tpc=Ticks per Cycle
 
-gregtech.creative.tank.fluid=Item
+gregtech.creative.tank.fluid=Fluid
 gregtech.creative.tank.mbpc=mB per Cycle
 gregtech.creative.tank.tpc=Ticks per Cycle
 
