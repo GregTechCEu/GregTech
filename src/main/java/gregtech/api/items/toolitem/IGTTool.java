@@ -4,6 +4,7 @@ import appeng.api.implementations.items.IAEWrench;
 import buildcraft.api.tools.IToolWrench;
 import cofh.api.item.IToolHammer;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import crazypants.enderio.api.tool.ITool;
 import forestry.api.arboriculture.IToolGrafter;
@@ -21,6 +22,7 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWeb;
@@ -40,11 +42,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
@@ -52,9 +56,11 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.logging.log4j.ThreadContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.Set;
 
 import static gregtech.api.items.armor.IArmorLogic.*;
@@ -86,6 +92,8 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
     Set<Block> getEffectiveBlocks();
 
     Set<String> getOreDictNames();
+
+    AoEDefinition getAoEDefinition();
 
     default Item get() {
         return (Item) this;
@@ -242,8 +250,25 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
     }
 
     default boolean definition$onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
-        if (!worldIn.isRemote && (double) state.getBlockHardness(worldIn, pos) != 0.0D) {
-            damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
+        if (!worldIn.isRemote) {
+            if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
+                damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
+                if (stack.isEmpty()) {
+                    return true;
+                }
+            }
+            if (!entityLiving.isSneaking() && entityLiving instanceof EntityPlayerMP && !ThreadContext.containsKey("GT_AoE_Breaking")) { // Disable AoE when sneaking
+                EntityPlayerMP serverPlayer = (EntityPlayerMP) entityLiving;
+                ThreadContext.put("GT_AoE_Breaking", "");
+                for (BlockPos aoePos : getHarvestableBlocks(worldIn, serverPlayer)) {
+                    serverPlayer.interactionManager.tryHarvestBlock(aoePos);
+                    if (stack.isEmpty()) {
+                        ThreadContext.remove("GT_AoE_Breaking");
+                        return true;
+                    }
+                }
+                ThreadContext.remove("GT_AoE_Breaking");
+            }
         }
         return true;
     }
@@ -387,6 +412,75 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
         if (ConfigHolder.client.toolUseSounds && getSound() != null) {
             player.getEntityWorld().playSound(null, player.posX, player.posY, player.posZ, getSound(), SoundCategory.PLAYERS, 1F, 1F);
         }
+    }
+
+    // AoE
+    default Set<BlockPos> getHarvestableBlocks(@Nonnull World world, @Nonnull EntityPlayer player, RayTraceResult rayTraceResult) {
+        if (getAoEDefinition() == AoEDefinition.of()) {
+            return Collections.emptySet();
+        }
+        if (rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && rayTraceResult.sideHit != null) {
+            int height = getAoEDefinition().height;
+            int width = getAoEDefinition().width;
+            int depth = getAoEDefinition().depth;
+            EnumFacing playerFacing = player.getHorizontalFacing();
+            EnumFacing.Axis playerAxis = playerFacing.getAxis();
+            EnumFacing.Axis sideHitAxis = rayTraceResult.sideHit.getAxis();
+            EnumFacing.AxisDirection sideHitAxisDir = rayTraceResult.sideHit.getAxisDirection();
+            ImmutableSet.Builder<BlockPos> validPositions = ImmutableSet.builder();
+            if (sideHitAxis.isVertical()) {
+                boolean isX = playerAxis == EnumFacing.Axis.X;
+                boolean isDown = sideHitAxisDir == EnumFacing.AxisDirection.NEGATIVE;
+                for (int y = 0; y <= depth; y++) {
+                    for (int x = isX ? -width : -height; x <= (isX ? width : height); x++) {
+                        for (int z = isX ? -height : -width; z <= (isX ? height : width); z++) {
+                            if (!(x == 0 && y == 0 && z == 0)) {
+                                BlockPos pos = rayTraceResult.getBlockPos().add(x, isDown ? y : -y, z);
+                                IBlockState state = world.getBlockState(pos);
+                                if (state.getBlock().canHarvestBlock(world, pos, player)) {
+                                    ItemStack stack = player.getHeldItemMainhand();
+                                    if (get().getToolClasses(stack).stream().anyMatch(s -> state.getBlock().isToolEffective(s, state))) {
+                                        validPositions.add(pos);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                boolean isX = sideHitAxis == EnumFacing.Axis.X;
+                boolean isNegative = sideHitAxisDir == EnumFacing.AxisDirection.NEGATIVE;
+                for (int x = 0; x <= depth; x++) {
+                    for (int y = -width; y <= width; y++) {
+                        for (int z = -height; z <= height; z++) {
+                            if (!(x == 0 && y == 0 && z == 0)) {
+                                BlockPos pos = rayTraceResult.getBlockPos().add(isX ? (isNegative ? x : -x) : (isNegative ? z : -z), y, isX ? (isNegative ? z : -z) : (isNegative ? x : -x));
+                                IBlockState state = world.getBlockState(pos);
+                                if (state.getBlock().canHarvestBlock(world, pos, player)) {
+                                    ItemStack stack = player.getHeldItemMainhand();
+                                    if (get().getToolClasses(stack).stream().anyMatch(s -> state.getBlock().isToolEffective(s, state))) {
+                                        validPositions.add(pos);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return validPositions.build();
+        }
+        return Collections.emptySet();
+    }
+
+    default Set<BlockPos> getHarvestableBlocks(@Nonnull World world, @Nonnull EntityPlayer player) {
+        if (getAoEDefinition() == AoEDefinition.of()) {
+            return Collections.emptySet();
+        }
+        Vec3d lookPos = player.getPositionEyes(1F);
+        Vec3d rotation = player.getLook(1);
+        Vec3d realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
+        RayTraceResult rayTraceResult = world.rayTraceBlocks(lookPos, realLookPos);
+        return getHarvestableBlocks(world, player, rayTraceResult);
     }
 
     // Extended Interfaces

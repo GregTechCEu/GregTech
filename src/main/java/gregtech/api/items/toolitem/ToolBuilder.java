@@ -20,7 +20,7 @@ public abstract class ToolBuilder<T extends IGTTool> {
     protected int tier = -1;
     protected IGTToolDefinition toolStats;
     protected SoundEvent sound;
-    protected AoEData aoeData = AoEData.of();
+    protected AoEDefinition aoeDefinition = AoEDefinition.of();
 
     public ToolBuilder(String domain, String id) {
         this.domain = domain;
@@ -63,7 +63,7 @@ public abstract class ToolBuilder<T extends IGTTool> {
     }
 
     public ToolBuilder<T> aoeData(int height, int width, int depth) {
-        this.aoeData = AoEData.of(height, width, depth);
+        this.aoeDefinition = AoEDefinition.of(height, width, depth);
         return this;
     }
 
