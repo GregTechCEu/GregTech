@@ -372,7 +372,7 @@ public class SecondDegreeMaterials {
                 .fluid()
                 .color(0xA9D0F5)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Nitrogen, 143, Oxygen, 45, CarbonDioxide, 10, Helium, 1, Argon, 1, Ice, 1)
+                .components(Nitrogen, 70, Oxygen, 22, CarbonDioxide, 5, Helium, 2, Argon, 1, Ice, 1)
                 .build();
 
         NetherAir = new Material.Builder(2052, "nether_air")
