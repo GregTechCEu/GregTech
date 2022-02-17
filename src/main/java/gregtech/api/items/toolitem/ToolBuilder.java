@@ -62,8 +62,13 @@ public abstract class ToolBuilder<T extends IGTTool> {
         return this;
     }
 
-    public ToolBuilder<T> aoeData(int height, int width, int depth) {
-        this.aoeDefinition = AoEDefinition.of(height, width, depth);
+    public ToolBuilder<T> aoeData(int column, int row, int layer) {
+        this.aoeDefinition = AoEDefinition.of(column, row, layer);
+        return this;
+    }
+
+    public ToolBuilder<T> aoeData(AoEDefinition aoeDefinition) {
+        this.aoeDefinition = aoeDefinition;
         return this;
     }
 
