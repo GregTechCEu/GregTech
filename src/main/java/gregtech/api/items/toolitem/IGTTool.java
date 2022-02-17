@@ -22,9 +22,12 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLeaves;
+import net.minecraft.block.BlockLog;
 import net.minecraft.block.BlockWeb;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
@@ -61,6 +64,7 @@ import org.apache.logging.log4j.ThreadContext;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.Set;
 
 import static gregtech.api.items.armor.IArmorLogic.*;
@@ -257,17 +261,23 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
                     return true;
                 }
             }
-            if (!entityLiving.isSneaking() && entityLiving instanceof EntityPlayerMP && !ThreadContext.containsKey("GT_AoE_Breaking")) { // Disable AoE when sneaking
+            if (!entityLiving.isSneaking() && entityLiving instanceof EntityPlayerMP) {
                 EntityPlayerMP serverPlayer = (EntityPlayerMP) entityLiving;
-                ThreadContext.put("GT_AoE_Breaking", "");
-                for (BlockPos aoePos : getHarvestableBlocks(worldIn, serverPlayer)) {
-                    serverPlayer.interactionManager.tryHarvestBlock(aoePos);
-                    if (stack.isEmpty()) {
-                        ThreadContext.remove("GT_AoE_Breaking");
-                        return true;
+                if (get().getToolClasses(stack).contains("axe") && !ThreadContext.containsKey("GT_TreeFelling")) {
+                    ThreadContext.put("GT_TreeFelling", "");
+                    treeLogging(worldIn, serverPlayer, stack, pos);
+                    ThreadContext.remove("GT_TreeFelling");
+                } else if (!ThreadContext.containsKey("GT_AoE_Breaking")) {
+                    ThreadContext.put("GT_AoE_Breaking", "");
+                    for (BlockPos aoePos : getHarvestableBlocks(worldIn, serverPlayer)) {
+                        serverPlayer.interactionManager.tryHarvestBlock(aoePos);
+                        if (stack.isEmpty()) {
+                            ThreadContext.remove("GT_AoE_Breaking");
+                            return true;
+                        }
                     }
+                    ThreadContext.remove("GT_AoE_Breaking");
                 }
-                ThreadContext.remove("GT_AoE_Breaking");
             }
         }
         return true;
@@ -483,6 +493,48 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
         Vec3d realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
         RayTraceResult rayTraceResult = world.rayTraceBlocks(lookPos, realLookPos);
         return getHarvestableBlocks(world, player, rayTraceResult);
+    }
+
+    default void treeLogging(World world, EntityPlayerMP player, ItemStack stack, BlockPos start) {
+        LinkedList<BlockPos> blocks = new LinkedList<>();
+        Set<BlockPos> visited = new ObjectOpenHashSet<>();
+        blocks.add(start);
+        BlockPos pos;
+        int amount = 0;
+        while (!blocks.isEmpty() && amount <= 512) {
+            if (stack.isEmpty()) {
+                break;
+            }
+            pos = blocks.remove();
+            if (!visited.add(pos)) {
+                continue;
+            }
+            IBlockState state = world.getBlockState(pos);
+            Set<String> oreDictNames;
+            if (state.getBlock() instanceof BlockLog || state.getBlock() instanceof BlockLeaves || (oreDictNames = OreDictUnifier.getOreDictionaryNames(new ItemStack(state.getBlock()))).contains("logWood") || oreDictNames.contains("treeLeaves")) {
+                for (EnumFacing facing : EnumFacing.HORIZONTALS) {
+                    BlockPos offsetPos = pos.offset(facing);
+                    if (!visited.contains(offsetPos)) {
+                        blocks.add(offsetPos);
+                    }
+                }
+                for (int x = 0; x < 3; x++)  {
+                    for (int z = 0; z < 3; z++) {
+                        BlockPos branchPos = pos.add(-1 + x, 1, -1 + z);
+                        if (!visited.contains(branchPos)) {
+                            blocks.add(branchPos);
+                        }
+                    }
+                }
+                if (pos == start) { // Can use == since we are 100% on the instance being the same
+                    continue;
+                }
+                amount++;
+                if (!player.interactionManager.tryHarvestBlock(pos)) {
+                    break;
+                }
+            }
+        }
     }
 
     // Extended Interfaces
