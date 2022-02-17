@@ -49,6 +49,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         switch (voidingMode) {
             case VOID_ANY:
                 GTFluidUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, fluidFilter::testFluidStack);
+                break;
             case VOID_OVERFLOW:
                 voidOverflow(myFluidHandler, fluidFilter::testFluidStack, this.transferAmount);
         }
