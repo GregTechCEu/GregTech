@@ -10,25 +10,25 @@ public class AoEDefinition {
         return NONE;
     }
 
-    public static AoEDefinition of(int height, int width, int depth) {
-        Preconditions.checkArgument(height >= 0, "Height cannot be negative.");
-        Preconditions.checkArgument(width >= 0, "Width cannot be negative.");
-        Preconditions.checkArgument(depth >= 0, "Depth cannot be negative.");
-        return height == 0 && width == 0 && depth == 0 ? of() : new AoEDefinition(height, width, depth);
+    public static AoEDefinition of(int column, int row, int layer) {
+        Preconditions.checkArgument(column >= 0, "Height cannot be negative.");
+        Preconditions.checkArgument(row >= 0, "Width cannot be negative.");
+        Preconditions.checkArgument(layer >= 0, "Depth cannot be negative.");
+        return column == 0 && row == 0 && layer == 0 ? of() : new AoEDefinition(column, row, layer);
     }
 
-    public final int height, width, depth;
+    public final int column, row, layer;
 
     private AoEDefinition() {
-        this.height = 0;
-        this.width = 0;
-        this.depth = 0;
+        this.column = 0;
+        this.row = 0;
+        this.layer = 0;
     }
 
-    private AoEDefinition(int height, int width, int depth) {
-        this.height = height;
-        this.width = width;
-        this.depth = depth;
+    private AoEDefinition(int column, int row, int layer) {
+        this.column = column;
+        this.row = row;
+        this.layer = layer;
     }
 
 }
