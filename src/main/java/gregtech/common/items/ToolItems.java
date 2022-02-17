@@ -166,9 +166,6 @@ public class ToolItems {
                         event.setNewSpeed(newSpeed);
                     }
                 }
-            } else {
-                // If player uncrouches...
-                player.getTags().remove("GT_AoE_BreakSpeed");
             }
         }
     }
