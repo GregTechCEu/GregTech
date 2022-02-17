@@ -787,7 +787,7 @@ public class FirstDegreeMaterials {
                 .ingot(0).fluid()
                 .color(0x3C3C3C).iconSet(METALLIC)
                 .flags(GENERATE_RING)
-                .components(Nickel, 1, Zinc, 1, Iron, 4)
+                .components(Nickel, 1, Zinc, 1, Iron, 4, Oxygen, 8)
                 .build();
 
         SiliconDioxide = new Material.Builder(356, "silicon_dioxide")
