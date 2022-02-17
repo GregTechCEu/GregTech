@@ -39,8 +39,9 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     protected final Set<String> oreDicts;
     protected final SoundEvent sound;
     protected final Set<Block> effectiveBlocks;
+    protected final AoEDefinition aoeDefinition;
 
-    protected ItemGTTool(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, Set<String> toolClasses, Set<String> oreDicts, Set<Block> effectiveBlocks) {
+    protected ItemGTTool(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, Set<String> toolClasses, Set<String> oreDicts, Set<Block> effectiveBlocks, AoEDefinition aoeDefinition) {
         super(0F, 0F, ToolMaterial.STONE, effectiveBlocks);
         this.domain = domain;
         this.id = id;
@@ -50,6 +51,7 @@ public class ItemGTTool extends ItemTool implements IGTTool {
         this.toolClasses = Collections.unmodifiableSet(toolClasses);
         this.oreDicts = Collections.unmodifiableSet(oreDicts);
         this.effectiveBlocks = effectiveBlocks;
+        this.aoeDefinition = aoeDefinition;
         setMaxStackSize(1);
         setCreativeTab(CreativeTabs.TOOLS);
         setTranslationKey("gt.tool." + id + ".name");
@@ -98,9 +100,15 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     }
 
     @Override
+    public AoEDefinition getAoEDefinition() {
+        return aoeDefinition;
+    }
+
+    @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (this.isInCreativeTab(tab)) {
             items.add(get(Materials.Neutronium));
+            items.add(get(Materials.Iron));
         }
     }
 
@@ -207,7 +215,7 @@ public class ItemGTTool extends ItemTool implements IGTTool {
 
         @Override
         public ItemGTTool build() {
-            return new ItemGTTool(domain, id, tier, toolStats, sound, toolClasses, oreDicts, effectiveBlocks);
+            return new ItemGTTool(domain, id, tier, toolStats, sound, toolClasses, oreDicts, effectiveBlocks, aoeDefinition);
         }
 
     }
