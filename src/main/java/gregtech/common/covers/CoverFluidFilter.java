@@ -153,7 +153,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
                 }
                 return doDrain ? super.drain(maxDrain, true) : result;
             }
-            return super.drain(maxDrain, true);
+            return super.drain(maxDrain, doDrain);
         }
     }
 }

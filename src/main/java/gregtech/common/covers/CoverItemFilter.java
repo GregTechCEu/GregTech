@@ -148,10 +148,9 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
         @Nonnull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            ItemFilterMode filterMode = getFilterMode();
-            if (filterMode != ItemFilterMode.FILTER_INSERT) {
+            if (getFilterMode() != ItemFilterMode.FILTER_INSERT) {
                 ItemStack result = super.extractItem(slot, amount, true);
-                if (!itemFilter.testItemStack(result)) {
+                if (result.isEmpty() || !itemFilter.testItemStack(result)) {
                     return ItemStack.EMPTY;
                 }
                 return simulate ? result : super.extractItem(slot, amount, false);
