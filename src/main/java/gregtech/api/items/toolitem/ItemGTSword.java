@@ -80,6 +80,11 @@ public class ItemGTSword extends ItemSword implements IGTTool {
     }
 
     @Override
+    public AoEDefinition getAoEDefinition() {
+        return AoEDefinition.of();
+    }
+
+    @Override
     public float getDestroySpeed(ItemStack stack, IBlockState state) {
         return definition$getDestroySpeed(stack, state);
     }
