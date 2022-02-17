@@ -420,9 +420,9 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
             return Collections.emptySet();
         }
         if (rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && rayTraceResult.sideHit != null) {
-            int height = getAoEDefinition().height;
-            int width = getAoEDefinition().width;
-            int depth = getAoEDefinition().depth;
+            int column = getAoEDefinition().column;
+            int row = getAoEDefinition().row;
+            int layer = getAoEDefinition().layer;
             EnumFacing playerFacing = player.getHorizontalFacing();
             EnumFacing.Axis playerAxis = playerFacing.getAxis();
             EnumFacing.Axis sideHitAxis = rayTraceResult.sideHit.getAxis();
@@ -431,9 +431,9 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
             if (sideHitAxis.isVertical()) {
                 boolean isX = playerAxis == EnumFacing.Axis.X;
                 boolean isDown = sideHitAxisDir == EnumFacing.AxisDirection.NEGATIVE;
-                for (int y = 0; y <= depth; y++) {
-                    for (int x = isX ? -width : -height; x <= (isX ? width : height); x++) {
-                        for (int z = isX ? -height : -width; z <= (isX ? height : width); z++) {
+                for (int y = 0; y <= layer; y++) {
+                    for (int x = isX ? -row : -column; x <= (isX ? row : column); x++) {
+                        for (int z = isX ? -column : -row; z <= (isX ? column : row); z++) {
                             if (!(x == 0 && y == 0 && z == 0)) {
                                 BlockPos pos = rayTraceResult.getBlockPos().add(x, isDown ? y : -y, z);
                                 IBlockState state = world.getBlockState(pos);
@@ -450,9 +450,11 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
             } else {
                 boolean isX = sideHitAxis == EnumFacing.Axis.X;
                 boolean isNegative = sideHitAxisDir == EnumFacing.AxisDirection.NEGATIVE;
-                for (int x = 0; x <= depth; x++) {
-                    for (int y = -width; y <= width; y++) {
-                        for (int z = -height; z <= height; z++) {
+                for (int x = 0; x <= layer; x++) {
+                    // Special case for any additional column > 1: https://i.imgur.com/Dvcx7Vg.png
+                    // Same behaviour as the Flux Bore
+                    for (int y = (row == 0 ? 0 : -1); y <= (row == 1 ? 1 : row + 1); y++) {
+                        for (int z = -column; z <= column; z++) {
                             if (!(x == 0 && y == 0 && z == 0)) {
                                 BlockPos pos = rayTraceResult.getBlockPos().add(isX ? (isNegative ? x : -x) : (isNegative ? z : -z), y, isX ? (isNegative ? z : -z) : (isNegative ? x : -x));
                                 IBlockState state = world.getBlockState(pos);
