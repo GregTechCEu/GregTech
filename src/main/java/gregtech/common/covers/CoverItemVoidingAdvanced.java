@@ -41,6 +41,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         switch (voidingMode) {
             case VOID_ANY:
                 voidAny(myItemHandler);
+                break;
             case VOID_OVERFLOW:
                 voidExact(myItemHandler);
         }
@@ -122,7 +123,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                 })
                         .setCentered(true)
                         .setNumbersOnly(1, Integer.MAX_VALUE)
-                        .setMaxLength(4)
+                        .setMaxLength(10)
                         .setScale(0.9f)
         );
 
