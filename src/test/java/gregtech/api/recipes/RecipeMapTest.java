@@ -1,10 +1,8 @@
 package gregtech.api.recipes;
 
+import gregtech.Bootstrap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
-import gregtech.api.unification.material.Materials;
-import gregtech.common.MetaFluids;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Bootstrap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -21,10 +19,8 @@ import static org.junit.Assert.assertNotNull;
 public class RecipeMapTest {
 
     @BeforeClass
-    public static void init() {
-        Bootstrap.register();
-        Materials.register();
-        MetaFluids.init();
+    public static void bootstrap() {
+        Bootstrap.perform();
     }
 
     @Test
