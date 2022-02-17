@@ -62,12 +62,14 @@ public abstract class FluidType {
 
     protected abstract void setFluidProperties(@Nonnull Fluid fluid);
 
-    @ZenMethod
-    @Optional.Method(modid = GTValues.MODID_CT)
-    public static void setFluidPropertiesCT(FluidType fluidType, @Nonnull ILiquidStack liquidStack) {
-        Material material = GregTechAPI.MATERIAL_REGISTRY.getObject(liquidStack.getName());
-        if (material == null || !material.hasProperty(PropertyKey.FLUID)) {
-            GTLog.logger.warn("LiquidStack {} does not have a FluidProperty!", liquidStack.getName());
+    @ZenMethod("setFluidProperties")
+    public void setFluidPropertiesCT(FluidType fluidType, Material material) {
+        if (material == null) {
+            GTLog.logger.warn("Material cannot be null!");
+            return;
+        }
+        if (!material.hasProperty(PropertyKey.FLUID)) {
+            GTLog.logger.warn("Material {} does not have a FluidProperty!", material.getUnlocalizedName());
             return;
         }
 

@@ -3,6 +3,7 @@ package gregtech.api.unification.crafttweaker;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.enchantments.IEnchantment;
 import gregtech.api.GTValues;
+import gregtech.api.fluids.fluidType.FluidType;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
@@ -15,6 +16,8 @@ import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenConstructor;
 import stanhebben.zenscript.annotations.ZenMethod;
+
+import javax.annotation.Nonnull;
 
 import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateComponentList;
 import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidTypeNoPlasma;
@@ -41,6 +44,12 @@ public class CTMaterialBuilder {
     @ZenMethod
     public CTMaterialBuilder fluid(@Optional String type, @Optional boolean hasBlock) {
         backingBuilder.fluid(validateFluidTypeNoPlasma(type), hasBlock);
+        return this;
+    }
+
+    @ZenMethod
+    public CTMaterialBuilder fluid(@Nonnull @Optional FluidType type, @Optional boolean hasBlock) {
+        backingBuilder.fluid(validateFluidTypeNoPlasma(type.getName()), hasBlock);
         return this;
     }
 

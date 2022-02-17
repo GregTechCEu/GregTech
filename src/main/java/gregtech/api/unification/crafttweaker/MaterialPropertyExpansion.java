@@ -9,8 +9,9 @@ import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenExpansion;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.checkFrozen;
-import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.validateFluidType;
+import javax.annotation.Nonnull;
+
+import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.*;
 
 @ZenExpansion("mods.gregtech.material.Material")
 @ZenRegister
@@ -110,7 +111,17 @@ public class MaterialPropertyExpansion {
     @ZenMethod
     public static void addFluid(Material m, @Optional String fluidTypeName, @Optional boolean hasBlock) {
         if (checkFrozen("add a Fluid to a material")) return;
-        FluidType type = validateFluidType(fluidTypeName);
+        FluidType type = validateFluidTypeNoPlasma(fluidTypeName);
+        if (m.hasProperty(PropertyKey.FLUID)) {
+            m.getProperty(PropertyKey.FLUID).setIsGas(type == FluidTypes.GAS);
+            m.getProperty(PropertyKey.FLUID).setHasBlock(hasBlock);
+        } else m.setProperty(PropertyKey.FLUID, new FluidProperty(type, hasBlock));
+    }
+
+    @ZenMethod
+    public static void addFluid(Material m, @Nonnull @Optional FluidType fluidType, @Optional boolean hasBlock) {
+        if (checkFrozen("add a Fluid to a material")) return;
+        FluidType type = validateFluidTypeNoPlasma(fluidType.getName());
         if (m.hasProperty(PropertyKey.FLUID)) {
             m.getProperty(PropertyKey.FLUID).setIsGas(type == FluidTypes.GAS);
             m.getProperty(PropertyKey.FLUID).setHasBlock(hasBlock);
