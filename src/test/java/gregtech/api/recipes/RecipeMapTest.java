@@ -1,9 +1,7 @@
 package gregtech.api.recipes;
 
-import gregtech.api.fluids.MetaFluids;
 import gregtech.Bootstrap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
-import gregtech.api.unification.material.Materials;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidRegistry;

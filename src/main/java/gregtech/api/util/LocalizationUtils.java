@@ -22,7 +22,7 @@ public class LocalizationUtils {
      * @return the localized string.
      */
     public static String format(String localisationKey, Object... substitutions) {
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER || GTValues.IS_TEST) {
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
             return net.minecraft.util.text.translation.I18n.translateToLocalFormatted(localisationKey, substitutions);
         } else {
             return net.minecraft.client.resources.I18n.format(localisationKey, substitutions);
