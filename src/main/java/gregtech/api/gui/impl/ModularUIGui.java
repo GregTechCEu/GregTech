@@ -79,7 +79,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         lastUpdate += partialTicks;
-        while (lastUpdate >= FRAMES_PER_TICK) {
+        while (lastUpdate >= 0) {
             lastUpdate -= FRAMES_PER_TICK;
             modularUI.guiWidgets.values().forEach(Widget::updateScreenOnFrame);
         }
