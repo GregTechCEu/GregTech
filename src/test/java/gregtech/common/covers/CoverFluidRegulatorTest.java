@@ -5,9 +5,6 @@ import gregtech.api.capability.impl.*;
 import net.minecraft.util.*;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.*;
-import net.minecraftforge.fml.common.DummyModContainer;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModMetadata;
 import org.junit.*;
 
 import java.util.function.*;

@@ -14,9 +14,6 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemB
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.DummyModContainer;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModMetadata;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
