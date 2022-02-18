@@ -8,11 +8,8 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.recipes.FluidKey;
 import gregtech.api.util.GTFluidUtils;
-import gregtech.api.util.GTHashMaps;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.covers.filter.FluidFilter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
@@ -21,8 +18,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import java.util.HashMap;
 import java.util.function.Predicate;
 
 public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
@@ -68,18 +65,14 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         if (sourceHandler == null || fluidFilter == null)
             return;
 
-        HashMap<FluidKey, Integer> sourceFluids = GTHashMaps.fromFluidHandler(sourceHandler);
-
-        for (FluidKey fluidKey : sourceFluids.keySet()) {
-            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null && voidingMode != VoidingMode.VOID_ANY) {
-                keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(new FluidStack(fluidKey.getFluid(), 1));
+        for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
+            FluidStack sourceFluid = tankProperties.getContents();
+            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null && voidingMode == VoidingMode.VOID_OVERFLOW) {
+                keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(sourceFluid);
             }
-            int amount;
-            if ((amount = sourceFluids.getOrDefault(fluidKey, 0)) > keepAmount) {
-                // move the lesser of the remaining transfer limit and the difference in actual vs keep exact amount
-                int amountToMove = amount - keepAmount;
-                sourceHandler.drain(new FluidStack(fluidKey.getFluid(), amountToMove), true);
-            }
+            if (sourceFluid == null || sourceFluid.amount == 0 || !fluidFilter.test(sourceFluid)) continue;
+            sourceFluid.amount = sourceFluid.amount - keepAmount;
+            GTFluidUtils.transferExactFluidStack(sourceHandler, nullFluidTank, sourceFluid);
         }
     }
 
