@@ -28,7 +28,10 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
     public static final float rColorForOverlay = 1;
     public static final float gColorForOverlay = 1;
     public static final float bColorForOverlay = 1;
+
+    public static final float FRAMES_PER_TICK = 1/3f;
     private float lastUpdate;
+
     public int dragSplittingLimit;
     public int dragSplittingButton;
 
@@ -75,11 +78,10 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        float now = getModularUI().entityPlayer.ticksExisted + partialTicks;
-        int times = (int) ((now - lastUpdate) / 0.333f);
-        for (int i = 0; i < times; i++) {
+        lastUpdate += partialTicks;
+        while (lastUpdate >= FRAMES_PER_TICK) {
+            lastUpdate -= FRAMES_PER_TICK;
             modularUI.guiWidgets.values().forEach(Widget::updateScreenOnFrame);
-            lastUpdate += 0.333f;
         }
         this.hoveredSlot = null;
         drawDefaultBackground();
