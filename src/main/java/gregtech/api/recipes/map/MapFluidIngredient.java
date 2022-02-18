@@ -1,37 +1,45 @@
 package gregtech.api.recipes.map;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
+import java.util.Objects;
 
 public class MapFluidIngredient extends AbstractMapIngredient {
 
-    public FluidStack stack;
+    public final Fluid fluid;
+    public final NBTTagCompound tag;
 
     public MapFluidIngredient(FluidStack stack, boolean insideMap) {
         super(insideMap);
-        this.stack = stack;
+        this.fluid = stack.getFluid();
+        this.tag = stack.tag;
     }
 
     @Override
     protected int hash() {
-        return stack.getFluid().getName().hashCode();
+        int hash = fluid.hashCode();
+        if (tag != null) {
+            return 31 * hash + tag.hashCode();
+        }
+        return hash;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (!super.equals(o)) return false;
-        if (o instanceof MapFluidIngredient) {
-            MapFluidIngredient fluid = (MapFluidIngredient) o;
-            return this.hashCode() == fluid.hashCode() && stack.getFluid() == fluid.stack.getFluid(); //&& stack.isFluidEqual(fluid.stack);
+        if (super.equals(o)) {
+            MapFluidIngredient other = (MapFluidIngredient) o;
+            return fluid == other.fluid && Objects.equals(tag, other.tag);
         }
-        /*if (o instanceof MapTagIngredient) {
-            MapTagIngredient tag = (MapTagIngredient) o;
-            return stack.getFluid().getTags().contains(tag.loc);
-        }*/
         return false;
     }
 
     @Override
     public String toString() {
-        return stack.getFluid().getName();
+        return "MapFluidIngredient{" +
+                "fluid=" + fluid.getName() +
+                ", tag=" + tag +
+                '}';
     }
 }

@@ -22,7 +22,6 @@ import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
 import gregtech.api.recipes.map.AbstractMapIngredient;
 import gregtech.api.recipes.map.MapFluidIngredient;
-import gregtech.api.recipes.map.MapItemIngredient;
 import gregtech.api.recipes.map.MapItemStackIngredient;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -40,8 +39,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.oredict.OreDictionary;
-import scala.util.Either;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.*;
 
@@ -263,7 +260,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public void compileRecipe(Recipe recipe) {
         if (recipe == null)
             return;
-        boolean flag = false;
+        // boolean flag = false;
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe, true);
 
         // Recipe r = recurseItemTreeFind(items, map, rr -> true);
@@ -272,10 +269,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         // available.");
         // }
         if (recurseItemTreeAdd(recipe, items, LOOKUP, 0, 0)) {
-            items.forEach(t -> t.forEach(ing -> {
-                if (!ing.isSpecial())
-                    ROOT.add(ing);
-            }));
+            items.forEach(t -> t.forEach(ing -> ROOT.add(ing)));
         }
     }
 
@@ -379,20 +373,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public boolean acceptsItem(ItemStack item) {
-        MapItemStackIngredient i = new MapItemStackIngredient(item, false);
-        MapItemIngredient j = new MapItemIngredient(item.getItem(), false);
-        if (ROOT.contains(i))
-            return true;
-        if (ROOT.contains(j))
-            return true;
-        return false;
+        return ROOT.contains(new MapItemStackIngredient(item, false));
     }
 
     public boolean acceptsFluid(FluidStack fluid) {
-        MapFluidIngredient i = new MapFluidIngredient(fluid, false);
-        if (ROOT.contains(i))
-            return true;
-        return false;
+        return ROOT.contains(new MapFluidIngredient(fluid, false));
     }
 
     @Nullable
@@ -744,50 +729,34 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         List<AbstractMapIngredient> current = ingredients.get(index);
         Either<List<Recipe>, Branch> r;
         for (AbstractMapIngredient obj : current) {
-            if (!obj.isSpecial()) {
-                // Either add the recipe or create a branch.
-                r = map.NODES.compute(obj, (k, v) -> {
-                    if (count == ingredients.size() - 1) {
-                        if (v == null) {
-                            v = Either.left(new ObjectArrayList<>());
-                        }
-                        v.ifLeft(list -> list.add(recipe));
-                        return v;
-                    } else if (v == null) {
-                        Branch traverse = new Branch();
-                        v = Either.right(traverse);
-                    }
-                    return v;
-                });
-                // At the end, return.
-                if (count == ingredients.size() - 1)
-                    continue;
-                // If left was present before. Shouldn't be needed?
-                /*
-                 * if (r.left().isPresent()) { Utils.onInvalidData("COLLISION DETECTED!");
-                 * current.forEach(map.NODES::remove); return false; }
-                 */
-                // should always be present but this gives no warning.
-                if (r.right().map(
-                                m -> !recurseItemTreeAdd(recipe, ingredients, m, (index + 1) % ingredients.size(), count + 1))
-                        .orElse(false)) {
-                    current.forEach(map.NODES::remove);
-                    return false;
-                }
-            } else {
+            // Either add the recipe or create a branch.
+            r = map.NODES.compute(obj, (k, v) -> {
                 if (count == ingredients.size() - 1) {
-                    map.SPECIAL_NODES.add(new Tuple<>(obj, Either.left(recipe)));
-                } else {
-                    Branch branch = new Branch();
-                    boolean ok = recurseItemTreeAdd(recipe, ingredients, branch, (index + 1) % ingredients.size(),
-                            count + 1);
-                    if (!ok) {
-                        current.forEach(map.NODES::remove);
-                        return false;
-                    } else {
-                        map.SPECIAL_NODES.add(new Tuple<>(obj, Either.right(branch)));
+                    if (v == null) {
+                        v = Either.left(new ObjectArrayList<>());
                     }
+                    v.ifLeft(list -> list.add(recipe));
+                    return v;
+                } else if (v == null) {
+                    Branch traverse = new Branch();
+                    v = Either.right(traverse);
                 }
+                return v;
+            });
+            // At the end, return.
+            if (count == ingredients.size() - 1)
+                continue;
+            // If left was present before. Shouldn't be needed?
+            /*
+             * if (r.left().isPresent()) { Utils.onInvalidData("COLLISION DETECTED!");
+             * current.forEach(map.NODES::remove); return false; }
+             */
+            // should always be present but this gives no warning.
+            if (r.right().map(
+                            m -> !recurseItemTreeAdd(recipe, ingredients, m, (index + 1) % ingredients.size(), count + 1))
+                    .orElse(false)) {
+                current.forEach(map.NODES::remove);
+                return false;
             }
         }
         return true;
@@ -823,6 +792,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected void buildFromItems(List<List<AbstractMapIngredient>> list, List<CountableIngredient> ingredients, boolean insideMap) {
         for (CountableIngredient r : ingredients) {
             Ingredient t = r.getIngredient();
+            List<AbstractMapIngredient> inner = new ObjectArrayList<>(t.getMatchingStacks().length);
+            for (ItemStack stack : t.getMatchingStacks()) {
+                inner.add(new MapItemStackIngredient(stack, insideMap));
+            }
+            list.add(inner);
+            /*
             if (!false) {
                 java.util.Optional<ResourceLocation> rl = java.util.Optional.empty();//MapTagIngredient.findCommonTag(t, tags);
                 if (rl.isPresent()) {
@@ -841,6 +816,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             } else {
                // list.add(Collections.singletonList(new SpecialIngredientWrapper(t)));
             }
+             */
         }
     }
 
@@ -848,7 +824,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         for (ItemStack t : ingredients) {
             //OreDictionary.getOreIDs()
             List<AbstractMapIngredient> ls = new ObjectArrayList<>(2);
-            ls.add(new MapItemIngredient(t.getItem(), false));
             ls.add(new MapItemStackIngredient(t, false));
             /*for (ResourceLocation rl : t.getItem().getTags()) {
                 ls.add(new MapTagIngredient(rl, false));

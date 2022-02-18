@@ -1,10 +1,12 @@
 package gregtech.api.recipes.map;
 
 public abstract class AbstractMapIngredient {
-    private int hash;
-    private boolean hashed = false;
+
     private final Class<? extends AbstractMapIngredient> objClass;
     private final boolean insideMap;
+
+    private int hash;
+    private boolean hashed = false;
 
     protected AbstractMapIngredient(boolean insideMap) {
         this.objClass = getClass();
@@ -39,7 +41,4 @@ public abstract class AbstractMapIngredient {
         return false;
     }
 
-    public boolean isSpecial() {
-        return false;
-    }
 }
