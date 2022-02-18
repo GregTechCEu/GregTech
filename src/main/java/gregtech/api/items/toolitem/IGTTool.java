@@ -510,15 +510,10 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
                 continue;
             }
             IBlockState state = world.getBlockState(pos);
-            Set<String> oreDictNames;
-            if (state.getBlock() instanceof BlockLog || state.getBlock() instanceof BlockLeaves || (oreDictNames = OreDictUnifier.getOreDictionaryNames(new ItemStack(state.getBlock()))).contains("logWood") || oreDictNames.contains("treeLeaves")) {
-                for (EnumFacing facing : EnumFacing.HORIZONTALS) {
-                    BlockPos offsetPos = pos.offset(facing);
-                    if (!visited.contains(offsetPos)) {
-                        blocks.add(offsetPos);
-                    }
-                }
-                for (int x = 0; x < 3; x++)  {
+            boolean found = false;
+            if (state.getBlock() instanceof BlockLog || OreDictUnifier.getOreDictionaryNames(new ItemStack(state.getBlock())).contains("logWood")) {
+                found = true;
+                for (int x = 0; x < 3; x++) {
                     for (int z = 0; z < 3; z++) {
                         BlockPos branchPos = pos.add(-1 + x, 1, -1 + z);
                         if (!visited.contains(branchPos)) {
@@ -526,9 +521,17 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
                         }
                     }
                 }
-                if (pos == start) { // Can use == since we are 100% on the instance being the same
-                    continue;
+                for (EnumFacing facing : EnumFacing.HORIZONTALS) {
+                    BlockPos offsetPos = pos.offset(facing);
+                    if (!visited.contains(offsetPos)) {
+                        blocks.add(offsetPos);
+                    }
                 }
+            }
+            if (pos == start) { // Can use == since we are 100% on the instance being the same
+                continue;
+            }
+            if (found) {
                 amount++;
                 if (!player.interactionManager.tryHarvestBlock(pos)) {
                     break;
