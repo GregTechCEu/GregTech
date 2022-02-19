@@ -82,9 +82,9 @@ public class SecondDegreeMaterials {
         // Free ID 2009
 
         Apatite = new Material.Builder(2010, "apatite")
-                .gem(1).ore(4, 2)
+                .gem(1).ore(4, 3)
                 .color(0xC8C8FF).iconSet(DIAMOND)
-                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_BOLT_SCREW)
+                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION)
                 .components(Calcium, 5, Phosphate, 3, Chlorine, 1)
                 .build();
 
@@ -128,9 +128,9 @@ public class SecondDegreeMaterials {
                 .build();
 
         TricalciumPhosphate = new Material.Builder(2015, "tricalcium_phosphate")
-                .dust().ore(3, 1)
+                .dust().ore(3, 2)
                 .color(0xFFFF00).iconSet(FLINT)
-                .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE, DISABLE_DECOMPOSITION)
                 .components(Calcium, 3, Phosphate, 2)
                 .build();
 
@@ -219,7 +219,7 @@ public class SecondDegreeMaterials {
         Monazite = new Material.Builder(2029, "monazite")
                 .gem(1).ore(4, 2)
                 .color(0x324632).iconSet(DIAMOND)
-                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE)
+                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, DISABLE_DECOMPOSITION)
                 .components(RareEarth, 1, Phosphate, 1)
                 .build();
 

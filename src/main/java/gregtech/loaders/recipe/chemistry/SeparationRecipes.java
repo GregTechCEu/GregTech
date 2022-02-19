@@ -450,6 +450,13 @@ public class SeparationRecipes {
                 .fluidOutputs(Oxygen.getFluid(4000))
                 .duration(210).EUt(960).buildAndRegister();
 
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .input(dust, Monazite, 10)
+                .output(dust, RareEarth, 5)
+                .output(dust, Phosphorus, 1)
+                .fluidOutputs(Oxygen.getFluid(4000))
+                .duration(400).EUt(VA[MV]).buildAndRegister();
+
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 1, GTValues.W))
