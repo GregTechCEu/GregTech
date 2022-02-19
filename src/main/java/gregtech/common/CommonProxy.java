@@ -256,9 +256,9 @@ public class CommonProxy {
         ItemStack stack = event.getItemStack();
         Block block = Block.getBlockFromItem(stack.getItem());
         //handle sapling and log burn rates
-        if (block == MetaBlocks.RUBBER_LOG) {
+        if (block == RUBBER_LOG || block == PLANKS) {
             event.setBurnTime(300);
-        } else if (block == MetaBlocks.RUBBER_SAPLING) {
+        } else if (block == RUBBER_SAPLING) {
             event.setBurnTime(100);
         }
         //handle material blocks burn value
