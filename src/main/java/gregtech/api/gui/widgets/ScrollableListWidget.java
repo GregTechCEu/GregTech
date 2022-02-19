@@ -1,5 +1,6 @@
 package gregtech.api.gui.widgets;
 
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
@@ -62,7 +63,6 @@ public class ScrollableListWidget extends AbstractWidgetGroup {
             widget.setParentPosition(childPosition);
             currentPosY += widget.getSize().getHeight();
             totalListHeight += widget.getSize().getHeight();
-            final Size size = getSize();
         }
         this.totalListHeight = totalListHeight;
         this.slotHeight = widgets.isEmpty() ? 0 : totalListHeight / widgets.size();
@@ -93,14 +93,13 @@ public class ScrollableListWidget extends AbstractWidgetGroup {
         Size size = getSize();
         int paneSize = scrollPaneWidth;
         int scrollX = position.x + size.width - paneSize;
-        drawSolidRect(scrollX, position.y, paneSize, size.height, 0xFF666666);
-        drawSolidRect(scrollX + 1, position.y + 1, paneSize - 2, size.height - 2, 0xFF888888);
+        GuiTextures.SLIDER_BACKGROUND_VERTICAL.draw(scrollX + 1, position.y + 1, paneSize - 2, size.height - 2);
 
-        int maxScrollOffset = totalListHeight - getSize().height;
+        int maxScrollOffset = totalListHeight - getSize().height + 2;
         float scrollPercent = maxScrollOffset == 0 ? 0 : scrollOffset / (maxScrollOffset * 1.0f);
         int scrollSliderHeight = 14;
         int scrollSliderY = Math.round(position.y + (size.height - scrollSliderHeight) * scrollPercent);
-        drawGradientRect(scrollX + 1, scrollSliderY, paneSize - 2, scrollSliderHeight, 0xFF555555, 0xFF454545);
+        GuiTextures.SLIDER_ICON.draw(scrollX + 1, scrollSliderY + 2, paneSize - 2, scrollSliderHeight);
 
         RenderUtil.useScissor(position.x, position.y, size.width - paneSize, size.height, () ->
             super.drawInBackground(finalMouseX, finalMouseY, partialTicks, context));
