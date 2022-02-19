@@ -7,6 +7,8 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class IngredientHashStrategy implements Hash.Strategy<Ingredient> {
 
+    public final static IngredientHashStrategy INSTANCE = new IngredientHashStrategy();
+
     public IngredientHashStrategy() {
     }
 

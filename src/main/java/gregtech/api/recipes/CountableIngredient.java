@@ -3,6 +3,7 @@ package gregtech.api.recipes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.IngredientHashStrategy;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
@@ -11,9 +12,22 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 public class CountableIngredient {
+
+    private final Ingredient ingredient;
+    private final int count;
+    private boolean nonConsumable = false;
+
+    public CountableIngredient(Ingredient ingredient, int count) {
+        this.ingredient = ingredient;
+        if (count <= 0) {
+            this.count = 1;
+            setNonConsumable();
+        } else {
+            this.count = count;
+        }
+    }
 
     public static CountableIngredient from(ItemStack stack) {
         return new CountableIngredient(Ingredient.fromStacks(stack), stack.getCount());
@@ -45,14 +59,6 @@ public class CountableIngredient {
         return new CountableIngredient(new OreIngredient(new UnificationEntry(prefix, material).toString()), count);
     }
 
-    private final Ingredient ingredient;
-    private final int count;
-
-    public CountableIngredient(Ingredient ingredient, int count) {
-        this.ingredient = ingredient;
-        this.count = count;
-    }
-
     public Ingredient getIngredient() {
         return ingredient;
     }
@@ -61,18 +67,27 @@ public class CountableIngredient {
         return count;
     }
 
+    public boolean isNonConsumable() {
+        return nonConsumable;
+    }
+
+    public CountableIngredient setNonConsumable() {
+        this.nonConsumable = true;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CountableIngredient that = (CountableIngredient) o;
         return count == that.count &&
-                Objects.equals(ingredient, that.ingredient);
+                IngredientHashStrategy.INSTANCE.equals(ingredient, that.ingredient);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ingredient, count);
+        return IngredientHashStrategy.INSTANCE.hashCode(ingredient) + 31 * count;
     }
 
     @Override

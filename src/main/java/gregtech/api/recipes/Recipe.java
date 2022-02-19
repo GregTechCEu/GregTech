@@ -83,7 +83,7 @@ public class Recipe {
         this.hidden = hidden;
 
         //sort not consumables inputs to the end
-        this.inputs.sort((ing1, ing2) -> ing1.getCount() == 0 ? 1 : 0);
+        this.inputs.sort((ing1, ing2) -> Boolean.compare(ing1.isNonConsumable(), ing2.isNonConsumable()));
         this.hashCode = makeHashCode();
     }
 
@@ -168,18 +168,13 @@ public class Recipe {
 
         for (CountableIngredient ingredient : this.inputs) {
             int ingredientAmount = ingredient.getCount();
-            boolean isNotConsumed = false;
-            if (ingredientAmount == 0) {
-                ingredientAmount = 1;
-                isNotConsumed = true;
-            }
             for (int i = 0; i < inputs.size(); i++) {
                 ItemStack inputStack = inputs.get(i);
                 if (inputStack.isEmpty() || !ingredient.getIngredient().apply(inputStack))
                     continue;
                 int itemAmountToConsume = Math.min(itemAmountInSlot[i], ingredientAmount);
                 ingredientAmount -= itemAmountToConsume;
-                if (!isNotConsumed) itemAmountInSlot[i] -= itemAmountToConsume;
+                if (!ingredient.isNonConsumable()) itemAmountInSlot[i] -= itemAmountToConsume;
                 if (ingredientAmount == 0) break;
             }
             if (ingredientAmount > 0)
@@ -199,14 +194,10 @@ public class Recipe {
 
         for (FluidStack fluid : this.fluidInputs) {
             int fluidAmount = fluid.amount;
-            boolean isNotConsumed = false;
-            if (fluidAmount == 0) {
-                fluidAmount = 1;
-                isNotConsumed = true;
-            }
+            boolean isNotConsumed = (fluid.tag != null && fluid.tag.hasKey("nonConsumable"));
             for (int i = 0; i < fluidInputs.size(); i++) {
                 FluidStack tankFluid = fluidInputs.get(i);
-                if (tankFluid == null || !tankFluid.isFluidEqual(fluid))
+                if (tankFluid == null || tankFluid.getFluid() != fluid.getFluid())
                     continue;
                 int fluidAmountToConsume = Math.min(fluidAmountInTank[i], fluidAmount);
                 fluidAmount -= fluidAmountToConsume;
@@ -419,31 +410,18 @@ public class Recipe {
 
     public boolean hasInputFluid(FluidStack fluid) {
         for (FluidStack fluidStack : fluidInputs) {
-            if (fluidStack.isFluidEqual(fluid)) {
-                return true;
+            if (fluid.getFluid() == fluidStack.getFluid()) {
+                if (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable")) {
+                    fluidStack = fluidStack.copy();
+                    fluidStack.tag.removeTag("nonConsumable");
+                    if (fluidStack.tag.isEmpty()) {
+                        fluidStack.tag = null;
+                    }
+                }
+                return fluidStack.isFluidEqual(fluid);
             }
         }
         return false;
-    }
-
-    public boolean isNotConsumedInput(Object stack) {
-        if (stack instanceof FluidStack) {
-            if (fluidInputs.contains(stack)) {
-                return fluidInputs.get(fluidInputs.indexOf(stack)).amount == 0;
-            } else return false;
-        } else if (stack instanceof ItemStack) {
-            for (CountableIngredient ing : inputs) {
-                if (ing.getCount() != 0) continue;
-                for (ItemStack inputStack : ing.getIngredient().getMatchingStacks()) {
-                    if (inputStack.getItem() == ((ItemStack) stack).getItem()
-                            && inputStack.getItemDamage() == ((ItemStack) stack).getItemDamage()
-                            && Objects.equals(inputStack.getTagCompound(), ((ItemStack) stack).getTagCompound())) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        } else return false;
     }
 
     public List<FluidStack> getFluidOutputs() {
@@ -526,6 +504,10 @@ public class Recipe {
 
         public ItemStack getItemStack() {
             return itemStack.copy();
+        }
+
+        public ItemStack getItemStackRaw() {
+            return itemStack;
         }
 
         public int getChance() {
