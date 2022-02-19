@@ -9,6 +9,7 @@ import gregtech.integration.jei.recipe.RecipeMapCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.common.Loader;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +38,7 @@ public class RecipeProgressWidget extends ProgressWidget {
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
-        if (!GTValues.isModLoaded(GTValues.MODID_JEI))
+        if (!Loader.isModLoaded(GTValues.MODID_JEI))
             return false;
         if (isMouseOverElement(mouseX, mouseY) && RecipeMapCategory.getCategoryMap().containsKey(recipeMap)) {
             // Since categories were even registered at all, we know JEI is active.
@@ -58,7 +59,7 @@ public class RecipeProgressWidget extends ProgressWidget {
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
         super.drawInForeground(mouseX, mouseY);
-        if (isMouseOverElement(mouseX, mouseY) && GTValues.isModLoaded(GTValues.MODID_JEI)) {
+        if (isMouseOverElement(mouseX, mouseY) && Loader.isModLoaded(GTValues.MODID_JEI)) {
             Minecraft mc = Minecraft.getMinecraft();
             GuiUtils.drawHoveringText(Collections.singletonList(I18n.format("gui.widget.recipeProgressWidget.default_tooltip")), mouseX, mouseY,
                     sizes.getScreenWidth(),

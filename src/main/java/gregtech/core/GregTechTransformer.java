@@ -5,6 +5,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.core.util.TargetClassVisitor;
 import gregtech.core.visitors.*;
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import org.objectweb.asm.ClassReader;
@@ -69,8 +70,10 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 classReader.accept(new TargetClassVisitor(classWriter, EntityRendererVisitor.TARGET_METHOD, EntityRendererVisitor::new), 0);
                 return classWriter.toByteArray();
             }
-            case BlockVisitor.TARGET_CLASS_NAME:{
-                if (!GTValues.isModLoaded("team.chisel.ctm.CTM")) {
+            case BlockVisitor.TARGET_CLASS_NAME: {
+                try {
+                    Class.forName("team.chisel.ctm.CTM", false, Launch.classLoader);
+                } catch (ClassNotFoundException ignored) {
                     ClassReader classReader = new ClassReader(basicClass);
                     ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
                     ClassNode classNode = new ClassNode();
