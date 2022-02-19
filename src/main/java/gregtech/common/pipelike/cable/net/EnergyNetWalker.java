@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.pipenet.PipeNetWalker;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -12,9 +13,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class EnergyNetWalker extends PipeNetWalker {
 
@@ -25,7 +24,7 @@ public class EnergyNetWalker extends PipeNetWalker {
     }
 
     private final List<RoutePath> routes;
-    private Set<TileEntityCable> pipes = new HashSet<>();
+    private List<TileEntityCable> pipes = new ArrayList<>();
     private int loss;
 
     protected EnergyNetWalker(World world, BlockPos sourcePipe, int walkedBlocks, List<RoutePath> routes) {
@@ -37,13 +36,17 @@ public class EnergyNetWalker extends PipeNetWalker {
     protected PipeNetWalker createSubWalker(World world, BlockPos nextPos, int walkedBlocks) {
         EnergyNetWalker walker = new EnergyNetWalker(world, nextPos, walkedBlocks, routes);
         walker.loss = loss;
-        walker.pipes = new HashSet<>(pipes);
+        walker.pipes = new ArrayList<>(pipes);
         return walker;
     }
 
     @Override
     protected void checkPipe(IPipeTile<?, ?> pipeTile, BlockPos pos) {
-        pipes.add((TileEntityCable) pipeTile);
+        if (pipes.contains(pipeTile)) {
+            GTLog.logger.error("Pipe already listed!!!");
+        } else {
+            pipes.add((TileEntityCable) pipeTile);
+        }
         loss += ((TileEntityCable) pipeTile).getNodeData().getLossPerBlock();
     }
 
@@ -52,7 +55,7 @@ public class EnergyNetWalker extends PipeNetWalker {
         if (neighbourTile != null) {
             IEnergyContainer container = neighbourTile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, faceToNeighbour.getOpposite());
             if (container != null) {
-                routes.add(new RoutePath(new BlockPos(pipePos), faceToNeighbour, new HashSet<>(pipes), getWalkedBlocks(), loss));
+                routes.add(new RoutePath(new BlockPos(pipePos), faceToNeighbour, new ArrayList<>(pipes), getWalkedBlocks(), loss));
             }
         }
     }
