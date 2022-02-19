@@ -246,11 +246,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public void compileRecipe(Recipe recipe) {
-        if (recipe == null)
+        if (recipe == null) {
             return;
+        }
         // boolean flag = false;
-        List<List<AbstractMapIngredient>> items = fromRecipe(recipe, true);
-
+        List<List<AbstractMapIngredient>> items = fromRecipe(recipe);
         // Recipe r = recurseItemTreeFind(items, map, rr -> true);
         // if (r != null) {
         // Antimatter.LOGGER.warn("Recipe collision, adding both but only first is
@@ -395,7 +395,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     stack.add(f);
             }
             if (stack.size() > 0)
-                buildFromFluidStacks(list, stack, false);
+                buildFromFluidStacks(list, stack);
         }
         if (list.size() == 0)
             return null;
@@ -463,17 +463,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         List<AbstractMapIngredient> wr = items.get(index);
         // Iterate over current level of nodes.
         for (AbstractMapIngredient t : wr) {
-            Either<List<Recipe>, RecipeMap.Branch> result = map.nodes.get(t);
+            Either<Recipe, RecipeMap.Branch> result = map.nodes.get(t);
             if (result != null) {
                 // Either return recipe or continue branch.
-                Recipe r = result.map(left -> {
-                    for (Recipe recipe : left) {
-                        if (canHandle.test(recipe)) {
-                            return recipe;
-                        }
-                    }
-                    return null;
-                }, right -> callback(items, right, canHandle, index, count, skip));
+                Recipe r = result.map(recipe -> canHandle.test(recipe) ? recipe : null, right -> callback(items, right, canHandle, index, count, skip));
                 if (r != null) {
                     return r;
                 }
@@ -713,15 +706,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
         // Loop through NUMBER_OF_INGREDIENTS times.
         List<AbstractMapIngredient> current = ingredients.get(index);
-        Either<List<Recipe>, Branch> r;
+        Either<Recipe, Branch> r;
         for (AbstractMapIngredient obj : current) {
             // Either add the recipe or create a branch.
             r = map.nodes.compute(obj, (k, v) -> {
                 if (count == ingredients.size() - 1) {
                     if (v == null) {
-                        v = Either.left(new ObjectArrayList<>());
+                        v = Either.left(recipe);
                     }
-                    v.ifLeft(list -> list.add(recipe));
                     return v;
                 } else if (v == null) {
                     Branch traverse = new Branch();
@@ -730,8 +722,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 return v;
             });
             // At the end, return.
-            if (count == ingredients.size() - 1)
+            if (count == ingredients.size() - 1) {
                 continue;
+            }
             // If left was present before. Shouldn't be needed?
             /*
              * if (r.left().isPresent()) { Utils.onInvalidData("COLLISION DETECTED!");
@@ -746,34 +739,30 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return true;
     }
 
-    protected void buildFromFluids(List<List<AbstractMapIngredient>> builder, List<FluidStack> ingredients,
-                                   boolean insideMap) {
+    protected void buildFromFluids(List<List<AbstractMapIngredient>> builder, List<FluidStack> ingredients) {
         for (FluidStack t : ingredients) {
             builder.add(Collections.singletonList(new MapFluidIngredient(t)));
         }
     }
 
-    protected void buildFromFluidStacks(List<List<AbstractMapIngredient>> builder, List<FluidStack> ingredients,
-                                        boolean insideMap) {
+    protected void buildFromFluidStacks(List<List<AbstractMapIngredient>> builder, List<FluidStack> ingredients) {
         for (FluidStack t : ingredients) {
             builder.add(Collections.singletonList(new MapFluidIngredient(t)));
         }
     }
 
-    protected List<List<AbstractMapIngredient>> fromRecipe(Recipe r, boolean insideMap) {
-        List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(
-                (r.getInputs().size())
-                        + r.getFluidInputs().size());
+    protected List<List<AbstractMapIngredient>> fromRecipe(Recipe r) {
+        List<List<AbstractMapIngredient>> list = new ObjectArrayList<>((r.getInputs().size()) + r.getFluidInputs().size());
         if (r.getInputs().size() > 0) {
-            buildFromItems(list, r.getInputs(), insideMap);
+            buildFromItems(list, r.getInputs());
         }
         if (r.getFluidInputs().size() > 0) {
-            buildFromFluids(list, r.getFluidInputs(), insideMap);
+            buildFromFluids(list, r.getFluidInputs());
         }
         return list;
     }
 
-    protected void buildFromItems(List<List<AbstractMapIngredient>> list, List<CountableIngredient> ingredients, boolean insideMap) {
+    protected void buildFromItems(List<List<AbstractMapIngredient>> list, List<CountableIngredient> ingredients) {
         for (CountableIngredient r : ingredients) {
             Ingredient t = r.getIngredient();
             List<AbstractMapIngredient> inner = new ObjectArrayList<>(t.getMatchingStacks().length);
@@ -790,9 +779,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     List<AbstractMapIngredient> inner = new ObjectArrayList<>(t.getMatchingStacks().length);
                     for (ItemStack stack : t.getMatchingStacks()) {
                         //if (r.ignoreNbt()) {
-                        //    inner.add(new MapItemIngredient(stack.getItem(), insideMap));
+                        //    inner.add(new MapItemIngredient(stack.getItem()));
                         //} else {
-                        inner.add(new MapItemStackIngredient(stack, insideMap));
+                        inner.add(new MapItemStackIngredient(stack));
                         //}
                     }
                     list.add(inner);
@@ -830,8 +819,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
 
     public Collection<Recipe> getRecipeList() {
-        // return LOOKUP.getRecipes(true).sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList());
-        return Collections.unmodifiableList(new ArrayList<>(recipeSet));
+        return lookup.getRecipes(true).sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList());
+        // return Collections.unmodifiableList(new ArrayList<>(recipeSet));
     }
 
     public SoundEvent getSound() {
@@ -939,10 +928,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     protected static class Branch {
 
-        private Map<AbstractMapIngredient, Either<List<Recipe>, Branch>> nodes = new Object2ObjectOpenHashMap<>();
+        private Map<AbstractMapIngredient, Either<Recipe, Branch>> nodes = new Object2ObjectOpenHashMap<>();
 
         public Stream<Recipe> getRecipes(boolean filterHidden) {
-            Stream<Recipe> stream = nodes.values().stream().flatMap(t -> t.map(Collection::stream, branch -> branch.getRecipes(filterHidden)));
+            Stream<Recipe> stream = nodes.values().stream().flatMap(t -> t.map(Stream::of, branch -> branch.getRecipes(filterHidden)));
             if (filterHidden) {
                 stream = stream.filter(t -> !t.isHidden());
             }
@@ -950,8 +939,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
 
         public boolean removeRecipe(Recipe recipe) {
-            for (Map.Entry<AbstractMapIngredient, Either<List<Recipe>, Branch>> entry : nodes.entrySet()) {
-                if (entry.getValue().left().map(recipes -> recipes.removeIf(check -> check.equals(recipe))).orElse(false)) {
+            for (Map.Entry<AbstractMapIngredient, Either<Recipe, Branch>> entry : nodes.entrySet()) {
+                if (entry.getValue().left().map(check -> check.equals(recipe)).orElse(false)) {
                     return true;
                 } else if (entry.getValue().right().map(branch -> branch.removeRecipe(recipe)).orElse(false)) {
                     return true;
