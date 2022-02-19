@@ -76,7 +76,6 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
                 () -> (getPageNum(holder) + 1) + " / " + MAX_PAGES, true));
 
         builder.shouldColor(false);
-
         return builder.build(holder, entityPlayer);
     }
 
@@ -103,6 +102,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
         builder.widget(new SimpleTextWidget(85, 208, "", TEXT_COLOR,
                 () -> (getPageNum(holder) + 1) + " / " + MAX_PAGES, true));
 
+        builder.shouldColor(false);
         return builder.build(holder, entityPlayer);
     }
 
