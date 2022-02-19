@@ -12,7 +12,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.util.GTFluidUtils;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
@@ -73,7 +73,7 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
             TileEntity tileEntity = getWorld().getTileEntity(getPos().offset(getFrontFacing()));
             IFluidHandler fluidHandler = tileEntity == null ? null : tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getFrontFacing().getOpposite());
             if (fluidHandler != null) {
-                GTFluidUtils.transferFluids(fluidInventory, fluidHandler, Integer.MAX_VALUE);
+                GTTransferUtils.transferFluids(fluidInventory, fluidHandler, Integer.MAX_VALUE);
             }
         }
     }
@@ -115,7 +115,7 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart implem
     @Override
     public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
         super.removeFromMultiBlock(controllerBase);
-        this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false) ,new FluidTankList(false));
+        this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false), new FluidTankList(false));
     }
 
     @Override

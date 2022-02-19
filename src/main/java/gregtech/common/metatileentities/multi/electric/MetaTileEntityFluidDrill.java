@@ -19,6 +19,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -234,7 +235,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
     }
 
     public boolean fillTanks(FluidStack stack, boolean simulate) {
-        return MetaTileEntity.addFluidsToFluidHandler(outputFluidInventory, simulate, Collections.singletonList(stack));
+        return GTTransferUtils.addFluidsToFluidHandler(outputFluidInventory, simulate, Collections.singletonList(stack));
     }
 
     public int getEnergyTier() {

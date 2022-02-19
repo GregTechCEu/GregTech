@@ -9,6 +9,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.OreDictUnifier;
@@ -239,8 +240,8 @@ public class MinerLogic {
         // If the block's drops can fit in the inventory, move the previously mined position to the block
         // replace the ore block with cobblestone instead of breaking it to prevent mob spawning
         // remove the ore block's position from the mining queue
-        if (MetaTileEntity.addItemsToItemHandler(metaTileEntity.getExportItems(), true, blockDrops)) {
-            MetaTileEntity.addItemsToItemHandler(metaTileEntity.getExportItems(), false, blockDrops);
+        if (GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), true, blockDrops)) {
+            GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), false, blockDrops);
             world.setBlockState(blocksToMine.getFirst(), Blocks.COBBLESTONE.getDefaultState());
             mineX.set(blocksToMine.getFirst().getX());
             mineZ.set(blocksToMine.getFirst().getZ());
