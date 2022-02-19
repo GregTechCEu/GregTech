@@ -3,14 +3,12 @@ package gregtech.api.recipes.map;
 public abstract class AbstractMapIngredient {
 
     private final Class<? extends AbstractMapIngredient> objClass;
-    private final boolean insideMap;
 
     private int hash;
     private boolean hashed = false;
 
-    protected AbstractMapIngredient(boolean insideMap) {
+    protected AbstractMapIngredient() {
         this.objClass = getClass();
-        this.insideMap = insideMap;
     }
 
     protected abstract int hash();
@@ -31,12 +29,7 @@ public abstract class AbstractMapIngredient {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof AbstractMapIngredient) {
-            AbstractMapIngredient ing = (AbstractMapIngredient) obj;
-            if (ing.insideMap && this.insideMap) {
-                return this.objClass == ing.objClass;
-            } else {
-                return true;
-            }
+            return this.objClass == ((AbstractMapIngredient) obj).objClass;
         }
         return false;
     }

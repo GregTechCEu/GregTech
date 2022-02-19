@@ -10,8 +10,7 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
 
     public final ItemStack stack;
 
-    public MapItemStackIngredient(ItemStack stack, boolean insideMap) {
-        super(insideMap);
+    public MapItemStackIngredient(ItemStack stack) {
         this.stack = stack;
     }
 

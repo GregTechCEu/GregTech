@@ -28,13 +28,12 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
@@ -53,8 +52,11 @@ import java.util.stream.Stream;
 @ZenRegister
 public class RecipeMap<R extends RecipeBuilder<R>> {
 
-    private static final Map<String, RecipeMap<?>> RECIPE_MAP_REGISTRY = new HashMap<>();
-    public IChanceFunction chanceFunction = (chance, boostPerTier, tier) -> chance + (boostPerTier * tier);
+    private static final Map<String, RecipeMap<?>> RECIPE_MAP_REGISTRY = new Object2ReferenceOpenHashMap<>();
+    private static final Comparator<Recipe> RECIPE_DURATION_THEN_EU = Comparator.comparingInt(Recipe::getDuration).thenComparingInt(Recipe::getEUt).thenComparing(Recipe::hashCode);
+    private static final IChanceFunction DEFAULT_CHANCE_FUNCTION = (chance, boostPerTier, tier) -> chance + (boostPerTier * tier);
+
+    public IChanceFunction chanceFunction = DEFAULT_CHANCE_FUNCTION;
 
     public final String unlocalizedName;
 
@@ -70,27 +72,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected MoveType moveType;
     public final boolean isHidden;
 
-    private final Object2ObjectOpenHashMap<FluidKey, Set<Recipe>> recipeFluidMap = new Object2ObjectOpenHashMap<>();
-    private final Object2ObjectOpenHashMap<ItemStackKey, Set<Recipe>> recipeItemMap = new Object2ObjectOpenHashMap<>();
-
-    private final Branch LOOKUP = new Branch();
-    private final List<Recipe> RECIPES_TO_COMPILE = new ObjectArrayList<>();
-    private final Set<AbstractMapIngredient> ROOT = new ObjectOpenHashSet<>();
-    private static final ItemStack[] EMPTY_ITEM = new ItemStack[0];
-    private static final FluidStack[] EMPTY_FLUID = new FluidStack[0];
-
-
-    private static final Comparator<Recipe> RECIPE_DURATION_THEN_EU =
-            Comparator.comparingInt(Recipe::getDuration)
-                    .thenComparingInt(Recipe::getEUt)
-                    .thenComparing(Recipe::hashCode);
-
+    private final Branch lookup = new Branch();
+    private final Set<AbstractMapIngredient> root = new ObjectOpenHashSet<>();
     private final Set<Recipe> recipeSet = new TreeSet<>(RECIPE_DURATION_THEN_EU);
 
     private Consumer<RecipeBuilder<?>> onRecipeBuildAction;
-
     protected SoundEvent sound;
-
     private RecipeMap<?> smallRecipeMap;
 
     public RecipeMap(String unlocalizedName,
@@ -200,7 +187,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public Collection<Recipe> getRecipesForFluid(FluidStack fluid) {
-        return recipeFluidMap.getOrDefault(new FluidKey(fluid), Collections.emptySet());
+        return lookup.getRecipes(false).filter(r -> r.hasInputFluid(fluid)).collect(Collectors.toSet());
+        // return recipeFluidMap.getOrDefault(new FluidKey(fluid), Collections.emptySet());
     }
 
     public Collection<Recipe> getRecipesForFluid(FluidKey fluidKey) {
@@ -268,13 +256,17 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         // Antimatter.LOGGER.warn("Recipe collision, adding both but only first is
         // available.");
         // }
-        if (recurseItemTreeAdd(recipe, items, LOOKUP, 0, 0)) {
-            items.forEach(t -> t.forEach(ing -> ROOT.add(ing)));
+        if (recurseItemTreeAdd(recipe, items, lookup, 0, 0)) {
+            items.forEach(root::addAll);
         }
     }
 
     public boolean removeRecipe(Recipe recipe) {
-        //if we actually removed this recipe
+        if (recipeSet.remove(recipe)) {
+            lookup.removeRecipe(recipe);
+            return true;
+        }
+        /*
         if (recipeSet.remove(recipe)) {
             //also iterate trough fluid mappings and remove recipe from them
             recipeFluidMap.values().forEach(fluidMap ->
@@ -284,6 +276,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
             return true;
         }
+         */
         return false;
     }
 
@@ -369,15 +362,15 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         //if (minInputs > 0 && GTUtility.amountOfNonEmptyStacks(inputs) < minInputs) {
         //    return null;
         //}
-        return find(inputs.stream().filter(t -> t != null && !t.isEmpty()).toArray(ItemStack[]::new), fluidInputs.stream().filter(t -> t != null).toArray(FluidStack[]::new), a -> a.matches(false, inputs, fluidInputs, matchingMode));
+        return find(inputs.stream().filter(t -> t != null && !t.isEmpty()).toArray(ItemStack[]::new), fluidInputs.stream().filter(Objects::nonNull).toArray(FluidStack[]::new), a -> a.matches(false, inputs, fluidInputs, matchingMode));
     }
 
     public boolean acceptsItem(ItemStack item) {
-        return ROOT.contains(new MapItemStackIngredient(item, false));
+        return root.contains(new MapItemStackIngredient(item));
     }
 
     public boolean acceptsFluid(FluidStack fluid) {
-        return ROOT.contains(new MapFluidIngredient(fluid, false));
+        return root.contains(new MapFluidIngredient(fluid));
     }
 
     @Nullable
@@ -408,7 +401,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             return null;
         // Find recipe.
         // long current = System.nanoTime();
-        Recipe r = recurseItemTreeFind(list, LOOKUP, canHandle);
+        Recipe r = recurseItemTreeFind(list, lookup, canHandle);
         // Antimatter.LOGGER.info("Time to lookup (µs): " + ((System.nanoTime() -
         // current) / 1000));
 
@@ -444,8 +437,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         // Try each ingredient as a starting point, adding it to the skiplist.
         for (int i = 0; i < items.size(); i++) {
             Recipe r = recurseItemTreeFind(items, map, canHandle, i, 0, (1L << i));
-            if (r != null)
+            if (r != null) {
                 return r;
+            }
         }
         return null;
     }
@@ -462,14 +456,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      *                  recursion.
      * @return a recipe
      */
-    Recipe recurseItemTreeFind(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
-                               @Nonnull Predicate<Recipe> canHandle, int index, int count, long skip) {
-        if (count == items.size())
+    Recipe recurseItemTreeFind(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map, @Nonnull Predicate<Recipe> canHandle, int index, int count, long skip) {
+        if (count == items.size()) {
             return null;
+        }
         List<AbstractMapIngredient> wr = items.get(index);
         // Iterate over current level of nodes.
         for (AbstractMapIngredient t : wr) {
-            Either<List<Recipe>, RecipeMap.Branch> result = map.NODES.get(t);
+            Either<List<Recipe>, RecipeMap.Branch> result = map.nodes.get(t);
             if (result != null) {
                 // Either return recipe or continue branch.
                 Recipe r = result.map(left -> {
@@ -480,25 +474,15 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     }
                     return null;
                 }, right -> callback(items, right, canHandle, index, count, skip));
-                if (r != null)
+                if (r != null) {
                     return r;
-            }
-            if (map.SPECIAL_NODES.size() > 0) {
-                // Iterate over special nodes.
-                for (Tuple<AbstractMapIngredient, Either<Recipe, Branch>> tuple : map.SPECIAL_NODES) {
-                    AbstractMapIngredient special = tuple.getFirst();
-                    if (special.equals(t)) {
-                        return tuple.getSecond().map(r -> canHandle.test(r) ? r : null,
-                                branch -> callback(items, branch, canHandle, index, count, skip));
-                    }
                 }
             }
         }
         return null;
     }
 
-    private Recipe callback(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
-                            Predicate<Recipe> canHandle, int index, int count, long skip) {
+    private Recipe callback(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map, Predicate<Recipe> canHandle, int index, int count, long skip) {
         // We loop around items.size() if we reach the end.
         int counter = (index + 1) % items.size();
         while (counter != index) {
@@ -506,15 +490,16 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             if (((skip & (1L << counter)) == 0)) {
                 // Recursive call.
                 Recipe found = recurseItemTreeFind(items, map, canHandle, counter, count + 1, skip | (1L << counter));
-                if (found != null)
+                if (found != null) {
                     return found;
+                }
             }
             counter = (counter + 1) % items.size();
         }
         return null;
     }
 
-
+    /*
     @Nullable
     private Recipe findByInputsAndFluids(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, boolean exactVoltage) {
         HashSet<Recipe> iteratedRecipes = new HashSet<>();
@@ -585,6 +570,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         priorityRecipeMap.computeIfAbsent(p, k -> new LinkedList<>());
         priorityRecipeMap.get(p).add(recipe);
     }
+     */
 
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
@@ -730,7 +716,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         Either<List<Recipe>, Branch> r;
         for (AbstractMapIngredient obj : current) {
             // Either add the recipe or create a branch.
-            r = map.NODES.compute(obj, (k, v) -> {
+            r = map.nodes.compute(obj, (k, v) -> {
                 if (count == ingredients.size() - 1) {
                     if (v == null) {
                         v = Either.left(new ObjectArrayList<>());
@@ -752,10 +738,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
              * current.forEach(map.NODES::remove); return false; }
              */
             // should always be present but this gives no warning.
-            if (r.right().map(
-                            m -> !recurseItemTreeAdd(recipe, ingredients, m, (index + 1) % ingredients.size(), count + 1))
-                    .orElse(false)) {
-                current.forEach(map.NODES::remove);
+            if (r.right().map(m -> !recurseItemTreeAdd(recipe, ingredients, m, (index + 1) % ingredients.size(), count + 1)).orElse(false)) {
+                current.forEach(map.nodes::remove);
                 return false;
             }
         }
@@ -765,14 +749,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected void buildFromFluids(List<List<AbstractMapIngredient>> builder, List<FluidStack> ingredients,
                                    boolean insideMap) {
         for (FluidStack t : ingredients) {
-            builder.add(Collections.singletonList(new MapFluidIngredient(t, insideMap)));
+            builder.add(Collections.singletonList(new MapFluidIngredient(t)));
         }
     }
 
     protected void buildFromFluidStacks(List<List<AbstractMapIngredient>> builder, List<FluidStack> ingredients,
                                         boolean insideMap) {
         for (FluidStack t : ingredients) {
-            builder.add(Collections.singletonList(new MapFluidIngredient(t, insideMap)));
+            builder.add(Collections.singletonList(new MapFluidIngredient(t)));
         }
     }
 
@@ -794,7 +778,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             Ingredient t = r.getIngredient();
             List<AbstractMapIngredient> inner = new ObjectArrayList<>(t.getMatchingStacks().length);
             for (ItemStack stack : t.getMatchingStacks()) {
-                inner.add(new MapItemStackIngredient(stack, insideMap));
+                inner.add(new MapItemStackIngredient(stack));
             }
             list.add(inner);
             /*
@@ -824,7 +808,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         for (ItemStack t : ingredients) {
             //OreDictionary.getOreIDs()
             List<AbstractMapIngredient> ls = new ObjectArrayList<>(2);
-            ls.add(new MapItemStackIngredient(t, false));
+            ls.add(new MapItemStackIngredient(t));
             /*for (ResourceLocation rl : t.getItem().getTags()) {
                 ls.add(new MapTagIngredient(rl, false));
             }*/
@@ -846,6 +830,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
 
     public Collection<Recipe> getRecipeList() {
+        // return LOOKUP.getRecipes(true).sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList());
         return Collections.unmodifiableList(new ArrayList<>(recipeSet));
     }
 
@@ -954,32 +939,31 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     protected static class Branch {
 
-        private Map<AbstractMapIngredient, Either<List<Recipe>, Branch>> NODES = new Object2ObjectOpenHashMap<>();
-
-        private final List<Tuple<AbstractMapIngredient, Either<Recipe, Branch>>> SPECIAL_NODES = new ObjectArrayList<>();
+        private Map<AbstractMapIngredient, Either<List<Recipe>, Branch>> nodes = new Object2ObjectOpenHashMap<>();
 
         public Stream<Recipe> getRecipes(boolean filterHidden) {
-            Stream<Recipe> stream = NODES.values().stream()
-                    .flatMap(t -> t.map(Collection::stream, branch -> branch.getRecipes(filterHidden)));
-            if (SPECIAL_NODES.size() > 0) {
-                stream = Stream.concat(stream, SPECIAL_NODES.stream()
-                        .flatMap(t -> t.getSecond().map(Stream::of, branch -> branch.getRecipes(filterHidden))));
-            }
-            if (filterHidden)
+            Stream<Recipe> stream = nodes.values().stream().flatMap(t -> t.map(Collection::stream, branch -> branch.getRecipes(filterHidden)));
+            if (filterHidden) {
                 stream = stream.filter(t -> !t.isHidden());
+            }
             return stream;
         }
 
-        public void clear() {
-            NODES = new Object2ObjectOpenHashMap<>();
-            SPECIAL_NODES.clear();
+        public boolean removeRecipe(Recipe recipe) {
+            for (Map.Entry<AbstractMapIngredient, Either<List<Recipe>, Branch>> entry : nodes.entrySet()) {
+                if (entry.getValue().left().map(recipes -> recipes.removeIf(check -> check.equals(recipe))).orElse(false)) {
+                    return true;
+                } else if (entry.getValue().right().map(branch -> branch.removeRecipe(recipe)).orElse(false)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
-        public void finish() {
-            // NODES.forEach((k,v) -> v.ifRight(Branch::finish));
-            // this.NODES = ImmutableMap.<AbstractMapIngredient, Either<List<Recipe>,
-            // Branch>>builder().putAll(NODES).build();
+        public void clear() {
+            nodes = new Object2ObjectOpenHashMap<>();
         }
+
     }
 
 

@@ -11,8 +11,7 @@ public class MapFluidIngredient extends AbstractMapIngredient {
     public final Fluid fluid;
     public final NBTTagCompound tag;
 
-    public MapFluidIngredient(FluidStack stack, boolean insideMap) {
-        super(insideMap);
+    public MapFluidIngredient(FluidStack stack) {
         this.fluid = stack.getFluid();
         this.tag = stack.tag;
     }
