@@ -455,7 +455,7 @@ public class SeparationRecipes {
                 .output(dust, RareEarth, 5)
                 .output(dust, Phosphorus, 1)
                 .fluidOutputs(Oxygen.getFluid(4000))
-                .duration(400).EUt(VA[MV]).buildAndRegister();
+                .duration(610).EUt(VA[LV]).buildAndRegister();
 
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
