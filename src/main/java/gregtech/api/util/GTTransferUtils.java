@@ -197,6 +197,10 @@ public class GTTransferUtils {
         if (handler == null || stack.isEmpty()) {
             return stack;
         }
+        if (!stack.isStackable()) {
+            return insertToEmpty(handler, stack, simulate);
+        }
+
         int slots = handler.getSlots();
         for (int i = 0; i < slots; i++) {
             ItemStack slotStack = handler.getStackInSlot(i);
@@ -210,6 +214,9 @@ public class GTTransferUtils {
         return stack;
     }
 
+    /**
+     * Only inerts to empty slots. Perfect for not stackable items
+     */
     public static ItemStack insertToEmpty(IItemHandler handler, ItemStack stack, boolean simulate) {
         if (handler == null || stack.isEmpty()) {
             return stack;

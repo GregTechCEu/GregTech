@@ -42,11 +42,7 @@ public class EnergyNetWalker extends PipeNetWalker {
 
     @Override
     protected void checkPipe(IPipeTile<?, ?> pipeTile, BlockPos pos) {
-        if (pipes.contains(pipeTile)) {
-            GTLog.logger.error("Pipe already listed!!!");
-        } else {
-            pipes.add((TileEntityCable) pipeTile);
-        }
+        pipes.add((TileEntityCable) pipeTile);
         loss += ((TileEntityCable) pipeTile).getNodeData().getLossPerBlock();
     }
 
