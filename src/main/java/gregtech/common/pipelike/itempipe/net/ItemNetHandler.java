@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.util.FacingPos;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.*;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
@@ -318,14 +319,14 @@ public class ItemNetHandler implements IItemHandler {
 
     private ItemStack insert(IItemHandler handler, ItemStack stack, boolean simulate, int allowed, boolean ignoreLimit) {
         if (stack.getCount() == allowed) {
-            ItemStack re = ItemHandlerHelper.insertItemStacked(handler, stack, simulate);
+            ItemStack re = GTTransferUtils.insertItem(handler, stack, simulate);
             if (!ignoreLimit)
                 transfer(simulate, stack.getCount() - re.getCount());
             return re;
         }
         ItemStack toInsert = stack.copy();
         toInsert.setCount(Math.min(allowed, stack.getCount()));
-        int r = ItemHandlerHelper.insertItemStacked(handler, toInsert, simulate).getCount();
+        int r = GTTransferUtils.insertItem(handler, toInsert, simulate).getCount();
         if (!ignoreLimit)
             transfer(simulate, toInsert.getCount() - r);
         ItemStack remainder = stack.copy();

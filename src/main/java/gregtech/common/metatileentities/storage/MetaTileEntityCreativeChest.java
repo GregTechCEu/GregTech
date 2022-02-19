@@ -10,6 +10,8 @@ import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.cclop.ColourOperation;
@@ -22,7 +24,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -111,10 +112,10 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
                 return;
             stack.setCount(itemsPerCycle);
 
-            ItemStack remainder = ItemHandlerHelper.insertItemStacked(container, stack, true);
+            ItemStack remainder = GTTransferUtils.insertItem(container, stack, true);
             int amountToInsert = stack.getCount() - remainder.getCount();
             if (amountToInsert > 0) {
-                ItemHandlerHelper.insertItemStacked(container, stack, false);
+                GTTransferUtils.insertItem(container, stack, false);
             }
         }
     }
