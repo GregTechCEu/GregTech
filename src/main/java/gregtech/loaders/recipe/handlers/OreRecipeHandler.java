@@ -60,7 +60,7 @@ public class OreRecipeHandler {
             ItemStack ingotStack = OreDictUnifier.get(OrePrefix.ingot, smeltingResult);
 
             if (!ingotStack.isEmpty() && doesMaterialUseNormalFurnace(smeltingResult)) {
-                ModHandler.addSmeltingRecipe(new UnificationEntry(crushedPrefix, material), ingotStack);
+                ModHandler.addSmeltingRecipe(new UnificationEntry(crushedPrefix, material), ingotStack, 0.5f);
             }
         }
     }
@@ -112,7 +112,7 @@ public class OreRecipeHandler {
 
         //do not try to add smelting recipes for materials which require blast furnace
         if (!ingotStack.isEmpty() && doesMaterialUseNormalFurnace(smeltingMaterial)) {
-            ModHandler.addSmeltingRecipe(new UnificationEntry(orePrefix, material), ingotStack);
+            ModHandler.addSmeltingRecipe(new UnificationEntry(orePrefix, material), ingotStack, 0.5f);
         }
     }
 
@@ -318,7 +318,7 @@ public class OreRecipeHandler {
 
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
                 .input(dustPrefix, material)
-                .notConsumable(new IntCircuitIngredient(1))
+                .notConsumable(new IntCircuitIngredient(2))
                 .fluidInputs(Materials.Water.getFluid(100))
                 .outputs(dustStack)
                 .duration(8).EUt(4).buildAndRegister();
@@ -365,7 +365,7 @@ public class OreRecipeHandler {
 
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
                 .input(purePrefix, material)
-                .notConsumable(new IntCircuitIngredient(1))
+                .notConsumable(new IntCircuitIngredient(2))
                 .fluidInputs(Materials.Water.getFluid(100))
                 .outputs(dustStack)
                 .duration(8).EUt(4).buildAndRegister();

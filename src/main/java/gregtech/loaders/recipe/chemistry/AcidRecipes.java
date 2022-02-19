@@ -103,14 +103,6 @@ public class AcidRecipes {
                 .duration(240).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
-                .fluidInputs(NitrogenDioxide.getFluid(2000))
-                .fluidInputs(Water.getFluid(1000))
-                .fluidInputs(Oxygen.getFluid(1000))
-                .fluidOutputs(NitricAcid.getFluid(2000))
-                .duration(240).EUt(VA[LV]).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(3))
                 .fluidInputs(Water.getFluid(1000))
                 .fluidInputs(Oxygen.getFluid(1000))

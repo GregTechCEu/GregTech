@@ -1,5 +1,6 @@
 package gregtech.api.capability.impl;
 
+import gregtech.Bootstrap;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -10,7 +11,6 @@ import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Bootstrap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -22,8 +22,8 @@ import static org.junit.Assert.*;
 public class AbstractRecipeLogicTest {
 
     @BeforeClass
-    public static void init() {
-        Bootstrap.register();
+    public static void bootstrap() {
+        Bootstrap.perform();
     }
 
     @Test

@@ -353,11 +353,11 @@ public class SecondDegreeMaterials {
                 .components(HydrochloricAcid, 1, Water, 1)
                 .build();
 
-
         Flint = new Material.Builder(2049, "flint")
                 .gem(1)
                 .color(0x002040).iconSet(FLINT)
                 .flags(NO_SMASHING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING)
+                .components(SiliconDioxide, 1)
                 .toolStats(6, 4, 80, 10, true)
                 .build();
 

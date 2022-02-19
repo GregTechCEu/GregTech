@@ -24,10 +24,6 @@ public class CraftingRecipeMemory {
         this.memorizedRecipes = new MemorizedRecipe[memorySize];
     }
 
-    public int getMemorySize() {
-        return memorizedRecipes.length;
-    }
-
     public void loadRecipe(int index, IItemHandlerModifiable craftingGrid) {
         MemorizedRecipe recipe = memorizedRecipes[index];
         if (recipe != null) {
@@ -152,10 +148,6 @@ public class CraftingRecipeMemory {
 
         public void setRecipeLocked(boolean recipeLocked) {
             this.recipeLocked = recipeLocked;
-        }
-
-        public int getTimesUsed() {
-            return timesUsed;
         }
     }
 

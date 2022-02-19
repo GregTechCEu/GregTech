@@ -160,7 +160,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Coal = new Material.Builder(271, "coal")
-                .gem(1, 1600).ore() //default coal burn time in vanilla
+                .gem(1, 1600).ore(2, 1) //default coal burn time in vanilla
                 .color(0x464646).iconSet(LIGNITE)
                 .flags(FLAMMABLE, NO_SMELTING, NO_SMASHING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
@@ -787,7 +787,7 @@ public class FirstDegreeMaterials {
                 .ingot(0).fluid()
                 .color(0x3C3C3C).iconSet(METALLIC)
                 .flags(GENERATE_RING)
-                .components(Nickel, 1, Zinc, 1, Iron, 4)
+                .components(Nickel, 1, Zinc, 1, Iron, 4, Oxygen, 8)
                 .build();
 
         SiliconDioxide = new Material.Builder(356, "silicon_dioxide")

@@ -10,6 +10,7 @@ import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
@@ -17,7 +18,9 @@ import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
@@ -386,5 +389,42 @@ public class MiscRecipeLoader {
                 .input(block, Neutronium, 64)
                 .output(NAN_CERTIFICATE)
                 .duration(Integer.MAX_VALUE).EUt(VA[ULV]).buildAndRegister();
+
+        // Fertilizer
+        MIXER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.DIRT))
+                .input(dust, Wood, 2)
+                .inputs(new ItemStack(Blocks.SAND, 4))
+                .fluidInputs(Water.getFluid(1000))
+                .output(FERTILIZER, 4)
+                .duration(100).EUt(VA[LV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite)       .input(dust, Sulfur)             .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite)       .input(dust, TricalciumPhosphate).fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite)       .input(dust, Phosphate)          .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite)       .input(dust, Ash, 3)       .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 1).duration(100).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite)       .input(dust, DarkAsh)            .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 1).duration(100).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium)       .input(dust, Sulfur)             .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium)       .input(dust, TricalciumPhosphate).fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 4).duration(400).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium)       .input(dust, Phosphate)          .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium)       .input(dust, Ash, 3)       .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium)       .input(dust, DarkAsh)            .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite)       .input(dust, Sulfur)             .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite)       .input(dust, TricalciumPhosphate).fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 4).duration(400).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite)       .input(dust, Phosphate)          .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite)       .input(dust, Ash, 3)       .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite)       .input(dust, DarkAsh)            .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, Sulfur)             .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, TricalciumPhosphate).fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 4).duration(400).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, Phosphate)          .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, Ash, 3)       .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, DarkAsh)            .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .input(FERTILIZER)
+                .output(dust, Calcite)
+                .output(dust, Carbon)
+                .fluidOutputs(Water.getFluid(1000))
+                .duration(100).EUt(VA[LV]).buildAndRegister();
     }
 }

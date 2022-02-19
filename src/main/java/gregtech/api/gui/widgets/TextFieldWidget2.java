@@ -316,10 +316,10 @@ public class TextFieldWidget2 extends Widget {
                 }
                 return true;
             }
-            if(keyCode == Keyboard.KEY_DELETE && text.length() > 0) {
+            if (keyCode == Keyboard.KEY_DELETE && text.length() > 0) {
                 if (cursorPos != cursorPos2) {
                     replaceMarkedText(null);
-                } else if(cursorPos < text.length()) {
+                } else if (cursorPos < text.length()) {
                     String t1 = text.substring(0, cursorPos);
                     String t2 = text.substring(cursorPos + 1);
                     text = t1 + t2;
@@ -395,6 +395,12 @@ public class TextFieldWidget2 extends Widget {
             text = buffer.readString(maxLength);
             setter.accept(text);
             initialised = true;
+            if (cursorPos > text.length()) {
+                cursorPos = text.length();
+            }
+            if (cursorPos2 > text.length()) {
+                cursorPos2 = text.length();
+            }
         }
     }
 
