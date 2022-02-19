@@ -17,6 +17,7 @@ import java.util.Objects;
 public class EnergyNetHandler implements IEnergyContainer {
 
     private EnergyNet net;
+    private boolean transfer;
     private final TileEntityCable cable;
     private final EnumFacing facing;
 
@@ -45,7 +46,13 @@ public class EnergyNetHandler implements IEnergyContainer {
     }
 
     @Override
+    public long getEnergyCanBeInserted() {
+        return transfer ? 0 : getEnergyCapacity();
+    }
+
+    @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+        if (transfer) return 0;
         if (side == null) {
             if (facing == null) return 0;
             side = facing;
@@ -77,7 +84,9 @@ public class EnergyNetHandler implements IEnergyContainer {
                 }
             }
 
+            transfer = true;
             long amps = dest.acceptEnergyFromNetwork(facing, v, amperage - amperesUsed);
+            transfer = false;
             if(amps == 0)
                 continue;
             amperesUsed += amps;
