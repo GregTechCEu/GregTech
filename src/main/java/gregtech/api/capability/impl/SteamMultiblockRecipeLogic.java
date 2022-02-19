@@ -5,6 +5,7 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
@@ -158,7 +159,9 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
                 ventingSide.getXOffset() / 2.0,
                 ventingSide.getYOffset() / 2.0,
                 ventingSide.getZOffset() / 2.0, 0.1);
-        world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        if (ConfigHolder.machines.machineSounds && !metaTileEntity.isMuffled()){
+            world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        }
 
     }
 }
