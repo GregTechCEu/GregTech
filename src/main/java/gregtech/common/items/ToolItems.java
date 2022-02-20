@@ -102,8 +102,14 @@ public class ToolItems {
                 .toolClasses("pickaxe")
                 .aoeData(1, 1, 0)
                 .build();
+        AXE = ItemGTTool.Builder.of(GTValues.MODID, "axe")
+                .toolStats(b -> b.damagePerBlockBreak().usedForAttacking())
+                .oreDicts("craftingToolAxe")
+                .toolClasses("axe")
+                .build();
         TOOLS.add(WRENCH);
         TOOLS.add(PICKAXE);
+        TOOLS.add(AXE);
     }
 
     public static void registerModels() {
