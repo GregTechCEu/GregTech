@@ -183,7 +183,8 @@ public class ClientProxy extends CommonProxy {
                 tooltips.add(TextFormatting.YELLOW + oreDictItem.OREDICT_TO_FORMULA.get(oreDictName.get()));
             }
         } else if (unificationEntry != null && unificationEntry.material != null) {
-            tooltips.add(TextFormatting.YELLOW + unificationEntry.material.getChemicalFormula());
+            if (unificationEntry.material.getChemicalFormula() != null && !unificationEntry.material.getChemicalFormula().isEmpty())
+                tooltips.add(TextFormatting.YELLOW + unificationEntry.material.getChemicalFormula());
         } else if (ItemNBTUtils.hasTag(itemStack)) { // Test for Fluids
             // Vanilla bucket
             tooltips = FluidTooltipUtil.getFluidTooltip(ItemNBTUtils.getString(itemStack, "FluidName"));
@@ -204,7 +205,7 @@ public class ClientProxy extends CommonProxy {
 
         if (tooltips != null) {
             for (String s : tooltips) {
-                if (s.isEmpty()) continue;
+                if (s == null || s.isEmpty()) continue;
                 event.getToolTip().add(s);
             }
         }
