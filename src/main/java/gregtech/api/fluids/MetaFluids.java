@@ -28,7 +28,10 @@ import net.minecraftforge.fluids.FluidRegistry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class MetaFluids {
 
@@ -156,7 +159,7 @@ public class MetaFluids {
      */
     private static void registerIconFluidSprites() {
         for (MaterialIconSet materialIconSet : MaterialIconSet.ICON_SETS.values()) {
-            fluidSprites.add(new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + materialIconSet.name.toLowerCase(Locale.ROOT) + "/fluid"));
+            fluidSprites.add(new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + materialIconSet.getName() + "/fluid"));
         }
     }
 
