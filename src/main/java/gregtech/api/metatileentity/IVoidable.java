@@ -25,6 +25,8 @@ public interface IVoidable {
         VOID_FLUIDS("gregtech.gui.multiblock_fluid_voiding"),
         VOID_BOTH("gregtech.gui.multiblock_item_fluid_voiding");
 
+        public static final VoidingMode[] VALUES = values();
+
         public final String localeName;
 
         VoidingMode(String name) {

@@ -9,6 +9,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.CycleButtonWidget;
+import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
@@ -345,9 +346,9 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                 .setMaxWidthLimit(156)
                 .setClickHandler(this::handleDisplayClick));
         if(shouldShowVoidingModeButton()) {
-            builder.widget(new CycleButtonWidget(142, 121 - 16, 26, 18,
-                    VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
-                    .setTooltipHoverString(LocalizationUtils.format("gregtech.gui.multiblock_voiding_description")));
+            builder.widget(new ImageCycleButtonWidget(149, 121 - 17, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
+                    4, this::getVoidingMode, this::setVoidingMode)
+                    .setTooltipHoverString(this::getVoidingModeTooltip));
         }
         builder.bindPlayerInventory(entityPlayer.inventory, 134);
         return builder;
@@ -357,16 +358,16 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return true;
     }
 
-    protected VoidingMode getVoidingMode() {
-        return voidingMode;
+    protected int getVoidingMode() {
+        return voidingMode.ordinal();
     }
 
-    private void setVoidingMode(VoidingMode mode) {
-        this.voidingMode = mode;
+    private void setVoidingMode(int mode) {
+        this.voidingMode = VoidingMode.VALUES[mode];
 
-        this.voidingFluids = mode.ordinal() >= 2;
+        this.voidingFluids = mode >= 2;
 
-        this.voidingItems = mode.ordinal() == 1 || mode.ordinal() == 3;
+        this.voidingItems = mode == 1 || mode == 3;
 
         // After changing the voiding mode, reset the notified buses in case a recipe can run now that voiding mode has been changed
         for(IFluidTank tank : this.getAbilities(MultiblockAbility.IMPORT_FLUIDS)) {
@@ -376,6 +377,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
 
         this.getHolder().markDirty();
+    }
+
+    private String getVoidingModeTooltip(int mode) {
+        return VoidingMode.VALUES[mode].getName();
     }
 
     @Override
