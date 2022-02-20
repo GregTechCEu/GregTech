@@ -625,22 +625,22 @@ public class MachineRecipeLoader {
 
         // Phosphorus Recipes
         BLAST_RECIPES.recipeBuilder()
-                .input(dust, Apatite, 2)
+                .input(dust, Apatite, 6)
                 .input(dust, SiliconDioxide, 9)
-                .input(dust, Carbon, 15)
-                .output(dust, Phosphorus, 6)
-                .output(dust, CalciumMetasilicate, 9)
+                .input(dust, Carbon, 5)
+                .output(dust, Phosphorus, 2)
+                .output(dust, CalciumMetasilicate, 15)
                 .output(dust, CalciumChloride, 1)
-                .fluidOutputs(CarbonMonoxide.getFluid(15000))
+                .fluidOutputs(CarbonMonoxide.getFluid(5000))
                 .blastFurnaceTemp(1650)
                 .duration(400).EUt(VA[MV]).buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder()
-                .input(dust, TricalciumPhosphate, 1)
-                .input(dust, SiliconDioxide, 3)
+                .input(dust, TricalciumPhosphate, 5)
+                .input(dust, SiliconDioxide, 9)
                 .input(dust, Carbon, 5)
                 .output(dust, Phosphorus, 2)
-                .output(dust, CalciumMetasilicate, 3)
+                .output(dust, CalciumMetasilicate, 15)
                 .fluidOutputs(CarbonMonoxide.getFluid(5000))
                 .blastFurnaceTemp(1800)
                 .duration(400).EUt(VA[MV]).buildAndRegister();
