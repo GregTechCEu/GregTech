@@ -1,6 +1,5 @@
 package gregtech.api.fluids;
 
-import com.google.common.collect.ImmutableMap;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.fluidType.FluidType;
@@ -187,7 +186,15 @@ public class MetaFluids {
      * @param textureLocation the location of the texture to use
      */
     public static void setMaterialFluidTexture(Material material, FluidType fluidType, ResourceLocation textureLocation) {
-        fluidTextureMap.put(material, ImmutableMap.of(fluidType, textureLocation));
+        fluidTextureMap.computeIfAbsent(material, key -> {
+            Map<FluidType, ResourceLocation> map = new Object2ObjectOpenHashMap<>();
+            map.put(fluidType, textureLocation);
+            return map;
+        }).computeIfAbsent(fluidType, key -> {
+            Map<FluidType, ResourceLocation> map = fluidTextureMap.get(material);
+            map.put(fluidType, textureLocation);
+            return textureLocation;
+        });
         fluidSprites.add(textureLocation);
     }
 
@@ -210,15 +217,21 @@ public class MetaFluids {
         // if the material is still not registered by this point, register it
         if (fluid == null) {
             // determine texture for use
-            ResourceLocation textureLocation;
-            ResourceLocation defaultTextureLocation = fluidType.equals(FluidTypes.PLASMA) ? AUTO_GENERATED_PLASMA_TEXTURE : MaterialIconType.fluid.getBlockPath(material.getMaterialIconSet());
-
-            if (fluidTextureMap.containsKey(material)) {
-                textureLocation = fluidTextureMap.get(material).getOrDefault(fluidType, defaultTextureLocation);
-            } else {
-                fluidTextureMap.put(material, ImmutableMap.of(fluidType, defaultTextureLocation));
-                textureLocation = defaultTextureLocation;
-            }
+            ResourceLocation textureLocation = fluidTextureMap.computeIfAbsent(material, key -> {
+                Map<FluidType, ResourceLocation> map = new Object2ObjectOpenHashMap<>();
+                if (fluidType.equals(FluidTypes.PLASMA))
+                    map.put(fluidType, AUTO_GENERATED_PLASMA_TEXTURE);
+                else
+                    map.put(fluidType, MaterialIconType.fluid.getBlockPath(material.getMaterialIconSet()));
+                return map;
+            }).computeIfAbsent(fluidType, key -> {
+                Map<FluidType, ResourceLocation> map = fluidTextureMap.get(material);
+                if (fluidType.equals(FluidTypes.PLASMA))
+                    map.put(fluidType, AUTO_GENERATED_PLASMA_TEXTURE);
+                else
+                    map.put(fluidType, MaterialIconType.fluid.getBlockPath(material.getMaterialIconSet()));
+                return map.get(fluidType);
+            });
 
             // create the new fluid
             fluid = new MaterialFluid(fluidName, material, fluidType, textureLocation);
