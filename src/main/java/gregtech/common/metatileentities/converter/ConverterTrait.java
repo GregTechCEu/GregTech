@@ -91,9 +91,7 @@ public class ConverterTrait extends MTETrait {
         long original = amount;
         IItemHandlerModifiable inventory = getInventory();
         for (int i = 0; i < inventory.getSlots() && amount > 0; i++) {
-            IElectricItem electricItem = getBatteryContainer(inventory.getStackInSlot(i));
-            if (electricItem == null) continue;
-            amount -= electricItem.charge(amount, tier, false, simulate);
+            amount -= chargeStack(inventory.getStackInSlot(i), amount, simulate);
         }
         return original - amount;
     }
@@ -110,18 +108,70 @@ public class ConverterTrait extends MTETrait {
         // then from batteries
         IItemHandlerModifiable inventory = getInventory();
         for (int i = 0; i < inventory.getSlots() && amount > 0; i++) {
-            IElectricItem electricItem = getBatteryContainer(inventory.getStackInSlot(i));
-            if (electricItem == null) continue;
-            amount -= electricItem.discharge(amount, tier, false, false, simulate);
+            amount -= dischargeStack(inventory.getStackInSlot(i), amount, simulate);
         }
         return original - amount;
     }
 
-    public IElectricItem getBatteryContainer(ItemStack itemStack) {
-        IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (electricItem != null && electricItem.canProvideChargeExternally())
-            return electricItem;
-        return null;
+    /** @return the amount charged into the battery */
+    public long chargeStack(ItemStack stack, long amount, boolean simulate) {
+        if (stack.isEmpty()) return 0;
+        IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (electricItem != null) {
+            return electricItem.charge(amount, tier, false, simulate);
+        } else {
+            IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);
+            if (storage != null) {
+                return storage.receiveEnergy(FeCompat.toFe(amount, false), simulate);
+            }
+        }
+        return 0;
+    }
+
+    /** @return the amount discharged from the battery */
+    public long dischargeStack(ItemStack stack, long amount, boolean simulate) {
+        if (stack.isEmpty()) return 0;
+        IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (electricItem != null) {
+            if (!electricItem.canProvideChargeExternally()) return 0;
+            return electricItem.discharge(amount, tier, false, false, simulate);
+        } else {
+            IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);
+            if (storage != null) {
+                return storage.extractEnergy(FeCompat.toFe(amount, false), simulate);
+            }
+        }
+        return 0;
+    }
+
+    /** @return the amount of charge in the battery */
+    public long getChargeFromStack(ItemStack stack) {
+        if (stack.isEmpty()) return 0;
+        IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (electricItem != null) {
+            return electricItem.getCharge();
+        } else {
+            IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);
+            if (storage != null) {
+                return FeCompat.toEu(storage.getEnergyStored(), true);
+            }
+        }
+        return 0;
+    }
+
+    /** @return the max amount of charge for the battery */
+    public long getMaxChargeFromStack(ItemStack stack) {
+        if (stack.isEmpty()) return 0;
+        IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (electricItem != null) {
+            return electricItem.getMaxCharge();
+        } else {
+            IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);
+            if (storage != null) {
+                return FeCompat.toEu(storage.getMaxEnergyStored(), true);
+            }
+        }
+        return 0;
     }
 
     protected IItemHandlerModifiable getInventory() {
@@ -258,10 +308,8 @@ public class ConverterTrait extends MTETrait {
             long energyStored = storedEU;
             IItemHandlerModifiable inventory = getInventory();
             for (int i = 0; i < inventory.getSlots(); i++) {
-                IElectricItem electricItem = getBatteryContainer(inventory.getStackInSlot(i));
-                if (electricItem == null) continue;
-                energyStored = LongMath.saturatedAdd(electricItem.getCharge(), energyStored);
-                if (energyStored == Long.MAX_VALUE) break;
+                energyStored = LongMath.saturatedAdd(getChargeFromStack(inventory.getStackInSlot(i)), energyStored);
+                if (energyStored == Long.MAX_VALUE) return Long.MAX_VALUE;
             }
             return energyStored;
         }
@@ -271,25 +319,15 @@ public class ConverterTrait extends MTETrait {
             long energyStored = baseCapacity;
             IItemHandlerModifiable inventory = getInventory();
             for (int i = 0; i < inventory.getSlots(); i++) {
-                IElectricItem electricItem = getBatteryContainer(inventory.getStackInSlot(i));
-                if (electricItem == null) continue;
-                energyStored = LongMath.saturatedAdd(electricItem.getMaxCharge(), energyStored);
-                if (energyStored == Long.MAX_VALUE) break;
+                energyStored = LongMath.saturatedAdd(getMaxChargeFromStack(inventory.getStackInSlot(i)), energyStored);
+                if (energyStored == Long.MAX_VALUE) return Long.MAX_VALUE;
             }
             return energyStored;
         }
 
         @Override
         public long getInputAmperage() {
-            int inputAmperage = 0;
-            IItemHandlerModifiable inventory = getInventory();
-            for (int i = 0; i < inventory.getSlots(); i++) {
-                ItemStack batteryStack = inventory.getStackInSlot(i);
-                IElectricItem electricItem = getBatteryContainer(batteryStack);
-                if (electricItem == null) continue;
-                inputAmperage++;
-            }
-            return inputAmperage > 0 ? inputAmperage : baseAmps;
+            return baseAmps;
         }
 
         @Override
