@@ -179,7 +179,7 @@ public class ToolItems {
     // Handle Saws harvesting Ice Blocks correctly
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onHarvestDrops(BlockEvent.HarvestDropsEvent event) {
-        if (!event.isSilkTouching() && event.getState().getBlock() == Blocks.ICE) {
+        if (!event.isSilkTouching() && event.getHarvester() != null && event.getState().getBlock() == Blocks.ICE) {
             ItemStack stack = event.getHarvester().getHeldItemMainhand();
             Item item = stack.getItem();
             if (item == SAW) {
