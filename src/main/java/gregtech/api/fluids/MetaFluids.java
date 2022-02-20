@@ -66,9 +66,10 @@ public class MetaFluids {
             FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);
 
             if (fluidProperty != null && fluidProperty.getFluid() == null) {
-                int temperature = fluidProperty.getFluidTemperature();
+                int temperature = Math.max(material.getBlastTemperature(), fluidProperty.getFluidTemperature());
                 Fluid fluid = registerFluid(material, fluidProperty.getFluidType(), temperature, fluidProperty.hasBlock());
                 fluidProperty.setFluid(fluid);
+                fluidProperty.setFluidTemperature(fluid.getTemperature());
             }
 
             PlasmaProperty plasmaProperty = material.getProperty(PropertyKey.PLASMA);
@@ -82,6 +83,7 @@ public class MetaFluids {
 
     public static void handleNonMaterialFluids(@Nonnull Material material, @Nonnull Fluid fluid) {
         material.getProperty(PropertyKey.FLUID).setFluid(fluid);
+        material.getProperty(PropertyKey.FLUID).setFluidTemperature(fluid.getTemperature());
         List<String> tooltip = new ArrayList<>();
         if (!material.getChemicalFormula().isEmpty()) {
             tooltip.add(TextFormatting.YELLOW + material.getChemicalFormula());
@@ -235,7 +237,6 @@ public class MetaFluids {
 
             // create the new fluid
             fluid = new MaterialFluid(fluidName, material, fluidType, textureLocation);
-
             fluid.setTemperature(temperature);
             if (material.hasFluidColor())
                 fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));

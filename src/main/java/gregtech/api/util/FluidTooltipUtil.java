@@ -92,7 +92,7 @@ public class FluidTooltipUtil {
      */
     @Nonnull
     public static List<String> getWaterTooltip() {
-        return getMaterialTooltip(Materials.Water);
+        return getMaterialTooltip(Materials.Water, Materials.Water.getProperty(PropertyKey.FLUID).getFluidTemperature());
     }
 
     /**
@@ -100,15 +100,15 @@ public class FluidTooltipUtil {
      */
     @Nonnull
     public static List<String> getLavaTooltip() {
-        return getMaterialTooltip(Materials.Lava);
+        return getMaterialTooltip(Materials.Lava, Materials.Lava.getProperty(PropertyKey.FLUID).getFluidTemperature());
     }
 
     @Nonnull
-    public static List<String> getMaterialTooltip(@Nonnull Material material) {
+    public static List<String> getMaterialTooltip(@Nonnull Material material, int temperature) {
         List<String> tooltip = new ArrayList<>();
         if (!material.getChemicalFormula().isEmpty())
             tooltip.add(TextFormatting.YELLOW + material.getChemicalFormula());
-        tooltip.add(LocalizationUtils.format("gregtech.fluid.temperature", material.getProperty(PropertyKey.FLUID).getFluidTemperature()));
+        tooltip.add(LocalizationUtils.format("gregtech.fluid.temperature", temperature));
         tooltip.add(LocalizationUtils.format(material.getProperty(PropertyKey.FLUID).getFluidType().getUnlocalizedTooltip()));
         tooltip.addAll(material.getProperty(PropertyKey.FLUID).getFluidType().getAdditionalTooltips());
         return tooltip;
