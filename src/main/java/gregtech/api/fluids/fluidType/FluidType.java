@@ -1,14 +1,10 @@
 package gregtech.api.fluids.fluidType;
 
 import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.liquid.ILiquidStack;
-import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTLog;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fml.common.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -29,7 +25,7 @@ public abstract class FluidType {
     private final String name;
     private final String prefix;
     private final String suffix;
-    private final String localization;
+    protected final String localization;
 
     public FluidType(@Nonnull String name, @Nullable String prefix, @Nullable String suffix, @Nonnull String localization) {
         if (FLUID_TYPES.get(name) != null)
