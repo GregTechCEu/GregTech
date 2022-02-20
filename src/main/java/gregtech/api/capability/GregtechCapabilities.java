@@ -1,11 +1,10 @@
 package gregtech.api.capability;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.impl.EUToFEItemProvider;
 import gregtech.api.capability.impl.EUToFEProvider;
 import gregtech.api.capability.tool.*;
 import gregtech.api.terminal.hardware.HardwareProvider;
-import net.minecraft.item.ItemStack;
+import gregtech.common.metatileentities.converter.ConverterTrait;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -48,15 +47,13 @@ public class GregtechCapabilities {
     @CapabilityInject(HardwareProvider.class)
     public static Capability<HardwareProvider> CAPABILITY_HARDWARE_PROVIDER = null;
 
+    @CapabilityInject(ConverterTrait.class)
+    public static Capability<ConverterTrait> CAPABILITY_CONVERTER = null;
+
     private static final ResourceLocation CAPABILITY_EU_TO_FE = new ResourceLocation(GTValues.MODID, "fe_capability");
 
     @SubscribeEvent
     public static void attachTileCapability(AttachCapabilitiesEvent<TileEntity> event) {
         event.addCapability(CAPABILITY_EU_TO_FE, new EUToFEProvider(event.getObject()));
-    }
-
-    @SubscribeEvent
-    public static void attachItemCapability(AttachCapabilitiesEvent<ItemStack> event) {
-        event.addCapability(new ResourceLocation(GTValues.MODID, "fe_item_capability"), new EUToFEItemProvider(event.getObject()));
     }
 }

@@ -185,6 +185,9 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
             return side != (converterTrait.isFeToEu() ? frontFacing : null) ?
                     CapabilityEnergy.ENERGY.cast(converterTrait.getEnergyFEContainer()) : null;
         }
+        if (capability == GregtechCapabilities.CAPABILITY_CONVERTER) {
+            return GregtechCapabilities.CAPABILITY_CONVERTER.cast(converterTrait);
+        }
         return super.getCapability(capability, side);
     }
 

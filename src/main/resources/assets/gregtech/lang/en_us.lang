@@ -32,6 +32,9 @@ gregtech.top.transform_down=§aStep Down§r
 gregtech.top.transform_input=§6Input:§r
 gregtech.top.transform_output=§9Output:§r
 
+gregtech.top.convert_eu=§eConverting EU§r
+gregtech.top.convert_fe=§cConverting FE§r
+
 gregtech.top.fuel_burn=for
 gregtech.top.fuel_time=secs
 gregtech.top.fuel_min_consume=needs
@@ -3533,9 +3536,9 @@ gregtech.machine.energy_converter.max.8.name=MAX Energy Converter (8A)
 gregtech.machine.energy_converter.max.16.name=MAX Energy Converter (16A)
 
 gregtech.machine.energy_converter.tooltip_tool_usage=Use Soft Hammer to invert (Starts as FE Converter)
-gregtech.machine.energy_converter.tooltip_conversion_fe=Forge Conversion: §4%,dFE§7 -> §a%,dA %,dEU (§r%s§a)
+gregtech.machine.energy_converter.tooltip_conversion_fe=Forge Conversion: §c%,dFE§7 -> §a%,dA %,dEU (§r%s§a)
 gregtech.machine.energy_converter.message_conversion_fe=Converting Forge Energy, In: %dFE, Out: %dA %dEU
-gregtech.machine.energy_converter.tooltip_conversion_eu=EU Conversion: §a%,dA %,dEU (§r%s§a)§7 -> §4%,dFE
+gregtech.machine.energy_converter.tooltip_conversion_eu=EU Conversion: §a%,dA %,dEU (§r%s§a)§7 -> §c%,dFE
 gregtech.machine.energy_converter.message_conversion_eu=Converting EU, In: %dA %dEU, Out: %dFE
 
 # Pumps
