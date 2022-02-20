@@ -1411,12 +1411,5 @@ public class FirstDegreeMaterials {
                 .flags()
                 .components(Calcium, 2, Niobium, 2, Oxygen, 7)
                 .build();
-
-        CalciumMetasilicate = new Material.Builder(450, "calcium_metasilicate")
-                .dust()
-                .color(0xF0F3FA).iconSet(DULL)
-                .flags(DECOMPOSITION_BY_ELECTROLYZING)
-                .components(Calcium, 1, Silicon, 1, Oxygen, 3)
-                .build();
     }
 }

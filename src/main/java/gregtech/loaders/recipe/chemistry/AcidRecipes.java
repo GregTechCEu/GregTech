@@ -152,6 +152,14 @@ public class AcidRecipes {
                 .fluidOutputs(PhosphoricAcid.getFluid(3000))
                 .duration(320).EUt(VA[LV]).buildAndRegister();
 
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, TricalciumPhosphate, 5)
+                .fluidInputs(SulfuricAcid.getFluid(3000))
+                .fluidInputs(Water.getFluid(6000))
+                .output(dust, Gypsum, 24)
+                .fluidOutputs(PhosphoricAcid.getFluid(2000))
+                .duration(240).EUt(VA[LV]).buildAndRegister();
+
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(24))
                 .input(dust, Phosphorus, 2)
