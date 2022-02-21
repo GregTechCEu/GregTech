@@ -70,9 +70,9 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
             if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null && voidingMode == VoidingMode.VOID_OVERFLOW) {
                 keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(sourceFluid);
             }
-            if (sourceFluid == null || sourceFluid.amount == 0 || !fluidFilter.test(sourceFluid)) continue;
+            if (sourceFluid == null || sourceFluid.amount == 0 || !getFluidFilterContainer().testFluidStack(sourceFluid, true)) continue;
             sourceFluid.amount = sourceFluid.amount - keepAmount;
-            GTFluidUtils.transferExactFluidStack(sourceHandler, nullFluidTank, sourceFluid);
+            sourceHandler.drain(sourceFluid, true);
         }
     }
 
@@ -128,7 +128,10 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         WidgetGroup primaryGroup = new WidgetGroup();
         primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
 
-        this.fluidFilter.initUI(20, primaryGroup::addWidget);
+        primaryGroup.addWidget(new SlotWidget(fluidFilter.getFilterInventory(), 0, 10, 15)
+                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
+        this.fluidFilter.getFilterWrapper().initUI(20, primaryGroup::addWidget);
+        this.fluidFilter.getFilterWrapper().blacklistUI(32, primaryGroup::addWidget, () -> voidingMode != VoidingMode.VOID_OVERFLOW);
 
         primaryGroup.addWidget(new CycleButtonWidget(92, 14, 75, 18,
                 VoidingMode.class, this::getVoidingMode, this::setVoidingMode)

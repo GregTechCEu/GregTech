@@ -106,7 +106,8 @@ public class SimpleFluidFilter extends FluidFilter {
         int limit = 0;
         for (FluidTank fluidTank : fluidFilterTanks) {
             if (fluidTank.getFluid() != null && fluidTank.getFluid().isFluidEqual(fluidStack)) {
-                limit += fluidTank.getFluid().amount;
+                limit = fluidTank.getFluid().amount;
+                break;
             }
         }
         return limit;

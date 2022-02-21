@@ -72,7 +72,9 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
         widgetGroup.accept(new LabelWidget(10, y, "cover.pump.fluid_filter.title"));
         widgetGroup.accept(new SlotWidget(filterInventory, 0, 10, y + 15)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
+
         this.filterWrapper.initUI(y + 15, widgetGroup);
+        this.filterWrapper.blacklistUI(y + 15, widgetGroup, ()-> true);
     }
 
     protected void onFilterSlotChange(boolean notify) {
@@ -93,6 +95,10 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
 
     public boolean testFluidStack(FluidStack fluidStack) {
         return filterWrapper.testFluidStack(fluidStack);
+    }
+
+    public boolean testFluidStack(FluidStack fluidStack, Boolean whitelist) {
+        return filterWrapper.testFluidStack(fluidStack, whitelist);
     }
 
     @Override

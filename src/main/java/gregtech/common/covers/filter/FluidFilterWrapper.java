@@ -2,10 +2,12 @@ package gregtech.common.covers.filter;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
+import gregtech.api.gui.widgets.ServerWidgetGroup;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.util.IDirtyNotifiable;
 import net.minecraftforge.fluids.FluidStack;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -27,9 +29,14 @@ public class FluidFilterWrapper {
     }
 
     public void initUI(int y, Consumer<Widget> widgetGroup) {
-        widgetGroup.accept(new ToggleButtonWidget(144, y, 18, 18, GuiTextures.BUTTON_BLACKLIST,
-                this::isBlacklistFilter, this::setBlacklistFilter).setTooltipText("cover.filter.blacklist"));
         widgetGroup.accept(new WidgetGroupFluidFilter(y, this::getFluidFilter, shouldShowTip()));
+    }
+
+    public void blacklistUI(int y, Consumer<Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
+        ServerWidgetGroup blacklistButton = new ServerWidgetGroup(() -> getFluidFilter() != null);
+        blacklistButton.addWidget(new ToggleButtonWidget(144, y, 18, 18, GuiTextures.BUTTON_BLACKLIST,
+                this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton).setTooltipText("cover.filter.blacklist"));
+        widgetGroup.accept(blacklistButton);
     }
 
     public void setFluidFilter(FluidFilter fluidFilter) {
@@ -63,6 +70,17 @@ public class FluidFilterWrapper {
 
     public boolean isBlacklistFilter() {
         return isBlacklistFilter;
+    }
+
+    public boolean testFluidStack(FluidStack fluidStack, boolean whitelist) {
+        boolean result = true;
+        if (currentFluidFilter != null) {
+            result = currentFluidFilter.testFluid(fluidStack);
+        }
+        if (!whitelist) {
+            result = !result;
+        }
+        return result;
     }
 
     public boolean testFluidStack(FluidStack fluidStack) {
