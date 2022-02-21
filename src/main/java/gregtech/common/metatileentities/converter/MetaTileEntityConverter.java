@@ -45,16 +45,20 @@ import static gregtech.api.capability.GregtechDataCodes.SYNC_TILE_MODE;
 
 public class MetaTileEntityConverter extends TieredMetaTileEntity {
 
-    private final ConverterTrait converterTrait;
+    protected final ConverterTrait converterTrait;
 
-    private final int amps;
+    protected final int amps;
 
     public MetaTileEntityConverter(ResourceLocation metaTileEntityId, int tier, int amps) {
         super(metaTileEntityId, tier);
         this.amps = amps;
-        this.converterTrait = new ConverterTrait(this, amps, true);
+        this.converterTrait = initializeTrait();
         //initializeInventory();
         reinitializeEnergyContainer();
+    }
+
+    protected ConverterTrait initializeTrait() {
+        return new ConverterTrait(this, amps, true);
     }
 
     @Override
@@ -99,6 +103,10 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
             getHolder().notifyBlockUpdate();
             markDirty();
         }
+    }
+
+    public boolean isFeToEu() {
+        return converterTrait.isFeToEu();
     }
 
     @Override

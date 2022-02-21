@@ -27,7 +27,7 @@ public class ConverterTrait extends MTETrait {
 
     private final IEnergyStorage energyFE = new FEContainer();
     private final IEnergyContainer energyEU = new EUContainer();
-    private long storedEU;
+    protected long storedEU;
 
     private final long baseCapacity;
 
@@ -110,7 +110,7 @@ public class ConverterTrait extends MTETrait {
         }
     }
 
-    private void pushEnergy() {
+    protected void pushEnergy() {
         long energyInserted;
         if (feToEu) { // push out EU
             // Get the EU capability in front of us
@@ -135,7 +135,7 @@ public class ConverterTrait extends MTETrait {
         extractInternal(energyInserted);
     }
 
-    private <T> T getCapabilityAtFront(Capability<T> capability) {
+    protected <T> T getCapabilityAtFront(Capability<T> capability) {
         TileEntity tile = metaTileEntity.getWorld().getTileEntity(metaTileEntity.getPos().offset(metaTileEntity.getFrontFacing()));
         if (tile == null) return null;
         EnumFacing opposite = metaTileEntity.getFrontFacing().getOpposite();
@@ -232,6 +232,7 @@ public class ConverterTrait extends MTETrait {
         public int receiveEnergy(int maxReceive, boolean simulate) {
             if (!feToEu || maxReceive <= 0) return 0;
             int received = Math.min(getMaxEnergyStored() - getEnergyStored(), maxReceive);
+            received -= received % FeCompat.ratio(true); // avoid rounding issues
             if (!simulate) storedEU += FeCompat.toEu(received);
             return received;
         }
