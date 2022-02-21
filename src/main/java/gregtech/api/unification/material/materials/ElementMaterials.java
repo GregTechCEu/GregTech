@@ -1,9 +1,9 @@
 package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
+import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Material.FluidType;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 
 import static gregtech.api.GTValues.*;
@@ -46,7 +46,7 @@ public class ElementMaterials {
                 .build();
 
         Argon = new Material.Builder(5, "argon")
-                .fluid(FluidType.GAS).plasma()
+                .fluid(FluidTypes.GAS).plasma()
                 .color(0x00FF00).iconSet(GAS)
                 .element(Elements.Ar)
                 .build();
@@ -138,7 +138,7 @@ public class ElementMaterials {
                 .build();
 
         Chlorine = new Material.Builder(21, "chlorine")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .element(Elements.Cl)
                 .build();
 
@@ -189,7 +189,7 @@ public class ElementMaterials {
                 .build();
 
         Deuterium = new Material.Builder(28, "deuterium")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .element(Elements.D)
                 .build();
 
@@ -234,7 +234,7 @@ public class ElementMaterials {
                 .build();
 
         Fluorine = new Material.Builder(36, "fluorine")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .element(Elements.F)
                 .fluidTemp(253)
                 .build();
@@ -286,18 +286,18 @@ public class ElementMaterials {
                 .build();
 
         Hydrogen = new Material.Builder(45, "hydrogen")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0x0000B5)
                 .element(Elements.H)
                 .build();
 
         Helium = new Material.Builder(46, "helium")
-                .fluid(FluidType.GAS).plasma()
+                .fluid(FluidTypes.GAS).plasma()
                 .element(Elements.He)
                 .build();
 
         Helium3 = new Material.Builder(47, "helium_3")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .element(Elements.He3)
                 .build();
 
@@ -332,7 +332,7 @@ public class ElementMaterials {
                 .build();
 
         Krypton = new Material.Builder(52, "krypton")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0x80FF80).iconSet(GAS)
                 .element(Elements.Kr)
                 .build();
@@ -427,7 +427,7 @@ public class ElementMaterials {
                 .build();
 
         Neon = new Material.Builder(67, "neon")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0xFAB4B4).iconSet(GAS)
                 .element(Elements.Ne)
                 .build();
@@ -459,7 +459,7 @@ public class ElementMaterials {
                 .build();
 
         Nitrogen = new Material.Builder(72, "nitrogen")
-                .fluid(FluidType.GAS).plasma()
+                .fluid(FluidTypes.GAS).plasma()
                 .color(0x00BFC1).iconSet(GAS)
                 .element(Elements.N)
                 .build();
@@ -486,13 +486,13 @@ public class ElementMaterials {
                 .build();
 
         Oxygen = new Material.Builder(76, "oxygen")
-                .fluid(FluidType.GAS).plasma()
+                .fluid(FluidTypes.GAS).plasma()
                 .color(0x4CC3FF)
                 .element(Elements.O)
                 .build();
 
         Palladium = new Material.Builder(77, "palladium")
-                .ingot().fluid(FluidType.FLUID).ore()
+                .ingot().fluid().ore()
                 .color(0x808080).iconSet(SHINY)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
                 .element(Elements.Pd)
@@ -512,7 +512,7 @@ public class ElementMaterials {
                 .build();
 
         Platinum = new Material.Builder(80, "platinum")
-                .ingot().fluid(FluidType.GAS, true).ore()
+                .ingot().fluid().ore()
                 .color(0xFFFFC8).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_RING)
                 .element(Elements.Pt)
@@ -555,7 +555,7 @@ public class ElementMaterials {
                 .build();
 
         Radon = new Material.Builder(87, "radon")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0xFF39FF)
                 .element(Elements.Rn)
                 .build();
@@ -704,7 +704,7 @@ public class ElementMaterials {
                 .build();
 
         Tin = new Material.Builder(112, "tin")
-                .ingot(1).fluid(FluidType.FLUID, true).ore()
+                .ingot(1).fluid(FluidTypes.LIQUID, true).ore()
                 .color(0xDCDCDC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE)
                 .element(Elements.Sn)
@@ -723,7 +723,7 @@ public class ElementMaterials {
                 .build();
 
         Tritium = new Material.Builder(114, "tritium")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .iconSet(METALLIC)
                 .element(Elements.T)
                 .build();
@@ -763,7 +763,7 @@ public class ElementMaterials {
                 .build();
 
         Xenon = new Material.Builder(119, "xenon")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0x00FFFF).iconSet(GAS)
                 .element(Elements.Xe)
                 .build();

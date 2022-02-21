@@ -1,7 +1,7 @@
 package gregtech.api.unification.material.materials;
 
+import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Material.FluidType;
 
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
@@ -12,7 +12,7 @@ public class UnknownCompositionMaterials {
     public static void register() {
 
         WoodGas = new Material.Builder(1500, "wood_gas")
-                .fluid(FluidType.GAS).color(0xDECD87).build();
+                .fluid(FluidTypes.GAS).color(0xDECD87).build();
 
         WoodVinegar = new Material.Builder(1501, "wood_vinegar")
                 .fluid().color(0xD45500).build();
@@ -119,69 +119,69 @@ public class UnknownCompositionMaterials {
                 .fluid().color(0xBFB608).build();
 
         SulfuricGas = new Material.Builder(1540, "sulfuric_gas")
-                .fluid(FluidType.GAS).build();
+                .fluid(FluidTypes.GAS).build();
 
         RefineryGas = new Material.Builder(1541, "refinery_gas")
-                .fluid(FluidType.GAS).build();
+                .fluid(FluidTypes.GAS).build();
 
         LightlyHydroCrackedGas = new Material.Builder(1542, "lightly_hydrocracked_gas")
-                .fluid(FluidType.GAS).color(0xB4B4B4).build();
+                .fluid(FluidTypes.GAS).color(0xB4B4B4).build();
 
         SeverelyHydroCrackedGas = new Material.Builder(1543, "severely_hydrocracked_gas")
-                .fluid(FluidType.GAS).color(0xB4B4B4).build();
+                .fluid(FluidTypes.GAS).color(0xB4B4B4).build();
 
         LightlySteamCrackedGas = new Material.Builder(1544, "lightly_steamcracked_gas")
-                .fluid(FluidType.GAS).color(0xB4B4B4).build();
+                .fluid(FluidTypes.GAS).color(0xB4B4B4).build();
 
         SeverelySteamCrackedGas = new Material.Builder(1545, "severely_steamcracked_gas")
-                .fluid(FluidType.GAS).color(0xB4B4B4).build();
+                .fluid(FluidTypes.GAS).color(0xB4B4B4).build();
 
         HydroCrackedEthane = new Material.Builder(1546, "hydrocracked_ethane")
-                .fluid(FluidType.GAS).color(0x9696BC).build();
+                .fluid(FluidTypes.GAS).color(0x9696BC).build();
 
         HydroCrackedEthylene = new Material.Builder(1547, "hydrocracked_ethylene")
-                .fluid(FluidType.GAS).color(0xA3A3A0).build();
+                .fluid(FluidTypes.GAS).color(0xA3A3A0).build();
 
         HydroCrackedPropene = new Material.Builder(1548, "hydrocracked_propene")
-                .fluid(FluidType.GAS).color(0xBEA540).build();
+                .fluid(FluidTypes.GAS).color(0xBEA540).build();
 
         HydroCrackedPropane = new Material.Builder(1549, "hydrocracked_propane")
-                .fluid(FluidType.GAS).color(0xBEA540).build();
+                .fluid(FluidTypes.GAS).color(0xBEA540).build();
 
         HydroCrackedButane = new Material.Builder(1550, "hydrocracked_butane")
-                .fluid(FluidType.GAS).color(0x852C18).build();
+                .fluid(FluidTypes.GAS).color(0x852C18).build();
 
         HydroCrackedButene = new Material.Builder(1551, "hydrocracked_butene")
-                .fluid(FluidType.GAS).color(0x993E05).build();
+                .fluid(FluidTypes.GAS).color(0x993E05).build();
 
         HydroCrackedButadiene = new Material.Builder(1552, "hydrocracked_butadiene")
-                .fluid(FluidType.GAS).color(0xAD5203).build();
+                .fluid(FluidTypes.GAS).color(0xAD5203).build();
 
         SteamCrackedEthane = new Material.Builder(1553, "steamcracked_ethane")
-                .fluid(FluidType.GAS).color(0x9696BC).build();
+                .fluid(FluidTypes.GAS).color(0x9696BC).build();
 
         SteamCrackedEthylene = new Material.Builder(1554, "steamcracked_ethylene")
-                .fluid(FluidType.GAS).color(0xA3A3A0).build();
+                .fluid(FluidTypes.GAS).color(0xA3A3A0).build();
 
         SteamCrackedPropene = new Material.Builder(1555, "steamcracked_propene")
-                .fluid(FluidType.GAS).color(0xBEA540).build();
+                .fluid(FluidTypes.GAS).color(0xBEA540).build();
 
         SteamCrackedPropane = new Material.Builder(1556, "steamcracked_propane")
-                .fluid(FluidType.GAS).color(0xBEA540).build();
+                .fluid(FluidTypes.GAS).color(0xBEA540).build();
 
         SteamCrackedButane = new Material.Builder(1557, "steamcracked_butane")
-                .fluid(FluidType.GAS).color(0x852C18).build();
+                .fluid(FluidTypes.GAS).color(0x852C18).build();
 
         SteamCrackedButene = new Material.Builder(1558, "steamcracked_butene")
-                .fluid(FluidType.GAS).color(0x993E05).build();
+                .fluid(FluidTypes.GAS).color(0x993E05).build();
 
         SteamCrackedButadiene = new Material.Builder(1559, "steamcracked_butadiene")
-                .fluid(FluidType.GAS).color(0xAD5203).build();
+                .fluid(FluidTypes.GAS).color(0xAD5203).build();
 
         //Free IDs 1560-1575
 
         LPG = new Material.Builder(1576, "lpg")
-                .fluid(FluidType.GAS).build();
+                .fluid(FluidTypes.GAS).build();
 
         RawGrowthMedium = new Material.Builder(1577, "raw_growth_medium")
                 .fluid().color(0xA47351).build();
@@ -190,27 +190,27 @@ public class UnknownCompositionMaterials {
                 .fluid().color(0xAC876E).build();
 
         Oil = new Material.Builder(1579, "oil")
-                .fluid(FluidType.FLUID, true)
+                .fluid(FluidTypes.LIQUID, true)
                 .color(0x0A0A0A)
                 .build();
 
         OilHeavy = new Material.Builder(1580, "oil_heavy")
-                .fluid(FluidType.FLUID, true)
+                .fluid(FluidTypes.LIQUID, true)
                 .color(0x0A0A0A)
                 .build();
 
         RawOil = new Material.Builder(1581, "oil_medium")
-                .fluid(FluidType.FLUID, true)
+                .fluid(FluidTypes.LIQUID, true)
                 .color(0x0A0A0A)
                 .build();
 
         OilLight = new Material.Builder(1582, "oil_light")
-                .fluid(FluidType.FLUID, true)
+                .fluid(FluidTypes.LIQUID, true)
                 .color(0x0A0A0A)
                 .build();
 
         NaturalGas = new Material.Builder(1583, "natural_gas")
-                .fluid(FluidType.GAS, true).build();
+                .fluid(FluidTypes.GAS, true).build();
 
         Bacteria = new Material.Builder(1584, "bacteria")
                 .fluid().color(0x808000).build();
@@ -241,7 +241,7 @@ public class UnknownCompositionMaterials {
         // free id: 1593
 
         CoalGas = new Material.Builder(1594, "coal_gas")
-                .fluid(FluidType.GAS).color(0x333333).build();
+                .fluid(FluidTypes.GAS).color(0x333333).build();
 
         CoalTar = new Material.Builder(1595, "coal_tar")
                 .fluid().color(0x1A1A1A).build();
@@ -427,7 +427,7 @@ public class UnknownCompositionMaterials {
                 .fluid().color(0x3AAD3A).build();
 
         AcidicEnrichedNaquadahSolution = new Material.Builder(1641, "acidic_enriched_naquadah_solution")
-                .fluid().color(0x3DD63D).build();
+                .fluid(FluidTypes.ACID).color(0x3DD63D).build();
 
         EnrichedNaquadahWaste = new Material.Builder(1642, "enriched_naquadah_waste")
                 .fluid().color(0x355B35).build();
@@ -439,7 +439,7 @@ public class UnknownCompositionMaterials {
                 .fluid().color(0x61AD61).build();
 
         AcidicNaquadriaSolution = new Material.Builder(1645, "acidic_naquadria_solution")
-                .fluid().color(0x70D670).build();
+                .fluid(FluidTypes.ACID).color(0x70D670).build();
 
         NaquadriaWaste = new Material.Builder(1646, "naquadria_waste")
                 .fluid().color(0x425B42).build();
