@@ -3875,6 +3875,15 @@ gregtech.machine.miner.multi.description=A multiblock mining machine that covers
 gregtech.machine.miner.fluid_usage=Consumes §b%dmb§7 of §e%s§7 per tick. Each overclock doubles the fluid consumption.
 gregtech.machine.miner.overclock=Requires %s§7 power. Overclocks up to %s§7.
 
+gregtech.machine.miner.startx=sX: %d
+gregtech.machine.miner.starty=sY: %d
+gregtech.machine.miner.startz=sZ: %d
+gregtech.machine.miner.minex=mX: %d
+gregtech.machine.miner.miney=mY: %d
+gregtech.machine.miner.minez=mZ: %d
+gregtech.machine.miner.radius=Radius: %d
+gregtech.machine.miner.chunkradius=Chunk Radius: %d
+
 gregtech.machine.fluid_drilling_rig.mv.name=Basic Fluid Drilling Rig
 gregtech.machine.fluid_drilling_rig.hv.name=Advanced Fluid Drilling Rig
 gregtech.machine.fluid_drilling_rig.ev.name=Advanced Fluid Drilling Rig II
