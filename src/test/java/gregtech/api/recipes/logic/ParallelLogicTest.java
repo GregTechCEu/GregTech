@@ -1,5 +1,6 @@
 package gregtech.api.recipes.logic;
 
+import gregtech.Bootstrap;
 import gregtech.api.GTValues;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
@@ -8,11 +9,9 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.OverlayedFluidHandler;
 import gregtech.api.util.OverlayedItemHandler;
-import gregtech.common.MetaFluids;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Bootstrap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.junit.BeforeClass;
@@ -28,10 +27,8 @@ public class ParallelLogicTest {
     MetaTileEntityFluidHatch exportFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import.lv"), 1, true);
 
     @BeforeClass
-    public static void bootStrap() {
-        Bootstrap.register();
-        Materials.register();
-        MetaFluids.init();
+    public static void bootstrap() {
+        Bootstrap.perform();
     }
 
     private static ResourceLocation gregtechId(String name) {

@@ -64,7 +64,8 @@ public class WireRecipeHandler {
 
 
     public static void processWireSingle(OrePrefix wirePrefix, Material material, WireProperties property) {
-        OrePrefix prefix = property.isWireFromDust() ? OrePrefix.dust : OrePrefix.ingot;
+        OrePrefix prefix = material.hasProperty(PropertyKey.INGOT) ? ingot : material.hasProperty(PropertyKey.GEM) ? gem : dust;
+
         EXTRUDER_RECIPES.recipeBuilder()
                 .input(prefix, material)
                 .notConsumable(SHAPE_EXTRUDER_WIRE)

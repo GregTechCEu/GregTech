@@ -5,9 +5,9 @@ import net.minecraft.util.DamageSource;
 public class DamageSources {
 
     private static final DamageSource EXPLOSION = new DamageSource("explosion").setExplosion();
-    private static final DamageSource HEAT = new DamageSource("heat").setDamageBypassesArmor();
-    private static final DamageSource FROST = new DamageSource("frost").setDamageBypassesArmor();
-    private static final DamageSource ELECTRIC = new DamageSource("electric").setDamageBypassesArmor();
+    private static final DamageSource HEAT = new DamageSource("heat");
+    private static final DamageSource FROST = new DamageSource("frost");
+    private static final DamageSource ELECTRIC = new DamageSource("electric");
     private static final DamageSource RADIATION = new DamageSource("radiation").setDamageBypassesArmor();
     private static final DamageSource TURBINE = new DamageSource("turbine");
 

@@ -20,6 +20,7 @@ public class GregTechCommand extends CommandTreeBase {
         addSubcommand(new CommandWorldgen());
         addSubcommand(new CommandHand());
         addSubcommand(new CommandRecipeCheck());
+        addSubcommand(new CommandShaders());
     }
 
     @Nonnull
@@ -41,7 +42,7 @@ public class GregTechCommand extends CommandTreeBase {
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, String[] args) throws CommandException {
         if (args.length > 0) {
             if (args[0].equals("copy")) {
                 StringBuilder message = new StringBuilder();

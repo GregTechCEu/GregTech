@@ -26,6 +26,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fml.common.Loader;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.nio.file.FileSystem;
@@ -57,7 +58,7 @@ public class GTOreInfo implements IRecipeWrapper {
 
         //Don't default to vanilla Maximums and minimums if the values are not defined and Cubic Chunks is loaded
         //This could be improved to use the actual minimum and maximum heights, at the cost of including the CC Api
-        if (isModLoaded(MODID_CC)) {
+        if (Loader.isModLoaded(MODID_CC)) {
             this.maxHeight = definition.getMaximumHeight() == Integer.MAX_VALUE ? Integer.MAX_VALUE : definition.getMaximumHeight();
             this.minHeight = definition.getMinimumHeight() == Integer.MIN_VALUE ? Integer.MIN_VALUE : definition.getMinimumHeight();
         } else {

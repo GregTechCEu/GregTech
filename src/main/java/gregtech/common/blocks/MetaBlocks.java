@@ -68,6 +68,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static gregtech.api.unification.material.info.MaterialFlags.FORCE_GENERATE_BLOCK;
 import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FRAME;
 import static gregtech.client.ClientProxy.*;
 
@@ -225,7 +226,7 @@ public class MetaBlocks {
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.DUST), MetaBlocks::createSurfaceRockBlock);
 
         createGeneratedBlock(
-                material -> (material.hasProperty(PropertyKey.INGOT) || material.hasProperty(PropertyKey.GEM))
+                material -> (material.hasProperty(PropertyKey.INGOT) || material.hasProperty(PropertyKey.GEM) || material.hasFlag(FORCE_GENERATE_BLOCK))
                         && !OrePrefix.block.isIgnored(material),
                 MetaBlocks::createCompressedBlock);
 
@@ -538,7 +539,7 @@ public class MetaBlocks {
         for (BlockOre blockOre : ORES) {
             Material material = blockOre.material;
             for (StoneType stoneType : blockOre.STONE_TYPE.getAllowedValues()) {
-                if (stoneType == null || !stoneType.shouldBeDroppedAsItem) continue;
+                if (stoneType == null) continue;
                 ItemStack normalStack = blockOre.getItem(blockOre.getDefaultState()
                         .withProperty(blockOre.STONE_TYPE, stoneType));
                 OreDictUnifier.registerOre(normalStack, stoneType.processingPrefix, material);

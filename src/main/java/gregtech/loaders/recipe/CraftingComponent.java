@@ -403,21 +403,6 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
-        HULL_PLATE = new Component(Stream.of(new Object[][]{
-
-                {0, new UnificationEntry(OrePrefix.plate, Materials.Wood)},
-                {1, new UnificationEntry(OrePrefix.plate, Materials.WroughtIron)},
-                {2, new UnificationEntry(OrePrefix.plate, Materials.WroughtIron)},
-                {3, new UnificationEntry(OrePrefix.plate, Materials.Polyethylene)},
-                {4, new UnificationEntry(OrePrefix.plate, Materials.Polyethylene)},
-                {5, new UnificationEntry(OrePrefix.plate, Materials.Polytetrafluoroethylene)},
-                {6, new UnificationEntry(OrePrefix.plate, Materials.Polytetrafluoroethylene)},
-                {7, new UnificationEntry(OrePrefix.plate, Materials.Polybenzimidazole)},
-                {8, new UnificationEntry(OrePrefix.plate, Materials.Polybenzimidazole)},
-                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.plate, Materials.Polybenzimidazole)},
-
-        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
-
         MOTOR = new Component(Stream.of(new Object[][]{
 
                 {1, MetaItems.ELECTRIC_MOTOR_LV.getStackForm()},

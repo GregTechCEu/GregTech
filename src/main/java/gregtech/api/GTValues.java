@@ -8,8 +8,6 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import java.time.LocalDate;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.Supplier;
 
 import static net.minecraft.util.text.TextFormatting.*;
@@ -128,26 +126,9 @@ public class GTValues {
         return isClient;
     }
 
-    //because forge is too fucking retarded to cache results or at least do not create fucking
-    //immutable collections every time you retrieve indexed mod list
-    private static final ConcurrentMap<String, Boolean> isModLoadedCache = new ConcurrentHashMap<>();
-
+    @Deprecated
     public static boolean isModLoaded(String modid) {
-        if (isModLoadedCache.containsKey(modid)) {
-            return isModLoadedCache.get(modid);
-        }
-        boolean isLoaded = Loader.instance().getIndexedModList().containsKey(modid);
-        if (!isLoaded) {
-            try {
-                Class.forName(modid);
-                isLoaded = true;
-            } catch (ClassNotFoundException ignored) {
-            } catch (NoClassDefFoundError noClassDefFoundError) {
-                isLoaded = true;
-            }
-        }
-        isModLoadedCache.put(modid, isLoaded);
-        return isLoaded;
+        return Loader.isModLoaded(modid);
     }
 
     /**

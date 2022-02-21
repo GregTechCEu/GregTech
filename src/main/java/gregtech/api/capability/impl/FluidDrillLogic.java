@@ -182,18 +182,23 @@ public class FluidDrillLogic {
             this.isActive = active;
             this.metaTileEntity.markDirty();
             if (metaTileEntity.getWorld() != null && !metaTileEntity.getWorld().isRemote) {
-                this.metaTileEntity.writeCustomData(GregtechDataCodes.IS_WORKING, buf -> buf.writeBoolean(active));
+                this.metaTileEntity.writeCustomData(GregtechDataCodes.WORKABLE_ACTIVE, buf -> buf.writeBoolean(active));
             }
         }
     }
 
     /**
      *
-     * @param workingEnabled the new state of the rig's ability to work: true to change to enabled, else false
+     * @param isWorkingEnabled the new state of the rig's ability to work: true to change to enabled, else false
      */
-    public void setWorkingEnabled(boolean workingEnabled) {
-        this.isWorkingEnabled = workingEnabled;
-        metaTileEntity.markDirty();
+    public void setWorkingEnabled(boolean isWorkingEnabled) {
+        if (this.isWorkingEnabled != isWorkingEnabled) {
+            this.isWorkingEnabled = isWorkingEnabled;
+            metaTileEntity.markDirty();
+            if (metaTileEntity.getWorld() != null && !metaTileEntity.getWorld().isRemote) {
+                this.metaTileEntity.writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(isWorkingEnabled));
+            }
+        }
     }
 
     /**
@@ -292,9 +297,12 @@ public class FluidDrillLogic {
      * This MUST be called and returned in the MetaTileEntity's {@link MetaTileEntity#receiveCustomData(int, PacketBuffer)} method
      */
     public void receiveCustomData(int dataId, PacketBuffer buf) {
-        if (dataId == GregtechDataCodes.IS_WORKING) {
-            setActive(buf.readBoolean());
-            metaTileEntity.getHolder().scheduleChunkForRenderUpdate();
+        if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
+            this.isActive = buf.readBoolean();
+            metaTileEntity.scheduleRenderUpdate();
+        } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
+            this.isWorkingEnabled = buf.readBoolean();
+            metaTileEntity.scheduleRenderUpdate();
         }
     }
 
