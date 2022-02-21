@@ -1,0 +1,48 @@
+# This workflow will build a Java project with Gradle
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+      - name: Build with Gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew test
+  formatting:
+    name: check-fmt
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone Repository
+        shell: bash
+        run: |
+          /usr/bin/git clone https://github.com/Gregicality/GregTech.git ./
+      - name: Declare some variables
+        id: vars
+        shell: bash
+        run: |
+          echo "::set-output name=sha_short::$(git rev-parse --short $GITHUB_SHA)"
+      - name: Install npm
+        uses: actions/setup-node@v2
+      - name: Run Formatter
+        run: |
+          cd scripts
+          chmod +x format.sh
+          ./format.sh
