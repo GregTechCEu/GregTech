@@ -393,10 +393,12 @@ public class MetaTileEntityLoader {
             ModHandler.addShapedRecipe(true, "electric_blast_furnace", MetaTileEntities.ELECTRIC_BLAST_FURNACE.getStackForm(), "FFF", "CMC", "WCW", 'M', MetaBlocks.METAL_CASING.getItemVariant(INVAR_HEATPROOF), 'F', OreDictNames.craftingFurnace, 'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic), 'W', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin));
         }
 
-        registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[0], "WTW", "RMR", "WCW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE, 'T', OreDictNames.chestWood, 'R', new UnificationEntry(OrePrefix.cableGtSingle, Materials.RedAlloy));
-        registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[1], "WTW", "RMR", "WCW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE_QUAD, 'T', OreDictNames.chestWood, 'R', new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.RedAlloy));
-        registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[2], "WTW", "RMR", "WCW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE_OCT, 'T', OreDictNames.chestWood, 'R', new UnificationEntry(OrePrefix.cableGtOctal, Materials.RedAlloy));
-        registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[3], "WTW", "RMR", "WCW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE_HEX, 'T', OreDictNames.chestWood, 'R', new UnificationEntry(OrePrefix.cableGtHex, Materials.RedAlloy));
+        if (ConfigHolder.compat.energy.enableFEConverters) {
+            registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[0], "WTW", "RMR", "WCW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE, 'T', OreDictNames.chestWood, 'R', new UnificationEntry(OrePrefix.cableGtSingle, Materials.RedAlloy));
+            registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[1], "WTW", "RMR", "WCW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE_QUAD, 'T', OreDictNames.chestWood, 'R', new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.RedAlloy));
+            registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[2], "WTW", "RMR", "WCW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE_OCT, 'T', OreDictNames.chestWood, 'R', new UnificationEntry(OrePrefix.cableGtOctal, Materials.RedAlloy));
+            registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[3], "WTW", "RMR", "WCW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE_HEX, 'T', OreDictNames.chestWood, 'R', new UnificationEntry(OrePrefix.cableGtHex, Materials.RedAlloy));
+        }
     }
 
     // Can only accept a subset of "Item" types:

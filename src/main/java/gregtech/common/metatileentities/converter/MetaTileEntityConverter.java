@@ -8,36 +8,33 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.tool.ISoftHammerItem;
-import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
+import gregtech.common.ConfigHolder;
 import gregtech.common.tools.DamageValues;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -53,7 +50,6 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
         super(metaTileEntityId, tier);
         this.amps = amps;
         this.converterTrait = initializeTrait();
-        //initializeInventory();
         reinitializeEnergyContainer();
     }
 
@@ -124,6 +120,13 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     }
 
     @Override
+    public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
+        if (ConfigHolder.compat.energy.enableFEConverters) {
+            super.getSubItems(creativeTab, subItems);
+        }
+    }
+
+    @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         buf.writeBoolean(converterTrait.isFeToEu());
         super.writeInitialSyncData(buf);
@@ -169,26 +172,6 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return null;
-        /*
-        int slotWidth, slotHeight;
-        if (slots == 8) {
-            slotWidth = 4;
-            slotHeight = 2;
-        } else {
-            slotWidth = slotHeight = (int) Math.sqrt(converterTrait.getBaseAmps());
-        }
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-                        18 + 18 * slotHeight + 94)
-                .label(10, 5, getMetaFullName());
-
-        for (int y = 0; y < slotHeight; y++) {
-            for (int x = 0; x < slotWidth; x++) {
-                builder.widget(new SlotWidget(importItems, y * slotWidth + x, 89 - slotWidth * 9 + x * 18, 18 + y * 18, true, true)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.BATTERY_OVERLAY));
-            }
-        }
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * slotHeight + 12);
-        return builder.build(getHolder(), entityPlayer);*/
     }
 
     @Override
@@ -206,26 +189,6 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
         }
         return super.getCapability(capability, side);
     }
-/*
-    @Override
-    protected IItemHandlerModifiable createImportItemHandler() {
-        return new ItemStackHandler(slots) {
-            @Nonnull
-            @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-                IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                if ((electricItem != null && getTier() >= electricItem.getTier()) || stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
-                    return super.insertItem(slot, stack, simulate);
-                }
-                return stack;
-            }
-
-            @Override
-            public int getSlotLimit(int slot) {
-                return 1;
-            }
-        };
-    }*/
 
     @Override
     public boolean isValidFrontFacing(EnumFacing facing) {
@@ -237,7 +200,6 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
         long voltage = converterTrait.getVoltage();
         long amps = converterTrait.getBaseAmps();
         tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_tool_usage"));
-        //tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", slots));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", converterTrait.getEnergyEUContainer().getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", FeCompat.toFe(voltage * amps), amps, voltage, GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VNF[getTier()], FeCompat.toFe(voltage * amps)));
