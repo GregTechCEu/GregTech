@@ -480,7 +480,7 @@ public class OrganicChemistryMaterials {
                 .build();
 
         NitrosylChloride = new Material.Builder(1070, "nitrosyl_chloride")
-                .fluid(Material.FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .flags(FLAMMABLE)
                 .color(0xF3F100)
                 .components(Nitrogen, 1, Oxygen, 1, Chlorine, 1)
