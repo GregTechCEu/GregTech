@@ -475,8 +475,8 @@ public class PolymerRecipes {
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(400)
                 .fluidInputs(Benzene.getFluid(1000))
                 .fluidInputs(Hydrogen.getFluid(6000))
-                .fluidOutputs(Cyclohexane.getFluid(1000))
                 .notConsumable(dust, Nickel)
+                .fluidOutputs(Cyclohexane.getFluid(1000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(100)
@@ -496,6 +496,7 @@ public class PolymerRecipes {
                 .input(dust, CyclohexanoneOxime, 19)
                 .fluidInputs(SulfuricAcid.getFluid(1000))
                 .output(dust, Caprolactam, 19)
+                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
                 .buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder().EUt(VA[MV]).duration(150).blastFurnaceTemp(533)
