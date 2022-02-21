@@ -198,6 +198,10 @@ public class ModHandler {
         }
     }
 
+    public static void addSmeltingRecipe(ItemStack input, ItemStack output) {
+        addSmeltingRecipe(input, output, 0);
+    }
+
     ///////////////////////////////////////////////////
     //              Crafting Recipe Helpers          //
     ///////////////////////////////////////////////////
