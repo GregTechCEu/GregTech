@@ -22,6 +22,7 @@ public class OrganicChemistryMaterials {
         Nitrobenzene = new Material.Builder(1001, "nitrobenzene")
                 .fluid(FluidTypes.GAS)
                 .color(0x704936)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 6, Hydrogen, 5, Nitrogen, 1, Oxygen, 2)
                 .build();
 
@@ -133,7 +134,7 @@ public class OrganicChemistryMaterials {
         Sugar = new Material.Builder(1017, "sugar")
                 .gem(1)
                 .color(0xFAFAFA).iconSet(FINE)
-                .components(Carbon, 2, Water, 5, Oxygen, 25)
+                .components(Carbon, 6, Hydrogen, 12, Oxygen, 6)
                 .build();
 
         Methane = new Material.Builder(1018, "methane")
@@ -151,9 +152,8 @@ public class OrganicChemistryMaterials {
         Monochloramine = new Material.Builder(1020, "monochloramine")
                 .fluid(FluidTypes.GAS)
                 .color(0x3F9F80)
-                .components(Hydrogen, 1, HydrochloricAcid, 1)
-                .build()
-                .setFormula("NH2Cl", true);
+                .components(Nitrogen, 1, Hydrogen, 2, Chlorine, 1)
+                .build();
 
         Chloroform = new Material.Builder(1021, "chloroform")
                 .fluid()
@@ -186,7 +186,8 @@ public class OrganicChemistryMaterials {
                 .fluid()
                 .color(0x87DEAA)
                 .components(Carbon, 2, Methane, 1, HydrochloricAcid, 1)
-                .build();
+                .build()
+                .setFormula("C3H5Cl", true);
 
         Isoprene = new Material.Builder(1026, "isoprene")
                 .fluid()
@@ -217,7 +218,7 @@ public class OrganicChemistryMaterials {
                 .fluid(FluidTypes.GAS)
                 .color(0xCF5005)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Carbon, 2, Hydrogen, 8)
+                .components(Carbon, 4, Hydrogen, 8)
                 .build();
 
         Butane = new Material.Builder(1031, "butane")
@@ -238,21 +239,21 @@ public class OrganicChemistryMaterials {
                 .fluid()
                 .color(0xE1B380)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Carbon, 4, Oxygen, 6, Hydrogen, 2)
+                .components(Carbon, 4, Hydrogen, 6, Oxygen, 2)
                 .build();
 
         MethylAcetate = new Material.Builder(1034, "methyl_acetate")
                 .fluid()
                 .color(0xEEC6AF)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Carbon, 3, Oxygen, 6, Hydrogen, 2)
+                .components(Carbon, 3, Hydrogen, 6, Oxygen, 2)
                 .build();
 
         Ethenone = new Material.Builder(1035, "ethenone")
                 .fluid()
                 .color(0x141446)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Carbon, 3, Oxygen, 6, Hydrogen, 2)
+                .components(Carbon, 2, Hydrogen, 2, Oxygen, 1)
                 .build();
 
         Tetranitromethane = new Material.Builder(1036, "tetranitromethane")
