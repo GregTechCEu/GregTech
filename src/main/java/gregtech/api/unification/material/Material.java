@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GregTechAPI;
+import gregtech.api.fluids.fluidType.FluidType;
+import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.info.MaterialFlag;
@@ -379,7 +381,7 @@ public class Material implements Comparable<Material> {
 
         /**
          * Add a {@link FluidProperty} to this Material.<br>
-         * Will be created as a {@link FluidType#FLUID}, without a Fluid Block.
+         * Will be created as a {@link FluidTypes#LIQUID}, without a Fluid Block.
          *
          * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
          */
@@ -402,12 +404,12 @@ public class Material implements Comparable<Material> {
         /**
          * Add a {@link FluidProperty} to this Material.
          *
-         * @param type     The {@link FluidType} of this Material, either Fluid or Gas.
+         * @param type     The {@link FluidType} of this Material.
          * @param hasBlock If true, create a Fluid Block for this Material.
          * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
          */
         public Builder fluid(FluidType type, boolean hasBlock) {
-            properties.setProperty(PropertyKey.FLUID, new FluidProperty(type == FluidType.GAS, hasBlock));
+            properties.setProperty(PropertyKey.FLUID, new FluidProperty(type, hasBlock));
             return this;
         }
 
@@ -586,7 +588,7 @@ public class Material implements Comparable<Material> {
          * Defaults to 0xFFFFFF unless {@link Builder#colorAverage()} was called, where
          * it will be a weighted average of the components of the Material.
          *
-         * @param color The RGB-formatted Color.
+         * @param color         The RGB-formatted Color.
          * @param hasFluidColor Whether the fluid should be colored or not.
          */
         public Builder color(int color, boolean hasFluidColor) {
@@ -912,9 +914,5 @@ public class Material implements Comparable<Material> {
                 }
             }
         }
-    }
-
-    public enum FluidType {
-        FLUID, GAS
     }
 }

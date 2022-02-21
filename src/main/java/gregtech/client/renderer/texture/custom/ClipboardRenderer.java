@@ -40,7 +40,6 @@ public class ClipboardRenderer implements IIconRegister {
     @SideOnly(Side.CLIENT)
     private TextureAtlasSprite[] textures;
 
-
     public ClipboardRenderer() {
         if (FMLCommonHandler.instance().getSide().isClient()) {
             boxTextureMap = new HashMap<>();
@@ -73,10 +72,9 @@ public class ClipboardRenderer implements IIconRegister {
         }
     }
 
-
     @SideOnly(Side.CLIENT)
     public void renderGUI(double x, double y, double z, EnumFacing rotation, MetaTileEntityClipboard clipboard, float partialTicks) {
-        GlStateManager.color(1,1,1,1);
+        GlStateManager.color(1, 1, 1, 1);
         GlStateManager.pushMatrix();
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
@@ -107,8 +105,6 @@ public class ClipboardRenderer implements IIconRegister {
         RenderHelper.enableStandardItemLighting();
         GlStateManager.popMatrix();
     }
-
-
 
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getParticleTexture() {

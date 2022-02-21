@@ -114,6 +114,9 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
+        if (meta >= STONE_TYPE.getAllowedValues().size()) {
+            meta = 0;
+        }
         return getDefaultState().withProperty(STONE_TYPE, STONE_TYPE.getAllowedValues().get(meta));
     }
 

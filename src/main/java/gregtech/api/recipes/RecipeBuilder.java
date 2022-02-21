@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -206,27 +207,46 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R notConsumable(ItemStack itemStack) {
-        return inputs(CountableIngredient.from(itemStack, 0));
+        return inputs(CountableIngredient.from(itemStack, itemStack.getCount())
+                .setNonConsumable());
+    }
+
+    public R notConsumable(OrePrefix prefix, Material material, int amount) {
+        return inputs(CountableIngredient.from(prefix, material, amount)
+                .setNonConsumable());
     }
 
     public R notConsumable(OrePrefix prefix, Material material) {
-        return input(prefix, material, 0);
+        return notConsumable(prefix, material, 1);
     }
 
     public R notConsumable(Ingredient ingredient) {
-        return inputs(new CountableIngredient(ingredient, 0));
+        return inputs(new CountableIngredient(ingredient, 1)
+                .setNonConsumable());
     }
 
     public R notConsumable(MetaItem<?>.MetaValueItem item) {
-        return inputs(CountableIngredient.from(item.getStackForm(), 0));
+        return inputs(CountableIngredient.from(item.getStackForm(), 1)
+                .setNonConsumable());
+    }
+
+    public R notConsumable(Fluid fluid, int amount) {
+        FluidStack ncf = new FluidStack(fluid, amount, new NBTTagCompound());
+        ncf.tag.setBoolean("nonConsumable", true);
+        return fluidInputs(ncf);
     }
 
     public R notConsumable(Fluid fluid) {
-        return fluidInputs(new FluidStack(fluid, 0));
+        return notConsumable(fluid, 1);
     }
 
     public R notConsumable(FluidStack fluidStack) {
-        return fluidInputs(new FluidStack(fluidStack, 0));
+        FluidStack ncf = fluidStack.copy();
+        if (ncf.tag == null) {
+            ncf.tag = new NBTTagCompound();
+        }
+        ncf.tag.setBoolean("nonConsumable", true);
+        return fluidInputs(ncf);
     }
 
     public R output(OrePrefix orePrefix, Material material) {
@@ -461,13 +481,26 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
                                                    List<FluidStack> outputFluids,
                                                    Recipe recipe,
                                                    int numberOfOperations) {
-        recipe.getInputs().forEach(ci ->
+        recipe.getInputs().forEach(ci -> {
+            if (ci.isNonConsumable()) {
                 newRecipeInputs.add(new CountableIngredient(ci.getIngredient(),
-                        ci.getCount() * numberOfOperations)));
+                        ci.getCount()).setNonConsumable());
+            } else {
+                newRecipeInputs.add(new CountableIngredient(ci.getIngredient(),
+                        ci.getCount() * numberOfOperations));
+            }
+        });
 
-        recipe.getFluidInputs().forEach(fluidStack ->
+        recipe.getFluidInputs().forEach(fluidStack -> {
+            if (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable")) {
+                FluidStack fs = new FluidStack(fluidStack.getFluid(), fluidStack.amount, new NBTTagCompound());
+                fs.tag.setBoolean("nonConsumable", true);
+                newFluidInputs.add(fs);
+            } else {
                 newFluidInputs.add(new FluidStack(fluidStack.getFluid(),
-                        fluidStack.amount * numberOfOperations)));
+                        fluidStack.amount * (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable") ? 1 : numberOfOperations)));
+            }
+        });
 
         recipe.getOutputs().forEach(itemStack ->
                 outputItems.add(copyItemStackWithCount(itemStack,

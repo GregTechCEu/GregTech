@@ -1,5 +1,6 @@
 package gregtech.api.recipes.logic;
 
+import gregtech.Bootstrap;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -10,18 +11,14 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
-import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.world.DummyWorld;
-import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemBus;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Bootstrap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -46,11 +43,8 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
     private static boolean enableBonusOverride = false;
 
     @BeforeClass
-    public static void init() {
-        Bootstrap.register();
-        Materials.register();
-        OrePrefix.runMaterialHandlers();
-        MetaItems.init();
+    public static void bootstrap() {
+        Bootstrap.perform();
     }
 
     private static ResourceLocation gregtechId(String name) {

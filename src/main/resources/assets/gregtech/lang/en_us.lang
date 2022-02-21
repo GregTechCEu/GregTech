@@ -1066,6 +1066,7 @@ metaitem.nan.certificate.tooltip=Challenge Accepted!
 metaitem.fertilizer.name=Fertilizer
 
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
+gui.widget.recipeProgressWidget.default_tooltip=Show Recipes
 
 gregtech.recipe_memory_widget.tooltip.1=§7Left click to automatically input this recipe into the crafting grid
 gregtech.recipe_memory_widget.tooltip.2=§7Shift click to lock/unlock this recipe
@@ -4121,19 +4122,22 @@ gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or 
 
 gregtech.fluid.click_to_empty=§7Click with a Fluid Container to §cempty §7the tank (Shift-click for a full stack).
 
+gregtech.fluid.generic=%s
 gregtech.fluid.plasma=%s Plasma
 gregtech.fluid.empty=Empty
 gregtech.fluid.amount=§9Amount: %,d/%,d L
 gregtech.fluid.temperature=§cTemperature: %,d K
 gregtech.fluid.state_gas=§aState: Gaseous
 gregtech.fluid.state_liquid=§aState: Liquid
+gregtech.fluid.state_plasma=§aState: Plasma
+gregtech.fluid.type_acid.tooltip=§6Acidic! Handle with care!
 gregtech.gui.fuel_amount=Fuel Amount:
 gregtech.gui.fluid_amount=Fluid Amount:
 gregtech.gui.toggle_view.disabled=Toggle View (Fluids)
 gregtech.gui.toggle_view.enabled=Toggle View (Items)
 gregtech.gui.overclock.enabled=Overclocking Enabled./nClick to Disable
 gregtech.gui.overclock.disabled=Overclocking Disabled./nClick to Enable
-gregtech.gui.overclock.description=Recipes can overclock to this tier./nX means no overclocking is performed.
+gregtech.gui.overclock.description=Overclock Button/n§7Recipes can overclock up to the set tier
 gregtech.gui.overclock.off=X
 gregtech.gui.sort=Sort
 gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
@@ -4322,6 +4326,20 @@ gregtech.cover.activity_detector.message_activity_inverted=Monitoring Inverted A
 
 gregtech.cover.activity_detector_advanced.message_activity_normal=Monitoring Normal Progress Status
 gregtech.cover.activity_detector_advanced.message_activity_inverted=Monitoring Inverted Progress Status
+
+gregtech.creative.chest.item=Item
+gregtech.creative.chest.ipc=Items per Cycle
+gregtech.creative.chest.tpc=Ticks per Cycle
+
+gregtech.creative.tank.fluid=Fluid
+gregtech.creative.tank.mbpc=mB per Cycle
+gregtech.creative.tank.tpc=Ticks per Cycle
+
+gregtech.creative.energy.amperage=Amperage
+gregtech.creative.energy.voltage=Voltage
+
+gregtech.creative.activity.on=Active
+gregtech.creative.activity.off=Not active
 
 gregtech.terminal.app_name.items=Item Guides
 gregtech.terminal.app_name.machines=Machine Guides

@@ -213,6 +213,13 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 }
             }
             for (FluidStack fluid : recipe.getFluidInputs()) {
+                if (fluid.tag != null && fluid.tag.hasKey("nonConsumable")) {
+                    fluid = fluid.copy();
+                    fluid.tag.removeTag("nonConsumable");
+                    if (fluid.tag.isEmpty()) {
+                        fluid.tag = null;
+                    }
+                }
                 FluidKey fluidKey = new FluidKey(fluid);
                 recipeFluidMap.computeIfPresent(fluidKey, (k, v) -> {
                     v.add(recipe);
