@@ -131,7 +131,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 } else if (handle.getItemHandler() == exportItems) {
                     //this is output item stack slot widget, so add it to item group
                     itemStackGroup.init(importItems.getSlots() + handle.getSlotIndex(), false,
-                            new ItemStackTextRenderer(recipeWrapper.getOutputChance(handle.getSlotIndex() )),
+                            new ItemStackTextRenderer(recipeWrapper.getOutputChance(handle.getSlotIndex() - recipeWrapper.getRecipe().getOutputs().size())),
                             slotWidget.getPosition().x + 1,
                             slotWidget.getPosition().y + 1,
                             slotWidget.getSize().width - 2,
