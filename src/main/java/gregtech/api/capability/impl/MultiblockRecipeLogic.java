@@ -275,8 +275,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     protected void completeRecipe() {
-        super.completeRecipe();
         performMaintenanceMufflerOperations();
+        super.completeRecipe();
     }
 
     protected void performMaintenanceMufflerOperations() {
