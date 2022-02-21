@@ -394,10 +394,10 @@ public class MetaTileEntityLoader {
         }
 
         if (ConfigHolder.compat.energy.enableFEConverters) {
-            registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[0], "WTW", "RMR", "WCW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE, 'T', OreDictNames.chestWood, 'R', new UnificationEntry(OrePrefix.cableGtSingle, Materials.RedAlloy));
-            registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[1], "WTW", "RMR", "WCW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE_QUAD, 'T', OreDictNames.chestWood, 'R', new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.RedAlloy));
-            registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[2], "WTW", "RMR", "WCW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE_OCT, 'T', OreDictNames.chestWood, 'R', new UnificationEntry(OrePrefix.cableGtOctal, Materials.RedAlloy));
-            registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[3], "WTW", "RMR", "WCW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE_HEX, 'T', OreDictNames.chestWood, 'R', new UnificationEntry(OrePrefix.cableGtHex, Materials.RedAlloy));
+            registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[0], " WW", "RMC", " WW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE, 'R', new UnificationEntry(OrePrefix.cableGtSingle, Materials.RedAlloy));
+            registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[1], " WW", "RMC", " WW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE_QUAD, 'R', new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.RedAlloy));
+            registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[2], " WW", "RMC", " WW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE_OCT, 'R', new UnificationEntry(OrePrefix.cableGtOctal, Materials.RedAlloy));
+            registerMachineRecipe(MetaTileEntities.ENERGY_CONVERTER[3], " WW", "RMC", " WW", 'C', CIRCUIT, 'M', HULL, 'W', CABLE_HEX, 'R', new UnificationEntry(OrePrefix.cableGtHex, Materials.RedAlloy));
         }
     }
 
