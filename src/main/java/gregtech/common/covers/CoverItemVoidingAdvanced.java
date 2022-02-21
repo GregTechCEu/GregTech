@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -43,11 +44,11 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                 voidAny(myItemHandler);
                 break;
             case VOID_OVERFLOW:
-                voidExact(myItemHandler);
+                voidOverflow(myItemHandler);
         }
     }
 
-    protected void voidExact(IItemHandler myItemHandler) {
+    protected void voidOverflow(IItemHandler myItemHandler) {
         Map<Object, GroupItemInfo> sourceItemAmounts = countInventoryItemsByMatchSlot(myItemHandler);
         Iterator<Object> iterator = sourceItemAmounts.keySet().iterator();
         while (iterator.hasNext()) {
@@ -61,7 +62,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                 int itemToVoidAmount = sourceInfo.totalCount - itemToKeepAmount;
                 for (int srcIndex = 0; srcIndex < myItemHandler.getSlots(); srcIndex++) {
                     ItemStack is = myItemHandler.getStackInSlot(srcIndex);
-                    if (!is.isEmpty() && itemFilterContainer.testItemStack(is)) {
+                    if (!is.isEmpty() && itemFilterContainer.testItemStack(is, true)) {
                         ItemStack extracted = myItemHandler.extractItem(srcIndex, itemToVoidAmount, false);
                         if (!extracted.isEmpty()) {
                             itemToVoidAmount -= extracted.getCount();
@@ -105,7 +106,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         widgetGroup.accept(new SlotWidget(itemFilterContainer.getFilterInventory(), 0, 10, y + 15)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
 
-        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(itemFilterContainer::showGlobalTransferLimitSlider);
+        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(() -> itemFilterContainer.getFilterWrapper().getItemFilter() == null && voidingMode == VoidingMode.VOID_OVERFLOW);
         stackSizeGroup.addWidget(new ImageWidget(111, 34, 35, 20, GuiTextures.DISPLAY));
 
         stackSizeGroup.addWidget(new IncrementButtonWidget(146, 34, 20, 20, 1, 8, 64, 512, itemFilterContainer::adjustTransferStackSize)
@@ -119,7 +120,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 
         stackSizeGroup.addWidget(new TextFieldWidget2(113, 41, 31, 20, () -> String.valueOf(itemFilterContainer.getTransferStackSize()), val -> {
                     if (val != null && !val.isEmpty())
-                        itemFilterContainer.setTransferStackSize(Integer.parseInt(val));
+                        itemFilterContainer.setTransferStackSize(MathHelper.clamp(Integer.parseInt(val), 1, voidingMode.maxStackSize));
                 })
                         .setCentered(true)
                         .setNumbersOnly(1, Integer.MAX_VALUE)
@@ -127,10 +128,11 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                         .setScale(0.9f)
         );
 
-
         widgetGroup.accept(stackSizeGroup);
 
         this.itemFilterContainer.getFilterWrapper().initUI(y + 38, widgetGroup);
+
+        this.itemFilterContainer.getFilterWrapper().blacklistUI(y + 38, widgetGroup, () -> voidingMode != VoidingMode.VOID_OVERFLOW);
     }
 
     @Override

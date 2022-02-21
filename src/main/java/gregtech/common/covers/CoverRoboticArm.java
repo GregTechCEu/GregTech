@@ -5,17 +5,18 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.client.renderer.texture.Textures;
+import gregtech.api.gui.widgets.*;
 import gregtech.api.util.ItemStackKey;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.Collections;
@@ -152,12 +153,35 @@ public class CoverRoboticArm extends CoverConveyor {
 
     @Override
     protected ModularUI buildUI(Builder builder, EntityPlayer player) {
-        WidgetGroup filterGroup = new WidgetGroup();
-        filterGroup.addWidget(new CycleButtonWidget(91, 45, 75, 20,
+        WidgetGroup primaryGroup = new WidgetGroup();
+        primaryGroup.addWidget(new CycleButtonWidget(91, 45, 75, 20,
                 TransferMode.class, this::getTransferMode, this::setTransferMode)
                 .setTooltipHoverString("cover.robotic_arm.transfer_mode.description"));
 
-        return super.buildUI(builder.widget(filterGroup), player);
+        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(() -> itemFilterContainer.getFilterWrapper().getItemFilter() == null && transferMode != TransferMode.TRANSFER_ANY);
+        stackSizeGroup.addWidget(new ImageWidget(111, 70, 35, 20, GuiTextures.DISPLAY));
+
+        stackSizeGroup.addWidget(new IncrementButtonWidget(146, 70, 20, 20, 1, 8, 64, 512, itemFilterContainer::adjustTransferStackSize)
+                .setDefaultTooltip()
+                .setTextScale(0.7f)
+                .setShouldClientCallback(false));
+        stackSizeGroup.addWidget(new IncrementButtonWidget(91, 70, 20, 20, -1, -8, -64, -512, itemFilterContainer::adjustTransferStackSize)
+                .setDefaultTooltip()
+                .setTextScale(0.7f)
+                .setShouldClientCallback(false));
+
+        stackSizeGroup.addWidget(new TextFieldWidget2(113, 77, 31, 20, () -> String.valueOf(itemFilterContainer.getTransferStackSize()), val -> {
+                    if (val != null && !val.isEmpty())
+                        itemFilterContainer.setTransferStackSize(MathHelper.clamp(Integer.parseInt(val), 1, transferMode.maxStackSize));
+                })
+                        .setNumbersOnly(1, transferMode.maxStackSize)
+                        .setMaxLength(4)
+                        .setScale(0.9f)
+        );
+
+        primaryGroup.addWidget(stackSizeGroup);
+
+        return super.buildUI(builder.widget(primaryGroup), player);
     }
 
     @Override
