@@ -134,10 +134,10 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     void addDisplayText(List<ITextComponent> textList) {
-        textList.add(new TextComponentString(String.format("sX: %d", this.minerLogic.getX().get())));
-        textList.add(new TextComponentString(String.format("sY: %d", this.minerLogic.getY().get())));
-        textList.add(new TextComponentString(String.format("sZ: %d", this.minerLogic.getZ().get())));
-        textList.add(new TextComponentString(String.format("Radius: %d", this.minerLogic.getCurrentRadius())));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.startx", this.minerLogic.getX().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.starty", this.minerLogic.getY().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.radius", this.minerLogic.getCurrentRadius()));
         if (this.minerLogic.isDone())
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
         else if (this.minerLogic.isWorking())
@@ -153,9 +153,9 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     void addDisplayText2(List<ITextComponent> textList) {
-        textList.add(new TextComponentString(String.format("mX: %d", this.minerLogic.getMineX().get())));
-        textList.add(new TextComponentString(String.format("mY: %d", this.minerLogic.getMineY().get())));
-        textList.add(new TextComponentString(String.format("mZ: %d", this.minerLogic.getMineZ().get())));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.minex", this.minerLogic.getMineX().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.miney", this.minerLogic.getMineY().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.minez", this.minerLogic.getMineZ().get()));
     }
 
     @Override
