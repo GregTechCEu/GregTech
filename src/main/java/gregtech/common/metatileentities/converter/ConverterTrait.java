@@ -1,46 +1,44 @@
 package gregtech.common.metatileentities.converter;
 
-import com.google.common.math.IntMath;
-import com.google.common.math.LongMath;
 import gregtech.api.GTValues;
 import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.util.GTUtility;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class ConverterTrait extends MTETrait {
 
-    private final int baseAmps;
-    private final int tier;
+    private final int amps;
     private final long voltage;
+
+    /**
+     * If TRUE, the front facing of the machine will OUTPUT EU, other sides INPUT FE.
+     *
+     * If FALSE, the front facing of the machine will OUTPUT FE, other sides INPUT EU.
+     */
     private boolean feToEu;
 
     private final IEnergyStorage energyFE = new FEContainer();
     private final IEnergyContainer energyEU = new EUContainer();
     private long storedEU;
-    private long storedFE;
 
     private final long baseCapacity;
 
     private long usedAmps;
 
-    public ConverterTrait(MetaTileEntityConverter mte, int tier, int baseAmps, boolean feToEu) {
+    public ConverterTrait(MetaTileEntityConverter mte, int amps, boolean feToEu) {
         super(mte);
-        this.baseAmps = baseAmps;
+        this.amps = amps;
         this.feToEu = feToEu;
-        this.tier = tier;
-        this.voltage = GTValues.V[tier];
-        this.baseCapacity = this.voltage * 8 * baseAmps;
+        this.voltage = GTValues.V[mte.getTier()];
+        this.baseCapacity = this.voltage * 16 * amps;
     }
 
     protected IEnergyContainer getEnergyEUContainer() {
@@ -60,7 +58,7 @@ public class ConverterTrait extends MTETrait {
     }
 
     public int getBaseAmps() {
-        return baseAmps;
+        return amps;
     }
 
     public long getVoltage() {
@@ -82,107 +80,17 @@ public class ConverterTrait extends MTETrait {
         return null;
     }
 
-    private int feCapacity(){
-        return FeCompat.toFe(baseCapacity, true);
-    }
-
-    private long chargeBattery(long amount, boolean simulate) {
+    private long extractInternal(long amount) {
         if (amount <= 0) return 0;
-        long original = amount;
-        IItemHandlerModifiable inventory = getInventory();
-        for (int i = 0; i < inventory.getSlots() && amount > 0; i++) {
-            amount -= chargeStack(inventory.getStackInSlot(i), amount, simulate);
-        }
-        return original - amount;
-    }
-
-    private long extractInternal(long amount, boolean simulate) {
-        if (amount <= 0) return 0;
-        long original = amount;
-
-        // remove energy first from internal buffer
         long change = Math.min(storedEU, amount);
-        if (!simulate) storedEU -= change;
-        amount -= change;
-
-        // then from batteries
-        IItemHandlerModifiable inventory = getInventory();
-        for (int i = 0; i < inventory.getSlots() && amount > 0; i++) {
-            amount -= dischargeStack(inventory.getStackInSlot(i), amount, simulate);
-        }
-        return original - amount;
-    }
-
-    /** @return the amount charged into the battery */
-    public long chargeStack(ItemStack stack, long amount, boolean simulate) {
-        if (stack.isEmpty()) return 0;
-        IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (electricItem != null) {
-            return electricItem.charge(amount, tier, false, simulate);
-        } else {
-            IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);
-            if (storage != null) {
-                return storage.receiveEnergy(FeCompat.toFe(amount, false), simulate);
-            }
-        }
-        return 0;
-    }
-
-    /** @return the amount discharged from the battery */
-    public long dischargeStack(ItemStack stack, long amount, boolean simulate) {
-        if (stack.isEmpty()) return 0;
-        IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (electricItem != null) {
-            if (!electricItem.canProvideChargeExternally()) return 0;
-            return electricItem.discharge(amount, tier, false, false, simulate);
-        } else {
-            IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);
-            if (storage != null) {
-                return storage.extractEnergy(FeCompat.toFe(amount, false), simulate);
-            }
-        }
-        return 0;
-    }
-
-    /** @return the amount of charge in the battery */
-    public long getChargeFromStack(ItemStack stack) {
-        if (stack.isEmpty()) return 0;
-        IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (electricItem != null) {
-            return electricItem.getCharge();
-        } else {
-            IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);
-            if (storage != null) {
-                return FeCompat.toEu(storage.getEnergyStored(), true);
-            }
-        }
-        return 0;
-    }
-
-    /** @return the max amount of charge for the battery */
-    public long getMaxChargeFromStack(ItemStack stack) {
-        if (stack.isEmpty()) return 0;
-        IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (electricItem != null) {
-            return electricItem.getMaxCharge();
-        } else {
-            IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);
-            if (storage != null) {
-                return FeCompat.toEu(storage.getMaxEnergyStored(), true);
-            }
-        }
-        return 0;
-    }
-
-    protected IItemHandlerModifiable getInventory() {
-        return metaTileEntity.getImportItems();
+        storedEU -= change;
+        return change;
     }
 
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setLong("StoredEU", storedEU);
-        nbt.setLong("StoredFE", storedFE);
         nbt.setBoolean("feToEu", feToEu);
         return nbt;
     }
@@ -190,7 +98,6 @@ public class ConverterTrait extends MTETrait {
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         this.storedEU = nbt.getLong("StoredEU");
-        this.storedFE = nbt.getLong("StoredFE");
         this.feToEu = nbt.getBoolean("feToEu");
     }
 
@@ -198,45 +105,34 @@ public class ConverterTrait extends MTETrait {
     public void update() {
         super.update();
         this.usedAmps = 0;
-        if (metaTileEntity.getWorld().isRemote) return;
-
-        pushEnergy();
-
-        if (feToEu && storedEU < baseCapacity) {
-            long eu = Math.min(FeCompat.toEu(storedFE, true), baseCapacity - storedEU);
-            this.storedEU += eu;
-            this.storedFE -= FeCompat.toFe(eu, true);
+        if (!metaTileEntity.getWorld().isRemote) {
+            pushEnergy();
         }
-        this.storedEU -= chargeBattery(storedEU, false);
     }
 
     private void pushEnergy() {
-        long inputAmp = energyEU.getInputAmperage();
-        long extractable = extractInternal(inputAmp * voltage, true);
-        if (extractable <= 0) return;
-        if (feToEu) {
+        long energyInserted;
+        if (feToEu) { // push out EU
+            // Get the EU capability in front of us
             IEnergyContainer container = getCapabilityAtFront(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER);
             if (container == null) return;
 
-            // check how much can be extracted
-            long ampsToInsert = Math.min(inputAmp, extractable / voltage);
+            // make sure we can output at least 1 amp
+            long ampsToInsert = Math.min(amps, storedEU / voltage);
+            if (ampsToInsert == 0) return;
 
-            // if the energy is not enough for a full package, make it smaller (for batteries below the converters tier)
-            long volt = voltage;
-            if (ampsToInsert == 0) {
-                ampsToInsert = 1;
-                volt = extractable;
-            }
-
-            long inserted = volt * container.acceptEnergyFromNetwork(metaTileEntity.getFrontFacing().getOpposite(), volt, ampsToInsert);
-            extractInternal(inserted, false);
-        } else {
+            // send out energy
+            energyInserted = container.acceptEnergyFromNetwork(metaTileEntity.getFrontFacing().getOpposite(), voltage, ampsToInsert) * voltage;
+        } else { // push out FE
+            // Get the FE capability in front of us
             IEnergyStorage storage = getCapabilityAtFront(CapabilityEnergy.ENERGY);
             if (storage == null) return;
 
-            long inserted = FeCompat.toEu(storage.receiveEnergy(FeCompat.toFe(extractable, false), false), false);
-            extractInternal(inserted, false);
+            // send out energy
+            int feToSend = FeCompat.toFe(storedEU - (storedEU % FeCompat.ratio(false))); // don't lose EU precision
+            energyInserted = FeCompat.toEu(storage.receiveEnergy(feToSend, false));
         }
+        extractInternal(energyInserted);
     }
 
     private <T> T getCapabilityAtFront(Capability<T> capability) {
@@ -254,16 +150,15 @@ public class ConverterTrait extends MTETrait {
         public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
             if (amperage <= 0 || voltage <= 0 || feToEu || side == metaTileEntity.getFrontFacing())
                 return 0;
-            long inputAmps = getInputAmperage();
-            if (usedAmps >= inputAmps) return 0;
+            if (usedAmps >= amps) return 0;
             if (voltage > getInputVoltage()) {
                 metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
-                return Math.min(amperage, inputAmps - usedAmps);
+                return Math.min(amperage, amps - usedAmps);
             }
 
             long space = baseCapacity - storedEU;
-            if (space <= voltage) return 0;
-            long maxAmps = Math.min(Math.min(amperage, inputAmps - usedAmps), space / voltage);
+            if (space < voltage) return 0;
+            long maxAmps = Math.min(Math.min(amperage, amps - usedAmps), space / voltage);
             storedEU += voltage * maxAmps;
             usedAmps += maxAmps;
             return maxAmps;
@@ -276,58 +171,41 @@ public class ConverterTrait extends MTETrait {
 
         @Override
         public long changeEnergy(long amount) {
-            if (amount == 0)
-                return 0;
+            if (amount == 0) return 0;
             return amount > 0 ? addEnergy(amount) : removeEnergy(-amount);
         }
 
         @Override
         public long addEnergy(long energyToAdd) {
-            if (energyToAdd <= 0)
-                return 0;
+            if (energyToAdd <= 0) return 0;
             long original = energyToAdd;
 
-            // add energy first to internal buffer
+            // add energy to internal buffer
             long change = Math.min(baseCapacity - storedEU, energyToAdd);
             storedEU += change;
             energyToAdd -= change;
-
-            // then to batteries
-            energyToAdd -= chargeBattery(energyToAdd, false);
 
             return original - energyToAdd;
         }
 
         @Override
         public long removeEnergy(long energyToRemove) {
-            return extractInternal(energyToRemove, false);
+            return extractInternal(energyToRemove);
         }
 
         @Override
         public long getEnergyStored() {
-            long energyStored = storedEU;
-            IItemHandlerModifiable inventory = getInventory();
-            for (int i = 0; i < inventory.getSlots(); i++) {
-                energyStored = LongMath.saturatedAdd(getChargeFromStack(inventory.getStackInSlot(i)), energyStored);
-                if (energyStored == Long.MAX_VALUE) return Long.MAX_VALUE;
-            }
-            return energyStored;
+            return storedEU;
         }
 
         @Override
         public long getEnergyCapacity() {
-            long energyStored = baseCapacity;
-            IItemHandlerModifiable inventory = getInventory();
-            for (int i = 0; i < inventory.getSlots(); i++) {
-                energyStored = LongMath.saturatedAdd(getMaxChargeFromStack(inventory.getStackInSlot(i)), energyStored);
-                if (energyStored == Long.MAX_VALUE) return Long.MAX_VALUE;
-            }
-            return energyStored;
+            return baseCapacity;
         }
 
         @Override
         public long getInputAmperage() {
-            return baseAmps;
+            return feToEu ? 0 : amps;
         }
 
         @Override
@@ -337,7 +215,7 @@ public class ConverterTrait extends MTETrait {
 
         @Override
         public long getOutputAmperage() {
-            return feToEu ? getInputAmperage() : 0;
+            return feToEu ? amps : 0;
         }
 
         @Override
@@ -353,9 +231,8 @@ public class ConverterTrait extends MTETrait {
         @Override
         public int receiveEnergy(int maxReceive, boolean simulate) {
             if (!feToEu || maxReceive <= 0) return 0;
-            int received = (int) Math.min(feCapacity() - storedFE,
-                    Math.min(FeCompat.toFe(voltage * energyEU.getInputAmperage(), true), maxReceive));
-            if (!simulate) storedFE += received;
+            int received = Math.min(getMaxEnergyStored() - getEnergyStored(), maxReceive);
+            if (!simulate) storedEU += FeCompat.toEu(received);
             return received;
         }
 
@@ -366,13 +243,12 @@ public class ConverterTrait extends MTETrait {
 
         @Override
         public int getEnergyStored() {
-            return IntMath.saturatedAdd(FeCompat.toFe(energyEU.getEnergyStored(), feToEu),
-                    storedFE >= Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) storedFE);
+            return FeCompat.toFe(storedEU);
         }
 
         @Override
         public int getMaxEnergyStored() {
-            return IntMath.saturatedAdd(FeCompat.toFe(energyEU.getEnergyCapacity(), feToEu), feCapacity());
+            return FeCompat.toFe(baseCapacity);
         }
 
         @Override

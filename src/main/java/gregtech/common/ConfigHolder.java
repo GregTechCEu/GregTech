@@ -218,12 +218,12 @@ public class ConfigHolder {
             public boolean nativeEUToFE = true;
 
             @Config.Comment("Forge Energy to GTEU ratio for converting FE to EU. Only affects converters. \nDefault: 4 FE == 1 EU")
-            @Config.RangeDouble() // to ensure positive number
-            public double feToEuRatio = 4;
+            @Config.RangeInt(min = 1)
+            public int feToEuRatio = 4;
 
             @Config.Comment("GTEU to Forge Energy ratio for converting EU to FE. Affects native conversion and Converters. \nDefault: 4 FE == 1 EU")
-            @Config.RangeDouble() // to ensure positive number
-            public double euToFeRatio = 4;
+            @Config.RangeInt(min = 1)
+            public int euToFeRatio = 4;
         }
     }
 

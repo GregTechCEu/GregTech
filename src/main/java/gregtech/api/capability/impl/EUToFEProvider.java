@@ -79,7 +79,7 @@ public class EUToFEProvider extends CapabilityCompatProvider {
                 }
             }
 
-            long maxPacket = FeCompat.nativeToFe(voltage);
+            long maxPacket = FeCompat.toFe(voltage);
             long maximalValue = maxPacket * amperage;
 
             // Try to consume our remainder buffer plus a fresh packet
@@ -150,32 +150,32 @@ public class EUToFEProvider extends CapabilityCompatProvider {
 
             if (delta < 0L) {
 
-                int extract = energyStorage.extractEnergy(FeCompat.nativeToFe(delta), true);
+                int extract = energyStorage.extractEnergy(FeCompat.toFe(delta), true);
 
                 if (extract != ConfigHolder.compat.energy.euToFeRatio)
                     extract -= extract % ConfigHolder.compat.energy.euToFeRatio;
 
-                return FeCompat.nativeToEu(energyStorage.extractEnergy(extract, false));
+                return FeCompat.toEu(energyStorage.extractEnergy(extract, false));
 
             } else {
 
-                int receive = energyStorage.receiveEnergy(FeCompat.nativeToFe(delta), true);
+                int receive = energyStorage.receiveEnergy(FeCompat.toFe(delta), true);
 
                 if (receive != ConfigHolder.compat.energy.euToFeRatio)
                     receive -= receive % ConfigHolder.compat.energy.euToFeRatio;
 
-                return FeCompat.nativeToEu(energyStorage.receiveEnergy(receive, false));
+                return FeCompat.toEu(energyStorage.receiveEnergy(receive, false));
             }
         }
 
         @Override
         public long getEnergyCapacity() {
-            return FeCompat.nativeToEu(energyStorage.getMaxEnergyStored());
+            return FeCompat.toEu(energyStorage.getMaxEnergyStored());
         }
 
         @Override
         public long getEnergyStored() {
-            return FeCompat.nativeToEu(energyStorage.getEnergyStored());
+            return FeCompat.toEu(energyStorage.getEnergyStored());
         }
 
         @Override
@@ -196,7 +196,7 @@ public class EUToFEProvider extends CapabilityCompatProvider {
             long maxInput = energyStorage.receiveEnergy(Integer.MAX_VALUE, true);
 
             if (maxInput == 0) return 0;
-            return GTValues.V[GTUtility.getTierByVoltage(FeCompat.nativeToEu(maxInput))];
+            return GTValues.V[GTUtility.getTierByVoltage(FeCompat.toEu(maxInput))];
         }
 
         @Override

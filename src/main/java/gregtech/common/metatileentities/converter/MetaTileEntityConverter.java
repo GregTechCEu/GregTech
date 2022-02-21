@@ -47,13 +47,13 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
 
     private final ConverterTrait converterTrait;
 
-    private final int slots;
+    private final int amps;
 
     public MetaTileEntityConverter(ResourceLocation metaTileEntityId, int tier, int amps) {
         super(metaTileEntityId, tier);
-        this.slots = amps;
-        this.converterTrait = new ConverterTrait(this, tier, amps, true);
-        initializeInventory();
+        this.amps = amps;
+        this.converterTrait = new ConverterTrait(this, amps, true);
+        //initializeInventory();
         reinitializeEnergyContainer();
     }
 
@@ -80,11 +80,11 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
             if (converterTrait.isFeToEu()) {
                 setFeToEu(false);
                 playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_eu",
-                        converterTrait.getBaseAmps(), converterTrait.getVoltage(), FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps(), false)));
+                        converterTrait.getBaseAmps(), converterTrait.getVoltage(), FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps())));
             } else {
                 setFeToEu(true);
                 playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_fe",
-                        FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps(), true), converterTrait.getBaseAmps(), converterTrait.getVoltage()));
+                        FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps()), converterTrait.getBaseAmps(), converterTrait.getVoltage()));
             }
             return true;
         }
@@ -112,7 +112,7 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityConverter(metaTileEntityId, getTier(), slots);
+        return new MetaTileEntityConverter(metaTileEntityId, getTier(), amps);
     }
 
     @Override
@@ -154,7 +154,14 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     }
 
     @Override
+    protected boolean openGUIOnRightClick() {
+        return false;
+    }
+
+    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
+        return null;
+        /*
         int slotWidth, slotHeight;
         if (slots == 8) {
             slotWidth = 4;
@@ -173,7 +180,7 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
             }
         }
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * slotHeight + 12);
-        return builder.build(getHolder(), entityPlayer);
+        return builder.build(getHolder(), entityPlayer);*/
     }
 
     @Override
@@ -191,7 +198,7 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
         }
         return super.getCapability(capability, side);
     }
-
+/*
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         return new ItemStackHandler(slots) {
@@ -210,7 +217,7 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
                 return 1;
             }
         };
-    }
+    }*/
 
     @Override
     public boolean isValidFrontFacing(EnumFacing facing) {
@@ -222,10 +229,10 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
         long voltage = converterTrait.getVoltage();
         long amps = converterTrait.getBaseAmps();
         tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_tool_usage"));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", slots));
+        //tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", slots));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", converterTrait.getEnergyEUContainer().getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", FeCompat.toFe(voltage * amps, true), amps, voltage, GTValues.VNF[getTier()]));
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VNF[getTier()], FeCompat.toFe(voltage * amps, false)));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", FeCompat.toFe(voltage * amps), amps, voltage, GTValues.VNF[getTier()]));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VNF[getTier()], FeCompat.toFe(voltage * amps)));
     }
 
     @Override

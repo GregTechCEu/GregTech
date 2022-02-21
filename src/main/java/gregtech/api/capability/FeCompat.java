@@ -3,17 +3,11 @@ package gregtech.api.capability;
 import gregtech.common.ConfigHolder;
 
 public class FeCompat {
-    /**
-     * Conversion ratio used by native conversion
-     */
-    public static double nativeRatio() {
-        return ConfigHolder.compat.energy.euToFeRatio;
-    }
 
     /**
      * Conversion ratio used by energy converters
      */
-    public static double ratio(boolean feToEu) {
+    public static int ratio(boolean feToEu) {
         return feToEu ? ConfigHolder.compat.energy.feToEuRatio : ConfigHolder.compat.energy.euToFeRatio;
     }
 
@@ -21,7 +15,7 @@ public class FeCompat {
      * Converts eu to fe, using specified ratio
      * @return fe
      */
-    public static int toFe(long eu, double ratio){
+    public static int toFe(long eu, int ratio){
         return (int) (eu * ratio);
     }
 
@@ -29,23 +23,15 @@ public class FeCompat {
      * Converts fe to eu, using specified ratio
      * @return eu
      */
-    public static long toEu(long fe, double ratio){
+    public static long toEu(long fe, int ratio){
         return (int) (fe / ratio);
     }
 
-    public static int nativeToFe(long eu){
-        return toFe(eu, nativeRatio());
+    public static int toFe(long eu) {
+        return (int) (eu * ratio(false));
     }
 
-    public static long nativeToEu(long fe){
-        return toEu(fe, nativeRatio());
-    }
-
-    public static int toFe(long eu, boolean feToEu){
-        return toFe(eu, ratio(feToEu));
-    }
-
-    public static long toEu(long fe, boolean feToEu){
-        return toEu(fe, ratio(feToEu));
+    public static long toEu(long fe) {
+        return (int) (fe / ratio(true));
     }
 }

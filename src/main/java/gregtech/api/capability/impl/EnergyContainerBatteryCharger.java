@@ -56,7 +56,7 @@ public class EnergyContainerBatteryCharger extends EnergyContainerHandler {
                     energy -= electricItem.charge(Math.min(distributed, GTValues.V[electricItem.getTier()] * 4L), getTier(), true, false);
                 } else if (item instanceof IEnergyStorage) {
                     IEnergyStorage energyStorage = (IEnergyStorage) item;
-                    energy -= FeCompat.nativeToEu(energyStorage.receiveEnergy(FeCompat.nativeToFe(Math.min(distributed, GTValues.V[getTier()] * 4L)), false));
+                    energy -= FeCompat.toEu(energyStorage.receiveEnergy(FeCompat.toFe(Math.min(distributed, GTValues.V[getTier()] * 4L)), false));
                 }
             }
 
@@ -117,7 +117,7 @@ public class EnergyContainerBatteryCharger extends EnergyContainerHandler {
             } else {
                 IEnergyStorage energyStorage = batteryStack.getCapability(CapabilityEnergy.ENERGY, null);
                 if (energyStorage != null) {
-                    energyCapacity += FeCompat.nativeToEu(energyStorage.getMaxEnergyStored());
+                    energyCapacity += FeCompat.toEu(energyStorage.getMaxEnergyStored());
                 }
             }
         }
@@ -136,7 +136,7 @@ public class EnergyContainerBatteryCharger extends EnergyContainerHandler {
             } else {
                 IEnergyStorage energyStorage = batteryStack.getCapability(CapabilityEnergy.ENERGY, null);
                 if (energyStorage != null) {
-                    energyStored += FeCompat.nativeToEu(energyStorage.getEnergyStored());
+                    energyStored += FeCompat.toEu(energyStorage.getEnergyStored());
                 }
             }
         }
