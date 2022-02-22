@@ -25,7 +25,7 @@ public class GTHashMaps {
         final Supplier<Map<ItemStackKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
 
         // Create a single stack of the combined count for each item
-        return new HashMap<>(StreamUtils.streamFrom(inputs)
+        return new LinkedHashMap<>(StreamUtils.streamFrom(inputs)
                 // keep only non-empty item stacks
                 .filter(not(ItemStack::isEmpty))
                 // Track the number of identical items
@@ -45,7 +45,7 @@ public class GTHashMaps {
         final Supplier<Map<ItemStackKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
 
         // Create a single stack of the combined count for each item
-        return new HashMap<>(inputs.stream()
+        return new LinkedHashMap<>(inputs.stream()
                 // keep only non-empty item stacks
                 .filter(not(ItemStack::isEmpty))
                 // Track the number of identical items
@@ -65,7 +65,7 @@ public class GTHashMaps {
         final Supplier<Map<FluidKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
 
         // Create a single stack of the combined count for each item
-        return new HashMap<>(StreamUtils.streamFrom(fluidInputs)
+        return new LinkedHashMap<>(StreamUtils.streamFrom(fluidInputs)
                 // keep only non-empty item stacks
                 .filter(Objects::nonNull)
                 // Track the number of identical items
@@ -85,7 +85,7 @@ public class GTHashMaps {
         final Supplier<Map<FluidKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
 
         // Create a single stack of the combined count for each item
-        return new HashMap<>(fluidInputs.stream()
+        return new LinkedHashMap<>(fluidInputs.stream()
                 // keep only non-empty item stacks
                 .filter(Objects::nonNull)
                 // Track the number of identical items
