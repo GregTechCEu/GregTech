@@ -138,9 +138,10 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         // Now distribute
         for (MutableTriple<IFluidHandler, IFluidHandler, Integer> triple : tanks) {
             if (availableCapacity > maxAmount) {
-                triple.setRight(Math.min(triple.getRight(), (int) Math.floor(triple.getRight() * maxAmount / availableCapacity))); // Distribue fluids based on percentage available space at destination
+                triple.setRight((int) Math.floor(triple.getRight() * maxAmount / availableCapacity)); // Distribute fluids based on percentage available space at destination
             }
             if (triple.getRight() == 0) {
+                if (tank.getFluidAmount() <= 0) break; // If there is no more stored fluid, stop transferring to prevent dupes
                 triple.setRight(1); // If the percent is not enough to give at least 1L, try to give 1L
             } else if (triple.getRight() < 0) {
                 continue;
