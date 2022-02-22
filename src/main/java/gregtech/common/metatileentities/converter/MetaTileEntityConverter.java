@@ -143,14 +143,14 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         Textures.VOLTAGE_CASINGS[getTier()].render(renderState, translation, colouredPipeline);
         if (converterTrait.isFeToEu()) {
-            for (EnumFacing facing : EnumFacing.values()) {
+            for (EnumFacing facing : EnumFacing.VALUES) {
                 if (facing == frontFacing)
                     Textures.ENERGY_OUT.renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
                 else
                     Textures.CONVERTER_FE_IN.renderSided(facing, renderState, translation, pipeline);
             }
         } else {
-            for (EnumFacing facing : EnumFacing.values()) {
+            for (EnumFacing facing : EnumFacing.VALUES) {
                 if (facing == frontFacing)
                     Textures.CONVERTER_FE_OUT.renderSided(facing, renderState, translation, pipeline);
                 else

@@ -24,7 +24,7 @@ public class FeCompat {
      * @return eu
      */
     public static long toEu(long fe, int ratio){
-        return (int) (fe / ratio);
+        return fe / ratio;
     }
 
     public static int toFe(long eu) {
@@ -32,6 +32,6 @@ public class FeCompat {
     }
 
     public static long toEu(long fe) {
-        return (int) (fe / ratio(true));
+        return fe / ratio(true);
     }
 }

@@ -10,31 +10,16 @@ public abstract class CapabilityCompatProvider implements ICapabilityProvider {
 
     private final ICapabilityProvider upvalue;
 
-    private volatile boolean hasCapabilityLocked;
-    private volatile boolean getCapabilityLocked;
-
     public CapabilityCompatProvider(ICapabilityProvider upvalue) {
         this.upvalue = upvalue;
     }
 
     protected <T> boolean hasUpvalueCapability(Capability<T> capability, EnumFacing facing) {
-        if (hasCapabilityLocked) return false;
-        try {
-            hasCapabilityLocked = true;
-            return upvalue.hasCapability(capability, facing);
-        } finally {
-            hasCapabilityLocked = false;
-        }
+        return upvalue.hasCapability(capability, facing);
     }
 
     @Nullable
     protected <T> T getUpvalueCapability(Capability<T> capability, EnumFacing facing) {
-        if (getCapabilityLocked) return null;
-        try {
-            getCapabilityLocked = true;
-            return upvalue.getCapability(capability, facing);
-        } finally {
-            getCapabilityLocked = false;
-        }
+        return upvalue.getCapability(capability, facing);
     }
 }
