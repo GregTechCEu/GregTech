@@ -472,5 +472,34 @@ public class OrganicChemistryMaterials {
                 .flags(GENERATE_GEAR, GENERATE_RING, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION, GENERATE_FOIL, GENERATE_BOLT_SCREW)
                 .components(Carbon, 5, Hydrogen, 8)
                 .build();
+
+        Cyclohexane = new Material.Builder(1069, "cyclohexane")
+                .fluid()
+                .color(0xF2F2F2E7)
+                .components(Carbon, 6, Hydrogen, 12)
+                .build();
+
+        NitrosylChloride = new Material.Builder(1070, "nitrosyl_chloride")
+                .fluid(FluidTypes.GAS)
+                .flags(FLAMMABLE)
+                .color(0xF3F100)
+                .components(Nitrogen, 1, Oxygen, 1, Chlorine, 1)
+                .build();
+
+        CyclohexanoneOxime = new Material.Builder(1071, "cyclohexanone_oxime")
+                .dust()
+                .flags(DISABLE_DECOMPOSITION, FLAMMABLE)
+                .color(0xEBEBF0)
+                .components(Carbon, 6, Hydrogen, 11, Nitrogen, 1, Oxygen, 1)
+                .build()
+                .setFormula("(CH2)5CO");
+
+        Caprolactam = new Material.Builder(1072, "caprolactam")
+                .dust()
+                .flags(DISABLE_DECOMPOSITION, FLAMMABLE)
+                .color(0x676768)
+                .components(Carbon, 6, Hydrogen, 11, Nitrogen, 1, Oxygen, 1)
+                .build()
+                .setFormula("(CH2)5C(O)NH");
     }
 }

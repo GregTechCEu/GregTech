@@ -531,13 +531,6 @@ public class ReactorRecipes {
                 .duration(140).EUt(192).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, Saltpeter)
-                .fluidInputs(Naphtha.getFluid(576))
-                .output(dustTiny, Potassium)
-                .fluidOutputs(Polycaprolactam.getFluid(1296))
-                .duration(640).EUt(VA[LV]).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Calcium)
                 .input(dust, Carbon)
                 .fluidInputs(Oxygen.getFluid(3000))

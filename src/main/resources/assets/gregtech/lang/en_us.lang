@@ -1691,7 +1691,10 @@ material.rarest_metal_mixture=Rarest Metal Mixture
 material.ammonium_chloride=Ammonium Chloride
 material.acidic_osmium_solution=Acidic Osmium Solution
 material.rhodium_plated_palladium=Rhodium Plated Palladium
-
+material.cyclohexane=Cyclohexane
+material.cyclohexanone_oxime=Cyclohexanone Oxime
+material.caprolactam=Caprolactam
+material.nitrosyl_chloride=Nitrosyl Chloride
 
 # Unknown Composition Materials
 material.wood_gas=Wood Gas
@@ -1921,7 +1924,6 @@ material.insane=Insane
 material.epic=Epic
 material.legendary=Legendary
 material.maximum=Maximum
-
 
 # Item Renaming
 item.nether_quartz.oreNetherrack=Nether Quartz Ore
