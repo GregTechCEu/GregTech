@@ -478,9 +478,9 @@ public class PolymerRecipes {
 
     public static void polycaprolactamProcess() {
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(400)
+                .notConsumable(dust, Nickel)
                 .fluidInputs(Benzene.getFluid(1000))
                 .fluidInputs(Hydrogen.getFluid(6000))
-                .notConsumable(dust, Nickel)
                 .fluidOutputs(Cyclohexane.getFluid(1000))
                 .buildAndRegister();
 
