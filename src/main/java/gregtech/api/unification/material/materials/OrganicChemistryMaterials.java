@@ -502,14 +502,14 @@ public class OrganicChemistryMaterials {
                 .build()
                 .setFormula("(CH2)5C(O)NH", true);
 
-        Butyraldehyde = new Material.Builder(1069, "butyraldehyde")
+        Butyraldehyde = new Material.Builder(1073, "butyraldehyde")
                 .fluid()
                 .colorAverage()
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 4, Hydrogen, 8, Oxygen, 1)
                 .build();
 
-        PolyvinylButyral = new Material.Builder(1070, "polyvinyl_butyral")
+        PolyvinylButyral = new Material.Builder(1074, "polyvinyl_butyral")
                 .ingot().fluid()
                 .colorAverage()
                 .flags(GENERATE_PLATE, DISABLE_DECOMPOSITION)
