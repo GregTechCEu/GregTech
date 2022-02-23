@@ -70,7 +70,6 @@ public class ElementMaterials {
                 .dust()
                 .color(0x83824C).iconSet(METALLIC)
                 .element(Elements.Ba)
-                .fluidTemp(1000)
                 .build();
 
         Berkelium = new Material.Builder(9, "berkelium")
