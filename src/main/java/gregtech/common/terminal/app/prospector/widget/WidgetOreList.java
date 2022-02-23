@@ -5,6 +5,7 @@ import com.google.common.collect.HashBiMap;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
+import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.os.TerminalTheme;
@@ -22,8 +23,6 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.*;
 import java.util.function.Consumer;
-
-import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class WidgetOreList extends DraggableScrollableWidgetGroup {
     protected WidgetGroup selected;
@@ -131,9 +130,10 @@ public class WidgetOreList extends DraggableScrollableWidgetGroup {
         for (Widget widget : widgets) {
             if (widget.isVisible()) {
                 widget.drawInBackground(mouseX, mouseY, partialTicks, context);
+
+                GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
             }
         }
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
         return true;
     }
 

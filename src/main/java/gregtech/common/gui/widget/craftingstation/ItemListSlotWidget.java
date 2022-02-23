@@ -10,7 +10,6 @@ import gregtech.api.util.Size;
 import gregtech.common.inventory.IItemInfo;
 import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.IItemList.InsertMode;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,8 +20,6 @@ import org.lwjgl.input.Keyboard;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
-
-import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class ItemListSlotWidget extends Widget {
 
@@ -56,7 +53,6 @@ public class ItemListSlotWidget extends Widget {
         if (isMouseOverElement(mouseX, mouseY)) {
             drawSelectionOverlay(stackX, stackY, 16, 16);
         }
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override

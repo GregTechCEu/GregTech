@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
-import static gregtech.api.gui.impl.ModularUIGui.*;
 
 /**
  * Class Designed for the Quantum Tank. Could be used elsewhere, but is very specialized.
@@ -158,7 +157,6 @@ public class PhantomTankWidget extends TankWidget implements IGhostIngredientTar
                     pos.x + fluidRenderOffset, pos.y + fluidRenderOffset,
                     size.width - fluidRenderOffset, size.height - fluidRenderOffset);
             GlStateManager.enableBlend();
-            GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
         }
     }
 

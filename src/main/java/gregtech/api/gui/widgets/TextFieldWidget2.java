@@ -136,7 +136,6 @@ public class TextFieldWidget2 extends Widget {
         }
         GlStateManager.popMatrix();
         GlStateManager.enableBlend();
-        GlStateManager.color(1, 1, 1, 1f);
     }
 
     @SideOnly(Side.CLIENT)

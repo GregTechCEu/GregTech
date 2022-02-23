@@ -17,8 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
-import static gregtech.api.gui.impl.ModularUIGui.*;
-
 public class ImageWidget extends Widget {
 
     protected IGuiTexture area;
@@ -28,6 +26,7 @@ public class ImageWidget extends Widget {
     private int border;
     private int borderColor;
     private String tooltipText;
+    private boolean ignoreColor = false;
 
     public ImageWidget(int xPosition, int yPosition, int width, int height) {
         super(new Position(xPosition, yPosition), new Size(width, height));
@@ -60,6 +59,11 @@ public class ImageWidget extends Widget {
         return this;
     }
 
+    public ImageWidget setIgnoreColor(boolean ignore) {
+        this.ignoreColor = ignore;
+        return this;
+    }
+
     @Override
     public void updateScreen() {
         if (area != null) {
@@ -88,13 +92,13 @@ public class ImageWidget extends Widget {
     @SideOnly(Side.CLIENT)
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         if (!this.isVisible || area == null) return;
+        if (ignoreColor) GlStateManager.color(1, 1, 1, 1);
         Position position = getPosition();
         Size size = getSize();
         area.draw(position.x, position.y, size.width, size.height);
         if (border > 0) {
             drawBorder(position.x, position.y, size.width, size.height, borderColor, border);
         }
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override

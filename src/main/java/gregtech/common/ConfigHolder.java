@@ -294,6 +294,10 @@ public class ConfigHolder {
                 "13819135 (0xD2DCFF in decimal) is the classic blue from GT5 (default)."})
         public int defaultPaintingColor = 0xD2DCFF;
 
+        @Config.Comment({"The default color to overlay onto Machine (and other) UIs.", "16777215 (0xFFFFFF) is no coloring (like GTCE).",
+                "13819135 (0xD2DCFF in decimal) is the classic blue from GT5 (default)."})
+        public int defaultUIColor = 0xD2DCFF;
+
         public static class GuiConfig {
             @Config.Comment({"The scrolling speed of widgets", "Default: 13"})
             @Config.RangeInt(min = 1)

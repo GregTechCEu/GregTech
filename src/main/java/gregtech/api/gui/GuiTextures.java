@@ -68,6 +68,7 @@ public class GuiTextures {
 
     //WIDGET UI RELATED
     public static final TextureArea SLIDER_BACKGROUND = TextureArea.fullImage("textures/gui/widget/slider_background.png");
+    public static final TextureArea SLIDER_BACKGROUND_VERTICAL = TextureArea.fullImage("textures/gui/widget/slider_background_vertical.png");
     public static final TextureArea SLIDER_ICON = TextureArea.fullImage("textures/gui/widget/slider.png");
     public static final TextureArea MAINTENANCE_ICON = TextureArea.fullImage("textures/gui/widget/button_maintenance.png");
 

@@ -10,7 +10,6 @@ import gregtech.api.util.Size;
 import gregtech.api.util.function.FloatConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.MathHelper;
@@ -18,8 +17,6 @@ import net.minecraft.util.math.MathHelper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.BiFunction;
-
-import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class SliderWidget extends Widget {
 
@@ -105,7 +102,6 @@ public class SliderWidget extends Widget {
         fontRenderer.drawString(displayString,
                 pos.x + size.width / 2 - fontRenderer.getStringWidth(displayString) / 2,
                 pos.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2, textColor);
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override

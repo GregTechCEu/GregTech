@@ -149,6 +149,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
             ModularUI ui = this.createUI(fakePlayer);
 
             ModularUI.Builder builder = new ModularUI.Builder(ui.backgroundPath, ui.getWidth(), ui.getHeight());
+            builder.shouldColor(false);
 
             List<Widget> widgets = new ArrayList<>(ui.guiWidgets.values());
 
