@@ -492,7 +492,7 @@ public class OrganicChemistryMaterials {
                 .color(0xEBEBF0).iconSet(ROUGH)
                 .components(Carbon, 6, Hydrogen, 11, Nitrogen, 1, Oxygen, 1)
                 .build()
-                .setFormula("(CH2)5CO", true);
+                .setFormula("C6H11NO", true);
 
         Caprolactam = new Material.Builder(1072, "caprolactam")
                 .dust()
