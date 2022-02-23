@@ -489,10 +489,10 @@ public class OrganicChemistryMaterials {
         CyclohexanoneOxime = new Material.Builder(1071, "cyclohexanone_oxime")
                 .dust()
                 .flags(DISABLE_DECOMPOSITION, FLAMMABLE)
-                .color(0xEBEBF0)
+                .color(0xEBEBF0).iconSet(ROUGH)
                 .components(Carbon, 6, Hydrogen, 11, Nitrogen, 1, Oxygen, 1)
                 .build()
-                .setFormula("(CH2)5CO");
+                .setFormula("(CH2)5CO", true);
 
         Caprolactam = new Material.Builder(1072, "caprolactam")
                 .dust()
@@ -500,6 +500,6 @@ public class OrganicChemistryMaterials {
                 .color(0x676768)
                 .components(Carbon, 6, Hydrogen, 11, Nitrogen, 1, Oxygen, 1)
                 .build()
-                .setFormula("(CH2)5C(O)NH");
+                .setFormula("(CH2)5C(O)NH", true);
     }
 }
