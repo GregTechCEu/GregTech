@@ -62,6 +62,7 @@ gregtech.multiblock.assembly_line.description=The Assembly Line is a large multi
 gregtech.multiblock.fusion_reactor.luv.description=The Fusion Reactor Mark 1 is a large multiblock structure used for fusing elements into heavier ones. It can only use LuV, ZPM, and UV Energy Hatches. For every Hatch it has, its buffer increases by 10M EU, and has a maximum of 160M.
 gregtech.multiblock.fusion_reactor.zpm.description=The Fusion Reactor Mark 2 is a large multiblock structure used for fusing elements into heavier ones. It can only use ZPM and UV Energy Hatches. For every Hatch it has, its buffer increases by 20M EU, and has a maximum of 320M.
 gregtech.multiblock.fusion_reactor.uv.description=The Fusion Reactor Mark 3 is a large multiblock structure used for fusing elements into heavier ones. It can only use UV Energy Hatches. For every Hatch it has, its buffer increases by 40M EU, and has a maximum of 640M.
+gregtech.multiblock.fusion_reactor.energy=EU: %d / %d
 gregtech.multiblock.fusion_reactor.heat=Heat: %d
 gregtech.multiblock.large_chemical_reactor.description=The Large Chemical Reactor performs chemical reactions at 100%% energy efficiency. Overclocks multiply both speed and energy by 4. The multiblock requires exactly 1 Cupronickel Coil Block, which must be placed adjacent to the PTFE Pipe casing located in the center.
 gregtech.multiblock.primitive_water_pump.description=The Primitive Water Pump is a pre-Steam Era multiblock that collects water once per second, depending on the Biome it is in. It can use a Pump, ULV, or LV Output Hatch, increasing the amount of water per tier. Follows the formula: Biome Coefficient * Hatch Multiplier.
@@ -3876,6 +3877,15 @@ gregtech.machine.miner.multi.description=A multiblock mining machine that covers
 #Small ores lang: gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator. Small ore Fortune §b%d§7.
 gregtech.machine.miner.fluid_usage=Consumes §b%dmb§7 of §e%s§7 per tick. Each overclock doubles the fluid consumption.
 gregtech.machine.miner.overclock=Requires %s§7 power. Overclocks up to %s§7.
+
+gregtech.machine.miner.startx=sX: %d
+gregtech.machine.miner.starty=sY: %d
+gregtech.machine.miner.startz=sZ: %d
+gregtech.machine.miner.minex=mX: %d
+gregtech.machine.miner.miney=mY: %d
+gregtech.machine.miner.minez=mZ: %d
+gregtech.machine.miner.radius=Radius: %d
+gregtech.machine.miner.chunkradius=Chunk Radius: %d
 
 gregtech.machine.fluid_drilling_rig.mv.name=Basic Fluid Drilling Rig
 gregtech.machine.fluid_drilling_rig.hv.name=Advanced Fluid Drilling Rig
