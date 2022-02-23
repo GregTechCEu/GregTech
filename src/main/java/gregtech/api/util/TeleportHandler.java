@@ -2,24 +2,15 @@ package gregtech.api.util;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.play.server.SPacketPlayerPosLook;
-import net.minecraft.network.play.server.SPacketRespawn;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.util.ITeleporter;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.util.List;
-
-class Teleporter implements ITeleporter {
-    @Override
-    public void placeEntity(World world, Entity entity, float yaw) {}
-}
 
 public class TeleportHandler {
 
@@ -49,14 +40,14 @@ public class TeleportHandler {
         return entity.world.getEntitiesWithinAABB(EntityLiving.class, box);
     }
 
-    public static Entity teleportEntityAndRiders(Entity entity, double x, double y, double z, int dimension) {
+    public static Entity teleportEntityAndRiders(Entity entity, int dimension, double x, double y, double z) {
         boolean canProceed = true;
         // Check if player is riding an entity.
         List<Entity> riders = entity.getPassengers();
         for (int i = 0; i < riders.size(); i++) {
             Entity rider = riders.get(i);
             rider.dismountRidingEntity();
-            rider = teleportEntityAndRiders(rider, x, y, z, dimension);
+            rider = teleportEntityAndRiders(rider, dimension, x, y, z);
             riders.set(i, rider);
         }
 
@@ -69,9 +60,6 @@ public class TeleportHandler {
                     rider.startRiding(entity, true);
                 }
             }
-        }
-        if(entity instanceof EntityPlayerMP){
-            ((EntityPlayerMP) entity).connection.sendPacket(new SPacketPlayerPosLook());
         }
         return entity;
     }
@@ -114,7 +102,7 @@ public class TeleportHandler {
     }
 
     public static void transferPlayerToDimension(EntityPlayerMP player, int newDimension, double x, double y, double z) {
-        player.changeDimension(newDimension, new Teleporter());
+        player.changeDimension(newDimension, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(newDimension).getDefaultTeleporter());
         if (player.dimension == newDimension) {
             setEntityLocation(player, x, y, z);
             player.velocityChanged = true;
@@ -127,16 +115,16 @@ public class TeleportHandler {
         return teleportEntityToWorld(entity, x, y, z, world);
     }
 
-     public static Entity teleportEntityToWorld(Entity entity, double x, double y, double z, WorldServer newWorld) {
-         MinecraftServer server = DimensionManager.getWorld(0).getMinecraftServer();
-         WorldServer oldWorld = server.getWorld(entity.dimension);
+    public static Entity teleportEntityToWorld(Entity entity, double x, double y, double z, WorldServer newWorld) {
+        MinecraftServer server = DimensionManager.getWorld(0).getMinecraftServer();
+        WorldServer oldWorld = server.getWorld(entity.dimension);
         if (oldWorld == newWorld) {
             setEntityLocation(entity, x, y, z);
             entity.world.updateEntityWithOptionalForce(entity, false);
             entity.velocityChanged = true; // Have to mark entity velocity changed.
             return entity;
         } else {
-            Entity newEntity = entity.changeDimension(newWorld.provider.getDimension(), new Teleporter());
+            Entity newEntity = entity.changeDimension(newWorld.provider.getDimension(), FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(newWorld.provider.getDimension()).getDefaultTeleporter());
             if (newEntity.dimension == newWorld.provider.getDimension()) {
                 setEntityLocation(newEntity, x, y, z);
                 newEntity.velocityChanged = true;
