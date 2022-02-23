@@ -25,6 +25,7 @@ import gregtech.common.terminal.app.multiblockhelper.MultiBlockPreviewARApp;
 import gregtech.common.terminal.app.prospector.ProspectorApp;
 import gregtech.common.terminal.app.recipechart.RecipeChartApp;
 import gregtech.common.terminal.app.settings.SettingsApp;
+import gregtech.common.terminal.app.teleport.TeleportApp;
 import gregtech.common.terminal.app.worldprospector.WorldProspectorARApp;
 import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.common.terminal.hardware.DeviceHardware;
@@ -72,6 +73,7 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new TutorialGuideApp()).defaultApp().build();
         AppRegistryBuilder.create(new GuideEditorApp()).defaultApp().build();
         AppRegistryBuilder.create(new SettingsApp()).defaultApp().build();
+        AppRegistryBuilder.create(new TeleportApp()).defaultApp().build();
 
         AppRegistryBuilder.create(new PongApp())
                 .battery(GTValues.LV, 75)
