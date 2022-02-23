@@ -1047,7 +1047,7 @@ public abstract class MetaTileEntity implements ICoverable {
         // determine if there is sufficient room to insert all items into the target inventory
         if (simulate) {
             OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(handler);
-            HashMap<ItemStackKey, Integer> stackKeyMap = GTHashMaps.fromItemStackCollection(items);
+            Map<ItemStackKey, Integer> stackKeyMap = GTHashMaps.fromItemStackCollection(items);
 
             for (Map.Entry<ItemStackKey, Integer> entry : stackKeyMap.entrySet()) {
                 int amountToInsert = entry.getValue();
@@ -1082,7 +1082,7 @@ public abstract class MetaTileEntity implements ICoverable {
                                                   List<FluidStack> fluidStacks) {
         if (simulate) {
             OverlayedFluidHandler overlayedFluidHandler = new OverlayedFluidHandler(fluidHandler);
-            HashMap<FluidKey, Integer> fluidKeyMap = GTHashMaps.fromFluidCollection(fluidStacks);
+            Map<FluidKey, Integer> fluidKeyMap = GTHashMaps.fromFluidCollection(fluidStacks);
             for (Map.Entry<FluidKey, Integer> entry : fluidKeyMap.entrySet()) {
                 int amountToInsert = entry.getValue();
                 int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), amountToInsert);

@@ -24,10 +24,10 @@ public class ParallelLogic {
 
     public static int getMaxRecipeMultiplier(Recipe recipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, int parallelAmount) {
         // Find all the items in the combined Item Input inventories and create oversized ItemStacks
-        HashMap<ItemStackKey, Integer> ingredientStacks = GTHashMaps.fromItemHandler(inputs);
+        Map<ItemStackKey, Integer> ingredientStacks = GTHashMaps.fromItemHandler(inputs);
 
         // Find all the fluids in the combined Fluid Input inventories and create oversized FluidStacks
-        HashMap<FluidKey, Integer> fluidStacks = GTHashMaps.fromFluidHandler(fluidInputs);
+        Map<FluidKey, Integer> fluidStacks = GTHashMaps.fromFluidHandler(fluidInputs);
 
         // Find the maximum number of recipes that can be performed from the items in the item input inventories
         int itemMultiplier = getMaxRatioItem(ingredientStacks, recipe, parallelAmount);
@@ -73,7 +73,7 @@ public class ParallelLogic {
         int minMultiplier = 0;
         int maxMultiplier = multiplier;
 
-        HashMap<ItemStackKey, Integer> recipeOutputs = GTHashMaps.fromItemStackCollection(recipe.getOutputs());
+        Map<ItemStackKey, Integer> recipeOutputs = GTHashMaps.fromItemStackCollection(recipe.getOutputs());
 
         while (minMultiplier != maxMultiplier) {
             overlayedItemHandler.reset();
@@ -113,10 +113,10 @@ public class ParallelLogic {
         int maxMultiplier = multiplier;
         int previousMutiplier = multiplier;
 
-        HashMap<ItemStackKey, Integer> recipeOutputs = GTHashMaps.fromItemStackCollection(recipeOutputList);
-        HashMap<ItemStackKey, Integer> recipeOutputsToAppend = GTHashMaps.fromItemStackCollection(outputsToAppend);
+        Map<ItemStackKey, Integer> recipeOutputs = GTHashMaps.fromItemStackCollection(recipeOutputList);
+        Map<ItemStackKey, Integer> recipeOutputsToAppend = GTHashMaps.fromItemStackCollection(outputsToAppend);
 
-        HashMap<ItemStackKey, Integer> appendedResultMap = new HashMap<>(recipeOutputs);
+        Map<ItemStackKey, Integer> appendedResultMap = new HashMap<>(recipeOutputs);
         recipeOutputsToAppend.forEach((stackKey, amt) -> appendedResultMap.merge(stackKey, amt * multiplier, Integer::sum));
 
         while (minMultiplier != maxMultiplier) {
@@ -192,7 +192,7 @@ public class ParallelLogic {
         int minMultiplier = 0;
         int maxMultiplier = multiplier;
 
-        HashMap<FluidKey, Integer> recipeFluidOutputs = GTHashMaps.fromFluidCollection(recipe.getFluidOutputs());
+        Map<FluidKey, Integer> recipeFluidOutputs = GTHashMaps.fromFluidCollection(recipe.getFluidOutputs());
 
         while (minMultiplier != maxMultiplier) {
             overlayedFluidHandler.reset();
@@ -222,12 +222,12 @@ public class ParallelLogic {
     /**
      * Finds the maximum number of Recipes that can be performed at the same time based on the items in the item input inventory
      *
-     * @param countIngredients a {@link HashMap} of {@link ItemStackKey}s that is the result of calling {@link GTHashMaps#fromItemHandler(IItemHandler)}
+     * @param countIngredients a {@link Map} of {@link ItemStackKey}s that is the result of calling {@link GTHashMaps#fromItemHandler(IItemHandler)}
      * @param recipe           The {@link Recipe} for which to find the maximum that can be ran simultaneously
      * @param parallelAmount   The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Items
      */
-    protected static int getMaxRatioItem(HashMap<ItemStackKey, Integer> countIngredients, Recipe recipe, int parallelAmount) {
+    protected static int getMaxRatioItem(Map<ItemStackKey, Integer> countIngredients, Recipe recipe, int parallelAmount) {
         int minMultiplier = Integer.MAX_VALUE;
         //map the recipe ingredients to account for duplicated and notConsumable ingredients.
         //notConsumable ingredients are not counted towards the max ratio
@@ -298,12 +298,12 @@ public class ParallelLogic {
      * @param parallelAmount The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Fluids
      */
-    protected static int getMaxRatioFluid(HashMap<FluidKey, Integer> countFluid, Recipe recipe, int parallelAmount) {
+    protected static int getMaxRatioFluid(Map<FluidKey, Integer> countFluid, Recipe recipe, int parallelAmount) {
         int minMultiplier = Integer.MAX_VALUE;
         //map the recipe input fluids to account for duplicated fluids,
         //so their sum is counted against the total of fluids available in the input
-        HashMap<FluidKey, Integer> fluidCountMap = new HashMap<>();
-        HashMap<FluidKey, Integer> notConsumableMap = new HashMap<>();
+        Map<FluidKey, Integer> fluidCountMap = new HashMap<>();
+        Map<FluidKey, Integer> notConsumableMap = new HashMap<>();
         for (FluidStack fluidStack : recipe.getFluidInputs()) {
             int fluidAmount = fluidStack.amount;
             if (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable")) {
