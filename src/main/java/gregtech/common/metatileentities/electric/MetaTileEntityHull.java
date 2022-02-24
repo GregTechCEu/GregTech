@@ -1,5 +1,8 @@
 package gregtech.common.metatileentities.electric;
 
+import appeng.api.util.AECableType;
+import appeng.api.util.AEPartLocation;
+import appeng.me.helpers.AENetworkProxy;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
@@ -22,13 +25,16 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
 public class MetaTileEntityHull extends MetaTileEntityMultiblockPart {
 
     protected IEnergyContainer energyContainer;
+    private AENetworkProxy gridProxy;
 
     public MetaTileEntityHull(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
@@ -82,5 +88,31 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart {
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), tierName));
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), tierName));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if (isFirstTick()) {
+            getProxy();
+        }
+    }
+
+    @Nonnull
+    @Override
+    @Optional.Method(modid = GTValues.MODID_APPENG)
+    public AECableType getCableConnectionType(@Nonnull AEPartLocation part) {
+        return AECableType.SMART;
+    }
+
+    @Nullable
+    @Override
+    @Optional.Method(modid = GTValues.MODID_APPENG)
+    public AENetworkProxy getProxy() {
+        if (gridProxy == null) {
+            gridProxy = new AENetworkProxy(getHolder(), "proxy", getStackForm(), true);
+            gridProxy.onReady();
+        }
+        return gridProxy;
     }
 }
