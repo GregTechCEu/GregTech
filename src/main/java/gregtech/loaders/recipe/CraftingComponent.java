@@ -31,6 +31,8 @@ public class CraftingComponent {
     public static Component WIRE_HEX;
     public static Component CABLE;
     public static Component CABLE_QUAD;
+    public static Component CABLE_OCT;
+    public static Component CABLE_HEX;
     public static Component CABLE_TIER_UP;
     public static Component CASING;
     public static Component HULL;
@@ -220,6 +222,36 @@ public class CraftingComponent {
                 {7, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.VanadiumGallium)},
                 {8, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.YttriumBariumCuprate)},
                 {9, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Europium)},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+        CABLE_OCT = new Component(Stream.of(new Object[][]{
+
+                {0, new UnificationEntry(OrePrefix.cableGtOctal, Materials.RedAlloy)},
+                {1, new UnificationEntry(OrePrefix.cableGtOctal, Materials.Tin)},
+                {2, new UnificationEntry(OrePrefix.cableGtOctal, Materials.Copper)},
+                {3, new UnificationEntry(OrePrefix.cableGtOctal, Materials.Gold)},
+                {4, new UnificationEntry(OrePrefix.cableGtOctal, Materials.Aluminium)},
+                {5, new UnificationEntry(OrePrefix.cableGtOctal, Materials.Platinum)},
+                {6, new UnificationEntry(OrePrefix.cableGtOctal, Materials.NiobiumTitanium)},
+                {7, new UnificationEntry(OrePrefix.cableGtOctal, Materials.VanadiumGallium)},
+                {8, new UnificationEntry(OrePrefix.cableGtOctal, Materials.YttriumBariumCuprate)},
+                {9, new UnificationEntry(OrePrefix.cableGtOctal, Materials.Europium)},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+        CABLE_HEX = new Component(Stream.of(new Object[][]{
+
+                {0, new UnificationEntry(OrePrefix.cableGtHex, Materials.RedAlloy)},
+                {1, new UnificationEntry(OrePrefix.cableGtHex, Materials.Tin)},
+                {2, new UnificationEntry(OrePrefix.cableGtHex, Materials.Copper)},
+                {3, new UnificationEntry(OrePrefix.cableGtHex, Materials.Gold)},
+                {4, new UnificationEntry(OrePrefix.cableGtHex, Materials.Aluminium)},
+                {5, new UnificationEntry(OrePrefix.cableGtHex, Materials.Platinum)},
+                {6, new UnificationEntry(OrePrefix.cableGtHex, Materials.NiobiumTitanium)},
+                {7, new UnificationEntry(OrePrefix.cableGtHex, Materials.VanadiumGallium)},
+                {8, new UnificationEntry(OrePrefix.cableGtHex, Materials.YttriumBariumCuprate)},
+                {9, new UnificationEntry(OrePrefix.cableGtHex, Materials.Europium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 

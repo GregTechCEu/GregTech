@@ -1,13 +1,13 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
-import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -178,7 +178,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         double chargePercent = getEnergyStored() / (getEnergyCapacity() * 1.0);
 
         if (chargePercent > 0.5) {
-            int chargedBy = energyStorage.receiveEnergy((int) (GTValues.V[machineTier] * ConfigHolder.compat.energy.rfRatio), false);
+            long chargedBy = FeCompat.toEu(energyStorage.receiveEnergy(FeCompat.toFe(GTValues.V[machineTier]), false));
             removeEnergy(chargedBy);
             return chargedBy > 0;
         }
