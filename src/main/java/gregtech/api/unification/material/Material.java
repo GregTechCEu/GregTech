@@ -65,9 +65,20 @@ public class Material implements Comparable<Material> {
             return materialInfo.element.getSymbol();
         }
         if (!materialInfo.componentList.isEmpty()) {
+            long water = 0;
             StringBuilder components = new StringBuilder();
-            for (MaterialStack component : materialInfo.componentList)
-                components.append(component.toString());
+            for (MaterialStack component : materialInfo.componentList) {
+                if (component.material == Materials.Water) {
+                    water += component.amount;
+                } else {
+                    components.append(component.toString());
+                }
+            }
+            if (water != 0) {
+                components.append("\u00b7 "); // middle dot TODO fix edge cases
+                components.append(water);
+                components.append(SmallDigits.toSmallDownNumbers("H2O"));
+            }
             return components.toString();
         }
         return "";
