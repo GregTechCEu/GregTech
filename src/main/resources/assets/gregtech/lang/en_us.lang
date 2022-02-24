@@ -4236,6 +4236,10 @@ gregtech.gui.silktouch.enabled=Silk Touch Enabled: Click to Disable./n§7Switchi
 gregtech.gui.silktouch.disabled=Silk Touch Disabled: Click to Enable./n§7Switching requires an idle machine.
 gregtech.gui.chunkmode.enabled=Chunk Mode Enabled: Click to Disable./n§7Switching requires an idle machine.
 gregtech.gui.chunkmode.disabled=Chunk Mode Disabled: Click to Enable./n§7Switching requires an idle machine.
+gregtech.gui.multiblock_item_voiding=Voiding Mode/n§7Voiding §6Items
+gregtech.gui.multiblock_fluid_voiding=Voiding Mode/n§7Voiding §9Fluids
+gregtech.gui.multiblock_item_fluid_voiding=Voiding Mode/n§7Voiding §6Items §7and §9Fluids
+gregtech.gui.multiblock_no_voiding=Voiding Mode/n§7Voiding Nothing
 
 ore.spawnlocation.name=Ore Spawn Information
 gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spawn locations.

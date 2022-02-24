@@ -8,12 +8,15 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.gui.widgets.CycleButtonWidget;
+import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.common.ConfigHolder;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -30,6 +33,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.util.text.event.HoverEvent.Action;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -41,6 +46,11 @@ import java.util.stream.IntStream;
 import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
 
 public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase implements IMaintenance {
+
+
+    private boolean voidingItems = false;
+    private boolean voidingFluids = false;
+    private VoidingMode voidingMode;
 
     /**
      * Items to recover in a muffler hatch
@@ -62,9 +72,14 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     // Used for data preservation with Maintenance Hatch
     private boolean storedTaped = false;
 
+    private final String NBT_VOIDING_MODE = "VoidingMode";
+    private final String NBT_VOIDING_ITEMS = "VoidingItems";
+    private final String NBT_VOIDING_FLUIDS = "VoidingFluids";
+
     public MultiblockWithDisplayBase(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
         this.maintenance_problems = 0b000000;
+        this.voidingMode = VoidingMode.VOID_NONE;
     }
 
     /**
@@ -330,8 +345,42 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         builder.widget(new AdvancedTextWidget(11, 19, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(156)
                 .setClickHandler(this::handleDisplayClick));
+        if(shouldShowVoidingModeButton()) {
+            builder.widget(new ImageCycleButtonWidget(149, 121 - 17, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
+                    4, this::getVoidingMode, this::setVoidingMode)
+                    .setTooltipHoverString(this::getVoidingModeTooltip));
+        }
         builder.bindPlayerInventory(entityPlayer.inventory, 134);
         return builder;
+    }
+
+    protected boolean shouldShowVoidingModeButton() {
+        return true;
+    }
+
+    protected int getVoidingMode() {
+        return voidingMode.ordinal();
+    }
+
+    private void setVoidingMode(int mode) {
+        this.voidingMode = VoidingMode.VALUES[mode];
+
+        this.voidingFluids = mode >= 2;
+
+        this.voidingItems = mode == 1 || mode == 3;
+
+        // After changing the voiding mode, reset the notified buses in case a recipe can run now that voiding mode has been changed
+        for(IFluidTank tank : this.getAbilities(MultiblockAbility.IMPORT_FLUIDS)) {
+            this.getNotifiedFluidInputList().add((IFluidHandler) tank);
+        }
+        this.getNotifiedItemInputList().addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
+
+
+        this.getHolder().markDirty();
+    }
+
+    private String getVoidingModeTooltip(int mode) {
+        return VoidingMode.VALUES[mode].getName();
     }
 
     @Override
@@ -344,6 +393,9 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         super.writeToNBT(data);
         data.setByte("Maintenance", maintenance_problems);
         data.setInteger("ActiveTimer", timeActive);
+        data.setBoolean(NBT_VOIDING_ITEMS, voidingItems);
+        data.setBoolean(NBT_VOIDING_FLUIDS, voidingFluids);
+        data.setInteger(NBT_VOIDING_MODE, voidingMode.ordinal());
         return data;
     }
 
@@ -352,6 +404,17 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         super.readFromNBT(data);
         maintenance_problems = data.getByte("Maintenance");
         timeActive = data.getInteger("ActiveTimer");
+        if(data.hasKey(NBT_VOIDING_ITEMS)) {
+            voidingItems = data.getBoolean(NBT_VOIDING_ITEMS);
+        }
+
+        if(data.hasKey(NBT_VOIDING_FLUIDS)) {
+            voidingFluids = data.getBoolean(NBT_VOIDING_FLUIDS);
+        }
+
+        if(data.hasKey(NBT_VOIDING_MODE)) {
+            voidingMode = VoidingMode.values()[data.getInteger(NBT_VOIDING_MODE)];
+        }
     }
 
     @Override
@@ -359,6 +422,9 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         super.writeInitialSyncData(buf);
         buf.writeByte(maintenance_problems);
         buf.writeInt(timeActive);
+        buf.writeBoolean(voidingFluids);
+        buf.writeBoolean(voidingItems);
+        buf.writeInt(voidingMode.ordinal());
     }
 
     @Override
@@ -366,6 +432,9 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         super.receiveInitialSyncData(buf);
         maintenance_problems = buf.readByte();
         timeActive = buf.readInt();
+        voidingFluids = buf.readBoolean();
+        voidingItems = buf.readBoolean();
+        voidingMode = VoidingMode.values()[buf.readInt()];
     }
 
     @Override
@@ -386,5 +455,15 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean canVoidRecipeFluidOutputs() {
+        return voidingFluids;
+    }
+
+    @Override
+    public boolean canVoidRecipeItemOutputs() {
+        return voidingItems;
     }
 }

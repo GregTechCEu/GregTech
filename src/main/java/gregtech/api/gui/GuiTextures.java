@@ -43,6 +43,7 @@ public class GuiTextures {
     public static final TextureArea BUTTON_LOCK = TextureArea.fullImage("textures/gui/widget/button_lock.png");
     public static final TextureArea BUTTON_VOID = TextureArea.fullImage("textures/gui/widget/button_void.png");
     public static final TextureArea BUTTON_VOID_PARTIAL = TextureArea.fullImage("textures/gui/widget/button_void_partial.png");
+    public static final TextureArea BUTTON_VOID_MULTIBLOCK = TextureArea.fullImage("textures/gui/widget/button_void_multiblock.png");
     public static final TextureArea BUTTON_LEFT = TextureArea.fullImage("textures/gui/widget/left.png");
     public static final TextureArea BUTTON_OVERCLOCK = TextureArea.fullImage("textures/gui/widget/button_overclock.png");
     public static final TextureArea BUTTON_PUBLIC_PRIVATE = TextureArea.fullImage("textures/gui/widget/button_public_private.png");
