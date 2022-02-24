@@ -402,7 +402,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                 .aisle(slice.toString()).setRepeatable(3, MAX_WIDTH)
                 .aisle(end.toString())
                 .where('S', selfPredicate())
-                .where('A', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID)).setMinGlobalLimited(3)
+                .where('A', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID)).setMinGlobalLimited(2)
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setPreviewCount(1)))
                 .where('B', metaTileEntities(MetaTileEntities.MONITOR_SCREEN))
                 .build();
