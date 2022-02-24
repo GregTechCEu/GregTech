@@ -160,13 +160,6 @@ public class ReactorRecipes {
                 .duration(120).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
-                .input(dust, Sodium)
-                .fluidInputs(Water.getFluid(1000))
-                .output(dust, SodiumHydroxide, 3)
-                .duration(40).EUt(8).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(NitrationMixture.getFluid(3000))
                 .fluidInputs(Glycerol.getFluid(1000))
                 .fluidOutputs(GlycerylTrinitrate.getFluid(1000))
@@ -517,10 +510,10 @@ public class ReactorRecipes {
                 .duration(1100).EUt(VA[HV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, SodiumBisulfate, 7)
-                .fluidInputs(Water.getFluid(1000))
-                .output(dust, SodiumHydroxide, 3)
-                .fluidOutputs(SulfuricAcid.getFluid(1000))
+                .input(dust, SodiumHydroxide, 3)
+                .fluidInputs(SulfuricAcid.getFluid(1000))
+                .output(dust, SodiumBisulfate, 7)
+                .fluidOutputs(Water.getFluid(1000))
                 .duration(60).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()

@@ -925,6 +925,7 @@ public class FirstDegreeMaterials {
         SodiumHydroxide = new Material.Builder(377, "sodium_hydroxide")
                 .dust(1)
                 .color(0x003380)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Sodium, 1, Oxygen, 1, Hydrogen, 1)
                 .build();
 
