@@ -27,7 +27,7 @@ public class GuiTextures {
     public static final TextureArea SLOT = AdoptableTextureArea.fullImage("textures/gui/base/slot.png", 18, 18, 1, 1);
     public static final TextureArea SLOT_DARKENED = TextureArea.fullImage("textures/gui/base/darkened_slot.png");
     public static final SteamTexture SLOT_STEAM = SteamTexture.fullImage("textures/gui/base/slot_%s.png");
-
+    public static final TextureArea TOGGLE_BUTTON_BACK = TextureArea.fullImage("textures/gui/widget/toggle_button_background.png");
 
     //FLUID & ITEM OUTPUT BUTTONS
     public static final TextureArea BLOCKS_INPUT = TextureArea.fullImage("textures/gui/widget/button_blocks_input.png");
