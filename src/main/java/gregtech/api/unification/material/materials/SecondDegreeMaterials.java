@@ -31,7 +31,7 @@ public class SecondDegreeMaterials {
         Borax = new Material.Builder(2002, "borax")
                 .dust(1)
                 .color(0xFAFAFA).iconSet(FINE)
-                .components(Sodium, 2, Boron, 4, Water, 10, Oxygen, 7)
+                .components(Sodium, 2, Boron, 4, Oxygen, 7, Water, 10)
                 .build();
 
         SaltWater = new Material.Builder(2003, "salt_water")
@@ -169,7 +169,7 @@ public class SecondDegreeMaterials {
                 .dust(1)
                 .color(0xFF0080).iconSet(ROUGH)
                 .flags(NO_SMASHING)
-                .components(Aluminium, 2, PotassiumFeldspar, 1, Oxygen, 3)
+                .components(Aluminium, 2, Oxygen, 3, PotassiumFeldspar, 1)
                 .build();
 
         // Free ID 2021
@@ -191,7 +191,7 @@ public class SecondDegreeMaterials {
         Pollucite = new Material.Builder(2024, "pollucite")
                 .dust().ore()
                 .color(0xF0D2D2)
-                .components(Caesium, 2, Aluminium, 2, Silicon, 4, Water, 2, Oxygen, 12)
+                .components(Caesium, 2, Silicon, 4, Aluminium, 2, Oxygen, 12, Water, 2)
                 .build();
 
         // Free ID 2025
@@ -200,13 +200,13 @@ public class SecondDegreeMaterials {
                 .dust().ore(3, 1)
                 .color(0xF5D7D2).iconSet(ROUGH)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Sodium, 1, Magnesium, 6, Silicon, 12, Hydrogen, 4, Water, 5, Oxygen, 36)
+                .components(Sodium, 1, Magnesium, 6, Silicon, 12, Hydrogen, 4, Oxygen, 36, Water, 5)
                 .build();
 
         FullersEarth = new Material.Builder(2027, "fullers_earth")
                 .dust().ore(2, 1)
                 .color(0xA0A078).iconSet(FINE)
-                .components(Magnesium, 1, Silicon, 4, Hydrogen, 1, Water, 4, Oxygen, 11)
+                .components(Magnesium, 1, Silicon, 4, Oxygen, 11, Hydrogen, 1, Water, 4)
                 .build();
 
         Pitchblende = new Material.Builder(2028, "pitchblende")
@@ -227,27 +227,27 @@ public class SecondDegreeMaterials {
         Mirabilite = new Material.Builder(2030, "mirabilite")
                 .dust()
                 .color(0xF0FAD2)
-                .components(Sodium, 2, Sulfur, 1, Water, 10, Oxygen, 4)
+                .components(Sodium, 2, Sulfur, 1, Oxygen, 4, Water, 10)
                 .build();
 
         Trona = new Material.Builder(2031, "trona")
                 .dust(1).ore(2, 1)
                 .color(0x87875F).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Sodium, 3, Carbon, 2, Hydrogen, 1, Water, 2, Oxygen, 6)
+                .components(SodaAsh, 1, SodiumBicarbonate, 1, Water, 2)
                 .build();
 
         Gypsum = new Material.Builder(2032, "gypsum")
                 .dust(1).ore()
                 .color(0xE6E6FA)
-                .components(Calcium, 1, Sulfur, 1, Water, 2, Oxygen, 4)
+                .components(Calcium, 1, Sulfur, 1, Oxygen, 4, Water, 2)
                 .build();
 
         Zeolite = new Material.Builder(2033, "zeolite")
                 .dust().ore(3, 1)
                 .color(0xF0E6E6)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Sodium, 1, Calcium, 4, Silicon, 27, Aluminium, 9, Water, 28, Oxygen, 72)
+                .components(Sodium, 1, Calcium, 4, Silicon, 27, Aluminium, 9, Oxygen, 72, Water, 28)
                 .build();
 
         Concrete = new Material.Builder(2034, "concrete")

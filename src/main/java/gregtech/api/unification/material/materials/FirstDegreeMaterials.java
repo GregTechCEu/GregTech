@@ -501,8 +501,7 @@ public class FirstDegreeMaterials {
                 .color(0xC88C14)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Calcium, 1, Tungsten, 1, Oxygen, 4)
-                .build()
-                .setFormula("Ca(WO3)O", true);
+                .build();
 
         Sodalite = new Material.Builder(316, "sodalite")
                 .gem(1).ore(6, 4)
@@ -583,7 +582,7 @@ public class FirstDegreeMaterials {
         Tetrahedrite = new Material.Builder(327, "tetrahedrite")
                 .dust().ore()
                 .color(0xC82000)
-                .components(Copper, 3, Antimony, 1, Sulfur, 3, Iron, 1)
+                .components(Copper, 3, Iron, 1, Antimony, 1, Sulfur, 3)
                 .build();
 
         TinAlloy = new Material.Builder(328, "tin_alloy")
@@ -607,8 +606,7 @@ public class FirstDegreeMaterials {
                 .color(0x373223)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Tungsten, 1, Lithium, 2, Oxygen, 4)
-                .build()
-                .setFormula("Li2(WO3)O", true);
+                .build();
 
         Ultimet = new Material.Builder(331, "ultimet")
                 .ingot(4).fluid()
@@ -761,7 +759,7 @@ public class FirstDegreeMaterials {
                 .ingot(1).fluid()
                 .color(0xA0A0A0)
                 .flags(STD_METAL, DECOMPOSITION_BY_CENTRIFUGING)
-                .components(Arsenic, 1, Gallium, 1)
+                .components(Gallium, 1, Arsenic, 1)
                 .blastTemp(1200, GasTier.LOW, VA[MV], 1200)
                 .build();
 
@@ -937,7 +935,7 @@ public class FirstDegreeMaterials {
         Bastnasite = new Material.Builder(379, "bastnasite")
                 .dust().ore(2, 1)
                 .color(0xC86E2D).iconSet(FINE)
-                .components(Cerium, 1, Carbon, 1, Fluorine, 1, Oxygen, 3)
+                .components(Cerium, 1, Carbon, 1, Oxygen, 3, Fluorine, 1)
                 .build();
 
         Pentlandite = new Material.Builder(380, "pentlandite")

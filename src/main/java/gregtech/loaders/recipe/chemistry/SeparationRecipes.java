@@ -413,11 +413,11 @@ public class SeparationRecipes {
                 .duration(768).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Trona, 16)
-                .output(dust, SodaAsh, 6)
-                .output(dust, SodiumBicarbonate, 6)
-                .fluidOutputs(Water.getFluid(2000))
-                .duration(784).EUt(VA[LV] * 2).buildAndRegister();
+                .input(dust, Trona, 8)
+                .output(dust, SodaAsh, 3)
+                .output(dust, SodiumBicarbonate, 3)
+                .fluidOutputs(Water.getFluid(1000))
+                .duration(392).EUt(VA[LV] * 2).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .input(dust, Bauxite, 15)
