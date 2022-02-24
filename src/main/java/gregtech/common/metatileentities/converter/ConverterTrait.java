@@ -132,8 +132,9 @@ public class ConverterTrait extends MTETrait {
             if (storage == null) return;
 
             // send out energy
-            int feToSend = FeCompat.toFe(storedEU - (storedEU % FeCompat.ratio(false))); // don't lose EU precision
-            energyInserted = FeCompat.toEu(storage.receiveEnergy(feToSend, false));
+            // subtract the modulus of the fe possible to send
+            int feSent = storage.receiveEnergy(FeCompat.toFe(storedEU), true);
+            energyInserted = FeCompat.toEu(storage.receiveEnergy(feSent - (feSent % FeCompat.ratio(true)), false));
         }
         extractInternal(energyInserted);
     }

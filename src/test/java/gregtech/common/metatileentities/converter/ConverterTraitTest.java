@@ -127,6 +127,51 @@ public class ConverterTraitTest {
         assertEquals(0, storage.getEnergyStored());
     }
 
+    @Test
+    public void Test_No_Energy_Loss() {
+        resetEnergyStorage();
+        converter_1A.setFeToEu(false);
+
+        IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.SOUTH);
+        IEnergyStorage storage = converter_1A.getCapability(CapabilityEnergy.ENERGY, EnumFacing.NORTH);
+        assertNotNull(container);
+        assertNotNull(storage);
+
+        // Add EU
+        container.addEnergy(32); // 1A LV
+        assertEquals(32, container.getEnergyStored());
+        assertEquals(128, storage.getEnergyStored());
+
+        // Mostly fill dummy FE Storage
+        FEStorage.receiveEnergy(995, false);
+        assertEquals(995, FEStorage.getEnergyStored());
+
+        // Drain a little bit of energy
+        // Storage can hold 5 FE, but converter can only output 4 due to not voiding EU
+        ConverterTrait trait = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_CONVERTER, null);
+        assertNotNull(trait);
+        trait.pushEnergy();
+        assertEquals(999, FEStorage.getEnergyStored());
+        assertEquals(31, container.getEnergyStored());
+        assertEquals(124, storage.getEnergyStored());
+
+        // Another push should not send anything
+        trait.pushEnergy();
+        assertEquals(999, FEStorage.getEnergyStored());
+        assertEquals(31, container.getEnergyStored());
+        assertEquals(124, storage.getEnergyStored());
+
+        // Remove a little bit of energy
+        FEStorage.extractEnergy(3, false);
+        assertEquals(996, FEStorage.getEnergyStored());
+
+        // Push again
+        trait.pushEnergy();
+        assertEquals(1000, FEStorage.getEnergyStored());
+        assertEquals(30, container.getEnergyStored());
+        assertEquals(120, storage.getEnergyStored());
+    }
+
     private static void resetEnergyStorage() {
         ((ConverterTraitTestWrapper) converter_1A.getCapability(GregtechCapabilities.CAPABILITY_CONVERTER, null)).drainStorage();
         FEStorage.extractEnergy(Integer.MAX_VALUE, false);
