@@ -1,5 +1,14 @@
 ## Changelog
 
+## 2.1.3
+BETA RELEASE (hotfix)
+
+* Fix crash on servers
+* Fix converters not respecting rotation changes
+* Fix potential power dupe exploit with converters when conversion rates differ
+* Fix Wrench rotating Vanilla and some mod Blocks in a confusing way
+* Breaking Glass or Glass Panes (or Stained versions) with a GT Hammer drops Glass Dust
+
 ### 2.1.2
 BETA RELEASE
 
