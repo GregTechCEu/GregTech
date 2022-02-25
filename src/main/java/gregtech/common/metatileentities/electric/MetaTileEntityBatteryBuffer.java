@@ -17,6 +17,7 @@ import gregtech.api.metatileentity.*;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -108,7 +109,8 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
                 IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                if ((electricItem != null && getTier() >= electricItem.getTier()) || stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
+                if ((electricItem != null && getTier() >= electricItem.getTier()) ||
+                        (ConfigHolder.compat.energy.nativeEUToFE && stack.hasCapability(CapabilityEnergy.ENERGY, null))) {
                     return super.insertItem(slot, stack, simulate);
                 }
                 return stack;
