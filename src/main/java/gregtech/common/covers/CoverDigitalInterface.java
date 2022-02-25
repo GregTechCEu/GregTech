@@ -742,10 +742,10 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                         return 0;
                     }
                     public long getEnergyStored() {
-                        return FeCompat.toEu(fe.getEnergyStored());
+                        return FeCompat.toEu(fe.getEnergyStored(), FeCompat.ratio(false));
                     }
                     public long getEnergyCapacity() {
-                        return FeCompat.toEu(fe.getMaxEnergyStored());
+                        return FeCompat.toEu(fe.getMaxEnergyStored(), FeCompat.ratio(false));
                     }
                     public long getInputAmperage() {
                         return 0;

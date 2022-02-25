@@ -4,6 +4,7 @@ import gregtech.Bootstrap;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.common.ConfigHolder;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -170,6 +171,37 @@ public class ConverterTraitTest {
         assertEquals(1000, FEStorage.getEnergyStored());
         assertEquals(30, container.getEnergyStored());
         assertEquals(120, storage.getEnergyStored());
+    }
+
+    @Test
+    public void Test_Non_Identical_Ratio_Configuration() {
+        resetEnergyStorage();
+        converter_1A.setFeToEu(true);
+
+        // Change two ratios to different value
+        ConfigHolder.compat.energy.feToEuRatio = 4;
+        ConfigHolder.compat.energy.euToFeRatio = 1;
+
+        IEnergyStorage storage = converter_1A.getCapability(CapabilityEnergy.ENERGY, EnumFacing.SOUTH);
+        IEnergyContainer container = converter_1A.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.NORTH);
+        assertNotNull(storage);
+        assertNotNull(container);
+
+        // No changes should be observed
+        int accepted = storage.receiveEnergy(128, false);
+        assertEquals(128, accepted);
+        assertEquals(128, storage.getEnergyStored());
+        assertEquals(32, container.getEnergyStored());
+
+        converter_1A.setFeToEu(false);
+
+        // When flipped to EU -> FE, stored EU is expected to be same, while FE is expected to become eq to stored EU
+        // according to config value.
+        assertEquals(32, storage.getEnergyStored());
+        assertEquals(32, container.getEnergyStored());
+
+        ConfigHolder.compat.energy.feToEuRatio = 4;
+        ConfigHolder.compat.energy.euToFeRatio = 4;
     }
 
     private static void resetEnergyStorage() {

@@ -80,11 +80,13 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
             if (converterTrait.isFeToEu()) {
                 setFeToEu(false);
                 playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_eu",
-                        converterTrait.getBaseAmps(), converterTrait.getVoltage(), FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps())));
+                        converterTrait.getBaseAmps(), converterTrait.getVoltage(),
+                        FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps(), FeCompat.ratio(false))));
             } else {
                 setFeToEu(true);
                 playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_fe",
-                        FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps()), converterTrait.getBaseAmps(), converterTrait.getVoltage()));
+                        FeCompat.toFe(converterTrait.getVoltage() * converterTrait.getBaseAmps(), FeCompat.ratio(true)),
+                        converterTrait.getBaseAmps(), converterTrait.getVoltage()));
             }
             return true;
         }
@@ -201,8 +203,8 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
         long amps = converterTrait.getBaseAmps();
         tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_tool_usage"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", converterTrait.getEnergyEUContainer().getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", FeCompat.toFe(voltage * amps), amps, voltage, GTValues.VNF[getTier()]));
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VNF[getTier()], FeCompat.toFe(voltage * amps)));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", FeCompat.toFe(voltage * amps, FeCompat.ratio(true)), amps, voltage, GTValues.VNF[getTier()]));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VNF[getTier()], FeCompat.toFe(voltage * amps, FeCompat.ratio(false))));
     }
 
     @Override

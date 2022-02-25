@@ -178,7 +178,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         double chargePercent = getEnergyStored() / (getEnergyCapacity() * 1.0);
 
         if (chargePercent > 0.5) {
-            long chargedBy = FeCompat.toEu(energyStorage.receiveEnergy(FeCompat.toFe(GTValues.V[machineTier]), false));
+            long chargedBy = FeCompat.insertEu(energyStorage, GTValues.V[machineTier]);
             removeEnergy(chargedBy);
             return chargedBy > 0;
         }
