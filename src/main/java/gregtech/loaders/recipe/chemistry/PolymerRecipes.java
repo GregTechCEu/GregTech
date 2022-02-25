@@ -387,15 +387,13 @@ public class PolymerRecipes {
                 .fluidInputs(Nitrochlorobenzene.getFluid(2000))
                 .fluidInputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(Dichlorobenzidine.getFluid(1000))
-                .fluidOutputs(Oxygen.getFluid(4000))
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(1800)
+        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(1800)
                 .input(dust, Copper)
                 .fluidInputs(Nitrochlorobenzene.getFluid(18000))
                 .fluidInputs(Hydrogen.getFluid(18000))
                 .fluidOutputs(Dichlorobenzidine.getFluid(9000))
-                .fluidOutputs(Oxygen.getFluid(36000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(100)
@@ -459,7 +457,6 @@ public class PolymerRecipes {
                 .fluidInputs(Benzene.getFluid(1000))
                 .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(Dimethylbenzene.getFluid(1000))
-                .fluidOutputs(Hydrogen.getFluid(4000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(100)
