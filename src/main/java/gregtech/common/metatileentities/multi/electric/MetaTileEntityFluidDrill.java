@@ -310,4 +310,9 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase implemen
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         return super.getCapability(capability, side);
     }
+
+    @Override
+    protected boolean shouldShowVoidingModeButton() {
+        return false;
+    }
 }

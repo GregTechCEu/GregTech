@@ -212,4 +212,9 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
     public boolean canVoidRecipeFluidOutputs() {
         return true;
     }
+
+    @Override
+    protected boolean shouldShowVoidingModeButton() {
+        return false;
+    }
 }

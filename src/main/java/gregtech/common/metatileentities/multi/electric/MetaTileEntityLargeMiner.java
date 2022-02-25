@@ -433,4 +433,9 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     public List<ITextComponent> getDataInfo() {
         return Collections.singletonList(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
     }
+
+    @Override
+    protected boolean shouldShowVoidingModeButton() {
+        return false;
+    }
 }
