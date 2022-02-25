@@ -7,10 +7,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -104,7 +104,7 @@ public class GTTransferUtils {
         // determine if there is sufficient room to insert all items into the target inventory
         if (simulate) {
             OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(handler);
-            HashMap<ItemStackKey, Integer> stackKeyMap = GTHashMaps.fromItemStackCollection(items);
+            Map<ItemStackKey, Integer> stackKeyMap = GTHashMaps.fromItemStackCollection(items);
 
             for (Map.Entry<ItemStackKey, Integer> entry : stackKeyMap.entrySet()) {
                 int amountToInsert = entry.getValue();
@@ -139,7 +139,7 @@ public class GTTransferUtils {
                                                   List<FluidStack> fluidStacks) {
         if (simulate) {
             OverlayedFluidHandler overlayedFluidHandler = new OverlayedFluidHandler(fluidHandler);
-            HashMap<FluidKey, Integer> fluidKeyMap = GTHashMaps.fromFluidCollection(fluidStacks);
+            Map<FluidKey, Integer> fluidKeyMap = GTHashMaps.fromFluidCollection(fluidStacks);
             for (Map.Entry<FluidKey, Integer> entry : fluidKeyMap.entrySet()) {
                 int amountToInsert = entry.getValue();
                 int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), amountToInsert);
@@ -173,7 +173,7 @@ public class GTTransferUtils {
             if (slotStack.isEmpty()) {
                 emptySlots.add(i);
             }
-            if (areStackable(stack, slotStack)) {
+            if (ItemHandlerHelper.canItemStacksStackRelaxed(stack, slotStack)) {
                 stack = handler.insertItem(i, stack, simulate);
                 if (stack.isEmpty()) {
                     return ItemStack.EMPTY;
@@ -185,30 +185,6 @@ public class GTTransferUtils {
             stack = handler.insertItem(slot, stack, simulate);
             if (stack.isEmpty()) {
                 return ItemStack.EMPTY;
-            }
-        }
-        return stack;
-    }
-
-    /**
-     * Tries to insert into the first slot it finds, empty or not.
-     */
-    public static ItemStack insertItemFirst(IItemHandler handler, ItemStack stack, boolean simulate) {
-        if (handler == null || stack.isEmpty()) {
-            return stack;
-        }
-        if (!stack.isStackable()) {
-            return insertToEmpty(handler, stack, simulate);
-        }
-
-        int slots = handler.getSlots();
-        for (int i = 0; i < slots; i++) {
-            ItemStack slotStack = handler.getStackInSlot(i);
-            if (slotStack.isEmpty() || areStackable(stack, slotStack)) {
-                stack = handler.insertItem(i, stack, simulate);
-                if (stack.isEmpty()) {
-                    return ItemStack.EMPTY;
-                }
             }
         }
         return stack;
@@ -232,14 +208,6 @@ public class GTTransferUtils {
             }
         }
         return stack;
-    }
-
-    public static boolean areStackable(ItemStack stack, ItemStack stack2) {
-        return !stack.isEmpty() && !stack2.isEmpty() &&
-                stack.getItem() == stack2.getItem() &&
-                stack.getMetadata() == stack2.getMetadata() &&
-                stack.hasTagCompound() == stack2.hasTagCompound() &&
-                (!stack.hasTagCompound() || stack.getTagCompound().equals(stack2.getTagCompound()));
     }
 
     public static boolean areStackable(FluidStack stack, FluidStack stack2) {
