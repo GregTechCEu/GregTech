@@ -132,9 +132,7 @@ public class ConverterTrait extends MTETrait {
             if (storage == null) return;
 
             // send out energy
-            // subtract the modulus of the fe possible to send
-            int feSent = storage.receiveEnergy(FeCompat.toFe(storedEU), true);
-            energyInserted = FeCompat.toEu(storage.receiveEnergy(feSent - (feSent % FeCompat.ratio(true)), false));
+            energyInserted = FeCompat.insertEu(storage, storedEU);
         }
         extractInternal(energyInserted);
     }
@@ -144,6 +142,11 @@ public class ConverterTrait extends MTETrait {
         if (tile == null) return null;
         EnumFacing opposite = metaTileEntity.getFrontFacing().getOpposite();
         return tile.getCapability(capability, opposite);
+    }
+
+    @Override
+    public void onFrontFacingSet(EnumFacing newFrontFacing) {
+        this.frontPos = null;
     }
 
     // -- GTCEu Energy--------------------------------------------
@@ -237,7 +240,7 @@ public class ConverterTrait extends MTETrait {
             if (!feToEu || maxReceive <= 0) return 0;
             int received = Math.min(getMaxEnergyStored() - getEnergyStored(), maxReceive);
             received -= received % FeCompat.ratio(true); // avoid rounding issues
-            if (!simulate) storedEU += FeCompat.toEu(received);
+            if (!simulate) storedEU += FeCompat.toEu(received, FeCompat.ratio(true));
             return received;
         }
 
@@ -248,12 +251,12 @@ public class ConverterTrait extends MTETrait {
 
         @Override
         public int getEnergyStored() {
-            return FeCompat.toFe(storedEU);
+            return FeCompat.toFe(storedEU, FeCompat.ratio(feToEu));
         }
 
         @Override
         public int getMaxEnergyStored() {
-            return FeCompat.toFe(baseCapacity);
+            return FeCompat.toFe(baseCapacity, FeCompat.ratio(feToEu));
         }
 
         @Override
