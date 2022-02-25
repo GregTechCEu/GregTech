@@ -1,5 +1,89 @@
 ## Changelog
 
+### 2.1.2
+BETA RELEASE
+
+Featured Changes:
+
+* Energy Converters
+    * Added Energy Converters (like the CEU mod for GTCE)
+    * By default, they are disabled
+    * The RF <-> EU ratio is configurable, and separated between the 2 conversion modes. By default, it is 4 FE -> 1 EU for both ways
+    * Differences from the CEU mod:
+        * Converters no longer have Battery slots
+        * Converters now have 5 sides for FE input or output
+        * No more CEU/CEF, use a Soft Hammer to switch between modes (like Transformers)
+
+* Optional Voiding Modes on Multiblocks
+    * Multiblocks now have modes to selectively enable voiding outputs
+    * Can choose between the following modes:
+        * Void Nothing (default, original behavior before this change)
+        * Void Items (void any excess items output by recipes)
+        * Void Fluids (void any excess fluids output by recipes)
+        * Void Items and Fluids (void any excess outputs by recipes)
+
+* Default UI Coloration Config
+    * A new config value has been added to colorize GT UIs like GT5 had
+    * Default to the classic GT5 blue color, but any color can be chosen (including 0xFFFFFF, for the CE coloration)
+
+* Fix and optimize many issues with Covers (especially when placed onto Pipes)
+* Redesigned the Clipboard UI (in-inventory and placed in-world)
+* New overlays for Input/Output Hatches and Buses
+* Fix GT GUIs taking longer and longer to open as the world stays open
+* Fix Fluid Prospector and Fluid Rig server-sided crash
+* Added Fertilizer
+* Allow Robot Arm Supply Exact mode to supply over 64 items
+* Fixed Ore Dictionary Filter server-sided crash
+* Reworked internals of the Crafting Station, should perform better and have less issues
+* Fix stack overflow issue with Compact Machines
+* Fix Steam Venting sound not stopping when the machine is muffled
+* Fix Assembly Line and Distillation Tower having no maximum count on Energy Hatches
+* Removed the Sodium Loop
+* Fix Distillation Tower requiring too large of a hatch on some layers
+* Added XP to smelting GT ores
+* Rework Polycaprolactam processing
+* Fix GT Shovels not being able to make Path Blocks
+* Fixed many, many recipe conflicts in the chemical reactor
+* Buffed GT Coal Ore to crush to 2x the normal amount (instead of default amount)
+* New textures for Jetpack Thruster items
+* Fix crash in the TextField widget
+* Fix LuV+ Field Generators using the wrong wires
+* Fix some buttons in UIs having a delay before the tooltip appears
+* Fix potential crash related to Stone Types
+* Add ability for stone types to be added for other mods
+* Added more zh_cn localization
+* Fix maintenance problems not occurring
+* Fix muffler particles having little positional variance
+* Changed prices of Fluid Prospector Terminal App
+* Fixed Heat, Electric, and Frost damage sources ignoring armor
+* Fix issues with user-entered number in Creative Chest/Tank
+* Fix Flint having no decomposition recipe
+* Fix Rubber Planks and Treated Planks not having a burn time
+* Fixed wires not being paintable with a Spray Can
+* Fixed Steam Machines not using the correct duration for all recipes
+* Fixed Miner/Fluid Rig front overlay getting desynced
+* Fixed issue with sounds getting cut off when too many are playing
+* Fixed `/gt shader_reload` command
+* Fixed a few Material tooltips (Polyethylene, Nickel-Zinc Ferrite, Sugar, Liquid Air)
+* Fixed finding elements from CraftTweaker
+* Fixed issues with Terminal text encoding
+* Fix enchanted items in the Crafting Station getting the "glint" effect over the entire slot
+* Allow Dust and Gem Materials to make Wires
+* Added UU-Matter, to be used in the future
+* Removed Graphene Ingot and Fluid
+* Nerfed the amount of Sticky Resin acquired from Rubber Trees
+* Fixed Catalyst order with Steam Machines in JEI
+* Fixed issues with Stone Types
+* Fixed GT Fluid slots sometimes drawing a Fluid incorrectly
+* Internal: Added flag to force generate a block (useful for Dust-only Materials)
+* Internal: Added `PostMaterialEvent` which runs after all Materials are added (GT, Addons, and CT)
+* Internal: Fixed the `NO_SMELTING` flag not always working
+* Internal: Reworked how Not-Consumed inputs are stored internally. Allows for recipes to have any amount of input for not-consumed items/fluids
+* Internal: Deprecated `GTValues#isModLoaded()`, use the similarly named method from Forge's `Loader` class instead
+* Internal: Reworked how Fluids are registered (#542)
+* Internal: JEI Preview world no longer gets ticked
+
+
 ### 2.1.1
 BETA RELEASE
 
