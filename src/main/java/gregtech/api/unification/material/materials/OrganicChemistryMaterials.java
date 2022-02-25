@@ -261,21 +261,22 @@ public class OrganicChemistryMaterials {
                 .color(0x0F2828)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 1, Nitrogen, 4, Oxygen, 8)
-                .build();
+                .build()
+                .setFormula("C(NO2)4", true);
 
         Dimethylamine = new Material.Builder(1037, "dimethylamine")
                 .fluid(FluidTypes.GAS)
                 .color(0x554469)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 7, Nitrogen, 1)
-                .build();
+                .build().setFormula("NH(CH3)2", true);
 
         Dimethylhydrazine = new Material.Builder(1038, "dimethylhydrazine")
                 .fluid()
                 .color(0x000055)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 8, Nitrogen, 2)
-                .build();
+                .build().setFormula("H2N2(CH3)2");
 
         DinitrogenTetroxide = new Material.Builder(1039, "dinitrogen_tetroxide")
                 .fluid(FluidTypes.GAS)
@@ -316,14 +317,14 @@ public class OrganicChemistryMaterials {
                 .color(0xC8B4A0)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 4, Oxygen, 2)
-                .build();
+                .build().setFormula("CH3CO2H", true);
 
         Phenol = new Material.Builder(1045, "phenol")
                 .fluid()
                 .color(0x784421)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 6, Hydrogen, 6, Oxygen, 1)
-                .build();
+                .build().setFormula("C6H5OH", true);
 
         BisphenolA = new Material.Builder(1046, "bisphenol_a")
                 .fluid()
@@ -358,19 +359,19 @@ public class OrganicChemistryMaterials {
                 .color(0xAFAFAF)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 3, Hydrogen, 6, Oxygen, 1)
-                .build();
+                .build().setFormula("(CH3)2CO");
 
         Glycerol = new Material.Builder(1051, "glycerol")
                 .fluid()
                 .color(0x87DE87)
                 .components(Carbon, 3, Hydrogen, 8, Oxygen, 3)
-                .build();
+                .build().setFormula("C3H5(OH)3", true);
 
         Methanol = new Material.Builder(1052, "methanol")
                 .fluid()
                 .color(0xAA8800)
                 .components(Carbon, 1, Hydrogen, 4, Oxygen, 1)
-                .build();
+                .build().setFormula("CH3OH", true);
 
         // FREE ID 1053
 
@@ -378,7 +379,7 @@ public class OrganicChemistryMaterials {
                 .fluid()
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 6, Oxygen, 1)
-                .build();
+                .build().setFormula("C2H5OH", true);
 
         Toluene = new Material.Builder(1055, "toluene")
                 .fluid()
