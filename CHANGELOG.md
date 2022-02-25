@@ -42,6 +42,7 @@ Featured Changes:
 * Fix Distillation Tower requiring too large of a hatch on some layers
 * Added XP to smelting GT ores
 * Rework Polycaprolactam processing
+* Fix GT Shovels not being able to make Path Blocks
 * Fixed many, many recipe conflicts in the chemical reactor
 * Buffed GT Coal Ore to crush to 2x the normal amount (instead of default amount)
 * New textures for Jetpack Thruster items
