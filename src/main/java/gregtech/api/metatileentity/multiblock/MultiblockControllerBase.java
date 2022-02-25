@@ -11,12 +11,12 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pattern.*;
 import gregtech.api.sound.GTSoundManager;
+import gregtech.api.util.world.DummyWorld;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
-import gregtech.client.utils.TrackedDummyWorld;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.VariantActiveBlock;
 import net.minecraft.block.Block;
@@ -76,9 +76,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             if (getOffsetTimer() % 20 == 0 || isFirstTick()) {
                 checkStructurePattern();
             }
-            // TrackedDummyWorld is the world for the JEI preview. We do not want to update the Multi in this world,
+            // DummyWorld is the world for the JEI preview. We do not want to update the Multi in this world,
             // besides initially forming it in checkStructurePattern
-            if (isStructureFormed() && !(getWorld() instanceof TrackedDummyWorld)) {
+            if (isStructureFormed() && !(getWorld() instanceof DummyWorld)) {
                 updateFormedValid();
             }
         }
