@@ -25,12 +25,14 @@ public class SecondDegreeMaterials {
         Perlite = new Material.Builder(2001, "perlite")
                 .dust(1)
                 .color(0x1E141E)
+                .flags(HYDRATED_SALT)
                 .components(Obsidian, 2, Water, 1)
                 .build();
 
         Borax = new Material.Builder(2002, "borax")
                 .dust(1)
                 .color(0xFAFAFA).iconSet(FINE)
+                .flags(HYDRATED_SALT)
                 .components(Sodium, 2, Boron, 4, Oxygen, 7, Water, 10)
                 .build();
 
@@ -191,6 +193,7 @@ public class SecondDegreeMaterials {
         Pollucite = new Material.Builder(2024, "pollucite")
                 .dust().ore()
                 .color(0xF0D2D2)
+                .flags(HYDRATED_SALT)
                 .components(Caesium, 2, Silicon, 4, Aluminium, 2, Oxygen, 12, Water, 2)
                 .build();
 
@@ -199,13 +202,14 @@ public class SecondDegreeMaterials {
         Bentonite = new Material.Builder(2026, "bentonite")
                 .dust().ore(3, 1)
                 .color(0xF5D7D2).iconSet(ROUGH)
-                .flags(DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION, HYDRATED_SALT)
                 .components(Sodium, 1, Magnesium, 6, Silicon, 12, Hydrogen, 4, Oxygen, 36, Water, 5)
                 .build();
 
         FullersEarth = new Material.Builder(2027, "fullers_earth")
                 .dust().ore(2, 1)
                 .color(0xA0A078).iconSet(FINE)
+                .flags(HYDRATED_SALT)
                 .components(Magnesium, 1, Silicon, 4, Oxygen, 11, Hydrogen, 1, Water, 4)
                 .build();
 
@@ -227,26 +231,28 @@ public class SecondDegreeMaterials {
         Mirabilite = new Material.Builder(2030, "mirabilite")
                 .dust()
                 .color(0xF0FAD2)
+                .flags(HYDRATED_SALT)
                 .components(Sodium, 2, Sulfur, 1, Oxygen, 4, Water, 10)
                 .build();
 
         Trona = new Material.Builder(2031, "trona")
                 .dust(1).ore(2, 1)
                 .color(0x87875F).iconSet(METALLIC)
-                .flags(DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION, HYDRATED_SALT)
                 .components(SodaAsh, 1, SodiumBicarbonate, 1, Water, 2)
                 .build();
 
         Gypsum = new Material.Builder(2032, "gypsum")
                 .dust(1).ore()
                 .color(0xE6E6FA)
+                .flags(HYDRATED_SALT)
                 .components(Calcium, 1, Sulfur, 1, Oxygen, 4, Water, 2)
                 .build();
 
         Zeolite = new Material.Builder(2033, "zeolite")
                 .dust().ore(3, 1)
                 .color(0xF0E6E6)
-                .flags(DISABLE_DECOMPOSITION)
+                .flags(DISABLE_DECOMPOSITION, HYDRATED_SALT)
                 .components(Sodium, 1, Calcium, 4, Silicon, 27, Aluminium, 9, Oxygen, 72, Water, 28)
                 .build();
 

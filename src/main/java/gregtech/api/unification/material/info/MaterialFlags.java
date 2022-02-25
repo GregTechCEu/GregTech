@@ -70,6 +70,11 @@ public class MaterialFlags {
      */
     public static final MaterialFlag FLAMMABLE = new MaterialFlag.Builder("flammable").build();
 
+    /**
+     * Add to material if it is some kind of hydrated salt (eg. CuSO4·5H2O)
+     */
+    public static final MaterialFlag HYDRATED_SALT = new MaterialFlag.Builder("hydrated_salt").build();
+
     //////////////////
     //     DUST     //
     //////////////////

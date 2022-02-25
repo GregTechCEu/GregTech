@@ -68,15 +68,15 @@ public class Material implements Comparable<Material> {
             long water = 0;
             StringBuilder components = new StringBuilder();
             for (MaterialStack component : materialInfo.componentList) {
-                if (component.material == Materials.Water) {
+                if (component.material == Materials.Water && this.hasFlag(MaterialFlags.HYDRATED_SALT)) {
                     water += component.amount;
                 } else {
                     components.append(component.toString());
                 }
             }
-            if (water != 0) {
-                components.append("\u00b7 "); // middle dot TODO fix edge cases
-                components.append(water);
+            if (water != 0 && this.hasFlag(MaterialFlags.HYDRATED_SALT)) {
+                components.append("\u00b7 "); // middle dot
+                if (water != 1) components.append(water);
                 components.append(SmallDigits.toSmallDownNumbers("H2O"));
             }
             return components.toString();
