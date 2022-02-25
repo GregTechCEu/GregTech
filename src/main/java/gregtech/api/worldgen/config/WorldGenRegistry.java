@@ -112,7 +112,7 @@ public class WorldGenRegistry {
         } catch (IOException | RuntimeException exception) {
             GTLog.logger.fatal("Failed to initialize worldgen registry.", exception);
         }
-        if (GTValues.isModLoaded("galacticraftcore")) {
+        if (Loader.isModLoaded("galacticraftcore")) {
             try {
                 Class<?> transformerHooksClass = Class.forName("micdoodle8.mods.galacticraft.core.TransformerHooks");
                 Field otherModGeneratorsWhitelistField = transformerHooksClass.getDeclaredField("otherModGeneratorsWhitelist");

@@ -1,6 +1,6 @@
 package gregtech.api.util;
 
-import net.minecraft.init.Bootstrap;
+import gregtech.Bootstrap;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagString;
@@ -22,8 +22,8 @@ public class InventoryUtilsTest {
      * Required. Without this all item-related operations will fail because registries haven't been initialized.
      */
     @BeforeClass
-    public static void bootStrap() {
-        Bootstrap.register();
+    public static void bootstrap() {
+        Bootstrap.perform();
     }
 
     /**

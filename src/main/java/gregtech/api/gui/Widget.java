@@ -322,6 +322,7 @@ public abstract class Widget {
         GlStateManager.pushMatrix();
         GlStateManager.translate(0.0F, 0.0F, 32.0F);
         GlStateManager.color(1F, 1F, 1F, 1F);
+        GlStateManager.enableDepth();
         GlStateManager.enableRescaleNormal();
         GlStateManager.enableLighting();
         RenderHelper.enableGUIStandardItemLighting();

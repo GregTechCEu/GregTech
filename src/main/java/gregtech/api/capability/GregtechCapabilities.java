@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.impl.EUToFEProvider;
 import gregtech.api.capability.tool.*;
 import gregtech.api.terminal.hardware.HardwareProvider;
+import gregtech.common.metatileentities.converter.ConverterTrait;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -45,6 +46,9 @@ public class GregtechCapabilities {
 
     @CapabilityInject(HardwareProvider.class)
     public static Capability<HardwareProvider> CAPABILITY_HARDWARE_PROVIDER = null;
+
+    @CapabilityInject(ConverterTrait.class)
+    public static Capability<ConverterTrait> CAPABILITY_CONVERTER = null;
 
     private static final ResourceLocation CAPABILITY_EU_TO_FE = new ResourceLocation(GTValues.MODID, "fe_capability");
 

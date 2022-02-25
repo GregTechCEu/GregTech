@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -23,6 +24,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -30,7 +32,7 @@ import java.util.stream.IntStream;
  */
 
 @SuppressWarnings("unchecked")
-public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
+public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected RecipeMap<R> recipeMap;
 
@@ -59,7 +61,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.fluidOutputs = new ArrayList<>(0);
     }
 
-    protected RecipeBuilder(Recipe recipe, RecipeMap<R> recipeMap) {
+    public RecipeBuilder(Recipe recipe, RecipeMap<R> recipeMap) {
         this.recipeMap = recipeMap;
         this.inputs = NonNullList.create();
         this.inputs.addAll(recipe.getInputs());
@@ -206,27 +208,46 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R notConsumable(ItemStack itemStack) {
-        return inputs(CountableIngredient.from(itemStack, 0));
+        return inputs(CountableIngredient.from(itemStack, itemStack.getCount())
+                .setNonConsumable());
+    }
+
+    public R notConsumable(OrePrefix prefix, Material material, int amount) {
+        return inputs(CountableIngredient.from(prefix, material, amount)
+                .setNonConsumable());
     }
 
     public R notConsumable(OrePrefix prefix, Material material) {
-        return input(prefix, material, 0);
+        return notConsumable(prefix, material, 1);
     }
 
     public R notConsumable(Ingredient ingredient) {
-        return inputs(new CountableIngredient(ingredient, 0));
+        return inputs(new CountableIngredient(ingredient, 1)
+                .setNonConsumable());
     }
 
     public R notConsumable(MetaItem<?>.MetaValueItem item) {
-        return inputs(CountableIngredient.from(item.getStackForm(), 0));
+        return inputs(CountableIngredient.from(item.getStackForm(), 1)
+                .setNonConsumable());
+    }
+
+    public R notConsumable(Fluid fluid, int amount) {
+        FluidStack ncf = new FluidStack(fluid, amount, new NBTTagCompound());
+        ncf.tag.setBoolean("nonConsumable", true);
+        return fluidInputs(ncf);
     }
 
     public R notConsumable(Fluid fluid) {
-        return fluidInputs(new FluidStack(fluid, 0));
+        return notConsumable(fluid, 1);
     }
 
     public R notConsumable(FluidStack fluidStack) {
-        return fluidInputs(new FluidStack(fluidStack, 0));
+        FluidStack ncf = fluidStack.copy();
+        if (ncf.tag == null) {
+            ncf.tag = new NBTTagCompound();
+        }
+        ncf.tag.setBoolean("nonConsumable", true);
+        return fluidInputs(ncf);
     }
 
     public R output(OrePrefix orePrefix, Material material) {
@@ -387,27 +408,6 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     /**
-     * Copies the first chanced outputs of a Recipe numberOfOperations times, so every chanced output
-     * gets an individual roll, instead of an all or nothing situation
-     *
-     * @param chancedOutputsFrom The original recipe before any parallel multiplication
-     * @param numberOfOperations The number of parallel operations that have been performed
-     */
-
-    public void trimmedChancedOutputsMultiply(Recipe chancedOutputsFrom, int numberOfOperations) {
-        Recipe.ChanceEntry entry = chancedOutputsFrom.getChancedOutputs().get(0);
-
-        int chance = entry.getChance();
-        int boost = entry.getBoostPerTier();
-
-        // Add individual chanced outputs per number of parallel operations performed, to mimic regular recipes.
-        // This is done instead of simply batching the chanced outputs by the number of parallel operations performed
-        IntStream.range(0, numberOfOperations).forEach(value -> {
-            this.chancedOutput(entry.getItemStack(), chance, boost);
-        });
-    }
-
-    /**
      * Appends the passed {@link Recipe} onto the inputs and outputs, multiplied by the amount specified by multiplier
      * The duration of the multiplied {@link Recipe} is also added to the current duration
      *
@@ -417,7 +417,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
      * @return the builder holding the multiplied recipe
      */
 
-    public R append(Recipe recipe, int multiplier, boolean multiplyDuration, boolean trimOutputs) {
+    public R append(Recipe recipe, int multiplier, boolean multiplyDuration) {
         for (Map.Entry<RecipeProperty<?>, Object> property : recipe.getPropertyValues()) {
             this.applyProperty(property.getKey().getKey(), property.getValue());
         }
@@ -435,16 +435,8 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.inputsIngredients(newRecipeInputs);
         this.fluidInputs(newFluidInputs);
 
-        if (trimOutputs) {
-            if (!outputItems.isEmpty()) {
-                this.outputs(outputItems.subList(0, 1));
-            } else if (recipe.getChancedOutputs().size() > 0) {
-                trimmedChancedOutputsMultiply(recipe, multiplier);
-            }
-        } else {
-            this.outputs(outputItems);
-            chancedOutputsMultiply(recipe, multiplier);
-        }
+        this.outputs(outputItems);
+        chancedOutputsMultiply(recipe, multiplier);
 
         this.fluidOutputs(outputFluids);
 
@@ -461,13 +453,26 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
                                                    List<FluidStack> outputFluids,
                                                    Recipe recipe,
                                                    int numberOfOperations) {
-        recipe.getInputs().forEach(ci ->
+        recipe.getInputs().forEach(ci -> {
+            if (ci.isNonConsumable()) {
                 newRecipeInputs.add(new CountableIngredient(ci.getIngredient(),
-                        ci.getCount() * numberOfOperations)));
+                        ci.getCount()).setNonConsumable());
+            } else {
+                newRecipeInputs.add(new CountableIngredient(ci.getIngredient(),
+                        ci.getCount() * numberOfOperations));
+            }
+        });
 
-        recipe.getFluidInputs().forEach(fluidStack ->
+        recipe.getFluidInputs().forEach(fluidStack -> {
+            if (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable")) {
+                FluidStack fs = new FluidStack(fluidStack.getFluid(), fluidStack.amount, new NBTTagCompound());
+                fs.tag.setBoolean("nonConsumable", true);
+                newFluidInputs.add(fs);
+            } else {
                 newFluidInputs.add(new FluidStack(fluidStack.getFluid(),
-                        fluidStack.amount * numberOfOperations)));
+                        fluidStack.amount * (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable") ? 1 : numberOfOperations)));
+            }
+        });
 
         recipe.getOutputs().forEach(itemStack ->
                 outputItems.add(copyItemStackWithCount(itemStack,
@@ -514,13 +519,18 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    public abstract R copy();
+    public R copy() {
+        return (R) new RecipeBuilder<>(this);
+    }
 
     protected EnumValidationResult finalizeAndValidate() {
         return validate();
     }
 
-    public abstract ValidationResult<Recipe> build();
+    public ValidationResult<Recipe> build() {
+        return ValidationResult.newResult(finalizeAndValidate(),
+                new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden));
+    }
 
     protected EnumValidationResult validate() {
         if (EUt == 0) {
@@ -568,6 +578,19 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public List<ChanceEntry> getChancedOutputs() {
         return chancedOutputs;
+    }
+
+    /**
+     * Similar to {@link Recipe#getAllItemOutputs()}, returns the recipe outputs and all chanced outputs
+     *
+     * @return A List of ItemStacks composed of the recipe outputs and chanced outputs
+     */
+    public List<ItemStack> getAllItemOutputs() {
+        List<ItemStack> stacks = new ArrayList<>(getOutputs());
+
+        stacks.addAll(getChancedOutputs().stream().map(ChanceEntry::getItemStack).collect(Collectors.toList()));
+
+        return stacks;
     }
 
     public List<FluidStack> getFluidInputs() {

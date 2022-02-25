@@ -14,13 +14,17 @@ import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.itemhandlers.InaccessibleItemStackHandler;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.metatileentity.*;
+import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
 import gregtech.common.gui.impl.FakeModularUIContainerClipboard;
 import gregtech.common.items.behaviors.ClipboardBehavior;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,11 +36,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -56,6 +64,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     public FakeModularUIContainerClipboard guiContainerCache;
     private static final Cuboid6 pageBox = new Cuboid6(3 / 16.0, 0.25 / 16.0, 0.25 / 16.0, 13 / 16.0, 14.25 / 16.0, 0.3 / 16.0);
     private static final NBTBase NO_CLIPBOARD_SIG = new NBTTagInt(0);
+    private boolean didSetFacing = false;
 
     public MetaTileEntityClipboard(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -82,7 +91,6 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
         return 0;
     }
 
-
     @Override
     public void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {
         CLIPBOARD_RENDERER.renderBoard(renderState, translation.copy(), new IVertexOperation[]{}, getFrontFacing(), this, partialTicks);
@@ -96,6 +104,11 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     public AxisAlignedBB getRenderBoundingBox() {
         return new AxisAlignedBB(getPos().add(-1, 0, -1), getPos().add(2, 2, 2));
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        return null;
     }
 
     @Override
@@ -136,6 +149,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
             ModularUI ui = this.createUI(fakePlayer);
 
             ModularUI.Builder builder = new ModularUI.Builder(ui.backgroundPath, ui.getWidth(), ui.getHeight());
+            builder.shouldColor(false);
 
             List<Widget> widgets = new ArrayList<>(ui.guiWidgets.values());
 
@@ -195,25 +209,43 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
                 MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
             }
         } else {
-            if(!getWorld().isRemote) {
-                BlockPos pos = this.getPos(); // Saving this for later so it doesn't get mangled
-                World world = this.getWorld(); // Same here
-
-                NonNullList<ItemStack> drops = NonNullList.create();
-                getDrops(drops, playerIn);
-
-                Block.spawnAsEntity(playerIn.world, this.getPos(), drops.get(0));
-                this.dropAllCovers();
-                this.onRemoval();
-
-                world.removeTileEntity(pos);
-                world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
-                this.scheduleRenderUpdate();
-            }
+            breakClipboard(playerIn);
         }
         return true;
     }
 
+    private void breakClipboard(@Nullable EntityPlayer player) {
+        if (!getWorld().isRemote) {
+            BlockPos pos = this.getPos(); // Saving this for later so it doesn't get mangled
+            World world = this.getWorld(); // Same here
+
+            NonNullList<ItemStack> drops = NonNullList.create();
+            getDrops(drops, player);
+
+            Block.spawnAsEntity(getWorld(), pos, drops.get(0));
+            this.dropAllCovers();
+            this.onRemoval();
+
+            world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+        }
+    }
+
+    @Override
+    public void onNeighborChanged() {
+        if (!getWorld().isRemote && didSetFacing) {
+            BlockPos pos = getPos().offset(getFrontFacing());
+            IBlockState state = getWorld().getBlockState(pos);
+            if (state.getBlock().isAir(state, getWorld(), pos) || !state.isSideSolid(getWorld(), pos, getFrontFacing())) {
+                breakClipboard(null);
+            }
+        }
+    }
+
+    @Override
+    public void setFrontFacing(EnumFacing frontFacing) {
+        super.setFrontFacing(frontFacing);
+        this.didSetFacing = true;
+    }
 
     @Override
     public String getHarvestTool() {

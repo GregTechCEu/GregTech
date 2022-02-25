@@ -120,7 +120,7 @@ public class TerminalRegistry {
                 .upgrade(1, MetaItems.EMITTER_HV.getStackForm(4), MetaItems.WORKSTATION_EV.getStackForm(2))
                 .defaultApp()
                 .build();
-        if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
+        if (Loader.isModLoaded(GTValues.MODID_JEI)) {
             AppRegistryBuilder.create(new RecipeChartApp())
                     .battery(GTValues.LV, 160)
                     .upgrade(0, new ItemStack(Items.PAPER, 32))
@@ -152,7 +152,7 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new CapeSelectorApp())
                 .battery(GTValues.ULV, 8)
                 .build();
-        if (GTValues.isModLoaded(GTValues.MODID_CT)) { // handle CT register
+        if (Loader.isModLoaded(GTValues.MODID_CT)) { // handle CT register
             CTTerminalRegistry.register();
         }
     }

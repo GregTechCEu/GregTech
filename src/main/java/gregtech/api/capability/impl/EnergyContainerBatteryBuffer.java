@@ -1,20 +1,21 @@
 package gregtech.api.capability.impl;
 
-import java.util.List;
-import java.util.ArrayList;
 import gregtech.api.GTValues;
+import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
-import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
 
@@ -58,7 +59,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
                     energy -= electricItem.charge(Math.min(distributed, GTValues.V[electricItem.getTier()] * 2L), getTier(), true, false);
                 } else if (item instanceof IEnergyStorage) {
                     IEnergyStorage energyStorage = (IEnergyStorage) item;
-                    energy -= energyStorage.receiveEnergy((int) (Math.min(distributed, GTValues.V[getTier()] * 2L) * ConfigHolder.compat.energy.rfRatio), false);
+                    energy -= FeCompat.toEu(energyStorage.receiveEnergy(FeCompat.toFe(Math.min(distributed, GTValues.V[getTier()] * 2L)), false));
                 }
             }
 
@@ -171,7 +172,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
             } else {
                 IEnergyStorage energyStorage = batteryStack.getCapability(CapabilityEnergy.ENERGY, null);
                 if (energyStorage != null) {
-                    energyCapacity += energyStorage.getMaxEnergyStored() / ConfigHolder.compat.energy.rfRatio;
+                    energyCapacity += FeCompat.toEu(energyStorage.getMaxEnergyStored());
                 }
             }
         }
@@ -190,7 +191,7 @@ public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
             } else {
                 IEnergyStorage energyStorage = batteryStack.getCapability(CapabilityEnergy.ENERGY, null);
                 if (energyStorage != null) {
-                    energyStored += energyStorage.getEnergyStored() / ConfigHolder.compat.energy.rfRatio;
+                    energyStored += FeCompat.toEu(energyStorage.getEnergyStored());
                 }
             }
         }

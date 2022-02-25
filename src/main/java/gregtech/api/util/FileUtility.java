@@ -54,7 +54,7 @@ public class FileUtility {
     public static JsonElement loadJson(File file) {
         try {
             if (!file.isFile()) return null;
-            FileReader reader = new FileReader(file);
+            Reader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
             JsonElement json = jsonParser.parse(new JsonReader(reader));
             reader.close();
             return json;
@@ -71,7 +71,7 @@ public class FileUtility {
                     GTLog.logger.error("Failed to create file dirs on path {}", file);
                 }
             }
-            FileWriter writer = new FileWriter(file);
+            Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
             writer.write(gson.toJson(element));
             writer.close();
             return true;

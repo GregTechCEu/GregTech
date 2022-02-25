@@ -173,6 +173,11 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
         return false;
     }
 
+    @Override
+    protected boolean shouldShowVoidingModeButton() {
+        return false;
+    }
+
     private static class LargeCombustionEngineWorkableHandler extends MultiblockFuelRecipeLogic {
 
         private boolean isOxygenBoosted = false;

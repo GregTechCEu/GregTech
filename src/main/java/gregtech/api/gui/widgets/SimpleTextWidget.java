@@ -6,15 +6,12 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.PacketBuffer;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
-
-import static gregtech.api.gui.impl.ModularUIGui.*;
 
 /**
  * Simple one-line text widget with text synced and displayed
@@ -109,7 +106,6 @@ public class SimpleTextWidget extends Widget {
             float y = pos.y - (isCentered ? height / 2f : 0) + i * fontRenderer.FONT_HEIGHT;
             drawText(resultText, x, y, scale, color, isShadow);
         }
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override

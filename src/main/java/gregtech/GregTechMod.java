@@ -6,6 +6,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.fluids.MetaFluids;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
@@ -26,7 +27,6 @@ import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaEntities;
-import gregtech.common.MetaFluids;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.command.GregTechCommand;
 import gregtech.common.covers.CoverBehaviors;
@@ -40,11 +40,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.LoaderException;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.Optional.Method;
-import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -98,7 +95,7 @@ public class GregTechMod {
         MinecraftForge.EVENT_BUS.post(new MaterialEvent());
 
         // Then, run CraftTweaker Material registration scripts
-        if (GTValues.isModLoaded(GTValues.MODID_CT)) {
+        if (Loader.isModLoaded(GTValues.MODID_CT)) {
             GTLog.logger.info("Running early CraftTweaker initialization scripts...");
             runEarlyCraftTweakerScripts();
             MinecraftForge.EVENT_BUS.register(this);
@@ -154,7 +151,7 @@ public class GregTechMod {
             }
         }
 
-        if (GTValues.isModLoaded(GTValues.MODID_TOP)) {
+        if (Loader.isModLoaded(GTValues.MODID_TOP)) {
             GTLog.logger.info("TheOneProbe found. Enabling integration...");
             TheOneProbeCompatibility.registerCompatibility();
         }

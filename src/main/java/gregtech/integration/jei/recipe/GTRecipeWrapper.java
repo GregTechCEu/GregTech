@@ -16,10 +16,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.integration.jei.utils.AdvancedRecipeWrapper;
 import gregtech.integration.jei.utils.JEIHelpers;
 import gregtech.integration.jei.utils.JeiButton;
-import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
-import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import net.minecraft.client.Minecraft;
@@ -27,6 +23,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -37,9 +34,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     private static final int LINE_HEIGHT = 10;
 
-    private final Int2ObjectMap<ChanceEntry> chanceOutput = new Int2ObjectOpenHashMap<>();
-    private final Int2BooleanMap notConsumedItemInput = new Int2BooleanOpenHashMap();
-    private final Int2BooleanMap notConsumedFluidInput = new Int2BooleanOpenHashMap();
     private final RecipeMap<?> recipeMap;
     private final Recipe recipe;
     private String lastCopiedRemoval;
@@ -55,8 +49,6 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     @Override
     public void getIngredients(@Nonnull IIngredients ingredients) {
-        int currentItemSlot = 0;
-        int currentFluidSlot = 0;
 
         // Inputs
         if (!recipe.getInputs().isEmpty()) {
@@ -64,35 +56,40 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             for (CountableIngredient ci : recipe.getInputs()) {
                 matchingInputs.add(Arrays.stream(ci.getIngredient().getMatchingStacks())
                         .sorted(OreDictUnifier.getItemStackComparator())
-                        .map(is -> GTUtility.copyAmount(ci.getCount() == 0 ? 1 : ci.getCount(), is))
+                        .map(is -> GTUtility.copyAmount(ci.getCount(), is))
                         .collect(Collectors.toList()));
-                notConsumedItemInput.put(currentItemSlot++, ci.getCount() == 0);
             }
             ingredients.setInputLists(VanillaTypes.ITEM, matchingInputs);
         }
-        currentItemSlot = recipeMap.getMaxInputs();
 
         // Fluid Inputs
         if (!recipe.getFluidInputs().isEmpty()) {
-            ingredients.setInputs(VanillaTypes.FLUID, recipe.getFluidInputs().stream()
-                    .map(fs -> GTUtility.copyAmount(fs.amount == 0 ? 1 : fs.amount, fs))
-                    .collect(Collectors.toList()));
+            List<FluidStack> matchingFluidInputs = new ArrayList<>(recipe.getFluidInputs().size());
+
             for (FluidStack fs : recipe.getFluidInputs()) {
-                notConsumedFluidInput.put(currentFluidSlot++, fs.amount == 0);
+                if (fs.tag != null && fs.tag.hasKey("nonConsumable")) {
+                    FluidStack fluidCopy = GTUtility.copyAmount(fs.amount, fs);
+                    fluidCopy.tag.removeTag("nonConsumable");
+                    if (fluidCopy.tag.isEmpty()) {
+                        fluidCopy.tag = null;
+                    }
+                    matchingFluidInputs.add(fluidCopy);
+                } else {
+                    matchingFluidInputs.add(fs);
+                }
             }
+            ingredients.setInputs(VanillaTypes.FLUID, matchingFluidInputs);
         }
 
         // Outputs
         if (!recipe.getOutputs().isEmpty() || !recipe.getChancedOutputs().isEmpty()) {
             List<ItemStack> recipeOutputs = recipe.getOutputs()
                     .stream().map(ItemStack::copy).collect(Collectors.toList());
-            currentItemSlot += recipeOutputs.size();
 
             List<ChanceEntry> chancedOutputs = recipe.getChancedOutputs();
             chancedOutputs.sort(Comparator.comparingInt(entry -> entry == null ? 0 : entry.getChance()));
             for (ChanceEntry chancedEntry : chancedOutputs) {
-                chanceOutput.put(currentItemSlot++, chancedEntry);
-                recipeOutputs.add(chancedEntry.getItemStack());
+                recipeOutputs.add(chancedEntry.getItemStackRaw());
             }
             ingredients.setOutputs(VanillaTypes.ITEM, recipeOutputs);
         }
@@ -106,8 +103,13 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     }
 
     public void addItemTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
-        boolean notConsumed = input && recipe.isNotConsumedInput(ingredient);
-        ChanceEntry entry = input ? null : chanceOutput.get(slotIndex);
+        boolean notConsumed = input && isNotConsumedItem(slotIndex);
+
+        ChanceEntry entry = null;
+        int outputIndex = slotIndex - recipeMap.getMaxInputs();
+        if (!input && !recipe.getChancedOutputs().isEmpty() && outputIndex >= recipe.getOutputs().size()) {
+            entry = recipe.getChancedOutputs().get(outputIndex - recipe.getOutputs().size());
+        }
 
         if (entry != null) {
             double chance = entry.getChance() / 100.0;
@@ -119,7 +121,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     }
 
     public void addFluidTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
-        boolean notConsumed = input && recipe.isNotConsumedInput(ingredient);
+        boolean notConsumed = input && isNotConsumedFluid(slotIndex);
 
         if (notConsumed) {
             tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
@@ -144,7 +146,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     @Override
     public void initExtras() {
-        BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isCreative() && GTValues.isModLoaded(GTValues.MODID_CT);
+        BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isCreative() && Loader.isModLoaded(GTValues.MODID_CT);
         buttons.add(new JeiButton(166, 2, 10, 10)
                 .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
                 .setTooltipBuilder(lines -> lines.add("Copies a CraftTweaker script, to remove this recipe, to the clipboard"))
@@ -163,16 +165,19 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                 .setActiveSupplier(creativePlayerCtPredicate));
     }
 
-    public Int2ObjectMap<ChanceEntry> getChanceOutputMap() {
-        return chanceOutput;
+    public ChanceEntry getOutputChance(int slot) {
+        if (slot >= recipe.getChancedOutputs().size() || slot < 0) return null;
+        return recipe.getChancedOutputs().get(slot);
     }
 
-    public Int2BooleanMap getNotConsumedItemInputs() {
-        return notConsumedItemInput;
+    public boolean isNotConsumedItem(int slot) {
+        if (slot >= recipe.getInputs().size()) return false;
+        return recipe.getInputs().get(slot).isNonConsumable();
     }
 
-    public Int2BooleanMap getNotConsumedFluidInputs() {
-        return notConsumedFluidInput;
+    public boolean isNotConsumedFluid(int slot) {
+        if (slot >= recipe.getFluidInputs().size()) return false;
+        return recipe.getFluidInputs().get(slot).tag != null && recipe.getFluidInputs().get(slot).tag.hasKey("nonConsumable");
     }
 
     private int getPropertyListHeight() {

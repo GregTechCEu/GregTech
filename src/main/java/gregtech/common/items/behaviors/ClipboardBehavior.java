@@ -3,7 +3,10 @@ package gregtech.common.items.behaviors;
 import codechicken.lib.raytracer.RayTracer;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.ClickButtonWidget;
+import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.gui.widgets.SimpleTextWidget;
+import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
@@ -23,48 +26,65 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static gregtech.common.blocks.MetaBlocks.MACHINE;
 import static gregtech.common.metatileentities.MetaTileEntities.CLIPBOARD_TILE;
 
 public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
     public static final int MAX_PAGES = 25;
+    private static final int TEXT_COLOR = 0x1E1E1E;
 
     @Override
     public ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 170, 238);
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.CLIPBOARD_BACKGROUND, 186, 263);
         initNBT(holder.getCurrentItem());
 
-        builder.widget(new ImageTextFieldWidget(20, 10, 130, 12, GuiTextures.CLIPBOARD_TEXT_BOX,
-                () -> getTitle(holder), (x) -> setTitle(holder, x), 23, 0xFFFFFF)
-                .setValidator((x) -> true)
-                .doesClientCallback(true));
+        List<TextFieldWidget2> textFields = new ArrayList<>();
+
+        builder.image(28, 28, 130, 12, GuiTextures.CLIPBOARD_TEXT_BOX);
+        textFields.add(new TextFieldWidget2(30, 30, 126, 9, () -> getTitle(holder), val -> setTitle(holder, val))
+                .setMaxLength(25)
+                .setCentered(true)
+                .setTextColor(TEXT_COLOR));
 
         for (int i = 0; i < 8; i++) {
             int finalI = i;
-            builder.widget(new ImageCycleButtonWidget(6, 37 + 20 * i, 15, 15, GuiTextures.CLIPBOARD_BUTTON, 4,
+            builder.widget(new ImageCycleButtonWidget(14, 55 + 22 * i, 15, 15, GuiTextures.CLIPBOARD_BUTTON, 4,
                     () -> getButtonState(holder, finalI), (x) -> setButton(holder, finalI, x)));
-            builder.widget(new ImageTextFieldWidget(24, 40 + 20 * i, 140, 12, GuiTextures.CLIPBOARD_TEXT_BOX,
-                    () -> getString(holder, finalI), (x) -> setString(holder, finalI, x), 23, 0xFFFFFF)
-                    .setValidator((x) -> true)
-                    .doesClientCallback(true));
+
+            builder.image(32, 58 + 22 * i, 140, 12, GuiTextures.CLIPBOARD_TEXT_BOX);
+            textFields.add(new TextFieldWidget2(34, 60 + 22 * i, 136, 9, () -> getString(holder, finalI), val -> setString(holder, finalI, val))
+                    .setMaxLength(23)
+                    .setTextColor(TEXT_COLOR));
         }
 
-        builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, -1))
+        for (TextFieldWidget2 textField : textFields) {
+            builder.widget(textField.setOnFocus(textField2 -> textFields.forEach(textField3 -> {
+                if (textField3 != textField2) {
+                    textField3.unFocus();
+                }
+            })));
+        }
+
+        builder.widget(new ClickButtonWidget(38, 231, 16, 16, "", (x) -> incrPageNum(holder, x.isShiftClick ? -10 : -1))
                 .setButtonTexture(GuiTextures.BUTTON_LEFT).setShouldClientCallback(true));
-        builder.widget(new ClickButtonWidget(124, 200, 16, 16, "", (x) -> incrPageNum(holder, 1))
+        builder.widget(new ClickButtonWidget(132, 231, 16, 16, "", (x) -> incrPageNum(holder, x.isShiftClick ? 10 : 1))
                 .setButtonTexture(GuiTextures.BUTTON_RIGHT).setShouldClientCallback(true));
-        builder.widget(new SimpleTextWidget(85, 208, "", 0xFFFFFF,
+        builder.widget(new SimpleTextWidget(93, 240, "", TEXT_COLOR,
                 () -> (getPageNum(holder) + 1) + " / " + MAX_PAGES, true));
 
+        builder.shouldColor(false);
         return builder.build(holder, entityPlayer);
     }
 
     public ModularUI createMTEUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) { // So that people don't click on any text fields
         initNBT(holder.getCurrentItem());
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 170, 238);
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.CLIPBOARD_PAPER_BACKGROUND, 170, 238);
 
         builder.image(18, 8, 130, 14, GuiTextures.CLIPBOARD_TEXT_BOX);
-        builder.widget(new SimpleTextWidget(20, 10, "", 0xFFFFFF, () -> getTitle(holder), true).setCenter(false));
+        builder.widget(new SimpleTextWidget(20, 10, "", TEXT_COLOR, () -> getTitle(holder), true).setCenter(false));
 
 
         for (int i = 0; i < 8; i++) {
@@ -72,19 +92,19 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
             builder.widget(new ImageCycleButtonWidget(6, 37 + 20 * i, 15, 15, GuiTextures.CLIPBOARD_BUTTON, 4,
                     () -> getButtonState(holder, finalI), (x) -> setButton(holder, finalI, x)));
             builder.image(22, 38 + 20 * i, 140, 12, GuiTextures.CLIPBOARD_TEXT_BOX);
-            builder.widget(new SimpleTextWidget(24, 40 + 20 * i, "", 0xFFFFFF, () -> getString(holder, finalI), true).setCenter(false));
+            builder.widget(new SimpleTextWidget(24, 40 + 20 * i, "", TEXT_COLOR, () -> getString(holder, finalI), true).setCenter(false));
         }
 
-        builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, -1))
+        builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, x.isShiftClick ? -10 : -1))
                 .setButtonTexture(GuiTextures.BUTTON_LEFT).setShouldClientCallback(true));
-        builder.widget(new ClickButtonWidget(124, 200, 16, 16, "", (x) -> incrPageNum(holder, 1))
+        builder.widget(new ClickButtonWidget(124, 200, 16, 16, "", (x) -> incrPageNum(holder, x.isShiftClick ? 10 : 1))
                 .setButtonTexture(GuiTextures.BUTTON_RIGHT).setShouldClientCallback(true));
-        builder.widget(new SimpleTextWidget(85, 208, "", 0xFFFFFF,
+        builder.widget(new SimpleTextWidget(85, 208, "", TEXT_COLOR,
                 () -> (getPageNum(holder) + 1) + " / " + MAX_PAGES, true));
 
+        builder.shouldColor(false);
         return builder.build(holder, entityPlayer);
     }
-
 
     private static NBTTagCompound getPageCompound(ItemStack stack) {
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
@@ -129,7 +149,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
     private static void setButton(PlayerInventoryHolder holder, int pos, int newState) {
         ItemStack stack = holder.getCurrentItem();
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
-           return;
+            return;
         NBTTagCompound tagCompound = getPageCompound(stack);
         short buttonState;
         buttonState = tagCompound.getShort("ButStat");
@@ -220,16 +240,15 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
 
     @Override
     public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if(!world.isRemote) {
+        if (!world.isRemote && facing.getAxis() != EnumFacing.Axis.Y) {
             ItemStack heldItem = player.getHeldItem(hand).copy();
             heldItem.setCount(1); // don't place multiple items at a time
-            EnumFacing playerFacing = player.getHorizontalFacing();
             // Make sure it's the right block
-            Block testBlock = world.getBlockState(pos).getBlock();
-            IBlockState testState = testBlock.getDefaultState();
-            if (!testBlock.isAir(world.getBlockState(pos), world, pos) && testState.isSideSolid(world, pos, playerFacing)) {
+            IBlockState testState = world.getBlockState(pos);
+            Block testBlock = testState.getBlock();
+            if (!testBlock.isAir(world.getBlockState(pos), world, pos) && testState.isSideSolid(world, pos, facing)) {
                 // Step away from the block so you don't replace it, and then give it our fun blockstate
-                BlockPos shiftedPos = pos.offset(playerFacing.getOpposite());
+                BlockPos shiftedPos = pos.offset(facing);
                 Block shiftedBlock = world.getBlockState(shiftedPos).getBlock();
                 if (shiftedBlock.isAir(world.getBlockState(shiftedPos), world, shiftedPos)) {
                     IBlockState state = MACHINE.getDefaultState();
@@ -241,7 +260,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
                     if (holder != null) {
                         MetaTileEntityClipboard clipboard = (MetaTileEntityClipboard) holder.setMetaTileEntity(CLIPBOARD_TILE, heldItem);
                         if (clipboard != null) {
-                            clipboard.setFrontFacing(playerFacing);
+                            clipboard.setFrontFacing(facing.getOpposite());
                             clipboard.setClipboard(heldItem);
                             ItemStack returnedStack = player.getHeldItem(hand);
                             if (!player.isCreative()) {
@@ -253,6 +272,6 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
                 }
             }
         }
-        return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
+        return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
     }
 }

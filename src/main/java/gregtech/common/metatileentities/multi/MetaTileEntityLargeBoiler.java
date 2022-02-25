@@ -272,4 +272,9 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase {
     protected boolean shouldUpdate(MTETrait trait) {
         return !(trait instanceof BoilerRecipeLogic);
     }
+
+    @Override
+    protected boolean shouldShowVoidingModeButton() {
+        return false;
+    }
 }

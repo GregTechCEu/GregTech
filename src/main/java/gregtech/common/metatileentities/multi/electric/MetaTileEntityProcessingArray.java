@@ -26,7 +26,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.electric.MetaTileEntityMacerator;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -155,6 +154,16 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         tooltip.add(I18n.format("gregtech.machine.parallel_limit", getMachineLimit()));
     }
 
+    @Override
+    public int getItemOutputLimit() {
+        ItemStack machineStack = ((ProcessingArrayWorkable) this.recipeMapWorkable).getMachineStack();
+
+        MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(machineStack);
+
+        return mte.getItemOutputLimit();
+
+    }
+
     @SuppressWarnings("InnerClassMayBeStatic")
     protected class ProcessingArrayWorkable extends MultiblockRecipeLogic {
 
@@ -271,12 +280,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             );
         }
 
-        @Override
-        public boolean trimOutputs() {
-            MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(currentMachineStack);
-
-            //Clear the chanced outputs of LV and MV macerators, as they do not have the slots to get byproducts
-            return mte instanceof MetaTileEntityMacerator && machineTier < GTValues.HV;
+        private ItemStack getMachineStack() {
+            return currentMachineStack;
         }
     }
 }

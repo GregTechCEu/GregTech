@@ -66,13 +66,13 @@ public class CraftingRecipeLoader {
 
         if (ConfigHolder.recipes.harderBrickRecipes) {
             ModHandler.addShapelessRecipe("compressed_clay", COMPRESSED_CLAY.getStackForm(), WOODEN_FORM_BRICK.getStackForm(), new ItemStack(Items.CLAY_BALL));
-            ModHandler.addSmeltingRecipe(COMPRESSED_CLAY.getStackForm(), new ItemStack(Items.BRICK));
+            ModHandler.addSmeltingRecipe(COMPRESSED_CLAY.getStackForm(), new ItemStack(Items.BRICK), 0.3f);
         }
 
         ModHandler.addShapedRecipe("compressed_coke_clay", COMPRESSED_COKE_CLAY.getStackForm(3), "XXX", "SYS", "SSS", 'Y', WOODEN_FORM_BRICK.getStackForm(), 'X', new ItemStack(Items.CLAY_BALL), 'S', "sand");
         ModHandler.addShapelessRecipe("fireclay_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Fireclay, 2), new UnificationEntry(OrePrefix.dust, Materials.Brick), new UnificationEntry(OrePrefix.dust, Materials.Clay));
-        ModHandler.addSmeltingRecipe(COMPRESSED_COKE_CLAY.getStackForm(), COKE_OVEN_BRICK.getStackForm());
-        ModHandler.addSmeltingRecipe(COMPRESSED_FIRECLAY.getStackForm(), FIRECLAY_BRICK.getStackForm());
+        ModHandler.addSmeltingRecipe(COMPRESSED_COKE_CLAY.getStackForm(), COKE_OVEN_BRICK.getStackForm(), 0.3f);
+        ModHandler.addSmeltingRecipe(COMPRESSED_FIRECLAY.getStackForm(), FIRECLAY_BRICK.getStackForm(), 0.3f);
 
         ModHandler.addSmeltingRecipe(new UnificationEntry(OrePrefix.nugget, Materials.Iron), OreDictUnifier.get(OrePrefix.nugget, Materials.WroughtIron));
 

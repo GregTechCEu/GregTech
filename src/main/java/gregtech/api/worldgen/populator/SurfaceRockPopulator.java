@@ -1,6 +1,7 @@
 package gregtech.api.worldgen.populator;
 
 import com.google.gson.JsonObject;
+import gregtech.api.fluids.MetaFluids;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -9,7 +10,6 @@ import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.config.OreConfigUtils;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.generator.GridEntryInfo;
-import gregtech.common.MetaFluids;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;

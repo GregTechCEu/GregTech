@@ -10,6 +10,7 @@ import gregtech.api.gui.widgets.*;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.Position;
+import gregtech.common.ConfigHolder;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraftforge.fml.relauncher.Side;
@@ -42,6 +43,7 @@ public final class ModularUI implements ISizeProvider {
     private ModularUIGui modularUIGui;
 
     public boolean isJEIHandled;
+    private boolean shouldColor = true;
 
     /**
      * UIHolder of this modular UI
@@ -156,8 +158,20 @@ public final class ModularUI implements ISizeProvider {
         return height;
     }
 
+    public float getRColorForOverlay() {
+        return shouldColor ? ((ConfigHolder.client.defaultUIColor & 0xFF0000) >> 16) / 255.0f : 1.0f;
+    }
+
+    public float getGColorForOverlay() {
+        return shouldColor ? ((ConfigHolder.client.defaultUIColor & 0xFF00) >> 8) / 255.0f : 1.0f;
+    }
+
+    public float getBColorForOverlay() {
+        return shouldColor ? (ConfigHolder.client.defaultUIColor & 0xFF) / 255.0f : 1.0f;
+    }
+
     /**
-     * Simple builder for  ModularUI objects
+     * Simple builder for ModularUI objects
      */
     public static class Builder {
 
@@ -168,6 +182,7 @@ public final class ModularUI implements ISizeProvider {
         private final int width;
         private final int height;
         private int nextFreeWidgetId = 0;
+        private boolean shouldColor = true;
 
         public Builder(IGuiTexture background, int width, int height) {
             Preconditions.checkNotNull(background);
@@ -259,9 +274,15 @@ public final class ModularUI implements ISizeProvider {
             return this;
         }
 
+        public Builder shouldColor(boolean color) {
+            shouldColor = color;
+            return this;
+        }
+
         public ModularUI build(IUIHolder holder, EntityPlayer player) {
-            return new ModularUI(widgets.build(), openListeners.build(), closeListeners.build(), background, width, height, holder, player);
+            ModularUI ui = new ModularUI(widgets.build(), openListeners.build(), closeListeners.build(), background, width, height, holder, player);
+            ui.shouldColor = this.shouldColor;
+            return ui;
         }
     }
-
 }

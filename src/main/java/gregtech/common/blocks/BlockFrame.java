@@ -63,14 +63,15 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
-        Material material = variantProperty.getAllowedValues().get(meta);
-        return getDefaultState().withProperty(variantProperty, material);
+        if (meta >= variantProperty.getAllowedValues().size()) {
+            meta = 0;
+        }
+        return getDefaultState().withProperty(variantProperty, variantProperty.getAllowedValues().get(meta));
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        Material material = state.getValue(variantProperty);
-        return variantProperty.getAllowedValues().indexOf(material);
+        return variantProperty.getAllowedValues().indexOf(state.getValue(variantProperty));
     }
 
     @Override

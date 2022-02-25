@@ -60,7 +60,7 @@ public class OreRecipeHandler {
             ItemStack ingotStack = OreDictUnifier.get(OrePrefix.ingot, smeltingResult);
 
             if (!ingotStack.isEmpty() && doesMaterialUseNormalFurnace(smeltingResult)) {
-                ModHandler.addSmeltingRecipe(new UnificationEntry(crushedPrefix, material), ingotStack);
+                ModHandler.addSmeltingRecipe(new UnificationEntry(crushedPrefix, material), ingotStack, 0.5f);
             }
         }
     }
@@ -112,7 +112,7 @@ public class OreRecipeHandler {
 
         //do not try to add smelting recipes for materials which require blast furnace
         if (!ingotStack.isEmpty() && doesMaterialUseNormalFurnace(smeltingMaterial)) {
-            ModHandler.addSmeltingRecipe(new UnificationEntry(orePrefix, material), ingotStack);
+            ModHandler.addSmeltingRecipe(new UnificationEntry(orePrefix, material), ingotStack, 0.5f);
         }
     }
 
