@@ -8,16 +8,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.List;
-
 public class RoutePath {
     private final BlockPos destPipePos;
     private final EnumFacing destFacing;
     private final int distance;
-    private final List<TileEntityCable> path;
+    private final TileEntityCable[] path;
     private final long maxLoss;
 
-    public RoutePath(BlockPos destPipePos, EnumFacing destFacing, List<TileEntityCable> path, int distance, long maxLoss) {
+    public RoutePath(BlockPos destPipePos, EnumFacing destFacing, TileEntityCable[] path, int distance, long maxLoss) {
         this.destPipePos = destPipePos;
         this.destFacing = destFacing;
         this.path = path;
@@ -33,7 +31,7 @@ public class RoutePath {
         return maxLoss;
     }
 
-    public List<TileEntityCable> getPath() {
+    public TileEntityCable[] getPath() {
         return path;
     }
 

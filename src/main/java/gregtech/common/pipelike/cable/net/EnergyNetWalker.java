@@ -10,6 +10,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class EnergyNetWalker extends PipeNetWalker {
     }
 
     private final List<RoutePath> routes;
-    private List<TileEntityCable> pipes = new ArrayList<>();
+    private TileEntityCable[] pipes = {};
     private int loss;
 
     protected EnergyNetWalker(World world, BlockPos sourcePipe, int walkedBlocks, List<RoutePath> routes) {
@@ -36,13 +37,13 @@ public class EnergyNetWalker extends PipeNetWalker {
     protected PipeNetWalker createSubWalker(World world, BlockPos nextPos, int walkedBlocks) {
         EnergyNetWalker walker = new EnergyNetWalker(world, nextPos, walkedBlocks, routes);
         walker.loss = loss;
-        walker.pipes = new ArrayList<>(pipes);
+        walker.pipes = pipes;
         return walker;
     }
 
     @Override
     protected void checkPipe(IPipeTile<?, ?> pipeTile, BlockPos pos) {
-        pipes.add((TileEntityCable) pipeTile);
+        pipes = ArrayUtils.add(pipes, (TileEntityCable) pipeTile);
         loss += ((TileEntityCable) pipeTile).getNodeData().getLossPerBlock();
     }
 
@@ -51,7 +52,7 @@ public class EnergyNetWalker extends PipeNetWalker {
         if (neighbourTile != null) {
             IEnergyContainer container = neighbourTile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, faceToNeighbour.getOpposite());
             if (container != null) {
-                routes.add(new RoutePath(new BlockPos(pipePos), faceToNeighbour, new ArrayList<>(pipes), getWalkedBlocks(), loss));
+                routes.add(new RoutePath(new BlockPos(pipePos), faceToNeighbour, pipes, getWalkedBlocks(), loss));
             }
         }
     }
