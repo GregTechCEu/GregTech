@@ -100,6 +100,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROD_LONG;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROTOR;
 
+    public static MetaItem<?>.MetaValueItem SPRAY_SOLVENT;
     public static MetaItem<?>.MetaValueItem SPRAY_EMPTY;
 
     public static MetaItem<?>.MetaValueItem FLUID_CELL;

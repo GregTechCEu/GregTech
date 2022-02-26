@@ -384,6 +384,13 @@ public class MachineRecipeLoader {
                     .buildAndRegister();
         }
 
+        CANNER_RECIPES.recipeBuilder()
+                .input(SPRAY_EMPTY)
+                .fluidInputs(Acetone.getFluid(100))
+                .output(SPRAY_SOLVENT)
+                .EUt(VA[ULV]).duration(200)
+                .buildAndRegister();
+
         Material material = Materials.Iron;
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()

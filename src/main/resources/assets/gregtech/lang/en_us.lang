@@ -235,6 +235,7 @@ metaitem.large_fluid_cell.stainless_steel.name=%s Stainless Steel Cell
 metaitem.large_fluid_cell.titanium.name=%s Titanium Cell
 metaitem.large_fluid_cell.tungstensteel.name=%s Tungstensteel Cell
 
+metaitem.spray.solvent.name=Spray Can (Solvent)
 metaitem.spray.can.dyes.white.name=Spray Can (White)
 metaitem.spray.can.dyes.orange.name=Spray Can (Orange)
 metaitem.spray.can.dyes.magenta.name=Spray Can (Magenta)
@@ -3866,6 +3867,7 @@ behaviour.softhammer=Activates and Deactivates Machines
 behaviour.hammer=Turns on and off Muffling for Machines (by hitting them)
 behaviour.wrench=Rotates Blocks on Rightclick
 behaviour.boor.by=by %s
+behaviour.paintspray.solvent.tooltip=Can remove color from things
 behaviour.paintspray.white.tooltip=Can paint things in White
 behaviour.paintspray.orange.tooltip=Can paint things in Orange
 behaviour.paintspray.magenta.tooltip=Can paint things in Magenta
