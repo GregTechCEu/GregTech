@@ -96,7 +96,7 @@ public class WoodMachineRecipes {
 
             if (ConfigHolder.recipes.harderCharcoalRecipe) {
                 ItemStack outputStack = FurnaceRecipes.instance().getSmeltingResult(stack);
-                if (stack != ItemStack.EMPTY && stack.getItem() == Items.COAL && stack.getItemDamage() == 1) {
+                if (outputStack.getItem() == Items.COAL && outputStack.getItemDamage() == 1) {
                     ModHandler.removeFurnaceSmelting(stack);
                 }
             }
