@@ -110,7 +110,7 @@ public class MetaItem1 extends StandardMetaItem {
 
         // out of registry order so it can reference the Empty Spray Can
         SPRAY_SOLVENT = addItem(60, "spray.solvent").setMaxStackSize(1)
-                .addComponents(new ColorSprayBehaviour(SPRAY_EMPTY.getStackForm(), 512, -1));
+                .addComponents(new ColorSprayBehaviour(SPRAY_EMPTY.getStackForm(), 1024, -1));
 
         for (int i = 0; i < EnumDyeColor.values().length; i++) {
             SPRAY_CAN_DYES[i] = addItem(62 + i, "spray.can.dyes." + EnumDyeColor.values()[i].getName()).setMaxStackSize(1)

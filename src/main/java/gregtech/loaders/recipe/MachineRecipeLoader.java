@@ -386,7 +386,7 @@ public class MachineRecipeLoader {
 
         CANNER_RECIPES.recipeBuilder()
                 .input(SPRAY_EMPTY)
-                .fluidInputs(Acetone.getFluid(100))
+                .fluidInputs(Acetone.getFluid(1000))
                 .output(SPRAY_SOLVENT)
                 .EUt(VA[ULV]).duration(200)
                 .buildAndRegister();
