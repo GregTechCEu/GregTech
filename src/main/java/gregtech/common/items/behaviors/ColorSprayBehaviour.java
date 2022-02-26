@@ -3,10 +3,15 @@ package gregtech.common.items.behaviors;
 import appeng.api.util.AEColor;
 import appeng.tile.networking.TileCableBus;
 import gregtech.api.GTValues;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.sound.GTSounds;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockColored;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.BlockStainedGlassPane;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,7 +34,8 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
     public ColorSprayBehaviour(ItemStack empty, int totalUses, int color) {
         super(totalUses);
         this.empty = empty;
-        this.color = EnumDyeColor.values()[color];
+        EnumDyeColor[] colors = EnumDyeColor.values();
+        this.color = color >= colors.length || color < 0 ? null : colors[color];
     }
 
     @Override
@@ -49,6 +55,9 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
     private boolean tryPaintBlock(EntityPlayer player, World world, BlockPos pos, EnumFacing side) {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
+        if (color == null) {
+            return tryStripBlockColor(player, world, pos, block, side);
+        }
         return block.recolorBlock(world, pos, side, this.color) || tryPaintSpecialBlock(player, world, pos, block);
     }
 
@@ -62,6 +71,12 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
         if (block == Blocks.GLASS_PANE) {
             IBlockState newBlockState = Blocks.STAINED_GLASS_PANE.getDefaultState()
                     .withProperty(BlockStainedGlassPane.COLOR, this.color);
+            world.setBlockState(pos, newBlockState);
+            return true;
+        }
+        if (block == Blocks.HARDENED_CLAY) {
+            IBlockState newBlockState = Blocks.STAINED_HARDENED_CLAY.getDefaultState()
+                    .withProperty(BlockColored.COLOR, this.color);
             world.setBlockState(pos, newBlockState);
             return true;
         }
@@ -79,10 +94,86 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
         return false;
     }
 
+    @SuppressWarnings("unchecked, rawtypes")
+    private boolean tryStripBlockColor(EntityPlayer player, World world, BlockPos pos, Block block, EnumFacing side) {
+        // MC special cases
+        if (block == Blocks.STAINED_GLASS) {
+            world.setBlockState(pos, Blocks.GLASS.getDefaultState());
+            return true;
+        }
+        if (block == Blocks.STAINED_GLASS_PANE) {
+            world.setBlockState(pos, Blocks.GLASS_PANE.getDefaultState());
+            return true;
+        }
+        if (block == Blocks.STAINED_HARDENED_CLAY) {
+            world.setBlockState(pos, Blocks.HARDENED_CLAY.getDefaultState());
+            return true;
+        }
+
+        // MTE special case
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof MetaTileEntityHolder) {
+            MetaTileEntity mte = ((MetaTileEntityHolder) te).getMetaTileEntity();
+            if (mte != null) {
+                if (mte.isPainted()) {
+                    mte.setPaintingColor(-1);
+                    return true;
+                } else return false;
+            }
+        }
+
+        // TileEntityPipeBase special case
+        if (te instanceof IPipeTile) {
+            IPipeTile<?, ?> pipe = (IPipeTile<?, ?>) te;
+            if (pipe.isPainted()) {
+                pipe.setPaintingColor(-1);
+                return true;
+            } else return false;
+        }
+
+        // AE2 cable special case
+        if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+            if (te instanceof TileCableBus) {
+                TileCableBus cable = (TileCableBus) te;
+                // do not try to strip color if it is already colorless
+                if (cable.getColor() != AEColor.TRANSPARENT) {
+                    cable.recolourBlock(null, AEColor.TRANSPARENT, player);
+                    return true;
+                } else return false;
+            }
+        }
+
+        // General case
+        IBlockState state = world.getBlockState(pos);
+        for (IProperty prop : state.getProperties().keySet()) {
+            if (prop.getName().equals("color") && prop.getValueClass() == EnumDyeColor.class) {
+                IBlockState defaultState = block.getDefaultState();
+                EnumDyeColor defaultColor = EnumDyeColor.WHITE;
+                try {
+                    // try to read the default color value from the default state instead of just
+                    // blindly setting it to default state, and potentially resetting other values
+                    defaultColor = (EnumDyeColor) defaultState.getValue(prop);
+                } catch (IllegalArgumentException ignored) {
+                    // no default color, we may have to fallback to WHITE here
+                    // other mods that have custom behavior can be done as
+                    // special cases above on a case-by-case basis
+                }
+                block.recolorBlock(world, pos, side, defaultColor);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
         int remainingUses = getUsesLeft(itemStack);
-        lines.add(I18n.format("behaviour.paintspray." + this.color.getTranslationKey() + ".tooltip"));
+        if (color != null) {
+            lines.add(I18n.format("behaviour.paintspray." + this.color.getTranslationKey() + ".tooltip"));
+        } else {
+            lines.add(I18n.format("behaviour.paintspray.solvent.tooltip"));
+        }
         lines.add(I18n.format("behaviour.paintspray.uses", remainingUses));
     }
 }

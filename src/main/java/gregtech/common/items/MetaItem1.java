@@ -75,7 +75,7 @@ public class MetaItem1 extends StandardMetaItem {
         SHAPE_MOLDS[11] = SHAPE_MOLD_GEAR_SMALL = addItem(23, "shape.mold.gear.small").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[12] = SHAPE_MOLD_ROTOR = addItem(24, "shape.mold.rotor").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
 
-        // Extruder Shapes: ID 31-60
+        // Extruder Shapes: ID 31-59
         SHAPE_EXTRUDERS[0] = SHAPE_EXTRUDER_PLATE = addItem(31, "shape.extruder.plate").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[1] = SHAPE_EXTRUDER_ROD = addItem(32, "shape.extruder.rod").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[2] = SHAPE_EXTRUDER_BOLT = addItem(33, "shape.extruder.bolt").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
@@ -104,9 +104,13 @@ public class MetaItem1 extends StandardMetaItem {
         SHAPE_EXTRUDERS[25] = SHAPE_EXTRUDER_ROD_LONG = addItem(56, "shape.extruder.rod_long").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[26] = SHAPE_EXTRUDER_ROTOR = addItem(57, "shape.extruder.rotor").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
 
-        // Spray Cans: ID 61-77
+        // Spray Cans: ID 60-77
         SPRAY_EMPTY = addItem(61, "spray.empty")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tin, M * 2), new MaterialStack(Materials.Redstone, M)));
+
+        // out of registry order so it can reference the Empty Spray Can
+        SPRAY_SOLVENT = addItem(60, "spray.solvent").setMaxStackSize(1)
+                .addComponents(new ColorSprayBehaviour(SPRAY_EMPTY.getStackForm(), 1024, -1));
 
         for (int i = 0; i < EnumDyeColor.values().length; i++) {
             SPRAY_CAN_DYES[i] = addItem(62 + i, "spray.can.dyes." + EnumDyeColor.values()[i].getName()).setMaxStackSize(1)
