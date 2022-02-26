@@ -59,6 +59,6 @@ public class CoverActivityDetectorAdvanced extends CoverActivityDetector {
         else if (this.isInverted)
             outputAmount = 15 - outputAmount;
 
-        setRedstoneSignalOutput(outputAmount);
+        setRedstoneSignalOutput(outputAmount, true);
     }
 }

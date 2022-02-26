@@ -16,6 +16,8 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     BlockPos getPipePos();
 
+    void notifyNeighborsOfStateChange(EnumFacing offsetSide, boolean updateObservers);
+
     default long getTickTimer() {
         return getPipeWorld().getTotalWorldTime();
     }

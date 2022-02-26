@@ -36,6 +36,8 @@ public interface ICoverable {
 
     BlockPos getPos();
 
+    void notifyNeighborsOfStateChange(EnumFacing offsetSide, boolean updateObservers);
+
     long getOffsetTimer();
 
     void markDirty();

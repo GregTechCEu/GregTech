@@ -354,14 +354,25 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public boolean shouldCheckWeakPower(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
         // The check in World::getRedstonePower in the vanilla code base is reversed. Setting this to false will
-        // actually cause getWeakPower to be called, rather than prevent it.
-        return false;
+        // actually cause getWeakPower to be called, rather than prevent it. (i.e. true = getStrongPower(), false = getWeakPower())
+        MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
+        return metaTileEntity != null && metaTileEntity.isOutputtingStrongRedstoneSignal(side.getOpposite())
+                && world.getBlockState(pos.offset(side.getOpposite())).isBlockNormalCube(); //Only output strong power to solid blocks, since strong can only be either 15 or 0
     }
 
     @Override
     public int getWeakPower(@Nonnull IBlockState blockState, @Nonnull IBlockAccess blockAccess, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(blockAccess, pos);
-        return metaTileEntity == null ? 0 : metaTileEntity.getOutputRedstoneSignal(side == null ? null : side.getOpposite());
+        return metaTileEntity == null ? 0 : metaTileEntity.getOutputRedstoneSignal(side.getOpposite());
+    }
+
+    @Override
+    public int getStrongPower(@Nonnull IBlockState blockState, @Nonnull IBlockAccess blockAccess, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+        MetaTileEntity metaTileEntity = getMetaTileEntity(blockAccess, pos);
+        if (metaTileEntity != null && metaTileEntity.getOutputRedstoneSignal(side.getOpposite()) > 0) {
+            return 15; //World::getStrongPower only cares about power level 15 or 0
+        }
+        return 0;
     }
 
     @Override

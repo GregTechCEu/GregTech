@@ -69,8 +69,8 @@ public class CoverActivityDetector extends CoverBehavior implements ITickable {
         if (workable == null)
             return;
 
-        if (isInverted) setRedstoneSignalOutput(workable.isActive() && workable.isWorkingEnabled() ? 0 : 15);
-        else setRedstoneSignalOutput(workable.isActive() && workable.isWorkingEnabled() ? 15 : 0);
+        if (isInverted) setRedstoneSignalOutput(workable.isActive() && workable.isWorkingEnabled() ? 0 : 15, true);
+        else setRedstoneSignalOutput(workable.isActive() && workable.isWorkingEnabled() ? 15 : 0, true);
     }
 
     @Override

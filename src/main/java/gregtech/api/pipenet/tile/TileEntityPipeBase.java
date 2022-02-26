@@ -6,7 +6,6 @@ import gregtech.api.metatileentity.SyncedTileEntityBase;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
-import gregtech.api.util.TaskScheduler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -75,6 +74,11 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public BlockPos getPipePos() {
         return getPos();
+    }
+
+    @Override
+    public void notifyNeighborsOfStateChange(EnumFacing offsetSide, boolean updateObservers) {
+        this.getWorld().notifyNeighborsOfStateChange(getPos().offset(offsetSide), getBlockType(), updateObservers);
     }
 
     @Override

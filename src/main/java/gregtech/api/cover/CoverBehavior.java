@@ -41,6 +41,7 @@ public abstract class CoverBehavior implements IUIHolder {
     public final ICoverable coverHolder;
     public final EnumFacing attachedSide;
     private int redstoneSignalOutput;
+    private boolean isOutputtingStrongRedstone;
 
     public CoverBehavior(ICoverable coverHolder, EnumFacing attachedSide) {
         this.coverHolder = coverHolder;
@@ -55,14 +56,20 @@ public abstract class CoverBehavior implements IUIHolder {
         return coverDefinition;
     }
 
-    public final void setRedstoneSignalOutput(int redstoneSignalOutput) {
+    public final void setRedstoneSignalOutput(int redstoneSignalOutput, boolean isStrong) {
         this.redstoneSignalOutput = redstoneSignalOutput;
+        this.isOutputtingStrongRedstone = isStrong;
         coverHolder.notifyBlockUpdate();
+        coverHolder.notifyNeighborsOfStateChange(attachedSide, false);
         coverHolder.markDirty();
     }
 
     public final int getRedstoneSignalOutput() {
         return redstoneSignalOutput;
+    }
+
+    public final boolean isOutputtingStrongRedstone() {
+        return isOutputtingStrongRedstone;
     }
 
     public final int getRedstoneSignalInput() {
@@ -80,10 +87,12 @@ public abstract class CoverBehavior implements IUIHolder {
         if (redstoneSignalOutput > 0) {
             tagCompound.setInteger("RedstoneSignal", redstoneSignalOutput);
         }
+        tagCompound.setBoolean("StrongSignal", isOutputtingStrongRedstone);
     }
 
     public void readFromNBT(NBTTagCompound tagCompound) {
         this.redstoneSignalOutput = tagCompound.getInteger("RedstoneSignal");
+        this.isOutputtingStrongRedstone = tagCompound.getBoolean("StrongSignal");
     }
 
     public void writeInitialSyncData(PacketBuffer packetBuffer) {

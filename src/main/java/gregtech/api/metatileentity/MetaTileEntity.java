@@ -92,6 +92,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     protected EnumFacing frontFacing = EnumFacing.NORTH;
     private int paintingColor = -1;
 
+    private final boolean[] isOutputtingStrongRedstone = new boolean[6];
     private final int[] sidedRedstoneOutput = new int[6];
     private final int[] sidedRedstoneInput = new int[6];
     private int cachedComparatorValue;
@@ -135,6 +136,14 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     public BlockPos getPos() {
         return holder == null ? null : holder.getPos();
+    }
+
+    @Override
+    public void notifyNeighborsOfStateChange(EnumFacing offsetSide, boolean updateObservers) {
+        World world = getWorld();
+        if (world != null) {
+            world.notifyNeighborsOfStateChange(getPos().offset(offsetSide), holder.getBlockType(), updateObservers);
+        }
     }
 
     public void markDirty() {
@@ -1117,11 +1126,19 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return highestSignal;
     }
 
-    public final void setOutputRedstoneSignal(EnumFacing side, int strength) {
+    public boolean isOutputtingStrongRedstoneSignal(EnumFacing side) {
+        CoverBehavior behavior = getCoverAtSide(side);
+        boolean strongSidedOutput = isOutputtingStrongRedstone[side.getIndex()];
+        return behavior == null ? strongSidedOutput : behavior.isOutputtingStrongRedstone();
+    }
+
+    public final void setOutputRedstoneSignal(EnumFacing side, int strength, boolean isStrong) {
         Preconditions.checkNotNull(side, "side");
         this.sidedRedstoneOutput[side.getIndex()] = strength;
+        this.isOutputtingStrongRedstone[side.getIndex()] = isStrong;
         if (getWorld() != null && !getWorld().isRemote && getCoverAtSide(side) == null) {
             notifyBlockUpdate();
+            notifyNeighborsOfStateChange(side, false);
             markDirty();
         }
     }

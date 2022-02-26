@@ -218,6 +218,11 @@ public class PipeCoverableImplementation implements ICoverable {
         return highestSignal;
     }
 
+    public boolean isOutputtingStrongRedstoneSignal(EnumFacing side) {
+        CoverBehavior behavior = getCoverAtSide(side);
+        return behavior != null && behavior.isOutputtingStrongRedstone();
+    }
+
     public void update() {
         if (!getWorld().isRemote) {
             for (CoverBehavior coverBehavior : coverBehaviors) {
@@ -332,6 +337,11 @@ public class PipeCoverableImplementation implements ICoverable {
     @Override
     public BlockPos getPos() {
         return holder.getPipePos();
+    }
+
+    @Override
+    public void notifyNeighborsOfStateChange(EnumFacing offsetSide, boolean updateObservers) {
+        holder.notifyNeighborsOfStateChange(offsetSide, updateObservers);
     }
 
     @Override
