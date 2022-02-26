@@ -1,5 +1,8 @@
 package gregtech.common.items.behaviors;
 
+import appeng.api.util.AEColor;
+import appeng.tile.networking.TileCableBus;
+import gregtech.api.GTValues;
 import gregtech.api.sound.GTSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockStainedGlass;
@@ -10,9 +13,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Loader;
 
 import java.util.List;
 
@@ -33,7 +38,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
         if (!player.canPlayerEdit(pos, facing, stack)) {
             return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
         }
-        if (!tryPaintBlock(world, pos, facing)) {
+        if (!tryPaintBlock(player, world, pos, facing)) {
             return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
         }
         useItemDurability(player, hand, stack, empty.copy());
@@ -41,13 +46,13 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
         return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }
 
-    private boolean tryPaintBlock(World world, BlockPos pos, EnumFacing side) {
+    private boolean tryPaintBlock(EntityPlayer player, World world, BlockPos pos, EnumFacing side) {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
-        return block.recolorBlock(world, pos, side, this.color) || tryPaintSpecialBlock(world, pos, block);
+        return block.recolorBlock(world, pos, side, this.color) || tryPaintSpecialBlock(player, world, pos, block);
     }
 
-    private boolean tryPaintSpecialBlock(World world, BlockPos pos, Block block) {
+    private boolean tryPaintSpecialBlock(EntityPlayer player, World world, BlockPos pos, Block block) {
         if (block == Blocks.GLASS) {
             IBlockState newBlockState = Blocks.STAINED_GLASS.getDefaultState()
                     .withProperty(BlockStainedGlass.COLOR, this.color);
@@ -59,6 +64,17 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
                     .withProperty(BlockStainedGlassPane.COLOR, this.color);
             world.setBlockState(pos, newBlockState);
             return true;
+        }
+        if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof TileCableBus) {
+                TileCableBus cable = (TileCableBus) te;
+                // do not try to recolor if it already is this color
+                if (cable.getColor().ordinal() != color.ordinal()) {
+                    cable.recolourBlock(null, AEColor.values()[color.ordinal()], player);
+                    return true;
+                }
+            }
         }
         return false;
     }
