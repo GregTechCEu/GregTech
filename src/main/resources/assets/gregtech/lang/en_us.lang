@@ -4338,6 +4338,7 @@ gregtech.multiblock.large_combustion_engine.oxygen_amount=Oxygen Amount: %sL
 gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount=Liquid Oxygen Amount: %sL
 gregtech.multiblock.large_combustion_engine.oxygen_boosted=§bOxygen boosted.
 gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted=§bLiquid Oxygen boosted.
+gregtech.multiblock.large_combustion_engine.boost_disallowed=§bUpgrade the Dynamo Hatch to enable Oxygen Boosting.
 gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost=Supply Oxygen to boost.
 gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost=Supply Liquid Oxygen to boost.
 gregtech.multiblock.large_combustion_engine.obstructed=Engine Intakes Obstructed.
