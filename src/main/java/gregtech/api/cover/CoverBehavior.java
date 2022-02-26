@@ -60,8 +60,10 @@ public abstract class CoverBehavior implements IUIHolder {
         this.redstoneSignalOutput = redstoneSignalOutput;
         this.isOutputtingStrongRedstone = isStrong;
         coverHolder.notifyBlockUpdate();
-        coverHolder.notifyNeighborsOfStateChange(attachedSide, false);
         coverHolder.markDirty();
+        if (isStrong) {
+            coverHolder.notifyNeighborsOfStateChange(attachedSide, false);
+        }
     }
 
     public final int getRedstoneSignalOutput() {

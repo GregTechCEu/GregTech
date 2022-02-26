@@ -1138,8 +1138,10 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         this.isOutputtingStrongRedstone[side.getIndex()] = isStrong;
         if (getWorld() != null && !getWorld().isRemote && getCoverAtSide(side) == null) {
             notifyBlockUpdate();
-            notifyNeighborsOfStateChange(side, false);
             markDirty();
+            if (isStrong) {
+                notifyNeighborsOfStateChange(side, false);
+            }
         }
     }
 
