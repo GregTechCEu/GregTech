@@ -1,6 +1,21 @@
 ## Changelog
 
-## 2.1.3
+### 2.1.4
+BETA RELEASE (hotfix 2)
+
+* Fix Steam Macerator not being able to run all recipes
+* Fix some Fluid-related CraftTweaker methods not working properly
+* Add Spray Can (Solvent) to remove paint from Blocks
+* Allow Spray Cans to paint all ME Cable types
+* Add 4A EV Energy/Dynamo Hatches
+* Restrict the LCE/ECE forming rules to enforce a valid tier of Dynamo Hatch
+* Block the LCE/ECE from allowing boosting if the Dynamo Hatch is not of sufficient tier
+* Fix `harderCharcoalRecipe` config not catching some mod wood smelting recipes
+* Small improvements for the Terminal's UI
+* Fix Sifter progress bar texture
+* Internal: Expose more Machine inventory slots for easier use
+
+### 2.1.3
 BETA RELEASE (hotfix)
 
 * Fix crash on servers
