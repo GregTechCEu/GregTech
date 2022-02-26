@@ -41,6 +41,10 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
         return this;
     }
 
+    public boolean canOpenMenuOnEdge() {
+        return true;
+    }
+
     /**
      * App theme color
      */

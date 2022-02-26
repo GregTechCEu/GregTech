@@ -108,7 +108,7 @@ public class WorldProspectorARApp extends ARApplication {
                             buttonWidget.setFill(res | 0xff000000);
                             colors[index] = res | 0xff000000;
                         }
-                    }).open())
+                    }, colors[index]).open())
             );
         }
         addWidget(new CircleButtonWidget(333 / 2, 200)
