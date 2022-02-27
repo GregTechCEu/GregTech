@@ -1,5 +1,6 @@
 package gregtech.api.gui;
 
+import gregtech.api.GTValues;
 import gregtech.api.gui.resources.AdoptableTextureArea;
 import gregtech.api.gui.resources.SizedTextureArea;
 import gregtech.api.gui.resources.SteamTexture;
@@ -41,6 +42,7 @@ public class GuiTextures {
     public static final TextureArea BUTTON_FLUID_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_fluid_output.png");
     public static final TextureArea BUTTON_ITEM_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_item_output.png");
     public static final TextureArea BUTTON_LOCK = TextureArea.fullImage("textures/gui/widget/button_lock.png");
+    public static final TextureArea BUTTON_MOB_SORTER_MODE = GTValues.FOOLS.get() ? TextureArea.fullImage("textures/gui/widget/button_mob_sorter_mode_special.png") : TextureArea.fullImage("textures/gui/widget/button_mob_sorter_mode.png");
     public static final TextureArea BUTTON_VOID = TextureArea.fullImage("textures/gui/widget/button_void.png");
     public static final TextureArea BUTTON_VOID_PARTIAL = TextureArea.fullImage("textures/gui/widget/button_void_partial.png");
     public static final TextureArea BUTTON_VOID_MULTIBLOCK = TextureArea.fullImage("textures/gui/widget/button_void_multiblock.png");

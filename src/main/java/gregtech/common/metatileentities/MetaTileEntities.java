@@ -124,6 +124,7 @@ public class MetaTileEntities {
     public static final MetaTileEntityBlockBreaker[] BLOCK_BREAKER = new MetaTileEntityBlockBreaker[4];
     public static final MetaTileEntityItemCollector[] ITEM_COLLECTOR = new MetaTileEntityItemCollector[4];
     public static final MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[4];
+    public static final MetaTileEntityMobAgeSorter[] MOB_AGE_SORTER = new MetaTileEntityMobAgeSorter[4];
     public static final MetaTileEntityWorldAccelerator[] WORLD_ACCELERATOR = new MetaTileEntityWorldAccelerator[8]; // no ULV, no MAX
     public static MetaTileEntityMachineHatch MACHINE_HATCH;
     // Used for addons if they wish to disable certain tiers of machines
@@ -729,6 +730,12 @@ public class MetaTileEntities {
                 ENERGY_CONVERTER[j][i] = registerMetaTileEntity(1670 + j + i * 4, converter);
             }
         }
+
+        // Mob Age Sorters, IDs 1730-1733
+        MOB_AGE_SORTER[0] = registerMetaTileEntity(1730, new MetaTileEntityMobAgeSorter(gregtechId("mob_age_sorter.lv"), 1, 1));
+        MOB_AGE_SORTER[1] = registerMetaTileEntity(1731, new MetaTileEntityMobAgeSorter(gregtechId("mob_age_sorter.mv"), 2, 3));
+        MOB_AGE_SORTER[2] = registerMetaTileEntity(1732, new MetaTileEntityMobAgeSorter(gregtechId("mob_age_sorter.hv"), 3, 5));
+        MOB_AGE_SORTER[3] = registerMetaTileEntity(1733, new MetaTileEntityMobAgeSorter(gregtechId("mob_age_sorter.ev"), 4, 9));
 
         /*
          * FOR ADDON DEVELOPERS:

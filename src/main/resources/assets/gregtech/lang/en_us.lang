@@ -3656,6 +3656,14 @@ gregtech.machine.world_accelerator.area=On Tile Entity mode, only adjacent block
 gregtech.machine.world_accelerator.mode_tile=Tile Entity Mode
 gregtech.machine.world_accelerator.mode_entity=Entity Mode
 
+# Mob Age Soter
+gregtech.machine.mob_age_sorter.lv.name=Basic Mob Age Sorter
+gregtech.machine.mob_age_sorter.mv.name=Advanced Mob Age Sorter
+gregtech.machine.mob_age_sorter.hv.name=Advanced Mob Age Sorter II
+gregtech.machine.mob_age_sorter.ev.name=Advanced Mob Age Sorter III
+
+gregtech.machine.mob_age_sorter.range=Moves animals in a $sx$s square in front
+
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side
 gregtech.machine.basic.input_from_output_side.disallow=Disallow Input from Output Side
@@ -4244,6 +4252,9 @@ gregtech.gui.multiblock_item_voiding=Voiding Mode/n§7Voiding §6Items
 gregtech.gui.multiblock_fluid_voiding=Voiding Mode/n§7Voiding §9Fluids
 gregtech.gui.multiblock_item_fluid_voiding=Voiding Mode/n§7Voiding §6Items §7and §9Fluids
 gregtech.gui.multiblock_no_voiding=Voiding Mode/n§7Voiding Nothing
+gregtech.gui.mob_age_sorter_mode.enabled=Only moves adults: Click to only move children instead.
+gregtech.gui.mob_age_sorter_mode.disabled=Only moves children: Click to only move adults instead.
+
 
 ore.spawnlocation.name=Ore Spawn Information
 gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spawn locations.
