@@ -276,7 +276,7 @@ public class OrganicChemistryMaterials {
                 .color(0x000055)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 8, Nitrogen, 2)
-                .build().setFormula("H2N2(CH3)2");
+                .build().setFormula("NH2N(CH3)2", true);
 
         DinitrogenTetroxide = new Material.Builder(1039, "dinitrogen_tetroxide")
                 .fluid(FluidTypes.GAS)
@@ -359,7 +359,7 @@ public class OrganicChemistryMaterials {
                 .color(0xAFAFAF)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 3, Hydrogen, 6, Oxygen, 1)
-                .build().setFormula("(CH3)2CO");
+                .build().setFormula("(CH3)2CO", true);
 
         Glycerol = new Material.Builder(1051, "glycerol")
                 .fluid()
