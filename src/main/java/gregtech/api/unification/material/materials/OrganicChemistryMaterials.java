@@ -233,7 +233,7 @@ public class OrganicChemistryMaterials {
                 .color(0xDCC8B4)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Calcium, 1, Carbon, 4, Oxygen, 4, Hydrogen, 6, Water, 1)
-                .build();
+                .build().setFormula("Ca(C2H3O2)2(H2O)", true);
 
         VinylAcetate = new Material.Builder(1033, "vinyl_acetate")
                 .fluid()

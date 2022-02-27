@@ -203,7 +203,7 @@ public class SecondDegreeMaterials {
                 .dust().ore(3, 1)
                 .color(0xF5D7D2).iconSet(ROUGH)
                 .flags(DISABLE_DECOMPOSITION, HYDRATED_SALT)
-                .components(Sodium, 1, Magnesium, 6, Silicon, 12, Hydrogen, 4, Oxygen, 36, Water, 5)
+                .components(Sodium, 1, Magnesium, 6, Silicon, 12, Oxygen, 36, Hydrogen, 4, Water, 5)
                 .build();
 
         FullersEarth = new Material.Builder(2027, "fullers_earth")
@@ -253,7 +253,7 @@ public class SecondDegreeMaterials {
                 .dust().ore(3, 1)
                 .color(0xF0E6E6)
                 .flags(DISABLE_DECOMPOSITION, HYDRATED_SALT)
-                .components(Sodium, 1, Calcium, 4, Silicon, 27, Aluminium, 9, Oxygen, 72, Water, 28)
+                .components(Sodium, 1, Calcium, 4, Aluminium, 9, Silicon, 27, Oxygen, 72, Water, 28)
                 .build();
 
         Concrete = new Material.Builder(2034, "concrete")
