@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 
 public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, IGhostIngredientHandler<ModularUIGui>, IRecipeTransferHandler<ModularUIContainer> {
 
-    protected final IRecipeTransferHandlerHelper transferHelper;
+    private final IRecipeTransferHandlerHelper transferHelper;
     private Predicate<IRecipeTransferHandlerWidget> validHandlers = widget -> true;
 
     public ModularUIGuiHandler(IRecipeTransferHandlerHelper transferHelper) {
