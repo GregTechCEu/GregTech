@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 
-public class TooDefinitionBuilder {
+public class ToolDefinitionBuilder {
 
     private int damagePerBlockBreak = 2;
     private int damagePerCraft = 1;
@@ -21,67 +21,67 @@ public class TooDefinitionBuilder {
     private boolean sneakBypassUse = false;
     private Supplier<ItemStack> brokenStack = () -> ItemStack.EMPTY;
 
-    public TooDefinitionBuilder damagePerBlockBreak(int damagePerBlockBreak) {
+    public ToolDefinitionBuilder damagePerBlockBreak(int damagePerBlockBreak) {
         this.damagePerBlockBreak = damagePerBlockBreak;
         return this;
     }
 
-    public TooDefinitionBuilder damagePerBlockBreak() {
+    public ToolDefinitionBuilder damagePerBlockBreak() {
         damagePerBlockBreak(1);
         return this;
     }
 
-    public TooDefinitionBuilder damagePerCraft(int damagePerCraft) {
+    public ToolDefinitionBuilder damagePerCraft(int damagePerCraft) {
         this.damagePerCraft = damagePerCraft;
         return this;
     }
 
-    public TooDefinitionBuilder damagePerCraft() {
+    public ToolDefinitionBuilder damagePerCraft() {
         damagePerCraft(1);
         return this;
     }
 
-    public TooDefinitionBuilder damagePerAttack(int damagePerAttack) {
+    public ToolDefinitionBuilder damagePerAttack(int damagePerAttack) {
         this.damagePerAttack = damagePerAttack;
         return this;
     }
 
-    public TooDefinitionBuilder usedForAttacking() {
+    public ToolDefinitionBuilder usedForAttacking() {
         damagePerAttack(1);
         return this;
     }
 
-    public TooDefinitionBuilder baseQuality(int baseQuality) {
+    public ToolDefinitionBuilder baseQuality(int baseQuality) {
         this.baseQuality = baseQuality;
         return this;
     }
 
-    public TooDefinitionBuilder baseQuality() {
+    public ToolDefinitionBuilder baseQuality() {
         baseQuality(0);
         return this;
     }
 
-    public TooDefinitionBuilder attackDamage(float attackDamage) {
+    public ToolDefinitionBuilder attackDamage(float attackDamage) {
         this.attackDamage = attackDamage;
         return this;
     }
 
-    public TooDefinitionBuilder efficiency(float efficiency) {
+    public ToolDefinitionBuilder efficiency(float efficiency) {
         this.efficiency = efficiency;
         return this;
     }
 
-    public TooDefinitionBuilder noEnchant() {
+    public ToolDefinitionBuilder noEnchant() {
         this.isEnchantable = false;
         return this;
     }
 
-    public TooDefinitionBuilder canApplyEnchantment(BiPredicate<ItemStack, Enchantment> canApplyEnchantment) {
+    public ToolDefinitionBuilder canApplyEnchantment(BiPredicate<ItemStack, Enchantment> canApplyEnchantment) {
         this.canApplyEnchantment = canApplyEnchantment;
         return this;
     }
 
-    public TooDefinitionBuilder canApplyEnchantment(EnumEnchantmentType... enchantmentTypes) {
+    public ToolDefinitionBuilder canApplyEnchantment(EnumEnchantmentType... enchantmentTypes) {
         this.canApplyEnchantment = (stack, enchantment) -> {
             for (EnumEnchantmentType type : enchantmentTypes) {
                 if (type == enchantment.type) {
@@ -93,17 +93,17 @@ public class TooDefinitionBuilder {
         return this;
     }
 
-    public TooDefinitionBuilder attackSpeed(float attackSpeed) {
+    public ToolDefinitionBuilder attackSpeed(float attackSpeed) {
         this.attackSpeed = attackSpeed;
         return this;
     }
 
-    public TooDefinitionBuilder sneakBypassUse() {
+    public ToolDefinitionBuilder sneakBypassUse() {
         this.sneakBypassUse = true;
         return this;
     }
 
-    public TooDefinitionBuilder brokenStack(Supplier<ItemStack> brokenStack) {
+    public ToolDefinitionBuilder brokenStack(Supplier<ItemStack> brokenStack) {
         this.brokenStack = brokenStack;
         return this;
     }
@@ -111,17 +111,17 @@ public class TooDefinitionBuilder {
     public IGTToolDefinition build() {
         return new IGTToolDefinition() {
 
-            private final int damagePerBlockBreak = TooDefinitionBuilder.this.damagePerBlockBreak;
-            private final int damagePerCraft = TooDefinitionBuilder.this.damagePerCraft;
-            private final int damagePerAttack = TooDefinitionBuilder.this.damagePerAttack;
-            private final int baseQuality = TooDefinitionBuilder.this.baseQuality;
-            private final float attackDamage = TooDefinitionBuilder.this.attackDamage;
-            private final float efficiency = TooDefinitionBuilder.this.efficiency;
-            private final boolean isEnchantable = TooDefinitionBuilder.this.isEnchantable;
-            private final BiPredicate<ItemStack, Enchantment> canApplyEnchantment = TooDefinitionBuilder.this.canApplyEnchantment;
-            private final float attackSpeed = TooDefinitionBuilder.this.attackSpeed;
-            private final boolean sneakBypassUse = TooDefinitionBuilder.this.sneakBypassUse;
-            private final Supplier<ItemStack> brokenStack = TooDefinitionBuilder.this.brokenStack;
+            private final int damagePerBlockBreak = ToolDefinitionBuilder.this.damagePerBlockBreak;
+            private final int damagePerCraft = ToolDefinitionBuilder.this.damagePerCraft;
+            private final int damagePerAttack = ToolDefinitionBuilder.this.damagePerAttack;
+            private final int baseQuality = ToolDefinitionBuilder.this.baseQuality;
+            private final float attackDamage = ToolDefinitionBuilder.this.attackDamage;
+            private final float efficiency = ToolDefinitionBuilder.this.efficiency;
+            private final boolean isEnchantable = ToolDefinitionBuilder.this.isEnchantable;
+            private final BiPredicate<ItemStack, Enchantment> canApplyEnchantment = ToolDefinitionBuilder.this.canApplyEnchantment;
+            private final float attackSpeed = ToolDefinitionBuilder.this.attackSpeed;
+            private final boolean sneakBypassUse = ToolDefinitionBuilder.this.sneakBypassUse;
+            private final Supplier<ItemStack> brokenStack = ToolDefinitionBuilder.this.brokenStack;
 
             @Override
             public int getToolDamagePerBlockBreak(ItemStack stack) {

@@ -4,7 +4,6 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.impl.ItemHandlerProxy;
@@ -14,9 +13,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.items.toolitem.GTToolDefinition;
-import gregtech.api.items.toolitem.IToolStats;
-import gregtech.api.items.toolitem.ToolMetaItem;
+import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMaintenance;
@@ -28,8 +25,6 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.gui.widget.among_us.FixWiringTaskWidget;
 import gregtech.common.inventory.handlers.TapeItemStackHandler;
 import gregtech.common.items.MetaItems;
-import gregtech.common.items.ToolItems;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -277,8 +272,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 for (ItemStack stack : entityPlayer.inventory.offHandInventory) {
                     if (stack.getItem().getToolClasses(stack).contains(toolToMatch)) {
                         ((IMaintenance) this.getController()).setMaintenanceFixed(i);
-                        if (stack.getItem() instanceof GTToolDefinition) {
-                            GTToolDefinition def = (GTToolDefinition) stack.getItem();
+                        if (stack.getItem() instanceof IGTTool) {
+                            IGTTool def = (IGTTool) stack.getItem();
                             def.damageItem(stack, entityPlayer, def.getToolStats().getToolDamagePerContainerCraft(stack));
                         } else {
                             stack.damageItem(1, entityPlayer);
@@ -291,8 +286,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 for (ItemStack stack : entityPlayer.inventory.mainInventory) {
                     if (stack.getItem().getToolClasses(stack).contains(toolToMatch)) {
                         ((IMaintenance) this.getController()).setMaintenanceFixed(i);
-                        if (stack.getItem() instanceof GTToolDefinition) {
-                            GTToolDefinition def = (GTToolDefinition) stack.getItem();
+                        if (stack.getItem() instanceof IGTTool) {
+                            IGTTool def = (IGTTool) stack.getItem();
                             def.damageItem(stack, entityPlayer, def.getToolStats().getToolDamagePerContainerCraft(stack));
                         } else {
                             stack.damageItem(1, entityPlayer);
