@@ -12,6 +12,8 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.capability.impl.ElectricItem;
+import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -23,10 +25,8 @@ import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.BlockWeb;
 import net.minecraft.block.state.IBlockState;
@@ -55,6 +55,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
@@ -112,6 +113,22 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
         toolTag.setInteger("Durability", 0);
         EnchantmentHelper.setEnchantments(toolProperty.getEnchantments(), stack);
         return stack;
+    }
+
+    default ItemStack get(Material material, long defaultCharge, long defaultMaxCharge) {
+        ItemStack stack = get(material);
+        if (isElectric()) {
+            ElectricItem electricItem = (ElectricItem) stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+            if (electricItem != null) {
+                electricItem.setMaxChargeOverride(defaultMaxCharge);
+                electricItem.setCharge(defaultCharge);
+            }
+        }
+        return stack;
+    }
+
+    default ItemStack get(Material material, long defaultMaxCharge) {
+        return get(material, defaultMaxCharge, defaultMaxCharge);
     }
 
     default NBTTagCompound getToolTag(ItemStack stack) {
@@ -350,9 +367,8 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
                 int electricDamage = damage * ConfigHolder.machines.energyUsageMultiplier;
                 IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
                 if (electricItem != null) {
-                    long newCharge = electricItem.getCharge() - electricDamage;
                     electricItem.discharge(electricDamage, getElectricTier(), true, false, false);
-                    if (newCharge > 0 && entity.getRNG().nextInt(100) > ConfigHolder.tools.rngDamageElectricTools) {
+                    if (electricItem.getCharge() > 0 && entity.getRNG().nextInt(100) > ConfigHolder.tools.rngDamageElectricTools) {
                         return;
                     }
                 } else {
@@ -406,6 +422,11 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
     default void definition$setDamage(ItemStack stack, int durability) {
         NBTTagCompound toolTag = getToolTag(stack);
         toolTag.setInteger("Durability", durability);
+    }
+
+    @Nullable
+    default ICapabilityProvider definition$initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+        return isElectric() ? ElectricStats.createElectricItem(0L, getElectricTier()).createProvider(stack) : null;
     }
 
     // Sound Playing
@@ -510,9 +531,7 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
                 continue;
             }
             IBlockState state = world.getBlockState(pos);
-            boolean found = false;
             if (state.getBlock() instanceof BlockLog || OreDictUnifier.getOreDictionaryNames(new ItemStack(state.getBlock())).contains("logWood")) {
-                found = true;
                 for (int x = 0; x < 3; x++) {
                     for (int z = 0; z < 3; z++) {
                         BlockPos branchPos = pos.add(-1 + x, 1, -1 + z);
@@ -527,11 +546,6 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
                         blocks.add(offsetPos);
                     }
                 }
-            }
-            if (pos == start) { // Can use == since we are 100% on the instance being the same
-                continue;
-            }
-            if (found) {
                 amount++;
                 if (!player.interactionManager.tryHarvestBlock(pos)) {
                     break;

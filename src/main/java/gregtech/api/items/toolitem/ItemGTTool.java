@@ -107,8 +107,11 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (this.isInCreativeTab(tab)) {
-            items.add(get(Materials.Neutronium));
-            items.add(get(Materials.Iron));
+            if (isElectric()) {
+                items.add(get(Materials.Neutronium, 50000L)); // TODO: change
+            } else {
+                items.add(get(Materials.Neutronium));
+            }
         }
     }
 
@@ -200,7 +203,7 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-        return null;
+        return definition$initCapabilities(stack, nbt);
     }
 
     public static class Builder extends ToolBuilder<ItemGTTool> {
