@@ -118,7 +118,9 @@ public class CraftingRecipeLogic {
                 continue;
             }
             ItemStackKey stackKey = KeySharedStack.getRegisteredStack(itemStack);
-            inventoryCrafting.setInventorySlotContents(i, itemStack);
+            if (itemStack.isItemEqual(inventoryCrafting.getStackInSlot(i))) {
+                inventoryCrafting.setInventorySlotContents(i, itemStack);
+            }
             int remainingAmount = itemStack.getCount() - itemSources.insertItem(stackKey, itemStack.getCount(), false, IItemList.InsertMode.HIGHEST_PRIORITY);
             if (remainingAmount > 0) {
                 itemStack.setCount(remainingAmount);
@@ -157,7 +159,7 @@ public class CraftingRecipeLogic {
     }
 
     public boolean isRecipeValid() {
-        return cachedRecipeData.getRecipe() != null && cachedRecipeData.attemptMatchRecipe() == ALL_INGREDIENTS_PRESENT;
+        return cachedRecipeData.getRecipe() != null && cachedRecipeData.matches(inventoryCrafting, this.world) && cachedRecipeData.attemptMatchRecipe() == ALL_INGREDIENTS_PRESENT;
     }
 
     private void updateCurrentRecipe() {
