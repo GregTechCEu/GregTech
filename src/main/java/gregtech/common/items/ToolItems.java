@@ -106,6 +106,7 @@ public class ToolItems {
                 .toolStats(b -> b.damagePerBlockBreak().usedForAttacking())
                 .oreDicts("craftingToolAxe")
                 .toolClasses("axe")
+                .electric(2)
                 .build();
         TOOLS.add(WRENCH);
         TOOLS.add(PICKAXE);
