@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static gregtech.api.GTValues.*;
+
 public class CraftingComponent {
 
     public static Component CIRCUIT;
@@ -155,58 +157,61 @@ public class CraftingComponent {
 
         WIRE_QUAD = new Component(Stream.of(new Object[][]{
 
-                {0, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Lead)},
-                {1, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Tin)},
-                {2, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Copper)},
-                {3, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Gold)},
-                {4, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Aluminium)},
-                {5, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Tungsten)},
-                {6, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.NiobiumTitanium)},
-                {7, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.VanadiumGallium)},
-                {8, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.YttriumBariumCuprate)},
+                {ULV, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Lead)},
+                {LV, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Tin)},
+                {MV, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Copper)},
+                {HV, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Gold)},
+                {EV, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Aluminium)},
+                {IV, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Tungsten)},
+                {LuV, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.NiobiumTitanium)},
+                {ZPM, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.VanadiumGallium)},
+                {UV, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.YttriumBariumCuprate)},
+                {UHV, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Europium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         WIRE_OCT = new Component(Stream.of(new Object[][]{
 
-                {0, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Lead)},
-                {1, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Tin)},
-                {2, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Copper)},
-                {3, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Gold)},
-                {4, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Aluminium)},
-                {5, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Tungsten)},
-                {6, new UnificationEntry(OrePrefix.wireGtOctal, Materials.NiobiumTitanium)},
-                {7, new UnificationEntry(OrePrefix.wireGtOctal, Materials.VanadiumGallium)},
-                {8, new UnificationEntry(OrePrefix.wireGtOctal, Materials.YttriumBariumCuprate)},
+                {ULV, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Lead)},
+                {LV, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Tin)},
+                {MV, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Copper)},
+                {HV, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Gold)},
+                {EV, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Aluminium)},
+                {IV, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Tungsten)},
+                {LuV, new UnificationEntry(OrePrefix.wireGtOctal, Materials.NiobiumTitanium)},
+                {ZPM, new UnificationEntry(OrePrefix.wireGtOctal, Materials.VanadiumGallium)},
+                {UV, new UnificationEntry(OrePrefix.wireGtOctal, Materials.YttriumBariumCuprate)},
+                {UHV, new UnificationEntry(OrePrefix.wireGtOctal, Materials.Europium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         WIRE_HEX = new Component(Stream.of(new Object[][]{
 
-                {0, new UnificationEntry(OrePrefix.wireGtHex, Materials.Lead)},
-                {1, new UnificationEntry(OrePrefix.wireGtHex, Materials.Tin)},
-                {2, new UnificationEntry(OrePrefix.wireGtHex, Materials.Copper)},
-                {3, new UnificationEntry(OrePrefix.wireGtHex, Materials.Gold)},
-                {4, new UnificationEntry(OrePrefix.wireGtHex, Materials.Aluminium)},
-                {5, new UnificationEntry(OrePrefix.wireGtHex, Materials.Tungsten)},
-                {6, new UnificationEntry(OrePrefix.wireGtHex, Materials.NiobiumTitanium)},
-                {7, new UnificationEntry(OrePrefix.wireGtHex, Materials.VanadiumGallium)},
-                {8, new UnificationEntry(OrePrefix.wireGtHex, Materials.YttriumBariumCuprate)},
+                {ULV, new UnificationEntry(OrePrefix.wireGtHex, Materials.Lead)},
+                {LV, new UnificationEntry(OrePrefix.wireGtHex, Materials.Tin)},
+                {MV, new UnificationEntry(OrePrefix.wireGtHex, Materials.Copper)},
+                {HV, new UnificationEntry(OrePrefix.wireGtHex, Materials.Gold)},
+                {EV, new UnificationEntry(OrePrefix.wireGtHex, Materials.Aluminium)},
+                {IV, new UnificationEntry(OrePrefix.wireGtHex, Materials.Tungsten)},
+                {LuV, new UnificationEntry(OrePrefix.wireGtHex, Materials.NiobiumTitanium)},
+                {ZPM, new UnificationEntry(OrePrefix.wireGtHex, Materials.VanadiumGallium)},
+                {UV, new UnificationEntry(OrePrefix.wireGtHex, Materials.YttriumBariumCuprate)},
+                {UHV, new UnificationEntry(OrePrefix.wireGtHex, Materials.Europium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         CABLE = new Component(Stream.of(new Object[][]{
 
-                {0, new UnificationEntry(OrePrefix.cableGtSingle, Materials.RedAlloy)},
-                {1, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin)},
-                {2, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper)},
-                {3, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold)},
-                {4, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Aluminium)},
-                {5, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Platinum)},
-                {6, new UnificationEntry(OrePrefix.cableGtSingle, Materials.NiobiumTitanium)},
-                {7, new UnificationEntry(OrePrefix.cableGtSingle, Materials.VanadiumGallium)},
-                {8, new UnificationEntry(OrePrefix.cableGtSingle, Materials.YttriumBariumCuprate)},
-                {9, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Europium)},
+                {ULV, new UnificationEntry(OrePrefix.cableGtSingle, Materials.RedAlloy)},
+                {LV, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin)},
+                {MV, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper)},
+                {HV, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold)},
+                {EV, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Aluminium)},
+                {IV, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Platinum)},
+                {LuV, new UnificationEntry(OrePrefix.cableGtSingle, Materials.NiobiumTitanium)},
+                {ZPM, new UnificationEntry(OrePrefix.cableGtSingle, Materials.VanadiumGallium)},
+                {UV, new UnificationEntry(OrePrefix.cableGtSingle, Materials.YttriumBariumCuprate)},
+                {UHV, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Europium)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
@@ -735,15 +740,16 @@ public class CraftingComponent {
 
         VOLTAGE_COIL = new Component(Stream.of(new Object[][]{
 
-                {0, MetaItems.VOLTAGE_COIL_ULV.getStackForm()},
-                {1, MetaItems.VOLTAGE_COIL_LV.getStackForm()},
-                {2, MetaItems.VOLTAGE_COIL_MV.getStackForm()},
-                {3, MetaItems.VOLTAGE_COIL_HV.getStackForm()},
-                {4, MetaItems.VOLTAGE_COIL_EV.getStackForm()},
-                {5, MetaItems.VOLTAGE_COIL_IV.getStackForm()},
-                {6, MetaItems.VOLTAGE_COIL_LUV.getStackForm()},
-                {7, MetaItems.VOLTAGE_COIL_ZPM.getStackForm()},
-                {8, MetaItems.VOLTAGE_COIL_UV.getStackForm()},
+                {ULV, MetaItems.VOLTAGE_COIL_ULV.getStackForm()},
+                {LV, MetaItems.VOLTAGE_COIL_LV.getStackForm()},
+                {MV, MetaItems.VOLTAGE_COIL_MV.getStackForm()},
+                {HV, MetaItems.VOLTAGE_COIL_HV.getStackForm()},
+                {EV, MetaItems.VOLTAGE_COIL_EV.getStackForm()},
+                {IV, MetaItems.VOLTAGE_COIL_IV.getStackForm()},
+                {LuV, MetaItems.VOLTAGE_COIL_LUV.getStackForm()},
+                {ZPM, MetaItems.VOLTAGE_COIL_ZPM.getStackForm()},
+                {UV, MetaItems.VOLTAGE_COIL_UV.getStackForm()},
+                {UHV, MetaItems.VOLTAGE_COIL_UHV.getStackForm()},
                 {GTValues.FALLBACK, MetaItems.VOLTAGE_COIL_UV},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));

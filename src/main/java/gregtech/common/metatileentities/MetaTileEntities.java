@@ -547,7 +547,7 @@ public class MetaTileEntities {
 
 
         // Transformer, IDs 1270-1299
-        endPos = GTValues.HT ? TRANSFORMER.length - 1 : Math.min(TRANSFORMER.length - 1, GTValues.UV);
+        endPos = GTValues.HT ? TRANSFORMER.length - 1 : Math.min(TRANSFORMER.length - 1, GTValues.UHV);
         for (int i = 0; i <= endPos; i++) {
             MetaTileEntityTransformer transformer = new MetaTileEntityTransformer(gregtechId("transformer." + GTValues.VN[i].toLowerCase()), i);
             TRANSFORMER[i] = registerMetaTileEntity(1270 + (i), transformer);

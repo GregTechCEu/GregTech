@@ -313,7 +313,7 @@ public class MetaTileEntityLoader {
         registerMachineRecipe(ArrayUtils.subarray(MetaTileEntities.DIODES, GTValues.LuV, MetaTileEntities.DIODES.length), "CDC", "DHD", "PDP", 'H', HULL, 'D', MetaItems.ADVANCED_SMD_DIODE, 'P', PLATE, 'C', CABLE_QUAD);
 
         registerMachineRecipe(ArrayUtils.subarray(MetaTileEntities.TRANSFORMER, GTValues.ULV, GTValues.MV), " CC", "TH ", " CC", 'C', CABLE, 'T', CABLE_TIER_UP, 'H', HULL);
-        registerMachineRecipe(ArrayUtils.subarray(MetaTileEntities.TRANSFORMER, GTValues.MV, GTValues.UHV), "WCC", "TH ", "WCC", 'W', POWER_COMPONENT, 'C', CABLE, 'T', CABLE_TIER_UP, 'H', HULL);
+        registerMachineRecipe(ArrayUtils.subarray(MetaTileEntities.TRANSFORMER, GTValues.MV, GTValues.UEV), "WCC", "TH ", "WCC", 'W', POWER_COMPONENT, 'C', CABLE, 'T', CABLE_TIER_UP, 'H', HULL);
 
         registerMachineRecipe(MetaTileEntities.BATTERY_BUFFER[0], "WTW", "WMW", 'M', HULL, 'W', WIRE_QUAD, 'T', OreDictNames.chestWood);
         registerMachineRecipe(MetaTileEntities.BATTERY_BUFFER[1], "WTW", "WMW", 'M', HULL, 'W', WIRE_OCT, 'T', OreDictNames.chestWood);

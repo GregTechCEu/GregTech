@@ -548,6 +548,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_LUV;
     public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_ZPM;
     public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_UV;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_UHV;
 
     public static MetaItem<?>.MetaValueItem CLIPBOARD;
 

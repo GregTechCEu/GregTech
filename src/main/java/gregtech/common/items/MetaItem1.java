@@ -167,7 +167,8 @@ public class MetaItem1 extends StandardMetaItem {
         VOLTAGE_COIL_IV = addItem(101, "voltage_coil.iv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Iridium, M * 2), new MaterialStack(Materials.NeodymiumMagnetic, M / 2)));
         VOLTAGE_COIL_LUV = addItem(102, "voltage_coil.luv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Osmiridium, M * 2), new MaterialStack(Materials.SamariumMagnetic, M / 2)));
         VOLTAGE_COIL_ZPM = addItem(103, "voltage_coil.zpm").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Europium, M * 2), new MaterialStack(Materials.SamariumMagnetic, M / 2)));
-        VOLTAGE_COIL_UV = addItem(104, "voltage_coil.uv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tritanium, M * 2), new MaterialStack(Materials.SamariumMagnetic, M / 2)));
+        VOLTAGE_COIL_UV = addItem(104, "voltage_coil.uv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Americium, M * 2), new MaterialStack(Materials.SamariumMagnetic, M / 2)));
+        VOLTAGE_COIL_UHV = addItem(105, "voltage_coil.uhv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tritanium, M * 2), new MaterialStack(Materials.SamariumMagnetic, M / 2)));
 
         // ???: ID 111-125
 
