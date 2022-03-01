@@ -272,18 +272,13 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
 
     default boolean definition$onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
         if (!worldIn.isRemote) {
-            if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
-                damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
-                if (stack.isEmpty()) {
-                    return true;
-                }
-            }
-            if (!entityLiving.isSneaking() && entityLiving instanceof EntityPlayerMP) {
+            if (!entityLiving.isSneaking()) {
                 EntityPlayerMP serverPlayer = (EntityPlayerMP) entityLiving;
                 if (get().getToolClasses(stack).contains("axe") && !ThreadContext.containsKey("GT_TreeFelling")) {
                     ThreadContext.put("GT_TreeFelling", "");
                     treeLogging(worldIn, serverPlayer, stack, pos);
                     ThreadContext.remove("GT_TreeFelling");
+                    return true;
                 } else if (!ThreadContext.containsKey("GT_AoE_Breaking")) {
                     ThreadContext.put("GT_AoE_Breaking", "");
                     for (BlockPos aoePos : getHarvestableBlocks(worldIn, serverPlayer)) {
@@ -296,13 +291,22 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
                     ThreadContext.remove("GT_AoE_Breaking");
                 }
             }
+            if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
+                damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
+                if (stack.isEmpty()) {
+                    return true;
+                }
+            }
         }
         return true;
     }
 
     default boolean definition$getIsRepairable(ItemStack toRepair, ItemStack repair) {
+        if (repair.getItem() instanceof IGTTool) {
+            return getToolMaterial(toRepair) == ((IGTTool) repair.getItem()).getToolMaterial(repair);
+        }
         MaterialStack repairMaterialStack = OreDictUnifier.getMaterial(repair);
-        return repairMaterialStack.material == getToolMaterial(toRepair);
+        return repairMaterialStack != null && repairMaterialStack.material == getToolMaterial(toRepair);
     }
 
     default Multimap<String, AttributeModifier> definition$getAttributeModifiers(EntityEquipmentSlot equipmentSlot, ItemStack stack) {
