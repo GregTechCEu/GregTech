@@ -3929,6 +3929,14 @@ gregtech.machine.miner.multi.description=一种占地面积大、产矿量大的
 #Small ores lang: gregtech.machine.miner.multi.production=比研磨机生产3倍以上的粉碎矿石. 贫矿时运 §b%d§7.
 gregtech.machine.miner.fluid_usage=消耗 §b%dmb§7 在 §e%s§7 每刻。每次超频都会使液体消耗量加倍。
 gregtech.machine.miner.overclock=需要 %s§7 能量。可以超频到 %s§7。
+gregtech.gui.fluid_voiding_partial.tooltip.enabled=流体虚空模式 (大于 %d%%) §a启用
+gregtech.gui.fluid_voiding_partial.tooltip.disabled=流体虚空模式 (大于 %d%%) §c禁用
+gregtech.gui.fluid_voiding_all.tooltip.enabled=流体虚空模式 (全部)§a启用
+gregtech.gui.fluid_voiding_all.tooltip.disabled=流体虚空模式 (全部) §c禁用
+gregtech.gui.multiblock_item_voiding=虚空模式/n§7销毁§6物品
+gregtech.gui.multiblock_fluid_voiding=虚空模式/n§7销毁§9流体
+gregtech.gui.multiblock_item_fluid_voiding=虚空模式/n§7销毁§6物品§7和§9流体
+gregtech.gui.multiblock_no_voiding=虚空模式/n§7不销毁任何东西
 
 gregtech.machine.fluid_drilling_rig.mv.name=基础流体钻机
 gregtech.machine.fluid_drilling_rig.hv.name=进阶流体钻机
@@ -3941,14 +3949,14 @@ gregtech.machine.fluid_drilling_rig.overclock=超频增加生产§d50%%§7.
 
 gregtech.machine.central_monitor.name=中央显示器
 gregtech.multiblock.central_monitor.low_power=低功率
-gregtech.multiblock.central_monitor.height=屏幕高度:
+gregtech.multiblock.central_monitor.height=屏幕高度: %d
 gregtech.multiblock.central_monitor.width=屏幕宽度: %d
 gregtech.multiblock.central_monitor.height_modify=修改高度: %d
 gregtech.multiblock.central_monitor.tooltip.1=这是一台监控由数字接口覆盖板代理的机器。您可以方便地监视能源网络中代理的机器的流体、物品、能量和状态。
 gregtech.multiblock.central_monitor.tooltip.2=您可以构建中央显示器屏幕从3X2到 %dX%d (宽 X 高).
-gregtech.multiblock.central_monitor.tooltip.3=默认高度为3。在结构形成之前，您可以在GUI中调整屏幕高度。
-gregtech.multiblock.central_monitor.tooltip.4=能源消耗:每一个屏幕 %d EU/s 。
-gregtech.multiblock.monitor_screen.tooltip.1=这个GUI可以用一个螺丝刀右键打开。
+gregtech.multiblock.central_monitor.tooltip.3=默认高度为 3，在结构形成之前，您可以在GUI中调整屏幕高度。
+gregtech.multiblock.central_monitor.tooltip.4=能源消耗:每块屏幕 %d EU/s 。
+gregtech.multiblock.monitor_screen.tooltip.1=这个 GUI 可以用螺丝刀右键打开。
 gregtech.multiblock.monitor_screen.tooltip.2=数字界面覆盖板的代理模式可以委托机器的功能和图形用户界面。(是的，你可以在屏幕上直接连接管道。)
 gregtech.multiblock.monitor_screen.tooltip.3=这个屏幕还支持插件。
 
@@ -3957,13 +3965,13 @@ gregtech.machine.monitor_screen.name=显示器屏幕
 
 
 # Multiblock Tooltips
-gregtech.machine.primitive_blast_furnace.bronze.tooltip=结构:3x3x4 (宽x长x高) 整个结构由耐火砖(共32块)组成。/n第一层是一个3x3正方形。/n第二三四层中间没有方块。/n土高炉方块位于第二层任意一侧的中间。/n高炉的两侧可以共享，如果那一侧没有控制器的话。/n
+gregtech.machine.primitive_blast_furnace.bronze.tooltip=结构:3x3x4 (宽x长x高) 整个结构由耐火砖(共 32 块)组成。/n第一层是一个3x3正方形。/n第二三四层中间没有方块。/n土高炉方块位于第二层任意一侧的中间。/n高炉的两侧可以共享，如果那一侧没有控制器的话。/n
 gregtech.machine.multiblock.universal.controller_information=控制器方块用于§e%s§7.
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=多方块结构的物品输入
-gregtech.universal.disabled=:共享之间的多方块结构§4禁用
-gregtech.universal.enabled=共享之间的多方块结构: §a启用
+gregtech.universal.disabled=在多个多方块结构中共享: §4禁用
+gregtech.universal.enabled=在多个多方块结构中共享: §a启用
 
 gregtech.machine.item_bus.import.ulv.name=ULV 输入总线
 gregtech.machine.item_bus.import.lv.name=LV 输入总线
@@ -4249,10 +4257,10 @@ gregtech.multiblock.running=运行正常。
 gregtech.multiblock.idling=待机。
 gregtech.multiblock.not_enough_energy=警告:机器需要更多的能量。
 gregtech.multiblock.progress=进度: %s%%
-gregtech.multiblock.invalid_structure=无效的结构。
-gregtech.multiblock.invalid_structure.tooltip=这个方块是多块结构的控制器。有关构建帮助，请参阅JEI中的结构模板。
+gregtech.multiblock.invalid_structure=结构无效。
+gregtech.multiblock.invalid_structure.tooltip=这个方块是多方块结构的控制器。有关建造帮助，请参阅JEI中的结构模板。
 gregtech.multiblock.validation_failed=输入仓/输出仓数量无效。
-gregtech.multiblock.max_energy_per_tick=最大 EU/t: §a%s (%s§r)
+gregtech.multiblock.max_energy_per_tick=最大耗能: §a%s EU/t (%s§r)
 gregtech.multiblock.generation_eu=输出: §a%s EU/t
 gregtech.multiblock.universal.no_problems=没有维护问题!
 gregtech.multiblock.universal.has_problems=维护问题!
