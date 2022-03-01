@@ -1,6 +1,6 @@
 **What:**
 _This section describes what this PR is about. It should be a clear and concise description concerning why is this PR needed and why it should be accepted.
-_Link to explanation from issue this PR is solving can be used instead of copying same text here._
+_Linking an issue can be used alternatively to writing a description._
 
 **Implementation Details:**
 _Any implementations in this PR that should be carefully looked over, or that could/should have alternate solutions recommended._
