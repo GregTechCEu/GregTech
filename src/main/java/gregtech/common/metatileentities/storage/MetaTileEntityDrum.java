@@ -6,10 +6,12 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.ThermalFluidHandlerItemStack;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.unification.material.Materials;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
@@ -41,13 +43,14 @@ import java.io.IOException;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
+import static gregtech.api.recipes.ModHandler.isMaterialWood;
 import static gregtech.api.unification.material.info.MaterialFlags.FLAMMABLE;
 
 public class MetaTileEntityDrum extends MetaTileEntity {
 
     private final int tankSize;
     private final Material material;
-    private FluidTank fluidTank;
+    private FilteredFluidHandler fluidTank;
     private boolean isAutoOutput = false;
 
     public MetaTileEntityDrum(ResourceLocation metaTileEntityId, Material material, int tankSize) {
@@ -83,7 +86,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public String getHarvestTool() {
-        return "pickaxe";
+        return material == Materials.Wood ? "axe" : "pickaxe";
     }
 
     @Override
@@ -94,7 +97,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.fluidTank = new FluidTank(tankSize);
+        this.fluidTank = new FilteredFluidHandler(tankSize).setFillPredicate(isMaterialWood(material) ? (fs -> !fs.getFluid().isGaseous() && fs.getFluid().getTemperature() > 325) : fs -> true);
         this.fluidInventory = fluidTank;
     }
 
@@ -120,7 +123,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public ICapabilityProvider initItemStackCapabilities(ItemStack itemStack) {
-        int maxTemperature = material.hasFlag(FLAMMABLE) ? 325 : Integer.MAX_VALUE;
+        int maxTemperature = (material.hasFlag(FLAMMABLE) || isMaterialWood(material)) ? 325 : Integer.MAX_VALUE;
         return new ThermalFluidHandlerItemStack(itemStack, tankSize, Integer.MIN_VALUE, maxTemperature);
     }
 
@@ -202,19 +205,28 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        int color = ColourRGBA.multiply(
-                GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()),
-                GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
-        color = GTUtility.convertOpaqueRGBA_CLtoRGB(color);
-        return Pair.of(Textures.DRUM.getParticleTexture(), color);
-
+        if(isMaterialWood(material)) {
+            return Pair.of(Textures.WOODEN_DRUM.getParticleTexture(), getPaintingColorForRendering());
+        } else {
+            int color = ColourRGBA.multiply(
+                    GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()),
+                    GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
+            color = GTUtility.convertOpaqueRGBA_CLtoRGB(color);
+            return Pair.of(Textures.DRUM.getParticleTexture(), color);
+        }
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        ColourMultiplier multiplier = new ColourMultiplier(ColourRGBA.multiply(GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()), GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
-        Textures.DRUM.render(renderState, translation, ArrayUtils.add(pipeline, multiplier), getFrontFacing());
-        Textures.DRUM_OVERLAY.render(renderState, translation, pipeline);
+        if(isMaterialWood(material)) {
+            ColourMultiplier multiplier = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
+            Textures.WOODEN_DRUM.render(renderState, translation, ArrayUtils.add(pipeline, multiplier), getFrontFacing());
+        } else {
+            ColourMultiplier multiplier = new ColourMultiplier(ColourRGBA.multiply(GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()), GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
+            Textures.DRUM.render(renderState, translation, ArrayUtils.add(pipeline, multiplier), getFrontFacing());
+            Textures.DRUM_OVERLAY.render(renderState, translation, pipeline);
+
+        }
 
         if (isAutoOutput) {
             Textures.STEAM_VENT_OVERLAY.renderSided(EnumFacing.DOWN, renderState, translation, pipeline);
