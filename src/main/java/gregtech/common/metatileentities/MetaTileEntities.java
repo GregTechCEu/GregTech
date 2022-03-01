@@ -126,6 +126,8 @@ public class MetaTileEntities {
     public static final MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[4];
     public static final MetaTileEntityMobAgeSorter[] MOB_AGE_SORTER = new MetaTileEntityMobAgeSorter[4];
     public static final MetaTileEntityMobExterminator[] MOB_EXTERMINATOR = new MetaTileEntityMobExterminator[4];
+    public static final MetaTileEntityMobExtractor[] MOB_EXTRACTOR = new MetaTileEntityMobExtractor[GTValues.UV];
+
     public static final MetaTileEntityWorldAccelerator[] WORLD_ACCELERATOR = new MetaTileEntityWorldAccelerator[8]; // no ULV, no MAX
     public static MetaTileEntityMachineHatch MACHINE_HATCH;
     // Used for addons if they wish to disable certain tiers of machines
@@ -419,6 +421,16 @@ public class MetaTileEntities {
             ROCK_BREAKER[10] = registerMetaTileEntity(675, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.uiv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 11));
             ROCK_BREAKER[11] = registerMetaTileEntity(676, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.umv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 12));
             ROCK_BREAKER[12] = registerMetaTileEntity(677, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.uxv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 13));
+        }
+
+        // Mob Extractor, IDs 678-685
+        for (int i = 0; i < GAS_COLLECTOR.length - 1; i++) {
+            if (i > 4 && !getMidTier("mob_extractor")) continue;
+            if (i > 7 && !getHighTier("mob_extractor")) break;
+
+            String voltageName = GTValues.VN[i + 1].toLowerCase();
+            MOB_EXTRACTOR[i] = registerMetaTileEntity(678 + i,
+                    new MetaTileEntityMobExtractor(gregtechId(String.format("%s.%s", "mob_extractor", voltageName)), RecipeMaps.MOB_EXTRACTOR_RECIPES, Textures.MOB_EXTRACTOR_OVERLAY, i + 1, false, GTUtility.largeTankSizeFunction));
         }
 
         // Some space here for more SimpleMachines
@@ -743,8 +755,6 @@ public class MetaTileEntities {
         MOB_EXTERMINATOR[1] = registerMetaTileEntity(1735, new MetaTileEntityMobExterminator(gregtechId("mob_exterminator.mv"), 2));
         MOB_EXTERMINATOR[2] = registerMetaTileEntity(1736, new MetaTileEntityMobExterminator(gregtechId("mob_exterminator.hv"), 3));
         MOB_EXTERMINATOR[3] = registerMetaTileEntity(1737, new MetaTileEntityMobExterminator(gregtechId("mob_exterminator.ev"), 4));
-
-
 
         /*
          * FOR ADDON DEVELOPERS:

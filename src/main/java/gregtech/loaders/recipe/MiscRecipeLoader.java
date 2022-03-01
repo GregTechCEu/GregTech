@@ -5,22 +5,21 @@ import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
+import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
@@ -426,5 +425,14 @@ public class MiscRecipeLoader {
                 .output(dust, Carbon)
                 .fluidOutputs(Water.getFluid(1000))
                 .duration(100).EUt(VA[LV]).buildAndRegister();
+
+        MOB_EXTRACTOR_RECIPES.recipeBuilder()
+                .mob(EntityCow.class)
+                .notConsumable(new IntCircuitIngredient(1))
+                .fluidOutputs(Milk.getFluid(10))
+                .duration(20)
+                .EUt(2)
+                .buildAndRegister();
+
     }
 }

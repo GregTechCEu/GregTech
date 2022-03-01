@@ -161,7 +161,6 @@ public class Textures {
     public static final OrientedOverlayRenderer MOB_EXTERMINATOR_OVERLAY = new OrientedOverlayRenderer("machines/mob_exterminator", FRONT);
     public static final OrientedOverlayRenderer MOB_EXTRACTOR_OVERLAY = new OrientedOverlayRenderer("machines/mob_extractor", FRONT, BACK);
 
-
     // Simple Overlay Renderers
     public static final SimpleOverlayRenderer SCREEN = new SimpleOverlayRenderer("overlay/machine/overlay_screen");
     public static final SimpleOverlayRenderer DISPLAY = new SimpleOverlayRenderer("cover/overlay_display");

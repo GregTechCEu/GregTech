@@ -676,6 +676,13 @@ public class RecipeMaps {
 
 
     @ZenProperty
+    public static final RecipeMap<MobProximityRecipeBuilder> MOB_EXTRACTOR_RECIPES = new RecipeMap<>("mob_extractor", 1, 1, 0, 1, 0, 0, 0, 1, new MobProximityRecipeBuilder(), false)
+            .setSlotOverlay(false, false, GuiTextures.INT_CIRCUIT_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL)
+            .setSound(GTSounds.COMPRESSOR);
+
+
+    @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> ORE_WASHER_RECIPES = new RecipeMap<>("ore_washer", 1, 2, 1, 3, 0, 1, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(16), false)
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)

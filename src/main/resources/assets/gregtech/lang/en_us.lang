@@ -2213,6 +2213,7 @@ recipemap.circuit_assembler.name=Circuit Assembler
 recipemap.mass_fabricator.name=Mass Fabricator
 recipemap.materialtree.name=Material Tree
 recipemap.gas_collector.name=Gas Collector
+recipemap.mob_extractor.name=Mob Extractor
 recipemap.rock_breaker.name=Rock Breaker
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
@@ -3675,6 +3676,23 @@ gregtech.machine.mob_exterminator.tooltip=Kills 4 mobs each second in a 4x4 squa
 gregtech.machine.mob_exterminator.tooltip.consumption=Consumes %s EU for each kill
 gregtech.machine.mob_exterminator.tooltip.nitrous=Can kill up to 12 more mobs each second when boosted with Nitrous Oxide
 
+# Mob Extractor
+gregtech.machine.mob_extractor.lv.name=Basic Mob Extractor
+gregtech.machine.mob_extractor.mv.name=Advanced Mob Extractor
+gregtech.machine.mob_extractor.hv.name=Advanced Mob Extractor II
+gregtech.machine.mob_extractor.ev.name=Advanced Mob Extractor III
+gregtech.machine.mob_extractor.iv.name=Elite Mob Extractor
+gregtech.machine.mob_extractor.luv.name=Elite Mob Extractor II
+gregtech.machine.mob_extractor.zpm.name=Elite Mob Extractor III
+gregtech.machine.mob_extractor.uv.name=Elite Mob Extractor IV
+gregtech.machine.mob_extractor.uhv.name=High-Tech Mob Extractor
+gregtech.machine.mob_extractor.uev.name=High-Tech Mob Extractor II
+gregtech.machine.mob_extractor.uiv.name=High-Tech Mob Extractor III
+gregtech.machine.mob_extractor.umv.name=High-Tech Mob Extractor IV
+gregtech.machine.mob_extractor.uxv.name=Ultimate Mob Extractor
+
+gregtech.machine.mob_extractor.tooltip=Entity Essence Extraction Enters Electric Era
+
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side
 gregtech.machine.basic.input_from_output_side.disallow=Disallow Input from Output Side
@@ -4219,6 +4237,7 @@ gregtech.recipe.temperature=Temperature: %,dK (%s)
 gregtech.recipe.explosive=Explosive: %s
 gregtech.recipe.eu_to_start=Energy To Start: %sEU
 gregtech.recipe.dimensions=Dimensions: %s
+gregtech.recipe.accepted_mobs_on_top=Requires a %s to be on top
 
 gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
 gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).

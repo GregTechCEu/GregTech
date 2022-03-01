@@ -453,7 +453,6 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ZPM;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_UV;
 
-
     public static MetaItem<?>.MetaValueItem PLUGIN_TEXT;
     public static MetaItem<?>.MetaValueItem PLUGIN_ONLINE_PIC;
     public static MetaItem<?>.MetaValueItem PLUGIN_FAKE_GUI;
