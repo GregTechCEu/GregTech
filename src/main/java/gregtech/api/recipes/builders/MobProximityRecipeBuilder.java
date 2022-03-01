@@ -3,6 +3,7 @@ package gregtech.api.recipes.builders;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.recipeproperties.CauseDamageProperty;
 import gregtech.api.recipes.recipeproperties.MobOnTopProperty;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.ValidationResult;
@@ -14,6 +15,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class MobProximityRecipeBuilder extends RecipeBuilder<MobProximityRecipeBuilder> {
 
     private ResourceLocation entityID;
+    private float damage;
 
     public MobProximityRecipeBuilder() {
     }
@@ -51,11 +53,21 @@ public class MobProximityRecipeBuilder extends RecipeBuilder<MobProximityRecipeB
         return this;
     }
 
+    public MobProximityRecipeBuilder causeDamage(float damage) {
+        this.damage = damage;
+        return this;
+    }
+
     public ValidationResult<Recipe> build() {
         Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs,
                 duration, EUt, hidden);
         if (!recipe.setProperty(MobOnTopProperty.getInstance(), entityID)) {
             return ValidationResult.newResult(EnumValidationResult.INVALID, recipe);
+        }
+        if (this.damage != 0) {
+            if (!recipe.setProperty(CauseDamageProperty.getInstance(), damage)) {
+                return ValidationResult.newResult(EnumValidationResult.INVALID, recipe);
+            }
         }
 
         return ValidationResult.newResult(finalizeAndValidate(), recipe);
@@ -66,6 +78,7 @@ public class MobProximityRecipeBuilder extends RecipeBuilder<MobProximityRecipeB
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
                 .append(MobOnTopProperty.getInstance().getKey(), entityID.toString())
+                .append(CauseDamageProperty.getInstance().getKey(), damage)
                 .toString();
     }
 }

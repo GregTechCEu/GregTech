@@ -22,7 +22,10 @@ public class MobOnTopProperty extends RecipeProperty<ResourceLocation> {
     @Override
     public void drawInfo(Minecraft minecraft, int x, int y, int color, Object value) {
         minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.accepted_mobs_on_top",
-                EntityList.getTranslationName(castValue(value))), x, y, color);
+                getTranslationName(castValue(value))), x, y, color);
     }
 
+    private String getTranslationName(ResourceLocation location) {
+        return location.equals(EntityList.PLAYER) ? I18n.format("mob_extractor.player_name") : EntityList.getTranslationName(location);
+    }
 }

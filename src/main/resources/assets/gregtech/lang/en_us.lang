@@ -2218,6 +2218,8 @@ recipemap.rock_breaker.name=Rock Breaker
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
 
+mob_extractor.player_name=Player
+
 behaviour.hoe=Can till dirt
 behaviour.soft_hammer=Activates and Deactivates Machines
 behaviour.soft_hammer.enabled=Working Enabled
@@ -4238,6 +4240,7 @@ gregtech.recipe.explosive=Explosive: %s
 gregtech.recipe.eu_to_start=Energy To Start: %sEU
 gregtech.recipe.dimensions=Dimensions: %s
 gregtech.recipe.accepted_mobs_on_top=Requires a %s to be on top
+gregtech.recipe.cause_damage=Causes %s hearts of damage
 
 gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
 gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
