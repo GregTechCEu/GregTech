@@ -6,9 +6,9 @@ import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.net.NetworkHandler;
-import gregtech.api.util.CapesRegistry;
 import gregtech.api.net.packets.CPacketKeysPressed;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.Key;
@@ -16,6 +16,7 @@ import gregtech.api.util.input.KeyBinds;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
+import gregtech.common.metatileentities.electric.MetaTileEntityMobExterminator;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.tools.ToolUtility;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -33,10 +34,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraftforge.event.entity.living.EnderTeleportEvent;
-import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
@@ -226,5 +224,11 @@ public class EventHandlers {
         if(ItemStack.areItemStacksEqual(event.getItemStack(), FluidUtil.getFilledBucket(Materials.Creosote.getFluid(1000)))) {
             event.setBurnTime(6400);
         }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onLootingEvent(LootingLevelEvent event) {
+        if (event.getDamageSource().getDamageType().equals("extermination"))
+            event.setLootingLevel(MetaTileEntityMobExterminator.LOOTING_USED);
     }
 }

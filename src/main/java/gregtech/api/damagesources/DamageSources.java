@@ -1,6 +1,9 @@
 package gregtech.api.damagesources;
 
+import gregtech.api.util.GregFakePlayer;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
+import net.minecraft.world.World;
 
 public class DamageSources {
 
@@ -34,4 +37,9 @@ public class DamageSources {
     public static DamageSource getTurbineDamage() {
         return TURBINE;
     }
+
+    public static DamageSource getExterminationDamage(World worldIn) {
+        return new EntityDamageSource("extermination", new GregFakePlayer(worldIn)).setDamageBypassesArmor();
+    }
+
 }

@@ -1,11 +1,12 @@
-death.attack.heat=%s was boiled alive.
-death.attack.frost=%s explored cryogenics.
-death.attack.electric=%s was electrocuted.
-death.attack.radiation=%s glows with joy now.
-death.attack.turbine=%s put their head into a turbine.
-death.attack.explosion=%s exploded.
-death.attack.explosion.player=%s exploded with help of %s.
-death.attack.heat.player=%s was boiled alive by %s.
+death.attack.heat=%s was boiled alive
+death.attack.frost=%s explored cryogenics
+death.attack.electric=%s was electrocuted
+death.attack.radiation=%s glows with joy now
+death.attack.turbine=%s put their head into a turbine
+death.attack.explosion=%s exploded
+death.attack.explosion.player=%s exploded with help of %s
+death.attack.heat.player=%s was boiled alive by %s
+death.attack.extermination=%s was exterminated.
 
 enchantment.disjunction=Disjunction
 
@@ -3656,13 +3657,23 @@ gregtech.machine.world_accelerator.area=On Tile Entity mode, only adjacent block
 gregtech.machine.world_accelerator.mode_tile=Tile Entity Mode
 gregtech.machine.world_accelerator.mode_entity=Entity Mode
 
-# Mob Age Soter
+# Mob Age Sorter
 gregtech.machine.mob_age_sorter.lv.name=Basic Mob Age Sorter
 gregtech.machine.mob_age_sorter.mv.name=Advanced Mob Age Sorter
 gregtech.machine.mob_age_sorter.hv.name=Advanced Mob Age Sorter II
 gregtech.machine.mob_age_sorter.ev.name=Advanced Mob Age Sorter III
 
-gregtech.machine.mob_age_sorter.range=Moves animals in a $sx$s square in front
+gregtech.machine.mob_age_sorter.range=Moves animals in a %sx%s square in front
+
+# Mob Exterminator
+gregtech.machine.mob_exterminator.lv.name=Basic Mob Exterminator
+gregtech.machine.mob_exterminator.mv.name=Advanced Mob Exterminator
+gregtech.machine.mob_exterminator.hv.name=Advanced Mob Exterminator II
+gregtech.machine.mob_exterminator.ev.name=Advanced Mob Exterminator III
+
+gregtech.machine.mob_exterminator.tooltip=Kills 4 mobs each second in a 4x4 square in front per tick with looting %s
+gregtech.machine.mob_exterminator.tooltip.consumption=Consumes %s EU for each kill
+gregtech.machine.mob_exterminator.tooltip.nitrous=Can kill up to 12 more mobs each second when boosted with Nitrous Oxide
 
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side

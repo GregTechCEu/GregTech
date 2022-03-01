@@ -125,6 +125,7 @@ public class MetaTileEntities {
     public static final MetaTileEntityItemCollector[] ITEM_COLLECTOR = new MetaTileEntityItemCollector[4];
     public static final MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[4];
     public static final MetaTileEntityMobAgeSorter[] MOB_AGE_SORTER = new MetaTileEntityMobAgeSorter[4];
+    public static final MetaTileEntityMobExterminator[] MOB_EXTERMINATOR = new MetaTileEntityMobExterminator[4];
     public static final MetaTileEntityWorldAccelerator[] WORLD_ACCELERATOR = new MetaTileEntityWorldAccelerator[8]; // no ULV, no MAX
     public static MetaTileEntityMachineHatch MACHINE_HATCH;
     // Used for addons if they wish to disable certain tiers of machines
@@ -736,6 +737,14 @@ public class MetaTileEntities {
         MOB_AGE_SORTER[1] = registerMetaTileEntity(1731, new MetaTileEntityMobAgeSorter(gregtechId("mob_age_sorter.mv"), 2, 3));
         MOB_AGE_SORTER[2] = registerMetaTileEntity(1732, new MetaTileEntityMobAgeSorter(gregtechId("mob_age_sorter.hv"), 3, 5));
         MOB_AGE_SORTER[3] = registerMetaTileEntity(1733, new MetaTileEntityMobAgeSorter(gregtechId("mob_age_sorter.ev"), 4, 9));
+
+        // Mob Exterminators, IDs 1734-1737
+        MOB_EXTERMINATOR[0] = registerMetaTileEntity(1734, new MetaTileEntityMobExterminator(gregtechId("mob_exterminator.lv"), 1));
+        MOB_EXTERMINATOR[1] = registerMetaTileEntity(1735, new MetaTileEntityMobExterminator(gregtechId("mob_exterminator.mv"), 2));
+        MOB_EXTERMINATOR[2] = registerMetaTileEntity(1736, new MetaTileEntityMobExterminator(gregtechId("mob_exterminator.hv"), 3));
+        MOB_EXTERMINATOR[3] = registerMetaTileEntity(1737, new MetaTileEntityMobExterminator(gregtechId("mob_exterminator.ev"), 4));
+
+
 
         /*
          * FOR ADDON DEVELOPERS:
