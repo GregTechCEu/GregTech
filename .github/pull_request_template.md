@@ -10,7 +10,7 @@ _This section is used mostly for generating the changelog and there should be a 
 _For correct linking of issues please use any of Closes/Fixes/Resolves keywords. Example: When PR is fixing a bug use "Fixes: #number-of-bug"_
 
 **Additional info:**
-_This section is for screenshots to demonstrate any GUI, rendering or recipe changes. Or any additional info that reviewers should be aware of._
+_This section is for screenshots to demonstrate any GUI, rendering, recipe changes, or any additional info that reviewers should be aware of._
 
 **Possible compatibility issue:**
 _This section is for defining possible compatibility issues. It must be used when there were API changes, item/block removal, or recipe changes._
