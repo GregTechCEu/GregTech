@@ -950,21 +950,38 @@ public class MachineRecipeLoader {
         for (int i = 0; i < FLUID_IMPORT_HATCH.length; i++) {
             if (FLUID_IMPORT_HATCH[i] != null && FLUID_EXPORT_HATCH[i] != null) {
 
-                ModHandler.addShapelessRecipe("fluid_hatch_output_to_input_" + FLUID_IMPORT_HATCH[i].getTier(), FLUID_IMPORT_HATCH[i].getStackForm(), FLUID_EXPORT_HATCH[i].getStackForm());
-                ModHandler.addShapelessRecipe("fluid_hatch_input_to_output_" + FLUID_EXPORT_HATCH[i].getTier(), FLUID_EXPORT_HATCH[i].getStackForm(), FLUID_IMPORT_HATCH[i].getStackForm());
+                ModHandler.addShapedRecipe("fluid_hatch_output_to_input_" + FLUID_IMPORT_HATCH[i].getTier(), FLUID_IMPORT_HATCH[i].getStackForm(),
+                        "d", "B", 'B', FLUID_EXPORT_HATCH[i].getStackForm());
+                ModHandler.addShapedRecipe("fluid_hatch_input_to_output_" + FLUID_EXPORT_HATCH[i].getTier(), FLUID_EXPORT_HATCH[i].getStackForm(),
+                        "d", "B", 'B', FLUID_IMPORT_HATCH[i].getStackForm());
             }
         }
         for (int i = 0; i < ITEM_IMPORT_BUS.length; i++) {
             if (ITEM_IMPORT_BUS[i] != null && ITEM_EXPORT_BUS[i] != null) {
 
-                ModHandler.addShapelessRecipe("item_bus_output_to_input_" + ITEM_IMPORT_BUS[i].getTier(), ITEM_IMPORT_BUS[i].getStackForm(), ITEM_EXPORT_BUS[i].getStackForm());
-                ModHandler.addShapelessRecipe("item_bus_input_to_output_" + ITEM_EXPORT_BUS[i].getTier(), ITEM_EXPORT_BUS[i].getStackForm(), ITEM_IMPORT_BUS[i].getStackForm());
+                ModHandler.addShapedRecipe("item_bus_output_to_input_" + ITEM_IMPORT_BUS[i].getTier(), ITEM_IMPORT_BUS[i].getStackForm(),
+                        "d", "B", 'B', ITEM_EXPORT_BUS[i].getStackForm());
+                ModHandler.addShapedRecipe("item_bus_input_to_output_" + ITEM_EXPORT_BUS[i].getTier(), ITEM_EXPORT_BUS[i].getStackForm(),
+                        "d", "B", 'B', ITEM_IMPORT_BUS[i].getStackForm());
             }
         }
+
+        for(int i = 0; i < MULTI_FLUID_IMPORT_HATCH.length; i++) {
+            if(MULTI_FLUID_IMPORT_HATCH[i] != null && MULTI_FLUID_EXPORT_HATCH[i] != null) {
+
+                ModHandler.addShapedRecipe("item_bus_output_to_input_" + MULTI_FLUID_IMPORT_HATCH[i].getTier(), MULTI_FLUID_IMPORT_HATCH[i].getStackForm(),
+                        "d", "B", 'B', MULTI_FLUID_EXPORT_HATCH[i].getStackForm());
+                ModHandler.addShapedRecipe("item_bus_input_to_output_" + MULTI_FLUID_EXPORT_HATCH[i].getTier(), MULTI_FLUID_EXPORT_HATCH[i].getStackForm(),
+                        "d", "B", 'B', MULTI_FLUID_IMPORT_HATCH[i].getStackForm());
+            }
+        }
+
         if (STEAM_EXPORT_BUS != null && STEAM_IMPORT_BUS != null) {
             //Steam
-            ModHandler.addShapelessRecipe("steam_bus_output_to_input_" + STEAM_EXPORT_BUS.getTier(), STEAM_EXPORT_BUS.getStackForm(), STEAM_IMPORT_BUS.getStackForm());
-            ModHandler.addShapelessRecipe("steam_bus_input_to_output_" + STEAM_IMPORT_BUS.getTier(), STEAM_IMPORT_BUS.getStackForm(), STEAM_EXPORT_BUS.getStackForm());
+            ModHandler.addShapedRecipe("steam_bus_output_to_input_" + STEAM_EXPORT_BUS.getTier(), STEAM_EXPORT_BUS.getStackForm(),
+                    "d", "B", 'B', STEAM_IMPORT_BUS.getStackForm());
+            ModHandler.addShapedRecipe("steam_bus_input_to_output_" + STEAM_IMPORT_BUS.getTier(), STEAM_IMPORT_BUS.getStackForm(),
+                    "d", "B", 'B', STEAM_EXPORT_BUS.getStackForm());
         }
     }
 }
