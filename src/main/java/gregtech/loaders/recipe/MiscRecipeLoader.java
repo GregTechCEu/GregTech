@@ -20,7 +20,6 @@ import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
@@ -433,15 +432,6 @@ public class MiscRecipeLoader {
                 .fluidOutputs(Milk.getFluid(10))
                 .duration(20)
                 .EUt(2)
-                .buildAndRegister();
-
-        MOB_EXTRACTOR_RECIPES.recipeBuilder()
-                .mob(new ResourceLocation("player"))
-                .causeDamage(10)
-                .notConsumable(new IntCircuitIngredient(2))
-                .output(dustTiny, Meat)
-                .duration(10)
-                .EUt(8)
                 .buildAndRegister();
 
     }
