@@ -46,6 +46,11 @@ public class WoodMachineRecipes {
 
             //wood nerf
             if (ConfigHolder.recipes.nerfWoodCrafting) {
+                //set custom amount
+                if (ConfigHolder.recipes.nerfWoodCraftingBase != 4) {
+                    originalOutput = ConfigHolder.recipes.nerfWoodCraftingBase;
+                }
+
                 //remove the old recipe
                 ModHandler.removeRecipeByName(outputRecipe.getRegistryName());
 

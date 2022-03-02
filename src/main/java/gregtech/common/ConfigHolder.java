@@ -139,6 +139,10 @@ public class ConfigHolder {
         @Config.Comment({"Whether to nerf Wood crafting to 2 Planks from 1 Log, and 2 Sticks from 2 Planks.", "Default: false"})
         public boolean nerfWoodCrafting = false;
 
+        @Config.Comment({"Whether the number of wood and sticks crafted should be changed numerically when nerfWoodCrafting is enabled.", "Default: 4"})
+        @Config.RangeInt(min = 2, max = 4)
+        public int nerfWoodCraftingBase = 4;
+
         @Config.Comment({"Whether to nerf the Paper crafting recipe.", "Default: true"})
         public boolean nerfPaperCrafting = true;
 
