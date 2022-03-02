@@ -289,6 +289,11 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
+    protected boolean shouldShowVoidingModeButton() {
+        return false;
+    }
+
+    @Override
     protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
         super.handleDisplayClick(componentData, clickData);
         int modifier = componentData.equals("add") ? 1 : -1;
