@@ -626,7 +626,7 @@ public class ModHandler {
 
         boolean wasRemoved = false;
         for (ItemStack stack : FurnaceRecipes.instance().getSmeltingList().keySet()) {
-            if (ItemStack.areItemStacksEqual(input, stack)) {
+            if ((stack.getItem() == input.getItem() && (stack.getMetadata() == GTValues.W || stack.getMetadata() == input.getMetadata()))) {
                 FurnaceRecipes.instance().getSmeltingList().remove(stack);
                 wasRemoved = true;
                 break;
