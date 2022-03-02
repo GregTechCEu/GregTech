@@ -47,7 +47,9 @@ public class WoodMachineRecipes {
             //wood nerf
             if (ConfigHolder.recipes.nerfWoodCrafting) {
                 //set custom amount
-                if (ConfigHolder.recipes.nerfWoodCraftingBase != 4) {
+                if (ConfigHolder.recipes.nerfWoodCraftingBase == 4) {
+                    originalOutput = 4;
+                } else {
                     originalOutput = ConfigHolder.recipes.nerfWoodCraftingBase;
                 }
 
