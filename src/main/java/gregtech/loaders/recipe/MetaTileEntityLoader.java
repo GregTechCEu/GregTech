@@ -305,6 +305,9 @@ public class MetaTileEntityLoader {
         registerMachineRecipe(MetaTileEntities.BLOCK_BREAKER, "MGM", "CHC", "WSW", 'M', MOTOR, 'H', HULL, 'C', CIRCUIT, 'W', CABLE, 'S', Blocks.CHEST, 'G', GRINDER);
         registerMachineRecipe(MetaTileEntities.WORLD_ACCELERATOR, "IGI", "FHF", "IGI", 'H', HULL, 'F', EMITTER, 'G', SENSOR, 'I', FIELD_GENERATOR);
         registerMachineRecipe(MetaTileEntities.MINER, "MMM", "WHW", "CSC", 'M', MOTOR, 'W', CABLE, 'H', HULL, 'C', CIRCUIT, 'S', SENSOR);
+        registerMachineRecipe(MetaTileEntities.MOB_AGE_SORTER, "OWS", "OHW", "OCW", 'O', CONVEYOR, 'W', CABLE, 'H', HULL, 'C', CIRCUIT, 'S', SENSOR);
+        registerMachineRecipe(MetaTileEntities.MOB_EXTERMINATOR, "EIE", "WHW", "CSC", 'E', EMITTER, 'W', CABLE, 'I', WIRE_QUAD, 'H', HULL, 'C', CIRCUIT, 'S', SENSOR);
+        registerMachineRecipe(MetaTileEntities.MOB_EXTRACTOR, "BCE", "PME", "WCW", 'M', HULL, 'E', PISTON, 'P', PUMP, 'C', CIRCUIT, 'W', CABLE, 'B', SAWBLADE);
 
         registerMachineRecipe(MetaTileEntities.MUFFLER_HATCH, "HM", "PR", 'H', HULL, 'M', MOTOR, 'P', PIPE_NORMAL, 'R', ROTOR);
 

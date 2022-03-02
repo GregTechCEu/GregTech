@@ -66,7 +66,7 @@ public class MetaTileEntityMobAgeSorter extends TieredMetaTileEntity {
                 this.areaBoundingBox = new AxisAlignedBB(areaCenterPos).grow(suckingRange - 1, 1.0, suckingRange - 1);
             }
             List<EntityLivingBase> animals = this.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, areaBoundingBox);
-            animals.removeIf(animal -> animal.isChild() == movesChildren);
+            animals.removeIf(animal -> animal.isChild() != movesChildren);
 
             if (!animals.isEmpty()) {
                 BlockPos pos = this.getPos().offset(this.getFrontFacing().getOpposite());

@@ -150,7 +150,7 @@ public class MetaTileEntityMobExterminator extends TieredMetaTileEntity {
     }
 
     protected int getEnergyConsumedPerKill() {
-        return BASE_EU_CONSUMPTION_PER_KILL * (1 << (getTier() - 1));
+        return BASE_EU_CONSUMPTION_PER_KILL * (1 << (getTier() - 1) * 2);
     }
 
     @Override
