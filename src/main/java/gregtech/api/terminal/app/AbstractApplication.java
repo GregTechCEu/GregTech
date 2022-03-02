@@ -247,4 +247,8 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
     public void onOSSizeUpdate(int width, int height) {
         setSelfPosition(Position.ORIGIN.add(new Position((width - getSize().width) / 2, (height - getSize().height) / 2)));
     }
+
+    public boolean canLaunchConcurrently(AbstractApplication application) {
+        return true;
+    }
 }
