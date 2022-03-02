@@ -4133,6 +4133,8 @@ gregtech.machine.maintenance_hatch_configurable.name=Configurable Maintenance Ha
 gregtech.machine.maintenance_hatch_configurable.tooltip=For finer control over Multiblocks/nStarts with no Maintenance problems!
 gregtech.machine.maintenance_hatch_full_auto.name=Automatic Maintenance Hatch
 gregtech.machine.maintenance_hatch_full_auto.tooltip=For automatically maintaining Multiblocks
+gregtech.machine.maintenance_hatch_tool_slot.tooltip=Click slot with empty hand when required tools are in inventory to solve problems
+gregtech.machine.maintenance_hatch_tape_slot.tooltip=Insert Tape to prevent problems
 
 gregtech.maintenance.configurable_duration=Duration: %fx
 gregtech.maintenance.configurable_duration.unchanged_description=Recipes will run at normal speed. Change configuration to update.
