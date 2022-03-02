@@ -969,9 +969,9 @@ public class MachineRecipeLoader {
         for(int i = 0; i < MULTI_FLUID_IMPORT_HATCH.length; i++) {
             if(MULTI_FLUID_IMPORT_HATCH[i] != null && MULTI_FLUID_EXPORT_HATCH[i] != null) {
 
-                ModHandler.addShapedRecipe("item_bus_output_to_input_" + MULTI_FLUID_IMPORT_HATCH[i].getTier(), MULTI_FLUID_IMPORT_HATCH[i].getStackForm(),
+                ModHandler.addShapedRecipe("multi_fluid_hatch_output_to_input_" + MULTI_FLUID_IMPORT_HATCH[i].getTier(), MULTI_FLUID_IMPORT_HATCH[i].getStackForm(),
                         "d", "B", 'B', MULTI_FLUID_EXPORT_HATCH[i].getStackForm());
-                ModHandler.addShapedRecipe("item_bus_input_to_output_" + MULTI_FLUID_EXPORT_HATCH[i].getTier(), MULTI_FLUID_EXPORT_HATCH[i].getStackForm(),
+                ModHandler.addShapedRecipe("multi_fluid_hatch_input_to_output_" + MULTI_FLUID_EXPORT_HATCH[i].getTier(), MULTI_FLUID_EXPORT_HATCH[i].getStackForm(),
                         "d", "B", 'B', MULTI_FLUID_IMPORT_HATCH[i].getStackForm());
             }
         }
