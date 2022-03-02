@@ -438,7 +438,7 @@ public class MiscRecipeLoader {
         MOB_EXTRACTOR_RECIPES.recipeBuilder()
                 .mob(new ResourceLocation("player"))
                 .causeDamage(10)
-                .notConsumable(new IntCircuitIngredient(1))
+                .notConsumable(new IntCircuitIngredient(2))
                 .output(dustTiny, Meat)
                 .duration(10)
                 .EUt(8)

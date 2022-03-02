@@ -1,16 +1,24 @@
 package gregtech.api.recipes.builders;
 
+import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.CauseDamageProperty;
 import gregtech.api.recipes.recipeproperties.MobOnTopProperty;
 import gregtech.api.util.EnumValidationResult;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.ValidationResult;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.util.Collections;
+
+import static gregtech.api.GTValues.MAX;
+import static gregtech.api.GTValues.V;
 
 public class MobProximityRecipeBuilder extends RecipeBuilder<MobProximityRecipeBuilder> {
 
@@ -61,6 +69,14 @@ public class MobProximityRecipeBuilder extends RecipeBuilder<MobProximityRecipeB
     public ValidationResult<Recipe> build() {
         Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs,
                 duration, EUt, hidden);
+        for (ItemStack stack : this.getInputs().get(0).getIngredient().getMatchingStacks()){
+            if (this.recipeMap.findRecipe(V[MAX], Collections.singletonList(stack),
+                    Collections.EMPTY_LIST, Integer.MAX_VALUE, MatchingMode.IGNORE_FLUIDS) != null) {
+                GTLog.logger.error("Input items of Mob Extractor recipes must not conflict", new IllegalArgumentException());
+                return ValidationResult.newResult(EnumValidationResult.INVALID, recipe);
+            }
+        }
+
         if (!recipe.setProperty(MobOnTopProperty.getInstance(), entityID)) {
             return ValidationResult.newResult(EnumValidationResult.INVALID, recipe);
         }

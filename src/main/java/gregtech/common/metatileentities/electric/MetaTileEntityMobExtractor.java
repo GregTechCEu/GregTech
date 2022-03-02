@@ -47,7 +47,7 @@ public class MetaTileEntityMobExtractor extends SimpleMachineMetaTileEntity {
 
     protected boolean checkRecipe(@Nonnull Recipe recipe) {
         ResourceLocation entityRequired = recipe.getProperty(MobOnTopProperty.getInstance(), EntityList.LIGHTNING_BOLT);
-        List<Entity> nearbyEntities = this.getWorld().getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(this.getPos().up()));
+        List<Entity> nearbyEntities = getEntitiesInProximity();
         for (Entity entity : nearbyEntities) {
             if (EntityList.isMatchingName(entity, entityRequired)) {
                 if (entity instanceof EntityLivingBase) // Prepare to cause damage if needed.
@@ -58,6 +58,10 @@ public class MetaTileEntityMobExtractor extends SimpleMachineMetaTileEntity {
             }
         }
         return false;
+    }
+
+    protected List<Entity> getEntitiesInProximity() {
+        return this.getWorld().getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(this.getPos().up()));
     }
 
     protected void damageEntity(Recipe recipe) {
