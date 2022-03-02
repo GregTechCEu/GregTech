@@ -7,6 +7,7 @@ death.attack.explosion=%s exploded
 death.attack.explosion.player=%s exploded with help of %s
 death.attack.heat.player=%s was boiled alive by %s
 death.attack.extermination=%s was exterminated.
+death.attack.extraction=%s's internal organs were harvested
 
 enchantment.disjunction=Disjunction
 
@@ -3674,7 +3675,7 @@ gregtech.machine.mob_exterminator.mv.name=Advanced Mob Exterminator
 gregtech.machine.mob_exterminator.hv.name=Advanced Mob Exterminator II
 gregtech.machine.mob_exterminator.ev.name=Advanced Mob Exterminator III
 
-gregtech.machine.mob_exterminator.tooltip=Kills 4 mobs each second in a 4x4 square in front per tick with looting %s
+gregtech.machine.mob_exterminator.tooltip=Kills 4 mobs each second in a 9x9 square in front per tick with looting %s
 gregtech.machine.mob_exterminator.tooltip.consumption=Consumes %s EU for each kill
 gregtech.machine.mob_exterminator.tooltip.nitrous=Can kill up to 12 more mobs each second when boosted with Nitrous Oxide
 

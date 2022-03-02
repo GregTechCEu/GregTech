@@ -1,5 +1,9 @@
 package gregtech.common.metatileentities.electric;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.damagesources.DamageSources;
@@ -9,12 +13,16 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
+import gregtech.api.sound.GTSounds;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.OrientedOverlayRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -51,14 +59,27 @@ public class MetaTileEntityMobExterminator extends TieredMetaTileEntity {
     }
 
     @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        OrientedOverlayRenderer renderer = Textures.MOB_EXTERMINATOR_OVERLAY;
+        renderer.renderOrientedState(renderState, translation, pipeline, Cuboid6.full, this.getFrontFacing(), isWorking, true);
+    }
+
+    @Override
     public void update() {
         super.update();
+
+        boolean isWorkingNow = energyContainer.getEnergyStored() >= getEnergyConsumedPerKill() && isBlockRedstonePowered();
+
+        if (isWorkingNow != isWorking) {
+            this.isWorking = isWorkingNow;
+            writeCustomData(IS_WORKING, buffer -> buffer.writeBoolean(isWorkingNow));
+        }
 
         if (getWorld().isRemote || getOffsetTimer() % 20 != 0) {
             return;
         }
 
-        boolean isWorkingNow = energyContainer.getEnergyStored() >= getEnergyConsumedPerKill() && isBlockRedstonePowered();
         if (isWorkingNow) {
             BlockPos selfPos = getPos();
             if (areaCenterPos == null || areaBoundingBox == null) {
@@ -104,7 +125,7 @@ public class MetaTileEntityMobExterminator extends TieredMetaTileEntity {
         builder.label(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF);
         builder.dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF);
         builder.dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF);
-        return builder.label(6, 6, metaTileEntityId.toString()).build(getHolder(), entityPlayer);
+        return builder.label(6, 6, getMetaFullName()).build(getHolder(), entityPlayer);
     }
 
     @Override
@@ -146,5 +167,15 @@ public class MetaTileEntityMobExterminator extends TieredMetaTileEntity {
     @Override
     protected FluidTankList createImportFluidHandler() {
         return new FluidTankList(true, fluidTank);
+    }
+
+    @Override
+    public SoundEvent getSound() {
+        return GTSounds.MACERATOR;
+    }
+
+    @Override
+    public boolean isActive() {
+        return isWorking;
     }
 }

@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.electric;
 
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.RecipeLogicEnergy;
+import gregtech.api.damagesources.DamageSources;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
@@ -15,7 +16,6 @@ import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -68,7 +68,7 @@ public class MetaTileEntityMobExtractor extends SimpleMachineMetaTileEntity {
         if (attackableTarget != null) {
             float damage = recipe.getProperty(CauseDamageProperty.getInstance(), 0f);
             if (damage > 0) {
-                attackableTarget.attackEntityFrom(DamageSource.GENERIC, damage);
+                attackableTarget.attackEntityFrom(DamageSources.getExtractionDamage(), damage);
             }
         }
     }

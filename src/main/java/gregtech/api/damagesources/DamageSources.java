@@ -13,6 +13,8 @@ public class DamageSources {
     private static final DamageSource ELECTRIC = new DamageSource("electric");
     private static final DamageSource RADIATION = new DamageSource("radiation").setDamageBypassesArmor();
     private static final DamageSource TURBINE = new DamageSource("turbine");
+    private static final DamageSource EXTRACTION = new DamageSource("extraction");
+
 
     public static DamageSource getElectricDamage() {
         return ELECTRIC;
@@ -40,6 +42,10 @@ public class DamageSources {
 
     public static DamageSource getExterminationDamage(World worldIn) {
         return new EntityDamageSource("extermination", new GregFakePlayer(worldIn)).setDamageBypassesArmor();
+    }
+
+    public static DamageSource getExtractionDamage() {
+        return EXTRACTION;
     }
 
 }

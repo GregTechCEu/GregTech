@@ -1,5 +1,9 @@
 package gregtech.common.metatileentities.electric;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -7,6 +11,8 @@ import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.OrientedOverlayRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -57,7 +63,7 @@ public class MetaTileEntityMobAgeSorter extends TieredMetaTileEntity {
             BlockPos selfPos = getPos();
             if (areaCenterPos == null || areaBoundingBox == null) {
                 this.areaCenterPos = selfPos.offset(this.getFrontFacing(), suckingRange);
-                this.areaBoundingBox = new AxisAlignedBB(areaCenterPos).grow(suckingRange, 1.0, suckingRange);
+                this.areaBoundingBox = new AxisAlignedBB(areaCenterPos).grow(suckingRange - 1, 1.0, suckingRange - 1);
             }
             List<EntityLivingBase> animals = this.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, areaBoundingBox);
             animals.removeIf(animal -> animal.isChild() == movesChildren);
@@ -66,6 +72,11 @@ public class MetaTileEntityMobAgeSorter extends TieredMetaTileEntity {
                 BlockPos pos = this.getPos().offset(this.getFrontFacing().getOpposite());
                 animals.get(0).setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
             }
+        }
+
+        if (isWorkingNow != isWorking) {
+            this.isWorking = isWorkingNow;
+            writeCustomData(IS_WORKING, buffer -> buffer.writeBoolean(isWorkingNow));
         }
     }
 
@@ -112,10 +123,17 @@ public class MetaTileEntityMobAgeSorter extends TieredMetaTileEntity {
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 60)
-                .label(10, 5, getMetaFullName());
+                .label(10, 6, getMetaFullName());
         builder.widget(new ToggleButtonWidget(10, 20, 20, 20, this::getAgeFilter, data -> invertFilter())
                 .setButtonTexture(GuiTextures.BUTTON_MOB_SORTER_MODE).setTooltipText("gregtech.gui.mob_age_sorter_mode"));
         return builder.build(getHolder(), entityPlayer);
+    }
+
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        OrientedOverlayRenderer renderer = Textures.MOB_AGE_SORTER_OVERLAY;
+        renderer.renderOrientedState(renderState, translation, pipeline, Cuboid6.full, this.getFrontFacing(), isWorking, true);
     }
 
     private void invertFilter() {
