@@ -21,6 +21,7 @@ public abstract class ToolBuilder<T extends IGTTool> {
     protected IGTToolDefinition toolStats;
     protected SoundEvent sound;
     protected AoEDefinition aoeDefinition = AoEDefinition.of();
+    protected Character craftingSymbol = null;
 
     public ToolBuilder(String domain, String id) {
         this.domain = domain;
@@ -37,8 +38,8 @@ public abstract class ToolBuilder<T extends IGTTool> {
         return this;
     }
 
-    public ToolBuilder<T> toolStats(UnaryOperator<TooDefinitionBuilder> builder) {
-        this.toolStats = builder.apply(new TooDefinitionBuilder()).build();
+    public ToolBuilder<T> toolStats(UnaryOperator<ToolDefinitionBuilder> builder) {
+        this.toolStats = builder.apply(new ToolDefinitionBuilder()).build();
         return this;
     }
 
@@ -69,6 +70,11 @@ public abstract class ToolBuilder<T extends IGTTool> {
 
     public ToolBuilder<T> aoeData(AoEDefinition aoeDefinition) {
         this.aoeDefinition = aoeDefinition;
+        return this;
+    }
+
+    public ToolBuilder<T> craftingSymbol(char craftingSymbol) {
+        this.craftingSymbol = craftingSymbol;
         return this;
     }
 
