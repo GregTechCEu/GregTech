@@ -4,7 +4,6 @@ import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.packets.CPacketKeysPressed;
 import gregtech.api.util.GTLog;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
