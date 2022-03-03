@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.items.toolitem.AoEDefinition;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ItemGTTool;
+import gregtech.api.items.toolitem.ToolBuilder;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.TaskScheduler;
@@ -96,33 +97,31 @@ public class ToolItems {
 
     public static void init() {
         MinecraftForge.EVENT_BUS.register(ToolItems.class);
-        WRENCH = ItemGTTool.Builder.of(GTValues.MODID, "wrench")
+        WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench")
                 .toolStats(b -> b.damagePerAction(DAMAGE_FOR_WRENCH).suitableForBlockBreaking().suitableForCrafting())
                 .sound(GTSounds.WRENCH_TOOL)
                 .oreDicts("craftingToolWrench")
-                .toolClasses("wrench")
-                .build();
-        PICKAXE = ItemGTTool.Builder.of(GTValues.MODID, "pickaxe")
+                .toolClasses("wrench"));
+        PICKAXE = register(ItemGTTool.Builder.of(GTValues.MODID, "pickaxe")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking())
                 .oreDicts("craftingToolPickaxe")
-                .toolClasses("pickaxe")
-                .aoeData(1, 1, 0)
-                .build();
-        AXE = ItemGTTool.Builder.of(GTValues.MODID, "axe")
+                .toolClasses("pickaxe"));
+        AXE = register(ItemGTTool.Builder.of(GTValues.MODID, "axe")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking())
                 .oreDicts("craftingToolAxe")
-                .toolClasses("axe")
-                .build();
-        DRILL_LV = ItemGTTool.Builder.of(GTValues.MODID, "drill_lv")
+                .toolClasses("axe"));
+        DRILL_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_lv")
                 .toolStats(b -> b.suitableForBlockBreaking())
                 .oreDicts("craftingToolDrill")
                 .toolClasses("pickaxe", "drill", "shovel")
-                .electric(1)
-                .build();
-        TOOLS.add(WRENCH);
-        TOOLS.add(PICKAXE);
-        TOOLS.add(AXE);
-        TOOLS.add(DRILL_LV);
+                .aoeData(1, 1, 0)
+                .electric(1));
+    }
+
+    private static IGTTool register(ToolBuilder<?> builder) {
+        IGTTool tool = builder.build();
+        TOOLS.add(tool);
+        return tool;
     }
 
     public static void registerModels() {
