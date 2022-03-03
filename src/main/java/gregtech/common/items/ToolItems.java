@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -21,20 +22,25 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.ThreadContext;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 public class ToolItems {
@@ -91,26 +97,32 @@ public class ToolItems {
     public static void init() {
         MinecraftForge.EVENT_BUS.register(ToolItems.class);
         WRENCH = ItemGTTool.Builder.of(GTValues.MODID, "wrench")
-                .toolStats(b -> b.damagePerCraft(DAMAGE_FOR_WRENCH).usedForAttacking())
+                .toolStats(b -> b.damagePerAction(DAMAGE_FOR_WRENCH).suitableForBlockBreaking().suitableForCrafting())
                 .sound(GTSounds.WRENCH_TOOL)
                 .oreDicts("craftingToolWrench")
                 .toolClasses("wrench")
                 .build();
         PICKAXE = ItemGTTool.Builder.of(GTValues.MODID, "pickaxe")
-                .toolStats(b -> b.damagePerBlockBreak().usedForAttacking())
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking())
                 .oreDicts("craftingToolPickaxe")
                 .toolClasses("pickaxe")
                 .aoeData(1, 1, 0)
                 .build();
         AXE = ItemGTTool.Builder.of(GTValues.MODID, "axe")
-                .toolStats(b -> b.damagePerBlockBreak().usedForAttacking())
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking())
                 .oreDicts("craftingToolAxe")
                 .toolClasses("axe")
-                .electric(2)
+                .build();
+        DRILL_LV = ItemGTTool.Builder.of(GTValues.MODID, "drill_lv")
+                .toolStats(b -> b.suitableForBlockBreaking())
+                .oreDicts("craftingToolDrill")
+                .toolClasses("pickaxe", "drill", "shovel")
+                .electric(1)
                 .build();
         TOOLS.add(WRENCH);
         TOOLS.add(PICKAXE);
         TOOLS.add(AXE);
+        TOOLS.add(DRILL_LV);
     }
 
     public static void registerModels() {
@@ -201,8 +213,34 @@ public class ToolItems {
         }
     }
 
+    // Handle formatting of stat tooltips, this is easier to be done here than in Item#addInformation
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onItemTooltipEvent(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+        if (stack.getItem() instanceof IGTTool) {
+            IGTTool tool = (IGTTool) stack.getItem();
+            String mainHandTooltip = I18n.format("item.modifiers.mainhand");
+            ListIterator<String> tooltipIterator = event.getToolTip().listIterator(event.getToolTip().size());
+            // Check where in the tooltip list we are
+            while (tooltipIterator.hasPrevious()) {
+                if (mainHandTooltip.equals(tooltipIterator.previous())) {
+                    tooltipIterator.next(); // Turnover
+                    // Push
+                    if (tool.getToolStats().isSuitableForCrafting(stack)) {
+                        tooltipIterator.add(TextFormatting.GREEN + " " + tool.getToolStats().getToolDamagePerCraft(stack) + " Crafting Uses");
+                    }
+                    tooltipIterator.add(TextFormatting.LIGHT_PURPLE + " " + tool.getTotalAttackDamage(stack) + " Mining Speed");
+                    tooltipIterator.add(TextFormatting.YELLOW + " " + tool.getTotalHarvestLevel(stack) + " Harvest Level");
+                    break; // Exit early
+                }
+            }
+        }
+    }
+
     // Handle client-view of harvestable blocks in AoE (and potentially wrench overlay in the future)
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public static void onDrawHighlightEvent(DrawBlockHighlightEvent event) {
         EntityPlayer player = event.getPlayer();
         if (!player.isSneaking()) {
