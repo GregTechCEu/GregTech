@@ -206,9 +206,16 @@ public class AssemblerRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[UV])
                 .input(stick, SamariumMagnetic)
-                .input(wireFine, Tritanium, 16)
+                .input(wireFine, Americium, 16)
                 .circuitMeta(1)
                 .outputs(VOLTAGE_COIL_UV.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[UHV])
+                .input(stick, SamariumMagnetic)
+                .input(wireFine, Tritanium, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_UHV.getStackForm())
                 .buildAndRegister();
 
         // Neutron Reflector
