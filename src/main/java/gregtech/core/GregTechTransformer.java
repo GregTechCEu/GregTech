@@ -125,6 +125,15 @@ public class GregTechTransformer implements IClassTransformer, Opcodes {
                 }
                 return classWriter.toByteArray();
             }
+            case RenderItemVisitor.TARGET_CLASS_NAME: {
+                if (GTValues.isModLoaded("enderio")) {
+                    return basicClass;
+                }
+                ClassReader classReader = new ClassReader(basicClass);
+                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+                classReader.accept(new TargetClassVisitor(classWriter, RenderItemVisitor.TARGET_METHOD, RenderItemVisitor::new), 0);
+                return classWriter.toByteArray();
+            }
         }
         return basicClass;
     }
