@@ -11,11 +11,28 @@ public interface IGTToolDefinition {
     /**
      * Durability Spec
      */
-    int getToolDamagePerBlockBreak(ItemStack stack);
+    int getDamagePerAction(ItemStack stack);
 
-    int getToolDamagePerContainerCraft(ItemStack stack);
+    boolean isSuitableForBlockBreak(ItemStack stack);
 
-    int getToolDamagePerEntityAttack(ItemStack stack);
+    boolean isSuitableForAttacking(ItemStack stack);
+
+    boolean isSuitableForCrafting(ItemStack stack);
+
+    default int getToolDamagePerBlockBreak(ItemStack stack) {
+        int action = getDamagePerAction(stack);
+        return isSuitableForBlockBreak(stack) ? action : action * 2;
+    }
+
+    default int getToolDamagePerAttack(ItemStack stack) {
+        int action = getDamagePerAction(stack);
+        return isSuitableForAttacking(stack) ? action : action * 2;
+    }
+
+    default int getToolDamagePerCraft(ItemStack stack) {
+        int action = getDamagePerAction(stack);
+        return isSuitableForCrafting(stack) ? action : action * 2;
+    }
 
     /**
      * Tool Stat

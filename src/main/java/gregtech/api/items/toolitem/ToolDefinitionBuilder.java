@@ -9,9 +9,10 @@ import java.util.function.Supplier;
 
 public class ToolDefinitionBuilder {
 
-    private int damagePerBlockBreak = 2;
-    private int damagePerCraft = 1;
-    private int damagePerAttack = 2;
+    private int damagePerAction = 1;
+    private boolean suitableForBlockBreaking = false;
+    private boolean suitableForAttacking = false;
+    private boolean suitableForCrafting = false;
     private int baseQuality = 0;
     private float attackDamage = 0F;
     private float efficiency = 4F;
@@ -21,33 +22,23 @@ public class ToolDefinitionBuilder {
     private boolean sneakBypassUse = false;
     private Supplier<ItemStack> brokenStack = () -> ItemStack.EMPTY;
 
-    public ToolDefinitionBuilder damagePerBlockBreak(int damagePerBlockBreak) {
-        this.damagePerBlockBreak = damagePerBlockBreak;
+    public ToolDefinitionBuilder damagePerAction(int damagePerAction) {
+        this.damagePerAction = damagePerAction;
         return this;
     }
 
-    public ToolDefinitionBuilder damagePerBlockBreak() {
-        damagePerBlockBreak(1);
+    public ToolDefinitionBuilder suitableForBlockBreaking() {
+        this.suitableForBlockBreaking = true;
         return this;
     }
 
-    public ToolDefinitionBuilder damagePerCraft(int damagePerCraft) {
-        this.damagePerCraft = damagePerCraft;
+    public ToolDefinitionBuilder suitableForAttacking() {
+        this.suitableForAttacking = true;
         return this;
     }
 
-    public ToolDefinitionBuilder damagePerCraft() {
-        damagePerCraft(1);
-        return this;
-    }
-
-    public ToolDefinitionBuilder damagePerAttack(int damagePerAttack) {
-        this.damagePerAttack = damagePerAttack;
-        return this;
-    }
-
-    public ToolDefinitionBuilder usedForAttacking() {
-        damagePerAttack(1);
+    public ToolDefinitionBuilder suitableForCrafting() {
+        this.suitableForCrafting = true;
         return this;
     }
 
@@ -111,9 +102,10 @@ public class ToolDefinitionBuilder {
     public IGTToolDefinition build() {
         return new IGTToolDefinition() {
 
-            private final int damagePerBlockBreak = ToolDefinitionBuilder.this.damagePerBlockBreak;
-            private final int damagePerCraft = ToolDefinitionBuilder.this.damagePerCraft;
-            private final int damagePerAttack = ToolDefinitionBuilder.this.damagePerAttack;
+            private final int damagePerAction = ToolDefinitionBuilder.this.damagePerAction;
+            private final boolean suitableForBlockBreaking = ToolDefinitionBuilder.this.suitableForBlockBreaking;
+            private final boolean suitableForAttacking = ToolDefinitionBuilder.this.suitableForAttacking;
+            private final boolean suitableForCrafting = ToolDefinitionBuilder.this.suitableForCrafting;
             private final int baseQuality = ToolDefinitionBuilder.this.baseQuality;
             private final float attackDamage = ToolDefinitionBuilder.this.attackDamage;
             private final float efficiency = ToolDefinitionBuilder.this.efficiency;
@@ -124,18 +116,23 @@ public class ToolDefinitionBuilder {
             private final Supplier<ItemStack> brokenStack = ToolDefinitionBuilder.this.brokenStack;
 
             @Override
-            public int getToolDamagePerBlockBreak(ItemStack stack) {
-                return damagePerBlockBreak;
+            public int getDamagePerAction(ItemStack stack) {
+                return damagePerAction;
             }
 
             @Override
-            public int getToolDamagePerContainerCraft(ItemStack stack) {
-                return damagePerCraft;
+            public boolean isSuitableForBlockBreak(ItemStack stack) {
+                return suitableForBlockBreaking;
             }
 
             @Override
-            public int getToolDamagePerEntityAttack(ItemStack stack) {
-                return damagePerAttack;
+            public boolean isSuitableForAttacking(ItemStack stack) {
+                return suitableForAttacking;
+            }
+
+            @Override
+            public boolean isSuitableForCrafting(ItemStack stack) {
+                return suitableForCrafting;
             }
 
             @Override
