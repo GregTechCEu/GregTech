@@ -122,7 +122,7 @@ public class MetaTileEntityMobAgeSorter extends TieredMetaTileEntity {
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 60)
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 150, 50)
                 .label(10, 6, getMetaFullName());
         builder.widget(new ToggleButtonWidget(10, 20, 20, 20, this::getAgeFilter, data -> invertFilter())
                 .setButtonTexture(GuiTextures.BUTTON_MOB_SORTER_MODE).setTooltipText("gregtech.gui.mob_age_sorter_mode"));

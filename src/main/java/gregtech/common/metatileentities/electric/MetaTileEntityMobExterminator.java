@@ -71,15 +71,18 @@ public class MetaTileEntityMobExterminator extends TieredMetaTileEntity {
 
         boolean isWorkingNow = energyContainer.getEnergyStored() >= getEnergyConsumedPerKill() && isBlockRedstonePowered();
 
+
+
+        if (getWorld().isRemote) {
+            return;
+        }
         if (isWorkingNow != isWorking) {
             this.isWorking = isWorkingNow;
             writeCustomData(IS_WORKING, buffer -> buffer.writeBoolean(isWorkingNow));
         }
-
-        if (getWorld().isRemote || getOffsetTimer() % 20 != 0) {
+        if (getOffsetTimer() % 20 != 0) {
             return;
         }
-
         if (isWorkingNow) {
             BlockPos selfPos = getPos();
             if (areaCenterPos == null || areaBoundingBox == null) {
@@ -117,7 +120,7 @@ public class MetaTileEntityMobExterminator extends TieredMetaTileEntity {
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.defaultBuilder();
+        ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 170, 90);
         builder.image(7, 16, 81, 55, GuiTextures.DISPLAY);
         TankWidget tankWidget = new TankWidget(fluidTank, 69, 52, 18, 18)
                 .setHideTooltip(true).setAlwaysShowFull(true);

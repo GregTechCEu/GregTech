@@ -65,7 +65,7 @@ public class MetaTileEntityMobExtractor extends SimpleMachineMetaTileEntity {
     }
 
     protected void damageEntity(Recipe recipe) {
-        if (attackableTarget != null) {
+        if (attackableTarget != null && recipe.hasProperty(CauseDamageProperty.getInstance())) {
             float damage = recipe.getProperty(CauseDamageProperty.getInstance(), 0f);
             if (damage > 0) {
                 attackableTarget.attackEntityFrom(DamageSources.getExtractionDamage(), damage);
