@@ -306,7 +306,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         ((IMaintenance) getController()).setMaintenanceFixed(problemIndex);
         if (stack.getItem() instanceof IGTTool) {
             IGTTool def = (IGTTool) stack.getItem();
-            def.damageItem(stack, entityPlayer, def.getToolStats().getToolDamagePerContainerCraft(stack));
+            def.damageItem(stack, entityPlayer, def.getToolStats().getToolDamagePerCraft(stack));
         } else {
             stack.damageItem(1, entityPlayer);
         }

@@ -3,6 +3,7 @@ package gregtech.api.items.toolitem;
 import appeng.api.implementations.items.IAEWrench;
 import buildcraft.api.tools.IToolWrench;
 import cofh.api.item.IToolHammer;
+import com.enderio.core.common.interfaces.IOverlayRenderAware;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -30,6 +31,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.BlockWeb;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentDurability;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -66,6 +68,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import static gregtech.api.items.armor.IArmorLogic.*;
@@ -78,8 +81,9 @@ import static gregtech.api.items.armor.IArmorLogic.*;
         @Optional.Interface(modid = GTValues.MODID_BC, iface = "buildcraft.api.tools.IToolWrench"),
         @Optional.Interface(modid = GTValues.MODID_COFH, iface = "cofh.api.item.IToolHammer"),
         @Optional.Interface(modid = GTValues.MODID_EIO, iface = "crazypants.enderio.api.tool.ITool"),
-        @Optional.Interface(modid = GTValues.MODID_FR, iface = "forestry.api.arboriculture.IToolGrafter")})
-public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, IToolGrafter {
+        @Optional.Interface(modid = GTValues.MODID_FR, iface = "forestry.api.arboriculture.IToolGrafter"),
+        @Optional.Interface(modid = GTValues.MODID_EIO, iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")})
+public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, IToolGrafter, IOverlayRenderAware {
 
     String getDomain();
 
@@ -186,6 +190,26 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
         return getDustProperty(stack).getHarvestLevel();
     }
 
+    default long getMaxCharge(ItemStack stack) {
+        if (isElectric()) {
+            NBTTagCompound tag = stack.getTagCompound();
+            if (tag != null && tag.hasKey("MaxCharge", Constants.NBT.TAG_LONG)) {
+                return stack.getTagCompound().getLong("MaxCharge");
+            }
+        }
+        return -1L;
+    }
+
+    default long getCharge(ItemStack stack) {
+        if (isElectric()) {
+            NBTTagCompound tag = stack.getTagCompound();
+            if (tag != null && tag.hasKey("Charge", Constants.NBT.TAG_LONG)) {
+                return stack.getTagCompound().getLong("Charge");
+            }
+        }
+        return -1L;
+    }
+
     default Object2IntMap<Enchantment> getMaterialEnchantments(ItemStack stack) {
         return getToolProperty(stack).getEnchantments();
     }
@@ -266,7 +290,7 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
     }
 
     default boolean definition$hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-        damageItem(stack, attacker, getToolStats().getToolDamagePerEntityAttack(stack));
+        damageItem(stack, attacker, getToolStats().getToolDamagePerAttack(stack));
         return true;
     }
 
@@ -339,7 +363,7 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
     }
 
     default ItemStack definition$getContainerItem(ItemStack stack) {
-        int damage = getToolStats().getToolDamagePerContainerCraft(stack);
+        int damage = getToolStats().getToolDamagePerCraft(stack);
         if (damage > 0) {
             EntityPlayer player = ForgeHooks.getCraftingPlayer();
             damageItem(stack, player, damage);
@@ -431,6 +455,26 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
     @Nullable
     default ICapabilityProvider definition$initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
         return isElectric() ? ElectricStats.createElectricItem(0L, getElectricTier()).createProvider(stack) : null;
+    }
+
+    @SideOnly(Side.CLIENT)
+    default void definition$addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
+        // if (flag.isAdvanced()) TODO: lists "behaviours"
+    }
+
+    @SideOnly(Side.CLIENT)
+    default void renderElectricBar(@Nonnull ItemStack stack, int xPosition, int yPosition) {
+        if (isElectric()) {
+            long maxCharge = getMaxCharge(stack);
+            if (maxCharge != -1L) {
+                long charge = getCharge(stack);
+                if (charge < maxCharge) {
+                    double level = (double) charge / (double) maxCharge;
+                    boolean showDurability = stack.getItem().showDurabilityBar(stack);
+                    ToolChargeBarRenderer.render(level, xPosition, yPosition, showDurability ? 2 : 0, true);
+                }
+            }
+        }
     }
 
     // Sound Playing
@@ -642,4 +686,9 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
         return get().getToolClasses(stack).contains("grafter") ? 100F : 1.0F;
     }
 
+    // IOverlayRenderAware
+    @Override
+    default void renderItemOverlayIntoGUI(@Nonnull ItemStack stack, int xPosition, int yPosition) {
+        renderElectricBar(stack, xPosition, yPosition);
+    }
 }
