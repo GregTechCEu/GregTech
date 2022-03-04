@@ -163,7 +163,7 @@ public class ReactorRecipes {
                 .fluidInputs(NitrationMixture.getFluid(3000))
                 .fluidInputs(Glycerol.getFluid(1000))
                 .fluidOutputs(GlycerylTrinitrate.getFluid(1000))
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(3000))
+                .fluidOutputs(DilutedSulfuricAcid.getFluid(2000))
                 .duration(180).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
