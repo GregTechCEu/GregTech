@@ -14,6 +14,8 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -43,9 +45,8 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     protected final Set<String> oreDicts;
     protected final SoundEvent sound;
     protected final Set<Block> effectiveBlocks;
-    protected final AoEDefinition aoeDefinition;
 
-    protected ItemGTTool(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, Set<String> toolClasses, Set<String> oreDicts, Set<Block> effectiveBlocks, AoEDefinition aoeDefinition) {
+    protected ItemGTTool(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, Set<String> toolClasses, Set<String> oreDicts, Set<Block> effectiveBlocks) {
         super(0F, 0F, ToolMaterial.STONE, effectiveBlocks);
         this.domain = domain;
         this.id = id;
@@ -55,7 +56,6 @@ public class ItemGTTool extends ItemTool implements IGTTool {
         this.toolClasses = Collections.unmodifiableSet(toolClasses);
         this.oreDicts = Collections.unmodifiableSet(oreDicts);
         this.effectiveBlocks = effectiveBlocks;
-        this.aoeDefinition = aoeDefinition;
         setMaxStackSize(1);
         setCreativeTab(CreativeTabs.TOOLS);
         setTranslationKey("gt.tool." + id + ".name");
@@ -101,11 +101,6 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     @Override
     public Set<String> getOreDictNames() {
         return oreDicts;
-    }
-
-    @Override
-    public AoEDefinition getAoEDefinition() {
-        return aoeDefinition;
     }
 
     @Override
@@ -211,6 +206,11 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     }
 
     @Override
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        return definition$onItemRightClick(world, player, hand);
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         definition$addInformation(stack, world, tooltip, flag);
@@ -228,7 +228,7 @@ public class ItemGTTool extends ItemTool implements IGTTool {
 
         @Override
         public ItemGTTool build() {
-            return new ItemGTTool(domain, id, tier, toolStats, sound, toolClasses, oreDicts, effectiveBlocks, aoeDefinition);
+            return new ItemGTTool(domain, id, tier, toolStats, sound, toolClasses, oreDicts, effectiveBlocks);
         }
 
     }
