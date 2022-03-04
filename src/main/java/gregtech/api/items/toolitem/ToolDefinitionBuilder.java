@@ -27,6 +27,7 @@ public class ToolDefinitionBuilder {
     private float attackSpeed = 0F;
     private boolean sneakBypassUse = false;
     private Supplier<ItemStack> brokenStack = () -> ItemStack.EMPTY;
+    private AoEDefinition aoeDefinition = AoEDefinition.none();
 
     public ToolDefinitionBuilder behaviours(IToolBehaviour... behaviours) {
         Collections.addAll(this.behaviours, behaviours);
@@ -115,6 +116,15 @@ public class ToolDefinitionBuilder {
         return this;
     }
 
+    public ToolDefinitionBuilder aoeDefinition(AoEDefinition aoeDefinition) {
+        this.aoeDefinition = aoeDefinition;
+        return this;
+    }
+
+    public ToolDefinitionBuilder aoeDefinition(int column, int row, int layer) {
+        return aoeDefinition(AoEDefinition.of(column, row, layer));
+    }
+
     public IGTToolDefinition build() {
         return new IGTToolDefinition() {
 
@@ -132,6 +142,7 @@ public class ToolDefinitionBuilder {
             private final float attackSpeed = ToolDefinitionBuilder.this.attackSpeed;
             private final boolean sneakBypassUse = ToolDefinitionBuilder.this.sneakBypassUse;
             private final Supplier<ItemStack> brokenStack = ToolDefinitionBuilder.this.brokenStack;
+            private final AoEDefinition aoeDefinition = ToolDefinitionBuilder.this.aoeDefinition;
 
             @Override
             public List<IToolBehaviour> getBehaviours() {
@@ -201,6 +212,11 @@ public class ToolDefinitionBuilder {
             @Override
             public ItemStack getBrokenStack() {
                 return brokenStack.get();
+            }
+
+            @Override
+            public AoEDefinition getAoEDefinition(ItemStack stack) {
+                return aoeDefinition;
             }
         };
     }
