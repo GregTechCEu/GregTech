@@ -992,7 +992,7 @@ metaitem.voltage_coil.uiv.name=Ultra Insane Coil
 metaitem.voltage_coil.uiv.tooltip=Insane Coil
 metaitem.voltage_coil.uxv.name=Ultra Extreme Voltage Coil
 metaitem.voltage_coil.uxv.tooltip=Epic Coil
-metaitem.voltage_coil.opv.name=Overpowered Voltage Coil
+metaitem.voltage_coil.opv.name=Ultra Immense Voltage Coil
 metaitem.voltage_coil.opv.tooltip=Legendary Coil
 metaitem.voltage_coil.max.name=Maximum Voltage Coil
 metaitem.voltage_coil.max.tooltip=Maximum Coil
@@ -2400,7 +2400,7 @@ tile.machine_casing.ultra_high_voltage.name=UHV Machine Casing
 tile.machine_casing.ultra_excessive_voltage.name=UEV Machine Casing
 tile.machine_casing.ultra_immense_voltage.name=UIV Machine Casing
 tile.machine_casing.ultra_extreme_voltage.name=UXV Machine Casing
-tile.machine_casing.overpowered_voltage.name=OpV Machine Casing
+tile.machine_casing.Ultra Immense_voltage.name=OpV Machine Casing
 tile.machine_casing.maximum_voltage.name=MAX Machine Casing
 
 # Steam casing blocks
@@ -2926,13 +2926,13 @@ gregtech.machine.canner.jei_description=You can fill and empty any fluid contain
 
 # Canning Machine
 gregtech.machine.canner.lv.name=Basic Canning Machine
-gregtech.machine.canner.lv.tooltip=Puts things into and out of Containers.
+gregtech.machine.canner.lv.tooltip=Puts things into and out of Containers
 gregtech.machine.canner.mv.name=Advanced Canning Machine
-gregtech.machine.canner.mv.tooltip=Puts things into and out of Containers.
+gregtech.machine.canner.mv.tooltip=Puts things into and out of Containers
 gregtech.machine.canner.hv.name=Advanced Canning Machine II
-gregtech.machine.canner.hv.tooltip=Puts things into and out of Containers.
+gregtech.machine.canner.hv.tooltip=Puts things into and out of Containers
 gregtech.machine.canner.ev.name=Advanced Canning Machine III
-gregtech.machine.canner.ev.tooltip=Puts things into and out of Containers.
+gregtech.machine.canner.ev.tooltip=Puts things into and out of Containers
 gregtech.machine.canner.iv.name=Elite Canning Machine
 gregtech.machine.canner.iv.tooltip=Can Operator
 gregtech.machine.canner.luv.name=Elite Canning Machine II
@@ -3568,8 +3568,7 @@ gregtech.machine.sifter.uxv.tooltip=Pulsation Filter
 gregtech.machine.sifter.opv.name=Legendary Sifting Machine
 gregtech.machine.sifter.opv.tooltip=Pulsation Filter
 
-gregtech.machine.thermal_centrifuge.tooltip=Separating Ores more precisely
-
+# Thermal Centrifuge
 gregtech.machine.thermal_centrifuge.lv.name=Basic Thermal Centrifuge
 gregtech.machine.thermal_centrifuge.lv.tooltip=Separating Ores more precisely
 gregtech.machine.thermal_centrifuge.mv.name=Advanced Thermal Centrifuge
@@ -3805,21 +3804,21 @@ gregtech.machine.battery_buffer.uhv.4.name=Ultra High Voltage 4x Battery Buffer
 gregtech.machine.battery_buffer.uhv.8.name=Ultra High Voltage 8x Battery Buffer
 gregtech.machine.battery_buffer.uhv.16.name=Ultra High Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uev.4.name=Overwhelming Voltage 4x Battery Buffer
-gregtech.machine.battery_buffer.uev.8.name=Overwhelming Voltage 8x Battery Buffer
-gregtech.machine.battery_buffer.uev.16.name=Overwhelming Voltage 16x Battery Buffer
+gregtech.machine.battery_buffer.uev.4.name=Ultra Excessive Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uev.8.name=Ultra Excessive Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uev.16.name=Ultra Excessive Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uiv.4.name=Overpowered Voltage 4x Battery Buffer
-gregtech.machine.battery_buffer.uiv.8.name=Overpowered Voltage 8x Battery Buffer
-gregtech.machine.battery_buffer.uiv.16.name=Overpowered Voltage 16x Battery Buffer
+gregtech.machine.battery_buffer.uiv.4.name=Ultra Immense Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uiv.8.name=Ultra Immense Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uiv.16.name=Ultra Immense Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.uxv.4.name=Transcendent Voltage 4x Battery Buffer
-gregtech.machine.battery_buffer.uxv.8.name=Transcendent Voltage 8x Battery Buffer
-gregtech.machine.battery_buffer.uxv.16.name=Transcendent Voltage 16x Battery Buffer
+gregtech.machine.battery_buffer.uxv.4.name=Ultra Extreme Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.uxv.8.name=Ultra Extreme Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.uxv.16.name=Ultra Extreme Voltage 16x Battery Buffer
 
-gregtech.machine.battery_buffer.opv.4.name=Godlike Voltage 4x Battery Buffer
-gregtech.machine.battery_buffer.opv.8.name=Godlike Voltage 8x Battery Buffer
-gregtech.machine.battery_buffer.opv.16.name=Godlike Voltage 16x Battery Buffer
+gregtech.machine.battery_buffer.opv.4.name=Overpowered Voltage 4x Battery Buffer
+gregtech.machine.battery_buffer.opv.8.name=Overpowered Voltage 8x Battery Buffer
+gregtech.machine.battery_buffer.opv.16.name=Ultra Immense Voltage 16x Battery Buffer
 
 gregtech.machine.battery_buffer.max.4.name=Maximum Voltage 4x Battery Buffer
 gregtech.machine.battery_buffer.max.8.name=Maximum Voltage 8x Battery Buffer
@@ -3847,10 +3846,10 @@ gregtech.machine.transformer.luv.name=Ludicrous Voltage Transformer
 gregtech.machine.transformer.zpm.name=Zero Point Module Transformer
 gregtech.machine.transformer.uv.name=Ultimate Voltage Transformer
 gregtech.machine.transformer.uhv.name=Ultra High Voltage Transformer
-gregtech.machine.transformer.uev.name=Overwhelming Voltage Transformer
-gregtech.machine.transformer.uiv.name=Overpowered Voltage Transformer
-gregtech.machine.transformer.uxv.name=Transcendent Voltage Transformer
-gregtech.machine.transformer.opv.name=Godlike Voltage Transformer
+gregtech.machine.transformer.uev.name=Ultra Excessive Voltage Transformer
+gregtech.machine.transformer.uiv.name=Ultra Immense Voltage Transformer
+gregtech.machine.transformer.uxv.name=Ultra Extreme Voltage Transformer
+gregtech.machine.transformer.opv.name=Overpowered Voltage Transformer
 
 gregtech.machine.transformer.adjustable.ulv.name=Ultra Low Voltage Adjustable Transformer
 gregtech.machine.transformer.adjustable.lv.name=Low Voltage Adjustable Transformer
@@ -3862,10 +3861,10 @@ gregtech.machine.transformer.adjustable.luv.name=Ludicrous Voltage Adjustable Tr
 gregtech.machine.transformer.adjustable.zpm.name=Zero Point Module Transformer
 gregtech.machine.transformer.adjustable.uv.name=Ultimate Voltage Adjustable Transformer
 gregtech.machine.transformer.adjustable.uhv.name=Ultra High Voltage Adjustable Transformer
-gregtech.machine.transformer.adjustable.uev.name=Overwhelming Voltage Adjustable Transformer
-gregtech.machine.transformer.adjustable.uiv.name=Overpowered Voltage Adjustable Transformer
-gregtech.machine.transformer.adjustable.uxv.name=Transcendent Voltage Adjustable Transformer
-gregtech.machine.transformer.adjustable.opv.name=Godlike Voltage Adjustable Transformer
+gregtech.machine.transformer.adjustable.uev.name=Ultra Excessive Voltage Adjustable Transformer
+gregtech.machine.transformer.adjustable.uiv.name=Ultra Immense Voltage Adjustable Transformer
+gregtech.machine.transformer.adjustable.uxv.name=Ultra Extreme Voltage Adjustable Transformer
+gregtech.machine.transformer.adjustable.opv.name=Overpowered Voltage Adjustable Transformer
 
 # Diodes
 gregtech.machine.diode.message=Max Amperage throughput: %s
@@ -3882,10 +3881,10 @@ gregtech.machine.diode.luv.name=Ludicrous Voltage Diode
 gregtech.machine.diode.zpm.name=Zero Point Module Diode
 gregtech.machine.diode.uv.name=Ultimate Voltage Diode
 gregtech.machine.diode.uhv.name=Ultra High Voltage Diode
-gregtech.machine.diode.uev.name=Overwhelming Voltage Diode
-gregtech.machine.diode.uiv.name=Overpowered Voltage Diode
-gregtech.machine.diode.uxv.name=Transcendent Voltage Diode
-gregtech.machine.diode.opv.name=Godlike Voltage Diode
+gregtech.machine.diode.uev.name=Ultra Excessive Voltage Diode
+gregtech.machine.diode.uiv.name=Ultra Immense Voltage Diode
+gregtech.machine.diode.uxv.name=Ultra Extreme Voltage Diode
+gregtech.machine.diode.opv.name=Overpowered Voltage Diode
 gregtech.machine.diode.max.name=Maximum Voltage Diode
 
 # Chargers
@@ -3899,10 +3898,10 @@ gregtech.machine.charger.luv.name=Ludicrous Voltage Turbo Charger
 gregtech.machine.charger.zpm.name=Zero Point Module Turbo Charger
 gregtech.machine.charger.uv.name=Ultimate Voltage Turbo Charger
 gregtech.machine.charger.uhv.name=Ultra High Voltage Turbo Charger
-gregtech.machine.charger.uev.name=Overhwelming Voltage Turbo Charger
-gregtech.machine.charger.uiv.name=Overpowered Voltage Turbo Charger
-gregtech.machine.charger.uxv.name=Transcendent Voltage Turbo Charger
-gregtech.machine.charger.opv.name=Godlike Voltage Turbo Charger
+gregtech.machine.charger.uev.name=Ultra Excessive Voltage Turbo Charger
+gregtech.machine.charger.uiv.name=Ultra Immense Voltage Turbo Charger
+gregtech.machine.charger.uxv.name=Ultra Extreme Voltage Turbo Charger
+gregtech.machine.charger.opv.name=Overpowered Voltage Turbo Charger
 gregtech.machine.charger.max.name=Maximum Voltage Turbo Charger
 
 gregtech.machine.energy_converter.ulv.1.name=ULV Energy Converter (1A)
@@ -4050,20 +4049,31 @@ tile.hermetic_casing.hermetic_casing_uhv.name=Hermetic Casing IX
 
 #Gas Collectors
 gregtech.machine.gas_collector.lv.name=Basic Gas Collector
+gregtech.machine.gas_collector.lv.tooltip=Collects Gas from the air depending on the dimension
 gregtech.machine.gas_collector.mv.name=Advanced Gas Collector
+gregtech.machine.gas_collector.mv.tooltip=Collects Gas from the air depending on the dimension
 gregtech.machine.gas_collector.hv.name=Advanced Gas Collector II
+gregtech.machine.gas_collector.hv.tooltip=Collects Gas from the air depending on the dimension
 gregtech.machine.gas_collector.ev.name=Advanced Gas Collector III
-gregtech.machine.gas_collector.iv.name=Atmospheric Gas Collector
-gregtech.machine.gas_collector.luv.name=Atmospheric Gas Collector II
-gregtech.machine.gas_collector.zpm.name=Atmospheric Gas Collector III
-gregtech.machine.gas_collector.uv.name=Atmospheric Gas Collector IV
-gregtech.machine.gas_collector.uhv.name=Planetary Gas Collector
-gregtech.machine.gas_collector.uev.name=Planetary Gas Collector II
-gregtech.machine.gas_collector.uiv.name=Planetary Gas Collector III
-gregtech.machine.gas_collector.uxv.name=Planetary Gas Collector IV
-gregtech.machine.gas_collector.opv.name=Galactic Gas Collector
-
-gregtech.machine.gas_collector.tooltip=Collects gas from adjacent blocks at the expense of energy, depending on the dimension
+gregtech.machine.gas_collector.ev.tooltip=Collects Gas from the air depending on the dimension
+gregtech.machine.gas_collector.iv.name=Elite Gas Collector
+gregtech.machine.gas_collector.iv.tooltip=Collects Gas from the atmosphere depending on the dimension
+gregtech.machine.gas_collector.luv.name=Elite Gas Collector II
+gregtech.machine.gas_collector.luv.tooltip=Collects Gas from the atmosphere depending on the dimension
+gregtech.machine.gas_collector.zpm.name=Elite Gas Collector III
+gregtech.machine.gas_collector.zpm.tooltip=Collects Gas from the atmosphere depending on the dimension
+gregtech.machine.gas_collector.uv.name=Ultimate Gas Collector
+gregtech.machine.gas_collector.uv.tooltip=Collects Gas from the solar system depending on the dimension
+gregtech.machine.gas_collector.uhv.name=Epic Gas Collector
+gregtech.machine.gas_collector.uhv.tooltip=Collects Gas from the solar system depending on the dimension
+gregtech.machine.gas_collector.uev.name=Epic Gas Collector II
+gregtech.machine.gas_collector.uev.tooltip=Collects Gas from the solar system depending on the dimension
+gregtech.machine.gas_collector.uiv.name=Epic Gas Collector III
+gregtech.machine.gas_collector.uiv.tooltip=Collects Gas from the solar system depending on the dimension
+gregtech.machine.gas_collector.uxv.name=Epic Gas Collector IV
+gregtech.machine.gas_collector.uxv.tooltip=Collects Gas from the solar system depending on the dimension
+gregtech.machine.gas_collector.opv.name=Legendary Gas Collector
+gregtech.machine.gas_collector.opv.tooltip=Collects Gas from the universe depending on the dimension
 
 #Rock Breakers
 gregtech.machine.rock_breaker.lv.name=Basic Rock Breaker
