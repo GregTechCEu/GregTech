@@ -1,12 +1,20 @@
 package gregtech.api.items.toolitem;
 
+import gregtech.api.items.metaitem.stats.IItemComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
+
+import java.util.List;
 
 /**
  * GT Tool Definition
  */
 public interface IGTToolDefinition {
+
+    /**
+     * Tool Component/Behaviours
+     */
+    List<IItemComponent> getComponents();
 
     /**
      * Durability Spec
@@ -37,6 +45,10 @@ public interface IGTToolDefinition {
     /**
      * Tool Stat
      */
+    default int getBaseDurability(ItemStack stack) {
+        return 0;
+    }
+
     default int getBaseQuality(ItemStack stack) {
         return 0;
     }

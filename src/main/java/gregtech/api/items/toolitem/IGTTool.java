@@ -239,7 +239,7 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
         if (toolTag.hasKey("MaxDurability", Constants.NBT.TAG_INT)) {
             return toolTag.getInteger("MaxDurability");
         }
-        int maxDurability = getToolProperty(stack).getToolDurability();
+        int maxDurability = getMaterialDurability(stack) + getToolStats().getBaseDurability(stack);
         toolTag.setInteger("MaxDurability", maxDurability);
         return maxDurability;
     }
