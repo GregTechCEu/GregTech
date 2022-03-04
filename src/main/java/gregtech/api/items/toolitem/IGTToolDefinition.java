@@ -1,6 +1,5 @@
 package gregtech.api.items.toolitem;
 
-import gregtech.api.items.metaitem.stats.IItemComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 
@@ -14,7 +13,7 @@ public interface IGTToolDefinition {
     /**
      * Tool Component/Behaviours
      */
-    List<IItemComponent> getComponents();
+    List<IToolBehaviour> getBehaviours();
 
     /**
      * Durability Spec
