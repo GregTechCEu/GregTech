@@ -111,34 +111,29 @@ public class ToolItems {
                 .oreDicts("craftingToolAxe")
                 .toolClasses("axe"));
         DRILL_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_lv")
-                .toolStats(b -> b.suitableForBlockBreaking().brokenStack(MetaItems.POWER_UNIT_LV::getStackForm))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0).brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
                 .oreDicts("craftingToolDrill")
                 .toolClasses("pickaxe", "shovel", "drill")
-                .aoeData(1, 1, 0)
                 .electric(1));
         DRILL_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_mv")
-                .toolStats(b -> b.suitableForBlockBreaking().brokenStack(MetaItems.POWER_UNIT_MV::getStackForm))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
                 .oreDicts("craftingToolDrill")
                 .toolClasses("pickaxe", "shovel", "drill")
-                .aoeData(1, 1, 0)
                 .electric(1));
         DRILL_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_hv")
-                .toolStats(b -> b.suitableForBlockBreaking().brokenStack(MetaItems.POWER_UNIT_HV::getStackForm))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 0).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
                 .oreDicts("craftingToolDrill")
                 .toolClasses("pickaxe", "shovel", "drill")
-                .aoeData(2, 2, 0)
                 .electric(1));
         DRILL_EV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_ev")
-                .toolStats(b -> b.suitableForBlockBreaking().brokenStack(MetaItems.POWER_UNIT_EV::getStackForm))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 0).brokenStack(() -> MetaItems.POWER_UNIT_EV.getStackForm()))
                 .oreDicts("craftingToolDrill")
                 .toolClasses("pickaxe", "shovel", "drill")
-                .aoeData(2, 2, 0)
                 .electric(1));
         DRILL_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_iv")
-                .toolStats(b -> b.suitableForBlockBreaking().brokenStack(MetaItems.POWER_UNIT_IV::getStackForm))
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 1).brokenStack(() -> MetaItems.POWER_UNIT_IV.getStackForm()))
                 .oreDicts("craftingToolDrill")
                 .toolClasses("pickaxe", "shovel", "drill")
-                .aoeData(2, 2, 1)
                 .electric(1));
     }
 
@@ -194,7 +189,7 @@ public class ToolItems {
             if (!player.isSneaking()) {
                 World world = player.world;
                 if (!ThreadContext.containsKey("GT_AoE_BreakSpeed")) {
-                    Set<BlockPos> validPositions = ((IGTTool) item).getHarvestableBlocks(world, player);
+                    Set<BlockPos> validPositions = ((IGTTool) item).getHarvestableBlocks(stack, world, player);
                     if (!validPositions.isEmpty()) {
                         float newSpeed = event.getNewSpeed(); // Take in consideration of higher prioritized event listeners
                         ThreadContext.put("GT_AoE_BreakSpeed", "");
@@ -270,7 +265,7 @@ public class ToolItems {
             ItemStack stack = player.getHeldItemMainhand();
             Item item = stack.getItem();
             if (item instanceof IGTTool) {
-                Set<BlockPos> validPositions = ((IGTTool) item).getHarvestableBlocks(player.world, player, event.getTarget());
+                Set<BlockPos> validPositions = ((IGTTool) item).getHarvestableBlocks(stack, player.world, player, event.getTarget());
                 float partialTicks = event.getPartialTicks();
                 for (BlockPos pos : validPositions) {
                     event.getContext().drawSelectionBox(player, new RayTraceResult(Vec3d.ZERO, null, pos), 0, partialTicks);

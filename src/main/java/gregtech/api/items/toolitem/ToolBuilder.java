@@ -20,7 +20,6 @@ public abstract class ToolBuilder<T extends IGTTool> {
     protected int tier = -1;
     protected IGTToolDefinition toolStats;
     protected SoundEvent sound;
-    protected AoEDefinition aoeDefinition = AoEDefinition.of();
     protected Character craftingSymbol = null;
 
     public ToolBuilder(String domain, String id) {
@@ -60,16 +59,6 @@ public abstract class ToolBuilder<T extends IGTTool> {
 
     public ToolBuilder<T> effectiveBlocks(Block... blocks) {
         Collections.addAll(effectiveBlocks, blocks);
-        return this;
-    }
-
-    public ToolBuilder<T> aoeData(int column, int row, int layer) {
-        this.aoeDefinition = AoEDefinition.of(column, row, layer);
-        return this;
-    }
-
-    public ToolBuilder<T> aoeData(AoEDefinition aoeDefinition) {
-        this.aoeDefinition = aoeDefinition;
         return this;
     }
 

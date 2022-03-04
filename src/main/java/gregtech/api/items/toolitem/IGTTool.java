@@ -14,6 +14,12 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.widgets.ClickButtonWidget;
+import gregtech.api.gui.widgets.DynamicLabelWidget;
+import gregtech.api.items.gui.ItemUIFactory;
+import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -47,10 +53,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -83,7 +86,7 @@ import static gregtech.api.items.armor.IArmorLogic.*;
         @Optional.Interface(modid = GTValues.MODID_EIO, iface = "crazypants.enderio.api.tool.ITool"),
         @Optional.Interface(modid = GTValues.MODID_FR, iface = "forestry.api.arboriculture.IToolGrafter"),
         @Optional.Interface(modid = GTValues.MODID_EIO, iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")})
-public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, IToolGrafter, IOverlayRenderAware {
+public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHammer, ITool, IToolGrafter, IOverlayRenderAware {
 
     String getDomain();
 
@@ -102,8 +105,6 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
 
     Set<String> getOreDictNames();
 
-    AoEDefinition getAoEDefinition();
-
     default Item get() {
         return (Item) this;
     }
@@ -116,6 +117,10 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
         toolTag.setInteger("MaxDurability", toolProperty.getToolDurability());
         toolTag.setInteger("Durability", 0);
         EnchantmentHelper.setEnchantments(toolProperty.getEnchantments(), stack);
+        AoEDefinition aoeDefinition = getToolStats().getAoEDefinition(stack);
+        toolTag.setInteger("AoEMaxColumn", aoeDefinition.column);
+        toolTag.setInteger("AoEMaxRow", aoeDefinition.row);
+        toolTag.setInteger("AoEMaxLayer", aoeDefinition.layer);
         return stack;
     }
 
@@ -264,6 +269,14 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
         return harvestLevel;
     }
 
+    default AoEDefinition getMaxAoEDefinition(ItemStack stack) {
+        return AoEDefinition.readMax(getToolTag(stack));
+    }
+
+    default AoEDefinition getAoEDefinition(ItemStack stack) {
+        return AoEDefinition.read(getToolTag(stack), getMaxAoEDefinition(stack));
+    }
+
     @SideOnly(Side.CLIENT)
     default int getColor(ItemStack stack, int tintIndex) {
         return tintIndex % 2 == 1 ? getToolMaterial(stack).getMaterialRGB() : 0xFFFFFF;
@@ -300,12 +313,17 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
                 EntityPlayerMP serverPlayer = (EntityPlayerMP) entityLiving;
                 if (get().getToolClasses(stack).contains("axe") && !ThreadContext.containsKey("GT_TreeFelling")) {
                     ThreadContext.put("GT_TreeFelling", "");
-                    treeLogging(worldIn, serverPlayer, stack, pos);
+                    if (!treeLogging(worldIn, serverPlayer, stack, pos)) {
+                        if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
+                            damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
+                            return true;
+                        }
+                    }
                     ThreadContext.remove("GT_TreeFelling");
                     return true;
                 } else if (!ThreadContext.containsKey("GT_AoE_Breaking")) {
                     ThreadContext.put("GT_AoE_Breaking", "");
-                    for (BlockPos aoePos : getHarvestableBlocks(worldIn, serverPlayer)) {
+                    for (BlockPos aoePos : getHarvestableBlocks(stack, worldIn, serverPlayer)) {
                         serverPlayer.interactionManager.tryHarvestBlock(aoePos);
                         if (stack.isEmpty()) {
                             ThreadContext.remove("GT_AoE_Breaking");
@@ -317,9 +335,6 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
             }
             if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
                 damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
-                if (stack.isEmpty()) {
-                    return true;
-                }
             }
         }
         return true;
@@ -457,6 +472,15 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
         return isElectric() ? ElectricStats.createElectricItem(0L, getElectricTier()).createProvider(stack) : null;
     }
 
+    default ActionResult<ItemStack> definition$onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
+        if (!world.isRemote) {
+            new PlayerInventoryHolder(player, hand).openUI();
+            return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
+        }
+        return ActionResult.newResult(EnumActionResult.PASS, stack);
+    }
+
     @SideOnly(Side.CLIENT)
     default void definition$addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         // if (flag.isAdvanced()) TODO: lists "behaviours"
@@ -494,14 +518,11 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
     }
 
     // AoE
-    default Set<BlockPos> getHarvestableBlocks(@Nonnull World world, @Nonnull EntityPlayer player, RayTraceResult rayTraceResult) {
-        if (getAoEDefinition() == AoEDefinition.of()) {
-            return Collections.emptySet();
-        }
+    default Set<BlockPos> getHarvestableBlocks(ItemStack stack, AoEDefinition aoeDefinition, @Nonnull World world, @Nonnull EntityPlayer player, RayTraceResult rayTraceResult) {
         if (rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && rayTraceResult.sideHit != null) {
-            int column = getAoEDefinition().column;
-            int row = getAoEDefinition().row;
-            int layer = getAoEDefinition().layer;
+            int column = aoeDefinition.column;
+            int row = aoeDefinition.row;
+            int layer = aoeDefinition.layer;
             EnumFacing playerFacing = player.getHorizontalFacing();
             EnumFacing.Axis playerAxis = playerFacing.getAxis();
             EnumFacing.Axis sideHitAxis = rayTraceResult.sideHit.getAxis();
@@ -517,7 +538,6 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
                                 BlockPos pos = rayTraceResult.getBlockPos().add(x, isDown ? y : -y, z);
                                 IBlockState state = world.getBlockState(pos);
                                 if (state.getBlock().canHarvestBlock(world, pos, player)) {
-                                    ItemStack stack = player.getHeldItemMainhand();
                                     if (get().getToolClasses(stack).stream().anyMatch(s -> state.getBlock().isToolEffective(s, state))) {
                                         validPositions.add(pos);
                                     }
@@ -538,7 +558,6 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
                                 BlockPos pos = rayTraceResult.getBlockPos().add(isX ? (isNegative ? x : -x) : (isNegative ? z : -z), y, isX ? (isNegative ? z : -z) : (isNegative ? x : -x));
                                 IBlockState state = world.getBlockState(pos);
                                 if (state.getBlock().canHarvestBlock(world, pos, player)) {
-                                    ItemStack stack = player.getHeldItemMainhand();
                                     if (get().getToolClasses(stack).stream().anyMatch(s -> state.getBlock().isToolEffective(s, state))) {
                                         validPositions.add(pos);
                                     }
@@ -553,26 +572,36 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
         return Collections.emptySet();
     }
 
-    default Set<BlockPos> getHarvestableBlocks(@Nonnull World world, @Nonnull EntityPlayer player) {
-        if (getAoEDefinition() == AoEDefinition.of()) {
+    default Set<BlockPos> getHarvestableBlocks(ItemStack stack, @Nonnull World world, @Nonnull EntityPlayer player, RayTraceResult rayTraceResult) {
+        AoEDefinition aoeDefinition = getAoEDefinition(stack);
+        if (aoeDefinition == AoEDefinition.none()) {
+            return Collections.emptySet();
+        }
+        return getHarvestableBlocks(stack, aoeDefinition, world, player, rayTraceResult);
+    }
+
+    default Set<BlockPos> getHarvestableBlocks(ItemStack stack, @Nonnull World world, @Nonnull EntityPlayer player) {
+        AoEDefinition aoeDefiniton = getAoEDefinition(stack);
+        if (aoeDefiniton == AoEDefinition.none()) {
             return Collections.emptySet();
         }
         Vec3d lookPos = player.getPositionEyes(1F);
         Vec3d rotation = player.getLook(1);
         Vec3d realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
         RayTraceResult rayTraceResult = world.rayTraceBlocks(lookPos, realLookPos);
-        return getHarvestableBlocks(world, player, rayTraceResult);
+        return getHarvestableBlocks(stack, aoeDefiniton, world, player, rayTraceResult);
     }
 
-    default void treeLogging(World world, EntityPlayerMP player, ItemStack stack, BlockPos start) {
+    default boolean treeLogging(World world, EntityPlayerMP player, ItemStack stack, BlockPos start) {
         LinkedList<BlockPos> blocks = new LinkedList<>();
         Set<BlockPos> visited = new ObjectOpenHashSet<>();
         blocks.add(start);
         BlockPos pos;
         int amount = 0;
+        boolean harvested = false;
         while (!blocks.isEmpty() && amount <= 512) {
             if (stack.isEmpty()) {
-                break;
+                return harvested;
             }
             pos = blocks.remove();
             if (!visited.add(pos)) {
@@ -595,11 +624,55 @@ public interface IGTTool extends IAEWrench, IToolWrench, IToolHammer, ITool, ITo
                     }
                 }
                 amount++;
-                if (!player.interactionManager.tryHarvestBlock(pos)) {
+                if (player.interactionManager.tryHarvestBlock(pos)) {
+                    harvested = true;
+                } else {
                     break;
                 }
             }
         }
+        return harvested;
+    }
+
+    /**
+     * Creates new UI basing on given holder. Holder contains information
+     * about item stack and hand, and also player
+     */
+    default ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
+        NBTTagCompound tag = getToolTag(holder.getCurrentItem());
+        AoEDefinition defaultDefinition = getMaxAoEDefinition(holder.getCurrentItem());
+        return ModularUI.builder(GuiTextures.BORDERED_BACKGROUND, 120, 80)
+                .label(10, 10, "Column")
+                .label(52, 10, "Row")
+                .label(82, 10, "Layer")
+                .widget(new ClickButtonWidget(15, 24, 20, 20, "+", data -> {
+                    AoEDefinition.increaseColumn(tag, defaultDefinition);
+                    holder.markAsDirty();
+                }))
+                .widget(new ClickButtonWidget(15, 44, 20, 20, "-", data -> {
+                    AoEDefinition.decreaseColumn(tag, defaultDefinition);
+                    holder.markAsDirty();
+                }))
+                .widget(new ClickButtonWidget(50, 24, 20, 20, "+", data -> {
+                    AoEDefinition.increaseRow(tag, defaultDefinition);
+                    holder.markAsDirty();
+                }))
+                .widget(new ClickButtonWidget(50, 44, 20, 20, "-", data -> {
+                    AoEDefinition.decreaseRow(tag, defaultDefinition);
+                    holder.markAsDirty();
+                }))
+                .widget(new ClickButtonWidget(85, 24, 20, 20, "+", data -> {
+                    AoEDefinition.increaseLayer(tag, defaultDefinition);
+                    holder.markAsDirty();
+                }))
+                .widget(new ClickButtonWidget(85, 44, 20, 20, "-", data -> {
+                    AoEDefinition.decreaseLayer(tag, defaultDefinition);
+                    holder.markAsDirty();
+                }))
+                .widget(new DynamicLabelWidget(23, 65, () -> Integer.toString(AoEDefinition.getColumn(getToolTag(holder.getCurrentItem()), defaultDefinition))))
+                .widget(new DynamicLabelWidget(58, 65, () -> Integer.toString(AoEDefinition.getRow(getToolTag(holder.getCurrentItem()), defaultDefinition))))
+                .widget(new DynamicLabelWidget(93, 65, () -> Integer.toString(AoEDefinition.getLayer(getToolTag(holder.getCurrentItem()), defaultDefinition))))
+                .build(holder, entityPlayer);
     }
 
     // Extended Interfaces
