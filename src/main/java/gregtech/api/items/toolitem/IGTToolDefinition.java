@@ -64,6 +64,10 @@ public interface IGTToolDefinition {
         return 0.0f;
     }
 
+    default AoEDefinition getAoEDefinition(ItemStack stack) {
+        return AoEDefinition.none();
+    }
+
     /**
      * Enchantments
      */
