@@ -1,10 +1,11 @@
 package gregtech.api.items.metaitem.stats;
 
+import gregtech.api.items.toolitem.IToolBehaviour;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 
-public interface IItemUseManager extends IItemComponent {
+public interface IItemUseManager extends IItemComponent, IToolBehaviour {
 
     default boolean canStartUsing(ItemStack stack, EntityPlayer player) {
         return true;
