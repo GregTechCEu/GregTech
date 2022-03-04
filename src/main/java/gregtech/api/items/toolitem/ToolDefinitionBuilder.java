@@ -1,18 +1,25 @@
 package gregtech.api.items.toolitem;
 
+import com.google.common.collect.ImmutableList;
+import gregtech.api.items.metaitem.stats.IItemComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.item.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 
 public class ToolDefinitionBuilder {
 
+    private List<IItemComponent> components = new ArrayList<>();
     private int damagePerAction = 1;
     private boolean suitableForBlockBreaking = false;
     private boolean suitableForAttacking = false;
     private boolean suitableForCrafting = false;
+    private int baseDurability = 0;
     private int baseQuality = 0;
     private float attackDamage = 0F;
     private float efficiency = 4F;
@@ -21,6 +28,11 @@ public class ToolDefinitionBuilder {
     private float attackSpeed = 0F;
     private boolean sneakBypassUse = false;
     private Supplier<ItemStack> brokenStack = () -> ItemStack.EMPTY;
+
+    public ToolDefinitionBuilder component(IItemComponent... components) {
+        Collections.addAll(this.components, components);
+        return this;
+    }
 
     public ToolDefinitionBuilder damagePerAction(int damagePerAction) {
         this.damagePerAction = damagePerAction;
@@ -39,6 +51,11 @@ public class ToolDefinitionBuilder {
 
     public ToolDefinitionBuilder suitableForCrafting() {
         this.suitableForCrafting = true;
+        return this;
+    }
+
+    public ToolDefinitionBuilder baseDurability(int baseDurability) {
+        this.baseDurability = baseDurability;
         return this;
     }
 
@@ -102,10 +119,12 @@ public class ToolDefinitionBuilder {
     public IGTToolDefinition build() {
         return new IGTToolDefinition() {
 
+            private final List<IItemComponent> components = ImmutableList.copyOf(ToolDefinitionBuilder.this.components);
             private final int damagePerAction = ToolDefinitionBuilder.this.damagePerAction;
             private final boolean suitableForBlockBreaking = ToolDefinitionBuilder.this.suitableForBlockBreaking;
             private final boolean suitableForAttacking = ToolDefinitionBuilder.this.suitableForAttacking;
             private final boolean suitableForCrafting = ToolDefinitionBuilder.this.suitableForCrafting;
+            private final int baseDurability = ToolDefinitionBuilder.this.baseDurability;
             private final int baseQuality = ToolDefinitionBuilder.this.baseQuality;
             private final float attackDamage = ToolDefinitionBuilder.this.attackDamage;
             private final float efficiency = ToolDefinitionBuilder.this.efficiency;
@@ -114,6 +133,11 @@ public class ToolDefinitionBuilder {
             private final float attackSpeed = ToolDefinitionBuilder.this.attackSpeed;
             private final boolean sneakBypassUse = ToolDefinitionBuilder.this.sneakBypassUse;
             private final Supplier<ItemStack> brokenStack = ToolDefinitionBuilder.this.brokenStack;
+
+            @Override
+            public List<IItemComponent> getComponents() {
+                return components;
+            }
 
             @Override
             public int getDamagePerAction(ItemStack stack) {
@@ -133,6 +157,11 @@ public class ToolDefinitionBuilder {
             @Override
             public boolean isSuitableForCrafting(ItemStack stack) {
                 return suitableForCrafting;
+            }
+
+            @Override
+            public int getBaseDurability(ItemStack stack) {
+                return baseDurability;
             }
 
             @Override

@@ -111,10 +111,34 @@ public class ToolItems {
                 .oreDicts("craftingToolAxe")
                 .toolClasses("axe"));
         DRILL_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_lv")
-                .toolStats(b -> b.suitableForBlockBreaking())
+                .toolStats(b -> b.suitableForBlockBreaking().brokenStack(MetaItems.POWER_UNIT_LV::getStackForm))
                 .oreDicts("craftingToolDrill")
-                .toolClasses("pickaxe", "drill", "shovel")
+                .toolClasses("pickaxe", "shovel", "drill")
                 .aoeData(1, 1, 0)
+                .electric(1));
+        DRILL_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_mv")
+                .toolStats(b -> b.suitableForBlockBreaking().brokenStack(MetaItems.POWER_UNIT_MV::getStackForm))
+                .oreDicts("craftingToolDrill")
+                .toolClasses("pickaxe", "shovel", "drill")
+                .aoeData(1, 1, 0)
+                .electric(1));
+        DRILL_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_hv")
+                .toolStats(b -> b.suitableForBlockBreaking().brokenStack(MetaItems.POWER_UNIT_HV::getStackForm))
+                .oreDicts("craftingToolDrill")
+                .toolClasses("pickaxe", "shovel", "drill")
+                .aoeData(2, 2, 0)
+                .electric(1));
+        DRILL_EV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_ev")
+                .toolStats(b -> b.suitableForBlockBreaking().brokenStack(MetaItems.POWER_UNIT_EV::getStackForm))
+                .oreDicts("craftingToolDrill")
+                .toolClasses("pickaxe", "shovel", "drill")
+                .aoeData(2, 2, 0)
+                .electric(1));
+        DRILL_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_iv")
+                .toolStats(b -> b.suitableForBlockBreaking().brokenStack(MetaItems.POWER_UNIT_IV::getStackForm))
+                .oreDicts("craftingToolDrill")
+                .toolClasses("pickaxe", "shovel", "drill")
+                .aoeData(2, 2, 1)
                 .electric(1));
     }
 
