@@ -2,7 +2,7 @@ package gregtech.api.items.metaitem.stats;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
+import gregtech.api.items.toolitem.IToolBehaviour;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -18,10 +18,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public interface IItemBehaviour extends IItemComponent {
-
-    default void onAddedToItem(MetaValueItem metaValueItem) {
-    }
+public interface IItemBehaviour extends IItemComponent, IToolBehaviour {
 
     default boolean onLeftClickEntity(ItemStack itemStack, EntityPlayer player, Entity entity) {
         return false;

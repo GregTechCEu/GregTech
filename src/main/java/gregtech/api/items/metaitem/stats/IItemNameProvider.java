@@ -1,9 +1,10 @@
 package gregtech.api.items.metaitem.stats;
 
+import gregtech.api.items.toolitem.IToolBehaviour;
 import net.minecraft.item.ItemStack;
 
 @FunctionalInterface
-public interface IItemNameProvider extends IItemComponent {
+public interface IItemNameProvider extends IItemComponent, IToolBehaviour {
 
     String getItemStackDisplayName(ItemStack itemStack, String unlocalizedName);
 

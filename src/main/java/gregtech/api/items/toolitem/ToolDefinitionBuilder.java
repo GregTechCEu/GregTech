@@ -1,7 +1,6 @@
 package gregtech.api.items.toolitem;
 
 import com.google.common.collect.ImmutableList;
-import gregtech.api.items.metaitem.stats.IItemComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.item.ItemStack;
@@ -14,7 +13,7 @@ import java.util.function.Supplier;
 
 public class ToolDefinitionBuilder {
 
-    private List<IItemComponent> components = new ArrayList<>();
+    private List<IToolBehaviour> behaviours = new ArrayList<>();
     private int damagePerAction = 1;
     private boolean suitableForBlockBreaking = false;
     private boolean suitableForAttacking = false;
@@ -29,8 +28,8 @@ public class ToolDefinitionBuilder {
     private boolean sneakBypassUse = false;
     private Supplier<ItemStack> brokenStack = () -> ItemStack.EMPTY;
 
-    public ToolDefinitionBuilder component(IItemComponent... components) {
-        Collections.addAll(this.components, components);
+    public ToolDefinitionBuilder behaviours(IToolBehaviour... behaviours) {
+        Collections.addAll(this.behaviours, behaviours);
         return this;
     }
 
@@ -119,7 +118,7 @@ public class ToolDefinitionBuilder {
     public IGTToolDefinition build() {
         return new IGTToolDefinition() {
 
-            private final List<IItemComponent> components = ImmutableList.copyOf(ToolDefinitionBuilder.this.components);
+            private final List<IToolBehaviour> behaviours = ImmutableList.copyOf(ToolDefinitionBuilder.this.behaviours);
             private final int damagePerAction = ToolDefinitionBuilder.this.damagePerAction;
             private final boolean suitableForBlockBreaking = ToolDefinitionBuilder.this.suitableForBlockBreaking;
             private final boolean suitableForAttacking = ToolDefinitionBuilder.this.suitableForAttacking;
@@ -135,8 +134,8 @@ public class ToolDefinitionBuilder {
             private final Supplier<ItemStack> brokenStack = ToolDefinitionBuilder.this.brokenStack;
 
             @Override
-            public List<IItemComponent> getComponents() {
-                return components;
+            public List<IToolBehaviour> getBehaviours() {
+                return behaviours;
             }
 
             @Override
