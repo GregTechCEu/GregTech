@@ -70,7 +70,12 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
     }
 
     public void setFluidTemperature(int fluidTemperature) {
-        Preconditions.checkArgument(fluidTemperature > 0, "Invalid temperature");
+        setFluidTemperature(fluidTemperature, true);
+    }
+
+    public void setFluidTemperature(int fluidTemperature, boolean isKelvin) {
+        if (isKelvin) Preconditions.checkArgument(fluidTemperature > 0, "Invalid temperature");
+        else setFluidTemperature(fluidTemperature += 273, false);
         this.fluidTemperature = fluidTemperature;
         if (fluid != null)
             fluid.setTemperature(fluidTemperature);
