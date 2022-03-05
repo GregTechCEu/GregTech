@@ -85,7 +85,8 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
         // Outputs
         if (!recipe.getOutputs().isEmpty() || !recipe.getChancedOutputs().isEmpty()) {
-            List<ItemStack> recipeOutputs;
+            List<ItemStack> recipeOutputs = recipe.getOutputs()
+                    .stream().map(ItemStack::copy).collect(Collectors.toList());
 
             // Scanner Output replacing
             if (recipe.getOutputs().size() > 0 && recipe.getOutputs().get(0).getSubCompound(AssemblyLineRecipeBuilder.RESEARCH_NBT_TAG_NAME) != null) {
@@ -94,15 +95,8 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                 ItemStack researchItem = new ItemStack(researchItemNBT);
                 if (!researchItem.isEmpty() && researchItemNBT != null) {
                     recipeOutputs = Collections.singletonList(researchItem);
-                } else {
-                    recipeOutputs = getOutputListFromRecipe(recipe);
-                    currentItemSlot += recipeOutputs.size();
                 }
-            } else {
-                recipeOutputs = getOutputListFromRecipe(recipe);
-                currentItemSlot += recipeOutputs.size();
             }
-
 
             List<ChanceEntry> chancedOutputs = recipe.getChancedOutputs();
             chancedOutputs.sort(Comparator.comparingInt(entry -> entry == null ? 0 : entry.getChance()));

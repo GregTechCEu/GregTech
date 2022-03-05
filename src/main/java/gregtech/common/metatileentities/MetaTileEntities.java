@@ -730,11 +730,11 @@ public class MetaTileEntities {
                 ENERGY_CONVERTER[j][i] = registerMetaTileEntity(1670 + j + i * 4, converter);
             }
         }
-        // Data Access hatches, IDs 1730-1731
-        DATA_HATCH[0] = registerMetaTileEntity(1730, new MetaTileEntityDataHatch(gregtechId("data_hatch.ev"), GTValues.EV));
-        DATA_HATCH[1] = registerMetaTileEntity(1731, new MetaTileEntityDataHatch(gregtechId("data_hatch.luv"), GTValues.LuV));
+        // Data Access hatches, IDs 1730-1732
+        DATA_HATCH[0] = registerMetaTileEntity(1730, new MetaTileEntityDataHatch(gregtechId("data_hatch.ev"), GTValues.EV, 4));
+        DATA_HATCH[1] = registerMetaTileEntity(1731, new MetaTileEntityDataHatch(gregtechId("data_hatch.luv"), GTValues.LuV, 8));
 
-        CREATIVE_DATA_HATCH = registerMetaTileEntity(1672, new MetaTileEntityCreativeDataHatch(gregtechId("creative_data_hatch")));
+        CREATIVE_DATA_HATCH = registerMetaTileEntity(1732, new MetaTileEntityCreativeDataHatch(gregtechId("creative_data_hatch")));
 
 
 
