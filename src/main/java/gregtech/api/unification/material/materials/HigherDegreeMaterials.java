@@ -15,7 +15,7 @@ public class HigherDegreeMaterials {
     public static void register() {
 
         Electrotine = new Material.Builder(2507, "electrotine")
-                .dust().ore(5, 1, true)
+                .dust().ore(4, 1, true)
                 .color(0x3CB4C8).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Redstone, 1, Electrum, 1)
@@ -64,7 +64,6 @@ public class HigherDegreeMaterials {
                 .dust(1).ore()
                 .color(0x283C3C).iconSet(SAND)
                 .components(Magnetite, 1, GraniteBlack, 1)
-                .flags(BLAST_FURNACE_CALCITE_DOUBLE)
                 .build();
 
         Redrock = new Material.Builder(2514, "redrock")
@@ -104,7 +103,6 @@ public class HigherDegreeMaterials {
                 .dust(1).ore()
                 .color(0x283228).iconSet(SAND)
                 .components(Magnetite, 1, Basalt, 1)
-                .flags(BLAST_FURNACE_CALCITE_DOUBLE)
                 .build();
 
         HSSE = new Material.Builder(2519, "hsse")

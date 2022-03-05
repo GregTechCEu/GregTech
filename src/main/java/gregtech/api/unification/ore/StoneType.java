@@ -35,7 +35,7 @@ public class StoneType implements Comparable<StoneType> {
 
     public static final GTControlledRegistry<String, StoneType> STONE_TYPE_REGISTRY = new GTControlledRegistry<>(128);
 
-    public StoneType(int id, String name, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial, Supplier<IBlockState> stone, Predicate<IBlockState> predicate, boolean shouldBeDroppedAsItem) {
+    public StoneType(int id, String name, SoundType soundType, OrePrefix processingPrefix, @Nonnull Material stoneMaterial, Supplier<IBlockState> stone, Predicate<IBlockState> predicate, boolean shouldBeDroppedAsItem) {
         Preconditions.checkArgument(
                 stoneMaterial.hasProperty(PropertyKey.DUST),
                 "Stone type must be made with a Material with the Dust Property!"

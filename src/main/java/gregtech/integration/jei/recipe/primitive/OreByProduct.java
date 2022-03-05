@@ -23,7 +23,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +41,7 @@ public class OreByProduct implements IRecipeWrapper {
             OrePrefix.crushed,
             OrePrefix.crushedPurified,
             OrePrefix.dustImpure,
-            OrePrefix.dustPure,
-            OrePrefix.crushedCentrifuged
+            OrePrefix.crushedRefined
     );
 
     private static ImmutableList<ItemStack> ALWAYS_MACHINES;
@@ -53,8 +51,8 @@ public class OreByProduct implements IRecipeWrapper {
     private final List<List<ItemStack>> outputs = new ArrayList<>();
     private final List<List<FluidStack>> fluidInputs = new ArrayList<>();
     private boolean hasDirectSmelt = false;
-    private boolean hasChemBath = false;
-    private boolean hasSeparator = false;
+    //private boolean hasChemBath = false;
+    //private boolean hasSeparator = false;
     private boolean hasSifter = false;
     private int currentSlot;
 
@@ -73,7 +71,6 @@ public class OreByProduct implements IRecipeWrapper {
         }
         OreProperty property = material.getProperty(PropertyKey.ORE);
         int oreMultiplier = property.getOreMultiplier();
-        int byproductMultiplier = property.getByProductMultiplier();
         currentSlot = 0;
         Material[] byproducts = new Material[]{
                 GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class),
@@ -84,8 +81,8 @@ public class OreByProduct implements IRecipeWrapper {
 
         // "INPUTS"
 
-        Pair<Material, Integer> washedIn = property.getWashedIn();
-        List<Material> separatedInto = property.getSeparatedInto();
+        //Pair<Material, Integer> washedIn = property.getWashedIn();
+        //List<Material> separatedInto = property.getSeparatedInto();
 
         List<ItemStack> oreStacks = new ArrayList<>();
         for (OrePrefix prefix : ORES) {
@@ -114,18 +111,18 @@ public class OreByProduct implements IRecipeWrapper {
         inputs.add(simpleWashers);
         inputs.add(simpleWashers);
 
-        if (washedIn != null && washedIn.getKey() != null) {
-            hasChemBath = true;
-            addToInputs(MetaTileEntities.CHEMICAL_BATH[GTValues.LV].getStackForm());
-        } else {
+        //if (washedIn != null && washedIn.getKey() != null) {
+        //    hasChemBath = true;
+         //   addToInputs(MetaTileEntities.CHEMICAL_BATH[GTValues.LV].getStackForm());
+        //} else {
             addToInputs(ItemStack.EMPTY);
-        }
-        if (separatedInto != null && !separatedInto.isEmpty()) {
-            hasSeparator = true;
-            addToInputs(MetaTileEntities.ELECTROMAGNETIC_SEPARATOR[GTValues.LV].getStackForm());
-        } else {
+        //}
+        //if (separatedInto != null && !separatedInto.isEmpty()) {
+        //    hasSeparator = true;
+        //    addToInputs(MetaTileEntities.ELECTROMAGNETIC_SEPARATOR[GTValues.LV].getStackForm());
+        //} else {
             addToInputs(ItemStack.EMPTY);
-        }
+        //}
         if (material.hasProperty(PropertyKey.GEM)) {
             hasSifter = true;
             addToInputs(MetaTileEntities.SIFTER[GTValues.LV].getStackForm());
@@ -174,7 +171,7 @@ public class OreByProduct implements IRecipeWrapper {
 
         // macerate crushed -> impure
         addToOutputs(material, OrePrefix.dustImpure, 1);
-        addToOutputs(byproducts[0], OrePrefix.dust, byproductMultiplier);
+        addToOutputs(byproducts[0], OrePrefix.dust, 1);
         addChance(1400, 850);
 
         // centrifuge impure -> dust
@@ -190,8 +187,8 @@ public class OreByProduct implements IRecipeWrapper {
         fluidInputs.add(fluidStacks);
 
         // TC crushed/crushed purified -> centrifuged
-        addToOutputs(material, OrePrefix.crushedCentrifuged, 1);
-        addToOutputs(byproducts[1], OrePrefix.dustTiny, byproductMultiplier * 3);
+        addToOutputs(material, OrePrefix.crushedRefined, 1);
+        addToOutputs(byproducts[1], OrePrefix.dustTiny, 3);
 
         // macerate centrifuged -> dust
         addToOutputs(material, OrePrefix.dust, 1);
@@ -199,9 +196,9 @@ public class OreByProduct implements IRecipeWrapper {
         addChance(1400, 850);
 
         // macerate crushed purified -> purified
-        addToOutputs(material, OrePrefix.dustPure, 1);
-        addToOutputs(byproducts[1], OrePrefix.dust, 1);
-        addChance(1400, 850);
+        //addToOutputs(material, OrePrefix.dustPure, 1);
+        //addToOutputs(byproducts[1], OrePrefix.dust, 1);
+        //addChance(1400, 850);
 
         // centrifuge purified -> dust
         addToOutputs(material, OrePrefix.dust, 1);
@@ -212,40 +209,40 @@ public class OreByProduct implements IRecipeWrapper {
         addToOutputs(material, OrePrefix.crushedPurified, 1);
         addToOutputs(material, OrePrefix.dustImpure, 1);
         addToOutputs(material, OrePrefix.dust, 1);
-        addToOutputs(material, OrePrefix.dustPure, 1);
+        //addToOutputs(material, OrePrefix.dustPure, 1);
         addToOutputs(material, OrePrefix.dust, 1);
 
         // ADVANCED PROCESSING
 
         // chem bath
-        if (hasChemBath) {
-            addToOutputs(material, OrePrefix.crushedPurified, 1);
-            addToOutputs(byproducts[3], OrePrefix.dust, byproductMultiplier);
-            addChance(7000, 580);
-            List<FluidStack> washedFluid = new ArrayList<>();
-            washedFluid.add(washedIn.getKey().getFluid(washedIn.getValue()));
-            fluidInputs.add(washedFluid);
-        } else {
+        //if (hasChemBath) {
+        //    addToOutputs(material, OrePrefix.crushedPurified, 1);
+        //    addToOutputs(byproducts[3], OrePrefix.dust, 1);
+        //    addChance(7000, 580);
+        //    List<FluidStack> washedFluid = new ArrayList<>();
+        //    washedFluid.add(washedIn.getKey().getFluid(washedIn.getValue()));
+        //    fluidInputs.add(washedFluid);
+        //} else {
             addEmptyOutputs(2);
             List<FluidStack> washedFluid = new ArrayList<>();
             fluidInputs.add(washedFluid);
-        }
+        //}
 
         // electromagnetic separator
-        if (hasSeparator) {
-            ItemStack separatedStack1 = OreDictUnifier.get(OrePrefix.dustSmall, separatedInto.get(0));
-            OrePrefix prefix = (separatedInto.get(separatedInto.size() - 1).getBlastTemperature() == 0 && separatedInto.get(separatedInto.size() - 1).hasProperty(PropertyKey.INGOT))
-                    ? OrePrefix.nugget : OrePrefix.dustSmall;
-            ItemStack separatedStack2 = OreDictUnifier.get(prefix, separatedInto.get(separatedInto.size() - 1), prefix == OrePrefix.nugget ? 2 : 1);
+        //if (hasSeparator) {
+        //    ItemStack separatedStack1 = OreDictUnifier.get(OrePrefix.dustSmall, separatedInto.get(0));
+        //    OrePrefix prefix = (separatedInto.get(separatedInto.size() - 1).getBlastTemperature() == 0 && separatedInto.get(separatedInto.size() - 1).hasProperty(PropertyKey.INGOT))
+        //            ? OrePrefix.nugget : OrePrefix.dustSmall;
+        //    ItemStack separatedStack2 = OreDictUnifier.get(prefix, separatedInto.get(separatedInto.size() - 1), prefix == OrePrefix.nugget ? 2 : 1);
 
-            addToOutputs(material, OrePrefix.dust, 1);
-            addToOutputs(separatedStack1);
-            addChance(4000, 850);
-            addToOutputs(separatedStack2);
-            addChance(2000, 600);
-        } else {
+        //    addToOutputs(material, OrePrefix.dust, 1);
+        //    addToOutputs(separatedStack1);
+        //    addChance(4000, 850);
+        //    addToOutputs(separatedStack2);
+        //    addChance(2000, 600);
+        //} else {
             addEmptyOutputs(3);
-        }
+        //}
 
         // sifter
         if (hasSifter) {
@@ -259,8 +256,8 @@ public class OreByProduct implements IRecipeWrapper {
             addGemChance(1000, 150, 1500, 200, highOutput);
             addToOutputs(material, OrePrefix.gem, 1);
             addGemChance(3500, 500, 5000, 1000, highOutput);
-            addToOutputs(material, OrePrefix.dustPure, 1);
-            addGemChance(5000, 750, 2500, 500, highOutput);
+            //addToOutputs(material, OrePrefix.dustPure, 1);
+            //addGemChance(5000, 750, 2500, 500, highOutput);
 
             if (!flawedStack.isEmpty()) {
                 addToOutputs(flawedStack);
@@ -303,13 +300,13 @@ public class OreByProduct implements IRecipeWrapper {
         return hasSifter;
     }
 
-    public boolean hasSeparator() {
-        return hasSeparator;
-    }
+    //public boolean hasSeparator() {
+    //    return hasSeparator;
+    //}
 
-    public boolean hasChemBath() {
-        return hasChemBath;
-    }
+    //public boolean hasChemBath() {
+    //    return hasChemBath;
+    //}
 
     public boolean hasDirectSmelt() {
         return hasDirectSmelt;

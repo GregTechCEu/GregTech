@@ -278,7 +278,7 @@ public class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_BATH_RECIPES = new RecipeMap<>("chemical_bath", 1, 1, 1, 6, 1, 1, 0, 1, new SimpleRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_BATH_RECIPES = new RecipeMap<>("chemical_bath", 1, 1, 1, 6, 1, 1, 0, 3, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, true, GuiTextures.BREWER_OVERLAY)
             .setSlotOverlay(true, false, false, GuiTextures.DUST_OVERLAY)
             .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
@@ -546,10 +546,10 @@ public class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> ELECTROLYZER_RECIPES = new RecipeMap<>("electrolyzer", 0, 2, 0, 6, 0, 1, 0, 6, new SimpleRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> ELECTROLYZER_RECIPES = new RecipeMap<>("electrolyzer", 0, 2, 0, 6, 0, 2, 0, 6, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, false, GuiTextures.LIGHTNING_OVERLAY_1)
             .setSlotOverlay(false, false, true, GuiTextures.CANISTER_OVERLAY)
-            .setSlotOverlay(false, true, true, GuiTextures.LIGHTNING_OVERLAY_2)
+            .setSlotOverlay(false, true, GuiTextures.LIGHTNING_OVERLAY_2)
             .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL)
             .setSound(GTSoundEvents.ELECTROLYZER);
 

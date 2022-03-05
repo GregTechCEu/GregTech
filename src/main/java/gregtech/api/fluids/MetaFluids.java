@@ -61,6 +61,9 @@ public class MetaFluids {
         // set custom textures for fluids
         setCustomTextures();
 
+        // set custom additional tooltips for fluids
+        setCustomTooltips();
+
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
             FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);
 
@@ -152,6 +155,10 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.Naquadria, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.Ice, FluidTypes.LIQUID);
         setMaterialFluidTexture(Materials.UUMatter, FluidTypes.LIQUID);
+    }
+
+    private static void setCustomTooltips() {
+        // TODO Vitriols
     }
 
     /**

@@ -551,10 +551,9 @@ public final class MetaItems {
         add(OrePrefix.dustSmall);
         add(OrePrefix.dustTiny);
         add(OrePrefix.dustImpure);
-        add(OrePrefix.dustPure);
         add(OrePrefix.crushed);
         add(OrePrefix.crushedPurified);
-        add(OrePrefix.crushedCentrifuged);
+        add(OrePrefix.crushedRefined);
         add(OrePrefix.gem);
         add(OrePrefix.gemChipped);
         add(OrePrefix.gemFlawed);

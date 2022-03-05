@@ -389,12 +389,6 @@ public class Materials {
     public static Material PotassiumDichromate;
     public static Material ChromiumTrioxide;
     public static Material AntimonyTrioxide;
-    public static Material Zincite;
-    public static Material CupricOxide;
-    public static Material CobaltOxide;
-    public static Material ArsenicTrioxide;
-    public static Material Massicot;
-    public static Material Ferrosilite;
     public static Material MetalMixture;
     public static Material SodiumHydroxide;
     public static Material SodiumPersulfate;
@@ -407,6 +401,8 @@ public class Materials {
     public static Material Mica;
     public static Material Barite;
     public static Material Alunite;
+    public static Material PotassiumBisulfate;
+    public static Material PotassiumPersulfate;
     public static Material Talc;
     public static Material Soapstone;
     public static Material Kyanite;
@@ -466,6 +462,19 @@ public class Materials {
     public static Material EnrichedNaquadahSulfate;
     public static Material NaquadriaSulfate;
     public static Material Pyrochlore;
+
+    // New Ore Processing Additions
+    public static Material CopperSulfate; // Blue Vitriol
+    public static Material IronSulfate; // Green Vitriol
+    public static Material CobaltSulfate; // Red Vitriol
+    public static Material MagnesiumSulfate; // Pink Vitriol
+    public static Material NickelSulfate; // Cyan Vitriol
+    public static Material ZincSulfate; // White Vitriol
+    public static Material ManganeseSulfate; // Gray Vitriol
+    public static Material AluminiumSulfate; // Vitriol of Clay
+    public static Material ChloroauricAcid; // TODO Maybe remove?? Probably worth it but *maybe* not
+    public static Material ChloroplatinicAcid; // TODO Definitely keep this one
+    public static Material StannicChloride; // TODO Remove, maybe. Probably not worth it
 
     /**
      * Organic chemistry
@@ -648,9 +657,6 @@ public class Materials {
     public static Material TreatedWood;
     public static Material Paper;
     public static Material FishOil;
-    public static Material RubySlurry;
-    public static Material SapphireSlurry;
-    public static Material GreenSapphireSlurry;
     public static Material DyeBlack;
     public static Material DyeRed;
     public static Material DyeGreen;

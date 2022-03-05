@@ -55,18 +55,9 @@ public class OrePrefix {
     // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
     public static final OrePrefix oreEndstone = new OrePrefix("oreEndstone", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
 
-    public static final OrePrefix crushedCentrifuged = new OrePrefix("crushedCentrifuged", -1, null, MaterialIconType.crushedCentrifuged, ENABLE_UNIFICATION, hasOreProperty);
-    public static final OrePrefix crushedPurified = new OrePrefix("crushedPurified", -1, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, hasOreProperty);
-    public static final OrePrefix crushed = new OrePrefix("crushed", -1, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.crushed.tooltip.purify")));
-
-    // Introduced by Mekanism
-    public static final OrePrefix shard = new OrePrefix("shard", -1, null, null, ENABLE_UNIFICATION, null);
-    public static final OrePrefix clump = new OrePrefix("clump", -1, null, null, ENABLE_UNIFICATION, null);
-    public static final OrePrefix reduced = new OrePrefix("reduced", -1, null, null, ENABLE_UNIFICATION, null);
-    public static final OrePrefix crystalline = new OrePrefix("crystalline", -1, null, null, ENABLE_UNIFICATION, null);
-
-    public static final OrePrefix cleanGravel = new OrePrefix("cleanGravel", -1, null, null, ENABLE_UNIFICATION, null);
-    public static final OrePrefix dirtyGravel = new OrePrefix("dirtyGravel", -1, null, null, ENABLE_UNIFICATION, null);
+    public static final OrePrefix crushedRefined = new OrePrefix("crushedRefined", M * 11 / 8, null, MaterialIconType.crushedRefined, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix crushedPurified = new OrePrefix("crushedPurified", M * 10 / 8, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix crushed = new OrePrefix("crushed", M * 9 / 8, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.crushed.tooltip.purify")));
 
     // A hot Ingot, which has to be cooled down by a Vacuum Freezer.
     public static final OrePrefix ingotHot = new OrePrefix("ingotHot", M, null, MaterialIconType.ingotHot, ENABLE_UNIFICATION, hasBlastProperty.and(mat -> mat.getProperty(PropertyKey.BLAST).getBlastTemperature() > 1750));
@@ -90,8 +81,7 @@ public class OrePrefix {
     public static final OrePrefix dustTiny = new OrePrefix("dustTiny", M / 9, null, MaterialIconType.dustTiny, ENABLE_UNIFICATION, hasDustProperty);
     // Dust with impurities. 1 Unit of Main Material and 1/9 - 1/4 Unit of secondary Material
     public static final OrePrefix dustImpure = new OrePrefix("dustImpure", M, null, MaterialIconType.dustImpure, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify")));
-    // Pure Dust worth of one Ingot or Gem. Introduced by Alblaka.
-    public static final OrePrefix dustPure = new OrePrefix("dustPure", M, null, MaterialIconType.dustPure, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify")));
+    // Dust worth of one Ingot or Gem
     public static final OrePrefix dust = new OrePrefix("dust", M, null, MaterialIconType.dust, ENABLE_UNIFICATION, hasDustProperty);
 
     // A Nugget. Introduced by Eloraam

@@ -393,14 +393,11 @@ public class UnknownCompositionMaterials {
                 .flags(STICKY, FLAMMABLE)
                 .build();
 
-        RubySlurry = new Material.Builder(1620, "ruby_slurry")
-                .fluid().color(0xff6464).build();
+        // FREE ID 1620
 
-        SapphireSlurry = new Material.Builder(1621, "sapphire_slurry")
-                .fluid().color(0x6464c8).build();
+        // FREE ID 1621
 
-        GreenSapphireSlurry = new Material.Builder(1622, "green_sapphire_slurry")
-                .fluid().color(0x64c882).build();
+        // FREE ID 1622
 
         // These colors are much nicer looking than those in MC's EnumDyeColor
         DyeBlack = new Material.Builder(1623, "dye_black")

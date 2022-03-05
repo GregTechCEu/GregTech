@@ -167,7 +167,7 @@ public class ElementMaterials {
         Cobalt = new Material.Builder(23, "cobalt")
                 .ingot().fluid().ore() // leave for TiCon ore processing
                 .color(0x5050FA).iconSet(METALLIC)
-                .flags(EXT_METAL)
+                .flags(EXT_METAL, WASHING_PERSULFATE)
                 .element(Elements.Co)
                 .cableProperties(GTValues.V[1], 2, 2)
                 .itemPipeProperties(2560, 2.0f)
@@ -182,7 +182,8 @@ public class ElementMaterials {
         Copper = new Material.Builder(25, "copper")
                 .ingot(1).fluid().ore()
                 .color(0xFF6400).iconSet(SHINY)
-                .flags(EXT_METAL, MORTAR_GRINDABLE, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE)
+                .flags(EXT_METAL, MORTAR_GRINDABLE, GENERATE_SPRING,
+                        GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE, WASHING_PERSULFATE)
                 .element(Elements.Cu)
                 .cableProperties(GTValues.V[2], 1, 2)
                 .fluidPipeProperties(1696, 6, true)
@@ -278,7 +279,8 @@ public class ElementMaterials {
         Gold = new Material.Builder(41, "gold")
                 .ingot().fluid().ore()
                 .color(0xFFE650).iconSet(SHINY)
-                .flags(EXT2_METAL, GENERATE_RING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE, GENERATE_FOIL)
+                .flags(EXT2_METAL, GENERATE_RING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_SPRING,
+                        GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE, GENERATE_FOIL, WASHING_MERCURY)
                 .element(Elements.Au)
                 .cableProperties(GTValues.V[3], 3, 2)
                 .fluidPipeProperties(1671, 25, true, true, false, false)
@@ -342,7 +344,7 @@ public class ElementMaterials {
         Iron = new Material.Builder(51, "iron")
                 .ingot().fluid().plasma().ore()
                 .color(0xC8C8C8).iconSet(METALLIC)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR, GENERATE_SPRING_SMALL, GENERATE_SPRING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, BLAST_FURNACE_CALCITE_TRIPLE)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR, GENERATE_SPRING_SMALL, GENERATE_SPRING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .element(Elements.Fe)
                 .toolStats(ToolProperty.Builder.of(2.0F, 2.0F, 256, 2)
                         .enchantability(14).build())
@@ -382,6 +384,7 @@ public class ElementMaterials {
         Lithium = new Material.Builder(56, "lithium")
                 .dust().fluid().ore()
                 .color(0xBDC7DB)
+                .flags(WASHING_MERCURY)
                 .element(Elements.Li)
                 .fluidTemp(454)
                 .build();
@@ -467,7 +470,7 @@ public class ElementMaterials {
         Nickel = new Material.Builder(69, "nickel")
                 .ingot().fluid().plasma().ore()
                 .color(0xC8C8FA).iconSet(METALLIC)
-                .flags(STD_METAL, MORTAR_GRINDABLE)
+                .flags(STD_METAL, MORTAR_GRINDABLE, WASHING_PERSULFATE)
                 .element(Elements.Ni)
                 .cableProperties(GTValues.V[GTValues.LV], 3, 3)
                 .itemPipeProperties(2048, 1.0f)
@@ -542,7 +545,7 @@ public class ElementMaterials {
         Platinum = new Material.Builder(80, "platinum")
                 .ingot().fluid().ore()
                 .color(0xFFFFC8).iconSet(SHINY)
-                .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_RING)
+                .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_RING, WASHING_MERCURY)
                 .element(Elements.Pt)
                 .cableProperties(GTValues.V[5], 2, 1)
                 .itemPipeProperties(512, 4.0f)
@@ -668,7 +671,7 @@ public class ElementMaterials {
         Silver = new Material.Builder(100, "silver")
                 .ingot().fluid().ore()
                 .color(0xDCDCFF).iconSet(SHINY)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FINE_WIRE, GENERATE_RING)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FINE_WIRE, GENERATE_RING, WASHING_MERCURY)
                 .element(Elements.Ag)
                 .cableProperties(GTValues.V[3], 1, 1)
                 .fluidTemp(1235)
@@ -820,9 +823,10 @@ public class ElementMaterials {
                 .build();
 
         Zinc = new Material.Builder(122, "zinc")
-                .ingot(1).fluid()
+                .ingot(1).fluid().ore()
                 .color(0xEBEBFA).iconSet(METALLIC)
-                .flags(STD_METAL, MORTAR_GRINDABLE, GENERATE_FOIL, GENERATE_RING, GENERATE_FINE_WIRE)
+                .flags(STD_METAL, MORTAR_GRINDABLE, GENERATE_FOIL, GENERATE_RING,
+                        GENERATE_FINE_WIRE, WASHING_MERCURY, WASHING_PERSULFATE)
                 .element(Elements.Zn)
                 .fluidTemp(693)
                 .build();

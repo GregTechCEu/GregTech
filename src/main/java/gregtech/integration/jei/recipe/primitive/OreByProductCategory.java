@@ -39,8 +39,8 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
     protected final List<Boolean> itemOutputExists = new ArrayList<>();
     protected final List<Boolean> fluidInputExists = new ArrayList<>();
     protected boolean hasDirectSmelt;
-    protected boolean hasChemBath;
-    protected boolean hasSeparator;
+    //protected boolean hasChemBath;
+    //protected boolean hasSeparator;
     protected boolean hasSifter;
 
     // XY positions of every item and fluid, in three enormous lists
@@ -160,8 +160,8 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
         fluidStackGroup.set(ingredients);
 
         hasDirectSmelt = recipeWrapper.hasDirectSmelt();
-        hasChemBath = recipeWrapper.hasChemBath();
-        hasSeparator = recipeWrapper.hasSeparator();
+        //hasChemBath = recipeWrapper.hasChemBath();
+        //hasSeparator = recipeWrapper.hasSeparator();
         hasSifter = recipeWrapper.hasSifter();
     }
 
@@ -183,12 +183,12 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
         if (hasDirectSmelt) {
             arrowsDirectSmelt.draw(minecraft, 0, 0);
         }
-        if (hasChemBath) {
-            arrowsChemBath.draw(minecraft, 0, 0);
-        }
-        if (hasSeparator) {
-            arrowsSeparator.draw(minecraft, 0, 0);
-        }
+        //if (hasChemBath) {
+        //    arrowsChemBath.draw(minecraft, 0, 0);
+        //}
+        //if (hasSeparator) {
+        //    arrowsSeparator.draw(minecraft, 0, 0);
+        //}
         if(hasSifter) {
             arrowsSifter.draw(minecraft, 0, 0);
         }
