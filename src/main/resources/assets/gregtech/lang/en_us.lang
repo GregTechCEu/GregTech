@@ -690,74 +690,74 @@ metaitem.plate.simple_system_on_chip.tooltip=Simple System on Chip
 
 
 # T1: Electronic
-metaitem.circuit.electronic.name=Electronic Circuit
-metaitem.circuit.electronic.tooltip=Your First Circuit/n§cLV-Tier Circuit
-metaitem.circuit.good_electronic.name=Good Electronic Circuit
-metaitem.circuit.good_electronic.tooltip=Your Second Circuit/n§cMV-Tier Circuit
+metaitem.circuit.electronic.lv.name=Electronic Circuit
+metaitem.circuit.electronic.lv.tooltip=Your First Circuit/n§cLV-Tier Circuit
+metaitem.circuit.electronic.mv.name=Good Electronic Circuit
+metaitem.circuit.electronic.mv.tooltip=Your Second Circuit/n§cMV-Tier Circuit
 
 # T2: Integrated
-metaitem.circuit.basic_integrated.name=Integrated Logic Circuit
-metaitem.circuit.basic_integrated.tooltip=Smaller and more powerful/n§6LV-Tier Circuit
-metaitem.circuit.good_integrated.name=Good Integrated Circuit
-metaitem.circuit.good_integrated.tooltip=Smaller and more powerful/n§6MV-Tier Circuit
-metaitem.circuit.advanced_integrated.name=Advanced Integrated Circuit
-metaitem.circuit.advanced_integrated.tooltip=Smaller and more powerful/n§6HV-Tier Circuit
+metaitem.circuit.integrated.lv.name=Integrated Logic Circuit
+metaitem.circuit.integrated.lv.tooltip=Smaller and more powerful/n§6LV-Tier Circuit
+metaitem.circuit.integrated.mv.name=Good Integrated Circuit
+metaitem.circuit.integrated.mv.tooltip=Smaller and more powerful/n§6MV-Tier Circuit
+metaitem.circuit.integrated.hv.name=Advanced Integrated Circuit
+metaitem.circuit.integrated.hv.tooltip=Smaller and more powerful/n§6HV-Tier Circuit
 
 # Misc
-metaitem.circuit.nand_chip.name=NAND Chip
-metaitem.circuit.nand_chip.tooltip=A Superior Simple Circuit/n§6ULV-Tier Circuit
-metaitem.circuit.microprocessor.name=Microprocessor
-metaitem.circuit.microprocessor.tooltip=A Superior Basic Circuit/n§eLV-Tier Circuit
+metaitem.circuit.nand_chip.ulv.name=NAND Chip
+metaitem.circuit.nand_chip.ulv.tooltip=A Superior Simple Circuit/n§6ULV-Tier Circuit
+metaitem.circuit.integrated_processor.lv.name=Integrated Processor
+metaitem.circuit.integrated_processor.lv.tooltip=A Superior Basic Circuit/n§eLV-Tier Circuit
 
 # T3: Processor
-metaitem.circuit.processor.name=Integrated Processor
-metaitem.circuit.processor.tooltip=Amazing Computation Speed!/n§eMV-Tier Circuit
-metaitem.circuit.assembly.name=Processor Assembly
-metaitem.circuit.assembly.tooltip=Amazing Computation Speed!/n§eHV-Tier Circuit
-metaitem.circuit.workstation.name=Workstation
-metaitem.circuit.workstation.tooltip=Amazing Computation Speed!/n§eEV-Tier Circuit
-metaitem.circuit.mainframe.name=Mainframe
-metaitem.circuit.mainframe.tooltip=Amazing Computation Speed!/n§eIV-Tier Circuit
+metaitem.circuit.micro.mv.name=Microprocessor
+metaitem.circuit.micro.mv.tooltip=Amazing Computation Speed!/n§eMV-Tier Circuit
+metaitem.circuit.micro.hv.name=Microprocessor Assembly
+metaitem.circuit.micro.hv.tooltip=Amazing Computation Speed!/n§eHV-Tier Circuit
+metaitem.circuit.micro.ev.name=Microprocessor Workstation
+metaitem.circuit.micro.ev.tooltip=Amazing Computation Speed!/n§eEV-Tier Circuit
+metaitem.circuit.micro.iv.name=Microprocessor Supercomputer
+metaitem.circuit.micro.iv.tooltip=Amazing Computation Speed!/n§eIV-Tier Circuit
 
 # T4: Nano
-metaitem.circuit.nano_processor.name=Nanoprocessor
-metaitem.circuit.nano_processor.tooltip=Smaller than ever/n§bHV-Tier Circuit
-metaitem.circuit.nano_assembly.name=Nanoprocessor Assembly
-metaitem.circuit.nano_assembly.tooltip=Smaller than ever/n§bEV-Tier Circuit
-metaitem.circuit.nano_computer.name=Nano Supercomputer
-metaitem.circuit.nano_computer.tooltip=Smaller than ever/n§bIV-Tier Circuit
-metaitem.circuit.nano_mainframe.name=Nanoprocessor Mainframe
-metaitem.circuit.nano_mainframe.tooltip=Smaller than ever/n§bLuV-Tier Circuit
+metaitem.circuit.nano.hv.name=Nanoprocessor
+metaitem.circuit.nano.hv.tooltip=Smaller than ever/n§bHV-Tier Circuit
+metaitem.circuit.nano.ev.name=Nanoprocessor Assembly
+metaitem.circuit.nano.ev.tooltip=Smaller than ever/n§bEV-Tier Circuit
+metaitem.circuit.nano.iv.name=Nanoprocessor Workstation
+metaitem.circuit.nano.iv.tooltip=Smaller than ever/n§bIV-Tier Circuit
+metaitem.circuit.nano.luv.name=Nanoprocessor Supercomputer
+metaitem.circuit.nano.luv.tooltip=Smaller than ever/n§bLuV-Tier Circuit
 
 # T5: Quantum
-metaitem.circuit.quantum_processor.name=Quantumprocessor
-metaitem.circuit.quantum_processor.tooltip=Quantum Computing comes to life!/n§aEV-Tier Circuit
-metaitem.circuit.quantum_assembly.name=Quantumprocessor Assembly
-metaitem.circuit.quantum_assembly.tooltip=Quantum Computing comes to life!/n§aIV-Tier Circuit
-metaitem.circuit.quantum_computer.name=Quantum Supercomputer
-metaitem.circuit.quantum_computer.tooltip=Quantum Computing comes to life!/n§aLuV-Tier Circuit
-metaitem.circuit.quantum_mainframe.name=Quantumprocessor Mainframe
-metaitem.circuit.quantum_mainframe.tooltip=Quantum Computing comes to life!/n§aZPM-Tier Circuit
+metaitem.circuit.quantum.ev.name=Quantum Processor
+metaitem.circuit.quantum.ev.tooltip=Quantum Computing comes to life!/n§aEV-Tier Circuit
+metaitem.circuit.quantum.iv.name=Quantum Processor Assembly
+metaitem.circuit.quantum.iv.tooltip=Quantum Computing comes to life!/n§aIV-Tier Circuit
+metaitem.circuit.quantum.luv.name=Quantum Workstation
+metaitem.circuit.quantum.luv.tooltip=Quantum Computing comes to life!/n§aLuV-Tier Circuit
+metaitem.circuit.quantum.zpm.name=Quantum Supercomputer
+metaitem.circuit.quantum.zpm.tooltip=Quantum Computing comes to life!/n§aZPM-Tier Circuit
 
 # T6: Crystal
-metaitem.circuit.crystal_processor.name=Crystal Processor
-metaitem.circuit.crystal_processor.tooltip=Taking Advantage of Crystal Engraving/n§9IV-Tier Circuit
-metaitem.circuit.crystal_assembly.name=Crystal Processor Assembly
-metaitem.circuit.crystal_assembly.tooltip=Taking Advantage of Crystal Engraving/n§9LuV-Tier Circuit
-metaitem.circuit.crystal_computer.name=Crystal Supercomputer
-metaitem.circuit.crystal_computer.tooltip=Taking Advantage of Crystal Engraving/n§9ZPM-Tier Circuit
-metaitem.circuit.crystal_mainframe.name=Crystal Processor Mainframe
-metaitem.circuit.crystal_mainframe.tooltip=Taking Advantage of Crystal Engraving/n§9UV-Tier Circuit
+metaitem.circuit.crystal.iv.name=Crystal Processor
+metaitem.circuit.crystal.iv.tooltip=Taking Advantage of Crystal Engraving/n§9IV-Tier Circuit
+metaitem.circuit.crystal.luv.name=Crystal Processor Assembly
+metaitem.circuit.crystal.luv.tooltip=Taking Advantage of Crystal Engraving/n§9LuV-Tier Circuit
+metaitem.circuit.crystal.zpm.name=Crystal Workstation
+metaitem.circuit.crystal.zpm.tooltip=Taking Advantage of Crystal Engraving/n§9ZPM-Tier Circuit
+metaitem.circuit.crystal.uv.name=Crystal Supercomputer
+metaitem.circuit.crystal.uv.tooltip=Taking Advantage of Crystal Engraving/n§9UV-Tier Circuit
 
 # T7: Wetware
-metaitem.circuit.wetware_processor.name=Wetware Processor
-metaitem.circuit.wetware_processor.tooltip=You have a feeling like it's watching you/n§4LuV-Tier Circuit
-metaitem.circuit.wetware_assembly.name=Wetware Assembly
-metaitem.circuit.wetware_assembly.tooltip=Can run Minecraft/n§4ZPM-tier Circuit
-metaitem.circuit.wetware_computer.name=Wetware Supercomputer
-metaitem.circuit.wetware_computer.tooltip=Ultimate fusion of Flesh and Machine/n§4UV-Tier Circuit
-metaitem.circuit.wetware_mainframe.name=Wetware Mainframe
-metaitem.circuit.wetware_mainframe.tooltip=The best Man has ever seen/n§4UHV-Tier Circuit
+metaitem.circuit.wetware.luv.name=Wetware Processor
+metaitem.circuit.wetware.luv.tooltip=You have a feeling like it's watching you/n§4LuV-Tier Circuit
+metaitem.circuit.wetware.zpm.name=Wetware Processor Assembly
+metaitem.circuit.wetware.zpm.tooltip=Can run Minecraft/n§4ZPM-tier Circuit
+metaitem.circuit.wetware.uv.name=Wetware Workstation
+metaitem.circuit.wetware.uv.tooltip=Ultimate fusion of Flesh and Machine/n§4UV-Tier Circuit
+metaitem.circuit.wetware.uhv.name=Wetware Supercomputer
+metaitem.circuit.wetware.uhv.tooltip=The best Man has ever seen/n§4UHV-Tier Circuit
 
 metaitem.stem_cells.name=Stem Cells
 metaitem.stem_cells.tooltip=Raw Intelligence

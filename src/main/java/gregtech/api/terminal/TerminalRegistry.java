@@ -117,7 +117,7 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new MultiBlockPreviewARApp())
                 .battery(GTValues.LV, 128)
                 .device(DeviceHardware.DEVICE.CAMERA)
-                .upgrade(1, MetaItems.EMITTER_HV.getStackForm(4), MetaItems.WORKSTATION_EV.getStackForm(2))
+                .upgrade(1, MetaItems.EMITTER_HV.getStackForm(4), MetaItems.MICRO_WORKSTATION_EV.getStackForm(2))
                 .defaultApp()
                 .build();
         if (Loader.isModLoaded(GTValues.MODID_JEI)) {

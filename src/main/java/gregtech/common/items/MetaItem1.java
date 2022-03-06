@@ -508,47 +508,47 @@ public class MetaItem1 extends StandardMetaItem {
         // Circuits: ID 621-700
 
         // T1: Electronic
-        ELECTRONIC_CIRCUIT_LV = addItem(621, "circuit.electronic").setUnificationData(OrePrefix.circuit, Tier.LV);
-        ELECTRONIC_CIRCUIT_MV = addItem(622, "circuit.good_electronic").setUnificationData(OrePrefix.circuit, Tier.MV);
+        ELECTRONIC_CIRCUIT_LV = addItem(621, "circuit.electronic.lv").setUnificationData(OrePrefix.circuit, Tier.LV);
+        ELECTRONIC_CIRCUIT_MV = addItem(622, "circuit.electronic.mv").setUnificationData(OrePrefix.circuit, Tier.MV);
 
         // T2: Integrated
-        INTEGRATED_CIRCUIT_LV = addItem(623, "circuit.basic_integrated").setUnificationData(OrePrefix.circuit, Tier.LV);
-        INTEGRATED_CIRCUIT_MV = addItem(624, "circuit.good_integrated").setUnificationData(OrePrefix.circuit, Tier.MV);
-        INTEGRATED_CIRCUIT_HV = addItem(625, "circuit.advanced_integrated").setUnificationData(OrePrefix.circuit, Tier.HV);
+        INTEGRATED_CIRCUIT_LV = addItem(623, "circuit.integrated.lv").setUnificationData(OrePrefix.circuit, Tier.LV);
+        INTEGRATED_CIRCUIT_MV = addItem(624, "circuit.integrated.mv").setUnificationData(OrePrefix.circuit, Tier.MV);
+        INTEGRATED_CIRCUIT_HV = addItem(625, "circuit.integrated.hv").setUnificationData(OrePrefix.circuit, Tier.HV);
 
         // Misc Unlocks
-        NAND_CHIP_ULV = addItem(626, "circuit.nand_chip").setUnificationData(OrePrefix.circuit, Tier.ULV);
-        MICROPROCESSOR_LV = addItem(627, "circuit.microprocessor").setUnificationData(OrePrefix.circuit, Tier.LV);
+        NAND_CHIP_ULV = addItem(626, "circuit.nand_chip.ulv").setUnificationData(OrePrefix.circuit, Tier.ULV);
+        INTEGRATED_PROCESSOR_LV = addItem(627, "circuit.integrated_processor.lv").setUnificationData(OrePrefix.circuit, Tier.LV);
 
         // T3: Processor
-        PROCESSOR_MV = addItem(628, "circuit.processor").setUnificationData(OrePrefix.circuit, Tier.MV);
-        PROCESSOR_ASSEMBLY_HV = addItem(629, "circuit.assembly").setUnificationData(OrePrefix.circuit, Tier.HV);
-        WORKSTATION_EV = addItem(630, "circuit.workstation").setUnificationData(OrePrefix.circuit, Tier.EV);
-        MAINFRAME_IV = addItem(631, "circuit.mainframe").setUnificationData(OrePrefix.circuit, Tier.IV);
+        MICRO_PROCESSOR_MV = addItem(628, "circuit.micro.mv").setUnificationData(OrePrefix.circuit, Tier.MV);
+        MICRO_PROCESSOR_ASSEMBLY_HV = addItem(629, "circuit.micro.hv").setUnificationData(OrePrefix.circuit, Tier.HV);
+        MICRO_WORKSTATION_EV = addItem(630, "circuit.micro.ev").setUnificationData(OrePrefix.circuit, Tier.EV);
+        MICRO_SUPERCOMPUTER_IV = addItem(631, "circuit.micro.iv").setUnificationData(OrePrefix.circuit, Tier.IV);
 
         // T4: Nano
-        NANO_PROCESSOR_HV = addItem(632, "circuit.nano_processor").setUnificationData(OrePrefix.circuit, Tier.HV);
-        NANO_PROCESSOR_ASSEMBLY_EV = addItem(633, "circuit.nano_assembly").setUnificationData(OrePrefix.circuit, Tier.EV);
-        NANO_COMPUTER_IV = addItem(634, "circuit.nano_computer").setUnificationData(OrePrefix.circuit, Tier.IV);
-        NANO_MAINFRAME_LUV = addItem(635, "circuit.nano_mainframe").setUnificationData(OrePrefix.circuit, Tier.LuV);
+        NANO_PROCESSOR_HV = addItem(632, "circuit.nano.hv").setUnificationData(OrePrefix.circuit, Tier.HV);
+        NANO_ASSEMBLY_EV = addItem(633, "circuit.nano.ev").setUnificationData(OrePrefix.circuit, Tier.EV);
+        NANO_WORKSTATION_IV = addItem(634, "circuit.nano.iv").setUnificationData(OrePrefix.circuit, Tier.IV);
+        NANO_SUPERCOMPUTER_LUV = addItem(635, "circuit.nano.luv").setUnificationData(OrePrefix.circuit, Tier.LuV);
 
         // T5: Quantum
-        QUANTUM_PROCESSOR_EV = addItem(636, "circuit.quantum_processor").setUnificationData(OrePrefix.circuit, Tier.EV);
-        QUANTUM_ASSEMBLY_IV = addItem(637, "circuit.quantum_assembly").setUnificationData(OrePrefix.circuit, Tier.IV);
-        QUANTUM_COMPUTER_LUV = addItem(638, "circuit.quantum_computer").setUnificationData(OrePrefix.circuit, Tier.LuV);
-        QUANTUM_MAINFRAME_ZPM = addItem(639, "circuit.quantum_mainframe").setUnificationData(OrePrefix.circuit, Tier.ZPM);
+        QUANTUM_PROCESSOR_EV = addItem(636, "circuit.quantum.ev").setUnificationData(OrePrefix.circuit, Tier.EV);
+        QUANTUM_ASSEMBLY_IV = addItem(637, "circuit.quantum.iv").setUnificationData(OrePrefix.circuit, Tier.IV);
+        QUANTUM_WORKSTATION_LUV = addItem(638, "circuit.quantum.luv").setUnificationData(OrePrefix.circuit, Tier.LuV);
+        QUANTUM_SUPERCOMPUTER_ZPM = addItem(639, "circuit.quantum.zpm").setUnificationData(OrePrefix.circuit, Tier.ZPM);
 
         // T6: Crystal
-        CRYSTAL_PROCESSOR_IV = addItem(640, "circuit.crystal_processor").setUnificationData(OrePrefix.circuit, Tier.IV);
-        CRYSTAL_ASSEMBLY_LUV = addItem(641, "circuit.crystal_assembly").setUnificationData(OrePrefix.circuit, Tier.LuV);
-        CRYSTAL_COMPUTER_ZPM = addItem(642, "circuit.crystal_computer").setUnificationData(OrePrefix.circuit, Tier.ZPM);
-        CRYSTAL_MAINFRAME_UV = addItem(643, "circuit.crystal_mainframe").setUnificationData(OrePrefix.circuit, Tier.UV);
+        CRYSTAL_PROCESSOR_IV = addItem(640, "circuit.crystal.iv").setUnificationData(OrePrefix.circuit, Tier.IV);
+        CRYSTAL_ASSEMBLY_LUV = addItem(641, "circuit.crystal.luv").setUnificationData(OrePrefix.circuit, Tier.LuV);
+        CRYSTAL_WORKSTATION_ZPM = addItem(642, "circuit.crystal.zpm").setUnificationData(OrePrefix.circuit, Tier.ZPM);
+        CRYSTAL_SUPERCOMPUTER_UV = addItem(643, "circuit.crystal.uv").setUnificationData(OrePrefix.circuit, Tier.UV);
 
         // T7: Wetware
-        WETWARE_PROCESSOR_LUV = addItem(644, "circuit.wetware_processor").setUnificationData(OrePrefix.circuit, Tier.LuV);
-        WETWARE_PROCESSOR_ASSEMBLY_ZPM = addItem(645, "circuit.wetware_assembly").setUnificationData(OrePrefix.circuit, Tier.ZPM);
-        WETWARE_SUPER_COMPUTER_UV = addItem(646, "circuit.wetware_computer").setUnificationData(OrePrefix.circuit, Tier.UV);
-        WETWARE_MAINFRAME_UHV = addItem(647, "circuit.wetware_mainframe").setUnificationData(OrePrefix.circuit, Tier.UHV);
+        WETWARE_PROCESSOR_LUV = addItem(644, "circuit.wetware.luv").setUnificationData(OrePrefix.circuit, Tier.LuV);
+        WETWARE_PROCESSOR_ASSEMBLY_ZPM = addItem(645, "circuit.wetware.zpm").setUnificationData(OrePrefix.circuit, Tier.ZPM);
+        WETWARE_SUPER_COMPUTER_UV = addItem(646, "circuit.wetware.uv").setUnificationData(OrePrefix.circuit, Tier.UV);
+        WETWARE_MAINFRAME_UHV = addItem(647, "circuit.wetware.uhv").setUnificationData(OrePrefix.circuit, Tier.UHV);
 
         // T8: Bioware
 

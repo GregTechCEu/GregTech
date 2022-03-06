@@ -382,31 +382,31 @@ public final class MetaItems {
 
     // ULV/LV easier circuits
     public static MetaItem<?>.MetaValueItem NAND_CHIP_ULV;
-    public static MetaItem<?>.MetaValueItem MICROPROCESSOR_LV;
+    public static MetaItem<?>.MetaValueItem INTEGRATED_PROCESSOR_LV;
 
     // T3: Processor
-    public static MetaItem<?>.MetaValueItem PROCESSOR_MV;
-    public static MetaItem<?>.MetaValueItem PROCESSOR_ASSEMBLY_HV;
-    public static MetaItem<?>.MetaValueItem WORKSTATION_EV;
-    public static MetaItem<?>.MetaValueItem MAINFRAME_IV;
+    public static MetaItem<?>.MetaValueItem MICRO_PROCESSOR_MV;
+    public static MetaItem<?>.MetaValueItem MICRO_PROCESSOR_ASSEMBLY_HV;
+    public static MetaItem<?>.MetaValueItem MICRO_WORKSTATION_EV;
+    public static MetaItem<?>.MetaValueItem MICRO_SUPERCOMPUTER_IV;
 
     // T4: Nano
     public static MetaItem<?>.MetaValueItem NANO_PROCESSOR_HV;
-    public static MetaItem<?>.MetaValueItem NANO_PROCESSOR_ASSEMBLY_EV;
-    public static MetaItem<?>.MetaValueItem NANO_COMPUTER_IV;
-    public static MetaItem<?>.MetaValueItem NANO_MAINFRAME_LUV;
+    public static MetaItem<?>.MetaValueItem NANO_ASSEMBLY_EV;
+    public static MetaItem<?>.MetaValueItem NANO_WORKSTATION_IV;
+    public static MetaItem<?>.MetaValueItem NANO_SUPERCOMPUTER_LUV;
 
     // T5: Quantum
     public static MetaItem<?>.MetaValueItem QUANTUM_PROCESSOR_EV;
     public static MetaItem<?>.MetaValueItem QUANTUM_ASSEMBLY_IV;
-    public static MetaItem<?>.MetaValueItem QUANTUM_COMPUTER_LUV;
-    public static MetaItem<?>.MetaValueItem QUANTUM_MAINFRAME_ZPM;
+    public static MetaItem<?>.MetaValueItem QUANTUM_WORKSTATION_LUV;
+    public static MetaItem<?>.MetaValueItem QUANTUM_SUPERCOMPUTER_ZPM;
 
     // T6: Crystal
     public static MetaItem<?>.MetaValueItem CRYSTAL_PROCESSOR_IV;
     public static MetaItem<?>.MetaValueItem CRYSTAL_ASSEMBLY_LUV;
-    public static MetaItem<?>.MetaValueItem CRYSTAL_COMPUTER_ZPM;
-    public static MetaItem<?>.MetaValueItem CRYSTAL_MAINFRAME_UV;
+    public static MetaItem<?>.MetaValueItem CRYSTAL_WORKSTATION_ZPM;
+    public static MetaItem<?>.MetaValueItem CRYSTAL_SUPERCOMPUTER_UV;
 
     // T7: Wetware
     public static MetaItem<?>.MetaValueItem WETWARE_PROCESSOR_LUV;
