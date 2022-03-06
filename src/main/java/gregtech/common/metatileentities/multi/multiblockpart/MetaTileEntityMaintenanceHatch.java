@@ -14,6 +14,7 @@ import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMaintenance;
@@ -272,12 +273,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 for (ItemStack stack : entityPlayer.inventory.offHandInventory) {
                     if (stack.getItem().getToolClasses(stack).contains(toolToMatch)) {
                         ((IMaintenance) this.getController()).setMaintenanceFixed(i);
-                        if (stack.getItem() instanceof IGTTool) {
-                            IGTTool def = (IGTTool) stack.getItem();
-                            def.damageItem(stack, entityPlayer, def.getToolStats().getToolDamagePerCraft(stack));
-                        } else {
-                            stack.damageItem(1, entityPlayer);
-                        }
+                        ToolHelper.damageItemWhenCrafting(stack, entityPlayer);
                         if (toolsToMatch.stream().allMatch(Objects::isNull)) {
                             return;
                         }
@@ -286,12 +282,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 for (ItemStack stack : entityPlayer.inventory.mainInventory) {
                     if (stack.getItem().getToolClasses(stack).contains(toolToMatch)) {
                         ((IMaintenance) this.getController()).setMaintenanceFixed(i);
-                        if (stack.getItem() instanceof IGTTool) {
-                            IGTTool def = (IGTTool) stack.getItem();
-                            def.damageItem(stack, entityPlayer, def.getToolStats().getToolDamagePerCraft(stack));
-                        } else {
-                            stack.damageItem(1, entityPlayer);
-                        }
+                        ToolHelper.damageItemWhenCrafting(stack, entityPlayer);
                         if (toolsToMatch.stream().allMatch(Objects::isNull)) {
                             return;
                         }
