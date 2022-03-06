@@ -210,22 +210,28 @@ public class ToolItems {
     // Handle Saws harvesting Ice Blocks correctly
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onHarvestDrops(BlockEvent.HarvestDropsEvent event) {
-        if (!event.isSilkTouching() && event.getHarvester() != null && event.getState().getBlock() == Blocks.ICE) {
+        EntityPlayer player = event.getHarvester();
+        if (player != null) {
             ItemStack stack = event.getHarvester().getHeldItemMainhand();
-            Item item = stack.getItem();
-            if (item == SAW) {
-                Item iceBlock = Item.getItemFromBlock(Blocks.ICE);
-                if (event.getDrops().stream().noneMatch(drop -> drop.getItem() == iceBlock)) {
-                    event.getDrops().add(new ItemStack(iceBlock));
-                    final World world = event.getWorld();
-                    final BlockPos icePos = event.getPos();
-                    TaskScheduler.scheduleTask(world, () -> {
-                        IBlockState flowingState = world.getBlockState(icePos);
-                        if (flowingState == Blocks.FLOWING_WATER.getDefaultState()) {
-                            world.setBlockToAir(icePos);
-                        }
-                        return true;
-                    });
+            boolean hasTag = stack.hasTagCompound();
+            if (hasTag) {
+                if (!event.isSilkTouching() && event.getState().getBlock() == Blocks.ICE && stack.getTagCompound().getBoolean("SilkHarvestIce")) {
+                    Item iceBlock = Item.getItemFromBlock(Blocks.ICE);
+                    if (event.getDrops().stream().noneMatch(drop -> drop.getItem() == iceBlock)) {
+                        event.getDrops().add(new ItemStack(iceBlock));
+                        final World world = event.getWorld();
+                        final BlockPos icePos = event.getPos();
+                        TaskScheduler.scheduleTask(world, () -> {
+                            IBlockState flowingState = world.getBlockState(icePos);
+                            if (flowingState == Blocks.FLOWING_WATER.getDefaultState()) {
+                                world.setBlockToAir(icePos);
+                            }
+                            return true;
+                        });
+                    }
+                }
+                if (stack.getTagCompound().getBoolean("RelocateMinedBlocks")) {
+                    event.getDrops().removeIf(player::addItemStackToInventory);
                 }
             }
         }
