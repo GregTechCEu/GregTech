@@ -88,7 +88,6 @@ public class MachineBuilderWidget extends WidgetGroup {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        if (handlers != null && gui.entityPlayer.ticksExisted % 20 == 0) handlers.forEach(CycleItemStackHandler::update);
     }
 
     @Override
