@@ -489,67 +489,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default EnumActionResult definition$onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ItemStack stack = player.getHeldItem(hand);
-        NBTTagCompound behaviourTag = getBehaviourTag(stack);
-        if (behaviourTag.getBoolean("TorchPlacing")) {
-            int cachedTorchSlot;
-            ItemStack slotStack;
-            if (behaviourTag.getBoolean("TorchPlacing$Slot")) {
-                cachedTorchSlot = behaviourTag.getInteger("TorchPlacing$Slot");
-                if (cachedTorchSlot < 0) {
-                    slotStack = player.inventory.offHandInventory.get(Math.abs(cachedTorchSlot) + 1);
-                    if (!slotStack.isEmpty() && (Block.getBlockFromItem(slotStack.getItem()) == Blocks.TORCH) ||
-                            OreDictUnifier.getOreDictionaryNames(slotStack).stream().anyMatch(s -> s.equals("torch") || s.equals("blockTorch"))) {
-                        player.setHeldItem(hand, slotStack);
-                        if (slotStack.getItem().onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
-                            player.setHeldItem(hand, stack);
-                            player.swingArm(hand);
-                            return EnumActionResult.SUCCESS;
-                        }
-                        player.setHeldItem(hand, stack);
-                    }
-                } else {
-                    slotStack = player.inventory.mainInventory.get(cachedTorchSlot);
-                    if (!slotStack.isEmpty() && (Block.getBlockFromItem(slotStack.getItem()) == Blocks.TORCH) ||
-                            OreDictUnifier.getOreDictionaryNames(slotStack).stream().anyMatch(s -> s.equals("torch") || s.equals("blockTorch"))) {
-                        player.setHeldItem(hand, slotStack);
-                        if (slotStack.getItem().onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
-                            player.setHeldItem(hand, stack);
-                            player.swingArm(hand);
-                            return EnumActionResult.SUCCESS;
-                        }
-                        player.setHeldItem(hand, stack);
-                    }
-                }
-            }
-            for (int i = 0; i < player.inventory.offHandInventory.size(); i++) {
-                slotStack = player.inventory.offHandInventory.get(i);
-                if (!slotStack.isEmpty() && (Block.getBlockFromItem(slotStack.getItem()) == Blocks.TORCH) ||
-                        OreDictUnifier.getOreDictionaryNames(slotStack).stream().anyMatch(s -> s.equals("torch") || s.equals("blockTorch"))) {
-                    behaviourTag.setInteger("TorchPlacing$Slot", -(i + 1));
-                    player.setHeldItem(hand, slotStack);
-                    if (slotStack.getItem().onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
-                        player.setHeldItem(hand, stack);
-                        player.swingArm(hand);
-                        return EnumActionResult.SUCCESS;
-                    }
-                    player.setHeldItem(hand, stack);
-                }
-            }
-            for (int i = 0; i < player.inventory.mainInventory.size(); i++) {
-                slotStack = player.inventory.mainInventory.get(i);
-                if (!slotStack.isEmpty() && (Block.getBlockFromItem(slotStack.getItem()) == Blocks.TORCH) ||
-                        OreDictUnifier.getOreDictionaryNames(slotStack).stream().anyMatch(s -> s.equals("torch") || s.equals("blockTorch"))) {
-                    behaviourTag.setInteger("TorchPlacing$Slot", i);
-                    player.setHeldItem(hand, slotStack);
-                    if (slotStack.getItem().onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
-                        player.setHeldItem(hand, stack);
-                        player.swingArm(hand);
-                        return EnumActionResult.SUCCESS;
-                    }
-                    player.setHeldItem(hand, stack);
-                }
-            }
+        if (ToolHelper.placeTorchRoutine(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
+            return EnumActionResult.SUCCESS;
         }
         return EnumActionResult.PASS;
     }
