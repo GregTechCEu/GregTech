@@ -30,7 +30,6 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
@@ -38,7 +37,6 @@ import net.minecraft.block.BlockLog;
 import net.minecraft.block.BlockWeb;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentDurability;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -112,15 +110,27 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default ItemStack get(Material material) {
         ItemStack stack = new ItemStack(get());
         NBTTagCompound toolTag = getToolTag(stack);
+        // Set Material
         toolTag.setString("Material", material.toString());
+        // Set other tool stats (durability)
         ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
         toolTag.setInteger("MaxDurability", toolProperty.getToolDurability());
         toolTag.setInteger("Durability", 0);
+        // Set material enchantments
         EnchantmentHelper.setEnchantments(toolProperty.getEnchantments(), stack);
+        // Set AoEDefinition
         AoEDefinition aoeDefinition = getToolStats().getAoEDefinition(stack);
         toolTag.setInteger("AoEMaxColumn", aoeDefinition.column);
         toolTag.setInteger("AoEMaxRow", aoeDefinition.row);
         toolTag.setInteger("AoEMaxLayer", aoeDefinition.layer);
+        toolTag.setInteger("AoEColumn", aoeDefinition.column);
+        toolTag.setInteger("AoERow", aoeDefinition.row);
+        toolTag.setInteger("AoELayer", aoeDefinition.layer);
+        // Set behaviours
+        NBTTagCompound behaviourTag = getBehaviourTag(stack);
+        behaviourTag.setBoolean("TorchPlacing", true);
+        behaviourTag.setBoolean("TreeFelling", stack.getItem().getToolClasses(stack).contains("axe"));
+        behaviourTag.setBoolean("RelocateMinedBlocks", false);
         return stack;
     }
 
@@ -144,13 +154,17 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return stack.getOrCreateSubCompound("GT.Tools");
     }
 
+    default NBTTagCompound getBehaviourTag(ItemStack stack) {
+        return stack.getOrCreateSubCompound("GT.Behaviours");
+    }
+
     default Material getToolMaterial(ItemStack stack) {
         NBTTagCompound toolTag = getToolTag(stack);
         String string = toolTag.getString("Material");
         Material material = GregTechAPI.MaterialRegistry.get(string);
         if (material == null) {
             GTLog.logger.error("Attempt to get {} as a tool material, but material does not exist. Using Neutronium instead.", string);
-            material = Materials.Neutronium;
+            toolTag.setString("Material", (material = Materials.Neutronium).toString());
         }
         return material;
     }
@@ -159,7 +173,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         Material material = getToolMaterial(stack);
         ToolProperty property = material.getProperty(PropertyKey.TOOL);
         if (property == null) {
-            GTLog.logger.error("Tool property for {} does not exist. Using Neutronium's tool property instead.", material.getId());
+            GTLog.logger.error("Tool property for {} does not exist. Using Neutronium's tool property instead.", material);
             property = Materials.Neutronium.getProperty(PropertyKey.TOOL);
         }
         return property;
@@ -169,7 +183,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         Material material = getToolMaterial(stack);
         DustProperty property = material.getProperty(PropertyKey.DUST);
         if (property == null) {
-            GTLog.logger.error("Dust property for {} does not exist. Using Neutronium's dust property instead.", material.getId());
+            GTLog.logger.error("Dust property for {} does not exist. Using Neutronium's dust property instead.", material);
             property = Materials.Neutronium.getProperty(PropertyKey.DUST);
         }
         return property;
@@ -213,10 +227,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             }
         }
         return -1L;
-    }
-
-    default Object2IntMap<Enchantment> getMaterialEnchantments(ItemStack stack) {
-        return getToolProperty(stack).getEnchantments();
     }
 
     default float getTotalToolSpeed(ItemStack stack) {
@@ -311,7 +321,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (!worldIn.isRemote) {
             if (!entityLiving.isSneaking()) {
                 EntityPlayerMP serverPlayer = (EntityPlayerMP) entityLiving;
-                if (get().getToolClasses(stack).contains("axe") && !ThreadContext.containsKey("GT_TreeFelling")) {
+                if (getBehaviourTag(stack).getBoolean("TreeFelling") && !ThreadContext.containsKey("GT_TreeFelling")) {
                     ThreadContext.put("GT_TreeFelling", "");
                     if (!treeLogging(worldIn, serverPlayer, stack, pos)) {
                         if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
@@ -405,6 +415,9 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
      * @param damage Damage the ItemStack will be taking
      */
     default void damageItem(ItemStack stack, EntityLivingBase entity, int damage) {
+        if (stack.getTagCompound() != null && stack.getTagCompound().getBoolean("Unbreakable")) {
+            return;
+        }
         if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).capabilities.isCreativeMode) {
             if (isElectric()) {
                 int electricDamage = damage * ConfigHolder.machines.energyUsageMultiplier;
@@ -634,10 +647,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return harvested;
     }
 
-    /**
-     * Creates new UI basing on given holder. Holder contains information
-     * about item stack and hand, and also player
-     */
     default ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
         NBTTagCompound tag = getToolTag(holder.getCurrentItem());
         AoEDefinition defaultDefinition = getMaxAoEDefinition(holder.getCurrentItem());
