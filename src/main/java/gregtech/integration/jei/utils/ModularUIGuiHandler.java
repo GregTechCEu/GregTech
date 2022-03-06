@@ -1,6 +1,8 @@
-package gregtech.api.gui.impl;
+package gregtech.integration.jei.utils;
 
 import gregtech.api.gui.Widget;
+import gregtech.api.gui.impl.ModularUIContainer;
+import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
 import gregtech.api.gui.ingredient.IRecipeTransferHandlerWidget;
@@ -17,13 +19,19 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, IGhostIngredientHandler<ModularUIGui>, IRecipeTransferHandler<ModularUIContainer> {
 
     private final IRecipeTransferHandlerHelper transferHelper;
+    private Predicate<IRecipeTransferHandlerWidget> validHandlers = widget -> true;
 
     public ModularUIGuiHandler(IRecipeTransferHandlerHelper transferHelper) {
         this.transferHelper = transferHelper;
+    }
+
+    public void setValidHandlers(Predicate<IRecipeTransferHandlerWidget> validHandlers) {
+        this.validHandlers = validHandlers;
     }
 
     @Nonnull
@@ -45,6 +53,7 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
                 .getFlatVisibleWidgetCollection().stream()
                 .filter(it -> it instanceof IRecipeTransferHandlerWidget)
                 .map(it -> (IRecipeTransferHandlerWidget) it)
+                .filter(validHandlers)
                 .findFirst();
         if (!transferHandler.isPresent()) {
             return transferHelper.createInternalError();
