@@ -14,6 +14,7 @@ import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMaintenance;
@@ -274,14 +275,14 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 // Try to use the item in the player's "hand" (under the cursor)
                 ItemStack heldItem = entityPlayer.inventory.getItemStack();
                 if (heldItem.getItem().getToolClasses(stack).contains(toolToMatch)) {
-                    fixProblemWithTool(i, heldItem);
+                    fixProblemWithTool(i, heldItem, entityPlayer);
                     continue;
                 }
 
                 // Then try all the remaining inventory slots
                 for (ItemStack itemStack : entityPlayer.inventory.mainInventory) {
                     if (itemStack.isItemEqualIgnoreDurability(tool.getStackForm())) {
-                        fixProblemWithTool(problemIndex, itemStack);
+                        fixProblemWithTool(problemIndex, itemStack, entityPlayer);
 
                         if (toolsToMatch.stream().allMatch(Objects::isNull)) {
                             return;
@@ -291,7 +292,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
                 for (ItemStack itemStack : entityPlayer.inventory.offHandInventory) {
                     if (itemStack.isItemEqualIgnoreDurability(tool.getStackForm())) {
-                        fixProblemWithTool(problemIndex, itemStack);
+                        fixProblemWithTool(problemIndex, itemStack, entityPlayer);
 
                         if (toolsToMatch.stream().allMatch(Objects::isNull)) {
                             return;
@@ -302,27 +303,10 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         }
     }
 
-    private void fixProblemWithTool(int problemIndex, ItemStack stack) {
+    private void fixProblemWithTool(int problemIndex, ItemStack stack, EntityPlayer player) {
         ((IMaintenance) getController()).setMaintenanceFixed(problemIndex);
-        if (stack.getItem() instanceof IGTTool) {
-            IGTTool def = (IGTTool) stack.getItem();
-            def.damageItem(stack, entityPlayer, def.getToolStats().getToolDamagePerCraft(stack));
-        } else {
-            stack.damageItem(1, entityPlayer);
-        }
+        ToolHelper.damageItemWhenCrafting(stack, player);
         setTaped(false);
-    }
-
-    /**
-     * Applies damage to toon upon its use for maintenance
-     *
-     * @param itemStack item to apply damage to
-     */
-    private void damageTool(ItemStack itemStack) {
-        if (itemStack.getItem() instanceof ToolMetaItem) {
-            ToolMetaItem<?> toolMetaItem = (ToolMetaItem<?>) itemStack.getItem();
-            toolMetaItem.damageItem(itemStack, null, 1, true, false);
-        }
     }
 
     /**

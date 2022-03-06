@@ -1,15 +1,25 @@
 package gregtech.api.items.toolitem;
 
+import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.IElectricItem;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.common.ConfigHolder;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.EnchantmentDurability;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -21,6 +31,82 @@ import net.minecraft.world.World;
  * Collection of tool related helper methods
  */
 public class ToolHelper {
+
+    /**
+     * Damages tools in a context where the tool had been used to craft something.
+     * This supports both vanilla-esque and GT tools in case it does get called on a vanilla-esque tool
+     *
+     * @param stack  stack to be damaged
+     * @param entity entity that has damaged this stack
+     */
+    public static void damageItemWhenCrafting(ItemStack stack, EntityLivingBase entity) {
+        int damage = 2;
+        if (stack.getItem() instanceof IGTTool) {
+            damage = ((IGTTool) stack.getItem()).getToolStats().getToolDamagePerCraft(stack);
+        } else {
+            if (OreDictUnifier.getOreDictionaryNames(stack).stream().anyMatch(s -> s.startsWith("craftingTool"))) {
+                damage = 1;
+            }
+        }
+        damageItem(stack, entity, damage);
+    }
+
+    /**
+     * Damages tools appropriately.
+     * This supports both vanilla-esque and GT tools in case it does get called on a vanilla-esque tool
+     *
+     * @param stack  stack to be damaged
+     * @param entity entity that has damaged this stack
+     * @param damage how much damage the stack will take
+     */
+    public static void damageItem(ItemStack stack, EntityLivingBase entity, int damage) {
+        if (!(stack.getItem() instanceof IGTTool)) {
+            stack.damageItem(damage, entity);
+        } else {
+            if (stack.getTagCompound() != null && stack.getTagCompound().getBoolean("Unbreakable")) {
+                return;
+            }
+            IGTTool tool = (IGTTool) stack.getItem();
+            if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).capabilities.isCreativeMode) {
+                if (tool.isElectric()) {
+                    int electricDamage = damage * ConfigHolder.machines.energyUsageMultiplier;
+                    IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                    if (electricItem != null) {
+                        electricItem.discharge(electricDamage, tool.getElectricTier(), true, false, false);
+                        if (electricItem.getCharge() > 0 && entity.getRNG().nextInt(100) > ConfigHolder.tools.rngDamageElectricTools) {
+                            return;
+                        }
+                    } else {
+                        throw new IllegalStateException("Electric tool does not have an attached electric item capability.");
+                    }
+                }
+                int unbreakingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
+                int negated = 0;
+                for (int k = 0; unbreakingLevel > 0 && k < damage; k++) {
+                    if (EnchantmentDurability.negateDamage(stack, unbreakingLevel, entity.getRNG())) {
+                        negated++;
+                    }
+                }
+                damage -= negated;
+                if (damage <= 0) {
+                    return;
+                }
+                int newDurability = stack.getItemDamage() + damage;
+                if (entity instanceof EntityPlayerMP) {
+                    CriteriaTriggers.ITEM_DURABILITY_CHANGED.trigger((EntityPlayerMP) entity, stack, newDurability);
+                }
+                stack.setItemDamage(newDurability);
+                if (newDurability > stack.getMaxDamage()) {
+                    if (entity instanceof EntityPlayer) {
+                        EntityPlayer entityplayer = (EntityPlayer) entity;
+                        entityplayer.addStat(StatList.getObjectBreakStats(stack.getItem()));
+                    }
+                    entity.renderBrokenItemStack(stack);
+                    stack.shrink(1);
+                }
+            }
+        }
+    }
 
     /**
      * Called from {@link net.minecraft.item.Item#onItemUse(EntityPlayer, World, BlockPos, EnumHand, EnumFacing, float, float, float)}
