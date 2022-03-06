@@ -624,14 +624,8 @@ public class ModHandler {
             return false;
         }
 
-        boolean wasRemoved = false;
-        for (ItemStack stack : FurnaceRecipes.instance().getSmeltingList().keySet()) {
-            if (ItemStack.areItemStacksEqual(input, stack)) {
-                FurnaceRecipes.instance().getSmeltingList().remove(stack);
-                wasRemoved = true;
-                break;
-            }
-        }
+        boolean wasRemoved = FurnaceRecipes.instance().getSmeltingList().keySet().removeIf(currentStack -> currentStack.getItem() == input.getItem() && (currentStack.getMetadata() == GTValues.W || currentStack.getMetadata() == input.getMetadata()));
+
         if (ConfigHolder.misc.debug) {
             if (wasRemoved)
                 GTLog.logger.info("Removed Smelting Recipe for Input: {}", input.getDisplayName());
