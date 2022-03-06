@@ -94,7 +94,7 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart {
     public void update() {
         super.update();
         if (isFirstTick()) {
-            getProxy();
+            getProxy().onReady();
         }
     }
 
@@ -111,7 +111,6 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart {
     public AENetworkProxy getProxy() {
         if (gridProxy == null) {
             gridProxy = new AENetworkProxy(getHolder(), "proxy", getStackForm(), true);
-            gridProxy.onReady();
         }
         return gridProxy;
     }
