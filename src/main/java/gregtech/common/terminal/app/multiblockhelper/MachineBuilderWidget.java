@@ -86,11 +86,6 @@ public class MachineBuilderWidget extends WidgetGroup {
     }
 
     @Override
-    public void updateScreen() {
-        super.updateScreen();
-    }
-
-    @Override
     public void handleClientAction(int id, PacketBuffer buffer) {
         if (id == -2) { // select
             this.selected = buffer.readVarInt();
