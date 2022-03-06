@@ -45,6 +45,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -85,6 +86,14 @@ import static gregtech.api.items.armor.IArmorLogic.*;
         @Optional.Interface(modid = GTValues.MODID_FR, iface = "forestry.api.arboriculture.IToolGrafter"),
         @Optional.Interface(modid = GTValues.MODID_EIO, iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")})
 public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHammer, ITool, IToolGrafter, IOverlayRenderAware {
+
+    static NBTTagCompound getToolTag(ItemStack stack) {
+        return stack.getOrCreateSubCompound("GT.Tools");
+    }
+
+    static NBTTagCompound getBehaviourTag(ItemStack stack) {
+        return stack.getOrCreateSubCompound("GT.Behaviours");
+    }
 
     String getDomain();
 
@@ -130,7 +139,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         NBTTagCompound behaviourTag = getBehaviourTag(stack);
         Set<String> toolClasses = stack.getItem().getToolClasses(stack);
         behaviourTag.setBoolean("SilkHarvestIce", toolClasses.contains("saw"));
-        behaviourTag.setBoolean("TorchPlacing", true);
+        behaviourTag.setBoolean("TorchPlacing", toolClasses.contains("pickaxe"));
         behaviourTag.setBoolean("TreeFelling", toolClasses.contains("axe"));
         behaviourTag.setBoolean("RelocateMinedBlocks", false);
         return stack;
@@ -150,14 +159,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default ItemStack get(Material material, long defaultMaxCharge) {
         return get(material, defaultMaxCharge, defaultMaxCharge);
-    }
-
-    default NBTTagCompound getToolTag(ItemStack stack) {
-        return stack.getOrCreateSubCompound("GT.Tools");
-    }
-
-    default NBTTagCompound getBehaviourTag(ItemStack stack) {
-        return stack.getOrCreateSubCompound("GT.Behaviours");
     }
 
     default Material getToolMaterial(ItemStack stack) {
@@ -487,11 +488,80 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return isElectric() ? ElectricStats.createElectricItem(0L, getElectricTier()).createProvider(stack) : null;
     }
 
+    default EnumActionResult definition$onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
+        NBTTagCompound behaviourTag = getBehaviourTag(stack);
+        if (behaviourTag.getBoolean("TorchPlacing")) {
+            int cachedTorchSlot;
+            ItemStack slotStack;
+            if (behaviourTag.getBoolean("TorchPlacing$Slot")) {
+                cachedTorchSlot = behaviourTag.getInteger("TorchPlacing$Slot");
+                if (cachedTorchSlot < 0) {
+                    slotStack = player.inventory.offHandInventory.get(Math.abs(cachedTorchSlot) + 1);
+                    if (!slotStack.isEmpty() && (Block.getBlockFromItem(slotStack.getItem()) == Blocks.TORCH) ||
+                            OreDictUnifier.getOreDictionaryNames(slotStack).stream().anyMatch(s -> s.equals("torch") || s.equals("blockTorch"))) {
+                        player.setHeldItem(hand, slotStack);
+                        if (slotStack.getItem().onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
+                            player.setHeldItem(hand, stack);
+                            player.swingArm(hand);
+                            return EnumActionResult.SUCCESS;
+                        }
+                        player.setHeldItem(hand, stack);
+                    }
+                } else {
+                    slotStack = player.inventory.mainInventory.get(cachedTorchSlot);
+                    if (!slotStack.isEmpty() && (Block.getBlockFromItem(slotStack.getItem()) == Blocks.TORCH) ||
+                            OreDictUnifier.getOreDictionaryNames(slotStack).stream().anyMatch(s -> s.equals("torch") || s.equals("blockTorch"))) {
+                        player.setHeldItem(hand, slotStack);
+                        if (slotStack.getItem().onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
+                            player.setHeldItem(hand, stack);
+                            player.swingArm(hand);
+                            return EnumActionResult.SUCCESS;
+                        }
+                        player.setHeldItem(hand, stack);
+                    }
+                }
+            }
+            for (int i = 0; i < player.inventory.offHandInventory.size(); i++) {
+                slotStack = player.inventory.offHandInventory.get(i);
+                if (!slotStack.isEmpty() && (Block.getBlockFromItem(slotStack.getItem()) == Blocks.TORCH) ||
+                        OreDictUnifier.getOreDictionaryNames(slotStack).stream().anyMatch(s -> s.equals("torch") || s.equals("blockTorch"))) {
+                    behaviourTag.setInteger("TorchPlacing$Slot", -(i + 1));
+                    player.setHeldItem(hand, slotStack);
+                    if (slotStack.getItem().onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
+                        player.setHeldItem(hand, stack);
+                        player.swingArm(hand);
+                        return EnumActionResult.SUCCESS;
+                    }
+                    player.setHeldItem(hand, stack);
+                }
+            }
+            for (int i = 0; i < player.inventory.mainInventory.size(); i++) {
+                slotStack = player.inventory.mainInventory.get(i);
+                if (!slotStack.isEmpty() && (Block.getBlockFromItem(slotStack.getItem()) == Blocks.TORCH) ||
+                        OreDictUnifier.getOreDictionaryNames(slotStack).stream().anyMatch(s -> s.equals("torch") || s.equals("blockTorch"))) {
+                    behaviourTag.setInteger("TorchPlacing$Slot", i);
+                    player.setHeldItem(hand, slotStack);
+                    if (slotStack.getItem().onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
+                        player.setHeldItem(hand, stack);
+                        player.swingArm(hand);
+                        return EnumActionResult.SUCCESS;
+                    }
+                    player.setHeldItem(hand, stack);
+                }
+            }
+        }
+        return EnumActionResult.PASS;
+    }
+
     default ActionResult<ItemStack> definition$onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
-            new PlayerInventoryHolder(player, hand).openUI();
-            return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
+            // TODO: relocate to keybind action when keybind PR happens
+            if (getMaxAoEDefinition(stack) != AoEDefinition.none()) {
+                PlayerInventoryHolder.openHandItemUI(player, hand);
+                return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
+            }
         }
         return ActionResult.newResult(EnumActionResult.PASS, stack);
     }
