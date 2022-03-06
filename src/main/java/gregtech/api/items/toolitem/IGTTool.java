@@ -128,8 +128,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         toolTag.setInteger("AoELayer", aoeDefinition.layer);
         // Set behaviours
         NBTTagCompound behaviourTag = getBehaviourTag(stack);
+        Set<String> toolClasses = stack.getItem().getToolClasses(stack);
+        behaviourTag.setBoolean("SilkHarvestIce", toolClasses.contains("saw"));
         behaviourTag.setBoolean("TorchPlacing", true);
-        behaviourTag.setBoolean("TreeFelling", stack.getItem().getToolClasses(stack).contains("axe"));
+        behaviourTag.setBoolean("TreeFelling", toolClasses.contains("axe"));
         behaviourTag.setBoolean("RelocateMinedBlocks", false);
         return stack;
     }
