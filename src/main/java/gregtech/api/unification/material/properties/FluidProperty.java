@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 
 public class FluidProperty implements IMaterialProperty<FluidProperty> {
 
-    public static final int BASE_TEMP = 300;
+    public static final int BASE_TEMP = 293; // Room Temperature
 
     /**
      * Internal material fluid field
