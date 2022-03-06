@@ -4673,6 +4673,7 @@ gregtech.fluid.plasma=%s Plasma
 gregtech.fluid.empty=Empty
 gregtech.fluid.amount=§9Amount: %,d/%,d L
 gregtech.fluid.temperature=§cTemperature: %,d K
+gregtech.fluid.temperature.cryogenic=§bCryogenic! Handle with care!
 gregtech.fluid.state_gas=§aState: Gaseous
 gregtech.fluid.state_liquid=§aState: Liquid
 gregtech.fluid.state_plasma=§aState: Plasma
@@ -4735,9 +4736,17 @@ gregtech.cable.loss_per_block=Loss/Meter/Ampere: §c%,d§7 EU-Volt
 gregtech.cable.superconductor=§d%s Superconductor
 
 gregtech.fluid_pipe.throughput=§9Transfer Rate: %,d L/s
-gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,dK
-gregtech.fluid_pipe.non_gas_proof=§aCan't transfer gases.
+gregtech.fluid_pipe.capacity=§9Capacity: %,d L
+gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,d K
 gregtech.fluid_pipe.channels=§eChannels: %d
+gregtech.fluid_pipe.gas_proof=§6Can handle Gases
+gregtech.fluid_pipe.non_gas_proof=§4Can't handle Gases
+gregtech.fluid_pipe.acid_proof=§6Can handle Acids
+gregtech.fluid_pipe.non_acid_proof=§4Can't handle Acids
+gregtech.fluid_pipe.cryo_proof=§6Can handle Cryogenics
+gregtech.fluid_pipe.non_cryo_proof=§4Can't handle Cryogenics
+gregtech.fluid_pipe.plasma_proof=§6Can handle Plasmas
+gregtech.fluid_pipe.non_plasma_proof=§4Can't handle Plasmas
 
 gregtech.item_pipe.rate_items=§9Transfer Rate: %d items/s
 gregtech.item_pipe.rate_stacks=§9Transfer Rate: %d stacks/s

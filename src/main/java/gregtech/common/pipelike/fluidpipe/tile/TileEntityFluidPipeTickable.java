@@ -2,19 +2,26 @@ package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.GTValues;
 import gregtech.api.cover.CoverBehavior;
+import gregtech.api.fluids.MaterialFluid;
+import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.util.GTUtility;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -153,6 +160,86 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             int inserted = triple.getLeft().fill(toInsert, true);
             if (inserted > 0) {
                 triple.getMiddle().drain(inserted, true);
+            }
+        }
+    }
+
+    public void checkAndDestroy(@Nonnull FluidStack stack) {
+        Fluid fluid = stack.getFluid();
+        boolean burning = getNodeData().getMaxFluidTemperature() < fluid.getTemperature(stack);
+        boolean leaking = !getNodeData().isGasProof() && fluid.isGaseous(stack);
+        boolean shattering = !getNodeData().isCryoProof() && fluid.getTemperature() < 120; // fluids less than 120K are cryogenic
+        boolean corroding = false;
+        boolean melting = false;
+        if (fluid instanceof MaterialFluid) {
+            MaterialFluid materialFluid = (MaterialFluid) fluid;
+            corroding = !getNodeData().isAcidProof() && materialFluid.getFluidType().equals(FluidTypes.ACID);
+            melting = !getNodeData().isPlasmaProof() && materialFluid.getFluidType().equals(FluidTypes.PLASMA);
+        }
+        if (burning || leaking || corroding || shattering || melting) {
+            destroyPipe(stack, burning, leaking, corroding, shattering, melting);
+        }
+    }
+
+    public void destroyPipe(FluidStack stack, boolean isBurning, boolean isLeaking, boolean isCorroding, boolean isShattering, boolean isMelting) {
+        // prevent the sound from spamming when filled from anything not a pipe
+        if (getOffsetTimer() % 10 == 0) {
+            world.playSound(null, pos, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 1.0F);
+        }
+
+        if (isLeaking) {
+            TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP, EnumParticleTypes.SMOKE_NORMAL, 7 + GTValues.RNG.nextInt(2));
+
+            // voids 10%
+            stack.amount = Math.max(0, stack.amount * 9 / 10);
+
+            // chance to do a small explosion
+            if (world.rand.nextInt(isBurning ? 3 : 7) == 0) {
+                this.doExplosion(1.0f + GTValues.RNG.nextFloat());
+            }
+        }
+
+        if (isCorroding) {
+            TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP, EnumParticleTypes.CRIT_MAGIC, 3 + GTValues.RNG.nextInt(2));
+
+            // voids 25%
+            stack.amount = Math.max(0, stack.amount * 3 / 4);
+
+            // 1/10 chance to void everything and destroy the pipe
+            if (GTValues.RNG.nextInt(10) == 0) {
+                stack.amount = 0;
+                world.setBlockToAir(pos);
+            }
+        }
+
+        if (isBurning || isMelting) {
+            TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP, EnumParticleTypes.FLAME, (isMelting ? 7 : 3) + GTValues.RNG.nextInt(2));
+
+            // voids 75%
+            stack.amount = Math.max(0, stack.amount / 4);
+
+            // 1/4 chance to burn everything around it
+            if (GTValues.RNG.nextInt(4) == 0) {
+                TileEntityFluidPipe.setNeighboursToFire(world, pos);
+            }
+
+            // 1/10 chance to void everything and burn the pipe
+            if (GTValues.RNG.nextInt(10) == 0) {
+                stack.amount = 0;
+                world.setBlockState(pos, Blocks.FIRE.getDefaultState());
+            }
+        }
+
+        if (isShattering) {
+            TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP, EnumParticleTypes.CLOUD, 3 + GTValues.RNG.nextInt(2));
+
+            // voids 75%
+            stack.amount = Math.max(0, stack.amount / 4);
+
+            // 1/10 chance to void everything and freeze the pipe
+            if (GTValues.RNG.nextInt(10) == 0) {
+                stack.amount = 0;
+                world.setBlockToAir(pos);
             }
         }
     }

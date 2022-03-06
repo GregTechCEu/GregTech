@@ -1,6 +1,7 @@
 package gregtech.api.fluids;
 
 import gregtech.api.fluids.fluidType.FluidType;
+import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
@@ -25,7 +26,7 @@ public class MaterialFluid extends Fluid {
     }
 
     public void registerFluidTooltip() {
-        FluidTooltipUtil.registerTooltip(this, FluidTooltipUtil.getMaterialTooltip(material, getTemperature()));
+        FluidTooltipUtil.registerTooltip(this, FluidTooltipUtil.getMaterialTooltip(material, getTemperature(), fluidType.equals(FluidTypes.PLASMA)));
     }
 
     @Nonnull

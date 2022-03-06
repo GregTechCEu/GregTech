@@ -59,6 +59,9 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
                 baseProperties.getMaxFluidTemperature(),
                 baseProperties.getThroughput() * capacityMultiplier,
                 baseProperties.isGasProof(),
+                baseProperties.isAcidProof(),
+                baseProperties.isCryoProof(),
+                baseProperties.isPlasmaProof(),
                 channels);
     }
 
