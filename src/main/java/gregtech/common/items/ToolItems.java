@@ -19,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -213,26 +214,27 @@ public class ToolItems {
         EntityPlayer player = event.getHarvester();
         if (player != null) {
             ItemStack stack = event.getHarvester().getHeldItemMainhand();
-            boolean hasTag = stack.hasTagCompound();
-            if (hasTag) {
-                if (!event.isSilkTouching() && event.getState().getBlock() == Blocks.ICE && stack.getTagCompound().getBoolean("SilkHarvestIce")) {
-                    Item iceBlock = Item.getItemFromBlock(Blocks.ICE);
-                    if (event.getDrops().stream().noneMatch(drop -> drop.getItem() == iceBlock)) {
-                        event.getDrops().add(new ItemStack(iceBlock));
-                        final World world = event.getWorld();
-                        final BlockPos icePos = event.getPos();
-                        TaskScheduler.scheduleTask(world, () -> {
-                            IBlockState flowingState = world.getBlockState(icePos);
-                            if (flowingState == Blocks.FLOWING_WATER.getDefaultState()) {
-                                world.setBlockToAir(icePos);
-                            }
-                            return true;
-                        });
-                    }
+            if (!stack.hasTagCompound()) {
+                return;
+            }
+            NBTTagCompound behaviourTag = IGTTool.getBehaviourTag(stack);
+            if (!event.isSilkTouching() && event.getState().getBlock() == Blocks.ICE && behaviourTag.getBoolean("SilkHarvestIce")) {
+                Item iceBlock = Item.getItemFromBlock(Blocks.ICE);
+                if (event.getDrops().stream().noneMatch(drop -> drop.getItem() == iceBlock)) {
+                    event.getDrops().add(new ItemStack(iceBlock));
+                    final World world = event.getWorld();
+                    final BlockPos icePos = event.getPos();
+                    TaskScheduler.scheduleTask(world, () -> {
+                        IBlockState flowingState = world.getBlockState(icePos);
+                        if (flowingState == Blocks.FLOWING_WATER.getDefaultState()) {
+                            world.setBlockToAir(icePos);
+                        }
+                        return true;
+                    });
                 }
-                if (stack.getTagCompound().getBoolean("RelocateMinedBlocks")) {
-                    event.getDrops().removeIf(player::addItemStackToInventory);
-                }
+            }
+            if (behaviourTag.getBoolean("RelocateMinedBlocks")) {
+                event.getDrops().removeIf(player::addItemStackToInventory);
             }
         }
     }
