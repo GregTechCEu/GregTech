@@ -316,7 +316,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default boolean definition$hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-        damageItem(stack, attacker, getToolStats().getToolDamagePerAttack(stack));
+        ToolHelper.damageItem(stack, attacker, getToolStats().getToolDamagePerAttack(stack));
         return true;
     }
 
@@ -328,7 +328,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                     ThreadContext.put("GT_TreeFelling", "");
                     if (!treeLogging(worldIn, serverPlayer, stack, pos)) {
                         if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
-                            damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
+                            ToolHelper.damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
                             return true;
                         }
                     }
@@ -347,7 +347,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                 }
             }
             if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
-                damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
+                ToolHelper.damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
             }
         }
         return true;
@@ -394,7 +394,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         int damage = getToolStats().getToolDamagePerCraft(stack);
         if (damage > 0) {
             EntityPlayer player = ForgeHooks.getCraftingPlayer();
-            damageItem(stack, player, damage);
+            ToolHelper.damageItem(stack, player, damage);
             playCraftingSound(player);
             // We cannot simply return the copied stack here because Forge's bug
             // Introduced here: https://github.com/MinecraftForge/MinecraftForge/pull/3388
