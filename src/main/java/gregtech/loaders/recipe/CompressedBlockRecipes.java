@@ -29,14 +29,15 @@ public class CompressedBlockRecipes {
 
         if(ConfigHolder.recipes.disableManualCompressionForOtherMaterials) {
             for (IRecipe recipe : CraftingManager.REGISTRY) {
-                if (recipe.getIngredients().size() == 9) {
+                int ingredientSize = recipe.getIngredients().size();
+                if (ingredientSize == 9 || ingredientSize == 4) {
                     // There is a pre-existing config that deals with GT materials and MC blocks
                     if (!(recipe.getRegistryName().getNamespace().equals(GTValues.MODID) || recipe.getRegistryName().getNamespace().equals("minecraft"))) {
                         if (!recipe.getRecipeOutput().isEmpty() && !(Block.getBlockFromItem(recipe.getRecipeOutput().getItem()) == Blocks.AIR)) {
 
-                            Ingredient[] inputStack = new Ingredient[9];
+                            Ingredient[] inputStack = new Ingredient[ingredientSize];
                             // Gather all the ingredients into an array
-                            for (int i = 0; i < 9; i++) {
+                            for (int i = 0; i < ingredientSize; i++) {
                                 inputStack[i] = recipe.getIngredients().get(i);
                             }
 
@@ -105,14 +106,14 @@ public class CompressedBlockRecipes {
                                 // Register Compressor recipes for the removed crafting table compression recipes
                                 if (!inputItemStack.isEmpty()) {
                                     COMPRESSOR_RECIPES.recipeBuilder()
-                                            .inputs(CountableIngredient.from(inputItemStack, recipe.getIngredients().size()))
+                                            .inputs(CountableIngredient.from(inputItemStack, ingredientSize))
                                             .outputs(recipe.getRecipeOutput())
                                             .duration(400)
                                             .EUt(2)
                                             .buildAndRegister();
                                 } else {
                                     COMPRESSOR_RECIPES.recipeBuilder()
-                                            .inputs(CountableIngredient.from(finalOreDictName, recipe.getIngredients().size()))
+                                            .inputs(CountableIngredient.from(finalOreDictName, ingredientSize))
                                             .outputs(recipe.getRecipeOutput())
                                             .duration(400)
                                             .EUt(2)
