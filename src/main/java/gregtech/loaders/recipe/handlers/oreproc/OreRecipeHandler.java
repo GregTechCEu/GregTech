@@ -123,6 +123,7 @@ public class OreRecipeHandler {
      * - Pure Dust:   1 Ingot
      * - Dust:        1 Ingot
      */
+    // TODO crushedAmount anywhere in here?
     protected static void processMetalSmelting(OrePrefix inputPrefix, Material material, OreProperty property) {
         // Get the Material that should be output by smelting this Item
         // Exit early if the result material has an EBF temperature, or is not an Ingot
@@ -136,22 +137,6 @@ public class OreRecipeHandler {
 
                 // In the easy mode, always return prefix amount here and do not check for the components.
                 : inputPrefix.getMaterialAmount(material);
-
-        if (material == Materials.Magnetite) {
-            if (!hasPrintedName) {
-                GTLog.logger.info("======================================");
-                GTLog.logger.info("Material: {}", material);
-                GTLog.logger.info("Ore Multiplier: {}", property.getOreMultiplier());
-                GTLog.logger.info("======================================");
-                hasPrintedName = true;
-            }
-            GTLog.logger.info("Ore Prefix: {}", inputPrefix.name);
-            GTLog.logger.info("Amount Output: {}", 1.0 * amountOutput / M);
-            GTLog.logger.info("Material Amount: M * {}", inputPrefix.getMaterialAmount(material) * (1.0 / M));
-            GTLog.logger.info("Num Components of {}: {}", smeltingResult, material.getNumComponentsOf(smeltingResult));
-            GTLog.logger.info("Num Components: {}", material.getNumComponents());
-            GTLog.logger.info("======================================");
-        }
 
         ItemStack outputStack = OreDictUnifier.getIngot(smeltingResult, amountOutput * getSmeltMultiplier(inputPrefix, property));
         if (!outputStack.isEmpty()) {

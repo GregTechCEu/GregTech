@@ -8,8 +8,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 
-import static gregtech.api.GTValues.LV;
-import static gregtech.api.GTValues.VA;
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.WASHING_MERCURY;
@@ -24,19 +23,21 @@ public class CrushedRecipeHandler {
         Material primaryByproduct = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
         Material secondaryByproduct = GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class);
 
+        // TODO Should this cause any effect on byproducts?
+        int crushedMultiplier = (int) (crushed.getMaterialAmount(material) / M);
+
         // Forge Hammer recipe
         // Crushed Ore -> Impure Dust
         FORGE_HAMMER_RECIPES.recipeBuilder()
                 .input(crushed, material)
-                .output(dustImpure, material)
+                .output(dustImpure, material, crushedMultiplier)
                 .duration(10).EUt(16).buildAndRegister();
 
         // Macerator recipe
         // Crushed Ore -> Impure Dust (with byproduct)
         MACERATOR_RECIPES.recipeBuilder()
                 .input(crushed, material)
-                .output(dustImpure, material)
-                .chancedOutput(dustImpure, material, 1250, 0)
+                .output(dustImpure, material, crushedMultiplier)
                 .chancedOutput(dust, primaryByproduct, 1400, 850)
                 .output(dust, Stone)
                 .duration(400).EUt(2).buildAndRegister();
@@ -104,7 +105,7 @@ public class CrushedRecipeHandler {
         // Hard Hammer crafting recipe
         // Crushed Ore -> Impure Dust
         ModHandler.addShapelessRecipe(String.format("crushed_ore_to_dust_%s", material),
-                OreDictUnifier.get(dustImpure, material), 'h', new UnificationEntry(crushed, material));
+                OreDictUnifier.get(dustImpure, material, crushedMultiplier), 'h', new UnificationEntry(crushed, material));
 
         processMetalSmelting(prefix, material, property);
     }

@@ -323,7 +323,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Lazurite = new Material.Builder(289, "lazurite")
-                .gem(1).ore(5)
+                .gem(1).ore()
                 .color(0x6478FF).iconSet(LAPIS)
                 .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_ROD, DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Aluminium, 6, Silicon, 6, Calcium, 8, Sodium, 8)
@@ -544,7 +544,7 @@ public class FirstDegreeMaterials {
                 .setFormula("Ca(WO3)O", true);
 
         Sodalite = new Material.Builder(316, "sodalite")
-                .gem(1).ore(5)
+                .gem(1).ore()
                 .color(0x1414FF).iconSet(LAPIS)
                 .flags(GENERATE_PLATE, GENERATE_ROD, NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Aluminium, 3, Silicon, 3, Sodium, 4, Chlorine, 1)
@@ -992,7 +992,7 @@ public class FirstDegreeMaterials {
 
         // TODO All of this
         GlauconiteSand = new Material.Builder(384, "glauconite_sand")
-                .dust().ore(3)
+                .dust().ore() // used  to be 3
                 .color(0x82B43C).iconSet(SAND)
                 .components(Potassium, 1, Magnesium, 2, Aluminium, 4, Hydrogen, 2, Oxygen, 12)
                 .build();

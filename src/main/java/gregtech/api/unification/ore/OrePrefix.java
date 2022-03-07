@@ -55,9 +55,12 @@ public class OrePrefix {
     // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
     public static final OrePrefix oreEndstone = new OrePrefix("oreEndstone", M * 2, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
 
-    public static final OrePrefix crushedRefined = new OrePrefix("crushedRefined", M * 11 / 8, null, MaterialIconType.crushedRefined, ENABLE_UNIFICATION, hasOreProperty);
-    public static final OrePrefix crushedPurified = new OrePrefix("crushedPurified", M * 10 / 8, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, hasOreProperty);
-    public static final OrePrefix crushed = new OrePrefix("crushed", M * 9 / 8, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.crushed.tooltip.purify")));
+    // Third ore processing output from Ore blocks. Worth 1.33 Dust
+    public static final OrePrefix crushedRefined = new OrePrefix("crushedRefined", M * 4 / 3, null, MaterialIconType.crushedRefined, ENABLE_UNIFICATION, hasOreProperty);
+    // Second ore processing output from Ore blocks. Worth 1.25 Dust
+    public static final OrePrefix crushedPurified = new OrePrefix("crushedPurified", M * 5 / 4, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, hasOreProperty);
+    // First ore processing output from Ore blocks. Worth 1 Dust
+    public static final OrePrefix crushed = new OrePrefix("crushed", M, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty, mat -> Collections.singletonList(I18n.format("metaitem.crushed.tooltip.purify")));
 
     // A hot Ingot, which has to be cooled down by a Vacuum Freezer.
     public static final OrePrefix ingotHot = new OrePrefix("ingotHot", M, null, MaterialIconType.ingotHot, ENABLE_UNIFICATION, hasBlastProperty.and(mat -> mat.getProperty(PropertyKey.BLAST).getBlastTemperature() > 1750));
@@ -466,7 +469,6 @@ public class OrePrefix {
             else if (material == Materials.Bone)
                 return M * 5;
         } else if (this == crushed || this == crushedPurified || this == crushedRefined) {
-            // TODO Implement these fully
             if (material == Materials.Redstone || material == Materials.Electrotine) {
                 return this.materialAmount * 4;
             } else if (material == Materials.Lapis || material == Materials.Sodalite || material == Materials.Lazurite) {

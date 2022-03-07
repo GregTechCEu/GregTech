@@ -9,8 +9,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 
-import static gregtech.api.GTValues.LV;
-import static gregtech.api.GTValues.VA;
+import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.HIGH_SIFTER_OUTPUT;
@@ -23,19 +22,21 @@ public class PurifiedRecipeHandler {
         // Get the byproduct used for this step
         Material byproduct = GTUtility.selectItemInList(1, material, property.getOreByProducts(), Material.class);
 
+        int crushedMultiplier = (int) (crushed.getMaterialAmount(material) / M);
+
         // Forge Hammer recipe
         // Purified Ore -> Dust
         FORGE_HAMMER_RECIPES.recipeBuilder()
                 .input(crushedPurified, material)
-                .output(dust, material)
+                .output(dust, material, crushedMultiplier)
                 .duration(10).EUt(16).buildAndRegister();
 
         // Macerator recipe
         // Purified Ore -> Dust
         MACERATOR_RECIPES.recipeBuilder()
                 .input(crushedPurified, material)
-                .output(dust, material)
-                .chancedOutput(dust, material, 2500, 0)
+                .output(dust, material, crushedMultiplier)
+                .chancedOutput(dust, material, crushedMultiplier, 2500, 0)
                 .chancedOutput(dust, byproduct, 1400, 850)
                 .duration(400).EUt(2).buildAndRegister();
 
@@ -49,6 +50,7 @@ public class PurifiedRecipeHandler {
 
         // Sifter recipe (if applicable)
         // Purified Ore -> Gems of various sizes
+        // TODO Fix these for crushedMultiplier
         if (material.hasProperty(PropertyKey.GEM)) {
             if (material.hasFlag(HIGH_SIFTER_OUTPUT)) {
                 SIFTER_RECIPES.recipeBuilder()
@@ -100,7 +102,7 @@ public class PurifiedRecipeHandler {
         // Hard Hammer crafting recipe
         // Purified Ore -> Dust
         ModHandler.addShapelessRecipe(String.format("purified_ore_to_dust_%s", material),
-                OreDictUnifier.get(dust, material), 'h', new UnificationEntry(crushedPurified, material));
+                OreDictUnifier.get(dust, material, crushedMultiplier), 'h', new UnificationEntry(crushedPurified, material));
 
         processMetalSmelting(prefix, material, property);
     }
@@ -109,26 +111,28 @@ public class PurifiedRecipeHandler {
         // Get the byproduct used for this step
         Material byproduct = GTUtility.selectItemInList(2, material, property.getOreByProducts(), Material.class);
 
+        int crushedMultiplier = (int) (crushed.getMaterialAmount(material) / M);
+
         // Forge Hammer recipe
         // Centrifuged Ore -> Dust
         FORGE_HAMMER_RECIPES.recipeBuilder()
                 .input(crushedRefined, material)
-                .output(dust, material)
+                .output(dust, material, crushedMultiplier)
                 .duration(10).EUt(16).buildAndRegister();
 
         // Macerator recipe
         // Centrifuged Ore -> Dust
         MACERATOR_RECIPES.recipeBuilder()
                 .input(crushedRefined, material)
-                .output(dust, material)
-                .chancedOutput(dust, material, 3750, 0)
+                .output(dust, material, crushedMultiplier)
+                .chancedOutput(dust, material, crushedMultiplier, 3333, 0)
                 .chancedOutput(dust, byproduct, 1400, 850)
                 .duration(400).EUt(2).buildAndRegister();
 
         // Hard Hammer crafting recipe
         // Centrifuged Ore -> Dust
         ModHandler.addShapelessRecipe(String.format("centrifuged_ore_to_dust_%s", material),
-                OreDictUnifier.get(dust, material), 'h', new UnificationEntry(crushedRefined, material));
+                OreDictUnifier.get(dust, material, crushedMultiplier), 'h', new UnificationEntry(crushedRefined, material));
 
         processMetalSmelting(prefix, material, property);
     }
