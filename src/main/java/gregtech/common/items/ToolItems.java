@@ -1,10 +1,10 @@
 package gregtech.common.items;
 
 import gregtech.api.GTValues;
-import gregtech.api.items.toolitem.AoEDefinition;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ItemGTTool;
 import gregtech.api.items.toolitem.ToolBuilder;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.TaskScheduler;
@@ -46,15 +46,6 @@ import java.util.ListIterator;
 import java.util.Set;
 
 public class ToolItems {
-
-    public static final int DAMAGE_FOR_SCREWDRIVER = 1;
-    public static final int DAMAGE_FOR_WRENCH = 2;
-    public static final int DAMAGE_FOR_CUTTER = 2;
-    public static final int DAMAGE_FOR_CROWBAR = 1;
-    public static final int DAMAGE_FOR_SOFT_HAMMER = 3;
-    public static final int DAMAGE_FOR_HAMMER = 3;
-    public static final int DAMAGE_FOR_HOE = 2;
-    public static final int DAMAGE_FOR_PLUNGER = 1;
 
     private static final List<IGTTool> TOOLS = new ArrayList<>();
 
@@ -98,19 +89,22 @@ public class ToolItems {
 
     public static void init() {
         MinecraftForge.EVENT_BUS.register(ToolItems.class);
-        WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench")
-                .toolStats(b -> b.damagePerAction(DAMAGE_FOR_WRENCH).suitableForBlockBreaking().suitableForCrafting())
-                .sound(GTSounds.WRENCH_TOOL)
-                .oreDicts("craftingToolWrench")
-                .toolClasses("wrench"));
         PICKAXE = register(ItemGTTool.Builder.of(GTValues.MODID, "pickaxe")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking())
-                .oreDicts("craftingToolPickaxe")
                 .toolClasses("pickaxe"));
         AXE = register(ItemGTTool.Builder.of(GTValues.MODID, "axe")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking())
-                .oreDicts("craftingToolAxe")
                 .toolClasses("axe"));
+        HARD_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "hammer")
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking().suitableForCrafting())
+                .oreDicts("craftingToolHammer")
+                .sound(GTSounds.FORGE_HAMMER)
+                .toolClasses("pickaxe", "hammer"));
+        WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench")
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting())
+                .sound(GTSounds.WRENCH_TOOL)
+                .oreDicts("craftingToolWrench")
+                .toolClasses("wrench"));
         DRILL_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_lv")
                 .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0).brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
                 .oreDicts("craftingToolDrill")
@@ -208,7 +202,9 @@ public class ToolItems {
         }
     }
 
-    // Handle Saws harvesting Ice Blocks correctly
+    // Handle saws harvesting ice without leaving water behind
+    // Handle mined blocks teleporting straight into inventory
+    // Handles drop conversion when a hammer tool (or tool with hard hammer enchantment) is used
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onHarvestDrops(BlockEvent.HarvestDropsEvent event) {
         EntityPlayer player = event.getHarvester();
@@ -216,6 +212,9 @@ public class ToolItems {
             ItemStack stack = event.getHarvester().getHeldItemMainhand();
             if (!stack.hasTagCompound()) {
                 return;
+            }
+            if (!event.isSilkTouching()) {
+                ToolHelper.applyHammerDropConversion(stack, event.getState(), event.getDrops(), event.getFortuneLevel(), event.getDropChance(), player.getRNG());
             }
             NBTTagCompound behaviourTag = IGTTool.getBehaviourTag(stack);
             if (!event.isSilkTouching() && event.getState().getBlock() == Blocks.ICE && behaviourTag.getBoolean("SilkHarvestIce")) {
