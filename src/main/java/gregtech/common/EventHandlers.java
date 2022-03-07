@@ -1,7 +1,6 @@
 package gregtech.common;
 
 import gregtech.api.GTValues;
-import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.material.Materials;
@@ -21,7 +20,6 @@ import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -38,7 +36,6 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.Mod;
@@ -104,16 +101,6 @@ public class EventHandlers {
             TileEntity holder = event.getWorld().getTileEntity(event.getPos());
             if (holder instanceof IGregTechTileEntity && ((IGregTechTileEntity) holder).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
                 ((MetaTileEntityCentralMonitor) ((IGregTechTileEntity) holder).getMetaTileEntity()).invalidateStructure();
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void hammer(BlockEvent.HarvestDropsEvent event) {
-        if (!event.getWorld().isRemote && event.getHarvester() != null && !event.isSilkTouching()) {
-            int level = EnchantmentHelper.getEnchantmentLevel(EnchantmentHardHammer.INSTANCE, event.getHarvester().getHeldItemMainhand());
-            if (level > 0) {
-                ToolUtility.applyHammerDrops(event.getWorld().rand, event.getState(), event.getDrops(), EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, event.getHarvester().getHeldItemMainhand()), event.getHarvester());
             }
         }
     }

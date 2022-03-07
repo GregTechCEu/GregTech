@@ -3,9 +3,9 @@ package gregtech.common.pipelike.cable;
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.tool.ICutterItem;
 import gregtech.api.damagesources.DamageSources;
-import gregtech.api.items.toolitem.IToolStats;
+import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -17,7 +17,7 @@ import gregtech.common.advancement.GTTriggers;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
-import gregtech.common.tools.DamageValues;
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -96,18 +96,16 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
 
     @Override
     public EnumActionResult onPipeToolUsed(World world, BlockPos pos, ItemStack stack, EnumFacing coverSide, IPipeTile<Insulation, WireProperties> pipeTile, EntityPlayer entityPlayer) {
-        ICutterItem cutterItem = stack.getCapability(GregtechCapabilities.CAPABILITY_CUTTER, null);
-        if (cutterItem != null) {
-            if (cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, true)) {
-                if (!entityPlayer.world.isRemote) {
-                    boolean isOpen = pipeTile.isConnected(coverSide);
-                    pipeTile.setConnection(coverSide, !isOpen, false);
-                    cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, false);
-                    IToolStats.onOtherUse(stack, world, pos);
+        if (stack.getItem().getToolClasses(stack).contains("screwdriver")) {
+            if (!entityPlayer.world.isRemote) {
+                boolean isOpen = pipeTile.isConnected(coverSide);
+                pipeTile.setConnection(coverSide, !isOpen, false);
+                ToolHelper.damageItem(stack, entityPlayer);
+                if (stack.getItem() instanceof IGTTool) {
+                    ((IGTTool) stack.getItem()).playSound(entityPlayer);
                 }
-                return EnumActionResult.SUCCESS;
             }
-            return EnumActionResult.FAIL;
+            return EnumActionResult.SUCCESS;
         }
         return EnumActionResult.PASS;
     }
@@ -177,11 +175,6 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
                 }
             }
         }
-    }
-
-    @Override
-    protected boolean doDrawGrid(ItemStack stack) {
-        return stack.hasCapability(GregtechCapabilities.CAPABILITY_CUTTER, null);
     }
 
     @Nonnull

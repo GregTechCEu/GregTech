@@ -20,7 +20,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.common.ConfigHolder;
-import gregtech.common.tools.DamageValues;
 import gregtech.integration.ctm.IFacadeWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -305,13 +304,13 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         }
         if (itemStack.getItem().getToolClasses(itemStack).contains("screwdriver")) {
             metaTileEntity.onCoverScrewdriverClick(playerIn, hand, rayTraceResult);
-            ToolHelper.damageItem(itemStack, playerIn, DamageValues.DAMAGE_FOR_SCREWDRIVER);
+            ToolHelper.damageItem(itemStack, playerIn);
             if (itemStack.getItem() instanceof IGTTool) {
                 ((IGTTool) itemStack.getItem()).playSound(playerIn);
             }
         } else if (itemStack.getItem().getToolClasses(itemStack).contains("wrench")) {
             metaTileEntity.onWrenchClick(playerIn, hand, ICoverable.determineGridSideHit(rayTraceResult), rayTraceResult);
-            ToolHelper.damageItem(itemStack, playerIn, DamageValues.DAMAGE_FOR_WRENCH);
+            ToolHelper.damageItem(itemStack, playerIn);
             if (itemStack.getItem() instanceof IGTTool) {
                 ((IGTTool) itemStack.getItem()).playSound(playerIn);
             }
