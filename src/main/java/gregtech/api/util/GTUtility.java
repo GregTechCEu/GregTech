@@ -12,7 +12,6 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
@@ -103,19 +102,10 @@ public class GTUtility {
         return Arrays.stream(array).flatMap(o -> o instanceof Object[] ? flatten((Object[]) o) : Stream.of(o));
     }
 
-    public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest, boolean fixTools) {
+    public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest, boolean unused) {
         for (int i = 0; i < src.getSlots(); i++) {
             ItemStack itemStack = src.getStackInSlot(i);
-            if (fixTools && itemStack.getItem() instanceof ToolMetaItem) {
-                ItemStack toolStack = itemStack.copy();
-                NBTTagCompound toolStats = toolStack.getTagCompound().getCompoundTag("GT.ToolStats");
-                toolStats.setInteger("Dmg", 0);
-                NBTTagCompound itemTag = new NBTTagCompound();
-                itemTag.setTag("GT.ToolStats", toolStats);
-                toolStack.setTagCompound(itemTag);
-                dest.setStackInSlot(i, toolStack);
-            } else
-                dest.setStackInSlot(i, itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy());
+            dest.setStackInSlot(i, itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy());
         }
     }
 
@@ -722,7 +712,7 @@ public class GTUtility {
         return isCoverBehaviorItem(itemStack, null, null);
     }
 
-    public static boolean isCoverBehaviorItem(ItemStack itemStack, BooleanSupplier hasCoverSupplier, Function<CoverDefinition, Boolean> canPlaceCover) {
+    public static boolean isCoverBehaviorItem(ItemStack itemStack, @Nullable BooleanSupplier hasCoverSupplier, @Nullable Predicate<CoverDefinition> canPlaceCover) {
         if (itemStack.getItem() instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) itemStack.getItem();
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
@@ -730,7 +720,7 @@ public class GTUtility {
                 List<IItemBehaviour> behaviourList = valueItem.getBehaviours();
                 for (IItemBehaviour behaviour : behaviourList) {
                     if (behaviour instanceof CoverPlaceBehavior)
-                        return canPlaceCover == null || canPlaceCover.apply(((CoverPlaceBehavior) behaviour).coverDefinition);
+                        return canPlaceCover == null || canPlaceCover.test(((CoverPlaceBehavior) behaviour).coverDefinition);
                     if (behaviour instanceof CrowbarBehaviour)
                         return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
                 }

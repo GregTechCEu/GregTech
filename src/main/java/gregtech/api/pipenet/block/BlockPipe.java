@@ -6,15 +6,13 @@ import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.vec.Cuboid6;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.BuiltInRenderBlock;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.tool.IScrewdriverItem;
-import gregtech.api.capability.tool.IWrenchItem;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.ICoverable.CoverSideData;
 import gregtech.api.cover.ICoverable.PrimaryBoxData;
 import gregtech.api.cover.IFacadeCover;
-import gregtech.api.items.toolitem.IToolStats;
+import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
@@ -176,10 +174,10 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             setTileEntityData((TileEntityPipeBase<PipeType, NodeDataType>) pipeTile, stack);
 
             // Color pipes/cables on place if holding spray can in off-hand
-            if(placer instanceof EntityPlayer) {
+            if (placer instanceof EntityPlayer) {
                 ItemStack offhand = placer.getHeldItemOffhand();
-                for(int i  = 0; i < EnumDyeColor.values().length; i++) {
-                    if(offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
+                for (int i  = 0; i < EnumDyeColor.values().length; i++) {
+                    if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
                         MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0 , 0);
                         break;
                     }
@@ -320,21 +318,19 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                     return false;
             }
         }
-
         CoverBehavior coverBehavior = pipeTile.getCoverableImplementation().getCoverAtSide(coverSide);
         if (coverBehavior == null) {
             return activateFrame(world, state, pos, entityPlayer, hand, hit, pipeTile);
         }
 
-        IScrewdriverItem screwdriver = itemStack.getCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null);
-        if (screwdriver != null) {
-            if (screwdriver.damageItem(DamageValues.DAMAGE_FOR_SCREWDRIVER, true) &&
-                    coverBehavior.onScrewdriverClick(entityPlayer, hand, hit) == EnumActionResult.SUCCESS) {
-                screwdriver.damageItem(DamageValues.DAMAGE_FOR_SCREWDRIVER, false);
-                IToolStats.onOtherUse(itemStack, world, pos);
+        if (itemStack.getItem().getToolClasses(itemStack).contains("screwdriver")) {
+            if (coverBehavior.onScrewdriverClick(entityPlayer, hand, hit) == EnumActionResult.SUCCESS) {
+                ToolHelper.damageItem(itemStack, entityPlayer);
+                if (itemStack.getItem() instanceof IGTTool) {
+                    ((IGTTool) itemStack.getItem()).playSound(entityPlayer);
+                }
                 return true;
             }
-            return false;
         }
 
         EnumActionResult result = coverBehavior.onRightClick(entityPlayer, hand, hit);
@@ -360,23 +356,18 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
      * -1 if ItemStack failed the capability check (no action done, continue checks).
      */
     public EnumActionResult onPipeToolUsed(World world, BlockPos pos, ItemStack stack, EnumFacing coverSide, IPipeTile<PipeType, NodeDataType> pipeTile, EntityPlayer entityPlayer) {
-        IWrenchItem wrenchItem = stack.getCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
-        if (wrenchItem != null) {
-            if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true)) {
-                if (!entityPlayer.world.isRemote) {
-                    if (entityPlayer.isSneaking() && pipeTile.canHaveBlockedFaces()) {
-                        boolean isBlocked = pipeTile.isFaceBlocked(coverSide);
-                        pipeTile.setFaceBlocked(coverSide, !isBlocked);
-                    } else {
-                        boolean isOpen = pipeTile.isConnected(coverSide);
-                        pipeTile.setConnection(coverSide, !isOpen, false);
-                    }
-                    wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
-                    IToolStats.onOtherUse(stack, world, pos);
+        if (stack.getItem().getToolClasses(stack).contains("wrench")) {
+            if (!entityPlayer.world.isRemote) {
+                if (entityPlayer.isSneaking() && pipeTile.canHaveBlockedFaces()) {
+                    boolean isBlocked = pipeTile.isFaceBlocked(coverSide);
+                    pipeTile.setFaceBlocked(coverSide, !isBlocked);
+                } else {
+                    boolean isOpen = pipeTile.isConnected(coverSide);
+                    pipeTile.setConnection(coverSide, !isOpen, false);
                 }
+                ToolHelper.damageItem(stack, entityPlayer);
                 return EnumActionResult.SUCCESS;
             }
-            return EnumActionResult.FAIL;
         }
         return EnumActionResult.PASS;
     }
@@ -548,6 +539,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         return result;
     }
 
+    // TODO Tools PR
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, Entity entity) {
         if (entity instanceof EntityPlayer) {
             return hasPipeCollisionChangingItem(world, pos, ((EntityPlayer) entity).getHeldItem(EnumHand.MAIN_HAND)) ||
@@ -557,18 +549,14 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         return false;
     }
 
+    // TODO Tools PR
     public abstract boolean isHoldingPipe(EntityPlayer player);
 
+    // TODO Tools PR
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
-        return doDrawGrid(stack) ||
-                stack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null) ||
-                GTUtility.isCoverBehaviorItem(stack,
-                        () -> hasCover(getPipeTileEntity(world, pos)),
-                        coverDef -> ICoverable.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
-    }
-
-    protected boolean doDrawGrid(ItemStack stack) {
-        return stack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
+        return ToolHelper.isTool(stack, "wrench", "screwdriver") || GTUtility.isCoverBehaviorItem(stack,
+                () -> hasCover(getPipeTileEntity(world, pos)),
+                coverDef -> ICoverable.canPlaceCover(coverDef, getPipeTileEntity(world, pos).getCoverableImplementation()));
     }
 
     protected boolean hasCover(IPipeTile<PipeType, NodeDataType> pipeTile) {

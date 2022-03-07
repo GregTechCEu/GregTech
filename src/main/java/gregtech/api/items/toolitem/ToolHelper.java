@@ -10,6 +10,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.GTVisibilityHackBlock;
@@ -33,7 +34,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.event.ForgeEventFactory;
 
 import java.util.*;
 
@@ -129,6 +129,33 @@ public class ToolHelper {
                 }
             }
         }
+    }
+
+    /**
+     * Return if any of the specified tool classes exists in the tool
+     */
+    public static boolean isTool(ItemStack tool, String... toolClasses) {
+        if (toolClasses.length == 1) {
+            return tool.getItem().getToolClasses(tool).contains(toolClasses[0]);
+        }
+        for (String toolClass : tool.getItem().getToolClasses(tool)) {
+            for (String specified : toolClasses) {
+                if (toolClass.equals(specified)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Return if all the specified tool classes exists in the tool
+     */
+    public static boolean areTools(ItemStack tool, String... toolClasses) {
+        if (toolClasses.length == 1) {
+            return tool.getItem().getToolClasses(tool).contains(toolClasses[0]);
+        }
+        return tool.getItem().getToolClasses(tool).containsAll(new ObjectArraySet<String>(toolClasses));
     }
 
     /**

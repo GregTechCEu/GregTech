@@ -5,15 +5,12 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.impl.EnergyContainerHandler;
-import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
-import gregtech.common.tools.DamageValues;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -136,34 +133,6 @@ public class MetaTileEntityAdjustableTransformer extends MetaTileEntityTransform
         frontFaceTexture.renderSided(frontFacing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() + 1]));
         Arrays.stream(EnumFacing.values()).filter(f -> f != frontFacing)
                 .forEach((f -> otherFaceTexture.renderSided(f, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]))));
-    }
-
-    @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        ItemStack itemStack = playerIn.getHeldItem(hand);
-        if (!itemStack.isEmpty() && itemStack.hasCapability(GregtechCapabilities.CAPABILITY_MALLET, null)) {
-            ISoftHammerItem softHammerItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_MALLET, null);
-
-            if (getWorld().isRemote) {
-                scheduleRenderUpdate();
-                return true;
-            }
-            if (!softHammerItem.damageItem(DamageValues.DAMAGE_FOR_SOFT_HAMMER, false)) {
-                return false;
-            }
-
-            if (isInverted()) {
-                setTransformUp(false);
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.transformer.message_transform_down",
-                        energyContainer.getInputVoltage(), energyContainer.getInputAmperage(), energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
-            } else {
-                setTransformUp(true);
-                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.transformer.message_transform_up",
-                        energyContainer.getInputVoltage(), energyContainer.getInputAmperage(), energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
-            }
-            return true;
-        }
-        return false;
     }
 
     @Override
