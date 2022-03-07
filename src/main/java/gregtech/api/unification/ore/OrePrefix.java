@@ -37,23 +37,23 @@ public class OrePrefix {
     private final static AtomicInteger idCounter = new AtomicInteger(0);
 
     // Regular Ore Prefix. Ore -> Material is a Oneway Operation! Introduced by Eloraam
-    public static final OrePrefix ore = new OrePrefix("ore", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
-    public static final OrePrefix oreGranite = new OrePrefix("oreGranite", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
-    public static final OrePrefix oreDiorite = new OrePrefix("oreDiorite", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
-    public static final OrePrefix oreAndesite = new OrePrefix("oreAndesite", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
-    public static final OrePrefix oreBlackgranite = new OrePrefix("oreBlackgranite", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
-    public static final OrePrefix oreRedgranite = new OrePrefix("oreRedgranite", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
-    public static final OrePrefix oreMarble = new OrePrefix("oreMarble", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
-    public static final OrePrefix oreBasalt = new OrePrefix("oreBasalt", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix ore = new OrePrefix("ore", M, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix oreGranite = new OrePrefix("oreGranite", M, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix oreDiorite = new OrePrefix("oreDiorite", M, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix oreAndesite = new OrePrefix("oreAndesite", M, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix oreBlackgranite = new OrePrefix("oreBlackgranite", M, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix oreRedgranite = new OrePrefix("oreRedgranite", M, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix oreMarble = new OrePrefix("oreMarble", M, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix oreBasalt = new OrePrefix("oreBasalt", M, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
 
     // In case of an Sand-Ores Mod. Ore -> Material is a Oneway Operation!
-    public static final OrePrefix oreSand = new OrePrefix("oreSand", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, null);
-    public static final OrePrefix oreRedSand = new OrePrefix("oreRedSand", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, null);
+    public static final OrePrefix oreSand = new OrePrefix("oreSand", M, null, MaterialIconType.ore, ENABLE_UNIFICATION, null);
+    public static final OrePrefix oreRedSand = new OrePrefix("oreRedSand", M, null, MaterialIconType.ore, ENABLE_UNIFICATION, null);
 
     // Prefix of the Nether-Ores Mod. Causes Ores to double. Ore -> Material is a Oneway Operation!
-    public static final OrePrefix oreNetherrack = new OrePrefix("oreNetherrack", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix oreNetherrack = new OrePrefix("oreNetherrack", M * 2, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
     // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
-    public static final OrePrefix oreEndstone = new OrePrefix("oreEndstone", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix oreEndstone = new OrePrefix("oreEndstone", M * 2, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty);
 
     public static final OrePrefix crushedRefined = new OrePrefix("crushedRefined", M * 11 / 8, null, MaterialIconType.crushedRefined, ENABLE_UNIFICATION, hasOreProperty);
     public static final OrePrefix crushedPurified = new OrePrefix("crushedPurified", M * 10 / 8, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, hasOreProperty);
@@ -86,6 +86,8 @@ public class OrePrefix {
 
     // A Nugget. Introduced by Eloraam
     public static final OrePrefix nugget = new OrePrefix("nugget", M / 9, null, MaterialIconType.nugget, ENABLE_UNIFICATION, hasIngotProperty);
+    // A large Nugget
+    public static final OrePrefix chunk = new OrePrefix("chunk", M / 4, null, MaterialIconType.chunk, ENABLE_UNIFICATION, hasIngotProperty);
 
     // 9 Plates combined in one Item.
     public static final OrePrefix plateDense = new OrePrefix("plateDense", M * 9, null, MaterialIconType.plateDense, ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_DENSE) && !mat.hasFlag(NO_SMASHING));
@@ -277,6 +279,9 @@ public class OrePrefix {
         nugget.setIgnored(Materials.Gold);
         nugget.setIgnored(Materials.Paper);
         nugget.setIgnored(Materials.Iron);
+        chunk.setIgnored(Materials.Wood);
+        chunk.setIgnored(Materials.TreatedWood);
+        chunk.setIgnored(Materials.Paper);
         plate.setIgnored(Materials.Paper);
 
         block.setIgnored(Materials.Iron);
@@ -460,6 +465,13 @@ public class OrePrefix {
                 return M * 4;
             else if (material == Materials.Bone)
                 return M * 5;
+        } else if (this == crushed || this == crushedPurified || this == crushedRefined) {
+            // TODO Implement these fully
+            if (material == Materials.Redstone || material == Materials.Electrotine) {
+                return this.materialAmount * 4;
+            } else if (material == Materials.Lapis || material == Materials.Sodalite || material == Materials.Lazurite) {
+                return this.materialAmount * 5;
+            }
         }
         return materialAmount;
     }

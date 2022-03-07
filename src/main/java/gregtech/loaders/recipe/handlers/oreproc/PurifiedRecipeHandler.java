@@ -15,6 +15,7 @@ import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.HIGH_SIFTER_OUTPUT;
 import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.loaders.recipe.handlers.oreproc.OreRecipeHandler.processMetalSmelting;
 
 public class PurifiedRecipeHandler {
 
@@ -100,9 +101,11 @@ public class PurifiedRecipeHandler {
         // Purified Ore -> Dust
         ModHandler.addShapelessRecipe(String.format("purified_ore_to_dust_%s", material),
                 OreDictUnifier.get(dust, material), 'h', new UnificationEntry(crushedPurified, material));
+
+        processMetalSmelting(prefix, material, property);
     }
 
-    public static void processCentrifuged(OrePrefix prefix, Material material, OreProperty property) {
+    public static void processRefined(OrePrefix prefix, Material material, OreProperty property) {
         // Get the byproduct used for this step
         Material byproduct = GTUtility.selectItemInList(2, material, property.getOreByProducts(), Material.class);
 
@@ -126,5 +129,7 @@ public class PurifiedRecipeHandler {
         // Centrifuged Ore -> Dust
         ModHandler.addShapelessRecipe(String.format("centrifuged_ore_to_dust_%s", material),
                 OreDictUnifier.get(dust, material), 'h', new UnificationEntry(crushedRefined, material));
+
+        processMetalSmelting(prefix, material, property);
     }
 }

@@ -46,6 +46,7 @@ public class MaterialTree implements IRecipeWrapper {
             // fluid,
             OrePrefix.lens,
             OrePrefix.foil
+            // TODO chunk?
     );
 
     private final List<List<ItemStack>> itemInputs = new ArrayList<>();

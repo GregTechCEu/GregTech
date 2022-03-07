@@ -35,6 +35,7 @@ public class MaterialRecipeHandler {
 
     public static void register() {
         OrePrefix.ingot.addProcessingHandler(PropertyKey.INGOT, MaterialRecipeHandler::processIngot);
+        OrePrefix.chunk.addProcessingHandler(PropertyKey.INGOT, MaterialRecipeHandler::processChunk);
         OrePrefix.nugget.addProcessingHandler(PropertyKey.DUST, MaterialRecipeHandler::processNugget);
 
         OrePrefix.block.addProcessingHandler(PropertyKey.DUST, MaterialRecipeHandler::processBlock);
@@ -262,15 +263,22 @@ public class MaterialRecipeHandler {
                 .output(nugget, material, 9)
                 .buildAndRegister();
 
+        ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getMass())
+                .input(ingot, material)
+                .notConsumable(MetaItems.SHAPE_MOLD_CHUNK.getStackForm())
+                .output(chunk, material, 4)
+                .buildAndRegister();
+
         if (!OreDictUnifier.get(block, material).isEmpty()) {
-            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getMass() * 9)
+            int blockAmount = (int) (block.getMaterialAmount(material) / M);
+            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getMass() * blockAmount)
                     .input(block, material)
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT.getStackForm())
-                    .output(ingot, material, 9)
+                    .output(ingot, material, blockAmount)
                     .buildAndRegister();
 
             COMPRESSOR_RECIPES.recipeBuilder().EUt(2).duration(300)
-                    .input(ingot, material, (int) (block.getMaterialAmount(material) / M))
+                    .input(ingot, material, blockAmount)
                     .output(block, material)
                     .buildAndRegister();
         }
@@ -360,10 +368,14 @@ public class MaterialRecipeHandler {
             ItemStack ingotStack = OreDictUnifier.get(OrePrefix.ingot, material);
 
             if (!ConfigHolder.recipes.disableManualCompression) {
-                ModHandler.addShapelessRecipe(String.format("nugget_disassembling_%s", material),
-                        GTUtility.copyAmount(9, nuggetStack), new UnificationEntry(OrePrefix.ingot, material));
+                ModHandler.addShapedRecipe(String.format("nugget_disassembling_%s", material),
+                        GTUtility.copyAmount(9, nuggetStack), "X ", "  ", 'X', new UnificationEntry(ingot, material));
                 ModHandler.addShapedRecipe(String.format("nugget_assembling_%s", material),
                         ingotStack, "XXX", "XXX", "XXX", 'X', new UnificationEntry(orePrefix, material));
+            }
+
+            if (dustTiny.doGenerateItem(material)) {
+                ModHandler.addSmeltingRecipe(new UnificationEntry(dustTiny, material), nuggetStack.copy());
             }
 
             COMPRESSOR_RECIPES.recipeBuilder()
@@ -395,6 +407,42 @@ public class MaterialRecipeHandler {
                 ModHandler.addShapedRecipe(String.format("nugget_assembling_%s", material),
                         gemStack, "XXX", "XXX", "XXX", 'X', new UnificationEntry(orePrefix, material));
             }
+        }
+    }
+
+    public static void processChunk(OrePrefix orePrefix, Material material, IngotProperty property) {
+        ItemStack chunkStack = OreDictUnifier.get(orePrefix, material);
+        ItemStack ingotStack = OreDictUnifier.get(ingot, material);
+        if (!ConfigHolder.recipes.disableManualCompression) {
+            ModHandler.addShapedRecipe(String.format("chunk_disassembling_%s", material),
+                    GTUtility.copyAmount(4, chunkStack), " X", "  ", 'X', new UnificationEntry(ingot, material));
+            ModHandler.addShapedRecipe(String.format("chunk_assembling_4_%s", material),
+                    ingotStack, "XX", "XX", 'X', new UnificationEntry(chunk, material));
+        }
+
+        if (dustSmall.doGenerateItem(material)) {
+            ModHandler.addSmeltingRecipe(new UnificationEntry(dustSmall, material), chunkStack.copy());
+        }
+
+        COMPRESSOR_RECIPES.recipeBuilder()
+                .input(chunk, material, 4)
+                .output(ingot, material)
+                .EUt(2).duration(300).buildAndRegister();
+
+        ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration((int) material.getMass())
+                .input(chunk, material, 4)
+                .notConsumable(MetaItems.SHAPE_MOLD_INGOT)
+                .output(ingot, material)
+                .buildAndRegister();
+
+        if (material.hasFluid()) {
+            FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+                    .notConsumable(MetaItems.SHAPE_MOLD_CHUNK)
+                    .fluidInputs(material.getFluid(L))
+                    .output(orePrefix, material, 4)
+                    .duration((int) material.getMass())
+                    .EUt(VA[ULV])
+                    .buildAndRegister();
         }
     }
 

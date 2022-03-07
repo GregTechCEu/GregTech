@@ -37,6 +37,7 @@ public class MaterialIconType {
     public static final MaterialIconType gemExquisite = new MaterialIconType("gemExquisite");
 
     public static final MaterialIconType nugget = new MaterialIconType("nugget");
+    public static final MaterialIconType chunk = new MaterialIconType("chunk");
 
     public static final MaterialIconType ingot = new MaterialIconType("ingot");
     public static final MaterialIconType ingotHot = new MaterialIconType("ingotHot");

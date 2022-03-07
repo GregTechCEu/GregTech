@@ -475,6 +475,7 @@ public class Materials {
     public static Material ChloroauricAcid; // TODO Maybe remove?? Probably worth it but *maybe* not
     public static Material ChloroplatinicAcid; // TODO Definitely keep this one
     public static Material StannicChloride; // TODO Remove, maybe. Probably not worth it
+    public static Material Alumina;
 
     /**
      * Organic chemistry

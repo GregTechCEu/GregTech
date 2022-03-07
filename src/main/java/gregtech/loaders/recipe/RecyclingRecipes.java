@@ -425,7 +425,7 @@ public class RecyclingRecipes {
     }
 
     private static final List<OrePrefix> DUST_ORDER = ImmutableList.of(OrePrefix.dust, OrePrefix.dustSmall, OrePrefix.dustTiny);
-    private static final List<OrePrefix> INGOT_ORDER = ImmutableList.of(OrePrefix.block, OrePrefix.ingot, OrePrefix.nugget);
+    private static final List<OrePrefix> INGOT_ORDER = ImmutableList.of(OrePrefix.block, OrePrefix.ingot, OrePrefix.chunk, OrePrefix.nugget);
 
     private static void shrinkStacks(List<Tuple<ItemStack, MaterialStack>> list, ItemStack originalStack, UnificationEntry entry) {
         Material material = entry.material;
@@ -454,6 +454,7 @@ public class RecyclingRecipes {
             splitStacks(list, OreDictUnifier.get(chosenList.get(0), ms.material, (int) (ms.amount / prefix.getMaterialAmount(material))), new UnificationEntry(prefix, material));
         }
 
+        // todo here, stuff is messed up with Chunks
         OrePrefix mediumPrefix = chosenList.get(1); // dustSmall or ingot
         OrePrefix smallestPrefix = chosenList.get(2); // dustTiny or nugget
         MaterialStack mediumMS = tempList.get(mediumPrefix); // dustSmall or ingot

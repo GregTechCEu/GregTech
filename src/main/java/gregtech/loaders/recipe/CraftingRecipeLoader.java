@@ -149,6 +149,7 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe("shape_mold_credit", SHAPE_MOLD_CREDIT.getStackForm(), "h  ", " S ", "   ", 'S', SHAPE_EMPTY.getStackForm());
         ModHandler.addShapedRecipe("shape_mold_gear", SHAPE_MOLD_GEAR.getStackForm(), "   ", " Sh", "   ", 'S', SHAPE_EMPTY.getStackForm());
         ModHandler.addShapedRecipe("shape_mold_plate", SHAPE_MOLD_PLATE.getStackForm(), " h ", " S ", "   ", 'S', SHAPE_EMPTY.getStackForm());
+        ModHandler.addShapedRecipe("shape_mold_chunk", SHAPE_MOLD_CHUNK.getStackForm(), "S  ", "   ", "  h", 'S', SHAPE_EMPTY.getStackForm());
 
         ///////////////////////////////////////////////////
         //                   Credits                     //

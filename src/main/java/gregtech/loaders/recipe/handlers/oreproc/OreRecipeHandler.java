@@ -54,7 +54,7 @@ public class OreRecipeHandler {
 
         crushed.addProcessingHandler(PropertyKey.ORE, CrushedRecipeHandler::processCrushed);
         crushedPurified.addProcessingHandler(PropertyKey.ORE, PurifiedRecipeHandler::processPurified);
-        crushedRefined.addProcessingHandler(PropertyKey.ORE, PurifiedRecipeHandler::processCentrifuged);
+        crushedRefined.addProcessingHandler(PropertyKey.ORE, PurifiedRecipeHandler::processRefined);
         dustImpure.addProcessingHandler(PropertyKey.ORE, DustRecipeHandler::processImpure);
         dust.addProcessingHandler(PropertyKey.ORE, DustRecipeHandler::processDust);
 
@@ -74,10 +74,9 @@ public class OreRecipeHandler {
         ItemStack stoneTypeDust = OreDictUnifier.getDust(prefix.secondaryMaterials.get(0));
 
         // Calculate the base crushed output.
-        // Combines the Ore Multiplier, as well as the bonus crushed from Nether/End Ores
-        // todo define the ore type bonus better
+        // Combines the Ore Multiplier, as well as the bonus crushed from certain ore types
         int baseOutputAmount = property.getOreMultiplier();
-        int oreTypeMultiplier = prefix == oreNetherrack || prefix == oreEndstone ? 2 : 1;
+        int oreTypeMultiplier = (int) (prefix.getMaterialAmount(material) / M);
 
         // Forge Hammer recipe. Outputs a Gem if possible
         FORGE_HAMMER_RECIPES.recipeBuilder()
@@ -111,6 +110,7 @@ public class OreRecipeHandler {
         return material.hasProperty(PropertyKey.GEM) && !gem.isIgnored(material);
     }
 
+    static boolean hasPrintedName = false;
     /**
      * Adds a Smelting Recipe to the ItemStack generated from OreDictUnifier.get(inputPrefix, material), or the direct smelting result override.
      * Only adds this recipe IF:
@@ -130,33 +130,37 @@ public class OreRecipeHandler {
         if (!doesMaterialUseNormalFurnace(smeltingResult) || !smeltingResult.hasProperty(PropertyKey.INGOT)) return;
 
         long amountOutput = ConfigHolder.recipes.harderOreProcessing
-                // Output M times the ratio of the direct smelt output to the total component list.
+                // Output prefix amount times the ratio of the direct smelt output to the total component list.
                 // For example, Chalcopyrite (CuFeS2) would return `M * 1 / 4`.
-                ? M * material.getNumComponentsOf(smeltingResult) / material.getNumComponents()
+                ? inputPrefix.getMaterialAmount(material) * material.getNumComponentsOf(smeltingResult) / material.getNumComponents()
 
-                // In the easy mode, always return M here and do not check for the components.
-                : M;
+                // In the easy mode, always return prefix amount here and do not check for the components.
+                : inputPrefix.getMaterialAmount(material);
 
-        if (material == Materials.Chalcopyrite) {
-            GTLog.logger.info("Num Components Of Copper: {}", material.getNumComponentsOf(Materials.Copper));
-            GTLog.logger.info("Total Components: {}", material.getNumComponents());
+        if (material == Materials.Magnetite) {
+            if (!hasPrintedName) {
+                GTLog.logger.info("======================================");
+                GTLog.logger.info("Material: {}", material);
+                GTLog.logger.info("Ore Multiplier: {}", property.getOreMultiplier());
+                GTLog.logger.info("======================================");
+                hasPrintedName = true;
+            }
+            GTLog.logger.info("Ore Prefix: {}", inputPrefix.name);
+            GTLog.logger.info("Amount Output: {}", 1.0 * amountOutput / M);
+            GTLog.logger.info("Material Amount: M * {}", inputPrefix.getMaterialAmount(material) * (1.0 / M));
+            GTLog.logger.info("Num Components of {}: {}", smeltingResult, material.getNumComponentsOf(smeltingResult));
+            GTLog.logger.info("Num Components: {}", material.getNumComponents());
+            GTLog.logger.info("======================================");
         }
 
-        if (isOreBlock(inputPrefix)) {
-            ItemStack outputStack = OreDictUnifier.getIngot(smeltingResult, amountOutput * property.getOreMultiplier());
-            if (!outputStack.isEmpty()) {
-                ModHandler.addSmeltingRecipe(new UnificationEntry(inputPrefix, material), outputStack, 0.5f);
-            }
-        } else if (inputPrefix == dustImpure || inputPrefix == dust) {
-            ItemStack outputStack = OreDictUnifier.getIngot(smeltingResult, amountOutput);
-            if (!outputStack.isEmpty()) {
-                ModHandler.addSmeltingRecipe(new UnificationEntry(inputPrefix, material), outputStack, 0.5f);
-            }
+        ItemStack outputStack = OreDictUnifier.getIngot(smeltingResult, amountOutput * getSmeltMultiplier(inputPrefix, property));
+        if (!outputStack.isEmpty()) {
+            ModHandler.addSmeltingRecipe(new UnificationEntry(inputPrefix, material), outputStack, 0.5f);
         }
     }
 
     private static final String ORE = "ore";
-    protected static boolean isOreBlock(OrePrefix prefix) {
-        return prefix.name().startsWith(ORE);
+    protected static int getSmeltMultiplier(OrePrefix prefix, OreProperty property) {
+        return prefix.name().startsWith(ORE) ? property.getOreMultiplier() : 1;
     }
 }

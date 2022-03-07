@@ -281,15 +281,21 @@ public class OreDictUnifier {
     }
 
     public static ItemStack getIngot(Material material, long materialAmount) {
-        if (!material.hasProperty(PropertyKey.INGOT) || materialAmount <= 0)
+        if (material == null || !material.hasProperty(PropertyKey.INGOT) || materialAmount < (M / 9))
             return ItemStack.EMPTY;
         if (materialAmount % (M * 9) == 0)
             return get(OrePrefix.block, material, (int) (materialAmount / (M * 9)));
         if (materialAmount % M == 0 || materialAmount >= M * 16)
             return get(OrePrefix.ingot, material, (int) (materialAmount / M));
-        else if ((materialAmount * 9) >= M)
-            return get(OrePrefix.nugget, material, (int) ((materialAmount * 9) / M));
-        return ItemStack.EMPTY;
+        if (materialAmount % (M / 4) == 0 || materialAmount >= M * 8) {
+            int stackCount = (int) (materialAmount * 4 / M);
+            if (stackCount % 4 == 0) { // todo make sure this isn't a problem
+                // edge case with weird numbers causes Arc Furnace to output stacks of chunks that could be Ingots
+                return get(OrePrefix.ingot, material, stackCount / 4);
+            }
+            return get(OrePrefix.chunk, material, stackCount);
+        }
+        return get(OrePrefix.nugget, material, (int) (materialAmount * 9 / M));
     }
 
     public static ItemStack getIngot(MaterialStack materialStack) {

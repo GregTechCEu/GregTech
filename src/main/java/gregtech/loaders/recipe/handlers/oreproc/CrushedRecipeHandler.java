@@ -15,6 +15,7 @@ import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.WASHING_MERCURY;
 import static gregtech.api.unification.material.info.MaterialFlags.WASHING_PERSULFATE;
 import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.loaders.recipe.handlers.oreproc.OreRecipeHandler.processMetalSmelting;
 
 public class CrushedRecipeHandler {
 
@@ -104,5 +105,7 @@ public class CrushedRecipeHandler {
         // Crushed Ore -> Impure Dust
         ModHandler.addShapelessRecipe(String.format("crushed_ore_to_dust_%s", material),
                 OreDictUnifier.get(dustImpure, material), 'h', new UnificationEntry(crushed, material));
+
+        processMetalSmelting(prefix, material, property);
     }
 }

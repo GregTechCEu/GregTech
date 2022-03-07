@@ -45,7 +45,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         Olivine = new Material.Builder(2004, "olivine")
-                .gem().ore(2)
+                .gem().ore()
                 .color(0x96FF96).iconSet(RUBY)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Magnesium, 2, Iron, 1, SiliconDioxide, 2)
@@ -66,7 +66,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         Lapis = new Material.Builder(2007, "lapis")
-                .gem(1).ore(4)
+                .gem(1).ore(5)
                 .color(0x4646DC).iconSet(LAPIS)
                 .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, NO_WORKING, DECOMPOSITION_BY_ELECTROLYZING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
                         GENERATE_PLATE, GENERATE_ROD)
@@ -84,7 +84,7 @@ public class SecondDegreeMaterials {
         // Free ID 2009
 
         Apatite = new Material.Builder(2010, "apatite")
-                .gem(1).ore(4)
+                .gem(1).ore(2)
                 .color(0xC8C8FF).iconSet(DIAMOND)
                 .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_BOLT_SCREW)
                 .components(Calcium, 5, Phosphate, 3, Chlorine, 1)
@@ -137,21 +137,23 @@ public class SecondDegreeMaterials {
                 .build();
 
         TricalciumPhosphate = new Material.Builder(2015, "tricalcium_phosphate")
-                .dust().ore(3)
+                .dust().ore(2)
                 .color(0xFFFF00).iconSet(FLINT)
                 .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Calcium, 3, Phosphate, 2)
                 .build();
 
+        // TODO REMOVE
         GarnetRed = new Material.Builder(2016, "garnet_red")
-                .gem().ore(4)
+                .gem().ore()
                 .color(0xC85050).iconSet(RUBY)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Pyrope, 3, Almandine, 5, Spessartine, 8)
                 .build();
 
+        // TODO REMOVE
         GarnetYellow = new Material.Builder(2017, "garnet_yellow")
-                .gem().ore(4)
+                .gem().ore()
                 .color(0xC8C850).iconSet(RUBY)
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Andradite, 5, Grossular, 8, Uvarovite, 3)
@@ -194,6 +196,7 @@ public class SecondDegreeMaterials {
                 .components(CertusQuartz, 1, Quartzite, 1)
                 .build();
 
+        // todo comp
         Pollucite = new Material.Builder(2024, "pollucite")
                 .dust().ore()
                 .color(0xF0D2D2)
@@ -202,15 +205,17 @@ public class SecondDegreeMaterials {
 
         // Free ID 2025
 
+        // todo comp
         Bentonite = new Material.Builder(2026, "bentonite")
-                .dust().ore(3)
+                .dust().ore()
                 .color(0xF5D7D2).iconSet(ROUGH)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Sodium, 1, Magnesium, 6, Silicon, 12, Hydrogen, 4, Water, 5, Oxygen, 36)
                 .build();
 
+        // todo comp
         FullersEarth = new Material.Builder(2027, "fullers_earth")
-                .dust().ore(2)
+                .dust().ore()
                 .color(0xA0A078).iconSet(FINE)
                 .components(Magnesium, 1, Silicon, 4, Hydrogen, 1, Water, 4, Oxygen, 11)
                 .build();
@@ -224,7 +229,7 @@ public class SecondDegreeMaterials {
                 .setFormula("(UO2)3ThPb", true);
 
         Monazite = new Material.Builder(2029, "monazite")
-                .gem(1).ore(4, 1, true)
+                .gem(1).ore(2, 1, true)
                 .color(0x324632).iconSet(DIAMOND)
                 .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE)
                 .components(RareEarth, 1, Phosphate, 1)
@@ -250,10 +255,9 @@ public class SecondDegreeMaterials {
                 .build();
 
         Zeolite = new Material.Builder(2033, "zeolite")
-                .dust().ore(3)
+                .dust().ore()
                 .color(0xF0E6E6)
-                .flags(DISABLE_DECOMPOSITION)
-                .components(Sodium, 1, Calcium, 4, Silicon, 27, Aluminium, 9, Water, 28, Oxygen, 72)
+                .components(Alumina, 1, Sodium, 2, SiliconDioxide, 3, Water, 2, Oxygen, 1)
                 .build();
 
         Concrete = new Material.Builder(2034, "concrete")
