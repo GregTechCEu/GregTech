@@ -2,21 +2,24 @@ package gregtech.client.event;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import gregtech.api.GTValues;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.CapesRegistry;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.handler.TerminalARRenderer;
-import gregtech.client.renderer.handler.ToolOverlayRenderer;
 import gregtech.client.utils.DepthTextureUtil;
 import gregtech.common.ConfigHolder;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -29,9 +32,14 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientEventHandler {
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
-        ToolOverlayRenderer.onDrawBlockHighlight(event);
+        TileEntity tileEntity = event.getPlayer().world.getTileEntity(event.getTarget().getBlockPos());
+        if (tileEntity instanceof MetaTileEntityHolder) {
+            if (((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
+                event.setCanceled(true);
+            }
+        }
     }
 
     @SubscribeEvent
