@@ -248,7 +248,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         super.writeItemStackData(itemStack);
         if (!this.itemStack.isEmpty()) {
             itemStack.setTag(NBT_ITEMSTACK, this.itemStack.writeToNBT(new NBTTagCompound()));
-            itemStack.setLong(NBT_ITEMCOUNT, itemsStoredInside + this.itemStack.getMaxStackSize());
+            itemStack.setLong(NBT_ITEMCOUNT, itemsStoredInside + this.exportItems.getStackInSlot(0).getCount());
         } else {
             ItemStack partialStack = exportItems.extractItem(0, 64, false);
             if (!partialStack.isEmpty()) {
