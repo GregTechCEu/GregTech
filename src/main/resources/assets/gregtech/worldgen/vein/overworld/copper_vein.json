@@ -1,5 +1,5 @@
 {
-  "weight": 80,
+  "weight": 120,
   "density": 0.2,
   "max_height": 60,
   "min_height": 5,
@@ -24,10 +24,10 @@
         "secondary": "ore:iron"
       },
       {
-        "between": "ore:pyrite"
+        "between": "ore:copper"
       },
       {
-        "sporadic": "ore:copper"
+        "sporadic": "ore:pyrite"
       }
     ]
   }
