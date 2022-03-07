@@ -1,11 +1,18 @@
 package gregtech.api.items.toolitem;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.enchants.EnchantmentHardHammer;
+import gregtech.api.recipes.MatchingMode;
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
+import net.minecraft.block.GTVisibilityHackBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentDurability;
@@ -26,6 +33,9 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.event.ForgeEventFactory;
+
+import java.util.*;
 
 /**
  * Collection of tool related helper methods
@@ -49,6 +59,19 @@ public class ToolHelper {
             }
         }
         damageItem(stack, entity, damage);
+    }
+
+    /**
+     * Damages tools appropriately.
+     * This supports both vanilla-esque and GT tools in case it does get called on a vanilla-esque tool.
+     *
+     * This method only takes 1 durability off, it ignores the tool's effectiveness because of the lack of context.
+     *
+     * @param stack  stack to be damaged
+     * @param entity entity that has damaged this stack
+     */
+    public static void damageItem(ItemStack stack, EntityLivingBase entity) {
+        damageItem(stack, entity, 1);
     }
 
     /**
@@ -103,6 +126,43 @@ public class ToolHelper {
                     }
                     entity.renderBrokenItemStack(stack);
                     stack.shrink(1);
+                }
+            }
+        }
+    }
+
+    /**
+     * Applies Forge Hammer recipes to block broken, used for hammers or tools with hard hammer enchant applied.
+     */
+    public static void applyHammerDropConversion(ItemStack tool, IBlockState state, List<ItemStack> drops, int fortune, float dropChance, Random random) {
+        if (tool.getItem().getToolClasses(tool).contains("hammer") || EnchantmentHelper.getEnchantmentLevel(EnchantmentHardHammer.INSTANCE, tool) > 0) {
+            ItemStack silktouchDrop = GTVisibilityHackBlock.getSilkTouchDrop(state.getBlock(), state);
+            if (!silktouchDrop.isEmpty()) {
+                // Stack lists can be immutable going into Recipe#matches barring no rewrites
+                List<ItemStack> dropAsList = Collections.singletonList(silktouchDrop);
+                // Search for forge hammer recipes from all drops individually (only LV or under)
+                Recipe hammerRecipe = RecipeMaps.FORGE_HAMMER_RECIPES.findRecipe(GTValues.V[1], dropAsList, Collections.emptyList(), 0, MatchingMode.DEFAULT);
+                if (hammerRecipe != null && hammerRecipe.matches(true, dropAsList, Collections.emptyList())) {
+                    drops.clear();
+                    OrePrefix prefix = OreDictUnifier.getPrefix(silktouchDrop);
+                    if (prefix == null) {
+                        for (ItemStack output : hammerRecipe.getOutputs()) {
+                            if (dropChance == 1.0F || random.nextFloat() <= dropChance) {
+                                drops.add(output.copy());
+                            }
+                        }
+                    } else if (prefix.name.startsWith("ore")) {
+                        for (ItemStack output : hammerRecipe.getOutputs()) {
+                            if (dropChance == 1.0F || random.nextFloat() <= dropChance) {
+                                // Only apply fortune on ore -> crushed forge hammer recipes
+                                if (OreDictUnifier.getPrefix(output) == OrePrefix.crushed) {
+                                    output = output.copy();
+                                    output.grow(random.nextInt(fortune));
+                                    drops.add(output);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
