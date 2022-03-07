@@ -175,7 +175,12 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             MaterialFluid materialFluid = (MaterialFluid) fluid;
             corroding = !getNodeData().isAcidProof() && materialFluid.getFluidType().equals(FluidTypes.ACID);
             melting = !getNodeData().isPlasmaProof() && materialFluid.getFluidType().equals(FluidTypes.PLASMA);
+
+            // carrying plasmas which are too hot when plasma proof does not burn pipes
+            if (burning && getNodeData().isPlasmaProof() && materialFluid.getFluidType().equals(FluidTypes.PLASMA))
+                burning = false;
         }
+
         if (burning || leaking || corroding || shattering || melting) {
             destroyPipe(stack, burning, leaking, corroding, shattering, melting);
         }

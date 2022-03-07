@@ -4735,7 +4735,7 @@ gregtech.cable.amperage=Max Amperage: §e%,d
 gregtech.cable.loss_per_block=Loss/Meter/Ampere: §c%,d§7 EU-Volt
 gregtech.cable.superconductor=§d%s Superconductor
 
-gregtech.fluid_pipe.throughput=§9Transfer Rate: %,d L/s
+gregtech.fluid_pipe.throughput=§bTransfer Rate: %,d L/t
 gregtech.fluid_pipe.capacity=§9Capacity: %,d L
 gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,d K
 gregtech.fluid_pipe.channels=§eChannels: %d
@@ -4745,7 +4745,7 @@ gregtech.fluid_pipe.acid_proof=§6Can handle Acids
 gregtech.fluid_pipe.non_acid_proof=§4Can't handle Acids
 gregtech.fluid_pipe.cryo_proof=§6Can handle Cryogenics
 gregtech.fluid_pipe.non_cryo_proof=§4Can't handle Cryogenics
-gregtech.fluid_pipe.plasma_proof=§6Can handle Plasmas
+gregtech.fluid_pipe.plasma_proof=§6Can handle all Plasmas
 gregtech.fluid_pipe.non_plasma_proof=§4Can't handle Plasmas
 
 gregtech.item_pipe.rate_items=§9Transfer Rate: %d items/s

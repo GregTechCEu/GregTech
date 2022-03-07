@@ -26,7 +26,7 @@ public class ElementMaterials {
                 .element(Elements.Al)
                 .toolStats(10.0f, 2.0f, 128, 21)
                 .cableProperties(GTValues.V[4], 1, 1)
-                .fluidPipeProperties(1166, 35, true)
+                .fluidPipeProperties(1166, 100, true)
                 .blastTemp(1700, GasTier.LOW)
                 .fluidTemp(933)
                 .build();
@@ -156,9 +156,9 @@ public class ElementMaterials {
                 .flags(EXT_METAL, GENERATE_ROTOR)
                 .element(Elements.Cr)
                 .toolStats(12.0f, 3.0f, 512, 33)
-                .fluidPipeProperties(2725, 40, true)
+                .fluidPipeProperties(2180, 35, true, true, false, false)
                 .blastTemp(1700, GasTier.LOW)
-                .fluidTemp(2180) // TODO change ebf temperature to this?
+                .fluidTemp(2180)
                 .build();
 
         Cobalt = new Material.Builder(23, "cobalt")
@@ -183,7 +183,7 @@ public class ElementMaterials {
                 .flags(EXT_METAL, MORTAR_GRINDABLE, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE)
                 .element(Elements.Cu)
                 .cableProperties(GTValues.V[2], 1, 2)
-                .fluidPipeProperties(1696, 10, true)
+                .fluidPipeProperties(1696, 6, true)
                 .fluidTemp(1358)
                 .build();
 
@@ -230,7 +230,7 @@ public class ElementMaterials {
                 .flags(STD_METAL, GENERATE_LONG_ROD, GENERATE_FINE_WIRE, GENERATE_SPRING, GENERATE_FOIL, GENERATE_FRAME)
                 .element(Elements.Eu)
                 .cableProperties(GTValues.V[GTValues.UHV], 2, 32)
-                .fluidPipeProperties(7780, 1200, true)
+                .fluidPipeProperties(7750, 300, true)
                 .blastTemp(6000, GasTier.MID, VA[IV], 180)
                 .fluidTemp(1099)
                 .build();
@@ -279,7 +279,7 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, GENERATE_RING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE, GENERATE_FOIL)
                 .element(Elements.Au)
                 .cableProperties(GTValues.V[3], 3, 2)
-                .fluidPipeProperties(1671, 35, true)
+                .fluidPipeProperties(1671, 25, true, true, false, false)
                 .fluidTemp(1337)
                 .build();
 
@@ -332,7 +332,7 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .element(Elements.Ir)
                 .toolStats(7.0f, 3.0f, 2560, 21)
-                .fluidPipeProperties(3398, 140, true)
+                .fluidPipeProperties(3398, 250, true)
                 .blastTemp(4500, GasTier.HIGH, VA[IV], 1100)
                 .fluidTemp(2719)
                 .build();
@@ -371,7 +371,7 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE)
                 .element(Elements.Pb)
                 .cableProperties(GTValues.V[0], 2, 2)
-                .fluidPipeProperties(1200, 15, true)
+                .fluidPipeProperties(1200, 8, true)
                 .fluidTemp(600)
                 .build();
 
@@ -752,7 +752,7 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR, GENERATE_FRAME)
                 .element(Elements.Ti)
                 .toolStats(7.0f, 3.0f, 1600, 21)
-                .fluidPipeProperties(2426, 80, true)
+                .fluidPipeProperties(2426, 150, true)
                 .blastTemp(1941, GasTier.MID, VA[HV], 1500)
                 .build();
 
@@ -769,7 +769,7 @@ public class ElementMaterials {
                 .element(Elements.W)
                 .toolStats(7.0f, 3.0f, 2560, 21)
                 .cableProperties(GTValues.V[5], 2, 2)
-                .fluidPipeProperties(4618, 90, true)
+                .fluidPipeProperties(4618, 50, true, true, false, true)
                 .blastTemp(3600, GasTier.MID, VA[EV], 1800)
                 .fluidTemp(3695)
                 .build();
@@ -837,7 +837,7 @@ public class ElementMaterials {
                 .element(Elements.Nq)
                 .toolStats(6.0f, 4.0f, 1280, 21)
                 .cableProperties(GTValues.V[7], 2, 2)
-                .fluidPipeProperties(19200, 1500, true)
+                .fluidPipeProperties(3776, 200, true, false, true, true)
                 .blastTemp(5000, GasTier.HIGH, VA[IV], 600)
                 .build();
 
@@ -864,7 +864,7 @@ public class ElementMaterials {
                 .flags(EXT_METAL, GENERATE_BOLT_SCREW, GENERATE_FRAME)
                 .element(Elements.Nt)
                 .toolStats(24.0f, 12.0f, 655360, 21)
-                .fluidPipeProperties(1_000_000, 2800, true)
+                .fluidPipeProperties(100_000, 5000, true, true, true, true)
                 .fluidTemp(100_000)
                 .build();
 
@@ -884,7 +884,7 @@ public class ElementMaterials {
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_GEAR)
                 .element(Elements.Dr)
                 .toolStats(16.0f, 5.0f, 5120, 21)
-                .fluidPipeProperties(100000, 2000, true)
+                .fluidPipeProperties(9625, 500, true, true, true, true)
                 .fluidTemp(7500)
                 .build();
 

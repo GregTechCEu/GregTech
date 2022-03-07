@@ -25,7 +25,8 @@ public class ItemBlockFluidPipe extends ItemBlockMaterialPipe<FluidPipeType, Flu
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         FluidPipeProperties pipeProperties = blockPipe.createItemProperties(stack);
-        tooltip.add(I18n.format("gregtech.fluid_pipe.throughput", pipeProperties.getThroughput() * 20));
+        tooltip.add(I18n.format("gregtech.fluid_pipe.throughput", pipeProperties.getThroughput()));
+        tooltip.add(I18n.format("gregtech.fluid_pipe.capacity", pipeProperties.getThroughput() * 20));
         tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", pipeProperties.getMaxFluidTemperature()));
         tooltip.add(I18n.format(pipeProperties.isGasProof() ? "gregtech.fluid_pipe.gas_proof" : "gregtech.fluid_pipe.non_gas_proof"));
         tooltip.add(I18n.format(pipeProperties.isAcidProof() ? "gregtech.fluid_pipe.acid_proof" : "gregtech.fluid_pipe.non_acid_proof"));
