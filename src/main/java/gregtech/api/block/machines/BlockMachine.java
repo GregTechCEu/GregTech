@@ -256,10 +256,10 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             }
 
             // Color machines on place if holding spray can in off-hand
-            if(placer instanceof EntityPlayer) {
+            if (placer instanceof EntityPlayer) {
                 ItemStack offhand = placer.getHeldItemOffhand();
-                for(int i  = 0; i < EnumDyeColor.values().length; i++) {
-                    if(offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
+                for (int i  = 0; i < EnumDyeColor.values().length; i++) {
+                    if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
                         MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn, pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0 , 0);
                         break;
                     }
@@ -320,13 +320,13 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         }
         if (itemStack.getItem().getToolClasses(itemStack).contains("screwdriver")) {
             metaTileEntity.onCoverScrewdriverClick(playerIn, hand, rayTraceResult);
-            ToolHelper.damageItem(itemStack, playerIn, DamageValues.DAMAGE_FOR_SCREWDRIVER);
+            ToolHelper.damageItem(itemStack, playerIn);
             if (itemStack.getItem() instanceof IGTTool) {
                 ((IGTTool) itemStack.getItem()).playSound(playerIn);
             }
         } else if (itemStack.getItem().getToolClasses(itemStack).contains("wrench")) {
             metaTileEntity.onWrenchClick(playerIn, hand, ICoverable.determineGridSideHit(rayTraceResult), rayTraceResult);
-            ToolHelper.damageItem(itemStack, playerIn, DamageValues.DAMAGE_FOR_WRENCH);
+            ToolHelper.damageItem(itemStack, playerIn);
             if (itemStack.getItem() instanceof IGTTool) {
                 ((IGTTool) itemStack.getItem()).playSound(playerIn);
             }
