@@ -1,7 +1,7 @@
 package gregtech.common.covers.filter;
 
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.CycleButtonWidget;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.widgets.CycleButtonWidget;
 import gregtech.api.recipes.*;
 import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.api.util.ItemStackKey;

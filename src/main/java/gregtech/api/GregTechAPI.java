@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.cover.CoverDefinition;
-import gregtech.api.gui.UIFactory;
+import gregtech.api.guiOld.UIFactory;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;

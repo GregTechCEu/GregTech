@@ -1,7 +1,7 @@
 package gregtech.api.terminal.gui.widgets;
 
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.interpolate.Eases;

@@ -73,11 +73,13 @@ dependencies {
     "deobfCompile"("codechicken-lib-1-8:CodeChickenLib-1.12.2:3.2.3.358:universal")
 
     "deobfCompile"("curse.maven:ae2-extended-life-570458:3649419")
+    "deobfCompile"("baubles:Baubles:1.12:1.5.2")
 
     "compile"(files("etc/CraftTweaker2-1.12-4.1.20.670.jar"))
     "compile"(files("etc/jei_1.12.2-4.16.1.301.jar"))
     "compile"(files("etc/theoneprobe-1.12-1.4.28.jar"))
     "compile"(files("etc/CTM-MC1.12.2-1.0.2.31.jar"))
+    "compile"(files("etc/modularui-1.0.jar"))
 
     "testImplementation"("junit:junit:4.13.1")
     "implementation"("org.projectlombok:lombok:1.18.16")

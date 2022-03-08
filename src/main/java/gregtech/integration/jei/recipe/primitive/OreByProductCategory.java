@@ -2,7 +2,7 @@ package gregtech.integration.jei.recipe.primitive;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
-import gregtech.api.gui.GuiTextures;
+import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;

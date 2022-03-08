@@ -1,14 +1,14 @@
 package gregtech.common.terminal.app.recipechart.widget;
 
 import gregtech.api.block.machines.MachineItemBlock;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.impl.ModularUIContainer;
-import gregtech.api.gui.widgets.SimpleTextWidget;
-import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.gui.widgets.TankWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.impl.ModularUIContainer;
+import gregtech.api.guiOld.widgets.SimpleTextWidget;
+import gregtech.api.guiOld.widgets.SlotWidget;
+import gregtech.api.guiOld.widgets.TankWidget;
+import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.recipes.Recipe;
@@ -34,12 +34,10 @@ import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.items.ItemStackHandler;
 

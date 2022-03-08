@@ -1,9 +1,9 @@
 package gregtech.api.terminal.gui.widgets;
 
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.resources.TextTexture;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.guiOld.IRenderContext;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.resources.TextTexture;
+import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;

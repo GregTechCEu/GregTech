@@ -9,11 +9,11 @@ import gregtech.api.capability.impl.FluidHandlerDelegate;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.ModularUI;
+import gregtech.api.guiOld.widgets.CycleButtonWidget;
+import gregtech.api.guiOld.widgets.LabelWidget;
+import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.api.util.GTUtility;
 import gregtech.common.covers.filter.FluidFilter;
@@ -29,7 +29,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nullable;
 

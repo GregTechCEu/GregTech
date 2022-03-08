@@ -1,7 +1,7 @@
 package gregtech.integration.jei.multiblock;
 
 import gregtech.api.GTValues;
-import gregtech.api.gui.GuiTextures;
+import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.IJeiHelpers;

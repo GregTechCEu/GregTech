@@ -9,7 +9,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.CombinedCapabilityProvider;
 import gregtech.api.capability.impl.ElectricItem;
-import gregtech.api.gui.ModularUI;
+import gregtech.api.guiOld.ModularUI;
 import gregtech.api.items.OreDictNames;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;

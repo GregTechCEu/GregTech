@@ -3,12 +3,12 @@ package gregtech.common.metatileentities.storage;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.PhantomSlotWidget;
-import gregtech.api.gui.widgets.TextFieldWidget2;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.ModularUI;
+import gregtech.api.guiOld.widgets.CycleButtonWidget;
+import gregtech.api.guiOld.widgets.ImageWidget;
+import gregtech.api.guiOld.widgets.PhantomSlotWidget;
+import gregtech.api.guiOld.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.GTUtility;
@@ -26,8 +26,6 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.function.Function;
 
 public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 

@@ -1,9 +1,9 @@
 package gregtech.api.terminal.gui;
 
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.gui.widgets.tab.ITabInfo;
-import gregtech.api.gui.widgets.tab.TabListRenderer;
+import gregtech.api.guiOld.ModularUI;
+import gregtech.api.guiOld.resources.IGuiTexture;
+import gregtech.api.guiOld.widgets.tab.ITabInfo;
+import gregtech.api.guiOld.widgets.tab.TabListRenderer;
 import gregtech.api.util.Position;
 import net.minecraft.client.renderer.GlStateManager;
 

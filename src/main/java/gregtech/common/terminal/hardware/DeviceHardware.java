@@ -1,7 +1,7 @@
 package gregtech.common.terminal.hardware;
 
-import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.gui.resources.ItemStackTexture;
+import gregtech.api.guiOld.resources.IGuiTexture;
+import gregtech.api.guiOld.resources.ItemStackTexture;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.common.items.MetaItems;

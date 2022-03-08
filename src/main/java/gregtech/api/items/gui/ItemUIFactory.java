@@ -1,6 +1,6 @@
 package gregtech.api.items.gui;
 
-import gregtech.api.gui.ModularUI;
+import gregtech.api.guiOld.ModularUI;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import net.minecraft.entity.player.EntityPlayer;
 

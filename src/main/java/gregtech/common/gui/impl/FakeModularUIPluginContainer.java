@@ -1,9 +1,9 @@
 package gregtech.common.gui.impl;
 
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.impl.FakeModularGuiContainer;
+import gregtech.api.guiOld.ModularUI;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.impl.FakeModularGuiContainer;
 import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;

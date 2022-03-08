@@ -2,12 +2,12 @@ package gregtech.common.items.behaviors.monitorplugin;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.IUIHolder;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.impl.FakeModularGui;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.IUIHolder;
+import gregtech.api.guiOld.ModularUI;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.impl.FakeModularGui;
+import gregtech.api.guiOld.widgets.*;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
 import gregtech.api.metatileentity.MetaTileEntity;

@@ -1,11 +1,11 @@
 package gregtech.common.covers.filter;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.DrawableWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.OreDictFilterTestSlot;
-import gregtech.api.gui.widgets.TextFieldWidget2;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.widgets.DrawableWidget;
+import gregtech.api.guiOld.widgets.ImageWidget;
+import gregtech.api.guiOld.widgets.OreDictFilterTestSlot;
+import gregtech.api.guiOld.widgets.TextFieldWidget2;
 import gregtech.api.util.ItemStackKey;
 import gregtech.api.util.OreDictExprFilter;
 import net.minecraft.client.renderer.GlStateManager;

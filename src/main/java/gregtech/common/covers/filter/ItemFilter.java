@@ -1,6 +1,6 @@
 package gregtech.common.covers.filter;
 
-import gregtech.api.gui.Widget;
+import gregtech.api.guiOld.Widget;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.api.util.ItemStackKey;
 import net.minecraft.item.ItemStack;

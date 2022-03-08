@@ -1,6 +1,6 @@
 package gregtech.api.net.packets;
 
-import gregtech.api.gui.impl.ModularUIGui;
+import gregtech.api.guiOld.impl.ModularUIGui;
 import gregtech.api.net.IPacket;
 import gregtech.api.net.NetworkUtils;
 import lombok.NoArgsConstructor;

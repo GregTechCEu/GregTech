@@ -2,9 +2,9 @@ package gregtech.common.covers;
 
 import com.google.common.math.IntMath;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.ModularUI;
+import gregtech.api.guiOld.widgets.*;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTFluidUtils;
@@ -27,7 +27,6 @@ import org.apache.logging.log4j.message.FormattedMessage;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 
 public class CoverFluidRegulator extends CoverPump {

@@ -1,7 +1,7 @@
 package gregtech.api.items.gui;
 
-import gregtech.api.gui.IUIHolder;
-import gregtech.api.gui.ModularUI;
+import gregtech.api.guiOld.IUIHolder;
+import gregtech.api.guiOld.ModularUI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;

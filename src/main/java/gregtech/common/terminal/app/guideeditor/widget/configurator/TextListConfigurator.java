@@ -1,7 +1,7 @@
 package gregtech.common.terminal.app.guideeditor.widget.configurator;
 
 import com.google.gson.*;
-import gregtech.api.gui.resources.ColorRectTexture;
+import gregtech.api.guiOld.resources.ColorRectTexture;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.TextEditorWidget;
 

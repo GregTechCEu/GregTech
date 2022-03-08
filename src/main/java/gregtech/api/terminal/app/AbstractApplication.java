@@ -1,8 +1,8 @@
 package gregtech.api.terminal.app;
 
-import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.gui.resources.ResourceHelper;
-import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.guiOld.resources.IGuiTexture;
+import gregtech.api.guiOld.resources.ResourceHelper;
+import gregtech.api.guiOld.resources.TextureArea;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.gui.widgets.AnimaWidgetGroup;
 import gregtech.api.terminal.os.TerminalOSWidget;
@@ -116,7 +116,7 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
 
     /**
      * Will be called when try to open this app. you should return an instance here.
-     * Due to INative's poor synchronization, do not add the INativeWidget {@link gregtech.api.gui.INativeWidget} here.
+     * Due to INative's poor synchronization, do not add the INativeWidget {@link gregtech.api.guiOld.INativeWidget} here.
      * Instead, It's probably best not to initialize your app here. initialize should in initApp {@link #initApp()}
      */
     public AbstractApplication createAppInstance(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {

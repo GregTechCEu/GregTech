@@ -1,9 +1,9 @@
 package gregtech.common.covers.filter;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.widgets.LabelWidget;
+import gregtech.api.guiOld.widgets.SlotWidget;
 import gregtech.api.util.IDirtyNotifiable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

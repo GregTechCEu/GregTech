@@ -7,7 +7,7 @@ import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.fluids.MetaFluids;
-import gregtech.api.gui.UIFactory;
+import gregtech.api.guiOld.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.net.NetworkHandler;

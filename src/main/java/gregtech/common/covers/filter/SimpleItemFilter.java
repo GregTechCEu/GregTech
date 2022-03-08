@@ -1,9 +1,9 @@
 package gregtech.common.covers.filter;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.PhantomSlotWidget;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
+import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.widgets.PhantomSlotWidget;
+import gregtech.api.guiOld.widgets.ToggleButtonWidget;
 import gregtech.api.util.ItemStackKey;
 import gregtech.api.util.LargeStackSizeItemStackHandler;
 import net.minecraft.item.ItemStack;
