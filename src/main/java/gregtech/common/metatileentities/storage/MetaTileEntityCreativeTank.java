@@ -42,8 +42,6 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
     private boolean active = false;
 
-    private final List<Character> ALLOWED_CHARS = Lists.newArrayList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-
     public MetaTileEntityCreativeTank(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 15, -1);
     }
@@ -69,27 +67,26 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         builder.widget(new PhantomFluidWidget(36, 6, 18, 18,
                 () -> this.fluidTank.getFluid(), data -> {
             this.fluidTank.setFluid(data);
-        })
-                .showTip(false).setBackgroundTexture(GuiTextures.SLOT_DARKENED));
-        builder.label(7, 9, "Fluid");
+        }).showTip(false));
+        builder.label(7, 9, "gregtech.creative.tank.fluid");
         builder.widget(new ImageWidget(7, 45, 154, 14, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(9, 47, 152, 10, () -> String.valueOf(mBPerCycle), value -> {
             if (!value.isEmpty()) {
                 mBPerCycle = Integer.parseInt(value);
             }
-        }).setAllowedChars("0123456789").setMaxLength(19).setValidator(getTextFieldValidator()));
-        builder.label(7, 28, "mB per cycle");
+        }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
+        builder.label(7, 28, "gregtech.creative.tank.mbpc");
 
         builder.widget(new ImageWidget(7, 82, 154, 14, GuiTextures.DISPLAY));
         builder.widget(new TextFieldWidget2(9, 84, 152, 10, () -> String.valueOf(ticksPerCycle), value -> {
             if (!value.isEmpty()) {
                 ticksPerCycle = Integer.parseInt(value);
             }
-        }).setMaxLength(10).setNumbersOnly(1, Integer.MAX_VALUE));
-        builder.label(7, 65, "Ticks per cycle");
+        }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
+        builder.label(7, 65, "gregtech.creative.tank.tpc");
 
 
-        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> active = value, "Not active", "Active"));
+        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> active = value, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
 
         return builder.build(getHolder(), entityPlayer);
     }
@@ -134,24 +131,6 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         ticksPerCycle = data.getInteger("TicksPerCycle");
         active = data.getBoolean("Active");
         super.readFromNBT(data);
-    }
-
-    public Function<String, String> getTextFieldValidator() {
-        return val -> {
-            if (val.isEmpty()) {
-                return "0";
-            }
-            long num;
-            try {
-                num = Long.parseLong(val);
-            } catch (NumberFormatException ignored) {
-                return "0";
-            }
-            if (num < 0) {
-                return "0";
-            }
-            return val;
-        };
     }
 
     @Override

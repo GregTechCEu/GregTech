@@ -4,6 +4,7 @@ import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
+import gregtech.api.util.FacingPos;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -12,7 +13,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
 
@@ -32,13 +36,8 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
         return data;
     }
 
-    public void nodeNeighbourChanged(BlockPos pos) {
-        NET_DATA.clear();
-    }
-
     @Override
-    protected void updateBlockedConnections(BlockPos nodePos, EnumFacing facing, boolean isBlocked) {
-        super.updateBlockedConnections(nodePos, facing, isBlocked);
+    public void onNeighbourUpdate(BlockPos fromPos) {
         NET_DATA.clear();
     }
 
@@ -48,6 +47,12 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
         NET_DATA.clear();
         ((ItemPipeNet) parentNet).NET_DATA.clear();
     }
+
+    @Override
+    protected void onPipeConnectionsUpdate() {
+        NET_DATA.clear();
+    }
+
 
     @Override
     protected void writeNodeData(ItemPipeProperties nodeData, NBTTagCompound tagCompound) {
@@ -98,6 +103,10 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
             if (tile != null)
                 return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, faceToHandler.getOpposite());
             return null;
+        }
+
+        public FacingPos toFacingPos() {
+            return new FacingPos(pipePos, faceToHandler);
         }
     }
 }

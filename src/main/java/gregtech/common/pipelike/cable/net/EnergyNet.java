@@ -5,10 +5,8 @@ import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.WireProperties;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -37,14 +35,14 @@ public class EnergyNet extends PipeNet<WireProperties> {
         return data;
     }
 
-    public void nodeNeighbourChanged(BlockPos pos) {
+    public void onNeighbourStateChanged() {
         NET_DATA.clear();
     }
 
     public long getEnergyFluxPerSec() {
         World world = getWorldData();
-        if (world != null && !world.isRemote && (world.getWorldTime() - lastTime) >= 20) {
-            lastTime = world.getWorldTime();
+        if (world != null && !world.isRemote && (world.getTotalWorldTime() - lastTime) >= 20) {
+            lastTime = world.getTotalWorldTime();
             clearCache();
         }
         return lastEnergyFluxPerSec;
@@ -60,8 +58,7 @@ public class EnergyNet extends PipeNet<WireProperties> {
     }
 
     @Override
-    protected void updateBlockedConnections(BlockPos nodePos, EnumFacing facing, boolean isBlocked) {
-        super.updateBlockedConnections(nodePos, facing, isBlocked);
+    protected void onPipeConnectionsUpdate() {
         NET_DATA.clear();
     }
 

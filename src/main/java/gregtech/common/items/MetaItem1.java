@@ -75,7 +75,7 @@ public class MetaItem1 extends StandardMetaItem {
         SHAPE_MOLDS[11] = SHAPE_MOLD_GEAR_SMALL = addItem(23, "shape.mold.gear.small").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_MOLDS[12] = SHAPE_MOLD_ROTOR = addItem(24, "shape.mold.rotor").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
 
-        // Extruder Shapes: ID 31-60
+        // Extruder Shapes: ID 31-59
         SHAPE_EXTRUDERS[0] = SHAPE_EXTRUDER_PLATE = addItem(31, "shape.extruder.plate").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[1] = SHAPE_EXTRUDER_ROD = addItem(32, "shape.extruder.rod").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[2] = SHAPE_EXTRUDER_BOLT = addItem(33, "shape.extruder.bolt").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
@@ -104,9 +104,13 @@ public class MetaItem1 extends StandardMetaItem {
         SHAPE_EXTRUDERS[25] = SHAPE_EXTRUDER_ROD_LONG = addItem(56, "shape.extruder.rod_long").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
         SHAPE_EXTRUDERS[26] = SHAPE_EXTRUDER_ROTOR = addItem(57, "shape.extruder.rotor").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4)));
 
-        // Spray Cans: ID 61-77
+        // Spray Cans: ID 60-77
         SPRAY_EMPTY = addItem(61, "spray.empty")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tin, M * 2), new MaterialStack(Materials.Redstone, M)));
+
+        // out of registry order so it can reference the Empty Spray Can
+        SPRAY_SOLVENT = addItem(60, "spray.solvent").setMaxStackSize(1)
+                .addComponents(new ColorSprayBehaviour(SPRAY_EMPTY.getStackForm(), 1024, -1));
 
         for (int i = 0; i < EnumDyeColor.values().length; i++) {
             SPRAY_CAN_DYES[i] = addItem(62 + i, "spray.can.dyes." + EnumDyeColor.values()[i].getName()).setMaxStackSize(1)
@@ -428,6 +432,8 @@ public class MetaItem1 extends StandardMetaItem {
         PROSPECTOR_LUV = addItem(468, "prospector.luv").addComponents(ElectricStats.createElectricItem(1_000_000_000L, GTValues.LuV), new ProspectorScannerBehavior(5, GTValues.LuV)).setMaxStackSize(1);
         TRICORDER_SCANNER = addItem(469, "tricorder_scanner").addComponents(ElectricStats.createElectricItem(100_000L, GTValues.MV), new TricorderBehavior(2)).setMaxStackSize(1);
         DEBUG_SCANNER = addItem(470, "debug_scanner").addComponents(new TricorderBehavior(3)).setMaxStackSize(1);
+        ITEM_MAGNET_LV = addItem(471, "item_magnet.lv").addComponents(ElectricStats.createElectricItem(100_000L, GTValues.LV), new ItemMagnetBehavior(6, 0.04F)).setMaxStackSize(1);
+        ITEM_MAGNET_HV = addItem(472, "item_magnet.hv").addComponents(ElectricStats.createElectricItem(1_600_000L, GTValues.HV), new ItemMagnetBehavior(16, 0.065F)).setMaxStackSize(1);
 
         // Misc Crafting Items: ID 491-515
         ENERGIUM_DUST = addItem(491, "energium_dust");
@@ -626,7 +632,7 @@ public class MetaItem1 extends StandardMetaItem {
         PLUGIN_TEXT = addItem(783, "plugin.text").addComponents(new TextPluginBehavior());
 
         // Records: 800-819
-        SUS_RECORD = addItem(800, "record.sus").addComponents(new MusicDiscStats(GTSounds.RECORD_SOUND)).setRarity(EnumRarity.RARE).setMaxStackSize(1).setInvisible();
+        SUS_RECORD = addItem(800, "record.sus").addComponents(new MusicDiscStats(GTSounds.SUS_RECORD)).setRarity(EnumRarity.RARE).setMaxStackSize(1).setInvisible();
 
         // Dyed Glass Lenses: 820-840
         for (int i = 0; i < MarkerMaterials.Color.VALUES.length; i++) {
@@ -638,5 +644,6 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Misc 1000+
         NAN_CERTIFICATE = addItem(1000, "nan.certificate").setRarity(EnumRarity.EPIC);
+        FERTILIZER = addItem(1001, "fertilizer").addComponents(new FertilizerBehavior());
     }
 }

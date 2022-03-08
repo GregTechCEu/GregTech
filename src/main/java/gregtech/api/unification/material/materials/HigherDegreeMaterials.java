@@ -94,6 +94,7 @@ public class HigherDegreeMaterials {
                 .flags(STD_METAL, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION)
                 .components(Copper, 1, Redstone, 4)
                 .cableProperties(GTValues.V[0], 1, 0)
+                .fluidTemp(1400)
                 .build();
 
         BasalticMineralSand = new Material.Builder(2518, "basaltic_mineral_sand")
@@ -164,6 +165,7 @@ public class HigherDegreeMaterials {
                 .flags(GENERATE_PLATE, GENERATE_BOLT_SCREW, DISABLE_DECOMPOSITION)
                 .components(Electrotine, 4, Silver, 1)
                 .cableProperties(GTValues.V[GTValues.HV], 2, 1)
+                .fluidTemp(1400)
                 .build();
     }
 }

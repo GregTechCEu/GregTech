@@ -2,37 +2,32 @@ package gregtech.client;
 
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.ItemNBTUtils;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
-import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.GTValues;
-import gregtech.client.model.customtexture.CustomTextureModelHandler;
-import gregtech.client.model.customtexture.MetadataSectionCTM;
-import gregtech.client.renderer.handler.MetaTileEntityRenderer;
-import gregtech.client.shader.Shaders;
+import gregtech.api.fluids.MetaFluids;
+import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.ModCompatibility;
 import gregtech.api.util.input.KeyBinds;
-import gregtech.common.CommonProxy;
-import gregtech.common.ConfigHolder;
-import gregtech.common.MetaEntities;
-import gregtech.common.MetaFluids;
-import gregtech.common.blocks.*;
+import gregtech.client.model.customtexture.CustomTextureModelHandler;
+import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.FacadeRenderer;
-import gregtech.common.items.MetaItems;
+import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.client.renderer.pipe.FluidPipeRenderer;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
+import gregtech.common.CommonProxy;
+import gregtech.common.ConfigHolder;
+import gregtech.common.MetaEntities;
+import gregtech.common.blocks.*;
+import gregtech.common.items.MetaItems;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.resources.I18n;
@@ -46,41 +41,32 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.ColorizerFoliage;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import paulscode.sound.SoundSystemConfig;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.*;
-import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
-
-    private static final ResourceLocation GREGTECH_CAPE_TEXTURE = new ResourceLocation(GTValues.MODID, "textures/gregtechcape.png");
 
     public static final IBlockColor COMPRESSED_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
             state.getValue(((BlockCompressed) state.getBlock()).variantProperty).getMaterialRGB();
@@ -117,20 +103,28 @@ public class ClientProxy extends CommonProxy {
 
     public static final IItemColor RUBBER_LEAVES_ITEM_COLOR = (stack, tintIndex) -> ColorizerFoliage.getFoliageColorBirch();
 
+    public static final IBlockColor MACHINE_CASING_BLOCK_COLOR = (state, world, pos, tintIndex) ->
+        state.getBlock() instanceof BlockMachineCasing && MetaBlocks.MACHINE_CASING.getMetaFromState(state) == 0 ? 0xFFFFFF : ConfigHolder.client.defaultPaintingColor;
+
+    public static final IItemColor MACHINE_CASING_ITEM_COLOR = (stack, tintIndex) ->
+        stack.getItemDamage() == 0 && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockMachineCasing ? 0xFFFFFF : ConfigHolder.client.defaultPaintingColor;
+
     public void onPreLoad() {
         super.onPreLoad();
 
-        if (!GTValues.isModLoaded(GTValues.MODID_CTM)) {
+        SoundSystemConfig.setNumberNormalChannels(ConfigHolder.client.maxNumSounds);
+
+        if (!Loader.isModLoaded(GTValues.MODID_CTM)) {
             Minecraft.getMinecraft().metadataSerializer.registerMetadataSectionType(new MetadataSectionCTM.Serializer(), MetadataSectionCTM.class);
             MinecraftForge.EVENT_BUS.register(CustomTextureModelHandler.INSTANCE);
-            ((SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(CustomTextureModelHandler.INSTANCE);
+            ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(CustomTextureModelHandler.INSTANCE);
         }
 
         KeyBinds.initBinds();
         MetaTileEntityRenderer.preInit();
-        CableRenderer.preInit();
-        FluidPipeRenderer.preInit();
-        ItemPipeRenderer.preInit();
+        CableRenderer.INSTANCE.preInit();
+        FluidPipeRenderer.INSTANCE.preInit();
+        ItemPipeRenderer.INSTANCE.preInit();
         MetaEntities.initRenderers();
         TextureUtils.addIconRegister(MetaFluids::registerSprites);
     }
@@ -139,9 +133,6 @@ public class ClientProxy extends CommonProxy {
     public void onLoad() {
         KeyBinds.registerClient();
         super.onLoad();
-        if (ConfigHolder.misc.debug) {
-            ClientCommandHandler.instance.registerCommand(new Shaders.ShaderCommand());
-        }
         registerColors();
     }
 
@@ -151,7 +142,6 @@ public class ClientProxy extends CommonProxy {
         TerminalRegistry.initTerminalFiles();
         ModCompatibility.initCompat();
         FacadeRenderer.init();
-        startCapeLoadingThread();
     }
 
     public void registerColors() {
@@ -178,37 +168,47 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
-    public static void addMaterialFormulaHandler(ItemTooltipEvent event) {
+    public static void addMaterialFormulaHandler(@Nonnull ItemTooltipEvent event) {
         ItemStack itemStack = event.getItemStack();
 
         // Handles Item tooltips
-        String chemicalFormula = null;
+        List<String> tooltips = new ArrayList<>();
 
         // Test for Items
         UnificationEntry unificationEntry = OreDictUnifier.getUnificationEntry(itemStack);
-        if (unificationEntry != null && unificationEntry.material != null) {
-            chemicalFormula = unificationEntry.material.getChemicalFormula();
 
-        // Test for Fluids
-        } else if (ItemNBTUtils.hasTag(itemStack)) {
-
+        if (itemStack.getItem() instanceof MetaOreDictItem) { // Test for OreDictItems
+            MetaOreDictItem oreDictItem = (MetaOreDictItem) itemStack.getItem();
+            Optional<String> oreDictName = OreDictUnifier.getOreDictionaryNames(itemStack).stream().findFirst();
+            if (oreDictName.isPresent() && oreDictItem.OREDICT_TO_FORMULA.containsKey(oreDictName.get()) && !oreDictItem.OREDICT_TO_FORMULA.get(oreDictName.get()).isEmpty()) {
+                tooltips.add(TextFormatting.YELLOW + oreDictItem.OREDICT_TO_FORMULA.get(oreDictName.get()));
+            }
+        } else if (unificationEntry != null && unificationEntry.material != null) {
+            if (unificationEntry.material.getChemicalFormula() != null && !unificationEntry.material.getChemicalFormula().isEmpty())
+                tooltips.add(TextFormatting.YELLOW + unificationEntry.material.getChemicalFormula());
+        } else if (ItemNBTUtils.hasTag(itemStack)) { // Test for Fluids
             // Vanilla bucket
-            chemicalFormula = FluidTooltipUtil.getFluidTooltip(ItemNBTUtils.getString(itemStack, "FluidName"));
+            tooltips = FluidTooltipUtil.getFluidTooltip(ItemNBTUtils.getString(itemStack, "FluidName"));
 
             // GTCE Cells, Forestry cans, some other containers
-            if (chemicalFormula == null) {
+            if (tooltips == null || tooltips.size() == 0) {
                 NBTTagCompound compound = itemStack.getTagCompound();
                 if (compound != null && compound.hasKey(FluidHandlerItemStack.FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
-                    chemicalFormula = FluidTooltipUtil.getFluidTooltip(FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY)));
+                    FluidStack fstack = FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY));
+                    tooltips = FluidTooltipUtil.getFluidTooltip(fstack);
                 }
             }
-
-        // Water buckets have a separate registry name from other buckets
-        } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) {
-            chemicalFormula = FluidTooltipUtil.getWaterTooltip();
+        } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) { // Water and Lava buckets have a separate registry name from other buckets
+            tooltips = FluidTooltipUtil.getWaterTooltip();
+        } else if (itemStack.getItem().equals(Items.LAVA_BUCKET)) {
+            tooltips = FluidTooltipUtil.getLavaTooltip();
         }
-        if (chemicalFormula != null && !chemicalFormula.isEmpty()) {
-            event.getToolTip().add(1, ChatFormatting.YELLOW + chemicalFormula);
+
+        if (tooltips != null) {
+            for (String s : tooltips) {
+                if (s == null || s.isEmpty()) continue;
+                event.getToolTip().add(s);
+            }
         }
     }
 
@@ -263,71 +263,6 @@ public class ClientProxy extends CommonProxy {
                     }
                 }
             }
-        }
-    }
-
-    private static final Set<UUID> capeHoldersUUIDs = new HashSet<>();
-
-    private static void startCapeLoadingThread() {
-        Thread capeListLoadThread = new Thread(ClientProxy::loadCapesList, "GregTech Cape List Downloader");
-        capeListLoadThread.setDaemon(true);
-        capeListLoadThread.start();
-    }
-
-    private static void loadCapesList() {
-        capeHoldersUUIDs.add(UUID.fromString("4bdba267-1479-449a-8ae4-d1957dd39f29"));
-        capeHoldersUUIDs.add(UUID.fromString("6cb05251-cd1b-481e-bf59-07637add1c64"));
-        capeHoldersUUIDs.add(UUID.fromString("a82fb558-64f9-4dd6-a87d-84040e84bb43"));
-        capeHoldersUUIDs.add(UUID.fromString("5c2933b3-5340-4356-81e7-783c53bd7845"));
-        try {
-            URL connectURL = new URL("https://www.dropbox.com/s/zc07k4y1h4ftmz3/GregTechPatreonList.txt?dl=1");
-            HttpURLConnection connection = (HttpURLConnection) connectURL.openConnection(Minecraft.getMinecraft().getProxy());
-            try {
-                connection.setDoInput(true);
-                connection.setDoOutput(false);
-                connection.connect();
-                InputStream inputStream = connection.getInputStream();
-                capeHoldersUUIDs.addAll(retrieveCapeUUIDs(inputStream));
-            } finally {
-                connection.disconnect();
-            }
-        } catch (UnknownHostException |
-                SocketTimeoutException |
-                MalformedURLException ignored) {
-        } catch (IOException exception) {
-            GTLog.logger.warn("Failed to fetch cape list", exception);
-        }
-    }
-
-    private static Set<UUID> retrieveCapeUUIDs(InputStream inputStream) throws IOException {
-        InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-        BufferedReader reader = new BufferedReader(streamReader);
-        Set<UUID> result = new HashSet<>();
-        for (; ; ) {
-            String line = reader.readLine();
-            if (line == null)
-                break;
-            int firstCommentIndex = line.indexOf('#');
-            if (firstCommentIndex > -1) {
-                line = line.substring(0, firstCommentIndex);
-            }
-            try {
-                UUID playerUUID = UUID.fromString(line.trim());
-                result.add(playerUUID);
-            } catch (IllegalArgumentException exception) {
-                GTLog.logger.warn("Failed to parse cape player UUID {}", line.trim(), exception);
-            }
-        }
-        return result;
-    }
-
-    @SubscribeEvent
-    public static void onPlayerRender(RenderPlayerEvent.Pre event) {
-        AbstractClientPlayer clientPlayer = (AbstractClientPlayer) event.getEntityPlayer();
-        if (capeHoldersUUIDs.contains(clientPlayer.getUniqueID()) && clientPlayer.hasPlayerInfo() && clientPlayer.getLocationCape() == null) {
-            NetworkPlayerInfo playerInfo = ObfuscationReflectionHelper.getPrivateValue(AbstractClientPlayer.class, clientPlayer, 0);
-            Map<Type, ResourceLocation> playerTextures = ObfuscationReflectionHelper.getPrivateValue(NetworkPlayerInfo.class, playerInfo, 1);
-            playerTextures.put(Type.CAPE, GREGTECH_CAPE_TEXTURE);
         }
     }
 

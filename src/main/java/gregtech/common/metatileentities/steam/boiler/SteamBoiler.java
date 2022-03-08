@@ -15,13 +15,13 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,10 +29,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -50,7 +47,7 @@ import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 
-public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreator, IDataInfoProvider {
+public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoProvider {
 
     private static final EnumFacing[] STEAM_PUSH_DIRECTIONS = ArrayUtils.add(EnumFacing.HORIZONTALS, EnumFacing.UP);
 
@@ -84,7 +81,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     }
 
     @Override
-    public boolean canCreateSound() {
+    public boolean isActive() {
         return isBurning;
     }
 
@@ -232,8 +229,10 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
                 doExplosion(2.0f);
             } else this.hasNoWater = !hasDrainedWater;
             if (filledSteam == 0 && hasDrainedWater) {
-                getWorld().playSound(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
-                        SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                if (ConfigHolder.machines.machineSounds && !this.isMuffled()){
+                    getWorld().playSound(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
+                            SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                }
                 steamFluidTank.drain(4000, true);
             }
         } else this.hasNoWater = false;
@@ -289,7 +288,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
 
     public ModularUI.Builder createUITemplate(EntityPlayer player) {
         return ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(isHighPressure), 176, 166)
-                .label(6, 6, getMetaFullName())
+                .label(6, 6, getMetaFullName()).shouldColor(false)
                 .widget(new ProgressWidget(this::getTemperaturePercent, 96, 26, 10, 54)
                         .setProgressBar(GuiTextures.PROGRESS_BAR_BOILER_EMPTY.get(isHighPressure),
                                 GuiTextures.PROGRESS_BAR_BOILER_HEAT,
@@ -315,11 +314,8 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
     }
 
     @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
-        if (getWorld() != null && getWorld().isRemote) {
-            this.setupSound(GTSounds.BOILER, this.getPos());
-        }
+    public SoundEvent getSound() {
+        return GTSounds.BOILER;
     }
 
     @Override

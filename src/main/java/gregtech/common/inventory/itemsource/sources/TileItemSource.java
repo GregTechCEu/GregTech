@@ -38,11 +38,12 @@ public class TileItemSource extends InventoryItemSource {
     }
 
     @Override
-    protected IItemHandler computeItemHandler() {
+    public void computeItemHandler() {
         if (!world.isBlockLoaded(accessedBlockPos)) {
             //we handle unloaded blocks as empty item handlers
             //so when they are loaded, they are refreshed and handled correctly
-            return EmptyHandler.INSTANCE;
+            itemHandler = EmptyHandler.INSTANCE;
+            return;
         }
         //use cached tile entity as long as it's valid and has same position (just in case of frames etc)
         TileEntity tileEntity = cachedTileEntity.get();
@@ -51,7 +52,8 @@ public class TileItemSource extends InventoryItemSource {
             if (tileEntity == null) {
                 //if tile entity doesn't exist anymore, we are invalid now
                 //return null which will be handled as INVALID
-                return null;
+                itemHandler = null;
+                return;
             }
             //update cached tile entity
             this.cachedTileEntity = new WeakReference<>(tileEntity);
@@ -60,7 +62,7 @@ public class TileItemSource extends InventoryItemSource {
         //if it returns null, item handler info will be removed
         //block should emit block update once it obtains capability again,
         //so handler info will be recreated accordingly
-        return tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, accessSide.getOpposite());
+        itemHandler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, accessSide.getOpposite());
     }
 
     @Override

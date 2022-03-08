@@ -5,9 +5,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.BlockPipe;
-import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -60,7 +58,7 @@ public class MachineItemBlock extends ItemBlock {
             if (block instanceof BlockPipe) {
                 IPipeTile pipeTile = ((BlockPipe<?, ?, ?>) block).getPipeTileEntity(world, possiblePipe);
                 if (pipeTile != null && ((BlockPipe<?, ?, ?>) block).canPipeConnectToBlock(pipeTile, side.getOpposite(), world.getTileEntity(pos))) {
-                    pipeTile.setConnectionBlocked(AttachmentType.PIPE, side, false, false);
+                    pipeTile.setConnection(side, true, false);
                 }
             }
         }

@@ -22,13 +22,20 @@ public class FluidKey {
         if (this == o) return true;
         if (!(o instanceof FluidKey)) return false;
         FluidKey fluidKey = (FluidKey) o;
-        return Objects.equals(fluid, fluidKey.fluid) &&
-                Objects.equals(tag, fluidKey.tag);
+        if (!Objects.equals(fluid, fluidKey.fluid) )
+            return false;
+        if (tag == null && fluidKey.tag != null) return false;
+        else return tag == null || tag.equals(fluidKey.tag);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fluid, tag);
+        int hash = 0;
+        hash += Objects.hash(fluid);
+        if (tag != null && !tag.isEmpty()) {
+            hash += tag.hashCode();
+        }
+        return hash;
     }
 
     @Override

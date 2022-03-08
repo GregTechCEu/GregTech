@@ -8,7 +8,6 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTUtility;
@@ -145,11 +144,9 @@ public class TricorderBehavior implements IItemBehaviour {
                 list.add(new TextComponentTranslation("behavior.tricorder.tanks_empty"));
 
             // sound muffling
-            if (metaTileEntity instanceof ISoundCreator) {
-                energyCost += 500;
-                if (metaTileEntity.isMuffled())
-                    list.add(new TextComponentTranslation("behavior.tricorder.muffled").setStyle(new Style().setColor(TextFormatting.GREEN)));
-            }
+            energyCost += 500;
+            if (metaTileEntity.isMuffled())
+                list.add(new TextComponentTranslation("behavior.tricorder.muffled").setStyle(new Style().setColor(TextFormatting.GREEN)));
 
             // workable progress info
             IWorkable workable = metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, null);
@@ -247,18 +244,25 @@ public class TricorderBehavior implements IItemBehaviour {
         // crops (adds 1000EU)
 
         // bedrock fluids
-        if (player.isCreative()) {
-            list.add(new TextComponentTranslation("behavior.tricorder.divider"));
-            Fluid fluid = BedrockFluidVeinHandler.getFluid(world, pos.getX() / 16, pos.getZ() / 16);//-# to only read
-            if (fluid != null) {
-                FluidStack stack = new FluidStack(fluid, BedrockFluidVeinHandler.getFluidRateInChunk(world, pos.getX() / 16, pos.getZ() / 16));
+        list.add(new TextComponentTranslation("behavior.tricorder.divider"));
+        Fluid fluid = BedrockFluidVeinHandler.getFluidInChunk(world, pos.getX() / 16, pos.getZ() / 16);//-# to only read
+        if (fluid != null) {
+            FluidStack stack = new FluidStack(fluid, BedrockFluidVeinHandler.getOperationsRemaining(world, pos.getX() / 16, pos.getZ() / 16));
+            double fluidPercent = stack.amount * 100.0 / BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS;
+
+            if (player.isCreative()) {
                 list.add(new TextComponentTranslation("behavior.tricorder.bedrock_fluid.amount",
                         new TextComponentTranslation(fluid.getLocalizedName(stack)).setStyle(new Style().setColor(TextFormatting.GOLD)),
-                        new TextComponentTranslation(GTUtility.formatNumbers(stack.amount)).setStyle(new Style().setColor(TextFormatting.YELLOW))
+                        new TextComponentTranslation("" + BedrockFluidVeinHandler.getFluidYield(world, pos.getX() / 16, pos.getZ() / 16)).setStyle(new Style().setColor(TextFormatting.GOLD)),
+                        new TextComponentTranslation("" + fluidPercent).setStyle(new Style().setColor(TextFormatting.YELLOW))
                 ));
             } else {
-                list.add(new TextComponentTranslation("behavior.tricorder.bedrock_fluid.nothing"));
+                list.add(new TextComponentTranslation("behavior.tricorder.bedrock_fluid.amount_unknown",
+                        new TextComponentTranslation("" + fluidPercent).setStyle(new Style().setColor(TextFormatting.YELLOW))
+                ));
             }
+        } else {
+            list.add(new TextComponentTranslation("behavior.tricorder.bedrock_fluid.nothing"));
         }
 
         // pollution

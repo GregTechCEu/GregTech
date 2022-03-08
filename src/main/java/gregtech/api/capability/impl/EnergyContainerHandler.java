@@ -1,5 +1,7 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.GTValues;
+import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IEnergyContainer;
@@ -11,6 +13,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.function.Predicate;
@@ -128,27 +132,55 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
 
     public boolean dischargeOrRechargeEnergyContainers(IItemHandlerModifiable itemHandler, int slotIndex) {
         ItemStack stackInSlot = itemHandler.getStackInSlot(slotIndex);
-        if (stackInSlot.isEmpty()) {
+        if (stackInSlot.isEmpty()) { // no stack to charge/discharge
             return false;
         }
-        IElectricItem electricItem = stackInSlot.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (electricItem == null || !electricItem.canProvideChargeExternally()) {
-            return false;
-        }
-        int machineTier = GTUtility.getTierByVoltage(Math.max(getInputVoltage(), getOutputVoltage()));
 
-        if (getEnergyCanBeInserted() > 0) {
-            double chargePercent = getEnergyStored() / (getEnergyCapacity() * 1.0);
-            if (chargePercent <= 0.5) {
+        IElectricItem electricItem = stackInSlot.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (electricItem != null) {
+            return handleElectricItem(electricItem);
+        } else {
+            IEnergyStorage energyStorage = stackInSlot.getCapability(CapabilityEnergy.ENERGY, null);
+            if (energyStorage != null) {
+                return handleForgeEnergyItem(energyStorage);
+            }
+        }
+        return false;
+    }
+
+    private boolean handleElectricItem(IElectricItem electricItem) {
+        int machineTier = GTUtility.getTierByVoltage(Math.max(getInputVoltage(), getOutputVoltage()));
+        int chargeTier = Math.min(machineTier, electricItem.getTier());
+        double chargePercent = getEnergyStored() / (getEnergyCapacity() * 1.0);
+
+        // Check if the item is a battery (or similar), and if we can receive some amount of energy
+        if (electricItem.canProvideChargeExternally() && getEnergyCanBeInserted() > 0) {
+
+            // Drain from the battery if we are below half energy capacity, and if the tier matches
+            if (chargePercent <= 0.5 && chargeTier == machineTier) {
                 long dischargedBy = electricItem.discharge(getEnergyCanBeInserted(), machineTier, false, true, false);
                 addEnergy(dischargedBy);
                 return dischargedBy > 0L;
-
-            } else if (chargePercent >= 0.9) {
-                long chargedBy = electricItem.charge(getEnergyStored(), machineTier, false, false);
-                removeEnergy(chargedBy);
-                return chargedBy > 0L;
             }
+        }
+
+        // Else, check if we have above 50% power
+        if (chargePercent > 0.5) {
+            long chargedBy = electricItem.charge(getEnergyStored(), chargeTier, false, false);
+            removeEnergy(chargedBy);
+            return chargedBy > 0;
+        }
+        return false;
+    }
+
+    private boolean handleForgeEnergyItem(IEnergyStorage energyStorage) {
+        int machineTier = GTUtility.getTierByVoltage(Math.max(getInputVoltage(), getOutputVoltage()));
+        double chargePercent = getEnergyStored() / (getEnergyCapacity() * 1.0);
+
+        if (chargePercent > 0.5) {
+            long chargedBy = FeCompat.insertEu(energyStorage, GTValues.V[machineTier]);
+            removeEnergy(chargedBy);
+            return chargedBy > 0;
         }
         return false;
     }

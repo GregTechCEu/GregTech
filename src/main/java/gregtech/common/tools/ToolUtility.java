@@ -2,11 +2,13 @@ package gregtech.common.tools;
 
 import codechicken.lib.raytracer.RayTracer;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TaskScheduler;
+import gregtech.common.blocks.BlockOre;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.state.IBlockState;
@@ -16,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -95,7 +98,12 @@ public class ToolUtility {
     }
 
     public static void applyHammerDrops(Random random, IBlockState blockState, List<ItemStack> drops, int fortuneLevel, EntityPlayer player) {
-        ItemStack inputStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
+        ItemStack inputStack;
+        if (blockState.getBlock() instanceof BlockOre) {
+            inputStack = drops.get(0);
+        } else {
+            inputStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
+        }
         MaterialStack input = OreDictUnifier.getMaterial(inputStack);
         if (input != null && input.material.hasProperty(PropertyKey.ORE) && GTUtility.isOre(blockState.getBlock()) && !(player instanceof FakePlayer)) {
             drops.clear();
@@ -105,16 +113,25 @@ public class ToolUtility {
 
             if(fortuneLevel > 0){
                 if(fortuneLevel > 3) fortuneLevel = 3;
-                output.setCount((input.material.getProperty((PropertyKey.ORE)).getOreMultiplier() * multiplier) * Math.max(1, random.nextInt(fortuneLevel + 2) - 1));
+                output.setCount((input.material.getProperty((PropertyKey.ORE)).getOreMultiplier() * multiplier) * (random.nextFloat() <= (fortuneLevel / 3.0) ? 2 : 1));
                 if (output.getCount() == 0) output.setCount(1);
             }
             else{
                 output.setCount(input.material.getProperty((PropertyKey.ORE)).getOreMultiplier());
             }
             drops.add(output);
-
+        } else if (inputStack.getItem() instanceof ItemBlock) {
+            ItemBlock itemBlock = (ItemBlock) inputStack.getItem();
+            ItemStack newOutput = ItemStack.EMPTY;
+            if (itemBlock.getBlock() == Blocks.STAINED_GLASS || itemBlock.getBlock() == Blocks.GLASS) {
+                newOutput = OreDictUnifier.get(OrePrefix.dust, Materials.Glass);
+            } else if (itemBlock.getBlock() == Blocks.STAINED_GLASS_PANE || itemBlock.getBlock() == Blocks.GLASS_PANE) {
+                newOutput = OreDictUnifier.get(OrePrefix.dustTiny, Materials.Glass);
+            }
+            if (newOutput != ItemStack.EMPTY) {
+                drops.clear();
+                drops.add(newOutput);
+            }
         }
     }
-
-
 }

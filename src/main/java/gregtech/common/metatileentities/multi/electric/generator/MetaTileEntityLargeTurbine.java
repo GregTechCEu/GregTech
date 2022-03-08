@@ -13,7 +13,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.block.state.IBlockState;
@@ -32,7 +31,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntityLargeTurbine extends FuelMultiblockController implements ITieredMetaTileEntity, IVoidable {
+public class MetaTileEntityLargeTurbine extends FuelMultiblockController implements ITieredMetaTileEntity {
 
     public final int tier;
 
@@ -125,7 +124,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
                     textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.rotor_durability", rotorDurability).setStyle(new Style().setColor(TextFormatting.RED)));
                 }
             }
-            if(!isRotorFaceFree()) {
+            if (!isRotorFaceFree()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.obstructed")
                         .setStyle(new Style().setColor(TextFormatting.RED)));
             }
@@ -153,7 +152,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
                         .filter(mte -> (mte instanceof ITieredMetaTileEntity) && (((ITieredMetaTileEntity) mte).getTier() >= tier))
                         .toArray(MetaTileEntity[]::new))
                         .addTooltips("gregtech.multiblock.pattern.clear_amount_3")
-                        .addTooltips(I18n.format("gregtech.multiblock.pattern.error.limited.1", GTValues.VN[tier]))
+                        .addTooltip("gregtech.multiblock.pattern.error.limited.1", GTValues.VN[tier])
                         .setExactLimit(1)
                         .or(abilities(MultiblockAbility.OUTPUT_ENERGY)).setExactLimit(1))
                 .where('H', states(getCasingState()).or(autoAbilities(false, true, false, false, true, true, true)))
@@ -205,7 +204,17 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController impleme
     }
 
     @Override
-    public boolean canVoidRecipeOutputs() {
+    public boolean canVoidRecipeItemOutputs() {
         return true;
+    }
+
+    @Override
+    public boolean canVoidRecipeFluidOutputs() {
+        return true;
+    }
+
+    @Override
+    protected boolean shouldShowVoidingModeButton() {
+        return false;
     }
 }

@@ -19,6 +19,7 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.sound.GTSoundManager;
 import gregtech.api.recipes.FluidKey;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.*;
@@ -28,6 +29,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -65,7 +67,7 @@ import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public abstract class MetaTileEntity implements ICoverable {
+public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
@@ -103,6 +105,8 @@ public abstract class MetaTileEntity implements ICoverable {
     protected List<IFluidHandler> notifiedFluidOutputList = new ArrayList<>();
 
     protected boolean muffled = false;
+
+    private int playSoundCooldown = 0;
 
     public MetaTileEntity(ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
@@ -348,10 +352,7 @@ public abstract class MetaTileEntity implements ICoverable {
         EnumActionResult coverResult = coverBehavior == null ? EnumActionResult.PASS :
                 coverBehavior.onRightClick(playerIn, hand, result);
         if (coverResult != EnumActionResult.PASS) {
-            if (coverResult == EnumActionResult.SUCCESS) {
-                return true;
-            }
-            return false;
+            return coverResult == EnumActionResult.SUCCESS;
         }
         return onRightClick(playerIn, hand, result.sideHit, result);
     }
@@ -634,6 +635,8 @@ public abstract class MetaTileEntity implements ICoverable {
             if (getOffsetTimer() % 5 == 0L) {
                 updateComparatorValue();
             }
+        } else {
+            updateSound();
         }
         if (getOffsetTimer() % 5 == 0L) {
             updateLightValue();
@@ -642,6 +645,27 @@ public abstract class MetaTileEntity implements ICoverable {
 
     protected boolean shouldUpdate(MTETrait trait) {
         return true;
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void updateSound() {
+        if (!ConfigHolder.machines.machineSounds || isMuffled()) {
+            return;
+        }
+        SoundEvent sound = getSound();
+        if (sound == null) {
+            return;
+        }
+        if (isValid() && isActive()) {
+            if (--playSoundCooldown > 0) {
+                return;
+            }
+            GTSoundManager.startTileSound(sound.getSoundName(), 1.0F, getPos());
+            playSoundCooldown = 20;
+        } else {
+            GTSoundManager.stopTileSound(getPos());
+            playSoundCooldown = 0;
+        }
     }
 
     public final ItemStack getStackForm(int amount) {
@@ -828,6 +852,11 @@ public abstract class MetaTileEntity implements ICoverable {
         } else if (dataId == UPDATE_IS_FRAGILE) {
             this.isFragile = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
+        } else if (dataId == UPDATE_SOUND_MUFFLED) {
+            this.muffled = buf.readBoolean();
+            if (muffled) {
+                GTSoundManager.stopTileSound(getPos());
+            }
         }
     }
 
@@ -1018,7 +1047,7 @@ public abstract class MetaTileEntity implements ICoverable {
         // determine if there is sufficient room to insert all items into the target inventory
         if (simulate) {
             OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(handler);
-            HashMap<ItemStackKey, Integer> stackKeyMap = GTHashMaps.fromItemStackCollection(items);
+            Map<ItemStackKey, Integer> stackKeyMap = GTHashMaps.fromItemStackCollection(items);
 
             for (Map.Entry<ItemStackKey, Integer> entry : stackKeyMap.entrySet()) {
                 int amountToInsert = entry.getValue();
@@ -1053,7 +1082,7 @@ public abstract class MetaTileEntity implements ICoverable {
                                                   List<FluidStack> fluidStacks) {
         if (simulate) {
             OverlayedFluidHandler overlayedFluidHandler = new OverlayedFluidHandler(fluidHandler);
-            HashMap<FluidKey, Integer> fluidKeyMap = GTHashMaps.fromFluidCollection(fluidStacks);
+            Map<FluidKey, Integer> fluidKeyMap = GTHashMaps.fromFluidCollection(fluidStacks);
             for (Map.Entry<FluidKey, Integer> entry : fluidKeyMap.entrySet()) {
                 int amountToInsert = entry.getValue();
                 int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), amountToInsert);
@@ -1261,6 +1290,21 @@ public abstract class MetaTileEntity implements ICoverable {
     public void onRemoval() {
     }
 
+    public void invalidate() {
+        if (getWorld() != null && getWorld().isRemote) {
+            GTSoundManager.stopTileSound(getPos());
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public SoundEvent getSound() {
+        return null;
+    }
+
+    public boolean isActive() {
+        return false;
+    }
+
     public EnumFacing getFrontFacing() {
         return frontFacing;
     }
@@ -1342,6 +1386,9 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public final void toggleMuffled() {
         muffled = !muffled;
+        if (!getWorld().isRemote) {
+            writeCustomData(UPDATE_SOUND_MUFFLED, buf -> buf.writeBoolean(muffled));
+        }
     }
 
     public boolean isMuffled() {
@@ -1369,13 +1416,21 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public void doExplosion(float explosionPower) {
         getWorld().setBlockToAir(getPos());
-        if (ConfigHolder.machines.doExplosions) {
-            getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
-                    explosionPower, true);
-        }
+        getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
+                explosionPower, ConfigHolder.machines.doExplosions);
     }
 
     public boolean doTickProfileMessage() {
         return true;
+    }
+
+    @Override
+    public boolean canVoidRecipeItemOutputs() {
+        return false;
+    }
+
+    @Override
+    public boolean canVoidRecipeFluidOutputs() {
+        return false;
     }
 }

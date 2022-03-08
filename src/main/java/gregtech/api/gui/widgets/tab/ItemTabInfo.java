@@ -10,8 +10,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
-import static gregtech.api.gui.impl.ModularUIGui.*;
-
 public class ItemTabInfo implements ITabInfo {
 
     private final String nameLocale;
@@ -30,7 +28,6 @@ public class ItemTabInfo implements ITabInfo {
         Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(iconStack, posX + xSize / 2 - 8, posY + ySize / 2 - 8);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableRescaleNormal();
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override

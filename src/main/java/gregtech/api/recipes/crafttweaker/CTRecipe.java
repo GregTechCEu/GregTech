@@ -6,7 +6,6 @@ import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.mc1120.item.MCItemStack;
 import crafttweaker.mc1120.liquid.MCLiquidStack;
-import gregtech.api.GTValues;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import stanhebben.zenscript.annotations.Optional;
@@ -16,11 +15,11 @@ import stanhebben.zenscript.annotations.ZenMethod;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @ZenClass("mods.gregtech.recipe.Recipe")
 @ZenRegister
+@SuppressWarnings("unused")
 public class CTRecipe {
 
     private final RecipeMap<?> recipeMap;
@@ -47,7 +46,7 @@ public class CTRecipe {
 
     @ZenMethod
     public List<IItemStack> getResultItemOutputs(@Optional(valueLong = 1) int tier) {
-        return this.backingRecipe.getResultItemOutputs(Integer.MAX_VALUE, tier, recipeMap).stream()
+        return this.backingRecipe.getResultItemOutputs(tier, recipeMap).stream()
                 .map(MCItemStack::new)
                 .collect(Collectors.toList());
     }

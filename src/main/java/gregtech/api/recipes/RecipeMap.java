@@ -213,6 +213,13 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 }
             }
             for (FluidStack fluid : recipe.getFluidInputs()) {
+                if (fluid.tag != null && fluid.tag.hasKey("nonConsumable")) {
+                    fluid = fluid.copy();
+                    fluid.tag.removeTag("nonConsumable");
+                    if (fluid.tag.isEmpty()) {
+                        fluid.tag = null;
+                    }
+                }
                 FluidKey fluidKey = new FluidKey(fluid);
                 recipeFluidMap.computeIfPresent(fluidKey, (k, v) -> {
                     v.add(recipe);
@@ -221,7 +228,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 recipeFluidMap.computeIfAbsent(fluidKey, k -> new HashSet<>()).add(recipe);
             }
         } else if (ConfigHolder.misc.debug) {
-            GTLog.logger.debug("Recipe: " + recipe.toString() + " is a duplicate and was not added");
+            GTLog.logger.warn("Recipe: {} for Recipe Map {} is a duplicate and was not added", recipe.toString(), this.unlocalizedName);
         }
     }
 
@@ -475,10 +482,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     protected TextureArea[] getOverlaysForSlot(boolean isOutput, boolean isFluid, boolean isLast) {
         TextureArea base = isFluid ? GuiTextures.FLUID_SLOT : GuiTextures.SLOT;
-        if (!isOutput && !isFluid && isLast && recipeBuilderSample instanceof IntCircuitRecipeBuilder) {
-            //automatically add int circuit overlay to last item input slot
-            return new TextureArea[]{base, GuiTextures.INT_CIRCUIT_OVERLAY};
-        }
         byte overlayKey = (byte) ((isOutput ? 2 : 0) + (isFluid ? 1 : 0) + (isLast ? 4 : 0));
         if (slotOverlays.containsKey(overlayKey)) {
             return new TextureArea[]{base, slotOverlays.get(overlayKey)};

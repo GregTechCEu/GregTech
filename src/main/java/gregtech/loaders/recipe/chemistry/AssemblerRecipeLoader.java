@@ -1,7 +1,6 @@
 package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -184,7 +183,7 @@ public class AssemblerRecipeLoader {
                 .outputs(VOLTAGE_COIL_EV.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[IV])
                 .input(stick, NeodymiumMagnetic)
                 .input(wireFine, Iridium, 16)
                 .circuitMeta(1)

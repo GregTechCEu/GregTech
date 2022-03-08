@@ -46,6 +46,11 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         return false;
     }
 
+    @Override
+    public boolean canHaveBlockedFaces() {
+        return false;
+    }
+
     private void initHandlers() {
         EnergyNet net = getEnergyNet();
         if (net == null) {
@@ -57,19 +62,18 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         defaultHandler = new EnergyNetHandler(net, this, null);
     }
 
-    public boolean checkAmperage(long amps) {
-        return getMaxAmperage() >= averageAmperageCounter.getLast(getWorld()) + amps;
-    }
-
     /**
      * Should only be called internally
+     * @return if the cable should be destroyed
      */
-    public void incrementAmperage(long amps, long voltage) {
+    public boolean incrementAmperage(long amps, long voltage) {
         if (voltage > maxVoltageCounter.get(world)) {
             maxVoltageCounter.set(world, voltage);
         }
         averageVoltageCounter.increment(world, voltage);
         averageAmperageCounter.increment(world, amps);
+
+        return getAverageAmperage() > getMaxAmperage();
     }
 
     public double getAverageAmperage() {
@@ -100,9 +104,23 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
                 return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(clientCapability);
             if (handlers.size() == 0)
                 initHandlers();
+            checkNetwork();
             return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(handlers.getOrDefault(facing, defaultHandler));
         }
         return super.getCapabilityInternal(capability, facing);
+    }
+
+
+    public void checkNetwork() {
+        if(defaultHandler != null) {
+            EnergyNet current = getEnergyNet();
+            if(defaultHandler.getNet() != current) {
+                defaultHandler.updateNetwork(current);
+                for (EnergyNetHandler handler : handlers.values()) {
+                    handler.updateNetwork(current);
+                }
+            }
+        }
     }
 
     private EnergyNet getEnergyNet() {

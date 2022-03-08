@@ -2,18 +2,15 @@ package gregtech.common.pipelike.itempipe;
 
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
-import gregtech.api.cover.CoverBehavior;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
-import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
+import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
-import gregtech.client.renderer.pipe.ItemPipeRenderer;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
@@ -58,17 +55,6 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     }
 
     @Override
-    public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
-        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
-        if (!worldIn.isRemote) {
-            ItemPipeNet itemPipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
-            if (itemPipeNet != null) {
-                itemPipeNet.nodeNeighbourChanged(pos);
-            }
-        }
-    }
-
-    @Override
     public Class<ItemPipeType> getPipeTypeClass() {
         return ItemPipeType.class;
     }
@@ -100,11 +86,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     @Override
     public void getSubBlocks(@Nonnull CreativeTabs itemIn, @Nonnull NonNullList<ItemStack> items) {
         for (Material material : enabledMaterials.keySet()) {
-            for (ItemPipeType itemPipeType : ItemPipeType.values()) {
-                if (!itemPipeType.getOrePrefix().isIgnored(material)) {
-                    items.add(getItem(material));
-                }
-            }
+            items.add(getItem(material));
         }
     }
 
@@ -137,7 +119,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     @SideOnly(Side.CLIENT)
     @SuppressWarnings("deprecation")
     public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
-        return ItemPipeRenderer.BLOCK_RENDER_TYPE;
+        return ItemPipeRenderer.INSTANCE.getBlockRenderType();
     }
 
 

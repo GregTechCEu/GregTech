@@ -98,14 +98,14 @@ public class PartsRecipeHandler {
                 .EUt(4)
                 .buildAndRegister();
 
-        ModHandler.addShapedRecipe(String.format("screw_%s", material.toString()),
+        ModHandler.addShapedRecipe(String.format("screw_%s", material),
                 screwStack, "fX", "X ",
                 'X', new UnificationEntry(OrePrefix.bolt, material));
     }
 
     public static void processFoil(OrePrefix foilPrefix, Material material, IngotProperty property) {
         if (!material.hasFlag(NO_SMASHING))
-            ModHandler.addShapedRecipe(String.format("foil_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("foil_%s", material),
                     OreDictUnifier.get(foilPrefix, material, 2),
                     "hP ", 'P', new UnificationEntry(plate, material));
 
@@ -117,7 +117,7 @@ public class PartsRecipeHandler {
                 .circuitMeta(1)
                 .buildAndRegister();
 
-        if (material.hasFlag(NO_SMASHING))
+        if (material.hasFlag(NO_SMASHING)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                     .input(ingot, material)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_FOIL)
@@ -125,6 +125,15 @@ public class PartsRecipeHandler {
                     .duration((int) material.getMass())
                     .EUt(24)
                     .buildAndRegister();
+
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                    .input(dust, material)
+                    .notConsumable(MetaItems.SHAPE_EXTRUDER_FOIL)
+                    .output(foilPrefix, material, 4)
+                    .duration((int) material.getMass())
+                    .EUt(24)
+                    .buildAndRegister();
+        }
     }
 
     public static void processFineWire(OrePrefix fineWirePrefix, Material material, IngotProperty property) {
@@ -233,12 +242,19 @@ public class PartsRecipeHandler {
     public static void processLens(OrePrefix lensPrefix, Material material, GemProperty property) {
         ItemStack stack = OreDictUnifier.get(lensPrefix, material);
 
-        RecipeMaps.LATHE_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, material)
-                .outputs(stack, OreDictUnifier.get(OrePrefix.dustSmall, material))
-                .duration((int) (material.getMass() / 2L))
-                .EUt(16)
-                .buildAndRegister();
+        LATHE_RECIPES.recipeBuilder()
+                .input(plate, material)
+                .output(lens, material)
+                .output(dustSmall, material)
+                .duration(1200).EUt(120).buildAndRegister();
+
+        if (!OreDictUnifier.get(gemExquisite, material).isEmpty()) {
+            LATHE_RECIPES.recipeBuilder()
+                    .input(gemExquisite, material)
+                    .output(lens, material)
+                    .output(dust, material, 2)
+                    .duration(2400).EUt(30).buildAndRegister();
+        }
 
         if (material == Materials.Diamond) { // override Diamond Lens to be LightBlue
             OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.LightBlue);
@@ -267,19 +283,12 @@ public class PartsRecipeHandler {
                     .EUt(VA[ULV])
                     .buildAndRegister();
         }
-
-        if (material.hasFlag(MORTAR_GRINDABLE)) {
-            ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, material);
-            ModHandler.addShapedRecipe(String.format("plate_to_dust_%s", material),
-                    dustStack, "X", "m",
-                    'X', new UnificationEntry(OrePrefix.plate, material));
-        }
     }
 
     public static void processPlateDouble(OrePrefix doublePrefix, Material material, IngotProperty property) {
         if (material.hasFlag(GENERATE_PLATE)) {
             if (!material.hasFlag(NO_SMASHING)) {
-                ModHandler.addShapedRecipe(String.format("plate_double_%s", material.toString()),
+                ModHandler.addShapedRecipe(String.format("plate_double_%s", material),
                         OreDictUnifier.get(doublePrefix, material),
                         "h", "P", "P", 'P', new UnificationEntry(plate, material));
             }
@@ -431,7 +440,7 @@ public class PartsRecipeHandler {
                     .EUt(4)
                     .buildAndRegister();
 
-            ModHandler.addShapedRecipe(String.format("bolt_saw_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("bolt_saw_%s", material),
                     GTUtility.copyAmount(2, boltStack),
                     "s ", " X",
                     'X', new UnificationEntry(OrePrefix.stick, material));
@@ -448,25 +457,25 @@ public class PartsRecipeHandler {
                 .duration((int) Math.max(material.getMass(), 1L)).EUt(4)
                 .buildAndRegister();
 
-        ModHandler.addShapedRecipe(String.format("stick_long_%s", material.toString()),
+        ModHandler.addShapedRecipe(String.format("stick_long_%s", material),
                 GTUtility.copyAmount(2, stickStack),
                 "s", "X", 'X', new UnificationEntry(OrePrefix.stickLong, material));
 
         if(material.hasProperty(PropertyKey.GEM)) {
-            ModHandler.addShapedRecipe(String.format("stick_long_gem_flawless_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("stick_long_gem_flawless_%s", material),
                     stickStack,
                     "sf",
                     "G ",
                     'G', new UnificationEntry(OrePrefix.gemFlawless, material));
 
-            ModHandler.addShapedRecipe(String.format("stick_long_gem_exquisite_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("stick_long_gem_exquisite_%s", material),
                     GTUtility.copyAmount(2, stickStack),
                     "sf", "G ",
                     'G', new UnificationEntry(OrePrefix.gemExquisite, material));
 
         }
 
-        ModHandler.addShapedRecipe(String.format("stick_long_stick_%s", material.toString()), stack,
+        ModHandler.addShapedRecipe(String.format("stick_long_stick_%s", material), stack,
                 "ShS",
                 'S', new UnificationEntry(OrePrefix.stick, material));
 
@@ -529,11 +538,11 @@ public class PartsRecipeHandler {
     public static void processRound(OrePrefix roundPrefix, Material material, IngotProperty property) {
         if (!material.hasFlag(NO_SMASHING)) {
 
-            ModHandler.addShapedRecipe(String.format("round_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("round_%s", material),
                     OreDictUnifier.get(round, material),
                     "fN", "Nh", 'N', new UnificationEntry(nugget, material));
 
-            ModHandler.addShapedRecipe(String.format("round_from_ingot_%s", material.toString()),
+            ModHandler.addShapedRecipe(String.format("round_from_ingot_%s", material),
                     OreDictUnifier.get(round, material, 4),
                     "fIh", 'I', new UnificationEntry(ingot, material));
         }

@@ -1,5 +1,6 @@
 package gregtech.common.pipelike.cable.tile;
 
+import gregtech.api.util.GTLog;
 import net.minecraft.world.World;
 
 import java.util.Arrays;
@@ -28,7 +29,7 @@ public class AveragingPerTickCounter {
     private void checkValueState(World world) {
         long currentWorldTime = world.getTotalWorldTime();
         if (currentWorldTime != lastUpdatedWorldTime) {
-            int dif = (int) (currentWorldTime - lastUpdatedWorldTime);
+            long dif = currentWorldTime - lastUpdatedWorldTime;
             if (dif >= values.length) {
                 Arrays.fill(values, defaultValue);
                 currentIndex = 0;

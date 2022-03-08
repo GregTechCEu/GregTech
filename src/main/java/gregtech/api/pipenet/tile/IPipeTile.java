@@ -1,6 +1,5 @@
 package gregtech.api.pipenet.tile;
 
-import gnu.trove.map.TIntIntMap;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import net.minecraft.network.PacketBuffer;
@@ -18,7 +17,7 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     BlockPos getPipePos();
 
     default long getTickTimer() {
-        return getPipeWorld().getWorldTime();
+        return getPipeWorld().getTotalWorldTime();
     }
 
     BlockPipe<PipeType, NodeDataType, ?> getPipeBlock();
@@ -33,17 +32,24 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     int getDefaultPaintingColor();
 
-    int getOpenConnections();
+    int getConnections();
 
-    TIntIntMap getOpenConnectionsMap();
+    boolean isConnected(EnumFacing side);
 
-    boolean isConnectionOpen(AttachmentType type, EnumFacing side);
+    void setConnection(EnumFacing side, boolean connected, boolean fromNeighbor);
 
-    default boolean isConnectionOpenAny(EnumFacing side) {
-        return (getOpenConnections() & 1 << side.getIndex()) > 0;
+    // if a face is blocked it will still render as connected, but it won't be able to receive stuff from that direction
+    default boolean canHaveBlockedFaces() {
+        return true;
     }
 
-    void setConnectionBlocked(AttachmentType type, EnumFacing side, boolean isBlocked, boolean fromNeighbor);
+    int getBlockedConnections();
+
+    boolean isFaceBlocked(EnumFacing side);
+
+    void setFaceBlocked(EnumFacing side, boolean blocked);
+
+    int getVisualConnections();
 
     PipeType getPipeType();
 

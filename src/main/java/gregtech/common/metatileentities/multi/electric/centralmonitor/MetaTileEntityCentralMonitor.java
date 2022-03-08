@@ -22,7 +22,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.BlockPosFace;
 import gregtech.client.renderer.ICubeRenderer;
@@ -146,7 +145,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                 continue;
             }
             for (EnumFacing facing : EnumFacing.VALUES) {
-                if (((TileEntityPipeBase<?,?>) tileEntityCable).isConnectionOpen(AttachmentType.PIPE, facing)) {
+                if (((TileEntityPipeBase<?,?>) tileEntityCable).isConnected(facing)) {
                     TileEntity tileEntity = world.getTileEntity(pos.offset(facing));
                     if (tileEntity instanceof MetaTileEntityHolder) {
                         MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
@@ -290,6 +289,11 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
+    protected boolean shouldShowVoidingModeButton() {
+        return false;
+    }
+
+    @Override
     protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
         super.handleDisplayClick(componentData, clickData);
         int modifier = componentData.equals("add") ? 1 : -1;
@@ -403,7 +407,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                 .aisle(slice.toString()).setRepeatable(3, MAX_WIDTH)
                 .aisle(end.toString())
                 .where('S', selfPredicate())
-                .where('A', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID)).setMinGlobalLimited(3)
+                .where('A', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID)).setMinGlobalLimited(2)
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setPreviewCount(1)))
                 .where('B', metaTileEntities(MetaTileEntities.MONITOR_SCREEN))
                 .build();

@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.common.advancement.GTTriggers;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
@@ -107,7 +108,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    public void writeInitialData(PacketBuffer buf) {
+    public void writeInitialData(@Nonnull PacketBuffer buf) {
         super.writeInitialData(buf);
         buf.writeByte(getVentingSide().getIndex());
         buf.writeBoolean(needsVenting);
@@ -115,7 +116,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    public void receiveInitialData(PacketBuffer buf) {
+    public void receiveInitialData(@Nonnull PacketBuffer buf) {
         super.receiveInitialData(buf);
         this.ventingSide = EnumFacing.VALUES[buf.readByte()];
         this.needsVenting = buf.readBoolean();
@@ -159,7 +160,9 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
                 ventingSide.getXOffset() / 2.0,
                 ventingSide.getYOffset() / 2.0,
                 ventingSide.getZOffset() / 2.0, 0.1);
-        world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        if (ConfigHolder.machines.machineSounds && !metaTileEntity.isMuffled()){
+            world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        }
         setNeedsVenting(false);
 
     }
@@ -187,14 +190,15 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
-        return standardOverclockingLogic((isHighPressure ? recipe.getEUt() * 2 : recipe.getEUt()) * (negativeEU ? -1 : 1),
-                getMaxVoltage(),
-                isHighPressure ? recipe.getDuration() : recipe.getDuration() * 2,
-                getOverclockingDurationDivisor(),
-                getOverclockingVoltageMultiplier(),
-                maxOverclocks
-        );
+    protected int[] calculateOverclock(@Nonnull Recipe recipe) {
+
+        //EUt, Duration
+        int[] result = new int[2];
+
+        result[0] = isHighPressure ? recipe.getEUt() * 2 : recipe.getEUt();
+        result[1] = isHighPressure ? recipe.getDuration() : recipe.getDuration() * 2;
+
+        return result;
     }
 
     @Override
@@ -234,7 +238,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound compound) {
+    public void deserializeNBT(@Nonnull NBTTagCompound compound) {
         super.deserializeNBT(compound);
         this.ventingSide = EnumFacing.VALUES[compound.getInteger("VentingSide")];
         this.needsVenting = compound.getBoolean("NeedsVenting");

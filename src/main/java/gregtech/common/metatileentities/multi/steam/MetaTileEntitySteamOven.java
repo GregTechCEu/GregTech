@@ -168,4 +168,9 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     public boolean hasMaintenanceMechanics() {
         return false;
     }
+
+    @Override
+    public int getItemOutputLimit() {
+        return 1;
+    }
 }

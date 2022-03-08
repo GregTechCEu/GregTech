@@ -83,7 +83,7 @@ public class RecyclingRecipes {
                 return;
             }
         }
-        registerArcRecycling(input, components, voltageMultiplier, prefix);
+        registerArcRecycling(input, components, prefix);
     }
 
     private static void registerMaceratorRecycling(ItemStack input, List<MaterialStack> materials, int multiplier) {
@@ -166,9 +166,21 @@ public class RecyclingRecipes {
         extractorBuilder.buildAndRegister();
     }
 
-    private static void registerArcRecycling(ItemStack input, List<MaterialStack> materials, int multiplier, @Nullable OrePrefix prefix) {
+    private static void registerArcRecycling(ItemStack input, List<MaterialStack> materials, @Nullable OrePrefix prefix) {
         // Block dusts from being arc'd instead of EBF'd
-        if (prefix == OrePrefix.dust && OreDictUnifier.getMaterial(input).material.hasProperty(PropertyKey.BLAST)) {
+        MaterialStack ms = OreDictUnifier.getMaterial(input);
+        if (prefix == OrePrefix.dust && ms != null && ms.material.hasProperty(PropertyKey.BLAST)) {
+            return;
+        } else if (prefix == OrePrefix.block) {
+            if (ms != null && !ms.material.hasProperty(PropertyKey.GEM)) {
+                ItemStack output = OreDictUnifier.get(OrePrefix.ingot, ms.material.getProperty(PropertyKey.INGOT).getArcSmeltInto(), 9);
+                RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
+                        .inputs(input.copy())
+                        .outputs(output)
+                        .duration(calculateDuration(Collections.singletonList(output)))
+                        .EUt(GTValues.VA[GTValues.LV])
+                        .buildAndRegister();
+            }
             return;
         }
 
@@ -195,7 +207,7 @@ public class RecyclingRecipes {
                 .inputs(input.copy())
                 .outputs(outputs)
                 .duration(calculateDuration(outputs))
-                .EUt(GTValues.VA[GTValues.LV] * (prefix == null ? 1 : multiplier))
+                .EUt(GTValues.VA[GTValues.LV])
                 .buildAndRegister();
     }
 

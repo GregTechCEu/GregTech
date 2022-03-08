@@ -176,7 +176,11 @@ public class OreByProduct implements IRecipeWrapper {
 
         // macerate ore -> crushed
         addToOutputs(material, OrePrefix.crushed, 2 * oreMultiplier);
-        addToOutputs(byproducts[0], OrePrefix.dust, 1);
+        if (!OreDictUnifier.get(OrePrefix.gem, byproducts[0]).isEmpty()) {
+            addToOutputs(byproducts[0], OrePrefix.gem, 1);
+        } else {
+            addToOutputs(byproducts[0], OrePrefix.dust, 1);
+        }
         addChance(1400, 850);
 
         // macerate crushed -> impure

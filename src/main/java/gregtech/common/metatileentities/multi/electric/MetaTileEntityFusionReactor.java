@@ -272,7 +272,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        textList.add(new TextComponentString("EU: " + this.energyContainer.getEnergyStored() + " / " + this.energyContainer.getEnergyCapacity()));
+        textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.energy", this.energyContainer.getEnergyStored(), this.energyContainer.getEnergyCapacity()));
         textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.heat", heat));
     }
 
@@ -357,7 +357,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         }
 
         @Override
-        public void deserializeNBT(NBTTagCompound compound) {
+        public void deserializeNBT(@Nonnull NBTTagCompound compound) {
             super.deserializeNBT(compound);
             heat = compound.getLong("Heat");
         }

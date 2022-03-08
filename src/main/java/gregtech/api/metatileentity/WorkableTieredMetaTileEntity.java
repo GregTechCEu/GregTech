@@ -5,7 +5,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.*;
-import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
@@ -13,6 +12,7 @@ import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity implements ISoundCreator, IDataInfoProvider {
+public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity implements IDataInfoProvider {
 
     protected final RecipeLogicEnergy workable;
     protected final RecipeMap<?> recipeMap;
@@ -57,10 +57,6 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         this.tankScalingFunction = tankScalingFunction;
         initializeInventory();
         reinitializeEnergyContainer();
-    }
-
-    public boolean canCreateSound() {
-        return workable.isActive();
     }
 
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
@@ -141,8 +137,8 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
                     //if we didn't have a list of recipes with any fluids, obtain it from first tank with fluid
                     matchingRecipes = new HashSet<>(recipeMap.getRecipesForFluid(fluidInTank));
                 } else {
-                    //else, remove recipes that don't contain fluid in this tank from list
-                    matchingRecipes.removeIf(recipe -> !recipe.hasInputFluid(fluidInTank));
+                    //retain recipes which use the fluid in this tank
+                    matchingRecipes.retainAll(recipeMap.getRecipesForFluid(fluidInTank));
                 }
             }
         }
@@ -150,8 +146,8 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
             //if all tanks are empty, generally fluid can be inserted if there are recipes for it
             return !recipeMap.getRecipesForFluid(inputFluid).isEmpty();
         } else {
-            //otherwise, we can insert fluid only if one of recipes accept it as input
-            return matchingRecipes.stream().anyMatch(recipe -> recipe.hasInputFluid(inputFluid));
+            matchingRecipes.retainAll(recipeMap.getRecipesForFluid(inputFluid));
+            return !matchingRecipes.isEmpty();
         }
     }
 
@@ -169,15 +165,12 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     }
 
     public boolean isActive() {
-        return workable.isActive();
+        return workable.isActive() && workable.isWorkingEnabled();
     }
 
     @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
-        if (getWorld() != null && getWorld().isRemote) {
-            this.setupSound(this.workable.getRecipeMap().getSound(), this.getPos());
-        }
+    public SoundEvent getSound() {
+        return workable.getRecipeMap().getSound();
     }
 
     @Nonnull

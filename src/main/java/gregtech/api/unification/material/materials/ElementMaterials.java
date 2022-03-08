@@ -1,9 +1,9 @@
 package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
+import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Material.FluidType;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 
 import static gregtech.api.GTValues.*;
@@ -28,6 +28,7 @@ public class ElementMaterials {
                 .cableProperties(GTValues.V[4], 1, 1)
                 .fluidPipeProperties(1166, 35, true)
                 .blastTemp(1700, GasTier.LOW)
+                .fluidTemp(933)
                 .build();
 
         Americium = new Material.Builder(3, "americium")
@@ -36,6 +37,7 @@ public class ElementMaterials {
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
                 .element(Elements.Am)
                 .itemPipeProperties(64, 64)
+                .fluidTemp(1449)
                 .build();
 
         Antimony = new Material.Builder(4, "antimony")
@@ -43,10 +45,11 @@ public class ElementMaterials {
                 .color(0xDCDCF0).iconSet(SHINY)
                 .flags(MORTAR_GRINDABLE)
                 .element(Elements.Sb)
+                .fluidTemp(904)
                 .build();
 
         Argon = new Material.Builder(5, "argon")
-                .fluid(FluidType.GAS).plasma()
+                .fluid(FluidTypes.GAS).plasma()
                 .color(0x00FF00).iconSet(GAS)
                 .element(Elements.Ar)
                 .build();
@@ -55,6 +58,7 @@ public class ElementMaterials {
                 .dust().fluid()
                 .color(0x676756)
                 .element(Elements.As)
+                .fluidTemp(887)
                 .build();
 
         Astatine = new Material.Builder(7, "astatine")
@@ -63,7 +67,7 @@ public class ElementMaterials {
                 .build();
 
         Barium = new Material.Builder(8, "barium")
-                .dust().fluid()
+                .dust()
                 .color(0x83824C).iconSet(METALLIC)
                 .element(Elements.Ba)
                 .build();
@@ -78,12 +82,14 @@ public class ElementMaterials {
                 .color(0x64B464).iconSet(METALLIC)
                 .flags(STD_METAL)
                 .element(Elements.Be)
+                .fluidTemp(1560)
                 .build();
 
         Bismuth = new Material.Builder(11, "bismuth")
                 .ingot(1).fluid()
                 .color(0x64A0A0).iconSet(METALLIC)
                 .element(Elements.Bi)
+                .fluidTemp(545)
                 .build();
 
         Bohrium = new Material.Builder(12, "bohrium")
@@ -103,7 +109,7 @@ public class ElementMaterials {
                 .build();
 
         Caesium = new Material.Builder(15, "caesium")
-                .ingot().fluid()
+                .dust()
                 .color(0x80620B).iconSet(METALLIC)
                 .element(Elements.Cs)
                 .build();
@@ -123,10 +129,11 @@ public class ElementMaterials {
                 .dust().fluid()
                 .color(0x141414)
                 .element(Elements.C)
+                .fluidTemp(4600)
                 .build();
 
         Cadmium = new Material.Builder(19, "cadmium")
-                .ingot().fluid()
+                .dust()
                 .color(0x32323C).iconSet(SHINY)
                 .element(Elements.Cd)
                 .build();
@@ -135,10 +142,11 @@ public class ElementMaterials {
                 .dust().fluid()
                 .color(0x87917D).iconSet(METALLIC)
                 .element(Elements.Ce)
+                .fluidTemp(1068)
                 .build();
 
         Chlorine = new Material.Builder(21, "chlorine")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .element(Elements.Cl)
                 .build();
 
@@ -150,6 +158,7 @@ public class ElementMaterials {
                 .toolStats(12.0f, 3.0f, 512, 33)
                 .fluidPipeProperties(2725, 40, true)
                 .blastTemp(1700, GasTier.LOW)
+                .fluidTemp(2180) // TODO change ebf temperature to this?
                 .build();
 
         Cobalt = new Material.Builder(23, "cobalt")
@@ -160,6 +169,7 @@ public class ElementMaterials {
                 .toolStats(10.0f, 3.0f, 256, 21)
                 .cableProperties(GTValues.V[1], 2, 2)
                 .itemPipeProperties(2560, 2.0f)
+                .fluidTemp(1768)
                 .build();
 
         Copernicium = new Material.Builder(24, "copernicium")
@@ -174,6 +184,7 @@ public class ElementMaterials {
                 .element(Elements.Cu)
                 .cableProperties(GTValues.V[2], 1, 2)
                 .fluidPipeProperties(1696, 10, true)
+                .fluidTemp(1358)
                 .build();
 
         Curium = new Material.Builder(26, "curium")
@@ -189,7 +200,7 @@ public class ElementMaterials {
                 .build();
 
         Deuterium = new Material.Builder(28, "deuterium")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .element(Elements.D)
                 .build();
 
@@ -221,6 +232,7 @@ public class ElementMaterials {
                 .cableProperties(GTValues.V[GTValues.UHV], 2, 32)
                 .fluidPipeProperties(7780, 1200, true)
                 .blastTemp(6000, GasTier.MID, VA[IV], 180)
+                .fluidTemp(1099)
                 .build();
 
         Fermium = new Material.Builder(34, "fermium")
@@ -234,9 +246,8 @@ public class ElementMaterials {
                 .build();
 
         Fluorine = new Material.Builder(36, "fluorine")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .element(Elements.F)
-                .fluidTemp(253)
                 .build();
 
         Francium = new Material.Builder(37, "francium")
@@ -254,6 +265,7 @@ public class ElementMaterials {
                 .color(0xDCDCFF).iconSet(SHINY)
                 .flags(STD_METAL, GENERATE_FOIL)
                 .element(Elements.Ga)
+                .fluidTemp(303)
                 .build();
 
         Germanium = new Material.Builder(40, "germanium")
@@ -268,6 +280,7 @@ public class ElementMaterials {
                 .element(Elements.Au)
                 .cableProperties(GTValues.V[3], 3, 2)
                 .fluidPipeProperties(1671, 35, true)
+                .fluidTemp(1337)
                 .build();
 
         Hafnium = new Material.Builder(42, "hafnium")
@@ -286,18 +299,18 @@ public class ElementMaterials {
                 .build();
 
         Hydrogen = new Material.Builder(45, "hydrogen")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0x0000B5)
                 .element(Elements.H)
                 .build();
 
         Helium = new Material.Builder(46, "helium")
-                .fluid(FluidType.GAS).plasma()
+                .fluid(FluidTypes.GAS).plasma()
                 .element(Elements.He)
                 .build();
 
-        Helium3 = new Material.Builder(47, "helium3")
-                .fluid(FluidType.GAS)
+        Helium3 = new Material.Builder(47, "helium_3")
+                .fluid(FluidTypes.GAS)
                 .element(Elements.He3)
                 .build();
 
@@ -305,6 +318,7 @@ public class ElementMaterials {
                 .ingot().fluid()
                 .color(0x400080).iconSet(SHINY)
                 .element(Elements.In)
+                .fluidTemp(430)
                 .build();
 
         Iodine = new Material.Builder(49, "iodine")
@@ -315,11 +329,12 @@ public class ElementMaterials {
         Iridium = new Material.Builder(50, "iridium")
                 .ingot(3).fluid()
                 .color(0xA1E4E4).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_FINE_WIRE)
+                .flags(EXT2_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .element(Elements.Ir)
                 .toolStats(7.0f, 3.0f, 2560, 21)
                 .fluidPipeProperties(3398, 140, true)
                 .blastTemp(4500, GasTier.HIGH, VA[IV], 1100)
+                .fluidTemp(2719)
                 .build();
 
         Iron = new Material.Builder(51, "iron")
@@ -329,10 +344,11 @@ public class ElementMaterials {
                 .element(Elements.Fe)
                 .toolStats(7.0f, 2.5f, 256, 21)
                 .cableProperties(GTValues.V[2], 2, 3)
+                .fluidTemp(1811)
                 .build();
 
         Krypton = new Material.Builder(52, "krypton")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0x80FF80).iconSet(GAS)
                 .element(Elements.Kr)
                 .build();
@@ -341,6 +357,7 @@ public class ElementMaterials {
                 .dust().fluid()
                 .color(0x5D7575).iconSet(METALLIC)
                 .element(Elements.La)
+                .fluidTemp(1193)
                 .build();
 
         Lawrencium = new Material.Builder(54, "lawrencium")
@@ -355,12 +372,14 @@ public class ElementMaterials {
                 .element(Elements.Pb)
                 .cableProperties(GTValues.V[0], 2, 2)
                 .fluidPipeProperties(1200, 15, true)
+                .fluidTemp(600)
                 .build();
 
         Lithium = new Material.Builder(56, "lithium")
                 .dust().fluid().ore()
                 .color(0xBDC7DB)
                 .element(Elements.Li)
+                .fluidTemp(454)
                 .build();
 
         Livermorium = new Material.Builder(57, "livermorium")
@@ -372,12 +391,14 @@ public class ElementMaterials {
                 .dust().fluid()
                 .color(0x00AAFF).iconSet(METALLIC)
                 .element(Elements.Lu)
+                .fluidTemp(1925)
                 .build();
 
         Magnesium = new Material.Builder(59, "magnesium")
                 .dust().fluid()
                 .color(0xFFC8C8).iconSet(METALLIC)
                 .element(Elements.Mg)
+                .fluidTemp(923)
                 .build();
 
         Mendelevium = new Material.Builder(60, "mendelevium")
@@ -391,6 +412,7 @@ public class ElementMaterials {
                 .flags(STD_METAL, GENERATE_FOIL, GENERATE_BOLT_SCREW)
                 .element(Elements.Mn)
                 .toolStats(7.0f, 2.0f, 512, 21)
+                .fluidTemp(1519)
                 .build();
 
         Meitnerium = new Material.Builder(62, "meitnerium")
@@ -410,6 +432,7 @@ public class ElementMaterials {
                 .element(Elements.Mo)
                 .flags(GENERATE_FOIL, GENERATE_BOLT_SCREW)
                 .toolStats(7.0f, 2.0f, 512, 33)
+                .fluidTemp(2896)
                 .build();
 
         Moscovium = new Material.Builder(65, "moscovium")
@@ -423,11 +446,11 @@ public class ElementMaterials {
                 .flags(STD_METAL, GENERATE_ROD, GENERATE_BOLT_SCREW)
                 .element(Elements.Nd)
                 .toolStats(7.0f, 2.0f, 512, 21)
-                .blastTemp(1289, GasTier.MID)
+                .blastTemp(1297, GasTier.MID)
                 .build();
 
         Neon = new Material.Builder(67, "neon")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0xFAB4B4).iconSet(GAS)
                 .element(Elements.Ne)
                 .build();
@@ -444,6 +467,7 @@ public class ElementMaterials {
                 .element(Elements.Ni)
                 .cableProperties(GTValues.V[GTValues.LV], 3, 3)
                 .itemPipeProperties(2048, 1.0f)
+                .fluidTemp(1728)
                 .build();
 
         Nihonium = new Material.Builder(70, "nihonium")
@@ -459,7 +483,7 @@ public class ElementMaterials {
                 .build();
 
         Nitrogen = new Material.Builder(72, "nitrogen")
-                .fluid(FluidType.GAS).plasma()
+                .fluid(FluidTypes.GAS).plasma()
                 .color(0x00BFC1).iconSet(GAS)
                 .element(Elements.N)
                 .build();
@@ -483,16 +507,17 @@ public class ElementMaterials {
                 .cableProperties(GTValues.V[6], 4, 2)
                 .itemPipeProperties(256, 8.0f)
                 .blastTemp(4500, GasTier.HIGH, VA[LuV], 1000)
+                .fluidTemp(3306)
                 .build();
 
         Oxygen = new Material.Builder(76, "oxygen")
-                .fluid(FluidType.GAS).plasma()
+                .fluid(FluidTypes.GAS).plasma()
                 .color(0x4CC3FF)
                 .element(Elements.O)
                 .build();
 
         Palladium = new Material.Builder(77, "palladium")
-                .ingot().fluid(FluidType.FLUID).ore()
+                .ingot().fluid().ore()
                 .color(0x808080).iconSet(SHINY)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
                 .element(Elements.Pd)
@@ -512,31 +537,35 @@ public class ElementMaterials {
                 .build();
 
         Platinum = new Material.Builder(80, "platinum")
-                .ingot().fluid(FluidType.GAS, true).ore()
+                .ingot().fluid().ore()
                 .color(0xFFFFC8).iconSet(SHINY)
-                .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
+                .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_RING)
                 .element(Elements.Pt)
                 .cableProperties(GTValues.V[5], 2, 1)
                 .itemPipeProperties(512, 4.0f)
+                .fluidTemp(2041)
                 .build();
 
         Plutonium239 = new Material.Builder(81, "plutonium")
                 .ingot(3).fluid().ore(true)
                 .color(0xF03232).iconSet(METALLIC)
                 .element(Elements.Pu239)
+                .fluidTemp(913)
                 .build();
 
-        Plutonium241 = new Material.Builder(82, "plutonium241")
+        Plutonium241 = new Material.Builder(82, "plutonium_241")
                 .ingot(3).fluid()
                 .color(0xFA4646).iconSet(SHINY)
                 .flags(EXT_METAL)
                 .element(Elements.Pu241)
+                .fluidTemp(913)
                 .build();
 
         Potassium = new Material.Builder(83, "potassium")
                 .dust(1).fluid()
                 .color(0xBEDCFF).iconSet(METALLIC)
                 .element(Elements.K)
+                .fluidTemp(337)
                 .build();
 
         Praseodymium = new Material.Builder(84, "praseodymium")
@@ -555,7 +584,7 @@ public class ElementMaterials {
                 .build();
 
         Radon = new Material.Builder(87, "radon")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0xFF39FF)
                 .element(Elements.Rn)
                 .build();
@@ -607,6 +636,7 @@ public class ElementMaterials {
                 .flags(GENERATE_LONG_ROD)
                 .element(Elements.Sm)
                 .blastTemp(5400, GasTier.HIGH, VA[EV], 1500)
+                .fluidTemp(1345)
                 .build();
 
         Scandium = new Material.Builder(96, "scandium")
@@ -635,13 +665,14 @@ public class ElementMaterials {
         Silver = new Material.Builder(100, "silver")
                 .ingot().fluid().ore()
                 .color(0xDCDCFF).iconSet(SHINY)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FINE_WIRE)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_FINE_WIRE, GENERATE_RING)
                 .element(Elements.Ag)
                 .cableProperties(GTValues.V[3], 1, 1)
+                .fluidTemp(1235)
                 .build();
 
         Sodium = new Material.Builder(101, "sodium")
-                .ingot().fluid()
+                .dust()
                 .color(0x000096).iconSet(METALLIC)
                 .element(Elements.Na)
                 .build();
@@ -652,7 +683,7 @@ public class ElementMaterials {
                 .build();
 
         Sulfur = new Material.Builder(103, "sulfur")
-                .dust().ore().fluid()
+                .dust().ore()
                 .color(0xC8C800)
                 .flags(FLAMMABLE)
                 .element(Elements.S)
@@ -663,6 +694,7 @@ public class ElementMaterials {
                 .color(0x78788c).iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_FOIL)
                 .element(Elements.Ta)
+                .fluidTemp(3290)
                 .build();
 
         Technetium = new Material.Builder(105, "technetium")
@@ -691,6 +723,7 @@ public class ElementMaterials {
                 .flags(STD_METAL, GENERATE_ROD)
                 .element(Elements.Th)
                 .toolStats(6.0f, 2.0f, 512, 33)
+                .fluidTemp(2023)
                 .build();
 
         Thallium = new Material.Builder(110, "thallium")
@@ -704,12 +737,13 @@ public class ElementMaterials {
                 .build();
 
         Tin = new Material.Builder(112, "tin")
-                .ingot(1).fluid(FluidType.FLUID, true).ore()
+                .ingot(1).fluid(FluidTypes.LIQUID, true).ore()
                 .color(0xDCDCDC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FINE_WIRE)
                 .element(Elements.Sn)
                 .cableProperties(GTValues.V[1], 1, 1)
                 .itemPipeProperties(4096, 0.5f)
+                .fluidTemp(505)
                 .build();
 
         Titanium = new Material.Builder(113, "titanium") // todo Ore? Look at EBF recipe here if we do Ti ores
@@ -723,7 +757,7 @@ public class ElementMaterials {
                 .build();
 
         Tritium = new Material.Builder(114, "tritium")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .iconSet(METALLIC)
                 .element(Elements.T)
                 .build();
@@ -737,6 +771,7 @@ public class ElementMaterials {
                 .cableProperties(GTValues.V[5], 2, 2)
                 .fluidPipeProperties(4618, 90, true)
                 .blastTemp(3600, GasTier.MID, VA[EV], 1800)
+                .fluidTemp(3695)
                 .build();
 
         Uranium238 = new Material.Builder(116, "uranium")
@@ -745,14 +780,16 @@ public class ElementMaterials {
                 .flags(EXT_METAL)
                 .element(Elements.U238)
                 .toolStats(6.0f, 3.0f, 512, 21)
+                .fluidTemp(1405)
                 .build();
 
-        Uranium235 = new Material.Builder(117, "uranium235")
+        Uranium235 = new Material.Builder(117, "uranium_235")
                 .ingot(3).fluid()
                 .color(0x46FA46).iconSet(SHINY)
                 .flags(EXT_METAL)
                 .element(Elements.U235)
                 .toolStats(6.0f, 3.0f, 512, 33)
+                .fluidTemp(1405)
                 .build();
 
         Vanadium = new Material.Builder(118, "vanadium")
@@ -763,7 +800,7 @@ public class ElementMaterials {
                 .build();
 
         Xenon = new Material.Builder(119, "xenon")
-                .fluid(FluidType.GAS)
+                .fluid(FluidTypes.GAS)
                 .color(0x00FFFF).iconSet(GAS)
                 .element(Elements.Xe)
                 .build();
@@ -785,6 +822,7 @@ public class ElementMaterials {
                 .color(0xEBEBFA).iconSet(METALLIC)
                 .flags(STD_METAL, MORTAR_GRINDABLE, GENERATE_FOIL, GENERATE_RING, GENERATE_FINE_WIRE)
                 .element(Elements.Zn)
+                .fluidTemp(693)
                 .build();
 
         Zirconium = new Material.Builder(123, "zirconium")
@@ -826,7 +864,8 @@ public class ElementMaterials {
                 .flags(EXT_METAL, GENERATE_BOLT_SCREW, GENERATE_FRAME)
                 .element(Elements.Nt)
                 .toolStats(24.0f, 12.0f, 655360, 21)
-                .fluidPipeProperties(1000000, 2800, true)
+                .fluidPipeProperties(1_000_000, 2800, true)
+                .fluidTemp(100_000)
                 .build();
 
         Tritanium = new Material.Builder(128, "tritanium")
@@ -836,15 +875,17 @@ public class ElementMaterials {
                 .element(Elements.Tr)
                 .cableProperties(GTValues.V[8], 1, 8)
                 .toolStats(20.0f, 6.0f, 10240, 21)
+                .fluidTemp(25000)
                 .build();
 
         Duranium = new Material.Builder(129, "duranium")
                 .ingot(5).fluid()
                 .color(0x4BAFAF).iconSet(BRIGHT)
-                .flags(EXT_METAL, GENERATE_FOIL)
+                .flags(EXT_METAL, GENERATE_FOIL, GENERATE_GEAR)
                 .element(Elements.Dr)
                 .toolStats(16.0f, 5.0f, 5120, 21)
                 .fluidPipeProperties(100000, 2000, true)
+                .fluidTemp(7500)
                 .build();
 
         Trinium = new Material.Builder(130, "trinium")

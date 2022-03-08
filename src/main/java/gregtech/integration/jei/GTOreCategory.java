@@ -17,13 +17,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Supplier;
 
 import static gregtech.api.GTValues.MODID_AR;
-import static gregtech.api.GTValues.isModLoaded;
 
 public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
 
@@ -207,7 +207,7 @@ public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
                 .forEach(dims::add);
 
         //Slight cleanup of the list if Advanced Rocketry is installed
-        if (isModLoaded(MODID_AR)) {
+        if (Loader.isModLoaded(MODID_AR)) {
             try {
                 int[] spaceDims = DimensionManager.getDimensions(DimensionType.byName("space"));
 

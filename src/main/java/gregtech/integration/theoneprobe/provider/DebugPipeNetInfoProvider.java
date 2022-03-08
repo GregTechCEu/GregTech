@@ -55,7 +55,7 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
                             .append(", open: ").append(node.openConnections).append("}");
                     probeInfo.text(builder.toString());
                 }
-                probeInfo.text("tile open: " + pipeTile.getOpenConnections());
+                probeInfo.text("tile open: " + pipeTile.getConnections());
                 /*if (blockPipe instanceof BlockFluidPipe) {
                     if (pipeTile instanceof TileEntityFluidPipeTickable) {
                         probeInfo.text("tile active: " + ((TileEntityFluidPipeTickable) pipeTile).isActive());

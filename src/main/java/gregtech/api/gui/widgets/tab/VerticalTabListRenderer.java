@@ -1,12 +1,11 @@
 package gregtech.api.gui.widgets.tab;
 
+import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.List;
-
-import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class VerticalTabListRenderer extends TabListRenderer {
 
@@ -19,11 +18,12 @@ public class VerticalTabListRenderer extends TabListRenderer {
     }
 
     @Override
-    public void renderTabs(Position offset, List<ITabInfo> tabInfos, int guiWidth, int guiHeight, int selectedTabIndex) {
+    public void renderTabs(ModularUI gui, Position offset, List<ITabInfo> tabInfos, int guiWidth, int guiHeight, int selectedTabIndex) {
         boolean startTop = startCorner == VerticalStartCorner.TOP;
         boolean isLeftLine = verticalLocation == HorizontalLocation.LEFT;
         int tabXPosition = isLeftLine ? (0 - TAB_HEIGHT + TAB_Y_OFFSET) : (guiWidth - TAB_Y_OFFSET);
         int currentYPosition = 0;
+        GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
         for (int tabIndex = 0; tabIndex < tabInfos.size(); tabIndex++) {
             boolean isTabSelected = tabIndex == selectedTabIndex;
             boolean isTabFirst = tabIndex == 0;
@@ -32,8 +32,8 @@ public class VerticalTabListRenderer extends TabListRenderer {
             //noinspection SuspiciousNameCombination
             tabInfos.get(tabIndex).renderTab(tabTexture, offset.x + tabXPosition, offset.y + finalPosY, TAB_HEIGHT, TAB_WIDTH, isTabSelected);
             currentYPosition += (TAB_WIDTH + SPACE_BETWEEN_TABS);
+            GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
         }
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     private static TextureArea getTabTexture(boolean isTabSelected, boolean isTabFirst, boolean isLeftSide, boolean startTop) {

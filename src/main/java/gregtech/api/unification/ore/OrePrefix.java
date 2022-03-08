@@ -6,18 +6,13 @@ import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconType;
-import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.IMaterialProperty;
-import gregtech.api.unification.material.properties.PlasmaProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.stack.MaterialStack;
-import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.function.TriConsumer;
 import gregtech.common.ConfigHolder;
-import gregtech.common.MetaFluids;
 import net.minecraft.client.resources.I18n;
-import net.minecraftforge.fluids.Fluid;
 import org.apache.commons.lang3.Validate;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -203,6 +198,7 @@ public class OrePrefix {
     public static final OrePrefix pipeSmallRestrictive = new OrePrefix("pipeSmallRestrictive", M, null, MaterialIconType.pipeSmall, ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeNormalRestrictive = new OrePrefix("pipeNormalRestrictive", M * 3, null, MaterialIconType.pipeMedium, ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeLargeRestrictive = new OrePrefix("pipeLargeRestrictive", M * 6, null, MaterialIconType.pipeLarge, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeHugeRestrictive = new OrePrefix("pipeHugeRestrictive", M * 12, null, MaterialIconType.pipeHuge, ENABLE_UNIFICATION, null);
 
     public static final OrePrefix wireGtHex = new OrePrefix("wireGtHex", M * 8, null, null, ENABLE_UNIFICATION, null);
     public static final OrePrefix wireGtOctal = new OrePrefix("wireGtOctal", M * 4, null, null, ENABLE_UNIFICATION, null);
@@ -231,8 +227,6 @@ public class OrePrefix {
     // Introduced by Calclavia
     public static final OrePrefix circuit = new OrePrefix("circuit", -1, null, null, ENABLE_UNIFICATION, null);
     public static final OrePrefix component = new OrePrefix("component", -1, null, null, ENABLE_UNIFICATION, null);
-
-    public static final String DUST_REGULAR = "dustRegular";
 
     public static class Flags {
         public static final long ENABLE_UNIFICATION = 1;
@@ -382,6 +376,7 @@ public class OrePrefix {
         pipeSmallRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeNormalRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeLargeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
+        pipeHugeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
 
         cableGtSingle.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount));
         cableGtDouble.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount));
@@ -539,26 +534,7 @@ public class OrePrefix {
         if (this.isSelfReferencing && material == null) {
             material = materialType; //append default material for self-referencing OrePrefix
         }
-        if (material != null) {
-            generatedMaterials.add(material);
-            if (material.hasFluid() || material.hasProperty(PropertyKey.PLASMA)) {
-                FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);
-                if (fluidProperty != null && fluidProperty.getFluid() == null) {
-                    int temperature = fluidProperty.getFluidTemperature();
-                    Fluid fluid = MetaFluids.registerFluid(material, MetaFluids.FluidType.NORMAL, temperature, fluidProperty.hasBlock());
-                    fluidProperty.setFluid(fluid);
-                    FluidTooltipUtil.registerTooltip(fluid, material.getChemicalFormula());
-                }
-
-                PlasmaProperty plasmaProperty = material.getProperty(PropertyKey.PLASMA);
-                if (plasmaProperty != null && plasmaProperty.getPlasma() == null) {
-                    int baseTemperature = fluidProperty == null ? 0 : fluidProperty.getFluidTemperature();
-                    Fluid fluid = MetaFluids.registerFluid(material, MetaFluids.FluidType.PLASMA, baseTemperature + 30000, false);
-                    plasmaProperty.setPlasma(fluid);
-                    FluidTooltipUtil.registerTooltip(fluid, material.getChemicalFormula());
-                }
-            }
-        }
+        if (material != null) generatedMaterials.add(material);
     }
 
     public static void runMaterialHandlers() {

@@ -211,7 +211,7 @@ public class BlockPattern {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
                         BlockPos pos = setActualRelativeOffset(x, y, z, facing).add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
                         worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
-                        if (!world.isAirBlock(pos)) {
+                        if (!world.getBlockState(pos).getMaterial().isReplaceable()) {
                             blocks.put(pos, world.getBlockState(pos));
                             for (TraceabilityPredicate.SimplePredicate limit : predicate.limited) {
                                 limit.testLimited(worldState);

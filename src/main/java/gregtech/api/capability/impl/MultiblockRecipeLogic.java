@@ -4,14 +4,13 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.metatileentity.multiblock.IMultipleRecipeMaps;
+import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -211,6 +210,9 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     protected boolean prepareRecipeDistinct(Recipe recipe) {
+
+        recipe = recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(), metaTileEntity.getFluidOutputLimit());
+
         recipe = findParallelRecipe(
                 this,
                 recipe,
@@ -248,6 +250,11 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         return overclock;
     }
 
+    @Override
+    public long getOverclockVoltage() {
+        return getMaxVoltage();
+    }
+
     protected Tuple<Integer, Double> getMaintenanceValues() {
         MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ? (MultiblockWithDisplayBase) metaTileEntity : null;
         int numMaintenanceProblems = displayBase == null || !displayBase.hasMaintenanceMechanics() || !ConfigHolder.machines.enableMaintenance ? 0 : displayBase.getNumMaintenanceProblems();
@@ -271,8 +278,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     protected void completeRecipe() {
-        super.completeRecipe();
         performMaintenanceMufflerOperations();
+        super.completeRecipe();
     }
 
     protected void performMaintenanceMufflerOperations() {
@@ -324,7 +331,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     @Override
     public RecipeMap<?> getRecipeMap() {
         // if the multiblock has more than one RecipeMap, return the currently selected one
-        if (metaTileEntity instanceof IMultipleRecipeMaps && ((IMultipleRecipeMaps) metaTileEntity).hasMultipleRecipeMaps())
+        if (metaTileEntity instanceof IMultipleRecipeMaps)
                 return ((IMultipleRecipeMaps) metaTileEntity).getCurrentRecipeMap();
         return super.getRecipeMap();
     }

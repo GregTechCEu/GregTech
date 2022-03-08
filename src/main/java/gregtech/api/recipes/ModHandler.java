@@ -1,5 +1,7 @@
 package gregtech.api.recipes;
 
+import crafttweaker.mc1120.actions.ActionAddFurnaceRecipe;
+import crafttweaker.mc1120.furnace.MCFurnaceManager;
 import gregtech.api.GTValues;
 import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.MetaItem;
@@ -8,12 +10,14 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.DummyContainer;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.ShapedOreEnergyTransferRecipe;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.ConfigHolder;
@@ -34,6 +38,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
@@ -158,14 +163,21 @@ public class ModHandler {
     public static void addSmeltingRecipe(UnificationEntry input, ItemStack output) {
         List<ItemStack> allStacks = OreDictUnifier.getAll(input);
         for (ItemStack inputStack : allStacks) {
-            addSmeltingRecipe(inputStack, output);
+            addSmeltingRecipe(inputStack, output, 0.0f);
+        }
+    }
+
+    public static void addSmeltingRecipe(UnificationEntry input, ItemStack output, float experience) {
+        List<ItemStack> allStacks = OreDictUnifier.getAll(input);
+        for (ItemStack inputStack : allStacks) {
+            addSmeltingRecipe(inputStack, output, experience);
         }
     }
 
     /**
      * Just simple Furnace smelting
      */
-    public static void addSmeltingRecipe(ItemStack input, ItemStack output) {
+    public static void addSmeltingRecipe(ItemStack input, ItemStack output, float experience) {
         boolean skip = false;
         if (input.isEmpty()) {
             GTLog.logger.error("Input cannot be an empty ItemStack", new IllegalArgumentException());
@@ -182,7 +194,7 @@ public class ModHandler {
 
         if (recipes.getSmeltingResult(input).isEmpty()) {
             //register only if there is no recipe with duplicate input
-            recipes.addSmeltingRecipe(input, output, 0.0f);
+            recipes.addSmeltingRecipe(input, output, experience);
         }
     }
 
@@ -612,14 +624,8 @@ public class ModHandler {
             return false;
         }
 
-        boolean wasRemoved = false;
-        for (ItemStack stack : FurnaceRecipes.instance().getSmeltingList().keySet()) {
-            if (ItemStack.areItemStacksEqual(input, stack)) {
-                FurnaceRecipes.instance().getSmeltingList().remove(stack);
-                wasRemoved = true;
-                break;
-            }
-        }
+        boolean wasRemoved = FurnaceRecipes.instance().getSmeltingList().keySet().removeIf(currentStack -> currentStack.getItem() == input.getItem() && (currentStack.getMetadata() == GTValues.W || currentStack.getMetadata() == input.getMetadata()));
+
         if (ConfigHolder.misc.debug) {
             if (wasRemoved)
                 GTLog.logger.info("Removed Smelting Recipe for Input: {}", input.getDisplayName());
@@ -737,5 +743,68 @@ public class ModHandler {
     public static ItemStack getSmeltingOutput(ItemStack input) {
         if (input.isEmpty()) return ItemStack.EMPTY;
         return OreDictUnifier.getUnificated(FurnaceRecipes.instance().getSmeltingResult(input));
+    }
+
+    /* Note: If a Furnace recipe is added through CT that is the exact same as one of the recipes that will be removed
+       then this recipe will not be added. Forge will prevent the duplicate smelting recipe from being added before we
+       remove the recipe added by another mod, therefore the CT recipe will fail. At this point, disable the config and
+       remove the recipes manually
+     */
+    public static void removeSmeltingEBFMetals() {
+
+        boolean isCTLoaded = Loader.isModLoaded(GTValues.MODID_CT);
+
+        Field actionAddFurnaceRecipe$output = null;
+
+        Map<ItemStack, ItemStack> furnaceList = FurnaceRecipes.instance().getSmeltingList();
+
+        Iterator<Map.Entry<ItemStack, ItemStack>> recipeIterator = furnaceList.entrySet().iterator();
+
+        outer: while(recipeIterator.hasNext()) {
+            Map.Entry<ItemStack, ItemStack> recipe = recipeIterator.next();
+
+            ItemStack output = recipe.getValue();
+            ItemStack input = recipe.getKey();
+            MaterialStack ms = OreDictUnifier.getMaterial(output);
+
+            if(ms != null) {
+                Material material = ms.material;
+                if(material.hasProperty(PropertyKey.BLAST)) {
+                    ItemStack dust = OreDictUnifier.get(OrePrefix.dust, material);
+                    ItemStack ingot = OreDictUnifier.get(OrePrefix.ingot, material);
+                    //Check if the inputs are actually dust -> ingot
+                    if(ingot.isItemEqual(output) && dust.isItemEqual(input)) {
+                        if(isCTLoaded) {
+                            if(actionAddFurnaceRecipe$output == null) {
+                                try {
+                                    actionAddFurnaceRecipe$output = ActionAddFurnaceRecipe.class.getDeclaredField("output");
+                                    actionAddFurnaceRecipe$output.setAccessible(true);
+                                } catch (NoSuchFieldException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            for(ActionAddFurnaceRecipe aafr : MCFurnaceManager.recipesToAdd) {
+                                try {
+                                    // Check for equality, if the stack added into FurnaceManager..
+                                    // ..was a cached stack in an existing ActionAddFurnaceRecipe as well
+                                    if(actionAddFurnaceRecipe$output.get(aafr) == output) {
+                                        if(ConfigHolder.misc.debug) {
+                                            GTLog.logger.info("Not removing Smelting Recipe for EBF material {} as it is added via CT", LocalizationUtils.format(material.getUnlocalizedName()));
+                                        }
+                                        continue outer;
+                                    }
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                        recipeIterator.remove();
+                        if(ConfigHolder.misc.debug) {
+                            GTLog.logger.info("Removing Smelting Recipe for EBF material {}", LocalizationUtils.format(material.getUnlocalizedName()));
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -3,11 +3,9 @@ package gregtech.loaders.recipe.chemistry;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 
 import static gregtech.api.GTValues.*;
-import static gregtech.api.recipes.RecipeMaps.CHEMICAL_RECIPES;
-import static gregtech.api.recipes.RecipeMaps.LARGE_CHEMICAL_RECIPES;
+import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.ore.OrePrefix.dust;
-import static gregtech.api.unification.ore.OrePrefix.dustTiny;
+import static gregtech.api.unification.ore.OrePrefix.*;
 
 public class PolymerRecipes {
 
@@ -18,6 +16,7 @@ public class PolymerRecipes {
         epoxyProcess();
         styreneButadieneProcess();
         polybenzimidazoleProcess();
+        polycaprolactamProcess();
     }
 
     private static void polyethyleneProcess() {
@@ -250,6 +249,7 @@ public class PolymerRecipes {
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(Propene.getFluid(1000))
                 .fluidInputs(Chlorine.getFluid(2000))
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
                 .fluidOutputs(AllylChloride.getFluid(1000))
                 .duration(160).EUt(VA[LV]).buildAndRegister();
@@ -299,6 +299,7 @@ public class PolymerRecipes {
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(1))
                 .fluidInputs(HydrochloricAcid.getFluid(1000))
                 .fluidInputs(Acetone.getFluid(1000))
                 .fluidInputs(Phenol.getFluid(2000))
@@ -369,7 +370,7 @@ public class PolymerRecipes {
                 .fluidInputs(Diaminobenzidine.getFluid(1000))
                 .fluidInputs(DiphenylIsophtalate.getFluid(1000))
                 .fluidOutputs(Phenol.getFluid(1000))
-                .fluidOutputs(Polybenzimidazole.getFluid(1000))
+                .fluidOutputs(Polybenzimidazole.getFluid(1008))
                 .buildAndRegister();
 
         // 3,3-Diaminobenzidine
@@ -383,13 +384,15 @@ public class PolymerRecipes {
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(200)
                 .input(dustTiny, Copper)
-                .fluidInputs(Nitrochlorobenzene.getFluid(1000))
+                .fluidInputs(Nitrochlorobenzene.getFluid(2000))
+                .fluidInputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(Dichlorobenzidine.getFluid(1000))
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(1800)
+        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(1800)
                 .input(dust, Copper)
-                .fluidInputs(Nitrochlorobenzene.getFluid(9000))
+                .fluidInputs(Nitrochlorobenzene.getFluid(18000))
+                .fluidInputs(Hydrogen.getFluid(18000))
                 .fluidOutputs(Dichlorobenzidine.getFluid(9000))
                 .buildAndRegister();
 
@@ -450,7 +453,7 @@ public class PolymerRecipes {
                 .buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[MV]).duration(4000)
-                .fluidInputs(Methane.getFluid(1000))
+                .fluidInputs(Methane.getFluid(2000))
                 .fluidInputs(Benzene.getFluid(1000))
                 .notConsumable(new IntCircuitIngredient(1))
                 .fluidOutputs(Dimethylbenzene.getFluid(1000))
@@ -468,5 +471,41 @@ public class PolymerRecipes {
                 .fluidInputs(Oxygen.getFluid(3000))
                 .output(dust, ChromiumTrioxide, 4)
                 .buildAndRegister();
+    }
+
+    public static void polycaprolactamProcess() {
+        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(400)
+                .notConsumable(dust, Nickel)
+                .fluidInputs(Benzene.getFluid(1000))
+                .fluidInputs(Hydrogen.getFluid(6000))
+                .fluidOutputs(Cyclohexane.getFluid(1000))
+                .buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(100)
+                .fluidInputs(Chlorine.getFluid(1000))
+                .fluidInputs(NitricOxide.getFluid(1000))
+                .fluidOutputs(NitrosylChloride.getFluid(1000))
+                .buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[MV]).duration(100)
+                .fluidInputs(Cyclohexane.getFluid(1000))
+                .fluidInputs(NitrosylChloride.getFluid(1000))
+                .output(dust, CyclohexanoneOxime, 19)
+                .fluidOutputs(HydrochloricAcid.getFluid(1000))
+                .buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(200)
+                .input(dust, CyclohexanoneOxime, 19)
+                .fluidInputs(SulfuricAcid.getFluid(1000))
+                .output(dust, Caprolactam, 19)
+                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
+                .buildAndRegister();
+
+        BLAST_RECIPES.recipeBuilder().EUt(VA[MV]).duration(150).blastFurnaceTemp(533)
+                .input(dust, Caprolactam, 1)
+                .fluidInputs(Nitrogen.getFluid(1000))
+                .output(ingot, Polycaprolactam, 1)
+                .buildAndRegister();
+
     }
 }

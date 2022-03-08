@@ -60,14 +60,15 @@ public class OreRecipeHandler {
             ItemStack ingotStack = OreDictUnifier.get(OrePrefix.ingot, smeltingResult);
 
             if (!ingotStack.isEmpty() && doesMaterialUseNormalFurnace(smeltingResult)) {
-                ModHandler.addSmeltingRecipe(new UnificationEntry(crushedPrefix, material), ingotStack);
+                ModHandler.addSmeltingRecipe(new UnificationEntry(crushedPrefix, material), ingotStack, 0.5f);
             }
         }
     }
 
     public static void processOre(OrePrefix orePrefix, Material material, OreProperty property) {
         Material byproductMaterial = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
-        ItemStack byproductStack = OreDictUnifier.get(OrePrefix.dust, byproductMaterial);
+        ItemStack byproductStack = OreDictUnifier.get(OrePrefix.gem, byproductMaterial);
+        if (byproductStack.isEmpty()) byproductStack = OreDictUnifier.get(OrePrefix.dust, byproductMaterial);
         ItemStack crushedStack = OreDictUnifier.get(OrePrefix.crushed, material);
         ItemStack ingotStack;
         Material smeltingMaterial = property.getDirectSmeltResult() == null ? material : property.getDirectSmeltResult();
@@ -111,7 +112,7 @@ public class OreRecipeHandler {
 
         //do not try to add smelting recipes for materials which require blast furnace
         if (!ingotStack.isEmpty() && doesMaterialUseNormalFurnace(smeltingMaterial)) {
-            ModHandler.addSmeltingRecipe(new UnificationEntry(orePrefix, material), ingotStack);
+            ModHandler.addSmeltingRecipe(new UnificationEntry(orePrefix, material), ingotStack, 0.5f);
         }
     }
 
@@ -150,7 +151,7 @@ public class OreRecipeHandler {
 
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
                 .input(crushedPrefix, material)
-                .notConsumable(new IntCircuitIngredient(1))
+                .notConsumable(new IntCircuitIngredient(2))
                 .fluidInputs(Materials.Water.getFluid(100))
                 .outputs(crushedPurifiedOre)
                 .duration(8).EUt(4).buildAndRegister();
@@ -158,6 +159,7 @@ public class OreRecipeHandler {
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
                 .input(crushedPrefix, material)
                 .fluidInputs(Materials.Water.getFluid(1000))
+                .notConsumable(new IntCircuitIngredient(1))
                 .outputs(crushedPurifiedOre,
                         OreDictUnifier.get(OrePrefix.dustTiny, byproductMaterial, 3),
                         OreDictUnifier.get(OrePrefix.dust, Materials.Stone))
@@ -316,7 +318,7 @@ public class OreRecipeHandler {
 
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
                 .input(dustPrefix, material)
-                .notConsumable(new IntCircuitIngredient(1))
+                .notConsumable(new IntCircuitIngredient(2))
                 .fluidInputs(Materials.Water.getFluid(100))
                 .outputs(dustStack)
                 .duration(8).EUt(4).buildAndRegister();
@@ -363,7 +365,7 @@ public class OreRecipeHandler {
 
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
                 .input(purePrefix, material)
-                .notConsumable(new IntCircuitIngredient(1))
+                .notConsumable(new IntCircuitIngredient(2))
                 .fluidInputs(Materials.Water.getFluid(100))
                 .outputs(dustStack)
                 .duration(8).EUt(4).buildAndRegister();

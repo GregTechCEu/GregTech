@@ -1,6 +1,5 @@
 package gregtech.api.gui.widgets;
 
-import com.google.common.collect.Lists;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import net.minecraft.client.Minecraft;
@@ -16,18 +15,29 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
+/**
+ * @author brachy84
+ */
 public class TextFieldWidget2 extends Widget {
+
+    // all positive whole numbers
+    public static final Pattern NATURAL_NUMS = Pattern.compile("[0-9]*");
+    // all positive and negative numbers
+    public static final Pattern WHOLE_NUMS = Pattern.compile("-?[0-9]*");
+    public static final Pattern DECIMALS = Pattern.compile("[0-9]*(\\.[0-9]*)?");
+    public static final Pattern LETTERS = Pattern.compile("[a-zA-Z]*");
 
     private String text;
     private String localisedPostFix;
     private final Supplier<String> supplier;
     private final Consumer<String> setter;
-    private List<Character> allowedChars;
+    private Consumer<TextFieldWidget2> onFocus;
+    private Pattern regex;
     private Function<String, String> validator = s -> s;
     private boolean initialised = false;
     private boolean centered;
@@ -41,6 +51,7 @@ public class TextFieldWidget2 extends Widget {
     private int cursorPos;
     private int cursorPos2;
 
+    private int clickTime = 20;
     private int cursorTime = 0;
     private boolean drawCursor = true;
 
@@ -60,6 +71,7 @@ public class TextFieldWidget2 extends Widget {
 
     @Override
     public void updateScreen() {
+        clickTime++;
         if (++cursorTime == 10) {
             cursorTime = 0;
             drawCursor = !drawCursor;
@@ -124,7 +136,6 @@ public class TextFieldWidget2 extends Widget {
         }
         GlStateManager.popMatrix();
         GlStateManager.enableBlend();
-        GlStateManager.color(1, 1, 1, 1f);
     }
 
     @SideOnly(Side.CLIENT)
@@ -182,18 +193,19 @@ public class TextFieldWidget2 extends Widget {
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (isMouseOverElement(mouseX, mouseY)) {
+
             focused = true;
-            int base = mouseX - getTextX();
-            float x = 1;
-            int i = 0;
-            while (x < base) {
-                if (i == text.length())
-                    break;
-                x += (Minecraft.getMinecraft().fontRenderer.getCharWidth(text.charAt(i)) + 1) * scale;
-                i++;
+            if (onFocus != null) {
+                onFocus.accept(this);
             }
-            cursorPos = i;
-            cursorPos2 = i;
+            if (clickTime < 5) {
+                cursorPos = text.length();
+                cursorPos2 = 0;
+            } else {
+                cursorPos = getCursorPosFromMouse(mouseX);
+                cursorPos2 = cursorPos;
+            }
+            clickTime = 0;
         } else
             unFocus();
         return focused;
@@ -206,18 +218,22 @@ public class TextFieldWidget2 extends Widget {
                 cursorPos = 0;
                 return true;
             }
-            int base = mouseX - (getTextX());
-            int x = 1;
-            int i = 0;
-            while (x < base) {
-                if (i == text.length())
-                    break;
-                x += (Minecraft.getMinecraft().fontRenderer.getCharWidth(text.charAt(i)) + 1) * scale;
-                i++;
-            }
-            cursorPos = i;
+            cursorPos = getCursorPosFromMouse(mouseX);
         }
         return focused;
+    }
+
+    private int getCursorPosFromMouse(int mouseX) {
+        int base = mouseX - getTextX();
+        float x = 1;
+        int i = 0;
+        while (x < base) {
+            if (i == text.length())
+                break;
+            x += (Minecraft.getMinecraft().fontRenderer.getCharWidth(text.charAt(i))) * scale;
+            i++;
+        }
+        return i;
     }
 
     public String getSelectedText() {
@@ -304,31 +320,35 @@ public class TextFieldWidget2 extends Widget {
                 }
                 return true;
             }
-            if (text.length() < maxLength && isAllowed(charTyped)) {
-                String t1 = text.substring(0, cursorPos);
-                String t2 = text.substring(cursorPos);
+            if (keyCode == Keyboard.KEY_DELETE && text.length() > 0) {
+                if (cursorPos != cursorPos2) {
+                    replaceMarkedText(null);
+                } else if (cursorPos < text.length()) {
+                    String t1 = text.substring(0, cursorPos);
+                    String t2 = text.substring(cursorPos + 1);
+                    text = t1 + t2;
+                    cursorPos2 = cursorPos;
+                }
+            }
+            if (charTyped != Character.MIN_VALUE && text.length() < maxLength) {
+                int min = Math.min(cursorPos, cursorPos2);
+                int max = Math.max(cursorPos, cursorPos2);
+                String t1 = text.substring(0, min);
+                String t2 = text.substring(max);
                 t1 += charTyped;
-                text = t1 + t2;
-                cursorPos++;
-                cursorPos2 = cursorPos;
-                return true;
+                if (isAllowed(t1 + t2)) {
+                    text = t1 + t2;
+                    cursorPos = t1.length();
+                    cursorPos2 = cursorPos;
+                    return true;
+                }
             }
         }
         return focused;
     }
 
-    private boolean isAllowed(char c) {
-        return allowedChars == null || allowedChars.contains(c);
-    }
-
     private boolean isAllowed(String t) {
-        if (allowedChars == null)
-            return true;
-        for (int i = 0; i < t.length(); i++) {
-            if (!allowedChars.contains(t.charAt(i)))
-                return false;
-        }
-        return true;
+        return regex == null || regex.matcher(t).matches();
     }
 
     private void replaceMarkedText(String replacement) {
@@ -336,24 +356,25 @@ public class TextFieldWidget2 extends Widget {
         int max = Math.max(cursorPos, cursorPos2);
         String t1 = text.substring(0, min);
         String t2 = text.substring(max);
-        if(replacement != null) {
-            if(t1.length() + t2.length() + replacement.length() > maxLength)
+        if (replacement != null) {
+            if (t1.length() + t2.length() + replacement.length() > maxLength)
                 return;
-            cursorPos = max;
-        } else
-            cursorPos = min;
-        cursorPos2 = cursorPos;
-        if (replacement == null)
+        }
+        if (replacement == null) {
             text = t1 + t2;
-        else
+            cursorPos = min;
+        } else {
             text = t1 + replacement + t2;
+            cursorPos = t1.length() + replacement.length();
+        }
+        cursorPos2 = cursorPos;
     }
 
     public String getText() {
         return text;
     }
 
-    private void unFocus() {
+    public void unFocus() {
         if (!focused) return;
         cursorPos2 = cursorPos;
         text = validator.apply(text);
@@ -378,6 +399,12 @@ public class TextFieldWidget2 extends Widget {
             text = buffer.readString(maxLength);
             setter.accept(text);
             initialised = true;
+            if (cursorPos > text.length()) {
+                cursorPos = text.length();
+            }
+            if (cursorPos2 > text.length()) {
+                cursorPos2 = text.length();
+            }
         }
     }
 
@@ -390,12 +417,13 @@ public class TextFieldWidget2 extends Widget {
     }
 
     /**
-     * If a pressed key is not in this list, it will not be typed. Allows every char by default
+     * If a key is pressed, the new string will be matched against this pattern.
+     * If it doesn't match, the char will not be typed.
      *
-     * @param allowedChars chars to allow as string
+     * @param regex pattern
      */
-    public TextFieldWidget2 setAllowedChars(String allowedChars) {
-        this.allowedChars = Lists.charactersOf(allowedChars);
+    public TextFieldWidget2 setAllowedChars(Pattern regex) {
+        this.regex = regex;
         return this;
     }
 
@@ -416,11 +444,11 @@ public class TextFieldWidget2 extends Widget {
      * @param max maximum accepted value
      */
     public TextFieldWidget2 setNumbersOnly(int min, int max) {
-        if (this.allowedChars == null) {
-            String nums = "0123456789";
+        if (this.regex == null) {
             if (min < 0)
-                nums += "-";
-            setAllowedChars(nums);
+                regex = WHOLE_NUMS;
+            else
+                regex = NATURAL_NUMS;
         }
         setValidator(val -> {
             if (val.isEmpty()) {
@@ -497,6 +525,16 @@ public class TextFieldWidget2 extends Widget {
 
     public TextFieldWidget2 setMaxLength(int maxLength) {
         this.maxLength = maxLength;
+        return this;
+    }
+
+    /**
+     * Called when the text field gets focused. Only called on client.
+     * Use it to un focus other text fields.
+     * Optimally this should be done automatically, but that is not really possible with the way Modular UI is made
+     */
+    public TextFieldWidget2 setOnFocus(Consumer<TextFieldWidget2> onFocus) {
+        this.onFocus = onFocus;
         return this;
     }
 }

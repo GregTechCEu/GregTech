@@ -23,8 +23,6 @@ import java.util.function.BiFunction;
 
 public class CoverBehaviors {
 
-    private static final int COVERS_PER_ITEM = 8;
-
     public static void init() {
         GTLog.logger.info("Registering cover behaviors...");
         registerBehavior(0, new ResourceLocation(GTValues.MODID, "conveyor.lv"), MetaItems.CONVEYOR_MODULE_LV, (tile, side) -> new CoverConveyor(tile, side, GTValues.LV, 8));

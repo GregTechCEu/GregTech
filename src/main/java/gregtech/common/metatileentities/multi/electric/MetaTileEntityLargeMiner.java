@@ -23,7 +23,6 @@ import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
-import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
@@ -47,6 +46,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -61,7 +61,7 @@ import java.util.List;
 
 import static gregtech.api.unification.material.Materials.DrillingFluid;
 
-public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implements IMiner, IControllable, ISoundCreator, IDataInfoProvider {
+public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implements IMiner, IControllable, IDataInfoProvider {
 
     private static final int CHUNK_LENGTH = 16;
 
@@ -209,10 +209,10 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
             }
 
-            textList.add(new TextComponentString(String.format("sX: %d", this.minerLogic.getX().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getX().get())));
-            textList.add(new TextComponentString(String.format("sY: %d", this.minerLogic.getY().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getY().get())));
-            textList.add(new TextComponentString(String.format("sZ: %d", this.minerLogic.getZ().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getZ().get())));
-            textList.add(new TextComponentString(String.format("Chunk Radius: %d", this.minerLogic.getCurrentRadius() / CHUNK_LENGTH)));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.startx", this.minerLogic.getX().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getX().get()));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.starty", this.minerLogic.getY().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getY().get()));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getZ().get()));
+            textList.add(new TextComponentTranslation("gregtech.machine.miner.chunkradius", this.minerLogic.getCurrentRadius() / CHUNK_LENGTH));
             if (this.minerLogic.isDone())
                 textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
             else if (this.minerLogic.isWorking())
@@ -230,9 +230,13 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     private void addDisplayText2(List<ITextComponent> textList) {
         if (this.isStructureFormed()) {
-            textList.add(new TextComponentString(String.format("    mX: %d", this.minerLogic.getMineX().get())));
-            textList.add(new TextComponentString(String.format("    mY: %d", this.minerLogic.getMineY().get())));
-            textList.add(new TextComponentString(String.format("    mZ: %d", this.minerLogic.getMineZ().get())));
+            ITextComponent mCoords = new TextComponentString("    ")
+                .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minex", this.minerLogic.getMineX().get()))
+                .appendText("\n    ")
+                .appendSibling(new TextComponentTranslation("gregtech.machine.miner.miney", this.minerLogic.getMineY().get()))
+                .appendText("\n    ")
+                .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minez", this.minerLogic.getMineZ().get()));
+            textList.add(mCoords);
         }
     }
 
@@ -415,21 +419,23 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
-        if (getWorld() != null && getWorld().isRemote) {
-            this.setupSound(GTSounds.MINER, this.getPos());
-        }
+    public SoundEvent getSound() {
+        return GTSounds.MINER;
     }
 
     @Override
-    public boolean canCreateSound() {
-        return this.minerLogic.isActive();
+    public boolean isActive() {
+        return minerLogic.isActive() && isWorkingEnabled();
     }
 
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
         return Collections.singletonList(new TextComponentTranslation(I18n.format("gregtech.multiblock.large_miner.radius", this.minerLogic.getCurrentRadius())));
+    }
+
+    @Override
+    protected boolean shouldShowVoidingModeButton() {
+        return false;
     }
 }

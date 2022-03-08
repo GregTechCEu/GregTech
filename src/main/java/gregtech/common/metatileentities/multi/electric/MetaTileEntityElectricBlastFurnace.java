@@ -30,7 +30,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -57,7 +59,8 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         if (isStructureFormed()) {
-            textList.add(new TextComponentTranslation(I18n.format("gregtech.multiblock.blast_furnace.max_temperature", blastFurnaceTemperature)));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.blast_furnace.max_temperature",
+                    new TextComponentTranslation(GTUtility.formatNumbers(blastFurnaceTemperature) + "K").setStyle(new Style().setColor(TextFormatting.RED))));
         }
         super.addDisplayText(textList);
     }
@@ -165,7 +168,8 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = super.getDataInfo();
-        list.add(new TextComponentTranslation(I18n.format("gregtech.multiblock.blast_furnace.max_temperature", GTUtility.formatNumbers(getCurrentTemperature()))));
+        list.add(new TextComponentTranslation("gregtech.multiblock.blast_furnace.max_temperature",
+                new TextComponentTranslation(GTUtility.formatNumbers(blastFurnaceTemperature) + "K").setStyle(new Style().setColor(TextFormatting.RED))));
         return list;
     }
 }

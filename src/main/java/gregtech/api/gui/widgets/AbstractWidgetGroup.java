@@ -19,8 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static gregtech.api.gui.impl.ModularUIGui.*;
-
 public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarget, IIngredientSlot {
 
     public transient final List<Widget> widgets = new ArrayList<>();
@@ -271,22 +269,24 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
+        GlStateManager.color(1, 1, 1, 1);
         for (Widget widget : widgets) {
             if (widget.isVisible()) {
                 widget.drawInForeground(mouseX, mouseY);
+                GlStateManager.color(1, 1, 1, 1);
             }
         }
-        GlStateManager.color(1, 1, 1, 1);
     }
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
         for (Widget widget : widgets) {
             if (widget.isVisible()) {
                 widget.drawInBackground(mouseX, mouseY, partialTicks, context);
+                GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
             }
         }
-        GlStateManager.color(1, 1, 1, 1);
     }
 
     @Override

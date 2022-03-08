@@ -4,12 +4,11 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
-import gregtech.api.gui.impl.ModularUIGuiHandler;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
-import gregtech.api.metatileentity.multiblock.IMultipleRecipeMaps;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
@@ -20,6 +19,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.gui.widget.craftingstation.CraftingSlotWidget;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
@@ -28,10 +28,7 @@ import gregtech.integration.jei.recipe.primitive.MaterialTree;
 import gregtech.integration.jei.recipe.primitive.MaterialTreeCategory;
 import gregtech.integration.jei.recipe.primitive.OreByProduct;
 import gregtech.integration.jei.recipe.primitive.OreByProductCategory;
-import gregtech.integration.jei.utils.CustomItemReturnRecipeWrapper;
-import gregtech.integration.jei.utils.MachineSubtypeHandler;
-import gregtech.integration.jei.utils.MetaItemSubtypeHandler;
-import gregtech.integration.jei.utils.MultiblockInfoRecipeFocusShower;
+import gregtech.integration.jei.utils.*;
 import gregtech.loaders.recipe.CustomItemReturnShapedOreRecipeRecipe;
 import mezz.jei.Internal;
 import mezz.jei.api.*;
@@ -48,7 +45,8 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -58,6 +56,7 @@ public class GTJeiPlugin implements IModPlugin {
 
     public static IIngredientRegistry ingredientRegistry;
     public static IJeiRuntime jeiRuntime;
+    public static IGuiHelper guiHelper;
 
     @Override
     public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
@@ -75,6 +74,7 @@ public class GTJeiPlugin implements IModPlugin {
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
+        guiHelper = registry.getJeiHelpers().getGuiHelper();
         registry.addRecipeCategories(new IntCircuitCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new MultiblockInfoCategory(registry.getJeiHelpers()));
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
@@ -96,13 +96,19 @@ public class GTJeiPlugin implements IModPlugin {
         registry.handleRecipes(CustomItemReturnShapedOreRecipeRecipe.class, recipe -> new CustomItemReturnRecipeWrapper(jeiHelpers, recipe), VanillaRecipeCategoryUid.CRAFTING);
         registry.addRecipeRegistryPlugin(new FacadeRegistryPlugin());
 
+        // register transfer handler for all categories, but not for the crafting station
         ModularUIGuiHandler modularUIGuiHandler = new ModularUIGuiHandler(jeiHelpers.recipeTransferHandlerHelper());
-        registry.addAdvancedGuiHandlers(modularUIGuiHandler);
-        registry.addGhostIngredientHandler(modularUIGuiHandler.getGuiContainerClass(), modularUIGuiHandler);
+        modularUIGuiHandler.setValidHandlers(widget -> !(widget instanceof CraftingSlotWidget));
         registry.getRecipeTransferRegistry().addRecipeTransferHandler(modularUIGuiHandler, Constants.UNIVERSAL_RECIPE_TRANSFER_UID);
 
+        registry.addAdvancedGuiHandlers(modularUIGuiHandler);
+        registry.addGhostIngredientHandler(modularUIGuiHandler.getGuiContainerClass(), modularUIGuiHandler);
+        // register transfer handler for crafting recipes
+        ModularUIGuiHandler craftingStationGuiHandler = new ModularUIGuiHandler(jeiHelpers.recipeTransferHandlerHelper());
+        registry.getRecipeTransferRegistry().addRecipeTransferHandler(craftingStationGuiHandler, VanillaRecipeCategoryUid.CRAFTING);
+
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            if(!recipeMap.isHidden) {
+            if (!recipeMap.isHidden) {
                 Stream<Recipe> recipeStream = recipeMap.getRecipeList().stream()
                         .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay());
 
@@ -118,7 +124,6 @@ public class GTJeiPlugin implements IModPlugin {
             }
         }
 
-        Map<RecipeMap<?>, List<MetaTileEntity>> deferredCatalysts = new HashMap<>();
         for (ResourceLocation metaTileEntityId : GregTechAPI.MTE_REGISTRY.getKeys()) {
             MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
             assert metaTileEntity != null;
@@ -127,9 +132,7 @@ public class GTJeiPlugin implements IModPlugin {
 
                 if (workableCapability instanceof AbstractRecipeLogic) {
                     AbstractRecipeLogic logic = (AbstractRecipeLogic) workableCapability;
-                    if (metaTileEntity instanceof SteamMetaTileEntity) {
-                        deferredCatalysts.computeIfAbsent(logic.getRecipeMap(), k -> new ArrayList<>()).add(metaTileEntity);
-                    } else if (metaTileEntity instanceof IMultipleRecipeMaps && ((IMultipleRecipeMaps) metaTileEntity).hasMultipleRecipeMaps()) {
+                    if (metaTileEntity instanceof IMultipleRecipeMaps) {
                         for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity).getAvailableRecipeMaps()) {
                             registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
                         }
@@ -137,11 +140,6 @@ public class GTJeiPlugin implements IModPlugin {
                         registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
                     }
                 }
-            }
-        }
-        for (Map.Entry<RecipeMap<?>, List<MetaTileEntity>> deferredMetaTileEntities : deferredCatalysts.entrySet()) {
-            for (MetaTileEntity mte : deferredMetaTileEntities.getValue()) {
-                registerRecipeMapCatalyst(registry, deferredMetaTileEntities.getKey(), mte);
             }
         }
 
@@ -212,7 +210,7 @@ public class GTJeiPlugin implements IModPlugin {
         }
 
         //Multiblock info page registration
-        MultiblockInfoCategory.REGISTER.forEach(mte->{
+        MultiblockInfoCategory.REGISTER.forEach(mte -> {
             String[] desc = mte.getDescription();
             if (desc.length > 0) {
                 registry.addIngredientInfo(mte.getStackForm(), VanillaTypes.ITEM, mte.getDescription());
@@ -238,9 +236,16 @@ public class GTJeiPlugin implements IModPlugin {
         registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
         if (recipeMap instanceof RecipeMapFurnace) {
             registry.addRecipeCatalyst(metaTileEntity.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
+            return;
         }
         if (recipeMap.getSmallRecipeMap() != null) {
             registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.getSmallRecipeMap().unlocalizedName);
+            return;
+        }
+        RecipeMapCategory category = RecipeMapCategory.getCategoryMap().get(recipeMap);
+        // don't allow a Steam Machine to be a JEI tab icon
+        if (category != null && !(metaTileEntity instanceof SteamMetaTileEntity)) {
+            category.setIcon(metaTileEntity.getStackForm());
         }
     }
 }

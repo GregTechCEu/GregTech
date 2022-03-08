@@ -3,13 +3,13 @@ package gregtech.common.gui.widget.craftingstation;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
+import gregtech.api.recipes.KeySharedStack;
 import gregtech.api.util.ItemStackKey;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.inventory.IItemInfo;
 import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.IItemList.InsertMode;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -20,8 +20,6 @@ import org.lwjgl.input.Keyboard;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
-
-import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class ItemListSlotWidget extends Widget {
 
@@ -55,7 +53,6 @@ public class ItemListSlotWidget extends Widget {
         if (isMouseOverElement(mouseX, mouseY)) {
             drawSelectionOverlay(stackX, stackY, 16, 16);
         }
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override
@@ -94,7 +91,7 @@ public class ItemListSlotWidget extends Widget {
                 //on server, we lookup item list to see how much we can actually insert
                 ItemStack heldItemStack = inventory.getItemStack();
                 IItemList itemList = gridWidget.getItemList();
-                int amountInserted = itemList.insertItem(new ItemStackKey(heldItemStack), Math.min(heldItemStack.getCount(), amountToInsert), false, InsertMode.LOWEST_PRIORITY);
+                int amountInserted = itemList.insertItem(KeySharedStack.getRegisteredStack(heldItemStack), Math.min(heldItemStack.getCount(), amountToInsert), false, InsertMode.LOWEST_PRIORITY);
                 heldItemStack.shrink(amountInserted);
                 uiAccess.sendHeldItemUpdate();
                 gui.entityPlayer.openContainer.detectAndSendChanges();
@@ -176,7 +173,7 @@ public class ItemListSlotWidget extends Widget {
             try {
                 ItemStack itemStack = buffer.readItemStack();
                 int button = buffer.readVarInt();
-                IItemInfo itemInfo = itemStack.isEmpty() ? null : gridWidget.getItemList().getItemInfo(new ItemStackKey(itemStack));
+                IItemInfo itemInfo = itemStack.isEmpty() ? null : gridWidget.getItemList().getItemInfo(KeySharedStack.getRegisteredStack(itemStack));
                 handleMouseClick(itemInfo, button, false);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -184,7 +181,7 @@ public class ItemListSlotWidget extends Widget {
         } else if (id == 2) {
             try {
                 ItemStack itemStack = buffer.readItemStack();
-                IItemInfo itemInfo = gridWidget.getItemList().getItemInfo(new ItemStackKey(itemStack));
+                IItemInfo itemInfo = gridWidget.getItemList().getItemInfo(KeySharedStack.getRegisteredStack(itemStack));
                 if (itemInfo != null) {
                     handleSelfShiftClick(itemInfo);
                 }

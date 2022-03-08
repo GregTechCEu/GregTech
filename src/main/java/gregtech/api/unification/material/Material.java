@@ -1,10 +1,11 @@
 package gregtech.api.unification.material;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.GregTechAPI;
+import gregtech.api.fluids.fluidType.FluidType;
+import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.info.MaterialFlag;
@@ -13,6 +14,7 @@ import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
 import net.minecraft.enchantment.Enchantment;
@@ -134,6 +136,10 @@ public class Material implements Comparable<Material> {
         return Arrays.stream(flags).allMatch(this::hasFlag);
     }
 
+    public boolean hasAnyOfFlags(MaterialFlag... flags) {
+        return Arrays.stream(flags).anyMatch(this::hasFlag);
+    }
+
     protected void calculateDecompositionType() {
         if (!materialInfo.componentList.isEmpty() &&
                 !hasFlag(MaterialFlags.DECOMPOSITION_BY_CENTRIFUGING) &&
@@ -212,7 +218,7 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null)
             return materialInfo.element.getProtons();
         if (materialInfo.componentList.isEmpty())
-            return Math.max(1, Elements.get("Technetium").getProtons());
+            return Math.max(1, Elements.Tc.getProtons());
         long totalProtons = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {
             totalAmount += material.amount;
@@ -226,7 +232,7 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null)
             return materialInfo.element.getNeutrons();
         if (materialInfo.componentList.isEmpty())
-            return Elements.get("Technetium").getNeutrons();
+            return Elements.Tc.getNeutrons();
         long totalNeutrons = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {
             totalAmount += material.amount;
@@ -241,7 +247,7 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null)
             return materialInfo.element.getMass();
         if (materialInfo.componentList.size() <= 0)
-            return Elements.get("Technetium").getMass();
+            return Elements.Tc.getMass();
         long totalMass = 0, totalAmount = 0;
         for (MaterialStack material : materialInfo.componentList) {
             totalAmount += material.amount;
@@ -263,7 +269,7 @@ public class Material implements Comparable<Material> {
 
     @ZenGetter("camelCaseName")
     public String toCamelCaseString() {
-        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, toString());
+        return GTUtility.lowerUnderscoreToUpperCamel(toString());
     }
 
     @ZenGetter("unlocalizedName")
@@ -315,7 +321,7 @@ public class Material implements Comparable<Material> {
             throw new IllegalStateException("Cannot add properties to a Material when registry is frozen!");
         }
         properties.setProperty(key, property);
-        properties.ensureSet(key, true);
+        properties.verify();
     }
 
     public boolean isSolid() {
@@ -362,6 +368,8 @@ public class Material implements Comparable<Material> {
          * @since GTCEu 2.0.0
          */
         public Builder(int id, String name) {
+            if (name.charAt(name.length() - 1) == '_')
+                throw new IllegalArgumentException("Material name cannot end with a '_'!");
             materialInfo = new MaterialInfo(id, name);
             properties = new MaterialProperties();
             flags = new MaterialFlags();
@@ -373,7 +381,7 @@ public class Material implements Comparable<Material> {
 
         /**
          * Add a {@link FluidProperty} to this Material.<br>
-         * Will be created as a {@link FluidType#FLUID}, without a Fluid Block.
+         * Will be created as a {@link FluidTypes#LIQUID}, without a Fluid Block.
          *
          * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
          */
@@ -396,12 +404,12 @@ public class Material implements Comparable<Material> {
         /**
          * Add a {@link FluidProperty} to this Material.
          *
-         * @param type     The {@link FluidType} of this Material, either Fluid or Gas.
+         * @param type     The {@link FluidType} of this Material.
          * @param hasBlock If true, create a Fluid Block for this Material.
          * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
          */
         public Builder fluid(FluidType type, boolean hasBlock) {
-            properties.setProperty(PropertyKey.FLUID, new FluidProperty(type == FluidType.GAS, hasBlock));
+            properties.setProperty(PropertyKey.FLUID, new FluidProperty(type, hasBlock));
             return this;
         }
 
@@ -580,7 +588,7 @@ public class Material implements Comparable<Material> {
          * Defaults to 0xFFFFFF unless {@link Builder#colorAverage()} was called, where
          * it will be a weighted average of the components of the Material.
          *
-         * @param color The RGB-formatted Color.
+         * @param color         The RGB-formatted Color.
          * @param hasFluidColor Whether the fluid should be colored or not.
          */
         public Builder color(int color, boolean hasFluidColor) {
@@ -781,7 +789,7 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon) {
-            properties.ensureSet(PropertyKey.INGOT);
+            properties.ensureSet(PropertyKey.DUST);
             properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, isSuperCon));
             return this;
         }
@@ -869,6 +877,8 @@ public class Material implements Comparable<Material> {
 
         private MaterialInfo(int metaItemSubId, String name) {
             this.metaItemSubId = metaItemSubId;
+            if (!GTUtility.toLowerCaseUnderscore(GTUtility.lowerUnderscoreToUpperCamel(name)).equals(name))
+                throw new IllegalStateException("Cannot add materials with names like 'materialnumber'! Use 'material_number' instead.");
             this.name = name;
         }
 
@@ -904,9 +914,5 @@ public class Material implements Comparable<Material> {
                 }
             }
         }
-    }
-
-    public enum FluidType {
-        FLUID, GAS
     }
 }

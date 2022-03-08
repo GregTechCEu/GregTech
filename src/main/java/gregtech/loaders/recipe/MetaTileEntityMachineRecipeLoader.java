@@ -1,12 +1,13 @@
 package gregtech.loaders.recipe;
 
+import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
-import static gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.stack.UnificationEntry;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLY_LINE_RECIPES;
+import static gregtech.api.unification.material.MarkerMaterials.Tier;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.items.MetaItems.*;
@@ -326,12 +327,21 @@ public class MetaTileEntityMachineRecipeLoader {
         // 4A Energy Hatches
 
         ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[EV])
+                .input(ENERGY_INPUT_HATCH[EV])
+                .input(POWER_INTEGRATED_CIRCUIT)
+                .input(VOLTAGE_COIL_EV)
+                .input(wireGtQuadruple, Aluminium, 2)
+                .output(ENERGY_INPUT_HATCH_4A[0])
+                .duration(100).EUt(VA[HV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
                 .input(TRANSFORMER[IV])
                 .input(ENERGY_INPUT_HATCH[IV])
                 .input(HIGH_POWER_INTEGRATED_CIRCUIT)
                 .input(VOLTAGE_COIL_IV)
                 .input(wireGtQuadruple, Tungsten, 2)
-                .output(ENERGY_INPUT_HATCH_4A[0])
+                .output(ENERGY_INPUT_HATCH_4A[1])
                 .duration(100).EUt(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -340,7 +350,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(HIGH_POWER_INTEGRATED_CIRCUIT)
                 .input(VOLTAGE_COIL_LUV)
                 .input(wireGtQuadruple, NiobiumTitanium, 2)
-                .output(ENERGY_INPUT_HATCH_4A[1])
+                .output(ENERGY_INPUT_HATCH_4A[2])
                 .duration(100).EUt(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -349,7 +359,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT)
                 .input(VOLTAGE_COIL_ZPM)
                 .input(wireGtQuadruple, VanadiumGallium, 2)
-                .output(ENERGY_INPUT_HATCH_4A[2])
+                .output(ENERGY_INPUT_HATCH_4A[3])
                 .duration(100).EUt(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -358,7 +368,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT)
                 .input(VOLTAGE_COIL_UV)
                 .input(wireGtQuadruple, YttriumBariumCuprate, 2)
-                .output(ENERGY_INPUT_HATCH_4A[3])
+                .output(ENERGY_INPUT_HATCH_4A[4])
                 .duration(100).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -366,14 +376,14 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT)
                 .input(wireGtQuadruple, Europium, 2)
                 .input(plate, Neutronium, 2)
-                .output(ENERGY_INPUT_HATCH_4A[4])
+                .output(ENERGY_INPUT_HATCH_4A[5])
                 .duration(100).EUt(VA[UV]).buildAndRegister();
 
         // 16A Energy Hatches
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ADJUSTABLE_TRANSFORMER[IV])
-                .input(ENERGY_INPUT_HATCH_4A[0])
+                .input(ENERGY_INPUT_HATCH_4A[1])
                 .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(VOLTAGE_COIL_IV)
                 .input(wireGtOctal, Tungsten, 2)
@@ -382,7 +392,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ADJUSTABLE_TRANSFORMER[LuV])
-                .input(ENERGY_INPUT_HATCH_4A[1])
+                .input(ENERGY_INPUT_HATCH_4A[2])
                 .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(VOLTAGE_COIL_LUV)
                 .input(wireGtOctal, NiobiumTitanium, 2)
@@ -391,7 +401,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ADJUSTABLE_TRANSFORMER[ZPM])
-                .input(ENERGY_INPUT_HATCH_4A[2])
+                .input(ENERGY_INPUT_HATCH_4A[3])
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(VOLTAGE_COIL_ZPM)
                 .input(wireGtOctal, VanadiumGallium, 2)
@@ -400,7 +410,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ADJUSTABLE_TRANSFORMER[UV])
-                .input(ENERGY_INPUT_HATCH_4A[3])
+                .input(ENERGY_INPUT_HATCH_4A[4])
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(VOLTAGE_COIL_UV)
                 .input(wireGtOctal, YttriumBariumCuprate, 2)
@@ -408,7 +418,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .duration(200).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_INPUT_HATCH_16A[3], 2)
+                .input(ENERGY_INPUT_HATCH_16A[4], 2)
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(wireGtOctal, Europium, 2)
                 .input(plate, Neutronium, 4)
@@ -418,12 +428,21 @@ public class MetaTileEntityMachineRecipeLoader {
         // 4A Dynamo Hatches
 
         ASSEMBLER_RECIPES.recipeBuilder()
+                .input(TRANSFORMER[EV])
+                .input(ENERGY_OUTPUT_HATCH[EV])
+                .input(POWER_INTEGRATED_CIRCUIT)
+                .input(VOLTAGE_COIL_EV)
+                .input(wireGtQuadruple, Aluminium, 2)
+                .output(ENERGY_OUTPUT_HATCH_4A[0])
+                .duration(100).EUt(VA[HV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
                 .input(TRANSFORMER[IV])
                 .input(ENERGY_OUTPUT_HATCH[IV])
                 .input(HIGH_POWER_INTEGRATED_CIRCUIT)
                 .input(VOLTAGE_COIL_IV)
                 .input(wireGtQuadruple, Tungsten, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[0])
+                .output(ENERGY_OUTPUT_HATCH_4A[1])
                 .duration(100).EUt(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -432,7 +451,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(HIGH_POWER_INTEGRATED_CIRCUIT)
                 .input(VOLTAGE_COIL_LUV)
                 .input(wireGtQuadruple, NiobiumTitanium, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[1])
+                .output(ENERGY_OUTPUT_HATCH_4A[2])
                 .duration(100).EUt(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -441,7 +460,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT)
                 .input(VOLTAGE_COIL_ZPM)
                 .input(wireGtQuadruple, VanadiumGallium, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[2])
+                .output(ENERGY_OUTPUT_HATCH_4A[3])
                 .duration(100).EUt(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -450,7 +469,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT)
                 .input(VOLTAGE_COIL_UV)
                 .input(wireGtQuadruple, YttriumBariumCuprate, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[3])
+                .output(ENERGY_OUTPUT_HATCH_4A[4])
                 .duration(100).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -458,14 +477,14 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT)
                 .input(wireGtQuadruple, Europium, 2)
                 .input(plate, Neutronium, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[4])
+                .output(ENERGY_OUTPUT_HATCH_4A[5])
                 .duration(100).EUt(VA[UV]).buildAndRegister();
 
         // 16A Dynamo Hatches
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ADJUSTABLE_TRANSFORMER[IV])
-                .input(ENERGY_OUTPUT_HATCH_4A[0])
+                .input(ENERGY_OUTPUT_HATCH_4A[1])
                 .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(VOLTAGE_COIL_IV)
                 .input(wireGtOctal, Tungsten, 2)
@@ -474,7 +493,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ADJUSTABLE_TRANSFORMER[LuV])
-                .input(ENERGY_OUTPUT_HATCH_4A[1])
+                .input(ENERGY_OUTPUT_HATCH_4A[2])
                 .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(VOLTAGE_COIL_LUV)
                 .input(wireGtOctal, NiobiumTitanium, 2)
@@ -483,7 +502,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ADJUSTABLE_TRANSFORMER[ZPM])
-                .input(ENERGY_OUTPUT_HATCH_4A[2])
+                .input(ENERGY_OUTPUT_HATCH_4A[3])
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(VOLTAGE_COIL_ZPM)
                 .input(wireGtOctal, VanadiumGallium, 2)
@@ -492,7 +511,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ADJUSTABLE_TRANSFORMER[UV])
-                .input(ENERGY_OUTPUT_HATCH_4A[3])
+                .input(ENERGY_OUTPUT_HATCH_4A[4])
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(VOLTAGE_COIL_UV)
                 .input(wireGtOctal, YttriumBariumCuprate, 2)
@@ -500,7 +519,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .duration(200).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_OUTPUT_HATCH_16A[3], 2)
+                .input(ENERGY_OUTPUT_HATCH_16A[4], 2)
                 .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(wireGtOctal, Europium, 2)
                 .input(plate, Neutronium, 4)
@@ -524,7 +543,8 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_MOTOR_EV, 4)
                 .input(ELECTRIC_PUMP_EV, 4)
                 .input(CONVEYOR_MODULE_EV, 4)
-                .input(gear, Tungsten, 2)
+                .input(gear, Tungsten, 4)
+                .circuitMeta(1)
                 .output(BASIC_LARGE_MINER)
                 .duration(400).EUt(VA[EV]).buildAndRegister();
 
@@ -535,7 +555,8 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_MOTOR_IV, 4)
                 .input(ELECTRIC_PUMP_IV, 4)
                 .input(CONVEYOR_MODULE_IV, 4)
-                .input(gear, Ultimet, 2)
+                .input(gear, Iridium, 4)
+                .circuitMeta(1)
                 .output(LARGE_MINER)
                 .duration(400).EUt(VA[IV]).buildAndRegister();
 
@@ -546,8 +567,44 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_MOTOR_LUV, 4)
                 .input(ELECTRIC_PUMP_LUV, 4)
                 .input(CONVEYOR_MODULE_LUV, 4)
-                .input(gear, Ruridit, 2)
+                .input(gear, Ruridit, 4)
+                .circuitMeta(1)
                 .output(ADVANCED_LARGE_MINER)
+                .duration(400).EUt(VA[LuV]).buildAndRegister();
+
+        // Multiblock Fluid Drills
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[MV])
+                .input(frameGt, Steel, 4)
+                .input(circuit, Tier.Good, 4)
+                .input(ELECTRIC_MOTOR_MV, 4)
+                .input(ELECTRIC_PUMP_MV, 4)
+                .input(gear, VanadiumSteel, 4)
+                .circuitMeta(2)
+                .output(BASIC_FLUID_DRILLING_RIG)
+                .duration(400).EUt(VA[MV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[EV])
+                .input(frameGt, Titanium, 4)
+                .input(circuit, Tier.Extreme, 4)
+                .input(ELECTRIC_MOTOR_EV, 4)
+                .input(ELECTRIC_PUMP_EV, 4)
+                .input(gear, TungstenCarbide, 4)
+                .circuitMeta(2)
+                .output(FLUID_DRILLING_RIG)
+                .duration(400).EUt(VA[EV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(HULL[LuV])
+                .input(frameGt, TungstenSteel, 4)
+                .input(circuit, Tier.Master, 4)
+                .input(ELECTRIC_MOTOR_LUV, 4)
+                .input(ELECTRIC_PUMP_LUV, 4)
+                .input(gear, Osmiridium, 4)
+                .circuitMeta(2)
+                .output(ADVANCED_FLUID_DRILLING_RIG)
                 .duration(400).EUt(VA[LuV]).buildAndRegister();
     }
 }

@@ -26,11 +26,11 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.electric.MetaTileEntityMacerator;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -128,16 +128,13 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     @Override
-    public void onAttached(Object... data) {
-        reinitializeStructurePattern();
-        if (getWorld() != null && getWorld().isRemote) {
-            this.setupSound(GTSounds.ARC, this.getPos());
-        }
+    public SoundEvent getSound() {
+        return GTSounds.ARC;
     }
 
     @Override
-    public TraceabilityPredicate autoAbilities(boolean checkEnergyIn, boolean checkMaintainer, boolean checkItemIn, boolean checkItemOut, boolean checkFluidIn, boolean checkFluidOut, boolean checkMuffler) {
-        TraceabilityPredicate predicate = super.autoAbilities(checkMaintainer, checkMuffler)
+    public TraceabilityPredicate autoAbilities(boolean checkEnergyIn, boolean checkMaintenance, boolean checkItemIn, boolean checkItemOut, boolean checkFluidIn, boolean checkFluidOut, boolean checkMuffler) {
+        TraceabilityPredicate predicate = super.autoAbilities(checkMaintenance, checkMuffler)
                 .or(checkEnergyIn ? abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(4).setPreviewCount(1) : new TraceabilityPredicate());
 
         predicate = predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setPreviewCount(1));
@@ -155,6 +152,16 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.parallel_limit", getMachineLimit()));
+    }
+
+    @Override
+    public int getItemOutputLimit() {
+        ItemStack machineStack = ((ProcessingArrayWorkable) this.recipeMapWorkable).getMachineStack();
+
+        MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(machineStack);
+
+        return mte.getItemOutputLimit();
+
     }
 
     @SuppressWarnings("InnerClassMayBeStatic")
@@ -273,12 +280,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             );
         }
 
-        @Override
-        public boolean trimOutputs() {
-            MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(currentMachineStack);
-
-            //Clear the chanced outputs of LV and MV macerators, as they do not have the slots to get byproducts
-            return mte instanceof MetaTileEntityMacerator && machineTier < GTValues.HV;
+        private ItemStack getMachineStack() {
+            return currentMachineStack;
         }
     }
 }

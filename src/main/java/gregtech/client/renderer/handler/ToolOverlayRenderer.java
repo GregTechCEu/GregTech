@@ -4,8 +4,6 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.vec.Vector3;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.ICoverable.PrimaryBoxData;
 import gregtech.api.items.toolitem.IAOEItem;
@@ -104,7 +102,7 @@ public class ToolOverlayRenderer {
                 rColor = gColor = bColor = 0.2f + (float) Math.sin((float) (System.currentTimeMillis() % (Math.PI * 800)) / 800) / 2;
 
                 if (tileEntity instanceof TileEntityPipeBase)
-                    drawOverlayLines(facing, box, facing1 -> ((TileEntityPipeBase<?, ?>) tileEntity).isConnectionOpenAny(facing1) ||
+                    drawOverlayLines(facing, box, facing1 -> ((TileEntityPipeBase<?, ?>) tileEntity).isConnected(facing1) ||
                             ((TileEntityPipeBase<?, ?>) tileEntity).getCoverableImplementation().getCoverAtSide(facing1) != null);
                 else if (tileEntity instanceof MetaTileEntityHolder)
                     drawOverlayLines(facing, box, face -> ((MetaTileEntityHolder) tileEntity).getMetaTileEntity().isSideUsed(face));

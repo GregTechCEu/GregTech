@@ -11,13 +11,14 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.storage.ICraftingStorage;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
-import gregtech.common.inventory.itemsource.ItemSourceList;
+import gregtech.common.inventory.itemsource.ItemSources;
 import gregtech.common.inventory.itemsource.sources.InventoryItemSource;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
-import gregtech.common.metatileentities.storage.CraftingRecipeResolver;
+import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,6 +26,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
+import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
@@ -35,14 +37,14 @@ import static gregtech.api.metatileentity.MetaTileEntity.clearInventory;
 /**
  * Code from this class is mostly copied from {@link MetaTileEntityWorkbench}
  */
-public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, ITickable {
+public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, ITickable, ICraftingStorage {
 
     private final ItemStackHandler internalInventory = new ItemStackHandler(18);
     private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
     private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
 
     private final CraftingRecipeMemory recipeMemory = new CraftingRecipeMemory(9);
-    private CraftingRecipeResolver recipeResolver = null;
+    private CraftingRecipeLogic recipeLogic = null;
     private int itemsCrafted = 0;
 
     public CoverCraftingTable(ICoverable coverHolder, EnumFacing attachedSide) {
@@ -55,7 +57,7 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
     }
 
     @Override
-    public boolean shouldRenderConnected() {
+    public boolean shouldAutoConnect() {
         return false;
     }
 
@@ -64,13 +66,13 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
         Textures.CRAFTING.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
 
-    private void createRecipeResolver() {
-        this.recipeResolver = new CraftingRecipeResolver(coverHolder.getWorld(), craftingGrid, recipeMemory);
-        this.recipeResolver.setItemsCrafted(itemsCrafted);
-        ItemSourceList itemSourceList = this.recipeResolver.getItemSourceList();
-        itemSourceList.addItemHandler(InventoryItemSource.direct(coverHolder.getWorld(), toolInventory, -2));
-        itemSourceList.addItemHandler(InventoryItemSource.direct(coverHolder.getWorld(), internalInventory, -1));
-        this.recipeResolver.checkNeighbourInventories(coverHolder.getPos());
+    private void createCraftingRecipeLogic() {
+        this.recipeLogic = new CraftingRecipeLogic(this);
+        this.recipeLogic.setItemsCraftedAmount(itemsCrafted);
+        ItemSources itemSources = this.recipeLogic.getItemSourceList();
+        itemSources.addItemHandler(new InventoryItemSource(coverHolder.getWorld(), toolInventory, -2));
+        itemSources.addItemHandler(new InventoryItemSource(coverHolder.getWorld(), internalInventory, -1));
+        this.recipeLogic.checkNeighbourInventories(coverHolder.getPos());
     }
 
     @Override
@@ -88,11 +90,11 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
 
     @Override
     public void update() {
-        if (!coverHolder.getWorld().isRemote && recipeResolver == null) {
-            createRecipeResolver();
+        if (!coverHolder.getWorld().isRemote && recipeLogic == null) {
+            createCraftingRecipeLogic();
         }
         if (!coverHolder.getWorld().isRemote) {
-            getRecipeResolver().update();
+            getRecipeLogic().update();
         }
     }
 
@@ -101,9 +103,9 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
         clearInventory(itemBuffer, toolInventory);
     }
 
-    private CraftingRecipeResolver getRecipeResolver() {
+    private CraftingRecipeLogic getRecipeLogic() {
         Preconditions.checkState(coverHolder.getWorld() != null, "getRecipeResolver called too early");
-        return recipeResolver;
+        return recipeLogic;
     }
 
     @Override
@@ -124,9 +126,9 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
     public ModularUI createUI(EntityPlayer player) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 221)
                 .bindPlayerInventory(player.inventory, 139);
-        builder.label(5, 5, I18n.format("metaitem.cover.crafting.name"));
+        builder.label(5, 5, "metaitem.cover.crafting.name");
 
-        builder.widget(MetaTileEntityWorkbench.createWorkbenchTab(getRecipeResolver(), craftingGrid, recipeMemory, toolInventory, internalInventory));
+        builder.widget(MetaTileEntityWorkbench.createWorkbenchTab(recipeLogic, craftingGrid, recipeMemory, toolInventory, internalInventory));
 
         return builder.build(this, player);
     }
@@ -137,7 +139,7 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
         tagCompound.setTag("CraftingGridInventory", craftingGrid.serializeNBT());
         tagCompound.setTag("ToolInventory", toolInventory.serializeNBT());
         tagCompound.setTag("InternalInventory", internalInventory.serializeNBT());
-        tagCompound.setInteger("ItemsCrafted", recipeResolver == null ? itemsCrafted : recipeResolver.getItemsCrafted());
+        tagCompound.setInteger("ItemsCrafted", recipeLogic == null ? itemsCrafted : recipeLogic.getItemsCraftedAmount());
         tagCompound.setTag("RecipeMemory", recipeMemory.serializeNBT());
     }
 
@@ -149,5 +151,20 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
         this.internalInventory.deserializeNBT(tagCompound.getCompoundTag("InternalInventory"));
         this.itemsCrafted = tagCompound.getInteger("ItemsCrafted");
         this.recipeMemory.deserializeNBT(tagCompound.getCompoundTag("RecipeMemory"));
+    }
+
+    @Override
+    public World getWorld() {
+        return coverHolder.getWorld();
+    }
+
+    @Override
+    public ItemStackHandler getCraftingGrid() {
+        return craftingGrid;
+    }
+
+    @Override
+    public CraftingRecipeMemory getRecipeMemory() {
+        return recipeMemory;
     }
 }

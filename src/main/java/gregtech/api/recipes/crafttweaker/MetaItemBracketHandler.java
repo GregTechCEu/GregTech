@@ -10,9 +10,16 @@ import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
+import gregtech.common.blocks.BlockCompressed;
+import gregtech.common.blocks.BlockFrame;
+import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.pipelike.cable.BlockCable;
+import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
+import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
 import stanhebben.zenscript.expression.ExpressionCallStatic;
@@ -29,6 +36,7 @@ import java.util.Map;
 @ZenRegister
 public class MetaItemBracketHandler implements IBracketHandler {
     private static final Map<String, ItemStack> metaItemNames = new HashMap<>();
+    private static final Map<String, ItemStack> metaBlockNames = new HashMap<>();
 
     private final IJavaMethod method;
 
@@ -40,31 +48,46 @@ public class MetaItemBracketHandler implements IBracketHandler {
     public static void rebuildComponentRegistry() {
         metaItemNames.clear();
         for (MetaItem<?> item : MetaItem.getMetaItems()) {
-            if (item instanceof MetaPrefixItem) {
-                MetaPrefixItem metaPrefixItem = ((MetaPrefixItem) item);
-                OrePrefix prefix = metaPrefixItem.getOrePrefix();
-                for (ItemStack entry : ((MetaPrefixItem) item).getEntries()) {
-                    MaterialStack material = OreDictUnifier.getMaterial(entry);
-                    if (material != null) {
-                        metaItemNames.put(prefix.name() + OreDictUnifier.getMaterial(entry).material.toCamelCaseString(), entry);
-                    } else GTLog.logger.error("Material in entry {} is null!", entry.toString());
-                }
-            }
             for (MetaValueItem entry : item.getAllItems()) {
                 if (!entry.unlocalizedName.equals("meta_item")) {
                     metaItemNames.put(entry.unlocalizedName, entry.getStackForm());
                 }
             }
         }
+
+        for(Map.Entry<Material, BlockCompressed> entry : MetaBlocks.COMPRESSED.entrySet()) {
+            metaBlockNames.put("block" + entry.getKey().toCamelCaseString(), entry.getValue().getItem(entry.getKey()));
+        }
+        for(Map.Entry<Material, BlockFrame> entry : MetaBlocks.FRAMES.entrySet()) {
+            metaBlockNames.put("frame" + entry.getKey().toCamelCaseString(), entry.getValue().getItem(entry.getKey()));
+        }
+
+        for(BlockCable cable : MetaBlocks.CABLES) {
+            for(Material material : cable.getEnabledMaterials()) {
+                metaBlockNames.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
+            }
+        }
+        for(BlockItemPipe cable : MetaBlocks.ITEM_PIPES) {
+            for(Material material : cable.getEnabledMaterials()) {
+                metaBlockNames.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
+            }
+        }
+        for(BlockFluidPipe cable : MetaBlocks.FLUID_PIPES) {
+            for(Material material : cable.getEnabledMaterials()) {
+                metaBlockNames.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
+            }
+        }
     }
 
     public static IItemStack getMetaItem(String name) {
-        ItemStack item = metaItemNames.get(name);
-        if (item != null) {
+        ItemStack item;
+        if((item = metaItemNames.get(name)) != null) {
             return new MCItemStack(item);
-        } else {
-            return null;
         }
+        if((item = metaBlockNames.get(name)) != null) {
+            return new MCItemStack(item);
+        }
+        return MetaTileEntityBracketHandler.getMetaTileEntityItem(name);
     }
 
     @Override

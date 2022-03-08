@@ -1,7 +1,7 @@
 package gregtech.common.covers;
 
+import gregtech.Bootstrap;
 import gregtech.api.capability.impl.*;
-import net.minecraft.init.*;
 import net.minecraft.util.*;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.*;
@@ -18,8 +18,8 @@ public class CoverFluidRegulatorTest {
      * Required. Without this all item-related operations will fail because registries haven't been initialized.
      */
     @BeforeClass
-    public static void bootStrap() {
-        Bootstrap.register();
+    public static void bootstrap() {
+        Bootstrap.perform();
     }
 
     @Test

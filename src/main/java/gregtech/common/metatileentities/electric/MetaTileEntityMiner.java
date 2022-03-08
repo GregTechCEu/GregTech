@@ -19,7 +19,6 @@ import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.sound.GTSounds;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.resources.I18n;
@@ -27,10 +26,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -44,7 +40,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner, IControllable, ISoundCreator, IDataInfoProvider {
+public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner, IControllable, IDataInfoProvider {
 
     private final ItemStackHandler chargerInventory;
 
@@ -134,10 +130,10 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     private void addDisplayText(@Nonnull List<ITextComponent> textList) {
-        textList.add(new TextComponentString(String.format("sX: %d", this.minerLogic.getX().get())));
-        textList.add(new TextComponentString(String.format("sY: %d", this.minerLogic.getY().get())));
-        textList.add(new TextComponentString(String.format("sZ: %d", this.minerLogic.getZ().get())));
-        textList.add(new TextComponentString(String.format("Radius: %d", this.minerLogic.getCurrentRadius())));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.startx", this.minerLogic.getX().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.starty", this.minerLogic.getY().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.radius", this.minerLogic.getCurrentRadius()));
         if (this.minerLogic.isDone())
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
         else if (this.minerLogic.isWorking())
@@ -151,9 +147,9 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     private void addDisplayText2(@Nonnull List<ITextComponent> textList) {
-        textList.add(new TextComponentString(String.format("mX: %d", this.minerLogic.getMineX().get())));
-        textList.add(new TextComponentString(String.format("mY: %d", this.minerLogic.getMineY().get())));
-        textList.add(new TextComponentString(String.format("mZ: %d", this.minerLogic.getMineZ().get())));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.minex", this.minerLogic.getMineX().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.miney", this.minerLogic.getMineY().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.minez", this.minerLogic.getMineZ().get()));
     }
 
     @Override
@@ -282,16 +278,13 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
-        if (getWorld() != null && getWorld().isRemote) {
-            this.setupSound(GTSounds.MINER, this.getPos());
-        }
+    public SoundEvent getSound() {
+        return GTSounds.MINER;
     }
 
     @Override
-    public boolean canCreateSound() {
-        return this.minerLogic.isActive();
+    public boolean isActive() {
+        return minerLogic.isActive() && isWorkingEnabled();
     }
 
     @Nonnull

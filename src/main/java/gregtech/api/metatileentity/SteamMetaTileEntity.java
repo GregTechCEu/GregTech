@@ -11,7 +11,6 @@ import gregtech.api.capability.impl.RecipeLogicSteam;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.metatileentity.sound.ISoundCreator;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.client.renderer.ICubeRenderer;
@@ -27,7 +26,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-public abstract class SteamMetaTileEntity extends MetaTileEntity implements ISoundCreator {
+public abstract class SteamMetaTileEntity extends MetaTileEntity {
 
     protected static final int STEAM_CAPACITY = 16000;
 
@@ -45,8 +44,8 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ISou
     }
 
     @Override
-    public boolean canCreateSound() {
-        return workableHandler.isActive();
+    public boolean isActive() {
+        return workableHandler.isActive() && workableHandler.isWorkingEnabled();
     }
 
     @SideOnly(Side.CLIENT)
@@ -110,17 +109,14 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ISou
 
     public ModularUI.Builder createUITemplate(EntityPlayer player) {
         return ModularUI.builder(GuiTextures.BACKGROUND_STEAM.get(isHighPressure), 176, 166)
-                .label(6, 6, getMetaFullName())
+                .label(6, 6, getMetaFullName()).shouldColor(false)
                 .widget(new ImageWidget(79, 42, 18, 18, GuiTextures.INDICATOR_NO_STEAM.get(isHighPressure))
                         .setPredicate(() -> workableHandler.isHasNotEnoughEnergy()))
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT_STEAM.get(isHighPressure), 0);
     }
 
     @Override
-    public void onAttached(Object... data) {
-        super.onAttached(data);
-        if (getWorld() != null && getWorld().isRemote) {
-            this.setupSound(workableHandler.getRecipeMap().getSound(), this.getPos());
-        }
+    public SoundEvent getSound() {
+        return workableHandler.getRecipeMap().getSound();
     }
 }

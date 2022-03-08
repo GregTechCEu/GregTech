@@ -17,16 +17,17 @@ import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.metatileentity.multiblock.IMaintenance;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTToolTypes;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.common.gui.widget.among_us.FixWiringTaskWidget;
 import gregtech.common.inventory.handlers.TapeItemStackHandler;
 import gregtech.common.items.MetaItems;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -37,6 +38,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
@@ -350,9 +352,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                     .setCanInteractPredicate(this::isAttachedToMultiBlock));
         } else {
             builder.widget(new SlotWidget(importItems, 0, 89 - 10, 18 - 1)
-                    .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUCT_TAPE_OVERLAY))
+                    .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUCT_TAPE_OVERLAY).setTooltipText("gregtech.machine.maintenance_hatch_tape_slot.tooltip"))
                     .widget(new ClickButtonWidget(89 - 10 - 1, 18 * 2 + 3, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
-                            .setButtonTexture(GuiTextures.MAINTENANCE_ICON));
+                            .setButtonTexture(GuiTextures.MAINTENANCE_ICON).setTooltipText("gregtech.machine.maintenance_hatch_tool_slot.tooltip"));
         }
         if (isConfigurable) {
             builder.widget(new AdvancedTextWidget(5, 25, getTextWidgetText("duration", this::getDurationMultiplier), 0x404040))
@@ -442,5 +444,11 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         if (ConfigHolder.machines.enableMaintenance) {
             super.getSubItems(creativeTab, subItems);
         }
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.universal.disabled"));
     }
 }

@@ -1,14 +1,14 @@
 {
   "weight": 65,
   "name": "Nether Lava Deposit",
-  "rate": {
-    "min": 100,
-    "max": 425
+  "yield": {
+    "min": 125,
+    "max": 250
   },
   "depletion": {
     "amount": 1,
-    "chance": 5,
-    "depleted_production_rate": 60
+    "chance": 100,
+    "depleted_yield": 30
   },
   "fluid": "lava",
   "dimension_filter": [

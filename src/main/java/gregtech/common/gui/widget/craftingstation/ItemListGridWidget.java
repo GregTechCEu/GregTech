@@ -4,6 +4,7 @@ import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.ScrollableListWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.recipes.KeySharedStack;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.inventory.IItemInfo;
@@ -72,7 +73,7 @@ public class ItemListGridWidget extends ScrollableListWidget {
         ItemStack itemStack = clickedSlot.getHandle().getStack();
         if (clickedSlot.getHandle().canTakeStack(gui.entityPlayer) && !itemStack.isEmpty()) {
             itemStack = clickedSlot.onItemTake(gui.entityPlayer, itemStack, true);
-            int amountInserted = getItemList().insertItem(new ItemStackKey(itemStack), itemStack.getCount(), false, InsertMode.LOWEST_PRIORITY);
+            int amountInserted = getItemList().insertItem(KeySharedStack.getRegisteredStack(itemStack), itemStack.getCount(), false, InsertMode.LOWEST_PRIORITY);
             if (amountInserted > 0) {
                 clickedSlot.onItemTake(gui.entityPlayer, itemStack, false);
                 itemStack.shrink(amountInserted);
@@ -191,12 +192,12 @@ public class ItemListGridWidget extends ScrollableListWidget {
             try {
                 int itemsRemoved = buffer.readVarInt();
                 for (int i = 0; i < itemsRemoved; i++) {
-                    ItemStackKey itemStack = new ItemStackKey(buffer.readItemStack());
+                    ItemStackKey itemStack = KeySharedStack.getRegisteredStack(buffer.readItemStack());
                     this.displayItemList.removeIf(it -> it.getItemStackKey().equals(itemStack));
                 }
                 int itemsChanged = buffer.readVarInt();
                 for (int i = 0; i < itemsChanged; i++) {
-                    ItemStackKey itemStack = new ItemStackKey(buffer.readItemStack());
+                    ItemStackKey itemStack = KeySharedStack.getRegisteredStack(buffer.readItemStack());
                     int newTotalAmount = buffer.readVarInt();
                     SimpleItemInfo itemInfo = displayItemList.stream().filter(it -> it.getItemStackKey().equals(itemStack)).findAny().orElse(null);
                     if (itemInfo == null) {

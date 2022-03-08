@@ -3,7 +3,6 @@ package gregtech.api.capability.impl.miner;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IMiner;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -354,7 +353,6 @@ public class MinerLogic {
 
     /**
      * Applies a fortune hammer to block drops based on a tier value, intended for small ores
-     * @param random the random chance component for recipe ChancedOutputs
      * @param blockState the block being mined
      * @param drops where the drops are stored to
      * @param fortuneLevel the level of fortune used
@@ -366,7 +364,7 @@ public class MinerLogic {
         Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0, MatchingMode.IGNORE_FLUIDS);
         if (recipe != null && !recipe.getOutputs().isEmpty()) {
             drops.clear();
-            for (ItemStack outputStack : recipe.getResultItemOutputs(Integer.MAX_VALUE, tier, map)) {
+            for (ItemStack outputStack : recipe.getResultItemOutputs(tier, map)) {
                 outputStack = outputStack.copy();
                 if (OreDictUnifier.getPrefix(outputStack) == OrePrefix.crushed) {
                     if (fortuneLevel > 0) {
@@ -474,10 +472,13 @@ public class MinerLogic {
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         if (dataId == GregtechDataCodes.PUMP_HEAD_LEVEL) {
             this.pipeLength = buf.readInt();
-            metaTileEntity.getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == GregtechDataCodes.IS_WORKING) {
-            setActive(buf.readBoolean());
-            metaTileEntity.getHolder().scheduleChunkForRenderUpdate();
+            metaTileEntity.scheduleRenderUpdate();
+        } else if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
+            this.isActive = buf.readBoolean();
+            metaTileEntity.scheduleRenderUpdate();
+        } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
+            this.isWorkingEnabled = buf.readBoolean();
+            metaTileEntity.scheduleRenderUpdate();
         }
     }
 
@@ -603,23 +604,30 @@ public class MinerLogic {
 
     /**
      *
-     * @param active the new state of the miner's activity: true to change to active, else false
+     * @param isActive the new state of the miner's activity: true to change to active, else false
      */
-    public void setActive(boolean active) {
-        this.isActive = active;
-        this.metaTileEntity.markDirty();
-        if (metaTileEntity.getWorld() != null && !metaTileEntity.getWorld().isRemote) {
-            this.metaTileEntity.writeCustomData(GregtechDataCodes.IS_WORKING, buf -> buf.writeBoolean(active));
+    public void setActive(boolean isActive) {
+        if (this.isActive != isActive) {
+            this.isActive = isActive;
+            this.metaTileEntity.markDirty();
+            if (metaTileEntity.getWorld() != null && !metaTileEntity.getWorld().isRemote) {
+                this.metaTileEntity.writeCustomData(GregtechDataCodes.WORKABLE_ACTIVE, buf -> buf.writeBoolean(isActive));
+            }
         }
     }
 
     /**
      *
-     * @param workingEnabled the new state of the miner's ability to work: true to change to enabled, else false
+     * @param isWorkingEnabled the new state of the miner's ability to work: true to change to enabled, else false
      */
-    public void setWorkingEnabled(boolean workingEnabled) {
-        this.isWorkingEnabled = workingEnabled;
-        metaTileEntity.markDirty();
+    public void setWorkingEnabled(boolean isWorkingEnabled) {
+        if (this.isWorkingEnabled != isWorkingEnabled) {
+            this.isWorkingEnabled = isWorkingEnabled;
+            metaTileEntity.markDirty();
+            if (metaTileEntity.getWorld() != null && !metaTileEntity.getWorld().isRemote) {
+                this.metaTileEntity.writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(isWorkingEnabled));
+            }
+        }
     }
 
     /**

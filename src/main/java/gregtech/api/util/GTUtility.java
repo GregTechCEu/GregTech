@@ -98,7 +98,7 @@ public class GTUtility {
     public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest, boolean fixTools) {
         for (int i = 0; i < src.getSlots(); i++) {
             ItemStack itemStack = src.getStackInSlot(i);
-            if (itemStack.getItem() instanceof ToolMetaItem) {
+            if (fixTools && itemStack.getItem() instanceof ToolMetaItem) {
                 ItemStack toolStack = itemStack.copy();
                 NBTTagCompound toolStats = toolStack.getTagCompound().getCompoundTag("GT.ToolStats");
                 toolStats.setInteger("Dmg", 0);
@@ -766,10 +766,10 @@ public class GTUtility {
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
             if (valueItem != null) {
                 List<IItemBehaviour> behaviourList = valueItem.getBehaviours();
-                for(IItemBehaviour behaviour : behaviourList) {
-                    if(behaviour instanceof CoverPlaceBehavior)
+                for (IItemBehaviour behaviour : behaviourList) {
+                    if (behaviour instanceof CoverPlaceBehavior)
                         return canPlaceCover == null || canPlaceCover.apply(((CoverPlaceBehavior) behaviour).coverDefinition);
-                    if(behaviour instanceof CrowbarBehaviour)
+                    if (behaviour instanceof CrowbarBehaviour)
                         return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
                 }
             }
@@ -928,13 +928,12 @@ public class GTUtility {
     /**
      * Checks whether a machine is not a multiblock and has a recipemap not present in a blacklist
      *
-     *
      * @param machineStack the ItemStack containing the machine to check the validity of
      * @return whether the machine is valid or not
      */
     public static boolean isMachineValidForMachineHatch(ItemStack machineStack, String[] recipeMapBlacklist) {
 
-        if(machineStack == null || machineStack.isEmpty()) {
+        if (machineStack == null || machineStack.isEmpty()) {
             return false;
         }
 
@@ -947,6 +946,7 @@ public class GTUtility {
 
     /**
      * Attempts to find a passed in RecipeMap unlocalized name in a list of names
+     *
      * @param unlocalizedName The unlocalized name of a RecipeMap
      * @return {@code true} If the RecipeMap is in the config blacklist
      */
@@ -954,12 +954,56 @@ public class GTUtility {
         return Arrays.asList(recipeMapBlacklist).contains(unlocalizedName);
     }
 
-    public static String formatNumbers(long number) {
+    /**
+     * Does almost the same thing as .to(LOWER_UNDERSCORE, string), but it also inserts underscores between words and numbers.
+     *
+     * @param string Any string with ASCII characters.
+     * @return A string that is all lowercase, with underscores inserted before word/number boundaries: "maragingSteel300" -> "maraging_steel_300"
+     */
+    public static String toLowerCaseUnderscore(String string) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < string.length(); i++) {
+            if (i != 0 && (Character.isUpperCase(string.charAt(i)) || (
+                    Character.isDigit(string.charAt(i - 1)) ^ Character.isDigit(string.charAt(i)))))
+                result.append("_");
+            result.append(Character.toLowerCase(string.charAt(i)));
+        }
+        return result.toString();
+    }
+
+    /**
+     * Does almost the same thing as LOWER_UNDERSCORE.to(UPPER_CAMEL, string), but it also removes underscores before numbers.
+     *
+     * @param string Any string with ASCII characters.
+     * @return A string that is all lowercase, with underscores inserted before word/number boundaries: "maraging_steel_300" -> "maragingSteel300"
+     */
+    public static String lowerUnderscoreToUpperCamel(String string) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < string.length(); i++) {
+            if (string.charAt(i) == '_')
+                continue;
+            if (i == 0 || string.charAt(i - 1) == '_') {
+                result.append(Character.toUpperCase(string.charAt(i)));
+            } else {
+                result.append(string.charAt(i));
+            }
+        }
+        return result.toString();
+    }
+
+  public static String formatNumbers(long number) {
         return NUMBER_FORMAT.format(number);
     }
 
     public static String formatNumbers(double number) {
         return NUMBER_FORMAT.format(number);
+    }
+
+    /**
+     * If pos of this world loaded
+     */
+    public static boolean isPosChunkLoaded(World world, BlockPos pos) {
+        return !world.getChunkProvider().provideChunk(pos.getX() >> 4, pos.getZ() >> 4).isEmpty();
     }
 
 }

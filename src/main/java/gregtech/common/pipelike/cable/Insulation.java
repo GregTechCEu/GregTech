@@ -8,16 +8,16 @@ import javax.annotation.Nonnull;
 
 public enum Insulation implements IMaterialPipeType<WireProperties> {
 
-    WIRE_SINGLE("wire_single", 0.1f, 1, 2, OrePrefix.wireGtSingle, -1),
-    WIRE_DOUBLE("wire_double", 0.2f, 2, 2, OrePrefix.wireGtDouble, -1),
+    WIRE_SINGLE("wire_single", 0.125f, 1, 2, OrePrefix.wireGtSingle, -1),
+    WIRE_DOUBLE("wire_double", 0.25f, 2, 2, OrePrefix.wireGtDouble, -1),
     WIRE_QUADRUPLE("wire_quadruple", 0.375f, 4, 3, OrePrefix.wireGtQuadruple, -1),
     WIRE_OCTAL("wire_octal", 0.5f, 8, 3, OrePrefix.wireGtOctal, -1),
     WIRE_HEX("wire_hex", 0.75f, 16, 3, OrePrefix.wireGtHex, -1),
 
-    CABLE_SINGLE("cable_single", 0.2f, 1, 1, OrePrefix.cableGtSingle, 0),
+    CABLE_SINGLE("cable_single", 0.25f, 1, 1, OrePrefix.cableGtSingle, 0),
     CABLE_DOUBLE("cable_double", 0.375f, 2, 1, OrePrefix.cableGtDouble, 1),
     CABLE_QUADRUPLE("cable_quadruple", 0.5f, 4, 1, OrePrefix.cableGtQuadruple, 2),
-    CABLE_OCTAL("cable_octal", 0.6f, 8, 1, OrePrefix.cableGtOctal, 3),
+    CABLE_OCTAL("cable_octal", 0.75f, 8, 1, OrePrefix.cableGtOctal, 3),
     CABLE_HEX("cable_hex", 1.0f, 16, 1, OrePrefix.cableGtHex, 4);
 
     public final String name;
@@ -69,6 +69,6 @@ public enum Insulation implements IMaterialPipeType<WireProperties> {
 
     @Override
     public boolean isPaintable() {
-        return insulationLevel != -1;
+        return true;
     }
 }

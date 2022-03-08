@@ -8,6 +8,7 @@ import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.terminal.app.VirtualTankApp;
+import gregtech.common.terminal.app.capeselector.CapeSelectorApp;
 import gregtech.common.terminal.app.appstore.AppStoreApp;
 import gregtech.common.terminal.app.batterymanager.BatteryManagerApp;
 import gregtech.common.terminal.app.console.ConsoleApp;
@@ -99,25 +100,27 @@ public class TerminalRegistry {
                 .device(3, DeviceHardware.DEVICE.PROSPECTOR_HV)
                 .device(4, DeviceHardware.DEVICE.PROSPECTOR_HV)
                 .build();
-        //TODO, Change when Fluid Prospector is re-enabled
-        /*AppRegistryBuilder.create(new ProspectorApp(1))
-                .battery(GTValues.MV, 1000)
-                .upgrade(0, MetaItems.SENSOR_LV.getStackForm(1))
-                .upgrade(1, MetaItems.SENSOR_LV.getStackForm(2))
-                .upgrade(2, MetaItems.SENSOR_MV.getStackForm(1))
-                .upgrade(3, MetaItems.SENSOR_MV.getStackForm(3))
-                .upgrade(4, MetaItems.SENSOR_HV.getStackForm(1))
-                .upgrade(5, MetaItems.SENSOR_HV.getStackForm(3))
-                .upgrade(6, MetaItems.SENSOR_IV.getStackForm(1))
-                .device(DeviceHardware.DEVICE.PROSPECTOR_LV)
-                .build(); */
+
+        AppRegistryBuilder.create(new ProspectorApp(1))
+                .battery(0, GTValues.MV, 1000)
+                .battery(1, GTValues.MV, 1000)
+                .battery(2, GTValues.HV, 1500)
+                .battery(3, GTValues.HV, 1500)
+                .battery(4, GTValues.HV, 1500)
+                .upgrade(0, MetaItems.SENSOR_HV.getStackForm(1))
+                .upgrade(1, MetaItems.SENSOR_HV.getStackForm(3))
+                .upgrade(2, MetaItems.SENSOR_EV.getStackForm(1))
+                .upgrade(3, MetaItems.SENSOR_IV.getStackForm(1))
+                .upgrade(4, MetaItems.SENSOR_LUV.getStackForm(1))
+                .device(DeviceHardware.DEVICE.PROSPECTOR_HV)
+                .build();
         AppRegistryBuilder.create(new MultiBlockPreviewARApp())
                 .battery(GTValues.LV, 128)
                 .device(DeviceHardware.DEVICE.CAMERA)
                 .upgrade(1, MetaItems.EMITTER_HV.getStackForm(4), MetaItems.WORKSTATION_EV.getStackForm(2))
                 .defaultApp()
                 .build();
-        if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
+        if (Loader.isModLoaded(GTValues.MODID_JEI)) {
             AppRegistryBuilder.create(new RecipeChartApp())
                     .battery(GTValues.LV, 160)
                     .upgrade(0, new ItemStack(Items.PAPER, 32))
@@ -146,7 +149,10 @@ public class TerminalRegistry {
                 .battery(GTValues.MV, 500)
                 .device(DeviceHardware.DEVICE.WIRELESS)
                 .build();
-        if (GTValues.isModLoaded(GTValues.MODID_CT)) { // handle CT register
+        AppRegistryBuilder.create(new CapeSelectorApp())
+                .battery(GTValues.ULV, 8)
+                .build();
+        if (Loader.isModLoaded(GTValues.MODID_CT)) { // handle CT register
             CTTerminalRegistry.register();
         }
     }

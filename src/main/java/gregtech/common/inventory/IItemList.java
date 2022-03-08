@@ -7,8 +7,6 @@ import java.util.Set;
 
 public interface IItemList {
 
-    void addItemListChangeCallback(Runnable changeCallback);
-
     Set<ItemStackKey> getStoredItems();
 
     @Nullable

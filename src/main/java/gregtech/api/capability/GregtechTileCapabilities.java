@@ -3,7 +3,6 @@ package gregtech.api.capability;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.metatileentity.multiblock.IMaintenance;
-import gregtech.api.metatileentity.multiblock.IMultipleRecipeMaps;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 

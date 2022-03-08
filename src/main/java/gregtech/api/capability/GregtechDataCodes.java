@@ -11,6 +11,7 @@ public class GregtechDataCodes {
     public static final int COVER_REMOVED_MTE = -6;
     public static final int UPDATE_COVER_DATA_MTE = -7;
     public static final int UPDATE_IS_FRAGILE = -8;
+    public static final int UPDATE_SOUND_MUFFLED = -9;
 
     public static final int UPDATE_OUTPUT_FACING = 100;
     public static final int UPDATE_AUTO_OUTPUT_ITEMS = 101;
@@ -18,8 +19,6 @@ public class GregtechDataCodes {
 
     // Drum
     public static final int UPDATE_AUTO_OUTPUT = 560;
-    public static final int SYNC_FLUID_CONTENT = -200;
-    public static final int SYNC_FLUID_AMOUNT = -201;
 
     // Safe
     public static final int UPDATE_LOCKED_STATE = 8;
@@ -55,6 +54,7 @@ public class GregtechDataCodes {
     public static final int SYNC_COVER_IMPLEMENTATION = -3;
     public static final int UPDATE_PIPE_TYPE = -4;
     public static final int UPDATE_PIPE_MATERIAL = -5;
+    public static final int UPDATE_BLOCKED_CONNECTIONS = -6;
     public static final int UPDATE_COVER_DATA_PIPE = 0;
     public static final int COVER_ATTACHED_PIPE = 1;
     public static final int COVER_REMOVED_PIPE = 2;
@@ -62,6 +62,7 @@ public class GregtechDataCodes {
     // Multiblock implementation update codes
     public static final int SYNC_CONTROLLER = 100;
     public static final int IS_ROTOR_LOOPING = 200;
+    public static final int FRONT_FACE_FREE = 201;
     public static final int UPDATE_ROTOR_COLOR = 201;
     public static final int STRUCTURE_FORMED = 400;
     public static final int IS_TAPED = 550;
@@ -70,12 +71,6 @@ public class GregtechDataCodes {
     public static final int RECIPE_MAP_INDEX = 553;
     public static final int IS_FRONT_FACE_FREE = 554;
     public static final int MAINTENANCE_MULTIPLIER = 555;
-
-    // Multiblock Fluid Tank implementation update codes
-    public static final int UPDATE_CONTROLLER_POSITION = 1;
-    public static final int DEFORM_TANK = 2;
-    public static final int SYNC_FLUID_CHANGE = 3;
-    public static final int SYNC_TANK_SHAPE = 4;
 
     // Fusion Reactor
     public static final int UPDATE_COLOR = 371;

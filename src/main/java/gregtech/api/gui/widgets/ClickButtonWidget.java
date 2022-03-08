@@ -1,5 +1,6 @@
 package gregtech.api.gui.widgets;
 
+import com.google.common.base.Preconditions;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
@@ -9,14 +10,15 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import org.lwjgl.input.Mouse;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
-
-import static gregtech.api.gui.impl.ModularUIGui.*;
+import java.util.function.Supplier;
 
 public class ClickButtonWidget extends Widget {
 
@@ -25,11 +27,16 @@ public class ClickButtonWidget extends Widget {
     protected int textColor = 0xFFFFFF;
     protected final Consumer<ClickData> onPressCallback;
     protected boolean shouldClientCallback;
+    protected Supplier<Boolean> shouldDisplay;
+
+    private String tooltipText;
+    private Object[] tooltipArgs;
 
     public ClickButtonWidget(int xPosition, int yPosition, int width, int height, String displayText, Consumer<ClickData> onPressed) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         this.displayText = displayText;
         this.onPressCallback = onPressed;
+        this.shouldDisplay = () -> true;
     }
 
     public ClickButtonWidget setShouldClientCallback(boolean shouldClientCallback) {
@@ -47,9 +54,32 @@ public class ClickButtonWidget extends Widget {
         return this;
     }
 
+    public ClickButtonWidget setDisplayFunction(Supplier<Boolean> displayFunction) {
+        this.shouldDisplay = displayFunction;
+        return this;
+    }
+
+    public ClickButtonWidget setTooltipText(String tooltipText, Object... args) {
+        Preconditions.checkNotNull(tooltipText, "tooltipText");
+        this.tooltipText = tooltipText;
+        this.tooltipArgs = args;
+        return this;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return super.isVisible() && shouldDisplay.get();
+    }
+
+    @Override
+    public boolean isActive() {
+         return super.isActive() && shouldDisplay.get();
+    }
+
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
+        if (!shouldDisplay.get()) return;
         Position position = getPosition();
         Size size = getSize();
         if (buttonTexture instanceof SizedTextureArea) {
@@ -62,11 +92,20 @@ public class ClickButtonWidget extends Widget {
         fontRenderer.drawString(text,
                 position.x + size.width / 2 - fontRenderer.getStringWidth(text) / 2,
                 position.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2, textColor);
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
+    }
+
+    @Override
+    public void drawInForeground(int mouseX, int mouseY) {
+        super.drawInForeground(mouseX, mouseY);
+        if (tooltipText != null && isMouseOverElement(mouseX, mouseY)) {
+            List<String> hoverList = Arrays.asList(I18n.format(tooltipText, tooltipArgs).split("/n"));
+            drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
+        }
     }
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
+        if (!shouldDisplay.get()) return false;
         if (isMouseOverElement(mouseX, mouseY)) {
             triggerButton();
             return true;
@@ -78,7 +117,7 @@ public class ClickButtonWidget extends Widget {
         ClickData clickData = new ClickData(Mouse.getEventButton(), isShiftDown(), isCtrlDown());
         writeClientAction(1, clickData::writeToBuf);
         if (shouldClientCallback) {
-           onPressCallback.accept(clickData);
+           onPressCallback.accept(new ClickData(Mouse.getEventButton(), isShiftDown(), isCtrlDown(), true));
         }
         playButtonClickSound();
     }

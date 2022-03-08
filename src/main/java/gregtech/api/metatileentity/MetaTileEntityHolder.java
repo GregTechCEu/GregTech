@@ -9,6 +9,9 @@ import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.packets.CPacketRecoverMTE;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TaskScheduler;
+import gregtech.client.particle.GTNameTagParticle;
+import gregtech.client.particle.GTParticleManager;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,9 +26,13 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.IWorldNameable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,10 +40,13 @@ import java.util.ArrayList;
 
 import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
-public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIHolder {
+public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIHolder, IWorldNameable {
 
     MetaTileEntity metaTileEntity;
     private boolean needToUpdateLightning = false;
+    private String customName;
+    @SideOnly(Side.CLIENT)
+    private GTNameTagParticle nameTagParticle;
 
     private int[] timeStatistics = new int[20];
     private int timeStatisticsIndex = 0;
@@ -67,7 +77,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         return metaTileEntity;
     }
 
-    protected void setRawMetaTileEntity(MetaTileEntity metaTileEntity){
+    protected void setRawMetaTileEntity(MetaTileEntity metaTileEntity) {
         this.metaTileEntity = metaTileEntity;
         this.metaTileEntity.holder = this;
     }
@@ -94,6 +104,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     @Override
     public void readFromNBT(@Nonnull NBTTagCompound compound) {
         super.readFromNBT(compound);
+        customName = compound.getString("CustomName");
         if (compound.hasKey("MetaId", NBT.TAG_STRING)) {
             String metaTileEntityIdRaw = compound.getString("MetaId");
             ResourceLocation metaTileEntityId = new ResourceLocation(metaTileEntityIdRaw);
@@ -113,6 +124,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     @Override
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
         super.writeToNBT(compound);
+        compound.setString("CustomName", getName());
         if (metaTileEntity != null) {
             compound.setString("MetaId", metaTileEntity.metaTileEntityId.toString());
             NBTTagCompound metaTileEntityData = new NBTTagCompound();
@@ -120,6 +132,14 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
             compound.setTag("MetaTileEntity", metaTileEntityData);
         }
         return compound;
+    }
+
+    @Override
+    public void invalidate() {
+        if (metaTileEntity != null) {
+            metaTileEntity.invalidate();
+        }
+        super.invalidate();
     }
 
     @Override
@@ -147,7 +167,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
                 world.setBlockToAir(pos);
             }
         }
-        
+
         if (this.needToUpdateLightning) {
             getWorld().checkLight(getPos());
             this.needToUpdateLightning = false;
@@ -226,6 +246,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
+        buf.writeString(getName());
         if (metaTileEntity != null) {
             buf.writeBoolean(true);
             buf.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId));
@@ -235,6 +256,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
+        setCustomName(buf.readString(Short.MAX_VALUE));
         if (buf.readBoolean()) {
             int metaTileEntityId = buf.readVarInt();
             setMetaTileEntity(GregTechAPI.MTE_REGISTRY.getObjectById(metaTileEntityId));
@@ -353,5 +375,48 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
             }
         }
         return false;
+    }
+
+    public void setCustomName(String customName) {
+        if (!getName().equals(customName)) {
+            this.customName = customName;
+            if (world.isRemote) {
+                if (hasCustomName()) {
+                    if (nameTagParticle == null) {
+                        nameTagParticle = new GTNameTagParticle(world, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, getName());
+                        nameTagParticle.setOnUpdate(p -> {
+                            if (isInvalid() || !GTUtility.isPosChunkLoaded(getWorld(), getPos())) p.setExpired();
+                        });
+                        GTParticleManager.INSTANCE.addEffect(nameTagParticle);
+                    } else {
+                        nameTagParticle.name = getName();
+                    }
+                } else {
+                    if (nameTagParticle != null) {
+                        nameTagParticle.setExpired();
+                        nameTagParticle = null;
+                    }
+                }
+            } else {
+                markAsDirty();
+            }
+        }
+    }
+
+    @Nonnull
+    @Override
+    public String getName() {
+        return this.customName == null ? "" : this.customName;
+    }
+
+    @Override
+    public boolean hasCustomName() {
+        return this.customName != null && !this.customName.isEmpty();
+    }
+
+    @Nonnull
+    @Override
+    public ITextComponent getDisplayName() {
+        return this.hasCustomName() ? new TextComponentString(this.getName()) : metaTileEntity != null ? new TextComponentTranslation(metaTileEntity.getMetaFullName()) : new TextComponentString(this.getName());
     }
 }

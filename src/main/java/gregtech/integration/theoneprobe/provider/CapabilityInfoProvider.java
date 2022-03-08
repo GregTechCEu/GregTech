@@ -1,5 +1,6 @@
 package gregtech.integration.theoneprobe.provider;
 
+import gregtech.api.util.GTLog;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.IProbeInfoProvider;
@@ -27,12 +28,16 @@ public abstract class CapabilityInfoProvider<T> implements IProbeInfoProvider {
             EnumFacing sideHit = data.getSideHit();
             TileEntity tileEntity = world.getTileEntity(data.getPos());
             if (tileEntity == null) return;
-            Capability<T> capability = getCapability();
-            T resultCapability = tileEntity.getCapability(capability, null);
-            if (resultCapability != null && allowDisplaying(resultCapability)) {
-                addProbeInfo(resultCapability, probeInfo, tileEntity, sideHit);
+            try {
+                T resultCapability = tileEntity.getCapability(getCapability(), null);
+                if (resultCapability != null && allowDisplaying(resultCapability)) {
+                    addProbeInfo(resultCapability, probeInfo, tileEntity, sideHit);
+                }
+            } catch (ClassCastException ignored) {
+            } catch (Throwable e) {
+                GTLog.logger.info("Bad One probe Implem: {} {} {}", e.getClass().toGenericString(), e.getMessage(), e.getStackTrace()[0].getClassName());
+                e.printStackTrace();
             }
         }
     }
-
 }

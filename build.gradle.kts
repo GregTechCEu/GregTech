@@ -62,11 +62,17 @@ repositories {
         name = "ChickenBones maven"
         setUrl("http://chickenbones.net/maven/")
     }
+    maven {
+        name = "CurseMaven"
+        setUrl("https://www.cursemaven.com")
+    }
 }
 
 dependencies {
     "deobfCompile"("codechicken:ChickenASM:1.12-1.0.2.9")
     "deobfCompile"("codechicken-lib-1-8:CodeChickenLib-1.12.2:3.2.3.358:universal")
+
+    "deobfCompile"("curse.maven:ae2-extended-life-570458:3649419")
 
     "compile"(files("etc/CraftTweaker2-1.12-4.1.20.670.jar"))
     "compile"(files("etc/jei_1.12.2-4.16.1.301.jar"))

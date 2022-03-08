@@ -3,7 +3,6 @@ package gregtech.client.shader;
 import codechicken.lib.render.shader.ShaderObject;
 import codechicken.lib.render.shader.ShaderProgram;
 import gregtech.api.GTValues;
-import gregtech.api.gui.resources.ShaderTexture;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
@@ -12,14 +11,9 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -169,31 +163,4 @@ public class Shaders {
 //        OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, lastID);
         return fbo;
     }
-
-    public static class ShaderCommand extends CommandBase {
-
-        @Override
-        @Nonnull
-        public String getName() {
-            return "gt_rs";
-        }
-
-        @Override
-        @Nonnull
-        public String getUsage(@Nonnull ICommandSender sender) {
-            return "reload GTCEus' shaders";
-        }
-
-        @Override
-        public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, @Nonnull String[] args) {
-            if (allowedShader()) {
-                initShaders();
-                ShaderTexture.clear();
-                sender.sendMessage(new TextComponentString("reload all shaders"));
-            } else {
-                sender.sendMessage(new TextComponentString("disable shaders"));
-            }
-        }
-    }
-
 }

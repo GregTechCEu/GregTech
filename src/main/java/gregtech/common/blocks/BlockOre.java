@@ -2,14 +2,13 @@ package gregtech.common.blocks;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.client.model.IModelSupplier;
-import gregtech.client.model.SimpleStateMapper;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.IBlockOre;
+import gregtech.client.model.IModelSupplier;
+import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.blocks.properties.PropertyStoneType;
 import net.minecraft.block.Block;
@@ -64,6 +63,7 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
         return net.minecraft.block.material.Material.ROCK;
     }
 
+    @Nonnull
     @Override
     protected final BlockStateContainer createBlockState() {
         return new BlockStateContainer(this);
@@ -90,7 +90,8 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
     @Override
     public String getHarvestTool(IBlockState state) {
         StoneType stoneType = state.getValue(STONE_TYPE);
-        return stoneType.harvestTool;
+        IBlockState stoneState = stoneType.stone.get();
+        return stoneState.getBlock().getHarvestTool(stoneState);
     }
 
     @Override
@@ -113,6 +114,9 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
+        if (meta >= STONE_TYPE.getAllowedValues().size()) {
+            meta = 0;
+        }
         return getDefaultState().withProperty(STONE_TYPE, STONE_TYPE.getAllowedValues().get(meta));
     }
 
@@ -158,16 +162,16 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
 
     @Override
     public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
-        if (tab == CreativeTabs.SEARCH) {
-            blockState.getValidStates().stream().filter(state -> state.getValue(STONE_TYPE).shouldBeDroppedAsItem).forEach(blockState -> list.add(getItem(blockState)));
-        } else if (tab == GregTechAPI.TAB_GREGTECH_ORES) {
-            list.add(getItem(getDefaultState()));
+        if (tab == CreativeTabs.SEARCH || tab == GregTechAPI.TAB_GREGTECH_ORES) {
+            blockState.getValidStates().stream()
+                    .filter(state -> state.getValue(STONE_TYPE).shouldBeDroppedAsItem)
+                    .forEach(blockState -> list.add(getItem(blockState)));
         }
     }
 
     @Override
     public boolean canRenderInLayer(@Nonnull IBlockState state, @Nonnull BlockRenderLayer layer) {
-        return layer == BlockRenderLayer.CUTOUT_MIPPED || (material.getProperty(PropertyKey.ORE).isEmissive() && layer == BloomEffectUtil.getRealBloomLayer()) ;
+        return layer == BlockRenderLayer.CUTOUT_MIPPED || (material.getProperty(PropertyKey.ORE).isEmissive() && layer == BloomEffectUtil.getRealBloomLayer());
     }
 
     private BlockStateContainer createStateContainer() {
@@ -182,12 +186,6 @@ public class BlockOre extends Block implements IBlockOre, IModelSupplier {
     @Override
     @SideOnly(Side.CLIENT)
     public void onTextureStitch(TextureStitchEvent.Pre event) {
-        event.getMap().registerSprite(MaterialIconType.block.getBlockPath(material.getMaterialIconSet()));
-        for (IBlockState state : this.getBlockState().getValidStates()) {
-            StoneType stoneType = state.getValue(STONE_TYPE);
-            event.getMap().registerSprite(stoneType.backgroundTopTexture);
-            event.getMap().registerSprite(stoneType.backgroundSideTexture);
-        }
     }
 
     @Override

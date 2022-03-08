@@ -158,6 +158,9 @@ public class ConfigHolder {
         @Config.Comment({"Whether to make coloring blocks like Concrete or Glass harder.", "Default: false"})
         public boolean hardDyeRecipes = false;
 
+        @Config.Comment({"Whether to remove charcoal smelting recipes from the vanilla furnace.", "Default: true"})
+        public boolean harderCharcoalRecipe = true;
+
         @Config.Comment({"Whether to make the Flint and Steel recipe require steel parts.", "Default: true."})
         public boolean flintAndSteelRequireSteel = true;
 
@@ -206,14 +209,24 @@ public class ConfigHolder {
                 "gregtech"
         };
 
+        @Config.Comment({"Whether Gregtech should remove smelting recipes from the vanilla furnace for ingots requiring the Electric Blast Furnace.", "Default: true"})
+        public boolean removeSmeltingForEBFMetals = true;
+
         public static class EnergyCompatOptions {
 
-            @Config.Comment({"Enable Native GTEU to Forge Energy (RF and alike) on GT Cables and Wires.", "Default: true"})
+            @Config.Comment({"Enable Native GTEU to Forge Energy (RF and alike) on GT Cables and Wires.", "This does not enable nor disable Converters.", "Default: true"})
             public boolean nativeEUToFE = true;
 
-            @Config.Comment({"GTEU to Forge Energy (RF and alike) ratio.", "Default: 4 FE to 1 EU"})
-            @Config.RangeDouble() // to ensure positive number
-            public double rfRatio = 4;
+            @Config.Comment({"Enable GTEU to FE (and vice versa) Converters.", "Default: false"})
+            public boolean enableFEConverters = false;
+
+            @Config.Comment({"Forge Energy to GTEU ratio for converting FE to EU.", "Only affects converters.", "Default: 4 FE == 1 EU"})
+            @Config.RangeInt(min = 1, max = 16)
+            public int feToEuRatio = 4;
+
+            @Config.Comment({"GTEU to Forge Energy ratio for converting EU to FE.", "Affects native conversion and Converters.", "Default: 4 FE == 1 EU"})
+            @Config.RangeInt(min = 1, max = 16)
+            public int euToFeRatio = 4;
         }
     }
 
@@ -277,9 +290,20 @@ public class ConfigHolder {
         @Config.Comment({"Whether or not sounds should be played when crafting with tools.", "Default: true"})
         public boolean toolCraftingSounds = true;
 
+        @Config.Comment({"Overrides the MC total playable sounds limit. MC's default is 28, which causes problems with many machine sounds at once",
+                "If sounds are causing large amounts of lag, try lowering this.",
+                "If sounds are not working at all, try setting this to the lowest value (28).", "Default: 512"})
+        @Config.RangeInt(min = 28, max = 2048)
+        @Config.RequiresMcRestart
+        public int maxNumSounds = 512;
+
         @Config.Comment({"The default color to overlay onto machines.", "16777215 (0xFFFFFF in decimal) is no coloring (like GTCE).",
                 "13819135 (0xD2DCFF in decimal) is the classic blue from GT5 (default)."})
         public int defaultPaintingColor = 0xD2DCFF;
+
+        @Config.Comment({"The default color to overlay onto Machine (and other) UIs.", "16777215 (0xFFFFFF) is no coloring (like GTCE).",
+                "13819135 (0xD2DCFF in decimal) is the classic blue from GT5 (default)."})
+        public int defaultUIColor = 0xD2DCFF;
 
         public static class GuiConfig {
             @Config.Comment({"The scrolling speed of widgets", "Default: 13"})

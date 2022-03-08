@@ -216,6 +216,9 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         if (blockHere.getBlock() instanceof BlockLiquid ||
                 blockHere.getBlock() instanceof IFluidBlock) {
             IFluidHandler fluidHandler = FluidUtil.getFluidHandler(getWorld(), checkPos, null);
+            if (fluidHandler == null) {
+                return;
+            }
             FluidStack drainStack = fluidHandler.drain(Integer.MAX_VALUE, false);
             if (drainStack != null && drainStack.amount > 0) {
                 this.fluidSourceBlocks.add(checkPos);
@@ -244,6 +247,9 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
         if (blockHere.getBlock() instanceof BlockLiquid ||
                 blockHere.getBlock() instanceof IFluidBlock) {
             IFluidHandler fluidHandler = FluidUtil.getFluidHandler(getWorld(), fluidBlockPos, null);
+            if (fluidHandler == null) {
+                return;
+            }
             FluidStack drainStack = fluidHandler.drain(Integer.MAX_VALUE, false);
             if (drainStack != null && exportFluids.fill(drainStack, false) == drainStack.amount) {
                 exportFluids.fill(drainStack, true);

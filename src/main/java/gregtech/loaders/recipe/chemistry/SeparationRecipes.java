@@ -61,7 +61,7 @@ public class SeparationRecipes {
                 .input(OrePrefix.ore, Oilsands)
                 .chancedOutput(new ItemStack(Blocks.SAND), 5000, 5000)
                 .fluidOutputs(Oil.getFluid(500))
-                .duration(1000).EUt(5).buildAndRegister();
+                .duration(200).EUt(5).buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(144).EUt(5)
                 .inputs(new ItemStack(Items.NETHER_WART))
@@ -253,7 +253,7 @@ public class SeparationRecipes {
                 .fluidOutputs(Oxygen.getFluid(1000))
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(1600).EUt(VA[LV])
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(1600).EUt(VA[MV])
                 .fluidInputs(NetherAir.getFluid(10000))
                 .fluidOutputs(CarbonMonoxide.getFluid(3900))
                 .fluidOutputs(SulfurDioxide.getFluid(1000))
@@ -286,7 +286,7 @@ public class SeparationRecipes {
                 .chancedOutput(dustTiny, Ilmenite, 5000, 500)
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(5)
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(5)
                 .input(dust, Oilsands)
                 .fluidOutputs(Oil.getFluid(1000))
                 .buildAndRegister();
@@ -313,6 +313,12 @@ public class SeparationRecipes {
                 .input(dust, Electrotine, 8)
                 .output(dust, Redstone)
                 .output(dust, Electrum)
+                .buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(51).EUt(VA[LV])
+                .fluidInputs(SaltWater.getFluid(1000))
+                .output(dust, Salt, 2)
+                .fluidOutputs(Water.getFluid(1000))
                 .buildAndRegister();
 
         // Electrolyzer
@@ -444,6 +450,13 @@ public class SeparationRecipes {
                 .fluidOutputs(Oxygen.getFluid(4000))
                 .duration(210).EUt(960).buildAndRegister();
 
+        ELECTROLYZER_RECIPES.recipeBuilder()
+                .input(dust, SodiumHydroxide, 3)
+                .output(dust, Sodium)
+                .fluidOutputs(Oxygen.getFluid(1000))
+                .fluidOutputs(Hydrogen.getFluid(1000))
+                .duration(150).EUt(60).buildAndRegister();
+
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 1, GTValues.W))
@@ -481,10 +494,25 @@ public class SeparationRecipes {
                 .fluidOutputs(SeedOil.getFluid(6))
                 .buildAndRegister();
 
-        EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(2)
-                .inputs(new ItemStack(Items.FISH, 1, GTValues.W))
-                .fluidOutputs(FishOil.getFluid(50))
-                .build();
+        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
+                .inputs(new ItemStack(Items.FISH))
+                .fluidOutputs(FishOil.getFluid(40))
+                .buildAndRegister();
+
+        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
+                .inputs(new ItemStack(Items.FISH, 1, 1))
+                .fluidOutputs(FishOil.getFluid(60))
+                .buildAndRegister();
+
+        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
+                .inputs(new ItemStack(Items.FISH, 1, 2))
+                .fluidOutputs(FishOil.getFluid(70))
+                .buildAndRegister();
+
+        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
+                .inputs(new ItemStack(Items.FISH, 1, 3))
+                .fluidOutputs(FishOil.getFluid(30))
+                .buildAndRegister();
 
         EXTRACTOR_RECIPES.recipeBuilder().duration(600).EUt(28)
                 .input(dust, Quartzite)

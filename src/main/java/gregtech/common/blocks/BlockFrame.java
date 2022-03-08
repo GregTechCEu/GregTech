@@ -59,17 +59,19 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
         return getMetaFromState(state);
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
-        Material material = variantProperty.getAllowedValues().get(meta);
-        return getDefaultState().withProperty(variantProperty, material);
+        if (meta >= variantProperty.getAllowedValues().size()) {
+            meta = 0;
+        }
+        return getDefaultState().withProperty(variantProperty, variantProperty.getAllowedValues().get(meta));
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        Material material = state.getValue(variantProperty);
-        return variantProperty.getAllowedValues().indexOf(material);
+        return variantProperty.getAllowedValues().indexOf(state.getValue(variantProperty));
     }
 
     @Override
@@ -115,7 +117,7 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
     @Override
     public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
         blockState.getValidStates().stream()
-                .filter(blockState -> blockState.getValue(variantProperty) != Materials._NULL)
+                .filter(blockState -> blockState.getValue(variantProperty) != Materials.NULL)
                 .forEach(blockState -> list.add(getItem(blockState)));
     }
 
@@ -129,6 +131,10 @@ public final class BlockFrame extends DelayedStateBlock implements IModelSupplie
 
     public IBlockState getBlock(Material material) {
         return getDefaultState().withProperty(variantProperty, material);
+    }
+
+    public Material getGtMaterial(int meta) {
+        return variantProperty.getAllowedValues().get(meta);
     }
 
     @Override

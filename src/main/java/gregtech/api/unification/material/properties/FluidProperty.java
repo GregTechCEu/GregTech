@@ -1,6 +1,8 @@
 package gregtech.api.unification.material.properties;
 
 import com.google.common.base.Preconditions;
+import gregtech.api.fluids.fluidType.FluidType;
+import gregtech.api.fluids.fluidType.FluidTypes;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -8,19 +10,22 @@ import javax.annotation.Nonnull;
 
 public class FluidProperty implements IMaterialProperty<FluidProperty> {
 
-    public static final int BASE_TEMP = 300;
+    public static final int BASE_TEMP = 293; // Room Temperature
 
     /**
      * Internal material fluid field
      */
     private Fluid fluid;
 
+    private final FluidType fluidType;
+
     private boolean hasBlock;
     private boolean isGas;
     private int fluidTemperature = BASE_TEMP;
 
-    public FluidProperty(boolean isGas, boolean hasBlock) {
-        this.isGas = isGas;
+    public FluidProperty(@Nonnull FluidType fluidType, boolean hasBlock) {
+        this.fluidType = fluidType;
+        this.isGas = fluidType == FluidTypes.GAS;
         this.hasBlock = hasBlock;
     }
 
@@ -28,7 +33,7 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
      * Default values of: no Block, not Gas.
      */
     public FluidProperty() {
-        this(false, false);
+        this(FluidTypes.LIQUID, false);
     }
 
     public boolean isGas() {
@@ -65,12 +70,24 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
     }
 
     public void setFluidTemperature(int fluidTemperature) {
-        Preconditions.checkArgument(fluidTemperature > 0, "Invalid temperature");
+        setFluidTemperature(fluidTemperature, true);
+    }
+
+    public void setFluidTemperature(int fluidTemperature, boolean isKelvin) {
+        if (isKelvin) Preconditions.checkArgument(fluidTemperature >= 0, "Invalid temperature");
+        else fluidTemperature += 273;
         this.fluidTemperature = fluidTemperature;
+        if (fluid != null)
+            fluid.setTemperature(fluidTemperature);
     }
 
     public int getFluidTemperature() {
         return fluidTemperature;
+    }
+
+    @Nonnull
+    public FluidType getFluidType() {
+        return this.fluidType;
     }
 
     @Override
