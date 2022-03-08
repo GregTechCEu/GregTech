@@ -250,13 +250,13 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                         toolsToMatch.set(1, "screwdriver");
                         break;
                     case 2:
-                        toolsToMatch.set(2, "soft_hammer");
+                        toolsToMatch.set(2, "mallet");
                         break;
                     case 3:
-                        toolsToMatch.set(3, "hard_hammer");
+                        toolsToMatch.set(3, "hammer");
                         break;
                     case 4:
-                        toolsToMatch.set(4, "wire_cutter");
+                        toolsToMatch.set(4, "cutter");
                         break;
                     case 5:
                         toolsToMatch.set(5, "crowbar");
@@ -271,7 +271,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
             String toolToMatch = toolsToMatch.get(i);
             if (toolToMatch != null) {
                 for (ItemStack stack : entityPlayer.inventory.offHandInventory) {
-                    if (stack.getItem().getToolClasses(stack).contains(toolToMatch)) {
+                    if (ToolHelper.isTool(stack, toolToMatch)) {
                         ((IMaintenance) this.getController()).setMaintenanceFixed(i);
                         ToolHelper.damageItemWhenCrafting(stack, entityPlayer);
                         if (toolsToMatch.stream().allMatch(Objects::isNull)) {
@@ -280,7 +280,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                     }
                 }
                 for (ItemStack stack : entityPlayer.inventory.mainInventory) {
-                    if (stack.getItem().getToolClasses(stack).contains(toolToMatch)) {
+                    if (ToolHelper.isTool(stack, toolToMatch)) {
                         ((IMaintenance) this.getController()).setMaintenanceFixed(i);
                         ToolHelper.damageItemWhenCrafting(stack, entityPlayer);
                         if (toolsToMatch.stream().allMatch(Objects::isNull)) {
