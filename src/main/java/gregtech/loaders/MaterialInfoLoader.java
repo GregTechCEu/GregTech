@@ -286,7 +286,7 @@ public class MaterialInfoLoader {
         OreDictUnifier.registerOre(new ItemStack(Blocks.STAINED_GLASS_PANE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Glass, M / 3))); // dust tiny
         OreDictUnifier.registerOre(new ItemStack(Blocks.GLASS_PANE, 1, W), new ItemMaterialInfo(new MaterialStack(Materials.Glass, M / 3))); // dust tiny
 
-        OreDictUnifier.registerOre(new ItemStack(Items.FLOWER_POT, 1), new ItemMaterialInfo(new MaterialStack(Materials.Clay, M * 3)));
+        OreDictUnifier.registerOre(new ItemStack(Items.FLOWER_POT, 1), new ItemMaterialInfo(new MaterialStack(Materials.Brick, M * 3)));
         OreDictUnifier.registerOre(new ItemStack(Items.PAINTING, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2)));
         OreDictUnifier.registerOre(new ItemStack(Items.ITEM_FRAME, 1), new ItemMaterialInfo(new MaterialStack(Materials.Wood, M * 2)));
         OreDictUnifier.registerOre(new ItemStack(Blocks.COBBLESTONE_WALL, 1), new ItemMaterialInfo(new MaterialStack(Materials.Stone, M)));
