@@ -28,7 +28,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
@@ -53,10 +52,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.fml.common.Loader;
+ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -71,8 +67,6 @@ import static gregtech.api.util.GTUtility.getMetaTileEntity;
 public class BlockMachine extends BlockCustomParticle implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
 
     private static final List<IndexedCuboid6> EMPTY_COLLISION_BOX = Collections.emptyList();
-    private static final IUnlistedProperty<String> HARVEST_TOOL = new UnlistedStringProperty("harvest_tool");
-    private static final IUnlistedProperty<Integer> HARVEST_LEVEL = new UnlistedIntegerProperty("harvest_level");
     //used for rendering purposes of non-opaque machines like chests and tanks
     public static final PropertyBool OPAQUE = PropertyBool.create("opaque");
 
@@ -86,25 +80,15 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         setDefaultState(getDefaultState().withProperty(OPAQUE, true));
     }
 
-    @Override
-    public boolean canHarvestBlock(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
-        if (ConfigHolder.machines.requireWrenchForMachines) {
-            return player.getHeldItemMainhand().hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
-        }
-        return super.canHarvestBlock(world, pos, player);
-    }
-
     @Nullable
     @Override
     public String getHarvestTool(@Nonnull IBlockState state) {
-        String value = ((IExtendedBlockState) state).getValue(HARVEST_TOOL);
-        return value == null ? "wrench" : value; //safety check for mods who don't handle state properly
+        return ConfigHolder.machines.requireWrenchForMachines ? "wrench" : "pickaxe";
     }
 
     @Override
     public int getHarvestLevel(@Nonnull IBlockState state) {
-        Integer value = ((IExtendedBlockState) state).getValue(HARVEST_LEVEL);
-        return value == null ? 0 : value; //safety check for mods who don't handle state properly
+        return 1;
     }
 
     @Override
@@ -114,20 +98,8 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Nonnull
     @Override
-    public IBlockState getActualState(@Nonnull IBlockState state, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
-        MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
-        if (metaTileEntity == null)
-            return state;
-
-        return ((IExtendedBlockState) state)
-                .withProperty(HARVEST_TOOL, metaTileEntity.getHarvestTool() == null ? "wrench" : metaTileEntity.getHarvestTool())
-                .withProperty(HARVEST_LEVEL, metaTileEntity.getHarvestLevel());
-    }
-
-    @Nonnull
-    @Override
     protected BlockStateContainer createBlockState() {
-        return new ExtendedBlockState(this, new IProperty[]{OPAQUE}, new IUnlistedProperty[]{HARVEST_TOOL, HARVEST_LEVEL});
+        return new BlockStateContainer(this, OPAQUE);
     }
 
     @Nonnull
