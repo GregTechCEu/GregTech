@@ -643,8 +643,6 @@ public final class MetaItems {
     public static void init() {
         MetaItem1 first = new MetaItem1();
         first.setRegistryName("meta_item_1");
-        MetaTool tool = new MetaTool();
-        tool.setRegistryName("meta_tool");
         CT_OREDICT_ITEM = new MetaOreDictItem((short) 0);
         CT_OREDICT_ITEM.setRegistryName("meta_oredict_item_ct");
         MetaArmor armor = new MetaArmor();
