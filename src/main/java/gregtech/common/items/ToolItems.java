@@ -119,6 +119,11 @@ public class ToolItems {
                 .sound(GTSounds.WRENCH_TOOL)
                 .oreDicts("craftingToolWrench")
                 .toolClasses("wrench"));
+        WIRE_CUTTER = register(ItemGTTool.Builder.of(GTValues.MODID, "wire_cutter")
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting())
+                .sound(GTSounds.WIRECUTTER_TOOL)
+                .oreDicts("craftingToolWireCutter")
+                .toolClasses("cutter"));
         DRILL_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_lv")
                 .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0).brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
                 .oreDicts("craftingToolDrill")
@@ -288,7 +293,7 @@ public class ToolItems {
         IBlockState state = player.world.getBlockState(pos);
         TileEntity tile = player.world.getTileEntity(event.getTarget().getBlockPos());
         boolean sneaking = player.isSneaking();
-        if (shouldRenderGridOverlays(state, tile, stack, player.getHeldItemOffhand(), sneaking) &&
+        if (tile != null && shouldRenderGridOverlays(state, tile, stack, player.getHeldItemOffhand(), sneaking) &&
                 renderGridOverlays(player, pos, state, event.getTarget().sideHit, tile, event.getPartialTicks())) {
             event.setCanceled(true);
             return;
