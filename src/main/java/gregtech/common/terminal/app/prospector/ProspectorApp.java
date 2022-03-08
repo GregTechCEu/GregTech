@@ -181,13 +181,4 @@ public class ProspectorApp extends AbstractApplication implements SearchComponen
             }
         }
     }
-
-    @Override
-    public boolean canLaunchConcurrently(AbstractApplication application) {
-        if(application instanceof ProspectorApp) {
-            return ((ProspectorApp) application).mode == mode;
-        }
-
-        return super.canLaunchConcurrently(application);
-    }
 }

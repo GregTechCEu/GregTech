@@ -163,7 +163,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             closeApplication(focusApp, isClient);
         }
         for (AbstractApplication app : openedApps) {
-            if (app.getClass() == application.getClass() && application.canLaunchConcurrently(app)) {
+            if (app.getRegistryName().equals(application.getRegistryName()) && application.canLaunchConcurrently(app)) {
                 app.onOSSizeUpdate(this.getSize().width, this.getSize().height);
                 maximizeApplication(app, isClient);
                 return;
