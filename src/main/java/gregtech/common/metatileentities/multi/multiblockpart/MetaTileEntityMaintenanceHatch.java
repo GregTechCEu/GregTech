@@ -251,13 +251,13 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                         toolsToMatch.set(1, "screwdriver");
                         break;
                     case 2:
-                        toolsToMatch.set(2, "soft_hammer");
+                        toolsToMatch.set(2, "mallet");
                         break;
                     case 3:
-                        toolsToMatch.set(3, "hard_hammer");
+                        toolsToMatch.set(3, "hammer");
                         break;
                     case 4:
-                        toolsToMatch.set(4, "wire_cutter");
+                        toolsToMatch.set(4, "cutter");
                         break;
                     case 5:
                         toolsToMatch.set(5, "crowbar");
@@ -274,14 +274,14 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
             if (toolToMatch != null) {
                 // Try to use the item in the player's "hand" (under the cursor)
                 ItemStack heldItem = entityPlayer.inventory.getItemStack();
-                if (heldItem.getItem().getToolClasses(stack).contains(toolToMatch)) {
+                if (ToolHelper.isTool(stack, toolToMatch)) {
                     fixProblemWithTool(i, heldItem, entityPlayer);
                     continue;
                 }
 
                 // Then try all the remaining inventory slots
                 for (ItemStack itemStack : entityPlayer.inventory.mainInventory) {
-                    if (itemStack.isItemEqualIgnoreDurability(tool.getStackForm())) {
+                    if (ToolHelper.isTool(stack, toolToMatch)) {
                         fixProblemWithTool(problemIndex, itemStack, entityPlayer);
 
                         if (toolsToMatch.stream().allMatch(Objects::isNull)) {
@@ -289,11 +289,10 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                         }
                     }
                 }
-
-                for (ItemStack itemStack : entityPlayer.inventory.offHandInventory) {
-                    if (itemStack.isItemEqualIgnoreDurability(tool.getStackForm())) {
-                        fixProblemWithTool(problemIndex, itemStack, entityPlayer);
-
+                for (ItemStack stack : entityPlayer.inventory.mainInventory) {
+                    if (ToolHelper.isTool(stack, toolToMatch)) {
+                        ((IMaintenance) this.getController()).setMaintenanceFixed(i);
+                        ToolHelper.damageItemWhenCrafting(stack, entityPlayer);
                         if (toolsToMatch.stream().allMatch(Objects::isNull)) {
                             return;
                         }
