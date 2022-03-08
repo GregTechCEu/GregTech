@@ -256,6 +256,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
     @SideOnly(Side.CLIENT)
     public void renderScreen(float partialTicks, RayTraceResult rayTraceResult) {
+        if (getController() == null) return;
         EnumFacing side = getController().getFrontFacing();
         GlStateManager.translate((scale - 1) * 0.5, (scale - 1) * 0.5, 0);
         GlStateManager.scale(this.scale, this.scale, 1);
