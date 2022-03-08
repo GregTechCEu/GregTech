@@ -115,7 +115,7 @@ public class ToolItems {
                 .sound(GTSounds.FORGE_HAMMER)
                 .toolClasses("pickaxe", "hammer"));
         WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench")
-                .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting())
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse())
                 .sound(GTSounds.WRENCH_TOOL)
                 .oreDicts("craftingToolWrench")
                 .toolClasses("wrench"));
