@@ -130,7 +130,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
                 return null;
             if (clipboardBehaviour.get() instanceof ClipboardBehavior) {
                 PlayerInventoryHolder holder = new PlayerInventoryHolder(new GregFakePlayer(entityPlayer.world), EnumHand.MAIN_HAND); // We can't have this actually set the player's hand
-                holder.setCurrentItem(this.getClipboard());
+                holder.setCustomValidityCheck(this::isValid).setCurrentItem(this.getClipboard());
                 if (entityPlayer instanceof GregFakePlayer) { // This is how to tell if this is being called in-world or not
                     return ((ClipboardBehavior) clipboardBehaviour.get()).createMTEUI(holder, entityPlayer);
                 } else {
