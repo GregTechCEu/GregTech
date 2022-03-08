@@ -28,7 +28,6 @@ import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.stack.MaterialStack;
-import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -45,7 +44,6 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -166,7 +164,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         String string = toolTag.getString("Material");
         Material material = GregTechAPI.MaterialRegistry.get(string);
         if (material == null) {
-            GTLog.logger.error("Attempt to get {} as a tool material, but material does not exist. Using Neutronium instead.", string);
             toolTag.setString("Material", (material = Materials.Neutronium).toString());
         }
         return material;
@@ -176,7 +173,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         Material material = getToolMaterial(stack);
         ToolProperty property = material.getProperty(PropertyKey.TOOL);
         if (property == null) {
-            GTLog.logger.error("Tool property for {} does not exist. Using Neutronium's tool property instead.", material);
             property = Materials.Neutronium.getProperty(PropertyKey.TOOL);
         }
         return property;
@@ -186,7 +182,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         Material material = getToolMaterial(stack);
         DustProperty property = material.getProperty(PropertyKey.DUST);
         if (property == null) {
-            GTLog.logger.error("Dust property for {} does not exist. Using Neutronium's dust property instead.", material);
             property = Materials.Neutronium.getProperty(PropertyKey.DUST);
         }
         return property;
