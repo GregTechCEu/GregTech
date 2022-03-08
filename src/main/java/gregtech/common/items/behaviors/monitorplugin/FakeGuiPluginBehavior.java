@@ -10,6 +10,7 @@ import gregtech.api.gui.impl.FakeModularGui;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -218,7 +219,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
     @Override
     public boolean onClickLogic(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, boolean isRight, double x, double y) {
         if (this.screen.getWorld().isRemote) return true;
-        if (fakeModularUIContainer != null && fakeModularUIContainer.modularUI != null && !playerIn.getHeldItemMainhand().hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null)) {
+        if (fakeModularUIContainer != null && fakeModularUIContainer.modularUI != null && !ToolHelper.isTool(playerIn.getHeldItemMainhand(), "screwdriver")) {
             int width = fakeModularUIContainer.modularUI.getWidth();
             int height = fakeModularUIContainer.modularUI.getHeight();
             float halfW = width / 2f;
