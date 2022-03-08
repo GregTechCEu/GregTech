@@ -17,6 +17,114 @@ public class SecondDegreeMaterials {
 
     public static void register() {
 
+        // MATERIALS MIGRATED UP FROM FIRST DEGREE
+        // These IDs are from the First Degree block,
+        // but had to be left as-is when moved to
+        // avoid voiding items in worlds.
+
+        Almandine = new Material.Builder(250, "almandine")
+                .gem(1).ore()
+                .color(0xFF0000)
+                .components(Alumina, 5, Iron, 3, SiliconDioxide, 3, Oxygen, 3)
+                .build()
+                .setFormula("(Al2O3)Fe3(SiO2)3O3", true);
+
+        Asbestos = new Material.Builder(253, "asbestos")
+                .dust(1).ore()
+                .color(0xE6E6E6)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Magnesium, 3, SiliconDioxide, 2, Water, 2, Oxygen, 3)
+                .build();
+
+        BlueTopaz = new Material.Builder(257, "blue_topaz")
+                .gem(3).ore()
+                .color(0x7B96DC).iconSet(GEM_HORIZONTAL)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .components(Alumina, 1, Silicon, 1, Oxygen, 2, Fluorine, 2, Water, 1)
+                .toolStats(7.0f, 3.0f, 256, 15)
+                .build().setFormula("(Al2O3)(SiO2)F2(H2O)", true);
+
+        Emerald = new Material.Builder(278, "emerald")
+                .gem().ore()
+                .color(0x50FF50).iconSet(EMERALD)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_LENS)
+                .components(Alumina, 1, Beryllium, 3, SiliconDioxide, 6, Oxygen, 3)
+                .toolStats(10.0f, 2.0f, 368, 15)
+                .build();
+
+        Grossular = new Material.Builder(282, "grossular")
+                .gem(1).ore()
+                .color(0xC86400).iconSet(RUBY)
+                .components(Alumina, 5, Calcium, 3, SiliconDioxide, 3, Oxygen, 3)
+                .build().setFormula("(Al2O3)Ca3(SiO2)3O3", true);
+
+        Pyrope = new Material.Builder(308, "pyrope")
+                .gem().ore()
+                .color(0x783264).iconSet(RUBY)
+                .components(Alumina, 5, Magnesium, 3, SiliconDioxide, 3, Oxygen, 3)
+                .build().setFormula("(Al2O3)Mg3(SiO2)3O3", true);
+
+        Ruby = new Material.Builder(311, "ruby")
+                .gem().ore()
+                .color(0xFF6464).iconSet(RUBY)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
+                .components(Alumina, 5, Chrome, 1)
+                .toolStats(8.5f, 3.0f, 256, 33)
+                .build().setFormula("Al2O3Cr", true);
+
+        Spessartine = new Material.Builder(321, "spessartine")
+                .gem().ore()
+                .color(0xFF6464).iconSet(RUBY)
+                .components(Alumina, 5, Manganese, 3, SiliconDioxide, 3, Oxygen, 3)
+                .build().setFormula("(Al2O3)Mn3(SiO2)3O3", true);
+
+        Topaz = new Material.Builder(329, "topaz")
+                .gem(3).ore()
+                .color(0xFF8000).iconSet(GEM_HORIZONTAL)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .components(Alumina, 5, Fluorine, 1, SiliconDioxide, 1, Water, 1)
+                .toolStats(7.0f, 2.0f, 256, 15)
+                .build().setFormula("(Al2O3)F(SiO2)(H2O)", true);
+
+        Spodumene = new Material.Builder(381, "spodumene")
+                .dust().ore()
+                .color(0xBEAAAA)
+                .components(Alumina, 5, Lithium, 2, SiliconDioxide, 4, Oxygen, 1)
+                .build().setFormula("(Al2O3)Li2(SiO2)4O", true);
+
+        Lepidolite = new Material.Builder(382, "lepidolite")
+                .dust().ore()
+                .color(0xF0328C).iconSet(FINE)
+                .components(Alumina, 2, Potassium, 1, Lithium, 3, Fluorine, 2, Oxygen, 6)
+                .build();
+
+        // todo mg vitriol?
+        Talc = new Material.Builder(392, "talc")
+                .dust().ore()
+                .color(0x5AB45A).iconSet(FINE)
+                .components(Magnesium, 3, SiliconDioxide, 4, Water, 1, Oxygen, 3)
+                .build();
+
+        // todo mg vitriol?
+        Soapstone = new Material.Builder(393, "soapstone")
+                .dust(1).ore()
+                .color(0x5F915F)
+                .components(Magnesium, 3, SiliconDioxide, 4, Water, 1, Oxygen, 3)
+                .build();
+
+        // todo Al vitriol?
+        Kyanite = new Material.Builder(394, "kyanite")
+                .dust().ore()
+                .color(0x6E6EFA).iconSet(FLINT)
+                .components(Alumina, 1, SiliconDioxide, 1)
+                .build();
+
+
+        ////////////////////////////
+        // Start of new Materials //
+        ////////////////////////////
+
+
         Glass = new Material.Builder(2000, "glass")
                 .gem(0).fluid()
                 .color(0xFAFAFA).iconSet(GLASS)
@@ -196,28 +304,25 @@ public class SecondDegreeMaterials {
                 .components(CertusQuartz, 1, Quartzite, 1)
                 .build();
 
-        // todo comp
         Pollucite = new Material.Builder(2024, "pollucite")
                 .dust().ore()
                 .color(0xF0D2D2)
-                .components(Caesium, 2, Aluminium, 2, Silicon, 4, Water, 2, Oxygen, 12)
+                .components(Alumina, 1, Caesium, 2, SiliconDioxide, 4, Water, 2, Oxygen, 1)
                 .build();
 
         // Free ID 2025
 
-        // todo comp
+        // TODO move these 2
         Bentonite = new Material.Builder(2026, "bentonite")
                 .dust().ore()
                 .color(0xF5D7D2).iconSet(ROUGH)
-                .flags(DISABLE_DECOMPOSITION)
-                .components(Sodium, 1, Magnesium, 6, Silicon, 12, Hydrogen, 4, Water, 5, Oxygen, 36)
+                //.components(SodiumHydroxide, 1, Clay, 13)
                 .build();
 
-        // todo comp
         FullersEarth = new Material.Builder(2027, "fullers_earth")
                 .dust().ore()
                 .color(0xA0A078).iconSet(FINE)
-                .components(Magnesium, 1, Silicon, 4, Hydrogen, 1, Water, 4, Oxygen, 11)
+                //.components(Magnesium, 1, Clay, 13)
                 .build();
 
         Pitchblende = new Material.Builder(2028, "pitchblende")

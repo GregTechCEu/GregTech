@@ -229,7 +229,7 @@ public class MetaBlocks {
         PLANKS.setRegistryName("planks");
 
         createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME), MetaBlocks::createFrameBlock);
-        createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.hasProperty(PropertyKey.DUST), MetaBlocks::createSurfaceRockBlock);
+        createGeneratedBlock(m -> m.hasProperty(PropertyKey.ORE) && m.getProperty(PropertyKey.ORE).doGenerateBlock() && m.hasProperty(PropertyKey.DUST), MetaBlocks::createSurfaceRockBlock);
 
         createGeneratedBlock(
                 material -> (material.hasProperty(PropertyKey.INGOT) || material.hasProperty(PropertyKey.GEM) || material.hasFlag(FORCE_GENERATE_BLOCK))

@@ -374,7 +374,7 @@ public class MaterialRecipeHandler {
                         ingotStack, "XXX", "XXX", "XXX", 'X', new UnificationEntry(orePrefix, material));
             }
 
-            if (dustTiny.doGenerateItem(material)) {
+            if (dustTiny.doGenerateItem(material) && !material.hasProperty(PropertyKey.BLAST)) {
                 ModHandler.addSmeltingRecipe(new UnificationEntry(dustTiny, material), nuggetStack.copy());
             }
 
@@ -420,7 +420,7 @@ public class MaterialRecipeHandler {
                     ingotStack, "XX", "XX", 'X', new UnificationEntry(chunk, material));
         }
 
-        if (dustSmall.doGenerateItem(material)) {
+        if (dustSmall.doGenerateItem(material) && !material.hasProperty(PropertyKey.BLAST)) {
             ModHandler.addSmeltingRecipe(new UnificationEntry(dustSmall, material), chunkStack.copy());
         }
 

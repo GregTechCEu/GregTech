@@ -14,6 +14,21 @@ public class HigherDegreeMaterials {
 
     public static void register() {
 
+        // MATERIALS MIGRATED UP FROM SECOND DEGREE
+        // These IDs are from the Second Degree block,
+        // but had to be left as-is when moved to
+        // avoid voiding items in worlds.
+
+
+
+
+
+        ////////////////////////////
+        // Start of new Materials //
+        ////////////////////////////
+
+
+        // TODO This still needs a better solution
         Electrotine = new Material.Builder(2507, "electrotine")
                 .dust().ore(2, 1, true)
                 .color(0x3CB4C8).iconSet(SHINY)
@@ -60,11 +75,12 @@ public class HigherDegreeMaterials {
                 .components(Olivine, 1, Calcite, 3, Flint, 8, DarkAsh, 4)
                 .build();
 
-        // todo processing
+        // todo processing, move to first degree
         GraniticMineralSand = new Material.Builder(2513, "granitic_mineral_sand")
                 .dust(1).ore()
                 .color(0x283C3C).iconSet(SAND)
-                .components(Magnetite, 1, GraniteBlack, 1)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Iron, 3, Oxygen, 4)
                 .build();
 
         Redrock = new Material.Builder(2514, "redrock")
@@ -101,11 +117,12 @@ public class HigherDegreeMaterials {
                 .fluidTemp(1400)
                 .build();
 
-        // todo processing
+        // todo processing, move to first degree
         BasalticMineralSand = new Material.Builder(2518, "basaltic_mineral_sand")
                 .dust(1).ore()
                 .color(0x283228).iconSet(SAND)
-                .components(Magnetite, 1, Basalt, 1)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Iron, 3, Oxygen, 4)
                 .build();
 
         HSSE = new Material.Builder(2519, "hsse")

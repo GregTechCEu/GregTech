@@ -8,11 +8,17 @@ import gregtech.api.unification.stack.MaterialStack;
 
 import static gregtech.api.GTValues.LV;
 import static gregtech.api.GTValues.VA;
-import static gregtech.api.recipes.RecipeMaps.ARC_FURNACE_RECIPES;
-import static gregtech.api.recipes.RecipeMaps.CHEMICAL_BATH_RECIPES;
+import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 
+/**
+ * Class for special Ore-related recipes.
+ * Includes:
+ * - Aqua Regia Bathing recipes
+ * - Arc Furnace Roasting recipes
+ * - Some special decomposition recipes for some Ore Dusts
+ */
 public class SpecialRecipeHandler {
 
     public static void init() {
@@ -102,9 +108,69 @@ public class SpecialRecipeHandler {
                 .input(dust, Sphalerite, 2)
                 .fluidInputs(Oxygen.getFluid(2000))
                 .output(ingot, Zinc)
-                .chancedOutput(dustSmall, Gallium, 2000, 1000)
+                .chancedOutput(chunk, Gallium, 2000, 1000)
                 .fluidOutputs(SulfurDioxide.getFluid(1000))
                 .duration(200).EUt(VA[LV]).buildAndRegister();
+
+        // Special Decomposition Recipes
+
+        // 3 Red Sand == 3/4ths of an Iron
+
+        // Granitic Mineral Sand
+        SIFTER_RECIPES.recipeBuilder().EUt(30).duration(100)
+                .input(dust, GraniticMineralSand, 9)
+                .chancedOutput(dust, GraniteBlack, 3, 7500, 0)
+                .chancedOutput(dust, Magnetite, 3, 5000, 0)
+                .chancedOutput(nugget, Silver, 6, 2500, 0)
+                .chancedOutput(nugget, Lead, 12, 2500, 0)
+                .chancedOutput(nugget, Cobalt, 3, 2500, 0)
+                .buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder().EUt(30).duration(100)
+                .input(dust, GraniticMineralSand, 9)
+                .chancedOutput(dust, GraniteBlack, 6, 7500, 0)
+                .chancedOutput(dust, Magnetite, 3, 5000, 0)
+                .chancedOutput(nugget, Vanadium, 6, 2500, 0)
+                .chancedOutput(nugget, Lead, 6, 2500, 0)
+                .chancedOutput(nugget, Cobalt, 3, 2500, 0)
+                .buildAndRegister();
+
+        ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder().EUt(30).duration(100)
+                .input(dust, GraniticMineralSand, 9)
+                .chancedOutput(dust, GraniteBlack, 3, 7500, 0)
+                .chancedOutput(dust, Magnetite, 6, 5000, 0)
+                .chancedOutput(nugget, Silver, 12, 2500, 0)
+                .chancedOutput(nugget, Lead, 6, 2500, 0)
+                .chancedOutput(nugget, Cobalt, 6, 2500, 0)
+                .buildAndRegister();
+
+        // Basaltic Mineral Sand
+        SIFTER_RECIPES.recipeBuilder().EUt(30).duration(100)
+                .input(dust, BasalticMineralSand, 9)
+                .chancedOutput(dust, Basalt, 3, 7500, 0)
+                .chancedOutput(dust, Magnetite, 3, 5000, 0)
+                .chancedOutput(nugget, Gold, 6, 2500, 0)
+                .chancedOutput(nugget, Copper, 12, 2500, 0)
+                .chancedOutput(nugget, Nickel, 3, 2500, 0)
+                .buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder().EUt(30).duration(100)
+                .input(dust, BasalticMineralSand, 9)
+                .chancedOutput(dust, Basalt, 6, 7500, 0)
+                .chancedOutput(dust, Magnetite, 3, 5000, 0)
+                .chancedOutput(nugget, Vanadium, 6, 2500, 0)
+                .chancedOutput(nugget, Copper, 6, 2500, 0)
+                .chancedOutput(nugget, Nickel, 3, 2500, 0)
+                .buildAndRegister();
+
+        ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder().EUt(30).duration(100)
+                .input(dust, BasalticMineralSand, 9)
+                .chancedOutput(dust, Basalt, 3, 7500, 0)
+                .chancedOutput(dust, Magnetite, 6, 5000, 0)
+                .chancedOutput(nugget, Gold, 12, 2500, 0)
+                .chancedOutput(nugget, Copper, 6, 2500, 0)
+                .chancedOutput(nugget, Nickel, 6, 2500, 0)
+                .buildAndRegister();
     }
 
     /**

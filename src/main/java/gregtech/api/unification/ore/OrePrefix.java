@@ -445,34 +445,38 @@ public class OrePrefix {
     }
 
     public long getMaterialAmount(@Nullable Material material) {
-
-        if(material == null) {
-            return this.materialAmount;
-        }
-
+        if(material == null) return materialAmount;
         if (this == block) {
-            //glowstone and nether quartz blocks use 4 gems (dusts)
             if (material == Materials.Glowstone ||
                     material == Materials.NetherQuartz ||
                     material == Materials.Brick ||
-                    material == Materials.Clay)
+                    material == Materials.Clay) {
+                //glowstone and nether quartz blocks use 4 gems (dusts)
                 return M * 4;
-                //glass, ice and obsidian gain only one dust
-            else if (material == Materials.Glass ||
+            } else if (material == Materials.Glass ||
                     material == Materials.Ice ||
                     material == Materials.Obsidian ||
-                    material == Materials.Concrete)
+                    material == Materials.Concrete) {
+                //glass, ice and obsidian gain only one dust
                 return M;
+            }
         } else if (this == stick) {
-            if (material == Materials.Blaze)
+            if (material == Materials.Blaze) {
+                //blaze rod makes 4 blaze powder
                 return M * 4;
-            else if (material == Materials.Bone)
+
+            } else if (material == Materials.Bone) {
+                //bone makes 5 bone meal
                 return M * 5;
+            }
         } else if (this == crushed || this == crushedPurified || this == crushedRefined) {
-            if (material == Materials.Redstone || material == Materials.Electrotine) {
-                return this.materialAmount * 4;
+            if (material == Materials.Redstone) {
+                //redstone outputs 4 dust per crushed to match vanilla ore and expected demand
+                return M * 4;
+
             } else if (material == Materials.Lapis || material == Materials.Sodalite || material == Materials.Lazurite) {
-                return this.materialAmount * 5;
+                //lapis (and similar) outputs 5 dust per crushed to match vanilla ore and expected demand
+                return M * 5;
             }
         }
         return materialAmount;

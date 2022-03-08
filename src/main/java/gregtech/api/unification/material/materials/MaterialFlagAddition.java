@@ -254,6 +254,7 @@ public class MaterialFlagAddition {
 
         oreProp = Topaz.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(BlueTopaz);
+        oreProp.setVitriol(AluminiumSulfate);
 
         oreProp = Tungstate.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Manganese, Silver, Lithium);

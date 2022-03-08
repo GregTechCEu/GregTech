@@ -76,7 +76,7 @@ public class CommonProxy {
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
 
-           if (material.hasProperty(PropertyKey.ORE)) {
+           if (material.hasProperty(PropertyKey.ORE) && material.getProperty(PropertyKey.ORE).doGenerateBlock()) {
                 createOreBlock(material);
             }
 

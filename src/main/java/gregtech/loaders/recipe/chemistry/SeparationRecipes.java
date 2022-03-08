@@ -428,15 +428,6 @@ public class SeparationRecipes {
                 .duration(270).EUt(VA[LV] * 2).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Bentonite, 30)
-                .output(dust, Sodium)
-                .output(dust, Magnesium, 6)
-                .output(dust, Silicon, 12)
-                .fluidOutputs(Water.getFluid(5000))
-                .fluidOutputs(Hydrogen.getFluid(6000))
-                .duration(480).EUt(VA[MV]).buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder()
                 .input(dust, TungsticAcid, 7)
                 .output(dust, Tungsten)
                 .fluidOutputs(Hydrogen.getFluid(2000))
@@ -561,14 +552,6 @@ public class SeparationRecipes {
                 .output(dust, Tin)
                 .fluidOutputs(HydrochloricAcid.getFluid(4000))
                 .fluidOutputs(Oxygen.getFluid(2000))
-                .buildAndRegister();
-
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(252).EUt(60)
-                .input(dust, Asbestos, 10)
-                .output(dust, Magnesium, 3)
-                .output(dust, SiliconDioxide, 2)
-                .fluidOutputs(Water.getFluid(2000))
-                .fluidOutputs(Oxygen.getFluid(3000))
                 .buildAndRegister();
 
         // Thermal Centrifuge

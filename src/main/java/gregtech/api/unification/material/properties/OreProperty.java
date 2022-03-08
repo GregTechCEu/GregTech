@@ -52,6 +52,13 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
      */
     private Material vitriol;
 
+    /**
+     * Whether or not this Material should generate an actual Ore Block.
+     * <p>
+     * Default: true
+     */
+    private boolean doGenerateBlock = true;
+
     public OreProperty(int oreMultiplier) {
         this.oreMultiplier = oreMultiplier;
         this.emissive = false;
@@ -61,6 +68,8 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
         this.oreMultiplier = oreMultiplier;
         this.emissive = emissive;
     }
+
+    // TODO Constructors for doGenerateBlock
 
     /**
      * Default values constructor.
@@ -109,6 +118,14 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
     public List<Material> getOreByProducts() {
         return this.oreByProducts;
+    }
+
+    public boolean doGenerateBlock() {
+        return doGenerateBlock;
+    }
+
+    public void setGenerateBlock(boolean doGenerateBlock) {
+        this.doGenerateBlock = doGenerateBlock;
     }
 
     @Override

@@ -16,12 +16,10 @@ import static gregtech.api.unification.material.info.MaterialIconSet.*;
 public class FirstDegreeMaterials {
 
     public static void register() {
-        Almandine = new Material.Builder(250, "almandine")
-                .gem(1).ore()
-                .color(0xFF0000)
-                .components(Aluminium, 2, Iron, 3, Silicon, 3, Oxygen, 12)
-                .build();
 
+        // ID 250 RESERVED: Almandine
+
+        // TODO?
         Andradite = new Material.Builder(251, "andradite")
                 .gem(1)
                 .color(0x967800).iconSet(RUBY)
@@ -38,13 +36,7 @@ public class FirstDegreeMaterials {
                 .build();
         Copper.getProperty(PropertyKey.INGOT).setArcSmeltingInto(AnnealedCopper);
 
-        Asbestos = new Material.Builder(253, "asbestos")
-                .dust(1).ore()
-                .color(0xE6E6E6)
-                .flags(DISABLE_DECOMPOSITION)
-                .components(Magnesium, 3, Silicon, 2, Hydrogen, 4, Oxygen, 9)
-                .build()
-                .setFormula("Mg3(SiO2)2(H2O)2O3", true);
+        // ID 253 RESERVED: Asbestos
 
         Ash = new Material.Builder(254, "ash")
                 .dust(1)
@@ -68,14 +60,7 @@ public class FirstDegreeMaterials {
                 .fluidTemp(660)
                 .build();
 
-        // TODO Al vitriol? change comp?
-        BlueTopaz = new Material.Builder(257, "blue_topaz")
-                .gem(3).ore()
-                .color(0x7B96DC).iconSet(GEM_HORIZONTAL)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
-                .components(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6)
-                .build()
-                .setFormula("(Al2O3)(SiO2)F2(H2O)", true);
+        // ID 257 RESERVED: Blue Topaz
 
         Bone = new Material.Builder(258, "bone")
                 .dust(1)
@@ -233,13 +218,7 @@ public class FirstDegreeMaterials {
                 .fluidTemp(1285)
                 .build();
 
-        // todo comp
-        Emerald = new Material.Builder(278, "emerald")
-                .gem().ore()
-                .color(0x50FF50).iconSet(EMERALD)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_LENS)
-                .components(Beryllium, 3, Aluminium, 2, Silicon, 6, Oxygen, 18)
-                .build();
+        // ID 278 RESERVED: Emerald
 
         Galena = new Material.Builder(279, "galena")
                 .dust(3).ore()
@@ -262,12 +241,7 @@ public class FirstDegreeMaterials {
                 .components(Aluminium, 2, Oxygen, 3)
                 .build();
 
-        // TODO Comp
-        Grossular = new Material.Builder(282, "grossular")
-                .gem(1).ore()
-                .color(0xC86400).iconSet(RUBY)
-                .components(Calcium, 3, Aluminium, 2, Silicon, 3, Oxygen, 12)
-                .build();
+        // ID 282 RESERVED: Grossular
 
         Ice = new Material.Builder(283, "ice")
                 .dust(0).fluid()
@@ -277,6 +251,7 @@ public class FirstDegreeMaterials {
                 .fluidTemp(273)
                 .build();
 
+        // todo new recipe to get TiO2 from this
         Ilmenite = new Material.Builder(284, "ilmenite")
                 .dust(3).ore()
                 .color(0x463732).iconSet(METALLIC)
@@ -483,12 +458,7 @@ public class FirstDegreeMaterials {
                 .components(Manganese, 1, Oxygen, 2)
                 .build();
 
-        // todo comp
-        Pyrope = new Material.Builder(308, "pyrope")
-                .gem().ore()
-                .color(0x783264).iconSet(RUBY)
-                .components(Aluminium, 2, Magnesium, 3, Silicon, 3, Oxygen, 12)
-                .build();
+        // ID 308 RESERVED: Pyrope
 
         RockSalt = new Material.Builder(309, "rock_salt")
                 .gem(1).ore()
@@ -505,13 +475,7 @@ public class FirstDegreeMaterials {
                 .blastTemp(4500, GasTier.HIGH, VA[EV], 1600)
                 .build();
 
-        // todo comp?
-        Ruby = new Material.Builder(311, "ruby")
-                .gem().ore()
-                .color(0xFF6464).iconSet(RUBY)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
-                .components(Chrome, 1, Aluminium, 2, Oxygen, 3)
-                .build();
+        // ID 311 RESERVED: Ruby
 
         Salt = new Material.Builder(312, "salt")
                 .gem(1).ore()
@@ -527,7 +491,6 @@ public class FirstDegreeMaterials {
                 .components(Potassium, 1, Nitrogen, 1, Oxygen, 3)
                 .build();
 
-        // todo comp
         Sapphire = new Material.Builder(314, "sapphire")
                 .gem().ore()
                 .color(0x6464C8).iconSet(GEM_VERTICAL)
@@ -576,12 +539,7 @@ public class FirstDegreeMaterials {
                 .fluidTemp(544)
                 .build();
 
-        // todo comp
-        Spessartine = new Material.Builder(321, "spessartine")
-                .gem().ore()
-                .color(0xFF6464).iconSet(RUBY)
-                .components(Aluminium, 2, Manganese, 3, Silicon, 3, Oxygen, 12)
-                .build();
+        // ID 321 RESERVED: Spessartine
 
         Sphalerite = new Material.Builder(322, "sphalerite")
                 .dust(1).ore()
@@ -643,13 +601,7 @@ public class FirstDegreeMaterials {
                 .fluidTemp(1258)
                 .build();
 
-        // todo comp
-        Topaz = new Material.Builder(329, "topaz")
-                .gem(3).ore()
-                .color(0xFF8000).iconSet(GEM_HORIZONTAL)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
-                .components(Aluminium, 2, Silicon, 1, Fluorine, 1, Hydrogen, 2)
-                .build();
+        // ID 329 RESERVED: Topaz
 
         Tungstate = new Material.Builder(330, "tungstate")
                 .dust(3).ore()
@@ -974,30 +926,19 @@ public class FirstDegreeMaterials {
                 .components(Nickel, 9, Sulfur, 8)
                 .build();
 
-        // todo comp
-        Spodumene = new Material.Builder(381, "spodumene")
-                .dust().ore()
-                .color(0xBEAAAA)
-                .components(Lithium, 1, Aluminium, 1, Silicon, 2, Oxygen, 6)
-                .build();
+        // ID 381 RESERVED: Spodumene
 
-        // todo comp
-        Lepidolite = new Material.Builder(382, "lepidolite")
-                .dust().ore()
-                .color(0xF0328C).iconSet(FINE)
-                .components(Potassium, 1, Lithium, 3, Aluminium, 4, Fluorine, 2, Oxygen, 10)
-                .build();
+        // ID 382 RESERVED: Lepidolite
 
         // Free ID 383
 
-        // TODO All of this
+        // TODO All of this (remove?)
         GlauconiteSand = new Material.Builder(384, "glauconite_sand")
                 .dust().ore() // used  to be 3
                 .color(0x82B43C).iconSet(SAND)
                 .components(Potassium, 1, Magnesium, 2, Aluminium, 4, Hydrogen, 2, Oxygen, 12)
                 .build();
 
-        // todo comp
         Malachite = new Material.Builder(385, "malachite")
                 .gem().ore()
                 .color(0x055F05).iconSet(LAPIS)
@@ -1040,26 +981,11 @@ public class FirstDegreeMaterials {
 
         // Free ID 391
 
-        // todo comp, mg vitriol?
-        Talc = new Material.Builder(392, "talc")
-                .dust().ore()
-                .color(0x5AB45A).iconSet(FINE)
-                .components(Magnesium, 3, Silicon, 4, Hydrogen, 2, Oxygen, 12)
-                .build();
+        // ID 392 RESERVED
 
-        // todo comp, mg vitriol?
-        Soapstone = new Material.Builder(393, "soapstone")
-                .dust(1).ore()
-                .color(0x5F915F)
-                .components(Magnesium, 3, Silicon, 4, Hydrogen, 2, Oxygen, 12)
-                .build();
+        // ID 393 RESERVED
 
-        // todo comp, Al vitriol?
-        Kyanite = new Material.Builder(394, "kyanite")
-                .dust().ore()
-                .color(0x6E6EFA).iconSet(FLINT)
-                .components(Aluminium, 2, Silicon, 1, Oxygen, 5)
-                .build();
+        // ID 394 RESERVED
 
         IronMagnetic = new Material.Builder(395, "iron_magnetic")
                 .ingot()
