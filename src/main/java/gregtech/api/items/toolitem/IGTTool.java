@@ -124,7 +124,11 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         toolTag.setInteger("MaxDurability", toolProperty.getToolDurability());
         toolTag.setInteger("Durability", 0);
         // Set material enchantments
-        EnchantmentHelper.setEnchantments(toolProperty.getEnchantments(), stack);
+        toolProperty.getEnchantments().forEach((enchantment, level) -> {
+            if (stack.getItem().canApplyAtEnchantingTable(stack, enchantment)) {
+                stack.addEnchantment(enchantment, level);
+            }
+        });
         // Set AoEDefinition
         AoEDefinition aoeDefinition = getToolStats().getAoEDefinition(stack);
         toolTag.setInteger("AoEMaxColumn", aoeDefinition.column);
