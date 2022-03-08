@@ -543,7 +543,7 @@ public class MetaTileEntities {
             }
         }
         ENERGY_INPUT_HATCH_4A[0] = registerMetaTileEntity(1399, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.input_4a.ev"), GTValues.EV, 4, false));
-        ENERGY_OUTPUT_HATCH_4A[0] = registerMetaTileEntity(1400, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a.ev"), GTValues.EV, 4, false));
+        ENERGY_OUTPUT_HATCH_4A[0] = registerMetaTileEntity(1400, new MetaTileEntityEnergyHatch(gregtechId("energy_hatch.output_4a.ev"), GTValues.EV, 4, true));
 
 
         // Transformer, IDs 1270-1299
