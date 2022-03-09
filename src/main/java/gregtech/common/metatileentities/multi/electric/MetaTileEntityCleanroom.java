@@ -164,7 +164,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             center[i] = I;
         }
 
-        TraceabilityPredicate casing = states(getCasingState()).setMinGlobalLimited(width * height * depth / 2)
+        TraceabilityPredicate casing = states(getCasingState()).setMinGlobalLimited((width * height * depth - (width - 2) * (height - 2) * (depth - 2)) * 3 / 4)
                 .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3))
                 .or(autoAbilities());
 
