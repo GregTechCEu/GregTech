@@ -61,6 +61,11 @@ public class Recipe {
      */
     private final boolean hidden;
 
+    /**
+     * If this Recipe is a Crafttweaker recipe. Used for logging purposes
+     */
+    private final boolean isCTRecipe;
+
     private final RecipePropertyStorage recipePropertyStorage;
 
     private static final ItemStackHashStrategy hashStrategy = ItemStackHashStrategy.comparingAll();
@@ -69,7 +74,7 @@ public class Recipe {
 
     public Recipe(List<CountableIngredient> inputs, List<ItemStack> outputs, List<ChanceEntry> chancedOutputs,
                   List<FluidStack> fluidInputs, List<FluidStack> fluidOutputs,
-                  int duration, int EUt, boolean hidden) {
+                  int duration, int EUt, boolean hidden, boolean isCTRecipe) {
         this.recipePropertyStorage = new RecipePropertyStorage();
         this.inputs = NonNullList.create();
         this.inputs.addAll(inputs);
@@ -81,6 +86,7 @@ public class Recipe {
         this.duration = duration;
         this.EUt = EUt;
         this.hidden = hidden;
+        this.isCTRecipe = isCTRecipe;
 
         //sort not consumables inputs to the end
         this.inputs.sort((ing1, ing2) -> Boolean.compare(ing1.isNonConsumable(), ing2.isNonConsumable()));
@@ -90,7 +96,7 @@ public class Recipe {
     public Recipe copy() {
 
         // Create a new Recipe object
-        Recipe newRecipe =  new Recipe(this.inputs, this.outputs, this.chancedOutputs, this.fluidInputs, this.fluidOutputs, this.duration, this.EUt, this.hidden);
+        Recipe newRecipe =  new Recipe(this.inputs, this.outputs, this.chancedOutputs, this.fluidInputs, this.fluidOutputs, this.duration, this.EUt, this.hidden, this.isCTRecipe);
 
         // Apply Properties from the original recipe onto the new one
         if(this.recipePropertyStorage.getSize() > 0) {
@@ -411,6 +417,7 @@ public class Recipe {
                 .append("duration", duration)
                 .append("EUt", EUt)
                 .append("hidden", hidden)
+                .append("CTRecipe", isCTRecipe)
                 .toString();
     }
 
@@ -570,6 +577,10 @@ public class Recipe {
 
     public boolean isHidden() {
         return hidden;
+    }
+
+    public boolean getIsCTRecipe() {
+        return isCTRecipe;
     }
 
     public boolean hasValidInputsForDisplay() {

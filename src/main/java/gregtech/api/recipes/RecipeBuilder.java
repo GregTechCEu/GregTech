@@ -1,5 +1,6 @@
 package gregtech.api.recipes;
 
+import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -45,6 +46,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected int duration, EUt;
     protected boolean hidden = false;
+
+    protected boolean isCTRecipe = false;
 
     protected int parallel = 0;
 
@@ -514,6 +517,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R isCTRecipe() {
+        this.isCTRecipe = true;
+        return (R) this;
+    }
+
     public R setRecipeMap(RecipeMap<R> recipeMap) {
         this.recipeMap = recipeMap;
         return (R) this;
@@ -529,16 +537,22 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public ValidationResult<Recipe> build() {
         return ValidationResult.newResult(finalizeAndValidate(),
-                new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden));
+                new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe));
     }
 
     protected EnumValidationResult validate() {
         if (EUt == 0) {
             GTLog.logger.error("EU/t cannot be equal to 0", new IllegalArgumentException());
+            if(isCTRecipe) {
+                CraftTweakerAPI.logError("EU/t cannot be equal to 0", new IllegalArgumentException());
+            }
             recipeStatus = EnumValidationResult.INVALID;
         }
         if (duration <= 0) {
             GTLog.logger.error("Duration cannot be less or equal to 0", new IllegalArgumentException());
+            if(isCTRecipe) {
+                CraftTweakerAPI.logError("Duration cannot be less or equal to 0", new IllegalArgumentException());
+            }
             recipeStatus = EnumValidationResult.INVALID;
         }
         if (recipeStatus == EnumValidationResult.INVALID) {
