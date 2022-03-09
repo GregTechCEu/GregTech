@@ -323,7 +323,7 @@ public class ToolHelper {
     public static void treeFellingRoutine(EntityPlayerMP player, ItemStack stack, BlockPos start) {
         IBlockState state = player.world.getBlockState(start);
         if (state.getBlock().isWood(player.world, start)) {
-            TreeFellingListener.start(stack, start, player);
+            TreeFellingListener.start(state, stack, start, player);
         }
     }
 
@@ -486,9 +486,9 @@ public class ToolHelper {
 
     private static class TreeFellingListener {
 
-        private static void start(ItemStack tool, BlockPos start, EntityPlayerMP player) {
+        private static void start(IBlockState state, ItemStack tool, BlockPos start, EntityPlayerMP player) {
             World world = player.world;
-            Block block = world.getBlockState(start).getBlock();
+            Block block = state.getBlock();
             BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
             Queue<BlockPos> checking = new ArrayDeque<>();
             Set<BlockPos> visited = new ObjectOpenHashSet<>();
