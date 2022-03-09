@@ -127,6 +127,11 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     }
 
     @Override
+    public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player) {
+        return definition$onBlockStartBreak(itemstack, pos, player);
+    }
+
+    @Override
     public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
         return definition$onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
     }

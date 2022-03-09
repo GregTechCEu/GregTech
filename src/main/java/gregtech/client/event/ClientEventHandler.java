@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -34,6 +35,9 @@ public class ClientEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
+        if (event.getTarget().getBlockPos() == null) {
+            return;
+        }
         TileEntity tileEntity = event.getPlayer().world.getTileEntity(event.getTarget().getBlockPos());
         if (tileEntity instanceof MetaTileEntityHolder) {
             if (((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
