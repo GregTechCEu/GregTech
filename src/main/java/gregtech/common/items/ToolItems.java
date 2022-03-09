@@ -119,6 +119,11 @@ public class ToolItems {
                 .sound(GTSounds.WRENCH_TOOL)
                 .oreDicts("craftingToolWrench")
                 .toolClasses("wrench"));
+        CROWBAR = register(ItemGTTool.Builder.of(GTValues.MODID, "crowbar")
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().suitableForAttacking().sneakBypassUse().aoeDefinition(18, 0, 0))
+                .sound(GTSounds.WRENCH_TOOL)
+                .oreDicts("craftingToolCrowbar")
+                .toolClasses("crowbar"));
         WIRE_CUTTER = register(ItemGTTool.Builder.of(GTValues.MODID, "wire_cutter")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting())
                 .sound(GTSounds.WIRECUTTER_TOOL)
@@ -194,6 +199,8 @@ public class ToolItems {
     }
 
     // Handle dynamic AoE break speed
+    // Fixme: Under Construction
+    /*
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
         ItemStack stack = event.getEntityPlayer().getHeldItemMainhand();
@@ -203,7 +210,7 @@ public class ToolItems {
             if (!player.isSneaking()) {
                 World world = player.world;
                 if (!ThreadContext.containsKey("GT_AoE_BreakSpeed")) {
-                    Set<BlockPos> validPositions = ((IGTTool) item).getHarvestableBlocks(stack, world, player);
+                    Set<BlockPos> validPositions = ToolHelper.getHarvestableBlocks(stack, world, player);
                     if (!validPositions.isEmpty()) {
                         float newSpeed = event.getNewSpeed(); // Take in consideration of higher prioritized event listeners
                         ThreadContext.put("GT_AoE_BreakSpeed", "");
@@ -220,6 +227,7 @@ public class ToolItems {
             }
         }
     }
+     */
 
     // Handle saws harvesting ice without leaving water behind
     // Handle mined blocks teleporting straight into inventory
@@ -287,6 +295,9 @@ public class ToolItems {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public static void onDrawHighlightEvent(DrawBlockHighlightEvent event) {
+        if (event.getTarget().getBlockPos() == null) {
+            return;
+        }
         EntityPlayer player = event.getPlayer();
         ItemStack stack = player.getHeldItemMainhand();
         BlockPos pos = event.getTarget().getBlockPos();
@@ -299,38 +310,39 @@ public class ToolItems {
             return;
         }
         if (!sneaking) {
-            if (stack.getItem() instanceof IGTTool) {
-                Set<BlockPos> validPositions = ((IGTTool) stack.getItem()).getHarvestableBlocks(stack, player.world, player, event.getTarget());
-                float partialTicks = event.getPartialTicks();
-                for (BlockPos validPosition : validPositions) {
-                    event.getContext().drawSelectionBox(player, new RayTraceResult(Vec3d.ZERO, null, validPosition), 0, partialTicks);
-                }
-                DestroyBlockProgress progress = event.getContext().damagedBlocks.get(player.getEntityId());
-                if (progress != null) {
-                    int damage = progress.getPartialBlockDamage();
-                    if (damage > -1) {
-                        double relX = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
-                        double relY = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
-                        double relZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
-                        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-                        Minecraft mc = Minecraft.getMinecraft();
-                        BlockRendererDispatcher rendererDispatcher = mc.blockRenderDispatcher;
-                        preRenderDamagedBlocks();
-                        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-                        bufferBuilder.setTranslation(-relX, -relY, -relZ);
-                        bufferBuilder.noColor(); // ?
-                        for (BlockPos validPosition : validPositions) {
-                            TileEntity tileEntity = mc.world.getTileEntity(validPosition);
-                            boolean hasBreak = tileEntity != null && tileEntity.canRenderBreaking();
-                            if (!hasBreak) {
-                                TextureAtlasSprite sprite = event.getContext().destroyBlockIcons[damage];
-                                rendererDispatcher.renderBlockDamage(mc.world.getBlockState(validPosition), validPosition, sprite, mc.world);
-                            }
+            Set<BlockPos> validPositions = ToolHelper.getHarvestableBlocks(stack, player.world, player, event.getTarget());
+            if (validPositions.isEmpty()) {
+                return;
+            }
+            float partialTicks = event.getPartialTicks();
+            for (BlockPos validPosition : validPositions) {
+                event.getContext().drawSelectionBox(player, new RayTraceResult(Vec3d.ZERO, null, validPosition), 0, partialTicks);
+            }
+            DestroyBlockProgress progress = event.getContext().damagedBlocks.get(player.getEntityId());
+            if (progress != null) {
+                int damage = progress.getPartialBlockDamage();
+                if (damage > -1) {
+                    double relX = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
+                    double relY = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
+                    double relZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
+                    BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+                    Minecraft mc = Minecraft.getMinecraft();
+                    BlockRendererDispatcher rendererDispatcher = mc.blockRenderDispatcher;
+                    preRenderDamagedBlocks();
+                    bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+                    bufferBuilder.setTranslation(-relX, -relY, -relZ);
+                    bufferBuilder.noColor(); // ?
+                    for (BlockPos validPosition : validPositions) {
+                        TileEntity tileEntity = mc.world.getTileEntity(validPosition);
+                        boolean hasBreak = tileEntity != null && tileEntity.canRenderBreaking();
+                        if (!hasBreak) {
+                            TextureAtlasSprite sprite = event.getContext().destroyBlockIcons[damage];
+                            rendererDispatcher.renderBlockDamage(mc.world.getBlockState(validPosition), validPosition, sprite, mc.world);
                         }
-                        Tessellator.getInstance().draw();
-                        bufferBuilder.setTranslation(0.0D, 0.0D, 0.0D);
-                        postRenderDamagedBlocks();
                     }
+                    Tessellator.getInstance().draw();
+                    bufferBuilder.setTranslation(0.0D, 0.0D, 0.0D);
+                    postRenderDamagedBlocks();
                 }
             }
         }
