@@ -102,12 +102,12 @@ public class CraftingRecipeLogic {
         return craftingGridChanged;
     }
 
-    public void performRecipe(EntityPlayer player) {
+    public boolean performRecipe(EntityPlayer player) {
         if (!isRecipeValid()) {
-            return;
+            return false;
         }
         if (!cachedRecipeData.consumeRecipeItems()) {
-            return;
+            return false;
         }
         ForgeHooks.setCraftingPlayer(player);
         NonNullList<ItemStack> remainingItems = cachedRecipe.getRemainingItems(inventoryCrafting); // todo right here is where tools get damaged (in UI)
@@ -130,6 +130,7 @@ public class CraftingRecipeLogic {
                 }
             }
         }
+        return true;
     }
 
     public void handleItemCraft(ItemStack itemStack, EntityPlayer player, boolean simulate) {
