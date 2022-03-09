@@ -172,6 +172,11 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     }
 
     @Override
+    public boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack) {
+        return definition$shouldCauseBlockBreakReset(oldStack, newStack);
+    }
+
+    @Override
     public boolean hasContainerItem(ItemStack stack) {
         return definition$hasContainerItem(stack);
     }

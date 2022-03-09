@@ -389,57 +389,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return stack.copy();
     }
 
-    /**
-     * Damages the tool appropriately
-     *
-     * @param stack  Tool ItemStack
-     * @param entity Entity that has damaged this ItemStack
-     * @param damage Damage the ItemStack will be taking
-     */
-    default void damageItem(ItemStack stack, EntityLivingBase entity, int damage) {
-        if (stack.getTagCompound() != null && stack.getTagCompound().getBoolean(UNBREAKABLE_KEY)) {
-            return;
-        }
-        if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).capabilities.isCreativeMode) {
-            if (isElectric()) {
-                int electricDamage = damage * ConfigHolder.machines.energyUsageMultiplier;
-                IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                if (electricItem != null) {
-                    electricItem.discharge(electricDamage, getElectricTier(), true, false, false);
-                    if (electricItem.getCharge() > 0 && entity.getRNG().nextInt(100) > ConfigHolder.tools.rngDamageElectricTools) {
-                        return;
-                    }
-                } else {
-                    throw new IllegalStateException("Electric tool does not have an attached electric item capability.");
-                }
-            }
-            int unbreakingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
-            int negated = 0;
-            for (int k = 0; unbreakingLevel > 0 && k < damage; k++) {
-                if (EnchantmentDurability.negateDamage(stack, unbreakingLevel, entity.getRNG())) {
-                    negated++;
-                }
-            }
-            damage -= negated;
-            if (damage <= 0) {
-                return;
-            }
-            int newDurability = definition$getDamage(stack) + damage;
-            if (entity instanceof EntityPlayerMP) {
-                CriteriaTriggers.ITEM_DURABILITY_CHANGED.trigger((EntityPlayerMP) entity, stack, newDurability);
-            }
-            definition$setDamage(stack, newDurability);
-            if (newDurability > definition$getMaxDamage(stack)) {
-                if (entity instanceof EntityPlayer) {
-                    EntityPlayer entityplayer = (EntityPlayer) entity;
-                    entityplayer.addStat(StatList.getObjectBreakStats(stack.getItem()));
-                }
-                entity.renderBrokenItemStack(stack);
-                stack.shrink(1);
-            }
-        }
-    }
-
     default boolean definition$isDamaged(ItemStack stack) {
         return definition$getDamage(stack) > 0;
     }
@@ -488,7 +437,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     @SideOnly(Side.CLIENT)
     default void definition$addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
-        // if (flag.isAdvanced()) TODO: lists "behaviours"
+
     }
 
     @SideOnly(Side.CLIENT)
