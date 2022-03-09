@@ -345,7 +345,6 @@ public class BatteryRecipes {
                 .input(bolt, Naquadah, 16)
                 .fluidInputs(SolderingAlloy.getFluid(L * 5))
                 .output(ENERGY_LAPOTRONIC_ORB_CLUSTER)
-                .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
         // Energy Module
@@ -365,7 +364,6 @@ public class BatteryRecipes {
                 .input(bolt, Trinium, 16)
                 .fluidInputs(SolderingAlloy.getFluid(L * 10))
                 .output(ENERGY_MODULE)
-                .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
         // Energy Cluster
@@ -386,7 +384,6 @@ public class BatteryRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 20))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .output(ENERGY_CLUSTER)
-                .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
         // Ultimate Battery
@@ -408,7 +405,6 @@ public class BatteryRecipes {
                 .fluidInputs(Polybenzimidazole.getFluid(2000))
                 .fluidInputs(Naquadria.getFluid(L * 18))
                 .output(ULTIMATE_BATTERY)
-                .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
     }
 }
