@@ -39,7 +39,7 @@ import java.util.List;
 
 public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements ITickable, IDataInfoProvider {
 
-    public byte mLastReceivedFrom = 0, oLastReceivedFrom = 0;
+    public byte lastReceivedFrom = 0, oldLastReceivedFrom = 0;
     private PipeTankList pipeTankList;
     private final EnumMap<EnumFacing, PipeTankList> tankLists = new EnumMap<>(EnumFacing.class);
     private FluidTank[] fluidTanks;
@@ -67,12 +67,12 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         timer++;
         getCoverableImplementation().update();
         if (!world.isRemote && getOffsetTimer() % FREQUENCY == 0) {
-            mLastReceivedFrom &= 63;
-            if (mLastReceivedFrom == 63) {
-                mLastReceivedFrom = 0;
+            lastReceivedFrom &= 63;
+            if (lastReceivedFrom == 63) {
+                lastReceivedFrom = 0;
             }
 
-            boolean shouldDistribute = (oLastReceivedFrom == mLastReceivedFrom);
+            boolean shouldDistribute = (oldLastReceivedFrom == lastReceivedFrom);
             int tanks = getNodeData().getTanks();
             for (int i = 0, j = GTValues.RNG.nextInt(tanks); i < tanks; i++) {
                 int index = (i + j) % tanks;
@@ -87,10 +87,10 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
                 if (shouldDistribute) {
                     distributeFluid(index, tank, fluid);
-                    mLastReceivedFrom = 0;
+                    lastReceivedFrom = 0;
                 }
             }
-            oLastReceivedFrom = mLastReceivedFrom;
+            oldLastReceivedFrom = lastReceivedFrom;
         }
     }
 
@@ -107,11 +107,11 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         FluidStack maxFluid = fluid.copy();
         double availableCapacity = 0;
 
-        for (byte aSide, i = 0, j = (byte) GTValues.RNG.nextInt(6); i < 6; i++) {
+        for (byte side, i = 0, j = (byte) GTValues.RNG.nextInt(6); i < 6; i++) {
             // Get a list of tanks accepting fluids, and what side they're on
-            aSide = (byte) ((i + j) % 6);
-            EnumFacing facing = EnumFacing.VALUES[aSide];
-            if (!isConnected(facing) || (mLastReceivedFrom & (1 << aSide)) != 0)
+            side = (byte) ((i + j) % 6);
+            EnumFacing facing = EnumFacing.VALUES[side];
+            if (!isConnected(facing) || (lastReceivedFrom & (1 << side)) != 0)
                 continue;
             EnumFacing oppositeSide = facing.getOpposite();
 
@@ -294,7 +294,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
     public void receivedFrom(EnumFacing facing) {
         if (facing != null) {
-            mLastReceivedFrom |= (1 << facing.getIndex());
+            lastReceivedFrom |= (1 << facing.getIndex());
         }
     }
 

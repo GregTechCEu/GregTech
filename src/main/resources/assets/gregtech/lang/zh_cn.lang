@@ -4758,7 +4758,6 @@ gregtech.cable.superconductor=§d%s 超导体
 
 gregtech.fluid_pipe.throughput=§9传输效率: %,d L/s
 gregtech.fluid_pipe.max_temperature=§c温度范围: %,dK
-gregtech.fluid_pipe.non_gas_proof=§a不能传输气体。
 gregtech.fluid_pipe.channels=§e频道: %d
 
 gregtech.item_pipe.rate_items=§9传输效率: %d 物品/s

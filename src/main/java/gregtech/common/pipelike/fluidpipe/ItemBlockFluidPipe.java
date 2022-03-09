@@ -28,10 +28,10 @@ public class ItemBlockFluidPipe extends ItemBlockMaterialPipe<FluidPipeType, Flu
         tooltip.add(I18n.format("gregtech.fluid_pipe.throughput", pipeProperties.getThroughput()));
         tooltip.add(I18n.format("gregtech.fluid_pipe.capacity", pipeProperties.getThroughput() * 20));
         tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", pipeProperties.getMaxFluidTemperature()));
-        tooltip.add(I18n.format(pipeProperties.isGasProof() ? "gregtech.fluid_pipe.gas_proof" : "gregtech.fluid_pipe.non_gas_proof"));
-        tooltip.add(I18n.format(pipeProperties.isAcidProof() ? "gregtech.fluid_pipe.acid_proof" : "gregtech.fluid_pipe.non_acid_proof"));
-        tooltip.add(I18n.format(pipeProperties.isCryoProof() ? "gregtech.fluid_pipe.cryo_proof" : "gregtech.fluid_pipe.non_cryo_proof"));
-        tooltip.add(I18n.format(pipeProperties.isPlasmaProof() ? "gregtech.fluid_pipe.plasma_proof" : "gregtech.fluid_pipe.non_plasma_proof"));
+        if (pipeProperties.isGasProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
+        if (pipeProperties.isAcidProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.acid_proof"));
+        if (pipeProperties.isCryoProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.cryo_proof"));
+        if (pipeProperties.isPlasmaProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
 
         if (pipeProperties.getTanks() > 1) tooltip.add(I18n.format("gregtech.fluid_pipe.channels", pipeProperties.getTanks()));
 

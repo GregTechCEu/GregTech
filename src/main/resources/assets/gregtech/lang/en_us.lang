@@ -4741,13 +4741,9 @@ gregtech.fluid_pipe.capacity=§9Capacity: %,d L
 gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,d K
 gregtech.fluid_pipe.channels=§eChannels: %d
 gregtech.fluid_pipe.gas_proof=§6Can handle Gases
-gregtech.fluid_pipe.non_gas_proof=§4Can't handle Gases
 gregtech.fluid_pipe.acid_proof=§6Can handle Acids
-gregtech.fluid_pipe.non_acid_proof=§4Can't handle Acids
 gregtech.fluid_pipe.cryo_proof=§6Can handle Cryogenics
-gregtech.fluid_pipe.non_cryo_proof=§4Can't handle Cryogenics
 gregtech.fluid_pipe.plasma_proof=§6Can handle all Plasmas
-gregtech.fluid_pipe.non_plasma_proof=§4Can't handle Plasmas
 
 gregtech.item_pipe.rate_items=§9Transfer Rate: %d items/s
 gregtech.item_pipe.rate_stacks=§9Transfer Rate: %d stacks/s
