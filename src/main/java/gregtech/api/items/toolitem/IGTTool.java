@@ -28,10 +28,8 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.ConfigHolder;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLog;
 import net.minecraft.block.BlockWeb;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -63,11 +61,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import static gregtech.api.items.armor.IArmorLogic.*;
+import static gregtech.api.items.toolitem.ToolHelper.*;
 
 /**
  * Backing of every variation of a GT Tool
@@ -80,14 +78,6 @@ import static gregtech.api.items.armor.IArmorLogic.*;
         @Optional.Interface(modid = GTValues.MODID_FR, iface = "forestry.api.arboriculture.IToolGrafter"),
         @Optional.Interface(modid = GTValues.MODID_EIO, iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")})
 public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHammer, ITool, IToolGrafter, IOverlayRenderAware {
-
-    static NBTTagCompound getToolTag(ItemStack stack) {
-        return stack.getOrCreateSubCompound("GT.Tools");
-    }
-
-    static NBTTagCompound getBehaviourTag(ItemStack stack) {
-        return stack.getOrCreateSubCompound("GT.Behaviours");
-    }
 
     String getDomain();
 
@@ -113,33 +103,41 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default ItemStack get(Material material) {
         ItemStack stack = new ItemStack(get());
         NBTTagCompound toolTag = getToolTag(stack);
+
         // Set Material
-        toolTag.setString("Material", material.toString());
+        toolTag.setString(MATERIAL_KEY, material.toString());
+
         // Set other tool stats (durability)
         ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
-        toolTag.setInteger("MaxDurability", toolProperty.getToolDurability());
-        toolTag.setInteger("Durability", 0);
+        toolTag.setInteger(MAX_DURABILITY_KEY, toolProperty.getToolDurability());
+        toolTag.setInteger(DURABILITY_KEY, 0);
+
         // Set material enchantments
         toolProperty.getEnchantments().forEach((enchantment, level) -> {
             if (stack.getItem().canApplyAtEnchantingTable(stack, enchantment)) {
                 stack.addEnchantment(enchantment, level);
             }
         });
-        // Set AoEDefinition
-        AoEDefinition aoeDefinition = getToolStats().getAoEDefinition(stack);
-        toolTag.setInteger("AoEMaxColumn", aoeDefinition.column);
-        toolTag.setInteger("AoEMaxRow", aoeDefinition.row);
-        toolTag.setInteger("AoEMaxLayer", aoeDefinition.layer);
-        toolTag.setInteger("AoEColumn", aoeDefinition.column);
-        toolTag.setInteger("AoERow", aoeDefinition.row);
-        toolTag.setInteger("AoELayer", aoeDefinition.layer);
+
         // Set behaviours
         NBTTagCompound behaviourTag = getBehaviourTag(stack);
+        AoEDefinition aoeDefinition = getToolStats().getAoEDefinition(stack);
+
+        behaviourTag.setInteger(MAX_AOE_COLUMN_KEY, aoeDefinition.column);
+        behaviourTag.setInteger(MAX_AOE_ROW_KEY, aoeDefinition.row);
+        behaviourTag.setInteger(MAX_AOE_LAYER_KEY, aoeDefinition.layer);
+        behaviourTag.setInteger(AOE_COLUMN_KEY, aoeDefinition.column);
+        behaviourTag.setInteger(AOE_ROW_KEY, aoeDefinition.row);
+        behaviourTag.setInteger(AOE_LAYER_KEY, aoeDefinition.layer);
+
         Set<String> toolClasses = stack.getItem().getToolClasses(stack);
-        behaviourTag.setBoolean("SilkHarvestIce", toolClasses.contains("saw"));
-        behaviourTag.setBoolean("TorchPlacing", toolClasses.contains("pickaxe"));
-        behaviourTag.setBoolean("TreeFelling", toolClasses.contains("axe"));
-        behaviourTag.setBoolean("RelocateMinedBlocks", false);
+
+        behaviourTag.setBoolean(HARVEST_ICE_KEY, toolClasses.contains("saw"));
+        behaviourTag.setBoolean(TORCH_PLACING_KEY, toolClasses.contains("pickaxe"));
+        behaviourTag.setBoolean(TREE_FELLING_KEY, toolClasses.contains("axe"));
+        behaviourTag.setBoolean(DISABLE_SHIELDS_KEY, toolClasses.contains("axe"));
+        behaviourTag.setBoolean(RELOCATE_MINED_BLOCKS_KEY, false);
+
         return stack;
     }
 
@@ -161,10 +159,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default Material getToolMaterial(ItemStack stack) {
         NBTTagCompound toolTag = getToolTag(stack);
-        String string = toolTag.getString("Material");
+        String string = toolTag.getString(MATERIAL_KEY);
         Material material = GregTechAPI.MaterialRegistry.get(string);
         if (material == null) {
-            toolTag.setString("Material", (material = Materials.Neutronium).toString());
+            toolTag.setString(MATERIAL_KEY, (material = Materials.Neutronium).toString());
         }
         return material;
     }
@@ -210,8 +208,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default long getMaxCharge(ItemStack stack) {
         if (isElectric()) {
             NBTTagCompound tag = stack.getTagCompound();
-            if (tag != null && tag.hasKey("MaxCharge", Constants.NBT.TAG_LONG)) {
-                return stack.getTagCompound().getLong("MaxCharge");
+            if (tag != null && tag.hasKey(MAX_CHARGE_KEY, Constants.NBT.TAG_LONG)) {
+                return stack.getTagCompound().getLong(MAX_CHARGE_KEY);
             }
         }
         return -1L;
@@ -220,8 +218,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default long getCharge(ItemStack stack) {
         if (isElectric()) {
             NBTTagCompound tag = stack.getTagCompound();
-            if (tag != null && tag.hasKey("Charge", Constants.NBT.TAG_LONG)) {
-                return stack.getTagCompound().getLong("Charge");
+            if (tag != null && tag.hasKey(CHARGE_KEY, Constants.NBT.TAG_LONG)) {
+                return stack.getTagCompound().getLong(CHARGE_KEY);
             }
         }
         return -1L;
@@ -229,51 +227,51 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default float getTotalToolSpeed(ItemStack stack) {
         NBTTagCompound toolTag = getToolTag(stack);
-        if (toolTag.hasKey("ToolSpeed", Constants.NBT.TAG_FLOAT)) {
-            return toolTag.getFloat("ToolSpeed");
+        if (toolTag.hasKey(TOOL_SPEED_KEY, Constants.NBT.TAG_FLOAT)) {
+            return toolTag.getFloat(TOOL_SPEED_KEY);
         }
         float toolSpeed = getMaterialToolSpeed(stack) + getToolStats().getBaseEfficiency(stack);
-        toolTag.setFloat("ToolSpeed", toolSpeed);
+        toolTag.setFloat(TOOL_SPEED_KEY, toolSpeed);
         return toolSpeed;
     }
 
     default float getTotalAttackDamage(ItemStack stack) {
         NBTTagCompound toolTag = getToolTag(stack);
-        if (toolTag.hasKey("AttackDamage", Constants.NBT.TAG_FLOAT)) {
-            return toolTag.getFloat("AttackDamage");
+        if (toolTag.hasKey(ATTACK_DAMAGE_KEY, Constants.NBT.TAG_FLOAT)) {
+            return toolTag.getFloat(ATTACK_DAMAGE_KEY);
         }
         float attackDamage = getMaterialAttackDamage(stack) + getToolStats().getBaseDamage(stack);
-        toolTag.setFloat("AttackDamage", attackDamage);
+        toolTag.setFloat(ATTACK_DAMAGE_KEY, attackDamage);
         return attackDamage;
     }
 
     default int getTotalMaxDurability(ItemStack stack) {
         NBTTagCompound toolTag = getToolTag(stack);
-        if (toolTag.hasKey("MaxDurability", Constants.NBT.TAG_INT)) {
-            return toolTag.getInteger("MaxDurability");
+        if (toolTag.hasKey(MAX_DURABILITY_KEY, Constants.NBT.TAG_INT)) {
+            return toolTag.getInteger(MAX_DURABILITY_KEY);
         }
         int maxDurability = getMaterialDurability(stack) + getToolStats().getBaseDurability(stack);
-        toolTag.setInteger("MaxDurability", maxDurability);
+        toolTag.setInteger(MAX_DURABILITY_KEY, maxDurability);
         return maxDurability;
     }
 
     default int getTotalEnchantability(ItemStack stack) {
         NBTTagCompound toolTag = getToolTag(stack);
-        if (toolTag.hasKey("Enchantability", Constants.NBT.TAG_INT)) {
-            return toolTag.getInteger("Enchantability");
+        if (toolTag.hasKey(ENCHANTABILITY_KEY, Constants.NBT.TAG_INT)) {
+            return toolTag.getInteger(ENCHANTABILITY_KEY);
         }
         int enchantability = getMaterialEnchantability(stack);
-        toolTag.setInteger("Enchantability", enchantability);
+        toolTag.setInteger(ENCHANTABILITY_KEY, enchantability);
         return enchantability;
     }
 
     default int getTotalHarvestLevel(ItemStack stack) {
         NBTTagCompound toolTag = getToolTag(stack);
-        if (toolTag.hasKey("HarvestLevel", Constants.NBT.TAG_INT)) {
-            return toolTag.getInteger("HarvestLevel");
+        if (toolTag.hasKey(HARVEST_LEVEL_KEY, Constants.NBT.TAG_INT)) {
+            return toolTag.getInteger(HARVEST_LEVEL_KEY);
         }
         int harvestLevel = getMaterialHarvestLevel(stack) + getToolStats().getBaseQuality(stack);
-        toolTag.setInteger("HarvestLevel", harvestLevel);
+        toolTag.setInteger(HARVEST_LEVEL_KEY, harvestLevel);
         return harvestLevel;
     }
 
@@ -311,15 +309,15 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default boolean definition$hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-        ToolHelper.damageItem(stack, attacker, getToolStats().getToolDamagePerAttack(stack));
+        damageItem(stack, attacker, getToolStats().getToolDamagePerAttack(stack));
         return true;
     }
 
     default boolean definition$onBlockStartBreak(ItemStack stack, BlockPos pos, EntityPlayer player) {
         if (!player.world.isRemote && !player.isSneaking()) {
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
-            if (!ToolHelper.areaOfEffectBlockBreakRoutine(stack, playerMP)) {
-                ToolHelper.treeFellingRoutine(playerMP, stack, pos);
+            if (!areaOfEffectBlockBreakRoutine(stack, playerMP)) {
+                treeFellingRoutine(playerMP, stack, pos);
             }
         }
         return false;
@@ -328,7 +326,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default boolean definition$onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
         if (!worldIn.isRemote) {
             if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
-                ToolHelper.damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
+                damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
             }
         }
         return true;
@@ -356,7 +354,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default boolean definition$canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity, EntityLivingBase attacker) {
-        return get().getToolClasses(stack).contains("axe");
+        return getBehaviourTag(stack).getBoolean(DISABLE_SHIELDS_KEY);
     }
 
     default boolean definition$doesSneakBypassUse(@Nonnull ItemStack stack, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
@@ -375,7 +373,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         int damage = getToolStats().getToolDamagePerCraft(stack);
         if (damage > 0) {
             EntityPlayer player = ForgeHooks.getCraftingPlayer();
-            ToolHelper.damageItem(stack, player, damage);
+            damageItem(stack, player, damage);
             playCraftingSound(player);
             // We cannot simply return the copied stack here because Forge's bug
             // Introduced here: https://github.com/MinecraftForge/MinecraftForge/pull/3388
@@ -399,7 +397,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
      * @param damage Damage the ItemStack will be taking
      */
     default void damageItem(ItemStack stack, EntityLivingBase entity, int damage) {
-        if (stack.getTagCompound() != null && stack.getTagCompound().getBoolean("Unbreakable")) {
+        if (stack.getTagCompound() != null && stack.getTagCompound().getBoolean(UNBREAKABLE_KEY)) {
             return;
         }
         if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).capabilities.isCreativeMode) {
@@ -448,10 +446,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default int definition$getDamage(ItemStack stack) {
         NBTTagCompound toolTag = getToolTag(stack);
-        if (toolTag.hasKey("Durability", Constants.NBT.TAG_INT)) {
-            return toolTag.getInteger("Durability");
+        if (toolTag.hasKey(DURABILITY_KEY, Constants.NBT.TAG_INT)) {
+            return toolTag.getInteger(DURABILITY_KEY);
         }
-        toolTag.setInteger("Durability", 0);
+        toolTag.setInteger(DURABILITY_KEY, 0);
         return 0;
     }
 
@@ -461,7 +459,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default void definition$setDamage(ItemStack stack, int durability) {
         NBTTagCompound toolTag = getToolTag(stack);
-        toolTag.setInteger("Durability", durability);
+        toolTag.setInteger(DURABILITY_KEY, durability);
     }
 
     @Nullable
@@ -470,7 +468,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default EnumActionResult definition$onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (ToolHelper.placeTorchRoutine(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
+        if (placeTorchRoutine(player, world, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
             return EnumActionResult.SUCCESS;
         }
         return EnumActionResult.PASS;
@@ -522,48 +520,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (ConfigHolder.client.toolUseSounds && getSound() != null) {
             player.getEntityWorld().playSound(null, player.posX, player.posY, player.posZ, getSound(), SoundCategory.PLAYERS, 1F, 1F);
         }
-    }
-
-    default boolean treeLogging(World world, EntityPlayerMP player, ItemStack stack, BlockPos start) {
-        LinkedList<BlockPos> blocks = new LinkedList<>();
-        Set<BlockPos> visited = new ObjectOpenHashSet<>();
-        blocks.add(start);
-        BlockPos pos;
-        int amount = 0;
-        boolean harvested = false;
-        while (!blocks.isEmpty() && amount <= 512) {
-            if (stack.isEmpty()) {
-                return harvested;
-            }
-            pos = blocks.remove();
-            if (!visited.add(pos)) {
-                continue;
-            }
-            IBlockState state = world.getBlockState(pos);
-            if (state.getBlock() instanceof BlockLog || OreDictUnifier.getOreDictionaryNames(new ItemStack(state.getBlock())).contains("logWood")) {
-                for (int x = 0; x < 3; x++) {
-                    for (int z = 0; z < 3; z++) {
-                        BlockPos branchPos = pos.add(-1 + x, 1, -1 + z);
-                        if (!visited.contains(branchPos)) {
-                            blocks.add(branchPos);
-                        }
-                    }
-                }
-                for (EnumFacing facing : EnumFacing.HORIZONTALS) {
-                    BlockPos offsetPos = pos.offset(facing);
-                    if (!visited.contains(offsetPos)) {
-                        blocks.add(offsetPos);
-                    }
-                }
-                amount++;
-                if (player.interactionManager.tryHarvestBlock(pos)) {
-                    harvested = true;
-                } else {
-                    break;
-                }
-            }
-        }
-        return harvested;
     }
 
     default ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
