@@ -269,7 +269,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             stack.amount = Math.max(0, stack.amount / 4);
 
             // apply frost damage in area surrounding the pipe
-            if (isMelting && getOffsetTimer() % 20 == 0) {
+            if (getOffsetTimer() % 20 == 0) {
                 List<EntityLivingBase> entities = getPipeWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(getPipePos()).grow(2));
                 for (EntityLivingBase entityLivingBase : entities) {
                     EntityDamageUtil.applyTemperatureDamage(entityLivingBase, stack.getFluid().getTemperature(stack), 2.0F, 10);
