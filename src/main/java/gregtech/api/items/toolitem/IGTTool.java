@@ -5,7 +5,6 @@ import buildcraft.api.tools.IToolWrench;
 import cofh.api.item.IToolHammer;
 import com.enderio.core.common.interfaces.IOverlayRenderAware;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import crazypants.enderio.api.tool.ITool;
 import forestry.api.arboriculture.IToolGrafter;
@@ -53,7 +52,6 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
@@ -62,11 +60,9 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.logging.log4j.ThreadContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -319,32 +315,18 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return true;
     }
 
+    default boolean definition$onBlockStartBreak(ItemStack stack, BlockPos pos, EntityPlayer player) {
+        if (!player.world.isRemote && !player.isSneaking()) {
+            EntityPlayerMP playerMP = (EntityPlayerMP) player;
+            if (!ToolHelper.areaOfEffectBlockBreakRoutine(stack, playerMP)) {
+                ToolHelper.treeFellingRoutine(playerMP, stack, pos);
+            }
+        }
+        return false;
+    }
+
     default boolean definition$onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
         if (!worldIn.isRemote) {
-            if (!entityLiving.isSneaking()) {
-                EntityPlayerMP serverPlayer = (EntityPlayerMP) entityLiving;
-                if (getBehaviourTag(stack).getBoolean("TreeFelling") && !ThreadContext.containsKey("GT_TreeFelling")) {
-                    ThreadContext.put("GT_TreeFelling", "");
-                    if (!treeLogging(worldIn, serverPlayer, stack, pos)) {
-                        if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
-                            ToolHelper.damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
-                            return true;
-                        }
-                    }
-                    ThreadContext.remove("GT_TreeFelling");
-                    return true;
-                } else if (!ThreadContext.containsKey("GT_AoE_Breaking")) {
-                    ThreadContext.put("GT_AoE_Breaking", "");
-                    for (BlockPos aoePos : getHarvestableBlocks(stack, worldIn, serverPlayer)) {
-                        serverPlayer.interactionManager.tryHarvestBlock(aoePos);
-                        if (stack.isEmpty()) {
-                            ThreadContext.remove("GT_AoE_Breaking");
-                            return true;
-                        }
-                    }
-                    ThreadContext.remove("GT_AoE_Breaking");
-                }
-            }
             if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
                 ToolHelper.damageItem(stack, entityLiving, getToolStats().getToolDamagePerBlockBreak(stack));
             }
@@ -540,81 +522,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (ConfigHolder.client.toolUseSounds && getSound() != null) {
             player.getEntityWorld().playSound(null, player.posX, player.posY, player.posZ, getSound(), SoundCategory.PLAYERS, 1F, 1F);
         }
-    }
-
-    // AoE
-    default Set<BlockPos> getHarvestableBlocks(ItemStack stack, AoEDefinition aoeDefinition, @Nonnull World world, @Nonnull EntityPlayer player, RayTraceResult rayTraceResult) {
-        if (rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && rayTraceResult.sideHit != null) {
-            int column = aoeDefinition.column;
-            int row = aoeDefinition.row;
-            int layer = aoeDefinition.layer;
-            EnumFacing playerFacing = player.getHorizontalFacing();
-            EnumFacing.Axis playerAxis = playerFacing.getAxis();
-            EnumFacing.Axis sideHitAxis = rayTraceResult.sideHit.getAxis();
-            EnumFacing.AxisDirection sideHitAxisDir = rayTraceResult.sideHit.getAxisDirection();
-            ImmutableSet.Builder<BlockPos> validPositions = ImmutableSet.builder();
-            if (sideHitAxis.isVertical()) {
-                boolean isX = playerAxis == EnumFacing.Axis.X;
-                boolean isDown = sideHitAxisDir == EnumFacing.AxisDirection.NEGATIVE;
-                for (int y = 0; y <= layer; y++) {
-                    for (int x = isX ? -row : -column; x <= (isX ? row : column); x++) {
-                        for (int z = isX ? -column : -row; z <= (isX ? column : row); z++) {
-                            if (!(x == 0 && y == 0 && z == 0)) {
-                                BlockPos pos = rayTraceResult.getBlockPos().add(x, isDown ? y : -y, z);
-                                IBlockState state = world.getBlockState(pos);
-                                if (state.getBlock().canHarvestBlock(world, pos, player)) {
-                                    if (get().getToolClasses(stack).stream().anyMatch(s -> state.getBlock().isToolEffective(s, state))) {
-                                        validPositions.add(pos);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-                boolean isX = sideHitAxis == EnumFacing.Axis.X;
-                boolean isNegative = sideHitAxisDir == EnumFacing.AxisDirection.NEGATIVE;
-                for (int x = 0; x <= layer; x++) {
-                    // Special case for any additional column > 1: https://i.imgur.com/Dvcx7Vg.png
-                    // Same behaviour as the Flux Bore
-                    for (int y = (row == 0 ? 0 : -1); y <= (row == 1 ? 1 : row + 1); y++) {
-                        for (int z = -column; z <= column; z++) {
-                            if (!(x == 0 && y == 0 && z == 0)) {
-                                BlockPos pos = rayTraceResult.getBlockPos().add(isX ? (isNegative ? x : -x) : (isNegative ? z : -z), y, isX ? (isNegative ? z : -z) : (isNegative ? x : -x));
-                                IBlockState state = world.getBlockState(pos);
-                                if (state.getBlock().canHarvestBlock(world, pos, player)) {
-                                    if (get().getToolClasses(stack).stream().anyMatch(s -> state.getBlock().isToolEffective(s, state))) {
-                                        validPositions.add(pos);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return validPositions.build();
-        }
-        return Collections.emptySet();
-    }
-
-    default Set<BlockPos> getHarvestableBlocks(ItemStack stack, @Nonnull World world, @Nonnull EntityPlayer player, RayTraceResult rayTraceResult) {
-        AoEDefinition aoeDefinition = getAoEDefinition(stack);
-        if (aoeDefinition == AoEDefinition.none()) {
-            return Collections.emptySet();
-        }
-        return getHarvestableBlocks(stack, aoeDefinition, world, player, rayTraceResult);
-    }
-
-    default Set<BlockPos> getHarvestableBlocks(ItemStack stack, @Nonnull World world, @Nonnull EntityPlayer player) {
-        AoEDefinition aoeDefiniton = getAoEDefinition(stack);
-        if (aoeDefiniton == AoEDefinition.none()) {
-            return Collections.emptySet();
-        }
-        Vec3d lookPos = player.getPositionEyes(1F);
-        Vec3d rotation = player.getLook(1);
-        Vec3d realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
-        RayTraceResult rayTraceResult = world.rayTraceBlocks(lookPos, realLookPos);
-        return getHarvestableBlocks(stack, aoeDefiniton, world, player, rayTraceResult);
     }
 
     default boolean treeLogging(World world, EntityPlayerMP player, ItemStack stack, BlockPos start) {
