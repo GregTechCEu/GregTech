@@ -5,8 +5,10 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.fluids.MaterialFluid;
 import gregtech.api.fluids.fluidType.FluidTypes;
 import gregtech.api.metatileentity.IDataInfoProvider;
+import gregtech.api.util.EntityDamageUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,6 +18,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -198,6 +201,14 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             // voids 10%
             stack.amount = Math.max(0, stack.amount * 9 / 10);
 
+            // apply heat damage in area surrounding the pipe
+            if (getOffsetTimer() % 20 == 0) {
+                List<EntityLivingBase> entities = getPipeWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(getPipePos()).grow(2));
+                for (EntityLivingBase entityLivingBase : entities) {
+                    EntityDamageUtil.applyTemperatureDamage(entityLivingBase, stack.getFluid().getTemperature(stack), 2.0F, 10);
+                }
+            }
+
             // chance to do a small explosion
             if (world.rand.nextInt(isBurning ? 3 : 7) == 0) {
                 this.doExplosion(1.0f + GTValues.RNG.nextFloat());
@@ -209,6 +220,14 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
             // voids 25%
             stack.amount = Math.max(0, stack.amount * 3 / 4);
+
+            // apply chemical damage in area surrounding the pipe
+            if (getOffsetTimer() % 20 == 0) {
+                List<EntityLivingBase> entities = getPipeWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(getPipePos()).grow(1));
+                for (EntityLivingBase entityLivingBase : entities) {
+                    EntityDamageUtil.applyChemicalDamage(entityLivingBase, 2);
+                }
+            }
 
             // 1/10 chance to void everything and destroy the pipe
             if (GTValues.RNG.nextInt(10) == 0) {
@@ -228,6 +247,14 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                 TileEntityFluidPipe.setNeighboursToFire(world, pos);
             }
 
+            // apply heat damage in area surrounding the pipe
+            if (isMelting && getOffsetTimer() % 20 == 0) {
+                List<EntityLivingBase> entities = getPipeWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(getPipePos()).grow(2));
+                for (EntityLivingBase entityLivingBase : entities) {
+                    EntityDamageUtil.applyTemperatureDamage(entityLivingBase, stack.getFluid().getTemperature(stack), 2.0F, 10);
+                }
+            }
+
             // 1/10 chance to void everything and burn the pipe
             if (GTValues.RNG.nextInt(10) == 0) {
                 stack.amount = 0;
@@ -240,6 +267,14 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
             // voids 75%
             stack.amount = Math.max(0, stack.amount / 4);
+
+            // apply frost damage in area surrounding the pipe
+            if (isMelting && getOffsetTimer() % 20 == 0) {
+                List<EntityLivingBase> entities = getPipeWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(getPipePos()).grow(2));
+                for (EntityLivingBase entityLivingBase : entities) {
+                    EntityDamageUtil.applyTemperatureDamage(entityLivingBase, stack.getFluid().getTemperature(stack), 2.0F, 10);
+                }
+            }
 
             // 1/10 chance to void everything and freeze the pipe
             if (GTValues.RNG.nextInt(10) == 0) {
