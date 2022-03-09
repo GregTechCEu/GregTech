@@ -57,6 +57,50 @@ import java.util.stream.Collectors;
  */
 public class ToolHelper {
 
+    public static final String TOOL_TAG_KEY = "GT.Tool";
+    public static final String BEHAVIOURS_TAG_KEY = "GT.Behaviours";
+
+    // Electric item keys
+    public static final String MAX_CHARGE_KEY = "MaxCharge";
+    public static final String CHARGE_KEY = "Charge";
+
+    // Vanilla keys
+    public static final String UNBREAKABLE_KEY = "Unbreakable";
+
+    // Keys that resides in tool tag
+    public static final String MATERIAL_KEY = "Material";
+    public static final String DURABILITY_KEY = "Durability";
+    public static final String MAX_DURABILITY_KEY = "MaxDurability";
+    public static final String TOOL_SPEED_KEY = "ToolSpeed";
+    public static final String ATTACK_DAMAGE_KEY = "AttackDamage";
+    public static final String ENCHANTABILITY_KEY = "Enchantability";
+    public static final String HARVEST_LEVEL_KEY = "HarvestLevel";
+
+    // Keys that resides in behaviours tag
+
+    // AoE
+    public static final String MAX_AOE_COLUMN_KEY = "MaxAoEColumn";
+    public static final String MAX_AOE_ROW_KEY = "MaxAoERow";
+    public static final String MAX_AOE_LAYER_KEY = "MaxAoELayer";
+    public static final String AOE_COLUMN_KEY = "AoEColumn";
+    public static final String AOE_ROW_KEY = "AoERow";
+    public static final String AOE_LAYER_KEY = "AoELayer";
+
+    // Others
+    public static final String HARVEST_ICE_KEY = "HarvestIce";
+    public static final String TORCH_PLACING_KEY = "TorchPlacing";
+    public static final String TREE_FELLING_KEY = "TreeFelling";
+    public static final String DISABLE_SHIELDS_KEY = "DisableShields";
+    public static final String RELOCATE_MINED_BLOCKS_KEY = "RelocateMinedBlocks";
+
+    public static NBTTagCompound getToolTag(ItemStack stack) {
+        return stack.getOrCreateSubCompound(TOOL_TAG_KEY);
+    }
+
+    public static NBTTagCompound getBehaviourTag(ItemStack stack) {
+        return stack.getOrCreateSubCompound(BEHAVIOURS_TAG_KEY);
+    }
+
     /**
      * Damages tools in a context where the tool had been used to craft something.
      * This supports both vanilla-esque and GT tools in case it does get called on a vanilla-esque tool
@@ -174,11 +218,11 @@ public class ToolHelper {
     }
 
     public static AoEDefinition getMaxAoEDefinition(ItemStack stack) {
-        return AoEDefinition.readMax(IGTTool.getToolTag(stack));
+        return AoEDefinition.readMax(getToolTag(stack));
     }
 
     public static AoEDefinition getAoEDefinition(ItemStack stack) {
-        return AoEDefinition.read(IGTTool.getToolTag(stack), getMaxAoEDefinition(stack));
+        return AoEDefinition.read(getToolTag(stack), getMaxAoEDefinition(stack));
     }
 
     /**
@@ -375,7 +419,7 @@ public class ToolHelper {
      */
     public static EnumActionResult placeTorchRoutine(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
-        NBTTagCompound behaviourTag = IGTTool.getBehaviourTag(stack);
+        NBTTagCompound behaviourTag = getBehaviourTag(stack);
         if (behaviourTag.getBoolean("TorchPlacing")) {
             int cachedTorchSlot;
             ItemStack slotStack;
