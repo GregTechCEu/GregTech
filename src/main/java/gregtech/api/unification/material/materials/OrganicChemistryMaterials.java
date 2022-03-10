@@ -15,7 +15,7 @@ public class OrganicChemistryMaterials {
         SiliconeRubber = new Material.Builder(1000, "silicone_rubber")
                 .polymer()
                 .color(0xDCDCDC)
-                .flags(GENERATE_GEAR, GENERATE_RING, FLAMMABLE, NO_SMASHING, GENERATE_FOIL, DISABLE_DECOMPOSITION)
+                .flags(GENERATE_GEAR, GENERATE_RING, GENERATE_FOIL)
                 .components(Carbon, 2, Hydrogen, 6, Oxygen, 1, Silicon, 1)
                 .fluidTemp(900)
                 .build();
@@ -31,7 +31,6 @@ public class OrganicChemistryMaterials {
         RawRubber = new Material.Builder(1002, "raw_rubber")
                 .polymer()
                 .color(0xCCC789)
-                .flags(DISABLE_DECOMPOSITION, FLAMMABLE)
                 .components(Carbon, 5, Hydrogen, 8)
                 .build();
 
@@ -46,7 +45,7 @@ public class OrganicChemistryMaterials {
         StyreneButadieneRubber = new Material.Builder(1004, "styrene_butadiene_rubber")
                 .polymer()
                 .color(0x211A18).iconSet(SHINY)
-                .flags(GENERATE_FOIL, GENERATE_RING, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
+                .flags(GENERATE_FOIL, GENERATE_RING)
                 .components(Carbon, 20, Hydrogen, 26)
                 .fluidTemp(1000)
                 .build()
@@ -63,7 +62,7 @@ public class OrganicChemistryMaterials {
         ReinforcedEpoxyResin = new Material.Builder(1006, "reinforced_epoxy_resin")
                 .polymer()
                 .color(0xA07A10)
-                .flags(STD_METAL, DISABLE_DECOMPOSITION, NO_SMASHING, FLAMMABLE)
+                .flags(STD_METAL)
                 .components(Carbon, 6, Hydrogen, 4, Oxygen, 1)
                 .fluidTemp(600)
                 .build();
@@ -71,7 +70,7 @@ public class OrganicChemistryMaterials {
         PolyvinylChloride = new Material.Builder(1007, "polyvinyl_chloride")
                 .polymer()
                 .color(0xD7E6E6)
-                .flags(EXT_METAL, GENERATE_FOIL, DISABLE_DECOMPOSITION, NO_SMASHING, FLAMMABLE)
+                .flags(EXT_METAL, GENERATE_FOIL)
                 .components(Carbon, 2, Hydrogen, 3, Chlorine, 1)
                 .itemPipeProperties(512, 4)
                 .fluidTemp(373)
@@ -80,7 +79,7 @@ public class OrganicChemistryMaterials {
         PolyphenyleneSulfide = new Material.Builder(1008, "polyphenylene_sulfide")
                 .polymer()
                 .color(0xAA8800)
-                .flags(EXT_METAL, DISABLE_DECOMPOSITION, GENERATE_FOIL, FLAMMABLE, NO_SMASHING)
+                .flags(EXT_METAL, GENERATE_FOIL)
                 .components(Carbon, 6, Hydrogen, 4, Sulfur, 1)
                 .fluidTemp(500)
                 .build();
@@ -95,7 +94,7 @@ public class OrganicChemistryMaterials {
         Polybenzimidazole = new Material.Builder(1010, "polybenzimidazole")
                 .polymer()
                 .color(0x2D2D2D)
-                .flags(EXCLUDE_BLOCK_CRAFTING_RECIPES, NO_SMASHING, DISABLE_DECOMPOSITION, GENERATE_FOIL, FLAMMABLE)
+                .flags(EXCLUDE_BLOCK_CRAFTING_RECIPES, GENERATE_FOIL)
                 .components(Carbon, 20, Hydrogen, 12, Nitrogen, 4)
                 .fluidPipeProperties(1000, 350, true)
                 .fluidTemp(1450)
@@ -111,7 +110,7 @@ public class OrganicChemistryMaterials {
         Polyethylene = new Material.Builder(1012, "plastic") //todo add polyethylene oredicts
                 .polymer(1)
                 .color(0xC8C8C8)
-                .flags(GENERATE_FOIL, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
+                .flags(GENERATE_FOIL)
                 .components(Carbon, 2, Hydrogen, 4)
                 .fluidPipeProperties(370, 50, true)
                 .fluidTemp(408)
@@ -120,7 +119,7 @@ public class OrganicChemistryMaterials {
         Epoxy = new Material.Builder(1013, "epoxy")
                 .polymer(1)
                 .color(0xC88C14)
-                .flags(STD_METAL, DISABLE_DECOMPOSITION, NO_SMASHING, FLAMMABLE)
+                .flags(STD_METAL)
                 .components(Carbon, 21, Hydrogen, 25, Chlorine, 1, Oxygen, 5)
                 .fluidTemp(400)
                 .build();
@@ -130,7 +129,7 @@ public class OrganicChemistryMaterials {
         Polycaprolactam = new Material.Builder(1015, "polycaprolactam")
                 .polymer(1)
                 .color(0x323232)
-                .flags(STD_METAL, DISABLE_DECOMPOSITION, NO_SMASHING, GENERATE_FOIL, FLAMMABLE)
+                .flags(STD_METAL, GENERATE_FOIL)
                 .components(Carbon, 6, Hydrogen, 11, Nitrogen, 1, Oxygen, 1)
                 .fluidTemp(493)
                 .build();
@@ -138,7 +137,7 @@ public class OrganicChemistryMaterials {
         Polytetrafluoroethylene = new Material.Builder(1016, "polytetrafluoroethylene")
                 .polymer(1)
                 .color(0x646464)
-                .flags(STD_METAL, GENERATE_FRAME, DISABLE_DECOMPOSITION, NO_SMASHING, GENERATE_FOIL, FLAMMABLE)
+                .flags(STD_METAL, GENERATE_FRAME, GENERATE_FOIL)
                 .components(Carbon, 2, Fluorine, 4)
                 .fluidPipeProperties(600, 100, true, true, false, false)
                 .fluidTemp(600)
@@ -484,7 +483,7 @@ public class OrganicChemistryMaterials {
         Rubber = new Material.Builder(1068, "rubber")
                 .polymer(0)
                 .color(0x000000).iconSet(SHINY)
-                .flags(GENERATE_GEAR, GENERATE_RING, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION, GENERATE_FOIL, GENERATE_BOLT_SCREW)
+                .flags(GENERATE_GEAR, GENERATE_RING, GENERATE_FOIL, GENERATE_BOLT_SCREW)
                 .components(Carbon, 5, Hydrogen, 8)
                 .fluidTemp(400)
                 .build();
