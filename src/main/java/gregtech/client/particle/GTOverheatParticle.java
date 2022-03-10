@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -184,7 +185,8 @@ public class GTOverheatParticle extends GTParticle {
 
     @Override
     public void onUpdate() {
-        if (!(world.getTileEntity(pos) instanceof TileEntityCable)) {
+        TileEntity te = world.getTileEntity(pos);
+        if (!(te instanceof TileEntityCable) || !((TileEntityCable) te).isParticleAlive()) {
             setExpired();
             return;
         }

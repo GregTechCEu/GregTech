@@ -50,7 +50,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     private final IEnergyContainer clientCapability = IEnergyContainer.DEFAULT;
     private WeakReference<EnergyNet> currentEnergyNet = new WeakReference<>(null);
     @SideOnly(Side.CLIENT)
-    private GTOverheatParticle particle = null;
+    private GTOverheatParticle particle;
     private int heatQueue;
     private int temperature = 293;
     private final int meltTemp = 3000;
@@ -202,6 +202,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         return meltTemp;
     }
 
+    @SideOnly(Side.CLIENT)
     public void createParticle() {
         particle = new GTOverheatParticle(world, pos, meltTemp, getPipeBoxes(), getPipeType().insulationLevel >= 0);
         GTParticleManager.INSTANCE.addEffect(particle);
@@ -211,6 +212,7 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
     public void killParticle() {
         if (isParticleAlive()) {
             particle.setExpired();
+            particle = null;
         }
     }
 
