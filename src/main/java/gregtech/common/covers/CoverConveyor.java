@@ -5,6 +5,14 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Size;
+import com.cleanroommc.modularui.common.internal.ModularWindow;
+import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.ButtonWidget;
+import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
+import com.cleanroommc.modularui.common.widget.TextFieldWidget;
+import com.cleanroommc.modularui.common.widget.TextWidget;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import gregtech.api.GTValues;
@@ -14,19 +22,20 @@ import gregtech.api.capability.impl.ItemHandlerDelegate;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.gui.GregTechUI;
+import gregtech.api.gui.GuiFunctions;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.ItemStackKey;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -423,7 +432,8 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     @Override
     public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         if (!coverHolder.getWorld().isRemote) {
-            openUI((EntityPlayerMP) playerIn);
+            //openUI((EntityPlayerMP) playerIn);
+            GregTechUI.getCoverUi(attachedSide).open(playerIn, coverHolder.getWorld(), coverHolder.getPos());
         }
         return EnumActionResult.SUCCESS;
     }
@@ -463,7 +473,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                 .setDefaultTooltip()
                 .setShouldClientCallback(false));
 
-        primaryGroup.addWidget(new ImageWidget(40, 20, 96, 20, GuiTextures.DISPLAY));
+        primaryGroup.addWidget(new ImageWidget(40, 20, 96, 20, gregtech.api.guiOld.GuiTextures.DISPLAY));
         primaryGroup.addWidget(new TextFieldWidget2(42, 26, 92, 20, () -> String.valueOf(transferRate), val -> {
                     if (val != null && !val.isEmpty())
                         setTransferRate(Integer.parseInt(val));
@@ -473,15 +483,15 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                         .setPostFix("cover.conveyor.transfer_rate")
         );
 
-        primaryGroup.addWidget(new CycleButtonWidget(10, 45, 75, 20,
+        /*primaryGroup.addWidget(new CycleButtonWidget(10, 45, 75, 20,
                 ConveyorMode.class, this::getConveyorMode, this::setConveyorMode));
         primaryGroup.addWidget(new CycleButtonWidget(7, 166, 116, 20,
                 ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
-                .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
+                .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));*/
 
         if (coverHolder.getWorld().getTileEntity(coverHolder.getPos()) instanceof TileEntityItemPipe ||
                 coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide)) instanceof TileEntityItemPipe) {
-            final ImageCycleButtonWidget distributionModeButton = new ImageCycleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE, 3,
+            final ImageCycleButtonWidget distributionModeButton = new ImageCycleButtonWidget(149, 166, 20, 20, gregtech.api.guiOld.GuiTextures.DISTRIBUTION_MODE, 3,
                     () -> distributionMode.ordinal(),
                     val -> setDistributionMode(DistributionMode.values()[val]))
                     .setTooltipHoverString(val -> DistributionMode.values()[val].getName());
@@ -490,10 +500,59 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
         this.itemFilterContainer.initUI(70, primaryGroup::addWidget);
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 190 + 82)
+        ModularUI.Builder builder = ModularUI.builder(gregtech.api.guiOld.GuiTextures.BACKGROUND, 176, 190 + 82)
                 .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 190);
+                .bindPlayerInventory(player.inventory, gregtech.api.guiOld.GuiTextures.SLOT, 7, 190);
         return buildUI(builder, player);
+    }
+
+    @Override
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        ModularWindow.Builder builder = ModularWindow.builder(new Size(176, 166));
+        //builder.addFromJson(GTValues.MODID, "cover/conveyor", buildContext);
+        builder.widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier])))
+                .widget(new ButtonWidget()
+                        .setOnClick(GuiFunctions.getIncrementer(1, 8, 64, 512, this::adjustTransferRate))
+                        .setSynced(true, false)
+                        .setBackground(GuiTextures.VANILLA_BUTTON_NORMAL)
+                        .setSize(30, 20)
+                        .setPos(136, 20))
+                .widget(new ButtonWidget()
+                        .setOnClick(GuiFunctions.getIncrementer(-1, -8, -64, 512, this::adjustTransferRate))
+                        .setSynced(true, false)
+                        .setBackground(GuiTextures.VANILLA_BUTTON_NORMAL)
+                        .setSize(30, 20)
+                        .setPos(10, 20))
+                .widget(new TextFieldWidget()
+                        .setMaxWidth(92)
+                        .setGetterInt(() -> transferRate)
+                        .setSetterInt(this::setTransferRate)
+                        .setNumbers(1, maxItemTransferRate))
+                .widget(new CycleButtonWidget()
+                        .setForEnum(ConveyorMode.class, this::setConveyorMode, this::getConveyorMode)
+                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(ConveyorMode.class))
+                        .setBackground(GuiTextures.BASE_BUTTON)
+                        .setPos(10, 45)
+                        .setSize(75, 20))
+                .widget(new CycleButtonWidget()
+                        .setForEnum(ManualImportExportMode.class, this::setManualImportExportMode, this::getManualImportExportMode)
+                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(ManualImportExportMode.class))
+                        .addTooltip(new Text("cover.universal.manual_import_export.mode.description").localise())
+                        .setPos(7, 166)
+                        .setSize(116, 20))
+                .widget(new CycleButtonWidget()
+                        .setForEnum(DistributionMode.class, this::setDistributionMode, this::getDistributionMode)
+                        .setTexture(GuiTextures.DISTRIBUTION_MODE) // TODO remove background of texture and use line below
+                        //.setBackground(GuiTextures.BASE_BUTTON)
+                        .setBackground()
+                        .setPos(149, 166)
+                        .setSize(20, 20));
+        return builder.build();
+    }
+
+    private boolean hasItemPipeNeighbour() {
+        return coverHolder.getWorld().getTileEntity(coverHolder.getPos()) instanceof TileEntityItemPipe ||
+                coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide)) instanceof TileEntityItemPipe;
     }
 
     @Override

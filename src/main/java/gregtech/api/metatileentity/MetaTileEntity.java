@@ -8,6 +8,8 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.common.internal.ModularWindow;
+import com.cleanroommc.modularui.common.internal.UIBuildContext;
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
@@ -18,6 +20,7 @@ import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.gui.GregTechUI;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.sound.GTSoundManager;
 import gregtech.api.recipes.FluidKey;
@@ -332,10 +335,17 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @param entityPlayer player opening inventory
      * @return freshly created UI instance
      */
+    @Deprecated
     protected abstract ModularUI createUI(EntityPlayer entityPlayer);
 
+    @Deprecated
     public ModularUI getModularUI(EntityPlayer entityPlayer) {
         return createUI(entityPlayer);
+    }
+
+    @Nullable
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        return null;
     }
 
     public final void onCoverLeftClick(EntityPlayer playerIn, CuboidRayTraceResult result) {
@@ -379,7 +389,8 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
-                MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                GregTechUI.MTE_UI.open(playerIn, getWorld(), getPos());
+                //MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
             }
             return true;
         } else if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {

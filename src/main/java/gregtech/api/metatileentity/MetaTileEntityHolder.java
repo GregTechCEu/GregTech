@@ -1,5 +1,8 @@
 package gregtech.api.metatileentity;
 
+import com.cleanroommc.modularui.api.ITileWithModularUI;
+import com.cleanroommc.modularui.common.internal.ModularWindow;
+import com.cleanroommc.modularui.common.internal.UIBuildContext;
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
@@ -39,7 +42,7 @@ import java.util.ArrayList;
 
 import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
-public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIHolder, IWorldNameable {
+public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIHolder, IWorldNameable, ITileWithModularUI {
 
     MetaTileEntity metaTileEntity;
     private boolean needToUpdateLightning = false;
@@ -374,6 +377,11 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
             }
         }
         return false;
+    }
+
+    @Override
+    public ModularWindow createWindow(UIBuildContext uiBuildContext) {
+        return null;
     }
 
     public void setCustomName(String customName) {
