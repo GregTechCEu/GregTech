@@ -6,11 +6,13 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Pos2d;
 import com.cleanroommc.modularui.api.math.Size;
 import com.cleanroommc.modularui.common.internal.ModularWindow;
 import com.cleanroommc.modularui.common.internal.UIBuildContext;
 import com.cleanroommc.modularui.common.widget.ButtonWidget;
 import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
+import com.cleanroommc.modularui.common.widget.DrawableWidget;
 import com.cleanroommc.modularui.common.widget.TextFieldWidget;
 import com.cleanroommc.modularui.common.widget.TextWidget;
 import gnu.trove.list.TIntList;
@@ -508,26 +510,31 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
-        ModularWindow.Builder builder = ModularWindow.builder(new Size(176, 166));
+        ModularWindow.Builder builder = ModularWindow.builder(new Size(176, 272));
         //builder.addFromJson(GTValues.MODID, "cover/conveyor", buildContext);
-        builder.widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier])))
+        builder.bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 190))
+                .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier])))
+                .widget(new DrawableWidget()
+                        .setDrawable(GuiTextures.BACKGROUND)
+                        .fillParent())
                 .widget(new ButtonWidget()
                         .setOnClick(GuiFunctions.getIncrementer(1, 8, 64, 512, this::adjustTransferRate))
                         .setSynced(true, false)
-                        .setBackground(GuiTextures.VANILLA_BUTTON_NORMAL)
+                        .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
                         .setSize(30, 20)
                         .setPos(136, 20))
                 .widget(new ButtonWidget()
                         .setOnClick(GuiFunctions.getIncrementer(-1, -8, -64, 512, this::adjustTransferRate))
                         .setSynced(true, false)
-                        .setBackground(GuiTextures.VANILLA_BUTTON_NORMAL)
+                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
                         .setSize(30, 20)
                         .setPos(10, 20))
                 .widget(new TextFieldWidget()
                         .setMaxWidth(92)
                         .setGetterInt(() -> transferRate)
                         .setSetterInt(this::setTransferRate)
-                        .setNumbers(1, maxItemTransferRate))
+                        .setNumbers(1, maxItemTransferRate)
+                        .setPos(42, 26))
                 .widget(new CycleButtonWidget()
                         .setForEnum(ConveyorMode.class, this::setConveyorMode, this::getConveyorMode)
                         .setTextureGetter(GuiFunctions.enumStringTextureGetter(ConveyorMode.class))
@@ -538,6 +545,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                         .setForEnum(ManualImportExportMode.class, this::setManualImportExportMode, this::getManualImportExportMode)
                         .setTextureGetter(GuiFunctions.enumStringTextureGetter(ManualImportExportMode.class))
                         .addTooltip(new Text("cover.universal.manual_import_export.mode.description").localise())
+                        .setBackground(GuiTextures.BASE_BUTTON)
                         .setPos(7, 166)
                         .setSize(116, 20))
                 .widget(new CycleButtonWidget()

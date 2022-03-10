@@ -343,6 +343,14 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
         return createUI(entityPlayer);
     }
 
+    /**
+     * Temporary method to determine which method should be called
+     */
+    @Deprecated
+    public boolean useOldGui() {
+        return true;
+    }
+
     @Nullable
     public ModularWindow createWindow(UIBuildContext buildContext) {
         return null;
@@ -389,8 +397,11 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
-                GregTechUI.MTE_UI.open(playerIn, getWorld(), getPos());
-                //MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                if(useOldGui()) {
+                    MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                } else {
+                    GregTechUI.MTE_UI.open(playerIn, getWorld(), getPos());
+                }
             }
             return true;
         } else if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {

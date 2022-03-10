@@ -32,7 +32,7 @@ public class GuiFunctions {
             if (val >= values.length) {
                 throw new ArrayIndexOutOfBoundsException("Tried getting enum constant of class " + clazz.getSimpleName() + " at index " + val);
             }
-            return new Text(values[val].getName());
+            return new Text(values[val].getName()).color(0xFFFFFF);
         };
     }
 }
