@@ -129,7 +129,10 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @Nonnull List<String> tooltip, boolean advanced) {
         String key = this.metaTileEntityId.getPath().split("\\.")[0];
-        tooltip.add(1, I18n.format(String.format("gregtech.machine.%s.tooltip", key)));
+        String mainKey = String.format("gregtech.machine.%s.tooltip", key);
+        if (I18n.hasKey(mainKey)) {
+            tooltip.add(1, I18n.format(mainKey));
+        }
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), GTValues.VNF[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         if (recipeMap.getMaxFluidInputs() > 0 || recipeMap.getMaxFluidOutputs() > 0)
