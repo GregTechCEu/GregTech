@@ -592,7 +592,7 @@ public class OrePrefix {
         String name = "";
 
         // Avoid NPE from Materials.NULL
-        if(!material.getUnlocalizedName().equals("material.null") && material.isPolymer()) {
+        if(!material.getUnlocalizedName().equals("material.null") && material.hasProperty(PropertyKey.POLYMER)) {
             if(this.equals(plate)) {
                 name = "item.material.oreprefix.platePolymer";
             }

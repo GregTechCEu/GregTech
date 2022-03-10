@@ -78,11 +78,6 @@ public class Material implements Comparable<Material> {
         return chemicalFormula;
     }
 
-    @ZenGetter
-    public Boolean isPolymer() {
-        return materialInfo.polymer;
-    }
-
     @ZenMethod
     public Material setFormula(String formula) {
         return setFormula(formula, false);
@@ -576,8 +571,37 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        /**
+         * Add an {@link PolymerProperty} to this Material.<br>
+         * Will be created with a Harvest Level of 2 and no Burn Time (Furnace Fuel).<br>
+         * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
+         *
+         * @throws IllegalArgumentException If an {@link PolymerProperty} has already been added to this Material.
+         */
         public Builder polymer() {
-            this.materialInfo.polymer = true;
+            properties.ensureSet(PropertyKey.POLYMER);
+            return this;
+        }
+
+        /**
+         * Add an {@link PolymerProperty} to this Material.<br>
+         * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
+         * Will have a burn time of 0
+         *
+         * @param harvestLevel The Harvest Level of this block for Mining.<br>
+         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     also be used to determine the tool's Mining level.<br>
+         *                     If this Material already had a Harvest Level defined, it will be overridden.
+         * @throws IllegalArgumentException If an {@link PolymerProperty} has already been added to this Material.
+         */
+        public Builder polymer(int harvestLevel) {
+            DustProperty prop = properties.getProperty(PropertyKey.DUST);
+            if (prop == null) dust(harvestLevel, 0);
+            else {
+                if (prop.getHarvestLevel() == 2) prop.setHarvestLevel(harvestLevel);
+            }
+            properties.ensureSet(PropertyKey.POLYMER);
+            properties.ensureSet(PropertyKey.FLUID);
             return this;
         }
 
@@ -905,11 +929,6 @@ public class Material implements Comparable<Material> {
          */
         private Element element;
 
-        /**
-         * If the material is considered a Polymer for special naming
-         */
-        private boolean polymer = false;
-
         private MaterialInfo(int metaItemSubId, String name) {
             this.metaItemSubId = metaItemSubId;
             if (!GTUtility.toLowerCaseUnderscore(GTUtility.lowerUnderscoreToUpperCamel(name)).equals(name))
@@ -923,7 +942,7 @@ public class Material implements Comparable<Material> {
             if (iconSet == null) {
                 if (p.hasProperty(PropertyKey.GEM)) {
                     iconSet = MaterialIconSet.GEM_VERTICAL;
-                } else if (p.hasProperty(PropertyKey.DUST) || p.hasProperty(PropertyKey.INGOT)) {
+                } else if (p.hasProperty(PropertyKey.DUST) || p.hasProperty(PropertyKey.INGOT) || p.hasProperty(PropertyKey.POLYMER)) {
                     iconSet = MaterialIconSet.DULL;
                 } else if (p.hasProperty(PropertyKey.FLUID)) {
                     if (p.getProperty(PropertyKey.FLUID).isGas()) {
