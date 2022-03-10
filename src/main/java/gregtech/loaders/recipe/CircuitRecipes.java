@@ -984,7 +984,7 @@ public class CircuitRecipes {
                 .input(component, Component.Capacitor, 2)
                 .input(component, Component.Transistor, 2)
                 .input(wireFine, Copper, 2)
-                .output(INTEGRATED_PROCESSOR_LV, 3)
+                .output(MICROPROCESSOR_LV, 3)
                 .buildAndRegister();
 
         // Microprocessor LV SoC
@@ -993,7 +993,7 @@ public class CircuitRecipes {
                 .input(SYSTEM_ON_CHIP)
                 .input(wireFine, Copper, 2)
                 .input(bolt, Tin, 2)
-                .output(INTEGRATED_PROCESSOR_LV, 6)
+                .output(MICROPROCESSOR_LV, 6)
                 .buildAndRegister();
 
         // T3: Processor ===============================================================================================
@@ -1006,7 +1006,7 @@ public class CircuitRecipes {
                 .input(component, Component.Capacitor, 4)
                 .input(component, Component.Transistor, 4)
                 .input(wireFine, RedAlloy, 4)
-                .output(MICRO_PROCESSOR_MV, 2)
+                .output(PROCESSOR_MV, 2)
                 .buildAndRegister();
 
         // MV SoC
@@ -1015,53 +1015,53 @@ public class CircuitRecipes {
                 .input(SYSTEM_ON_CHIP)
                 .input(wireFine, RedAlloy, 4)
                 .input(bolt, AnnealedCopper, 4)
-                .output(MICRO_PROCESSOR_MV, 4)
+                .output(PROCESSOR_MV, 4)
                 .buildAndRegister();
 
         // HV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[MV]).duration(400)
                 .input(PLASTIC_CIRCUIT_BOARD)
-                .input(MICRO_PROCESSOR_MV, 2)
+                .input(PROCESSOR_MV, 2)
                 .input(component, Component.Inductor, 4)
                 .input(component, Component.Capacitor, 8)
                 .input(RANDOM_ACCESS_MEMORY, 4)
                 .input(wireFine, RedAlloy, 8)
-                .output(MICRO_PROCESSOR_ASSEMBLY_HV, 2)
+                .output(PROCESSOR_ASSEMBLY_HV, 2)
                 .solderMultiplier(2)
                 .buildAndRegister();
 
         // EV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[MV]).duration(400)
                 .input(PLASTIC_CIRCUIT_BOARD)
-                .input(MICRO_PROCESSOR_ASSEMBLY_HV, 2)
+                .input(PROCESSOR_ASSEMBLY_HV, 2)
                 .input(component, Component.Diode, 4)
                 .input(RANDOM_ACCESS_MEMORY, 4)
                 .input(wireFine, Electrum, 16)
                 .input(bolt, BlueAlloy, 16)
-                .output(MICRO_WORKSTATION_EV)
+                .output(WORKSTATION_EV)
                 .solderMultiplier(2)
                 .buildAndRegister();
 
         // IV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[HV]).duration(800)
                 .input(frameGt, Aluminium, 2)
-                .input(MICRO_WORKSTATION_EV, 2)
+                .input(WORKSTATION_EV, 2)
                 .input(component, Component.Inductor, 8)
                 .input(component, Component.Capacitor, 16)
                 .input(RANDOM_ACCESS_MEMORY, 16)
                 .input(wireGtSingle, AnnealedCopper, 16)
-                .output(MICRO_SUPERCOMPUTER_IV)
+                .output(MAINFRAME_IV)
                 .solderMultiplier(4)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[HV]).duration(400)
                 .input(frameGt, Aluminium, 2)
-                .input(MICRO_WORKSTATION_EV, 2)
+                .input(WORKSTATION_EV, 2)
                 .input(ADVANCED_SMD_INDUCTOR, 2)
                 .input(ADVANCED_SMD_CAPACITOR, 4)
                 .input(RANDOM_ACCESS_MEMORY, 16)
                 .input(wireGtSingle, AnnealedCopper, 16)
-                .output(MICRO_SUPERCOMPUTER_IV)
+                .output(MAINFRAME_IV)
                 .solderMultiplier(4)
                 .buildAndRegister();
 
@@ -1105,7 +1105,7 @@ public class CircuitRecipes {
                 .input(SMD_CAPACITOR, 8)
                 .input(RANDOM_ACCESS_MEMORY, 8)
                 .input(wireFine, Electrum, 16)
-                .output(NANO_ASSEMBLY_EV, 2)
+                .output(NANO_PROCESSOR_ASSEMBLY_EV, 2)
                 .solderMultiplier(2)
                 .buildAndRegister();
 
@@ -1116,53 +1116,53 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_CAPACITOR, 2)
                 .input(RANDOM_ACCESS_MEMORY, 8)
                 .input(wireFine, Electrum, 16)
-                .output(NANO_ASSEMBLY_EV, 2)
+                .output(NANO_PROCESSOR_ASSEMBLY_EV, 2)
                 .solderMultiplier(2)
                 .buildAndRegister();
 
         // IV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(600).duration(400)
                 .input(ADVANCED_CIRCUIT_BOARD)
-                .input(NANO_ASSEMBLY_EV, 2)
+                .input(NANO_PROCESSOR_ASSEMBLY_EV, 2)
                 .input(SMD_DIODE, 8)
                 .input(NOR_MEMORY_CHIP, 4)
                 .input(RANDOM_ACCESS_MEMORY, 16)
                 .input(wireFine, Electrum, 16)
-                .output(NANO_WORKSTATION_IV)
+                .output(NANO_COMPUTER_IV)
                 .solderMultiplier(2)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(600).duration(200)
                 .input(ADVANCED_CIRCUIT_BOARD)
-                .input(NANO_ASSEMBLY_EV, 2)
+                .input(NANO_PROCESSOR_ASSEMBLY_EV, 2)
                 .input(ADVANCED_SMD_DIODE, 2)
                 .input(NOR_MEMORY_CHIP, 4)
                 .input(RANDOM_ACCESS_MEMORY, 16)
                 .input(wireFine, Electrum, 16)
-                .output(NANO_WORKSTATION_IV)
+                .output(NANO_COMPUTER_IV)
                 .solderMultiplier(2)
                 .buildAndRegister();
 
         // LuV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[EV]).duration(800)
                 .input(frameGt, Aluminium, 2)
-                .input(NANO_WORKSTATION_IV, 2)
+                .input(NANO_COMPUTER_IV, 2)
                 .input(SMD_INDUCTOR, 16)
                 .input(SMD_CAPACITOR, 32)
                 .input(RANDOM_ACCESS_MEMORY, 16)
                 .input(wireGtSingle, AnnealedCopper, 32)
-                .output(NANO_SUPERCOMPUTER_LUV)
+                .output(NANO_MAINFRAME_LUV)
                 .solderMultiplier(4)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[EV]).duration(400)
                 .input(frameGt, Aluminium, 2)
-                .input(NANO_WORKSTATION_IV, 2)
+                .input(NANO_COMPUTER_IV, 2)
                 .input(ADVANCED_SMD_INDUCTOR, 4)
                 .input(ADVANCED_SMD_CAPACITOR, 8)
                 .input(RANDOM_ACCESS_MEMORY, 16)
                 .input(wireGtSingle, AnnealedCopper, 32)
-                .output(NANO_SUPERCOMPUTER_LUV)
+                .output(NANO_MAINFRAME_LUV)
                 .solderMultiplier(4)
                 .buildAndRegister();
 
@@ -1229,7 +1229,7 @@ public class CircuitRecipes {
                 .input(NOR_MEMORY_CHIP, 4)
                 .input(RANDOM_ACCESS_MEMORY, 16)
                 .input(wireFine, Platinum, 32)
-                .output(QUANTUM_WORKSTATION_LUV)
+                .output(QUANTUM_COMPUTER_LUV)
                 .solderMultiplier(2)
                 .buildAndRegister();
 
@@ -1240,31 +1240,31 @@ public class CircuitRecipes {
                 .input(NOR_MEMORY_CHIP, 4)
                 .input(RANDOM_ACCESS_MEMORY, 16)
                 .input(wireFine, Platinum, 32)
-                .output(QUANTUM_WORKSTATION_LUV)
+                .output(QUANTUM_COMPUTER_LUV)
                 .solderMultiplier(2)
                 .buildAndRegister();
 
         // ZPM
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[IV]).duration(800)
                 .input(frameGt, HSSG, 2)
-                .input(QUANTUM_WORKSTATION_LUV, 2)
+                .input(QUANTUM_COMPUTER_LUV, 2)
                 .input(SMD_INDUCTOR, 24)
                 .input(SMD_CAPACITOR, 48)
                 .input(RANDOM_ACCESS_MEMORY, 24)
                 .input(wireGtSingle, AnnealedCopper, 48)
                 .solderMultiplier(4)
-                .output(QUANTUM_SUPERCOMPUTER_ZPM)
+                .output(QUANTUM_MAINFRAME_ZPM)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[IV]).duration(400)
                 .input(frameGt, HSSG, 2)
-                .input(QUANTUM_WORKSTATION_LUV, 2)
+                .input(QUANTUM_COMPUTER_LUV, 2)
                 .input(ADVANCED_SMD_INDUCTOR, 6)
                 .input(ADVANCED_SMD_CAPACITOR, 12)
                 .input(RANDOM_ACCESS_MEMORY, 24)
                 .input(wireGtSingle, AnnealedCopper, 48)
                 .solderMultiplier(4)
-                .output(QUANTUM_SUPERCOMPUTER_ZPM)
+                .output(QUANTUM_MAINFRAME_ZPM)
                 .buildAndRegister();
 
         // T6: Crystal =================================================================================================
@@ -1310,13 +1310,13 @@ public class CircuitRecipes {
                 .input(NAND_MEMORY_CHIP, 64)
                 .input(wireFine, NiobiumTitanium, 32)
                 .solderMultiplier(2)
-                .output(CRYSTAL_WORKSTATION_ZPM)
+                .output(CRYSTAL_COMPUTER_ZPM)
                 .buildAndRegister();
 
         // UV
         ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(VA[LuV]).duration(800)
                 .input(frameGt, HSSE, 2)
-                .input(CRYSTAL_WORKSTATION_ZPM, 2)
+                .input(CRYSTAL_COMPUTER_ZPM, 2)
                 .input(RANDOM_ACCESS_MEMORY, 32)
                 .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(wireGtSingle, NiobiumTitanium, 8)
@@ -1324,7 +1324,7 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_CAPACITOR, 16)
                 .input(ADVANCED_SMD_DIODE, 8)
                 .fluidInputs(SolderingAlloy.getFluid(L * 10))
-                .output(CRYSTAL_SUPERCOMPUTER_UV)
+                .output(CRYSTAL_MAINFRAME_UV)
                 .buildAndRegister();
 
         // T7: Wetware =================================================================================================
