@@ -294,7 +294,7 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
             } else {
                 lines.add(I18n.format("metaarmor.message.nightvision.disabled"));
             }
-            lines.add(I18n.format("metaarmor.tooltip.poitons"));
+            lines.add(I18n.format("metaarmor.tooltip.potions"));
         } else if (SLOT == EntityEquipmentSlot.CHEST) {
             lines.add(I18n.format("metaarmor.tooltip.burning"));
         } else if (SLOT == EntityEquipmentSlot.LEGS) {
