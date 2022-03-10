@@ -20,7 +20,7 @@ import java.util.List;
 
 public class EnergyContainerBatteryBuffer extends EnergyContainerHandler {
 
-    public static final long AMPS_PER_BATTERY = 4L;
+    public static final long AMPS_PER_BATTERY = 2L;
 
     private final int tier;
 
