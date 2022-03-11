@@ -323,6 +323,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                 if (!areaOfEffectBlockBreakRoutine(stack, playerMP)) {
                     if (result == -1) {
                         treeFellingRoutine(playerMP, stack, pos);
+                    } else {
+                        return true;
                     }
                 }
             }
