@@ -371,7 +371,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default boolean definition$shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack) {
-        return oldStack.getItem() != newStack.getItem();
+        return oldStack.getItem() != newStack.getItem() || oldStack.getItemDamage() < newStack.getItemDamage();
     }
 
     default boolean definition$hasContainerItem(ItemStack stack) {
