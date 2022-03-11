@@ -318,8 +318,13 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default boolean definition$onBlockStartBreak(ItemStack stack, BlockPos pos, EntityPlayer player) {
         if (!player.world.isRemote && !player.isSneaking()) {
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
-            if (!areaOfEffectBlockBreakRoutine(stack, playerMP)) {
-                treeFellingRoutine(playerMP, stack, pos);
+            int result = ToolHelper.shearBlockRoutine(playerMP, stack, pos);
+            if (result != 0) {
+                if (!areaOfEffectBlockBreakRoutine(stack, playerMP)) {
+                    if (result == -1) {
+                        treeFellingRoutine(playerMP, stack, pos);
+                    }
+                }
             }
         }
         return false;
