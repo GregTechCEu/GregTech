@@ -62,12 +62,17 @@ public class ToolHelper {
     public static final String TOOL_TAG_KEY = "GT.Tool";
     public static final String BEHAVIOURS_TAG_KEY = "GT.Behaviours";
 
+    // Base item keys
+
     // Electric item keys
     public static final String MAX_CHARGE_KEY = "MaxCharge";
     public static final String CHARGE_KEY = "Charge";
 
     // Vanilla keys
     public static final String UNBREAKABLE_KEY = "Unbreakable";
+
+    // Misc keys
+    public static final String DISALLOW_CONTAINER_ITEM_KEY = "DisallowContainerItem";
 
     // Keys that resides in tool tag
     public static final String MATERIAL_KEY = "Material";
