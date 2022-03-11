@@ -22,6 +22,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentDurability;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -42,6 +43,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -365,7 +367,12 @@ public class ToolHelper {
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean breakBlockRoutine(EntityPlayerMP player, ItemStack tool, BlockPos pos) {
+        // This is *not* a vanilla/forge convention, Forge never added "shears" to ItemShear's tool classes.
+        if (isTool(tool, "shears") && shearBlockRoutine(player, tool, pos) == 0) {
+            return false;
+        }
         World world = player.world;
         int exp = ForgeHooks.onBlockBreakEvent(world, player.interactionManager.getGameType(), player, pos);
         if (exp == -1) {
@@ -404,6 +411,44 @@ public class ToolHelper {
         }
     }
 
+    /**
+     * Shearing a Block.
+     * @return -1 if not shearable, otherwise return 0 or 1, 0 if tool is now broken.
+     */
+    public static int shearBlockRoutine(EntityPlayerMP player, ItemStack tool, BlockPos pos) {
+        if (!player.isCreative()) {
+            World world = player.world;
+            IBlockState state = world.getBlockState(pos);
+            if (state.getBlock() instanceof IShearable) {
+                IShearable shearable = (IShearable) state.getBlock();
+                if (shearable.isShearable(tool, world, pos)) {
+                    List<ItemStack> shearedDrops = shearable.onSheared(tool, world, pos, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, tool));
+                    boolean relocateMinedBlocks = getBehavioursTag(tool).getBoolean(RELOCATE_MINED_BLOCKS_KEY);
+                    Iterator<ItemStack> iter = shearedDrops.iterator();
+                    while (iter.hasNext()) {
+                        ItemStack stack = iter.next();
+                        if (relocateMinedBlocks && player.addItemStackToInventory(stack)) {
+                            iter.remove();
+                        } else {
+                            float f = 0.7F;
+                            double xo = (world.rand.nextFloat() * f) + 1.5D;
+                            double yo = (world.rand.nextFloat() * f) + 1.5D;
+                            double zo = (world.rand.nextFloat() * f) + 1.5D;
+                            EntityItem entityItem = new EntityItem(world, pos.getX() + xo, pos.getY() + yo, pos.getZ() + zo, stack);
+                            entityItem.setDefaultPickupDelay();
+                            player.world.spawnEntity(entityItem);
+                        }
+                    }
+                    ToolHelper.damageItem(tool, player);
+                    player.addStat(StatList.getBlockStats((Block) shearable));
+                    player.world.setBlockState(pos, Blocks.AIR.getDefaultState(), 11);
+                    return tool.isEmpty() ? 0 : 1;
+                }
+            }
+        }
+        return -1;
+    }
+
     public static boolean removeBlockRoutine(@Nullable IBlockState state, World world, EntityPlayerMP player, BlockPos pos, boolean canHarvest) {
         state = state == null ? world.getBlockState(pos) : state;
         boolean successful = state.getBlock().removedByPlayer(state, world, pos, player, canHarvest);
@@ -414,7 +459,7 @@ public class ToolHelper {
     }
 
     /**
-     * Called from {@link net.minecraft.item.Item#onItemUse(EntityPlayer, World, BlockPos, EnumHand, EnumFacing, float, float, float)}
+     * Called from {@link Item#onItemUse(EntityPlayer, World, BlockPos, EnumHand, EnumFacing, float, float, float)}
      *
      * Have to be called both sides.
      */
