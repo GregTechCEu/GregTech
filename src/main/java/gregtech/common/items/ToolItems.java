@@ -43,13 +43,11 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.logging.log4j.ThreadContext;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -243,8 +241,8 @@ public class ToolItems {
             if (!event.isSilkTouching()) {
                 ToolHelper.applyHammerDropConversion(stack, event.getState(), event.getDrops(), event.getFortuneLevel(), event.getDropChance(), player.getRNG());
             }
-            NBTTagCompound behaviourTag = IGTTool.getBehaviourTag(stack);
-            if (!event.isSilkTouching() && event.getState().getBlock() == Blocks.ICE && behaviourTag.getBoolean("SilkHarvestIce")) {
+            NBTTagCompound behaviourTag = ToolHelper.getBehavioursTag(stack);
+            if (!event.isSilkTouching() && event.getState().getBlock() == Blocks.ICE && behaviourTag.getBoolean(ToolHelper.HARVEST_ICE_KEY)) {
                 Item iceBlock = Item.getItemFromBlock(Blocks.ICE);
                 if (event.getDrops().stream().noneMatch(drop -> drop.getItem() == iceBlock)) {
                     event.getDrops().add(new ItemStack(iceBlock));
@@ -259,7 +257,7 @@ public class ToolItems {
                     });
                 }
             }
-            if (behaviourTag.getBoolean("RelocateMinedBlocks")) {
+            if (behaviourTag.getBoolean(ToolHelper.RELOCATE_MINED_BLOCKS_KEY)) {
                 event.getDrops().removeIf(player::addItemStackToInventory);
             }
         }

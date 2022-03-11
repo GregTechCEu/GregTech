@@ -50,6 +50,7 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
@@ -61,6 +62,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -120,7 +122,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         });
 
         // Set behaviours
-        NBTTagCompound behaviourTag = getBehaviourTag(stack);
+        NBTTagCompound behaviourTag = getBehavioursTag(stack);
         AoEDefinition aoeDefinition = getToolStats().getAoEDefinition(stack);
 
         behaviourTag.setInteger(MAX_AOE_COLUMN_KEY, aoeDefinition.column);
@@ -354,7 +356,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default boolean definition$canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity, EntityLivingBase attacker) {
-        return getBehaviourTag(stack).getBoolean(DISABLE_SHIELDS_KEY);
+        return getBehavioursTag(stack).getBoolean(DISABLE_SHIELDS_KEY);
     }
 
     default boolean definition$doesSneakBypassUse(@Nonnull ItemStack stack, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
@@ -437,7 +439,31 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     @SideOnly(Side.CLIENT)
     default void definition$addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
-
+        NBTTagCompound behavioursTag = getBehavioursTag(stack);
+        List<String> behaviours = new ArrayList<>();
+        if (behavioursTag.getBoolean(HARVEST_ICE_KEY)) {
+            behaviours.add(" " + TextFormatting.AQUA + "Silk Harvest Ice");
+        }
+        if (behavioursTag.getBoolean(TORCH_PLACING_KEY)) {
+            behaviours.add(" " + TextFormatting.YELLOW + "Torch Placing");
+        }
+        if (behavioursTag.getBoolean(TREE_FELLING_KEY)) {
+            behaviours.add(" " + TextFormatting.DARK_RED + "Tree Felling");
+        }
+        if (behavioursTag.getBoolean(DISABLE_SHIELDS_KEY)) {
+            behaviours.add(" " + TextFormatting.GRAY + "Disable Shields");
+        }
+        if (behavioursTag.getBoolean(RELOCATE_MINED_BLOCKS_KEY)) {
+            behaviours.add(" " + TextFormatting.DARK_GREEN + "Relocate Mined Blocks");
+        }
+        AoEDefinition aoeDefinition = ToolHelper.getAoEDefinition(stack);
+        if (aoeDefinition != AoEDefinition.none()) {
+            behaviours.add(" " + TextFormatting.DARK_PURPLE + aoeDefinition.column + "x" + aoeDefinition.row + "x" + aoeDefinition.layer + " AoE Mining");
+        }
+        if (!behaviours.isEmpty()) {
+            tooltip.add(TextFormatting.YELLOW + "Behaviours:");
+            tooltip.addAll(behaviours);
+        }
     }
 
     @SideOnly(Side.CLIENT)

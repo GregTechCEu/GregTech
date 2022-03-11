@@ -89,6 +89,7 @@ public class ToolHelper {
     // Others
     public static final String HARVEST_ICE_KEY = "HarvestIce";
     public static final String TORCH_PLACING_KEY = "TorchPlacing";
+    public static final String TORCH_PLACING_CACHE_SLOT_KEY = "TorchPlacing$Slot";
     public static final String TREE_FELLING_KEY = "TreeFelling";
     public static final String DISABLE_SHIELDS_KEY = "DisableShields";
     public static final String RELOCATE_MINED_BLOCKS_KEY = "RelocateMinedBlocks";
@@ -97,7 +98,7 @@ public class ToolHelper {
         return stack.getOrCreateSubCompound(TOOL_TAG_KEY);
     }
 
-    public static NBTTagCompound getBehaviourTag(ItemStack stack) {
+    public static NBTTagCompound getBehavioursTag(ItemStack stack) {
         return stack.getOrCreateSubCompound(BEHAVIOURS_TAG_KEY);
     }
 
@@ -218,11 +219,11 @@ public class ToolHelper {
     }
 
     public static AoEDefinition getMaxAoEDefinition(ItemStack stack) {
-        return AoEDefinition.readMax(getToolTag(stack));
+        return AoEDefinition.readMax(getBehavioursTag(stack));
     }
 
     public static AoEDefinition getAoEDefinition(ItemStack stack) {
-        return AoEDefinition.read(getToolTag(stack), getMaxAoEDefinition(stack));
+        return AoEDefinition.read(getBehavioursTag(stack), getMaxAoEDefinition(stack));
     }
 
     /**
@@ -419,12 +420,12 @@ public class ToolHelper {
      */
     public static EnumActionResult placeTorchRoutine(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
-        NBTTagCompound behaviourTag = getBehaviourTag(stack);
-        if (behaviourTag.getBoolean("TorchPlacing")) {
+        NBTTagCompound behaviourTag = getBehavioursTag(stack);
+        if (behaviourTag.getBoolean(TORCH_PLACING_KEY)) {
             int cachedTorchSlot;
             ItemStack slotStack;
-            if (behaviourTag.getBoolean("TorchPlacing$Slot")) {
-                cachedTorchSlot = behaviourTag.getInteger("TorchPlacing$Slot");
+            if (behaviourTag.getBoolean(TORCH_PLACING_CACHE_SLOT_KEY)) {
+                cachedTorchSlot = behaviourTag.getInteger(TORCH_PLACING_CACHE_SLOT_KEY);
                 if (cachedTorchSlot < 0) {
                     slotStack = player.inventory.offHandInventory.get(Math.abs(cachedTorchSlot) + 1);
                 } else {
@@ -437,14 +438,14 @@ public class ToolHelper {
             for (int i = 0; i < player.inventory.offHandInventory.size(); i++) {
                 slotStack = player.inventory.offHandInventory.get(i);
                 if (checkAndPlaceTorch(slotStack, player, world, pos, hand, facing, hitX, hitY, hitZ)) {
-                    behaviourTag.setInteger("TorchPlacing$Slot", -(i + 1));
+                    behaviourTag.setInteger(TORCH_PLACING_CACHE_SLOT_KEY, -(i + 1));
                     return EnumActionResult.SUCCESS;
                 }
             }
             for (int i = 0; i < player.inventory.mainInventory.size(); i++) {
                 slotStack = player.inventory.mainInventory.get(i);
                 if (checkAndPlaceTorch(slotStack, player, world, pos, hand, facing, hitX, hitY, hitZ)) {
-                    behaviourTag.setInteger("TorchPlacing$Slot", i);
+                    behaviourTag.setInteger(TORCH_PLACING_CACHE_SLOT_KEY, i);
                     return EnumActionResult.SUCCESS;
                 }
             }
@@ -527,7 +528,7 @@ public class ToolHelper {
         private final ItemStack tool;
         private final Deque<BlockPos> orderedBlocks;
         private final BlockPos samplePos;
-        private final int maxY, minY;
+        private final int minY;
 
         private int minX, maxX, minZ, maxZ;
         private boolean purgeLeaves;
@@ -539,7 +540,6 @@ public class ToolHelper {
             this.tool = tool;
             this.orderedBlocks = orderedBlocks;
             this.samplePos = orderedBlocks.getFirst();
-            this.maxY = this.samplePos.getY();
             this.minY = orderedBlocks.getLast().getY();
             this.minX = this.maxX = this.samplePos.getX();
             this.minZ = this.maxZ = this.samplePos.getZ();
