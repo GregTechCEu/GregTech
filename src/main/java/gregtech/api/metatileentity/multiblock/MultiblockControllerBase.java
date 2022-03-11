@@ -329,6 +329,19 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     @Override
+    public void setFrontFacing(EnumFacing frontFacing) {
+        super.setFrontFacing(frontFacing);
+        if (getWorld() != null && !getWorld().isRemote && structurePattern != null) {
+            // clear cache since the cache has no concept of pre-existing facing
+            // for the controller block (or any block) in the structure
+            structurePattern.clearCache();
+            // recheck structure pattern immediately to avoid a slight "lag"
+            // on deforming when rotating a multiblock controller
+            checkStructurePattern();
+        }
+    }
+
+    @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.multiblock.universal.controller_information", I18n.format(getMetaFullName())));
