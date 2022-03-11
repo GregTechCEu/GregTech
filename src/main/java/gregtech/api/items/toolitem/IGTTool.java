@@ -106,6 +106,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         ItemStack stack = new ItemStack(get());
         NBTTagCompound toolTag = getToolTag(stack);
 
+        stack.getTagCompound().setBoolean(DISALLOW_CONTAINER_ITEM_KEY, false);
+
         // Set Material
         toolTag.setString(MATERIAL_KEY, material.toString());
 
@@ -375,10 +377,14 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default boolean definition$hasContainerItem(ItemStack stack) {
-        return true;
+        return stack.getTagCompound() == null || !stack.getTagCompound().getBoolean(DISALLOW_CONTAINER_ITEM_KEY);
     }
 
     default ItemStack definition$getContainerItem(ItemStack stack) {
+        // Sanity-check, callers should really validate with hasContainerItem themselves...
+        if (!definition$hasContainerItem(stack)) {
+            return ItemStack.EMPTY;
+        }
         int damage = getToolStats().getToolDamagePerCraft(stack);
         if (damage > 0) {
             EntityPlayer player = ForgeHooks.getCraftingPlayer();
