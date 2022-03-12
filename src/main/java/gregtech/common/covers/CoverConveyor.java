@@ -6,6 +6,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Pos2d;
 import com.cleanroommc.modularui.api.math.Size;
 import com.cleanroommc.modularui.common.internal.ModularWindow;
@@ -520,7 +521,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                 .widget(new ButtonWidget()
                         .setOnClick(GuiFunctions.getIncrementer(1, 8, 64, 512, this::adjustTransferRate))
                         .setSynced(true, false)
-                        .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                        .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFFFF))
                         .setSize(30, 20)
                         .setPos(136, 20))
                 .widget(new ButtonWidget()
@@ -530,11 +531,15 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                         .setSize(30, 20)
                         .setPos(10, 20))
                 .widget(new TextFieldWidget()
-                        .setMaxWidth(92)
+                        .setMaxLines(1)
                         .setGetterInt(() -> transferRate)
                         .setSetterInt(this::setTransferRate)
                         .setNumbers(1, maxItemTransferRate)
-                        .setPos(42, 26))
+                        .setTextAlignment(Alignment.Center)
+                        .setTextColor(0xFFFFFF)
+                        .setBackground(GuiTextures.DISPLAY)
+                        .setPos(40, 20)
+                        .setSize(96, 20))
                 .widget(new CycleButtonWidget()
                         .setForEnum(ConveyorMode.class, this::setConveyorMode, this::getConveyorMode)
                         .setTextureGetter(GuiFunctions.enumStringTextureGetter(ConveyorMode.class))

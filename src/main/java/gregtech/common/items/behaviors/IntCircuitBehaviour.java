@@ -1,6 +1,13 @@
 package gregtech.common.items.behaviors;
 
-import gregtech.api.guiOld.GuiTextures;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Size;
+import com.cleanroommc.modularui.common.internal.ModularWindow;
+import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.ButtonWidget;
+import com.cleanroommc.modularui.common.widget.TextWidget;
+import gregtech.api.gui.GregTechUI;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.widgets.ClickButtonWidget;
 import gregtech.api.guiOld.widgets.DynamicLabelWidget;
@@ -33,15 +40,16 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack heldItem = player.getHeldItem(hand);
         if (!world.isRemote) {
-            PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
-            holder.openUI();
+            //PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
+            //holder.openUI();
+            GregTechUI.getPlayerItemUi(hand).open(player);
         }
         return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
     }
 
     @Override
     public ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 60)
+        return ModularUI.builder(gregtech.api.guiOld.GuiTextures.BACKGROUND, 176, 60)
                 .label(9, 8, "metaitem.circuit.integrated.gui")
                 .widget(new DynamicLabelWidget(82, 30, () -> Integer.toString(IntCircuitIngredient.getCircuitConfiguration(holder.getCurrentItem())), 0x4D4040))
                 .widget(new ClickButtonWidget(15, 24, 20, 20, "-5", data -> IntCircuitIngredient.adjustConfiguration(holder, -5)))
@@ -49,6 +57,37 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
                 .widget(new ClickButtonWidget(104, 24, 20, 20, "+1", data -> IntCircuitIngredient.adjustConfiguration(holder, +1)))
                 .widget(new ClickButtonWidget(141, 24, 20, 20, "+5", data -> IntCircuitIngredient.adjustConfiguration(holder, +5)))
                 .build(holder, entityPlayer);
+    }
+
+    @Override
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        return ModularWindow.builder(new Size(176, 60))
+                .widget(GuiTextures.BACKGROUND.asWidget().fillParent())
+                .widget(new TextWidget(new Text("metaitem.circuit.integrated.gui").localise())
+                        .setPos(9, 8))
+                .widget(new TextWidget(Text.dynamic(() -> Integer.toString(IntCircuitIngredient.getCircuitConfiguration(buildContext.getPlayer()))).color(0x4D4040))
+                        .setPos(82, 30))
+                .widget(new ButtonWidget()
+                        .setOnClick((clickData, widget) -> IntCircuitIngredient.adjustConfiguration(buildContext.getPlayer(), -5))
+                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-5"))
+                        .setSize(20, 20)
+                        .setPos(15, 24))
+                .widget(new ButtonWidget()
+                        .setOnClick((clickData, widget) -> IntCircuitIngredient.adjustConfiguration(buildContext.getPlayer(), -1))
+                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-1"))
+                        .setSize(20, 20)
+                        .setPos(50, 24))
+                .widget(new ButtonWidget()
+                        .setOnClick((clickData, widget) -> IntCircuitIngredient.adjustConfiguration(buildContext.getPlayer(), 1))
+                        .setBackground(GuiTextures.BASE_BUTTON, new Text("1"))
+                        .setSize(20, 20)
+                        .setPos(104, 24))
+                .widget(new ButtonWidget()
+                        .setOnClick((clickData, widget) -> IntCircuitIngredient.adjustConfiguration(buildContext.getPlayer(), 5))
+                        .setBackground(GuiTextures.BASE_BUTTON, new Text("5"))
+                        .setSize(20, 20)
+                        .setPos(141, 24))
+                .build();
     }
 
     @Override

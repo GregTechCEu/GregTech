@@ -1,6 +1,5 @@
 package gregtech.api.gui;
 
-import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.common.widget.Widget;
@@ -14,14 +13,14 @@ public class GuiFunctions {
 
     public static BiConsumer<Widget.ClickData, Widget> getIncrementer(int normal, int shift, int ctrl, int shiftCtrl, IntConsumer consumer) {
         return (clickData, widget) -> {
-            int amount = 1;
+            int amount = normal;
             if (clickData.shift) {
                 if (clickData.ctrl)
-                    amount = 512;
+                    amount = shiftCtrl;
                 else
-                    amount = 8;
+                    amount = shift;
             } else if (clickData.ctrl)
-                amount = 64;
+                amount = ctrl;
             consumer.accept(amount);
         };
     }
@@ -32,7 +31,7 @@ public class GuiFunctions {
             if (val >= values.length) {
                 throw new ArrayIndexOutOfBoundsException("Tried getting enum constant of class " + clazz.getSimpleName() + " at index " + val);
             }
-            return new Text(values[val].getName()).color(0xFFFFFF);
+            return new Text(values[val].getName()).color(0xFFFFFF).localise();
         };
     }
 }

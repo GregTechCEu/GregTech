@@ -2,6 +2,7 @@ package gregtech.api.recipes.ingredients;
 
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.common.items.MetaItems;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,6 +34,14 @@ public class IntCircuitIngredient extends Ingredient {
         tagCompound.setInteger("Configuration", configuration);
     }
 
+    public static int getCircuitConfiguration(EntityPlayer player) {
+        ItemStack stack = player.getHeldItemMainhand();
+        if(!isIntegratedCircuit(stack)) {
+            stack = player.getHeldItemOffhand();
+        }
+        return getCircuitConfiguration(stack);
+    }
+
     public static int getCircuitConfiguration(ItemStack itemStack) {
         if (!isIntegratedCircuit(itemStack)) return 0;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
@@ -52,6 +61,14 @@ public class IntCircuitIngredient extends Ingredient {
     public static void adjustConfiguration(PlayerInventoryHolder holder, int amount) {
         adjustConfiguration(holder.getCurrentItem(), amount);
         holder.markAsDirty();
+    }
+
+    public static void adjustConfiguration(EntityPlayer player, int amount) {
+        ItemStack stack = player.getHeldItemMainhand();
+        if(!isIntegratedCircuit(stack)) {
+            stack = player.getHeldItemOffhand();
+        }
+        adjustConfiguration(stack, amount);
     }
 
     public static void adjustConfiguration(ItemStack stack, int amount) {
