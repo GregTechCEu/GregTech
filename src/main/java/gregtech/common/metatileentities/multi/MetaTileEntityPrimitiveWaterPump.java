@@ -67,9 +67,7 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
         }
         Biome biome = getWorld().getBiome(getPos());
         Set<BiomeDictionary.Type> biomeTypes = BiomeDictionary.getTypes(biome);
-        if (biomeTypes.contains(BiomeDictionary.Type.END) ||
-                biomeTypes.contains(BiomeDictionary.Type.NETHER) ||
-                biomeTypes.contains(BiomeDictionary.Type.VOID)) {
+        if (biomeTypes.contains(BiomeDictionary.Type.NETHER)) {
             return -1; // Disabled
         }
         if (biomeTypes.contains(BiomeDictionary.Type.WATER)) {
