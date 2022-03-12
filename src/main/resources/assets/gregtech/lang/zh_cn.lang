@@ -2127,6 +2127,7 @@ recipemap.extruder.name=压模器
 recipemap.forming_press.name=冲压机床
 recipemap.forge_hammer.name=锻造锤
 recipemap.compressor.name=压缩机
+recipemap.packer.name=打包机
 recipemap.combustion_generator.name=燃烧燃料
 recipemap.gas_turbine.name=气体燃料
 recipemap.steam_turbine.name=蒸汽燃料
