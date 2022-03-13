@@ -5,10 +5,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.items.toolitem.IGTTool;
-import gregtech.api.items.toolitem.ItemGTTool;
-import gregtech.api.items.toolitem.ToolBuilder;
-import gregtech.api.items.toolitem.ToolHelper;
+import gregtech.api.items.toolitem.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -21,7 +18,6 @@ import gregtech.api.util.TaskScheduler;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
@@ -161,7 +157,7 @@ public class ToolItems {
     }
 
     public static void registerModels() {
-        TOOLS.forEach(tool -> ModelLoader.setCustomModelResourceLocation(tool.get(), 0, new ModelResourceLocation(tool.get().getRegistryName(), "inventory")));
+        TOOLS.forEach(tool -> ModelLoader.setCustomModelResourceLocation(tool.get(), 0, tool.getModelLocation()));
     }
 
     public static void registerColors() {
