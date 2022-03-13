@@ -55,22 +55,13 @@ minecraft {
 
 repositories {
     maven {
-        name = "CCL Maven New"
-        setUrl("https://minecraft.curseforge.com/api/maven")
-    }
-    maven {
-        name = "ChickenBones maven"
-        setUrl("http://chickenbones.net/maven/")
-    }
-    maven {
         name = "CurseMaven"
         setUrl("https://www.cursemaven.com")
     }
 }
 
 dependencies {
-    "deobfCompile"("codechicken:ChickenASM:1.12-1.0.2.9")
-    "deobfCompile"("codechicken-lib-1-8:CodeChickenLib-1.12.2:3.2.3.358:universal")
+    "deobfCompile"("curse.maven:codechicken-lib-1-8-242818:2779848")
 
     "deobfCompile"("curse.maven:ae2-extended-life-570458:3649419")
 
