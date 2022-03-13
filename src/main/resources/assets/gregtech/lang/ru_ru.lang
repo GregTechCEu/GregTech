@@ -1547,6 +1547,7 @@ recipemap.extruder.name=Экструдер
 recipemap.forming_press.name=Формовочный пресс
 recipemap.forge_hammer.name=Кузнечный молот
 recipemap.compressor.name=Компрессор
+recipemap.packer.name=Упаковщик
 recipemap.combustion_generator.name=Дизельный генератор
 recipemap.gas_turbine.name=Газовая турбина
 recipemap.steam_turbine.name=Паровая турбина

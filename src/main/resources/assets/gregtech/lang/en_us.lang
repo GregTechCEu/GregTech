@@ -2146,6 +2146,7 @@ recipemap.extruder.name=Extruder
 recipemap.forming_press.name=Forming Press
 recipemap.forge_hammer.name=Forge Hammer
 recipemap.compressor.name=Compressor
+recipemap.packer.name=Packager
 recipemap.combustion_generator.name=Combustion Fuels
 recipemap.gas_turbine.name=Gas Fuels
 recipemap.steam_turbine.name=Steam Fuels
