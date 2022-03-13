@@ -23,6 +23,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -67,25 +68,24 @@ public class ToolItems {
     public static IGTTool AXE;
     public static IGTTool HOE;
     public static IGTTool SAW;
-    public static IGTTool HARD_HAMMER;
-    public static IGTTool SOFT_HAMMER;
+    public static IGTTool HAMMER;
+    public static IGTTool MALLET;
+    public static IGTTool MINING_HAMMER;
     public static IGTTool WRENCH;
     public static IGTTool FILE;
     public static IGTTool CROWBAR;
     public static IGTTool SCREWDRIVER;
     public static IGTTool MORTAR;
     public static IGTTool WIRE_CUTTER;
-    public static IGTTool BRANCH_CUTTER;
+    public static IGTTool SICKLE;
     public static IGTTool KNIFE;
     public static IGTTool BUTCHERY_KNIFE;
-    public static IGTTool SENSE;
     public static IGTTool PLUNGER;
     public static IGTTool DRILL_LV;
     public static IGTTool DRILL_MV;
     public static IGTTool DRILL_HV;
     public static IGTTool DRILL_EV;
     public static IGTTool DRILL_IV;
-    public static IGTTool MINING_HAMMER;
     public static IGTTool CHAINSAW_LV;
     public static IGTTool CHAINSAW_MV;
     public static IGTTool CHAINSAW_HV;
@@ -97,56 +97,142 @@ public class ToolItems {
 
     public static void init() {
         MinecraftForge.EVENT_BUS.register(ToolItems.class);
+        SWORD = register(ItemGTTool.Builder.of(GTValues.MODID, "sword")
+                .toolStats(b -> b.suitableForAttacking().suitableForBlockBreaking())
+                .toolClasses("sword"));
         PICKAXE = register(ItemGTTool.Builder.of(GTValues.MODID, "pickaxe")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking())
                 .toolClasses("pickaxe"));
+        SHOVEL = register(ItemGTTool.Builder.of(GTValues.MODID, "shovel")
+                .toolStats(b -> b.suitableForBlockBreaking())
+                .toolClasses("shovel"));
         AXE = register(ItemGTTool.Builder.of(GTValues.MODID, "axe")
-                .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking())
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking().attackDamage(3.0F).attackSpeed(-2.6F).efficiency(2.0F))
                 .toolClasses("axe"));
-        HARD_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "hammer")
+        HOE = register(ItemGTTool.Builder.of(GTValues.MODID, "hoe")
+                .toolStats(b -> b)
+                .toolClasses("hoe"));
+        SAW = register(ItemGTTool.Builder.of(GTValues.MODID, "saw")
+                .toolStats(b -> b.suitableForAttacking().suitableForCrafting())
+                .toolClasses("saw", "axe"));
+        HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "hammer")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking().suitableForCrafting())
                 .oreDicts("craftingToolHammer")
                 .sound(GTSounds.FORGE_HAMMER)
                 .toolClasses("pickaxe", "hammer"));
+        MALLET = register(ItemGTTool.Builder.of(GTValues.MODID, "mallet")
+                .toolStats(b -> b.suitableForCrafting())
+                .oreDicts("craftingToolMallet", "craftingToolSoftHammer")
+                .sound(GTSounds.SOFT_HAMMER_TOOL)
+                .toolClasses("mallet"));
+        MINING_HAMMER = register(ItemGTTool.Builder.of(GTValues.MODID, "mining_hammer")
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0))
+                .toolClasses("pickaxe", "mining_hammer"));
         WRENCH = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse())
                 .sound(GTSounds.WRENCH_TOOL)
                 .oreDicts("craftingToolWrench")
                 .toolClasses("wrench"));
+        FILE = register(ItemGTTool.Builder.of(GTValues.MODID, "file")
+                .toolStats(b -> b.suitableForCrafting())
+                .sound(GTSounds.FILE_TOOL)
+                .oreDicts("craftingToolFile")
+                .toolClasses("file"));
         CROWBAR = register(ItemGTTool.Builder.of(GTValues.MODID, "crowbar")
-                .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().suitableForAttacking().sneakBypassUse().aoeDefinition(18, 0, 0))
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().suitableForAttacking().sneakBypassUse())
                 .sound(GTSounds.WRENCH_TOOL)
                 .oreDicts("craftingToolCrowbar")
                 .toolClasses("crowbar"));
+        SCREWDRIVER = register(ItemGTTool.Builder.of(GTValues.MODID, "screwdriver")
+                .toolStats(b -> b.suitableForCrafting().sneakBypassUse())
+                .sound(GTSounds.SCREWDRIVER_TOOL)
+                .oreDicts("craftingToolScrewdriver")
+                .toolClasses("screwdriver"));
+        MORTAR = register(ItemGTTool.Builder.of(GTValues.MODID, "mortar")
+                .toolStats(b -> b.suitableForCrafting())
+                .sound(GTSounds.MORTAR_TOOL)
+                .oreDicts("craftingToolMortar")
+                .toolClasses("mortar"));
         WIRE_CUTTER = register(ItemGTTool.Builder.of(GTValues.MODID, "wire_cutter")
                 .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting())
                 .sound(GTSounds.WIRECUTTER_TOOL)
                 .oreDicts("craftingToolWireCutter")
-                .toolClasses("cutter"));
+                .toolClasses("wire_cutter"));
+        SICKLE = register(ItemGTTool.Builder.of(GTValues.MODID, "sickle")
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForAttacking())
+                .toolClasses("sickle", "scythe", "shears", "hoe"));
+        KNIFE = register(ItemGTTool.Builder.of(GTValues.MODID, "knife")
+                .toolStats(b -> b.suitableForCrafting())
+                .oreDicts("craftingToolKnife")
+                .toolClasses("knife", "sword"));
+        BUTCHERY_KNIFE = register(ItemGTTool.Builder.of(GTValues.MODID, "butchery_knife")
+                .toolStats(b -> b.suitableForCrafting().suitableForAttacking())
+                .oreDicts("craftingToolButcheryKnife")
+                .toolClasses("butchery_knife"));
+        PLUNGER = register(ItemGTTool.Builder.of(GTValues.MODID, "plunger")
+                .toolStats(b -> b.suitableForCrafting())
+                .oreDicts("craftingToolPlunger")
+                .toolClasses("plunger"));
         DRILL_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_lv")
                 .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0).brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
-                .oreDicts("craftingToolDrill")
                 .toolClasses("pickaxe", "shovel", "drill")
                 .electric(1));
         DRILL_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_mv")
                 .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
-                .oreDicts("craftingToolDrill")
                 .toolClasses("pickaxe", "shovel", "drill")
-                .electric(1));
+                .electric(2));
         DRILL_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_hv")
                 .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 0).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
-                .oreDicts("craftingToolDrill")
                 .toolClasses("pickaxe", "shovel", "drill")
-                .electric(1));
+                .electric(3));
         DRILL_EV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_ev")
                 .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 0).brokenStack(() -> MetaItems.POWER_UNIT_EV.getStackForm()))
-                .oreDicts("craftingToolDrill")
                 .toolClasses("pickaxe", "shovel", "drill")
-                .electric(1));
+                .electric(4));
         DRILL_IV = register(ItemGTTool.Builder.of(GTValues.MODID, "drill_iv")
                 .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 1).brokenStack(() -> MetaItems.POWER_UNIT_IV.getStackForm()))
-                .oreDicts("craftingToolDrill")
                 .toolClasses("pickaxe", "shovel", "drill")
+                .electric(5));
+        CHAINSAW_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_lv")
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0).brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
+                .toolClasses("chainsaw", "axe")
+                .electric(1));
+        CHAINSAW_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_mv")
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(1, 1, 0).brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
+                .toolClasses("chainsaw", "axe")
+                .electric(2));
+        CHAINSAW_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "chainsaw_hv")
+                .toolStats(b -> b.suitableForBlockBreaking().aoeDefinition(2, 2, 0).brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
+                .toolClasses("chainsaw", "axe")
+                .electric(3));
+        WRENCH_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_lv")
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse().brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
+                .sound(GTSounds.WRENCH_TOOL)
+                .oreDicts("craftingToolWrench")
+                .toolClasses("wrench")
+                .electric(1));
+        WRENCH_MV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_mv")
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse().brokenStack(() -> MetaItems.POWER_UNIT_MV.getStackForm()))
+                .sound(GTSounds.WRENCH_TOOL)
+                .oreDicts("craftingToolWrench")
+                .toolClasses("wrench")
+                .electric(2));
+        WRENCH_HV = register(ItemGTTool.Builder.of(GTValues.MODID, "wrench_hv")
+                .toolStats(b -> b.suitableForBlockBreaking().suitableForCrafting().sneakBypassUse().brokenStack(() -> MetaItems.POWER_UNIT_HV.getStackForm()))
+                .sound(GTSounds.WRENCH_TOOL)
+                .oreDicts("craftingToolWrench")
+                .toolClasses("wrench")
+                .electric(3));
+        BUZZSAW = register(ItemGTTool.Builder.of(GTValues.MODID, "buzzsaw")
+                .toolStats(b -> b.suitableForCrafting().brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
+                .oreDicts("craftingToolSaw")
+                .toolClasses("buzzsaw")
+                .electric(1));
+        SCREWDRIVER_LV = register(ItemGTTool.Builder.of(GTValues.MODID, "screwdriver_lv")
+                .toolStats(b -> b.suitableForCrafting().sneakBypassUse().brokenStack(() -> MetaItems.POWER_UNIT_LV.getStackForm()))
+                .sound(GTSounds.SCREWDRIVER_TOOL)
+                .oreDicts("craftingToolScrewdriver")
+                .toolClasses("screwdriver")
                 .electric(1));
     }
 
