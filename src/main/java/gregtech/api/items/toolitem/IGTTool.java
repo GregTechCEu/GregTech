@@ -32,6 +32,7 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWeb;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentDurability;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -59,12 +60,14 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static gregtech.api.items.armor.IArmorLogic.*;
 import static gregtech.api.items.toolitem.ToolHelper.*;
@@ -287,11 +290,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return AoEDefinition.read(getToolTag(stack), getMaxAoEDefinition(stack));
     }
 
-    @SideOnly(Side.CLIENT)
-    default int getColor(ItemStack stack, int tintIndex) {
-        return tintIndex % 2 == 1 ? getToolMaterial(stack).getMaterialRGB() : 0xFFFFFF;
-    }
-
     // Item.class methods
     default float definition$getDestroySpeed(ItemStack stack, IBlockState state) {
         for (String type : get().getToolClasses(stack)) {
@@ -450,8 +448,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return ActionResult.newResult(EnumActionResult.PASS, stack);
     }
 
+    // Client-side methods
     @SideOnly(Side.CLIENT)
     default void definition$addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
+        tooltip.add(TextFormatting.WHITE + "Behaves like: " + stack.getItem().getToolClasses(stack).stream().map(StringUtils::capitalize).collect(Collectors.joining(", ")));
         NBTTagCompound behavioursTag = getBehavioursTag(stack);
         List<String> behaviours = new ArrayList<>();
         if (behavioursTag.getBoolean(HARVEST_ICE_KEY)) {
@@ -471,7 +471,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         }
         AoEDefinition aoeDefinition = ToolHelper.getAoEDefinition(stack);
         if (aoeDefinition != AoEDefinition.none()) {
-            behaviours.add(" " + TextFormatting.DARK_PURPLE + aoeDefinition.column + "x" + aoeDefinition.row + "x" + aoeDefinition.layer + " AoE Mining");
+            behaviours.add(" " + TextFormatting.DARK_PURPLE + (aoeDefinition.column + 1) + "x" + (aoeDefinition.row + 1) + "x" + (aoeDefinition.layer + 1) + " AoE Mining");
         }
         if (!behaviours.isEmpty()) {
             tooltip.add(TextFormatting.YELLOW + "Behaviours:");
@@ -492,6 +492,21 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                 }
             }
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    default int getColor(ItemStack stack, int tintIndex) {
+        return tintIndex % 2 == 1 ? getToolMaterial(stack).getMaterialRGB() : 0xFFFFFF;
+    }
+
+    @SideOnly(Side.CLIENT)
+    default String getModelPath() {
+        return getDomain() + ":" + "tools/" + getId();
+    }
+
+    @SideOnly(Side.CLIENT)
+    default ModelResourceLocation getModelLocation() {
+        return new ModelResourceLocation(getModelPath(), "inventory");
     }
 
     // Sound Playing
