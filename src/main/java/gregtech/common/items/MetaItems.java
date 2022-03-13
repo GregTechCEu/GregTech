@@ -6,7 +6,6 @@ import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.metaitem.MetaOreDictItem;
-import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.ore.OrePrefix;
@@ -502,40 +501,6 @@ public final class MetaItems {
     public static final MetaItem<?>.MetaValueItem[] SPRAY_CAN_DYES = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
 
     public static MetaItem<?>.MetaValueItem TURBINE_ROTOR;
-
-    public static ToolMetaItem<?>.MetaToolValueItem SWORD;
-    public static ToolMetaItem<?>.MetaToolValueItem PICKAXE;
-    public static ToolMetaItem<?>.MetaToolValueItem SHOVEL;
-    public static ToolMetaItem<?>.MetaToolValueItem AXE;
-    public static ToolMetaItem<?>.MetaToolValueItem HOE;
-    public static ToolMetaItem<?>.MetaToolValueItem SAW;
-    public static ToolMetaItem<?>.MetaToolValueItem HARD_HAMMER;
-    public static ToolMetaItem<?>.MetaToolValueItem SOFT_HAMMER;
-    public static ToolMetaItem<?>.MetaToolValueItem WRENCH;
-    public static ToolMetaItem<?>.MetaToolValueItem FILE;
-    public static ToolMetaItem<?>.MetaToolValueItem CROWBAR;
-    public static ToolMetaItem<?>.MetaToolValueItem SCREWDRIVER;
-    public static ToolMetaItem<?>.MetaToolValueItem MORTAR;
-    public static ToolMetaItem<?>.MetaToolValueItem WIRE_CUTTER;
-    public static ToolMetaItem<?>.MetaToolValueItem BRANCH_CUTTER;
-    public static ToolMetaItem<?>.MetaToolValueItem KNIFE;
-    public static ToolMetaItem<?>.MetaToolValueItem BUTCHERY_KNIFE;
-    public static ToolMetaItem<?>.MetaToolValueItem SENSE;
-    public static ToolMetaItem<?>.MetaToolValueItem PLUNGER;
-    public static ToolMetaItem<?>.MetaToolValueItem DRILL_LV;
-    public static ToolMetaItem<?>.MetaToolValueItem DRILL_MV;
-    public static ToolMetaItem<?>.MetaToolValueItem DRILL_HV;
-    public static ToolMetaItem<?>.MetaToolValueItem DRILL_EV;
-    public static ToolMetaItem<?>.MetaToolValueItem DRILL_IV;
-    public static ToolMetaItem<?>.MetaToolValueItem MINING_HAMMER;
-    public static ToolMetaItem<?>.MetaToolValueItem CHAINSAW_LV;
-    public static ToolMetaItem<?>.MetaToolValueItem CHAINSAW_MV;
-    public static ToolMetaItem<?>.MetaToolValueItem CHAINSAW_HV;
-    public static ToolMetaItem<?>.MetaToolValueItem WRENCH_LV;
-    public static ToolMetaItem<?>.MetaToolValueItem WRENCH_MV;
-    public static ToolMetaItem<?>.MetaToolValueItem WRENCH_HV;
-    public static ToolMetaItem<?>.MetaToolValueItem BUZZSAW;
-    public static ToolMetaItem<?>.MetaToolValueItem SCREWDRIVER_LV;
 
     public static MetaItem<?>.MetaValueItem ENERGY_MODULE;
     public static MetaItem<?>.MetaValueItem ENERGY_CLUSTER;

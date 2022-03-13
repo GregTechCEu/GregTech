@@ -2,6 +2,6 @@
   "parent": "item/handheld",
   "textures": {
     "layer0": "gregtech:items/tools/handle",
-    "layer1": "gregtech:items/tools/sense"
+    "layer1": "gregtech:items/tools/sickle"
   }
 }
