@@ -346,8 +346,8 @@ metaitem.electric.motor.uv.name=UV 电动马达
 metaitem.electric.motor.uhv.name=UHV 电动马达
 metaitem.electric.motor.uev.name=UEV 电动马达
 metaitem.electric.motor.uiv.name=UIV 电动马达
-metaitem.electric.motor.umv.name=UMV 电动马达
 metaitem.electric.motor.uxv.name=UXV 电动马达
+metaitem.electric.motor.opv.name=OpV 电动马达
 
 metaitem.electric.pump.lv.name=LV 电动泵
 metaitem.electric.pump.lv.tooltip=1280 升/秒 (作覆盖板时)
@@ -371,10 +371,10 @@ metaitem.electric.pump.uev.name=UEV 电动泵
 metaitem.electric.pump.uev.tooltip=20,971,520 升/秒 (作覆盖板时)
 metaitem.electric.pump.uiv.name=UIV 电动泵
 metaitem.electric.pump.uiv.tooltip=20,971,520 升/秒 (作覆盖板时)
-metaitem.electric.pump.umv.name=UMV 电动泵
-metaitem.electric.pump.umv.tooltip=20,971,520 升/秒 (作覆盖板时)
 metaitem.electric.pump.uxv.name=UXV 电动泵
 metaitem.electric.pump.uxv.tooltip=20,971,520 升/秒 (作覆盖板时)
+metaitem.electric.pump.opv.name=OpV 电动泵
+metaitem.electric.pump.opv.tooltip=20,971,520 升/秒 (作覆盖板时)
 
 metaitem.fluid.regulator.lv.name=LV 流体校准器
 metaitem.fluid.regulator.lv.tooltip=1280 升/秒 (作覆盖板时)
@@ -415,10 +415,10 @@ metaitem.conveyor.module.uev.name=UEV 传送带
 metaitem.conveyor.module.uev.tooltip=16 组物品每秒 (作覆盖板时)
 metaitem.conveyor.module.uiv.name=UIV 传送带
 metaitem.conveyor.module.uiv.tooltip=16 组物品每秒 (作覆盖板时)
-metaitem.conveyor.module.umv.name=UMV 传送带
-metaitem.conveyor.module.umv.tooltip=16 组物品每秒 (作覆盖板时)
 metaitem.conveyor.module.uxv.name=UXV 传送带
 metaitem.conveyor.module.uxv.tooltip=16 组物品每秒 (作覆盖板时)
+metaitem.conveyor.module.opv.name=OpV 传送带
+metaitem.conveyor.module.opv.tooltip=16 组物品每秒 (作覆盖板时)
 
 metaitem.electric.piston.lv.name=LV 电力活塞
 metaitem.electric.piston.mv.name=MV 电力活塞
@@ -431,8 +431,8 @@ metaitem.electric.piston.uv.name=UV 电力活塞
 metaitem.electric.piston.uhv.name=UHV 电力活塞
 metaitem.electric.piston.uev.name=UEV 电力活塞
 metaitem.electric.piston.uiv.name=UIV 电力活塞
-metaitem.electric.piston.umv.name=UMV 电力活塞
 metaitem.electric.piston.uxv.name=UXV 电力活塞
+metaitem.electric.piston.opv.name=OpV 电力活塞
 
 metaitem.robot.arm.lv.name=LV 机械臂
 metaitem.robot.arm.lv.tooltip=按指定速率抽取物品 (作覆盖板时)
@@ -456,10 +456,10 @@ metaitem.robot.arm.uev.name=UEV 机械臂
 metaitem.robot.arm.uev.tooltip=按指定速率抽取物品 (作覆盖板时)
 metaitem.robot.arm.uiv.name=UIV 机械臂
 metaitem.robot.arm.uiv.tooltip=按指定速率抽取物品 (作覆盖板时)
-metaitem.robot.arm.umv.name=UMV 机械臂
-metaitem.robot.arm.umv.tooltip=按指定速率抽取物品 (作覆盖板时)
 metaitem.robot.arm.uxv.name=UXV 机械臂
 metaitem.robot.arm.uxv.tooltip=按指定速率抽取物品 (作覆盖板时)
+metaitem.robot.arm.opv.name=OpV 机械臂
+metaitem.robot.arm.opv.tooltip=按指定速率抽取物品 (作覆盖板时)
 
 metaitem.field.generator.lv.name=LV 力场发生器
 metaitem.field.generator.mv.name=MV 力场发生器
@@ -472,8 +472,8 @@ metaitem.field.generator.uv.name=UV 力场发生器
 metaitem.field.generator.uhv.name=UHV 力场发生器
 metaitem.field.generator.uev.name=UEV 力场发生器
 metaitem.field.generator.uiv.name=UIV 力场发生器
-metaitem.field.generator.umv.name=UMV 力场发生器
 metaitem.field.generator.uxv.name=UXV 力场发生器
+metaitem.field.generator.opv.name=OpV 力场发生器
 
 metaitem.emitter.lv.name=LV 发射器
 metaitem.emitter.mv.name=MV 发射器
@@ -486,8 +486,8 @@ metaitem.emitter.uv.name=UV 发射器
 metaitem.emitter.uhv.name=UHV 发射器
 metaitem.emitter.uev.name=UEV 发射器
 metaitem.emitter.uiv.name=UIV 发射器
-metaitem.emitter.umv.name=UMV 发射器
 metaitem.emitter.uxv.name=UXV 发射器
+metaitem.emitter.opv.name=OpV 发射器
 
 metaitem.sensor.lv.name=LV 传感器
 metaitem.sensor.mv.name=MV 传感器
@@ -500,8 +500,8 @@ metaitem.sensor.uv.name=UV 传感器
 metaitem.sensor.uhv.name=UHV 传感器
 metaitem.sensor.uev.name=UEV 传感器
 metaitem.sensor.uiv.name=UIV 传感器
-metaitem.sensor.umv.name=UMV 传感器
 metaitem.sensor.uxv.name=UXV 传感器
+metaitem.sensor.opv.name=OpV 传感器
 
 metaitem.tool.datastick.name=闪存
 metaitem.tool.datastick.tooltip=一个小容量的数据存储器
@@ -989,10 +989,10 @@ metaitem.voltage_coil.uev.name=超极限压线圈
 metaitem.voltage_coil.uev.tooltip=超级线圈
 metaitem.voltage_coil.uiv.name=极强导压线圈
 metaitem.voltage_coil.uiv.tooltip=荒唐的线圈
-metaitem.voltage_coil.umv.name=极剧差压线圈
-metaitem.voltage_coil.umv.tooltip=史诗线圈
 metaitem.voltage_coil.uxv.name=极上拓压线圈
-metaitem.voltage_coil.uxv.tooltip=传奇线圈
+metaitem.voltage_coil.uxv.tooltip=史诗线圈
+metaitem.voltage_coil.opv.name=过载压线圈
+metaitem.voltage_coil.opv.tooltip=传奇线圈
 metaitem.voltage_coil.max.name=最大压线圈
 metaitem.voltage_coil.max.tooltip=终压线圈
 
@@ -2378,11 +2378,11 @@ tile.machine_casing.insane_voltage.name=IV 机械方块
 tile.machine_casing.ludicrous_voltage.name=LuV 机械方块
 tile.machine_casing.zpm_voltage.name=ZPM 机械方块
 tile.machine_casing.ultimate_voltage.name=UV 机械方块
-tile.machine_casing.highly_ultimate_voltage.name=UHV 机械方块
-tile.machine_casing.extremely_ultimate_voltage.name=UEV 机械方块
-tile.machine_casing.insanely_ultimate_voltage.name=UIV 机械方块
-tile.machine_casing.mega_ultimate_voltage.name=UMV 机械方块
-tile.machine_casing.extended_mega_ultimate_voltage.name=UXV 机械方块
+tile.machine_casing.ultra_high_voltage.name=UHV 机械方块
+tile.machine_casing.ultra_excessive_voltage.name=UEV 机械方块
+tile.machine_casing.ultra_immense_voltage.name=UIV 机械方块
+tile.machine_casing.ultra_extreme_voltage.name=UXV 机械方块
+tile.machine_casing.Ultra Immense_voltage.name=OpV 机械方块
 tile.machine_casing.maximum_voltage.name=MAX 机械方块
 
 # Steam casing blocks
@@ -2691,8 +2691,8 @@ gregtech.machine.electric_furnace.uv.name=精英电炉 IV
 gregtech.machine.electric_furnace.uhv.name=高科技电炉
 gregtech.machine.electric_furnace.uev.name=高科技电炉 II
 gregtech.machine.electric_furnace.uiv.name=高科技电炉 III
-gregtech.machine.electric_furnace.umv.name=高科技电炉 IV
-gregtech.machine.electric_furnace.uxv.name=终极电炉
+gregtech.machine.electric_furnace.uxv.name=高科技电炉 IV
+gregtech.machine.electric_furnace.opv.name=终极电炉
 
 gregtech.machine.macerator.tooltip1=分解你打矿石
 gregtech.machine.macerator.tooltip2=粉碎你的矿石与副产品
@@ -2708,8 +2708,8 @@ gregtech.machine.macerator.uv.name=精英研磨机 IV
 gregtech.machine.macerator.uhv.name=高科技研磨机
 gregtech.machine.macerator.uev.name=高科技研磨机 II
 gregtech.machine.macerator.uiv.name=高科技研磨机 III
-gregtech.machine.macerator.umv.name=高科技研磨机 IV
-gregtech.machine.macerator.uxv.name=终极研磨机
+gregtech.machine.macerator.uxv.name=高科技研磨机 IV
+gregtech.machine.macerator.opv.name=终极研磨机
 
 gregtech.machine.alloy_smelter.tooltip=高科技融合冶炼厂
 
@@ -2724,8 +2724,8 @@ gregtech.machine.alloy_smelter.uv.name=精英合金炉 IV
 gregtech.machine.alloy_smelter.uhv.name=高科技合金炉
 gregtech.machine.alloy_smelter.uev.name=高科技合金炉 II
 gregtech.machine.alloy_smelter.uiv.name=高科技合金炉 III
-gregtech.machine.alloy_smelter.umv.name=高科技合金炉 IV
-gregtech.machine.alloy_smelter.uxv.name=终极合金炉
+gregtech.machine.alloy_smelter.uxv.name=高科技合金炉 IV
+gregtech.machine.alloy_smelter.opv.name=终极合金炉
 
 gregtech.machine.arc_furnace.tooltip=谁需要高炉?
 
@@ -2740,8 +2740,8 @@ gregtech.machine.arc_furnace.uv.name=精英电弧炉 IV
 gregtech.machine.arc_furnace.uhv.name=高科技电弧炉
 gregtech.machine.arc_furnace.uev.name=高科技电弧炉 II
 gregtech.machine.arc_furnace.uiv.name=高科技电弧炉 III
-gregtech.machine.arc_furnace.umv.name=高科技电弧炉 IV
-gregtech.machine.arc_furnace.uxv.name=终极电弧炉
+gregtech.machine.arc_furnace.uxv.name=高科技电弧炉 IV
+gregtech.machine.arc_furnace.opv.name=终极电弧炉
 
 gregtech.machine.assembler.tooltip=复仇者集合!
 
@@ -2756,8 +2756,8 @@ gregtech.machine.assembler.uv.name=精英组装机 IV
 gregtech.machine.assembler.uhv.name=高科技组装机
 gregtech.machine.assembler.uev.name=高科技组装机 II
 gregtech.machine.assembler.uiv.name=高科技组装机 III
-gregtech.machine.assembler.umv.name=高科技组装机 IV
-gregtech.machine.assembler.uxv.name=终极组装机
+gregtech.machine.assembler.uxv.name=高科技组装机 IV
+gregtech.machine.assembler.opv.name=终极组装机
 
 gregtech.machine.autoclave.tooltip=让你的粉末结晶
 
@@ -2772,8 +2772,8 @@ gregtech.machine.autoclave.uv.name=精英高压釜 IV
 gregtech.machine.autoclave.uhv.name=高科技高压釜
 gregtech.machine.autoclave.uev.name=高科技高压釜 II
 gregtech.machine.autoclave.uiv.name=高科技高压釜 III
-gregtech.machine.autoclave.umv.name=高科技高压釜 IV
-gregtech.machine.autoclave.uxv.name=终极高压釜
+gregtech.machine.autoclave.uxv.name=高科技高压釜 IV
+gregtech.machine.autoclave.opv.name=终极高压釜
 
 gregtech.machine.bender.tooltip=嘘,他是不好的!我们想要的狂饮!!!
 
@@ -2788,8 +2788,8 @@ gregtech.machine.bender.uv.name=精英卷板机 IV
 gregtech.machine.bender.uhv.name=高科技卷板机
 gregtech.machine.bender.uev.name=高科技卷板机 II
 gregtech.machine.bender.uiv.name=高科技卷板机 III
-gregtech.machine.bender.umv.name=高科技卷板机 IV
-gregtech.machine.bender.uxv.name=终极卷板机
+gregtech.machine.bender.uxv.name=高科技卷板机 IV
+gregtech.machine.bender.opv.name=终极卷板机
 
 gregtech.machine.brewery.tooltip=紧凑高效的药剂酿造
 
@@ -2804,8 +2804,8 @@ gregtech.machine.brewery.uv.name=精英酿造室 IV
 gregtech.machine.brewery.uhv.name=高科技酿造室
 gregtech.machine.brewery.uev.name=高科技酿造室 II
 gregtech.machine.brewery.uiv.name=高科技酿造室 III
-gregtech.machine.brewery.umv.name=高科技酿造室 IV
-gregtech.machine.brewery.uxv.name=终极酿造室
+gregtech.machine.brewery.uxv.name=高科技酿造室 IV
+gregtech.machine.brewery.opv.name=终极酿造室
 
 gregtech.machine.canner.tooltip=将流体放入或取出容器，现在有物品!
 gregtech.machine.canner.jei_description=可以使用“流体储罐”(例如“桶”或“流体单元”)对任何流体容器进行填充和清空
@@ -2821,8 +2821,8 @@ gregtech.machine.canner.uv.name=精英装罐机 IV
 gregtech.machine.canner.uhv.name=高科技装罐机
 gregtech.machine.canner.uev.name=高科技装罐机 II
 gregtech.machine.canner.uiv.name=高科技装罐机 III
-gregtech.machine.canner.umv.name=高科技装罐机 IV
-gregtech.machine.canner.uxv.name=终极装罐机
+gregtech.machine.canner.uxv.name=高科技装罐机 IV
+gregtech.machine.canner.opv.name=终极装罐机
 
 gregtech.machine.centrifuge.tooltip=分离分子
 
@@ -2837,8 +2837,8 @@ gregtech.machine.centrifuge.uv.name=精英离心机 IV
 gregtech.machine.centrifuge.uhv.name=高科技离心机
 gregtech.machine.centrifuge.uev.name=高科技离心机 II
 gregtech.machine.centrifuge.uiv.name=高科技离心机 III
-gregtech.machine.centrifuge.umv.name=高科技离心机 IV
-gregtech.machine.centrifuge.uxv.name=终极离心机
+gregtech.machine.centrifuge.uxv.name=高科技离心机 IV
+gregtech.machine.centrifuge.opv.name=终极离心机
 
 gregtech.machine.chemical_bath.tooltip=用化学物质浸泡矿石来分离它们
 
@@ -2853,8 +2853,8 @@ gregtech.machine.chemical_bath.uv.name=精英化学浸洗器  IV
 gregtech.machine.chemical_bath.uhv.name=高科技化学浸洗器
 gregtech.machine.chemical_bath.uev.name=高科技化学浸洗器  II
 gregtech.machine.chemical_bath.uiv.name=高科技化学浸洗器  III
-gregtech.machine.chemical_bath.umv.name=高科技化学浸洗器  IV
-gregtech.machine.chemical_bath.uxv.name=终极化学浸洗器
+gregtech.machine.chemical_bath.uxv.name=高科技化学浸洗器  IV
+gregtech.machine.chemical_bath.opv.name=终极化学浸洗器
 
 gregtech.machine.chemical_reactor.tooltip=让化学物质相互反应
 
@@ -2869,8 +2869,8 @@ gregtech.machine.chemical_reactor.uv.name=精英化学反应釜 IV
 gregtech.machine.chemical_reactor.uhv.name=高科技化学反应釜
 gregtech.machine.chemical_reactor.uev.name=高科技化学反应釜 II
 gregtech.machine.chemical_reactor.uiv.name=高科技化学反应釜 III
-gregtech.machine.chemical_reactor.umv.name=高科技化学反应釜 IV
-gregtech.machine.chemical_reactor.uxv.name=终极化学反应釜
+gregtech.machine.chemical_reactor.uxv.name=高科技化学反应釜 IV
+gregtech.machine.chemical_reactor.opv.name=终极化学反应釜
 
 gregtech.machine.compressor.tooltip=Compress-O-Matic C77
 
@@ -2885,8 +2885,8 @@ gregtech.machine.compressor.uv.name=精英压缩机 IV
 gregtech.machine.compressor.uhv.name=高科技压缩机
 gregtech.machine.compressor.uev.name=高科技压缩机 II
 gregtech.machine.compressor.uiv.name=高科技压缩机 III
-gregtech.machine.compressor.umv.name=高科技压缩机 IV
-gregtech.machine.compressor.uxv.name=终极压缩机
+gregtech.machine.compressor.uxv.name=高科技压缩机 IV
+gregtech.machine.compressor.opv.name=终极压缩机
 
 gregtech.machine.cutter.tooltip=Slice'N Dice
 
@@ -2901,8 +2901,8 @@ gregtech.machine.cutter.uv.name=精英板材切割机 IV
 gregtech.machine.cutter.uhv.name=高科技板材切割机
 gregtech.machine.cutter.uev.name=高科技板材切割机 II
 gregtech.machine.cutter.uiv.name=高科技板材切割机 III
-gregtech.machine.cutter.umv.name=高科技板材切割机 IV
-gregtech.machine.cutter.uxv.name=终极板材切割机
+gregtech.machine.cutter.uxv.name=高科技板材切割机 IV
+gregtech.machine.cutter.opv.name=终极板材切割机
 
 gregtech.machine.distillery.tooltip=提取出流体中最有用的部分
 
@@ -2917,8 +2917,8 @@ gregtech.machine.distillery.uv.name=精英蒸馏室 IV
 gregtech.machine.distillery.uhv.name=高科技蒸馏室
 gregtech.machine.distillery.uev.name=高科技蒸馏室 II
 gregtech.machine.distillery.uiv.name=高科技蒸馏室 III
-gregtech.machine.distillery.umv.name=高科技蒸馏室 IV
-gregtech.machine.distillery.uxv.name=终极蒸馏室
+gregtech.machine.distillery.uxv.name=高科技蒸馏室 IV
+gregtech.machine.distillery.opv.name=终极蒸馏室
 
 gregtech.machine.electrolyzer.tooltip=电离分子
 
@@ -2933,8 +2933,8 @@ gregtech.machine.electrolyzer.uv.name=精英电解机 IV
 gregtech.machine.electrolyzer.uhv.name=高科技电解机
 gregtech.machine.electrolyzer.uev.name=高科技电解机 II
 gregtech.machine.electrolyzer.uiv.name=高科技电解机 III
-gregtech.machine.electrolyzer.umv.name=高科技电解机 IV
-gregtech.machine.electrolyzer.uxv.name=终极电解机
+gregtech.machine.electrolyzer.uxv.name=高科技电解机 IV
+gregtech.machine.electrolyzer.opv.name=终极电解机
 
 gregtech.machine.electromagnetic_separator.tooltip=把磁性矿石和其他矿石分开
 
@@ -2949,8 +2949,8 @@ gregtech.machine.electromagnetic_separator.uv.name=精英电磁选矿机 IV
 gregtech.machine.electromagnetic_separator.uhv.name=高科技电磁选矿机
 gregtech.machine.electromagnetic_separator.uev.name=高科技电磁选矿机 II
 gregtech.machine.electromagnetic_separator.uiv.name=高科技电磁选矿机 III
-gregtech.machine.electromagnetic_separator.umv.name=高科技电磁选矿机 IV
-gregtech.machine.electromagnetic_separator.uxv.name=终极电磁选矿机
+gregtech.machine.electromagnetic_separator.uxv.name=高科技电磁选矿机 IV
+gregtech.machine.electromagnetic_separator.opv.name=终极电磁选矿机
 
 gregtech.machine.extractor.tooltip=Dejuicer-Device of Doom - D123. Now with Fluids!
 
@@ -2965,8 +2965,8 @@ gregtech.machine.extractor.uv.name=精英提取机 IV
 gregtech.machine.extractor.uhv.name=高科技提取机
 gregtech.machine.extractor.uev.name=高科技提取机 II
 gregtech.machine.extractor.uiv.name=高科技提取机 III
-gregtech.machine.extractor.umv.name=高科技提取机 IV
-gregtech.machine.extractor.uxv.name=终极提取机
+gregtech.machine.extractor.uxv.name=高科技提取机 IV
+gregtech.machine.extractor.opv.name=终极提取机
 
 gregtech.machine.extruder.tooltip=金属加工通用机器
 
@@ -2981,8 +2981,8 @@ gregtech.machine.extruder.uv.name=精英压模器 IV
 gregtech.machine.extruder.uhv.name=高科技压模器
 gregtech.machine.extruder.uev.name=高科技压模器 II
 gregtech.machine.extruder.uiv.name=高科技压模器 III
-gregtech.machine.extruder.umv.name=高科技压模器 IV
-gregtech.machine.extruder.uxv.name=终极压模器
+gregtech.machine.extruder.uxv.name=高科技压模器 IV
+gregtech.machine.extruder.opv.name=终极压模器
 
 gregtech.machine.fermenter.tooltip=发酵液体
 
@@ -2997,8 +2997,8 @@ gregtech.machine.fermenter.uv.name=精英发酵槽 IV
 gregtech.machine.fermenter.uhv.name=高科技发酵槽
 gregtech.machine.fermenter.uev.name=高科技发酵槽 II
 gregtech.machine.fermenter.uiv.name=高科技发酵槽 III
-gregtech.machine.fermenter.umv.name=高科技发酵槽 IV
-gregtech.machine.fermenter.uxv.name=终极发酵槽
+gregtech.machine.fermenter.uxv.name=高科技发酵槽 IV
+gregtech.machine.fermenter.opv.name=终极发酵槽
 
 gregtech.machine.fluid_heater.tooltip=加热你的流体
 
@@ -3013,8 +3013,8 @@ gregtech.machine.fluid_heater.uv.name=精英流体加热器 IV
 gregtech.machine.fluid_heater.uhv.name=高科技流体加热器
 gregtech.machine.fluid_heater.uev.name=高科技流体加热器 II
 gregtech.machine.fluid_heater.uiv.name=高科技流体加热器 III
-gregtech.machine.fluid_heater.umv.name=高科技流体加热器 IV
-gregtech.machine.fluid_heater.uxv.name=终极流体加热器
+gregtech.machine.fluid_heater.uxv.name=高科技流体加热器 IV
+gregtech.machine.fluid_heater.opv.name=终极流体加热器
 
 gregtech.machine.fluid_solidifier.tooltip=冷却液体形成固体
 
@@ -3029,8 +3029,8 @@ gregtech.machine.fluid_solidifier.uv.name=精英流体固化机 IV
 gregtech.machine.fluid_solidifier.uhv.name=高科技流体固化机
 gregtech.machine.fluid_solidifier.uev.name=高科技流体固化机 II
 gregtech.machine.fluid_solidifier.uiv.name=高科技流体固化机 III
-gregtech.machine.fluid_solidifier.umv.name=高科技流体固化机 IV
-gregtech.machine.fluid_solidifier.uxv.name=终极流体固化机
+gregtech.machine.fluid_solidifier.uxv.name=高科技流体固化机 IV
+gregtech.machine.fluid_solidifier.opv.name=终极流体固化机
 
 gregtech.machine.forge_hammer.tooltip=停!锤子时间到!
 
@@ -3045,8 +3045,8 @@ gregtech.machine.forge_hammer.uv.name=精英锻造锤 IV
 gregtech.machine.forge_hammer.uhv.name=高科技锻造锤
 gregtech.machine.forge_hammer.uev.name=高科技锻造锤 II
 gregtech.machine.forge_hammer.uiv.name=高科技锻造锤 III
-gregtech.machine.forge_hammer.umv.name=高科技锻造锤 IV
-gregtech.machine.forge_hammer.uxv.name=终极锻造锤
+gregtech.machine.forge_hammer.uxv.name=高科技锻造锤 IV
+gregtech.machine.forge_hammer.opv.name=终极锻造锤
 
 gregtech.machine.forming_press.tooltip=把图像印到东西上
 
@@ -3061,8 +3061,8 @@ gregtech.machine.forming_press.uv.name=精英冲压机床 IV
 gregtech.machine.forming_press.uhv.name=高科技冲压机床
 gregtech.machine.forming_press.uev.name=高科技冲压机床 II
 gregtech.machine.forming_press.uiv.name=高科技冲压机床 III
-gregtech.machine.forming_press.umv.name=高科技冲压机床 IV
-gregtech.machine.forming_press.uxv.name=终极冲压机床
+gregtech.machine.forming_press.uxv.name=高科技冲压机床 IV
+gregtech.machine.forming_press.opv.name=终极冲压机床
 
 gregtech.machine.lathe.tooltip=更有效地生产棍棒
 
@@ -3077,8 +3077,8 @@ gregtech.machine.lathe.uv.name=精英车床 IV
 gregtech.machine.lathe.uhv.name=高科技车床
 gregtech.machine.lathe.uev.name=高科技车床 II
 gregtech.machine.lathe.uiv.name=高科技车床 III
-gregtech.machine.lathe.umv.name=高科技车床 IV
-gregtech.machine.lathe.uxv.name=终极车床
+gregtech.machine.lathe.uxv.name=高科技车床 IV
+gregtech.machine.lathe.opv.name=终极车床
 
 gregtech.machine.mixer.tooltip=会混合吗?
 
@@ -3093,8 +3093,8 @@ gregtech.machine.mixer.uv.name=精英搅拌机 IV
 gregtech.machine.mixer.uhv.name=高科技搅拌机
 gregtech.machine.mixer.uev.name=高科技搅拌机 II
 gregtech.machine.mixer.uiv.name=高科技搅拌机 III
-gregtech.machine.mixer.umv.name=高科技搅拌机 IV
-gregtech.machine.mixer.uxv.name=终极搅拌机
+gregtech.machine.mixer.uxv.name=高科技搅拌机 IV
+gregtech.machine.mixer.opv.name=终极搅拌机
 
 gregtech.machine.ore_washer.tooltip=洗涤你的矿石以得到更多的副产品
 
@@ -3109,8 +3109,8 @@ gregtech.machine.ore_washer.uv.name=精英洗矿厂 IV
 gregtech.machine.ore_washer.uhv.name=高科技洗矿厂
 gregtech.machine.ore_washer.uev.name=高科技洗矿厂 II
 gregtech.machine.ore_washer.uiv.name=高科技洗矿厂 III
-gregtech.machine.ore_washer.umv.name=高科技洗矿厂 IV
-gregtech.machine.ore_washer.uxv.name=终极洗矿厂
+gregtech.machine.ore_washer.uxv.name=高科技洗矿厂 IV
+gregtech.machine.ore_washer.opv.name=终极洗矿厂
 
 gregtech.machine.packer.tooltip=把东西放进盒子，把东西从盒子里拿出来
 
@@ -3125,8 +3125,8 @@ gregtech.machine.packer.uv.name=精英打包机 IV
 gregtech.machine.packer.uhv.name=高科技装箱者
 gregtech.machine.packer.uev.name=高科技装箱者 II
 gregtech.machine.packer.uiv.name=高科技装箱者 III
-gregtech.machine.packer.umv.name=高科技装箱者 IV
-gregtech.machine.packer.uxv.name=终极装箱者
+gregtech.machine.packer.uxv.name=高科技装箱者 IV
+gregtech.machine.packer.opv.name=终极装箱者
 
 gregtech.machine.polarizer.tooltip=将你的磁体极化
 
@@ -3141,8 +3141,8 @@ gregtech.machine.polarizer.uv.name=精英两极磁化机 IV
 gregtech.machine.polarizer.uhv.name=高科技两极磁化机
 gregtech.machine.polarizer.uev.name=高科技两极磁化机 II
 gregtech.machine.polarizer.uiv.name=高科技两极磁化机 III
-gregtech.machine.polarizer.umv.name=高科技两极磁化机 IV
-gregtech.machine.polarizer.uxv.name=终极两极磁化机
+gregtech.machine.polarizer.uxv.name=高科技两极磁化机 IV
+gregtech.machine.polarizer.opv.name=终极两极磁化机
 
 gregtech.machine.laser_engraver.tooltip=不要直视激光
 
@@ -3157,8 +3157,8 @@ gregtech.machine.laser_engraver.uv.name=精英精密激光蚀刻机 IV
 gregtech.machine.laser_engraver.uhv.name=高科技激光蚀刻机
 gregtech.machine.laser_engraver.uev.name=高科技激光蚀刻机 II
 gregtech.machine.laser_engraver.uiv.name=高科技激光蚀刻机 III
-gregtech.machine.laser_engraver.umv.name=高科技激光蚀刻机 IV
-gregtech.machine.laser_engraver.uxv.name=终极激光蚀刻机
+gregtech.machine.laser_engraver.uxv.name=高科技激光蚀刻机 IV
+gregtech.machine.laser_engraver.opv.name=终极激光蚀刻机
 
 gregtech.machine.sifter.tooltip=保持冷静，继续筛选
 
@@ -3173,8 +3173,8 @@ gregtech.machine.sifter.uv.name=精英筛选机 IV
 gregtech.machine.sifter.uhv.name=高科技筛选器
 gregtech.machine.sifter.uev.name=高科技筛选器 II
 gregtech.machine.sifter.uiv.name=高科技筛选器 III
-gregtech.machine.sifter.umv.name=高科技筛选器 IV
-gregtech.machine.sifter.uxv.name=终极筛选器
+gregtech.machine.sifter.uxv.name=高科技筛选器 IV
+gregtech.machine.sifter.opv.name=终极筛选器
 
 gregtech.machine.thermal_centrifuge.tooltip=更精确地分离矿石
 
@@ -3189,8 +3189,8 @@ gregtech.machine.thermal_centrifuge.uv.name=精英热力离心机 IV
 gregtech.machine.thermal_centrifuge.uhv.name=高科技热力离心机
 gregtech.machine.thermal_centrifuge.uev.name=高科技热力离心机 II
 gregtech.machine.thermal_centrifuge.uiv.name=高科技热力离心机 III
-gregtech.machine.thermal_centrifuge.umv.name=高科技热力离心机 IV
-gregtech.machine.thermal_centrifuge.uxv.name=终极热力离心机
+gregtech.machine.thermal_centrifuge.uxv.name=高科技热力离心机 IV
+gregtech.machine.thermal_centrifuge.opv.name=终极热力离心机
 
 gregtech.machine.wiremill.tooltip=更高效地生产电线
 
@@ -3205,8 +3205,8 @@ gregtech.machine.wiremill.uv.name=精英线材轧机 IV
 gregtech.machine.wiremill.uhv.name=高科技线材轧机
 gregtech.machine.wiremill.uev.name=高科技线材轧机 II
 gregtech.machine.wiremill.uiv.name=高科技线材轧机 III
-gregtech.machine.wiremill.umv.name=高科技线材轧机 IV
-gregtech.machine.wiremill.uxv.name=终极线材轧机
+gregtech.machine.wiremill.uxv.name=高科技线材轧机 IV
+gregtech.machine.wiremill.opv.name=终极线材轧机
 
 gregtech.machine.circuit_assembler.tooltip=到处都是Pick-n-Place
 
@@ -3221,8 +3221,8 @@ gregtech.machine.circuit_assembler.uv.name=精英电路组装机 IV
 gregtech.machine.circuit_assembler.uhv.name=高科技电路组装机
 gregtech.machine.circuit_assembler.uev.name=高科技电路组装机 II
 gregtech.machine.circuit_assembler.uiv.name=高科技电路组装机 III
-gregtech.machine.circuit_assembler.umv.name=高科技电路组装机 IV
-gregtech.machine.circuit_assembler.uxv.name=终极电路组装机
+gregtech.machine.circuit_assembler.uxv.name=高科技电路组装机 IV
+gregtech.machine.circuit_assembler.opv.name=终极电路组装机
 
 gregtech.machine.mass_fabricator.tooltip=UUM = 物质*发生平方
 
@@ -3237,8 +3237,8 @@ gregtech.machine.mass_fabricator.uv.name=精英质量发生器 IV
 gregtech.machine.mass_fabricator.uhv.name=高科技质量发生器
 gregtech.machine.mass_fabricator.uev.name=高科技质量发生器 II
 gregtech.machine.mass_fabricator.uiv.name=高科技质量发生器 III
-gregtech.machine.mass_fabricator.umv.name=高科技质量发生器 IV
-gregtech.machine.mass_fabricator.uxv.name=终极质量发生器
+gregtech.machine.mass_fabricator.uxv.name=高科技质量发生器 IV
+gregtech.machine.mass_fabricator.opv.name=终极质量发生器
 
 gregtech.machine.replicator.tooltip=产生最纯净的元素
 
@@ -3253,8 +3253,8 @@ gregtech.machine.replicator.uv.name=精英复制机 IV
 gregtech.machine.replicator.uhv.name=高科技复制机
 gregtech.machine.replicator.uev.name=高科技复制机 II
 gregtech.machine.replicator.uiv.name=高科技复制机 III
-gregtech.machine.replicator.umv.name=高科技复制机 IV
-gregtech.machine.replicator.uxv.name=终极复制机
+gregtech.machine.replicator.uxv.name=高科技复制机 IV
+gregtech.machine.replicator.opv.name=终极复制机
 
 gregtech.machine.scanner.tooltip=扫描材料和其他东西
 
@@ -3269,8 +3269,8 @@ gregtech.machine.scanner.uv.name=精英扫描仪 IV
 gregtech.machine.scanner.uhv.name=高科技扫描仪
 gregtech.machine.scanner.uev.name=高科技扫描仪 II
 gregtech.machine.scanner.uiv.name=高科技扫描仪 III
-gregtech.machine.scanner.umv.name=高科技扫描仪 IV
-gregtech.machine.scanner.uxv.name=终极扫描仪
+gregtech.machine.scanner.uxv.name=高科技扫描仪 IV
+gregtech.machine.scanner.opv.name=终极扫描仪
 
 gregtech.machine.infinite_energy.name=无限 GTEU 能量输出器
 gregtech.machine.infinite_energy.tooltip=§8你只需要§o§5绝§d对§4无§c所§e不§a能§b的§3创§7造§1模§5式§d力§r§8来使用它
@@ -3295,8 +3295,8 @@ gregtech.machine.hull.uv.name=UV 机械方块
 gregtech.machine.hull.uhv.name=UHV 机械方块
 gregtech.machine.hull.uev.name=UEV 机械方块
 gregtech.machine.hull.uiv.name=UIV 机械方块
-gregtech.machine.hull.umv.name=UMV 机械方块
 gregtech.machine.hull.uxv.name=UXV 机械方块
+gregtech.machine.hull.opv.name=OpV 机械方块
 gregtech.machine.hull.max.name=MAX 机械方块
 
 # Battery buffers
@@ -3348,13 +3348,13 @@ gregtech.machine.battery_buffer.uiv.4.name=极强导压 4x 电池箱
 gregtech.machine.battery_buffer.uiv.8.name=极强导压 8x 电池箱
 gregtech.machine.battery_buffer.uiv.16.name=极强导压 16x 电池箱
 
-gregtech.machine.battery_buffer.umv.4.name=极剧差压 4x 电池箱
-gregtech.machine.battery_buffer.umv.8.name=极剧差压 8x 电池箱
-gregtech.machine.battery_buffer.umv.16.name=极剧差压 16x 电池箱
-
 gregtech.machine.battery_buffer.uxv.4.name=极上拓压 4x 电池箱
 gregtech.machine.battery_buffer.uxv.8.name=极上拓压 8x 电池箱
 gregtech.machine.battery_buffer.uxv.16.name=极上拓压 16x 电池箱
+
+gregtech.machine.battery_buffer.opv.4.name=过载压 4x 电池箱
+gregtech.machine.battery_buffer.opv.8.name=过载压 8x 电池箱
+gregtech.machine.battery_buffer.opv.16.name=过载压 16x 电池箱
 
 gregtech.machine.battery_buffer.max.4.name=终压 4x 电池箱
 gregtech.machine.battery_buffer.max.8.name=终压 8x 电池箱
@@ -3384,8 +3384,8 @@ gregtech.machine.transformer.uv.name=极限压变压器
 gregtech.machine.transformer.uhv.name=极高压变压器
 gregtech.machine.transformer.uev.name=超极限压变压器
 gregtech.machine.transformer.uiv.name=极强导压变压器
-gregtech.machine.transformer.umv.name=极剧差压变压器
 gregtech.machine.transformer.uxv.name=极上拓压变压器
+gregtech.machine.transformer.opv.name=过载压变压器
 
 gregtech.machine.transformer.adjustable.ulv.name=超低压可调变压器
 gregtech.machine.transformer.adjustable.lv.name=低压可调变压器
@@ -3399,8 +3399,8 @@ gregtech.machine.transformer.adjustable.uv.name=极限压可调变压器
 gregtech.machine.transformer.adjustable.uhv.name=极高压可调变压器
 gregtech.machine.transformer.adjustable.uev.name=超极限压可调变压器
 gregtech.machine.transformer.adjustable.uiv.name=极强导压可调变压器
-gregtech.machine.transformer.adjustable.umv.name=极剧差压可调变压器
 gregtech.machine.transformer.adjustable.uxv.name=极上拓压可调变压器
+gregtech.machine.transformer.adjustable.opv.name=过载压可调变压器
 
 # Diodes
 gregtech.machine.diode.message=最大安培: %s
@@ -3419,8 +3419,8 @@ gregtech.machine.diode.uv.name=极限压二极管
 gregtech.machine.diode.uhv.name=极高压二极管
 gregtech.machine.diode.uev.name=超极限压二极管
 gregtech.machine.diode.uiv.name=极强导压二极管
-gregtech.machine.diode.umv.name=极剧差压二极管
 gregtech.machine.diode.uxv.name=极上拓压二极管
+gregtech.machine.diode.opv.name=过载压二极管
 gregtech.machine.diode.max.name=终压二极管
 
 # Chargers
@@ -3436,8 +3436,8 @@ gregtech.machine.charger.uv.name=极限压充电箱
 gregtech.machine.charger.uhv.name=极高压充电箱
 gregtech.machine.charger.uev.name=超极限压充电箱
 gregtech.machine.charger.uiv.name=极强导压充电箱
-gregtech.machine.charger.umv.name=极剧差压充电箱
 gregtech.machine.charger.uxv.name=极上拓压充电箱
+gregtech.machine.charger.opv.name=过载压充电箱
 gregtech.machine.charger.max.name=终压充电箱
 
 gregtech.machine.energy_converter.ulv.1.name=ULV 能量转换器 (1A)
@@ -3488,14 +3488,14 @@ gregtech.machine.energy_converter.uiv.1.name=UIV 能量转换器 (1A)
 gregtech.machine.energy_converter.uiv.4.name=UIV 能量转换器 (4A)
 gregtech.machine.energy_converter.uiv.8.name=UIV 能量转换器 (8A)
 gregtech.machine.energy_converter.uiv.16.name=UIV 能量转换器 (16A)
-gregtech.machine.energy_converter.umv.1.name=UMV 能量转换器 (1A)
-gregtech.machine.energy_converter.umv.4.name=UMV 能量转换器 (4A)
-gregtech.machine.energy_converter.umv.8.name=UMV 能量转换器 (8A)
-gregtech.machine.energy_converter.umv.16.name=UMV 能量转换器 (16A)
 gregtech.machine.energy_converter.uxv.1.name=UXV 能量转换器 (1A)
 gregtech.machine.energy_converter.uxv.4.name=UXV 能量转换器 (4A)
 gregtech.machine.energy_converter.uxv.8.name=UXV 能量转换器 (8A)
 gregtech.machine.energy_converter.uxv.16.name=UXV 能量转换器 (16A)
+gregtech.machine.energy_converter.opv.1.name=OpV 能量转换器 (1A)
+gregtech.machine.energy_converter.opv.4.name=OpV 能量转换器 (4A)
+gregtech.machine.energy_converter.opv.8.name=OpV 能量转换器 (8A)
+gregtech.machine.energy_converter.opv.16.name=OpV 能量转换器 (16A)
 gregtech.machine.energy_converter.max.1.name=MAX 能量转换器 (1A)
 gregtech.machine.energy_converter.max.4.name=MAX 能量转换器 (4A)
 gregtech.machine.energy_converter.max.8.name=MAX 能量转换器 (8A)
@@ -3605,8 +3605,8 @@ gregtech.machine.rock_breaker.uv.name=精英碎岩机 IV
 gregtech.machine.rock_breaker.uhv.name=高科技碎岩机
 gregtech.machine.rock_breaker.uev.name=高科技碎岩机 II
 gregtech.machine.rock_breaker.uiv.name=高科技碎岩机 III
-gregtech.machine.rock_breaker.umv.name=高科技碎岩机 IV
-gregtech.machine.rock_breaker.uxv.name=终极碎岩机
+gregtech.machine.rock_breaker.uxv.name=高科技碎岩机 IV
+gregtech.machine.rock_breaker.opv.name=终极碎岩机
 gregtech.machine.rock_breaker.tooltip=在相邻处放置熔岩和水
 
 #Fisher
@@ -3630,8 +3630,8 @@ gregtech.machine.world_accelerator.uv.name=精英世界加速器 IV
 gregtech.machine.world_accelerator.uhv.name=高科技世界加速器
 gregtech.machine.world_accelerator.uev.name=高科技世界加速器 II
 gregtech.machine.world_accelerator.uiv.name=高科技世界加速器 III
-gregtech.machine.world_accelerator.umv.name=高科技世界加速器 IV
-gregtech.machine.world_accelerator.uxv.name=终极时间加速器
+gregtech.machine.world_accelerator.uxv.name=高科技世界加速器 IV
+gregtech.machine.world_accelerator.opv.name=终极世界加速器
 gregtech.machine.world_accelerator.description=加速更新刻，有两种模式：方块实体或随机刻。使用螺丝刀切换模式。
 gregtech.machine.world_accelerator.area=在方块实体模式下, 只有相邻的方块会被加速在随机刻, 方块半径是 %dx%d 格。
 gregtech.machine.world_accelerator.mode_tile=方块实体模式
@@ -4044,8 +4044,8 @@ gregtech.machine.energy_hatch.input.uv.name=UV 能源仓
 gregtech.machine.energy_hatch.input.uhv.name=UHV 能源仓
 gregtech.machine.energy_hatch.input.uev.name=UEV 能源仓
 gregtech.machine.energy_hatch.input.uiv.name=UIV 能源仓
-gregtech.machine.energy_hatch.input.umv.name=UMV 能源仓
 gregtech.machine.energy_hatch.input.uxv.name=UXV 能源仓
+gregtech.machine.energy_hatch.input.opv.name=OpV 能源仓
 gregtech.machine.energy_hatch.input.max.name=MAX 能源仓
 
 gregtech.machine.energy_hatch.input_hi_amp.tooltip=多方块结构的更高安培能量输入
@@ -4076,8 +4076,8 @@ gregtech.machine.energy_hatch.output.uv.name=UV 动力仓
 gregtech.machine.energy_hatch.output.uhv.name=UHV 动力仓
 gregtech.machine.energy_hatch.output.uev.name=UEV 动力仓
 gregtech.machine.energy_hatch.output.uiv.name=UIV 动力仓
-gregtech.machine.energy_hatch.output.umv.name=UMV 动力仓
 gregtech.machine.energy_hatch.output.uxv.name=UXV 动力仓
+gregtech.machine.energy_hatch.output.opv.name=OpV 动力仓
 gregtech.machine.energy_hatch.output.max.name=MAX 动力仓
 
 gregtech.machine.energy_hatch.output_hi_amp.tooltip=多方块结构的更高安培能量输出
@@ -4134,8 +4134,8 @@ gregtech.machine.muffler_hatch.uv.name=UV 消声仓
 gregtech.machine.muffler_hatch.uhv.name=UHV 消声仓
 gregtech.machine.muffler_hatch.uev.name=UEV 消声仓
 gregtech.machine.muffler_hatch.uiv.name=UIV 消声仓
-gregtech.machine.muffler_hatch.umv.name=UMV 消声仓
 gregtech.machine.muffler_hatch.uxv.name=UXV 消声仓
+gregtech.machine.muffler_hatch.opv.name=OpV 消声仓
 gregtech.machine.muffler_hatch.max.name=MAX 消声仓
 
 gregtech.muffler.recovery_tooltip=恢复物品 §b%d%%§7 的时间!
