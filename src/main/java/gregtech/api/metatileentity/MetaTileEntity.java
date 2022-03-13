@@ -336,7 +336,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
      * @return freshly created UI instance
      */
     @Deprecated
-    protected abstract ModularUI createUI(EntityPlayer entityPlayer);
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        throw new UnsupportedOperationException();
+    }
 
     @Deprecated
     public ModularUI getModularUI(EntityPlayer entityPlayer) {

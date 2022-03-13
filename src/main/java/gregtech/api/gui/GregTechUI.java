@@ -60,7 +60,7 @@ public class GregTechUI {
                 if (te instanceof MetaTileEntityHolder && !te.isInvalid()) {
                     MetaTileEntity mte = ((MetaTileEntityHolder) te).getMetaTileEntity();
                     if (mte != null) {
-                        createModularContainer(player, mte::createWindow);
+                        return createModularContainer(player, mte::createWindow);
                     }
                 }
                 return null;

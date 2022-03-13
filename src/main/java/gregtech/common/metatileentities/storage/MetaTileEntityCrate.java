@@ -4,18 +4,21 @@ import codechicken.lib.colour.ColourRGBA;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.guiOld.GuiTextures;
-import gregtech.api.guiOld.ModularUI;
-import gregtech.api.guiOld.ModularUI.Builder;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Pos2d;
+import com.cleanroommc.modularui.common.internal.ModularWindow;
+import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.SlotGroup;
+import com.cleanroommc.modularui.common.widget.TextWidget;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
@@ -33,19 +36,20 @@ import java.util.List;
 public class MetaTileEntityCrate extends MetaTileEntity {
 
     private final Material material;
-    private final int inventorySize;
+    private final int inventorySize, slotsPerRow;
     private ItemStackHandler inventory;
 
-    public MetaTileEntityCrate(ResourceLocation metaTileEntityId, Material material, int inventorySize) {
+    public MetaTileEntityCrate(ResourceLocation metaTileEntityId, Material material, int inventorySize, int slotsPerRow) {
         super(metaTileEntityId);
         this.material = material;
         this.inventorySize = inventorySize;
+        this.slotsPerRow = slotsPerRow;
         initializeInventory();
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityCrate(metaTileEntityId, material, inventorySize);
+        return new MetaTileEntityCrate(metaTileEntityId, material, inventorySize, slotsPerRow);
     }
 
     @Override
@@ -115,14 +119,23 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        int factor = inventorySize / 9 > 8 ? 18 : 9;
-        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176 + (factor == 18 ? 176 : 0), 8 + inventorySize / factor * 18 + 104).label(5, 5, getMetaFullName());
-        for (int i = 0; i < inventorySize; i++) {
-            builder.slot(inventory, i, 7 * (factor == 18 ? 2 : 1) + i % factor * 18, 18 + i / factor * 18, GuiTextures.SLOT);
-        }
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7 + (factor == 18 ? 88 : 0), 18 + inventorySize / factor * 18 + 11);
-        return builder.build(getHolder(), entityPlayer);
+    public boolean useOldGui() {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        int slotsHeight = (int) Math.ceil(inventorySize * 1D / slotsPerRow) * 18;
+        int width = Math.max(176, slotsPerRow * 18 + 14);
+        ModularWindow.Builder builder = ModularWindow.builder(width, 8 + slotsHeight + 96);
+        builder.widget(GuiTextures.BACKGROUND.asWidget().fillParent())
+                .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(width / 2 - 81, 21 + slotsHeight))
+                .widget(new TextWidget(new Text(getMetaFullName()).localise())
+                        .setPos(8, 6))
+                .widget(SlotGroup.ofItemHandler(inventory, slotsPerRow, 0)
+                        .setPos(7, 16));
+        return builder.build();
     }
 
     @Override
