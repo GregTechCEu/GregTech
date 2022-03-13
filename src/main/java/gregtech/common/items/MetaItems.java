@@ -600,7 +600,7 @@ public final class MetaItems {
         add(OrePrefix.toolHeadDrill);
         add(OrePrefix.toolHeadChainsaw);
         add(OrePrefix.toolHeadWrench);
-        add(OrePrefix.toolHeadSense);
+        add(OrePrefix.toolHeadSickle);
         add(OrePrefix.toolHeadBuzzSaw);
         add(OrePrefix.toolHeadScrewdriver);
     }};

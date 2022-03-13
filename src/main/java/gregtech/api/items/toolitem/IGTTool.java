@@ -105,6 +105,13 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return (Item) this;
     }
 
+    default ItemStack getRaw() {
+        ItemStack stack = new ItemStack(get());
+        getToolTag(stack);
+        getBehavioursTag(stack);
+        return stack;
+    }
+
     default ItemStack get(Material material) {
         ItemStack stack = new ItemStack(get());
         NBTTagCompound toolTag = getToolTag(stack);
@@ -174,42 +181,39 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return material;
     }
 
+    @Nullable
     default ToolProperty getToolProperty(ItemStack stack) {
-        Material material = getToolMaterial(stack);
-        ToolProperty property = material.getProperty(PropertyKey.TOOL);
-        if (property == null) {
-            property = Materials.Neutronium.getProperty(PropertyKey.TOOL);
-        }
-        return property;
+        return getToolMaterial(stack).getProperty(PropertyKey.TOOL);
     }
 
+    @Nullable
     default DustProperty getDustProperty(ItemStack stack) {
-        Material material = getToolMaterial(stack);
-        DustProperty property = material.getProperty(PropertyKey.DUST);
-        if (property == null) {
-            property = Materials.Neutronium.getProperty(PropertyKey.DUST);
-        }
-        return property;
+        return getToolMaterial(stack).getProperty(PropertyKey.DUST);
     }
 
     default float getMaterialToolSpeed(ItemStack stack) {
-        return getToolProperty(stack).getToolSpeed();
+        ToolProperty toolProperty = getToolProperty(stack);
+        return toolProperty == null ? 0F : toolProperty.getToolSpeed();
     }
 
     default float getMaterialAttackDamage(ItemStack stack) {
-        return getToolProperty(stack).getToolAttackDamage();
+        ToolProperty toolProperty = getToolProperty(stack);
+        return toolProperty == null ? 0F : toolProperty.getToolAttackDamage();
     }
 
     default int getMaterialDurability(ItemStack stack) {
-        return getToolProperty(stack).getToolDurability();
+        ToolProperty toolProperty = getToolProperty(stack);
+        return toolProperty == null ? 0 : toolProperty.getToolDurability();
     }
 
     default int getMaterialEnchantability(ItemStack stack) {
-        return getToolProperty(stack).getToolEnchantability();
+        ToolProperty toolProperty = getToolProperty(stack);
+        return toolProperty == null ? 0 : toolProperty.getToolEnchantability();
     }
 
     default int getMaterialHarvestLevel(ItemStack stack) {
-        return getDustProperty(stack).getHarvestLevel();
+        DustProperty dustProperty = getDustProperty(stack);
+        return dustProperty == null ? 0 : dustProperty.getHarvestLevel();
     }
 
     default long getMaxCharge(ItemStack stack) {
