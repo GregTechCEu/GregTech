@@ -9,13 +9,13 @@ import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import it.unimi.dsi.fastutil.objects.Reference2LongArrayMap;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
@@ -107,6 +107,25 @@ public class ToolHelper {
 
     public static NBTTagCompound getBehavioursTag(ItemStack stack) {
         return stack.getOrCreateSubCompound(BEHAVIOURS_TAG_KEY);
+    }
+
+    public static ItemStack getAndSetToolData(IGTTool tool, Material material, int maxDurability, int harvestLevel, float toolSpeed, float attackDamage) {
+        ItemStack stack = tool.getRaw();
+        NBTTagCompound toolTag = getToolTag(stack);
+        toolTag.setString(MATERIAL_KEY, material.toString());
+        toolTag.setInteger(MAX_DURABILITY_KEY, maxDurability);
+        toolTag.setInteger(HARVEST_LEVEL_KEY, harvestLevel);
+        toolTag.setFloat(TOOL_SPEED_KEY, toolSpeed);
+        toolTag.setFloat(ATTACK_DAMAGE_KEY, attackDamage);
+        ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
+        if (toolProperty != null) {
+            toolProperty.getEnchantments().forEach((enchantment, level) -> {
+                if (stack.getItem().canApplyAtEnchantingTable(stack, enchantment)) {
+                    stack.addEnchantment(enchantment, level);
+                }
+            });
+        }
+        return stack;
     }
 
     /**
