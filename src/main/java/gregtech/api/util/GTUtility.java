@@ -699,18 +699,19 @@ public class GTUtility {
     }
 
     public static boolean isCoverBehaviorItem(ItemStack itemStack, @Nullable BooleanSupplier hasCoverSupplier, @Nullable Predicate<CoverDefinition> canPlaceCover) {
-        if (itemStack.getItem() instanceof MetaItem) {
+        Item item = itemStack.getItem();
+        if (item instanceof MetaItem) {
             MetaItem<?> metaItem = (MetaItem<?>) itemStack.getItem();
             MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
             if (valueItem != null) {
-                List<IItemBehaviour> behaviourList = valueItem.getBehaviours();
-                for (IItemBehaviour behaviour : behaviourList) {
-                    if (behaviour instanceof CoverPlaceBehavior)
+                for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
+                    if (behaviour instanceof CoverPlaceBehavior) {
                         return canPlaceCover == null || canPlaceCover.test(((CoverPlaceBehavior) behaviour).coverDefinition);
-                    if (behaviour instanceof CrowbarBehaviour)
-                        return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
+                    }
                 }
             }
+        } else if (item.getToolClasses(itemStack).contains("crowbar")) {
+            return hasCoverSupplier == null || hasCoverSupplier.getAsBoolean();
         }
         return false;
     }
