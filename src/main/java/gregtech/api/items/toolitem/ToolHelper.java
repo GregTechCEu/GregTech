@@ -436,9 +436,9 @@ public class ToolHelper {
                             iter.remove();
                         } else {
                             float f = 0.7F;
-                            double xo = (world.rand.nextFloat() * f) + 1.5D;
-                            double yo = (world.rand.nextFloat() * f) + 1.5D;
-                            double zo = (world.rand.nextFloat() * f) + 1.5D;
+                            double xo = world.rand.nextFloat() * f + 0.15D;
+                            double yo = world.rand.nextFloat() * f + 0.15D;
+                            double zo = world.rand.nextFloat() * f + 0.15D;
                             EntityItem entityItem = new EntityItem(world, pos.getX() + xo, pos.getY() + yo, pos.getZ() + zo, stack);
                             entityItem.setDefaultPickupDelay();
                             player.world.spawnEntity(entityItem);
