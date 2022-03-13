@@ -1,18 +1,18 @@
-## GregTech CommunityEdition Unofficial ja_jp.lang
-## Last Update 22.03.12
-## Translated version
-## 	1.12.2-2.1.4-beta
+# Japanese translate by MrKo_no & Quarri6343
+# 日本語ローカライズ担当： MrKo_no & Quarri6343
+# Corresponding Version: 2.1.4 - beta
+# 対応バージョン: 2.1.4 - beta
 
-death.attack.heat=%s は茹で上がってしまった.
-death.attack.frost=%s は極低温を探求した.
-death.attack.electric=%s は感電してしまった.
-death.attack.radiation=%s は喜びで光輝いた.
-death.attack.turbine=%s は頭をタービンに突っ込んでしまった.
-death.attack.explosion=%s は爆発した.
-death.attack.explosion.player=%s は %s の助けを借りて爆発した.
-death.attack.heat.player= %s は %s の助けを借りて茹で上がってしまった.
+death.attack.heat=%s が沸きました.給湯温度を1000kに設定します.
+death.attack.frost=%s のふとんがふっとんだ.
+death.attack.electric=%s は電気工事士ではなかった.
+death.attack.radiation=%s は青白い光で満ち溢れた.
+death.attack.turbine=%s はタービンで散髪しようとした.
+death.attack.explosion=%s は粉骨砕身した.
+death.attack.explosion.player=%s は %s のおかげで爆発した.
+death.attack.heat.player= %s は %s の水餃子の具になった.
 
-enchantment.disjunction=Disjunction
+enchantment.disjunction=ディスジャンクション
 
 gregtech.machine.steam_grinder.name=蒸気式破砕機
 gregtech.machine.steam_grinder.tooltip=1回につき同一アイテムを8個まで一度に粉砕. アイテム数に関わらず所要時間が1.5倍になり, §e蒸気用ハッチとバス§7が必要.
@@ -26,7 +26,7 @@ gregtech.machine.steam_export_bus.name=搬出バス (蒸気用)
 gregtech.machine.steam_bus.tooltip=非蒸気式のマルチブロックでは使用不可
 gregtech.machine.steam_oven.name=蒸気式オーブン
 gregtech.machine.steam_oven.tooltip=1回につき同一アイテムを8個まで一度に製錬.  アイテム数に関わらず所要時間が1.5倍になり, §e蒸気用ハッチとバス§7が必要.
-gregtech.multiblock.steam_oven.description=蒸気時代のマルチブロック式粉砕機. 青銅製外装が最低6個必要. 通常のハッチ/バスは使えず, 専用の蒸気用のものが必要. 蒸気ハッチは最下段のみであり, 1つしか置換できない.
+gregtech.multiblock.steam_oven.description=蒸気時代のマルチスメルター. 青銅製外装が最低6個必要. 通常のハッチ/バスは使えず, 専用の蒸気用のものが必要. 蒸気ハッチは最下段に一つだけ置ける.
 
 gregtech.top.energy_stored=エネルギー:
 gregtech.top.progress=進捗:
@@ -36,6 +36,9 @@ gregtech.top.transform_up=§c昇圧§r
 gregtech.top.transform_down=§a降圧§r
 gregtech.top.transform_input=§6入力:§r
 gregtech.top.transform_output=§9出力:§r
+
+gregtech.top.convert_eu=§eEUを変換中§r
+gregtech.top.convert_fe=§cFEを変換中§r
 
 gregtech.top.fuel_burn=あと
 gregtech.top.fuel_time=秒
@@ -49,37 +52,37 @@ gregtech.top.obstructed_structure=§cスペース不足
 gregtech.top.maintenance_fixed=§a修理は不要
 gregtech.top.maintenance_broken=§c修理が必要
 
-gregtech.multiblock.title=マルチブロック機械
-gregtech.multiblock.primitive_blast_furnace.bronze.description=初歩的な高炉 (PBF) は初期段階で鋼鉄を得るためのマルチブロック機械です.  しかし動作は遅く, 用途は最初の鋼鉄を提供するのみです.
-gregtech.multiblock.coke_oven.description=コークス炉は初期段階でコークスやクレオソート油を得るためのマルチブロック機械です. これは燃料を必要とせず, クレオソート油用の32バケツ分の内部タンクを有します. インベントリはコークス炉ハッチを経由してアクセスできます.
-gregtech.multiblock.vacuum_freezer.description=真空冷却機は主に過熱インゴットを通常のインゴットにするために用いるマルチブロック機械です. しかし, 水のような他の物も冷却できます.
+gregtech.multiblock.title=マルチブロックの構造
+gregtech.multiblock.primitive_blast_furnace.bronze.description=初歩的な溶鉱炉 (PBF) は序盤に鋼鉄を得るためのマルチブロック機械です.  動作は遅いですが、最初の高圧蒸気機械を作るためのスチールを提供します。
+gregtech.multiblock.coke_oven.description=コークス炉は序盤にコークスやクレオソート油を得るためのマルチブロック機械です. 燃料を必要とせず, クレオソート油用の32バケツ分の内部タンクを有します. コークス炉ハッチを経由してインベントリにアクセスできます.
+gregtech.multiblock.vacuum_freezer.description=真空フリーザーは主に過熱インゴットを通常のインゴットにするために用いるマルチブロック機械ですが、水のような他の物も冷却できます.
 gregtech.multiblock.implosion_compressor.description=内破圧縮機は, 爆発の力を用いて宝石の粉を対応する宝石にするマルチブロック機械です.
 gregtech.multiblock.pyrolyse_oven.description=熱分解炉は原木を木炭とクレオソート油, または灰と高密度な石油に変換するマルチブロック機械です.
-gregtech.multiblock.cracker.description=油分解装置は軽油や重油を分解したものにするマルチブロック機械です.
+gregtech.multiblock.cracker.description=接触分解装置は軽油や重油を分解したものにするマルチブロック機械です.
 gregtech.multiblock.large_combustion_engine.description=大型燃焼エンジンは, EV電力を生み出すマルチブロック型内燃発電機です.
 gregtech.multiblock.extreme_combustion_engine.description=強化型大型燃焼エンジンは, IV電力を生み出すマルチブロック型内燃発電機です.
 gregtech.multiblock.distillation_tower.description=蒸留塔は石油を様々なものに蒸留し, 副産物を得ることができるマルチブロック機械です.
-gregtech.multiblock.electric_blast_furnace.description=電気高炉 (EBF) は合金や金属, 鉱石の製錬を行うマルチブロック機械です. これはアルミニウムやステンレス鋼, チタン, ナクアダ合金のような上位素材に要求されます.
-gregtech.multiblock.multi_furnace.description=大型かまどは一度に大量のアイテムを製錬できるマルチブロック機械です. コイルの違いによって速度とエネルギー効率にブーストがかかります. 一度に製錬する個数は32個が基本であり, 高レベルのコイルを使うことで乗算されていきます.
+gregtech.multiblock.electric_blast_furnace.description=工業用電気炉 (EBF) は合金や金属の精錬, 鉱石の精製を行うマルチブロック機械です. これはアルミニウムやステンレス鋼, チタン, ナクアダ合金のような上位素材に要求されます.
+gregtech.multiblock.multi_furnace.description=マルチスメルターは一度に大量のアイテムを製錬できるマルチブロック機械です. コイルの違いによって速度とエネルギー効率にブーストがかかります. 一度に製錬する個数は32個が基本であり, 高レベルのコイルを使うことで乗算されていきます.
 gregtech.multiblock.large_boiler.description=大型ボイラーは燃料と水から蒸気を生み出すマルチブロック機械です. 燃料というのは固形燃料または高密度の液体です. ティアの違いは蒸気搬出量のみです.
 gregtech.multiblock.large_turbine.description=大型タービンは, 蒸気, ガスまたはプラズマの力でタービンローターを回転させ発電するマルチブロック機械です. エネルギー出力はローターの効率とタービンの現在の速度に基づきます.
-gregtech.multiblock.assembly_line.description=アセンブリラインは5から16の"スライス"から成る大型マルチブロック機械です. 理論的には, それは高度な電子部品を作成するために使用される大型の組み立て機です.
+gregtech.multiblock.assembly_line.description=アセンブリラインは5から16の"スライス"から成る大型マルチブロック機械です. 理屈の上では高度な電子部品を作成するために使用される大型の組み立て機です.
 gregtech.multiblock.fusion_reactor.luv.description=核融合炉Mark 1は, 元素をより重い元素に融合するために使われる大型マルチブロック機械です. 核融合炉Mark 1は, LuV,ZPMまたはUVエネルギーハッチを使用できます. ハッチごとに, バッファが1,000万EUずつ増加します. 最大開始エネルギーは160,000,000 EUです.
 gregtech.multiblock.fusion_reactor.zpm.description=核融合炉Mark 2は, 元素をより重い元素に融合するために使われる大型マルチブロック機械です. 核融合炉Mark 2は,ZPMまたはUVエネルギーハッチを使用できます. ハッチごとに, バッファが2,000万EUずつ増加します. 最大開始エネルギーは320,000,000 EUです.
 gregtech.multiblock.fusion_reactor.uv.description=核融合炉Mark 3は, 元素をより重い元素に融合するために使われる大型マルチブロック機械です. 核融合炉Mark 3はUVエネルギーハッチのみを使用できます. ハッチごとに, バッファが4,000万EUずつ増加します. 最大開始エネルギーは640,000,000 EUです.
 gregtech.multiblock.fusion_reactor.energy=EU: %d / %d
 gregtech.multiblock.fusion_reactor.heat=熱: %d
-gregtech.multiblock.large_chemical_reactor.description=大規模スケールで行うことにより, 100%%の効率で動く大型の化学反応機です. オーバークロックは速度とエネルギーの両方を4倍にします. マルチブロックには1つのキュプロニッケルコイルブロックが必要です. これは中央にあるPTFEパイプ外装に隣接して配置する必要があります.
-gregtech.multiblock.primitive_water_pump.description=初歩的なウォーターポンプは蒸気時代以前のマルチブロックであり, 1秒に1回バイオームに応じた水量を収集します. ポンプ, ULV, またはLV出力ハッチを使用して, ティアごとの水の量を増やすことができます. 次式に従います：バイオーム係数*ハッチ乗数. 
+gregtech.multiblock.large_chemical_reactor.description=大型化学反応機は化学反応を100%%のエネルギー効率で実現します. オーバークロックは速度とエネルギーの両方を4倍にします. マルチブロックには丁度1つのキュプロニッケルコイルブロックを中央にあるPTFEパイプ外装に隣接して配置する必要があります.
+gregtech.multiblock.primitive_water_pump.description=初歩的な揚水ポンプは蒸気時代以前のマルチブロックであり, 1秒に1回バイオームに応じた水量を収集します. ポンプ, ULV, またはLV出力ハッチを使用することにより, バイオーム係数*ハッチ乗数に従ってティアごとの水の量を増やすことができます.
 gregtech.multiblock.primitive_water_pump.extra1=バイオーム係数:/n  海, 川: 1000 L/s/n  湿地: 800 L/s/n  ジャングル: 350 L/s/n  雪原: 300 L/s/n  草原, 森林: 250 L/s/n  タイガ: 175 L/s/n  海岸: 170 L/s/n  他: 100 L/s
 gregtech.multiblock.primitive_water_pump.extra2=ハッチ乗数:/n  ポンプハッチ: 1x/n  ULV搬出ハッチ: 2x/n  LV出力ハッチ: 4x
-gregtech.multiblock.processing_array.description=処理アレイは1つのマルチブロックに同じ機械を最大16個まで組み込め, 自動化を効果的に容易にするマルチブロック機械です.
-gregtech.multiblock.advanced_processing_array.description=発展型処理アレイは1つのマルチブロックに同じ機械を最大64個まで組み込め, 自動化を効果的に容易にするマルチブロック機械です.
+gregtech.multiblock.processing_array.description=処理アレイは1つのマルチブロックに同じ機械を最大16個まで組み込め, 自動化を効率化して楽するためのマルチブロック機械です.
+gregtech.multiblock.advanced_processing_array.description=発展型処理アレイは1つのマルチブロックに同じ機械を最大64個まで組み込め, 自動化を効率化して楽するためのマルチブロック機械です.
 
-item.invalid.name=Invalid item
+item.invalid.name=無効なアイテム
 fluid.empty=空
 
-gregtech.tooltip.hold_shift=§aShift§7を押して詳細情報を表示
+gregtech.tooltip.hold_shift=§aShift§7を押して詳細を表示
 
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.electric_item.tooltip=%,d/%,d EU - Tier %s
@@ -87,30 +90,30 @@ metaitem.electric.discharge_mode.enabled=§e放電:有効
 metaitem.electric.discharge_mode.disabled=§e放電:無効
 metaitem.electric.discharge_mode.tooltip=スニーク中に使うことで放電を切り替えできます.
 
-metaitem.dust.tooltip.purify=大釜に投げ入れることで綺麗な粉を得られるが, 副産物は得られない.
-metaitem.crushed.tooltip.purify=大釜に投げ入れることで洗浄された鉱石を得られるが, 副産物は得られない.
+metaitem.dust.tooltip.purify=大釜に投げ入れることで綺麗な粉を得られる
+metaitem.crushed.tooltip.purify=大釜に投げ入れることで洗浄された鉱石を得られる
 metaitem.int_circuit.configuration=設定: %,d
 metaitem.credit.copper.name=銅製コイン
-metaitem.credit.copper.tooltip=0.125 Credits
+metaitem.credit.copper.tooltip=0.125 クレジット
 metaitem.credit.cupronickel.name=キュプロニッケル製コイン
-metaitem.credit.cupronickel.tooltip=1 Credit
+metaitem.credit.cupronickel.tooltip=1 クレジット
 metaitem.credit.silver.name=銀製コイン
-metaitem.credit.silver.tooltip=8 Credits
+metaitem.credit.silver.tooltip=8 クレジット
 metaitem.credit.gold.name=金製コイン
-metaitem.credit.gold.tooltip=64 Credits
+metaitem.credit.gold.tooltip=64 クレジット
 metaitem.credit.platinum.name=プラチナ製コイン
-metaitem.credit.platinum.tooltip=512 Credits
+metaitem.credit.platinum.tooltip=512 クレジット
 metaitem.credit.osmium.name=オスミウム製コイン
-metaitem.credit.osmium.tooltip=4,096 Credits
+metaitem.credit.osmium.tooltip=4,096 クレジット
 metaitem.credit.naquadah.name=ナクアダ製コイン
-metaitem.credit.naquadah.tooltip=32,768 Credits
+metaitem.credit.naquadah.tooltip=32,768 クレジット
 metaitem.credit.neutronium.name=ニュートロニウム製コイン
-metaitem.credit.neutronium.tooltip=262144 Credits
+metaitem.credit.neutronium.tooltip=262144 クレジット
 
 metaitem.coin.gold.ancient.name=古代の金貨
-metaitem.coin.gold.ancient.tooltip=古代遺跡で発見される
+metaitem.coin.gold.ancient.tooltip=古代遺跡で発見された
 metaitem.coin.doge.name=ドージコイン
-metaitem.coin.doge.tooltip=wow much coin how money so crypto plz mine v rich very currency wow
+metaitem.coin.doge.tooltip=ワオ 沢山 コイン どうやって お金 そんなに 暗号化 プリーズ 私の物 v 金持ち とても 通貨 ワオ
 metaitem.coin.chocolate.name=チョコレートコイン
 metaitem.coin.chocolate.tooltip=金包装
 
@@ -125,7 +128,7 @@ metaitem.power_unit.hv.name=パワーユニット (HV)
 metaitem.power_unit.ev.name=パワーユニット (EV)
 metaitem.power_unit.iv.name=パワーユニット (IV)
 metaitem.nano_saber.name=ナノセイバー
-metaitem.nano_saber.tooltip=龍神の剣を喰らえ!
+metaitem.nano_saber.tooltip=竜神の剣を喰らえ!
 
 
 metaitem.shape.mold.plate.name=金型 (プレート)
@@ -158,7 +161,7 @@ metaitem.shape.mold.rotor.name=金型 (ローター)
 metaitem.shape.mold.rotor.tooltip=ローターを作る為の金型
 
 metaitem.shape.extruder.plate.name=押出形成用金型 (プレート)
-metaitem.shape.extruder.plate.tooltip=プレート作る為の押出形成用金型
+metaitem.shape.extruder.plate.tooltip=プレートを作る為の押出形成用金型
 metaitem.shape.extruder.rod.name=押出形成用金型 (棒)
 metaitem.shape.extruder.rod.tooltip=棒を作る為の押出形成用金型
 metaitem.shape.extruder.bolt.name=押出形成用金型 (ボルト)
@@ -178,7 +181,7 @@ metaitem.shape.extruder.pipe.tiny.tooltip=極細パイプを作る為の押出�
 metaitem.shape.extruder.pipe.small.name=押出形成用金型 (細いパイプ)
 metaitem.shape.extruder.pipe.small.tooltip=細いパイプを作る為の押出形成用金型
 metaitem.shape.extruder.pipe.normal.name=押出形成用金型 (通常パイプ)
-metaitem.shape.extruder.pipe.normal.tooltip=普通のパイプを作る為の押出形成用金型
+metaitem.shape.extruder.pipe.normal.tooltip=パイプを作る為の押出形成用金型
 metaitem.shape.extruder.pipe.large.name=押出形成用金型 (太いパイプ)
 metaitem.shape.extruder.pipe.large.tooltip=太いパイプを作る為の押出形成用金型
 metaitem.shape.extruder.pipe.huge.name=押出形成用金型 (極太パイプ)
@@ -189,7 +192,7 @@ metaitem.shape.extruder.sword.name=押出形成用金型 (剣)
 metaitem.shape.extruder.sword.tooltip=剣の刃を作る為の押出形成用金型
 metaitem.shape.extruder.pickaxe.name=押出形成用金型 (ピッケルヘッド)
 metaitem.shape.extruder.pickaxe.tooltip=ピッケルヘッドを作る為の押出形成用金型
-metaitem.shape.extruder.shovel.name=押出形成用金型 (シャベルヘッド)
+metaitem.shape.extruder.shovel.name=押出形成用金型 (ショベルヘッド)
 metaitem.shape.extruder.shovel.tooltip=ショベルヘッドを作る為の押出形成用金型
 metaitem.shape.extruder.axe.name=押出形成用金型 (斧刃)
 metaitem.shape.extruder.axe.tooltip=斧刃を作る為の押出形成用金型
@@ -217,7 +220,7 @@ metaitem.shape.extruder.rotor.tooltip=ローターを作るための押出形成
 metaitem.spray.empty.name=スプレー缶 (空)
 metaitem.spray.empty.tooltip=様々な色のスプレーを封入できる
 
-metaitem.plant.ball.name=植物球
+metaitem.plant.ball.name=プラントボール
 
 # Fluid Cells
 metaitem.fluid_cell.empty=空
@@ -4544,7 +4547,6 @@ fluid.tile.lava=溶岩
 fluid.tile.water=水
 
 gregtech.top.convert_eu=§eConverting EU§r
-gregtech.top.convert_fe=§cConverting FE§r
 metaitem.board.multiplayer.fiber_reinforced.name=An Elite Board
 metaitem.duct_tape.tooltip=If you can't fix it with this, use more of it!
 metaitem.tool.drill.ev.name=%s Drill (EV)
@@ -5071,4 +5073,4 @@ gregtech.machine.item_bus.import.ev.name=EV Input Bus
 gregtech.machine.maintenance_hatch_tool_slot.tooltip=Click slot with empty hand when required tools are in inventory to solve problems
 gregtech.machine.maintenance_hatch_tape_slot.tooltip=Insert Tape to prevent problems
 gregtech.machine.centrifuge.uxv.name=Epic Centrifuge IV
-gregtech.machine.chemical_reactor.uxv.name=Epic Chemical Reactor IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IV
+gregtech.machine.chemical_reactor.uxv.name=Epic Chemical Reactor IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IV
