@@ -3,7 +3,6 @@ package gregtech.api.recipes;
 import crafttweaker.mc1120.actions.ActionAddFurnaceRecipe;
 import crafttweaker.mc1120.furnace.MCFurnaceManager;
 import gregtech.api.GTValues;
-import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -272,24 +271,8 @@ public class ModHandler {
      * <p/>
      * For UnificationEntry - {@link UnificationEntry#toString()} is called.
      * <p/>
-     * Lowercase Letters are reserved for Tools. They are as follows:
+     * For Characters - gets IGTool from {@link ToolHelper#getToolFromSymbol(Character)}, and calls {@link IGTTool#getOreDictName()}
      * <p/>
-     * <ul>
-     * <li>'b' -  ToolDictNames.craftingToolBlade</li>
-     * <li>'c' -  ToolDictNames.craftingToolCrowbar</li>
-     * <li>'d' -  ToolDictNames.craftingToolScrewdriver</li>
-     * <li>'f' -  ToolDictNames.craftingToolFile</li>
-     * <li>'h' -  ToolDictNames.craftingToolHardHammer</li>
-     * <li>'i' -  ToolDictNames.craftingToolSolderingIron</li>
-     * <li>'j' -  ToolDictNames.craftingToolSolderingMetal</li>
-     * <li>'k' -  ToolDictNames.craftingToolKnife</li>
-     * <li>'m' -  ToolDictNames.craftingToolMortar</li>
-     * <li>'p' -  ToolDictNames.craftingToolDrawplate</li>
-     * <li>'r' -  ToolDictNames.craftingToolSoftHammer</li>
-     * <li>'s' -  ToolDictNames.craftingToolSaw</li>
-     * <li>'w' -  ToolDictNames.craftingToolWrench</li>
-     * <li>'x' -  ToolDictNames.craftingToolWireCutter</li>
-     * </ul>
      */
     public static void addShapedRecipe(String regName, ItemStack result, Object... recipe) {
         addShapedRecipe(false, regName, result, false, recipe);
@@ -394,11 +377,9 @@ public class ModHandler {
             if (s.length() > 3) throw new IllegalArgumentException();
             for (char c : s.toString().toCharArray()) {
                 IGTTool tool = ToolHelper.getToolFromSymbol(c);
-                if (tool != null) {
-                    if (!tool.getOreDictNames().isEmpty()) {
-                        recipeList.add(c);
-                        recipeList.add(tool.getOreDictNames().get(0));
-                    }
+                if (tool != null && tool.getOreDictName() != null) {
+                    recipeList.add(c);
+                    recipeList.add(tool.getOreDictName());
                 }
             }
         }
@@ -545,10 +526,10 @@ public class ModHandler {
                 recipe[i] = recipe[i].toString();
             } else if (recipe[i] instanceof Character) {
                 IGTTool tool = ToolHelper.getToolFromSymbol((char) recipe[i]);
-                if (tool == null || tool.getOreDictNames().isEmpty()) {
+                if (tool == null || tool.getOreDictName() == null) {
                     throw new IllegalArgumentException("Tool name is not found for char " + recipe[i]);
                 }
-                recipe[i] = tool.getOreDictNames().get(0);
+                recipe[i] = tool.getOreDictName();
             } else if (!(recipe[i] instanceof ItemStack
                     || recipe[i] instanceof Item
                     || recipe[i] instanceof Block
