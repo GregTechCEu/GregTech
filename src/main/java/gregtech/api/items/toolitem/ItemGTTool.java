@@ -39,10 +39,10 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     protected final int tier;
     protected final IGTToolDefinition toolStats;
     protected final Set<String> toolClasses;
-    protected final List<String> oreDicts;
+    protected final String oreDict;
     protected final SoundEvent sound;
 
-    protected ItemGTTool(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, Set<String> toolClasses, List<String> oreDicts) {
+    protected ItemGTTool(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, Set<String> toolClasses, String oreDict) {
         super(0F, 0F, ToolMaterial.STONE, Collections.emptySet());
         this.domain = domain;
         this.id = id;
@@ -50,7 +50,7 @@ public class ItemGTTool extends ItemTool implements IGTTool {
         this.toolStats = toolStats;
         this.sound = sound;
         this.toolClasses = Collections.unmodifiableSet(toolClasses);
-        this.oreDicts = Collections.unmodifiableList(oreDicts);
+        this.oreDict = oreDict;
         setMaxStackSize(1);
         setCreativeTab(CreativeTabs.TOOLS);
         setTranslationKey("gt.tool." + id + ".name");
@@ -89,8 +89,8 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     }
 
     @Override
-    public List<String> getOreDictNames() {
-        return oreDicts;
+    public String getOreDictName() {
+        return oreDict;
     }
 
     @Override
@@ -233,7 +233,7 @@ public class ItemGTTool extends ItemTool implements IGTTool {
 
         @Override
         public Supplier<ItemGTTool> supply() {
-            return () -> new ItemGTTool(domain, id, tier, toolStats, sound, toolClasses, oreDicts);
+            return () -> new ItemGTTool(domain, id, tier, toolStats, sound, toolClasses, oreDict);
         }
 
     }
