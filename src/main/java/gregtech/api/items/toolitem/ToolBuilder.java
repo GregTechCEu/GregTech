@@ -3,9 +3,7 @@ package gregtech.api.items.toolitem;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.util.SoundEvent;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -15,7 +13,7 @@ public abstract class ToolBuilder<T extends IGTTool> {
     protected final String domain, id;
 
     protected final Set<String> toolClasses = new ObjectArraySet<>();
-    protected final List<String> oreDicts = new ArrayList<>();
+    protected String oreDict;
 
     protected int tier = -1;
     protected IGTToolDefinition toolStats;
@@ -52,8 +50,8 @@ public abstract class ToolBuilder<T extends IGTTool> {
         return this;
     }
 
-    public ToolBuilder<T> oreDicts(String... oreDicts) {
-        Collections.addAll(this.oreDicts, oreDicts);
+    public ToolBuilder<T> oreDict(String oreDict) {
+        this.oreDict = oreDict;
         return this;
     }
 

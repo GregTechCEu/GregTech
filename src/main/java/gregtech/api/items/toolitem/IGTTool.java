@@ -91,7 +91,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     @Nullable
     SoundEvent getSound();
 
-    List<String> getOreDictNames();
+    @Nullable
+    String getOreDictName();
 
     default Item get() {
         return (Item) this;
