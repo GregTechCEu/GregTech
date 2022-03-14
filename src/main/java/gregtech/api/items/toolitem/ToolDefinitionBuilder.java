@@ -1,6 +1,11 @@
 package gregtech.api.items.toolitem;
 
 import com.google.common.collect.ImmutableList;
+import gregtech.api.items.toolitem.behaviour.IToolBehaviour;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.item.ItemStack;
@@ -8,12 +13,14 @@ import net.minecraft.item.ItemStack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class ToolDefinitionBuilder {
 
-    private List<IToolBehaviour> behaviours = new ArrayList<>();
+    private final List<IToolBehaviour> behaviours = new ArrayList<>();
     private int damagePerAction = 1;
     private boolean suitableForBlockBreaking = false;
     private boolean suitableForAttacking = false;
@@ -28,6 +35,9 @@ public class ToolDefinitionBuilder {
     private boolean sneakBypassUse = false;
     private Supplier<ItemStack> brokenStack = () -> ItemStack.EMPTY;
     private AoEDefinition aoeDefinition = AoEDefinition.none();
+    private final Set<Block> effectiveBlocks = new ObjectOpenHashSet<>();
+    private final Set<Material> effectiveMaterials = new ObjectOpenHashSet<>();
+    private Predicate<IBlockState> effectiveStates;
 
     public ToolDefinitionBuilder behaviours(IToolBehaviour... behaviours) {
         Collections.addAll(this.behaviours, behaviours);
@@ -125,6 +135,21 @@ public class ToolDefinitionBuilder {
         return aoeDefinition(AoEDefinition.of(column, row, layer));
     }
 
+    public ToolDefinitionBuilder effectiveBlocks(Block... blocks) {
+        Collections.addAll(this.effectiveBlocks, blocks);
+        return this;
+    }
+
+    public ToolDefinitionBuilder effectiveMaterials(Material... materials) {
+        Collections.addAll(this.effectiveMaterials, materials);
+        return this;
+    }
+
+    public ToolDefinitionBuilder effectiveStates(Predicate<IBlockState> effectiveStates) {
+        this.effectiveStates = effectiveStates;
+        return this;
+    }
+
     public IGTToolDefinition build() {
         return new IGTToolDefinition() {
 
@@ -143,10 +168,35 @@ public class ToolDefinitionBuilder {
             private final boolean sneakBypassUse = ToolDefinitionBuilder.this.sneakBypassUse;
             private final Supplier<ItemStack> brokenStack = ToolDefinitionBuilder.this.brokenStack;
             private final AoEDefinition aoeDefinition = ToolDefinitionBuilder.this.aoeDefinition;
+            private final Predicate<IBlockState> effectiveStatePredicate;
+
+            {
+                Set<Block> effectiveBlocks = ToolDefinitionBuilder.this.effectiveBlocks;
+                Set<Material> effectiveMaterials = ToolDefinitionBuilder.this.effectiveMaterials;
+                Predicate<IBlockState> effectiveStates = ToolDefinitionBuilder.this.effectiveStates;
+                Predicate<IBlockState> effectiveStatePredicate = null;
+                if (!effectiveBlocks.isEmpty()) {
+                    effectiveStatePredicate = state -> effectiveBlocks.contains(state.getBlock());
+                }
+                if (!effectiveMaterials.isEmpty()) {
+                    effectiveStatePredicate = effectiveStatePredicate == null ?
+                            state -> effectiveMaterials.contains(state.getMaterial()) :
+                            effectiveStatePredicate.or(state -> effectiveMaterials.contains(state.getMaterial()));
+                }
+                if (effectiveStates != null) {
+                    effectiveStatePredicate = effectiveStatePredicate == null ? effectiveStates : effectiveStatePredicate.or(effectiveStates);
+                }
+                this.effectiveStatePredicate = effectiveStatePredicate == null ? state -> false : effectiveStatePredicate;
+            }
 
             @Override
             public List<IToolBehaviour> getBehaviours() {
                 return behaviours;
+            }
+
+            @Override
+            public boolean isToolEffective(IBlockState state) {
+                return effectiveStatePredicate.test(state);
             }
 
             @Override
