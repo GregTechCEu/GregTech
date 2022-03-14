@@ -2369,21 +2369,21 @@ tile.metal_casing.ptfe_inert.name=聚四氟乙烯化学惰性机械方块
 tile.metal_casing.hsse_sturdy.name=坚固高速钢-E机械方块
 
 # Machine casing blocks
-tile.machine_casing.ultra_low_voltage.name=ULV 机械方块
-tile.machine_casing.low_voltage.name=LV 机械方块
-tile.machine_casing.medium_voltage.name=MV 机械方块
-tile.machine_casing.high_voltage.name=HV 机械方块
-tile.machine_casing.extreme_voltage.name=EV 机械方块
-tile.machine_casing.insane_voltage.name=IV 机械方块
-tile.machine_casing.ludicrous_voltage.name=LuV 机械方块
-tile.machine_casing.zpm_voltage.name=ZPM 机械方块
-tile.machine_casing.ultimate_voltage.name=UV 机械方块
-tile.machine_casing.ultra_high_voltage.name=UHV 机械方块
-tile.machine_casing.ultra_excessive_voltage.name=UEV 机械方块
-tile.machine_casing.ultra_immense_voltage.name=UIV 机械方块
-tile.machine_casing.ultra_extreme_voltage.name=UXV 机械方块
-tile.machine_casing.Ultra Immense_voltage.name=OpV 机械方块
-tile.machine_casing.maximum_voltage.name=MAX 机械方块
+tile.machine_casing.ultra_low_voltage.name=ULV 机械外壳
+tile.machine_casing.low_voltage.name=LV 机械外壳
+tile.machine_casing.medium_voltage.name=MV 机械外壳
+tile.machine_casing.high_voltage.name=HV 机械外壳
+tile.machine_casing.extreme_voltage.name=EV 机械外壳
+tile.machine_casing.insane_voltage.name=IV 机械外壳
+tile.machine_casing.ludicrous_voltage.name=LuV 机械外壳
+tile.machine_casing.zpm_voltage.name=ZPM 机械外壳
+tile.machine_casing.ultimate_voltage.name=UV 机械外壳
+tile.machine_casing.ultra_high_voltage.name=UHV 机械外壳
+tile.machine_casing.ultra_excessive_voltage.name=UEV 机械外壳
+tile.machine_casing.ultra_immense_voltage.name=UIV 机械外壳
+tile.machine_casing.ultra_extreme_voltage.name=UXV 机械外壳
+tile.machine_casing.Ultra Immense_voltage.name=OpV 机械外壳
+tile.machine_casing.maximum_voltage.name=MAX 机械外壳
 
 # Steam casing blocks
 tile.steam_casing.bronze_hull.name=青铜外壳
@@ -3966,7 +3966,7 @@ gregtech.machine.monitor_screen.name=显示器屏幕
 
 # Multiblock Tooltips
 gregtech.machine.primitive_blast_furnace.bronze.tooltip=结构:3x3x4 (宽x长x高) 整个结构由耐火砖(共 32 块)组成。/n第一层是一个3x3正方形。/n第二三四层中间没有方块。/n土高炉方块位于第二层任意一侧的中间。/n高炉的两侧可以共享，如果那一侧没有控制器的话。/n
-gregtech.machine.multiblock.universal.controller_information=控制器方块用于§e%s§7.
+gregtech.machine.multiblock.universal.controller_information=§e%s§7的控制器方块.
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=多方块结构的物品输入
