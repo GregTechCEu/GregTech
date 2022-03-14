@@ -3,7 +3,7 @@
 # Corresponding Version: 2.1.4 - beta
 # 対応バージョン: 2.1.4 - beta
 
-death.attack.heat=%s が沸きました.給湯温度を1000kに設定します.
+death.attack.heat=%s は熱さを感じなくなった.
 death.attack.frost=%s のふとんがふっとんだ.
 death.attack.electric=%s は電気工事士ではなかった.
 death.attack.radiation=%s は青白い光で満ち溢れた.
@@ -16,7 +16,7 @@ enchantment.disjunction=ディスジャンクション
 
 gregtech.machine.steam_grinder.name=蒸気式破砕機
 gregtech.machine.steam_grinder.tooltip=1回につき同一アイテムを8個まで一度に粉砕. アイテム数に関わらず所要時間が1.5倍になり, §e蒸気用ハッチとバス§7が必要.
-gregtech.multiblock.steam_grinder.description=蒸気時代のマルチブロック式粉砕機. 青銅製外装が最低14個必要. 通常のハッチ/バスは使えず, 専用の蒸気用のものが必要.
+gregtech.multiblock.steam_grinder.description=蒸気時代のマルチブロック式粉砕機. ブロンズ製外装が最低14個必要. 通常のハッチ/バスは使えず, 専用の蒸気用のものが必要.
 gregtech.multiblock.steam.low_steam=蒸気不足!
 gregtech.multiblock.steam.steam_stored=蒸気: %s / %s mb
 gregtech.machine.steam_hatch.name=蒸気用ハッチ
@@ -26,7 +26,7 @@ gregtech.machine.steam_export_bus.name=搬出バス (蒸気用)
 gregtech.machine.steam_bus.tooltip=非蒸気式のマルチブロックでは使用不可
 gregtech.machine.steam_oven.name=蒸気式オーブン
 gregtech.machine.steam_oven.tooltip=1回につき同一アイテムを8個まで一度に製錬.  アイテム数に関わらず所要時間が1.5倍になり, §e蒸気用ハッチとバス§7が必要.
-gregtech.multiblock.steam_oven.description=蒸気時代のマルチスメルター. 青銅製外装が最低6個必要. 通常のハッチ/バスは使えず, 専用の蒸気用のものが必要. 蒸気ハッチは最下段に一つだけ置ける.
+gregtech.multiblock.steam_oven.description=蒸気時代のマルチスメルター. ブロンズ製外装が最低6個必要. 通常のハッチ/バスは使えず, 専用の蒸気用のものが必要. 蒸気ハッチは最下段に一つだけ置ける.
 
 gregtech.top.energy_stored=エネルギー:
 gregtech.top.progress=進捗:
@@ -1392,7 +1392,7 @@ material.blue_topaz=ブルートパーズ
 material.brass=真鍮
 material.charcoal=木炭
 material.brown_limonite=茶色褐鉄鉱
-material.bronze=青銅
+material.bronze=ブロンズ
 material.calcite=方解石
 material.cassiterite_sand=砂錫
 material.cassiterite=錫石
@@ -1429,8 +1429,8 @@ material.phosphate=リン酸塩
 material.platinum_raw=粗白金
 material.sterling_silver=スターリングシルバー
 material.rose_gold=ローズゴールド
-material.black_bronze=黒青銅
-material.bismuth_bronze=ビスマス青銅
+material.black_bronze=ブラックブロンズ
+material.bismuth_bronze=ビスマスブロンズ
 material.biotite=黒雲母
 material.powellite=パウエル石
 material.pyrite=黄鉄鉱
@@ -1870,7 +1870,7 @@ material.super=スーパー
 material.infinite=無限の
 material.ultra=ウルトラ
 material.insane=非常識な
-material.epic=エピック
+material.epic=史上最高の
 material.legendary=伝説の
 material.maximum=マキシマム
 
@@ -1995,7 +1995,7 @@ item.polyphenylene_sulfide.dust=ポリフェニレンサルファイドのパル
 item.polyphenylene_sulfide.dustSmall=小さなポリフェニレンサルファイドのパルプ
 item.polyphenylene_sulfide.dustTiny=極小のポリフェニレンサルファイドのパルプ
 item.polyphenylene_sulfide.foil=薄いポリフェニレンサルファイドのシート
-item.polyphenylene_sulfide.ingot=ポリフェニレンサルファイのバー
+item.polyphenylene_sulfide.ingot=ポリフェニレンサルファイドのバー
 item.polyphenylene_sulfide.nugget=ポリフェニレンサルファイドのチップ
 item.polyphenylene_sulfide.plate=ポリフェニレンサルファイドのシート
 item.polytetrafluoroethylene.dust=ポリテトラフルオロエチレン (PTFE) のパルプ
@@ -2094,9 +2094,8 @@ item.wood.stickLong=長い木の棒
 recipemap.ore_washer.name=鉱石洗浄機
 recipemap.thermal_centrifuge.name=熱遠心分離機
 recipemap.extractor.name=抽出機
-#recipemap.recycler.name=リサイクル装置
 recipemap.electric_furnace.name=かまど
-recipemap.scanner.name=スキャン装置
+recipemap.scanner.name=スキャナー
 recipemap.rockbreaker.name=破砕機
 recipemap.byproductlist.name=副産物一覧
 recipemap.replicator.name=複製機
@@ -2104,7 +2103,7 @@ recipemap.assembly_line.name=アセンブリライン
 recipemap.assembler.name=組立機
 recipemap.macerator.name=粉砕機
 recipemap.arc_furnace.name=アーク炉
-recipemap.sifter.name=選別機
+recipemap.sifter.name=電動ふるい
 recipemap.laser_engraver.name=レーザー刻印機
 recipemap.mixer.name=ミキサー
 recipemap.autoclave.name=オートクレーブ
@@ -2120,14 +2119,14 @@ recipemap.fusion_reactor.name=核融合炉
 recipemap.fusion_reactor.value=開始エネルギー: %s EU
 recipemap.centrifuge.name=遠心分離機
 recipemap.electrolyzer.name=電解槽
-recipemap.electric_blast_furnace.name=高炉
+recipemap.electric_blast_furnace.name=電気炉
 recipemap.blast_furnace.value=温度: %s K
 recipemap.implosion_compressor.name=内破圧縮機
 recipemap.vacuum_freezer.name=真空冷却機
-recipemap.chemical_reactor.name=化学反応機
+recipemap.chemical_reactor.name=化学反応炉
 recipemap.large_chemical_reactor.name=大型化学反応炉
 recipemap.distillation_tower.name=蒸留塔
-recipemap.cracker.name=油分解装置
+recipemap.cracker.name=接触分解装置
 recipemap.pyrolyse_oven.name=熱分解炉
 recipemap.wiremill.name=ワイヤー作製機
 recipemap.bender.name=金属加工機
@@ -2151,24 +2150,24 @@ recipemap.mass_fabricator.name=物質製造機
 recipemap.materialtree.name=素材派生一覧
 recipemap.gas_collector.name=ガス収集機
 recipemap.rock_breaker.name=破砕機
-recipemap.primitive_blast_furnace.name=初歩的な高炉
+recipemap.primitive_blast_furnace.name=初歩的な溶鉱炉
 recipemap.coke_oven.name=コークス炉
 
 behaviour.hoe=土を耕せる
-behaviour.soft_hammer=機械のON/OFFの切り替えに
+behaviour.soft_hammer=機械のON/OFFを切り替える
 behaviour.soft_hammer.enabled=作業開始
 behaviour.soft_hammer.disabled=作業停止
 behaviour.lighter.tooltip=着火可能
 behaviour.lighter.uses=残り使用回数: %,d
-behavior.plunger.description=機械の搬出タンクから液体を1,000 mb消去する./nスニーク中に使用すると搬入タンクから液体を1,000 mb分消去する./n搬入タンクの液体消去はGregの機械のみです!
+behavior.plunger.description=機械の搬出タンクから液体を1,000 mb消去する./nスニーク中に使用すると搬入タンクから液体を1,000 mb分消去する./n搬入タンクの液体消去はGregの機械のみ!
 behavior.toggle_energy_consumer.tooltip=使うことでモード切替
 
-enchantment.damage.disjunction=Disjunction
+enchantment.damage.disjunction=ディスジャンクション
 enchantment.gregtech.disjunction.desc=エンド関係のmobに弱体化と鈍足を付与する.
-enchantment.hard_hammer=Hammering
-enchantment.gregtech.hard_hammer.desc=GregTechハンマーで採掘されたかのようにブロックを壊す.
+enchantment.hard_hammer=ハンマリング
+enchantment.gregtech.hard_hammer.desc=ブロックを壊したときGregTechのハンマーで採掘したときと同じ挙動になる.
 
-tile.gt.seal.name=Sealed Block
+tile.gt.seal.name=密封されたブロック
 tile.gt.foam.name=フォーム
 tile.gt.reinforced_foam.name=強化フォーム
 tile.gt.petrified_foam.name=石化したフォーム
@@ -2177,9 +2176,8 @@ tile.rubber_log.name=ゴムの原木
 tile.rubber_leaves.name=ゴムの木の葉
 tile.rubber_sapling.name=ゴムの木の苗
 
-tile.planks.rubber.name=ゴムの木の木材
+tile.planks.rubber.name=ゴムの木材
 tile.planks.treated.name=防腐木材
-
 
 metaitem.prospector.lv.name=電動探知機 (LV)
 metaitem.prospector.hv.name=電動探知機 (HV)
@@ -2190,7 +2188,7 @@ metaitem.prospector.tooltip.ores=半径%sチャンクの鉱石をスキャン
 metaitem.prospector.tooltip.fluids=半径%sチャンクの液体と鉱石をスキャン
 behavior.prospector.not_enough_energy=エネルギー不足!
 
-metaitem.tricorder_scanner.name=携帯スキャナー
+metaitem.tricorder_scanner.name=ポータブルスキャナー
 metaitem.tricorder_scanner.tooltip=トライコーダー
 metaitem.debug_scanner.name=デバッグスキャナー
 metaitem.debug_scanner.tooltip=トライコーダー
@@ -2202,7 +2200,7 @@ behavior.tricorder.tank=タンク %s: %s L / %s L %s
 behavior.tricorder.tanks_empty=すべてのタンクが空
 behavior.tricorder.muffled=消音中.
 behavior.tricorder.machine_disabled=無効.
-behavior.tricorder.machine_power_loss=エネルギー不足でシャットダウン.
+behavior.tricorder.machine_power_loss=エネルギー不足で停止.
 behavior.tricorder.machine_progress=進捗/最大: %s / %s
 behavior.tricorder.energy_container_in=最大入力: %s (%s) EU at %s A
 behavior.tricorder.energy_container_out=最大出力: %s (%s) EU at %s A
@@ -2210,8 +2208,8 @@ behavior.tricorder.energy_container_storage=エネルギー: %s EU / %s EU
 behavior.tricorder.bedrock_fluid.amount=チャンク内の液体: %s %s - %s%%
 behavior.tricorder.bedrock_fluid.amount_unknown=チャンク内の液体: 不明 - %s%%
 behavior.tricorder.bedrock_fluid.nothing=チャンク内の液体: §6なし§r
-behavior.tricorder.eut_per_sec=最後の1秒 %s EU/t
-behavior.tricorder.amp_per_sec=最後の1秒 %s A
+behavior.tricorder.eut_per_sec=直近1秒間 %s EU/t
+behavior.tricorder.amp_per_sec=直近1秒間 %s A
 behavior.tricorder.workable_progress=進捗: %s s / %s s
 behavior.tricorder.workable_stored_energy=エネルギー貯蓄量: %s EU / %s EU
 behavior.tricorder.workable_consumption=予想使用量: %s EU/t at %s A
@@ -2221,11 +2219,11 @@ behavior.tricorder.multiblock_energy_output=最大エネルギー出力: %s EU/t
 behavior.tricorder.multiblock_maintenance=問題: %s
 behavior.tricorder.multiblock_parallel=並行処理: %s
 behavior.tricorder.debug_machine=Meta-ID: %s
-behavior.tricorder.debug_machine_valid= valid
-behavior.tricorder.debug_machine_invalid= invalid!
-behavior.tricorder.debug_machine_invalid_null=invalid! MetaTileEntity == null!
-behavior.tricorder.debug_cpu_load=Average CPU load of ~%sns over %s ticks with worst time of %sns.
-behavior.tricorder.debug_lag_count=Caused %s Lag Spike Warnings (anything taking longer than %sms) on the Server.
+behavior.tricorder.debug_machine_valid= 有効
+behavior.tricorder.debug_machine_invalid= 無効!
+behavior.tricorder.debug_machine_invalid_null=無効! MetaTileEntity == null!
+behavior.tricorder.debug_cpu_load=CPUの平均ロード時間は ~%sns ( %s tickの間集計) 最長ロード時間は %sns.
+behavior.tricorder.debug_lag_count=サーバーで %s 件のラグスパイク警告が発生 ( %smsを超過した全てのオブジェクトが対象).
 
 metaitem.item_magnet.lv.name=磁石 (LV)
 metaitem.item_magnet.hv.name=磁石 (MV)
@@ -2241,16 +2239,16 @@ metaitem.wireless.name=ワイヤレス送信機
 metaitem.camera.name=カメラ
 
 ## PLUGINS
-metaitem.plugin.tooltips.1=Plugins can be added to the screen for more functionality.
-metaitem.plugin.proxy.tooltips.1=(Please adjust to proxy mode in the screen)
-metaitem.plugin.text.name=Text Plugin
-metaitem.plugin.online_pic.name=Online Picture Plugin
-metaitem.plugin.fake_gui.name=GUI Proxy Plugin
-metaitem.plugin.advanced_monitor.name=Advanced Monitor Proxy Plugin
-metaitem.cover.digital.name=Digital Interface Cover
-metaitem.cover.digital.wireless.name=Wireless Digital Interface Cover
-metaitem.coloured.leds.name=Coloured LEDs
-metaitem.display.name=Display
+metaitem.plugin.tooltips.1=プラグインはスクリーンに挿入することで機能を追加する
+metaitem.plugin.proxy.tooltips.1=(スクリーンでプロキシモードに設定してください)
+metaitem.plugin.text.name=テキストプラグイン
+metaitem.plugin.online_pic.name=オンライン画像プラグイン
+metaitem.plugin.fake_gui.name=GUIプロキシプラグイン
+metaitem.plugin.advanced_monitor.name=発展モニタープロキシプラグイン
+metaitem.cover.digital.name=デジタルインターフェースカバー
+metaitem.cover.digital.wireless.name=ワイヤレスデジタルインターフェースカバー
+metaitem.coloured.leds.name=彩色LED
+metaitem.display.name=ディスプレイ
 
 tile.casing.ulv=ULVマシン筐体
 tile.casing.lv=LVマシン筐体
@@ -2262,18 +2260,18 @@ tile.casing.iv=IVマシン筐体
 
 # Wire coil blocks
 tile.wire_coil.tooltip_heat=基本最大温度: §e%,dK
-tile.wire_coil.tooltip_smelter=§a大型かまど§7:
+tile.wire_coil.tooltip_smelter=§aマルチスメルター§7:
 tile.wire_coil.tooltip_parallel_smelter=  最大並行処理数: §e%s§7
 tile.wire_coil.tooltip_energy_smelter=  エネルギー使用量: §e%s EU/t毎レシピ§7
 tile.wire_coil.tooltip_pyro=§a熱分解炉§7:
 tile.wire_coil.tooltip_speed_pyro=  処理速度: §e%s%%§7
-tile.wire_coil.tooltip_cracking=§a油分解装置§7:
+tile.wire_coil.tooltip_cracking=§a接触分解装置§7:
 tile.wire_coil.tooltip_energy_cracking=  エネルギー使用量: §e%s%%§7
 
 tile.wire_coil.cupronickel.name=キュプロニッケルコイルブロック
 tile.wire_coil.kanthal.name=カンタルコイルブロック
 tile.wire_coil.nichrome.name=ニクロムコイルブロック
-tile.wire_coil.tungstensteel.name=タングステン鋼コイルブロック
+tile.wire_coil.tungstensteel.name=タングステンスチールコイルブロック
 tile.wire_coil.hss_g.name=HSS-Gコイルブロック
 tile.wire_coil.naquadah.name=ナクアダコイルブロック
 tile.wire_coil.trinium.name=トリニウムコイルブロック
@@ -2296,28 +2294,28 @@ tile.warning_sign.frost_hazard.name=降霜危害警告ブロック
 tile.warning_sign.noise_hazard.name=騒音危害警告ブロック
 
 # Boiler casing blocks
-tile.boiler_casing.bronze_pipe.name=青銅製パイプ外装
-tile.boiler_casing.steel_pipe.name=鋼鉄製パイプ外装
+tile.boiler_casing.bronze_pipe.name=ブロンズ製パイプ外装
+tile.boiler_casing.steel_pipe.name=スチール製パイプ外装
 tile.boiler_casing.titanium_pipe.name=チタン製パイプ外装
 tile.boiler_casing.tungstensteel_pipe.name=タングステン鋼パイプ外装
 tile.boiler_casing.polytetrafluoroethylene_pipe.name=PTFE製パイプ外装
 
 #Firebox casing blocks
-tile.boiler_casing.bronze_firebox.name=青銅製製火室外装
-tile.boiler_casing.steel_firebox.name=鋼鉄製火室外装
+tile.boiler_casing.bronze_firebox.name=ブロンズ製火室外装
+tile.boiler_casing.steel_firebox.name=スチール製火室外装
 tile.boiler_casing.titanium_firebox.name=チタン製火室外装
-tile.boiler_casing.tungstensteel_firebox.name=タングステン鋼製火室外装
+tile.boiler_casing.tungstensteel_firebox.name=タングステンスチール製火室外装
 
 # Metal casing blocks
 tile.metal_casing.primitive_bricks.name=耐火レンガブロック
 tile.metal_casing.coke_bricks.name=コークス炉用レンガブロック
-tile.metal_casing.bronze_bricks.name=青銅製マシン外装
+tile.metal_casing.bronze_bricks.name=ブロンズ製マシン外装
 tile.metal_casing.invar_heatproof.name=耐熱マシン外装
 tile.metal_casing.aluminium_frostproof.name=耐冷マシン外装
-tile.metal_casing.steel_solid.name=鋼鉄製マシン外装
-tile.metal_casing.stainless_clean.name=ステンレス鋼製マシン外装
+tile.metal_casing.steel_solid.name=スチール製マシン外装
+tile.metal_casing.stainless_clean.name=ステンレススチール製マシン外装
 tile.metal_casing.titanium_stable.name=堅牢なチタン製マシン外装
-tile.metal_casing.tungstensteel_robust.name=強化タングステン鋼製マシン外装
+tile.metal_casing.tungstensteel_robust.name=強化タングステンスチール製マシン外装
 tile.metal_casing.ptfe_inert.name=耐薬品性PTFE製マシン外装
 tile.metal_casing.hsse_sturdy.name=頑丈なHSS-E製マシン外装
 
@@ -2331,11 +2329,17 @@ tile.machine_casing.insane_voltage.name=IVマシン外装
 tile.machine_casing.ludicrous_voltage.name=LuVマシン外装
 tile.machine_casing.zpm_voltage.name=ZPMマシン外装
 tile.machine_casing.ultimate_voltage.name=UVマシン外装
+tile.machine_casing.ultra_high_voltage.name=UHVマシン外装
+tile.machine_casing.ultra_excessive_voltage.name=UEVマシン外装
+tile.machine_casing.ultra_immense_voltage.name=UIVマシン外装
+tile.machine_casing.ultra_extreme_voltage.name=UXVマシン外装
+tile.machine_casing.Ultra Immense_voltage.name=OpVマシン外装
+tile.machine_casing.maximum_voltage.name=MAXマシン外装
 
 # Steam casing blocks
-tile.steam_casing.bronze_hull.name=青銅製筐体
-tile.steam_casing.bronze_bricks_hull.name=青銅製レンガ筐体
-tile.steam_casing.steel_hull.name=鋼鉄製筐体
+tile.steam_casing.bronze_hull.name=ブロンズ製筐体
+tile.steam_casing.bronze_bricks_hull.name=ブロンズ製レンガ筐体
+tile.steam_casing.steel_hull.name=スチール製筐体
 tile.steam_casing.steel_bricks_hull.name=錬鉄製レンガ筐体
 tile.steam_casing.bronze.tooltip=初めての蒸気機械に
 tile.steam_casing.steel.tooltip=上位蒸気機械に
@@ -2343,23 +2347,23 @@ tile.steam_casing.pump_deck.name=ポンプデッキ
 tile.steam_casing.wood_wall.name=木製の壁
 
 # Gearbox casing blocks
-tile.turbine_casing.bronze_gearbox.name=青銅製ギアボックス外装
-tile.turbine_casing.steel_gearbox.name=鋼鉄製ギアボックス外装
-tile.turbine_casing.stainless_steel_gearbox.name=ステンレス鋼製ギアボックス外装
+tile.turbine_casing.bronze_gearbox.name=ブロンズ製ギアボックス外装
+tile.turbine_casing.steel_gearbox.name=スチール製ギアボックス外装
+tile.turbine_casing.stainless_steel_gearbox.name=ステンレススチール製ギアボックス外装
 tile.turbine_casing.titanium_gearbox.name=チタン製ギアボックス外装
-tile.turbine_casing.tungstensteel_gearbox.name=タングステン鋼ギアボックス外装
+tile.turbine_casing.tungstensteel_gearbox.name=タングステンスチールギアボックス外装
 
 # Turbine casing blocks
-tile.turbine_casing.steel_turbine_casing.name=鋼鉄製タービン外装
+tile.turbine_casing.steel_turbine_casing.name=スチール製タービン外装
 tile.turbine_casing.titanium_turbine_casing.name=チタン製タービン外装
-tile.turbine_casing.stainless_turbine_casing.name=ステンレス鋼製タービン外装
-tile.turbine_casing.tungstensteel_turbine_casing.name=タングステン鋼製タービン外装
+tile.turbine_casing.stainless_turbine_casing.name=ステンレススチール製タービン外装
+tile.turbine_casing.tungstensteel_turbine_casing.name=タングステンスチール製タービン外装
 
 # Multiblock casing blocks
-tile.multiblock_casing.engine_intake.name=エンジン外装
-tile.multiblock_casing.extreme_engine_intake.name=上位エンジン外装
+tile.multiblock_casing.engine_intake.name=エンジン吸気口
+tile.multiblock_casing.extreme_engine_intake.name=上位エンジン吸気口
 tile.multiblock_casing.grate.name=格子マシン外装
-tile.multiblock_casing.assembly_control.name=組立機操作外装
+tile.multiblock_casing.assembly_control.name=組立機制御外装
 tile.multiblock_casing.assembly_line.name=組立機マシン外装
 
 # Fusion casing blocks
@@ -2379,25 +2383,25 @@ itemGroup.gregtech.materials=Materials (GT)
 itemGroup.gregtech.ores=Ores (GT)
 
 # Drums
-gregtech.machine.drum.wood.name=木製樽
-gregtech.machine.drum.bronze.name=青銅製ドラム
-gregtech.machine.drum.steel.name=鋼鉄製ドラム
-gregtech.machine.drum.aluminium.name=アルミ製ドラム
-gregtech.machine.drum.stainless_steel.name=ステンレス鋼製ドラム
+gregtech.machine.drum.wood.name=木製バレル
+gregtech.machine.drum.bronze.name=ブロンズ製ドラム
+gregtech.machine.drum.steel.name=スチール製ドラム
+gregtech.machine.drum.aluminium.name=アルミニウム製ドラム
+gregtech.machine.drum.stainless_steel.name=ステンレススチール製ドラム
 gregtech.machine.drum.titanium.name=チタン製ドラム
-gregtech.machine.drum.tungstensteel.name=タングステン鋼製ドラム
+gregtech.machine.drum.tungstensteel.name=タングステンスチール製ドラム
 
 gregtech.machine.drum.enable_output=垂直に隣接するタンクに液体を排出.
-gregtech.machine.drum.disable_output=液体を吸い取らない.
+gregtech.machine.drum.disable_output=液体を排出しない.
 
 # Crates
 gregtech.machine.crate.wood.name=木製クレート
-gregtech.machine.crate.bronze.name=青銅製クレート
-gregtech.machine.crate.steel.name=鋼鉄製クレート
-gregtech.machine.crate.aluminium.name=アルミ製クレート
-gregtech.machine.crate.stainless_steel.name=ステンレス鋼製クレート
+gregtech.machine.crate.bronze.name=ブロンズ製クレート
+gregtech.machine.crate.steel.name=スチール製クレート
+gregtech.machine.crate.aluminium.name=アルミニウム製クレート
+gregtech.machine.crate.stainless_steel.name=ステンレススチール製クレート
 gregtech.machine.crate.titanium.name=チタン製クレート
-gregtech.machine.crate.tungstensteel.name=タングステン鋼製クレート
+gregtech.machine.crate.tungstensteel.name=タングステンスチール製クレート
 
 # Safe
 gregtech.machine.locked_safe.name=金庫
@@ -2418,8 +2422,8 @@ gregtech.machine.workbench.tab.container=ストレージ
 # Tanks
 gregtech.machine.tank_valve.wood.name=木製タンクバルブ
 gregtech.machine.tank.wood.name=木製マルチブロックタンク
-gregtech.machine.tank_valve.steel.name=鋼鉄製タンクバルブ
-gregtech.machine.tank.steel.name=鋼鉄製マルチブロックタンク
+gregtech.machine.tank_valve.steel.name=スチール製タンクバルブ
+gregtech.machine.tank.steel.name=スチール製マルチブロックタンク
 
 gregtech.multiblock.tank.tooltip=コントローラまたはタンクバルブを介して充填および排出します.
 gregtech.tank_valve.tooltip=マルチブロックタンクへの搬入と搬出に使用します. 下向きの場合は自動搬出です.
@@ -2547,7 +2551,7 @@ gregtech.machine.steam_boiler.tooltip_produces=%,dmb/秒で蒸気を生産
 
 
 gregtech.machine.steam_boiler_coal_bronze.name=固形燃料用小型ボイラー
-gregtech.machine.steam_boiler_coal_bronze.tooltip=蒸気の力を得るための初歩的な手段
+gregtech.machine.steam_boiler_coal_bronze.tooltip=蒸気の力を得るための最初の手段
 gregtech.machine.steam_boiler_coal_steel.name=固形燃料用高圧ボイラー
 gregtech.machine.steam_boiler_coal_steel.tooltip=固形燃料用小型ボイラーよりも早い
 gregtech.machine.steam_boiler_solar_bronze.name=ソーラーボイラー
@@ -2590,8 +2594,8 @@ gregtech.machine.steam_rock_breaker_bronze.tooltip=水と溶岩に隣接させ�
 gregtech.machine.steam_rock_breaker_steel.name=高圧蒸気式破砕機
 gregtech.machine.steam_rock_breaker_steel.tooltip=水と溶岩に隣接させて
 gregtech.machine.steam_miner.name=蒸気式採掘機
-gregtech.machine.steam_miner.tooltip=採掘するのは採掘機より下§bのみ§7!
-gregtech.machine.steam_miner.description=可動範囲: §b%dx%d§7 ブロック. 1ブロックにつき§b%d秒§7. 蒸気を §b16mB/t§7で消費.
+gregtech.machine.steam_miner.tooltip=採掘機より下§bのみ§7採掘!
+gregtech.machine.steam_miner.description=採掘範囲: §b%dx%d§7 ブロック. 1ブロックにつき§b%d秒§7. 蒸気を §b16mB/t§7消費.
 
 # Generators
 gregtech.machine.combustion_generator.tooltip=可燃性液体が必要
@@ -2614,14 +2618,16 @@ gregtech.machine.gas_turbine.hv.name=ターボガスタービン
 
 
 gregtech.machine.magic_energy_absorber.name=魔力吸収機
-gregtech.machine.magic_energy_absorber.tooltip=出力: §a2048 §7(§5EV§7)/n64ブロック以内の黒曜石柱のエンドクリスタルからエネルギーを集める/nエンドクリスタル1つ当たり32 EU/tを出力/nドラゴンの卵を上に置くと出力が増幅/n/n増幅時:/nエンドクリスタル1つ当たり128 EU/tを出力
+gregtech.machine.magic_energy_absorber.tooltip=出力: §a2048 §7(§5EV§7)/n64ブロック以内の自然生成された黒曜石柱のエンドクリスタルからエネルギーを集める/nエンドクリスタル1つ当たり32 EU/tを出力/nドラゴンの卵を上に置くと出力が増幅/n/n増幅時:/nエンドクリスタル1つ当たり128 EU/tを出力
 
 # Machines
+
+# Block Breaker
 gregtech.machine.block_breaker.lv.name=基本型ブロック破壊機
 gregtech.machine.block_breaker.mv.name=発展型ブロック破壊機
 gregtech.machine.block_breaker.hv.name=発展型ブロック破壊機 II
 gregtech.machine.block_breaker.ev.name=発展型ブロック破壊機 III
-gregtech.machine.block_breaker.tooltip=正面のブロックを破壊し, 集める
+gregtech.machine.block_breaker.tooltip=正面のブロックを破壊しドロップアイテムを集める
 gregtech.machine.block_breaker.redstone=稼働にはレッドストーン信号が必要
 gregtech.machine.block_breaker.consumption=動作毎に§e%,d EU§7を消費.
 gregtech.machine.block_breaker.speed_bonus=速度ボーナス: §e%,d%%
@@ -4532,11 +4538,6 @@ material.ash=Ashes
 material.bone=Bone
 material.niobium_nitride=Niobium Nitride
 item.polytetrafluoroethylene.plateDense=Dense Polytetrafluoroethylene (PTFE) Sheet
-tile.machine_casing.ultra_high_voltage.name=UHV Machine Casing
-tile.machine_casing.ultra_excessive_voltage.name=UEV Machine Casing
-tile.machine_casing.ultra_immense_voltage.name=UIV Machine Casing
-tile.machine_casing.ultra_extreme_voltage.name=UXV Machine Casing
-tile.machine_casing.Ultra Immense_voltage.name=OpV Machine Casing
 tile.machine_casing.maximum_voltage.name=MAX Machine Casing
 gregtech.machine.electric_furnace.lv.tooltip=Not like using a Commodore 64
 gregtech.machine.electric_furnace.mv.tooltip=Not like using a Commodore 64
