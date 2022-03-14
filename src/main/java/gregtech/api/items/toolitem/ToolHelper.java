@@ -1,5 +1,7 @@
 package gregtech.api.items.toolitem;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableSet;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
@@ -100,6 +102,21 @@ public class ToolHelper {
     public static final String TREE_FELLING_KEY = "TreeFelling";
     public static final String DISABLE_SHIELDS_KEY = "DisableShields";
     public static final String RELOCATE_MINED_BLOCKS_KEY = "RelocateMinedBlocks";
+
+    // Crafting Symbols
+    private static final BiMap<Character, IGTTool> symbols = HashBiMap.create();
+
+    public static Character getSymbolFromTool(IGTTool tool) {
+        return symbols.inverse().get(tool);
+    }
+
+    public static IGTTool getToolFromSymbol(Character symbol) {
+        return symbols.get(symbol);
+    }
+
+    public static void registerToolSymbol(Character symbol, IGTTool tool) {
+        symbols.put(symbol, tool);
+    }
 
     public static NBTTagCompound getToolTag(ItemStack stack) {
         return stack.getOrCreateSubCompound(TOOL_TAG_KEY);

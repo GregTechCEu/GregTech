@@ -1,5 +1,7 @@
 package gregtech.api.items.toolitem;
 
+import gregtech.api.items.toolitem.behaviour.IToolBehaviour;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 
@@ -14,6 +16,8 @@ public interface IGTToolDefinition {
      * Tool Component/Behaviours
      */
     List<IToolBehaviour> getBehaviours();
+
+    boolean isToolEffective(IBlockState state);
 
     /**
      * Durability Spec
