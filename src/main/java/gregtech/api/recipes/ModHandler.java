@@ -5,6 +5,8 @@ import crafttweaker.mc1120.furnace.MCFurnaceManager;
 import gregtech.api.GTValues;
 import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.recipes.recipes.DummyRecipe;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
@@ -391,10 +393,12 @@ public class ModHandler {
             while (s.length() < 3) s.append(" ");
             if (s.length() > 3) throw new IllegalArgumentException();
             for (char c : s.toString().toCharArray()) {
-                String toolName = getToolNameByCharacter(c);
-                if (toolName != null) {
-                    recipeList.add(c);
-                    recipeList.add(toolName);
+                IGTTool tool = ToolHelper.getToolFromSymbol(c);
+                if (tool != null) {
+                    if (!tool.getOreDictNames().isEmpty()) {
+                        recipeList.add(c);
+                        recipeList.add(tool.getOreDictNames().get(0));
+                    }
                 }
             }
         }
@@ -434,7 +438,7 @@ public class ModHandler {
         while (recipe[itr] instanceof String) {
             String s = (String) recipe[itr];
             for (char c : s.toCharArray()) {
-                if (getToolNameByCharacter(c) != null) continue; // skip tools
+                if (ToolHelper.getToolFromSymbol(c) != null) continue; // skip tools
                 int count = inputCountMap.getOrDefault(c, 0);
                 inputCountMap.put(c, count + 1);
             }
@@ -540,11 +544,11 @@ public class ModHandler {
             } else if (recipe[i] instanceof UnificationEntry) {
                 recipe[i] = recipe[i].toString();
             } else if (recipe[i] instanceof Character) {
-                String toolName = getToolNameByCharacter((char) recipe[i]);
-                if (toolName == null) {
+                IGTTool tool = ToolHelper.getToolFromSymbol((char) recipe[i]);
+                if (tool == null || tool.getOreDictNames().isEmpty()) {
                     throw new IllegalArgumentException("Tool name is not found for char " + recipe[i]);
                 }
-                recipe[i] = toolName;
+                recipe[i] = tool.getOreDictNames().get(0);
             } else if (!(recipe[i] instanceof ItemStack
                     || recipe[i] instanceof Item
                     || recipe[i] instanceof Block
@@ -567,42 +571,6 @@ public class ModHandler {
         }
 
         ForgeRegistries.RECIPES.register(shapelessRecipe);
-    }
-
-    @Nullable
-    private static String getToolNameByCharacter(char character) {
-        switch (character) {
-            case 'b':
-                return ToolDictNames.craftingToolBlade.name();
-            case 'c':
-                return ToolDictNames.craftingToolCrowbar.name();
-            case 'd':
-                return ToolDictNames.craftingToolScrewdriver.name();
-            case 'f':
-                return ToolDictNames.craftingToolFile.name();
-            case 'h':
-                return ToolDictNames.craftingToolHardHammer.name();
-            case 'i':
-                return ToolDictNames.craftingToolSolderingIron.name();
-            case 'j':
-                return ToolDictNames.craftingToolSolderingMetal.name();
-            case 'k':
-                return ToolDictNames.craftingToolKnife.name();
-            case 'm':
-                return ToolDictNames.craftingToolMortar.name();
-            case 'p':
-                return ToolDictNames.craftingToolDrawplate.name();
-            case 'r':
-                return ToolDictNames.craftingToolSoftHammer.name();
-            case 's':
-                return ToolDictNames.craftingToolSaw.name();
-            case 'w':
-                return ToolDictNames.craftingToolWrench.name();
-            case 'x':
-                return ToolDictNames.craftingToolWireCutter.name();
-            default:
-                return null;
-        }
     }
 
     public static Collection<ItemStack> getAllSubItems(ItemStack item) {

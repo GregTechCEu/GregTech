@@ -1,12 +1,13 @@
 package gregtech.api.items.toolitem;
 
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.block.Block;
 import net.minecraft.util.SoundEvent;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 public abstract class ToolBuilder<T extends IGTTool> {
@@ -14,13 +15,12 @@ public abstract class ToolBuilder<T extends IGTTool> {
     protected final String domain, id;
 
     protected final Set<String> toolClasses = new ObjectArraySet<>();
-    protected final Set<String> oreDicts = new ObjectArraySet<>();
-    protected final Set<Block> effectiveBlocks = new ObjectOpenHashSet<>();
+    protected final List<String> oreDicts = new ArrayList<>();
 
     protected int tier = -1;
     protected IGTToolDefinition toolStats;
     protected SoundEvent sound;
-    protected Character craftingSymbol = null;
+    protected Character symbol = null;
 
     public ToolBuilder(String domain, String id) {
         this.domain = domain;
@@ -52,21 +52,26 @@ public abstract class ToolBuilder<T extends IGTTool> {
         return this;
     }
 
-    public ToolBuilder<T> oreDicts(String... ores) {
-        Collections.addAll(oreDicts, ores);
+    public ToolBuilder<T> oreDicts(String... oreDicts) {
+        Collections.addAll(this.oreDicts, oreDicts);
         return this;
     }
 
-    public ToolBuilder<T> effectiveBlocks(Block... blocks) {
-        Collections.addAll(effectiveBlocks, blocks);
+    public ToolBuilder<T> symbol(char symbol) {
+        this.symbol = symbol;
         return this;
     }
 
-    public ToolBuilder<T> craftingSymbol(char craftingSymbol) {
-        this.craftingSymbol = craftingSymbol;
-        return this;
-    }
+    public abstract Supplier<T> supply();
 
-    public abstract T build();
+    public T build() {
+        IGTTool existing = ToolHelper.getToolFromSymbol(this.symbol);
+        if (existing != null) {
+            throw new IllegalArgumentException(String.format("Symbol %s has been taken by %s already!", symbol, existing));
+        }
+        T supplied = supply().get();
+        ToolHelper.registerToolSymbol(this.symbol, supplied);
+        return supplied;
+    }
 
 }

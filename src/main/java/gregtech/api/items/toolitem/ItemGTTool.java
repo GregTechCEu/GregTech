@@ -3,7 +3,6 @@ package gregtech.api.items.toolitem;
 import com.google.common.collect.Multimap;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.LocalizationUtils;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -26,6 +25,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * GT-styled ItemTool (generic tool item).
@@ -39,20 +39,18 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     protected final int tier;
     protected final IGTToolDefinition toolStats;
     protected final Set<String> toolClasses;
-    protected final Set<String> oreDicts;
+    protected final List<String> oreDicts;
     protected final SoundEvent sound;
-    protected final Set<Block> effectiveBlocks;
 
-    protected ItemGTTool(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, Set<String> toolClasses, Set<String> oreDicts, Set<Block> effectiveBlocks) {
-        super(0F, 0F, ToolMaterial.STONE, effectiveBlocks);
+    protected ItemGTTool(String domain, String id, int tier, IGTToolDefinition toolStats, SoundEvent sound, Set<String> toolClasses, List<String> oreDicts) {
+        super(0F, 0F, ToolMaterial.STONE, Collections.emptySet());
         this.domain = domain;
         this.id = id;
         this.tier = tier;
         this.toolStats = toolStats;
         this.sound = sound;
         this.toolClasses = Collections.unmodifiableSet(toolClasses);
-        this.oreDicts = Collections.unmodifiableSet(oreDicts);
-        this.effectiveBlocks = effectiveBlocks;
+        this.oreDicts = Collections.unmodifiableList(oreDicts);
         setMaxStackSize(1);
         setCreativeTab(CreativeTabs.TOOLS);
         setTranslationKey("gt.tool." + id + ".name");
@@ -91,12 +89,7 @@ public class ItemGTTool extends ItemTool implements IGTTool {
     }
 
     @Override
-    public Set<Block> getEffectiveBlocks() {
-        return effectiveBlocks;
-    }
-
-    @Override
-    public Set<String> getOreDictNames() {
+    public List<String> getOreDictNames() {
         return oreDicts;
     }
 
@@ -239,8 +232,8 @@ public class ItemGTTool extends ItemTool implements IGTTool {
         }
 
         @Override
-        public ItemGTTool build() {
-            return new ItemGTTool(domain, id, tier, toolStats, sound, toolClasses, oreDicts, effectiveBlocks);
+        public Supplier<ItemGTTool> supply() {
+            return () -> new ItemGTTool(domain, id, tier, toolStats, sound, toolClasses, oreDicts);
         }
 
     }
