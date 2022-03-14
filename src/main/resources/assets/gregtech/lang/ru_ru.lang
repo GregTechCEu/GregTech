@@ -1,4 +1,4 @@
-death.attack.heat=%s был cварен заживо.
+death.attack.heat=%s был cварен заживо в бульоне из дошиков.
 death.attack.frost=%s исследовал криогенику.
 death.attack.electric=%s был шокирован.
 death.attack.radiation=%s теперь светится от радости.
@@ -6,9 +6,7 @@ death.attack.turbine=%s заглянул в турбину.
 death.attack.explosion=%s взорвался.
 death.attack.explosion.player=%s взорвался при помощи %s.
 death.attack.heat.player=%s был сварен живым %s.
-
 enchantment.disjunction=Разъединение
-
 gregtech.top.energy_stored=Энергия:
 gregtech.top.progress=Прогресс:
 gregtech.top.working_disabled=Работа запрещена
@@ -18,16 +16,13 @@ gregtech.top.transform_up=§cStep Up§r
 gregtech.top.transform_down=§aStep Down§r
 gregtech.top.transform_input=§6Input:§r
 gregtech.top.transform_output=§9Output:§r
-
 gregtech.top.fuel_burn=for
 gregtech.top.fuel_time=secs
 gregtech.top.fuel_min_consume=needs
 gregtech.top.fuel_name=Fuel:
 gregtech.top.fuel_none=No fuel
-
 gregtech.top.invalid_structure=§cInvalid Structure
 gregtech.top.valid_structure=§aStructure Formed
-
 gregtech.multiblock.title=Шаблон мультиблочной структуры
 gregtech.multiblock.primitive_blast_furnace.description=Примитивная доменная печь (ПДП) - является многоблочной конструкцией, используемой для варки стали на ранней стадии игры. Хотя она и не очень быстра, она обеспечит вас сталью для ваших первых нужд.
 gregtech.multiblock.coke_oven.description=Коксовая печь - это многоблочная структура, используемая для получения кокосового угля и креозота на ранней стадии игры. Не требует топлива и имеет внутренний бак на 32 ведра креозота. Доступ к инвентарю можно получить через люк коксовой печи.
@@ -48,16 +43,13 @@ gregtech.multiblock.fusion_reactor_mk2.description=The Fusion Reactor Mark 2 is 
 gregtech.multiblock.fusion_reactor_mk3.description=The Fusion Reactor Mark 3 is a large multiblock structure used for fusing elements into heavier ones. The Mark 3 Fusion Reactor can only use UV Energy Hatches. For every Hatch it has its buffer increases by 40M EU.
 gregtech.multiblock.fusion_reactor.heat=Heat: %d
 gregtech.multiblock.large_chemical_reactor.description=The Large Chemical Reactor performs chemical reactions at 100% energy efficiency. Overclocks multiply both speed and energy by 4. The multiblock requires exactly 1 Cupronickel Coil Block, which must be placed adjacent to the PTFE Pipe casing located in the center.
-
 item.invalid.name=Недопустимый предмет
 fluid.empty=Пусто
-
 metaitem.generic.fluid_container.tooltip=%d/%dЛ %s
 metaitem.generic.electric_item.tooltip=%d/%d EU - Уровень §e%d
 metaitem.electric.discharge_mode.enabled=§eРежим разрядки Включен
 metaitem.electric.discharge_mode.disabled=§eРежим разрядки Выключен
 metaitem.electric.discharge_mode.tooltip=Нажмите Shift для переключения режима разрядки
-
 metaitem.dust.tooltip.purify=Бросьте в котел, чтобы получить чистую пыль
 metaitem.int_circuit.configuration=Конфигурация: %d
 metaitem.credit.copper.name=Медный кредит
@@ -76,25 +68,20 @@ metaitem.credit.naquadah.name=Наквадовый кредит
 metaitem.credit.naquadah.tooltip=32768 кредитов
 metaitem.credit.darmstadtium.name=Дармштадтиевый кредит
 metaitem.credit.darmstadtium.tooltip=262144 кредита
-
 metaitem.coin.gold.ancient.name=Древняя золотая монета
 metaitem.coin.gold.ancient.tooltip=Найдено в древних руинах
 metaitem.coin.doge.name=Догкоин
 metaitem.coin.doge.tooltip=Ничего себе много монетка... И как они делают эту криптовалюту? Ни разу в шахте такого не встречал
 metaitem.coin.chocolate.name=Шоколадная монета
 metaitem.coin.chocolate.tooltip=Завернуто в золото
-
 metaitem.shape.empty.name=Пустая форма
 metaitem.shape.empty.tooltip=Сырье для изготовления пресс-форм и форм
-
 metaitem.dynamite.name=Динамит
-
 metaitem.power_unit.lv.name=Блок питания (LV)
 metaitem.power_unit.mv.name=Блок питания (MV)
 metaitem.power_unit.hv.name=Блок питания (HV)
 metaitem.nano_saber.name=Нано сабля
 metaitem.nano_saber.tooltip=Ryujin no ken wo kurae!
-
 metaitem.shape.mold.plate.name=Форма (Пластина)
 metaitem.shape.mold.plate.tooltip=Форма для изготовления пластин
 metaitem.shape.mold.casing.name=Форма (Корпус)
@@ -123,7 +110,6 @@ metaitem.shape.mold.gear.small.name=Форма (Малая шестерня)
 metaitem.shape.mold.gear.small.tooltip=Форма для изготовления маленьких зубчатых колес
 metaitem.shape.mold.rotor.name=Mold (Rotor)
 metaitem.shape.mold.rotor.tooltip=Mold for making Rotors
-
 metaitem.shape.extruder.plate.name=Форма экструдера (Пластина)
 metaitem.shape.extruder.plate.tooltip=Форма экструдера для изготовления пластин
 metaitem.shape.extruder.rod.name=Форма экструдера (Стержень)
@@ -172,10 +158,8 @@ metaitem.shape.extruder.gear.name=Форма экструдера (Шестер�
 metaitem.shape.extruder.gear.tooltip=Форма экструдера для изготовления зубчатых колес
 metaitem.shape.extruder.bottle.name=Форма экструдера (Бутылка)
 metaitem.shape.extruder.bottle.tooltip=Форма экструдера для изготовления бутылок
-
 metaitem.spray.empty.name=Баллончик (Пустой)
 metaitem.spray.empty.tooltip=Может быть наполнен спреями разных цветов
-
 metaitem.plant.ball.name=Комок биомассы
 
 # Fluid Cells
@@ -208,59 +192,49 @@ metaitem.spray.can.dyes.brown.name=Аэрозоль (Коричневый)
 metaitem.spray.can.dyes.green.name=Аэрозоль (Зеленый)
 metaitem.spray.can.dyes.red.name=Аэрозоль (Красный)
 metaitem.spray.can.dyes.black.name=Аэрозоль (Черный)
-
 metaitem.tool.matches.name=Спичка
 metaitem.tool.matchbox.name=Коробок спичек
 metaitem.tool.lighter.invar.name=Зажигалка
 metaitem.tool.lighter.platinum.name=Платиновая зажигалка
 metaitem.tool.lighter.platinum.tooltip=На ней выгравирован известный шутник
-
 metaitem.battery.hull.lv.name=Маленький корпус батареи
 metaitem.battery.hull.lv.tooltip=Пустой LV корпус батареи
 metaitem.battery.hull.hv.name=Средний корпус батареи
 metaitem.battery.hull.hv.tooltip=Пустой MV корпус батареи
 metaitem.battery.hull.mv.name=Большой корпус батареи
 metaitem.battery.hull.mv.tooltip=Пустой HV корпус батареи
-
 metaitem.battery.re.ulv.tantalum.name=Танталовый конденсатор
 metaitem.battery.re.ulv.tantalum.tooltip=Многоразовый
-
 metaitem.battery.su.lv.sulfuricacid.name=Маленькая кислотная батарея
 metaitem.battery.su.lv.sulfuricacid.tooltip=Одноразовая
 metaitem.battery.su.lv.mercury.name=Маленькая ртутная батарея
 metaitem.battery.su.lv.mercury.tooltip=Одноразовая
-
 metaitem.battery.re.lv.cadmium.name=Маленькая кадмиевая батарея
 metaitem.battery.re.lv.cadmium.tooltip=Многоразовая
 metaitem.battery.re.lv.lithium.name=Маленькая литиевая батарея
 metaitem.battery.re.lv.lithium.tooltip=Многоразовая
 metaitem.battery.re.lv.sodium.name=Маленькая натриевая батарея
 metaitem.battery.re.lv.sodium.tooltip=Многоразовая
-
 metaitem.battery.su.mv.sulfuricacid.name=Средняя кислотная батарея
 metaitem.battery.su.mv.sulfuricacid.tooltip=Одноразовая
 metaitem.battery.su.mv.mercury.name=Средняя ртутная батарея
 metaitem.battery.su.mv.mercury.tooltip=Одноразовая
-
 metaitem.battery.re.mv.cadmium.name=Средняя кадмиевая батарея
 metaitem.battery.re.mv.cadmium.tooltip=Многоразовая
 metaitem.battery.re.mv.lithium.name=Средняя литиевая батарея
 metaitem.battery.re.mv.lithium.tooltip=Многоразовая
 metaitem.battery.re.mv.sodium.name=Средняя натриевая батарея
 metaitem.battery.re.mv.sodium.tooltip=Многоразовая
-
 metaitem.battery.su.hv.sulfuricacid.name=Большая кислотная батарея
 metaitem.battery.su.hv.sulfuricacid.tooltip=Одноразовая
 metaitem.battery.su.hv.mercury.name=Большая ртутная батарея
 metaitem.battery.su.hv.mercury.tooltip=Одноразовая
-
 metaitem.battery.re.hv.cadmium.name=Большая кадмиевая батарея
 metaitem.battery.re.hv.cadmium.tooltip=Многоразовая
 metaitem.battery.re.hv.lithium.name=Большая литиевая батарея
 metaitem.battery.re.hv.lithium.tooltip=Многоразовая
 metaitem.battery.re.hv.sodium.name=Большая натриевая батарея
 metaitem.battery.re.hv.sodium.tooltip=Многоразовая
-
 metaitem.energy_crystal.name=Энергетический кристалл
 metaitem.lapotron_crystal.name=Лапотронный кристалл
 metaitem.energy.lapotronicorb.name=Лапотронная энергетическая сфера
@@ -273,7 +247,6 @@ metaitem.zpm2.tooltip=Заполни это, чтобы пройти Minecraft
 metaitem.energy.module.name=Energy Module
 metaitem.energy.cluster.name=Energy Cluster
 metaitem.max.battery.name=MAX Battery
-
 metaitem.electric.motor.lv.name=LV Электрический Мотор
 metaitem.electric.motor.mv.name=MV Электрический Мотор
 metaitem.electric.motor.hv.name=HV Электрический Мотор
@@ -282,7 +255,6 @@ metaitem.electric.motor.iv.name=IV Электрический Мотор
 metaitem.electric.motor.luv.name=LuV Электрический Мотор
 metaitem.electric.motor.zpm.name=ZPM Электрический Мотор
 metaitem.electric.motor.uv.name=UV Электрический Мотор
-
 metaitem.electric.pump.lv.name=LV Электрическая помпа
 metaitem.electric.pump.lv.tooltip=1280 Л/сек (как улучшение)
 metaitem.electric.pump.mv.name=MV Электрическая помпа
@@ -317,7 +289,6 @@ metaitem.fluid.regulator.iv.tooltip=327,680 L/sec (as Cover)
 metaitem.fluid.regulator.luv.tooltip=1,310,720 L/sec (as Cover)
 metaitem.fluid.regulator.zpm.tooltip=5,242,880 L/sec (as Cover)
 metaitem.fluid.regulator.uv.tooltip=20,971,520 L/sec (as Cover)
-
 metaitem.conveyor.module.lv.name=LV Конвейерный модуль
 metaitem.conveyor.module.lv.tooltip=1 Стэк каждые 20 сек (как улучшение)
 metaitem.conveyor.module.mv.name=MV Конвейерный модуль
@@ -334,7 +305,6 @@ metaitem.conveyor.module.zpm.name=ZPM Конвейерный модуль
 metaitem.conveyor.module.zpm.tooltip=1 Стэк каждые 1/20 сек (как улучшение)
 metaitem.conveyor.module.uv.name=UV Конвейерный модуль
 metaitem.conveyor.module.uv.tooltip=1 Стэк каждые 1/20 сек (как улучшение)
-
 metaitem.electric.piston.lv.name=LV Электрический поршень
 metaitem.electric.piston.mv.name=MV Электрический поршень
 metaitem.electric.piston.hv.name=HV Электрический поршень
@@ -343,7 +313,6 @@ metaitem.electric.piston.iv.name=IV Электрический поршень
 metaitem.electric.piston.luv.name=LuV Электрический поршень
 metaitem.electric.piston.zpm.name=ZPM Электрический поршень
 metaitem.electric.piston.uv.name=UV Электрический поршень
-
 metaitem.robot.arm.lv.name=LV Роботизированный манипулятор
 metaitem.robot.arm.lv.tooltip=Помещает в определенный слот (как улучшение)
 metaitem.robot.arm.mv.name=MV Роботизированный манипулятор
@@ -360,7 +329,6 @@ metaitem.robot.arm.zpm.name=ZPM Роботизированный манипул�
 metaitem.robot.arm.zpm.tooltip=Помещает в определенный слот (как улучшение)
 metaitem.robot.arm.uv.name=UV Роботизированный манипулятор
 metaitem.robot.arm.uv.tooltip=Помещает в определенный слот (как улучшение)
-
 metaitem.field.generator.lv.name=LV Генератор поля
 metaitem.field.generator.mv.name=MV Генератор поля
 metaitem.field.generator.hv.name=HV Генератор поля
@@ -369,7 +337,6 @@ metaitem.field.generator.iv.name=IV Генератор поля
 metaitem.field.generator.luv.name=LuV Генератор поля
 metaitem.field.generator.zpm.name=ZPM Генератор поля
 metaitem.field.generator.uv.name=UV Генератор поля
-
 metaitem.emitter.lv.name=LV Эмиттер
 metaitem.emitter.mv.name=MV Эмиттер
 metaitem.emitter.hv.name=HV Эмиттер
@@ -378,7 +345,6 @@ metaitem.emitter.iv.name=IV Эмиттер
 metaitem.emitter.luv.name=LuV Эмиттер
 metaitem.emitter.zpm.name=ZPM Эмиттер
 metaitem.emitter.uv.name=UV Эмиттер
-
 metaitem.sensor.lv.name=LV Сенсор
 metaitem.sensor.mv.name=MV Сенсор
 metaitem.sensor.hv.name=HV Сенсор
@@ -387,7 +353,6 @@ metaitem.sensor.iv.name=IV Сенсор
 metaitem.sensor.luv.name=LuV Сенсор
 metaitem.sensor.zpm.name=ZPM Сенсор
 metaitem.sensor.uv.name=UV Сенсор
-
 metaitem.tool.datastick.name=Флешка
 metaitem.tool.datastick.tooltip=Хранение малого объема данных
 metaitem.tool.dataorb.name=Сфера данных
@@ -397,7 +362,6 @@ metaitem.circuit.integrated.tooltip=Щелкните правой кнопкой
 metaitem.circuit.integrated.gui=Конфигурация интегральной схемы
 # TODO
 metaitem.circuit.integrated.jei_description=JEI is only showing recipes for the given configuration.\n\nYou can select a configuration in the Programmed Circuit configuration tab.
-
 item.glass.lens=Стекло Линза (Белый)
 metaitem.glass_lens.orange.name=Стекло Линза (Оранжевый)
 metaitem.glass_lens.magenta.name=Стекло Линза (Пурпурный)
@@ -433,7 +397,6 @@ metaitem.wafer.naquadah.name=Наквадаховый лист
 metaitem.wafer.naquadah.tooltip=Raw Circuit
 metaitem.wafer.neutronium.name=Neutronium-doped Wafer
 metaitem.wafer.neutronium.tooltip=Raw Circuit
-
 metaitem.board.coated.name=Прорезиненая подложка
 metaitem.board.coated.tooltip=A Coated Board
 metaitem.board.phenolic.name=Профеноленая подложка
@@ -448,7 +411,6 @@ metaitem.board.multilayer.fiber_reinforced.name=Многослойная Укр�
 metaitem.board.multiplayer.fiber_reinforced.name=An Elite Board
 metaitem.board.wetware.name=Питательная подложка
 metaitem.board.wetware.tooltip=The Board that keeps life
-
 metaitem.circuit_board.basic.name=Circuit Board
 metaitem.circuit_board.basic.tooltip=A Basic Circuit Board
 metaitem.circuit_board.good.name=Good Circuit Board
@@ -463,7 +425,6 @@ metaitem.circuit_board.elite.name=Elite Circuit Board
 metaitem.circuit_board.elite.tooltip=An Elite Circuit Board
 metaitem.circuit_board.wetware.name=Master Circuit Board
 metaitem.circuit_board.wetware.tooltip=The Board that keeps life
-
 metaitem.circuit.vacuum_tube.name=Электровакуумная лампа
 metaitem.circuit.vacuum_tube.tooltip=Простейший компонент схемы
 metaitem.component.diode.name=Диод
@@ -495,7 +456,6 @@ metaitem.component.advanced_smd.transistor.name=Advanced SMD Transistor
 metaitem.component.advanced_smd.transistor.tooltip=Advanced Electronic Component
 metaitem.component.advanced_smd.resistor.name=Advanced SMD Resistor
 metaitem.component.advanced_smd.resistor.tooltip=Advanced Electronic Component
-
 metaitem.wafer.ultra_low_power_integrated_circuit.name=ULPIC Wafer
 metaitem.wafer.low_power_integrated_circuit.name=LPIC Wafer
 metaitem.wafer.highly_advanced_system_on_chip.name=HASoC Wafer
@@ -517,7 +477,6 @@ metaitem.crystal.raw.name=Raw Crystal Chip
 metaitem.crystal.raw.tooltip=Raw Crystal Processor
 metaitem.crystal.raw_chip.name=Raw Crystal Chip Parts
 metaitem.crystal.raw_chip.tooltip=Raw Crystal Processor Parts
-
 metaitem.plate.highly_advanced_system_on_chip.name=HASoC
 metaitem.plate.ultra_low_power_integrated_circuit.name=Ultra Low Power IC
 metaitem.plate.low_power_integrated_circuit.name=Low Power IC
@@ -611,7 +570,6 @@ metaitem.circuit.wetware_computer.name=Нейронный суперкомпью
 metaitem.circuit.wetware_computer.tooltip=Ultimate fusion of Flesh and Machine/n§5UV-tier
 metaitem.circuit.wetware_mainframe.name=Нейронный мейнфрейм
 metaitem.circuit.wetware_mainframe.tooltip=The best Man has ever seen/n§5UHV-tier
-
 metaitem.stem_cells.name=Stem Cells
 metaitem.stem_cells.tooltip=Raw Intelligence
 metaitem.processor.neuro.name=Neuro Processing Unit
@@ -619,23 +577,19 @@ metaitem.processor.neuro.tooltip=Neuro CPU
 metaitem.petri_dish.name=Petri Dish
 metaitem.petri_dish.tooltip=For cultivating Cells
 metaitem.bio_chaff.name=Bio Chaff
-
 metaitem.carbon.fibers.name=Сырые углеродные волокна
 metaitem.carbon.mesh.name=углеродная сеть
 metaitem.carbon.plate.name=Углеродный лист
 metaitem.neutron_reflector.name=Нейтронный отражатель
 metaitem.neutron_reflector.tooltip=Indestructible
-
 metaitem.component.grinder.diamond.name=Алмазная шлифовальная головка
 metaitem.component.grinder.tungsten.name=Вольфрамовая шлифовальная головка
-
 metaitem.quantumeye.tooltip=Квантовый глаз
 metaitem.quantumeye.name=Улучшенный глаз энда
 metaitem.quantumstar.tooltip=Квантовая звезда
 metaitem.quantumstar.name=Улучшенная звезда края
 metaitem.gravistar.name=Гравитационная звезда
 metaitem.gravistar.tooltip=Предельная звезда края
-
 metaitem.item_filter.name=Предметный фильтр
 metaitem.item_filter.tooltip=Фильтрует помещаемые и извлекаемые предметы (улучшение)/nМожет использоваться как обновление конвейера
 metaitem.ore_dictionary_filter.name=Предметный фильтр (словарь руд)
@@ -644,7 +598,6 @@ metaitem.fluid_filter.name=Жидкостный фильтр
 metaitem.fluid_filter.tooltip=Фильтрует помещаемые и извлекаемые жидкости (улучшение)/nМожет использоваться как обновление насоса
 metaitem.smart_item_filter.name=Умный предметный фильтр
 metaitem.smart_item_filter.tooltip=Фильтрует предметы в зависимости от рецептов механизма
-
 metaitem.cover.controller.name=Контроллер машины
 metaitem.cover.controller.tooltip=Управление работой машины
 metaitem.cover.activity.detector.name=Детектор активности
@@ -662,30 +615,24 @@ metaitem.cover.player.detector.tooltip=Выдает сигнал красног�
 # TODO
 metaitem.cover.facade.name=%s Facade
 metaitem.cover.facade.tooltip=Decorative outfit
-
 metaitem.cover.screen.name=Компьютерный монитор
 metaitem.cover.screen.tooltip=Отображает данные
 metaitem.cover.crafting.name=Верстак (улучшение)
 metaitem.cover.crafting.tooltip=Лучше, чем деревянный верстак
 metaitem.cover.shutter.name=Затвор
 metaitem.cover.shutter.tooltip=Предотвращает все взаимодействия с этой стороной машины
-
 metaitem.cover.solar.panel.name=Солнечная панель
 metaitem.cover.solar.panel.tooltip=Прибудет солнце с тобой
 metaitem.cover.solar.panel.ulv.name=Солнечная панель (ULV)
 metaitem.cover.solar.panel.ulv.tooltip=Солнечная панель очень низкого напряжения
 metaitem.cover.solar.panel.lv.name=Солнечная панель (LV)
 metaitem.cover.solar.panel.lv.tooltip=Солнечная панель низкого напряжения
-
 metaitem.gelled_toluene.name=Гелеобразный толуол
 metaitem.gelled_toluene.tooltip=Сырое взрывчатое вещество
-
 metaitem.bottle.purple.drink.name=Фиолетовый напиток
 metaitem.bottle.purple.drink.tooltip=Как насчет лимонада. Или чая со льдом? Я получил пурпурный напиток!
-
 metaitem.dye.indigo.name=Фиолетовый краситель
 metaitem.dye.indigo.tooltip=Фиолетовый краситель
-
 metaitem.dye.white.name=Белый краситель
 metaitem.dye.orange.name=Оранжевый краситель
 metaitem.dye.magenta.name=Пурпурный краситель
@@ -702,7 +649,6 @@ metaitem.dye.brown.name=Коричневый краситель
 metaitem.dye.green.name=Зеленый краситель
 metaitem.dye.red.name=Красный краситель
 metaitem.dye.black.name=Черный краситель
-
 metaitem.rubber_drop.name=Резина
 metaitem.plant_ball.name=Комок биомассы
 metaitem.tool_parts_box.name=Ящик для инструментов
@@ -716,7 +662,6 @@ metaitem.brick.fireclay.name=Кирпич из шамотной глины
 metaitem.brick.coke.name=Кирпич коксовой печи
 metaitem.wooden_form.empty.name=Пустая деревянная форма
 metaitem.wooden_form.brick.name=Деревянная форма для кирпича
-
 metaitem.tool.sword.name=%s меч
 metaitem.tool.pickaxe.name=%s кирка
 metaitem.tool.shovel.name=%s лопата
@@ -765,31 +710,25 @@ metaitem.tool.screwdriver.lv.name=%s отвертка (LV)
 metaitem.tool.screwdriver.lv.tooltip=Регулирует покрытия и машины
 metaitem.turbine_rotor.name=%s ротор турбины
 metaitem.turbine_rotor.tooltip=Турбинные роторы для вашей электростанции
-
 metaitem.behavior.mode_switch.tooltip=Нажмите Shift для переключения режимов
 metaitem.behavior.mode_switch.mode_switched=§eРежим изменен на: %s
 metaitem.behavior.mode_switch.current_mode=Режим: %s
-
 metaitem.tool.tooltip.primary_material=Материал: %s (%s ур.)
 metaitem.tool.tooltip.attack_damage=Наносимый урон: %d
 metaitem.tool.tooltip.mining_speed=Скорость добычи: %d
 metaitem.tool.tooltip.durability=Прочность: %d/%d
 metaitem.tool.tooltip.rotor.efficiency=Эффективность ротора: %d%%
 metaitem.tool.tooltip.hammer.extra_drop=Имеет 50%% шанс добыть еще 1 дробленую руду
-
 cover.filter.blacklist.disabled=Белый список
 cover.filter.blacklist.enabled=Черный список
-
 cover.ore_dictionary_filter.title=Фильтр по словарю руд
 cover.ore_dictionary_filter.title1=Название по словарю руд
 cover.ore_dictionary_filter.title2=(используйте * как подстановочный знак)
-
 cover.fluid_filter.title=Жидкостный фильтр
 cover.fluid_filter.mode.filter_fill=Фильтрирует при наполнении
 cover.fluid_filter.mode.filter_drain=Фильтрирует при сливе
 # TODO
 cover.fluid_filter.mode.filter_both=Filter Fill & Drain
-
 cover.item_filter.title=Предиетный фильтр
 cover.filter.mode.filter_insert=Фильтрирует помещаемые предметы
 cover.filter.mode.filter_extract=Фильтрирует извлекаемые предметы
@@ -797,7 +736,6 @@ cover.item_filter.ignore_damage.enabled=Игнорировать поврежд�
 cover.item_filter.ignore_damage.disabled=Учитывать повреждения
 cover.item_filter.ignore_nbt.enabled=Игнорировать NBT
 cover.item_filter.ignore_nbt.disabled=Учитывать NBT
-
 cover.conveyor.title=Настройки покрытия конвейера (%s)
 cover.conveyor.transfer_rate=%s предметов/с.
 cover.conveyor.mode.export=Режим: Экспорт
@@ -805,13 +743,11 @@ cover.conveyor.mode.import=Режим: Импорт
 cover.conveyor.item_filter.title=Фильтр предметов
 cover.conveyor.ore_dictionary.title=Название по словарю руд
 cover.conveyor.ore_dictionary.title2=(используйте * как подстановочный знак)
-
 cover.robotic_arm.title=Настройки роботизированной руки (%s)
 cover.robotic_arm.transfer_mode.transfer_any=Перемещение любых предметов
 cover.robotic_arm.transfer_mode.transfer_exact=Точное перемещение
 cover.robotic_arm.transfer_mode.keep_exact=Фиксированя точность
 cover.robotic_arm.transfer_mode.description=§eПеремещение любых предметов§r - в этом режиме улучшение будет передавать как можно больше предметов, соответствующих фильтру./n§eТочное перемещение§r - в этом режиме улучшение будет поставлять предметы порциями, указанными в слотах фильтра предметов (или скоростью передачи для фильтра словаря руды). Если количество предметов меньше размера порции, предметы не будут перемещены ./n§eФиксированя точность§r - в этом режиме обложка сохранит указанное количество предметов в целевом инвентаре, предоставляя дополнительное количество предметов, если это необходимо./n§7Подсказка: щелкните левой или правой кнопкой мыши на слотах фильтра, чтобы изменить количество предметов, используйте Shift, чтобы изменять количество быстрее.
-
 cover.pump.title=Настройки покртия насоса (%s)
 cover.pump.transfer_rate=%s мВ/сек.
 cover.pump.mode.export=Режим: Экспорт
@@ -823,7 +759,6 @@ cover.fluid_regulator.title=Fluid Regulator Settings (%s)
 cover.fluid_regulator.transfer_mode.description=§eTransfer Any§r - in this mode, cover will transfer as many fluids matching its filter as possible./n§eSupply Exact§r - in this mode, cover will supply fluids in portions specified in the window underneath this button. If amount of fluids is less than portion size, fluids won't be moved./n§eKeep Exact§r - in this mode, cover will keep specified amount of fluids in the destination inventory, supplying additional amount of fluids if required./n§7Tip: shift click will multiply increase/decrease amounts by 10 and ctrl click will multiply by 100.
 cover.fluid_regulator.supply_exact=Supply Exact: %s
 cover.fluid_regulator.keep_exact=Keep Exact: %s
-
 cover.machine_controller.title=Настройки контроллера машины
 cover.machine_controller.normal=Нормально
 cover.machine_controller.inverted=Инвертировано
@@ -921,7 +856,6 @@ item.material.oreprefix.cableGtOctal=%s 8х кабель
 item.material.oreprefix.cableGtQuadruple=%s 4х кабель
 item.material.oreprefix.cableGtDouble=%s 2х кабель
 item.material.oreprefix.cableGtSingle=%s 1х кабель
-
 material.aluminium=Алюминий
 material.americium=Америций
 material.antimony=Сурьма
@@ -1002,7 +936,6 @@ material.vanadium=Ванадий
 material.ytterbium=Иттербий
 material.yttrium=Иттрий
 material.zinc=Цинк
-
 material.construction_foam=Строительная пена
 material.biomass=Биомасса
 material.creosote=Креозот
@@ -1113,7 +1046,6 @@ material.sodalite=Содалит
 material.sodium_persulfate=Персульфат натрия
 material.sodium_sulfide=Сульфид натрия
 material.hydrogen_sulfide=Сероводород
-
 material.phosphorus_pentoxide=Пятиокись фосфора
 material.phosphoric_acid=Фосфорная кислота
 material.polyvinyl_acetate=Поливинилацетат
@@ -1223,7 +1155,6 @@ material.arsenic_trioxide=Триоксид мышьяка
 material.cupric_oxide=Оксид меди
 material.ferrosilite=Ферросилит
 material.magnesia=Магнезия
-
 material.oil_heavy=Тяжелая нефть
 material.oil_medium=Средняя нефть
 material.oil_light=Легкая нефть
@@ -1237,7 +1168,6 @@ material.naphtha=Нафта
 material.light_fuel=Легкое топливо
 material.heavy_fuel=Тяжелое топливо
 material.lpg=Сжиженный углеводородный газ
-
 material.soldering_alloy=Припой
 material.spessartine=Спасерит
 material.sphalerite=Сфалерит
@@ -1264,7 +1194,6 @@ material.quartzite=Кварцит
 material.graphite=Графит
 material.graphene=Графен
 material.osmiridium=Осмистый иридий
-
 material.glass=Стекло
 material.perlite=Перлит
 material.borax=Бура
@@ -1341,7 +1270,6 @@ material.vanadium_steel=Ванадиевая сталь
 material.hssg=HSS-G
 material.hsse=HSS-E
 material.hsss=HSS-S
-
 material.primitive=Примитивный
 material.basic=Основной
 material.good=Хороший
@@ -1364,7 +1292,6 @@ material.duranium=Дураний
 material.milk=Молоко
 material.cocoa=Какао
 material.wheat=Пшеница
-
 item.gunpowder.dustTiny=Крошечная кучка пороха
 item.gunpowder.dustSmall=Маленькая кучка пороха
 item.paper.dustTiny=Крошечная куча целюлозы
@@ -1499,7 +1426,6 @@ item.talc.dust=Тальк
 item.wheat.dustTiny=Крошечная кучка муки
 item.wheat.dustSmall=Маленькая кучка муки
 item.wheat.dust=Мука
-
 recipemap.ore_washer.name=Рудопромывщик
 recipemap.thermal_centrifuge.name=Термальная центрифуга
 recipemap.extractor.name=Экстрактор
@@ -1552,16 +1478,13 @@ recipemap.combustion_generator.name=Дизельный генератор
 recipemap.gas_turbine.name=Газовая турбина
 recipemap.steam_turbine.name=Паровая турбина
 recipemap.semi_fluid_generator.name=Полужидкое топливо
-
 behaviour.hoe=Может до грязи
 behaviour.soft_hammer=Нажмите на машину, чтобы разрешить/запретить ее работу
 behaviour.lighter.tooltip=Может поджечь предметы
 behaviour.lighter.uses=Осталось использований: %d
 behavior.plunger.description=Щелкните правой кнопкой мыши на машине, чтобы очистить 1000 мВ из его выходного бака./nкрадитесь, чтобы очистить 1000 мВ от входного бака машины./nОчистка входного бака работает только на машинах GTCE!
 behavior.toggle_energy_consumer.tooltip=Щелкните для переключения режима
-
 enchantment.damage.endermen=Дизъюнкция
-
 tile.gt.foam.name=Пена
 tile.gt.reinforced_foam.name=Усиленная пена
 tile.gt.petrified_foam.name=Окаменелая пена
@@ -1577,16 +1500,14 @@ tile.casing.mv=Корпус машины (MV)
 tile.casing.hv=Корпус машины (HV)
 tile.casing.ev=Корпус машины (EV)
 tile.casing.iv=Корпус машины (IV)
-
 fluid.distilled_water=Дистиллированная вода
 
 # Проволочные блоки
 tile.wire_coil.tooltip_ebf=Когда используется в §aэлектрической доменной печи§7:
-tile.wire_coil.tooltip_heat=  Базовая тепловая мощность: §e%dK
+tile.wire_coil.tooltip_heat=Базовая тепловая мощность: §e%dK
 tile.wire_coil.tooltip_smelter=Когда используется в §aмульти плавильном заводе§7:
-tile.wire_coil.tooltip_level=  Уровень: §e%d
-tile.wire_coil.tooltip_discount=  Снижение энергозатрат: §a%dx
-
+tile.wire_coil.tooltip_level=Уровень: §e%d
+tile.wire_coil.tooltip_discount=Снижение энергозатрат: §a%dx
 tile.wire_coil.cupronickel.name=Купроникелевая катушка
 tile.wire_coil.kanthal.name=Канталовая катушка
 tile.wire_coil.nichrome.name=Нихромовая катушка
@@ -1641,7 +1562,6 @@ tile.machine_casing.ludicrous_voltage.name=Корпус машины (LuV)
 tile.machine_casing.zpm_voltage.name=Корпус машины (ZPM)
 tile.machine_casing.ultimate_voltage.name=Корпус машины (UV)
 tile.machine_casing.maximum_voltage.name=Корпус машины (Макс.)
-
 tile.steam_casing.bronze_hull.name=Бронзовый корпус
 tile.steam_casing.bronze_bricks_hull.name=Кирпичный бронзовый корпус
 tile.steam_casing.steel_hull.name=Стальной корпус
@@ -1689,7 +1609,6 @@ tile.granite.black_granite_bricks.normal.name=Черный гранитный к
 tile.granite.black_granite_bricks.cracked.name=Потресканый черный гранитный кирпич
 tile.granite.black_granite_bricks.mossy.name=Замшелый черный гранитный кирпич
 tile.granite.black_granite_bricks.chiseled.name=Точеный черный гранитный кирпич
-
 tile.granite.red_granite.normal.name=Красный гранит
 tile.granite.red_granite.cracked.name=Красный гранитный булыжник
 tile.granite.red_granite.mossy.name=Замшелый красный гранитный булыжник
@@ -1708,7 +1627,6 @@ tile.mineral.marble_bricks.normal.name=Мраморный кирпич
 tile.mineral.marble_bricks.cracked.name=Потресканый мрамор кирпич
 tile.mineral.marble_bricks.mossy.name=Замшелый мрамор кирпич
 tile.mineral.marble_bricks.chiseled.name=Точеный мрамор кирпич
-
 tile.mineral.basalt.normal.name=Базальт
 tile.mineral.basalt.cracked.name=Базальтовый булыжник
 tile.mineral.basalt.mossy.name=Замшелый базальтовый булыжник
@@ -1727,7 +1645,6 @@ tile.concrete.light_bricks.normal.name=Кирпичи светлго бетон�
 tile.concrete.light_bricks.cracked.name=Потресканые кирпичи светлго бетона
 tile.concrete.light_bricks.mossy.name=Замшелые кирпичи светлого бетона
 tile.concrete.light_bricks.chiseled.name=Точеные кирпичи светлого бетона
-
 tile.concrete.dark_concrete.normal.name=Темный бетон
 tile.concrete.dark_concrete.cracked.name=Темный бетонный булыжник
 tile.concrete.dark_concrete.mossy.name=Замшлый темный бетонный булыжник
@@ -1739,7 +1656,6 @@ tile.concrete.dark_bricks.chiseled.name=Точеные кирпичи темно
 
 # Паровые механизмы
 gregtech.machine.steam_boiler.tooltip_produces=Производит %dмВ пара в %d тик
-
 gregtech.machine.steam_boiler_coal_bronze.name=Маленький паровой угольный котел
 gregtech.machine.steam_boiler_coal_bronze.tooltip=Ранний способ получить энергию пара
 gregtech.machine.steam_boiler_coal_steel.name=Паровой угольный котел высокого давления
@@ -1750,7 +1666,6 @@ gregtech.machine.steam_boiler_lava_bronze.name=Маленький паровой
 gregtech.machine.steam_boiler_lava_bronze.tooltip=Котел работает на лаве
 gregtech.machine.steam_boiler_lava_steel.name=Паровой лавовый котел высокого давления
 gregtech.machine.steam_boiler_lava_steel.tooltip=Быстрее, чем маленький паровой лавовый котел
-
 gregtech.machine.steam_extractor_bronze.name=Паровой экстрактор
 gregtech.machine.steam_extractor_bronze.tooltip=Экстракция вашей первой резины
 gregtech.machine.steam_extractor_steel.name=Паровой экстрактор высокого давления
@@ -1776,17 +1691,14 @@ gregtech.machine.combustion_generator.lv.name=Базовый дизельный 
 gregtech.machine.combustion_generator.mv.name=Улучшеный дизельный генератор
 gregtech.machine.combustion_generator.hv.name=Турбодизельный генератор
 gregtech.machine.combustion_generator.ev.name=Турбодизельный генератор II
-
 gregtech.machine.steam_turbine.lv.name=Базовая паровая турбина
 gregtech.machine.steam_turbine.mv.name=Улучшеная паровая турбина
 gregtech.machine.steam_turbine.hv.name=Турбопаровая турбина
 gregtech.machine.steam_turbine.ev.name=Турбопаровая турбина II
-
 gregtech.machine.gas_turbine.lv.name=Базовая газовая турбина
 gregtech.machine.gas_turbine.mv.name=Улучшеная газовая турбина
 gregtech.machine.gas_turbine.hv.name=Турбогазовая турбина
 gregtech.machine.gas_turbine.ev.name=Турбогазовая турбина II
-
 gregtech.machine.magic_energy_absorber.name=Поглотитель магической энергии
 gregtech.machine.magic_energy_absorber.tooltip=Максимальное напряжение: §a2048 §7(§aEV§7)/nСобирает энергию от эндерных кристаллов в 64 блоках/nКаждый кристалл эндера добавляет 32 EU/т к выходу/nПоместите яйцо дракона сверху, чтобы усилить вывод/n/nКогда усилено:/nКаждый эндер кристалл добавляет 128 EU/т
 gregtech.machine.magic_energy_converter.name=Конвертер магической энергии
@@ -1800,17 +1712,14 @@ gregtech.machine.block_breaker.ev.name=Advanced разрушитель блок�
 gregtech.machine.block_breaker.tooltip=Разрушает блок перед собой и подбирает то, что выпало
 gregtech.machine.block_breaker.consumption=Потребляет §e%d EU§7 за операцию
 gregtech.machine.block_breaker.speed_bonus=Бонус скорости: §e%d%%
-
 gregtech.machine.electric_furnace.lv.name=Базовая электрическая печь
 gregtech.machine.electric_furnace.mv.name=Улучшеная электрическая печь
 gregtech.machine.electric_furnace.hv.name=Улучшеная электрическая печь II
 gregtech.machine.electric_furnace.ev.name=Улучшеная электрическая печь III
-
 gregtech.machine.macerator.lv.name=Базовый дробитель
 gregtech.machine.macerator.mv.name=Улучшеный дробитель
 gregtech.machine.macerator.hv.name=Универсальный дробитель
 gregtech.machine.macerator.ev.name=Универсальный распылитель
-
 gregtech.machine.alloy_smelter.lv.name=Базовая плавильня
 gregtech.machine.alloy_smelter.mv.name=Улучшеная плавильня
 gregtech.machine.alloy_smelter.hv.name=Улучшеная плавильня II
@@ -1830,177 +1739,133 @@ gregtech.machine.assembler.ev.name=Улучшеная сборочная маш�
 
 
 gregtech.machine.autoclave.tooltip=Кристаллизирует ваши пыли
-
 gregtech.machine.autoclave.lv.name=Базовый автоклав
 gregtech.machine.autoclave.mv.name=Улучшеный автоклав
 gregtech.machine.autoclave.hv.name=Улучшеный автоклав II
 gregtech.machine.autoclave.ev.name=Улучшеный автоклав III
-
 gregtech.machine.bender.tooltip=Производит пластины более эффективно
-
 gregtech.machine.bender.lv.name=Базовый гибочный станок
 gregtech.machine.bender.mv.name=Улучшеный гибочный станок
 gregtech.machine.bender.hv.name=Улучшеный гибочный станок II
 gregtech.machine.bender.ev.name=Улучшеный гибочный станок III
-
 gregtech.machine.brewery.tooltip=Варим ваши напитки
-
 gregtech.machine.brewery.lv.name=Базовая пивоварня
 gregtech.machine.brewery.mv.name=Улучшеная пивоварня
 gregtech.machine.brewery.hv.name=Улучшеная пивоварня II
 gregtech.machine.brewery.ev.name=Улучшеная пивоварня III
-
 gregtech.machine.canner.lv.name=Базовая консервная машина
 gregtech.machine.canner.mv.name=Улучшеная консервная машина
 gregtech.machine.canner.hv.name=Улучшеная консервная машина II
 gregtech.machine.canner.ev.name=Улучшеная консервная машина III
-
 gregtech.machine.centrifuge.lv.name=Базовая центрифуга
 gregtech.machine.centrifuge.mv.name=Улучшеная центрифуга
 gregtech.machine.centrifuge.hv.name=Турбо центрифуга
 gregtech.machine.centrifuge.ev.name=Турбо центрифуга II
-
 gregtech.machine.chemical_bath.tooltip=Промывка руд в химикатах для их разделения
-
 gregtech.machine.chemical_bath.lv.name=Базовая химическая ванна
 gregtech.machine.chemical_bath.mv.name=Улучшеная химическая ванна
 gregtech.machine.chemical_bath.hv.name=Улучшеная химическая ванна II
 gregtech.machine.chemical_bath.ev.name=Улучшеная химическая ванна III
-
 gregtech.machine.chemical_reactor.tooltip=Позволяет химикатам реагировать друг с другом
-
 gregtech.machine.chemical_reactor.lv.name=Базовый химический реактор
 gregtech.machine.chemical_reactor.mv.name=Улучшеный химический реактор
 gregtech.machine.chemical_reactor.hv.name=Улучшеный химический реактор II
 gregtech.machine.chemical_reactor.ev.name=Улучшеный химический реактор III
-
 gregtech.machine.compressor.lv.name=Базовый компрессор
 gregtech.machine.compressor.mv.name=Улучшеный компрессор
 gregtech.machine.compressor.hv.name=Улучшеный компрессор II
 gregtech.machine.compressor.ev.name=Сингулярный компрессор
-
 gregtech.machine.cutter.lv.name=Базовая резочная машина
 gregtech.machine.cutter.mv.name=Улучшеная резочная машина
 gregtech.machine.cutter.hv.name=Улучшеная резочная машина II
 gregtech.machine.cutter.ev.name=Улучшеная резочная машина III
-
 gregtech.machine.distillery.tooltip=Дистилляция наиболее важных частей жидкостей
-
 gregtech.machine.distillery.lv.name=Базовый дистиллятор
 gregtech.machine.distillery.mv.name=Улучшеный дистиллятор
 gregtech.machine.distillery.hv.name=Улучшеный дистиллятор II
 gregtech.machine.distillery.ev.name=Улучшеный дистиллятор III
-
 gregtech.machine.electrolyzer.lv.name=Базовый электролизер
 gregtech.machine.electrolyzer.mv.name=Улучшеный электролизер
 gregtech.machine.electrolyzer.hv.name=Улучшеный электролизер II
 gregtech.machine.electrolyzer.ev.name=Молекулярный электролизер E-4908
-
 gregtech.machine.electromagnetic_separator.tooltip=Отделение магнитных руд от остальных
-
 gregtech.machine.electromagnetic_separator.lv.name=Базовый электромагнитный сепаратор
 gregtech.machine.electromagnetic_separator.mv.name=Улучшеный электромагнитный сепаратор
 gregtech.machine.electromagnetic_separator.hv.name=Улучшеный электромагнитный сепаратор II
 gregtech.machine.electromagnetic_separator.ev.name=Улучшеный электромагнитный сепаратор III
-
 gregtech.machine.extractor.lv.name=Базовый экстрактор
 gregtech.machine.extractor.mv.name=Улучшеный экстрактор
 gregtech.machine.extractor.hv.name=Улучшеный экстрактор II
 gregtech.machine.extractor.ev.name=Вакуумный экстрактор
-
 gregtech.machine.extruder.tooltip=Универсальный станок для металлообработки
-
 gregtech.machine.extruder.lv.name=Базовый экструдер
 gregtech.machine.extruder.mv.name=Улучшеный экструдер
 gregtech.machine.extruder.hv.name=Улучшеный экструдер II
 gregtech.machine.extruder.ev.name=Улучшеный экструдер III
-
 gregtech.machine.fermenter.tooltip=Ферментирует жидкости
-
 gregtech.machine.fermenter.lv.name=Базовый ферментер
 gregtech.machine.fermenter.mv.name=Улучшеный ферментер
 gregtech.machine.fermenter.hv.name=Улучшеный ферментер II
 gregtech.machine.fermenter.ev.name=Улучшеный ферментер III
-
 gregtech.machine.fluid_heater.lv.name=Базовый жидкостный нагреватель
 gregtech.machine.fluid_heater.mv.name=Улучшеный жидкостный нагреватель
 gregtech.machine.fluid_heater.hv.name=Улучшеный жидкостный нагреватель II
 gregtech.machine.fluid_heater.ev.name=Улучшеный жидкостный нагреватель III
-
 gregtech.machine.fluid_solidifier.tooltip=Охлаждает жидкости, образуя твердые вещества
-
 gregtech.machine.fluid_solidifier.lv.name=Базовый жидкостный отвердитель
 gregtech.machine.fluid_solidifier.mv.name=Улучшеный жидкостный отвердитель
 gregtech.machine.fluid_solidifier.hv.name=Улучшеный жидкостный отвердитель II
 gregtech.machine.fluid_solidifier.ev.name=Улучшеный жидкостный отвердитель III
-
 gregtech.machine.forge_hammer.lv.name=Базовый кузнечный молот
 gregtech.machine.forge_hammer.mv.name=Улучшеная кузнечный молот
 gregtech.machine.forge_hammer.hv.name=Улучшен кузнечный молот II
 gregtech.machine.forge_hammer.ev.name=Улучшен кузнечный молот III
-
 gregtech.machine.forming_press.lv.name=Базовый формовочный пресс
 gregtech.machine.forming_press.mv.name=Улучшеный формовочный пресс
 gregtech.machine.forming_press.hv.name=Улучшеный формовочный пресс II
 gregtech.machine.forming_press.ev.name=Улучшеный формовочный пресс III
-
 gregtech.machine.lathe.tooltip=Производит прутья более эффективно
-
 gregtech.machine.lathe.lv.name=Базовый токарный станок
 gregtech.machine.lathe.mv.name=Улучшеный токарный станок
 gregtech.machine.lathe.hv.name=Улучшеный токарный станок II
 gregtech.machine.lathe.ev.name=Улучшеный токарный станок III
-
 gregtech.machine.mixer.lv.name=Базовый смеситель
 gregtech.machine.mixer.mv.name=Улучшеный смеситель
 gregtech.machine.mixer.hv.name=Улучшеный смеситель II
 gregtech.machine.mixer.ev.name=Улучшеный смеситель III
-
 gregtech.machine.ore_washer.tooltip=Мытье ваших руд, чтобы получить побочные продукты
-
 gregtech.machine.ore_washer.lv.name=Базовый рудопромывочный агрегат
 gregtech.machine.ore_washer.mv.name=Улучшеный рудопромывочный агрегат
 gregtech.machine.ore_washer.hv.name=Улучшеный рудопромывочный агрегат II
 gregtech.machine.ore_washer.ev.name=Улучшеный рудопромывочный агрегат III
-
 gregtech.machine.packer.lv.name=Базовый упаковщик
 gregtech.machine.packer.mv.name=Улучшеный упаковщик
 gregtech.machine.packer.hv.name=Улучшеный упаковщик II
 gregtech.machine.packer.ev.name=Улучшеный упаковщик III
-
 gregtech.machine.unpacker.lv.name=Базовый распаковщик
 gregtech.machine.unpacker.mv.name=Улучшеный распаковщик
 gregtech.machine.unpacker.hv.name=Улучшеный распаковщик II
 gregtech.machine.unpacker.ev.name=Улучшеный распаковщик III
-
 gregtech.machine.polarizer.tooltip=Биполяризация ваших магнитов
-
 gregtech.machine.polarizer.lv.name=Базовый поляризатор
 gregtech.machine.polarizer.mv.name=Улучшеный поляризатор
 gregtech.machine.polarizer.hv.name=Улучшеный поляризатор II
 gregtech.machine.polarizer.ev.name=Улучшеный поляризатор III
-
 gregtech.machine.laser_engraver.lv.name=Базовый прецизионный лазерный гравер
 gregtech.machine.laser_engraver.mv.name=Улучшеный прецизионный лазерный гравер
 gregtech.machine.laser_engraver.hv.name=Улучшеный прецизионный лазерный гравер II
 gregtech.machine.laser_engraver.ev.name=Улучшеный прецизионный лазерный гравер III
-
 gregtech.machine.sifter.tooltip=Сохраняйте спокойствие и продолжайте просеивать
-
 gregtech.machine.sifter.lv.name=Базовая просеивающая машина
 gregtech.machine.sifter.mv.name=Улучшеная просеивающая машина
 gregtech.machine.sifter.hv.name=Улучшеная просеивающая машина II
 gregtech.machine.sifter.ev.name=Улучшеная просеивающая машина III
-
 gregtech.machine.thermal_centrifuge.tooltip=Точнее отделять руды
-
 gregtech.machine.thermal_centrifuge.lv.name=Базовая термальная центрифуга
 gregtech.machine.thermal_centrifuge.mv.name=Улучшеная термальная центрифуга
 gregtech.machine.thermal_centrifuge.hv.name=Улучшеная термальная центрифуга II
 gregtech.machine.thermal_centrifuge.ev.name=Улучшеная термальная центрифуга III
-
 gregtech.machine.wiremill.tooltip=Производит провода более эффективно
-
 gregtech.machine.wiremill.lv.name=Базовый волочильный стан
 gregtech.machine.wiremill.mv.name=Улучшеный волочильный стан
 gregtech.machine.wiremill.hv.name=Улучшеный волочильный стан II
@@ -2008,7 +1873,6 @@ gregtech.machine.wiremill.ev.name=Улучшеный волочильный ст
 
 # Корпуса машин
 gregtech.machine.hull.tooltip=§fВам просто нужно §5В§dо§4о§cб§eр§aа§bж§3е§7н§1и§5е§f, чтобы использовать это
-
 gregtech.machine.hull.ulv.name=Корпус машины (ULV)
 gregtech.machine.hull.lv.name=Корпус машины (LV)
 gregtech.machine.hull.mv.name=Корпус машины (MV)
@@ -2025,47 +1889,38 @@ gregtech.machine.battery_buffer.ulv.1.name=Батарейный буфер (1 я
 gregtech.machine.battery_buffer.ulv.4.name=Батарейный буфер (4 ячейки ULV)
 gregtech.machine.battery_buffer.ulv.9.name=Батарейный буфер (9 ячеек ULV)
 gregtech.machine.battery_buffer.ulv.16.name=Батарейный буфер (16 ячеек ULV)
-
 gregtech.machine.battery_buffer.lv.1.name=Батарейный буфер (1 ячека LV)
 gregtech.machine.battery_buffer.lv.4.name=Батарейный буфер (4 ячейки LV)
 gregtech.machine.battery_buffer.lv.9.name=Батарейный буфер (9 ячеек LV)
 gregtech.machine.battery_buffer.lv.16.name=Батарейный буфер (16 ячеек LV)
-
 gregtech.machine.battery_buffer.mv.1.name=Батарейный буфер (1 ячейка MV)
 gregtech.machine.battery_buffer.mv.4.name=Батарейный буфер (4 ячеек MV)
 gregtech.machine.battery_buffer.mv.9.name=Батарейный буфер (9 ячеек MV)
 gregtech.machine.battery_buffer.mv.16.name=Батарейный буфер (16 ячеек MV)
-
 gregtech.machine.battery_buffer.hv.1.name=Батарейный буфер (1 ячейка HV)
 gregtech.machine.battery_buffer.hv.4.name=Батарейный буфер (4 ячейки HV)
 gregtech.machine.battery_buffer.hv.9.name=Батарейный буфер (9 ячеек HV)
 gregtech.machine.battery_buffer.hv.16.name=Батарейный буфер (16 ячеек HV)
-
 gregtech.machine.battery_buffer.ev.1.name=Батарейный буфер (1 ячейка EV)
 gregtech.machine.battery_buffer.ev.4.name=Батарейный буфер (4 ячейки EV)
 gregtech.machine.battery_buffer.ev.9.name=Батарейный буфер (9 ячеек EV)
 gregtech.machine.battery_buffer.ev.16.name=Батарейный буфер (16 ячеек EV)
-
 gregtech.machine.battery_buffer.iv.1.name=Батарейный буфер (1 ячейка IV)
 gregtech.machine.battery_buffer.iv.4.name=Батарейный буфер (4 ячейки IV)
 gregtech.machine.battery_buffer.iv.9.name=Батарейный буфер (9 ячеек IV)
 gregtech.machine.battery_buffer.iv.16.name=Батарейный буфер (16 ячеек IV)
-
 gregtech.machine.battery_buffer.luv.1.name=Батарейный буфер (1 ячейка LuV)
 gregtech.machine.battery_buffer.luv.4.name=Батарейный буфер (4 ячейки LuV)
 gregtech.machine.battery_buffer.luv.9.name=Батарейный буфер (9 ячеек LuV)
 gregtech.machine.battery_buffer.luv.16.name=Батарейный буфер (16 ячеек LuV)
-
 gregtech.machine.battery_buffer.zpm.1.name=Батарейный буфер (1 ячейка ZPM)
 gregtech.machine.battery_buffer.zpm.4.name=Батарейный буфер (4 ячейки ZPM)
 gregtech.machine.battery_buffer.zpm.9.name=Батарейный буфер (9 ячеек ZPM)
 gregtech.machine.battery_buffer.zpm.16.name=Батарейный буфер (16 ячеек ZPM)
-
 gregtech.machine.battery_buffer.uv.1.name=Батарейный буфер (1 ячейка UV)
 gregtech.machine.battery_buffer.uv.4.name=Батарейный буфер (4 ячейки UV)
 gregtech.machine.battery_buffer.uv.9.name=Батарейный буфер (9 ячеек UV)
 gregtech.machine.battery_buffer.uv.16.name=Батарейный буфер (16 ячеек UV)
-
 gregtech.machine.battery_buffer.max.1.name=Батарейный буфер (1 ячейка Макс.)
 gregtech.machine.battery_buffer.max.4.name=Батарейный буфер (4 ячейки Макс.)
 gregtech.machine.battery_buffer.max.9.name=Батарейный буфер (9 ячеек Макс.)
@@ -2077,7 +1932,6 @@ gregtech.machine.transformer.tooltip_transform_down=Понижающий реж�
 gregtech.machine.transformer.message_transform_down=Понижает напряжение, вход: %dВ %d А, выход: %dВ %d А
 gregtech.machine.transformer.tooltip_transform_up=Повышающий режим:
 gregtech.machine.transformer.message_transform_up=Повышает напряжение, вход: %dВ %d А, выход: %dВ %d А
-
 gregtech.machine.transformer.lv.name=Трансформатор низкого напряжения (LV)
 gregtech.machine.transformer.mv.name=Трансформатор среднего напряжения (MV)
 gregtech.machine.transformer.hv.name=Трансформатор высокого напряжения (HV)
@@ -2102,17 +1956,14 @@ gregtech.machine.charger.max.name=Зарядное устройство макс
 # Насосы
 gregtech.machine.pump.tooltip_range=Зона действия: %dx%d
 gregtech.machine.pump.tooltip_speed=Откачивает жидкость каждый %d тик
-
 gregtech.machine.pump.lv.name=Базовый насос
 gregtech.machine.pump.mv.name=Улучшеный насос
 gregtech.machine.pump.hv.name=Улучшеный насос II
 gregtech.machine.pump.ev.name=Улучшеный насос III
-
 gregtech.machine.item_collector.lv.name=Базовый подбиратель предметов
 gregtech.machine.item_collector.mv.name=Улучшеный подбиратель предметов
 gregtech.machine.item_collector.hv.name=Улучшеный подбиратель предметов II
 gregtech.machine.item_collector.ev.name=Улучшеный подбиратель предметов III
-
 gregtech.machine.item_collector.collect_range=Область работы: %dx%d
 gregtech.machine.item_collector.gui.collect_range=Подбирает в радиусе %s блоков
 
@@ -2120,13 +1971,11 @@ gregtech.machine.item_collector.gui.collect_range=Подбирает в ради
 gregtech.machine.quantum_chest.tooltip=Лучше чем JABBA.
 gregtech.machine.quantum_chest.capacity=Вместительность: %d предметов
 gregtech.machine.quantum_chest.items_stored=Содержит предметов:
-
 gregtech.machine.quantum_chest.iv.name=Квантовый сундук на черной дыре
 
 # Квантовые резервуар
 gregtech.machine.quantum_tank.tooltip=Компактное место для хранения всех ваших жидкостей.
 gregtech.machine.quantum_tank.capacity=Объем жидкости: %d мВ
-
 gregtech.machine.quantum_tank.iv.name=Квантовый резервуар на черной дыре
 
 # Воздухосборники
@@ -2150,7 +1999,6 @@ gregtech.machine.fisher.requirement=Требует куб воды радиус�
 itemGroup.gregtech.main=Главная (GTCE)
 itemGroup.gregtech.materials=Материалы (GTCE)
 itemGroup.gregtech.ores=Руды (GTCE)
-
 behaviour.softhammer=Активирует и деактивирует машины
 behaviour.wrench=Повернет блок по правому клику
 behaviour.boor.by=от %s
@@ -2185,12 +2033,10 @@ gregtech.machine.cracker.name=Крекинговый завод
 gregtech.machine.coke_oven.name=Коксовая печь
 gregtech.machine.coke_oven_hatch.name=Люк коксовой печи
 gregtech.machine.coke_oven_hatch.tooltip=Позволяет автоматизировать доступ к коксовой печи
-
 gregtech.machine.large_combustion_engine.name=Дизельный двигатель
 gregtech.machine.large_turbine.steam.name=Большая паровая турбина
 gregtech.machine.large_turbine.gas.name=Большая газовая турбина
 gregtech.machine.large_turbine.plasma.name=Большая плазменная турбина
-
 gregtech.machine.large_boiler.bronze.name=Большой бронзовый котел
 gregtech.machine.large_boiler.steel.name=Большой стальной котел
 gregtech.machine.large_boiler.titanium.name=Большой титановый котел
@@ -2201,7 +2047,6 @@ gregtech.machine.primitive_blast_furnace.bronze.tooltip=Структура: 3x3x
 
 # Многоблочные детали машин
 gregtech.machine.item_bus.import.tooltip=Загружает предметы в агрегат
-
 gregtech.machine.item_bus.import.ulv.name=Входной люк (ULV)
 gregtech.machine.item_bus.import.lv.name=Входной люк (LV)
 gregtech.machine.item_bus.import.mv.name=Входной люк (MV)
@@ -2212,9 +2057,7 @@ gregtech.machine.item_bus.import.luv.name=Входной люк (LuV)
 gregtech.machine.item_bus.import.zpm.name=Входной люк (ZPM)
 gregtech.machine.item_bus.import.uv.name=Входной люк (UV)
 gregtech.machine.item_bus.import.uhv.name=Входной люк (UHV)
-
 gregtech.machine.item_bus.export.tooltip=Выдает готовые предметы из агрегата
-
 gregtech.machine.item_bus.export.ulv.name=Выходной люк (ULV)
 gregtech.machine.item_bus.export.lv.name=Выходной люк (LV)
 gregtech.machine.item_bus.export.mv.name=Выходной люк (MV)
@@ -2225,9 +2068,7 @@ gregtech.machine.item_bus.export.luv.name=Выходной люк (LuV)
 gregtech.machine.item_bus.export.zpm.name=Выходной люк (ZPM)
 gregtech.machine.item_bus.export.uv.name=Выходной люк (UV)
 gregtech.machine.item_bus.export.uhv.name=Выходной люк (UHV)
-
 gregtech.machine.fluid_hatch.import.tooltip=Для подачи жидкости в агрегат
-
 gregtech.machine.fluid_hatch.import.ulv.name=Жидкостный входной люк (ULV)
 gregtech.machine.fluid_hatch.import.lv.name=Жидкостный входной люк (LV)
 gregtech.machine.fluid_hatch.import.mv.name=Жидкостный входной люк (MV)
@@ -2238,9 +2079,7 @@ gregtech.machine.fluid_hatch.import.luv.name=Жидкостный входной
 gregtech.machine.fluid_hatch.import.zpm.name=Жидкостный входной люк (ZPM)
 gregtech.machine.fluid_hatch.import.uv.name=Жидкостный входной люк (UV)
 gregtech.machine.fluid_hatch.import.uhv.name=Жидкостный входной люк (UHV)
-
 gregtech.machine.fluid_hatch.export.tooltip=Для слива жидкости из агрегата
-
 gregtech.machine.fluid_hatch.export.ulv.name=Жидкостный выходной люк (ULV)
 gregtech.machine.fluid_hatch.export.lv.name=Жидкостный выходной люк (LV)
 gregtech.machine.fluid_hatch.export.mv.name=Жидкостный выходной люк (MV)
@@ -2251,9 +2090,7 @@ gregtech.machine.fluid_hatch.export.luv.name=Жидкостный выходно
 gregtech.machine.fluid_hatch.export.zpm.name=Жидкостный выходной люк (ZPM)
 gregtech.machine.fluid_hatch.export.uv.name=Жидкостный выходной люк (UV)
 gregtech.machine.fluid_hatch.export.uhv.name=Жидкостный выходной люк (UHV)
-
 gregtech.machine.energy_hatch.input.tooltip=Разъем для подключения кабелей к агрегату
-
 gregtech.machine.energy_hatch.input.ulv.name=Энергетический входной разъем (ULV)
 gregtech.machine.energy_hatch.input.lv.name=Энергетический входной разъем (LV)
 gregtech.machine.energy_hatch.input.mv.name=Энергетический входной разъем (MV)
@@ -2264,7 +2101,6 @@ gregtech.machine.energy_hatch.input.luv.name=Энергетический вхо
 gregtech.machine.energy_hatch.input.zpm.name=Энергетический входной разъем (ZPM)
 gregtech.machine.energy_hatch.input.uv.name=Энергетический входной разъем (UV)
 gregtech.machine.energy_hatch.input.max.name=Энергетический входной разъем (Макс.)
-
 gregtech.machine.energy_hatch.output.ulv.name=Энергетический выходной разъем (ULV)
 gregtech.machine.energy_hatch.output.lv.name=Энергетический выходной разъем (LV)
 gregtech.machine.energy_hatch.output.mv.name=Энергетический выходной разъем (MV)
@@ -2275,12 +2111,9 @@ gregtech.machine.energy_hatch.output.luv.name=Энергетический вы�
 gregtech.machine.energy_hatch.output.zpm.name=Энергетический выходной разъем (ZPM)
 gregtech.machine.energy_hatch.output.uv.name=Энергетический выходной разъем (UV)
 gregtech.machine.energy_hatch.output.max.name=Энергетический выходной разъем (Макс.)
-
 gregtech.machine.rotor_holder.hv.name=Держатель ротора (HV)
 gregtech.machine.rotor_holder.luv.name=Держатель ротора (LuV)
-
 gregtech.machine.fluid_tank.fluid=слдежит %s mb %s
-
 gregtech.machine.item_controller.tooltip.redstone=Требует подачи редстоуп сигнала для работы
 gregtech.machine.item_controller.tooltip.consumption=Пока работает, постоянно потребляет %d EU/тик
 
@@ -2295,7 +2128,6 @@ gregtech.universal.tooltip.amperage_out_till=Генерирует ток до: �
 gregtech.universal.tooltip.item_storage_capacity=Предметные слоты: %d
 gregtech.universal.tooltip.fluid_storage_capacity=Объем жидкости: %d Л
 gregtech.universal.tooltip.max_voltage_in=Максимальное потребляемое напряжение: §a%d §7(§a%s§7)
-
 gregtech.recipe.total=Всего: %d EU
 gregtech.recipe.eu=Потребление: %d EU/т
 gregtech.recipe.eu_inverted=Производство: %d EU/т
@@ -2305,13 +2137,10 @@ gregtech.recipe.not_consumed=Не расходуется
 gregtech.recipe.chance=Шанс: %s%% +%s%%/уровень
 gregtech.recipe.temperature=Температура: %dK (%s)
 gregtech.recipe.eu_to_start=Энергия для запуска: %sEU
-
 gregtech.fluid.click_to_fill=§7Нажмите с пустым контейнером для жидкости, чтобы заполнить его из бака.
 gregtech.fluid.click_to_fill.shift=§7(Shift-нажатие заполнит все контейнеры в вашей руке)
-
 gregtech.fluid.click_to_empty=§7Нажмите с заполненным контейнером для жидкости, чтобы опустошить в бак.
 gregtech.fluid.click_to_empty.shift=§7(Shift-нажатие опустошит все контейнеры в вашей руке)
-
 gregtech.fluid.plasma=%s плазма
 gregtech.fluid.empty=пустой
 gregtech.fluid.amount=§7%,d/%,d
@@ -2325,18 +2154,14 @@ gregtech.gui.toggle_view.enabled=Переключить вид (Предметы
 gregtech.gui.overclock.enabled=Разрешить разгон
 gregtech.gui.overclock.disabled=Запретить разгон
 gregtech.gui.sort=Сортировать
-
 gregtech.item_filter.empty_item=Пусто (нет предмета)
 gregtech.item_filter.footer=§eНажмите с предметом, чтобы переопределить
-
 gregtech.cable.voltage=Вольтаж: §a%d §7(§a%s§7)
 gregtech.cable.amperage=Сила тока: §e%d
 gregtech.cable.loss_per_block=Потеря за блок: §c%d
-
 gregtech.fluid_pipe.throughput=Пропускная способность: §e%d мВ/т
 gregtech.fluid_pipe.max_temperature=Максимальная температура: §c%dK
 gregtech.fluid_pipe.non_gas_proof=Не может переносить газы.
-
 gregtech.multiblock.work_paused=Работа приостановлена.
 gregtech.multiblock.running=Работает отлично.
 gregtech.multiblock.idling=Холостой ход.
@@ -2346,28 +2171,23 @@ gregtech.multiblock.invalid_structure=Неверная структура.
 gregtech.multiblock.validation_failed=Неверное количество входов/выходов.
 gregtech.multiblock.max_energy_per_tick=Максимум EU/т: %s (%s)
 gregtech.multiblock.generation_eu=Генерирует: %s EU/т
-
 gregtech.multiblock.blast_furnace.max_temperature=Максимальная температура: %sK
 gregtech.multiblock.multi_furnace.heating_coil_level=Уровень нагревательной катушки: %s
 gregtech.multiblock.multi_furnace.heating_coil_discount=EU усиление нагревательной катушки: %sx
 gregtech.multiblock.distillation_tower.distilling_fluid=Дистилляция %s
 gregtech.multiblock.cracker.cracking_fluid=Крекинг %s
-
 gregtech.multiblock.large_combustion_engine.lubricant_amount=Количество смазки: %sЛ
 gregtech.multiblock.large_combustion_engine.fuel_amount=Количество топлива: %sЛ (%s)
 gregtech.multiblock.large_combustion_engine.oxygen_amount=Количество кислорода: %sЛ
 gregtech.multiblock.large_combustion_engine.oxygen_boosted=Кислород добавлен.
 gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost=Принимает кислород для ускорения.
-
 gregtech.multiblock.turbine.fuel_amount=Количество топлива: %sЛ (%s)
 gregtech.multiblock.turbine.rotor_speed=Скорость ротора: %s / %s об/мин
 gregtech.multiblock.turbine.rotor_efficiency=Эффективность ротора: %s%%
 gregtech.multiblock.turbine.rotor_durability=Прочность ротора: %s%%
 gregtech.multiblock.turbine.low_rotor_durability=ВНИМАНИЕ: Прочность ротора ниже %s%% (%s%%)
-
 gregtech.multiblock.large_boiler.temperature=Температура: %s / %s C
 gregtech.multiblock.large_boiler.steam_output=Выход пара: %s мВ/т
-
 gregtech.command.usage=Применение: /gregtech <worldgen/util>
 gregtech.command.worldgen.usage=Применение: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Применение: /gregtech worldgen reload
@@ -2384,23 +2204,18 @@ gregtech.command.util.hand.meta_item=Название мета-предмета:
 gregtech.command.util.hand.not_a_player=Эта команда может использоваться только игроком.
 gregtech.command.util.hand.no_item=Перед выполнением этой команды, вы должны держать что-то в основной руке.
 gregtech.command.util.recipecheck.usage=Применение: /gregtech recipecheck
-
 gregtech.machine.locked_safe.name=Закрытый сейф
 gregtech.machine.locked_safe.malfunctioning=§cСломан!
 gregtech.machine.locked_safe.requirements=§7Требуется замена:
-
 gregtech.machine.workbench.name=Инженерный верстак
 gregtech.machine.workbench.tab.workbench=Создание
 gregtech.machine.workbench.tab.item_list=Хранение
 gregtech.machine.workbench.storage_note_1=(Доступные предметы в соседних
 gregtech.machine.workbench.storage_note_2=инвентарях, доступные для крафта)
 gregtech.item_list.item_stored=§7Хранится: %,d
-
 gregtech.machine.workbench.tab.crafting=Создание
 gregtech.machine.workbench.tab.container=Контейнер
-
 gregtech.machine.fluid_tank.max_multiblock=Максимальный размер: %,dx%,dx%,d
-
 cover.smart_item_filter.title=Умный предметный фильтр
 cover.smart_item_filter.filtering_mode.electrolyzer=Электролизер
 cover.smart_item_filter.filtering_mode.centrifuge=Центрифуга
@@ -2409,9 +2224,7 @@ cover.smart_item_filter.filtering_mode.description=Выберите машину
 cover.smart_item_filter.matching_mode.default=По умолчанию
 cover.smart_item_filter.matching_mode.ignore_fluid=Игнорировать жидкости
 cover.smart_item_filter.matching_mode.description=§eПо умолчанию§r - будет фильтровать предметы и жидкости по определенным критериям. /n§eИгнорировать жидкостиs§r - будет фильтровать только предметы.
-
 behavior.prospector.not_enough_energy=Ошибка анализа: Недостаточно энергии!
-
 metaitem.tool.matchbox.tooltip=This is not a Car
 metaitem.energy_crystal.tooltip=Reusable Battery
 metaitem.lapotron_crystal.tooltip=Reusable Battery
@@ -3337,6 +3150,5 @@ info.infinite_energy.uxv=Voltage: UXV
 info.infinite_energy.max=Voltage: MAX
 gregtech.universal.clear_nbt_recipe.tooltip=§cThis will destroy all contents!
 gregtech.multiblock.primitive_water_pump.description=The Primitive Water Pump is a pre-Steam Era multiblock that collects water once per second, depending on the Biome it is in. It can use a Pump, ULV, or LV Output Hatch, increasing the amount of water per tier. Follows the formula: Biome Coefficient * Hatch Multiplier.
-
 fluid.tile.lava=Lava
 fluid.tile.water=Water
