@@ -8,7 +8,7 @@ death.attack.frost=%s のふとんがふっとんだ.
 death.attack.electric=%s は電気工事士ではなかった.
 death.attack.radiation=%s は青白い光で満ち溢れた.
 death.attack.turbine=%s はタービンで散髪しようとした.
-death.attack.explosion=%s は粉骨砕身した.
+death.attack.explosion=%s の遺体が全国各地で発見された.
 death.attack.explosion.player=%s は %s のおかげで爆発した.
 death.attack.heat.player= %s は %s の水餃子の具になった.
 
@@ -3765,7 +3765,7 @@ gregtech.advancement.ultimate_voltage.79_tritanium_coil.desc=トリタニウム�
 
 
 behaviour.softhammer=機械の稼働/停止を切り替える
-behaviour.hammer=マシンの消音のオンとオフを切り替えます (叩く必要がある)
+behaviour.hammer=叩いてマシンの消音のオンとオフを切り替える
 behaviour.wrench=右クリックでブロックを回転
 behaviour.boor.by=by %s
 behaviour.paintspray.solvent.tooltip=様々なものを脱色できる
@@ -3789,19 +3789,19 @@ behaviour.paintspray.uses=残り使用回数: %,d
 behaviour.prospecting=鉱石探知に
 
 # Multiblock machine controllers
-gregtech.machine.primitive_water_pump.name=初歩的なウォーターポンプ
-gregtech.machine.primitive_blast_furnace.bronze.name=初歩的な高炉
-gregtech.machine.electric_blast_furnace.name=電気高炉
-gregtech.machine.electric_blast_furnace.tooltip.1=レシピの温度よりも高い場合, オーバークロック前にエネルギーが§a95%%§7になる効果が§a900K§7毎に適用される.
-gregtech.machine.electric_blast_furnace.tooltip.2=レシピの温度よりも高い場合, §a1800K§7毎に1つのオーバークロックが§a100%%§7効率的になる.
+gregtech.machine.primitive_water_pump.name=初歩的な揚水ポンプ
+gregtech.machine.primitive_blast_furnace.bronze.name=初歩的な溶鉱炉
+gregtech.machine.electric_blast_furnace.name=工業用電気炉
+gregtech.machine.electric_blast_furnace.tooltip.1=レシピの温度よりも§a900K§7高い毎に, オーバークロック前に消費エネルギーが§a95%%§7になる効果が適用される.
+gregtech.machine.electric_blast_furnace.tooltip.2=レシピの温度よりも§a1800K§7高い毎に, 1つのオーバークロックが§a100%%§7効率的になる.
 gregtech.machine.electric_blast_furnace.tooltip.3=使用電圧が§aMV以上§7かつレシピの電圧よりも高い場合, 電圧Tier毎に温度が§a100K§7上昇する.
 gregtech.machine.vacuum_freezer.name=真空冷却機
 gregtech.machine.implosion_compressor.name=内破圧縮機
 gregtech.machine.pyrolyse_oven.name=熱分解炉
-gregtech.machine.pyrolyse_oven.tooltip.1=コイルブロックが§aキュプロニッケル§7製では速度が§a25%%§7遅くなります. §aカンタル§7製以上の場合, コイルごとに処理時間が§a50%%§7になります.
+gregtech.machine.pyrolyse_oven.tooltip.1=コイルブロックが§aキュプロニッケル§7製では速度が§a25%%§7遅くなります. §aカンタル§7製以上の場合, コイルごとに速度が§a50%%§7上昇します.
 gregtech.machine.distillation_tower.name=蒸留塔
-gregtech.machine.multi_furnace.name=大型かまど
-gregtech.machine.cracker.name=油分解装置
+gregtech.machine.multi_furnace.name=マルチスメルター
+gregtech.machine.cracker.name=接触分解装置
 gregtech.machine.cracker.tooltip.1=§aキュプロニッケル§7製以上のコイルブロックを用いた場合, コイルごとに消費エネルギーが§a5%%§7軽減されます.
 gregtech.machine.coke_oven.name=コークス炉
 gregtech.machine.processing_array.name=プロセッシングアレイ
@@ -3822,17 +3822,17 @@ gregtech.machine.large_turbine.steam.name=大型蒸気タービン
 gregtech.machine.large_turbine.gas.name=大型ガスタービン
 gregtech.machine.large_turbine.plasma.name=大型プラズマタービン
 
-gregtech.machine.large_boiler.bronze.name=青銅製大型ボイラー
-gregtech.machine.large_boiler.steel.name=鋼鉄製大型ボイラー
+gregtech.machine.large_boiler.bronze.name=ブロンズ製大型ボイラー
+gregtech.machine.large_boiler.steel.name=スチール製大型ボイラー
 gregtech.machine.large_boiler.titanium.name=チタン製大型ボイラー
-gregtech.machine.large_boiler.tungstensteel.name=タングステン鋼製大型ボイラー
+gregtech.machine.large_boiler.tungstensteel.name=タングステンスチール製大型ボイラー
 
 gregtech.machine.assembly_line.name=アセンブリライン
 gregtech.machine.fusion_reactor.luv.name=核融合炉 Mark 1
 gregtech.machine.fusion_reactor.zpm.name=核融合炉 Mark 2
 gregtech.machine.fusion_reactor.uv.name=核融合炉 Mark 3
 gregtech.machine.fusion_reactor.capacity=§7最大蓄電量: §e%sM EU
-gregtech.machine.fusion_reactor.overclocking=オーバークロックはエネルギー2倍, 所要時間半分.
+gregtech.machine.fusion_reactor.overclocking=オーバークロックするとエネルギーは2倍, 所要時間は半分になる.
 
 gregtech.machine.miner.lv.name=基本型採掘機
 gregtech.machine.miner.mv.name=発展型採掘機
@@ -3848,7 +3848,7 @@ gregtech.machine.miner.multi.tooltip=最大範囲: §b%dx%d§7チャンク.
 gregtech.machine.miner.multi.production=粉砕機の3倍以上の砕いた鉱石を生産.
 gregtech.machine.miner.multi.description=広い面積をカバーし, 大量の鉱石を生産するマルチブロック採掘機.
 #Small ores lang: gregtech.machine.miner.multi.production=粉砕機の3倍以上の砕いた鉱石を生産. Small ore Fortune §b%d§7.
-gregtech.machine.miner.fluid_usage=§b%dmb/tick§7で§e%s§7を消費. オーバークロックごとに液体消費が2倍.
+gregtech.machine.miner.fluid_usage=§b%dmb/tick§7で§e%s§7を消費. オーバークロックごとに液体消費が2倍になる.
 gregtech.machine.miner.overclock=%s§7を要求. %s§7までオーバークロック可能.
 
 gregtech.machine.miner.startx=開始X: %d
@@ -3865,25 +3865,25 @@ gregtech.machine.fluid_drilling_rig.hv.name=発展型液体採掘機
 gregtech.machine.fluid_drilling_rig.ev.name=発展型液体採掘機 II
 gregtech.machine.fluid_drilling_rig.description=液体を岩盤下から汲みだす.
 gregtech.machine.fluid_drilling_rig.production=生産倍率: §e%sx§7
-gregtech.machine.fluid_drilling_rig.depletion=枯渇率: §b%s%%§7
+gregtech.machine.fluid_drilling_rig.depletion=枯渇速度: §b%s%%§7
 gregtech.machine.fluid_drilling_rig.energy=%s§7を要求. %s§7までオーバークロック可能.
 gregtech.machine.fluid_drilling_rig.overclock=オーバークロックで生産が§d50%%§7上昇する.
 
-gregtech.machine.central_monitor.name=Central Monitor
-gregtech.multiblock.central_monitor.low_power=Low Power
-gregtech.multiblock.central_monitor.height=Screen Height:
-gregtech.multiblock.central_monitor.width=Screen Width: %d
-gregtech.multiblock.central_monitor.height_modify=Modify Height: %d
-gregtech.multiblock.central_monitor.tooltip.1=This is a machine that monitors machines proxied by the Digital Interface Cover. You can easily monitor the Fluids, Items, Energy, and States of machines proxied in Energy Network.
-gregtech.multiblock.central_monitor.tooltip.2=You can build the central monitor screen from 3X2 to %dX%d (width X height).
-gregtech.multiblock.central_monitor.tooltip.3=The default height is 3. You can adjust the screen height in the GUI before the structure is formed.
-gregtech.multiblock.central_monitor.tooltip.4=Energy consumption: %d EU/s for each screen.
-gregtech.multiblock.monitor_screen.tooltip.1=The GUI can be opened with a right-click of a screwdriver.
-gregtech.multiblock.monitor_screen.tooltip.2=The proxy mode of Digital Interface Cover can delegate machines' capabilities and GUI. (Yes, you can connect pipes directly on the screen.)
-gregtech.multiblock.monitor_screen.tooltip.3=The screen also supports plugins.
+gregtech.machine.central_monitor.name=セントラルモニター
+gregtech.multiblock.central_monitor.low_power=電力不足
+gregtech.multiblock.central_monitor.height=スクリーンの高さ:
+gregtech.multiblock.central_monitor.width=スクリーンの長さ: %d
+gregtech.multiblock.central_monitor.height_modify=高さ変更: %d
+gregtech.multiblock.central_monitor.tooltip.1=セントラルモニターはデジタルインターフェースカバーによって連結された機械を監視する機械です.これによりエネルギーネットワーク内の液体とアイテムとエネルギーと機械の状態を容易に管理することができます.
+gregtech.multiblock.central_monitor.tooltip.2=モニタースクリーンは 3X2 から %dX%d (長さ X 高さ)までの自由な大きさにすることができます.
+gregtech.multiblock.central_monitor.tooltip.3=デフォルトの高さは3です.モニターが完成するまでにGUIを開くことで高さを調節することができます.
+gregtech.multiblock.central_monitor.tooltip.4=エネルギー消費: スクリーン一枚につき %d EU/s.
+gregtech.multiblock.monitor_screen.tooltip.1=スクリュードライバーで右クリックすることでGUIを開けます.
+gregtech.multiblock.monitor_screen.tooltip.2=デジタルインターフェースのプロキシモードはスクリーンに機械の性質とGUIを付与させます. (つまり, 機械に繋ぐようにスクリーンに直接パイプを繋げます.)
+gregtech.multiblock.monitor_screen.tooltip.3=スクリーンはプラグインにも対応しています.
 
 
-gregtech.machine.monitor_screen.name=Monitor Screen
+gregtech.machine.monitor_screen.name=モニタースクリーン
 
 
 # Multiblock Tooltips
@@ -3968,9 +3968,9 @@ gregtech.machine.energy_hatch.input.uxv.name=UXVエネルギーハッチ
 gregtech.machine.energy_hatch.input.opv.name=OpVエネルギーハッチ
 gregtech.machine.energy_hatch.input.max.name=MAXエネルギーハッチ
 
-gregtech.machine.energy_hatch.input_hi_amp.tooltip=マルチブロックへの複数電流でのエネルギー入力
+gregtech.machine.energy_hatch.input_hi_amp.tooltip=マルチブロックへの複数アンペアでのエネルギー入力
 
-gregtech.machine.energy_hatch.input_4a.ev.name=EV 4A エネルギーハッチ
+gregtech.machine.energy_hatch.input_4a.ev.name=EV 4Aエネルギーハッチ
 gregtech.machine.energy_hatch.input_4a.iv.name=IV 4Aエネルギーハッチ
 gregtech.machine.energy_hatch.input_4a.luv.name=LuV 4Aエネルギーハッチ
 gregtech.machine.energy_hatch.input_4a.zpm.name=ZPM 4Aエネルギーハッチ
@@ -3983,7 +3983,7 @@ gregtech.machine.energy_hatch.input_16a.zpm.name=ZPM 16Aエネルギーハッチ
 gregtech.machine.energy_hatch.input_16a.uv.name=UV 16Aエネルギーハッチ
 gregtech.machine.energy_hatch.input_16a.uhv.name=UHV 16Aエネルギーハッチ
 
-gregtech.machine.energy_hatch.output.tooltip=マルチブロックからのエネルギー取出
+gregtech.machine.energy_hatch.output.tooltip=マルチブロックからのエネルギー出力
 
 gregtech.machine.energy_hatch.output.ulv.name=ULV ダイナモハッチ
 gregtech.machine.energy_hatch.output.lv.name=LV ダイナモハッチ
@@ -4001,7 +4001,7 @@ gregtech.machine.energy_hatch.output.uxv.name=UXV ダイナモハッチ
 gregtech.machine.energy_hatch.output.opv.name=OpV ダイナモハッチ
 gregtech.machine.energy_hatch.output.max.name=MAX ダイナモハッチ
 
-gregtech.machine.energy_hatch.output_hi_amp.tooltip=マルチブロックからの複数電流でのエネルギー取出
+gregtech.machine.energy_hatch.output_hi_amp.tooltip=マルチブロックからの複数アンペアでのエネルギー出力
 
 gregtech.machine.energy_hatch.output_4a.ev.name=EV 4A ダイナモハッチ
 gregtech.machine.energy_hatch.output_4a.iv.name=IV 4A ダイナモハッチ
@@ -4017,7 +4017,7 @@ gregtech.machine.energy_hatch.output_16a.uv.name=UV 16A ダイナモハッチ
 gregtech.machine.energy_hatch.output_16a.uhv.name=UHV 16A ダイナモハッチ
 
 gregtech.machine.rotor_holder.tooltip1=マルチブロックのローターホルダー
-gregtech.machine.rotor_holder.tooltip2=ローターを所定の位置に保持, 飛び散らないようにする
+gregtech.machine.rotor_holder.tooltip2=ローターが飛び散らないように所定の位置に固定する
 
 gregtech.machine.rotor_holder.hv.name=HVローターホルダー
 gregtech.machine.rotor_holder.ev.name=EVローターホルダー
@@ -4028,21 +4028,21 @@ gregtech.machine.rotor_holder.uv.name=UVローターホルダー
 
 gregtech.machine.maintenance_hatch.name=メンテナンスハッチ
 gregtech.machine.maintenance_hatch.tooltip=マルチブロックのメンテナンスに
-gregtech.machine.maintenance_hatch_configurable.name=構成可能なメンテナンスハッチ
-gregtech.machine.maintenance_hatch_configurable.tooltip=マルチブロックをより細かく制御するために./nまずは故障箇所を無くそう!
+gregtech.machine.maintenance_hatch_configurable.name=制御可能なメンテナンスハッチ
+gregtech.machine.maintenance_hatch_configurable.tooltip=マルチブロックをより細かく制御するために./n設置した時点で故障箇所なし
 gregtech.machine.maintenance_hatch_full_auto.name=自動メンテナンスハッチ
 gregtech.machine.maintenance_hatch_full_auto.tooltip=マルチブロックの自動メンテナンスに
-#div.gregtech.machine.maintenance_hatch_tool_slot.tooltip=問題解決のためのツールがインベントリ内にある場合, 素手でここをクリック
-#div.gregtech.machine.maintenance_hatch_tape_slot.tooltip=問題を防ぐためにテープを挿入
+gregtech.machine.maintenance_hatch_tool_slot.tooltip=故障解決のためのツールがインベントリ内にある場合, 素手でここをクリック
+gregtech.machine.maintenance_hatch_tape_slot.tooltip=故障を解決するためにテープを挿入
 
 
-gregtech.maintenance.configurable_duration=倍率: %fx
-gregtech.maintenance.configurable_duration.unchanged_description=レシピは通常の速度で実行されます. 設定を変更すると変更されます.
-gregtech.maintenance.configurable_duration.changed_description=レシピはオーバークロック前の速度より%f倍かかります.
+gregtech.maintenance.configurable_duration=加工時間: %fx
+gregtech.maintenance.configurable_duration.unchanged_description=レシピは通常の加工時間で実行されます. 設定を変更するとアップデートされます.
+gregtech.maintenance.configurable_duration.changed_description=オーバークロックについての計算が入る前にレシピの加工時間に %fx の補正が掛かります、
 
-gregtech.maintenance.configurable_time=時間: %fx
-gregtech.maintenance.configurable_time.unchanged_description=故障は通常の頻度で発生します. 設定を変更すると変更されます.
-gregtech.maintenance.configurable_time.changed_description=問題は通常の%f倍の頻度で発生します.
+gregtech.maintenance.configurable_time=故障率: %fx
+gregtech.maintenance.configurable_time.unchanged_description=故障は通常の頻度で発生します. 設定を変更するとアップデートされます.
+gregtech.maintenance.configurable_time.changed_description=故障は通常の%f倍の頻度で発生します.
 
 gregtech.machine.muffler_hatch.tooltip=搬出口を塞ぐな!
 
@@ -4062,10 +4062,10 @@ gregtech.machine.muffler_hatch.uxv.name=UXVマフラーハッチ
 gregtech.machine.muffler_hatch.opv.name=OpVマフラーハッチ
 gregtech.machine.muffler_hatch.max.name=MAXマフラーハッチ
 
-gregtech.muffler.recovery_tooltip=§b%d%%§7の確率でアイテムを回復する.
+gregtech.muffler.recovery_tooltip=§b%d%%§7の確率でアイテムを回収する.
 
 gregtech.machine.pump_hatch.name=ポンプ搬出ハッチ
-gregtech.machine.pump_hatch.tooltip=ウォーターポンプ用の初歩的な搬出ハッチ
+gregtech.machine.pump_hatch.tooltip=揚水ポンプ用の初歩的な搬出ハッチ
 
 gregtech.machine.machine_hatch.name=マシンアクセスインターフェース
 gregtech.machine.machine_hatch.locked=インターフェースはロックされている
@@ -5061,7 +5061,5 @@ gregtech.machine.rock_breaker.uxv.tooltip=Volcanic Formation Chamber
 gregtech.machine.rock_breaker.opv.tooltip=Volcanic Formation Chamber
 gregtech.machine.item_bus.import.hv.name=HV Input Bus
 gregtech.machine.item_bus.import.ev.name=EV Input Bus
-gregtech.machine.maintenance_hatch_tool_slot.tooltip=Click slot with empty hand when required tools are in inventory to solve problems
-gregtech.machine.maintenance_hatch_tape_slot.tooltip=Insert Tape to prevent problems
 gregtech.machine.centrifuge.uxv.name=Epic Centrifuge IV
 gregtech.machine.chemical_reactor.uxv.name=Epic Chemical Reactor IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IVgregtech.machine.autoclave.uxv.name=Epic Autoclave IV
