@@ -106,14 +106,23 @@ public class ToolHelper {
     // Crafting Symbols
     private static final BiMap<Character, IGTTool> symbols = HashBiMap.create();
 
+    /**
+     * @return finds the registered crafting symbol with the tool
+     */
     public static Character getSymbolFromTool(IGTTool tool) {
         return symbols.inverse().get(tool);
     }
 
+    /**
+     * @return finds the registered tool with the crafting symbol
+     */
     public static IGTTool getToolFromSymbol(Character symbol) {
         return symbols.get(symbol);
     }
 
+    /**
+     * Registers the tool against a crafting symbol, this is used in {@link gregtech.api.recipes.ModHandler}
+     */
     public static void registerToolSymbol(Character symbol, IGTTool tool) {
         symbols.put(symbol, tool);
     }
