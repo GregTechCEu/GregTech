@@ -2975,17 +2975,17 @@ gregtech.machine.chemical_bath.luv.tooltip=化学浸泡器
 gregtech.machine.chemical_bath.zpm.name=精英化学浸洗器 III
 gregtech.machine.chemical_bath.zpm.tooltip=化学浸泡器
 gregtech.machine.chemical_bath.uv.name=终极化学浸洗器
-gregtech.machine.chemical_bath.uv.tooltip=化学敦煌网
+gregtech.machine.chemical_bath.uv.tooltip=化学浸泡器
 gregtech.machine.chemical_bath.uhv.name=史诗化学浸洗器
-gregtech.machine.chemical_bath.uhv.tooltip=化学敦煌网
+gregtech.machine.chemical_bath.uhv.tooltip=化学浸泡器
 gregtech.machine.chemical_bath.uev.name=史诗化学浸洗器 II
-gregtech.machine.chemical_bath.uev.tooltip=化学敦煌网
+gregtech.machine.chemical_bath.uev.tooltip=化学浸泡器
 gregtech.machine.chemical_bath.uiv.name=史诗化学浸洗器 III
-gregtech.machine.chemical_bath.uiv.tooltip=化学敦煌网
+gregtech.machine.chemical_bath.uiv.tooltip=化学浸泡器
 gregtech.machine.chemical_bath.uxv.name=史诗化学浸洗器 IV
-gregtech.machine.chemical_bath.uxv.tooltip=化学敦煌网
+gregtech.machine.chemical_bath.uxv.tooltip=化学浸泡器
 gregtech.machine.chemical_bath.opv.name=传奇化学浸洗器
-gregtech.machine.chemical_bath.opv.tooltip=化学敦煌网
+gregtech.machine.chemical_bath.opv.tooltip=化学浸泡器
 
 # 化学反应釜 Chemical Reactor
 gregtech.machine.chemical_reactor.lv.name=基础化学反应釜
