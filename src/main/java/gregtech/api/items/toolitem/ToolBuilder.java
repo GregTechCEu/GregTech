@@ -63,6 +63,9 @@ public abstract class ToolBuilder<T extends IGTTool> {
     public abstract Supplier<T> supply();
 
     public T build() {
+        if (this.symbol == null) {
+            return supply().get();
+        }
         IGTTool existing = ToolHelper.getToolFromSymbol(this.symbol);
         if (existing != null) {
             throw new IllegalArgumentException(String.format("Symbol %s has been taken by %s already!", symbol, existing));
