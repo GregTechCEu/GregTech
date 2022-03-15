@@ -548,7 +548,7 @@ metaitem.board.epoxy.tooltip=An Advanced Board
 metaitem.board.fiber_reinforced.name=Fiber-Reinforced Circuit Board
 metaitem.board.fiber_reinforced.tooltip=An Extreme Board
 metaitem.board.multilayer.fiber_reinforced.name=Multi-layer Fiber-Reinforced Circuit Board
-metaitem.board.multiplayer.fiber_reinforced.name=An Elite Board
+metaitem.board.multilayer.fiber_reinforced.tooltip=An Elite Board
 metaitem.board.wetware.name=Wetware Lifesupport Circuit Board
 metaitem.board.wetware.tooltip=The Board that keeps life
 
