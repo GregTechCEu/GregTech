@@ -37,6 +37,9 @@ gregtech.top.transform_down=§a减低§r
 gregtech.top.transform_input=§6输入:§r
 gregtech.top.transform_output=§9输出:§r
 
+gregtech.top.convert_eu=§e正在转换 EU§r
+gregtech.top.convert_fe=§c正在转换 FE§r
+
 gregtech.top.fuel_burn=for
 gregtech.top.fuel_time=秒
 gregtech.top.fuel_min_consume=需要
@@ -67,6 +70,7 @@ gregtech.multiblock.assembly_line.description=装配线是由5到16个“片”�
 gregtech.multiblock.fusion_reactor.luv.description=核聚变反应堆 Mk I 是一台可以通过聚变生产重元素的大型多方块机器。它可以使用LuV，ZPM或者UV等级的能源仓.每一个能源仓可以增加10M EU的能量缓存，最大160M EU.
 gregtech.multiblock.fusion_reactor.zpm.description=核聚变反应堆 Mk II 是一台可以通过聚变生产重元素的大型多方块机器。它可以使用ZPM或者UV等级的能源仓。每一个能源仓可以增加20M EU的能量缓存，最大320M EU.
 gregtech.multiblock.fusion_reactor.uv.description=核聚变反应堆 Mk III 是一台可以通过聚变生产重元素的大型多方块机器。它只能使用UV等级的能源仓。每一个能源仓可以增加40M EU的能量缓存，最大640M EU.
+gregtech.multiblock.fusion_reactor.energy=EU: %d / %d
 gregtech.multiblock.fusion_reactor.heat=热量: %d
 gregtech.multiblock.large_chemical_reactor.description=大型化学反应釜以100%的能源效率进行化学反应. 超频时将速度和能量都乘以 4. 多方块结构恰好需要一个白铜线圈块方块.它必须放置在相邻于聚四氟乙烯管道方块位于中心.
 gregtech.multiblock.primitive_water_pump.description=原始水泵是一个蒸汽时代前期的多方块结构每秒钟收集一次水, 取决于它所在的生物群系。它可以使用一个泵，ULV，或LV输出舱，增加每层的水量. 遵循公式:生物群系系数*输出舱乘数.
@@ -236,6 +240,7 @@ metaitem.large_fluid_cell.stainless_steel.name=%s不锈钢单元
 metaitem.large_fluid_cell.titanium.name=%s钛单元
 metaitem.large_fluid_cell.tungstensteel.name=%s钨钢单元
 
+metaitem.spray.solvent.name=喷漆罐(溶剂)
 metaitem.spray.can.dyes.white.name=喷漆罐(白色)
 metaitem.spray.can.dyes.orange.name=喷漆罐(橙色)
 metaitem.spray.can.dyes.magenta.name=喷漆罐(品红)
@@ -1045,7 +1050,7 @@ metaarmor.tooltip.stepassist=提供步行辅助
 metaarmor.tooltip.speed=提高跑步速度
 metaarmor.tooltip.jump=增加跳跃高度和距离
 metaarmor.tooltip.falldamage=消除掉落伤害
-metaarmor.tooltip.poitons=消除不良效果
+metaarmor.tooltip.potions=消除不良效果
 metaarmor.tooltip.burning=消除燃烧伤害
 
 metaarmor.hud.status.enabled=§a开
@@ -1887,6 +1892,10 @@ material.ammonium_chloride=氯化铵
 material.acidic_osmium_solution=酸性锇溶液
 material.iridium_metal_residue=金属铱残留物
 material.rhodium_plated_palladium=镀铑钯合金
+material.cyclohexane=环已烷
+material.cyclohexanone_oxime=环已酮肟
+material.caprolactam=环氧乙烷
+material.nitrosyl_chloride=亚硝基氯化物
 
 material.fluoroantimonic_acid=氟锑酸
 material.titanium_trifluoride=三氟化钛
@@ -3931,6 +3940,10 @@ gregtech.machine.energy_converter.uiv.1.name=UIV 能量转换器 (1A)
 gregtech.machine.energy_converter.uiv.4.name=UIV 能量转换器 (4A)
 gregtech.machine.energy_converter.uiv.8.name=UIV 能量转换器 (8A)
 gregtech.machine.energy_converter.uiv.16.name=UIV 能量转换器 (16A)
+gregtech.machine.energy_converter.umv.1.name=UMV 能量转换器 (1A)
+gregtech.machine.energy_converter.umv.4.name=UMV 能量转换器 (4A)
+gregtech.machine.energy_converter.umv.8.name=UMV 能量转换器 (8A)
+gregtech.machine.energy_converter.umv.16.name=UMV 能量转换器 (16A)
 gregtech.machine.energy_converter.uxv.1.name=UXV 能量转换器 (1A)
 gregtech.machine.energy_converter.uxv.4.name=UXV 能量转换器 (4A)
 gregtech.machine.energy_converter.uxv.8.name=UXV 能量转换器 (8A)
@@ -4320,6 +4333,7 @@ behaviour.softhammer=激活和关闭机器
 behaviour.hammer=打开和关闭机器的消声(通过点击它们)
 behaviour.wrench=右键单击旋转方块
 behaviour.boor.by=通过 %s
+behaviour.paintspray.solvent.tooltip=可以移除已经染色的物品的颜色
 behaviour.paintspray.white.tooltip=可以将物品染成白色
 behaviour.paintspray.orange.tooltip=可以将物品染成橙色
 behaviour.paintspray.magenta.tooltip=可以将物品染成品红色
@@ -4522,6 +4536,7 @@ gregtech.machine.energy_hatch.input.max.name=MAX 能源仓
 
 gregtech.machine.energy_hatch.input_hi_amp.tooltip=多方块结构的更高安培能量输入
 
+gregtech.machine.energy_hatch.input_4a.ev.name=EV 4A 能源仓
 gregtech.machine.energy_hatch.input_4a.iv.name=IV 4A 能源仓
 gregtech.machine.energy_hatch.input_4a.luv.name=LuV 4A 能源仓
 gregtech.machine.energy_hatch.input_4a.zpm.name=ZPM 4A 能源仓
@@ -4578,11 +4593,13 @@ gregtech.machine.rotor_holder.zpm.name=ZPM 转子支架
 gregtech.machine.rotor_holder.uv.name=UV 转子支架
 
 gregtech.machine.maintenance_hatch.name=维护仓
-gregtech.machine.maintenance_hatch.tooltip=去修复多方块结构
+gregtech.machine.maintenance_hatch.tooltip=用于修复多方块结构
 gregtech.machine.maintenance_hatch_configurable.name=可配置维护仓
-gregtech.machine.maintenance_hatch_configurable.tooltip=为了更好地控制多方块结构启动/n没有维护问题!
+gregtech.machine.maintenance_hatch_configurable.tooltip=为了更好地控制多方块结构/n启动，没有维护问题！
 gregtech.machine.maintenance_hatch_full_auto.name=自动维护仓
 gregtech.machine.maintenance_hatch_full_auto.tooltip=用于自动维护多方块结构
+gregtech.machine.maintenance_hatch_tool_slot.tooltip=当维护的所需工具在库存中时，用空手右击即可解决维护问题
+gregtech.machine.maintenance_hatch_tape_slot.tooltip=放入胶带以防止出现问题
 
 gregtech.maintenance.configurable_duration=持续时间: %fx
 gregtech.maintenance.configurable_duration.unchanged_description=配方以正常速度运行。将配置更改以更新。
@@ -4656,6 +4673,7 @@ gregtech.fluid.click_combined=§7单击流体容器可 §c清空 §7或 §b填�
 
 gregtech.fluid.click_to_empty=§7单击流体容器可 §c清空 §7容器 (shift单击可以得到整组)。
 
+gregtech.fluid.generic=%s
 gregtech.fluid.plasma=%s 等离子
 gregtech.fluid.empty=空
 gregtech.fluid.amount=§9总量: %,d/%,d L
@@ -4868,6 +4886,20 @@ gregtech.cover.activity_detector.message_activity_inverted=监控倒转活动状
 
 gregtech.cover.activity_detector_advanced.message_activity_normal=监控正常进度状态
 gregtech.cover.activity_detector_advanced.message_activity_inverted=监控倒转进度状态
+
+gregtech.creative.chest.item=物品
+gregtech.creative.chest.ipc=每次循环输出物品数量
+gregtech.creative.chest.tpc=多少 Tick 循环一次
+
+gregtech.creative.tank.fluid=流体
+gregtech.creative.tank.mbpc=每次循环输出流体数量
+gregtech.creative.tank.tpc=多少 Tick 循环一次
+
+gregtech.creative.energy.amperage=电流
+gregtech.creative.energy.voltage=电压
+
+gregtech.creative.activity.on=激活
+gregtech.creative.activity.off=未激活
 
 gregtech.terminal.app_name.items=物品指南
 gregtech.terminal.app_name.machines=机器指南
