@@ -35,10 +35,10 @@ public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeB
     @Override
     public boolean applyProperty(String key, Object value) {
         if (key.equals(GasCollectorDimensionProperty.KEY)) {
-            this.dimension(((Number) value).intValue());
+            this.dimension(((List<Integer>) value).get(0));
             return true;
         }
-        return true;
+        return false;
     }
 
     public GasCollectorRecipeBuilder dimension(int dimensionID) {

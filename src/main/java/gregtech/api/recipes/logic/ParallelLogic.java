@@ -303,6 +303,12 @@ public class ParallelLogic {
             }
         }
 
+        // Return the maximum parallel limit here if there are only non-consumed inputs, which are all found in the input bus
+        // At this point, we would have already returned 0 if we were missing any non-consumable inputs, so we can omit that check
+        if(countableMap.isEmpty() && !notConsumableMap.isEmpty()) {
+            return parallelAmount;
+        }
+
         // Iterate through the recipe inputs
         for (Map.Entry<Ingredient, Integer> recipeInputEntry : countableMap.entrySet()) {
             int needed = recipeInputEntry.getValue();
