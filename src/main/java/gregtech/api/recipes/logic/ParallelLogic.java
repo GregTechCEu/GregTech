@@ -15,6 +15,10 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import java.util.*;
 
 public class ParallelLogic {
+
+    private static final String NON_CONSUMED_NBT_KEY = "nonConsumable";
+
+
     /**
      * @param recipe         The recipe
      * @param inputs         The item inputs
@@ -298,7 +302,10 @@ public class ParallelLogic {
                     }
                 }
             }
-            if (needed > available) {
+            // We need to check >= available here because of Non-Consumable inputs with stacksize. If there is a NC input
+            // with size 2, and only 1 in the input, needed will be equal to available, but this situation should still fail
+            // as not all inputs are present
+            if (needed >= available) {
                 return 0;
             }
         }
@@ -347,7 +354,7 @@ public class ParallelLogic {
         Map<FluidKey, Integer> notConsumableMap = new HashMap<>();
         for (FluidStack fluidStack : recipe.getFluidInputs()) {
             int fluidAmount = fluidStack.amount;
-            if (fluidStack.tag != null && fluidStack.tag.hasKey("nonConsumable")) {
+            if (fluidStack.tag != null && fluidStack.tag.hasKey(NON_CONSUMED_NBT_KEY)) {
                 notConsumableMap.computeIfPresent(new FluidKey(fluidStack), (k, v) -> v + fluidAmount);
                 notConsumableMap.putIfAbsent(new FluidKey(fluidStack), fluidAmount);
             } else {
@@ -362,7 +369,14 @@ public class ParallelLogic {
             int available = 0;
             // For every fluid gathered from the fluid inputs.
             for (Map.Entry<FluidKey, Integer> inputFluid : countFluid.entrySet()) {
-                if (notConsumableFluid.getKey().equals(inputFluid.getKey())) {
+                // Strip the Non-consumable tags here, as FluidKey compares the tags, which causes finding matching fluids
+                // in the input tanks to fail, because there is nothing in those hatches with a non-consumable tag
+                FluidKey ncFluid = notConsumableFluid.getKey().copy();
+                ncFluid.tag.removeTag(NON_CONSUMED_NBT_KEY);
+                if(ncFluid.tag.isEmpty()) {
+                    ncFluid.tag = null;
+                }
+                if (ncFluid.equals(inputFluid.getKey())) {
                     available = inputFluid.getValue();
                     if (available > needed) {
                         inputFluid.setValue(available - needed);
@@ -375,7 +389,10 @@ public class ParallelLogic {
                     }
                 }
             }
-            if (needed > available) {
+            // We need to check >= available here because of Non-Consumable inputs with stacksize. If there is a NC input
+            // with size 1000, and only 500 in the input, needed will be equal to available, but this situation should still fail
+            // as not all inputs are present
+            if (needed >= available) {
                 return 0;
             }
         }
