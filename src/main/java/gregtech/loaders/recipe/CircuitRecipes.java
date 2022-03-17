@@ -62,23 +62,23 @@ public class CircuitRecipes {
         CUTTER_RECIPES.recipeBuilder()
                 .input(SILICON_BOULE)
                 .output(SILICON_WAFER, 16)
-                .duration(400).EUt(16).buildAndRegister();
+                .duration(400).EUt(64).buildAndRegister();
 
         CUTTER_RECIPES.recipeBuilder()
                 .input(GLOWSTONE_BOULE)
                 .output(GLOWSTONE_WAFER, 32)
-                .duration(800).EUt(VA[MV]).buildAndRegister();
+                .duration(800).EUt(VA[HV]).buildAndRegister();
 
         CUTTER_RECIPES.recipeBuilder()
                 .input(NAQUADAH_BOULE)
                 .output(NAQUADAH_WAFER, 64)
-                .duration(1600).EUt(VA[HV]).buildAndRegister();
+                .duration(1600).EUt(VA[EV]).buildAndRegister();
 
         CUTTER_RECIPES.recipeBuilder()
                 .input(NEUTRONIUM_BOULE)
                 .output(NEUTRONIUM_WAFER, 64)
                 .output(NEUTRONIUM_WAFER, 32)
-                .duration(2400).EUt(VA[EV]).buildAndRegister();
+                .duration(2400).EUt(VA[IV]).buildAndRegister();
 
         // Wafer engraving
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[MV]).input(SILICON_WAFER).notConsumable(craftingLens, Color.Red).output(INTEGRATED_LOGIC_CIRCUIT_WAFER).buildAndRegister();
@@ -397,28 +397,28 @@ public class CircuitRecipes {
                 .input(wireFine, Copper, 2)
                 .fluidInputs(Polyethylene.getFluid(L / 4))
                 .output(INDUCTOR, 2)
-                .duration(320).EUt(30).buildAndRegister();
+                .duration(320).EUt(VA[MV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ring, Steel)
                 .input(wireFine, AnnealedCopper, 2)
                 .fluidInputs(Polyethylene.getFluid(L / 4))
                 .output(INDUCTOR, 4)
-                .duration(320).EUt(30).buildAndRegister();
+                .duration(320).EUt(VA[MV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ring, NickelZincFerrite)
                 .input(wireFine, Copper, 2)
                 .fluidInputs(Polyethylene.getFluid(L / 4))
                 .output(INDUCTOR, 4)
-                .duration(320).EUt(30).buildAndRegister();
+                .duration(320).EUt(VA[MV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ring, NickelZincFerrite)
                 .input(wireFine, AnnealedCopper, 2)
                 .fluidInputs(Polyethylene.getFluid(L / 4))
                 .output(INDUCTOR, 8)
-                .duration(320).EUt(30).buildAndRegister();
+                .duration(320).EUt(VA[MV]).buildAndRegister();
 
         // SMD Resistor
         ASSEMBLER_RECIPES.recipeBuilder()
