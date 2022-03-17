@@ -197,7 +197,14 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new ItemStackHandler(1);
+        return new ItemStackHandler(1) {
+            @Override
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                NBTTagCompound compound = GTUtility.getOrCreateNbtCompound(stack);
+                if (compound == null) return true;
+                return !(compound.hasKey(NBT_ITEMSTACK, NBT.TAG_COMPOUND) || compound.hasKey("Fluid", NBT.TAG_COMPOUND)); //prevents inserting items with NBT to the Quantum Chest
+            }
+        };
     }
 
     @Override
