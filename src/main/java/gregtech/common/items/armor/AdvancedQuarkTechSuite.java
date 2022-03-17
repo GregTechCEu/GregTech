@@ -140,10 +140,12 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
         }
         lines.add(I18n.format("metaarmor.energy_share.tooltip", state));
         lines.add(I18n.format("metaarmor.energy_share.tooltip.guide"));
+        String status = I18n.format("metaarmor.hud.status.disabled");
         if (data.hasKey("hover")) {
-            String status = (data.getBoolean("hover") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled"));
-            lines.add(I18n.format("metaarmor.hud.hover_mode", status));
+            if (data.getBoolean("hover"))
+                status = I18n.format("metaarmor.hud.status.enabled");
         }
+        lines.add(I18n.format("metaarmor.hud.hover_mode", status));
         super.addInfo(itemStack, lines);
     }
 

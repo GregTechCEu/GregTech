@@ -1029,6 +1029,8 @@ metaarmor.tooltip.jump=Increases Jump Height and Distance
 metaarmor.tooltip.falldamage=Nullifies Fall Damage
 metaarmor.tooltip.potions=Nullifies Harmful Effects
 metaarmor.tooltip.burning=Nullifies Burning
+metaarmor.tooltip.breath=Replenishes Underwater Breath Bar
+metaarmor.tooltip.autoeat=Replenishes Food Bar by Using Food from Inventory
 
 metaarmor.hud.status.enabled=§aON
 metaarmor.hud.status.disabled=§cOFF
