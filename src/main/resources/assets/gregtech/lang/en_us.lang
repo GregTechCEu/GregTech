@@ -1015,9 +1015,11 @@ metaarmor.jetpack.emergency_hover_mode=Emergency Hover Mode Enabled!
 
 metaarmor.nms.share.enable=NanoMuscle™ Suite: Charging Enabled
 metaarmor.nms.share.disable=NanoMuscle™ Suite: Charging Disabled
+metaarmor.nms.share.error=NanoMuscle™ Suite: §cNot enough power for charging!
 
 metaarmor.qts.share.enable=QuarkTech™ Suite: Charging Enabled
 metaarmor.qts.share.disable=QuarkTech™ Suite: Charging Disabled
+metaarmor.qts.share.error=QuarkTech™ Suite: §cNot enough power for charging!
 
 metaarmor.message.nightvision.enabled=§bNightVision: §aOn
 metaarmor.message.nightvision.disabled=§bNightVision: §cOff

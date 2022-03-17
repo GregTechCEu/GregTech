@@ -61,13 +61,18 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
         if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.SHARE_KEY)) {
             canShare = !canShare;
             toggleTimer = 5;
-            data.setBoolean("canShare", canShare);
             if (!world.isRemote) {
-                if (canShare)
+                if (canShare && cont.getCharge() == 0)
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.qts.share.error"), true);
+                else if (canShare)
                     player.sendStatusMessage(new TextComponentTranslation("metaarmor.qts.share.enable"), true);
                 else
                     player.sendStatusMessage(new TextComponentTranslation("metaarmor.qts.share.disable"), true);
             }
+
+            // Only allow for charging to be enabled if charge is nonzero
+            canShare = canShare && (cont.getCharge() != 0);
+            data.setBoolean("canShare", canShare);
         }
 
         performFlying(player, hoverMode, item);
