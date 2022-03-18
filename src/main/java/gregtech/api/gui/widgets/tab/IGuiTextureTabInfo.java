@@ -4,11 +4,8 @@ import com.google.common.collect.Lists;
 import gregtech.api.gui.resources.IGuiTexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.config.GuiUtils;
-
-import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class IGuiTextureTabInfo implements ITabInfo {
     public final IGuiTexture texture;
@@ -23,7 +20,6 @@ public class IGuiTextureTabInfo implements ITabInfo {
     public void renderTab(IGuiTexture tabTexture, int posX, int posY, int xSize, int ySize, boolean isSelected) {
         tabTexture.draw(posX, posY, xSize, ySize);
         texture.draw(posX, posY, xSize, ySize);
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override

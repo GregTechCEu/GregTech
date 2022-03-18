@@ -22,6 +22,7 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -134,10 +135,10 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     void addDisplayText(List<ITextComponent> textList) {
-        textList.add(new TextComponentString(String.format("sX: %d", this.minerLogic.getX().get())));
-        textList.add(new TextComponentString(String.format("sY: %d", this.minerLogic.getY().get())));
-        textList.add(new TextComponentString(String.format("sZ: %d", this.minerLogic.getZ().get())));
-        textList.add(new TextComponentString(String.format("Radius: %d", this.minerLogic.getCurrentRadius())));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.startx", this.minerLogic.getX().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.starty", this.minerLogic.getY().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.startz", this.minerLogic.getZ().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.radius", this.minerLogic.getCurrentRadius()));
         if (this.minerLogic.isDone())
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
         else if (this.minerLogic.isWorking())
@@ -153,9 +154,9 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     }
 
     void addDisplayText2(List<ITextComponent> textList) {
-        textList.add(new TextComponentString(String.format("mX: %d", this.minerLogic.getMineX().get())));
-        textList.add(new TextComponentString(String.format("mY: %d", this.minerLogic.getMineY().get())));
-        textList.add(new TextComponentString(String.format("mZ: %d", this.minerLogic.getMineZ().get())));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.minex", this.minerLogic.getMineX().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.miney", this.minerLogic.getMineY().get()));
+        textList.add(new TextComponentTranslation("gregtech.machine.miner.minez", this.minerLogic.getMineZ().get()));
     }
 
     @Override
@@ -303,7 +304,9 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
             double posY = (double) machinePos.getY() + 0.5D + (double) ventingSide.getYOffset() * 0.6D;
             double posZ = (double) machinePos.getZ() + 0.5D + (double) ventingSide.getZOffset() * 0.6D;
             world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY, posZ, 7 + world.rand.nextInt(3), (double) ventingSide.getXOffset() / 2.0D, (double) ventingSide.getYOffset() / 2.0D, (double) ventingSide.getZOffset() / 2.0D, 0.1D);
-            world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            if (ConfigHolder.machines.machineSounds && !this.isMuffled()){
+                world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            }
             this.setNeedsVenting(false);
         } else if (!this.ventingStuck) {
             this.setVentingStuck(true);

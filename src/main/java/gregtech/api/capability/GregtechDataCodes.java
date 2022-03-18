@@ -19,8 +19,6 @@ public class GregtechDataCodes {
 
     // Drum
     public static final int UPDATE_AUTO_OUTPUT = 560;
-    public static final int SYNC_FLUID_CONTENT = -200;
-    public static final int SYNC_FLUID_AMOUNT = -201;
 
     // Safe
     public static final int UPDATE_LOCKED_STATE = 8;
@@ -73,12 +71,6 @@ public class GregtechDataCodes {
     public static final int RECIPE_MAP_INDEX = 553;
     public static final int IS_FRONT_FACE_FREE = 554;
     public static final int MAINTENANCE_MULTIPLIER = 555;
-
-    // Multiblock Fluid Tank implementation update codes
-    public static final int UPDATE_CONTROLLER_POSITION = 1;
-    public static final int DEFORM_TANK = 2;
-    public static final int SYNC_FLUID_CHANGE = 3;
-    public static final int SYNC_TANK_SHAPE = 4;
 
     // Fusion Reactor
     public static final int UPDATE_COLOR = 371;

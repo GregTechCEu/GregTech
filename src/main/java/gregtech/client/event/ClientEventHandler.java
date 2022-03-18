@@ -72,7 +72,7 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onPlayerRender(RenderPlayerEvent.Pre event) {
         AbstractClientPlayer clientPlayer = (AbstractClientPlayer) event.getEntityPlayer();
-        if (clientPlayer.hasPlayerInfo()) {
+        if (clientPlayer.hasPlayerInfo() && clientPlayer.playerInfo != null) {
             Map<MinecraftProfileTexture.Type, ResourceLocation> playerTextures = clientPlayer.playerInfo.playerTextures;
             UUID uuid = clientPlayer.getPersistentID();
             ResourceLocation defaultPlayerCape;

@@ -139,10 +139,7 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-            ItemFilterMode filterMode = getFilterMode();
-            if (filterMode == ItemFilterMode.FILTER_EXTRACT) {
-                return stack;
-            } else if (!itemFilter.testItemStack(stack)) {
+            if (getFilterMode() == ItemFilterMode.FILTER_EXTRACT || !itemFilter.testItemStack(stack)) {
                 return stack;
             }
             return super.insertItem(slot, stack, simulate);
@@ -151,18 +148,14 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
         @Nonnull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            ItemFilterMode filterMode = getFilterMode();
-            if (filterMode == ItemFilterMode.FILTER_INSERT) {
-                return ItemStack.EMPTY;
+            if (getFilterMode() != ItemFilterMode.FILTER_INSERT) {
+                ItemStack result = super.extractItem(slot, amount, true);
+                if (result.isEmpty() || !itemFilter.testItemStack(result)) {
+                    return ItemStack.EMPTY;
+                }
+                return simulate ? result : super.extractItem(slot, amount, false);
             }
-            ItemStack result = super.extractItem(slot, amount, true);
-            if (!itemFilter.testItemStack(result)) {
-                return ItemStack.EMPTY;
-            }
-            if (!simulate) {
-                super.extractItem(slot, amount, false);
-            }
-            return result;
+            return super.extractItem(slot, amount, simulate);
         }
     }
 }

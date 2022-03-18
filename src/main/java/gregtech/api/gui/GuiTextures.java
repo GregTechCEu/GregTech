@@ -15,6 +15,8 @@ public class GuiTextures {
     public static final TextureArea BORDERED_BACKGROUND = AdoptableTextureArea.fullImage("textures/gui/base/bordered_background.png", 195, 136, 4, 4);
     public static final TextureArea BOXED_BACKGROUND = AdoptableTextureArea.fullImage("textures/gui/base/boxed_background.png", 256, 174, 11, 11);
     public static final SteamTexture BACKGROUND_STEAM = SteamTexture.fullImage("textures/gui/base/background_%s.png");
+    public static final TextureArea CLIPBOARD_BACKGROUND = TextureArea.fullImage("textures/gui/base/clipboard_background.png");
+    public static final TextureArea CLIPBOARD_PAPER_BACKGROUND = TextureArea.fullImage("textures/gui/base/clipboard_paper_background.png");
 
     public static final TextureArea BLANK = AdoptableTextureArea.fullImage("textures/gui/base/blank.png", 1, 1, 0, 0);
     public static final TextureArea DISPLAY = TextureArea.fullImage("textures/gui/base/display.png");
@@ -25,7 +27,7 @@ public class GuiTextures {
     public static final TextureArea SLOT = AdoptableTextureArea.fullImage("textures/gui/base/slot.png", 18, 18, 1, 1);
     public static final TextureArea SLOT_DARKENED = TextureArea.fullImage("textures/gui/base/darkened_slot.png");
     public static final SteamTexture SLOT_STEAM = SteamTexture.fullImage("textures/gui/base/slot_%s.png");
-
+    public static final TextureArea TOGGLE_BUTTON_BACK = TextureArea.fullImage("textures/gui/widget/toggle_button_background.png");
 
     //FLUID & ITEM OUTPUT BUTTONS
     public static final TextureArea BLOCKS_INPUT = TextureArea.fullImage("textures/gui/widget/button_blocks_input.png");
@@ -41,6 +43,7 @@ public class GuiTextures {
     public static final TextureArea BUTTON_LOCK = TextureArea.fullImage("textures/gui/widget/button_lock.png");
     public static final TextureArea BUTTON_VOID = TextureArea.fullImage("textures/gui/widget/button_void.png");
     public static final TextureArea BUTTON_VOID_PARTIAL = TextureArea.fullImage("textures/gui/widget/button_void_partial.png");
+    public static final TextureArea BUTTON_VOID_MULTIBLOCK = TextureArea.fullImage("textures/gui/widget/button_void_multiblock.png");
     public static final TextureArea BUTTON_LEFT = TextureArea.fullImage("textures/gui/widget/left.png");
     public static final TextureArea BUTTON_OVERCLOCK = TextureArea.fullImage("textures/gui/widget/button_overclock.png");
     public static final TextureArea BUTTON_PUBLIC_PRIVATE = TextureArea.fullImage("textures/gui/widget/button_public_private.png");
@@ -66,6 +69,7 @@ public class GuiTextures {
 
     //WIDGET UI RELATED
     public static final TextureArea SLIDER_BACKGROUND = TextureArea.fullImage("textures/gui/widget/slider_background.png");
+    public static final TextureArea SLIDER_BACKGROUND_VERTICAL = TextureArea.fullImage("textures/gui/widget/slider_background_vertical.png");
     public static final TextureArea SLIDER_ICON = TextureArea.fullImage("textures/gui/widget/slider.png");
     public static final TextureArea MAINTENANCE_ICON = TextureArea.fullImage("textures/gui/widget/button_maintenance.png");
 

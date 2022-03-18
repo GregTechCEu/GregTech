@@ -126,7 +126,7 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
     public ModularUI createUI(EntityPlayer player) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 221)
                 .bindPlayerInventory(player.inventory, 139);
-        builder.label(5, 5, I18n.format("metaitem.cover.crafting.name"));
+        builder.label(5, 5, "metaitem.cover.crafting.name");
 
         builder.widget(MetaTileEntityWorkbench.createWorkbenchTab(recipeLogic, craftingGrid, recipeMemory, toolInventory, internalInventory));
 

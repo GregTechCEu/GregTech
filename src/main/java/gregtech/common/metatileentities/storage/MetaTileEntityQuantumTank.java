@@ -253,16 +253,20 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
                 .widget(new ToggleButtonWidget(7, 64, 18, 18,
                         GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
-                        .setTooltipText("gregtech.gui.fluid_auto_output.tooltip"))
+                        .setTooltipText("gregtech.gui.fluid_auto_output.tooltip")
+                        .shouldUseBaseBackground())
                 .widget(new ToggleButtonWidget(25, 64, 18, 18,
                         GuiTextures.BUTTON_LOCK, this::isLocked, this::setLocked)
-                        .setTooltipText("gregtech.gui.fluid_lock.tooltip"))
+                        .setTooltipText("gregtech.gui.fluid_lock.tooltip")
+                        .shouldUseBaseBackground())
                 .widget(new ToggleButtonWidget(43, 64, 18, 18,
                         GuiTextures.BUTTON_VOID_PARTIAL, this::isPartialVoid, this::setPartialVoid)
-                        .setTooltipText("gregtech.gui.fluid_voiding_partial.tooltip", VOID_PERCENT))
+                        .setTooltipText("gregtech.gui.fluid_voiding_partial.tooltip", VOID_PERCENT)
+                        .shouldUseBaseBackground())
                 .widget(new ToggleButtonWidget(61, 64, 18, 18,
                         GuiTextures.BUTTON_VOID, this::isVoiding, this::setVoiding)
-                        .setTooltipText("gregtech.gui.fluid_voiding_all.tooltip"))
+                        .setTooltipText("gregtech.gui.fluid_voiding_all.tooltip")
+                        .shouldUseBaseBackground())
                 .bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
     }

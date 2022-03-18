@@ -18,9 +18,9 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.api.util.GTUtility;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -51,8 +51,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
 
     private final boolean hasFrontFacing;
 
-    private final ItemStackHandler chargerInventory;
-    private final ItemStackHandler circuitInventory;
+    protected final ItemStackHandler chargerInventory;
+    protected final ItemStackHandler circuitInventory;
     private EnumFacing outputFacingItems;
     private EnumFacing outputFacingFluids;
 
@@ -411,7 +411,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
                 .widget(new SlotWidget(chargerInventory, 0, 79, 62 + yOffset, true, true, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY)
                         .setTooltipText("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()], GTValues.VNF[getTier()]))
-                .widget(new ImageWidget(79, 42 + yOffset, 18, 18, GuiTextures.INDICATOR_NO_ENERGY)
+                .widget(new ImageWidget(79, 42 + yOffset, 18, 18, GuiTextures.INDICATOR_NO_ENERGY).setIgnoreColor(true)
                         .setPredicate(workable::isHasNotEnoughEnergy))
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);
 
@@ -420,13 +420,15 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         if (exportItems.getSlots() > 0) {
             builder.widget(new ToggleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
                     GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
-                    .setTooltipText("gregtech.gui.item_auto_output.tooltip"));
+                    .setTooltipText("gregtech.gui.item_auto_output.tooltip")
+                    .shouldUseBaseBackground());
             leftButtonStartX += 18;
         }
         if (exportFluids.getTanks() > 0) {
             builder.widget(new ToggleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
                     GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
-                    .setTooltipText("gregtech.gui.fluid_auto_output.tooltip"));
+                    .setTooltipText("gregtech.gui.fluid_auto_output.tooltip")
+                    .shouldUseBaseBackground());
             leftButtonStartX += 18;
         }
 
@@ -439,7 +441,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
             SlotWidget circuitSlot = new SlotWidget(circuitInventory, 0, 124, 62 + yOffset, true, true, false)
                     .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
             builder.widget(getCircuitSlotTooltip(circuitSlot))
-                    .widget(new ImageWidget(152, 63 + yOffset, 17, 17, GuiTextures.GREGTECH_LOGO))
+                    .widget(new ImageWidget(152, 63 + yOffset, 17, 17, GuiTextures.GREGTECH_LOGO).setIgnoreColor(true))
                     .widget(new ClickButtonWidget(115, 62 + yOffset, 9, 9, "", this::circuitConfigPlus)
                             .setShouldClientCallback(true)
                             .setButtonTexture(GuiTextures.BUTTON_INT_CIRCUIT_PLUS)
@@ -485,6 +487,9 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         String key = this.metaTileEntityId.getPath().split("\\.")[0];
-        tooltip.add(1, I18n.format(String.format("gregtech.machine.%s.tooltip", key)));
+        String mainKey = String.format("gregtech.machine.%s.tooltip", key);
+        if (I18n.hasKey(mainKey)) {
+            tooltip.add(1, mainKey);
+        }
     }
 }

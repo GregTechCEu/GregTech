@@ -10,13 +10,10 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.integration.jei.utils.render.FluidStackTextRenderer;
 import gregtech.integration.jei.utils.render.ItemStackTextRenderer;
-import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiFluidStackGroup;
@@ -115,9 +112,6 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     public void setRecipe(IRecipeLayout recipeLayout, @Nonnull GTRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
-        Int2ObjectMap<ChanceEntry> chanceOutputMap = recipeWrapper.getChanceOutputMap();
-        Int2BooleanMap notConsumedItemInputs = recipeWrapper.getNotConsumedItemInputs();
-        Int2BooleanMap notConsumedFluidInputs = recipeWrapper.getNotConsumedFluidInputs();
         for (Widget uiWidget : modularUI.guiWidgets.values()) {
 
             if (uiWidget instanceof SlotWidget) {
@@ -129,7 +123,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 if (handle.getItemHandler() == importItems) {
                     //this is input item stack slot widget, so add it to item group
                     itemStackGroup.init(handle.getSlotIndex(), true,
-                            new ItemStackTextRenderer(notConsumedItemInputs.get(handle.getSlotIndex())),
+                            new ItemStackTextRenderer(recipeWrapper.isNotConsumedItem(handle.getSlotIndex())),
                             slotWidget.getPosition().x + 1,
                             slotWidget.getPosition().y + 1,
                             slotWidget.getSize().width - 2,
@@ -137,7 +131,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 } else if (handle.getItemHandler() == exportItems) {
                     //this is output item stack slot widget, so add it to item group
                     itemStackGroup.init(importItems.getSlots() + handle.getSlotIndex(), false,
-                            new ItemStackTextRenderer(chanceOutputMap.get(importItems.getSlots() + handle.getSlotIndex())),
+                            new ItemStackTextRenderer(recipeWrapper.getOutputChance(handle.getSlotIndex() - recipeWrapper.getRecipe().getOutputs().size())),
                             slotWidget.getPosition().x + 1,
                             slotWidget.getPosition().y + 1,
                             slotWidget.getSize().width - 2,
@@ -156,7 +150,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                             new FluidStackTextRenderer(fluidAmount, false,
                                     tankWidget.getSize().width - (2 * tankWidget.fluidRenderOffset),
                                     tankWidget.getSize().height - (2 * tankWidget.fluidRenderOffset), null)
-                                    .setNotConsumed(notConsumedFluidInputs.get(importIndex)),
+                                    .setNotConsumed(recipeWrapper.isNotConsumedFluid(importIndex)),
                             tankWidget.getPosition().x + tankWidget.fluidRenderOffset,
                             tankWidget.getPosition().y + tankWidget.fluidRenderOffset,
                             tankWidget.getSize().width - (2 * tankWidget.fluidRenderOffset),

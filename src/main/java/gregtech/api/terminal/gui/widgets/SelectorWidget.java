@@ -20,6 +20,7 @@ public class SelectorWidget extends WidgetGroup {
     protected boolean isShow;
     private IGuiTexture background;
     private Consumer<String> onChanged;
+    private Consumer<Boolean> onShowChange;
     private boolean isUp;
     private final int fontColor;
 
@@ -28,7 +29,12 @@ public class SelectorWidget extends WidgetGroup {
         this.button = new RectButtonWidget(0,0,width,height);
         this.candidates = candidates;
         this.fontColor = fontColor;
-        button.setClickListener(d->isShow = !isShow);
+        button.setClickListener(d -> {
+            if(onShowChange != null) {
+                onShowChange.accept(!isShow);
+            }
+            isShow = !isShow;
+        });
         this.addWidget(button);
         this.addWidget(new SimpleTextWidget(width / 2, height / 2, "", fontColor, supplier, isClient));
     }
@@ -48,6 +54,11 @@ public class SelectorWidget extends WidgetGroup {
         return this;
     }
 
+    public SelectorWidget setOnShowChange(Consumer<Boolean> onShowChange) {
+        this.onShowChange = onShowChange;
+        return this;
+    }
+
     public SelectorWidget setColors(int stroke, int anima, int fill) {
         button.setColors(stroke, anima, fill);
         return this;
@@ -61,6 +72,10 @@ public class SelectorWidget extends WidgetGroup {
     public SelectorWidget setBackground(IGuiTexture background) {
         this.background = background;
         return this;
+    }
+
+    public void hide() {
+        this.isShow = false;
     }
 
     @Override
@@ -110,7 +125,6 @@ public class SelectorWidget extends WidgetGroup {
                 y += height;
             }
         }
-        isShow = false;
         return super.mouseClicked(mouseX, mouseY, button);
     }
 

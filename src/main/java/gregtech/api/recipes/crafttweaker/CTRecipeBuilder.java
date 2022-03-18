@@ -56,7 +56,7 @@ public class CTRecipeBuilder {
     @ZenMethod
     public CTRecipeBuilder notConsumable(IIngredient... ingredients) {
         this.backingBuilder.inputsIngredients(Arrays.stream(ingredients)
-                .map(s -> new CountableIngredient(new CraftTweakerIngredientWrapper(s), 0))
+                .map(s -> new CountableIngredient(new CraftTweakerIngredientWrapper(s), s.getAmount()).setNonConsumable())
                 .collect(Collectors.toList()));
         return this;
     }

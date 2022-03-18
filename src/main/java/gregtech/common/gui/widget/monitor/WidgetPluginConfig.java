@@ -28,6 +28,7 @@ public class WidgetPluginConfig extends WidgetGroup {
     @Override
     public void setGui(ModularUI gui) {
         super.setGui(gui);
+        if (gui == null) return;
         setSelfPosition(new Position((gui.getWidth() - width) / 2, (gui.getHeight() - height) / 2));
         onPositionUpdate();
     }

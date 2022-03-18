@@ -7,6 +7,7 @@ import gregtech.api.util.world.DummyWorld;
 import gregtech.common.ConfigHolder;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -91,6 +92,13 @@ public class WoodMachineRecipes {
                         .buildAndRegister();
 
                 ModHandler.addShapedRecipe(slabStack.getDisplayName() + "_saw", GTUtility.copyAmount(2, slabStack), "sS", 'S', GTUtility.copyAmount(1, plankStack));
+            }
+
+            if (ConfigHolder.recipes.harderCharcoalRecipe) {
+                ItemStack outputStack = FurnaceRecipes.instance().getSmeltingResult(stack);
+                if (outputStack.getItem() == Items.COAL && outputStack.getItemDamage() == 1) {
+                    ModHandler.removeFurnaceSmelting(stack);
+                }
             }
         }
     }

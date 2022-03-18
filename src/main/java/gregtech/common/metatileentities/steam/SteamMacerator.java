@@ -43,4 +43,9 @@ public class SteamMacerator extends SteamMetaTileEntity {
                 .slot(this.exportItems, 0, 107, 25, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure), GuiTextures.DUST_OVERLAY_STEAM.get(isHighPressure))
                 .build(getHolder(), player);
     }
+
+    @Override
+    public int getItemOutputLimit() {
+        return 1;
+    }
 }

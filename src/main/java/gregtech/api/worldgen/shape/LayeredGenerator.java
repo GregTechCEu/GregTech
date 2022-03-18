@@ -2,6 +2,7 @@ package gregtech.api.worldgen.shape;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.minecraft.util.math.Vec3i;
 
 public class LayeredGenerator extends EllipsoidGenerator {
 
@@ -24,6 +25,12 @@ public class LayeredGenerator extends EllipsoidGenerator {
     @Override
     public int getYRadius() {
         return yRadius;
+    }
+
+    @Override
+    public Vec3i getMaxSize() {
+        Vec3i result = super.getMaxSize();
+        return new Vec3i(result.getX(), yRadius, result.getZ());
     }
 
     @Override

@@ -95,12 +95,14 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
         if (simulate) {
             return stack;
         }
-        recipeResolver.performRecipe(thePlayer);
-        recipeResolver.refreshOutputSlot();
-        //send slot changes now, both of consumed items in inventory and result slot
-        gui.entityPlayer.openContainer.detectAndSendChanges();
-        uiAccess.sendSlotUpdate(this);
-        return stack;
+        if (recipeResolver.performRecipe(thePlayer)) {
+            recipeResolver.refreshOutputSlot();
+            //send slot changes now, both of consumed items in inventory and result slot
+            gui.entityPlayer.openContainer.detectAndSendChanges();
+            uiAccess.sendSlotUpdate(this);
+            return stack;
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override

@@ -67,16 +67,6 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
     private EnumBlockRenderType blockRenderType;
     private static final ThreadLocal<BlockRenderer.BlockFace> blockFaces = ThreadLocal.withInitial(BlockRenderer.BlockFace::new);
 
-    public static class PipeTextureInfo {
-        public final TextureAtlasSprite inTexture;
-        public final TextureAtlasSprite sideTexture;
-
-        public PipeTextureInfo(TextureAtlasSprite inTexture, TextureAtlasSprite sideTexture) {
-            this.inTexture = inTexture;
-            this.sideTexture = sideTexture;
-        }
-    }
-
     public PipeRenderer(String name, ModelResourceLocation modelLocation) {
         this.name = name;
         this.modelLocation = modelLocation;

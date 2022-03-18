@@ -1,10 +1,14 @@
 package gregtech.common.items.behaviors;
 
+import com.google.common.collect.UnmodifiableIterator;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.items.toolitem.IToolStats;
-import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.GTUtility;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockBed;
+import net.minecraft.block.BlockPistonExtension;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -15,6 +19,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.Collection;
 import java.util.List;
 
 public class WrenchBehaviour implements IItemBehaviour {
@@ -26,18 +31,37 @@ public class WrenchBehaviour implements IItemBehaviour {
     }
 
     @Override
+    @SuppressWarnings("rawtypes, unchecked")
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         if (!world.isRemote && !world.isAirBlock(pos)) {
             ItemStack stack = player.getHeldItem(hand);
 
             TileEntity tileEntity = world.getTileEntity(pos);
 
-            if (tileEntity instanceof MetaTileEntityHolder)
+            if (tileEntity instanceof MetaTileEntityHolder) {
                 //machines handle wrench click manually
                 return EnumActionResult.PASS;
-            if (world.getBlockState(pos).getBlock().rotateBlock(world, pos, side)) {
-                GTUtility.doDamageItem(stack, this.cost, false);
-                return EnumActionResult.SUCCESS;
+            }
+
+            // Adapted mostly from Block#rotateBlock()
+            IBlockState state = world.getBlockState(pos);
+            UnmodifiableIterator<IProperty<?>> propertyItr = state.getProperties().keySet().iterator();
+            IProperty prop;
+            while (propertyItr.hasNext()) {
+                prop = propertyItr.next();
+                if (prop.getName().equals("facing") || prop.getName().equals("rotation")) {
+                    if (prop.getValueClass() == EnumFacing.class) {
+                        Block block = state.getBlock();
+                        if (!(block instanceof BlockBed) && !(block instanceof BlockPistonExtension)) {
+                            Collection<EnumFacing> facings = (Collection<EnumFacing>) prop.getAllowedValues();
+                            if (facings.contains(side) && state.getValue(prop) != side) {
+                                world.setBlockState(pos, state.withProperty(prop, side));
+                                GTUtility.doDamageItem(stack, this.cost, false);
+                                return EnumActionResult.SUCCESS;
+                            }
+                        }
+                    }
+                }
             }
         }
         return EnumActionResult.PASS;

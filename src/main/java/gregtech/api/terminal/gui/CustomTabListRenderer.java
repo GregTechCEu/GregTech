@@ -1,9 +1,11 @@
 package gregtech.api.terminal.gui;
 
+import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.tab.ITabInfo;
 import gregtech.api.gui.widgets.tab.TabListRenderer;
 import gregtech.api.util.Position;
+import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.List;
 
@@ -21,15 +23,18 @@ public class CustomTabListRenderer extends TabListRenderer {
     }
 
     @Override
-    public void renderTabs(Position offset, List<ITabInfo> tabInfos, int guiWidth, int guiHeight, int selectedTabIndex) {
+    public void renderTabs(ModularUI gui, Position offset, List<ITabInfo> tabInfos, int guiWidth, int guiHeight, int selectedTabIndex) {
         int y = offset.y - height;
+        GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
         for (int i = 0; i < tabInfos.size(); i++) {
             int x = offset.x + i * width;
             if (selectedTabIndex == i && selected != null) {
                 tabInfos.get(i).renderTab(selected, x, y, width, height, true);
+                GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
             }
             if (selectedTabIndex != i && unSelected != null) {
                 tabInfos.get(i).renderTab(unSelected, x, y, width, height, false);
+                GlStateManager.color(gui.getRColorForOverlay(), gui.getGColorForOverlay(), gui.getBColorForOverlay(), 1.0F);
             }
         }
     }
