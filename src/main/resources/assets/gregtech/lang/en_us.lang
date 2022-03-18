@@ -3756,7 +3756,7 @@ gregtech.machine.battery_buffer.uxv.16.name=Ultra Extreme Voltage 16x Battery Bu
 
 gregtech.machine.battery_buffer.opv.4.name=Overpowered Voltage 4x Battery Buffer
 gregtech.machine.battery_buffer.opv.8.name=Overpowered Voltage 8x Battery Buffer
-gregtech.machine.battery_buffer.opv.16.name=Ultra Immense Voltage 16x Battery Buffer
+gregtech.machine.battery_buffer.opv.16.name=Overpowered Voltage 16x Battery Buffer
 
 gregtech.machine.battery_buffer.max.4.name=Maximum Voltage 4x Battery Buffer
 gregtech.machine.battery_buffer.max.8.name=Maximum Voltage 8x Battery Buffer
@@ -3890,14 +3890,14 @@ gregtech.machine.energy_converter.uiv.1.name=UIV Energy Converter (1A)
 gregtech.machine.energy_converter.uiv.4.name=UIV Energy Converter (4A)
 gregtech.machine.energy_converter.uiv.8.name=UIV Energy Converter (8A)
 gregtech.machine.energy_converter.uiv.16.name=UIV Energy Converter (16A)
-gregtech.machine.energy_converter.umv.1.name=UMV Energy Converter (1A)
-gregtech.machine.energy_converter.umv.4.name=UMV Energy Converter (4A)
-gregtech.machine.energy_converter.umv.8.name=UMV Energy Converter (8A)
-gregtech.machine.energy_converter.umv.16.name=UMV Energy Converter (16A)
 gregtech.machine.energy_converter.uxv.1.name=UXV Energy Converter (1A)
 gregtech.machine.energy_converter.uxv.4.name=UXV Energy Converter (4A)
 gregtech.machine.energy_converter.uxv.8.name=UXV Energy Converter (8A)
 gregtech.machine.energy_converter.uxv.16.name=UXV Energy Converter (16A)
+gregtech.machine.energy_converter.opv.1.name=OpV Energy Converter (1A)
+gregtech.machine.energy_converter.opv.4.name=OpV Energy Converter (4A)
+gregtech.machine.energy_converter.opv.8.name=OpV Energy Converter (8A)
+gregtech.machine.energy_converter.opv.16.name=OpV Energy Converter (16A)
 gregtech.machine.energy_converter.max.1.name=MAX Energy Converter (1A)
 gregtech.machine.energy_converter.max.4.name=MAX Energy Converter (4A)
 gregtech.machine.energy_converter.max.8.name=MAX Energy Converter (8A)
