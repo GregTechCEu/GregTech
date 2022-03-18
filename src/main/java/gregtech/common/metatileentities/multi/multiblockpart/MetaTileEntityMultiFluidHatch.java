@@ -127,6 +127,11 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
+    protected boolean wrenchOnRightClick() {
+        return true;
+    }
+
+    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int rowSize = getTier();
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,

@@ -88,6 +88,12 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
+    protected boolean wrenchOnRightClick() {
+        // Allow for item buses to be wrenched on right click without opening GUI
+        return true;
+    }
+
+    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int rowSize = (int) Math.sqrt(getInventorySize());
         return createUITemplate(entityPlayer, rowSize, rowSize == 10 ? 9 : 0)

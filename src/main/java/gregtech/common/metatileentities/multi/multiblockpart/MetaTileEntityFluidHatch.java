@@ -122,6 +122,11 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
+    protected boolean wrenchOnRightClick() {
+        return true;
+    }
+
+    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return createTankUI((isExportHatch ? exportFluids : importFluids).getTankAt(0), containerInventory, getMetaFullName(), entityPlayer)
                 .build(getHolder(), entityPlayer);
