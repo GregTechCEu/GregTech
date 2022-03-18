@@ -5057,3 +5057,9 @@ monitor.gui.title.config=Config
 
 fluid.tile.lava=Lava
 fluid.tile.water=Water
+
+# Keybindings
+gregtech.key.armor_mode_switch=Armor Mode Switch
+gregtech.key.armor_hover=Armor Hover Toggle
+gregtech.key.armor_charging=Armor Charging to Inventory Toggle
+gregtech.key.tool_aoe_change=Tool AoE Mode Switch
