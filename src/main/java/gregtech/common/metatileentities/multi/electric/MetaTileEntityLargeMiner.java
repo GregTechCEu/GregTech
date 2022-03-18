@@ -168,15 +168,16 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     protected BlockPattern createStructurePattern() {
         return material == null ? null : FactoryBlockPattern.start()
-                .aisle("CCC", "#F#", "#F#", "#F#", "###", "###", "###")
-                .aisle("CCC", "FCF", "FCF", "FCF", "#F#", "#F#", "#F#")
-                .aisle("CSC", "#F#", "#F#", "#F#", "###", "###", "###")
+                .aisle("XXX", "#F#", "#F#", "#F#", "###", "###", "###")
+                .aisle("XXX", "FCF", "FCF", "FCF", "#F#", "#F#", "#F#")
+                .aisle("XSX", "#F#", "#F#", "#F#", "###", "###", "###")
                 .where('S', selfPredicate())
-                .where('C', states(getCasingState()).setMinGlobalLimited(3)
-                        .or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1).setPreviewCount(1))
-                        .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).setPreviewCount(1))
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setPreviewCount(1)))
-                .where('F', states(MetaBlocks.FRAMES.get(getMaterial()).getBlock(getMaterial())))
+                .where('X', states(getCasingState())
+                        .or(abilities(MultiblockAbility.EXPORT_ITEMS).setMaxGlobalLimited(1).setPreviewCount(1))
+                        .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMaxGlobalLimited(1).setPreviewCount(1))
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3).setPreviewCount(1)))
+                .where('C', states(getCasingState()))
+                .where('F', states(getFrameState()))
                 .where('#', any())
                 .build();
     }
@@ -246,6 +247,15 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         if (this.material.equals(Materials.TungstenSteel))
             return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.TUNGSTENSTEEL_ROBUST);
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
+    }
+
+    @Nonnull
+    private IBlockState getFrameState() {
+        if (this.material.equals(Materials.Titanium))
+            return MetaBlocks.FRAMES.get(Materials.Titanium).getBlock(Materials.Titanium);
+        if (this.material.equals(Materials.TungstenSteel))
+            return MetaBlocks.FRAMES.get(Materials.TungstenSteel).getBlock(Materials.TungstenSteel);
+        return MetaBlocks.FRAMES.get(Materials.Steel).getBlock(Materials.Steel);
     }
 
     @Override
