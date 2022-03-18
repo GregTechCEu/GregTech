@@ -647,7 +647,11 @@ public class GTUtility {
 
     public static NBTTagCompound getOrCreateNbtCompound(ItemStack stack) {
         NBTTagCompound compound = stack.getTagCompound();
-        return compound == null ? new NBTTagCompound() : compound;
+        if (compound == null) {
+            compound = new NBTTagCompound();
+            stack.setTagCompound(compound);
+        }
+        return compound;
     }
 
     public static NonNullList<ItemStack> copyStackList(List<ItemStack> itemStacks) {
