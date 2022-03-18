@@ -7,6 +7,7 @@ import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.fluids.MetaFluids;
+import gregtech.api.gui.GregTechUI;
 import gregtech.api.guiOld.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
@@ -71,6 +72,7 @@ public class GregTechMod {
         NetworkHandler.init();
 
         /* Start UI Factory Registration */
+        GregTechUI.init();
         UI_FACTORY_REGISTRY.unfreeze();
         GTLog.logger.info("Registering GTCEu UI Factories");
         MetaTileEntityUIFactory.INSTANCE.init();

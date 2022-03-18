@@ -67,7 +67,7 @@ public class GregTechUI {
             })
             .build();
 
-    static {
+    public static void init() {
         for (EnumHand hand : EnumHand.values()) {
             PLAYER_ITEM_UI[hand.ordinal()] = UIBuilder.of()
                     .gui((player, world, x, y, z) -> {
