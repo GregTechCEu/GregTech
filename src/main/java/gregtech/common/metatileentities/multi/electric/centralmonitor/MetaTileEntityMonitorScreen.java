@@ -231,7 +231,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     private void loadPlugin(MonitorPluginBaseBehavior plugin) {
-        if (this.plugin == null) {
+        if (plugin !=null && this.plugin != plugin) {
             this.plugin = plugin.createPlugin();
             this.plugin.readFromNBT(this.itemInventory.getStackInSlot(0).getOrCreateSubCompound("monitor_plugin"));
             this.plugin.onMonitorValid(this, true);

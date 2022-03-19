@@ -295,6 +295,8 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
                 lines.add(I18n.format("metaarmor.message.nightvision.disabled"));
             }
             lines.add(I18n.format("metaarmor.tooltip.potions"));
+            lines.add(I18n.format("metaarmor.tooltip.breath"));
+            lines.add(I18n.format("metaarmor.tooltip.autoeat"));
         } else if (SLOT == EntityEquipmentSlot.CHEST) {
             lines.add(I18n.format("metaarmor.tooltip.burning"));
         } else if (SLOT == EntityEquipmentSlot.LEGS) {
@@ -302,6 +304,7 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
         } else if (SLOT == EntityEquipmentSlot.FEET) {
             lines.add(I18n.format("metaarmor.tooltip.stepassist"));
             lines.add(I18n.format("metaarmor.tooltip.falldamage"));
+            lines.add(I18n.format("metaarmor.tooltip.jump"));
         }
     }
 }
