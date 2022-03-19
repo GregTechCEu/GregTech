@@ -431,7 +431,7 @@ public class PetrochemRecipes {
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(hydroCracked.getFluid(1000))
-                .duration(40).EUt(VA[MV]).buildAndRegister();
+                .duration(80).EUt(VA[MV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(1))
@@ -445,7 +445,7 @@ public class PetrochemRecipes {
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Steam.getFluid(1000))
                 .fluidOutputs(steamCracked.getFluid(1000))
-                .duration(40).EUt(240).buildAndRegister();
+                .duration(80).EUt(240).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(1))
@@ -461,7 +461,7 @@ public class PetrochemRecipes {
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Hydrogen.getFluid(4000))
                 .fluidOutputs(hydroCracked.getFluid(1000))
-                .duration(60).EUt(180).buildAndRegister();
+                .duration(120).EUt(180).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(2))
@@ -475,7 +475,7 @@ public class PetrochemRecipes {
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Steam.getFluid(1000))
                 .fluidOutputs(steamCracked.getFluid(1000))
-                .duration(60).EUt(360).buildAndRegister();
+                .duration(120).EUt(360).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(2))
@@ -491,7 +491,7 @@ public class PetrochemRecipes {
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Hydrogen.getFluid(6000))
                 .fluidOutputs(hydroCracked.getFluid(1000))
-                .duration(80).EUt(240).buildAndRegister();
+                .duration(160).EUt(240).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(2))
@@ -505,7 +505,7 @@ public class PetrochemRecipes {
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Steam.getFluid(1000))
                 .fluidOutputs(steamCracked.getFluid(1000))
-                .duration(80).EUt(VA[HV]).buildAndRegister();
+                .duration(160).EUt(VA[HV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(3))
