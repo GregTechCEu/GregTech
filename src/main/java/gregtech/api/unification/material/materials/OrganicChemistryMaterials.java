@@ -147,6 +147,7 @@ public class OrganicChemistryMaterials {
         Sugar = new Material.Builder(1017, "sugar")
                 .gem(1)
                 .color(0xFAFAFA).iconSet(FINE)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 6, Hydrogen, 12, Oxygen, 6)
                 .build();
 
