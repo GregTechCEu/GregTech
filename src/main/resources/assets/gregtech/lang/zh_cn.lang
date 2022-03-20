@@ -3305,14 +3305,16 @@ gregtech.machine.fluid_solidifier.opv.name=传奇流体固化机
 gregtech.machine.fluid_solidifier.opv.tooltip=流体净化器
 
 # 锻造锤 Forge Hammer
+//关于 Hammer 不翻译的问题
+//这是 MC Hammer 歌词的梗，详情参照歌曲《U Can't Touch This》。
 gregtech.machine.forge_hammer.lv.name=基础锻造锤
-gregtech.machine.forge_hammer.lv.tooltip=停，锤子时间到！
+gregtech.machine.forge_hammer.lv.tooltip=停，现在是 Hammer 时间！
 gregtech.machine.forge_hammer.mv.name=进阶锻造锤
-gregtech.machine.forge_hammer.mv.tooltip=停，锤子时间到！
+gregtech.machine.forge_hammer.mv.tooltip=停，现在是 Hammer 时间！
 gregtech.machine.forge_hammer.hv.name=进阶锻造锤 II
-gregtech.machine.forge_hammer.hv.tooltip=停，锤子时间到！
+gregtech.machine.forge_hammer.hv.tooltip=停，现在是 Hammer 时间！
 gregtech.machine.forge_hammer.ev.name=进阶锻造锤 III
-gregtech.machine.forge_hammer.ev.tooltip=停，锤子时间到！
+gregtech.machine.forge_hammer.ev.tooltip=停，现在是 Hammer 时间！
 gregtech.machine.forge_hammer.iv.name=精英锻造锤
 gregtech.machine.forge_hammer.iv.tooltip=铸板机
 gregtech.machine.forge_hammer.luv.name=精英锻造锤 II
