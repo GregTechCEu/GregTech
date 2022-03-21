@@ -1381,7 +1381,6 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_DIODE, 8)
                 .fluidInputs(SolderingAlloy.getFluid(L * 10))
                 .output(CRYSTAL_MAINFRAME_UV)
-                .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
         // T7: Wetware =================================================================================================
@@ -1446,7 +1445,6 @@ public class CircuitRecipes {
                 .input(plate, Europium, 4)
                 .fluidInputs(SolderingAlloy.getFluid(1152))
                 .output(WETWARE_SUPER_COMPUTER_UV)
-                .cleanroom(CleanroomType.CLEANROOM)
                 .buildAndRegister();
 
         // UHV
@@ -1465,7 +1463,6 @@ public class CircuitRecipes {
                 .fluidInputs(SolderingAlloy.getFluid(L * 20))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 8))
                 .output(WETWARE_MAINFRAME_UHV)
-                .cleanroom(CleanroomType.CLEANROOM)
                 .EUt(300000).duration(2000).buildAndRegister();
 
         // Misc ========================================================================================================
