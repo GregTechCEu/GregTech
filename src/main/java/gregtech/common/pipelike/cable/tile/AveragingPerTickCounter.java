@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.cable.tile;
 
-import gregtech.api.util.GTLog;
 import net.minecraft.world.World;
 
 import java.util.Arrays;

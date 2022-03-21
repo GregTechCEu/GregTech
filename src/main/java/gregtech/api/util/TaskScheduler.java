@@ -19,8 +19,7 @@ public class TaskScheduler {
         if (world.isRemote) {
             throw new IllegalArgumentException("Attempt to schedule task on client world!");
         }
-        List<Task> taskList = tasksPerWorld.computeIfAbsent(world, k -> new ArrayList<>());
-        taskList.add(task);
+        tasksPerWorld.computeIfAbsent(world, k -> new ArrayList<>()).add(task);
     }
 
     @SubscribeEvent

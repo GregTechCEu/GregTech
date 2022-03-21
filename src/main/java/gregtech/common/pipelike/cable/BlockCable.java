@@ -35,6 +35,7 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -120,6 +121,33 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         if (pipeNet != null) {
             pipeNet.onNeighbourStateChanged();
         }
+    }
+
+    @Override
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileEntityCable) {
+            TileEntityCable cable = (TileEntityCable) tile;
+            int temp = cable.getTemperature();
+            // max light at 5000 K
+            // min light at 500 K
+            if(temp >= 5000) {
+                return 15;
+            }
+            if (temp > 500) {
+                return (temp - 500) * 15 / (4500);
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+        if (worldIn.isRemote) {
+            TileEntityCable cable = (TileEntityCable) getPipeTileEntity(worldIn, pos);
+            cable.killParticle();
+        }
+        super.breakBlock(worldIn, pos, state);
     }
 
     @Override
