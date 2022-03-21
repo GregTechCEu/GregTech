@@ -1,5 +1,7 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import appeng.core.AEConfig;
+import appeng.core.features.AEFeature;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -409,7 +411,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.8"));
             tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.9"));
             if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
-                tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.ae2"));
+                tooltip.add(I18n.format(AEConfig.instance().isFeatureEnabled(AEFeature.CHANNELS) ? "gregtech.machine.cleanroom.tooltip.ae2.channels" : "gregtech.machine.cleanroom.tooltip.ae2.no_channels"));
             }
         } else {
             tooltip.add(I18n.format("gregtech.tooltip.hold_shift"));
