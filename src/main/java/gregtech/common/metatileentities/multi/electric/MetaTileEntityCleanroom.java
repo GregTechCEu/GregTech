@@ -15,10 +15,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
-import gregtech.api.pattern.BlockPattern;
-import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.pattern.*;
+import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -27,10 +25,12 @@ import gregtech.common.blocks.BlockCleanroomCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -43,13 +43,12 @@ import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.Loader;
+import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implements ICleanroomProvider, IWorkable, IDataInfoProvider {
 
@@ -59,6 +58,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     private int height = 5;
     private int depth = 5;
 
+    private CleanroomType cleanroomType = null;
     private boolean isClean;
 
     private IEnergyContainer energyContainer;
@@ -87,6 +87,15 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         initializeAbilities();
+        Object type = context.get("FilterType");
+        if (type instanceof BlockCleanroomCasing.CasingType) {
+            BlockCleanroomCasing.CasingType casingType = (BlockCleanroomCasing.CasingType) type;
+
+            if (casingType.equals(BlockCleanroomCasing.CasingType.FILTER_CASING))
+                this.cleanroomType = CleanroomType.CLEANROOM;
+            else if (casingType.equals(BlockCleanroomCasing.CasingType.FILTER_CASING_STERILE))
+                this.cleanroomType = CleanroomType.STERILE_CLEANROOM;
+        }
     }
 
     @Override
@@ -98,7 +107,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     @Override
     protected void updateFormedValid() {
-        this.cleanroomLogic.performDrilling();
+        this.cleanroomLogic.updateLogic();
         if (!getWorld().isRemote && this.cleanroomLogic.wasActiveAndNeedsUpdate()) {
             this.cleanroomLogic.setWasActiveAndNeedsUpdate(false);
             this.cleanroomLogic.setActive(false);
@@ -137,7 +146,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         roof.append("B");
         controller.append("B");
 
-
         // build each slice of the structure
         String B = border.toString();
         String W = wall.toString();
@@ -164,9 +172,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             center[i] = I;
         }
 
-        TraceabilityPredicate casing = states(getCasingState()).setMinGlobalLimited((width * height * depth - (width - 2) * (height - 2) * (depth - 2)) * 3 / 4)
-                .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3))
-                .or(autoAbilities());
+        TraceabilityPredicate wallPredicate = states(getCasingState(), getGlassState()).setMinGlobalLimited((width * height * depth - (width - 2) * (height - 2) * (depth - 2)) * 3 / 4);
+        TraceabilityPredicate casing = wallPredicate.or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3)).or(autoAbilities());
 
         // layer the slices one behind the next
         return FactoryBlockPattern.start()
@@ -177,15 +184,41 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
                 .aisle(frontBack)
                 .where('S', selfPredicate())
                 .where('B', casing)
-                .where('X', casing.or(states(MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS)).setPreviewCount(0))
+                .where('X', casing
                         .or(doorPredicate().setMaxGlobalLimited(8).setPreviewCount(0))
                         .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_ITEM).setPreviewCount(1))
                         .or(metaTileEntities(MetaTileEntities.PASSTHROUGH_HATCH_FLUID).setPreviewCount(1))
                         .or(metaTileEntities(MetaTileEntities.HULL).setMaxGlobalLimited(5).setPreviewCount(1))
                         .or(metaTileEntities(MetaTileEntities.DIODES).setMaxGlobalLimited(5).setPreviewCount(1)))
-                .where('F', states(getFilterState()))
+                .where('F', filterPredicate())
                 .where(' ', innerPredicate())
                 .build();
+    }
+
+    @Nonnull
+    protected TraceabilityPredicate filterPredicate() {
+        return new TraceabilityPredicate(blockWorldState -> {
+            IBlockState blockState = blockWorldState.getBlockState();
+            Block block = blockState.getBlock();
+            if (block instanceof BlockCleanroomCasing) {
+                BlockCleanroomCasing.CasingType casingType = ((BlockCleanroomCasing) blockState.getBlock()).getState(blockState);
+                if (casingType.equals(BlockCleanroomCasing.CasingType.PLASCRETE)) return false;
+
+                Object currentFilter = blockWorldState.getMatchContext().getOrPut("FilterType", casingType);
+                if (!currentFilter.toString().equals(casingType.getName())) {
+                    blockWorldState.setError(new PatternStringError("gregtech.multiblock.pattern.error.filters"));
+                    return false;
+                }
+                blockWorldState.getMatchContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
+                return true;
+            }
+            return false;
+        }, () -> ArrayUtils.addAll(
+                Arrays.stream(BlockCleanroomCasing.CasingType.values())
+                        .filter(type -> !type.equals(BlockCleanroomCasing.CasingType.PLASCRETE))
+                        .map(type -> new BlockInfo(MetaBlocks.CLEANROOM_CASING.getState(type), null))
+                        .toArray(BlockInfo[]::new)))
+                .addTooltips("gregtech.multiblock.pattern.error.filters");
     }
 
     @Override
@@ -194,13 +227,14 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     }
 
     // protected to allow easy addition of addon "cleanrooms"
+    @Nonnull
     protected IBlockState getCasingState() {
         return MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.PLASCRETE);
     }
 
-    // protected to allow easy addition of addon "cleanrooms"
-    protected IBlockState getFilterState() {
-        return MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.FILTER_CASING);
+    @Nonnull
+    protected IBlockState getGlassState() {
+        return MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS);
     }
 
     @Nonnull
@@ -243,10 +277,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
             return true;
         if (metaTileEntity instanceof SimpleGeneratorMetaTileEntity)
             return true;
-        if (metaTileEntity instanceof FuelMultiblockController)
-            return true;
-
-        return false;
+        return metaTileEntity instanceof FuelMultiblockController;
     }
 
     @Override
@@ -358,7 +389,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     }
 
     protected boolean withinBounds(int size) {
-        return size >= MIN_DIAMETER && size <= MAX_DIAMETER;
+        return GTUtility.isBetweenInclusive(MIN_DIAMETER, MAX_DIAMETER, size);
     }
 
     @Override
@@ -396,7 +427,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
 
     @Override
     public Set<CleanroomType> getTypes() {
-        return Sets.newHashSet(CleanroomType.CLEANROOM);
+        return Sets.newHashSet(this.cleanroomType);
     }
 
     @Override
@@ -412,7 +443,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     @Nonnull
     @Override
     public List<ITextComponent> getDataInfo() {
-        return new ArrayList<>(); //TODO
+        return Collections.singletonList(new TextComponentTranslation(isClean ? "gregtech.multiblock.cleanroom.clean_state" : "gregtech.multiblock.cleanroom.dirty_state"));
     }
 
     @Override
@@ -457,7 +488,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     }
 
     public boolean drainEnergy(boolean simulate) {
-        long energyToDrain = GTValues.VA[getEnergyTier()];
+        long energyToDrain = isClean() ? (long) Math.min(4, Math.pow(4, getEnergyTier())) : GTValues.VA[getEnergyTier()];
         long resultEnergy = energyContainer.getEnergyStored() - energyToDrain;
         if (resultEnergy >= 0L && resultEnergy <= energyContainer.getEnergyCapacity()) {
             if (!simulate)
@@ -533,5 +564,38 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
         if (ConfigHolder.machines.enableCleanroom) {
             super.getSubItems(creativeTab, subItems);
         }
+    }
+
+    @Override
+    public List<MultiblockShapeInfo> getMatchingShapes() {
+        ArrayList<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
+        MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder()
+                .aisle("XXXXX", "XIHLX", "XXDXX", "XXXXX", "XXXXX")
+                .aisle("XXXXX", "X   X", "G   G", "X   X", "XFFFX")
+                .aisle("XXXXX", "X   X", "G   G", "X   X", "XFSFX")
+                .aisle("XXXXX", "X   X", "G   G", "X   X", "XFFFX")
+                .aisle("XMXEX", "XXOXX", "XXRXX", "XXXXX", "XXXXX")
+                .where('X', MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.PLASCRETE))
+                .where('G', MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS))
+                .where('S', MetaTileEntities.CLEANROOM, EnumFacing.SOUTH)
+                .where(' ', Blocks.AIR.getDefaultState())
+                .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.SOUTH)
+                .where('I', MetaTileEntities.PASSTHROUGH_HATCH_ITEM, EnumFacing.NORTH)
+                .where('L', MetaTileEntities.PASSTHROUGH_HATCH_FLUID, EnumFacing.NORTH)
+                .where('H', MetaTileEntities.HULL[GTValues.HV], EnumFacing.NORTH)
+                .where('D', MetaTileEntities.DIODES[GTValues.HV], EnumFacing.NORTH)
+                .where('M', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH : MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.PLASCRETE), EnumFacing.SOUTH)
+                .where('O', Blocks.IRON_DOOR.getDefaultState().withProperty(BlockDoor.FACING, EnumFacing.NORTH).withProperty(BlockDoor.HALF, BlockDoor.EnumDoorHalf.LOWER))
+                .where('R', Blocks.IRON_DOOR.getDefaultState().withProperty(BlockDoor.FACING, EnumFacing.NORTH).withProperty(BlockDoor.HALF, BlockDoor.EnumDoorHalf.UPPER));
+
+        Arrays.stream(BlockCleanroomCasing.CasingType.values())
+                .filter(casingType -> !casingType.equals(BlockCleanroomCasing.CasingType.PLASCRETE))
+                .forEach(casingType -> shapeInfo.add(builder.where('F', MetaBlocks.CLEANROOM_CASING.getState(casingType)).build()));
+        return shapeInfo;
+    }
+
+    @Override
+    protected boolean shouldShowVoidingModeButton() {
+        return false;
     }
 }
