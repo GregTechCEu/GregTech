@@ -67,7 +67,7 @@ import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public abstract class MetaTileEntity implements ICoverable {
+public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
@@ -1047,7 +1047,7 @@ public abstract class MetaTileEntity implements ICoverable {
         // determine if there is sufficient room to insert all items into the target inventory
         if (simulate) {
             OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(handler);
-            HashMap<ItemStackKey, Integer> stackKeyMap = GTHashMaps.fromItemStackCollection(items);
+            Map<ItemStackKey, Integer> stackKeyMap = GTHashMaps.fromItemStackCollection(items);
 
             for (Map.Entry<ItemStackKey, Integer> entry : stackKeyMap.entrySet()) {
                 int amountToInsert = entry.getValue();
@@ -1082,7 +1082,7 @@ public abstract class MetaTileEntity implements ICoverable {
                                                   List<FluidStack> fluidStacks) {
         if (simulate) {
             OverlayedFluidHandler overlayedFluidHandler = new OverlayedFluidHandler(fluidHandler);
-            HashMap<FluidKey, Integer> fluidKeyMap = GTHashMaps.fromFluidCollection(fluidStacks);
+            Map<FluidKey, Integer> fluidKeyMap = GTHashMaps.fromFluidCollection(fluidStacks);
             for (Map.Entry<FluidKey, Integer> entry : fluidKeyMap.entrySet()) {
                 int amountToInsert = entry.getValue();
                 int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), amountToInsert);
@@ -1422,5 +1422,15 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public boolean doTickProfileMessage() {
         return true;
+    }
+
+    @Override
+    public boolean canVoidRecipeItemOutputs() {
+        return false;
+    }
+
+    @Override
+    public boolean canVoidRecipeFluidOutputs() {
+        return false;
     }
 }

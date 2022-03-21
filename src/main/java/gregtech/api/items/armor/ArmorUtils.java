@@ -4,9 +4,7 @@ package gregtech.api.items.armor;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.util.ItemStackKey;
-import gregtech.api.util.input.EnumKey;
-import gregtech.api.util.input.Key;
-import gregtech.api.util.input.KeyBinds;
+import gregtech.api.util.input.KeyBind;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -158,23 +156,6 @@ public class ArmorUtils {
             return new ActionResult<>(EnumActionResult.FAIL, food);
         }
     }
-
-    /**
-     * Check if current key being pressed right now on both sides
-     *
-     * @return true if key currently pressed
-     */
-    public static boolean isKeyDown(EntityPlayer player, EnumKey type) {
-        if (SIDE.isClient()) {
-            return KeyBinds.REGISTRY.get(type.getID()).state;
-        } else {
-            if (KeyBinds.PLAYER_KEYS.get(player) == null) return false;
-            List<Key> playerKeys = KeyBinds.PLAYER_KEYS.get(player);
-            if (playerKeys.isEmpty()) return false;
-            return playerKeys.get(type.getID()).state;
-        }
-    }
-
 
     /**
      * Format itemstacks list from [1xitem@1, 1xitem@1, 1xitem@2] to

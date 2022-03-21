@@ -1,6 +1,5 @@
 package gregtech.api.unification.material.materials;
 
-import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 
@@ -405,14 +404,5 @@ public class MaterialFlagAddition {
 
         oreProp = Pyrochlore.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Apatite, Calcium, Niobium);
-
-        FluidProperty fluidProp = LiquidAir.getProperty(PropertyKey.FLUID);
-        fluidProp.setFluidTemperature(77);
-
-        fluidProp = LiquidNetherAir.getProperty(PropertyKey.FLUID);
-        fluidProp.setFluidTemperature(67);
-
-        fluidProp = LiquidEnderAir.getProperty(PropertyKey.FLUID);
-        fluidProp.setFluidTemperature(57);
     }
 }

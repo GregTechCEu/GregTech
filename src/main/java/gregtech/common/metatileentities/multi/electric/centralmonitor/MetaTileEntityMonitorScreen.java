@@ -231,7 +231,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     private void loadPlugin(MonitorPluginBaseBehavior plugin) {
-        if (this.plugin == null) {
+        if (plugin !=null && this.plugin != plugin) {
             this.plugin = plugin.createPlugin();
             this.plugin.readFromNBT(this.itemInventory.getStackInSlot(0).getOrCreateSubCompound("monitor_plugin"));
             this.plugin.onMonitorValid(this, true);
@@ -256,6 +256,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
     @SideOnly(Side.CLIENT)
     public void renderScreen(float partialTicks, RayTraceResult rayTraceResult) {
+        if (getController() == null) return;
         EnumFacing side = getController().getFrontFacing();
         GlStateManager.translate((scale - 1) * 0.5, (scale - 1) * 0.5, 0);
         GlStateManager.scale(this.scale, this.scale, 1);

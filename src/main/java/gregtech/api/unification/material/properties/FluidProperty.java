@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 
 public class FluidProperty implements IMaterialProperty<FluidProperty> {
 
-    public static final int BASE_TEMP = 300;
+    public static final int BASE_TEMP = 293; // Room Temperature
 
     /**
      * Internal material fluid field
@@ -70,7 +70,12 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
     }
 
     public void setFluidTemperature(int fluidTemperature) {
-        Preconditions.checkArgument(fluidTemperature > 0, "Invalid temperature");
+        setFluidTemperature(fluidTemperature, true);
+    }
+
+    public void setFluidTemperature(int fluidTemperature, boolean isKelvin) {
+        if (isKelvin) Preconditions.checkArgument(fluidTemperature >= 0, "Invalid temperature");
+        else fluidTemperature += 273;
         this.fluidTemperature = fluidTemperature;
         if (fluid != null)
             fluid.setTemperature(fluidTemperature);

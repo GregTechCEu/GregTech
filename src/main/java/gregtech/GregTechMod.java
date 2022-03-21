@@ -19,7 +19,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
-import gregtech.api.util.input.KeyBinds;
+import gregtech.api.util.input.KeyBind;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.api.worldgen.config.WorldGenRegistry;
@@ -129,7 +129,7 @@ public class GregTechMod {
         MetaEntities.init();
 
         proxy.onPreLoad();
-        KeyBinds.register();
+        KeyBind.init();
     }
 
     @Mod.EventHandler

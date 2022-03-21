@@ -101,6 +101,11 @@ public class MazeApp extends AbstractApplication {
     }
 
     @Override
+    public boolean canOpenMenuOnEdge() {
+        return gameState != 1;
+    }
+
+    @Override
     public boolean isClientSideApp() {
         return true;
     }

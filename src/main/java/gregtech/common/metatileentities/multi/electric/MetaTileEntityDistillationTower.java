@@ -94,4 +94,9 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     protected ICubeRenderer getFrontOverlay() {
         return Textures.DISTILLATION_TOWER_OVERLAY;
     }
+
+    @Override
+    public int getFluidOutputLimit() {
+        return getOutputFluidInventory().getTanks();
+    }
 }

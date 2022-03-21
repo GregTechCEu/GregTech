@@ -2,6 +2,7 @@ package gregtech.common.tools;
 
 import codechicken.lib.raytracer.RayTracer;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
@@ -17,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -118,9 +120,18 @@ public class ToolUtility {
                 output.setCount(input.material.getProperty((PropertyKey.ORE)).getOreMultiplier());
             }
             drops.add(output);
-
+        } else if (inputStack.getItem() instanceof ItemBlock) {
+            ItemBlock itemBlock = (ItemBlock) inputStack.getItem();
+            ItemStack newOutput = ItemStack.EMPTY;
+            if (itemBlock.getBlock() == Blocks.STAINED_GLASS || itemBlock.getBlock() == Blocks.GLASS) {
+                newOutput = OreDictUnifier.get(OrePrefix.dust, Materials.Glass);
+            } else if (itemBlock.getBlock() == Blocks.STAINED_GLASS_PANE || itemBlock.getBlock() == Blocks.GLASS_PANE) {
+                newOutput = OreDictUnifier.get(OrePrefix.dustTiny, Materials.Glass);
+            }
+            if (newOutput != ItemStack.EMPTY) {
+                drops.clear();
+                drops.add(newOutput);
+            }
         }
     }
-
-
 }

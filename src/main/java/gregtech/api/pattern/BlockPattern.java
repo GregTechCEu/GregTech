@@ -5,6 +5,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 import gregtech.common.blocks.MetaBlocks;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -102,15 +103,22 @@ public class BlockPattern {
                     pass = false;
                     break;
                 }
-                TileEntity tileEntity = world.getTileEntity(pos);
-                if (tileEntity != entry.getValue().getTileEntity()) {
-                    pass = false;
-                    break;
+                TileEntity cachedTileEntity = entry.getValue().getTileEntity();
+                if (cachedTileEntity != null) {
+                    TileEntity tileEntity = world.getTileEntity(pos);
+                    if (tileEntity != cachedTileEntity) {
+                        pass = false;
+                        break;
+                    }
                 }
             }
             if (pass) return worldState.hasError() ? null : matchContext;
         }
         return checkPatternAt(world, centerPos, facing);
+    }
+
+    public void clearCache() {
+        cache.clear();
     }
 
     private PatternMatchContext checkPatternAt(World world, BlockPos centerPos, EnumFacing facing) {

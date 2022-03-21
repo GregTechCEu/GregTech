@@ -102,12 +102,12 @@ public class CraftingRecipeLogic {
         return craftingGridChanged;
     }
 
-    public void performRecipe(EntityPlayer player) {
+    public boolean performRecipe(EntityPlayer player) {
         if (!isRecipeValid()) {
-            return;
+            return false;
         }
         if (!cachedRecipeData.consumeRecipeItems()) {
-            return;
+            return false;
         }
         ForgeHooks.setCraftingPlayer(player);
         NonNullList<ItemStack> remainingItems = cachedRecipe.getRemainingItems(inventoryCrafting); // todo right here is where tools get damaged (in UI)
@@ -118,7 +118,9 @@ public class CraftingRecipeLogic {
                 continue;
             }
             ItemStackKey stackKey = KeySharedStack.getRegisteredStack(itemStack);
-            inventoryCrafting.setInventorySlotContents(i, itemStack);
+            if (itemStack.isItemEqual(inventoryCrafting.getStackInSlot(i))) {
+                inventoryCrafting.setInventorySlotContents(i, itemStack);
+            }
             int remainingAmount = itemStack.getCount() - itemSources.insertItem(stackKey, itemStack.getCount(), false, IItemList.InsertMode.HIGHEST_PRIORITY);
             if (remainingAmount > 0) {
                 itemStack.setCount(remainingAmount);
@@ -128,6 +130,7 @@ public class CraftingRecipeLogic {
                 }
             }
         }
+        return true;
     }
 
     public void handleItemCraft(ItemStack itemStack, EntityPlayer player, boolean simulate) {
@@ -157,7 +160,7 @@ public class CraftingRecipeLogic {
     }
 
     public boolean isRecipeValid() {
-        return cachedRecipeData.getRecipe() != null && cachedRecipeData.attemptMatchRecipe() == ALL_INGREDIENTS_PRESENT;
+        return cachedRecipeData.getRecipe() != null && cachedRecipeData.matches(inventoryCrafting, this.world) && cachedRecipeData.attemptMatchRecipe() == ALL_INGREDIENTS_PRESENT;
     }
 
     private void updateCurrentRecipe() {

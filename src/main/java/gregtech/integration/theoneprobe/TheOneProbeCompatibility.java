@@ -18,5 +18,6 @@ public class TheOneProbeCompatibility {
         oneProbe.registerProvider(new MultiblockInfoProvider());
         oneProbe.registerProvider(new MaintenanceInfoProvider());
         oneProbe.registerProvider(new MultiRecipeMapInfoProvider());
+        oneProbe.registerProvider(new ConverterInfoProvider());
     }
 }

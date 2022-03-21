@@ -109,8 +109,8 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     private void addToInventoryOrDropItems(List<ItemStack> drops) {
         EnumFacing outputFacing = getOutputFacing();
         double itemSpawnX = getPos().getX() + 0.5 + outputFacing.getXOffset();
-        double itemSpawnY = getPos().getX() + 0.5 + outputFacing.getYOffset();
-        double itemSpawnZ = getPos().getX() + 0.5 + outputFacing.getZOffset();
+        double itemSpawnY = getPos().getY() + 0.5 + outputFacing.getYOffset();
+        double itemSpawnZ = getPos().getZ() + 0.5 + outputFacing.getZOffset();
         for (ItemStack itemStack : drops) {
             ItemStack remainStack = ItemHandlerHelper.insertItemStacked(exportItems, itemStack, false);
             if (!remainStack.isEmpty()) {

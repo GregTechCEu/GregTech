@@ -3,7 +3,6 @@ package gregtech.api;
 import gregtech.GregTechVersion;
 import gregtech.api.util.XSTR;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.time.LocalDate;
@@ -73,14 +72,14 @@ public class GTValues {
     public static final int UHV = 9;
     public static final int UEV = 10;
     public static final int UIV = 11;
-    public static final int UMV = 12;
-    public static final int UXV = 13;
+    public static final int UXV = 12;
+    public static final int OpV = 13;
     public static final int MAX = 14;
 
     /**
      * The short names for the voltages, used for registration primarily
      */
-    public static final String[] VN = new String[]{"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV", "UEV", "UIV", "UMV", "UXV", "MAX"};
+    public static final String[] VN = new String[]{"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV", "UEV", "UIV", "UXV", "OpV", "MAX"};
 
     /**
      * The short names for the voltages, formatted for text
@@ -90,7 +89,7 @@ public class GTValues {
             GOLD + "HV", DARK_PURPLE + "EV", DARK_BLUE + "IV",
             LIGHT_PURPLE + "LuV", WHITE + "ZPM", DARK_AQUA + "UV",
             DARK_RED + "UHV", GREEN + "UEV", DARK_GREEN + "UIV",
-            YELLOW + "UMV", BLUE + "UXV", RED + "MAX"};
+            YELLOW + "UXV", BLUE + "OpV", RED + "MAX"};
 
     /**
      * Color values for the voltages
@@ -101,7 +100,7 @@ public class GTValues {
      * The long names for the voltages
      */
     public static final String[] VOLTAGE_NAMES = new String[]{"Ultra Low Voltage", "Low Voltage", "Medium Voltage", "High Voltage", "Extreme Voltage", "Insane Voltage", "Ludicrous Voltage", "ZPM Voltage", "Ultimate Voltage",
-            "Highly Ultimate Voltage", "Extremely Ultimate Voltage", "Insanely Ultimate Voltage", "Mega Ultimate Voltage", "Extended Mega Ultimate Voltage", "Maximum Voltage"};
+            "Ultra High Voltage", "Ultra Excessive Voltage", "Ultra Immense Voltage", "Ultra Extreme Voltage", "Overpowered Voltage", "Maximum Voltage"};
 
     /**
      * ModID strings, since they are quite common parameters
@@ -124,11 +123,6 @@ public class GTValues {
     public static boolean isClientSide() {
         if (isClient == null) isClient = FMLCommonHandler.instance().getSide().isClient();
         return isClient;
-    }
-
-    @Deprecated
-    public static boolean isModLoaded(String modid) {
-        return Loader.isModLoaded(modid);
     }
 
     /**

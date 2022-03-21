@@ -73,39 +73,39 @@
           "side": "gregtech:blocks/casings/voltage/uv/side"
         }
       },
-      "highly_ultimate_voltage": {
+      "ultra_high_voltage": {
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/uhv/bottom",
           "top": "gregtech:blocks/casings/voltage/uhv/top",
           "side": "gregtech:blocks/casings/voltage/uhv/side"
         }
       },
-      "extremely_ultimate_voltage": {
+      "ultra_excessive_voltage": {
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/uev/bottom",
           "top": "gregtech:blocks/casings/voltage/uev/top",
           "side": "gregtech:blocks/casings/voltage/uev/side"
         }
       },
-      "insanely_ultimate_voltage": {
+      "ultra_immense_voltage": {
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/uiv/bottom",
           "top": "gregtech:blocks/casings/voltage/uiv/top",
           "side": "gregtech:blocks/casings/voltage/uiv/side"
         }
       },
-      "mega_ultimate_voltage": {
-        "textures": {
-          "bottom": "gregtech:blocks/casings/voltage/umv/bottom",
-          "top": "gregtech:blocks/casings/voltage/umv/top",
-          "side": "gregtech:blocks/casings/voltage/umv/side"
-        }
-      },
-      "extended_mega_ultimate_voltage": {
+      "ultra_extreme_voltage": {
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/uxv/bottom",
           "top": "gregtech:blocks/casings/voltage/uxv/top",
           "side": "gregtech:blocks/casings/voltage/uxv/side"
+        }
+      },
+      "overpowered_voltage": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/voltage/opv/bottom",
+          "top": "gregtech:blocks/casings/voltage/opv/top",
+          "side": "gregtech:blocks/casings/voltage/opv/side"
         }
       },
       "maximum_voltage": {
