@@ -5,6 +5,7 @@ import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.util.FacingPos;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -17,6 +18,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
 
@@ -70,12 +72,14 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
         private final EnumFacing faceToHandler;
         private final int distance;
         private final ItemPipeProperties properties;
+        private final List<Predicate<ItemStack>> filters;
 
-        public Inventory(BlockPos pipePos, EnumFacing facing, int distance, ItemPipeProperties properties) {
+        public Inventory(BlockPos pipePos, EnumFacing facing, int distance, ItemPipeProperties properties, List<Predicate<ItemStack>> filters) {
             this.pipePos = pipePos;
             this.faceToHandler = facing;
             this.distance = distance;
             this.properties = properties;
+            this.filters = filters;
         }
 
         public BlockPos getPipePos() {
@@ -92,6 +96,19 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
 
         public ItemPipeProperties getProperties() {
             return properties;
+        }
+
+        public List<Predicate<ItemStack>> getFilters() {
+            return filters;
+        }
+
+        public boolean matchesFilters(ItemStack stack) {
+            for (Predicate<ItemStack> filter : filters) {
+                if (!filter.test(stack)) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public BlockPos getHandlerPos() {

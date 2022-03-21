@@ -63,7 +63,7 @@ public class ItemNetHandler implements IItemHandler {
             this.pipe = tickingPipe;
         }
 
-        if (net == null || pipe == null || pipe.isInvalid()) {
+        if (net == null || pipe == null || pipe.isInvalid() || pipe.isFaceBlocked(facing)) {
             return stack;
         }
 
@@ -293,7 +293,9 @@ public class ItemNetHandler implements IItemHandler {
 
     public ItemStack insert(ItemPipeNet.Inventory handler, ItemStack stack, boolean simulate, boolean ignoreLimit) {
         int allowed = ignoreLimit ? stack.getCount() : checkTransferable(handler.getProperties().getTransferRate(), stack.getCount(), simulate);
-        if (allowed == 0) return stack;
+        if (allowed == 0 || !handler.matchesFilters(stack)) {
+            return stack;
+        }
         CoverBehavior pipeCover = getCoverOnPipe(handler.getPipePos(), handler.getFaceToHandler());
         CoverBehavior tileCover = getCoverOnNeighbour(handler.getPipePos(), handler.getFaceToHandler());
         if (pipeCover != null) {
