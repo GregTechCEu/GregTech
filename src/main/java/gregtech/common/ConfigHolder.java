@@ -94,7 +94,7 @@ public class ConfigHolder {
         @Config.Comment({"Blacklist of machines for the Processing Array.",
                 "Add the unlocalized Recipe Map name to blacklist the machine.",
                 "Default: All machines allowed"})
-        public String[] processingArrayBlacklist = new String[] {"rock_breaker"};
+        public String[] processingArrayBlacklist = new String[0];
     }
 
     public static class WorldGenOptions {
