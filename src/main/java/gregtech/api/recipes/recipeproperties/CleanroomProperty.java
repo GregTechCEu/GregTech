@@ -1,7 +1,6 @@
 package gregtech.api.recipes.recipeproperties;
 
 import gregtech.api.metatileentity.multiblock.CleanroomType;
-import gregtech.api.util.GTUtility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
@@ -26,20 +25,18 @@ public class CleanroomProperty extends RecipeProperty<CleanroomType> {
 
     @Override
     public void drawInfo(@Nonnull Minecraft minecraft, int x, int y, int color, Object value) {
-        if (castValue(value) == null)
-            return;
+        CleanroomType type = castValue(value);
+        if (type == null) return;
 
-        minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.cleanroom",
-                getName(castValue(value))), x, y, color);
+        minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.cleanroom", getName(type)), x, y, color);
     }
 
     @Nonnull
     private String getName(@Nonnull CleanroomType value) {
-        String name = value.getName();
+        String name = I18n.format(value.getDisplayName());
 
-        if (name.length() >= 13)
-            return  GTUtility.lowerUnderscoreToUpperCamel(name.substring(0, 10)) + "..";
+        if (name.length() >= 20) return name.substring(0, 20) + "..";
 
-        return GTUtility.lowerUnderscoreToUpperCamel(name);
+        return name;
     }
 }

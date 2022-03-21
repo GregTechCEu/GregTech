@@ -139,8 +139,9 @@ public class ElementMaterials {
                 .build();
 
         Cerium = new Material.Builder(20, "cerium")
-                .dust().fluid()
+                .ingot().fluid()
                 .color(0x87917D).iconSet(METALLIC)
+                .flags(GENERATE_PLATE)
                 .element(Elements.Ce)
                 .fluidTemp(1068)
                 .build();

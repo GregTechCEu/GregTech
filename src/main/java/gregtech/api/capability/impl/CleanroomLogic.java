@@ -24,7 +24,6 @@ public class CleanroomLogic {
     private boolean isActive;
     private boolean isWorkingEnabled = true;
     private boolean wasActiveAndNeedsUpdate;
-    private boolean isDone = false;
 
     private boolean hasNotEnoughEnergy;
 
@@ -37,26 +36,25 @@ public class CleanroomLogic {
      * Performs the actual drilling
      * Call this method every tick in update
      */
-    public void performDrilling() {
+    public void updateLogic() {
         if (metaTileEntity.getWorld().isRemote) return;
 
         if (ConfigHolder.machines.enableMaintenance && ((MultiblockWithDisplayBase) metaTileEntity).hasMaintenanceMechanics() && ((MultiblockWithDisplayBase) metaTileEntity).getNumMaintenanceProblems() > 5) {
             return;
         }
 
-        // drills that cannot work do nothing
+        // cleanrooms which cannot work do nothing
         if (!this.isWorkingEnabled)
             return;
 
-        // check if drilling is possible
-        if (!checkCanDrain())
+        // check if running is possible
+        if (!checkCanDrainStorages())
             return;
 
         // actually drain the energy
         consumeEnergy(false);
 
-        if (!this.isActive)
-            setActive(true);
+        if (!this.isActive) setActive(true);
 
         // increase progress
         progressTime++;
@@ -75,7 +73,7 @@ public class CleanroomLogic {
     /**
      * @return true if the cleanroom is able to drain energy, else false
      */
-    protected boolean checkCanDrain() {
+    protected boolean checkCanDrainStorages() {
         if (!consumeEnergy(true)) {
             if (progressTime >= 2) {
                 if (ConfigHolder.machines.recipeProgressLowEnergy)
@@ -182,7 +180,6 @@ public class CleanroomLogic {
         data.setBoolean("isActive", this.isActive);
         data.setBoolean("isWorkingEnabled", this.isWorkingEnabled);
         data.setBoolean("wasActiveAndNeedsUpdate", this.wasActiveAndNeedsUpdate);
-        data.setBoolean("isDone", isDone);
         data.setInteger("progressTime", progressTime);
         return data;
     }
@@ -195,7 +192,6 @@ public class CleanroomLogic {
         this.isActive = data.getBoolean("isActive");
         this.isWorkingEnabled = data.getBoolean("isWorkingEnabled");
         this.wasActiveAndNeedsUpdate = data.getBoolean("wasActiveAndNeedsUpdate");
-        this.isDone = data.getBoolean("isDone");
         this.progressTime = data.getInteger("progressTime");
     }
 

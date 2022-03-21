@@ -1076,6 +1076,9 @@ metaitem.nan.certificate.tooltip=Challenge Accepted!
 
 metaitem.fertilizer.name=Fertilizer
 
+metaitem.blacklight.name=Blacklight
+metaitem.blacklight.tooltip=Long-Wave §dUltraviolet§7 light source
+
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 gui.widget.recipeProgressWidget.default_tooltip=Show Recipes
 
@@ -2492,6 +2495,9 @@ gregtech.machine.clipboard.name=Clipboard
 # Cleanroom Casings
 tile.cleanroom_casing.plascrete.name=Plascrete
 tile.cleanroom_casing.filter_casing.name=Filter Casing
+tile.cleanroom_casing.filter_casing_sterile.name=Sterilizing Filter Casing
+tile.cleanroom_casing.filter.tooltip=Creates a §aParticle-Free§7 environment
+tile.cleanroom_casing.filter_sterile.tooltip=Creates a §aSterilized§7 environment
 
 # Asphalt
 tile.asphalt.asphalt.name=Asphalt
@@ -4441,15 +4447,15 @@ gregtech.machine.fluid_drilling_rig.overclock=Overclocking increases production 
 
 gregtech.machine.cleanroom.name=Cleanroom
 gregtech.machine.cleanroom.tooltip.1=Place machines inside to run cleanroom recipes.
-gregtech.machine.cleanroom.tooltip.2=Uses §a30§7 EU per tick. Supply more energy to clean faster.
-gregtech.machine.cleanroom.tooltip.3=Can be any size from §b5x5x5§7 to §b15x15x15§7. Width and Depth must be odd numbers.
-gregtech.machine.cleanroom.tooltip.4=Requires §b75%%§7 of the walls to be Plascrete.
+gregtech.machine.cleanroom.tooltip.2=Uses §a30 EU/t§7 when dirty and §a4 EU/t§7 when clean.
+gregtech.machine.cleanroom.tooltip.3=Can be any size from §b5x5x5§7 to §b15x15x15§7.
+gregtech.machine.cleanroom.tooltip.4=Requires §b75%%§7 of the walls to be Plascrete or Cleanroom Glass.
 gregtech.machine.cleanroom.tooltip.5=Requires Filter Casings in the ceiling, excluding the edges.
-gregtech.machine.cleanroom.tooltip.6=Accepts up to four doors! Remains clean when the door is open.
+gregtech.machine.cleanroom.tooltip.6=Accepts up to 4 doors! Remains clean when the door is open.
 gregtech.machine.cleanroom.tooltip.7=Generators and Muffler Hatches are too dirty for the cleanroom!
 gregtech.machine.cleanroom.tooltip.8=Send power through hulls or diodes in the walls.
 gregtech.machine.cleanroom.tooltip.9=Send items and fluids with Passthrough Hatches in the walls.
-gregtech.machine.cleanroom.tooltip.ae2=Send 8 AE2 Channels through hulls in the walls.
+gregtech.machine.cleanroom.tooltip.ae2=Send §a8 AE2 Channels§7 through hulls in the walls.
 gregtech.multiblock.cleanroom.size=Size: %sx%sx%s (WxHxD)
 gregtech.multiblock.cleanroom.size_modify_width=Structure Width:
 gregtech.multiblock.cleanroom.size_modify_height=Structure Height:
@@ -4698,6 +4704,8 @@ gregtech.recipe.explosive=Explosive: %s
 gregtech.recipe.eu_to_start=Energy To Start: %sEU
 gregtech.recipe.dimensions=Dimensions: %s
 gregtech.recipe.cleanroom=Requires %s
+gregtech.recipe.cleanroom.display_name=Cleanroom
+gregtech.recipe.cleanroom_sterile.display_name=Sterile Cleanroom
 
 gregtech.fluid.click_to_fill=§7Click with a Fluid Container to §bfill §7the tank (Shift-click for a full stack).
 gregtech.fluid.click_combined=§7Click with a Fluid Container to §cempty §7or §bfill §7the tank (Shift-click for a full stack).
@@ -4828,6 +4836,7 @@ gregtech.multiblock.pattern.error.limited.1=§cMinimum: %d§r
 gregtech.multiblock.pattern.error.limited.2=§cMaximum: %d per layer§r
 gregtech.multiblock.pattern.error.limited.3=§cMinimum: %d per layer§r
 gregtech.multiblock.pattern.error.coils=§cAll heating coils must be the same§r
+gregtech.multiblock.pattern.error.filters=§cAll filters must be the same§r
 gregtech.multiblock.pattern.clear_amount_1=§6Must have a clear 1x1x1 space in front§r
 gregtech.multiblock.pattern.clear_amount_3=§6Must have a clear 3x3x1 space in front§r
 gregtech.multiblock.pattern.single=§6Only this block can be used§r
