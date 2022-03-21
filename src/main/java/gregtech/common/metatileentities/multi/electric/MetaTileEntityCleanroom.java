@@ -272,12 +272,15 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase implement
     }
 
     protected boolean isMachineBanned(MetaTileEntity metaTileEntity) {
-        // blacklisted machines: mufflers and all generators
-        if (metaTileEntity instanceof IMufflerHatch)
-            return true;
-        if (metaTileEntity instanceof SimpleGeneratorMetaTileEntity)
-            return true;
-        return metaTileEntity instanceof FuelMultiblockController;
+        // blacklisted machines: mufflers and all generators, miners/drills, primitives
+        if (metaTileEntity instanceof IMufflerHatch) return true;
+        if (metaTileEntity instanceof SimpleGeneratorMetaTileEntity) return true;
+        if (metaTileEntity instanceof FuelMultiblockController) return true;
+        if (metaTileEntity instanceof MetaTileEntityLargeMiner) return true;
+        if (metaTileEntity instanceof MetaTileEntityFluidDrill) return true;
+        if (metaTileEntity.equals(MetaTileEntities.COKE_OVEN)) return true;
+        if (metaTileEntity.equals(MetaTileEntities.PRIMITIVE_BLAST_FURNACE)) return true;
+        return metaTileEntity.equals(MetaTileEntities.PRIMITIVE_WATER_PUMP);
     }
 
     @Override
