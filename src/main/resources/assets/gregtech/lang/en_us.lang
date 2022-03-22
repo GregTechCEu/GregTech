@@ -1652,6 +1652,9 @@ material.cyclohexane=Cyclohexane
 material.cyclohexanone_oxime=Cyclohexanone Oxime
 material.caprolactam=Caprolactam
 material.nitrosyl_chloride=Nitrosyl Chloride
+material.butyraldehyde=Butyraldehyde
+material.polyvinyl_butyral=Polyvinyl Butyral
+
 
 # Unknown Composition Materials
 material.wood_gas=Wood Gas
@@ -1881,6 +1884,7 @@ material.insane=Insane
 material.epic=Epic
 material.legendary=Legendary
 material.maximum=Maximum
+
 
 # Item Renaming
 item.nether_quartz.oreNetherrack=Nether Quartz Ore
@@ -2383,6 +2387,7 @@ tile.fusion_casing.fusion_casing_mk3.name=Fusion Machine Casing MK III
 # Transparent casing blocks
 tile.transparent_casing.tempered_glass.name=Tempered Glass
 tile.transparent_casing.fusion_glass.name=Fusion Glass
+tile.transparent_casing.laminated_glass.name=Laminated Glass
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech

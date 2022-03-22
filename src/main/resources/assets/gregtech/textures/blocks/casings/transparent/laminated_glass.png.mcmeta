@@ -4,7 +4,7 @@
         "type": "CTM",
         "layer": "TRANSLUCENT",
         "textures": [
-            "gregtech:blocks/casings/transparent/fusion_glass_ctm"
+            "gregtech:blocks/casings/transparent/laminated_glass_ctm"
         ],
         "extra": {
             "connect_inside": true

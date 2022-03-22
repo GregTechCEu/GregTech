@@ -517,5 +517,19 @@ public class OrganicChemistryMaterials {
                 .components(Carbon, 6, Hydrogen, 11, Nitrogen, 1, Oxygen, 1)
                 .build()
                 .setFormula("(CH2)5C(O)NH", true);
+
+        Butyraldehyde = new Material.Builder(1073, "butyraldehyde")
+                .fluid()
+                .color(0x554A3F)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Carbon, 4, Hydrogen, 8, Oxygen, 1)
+                .build();
+
+        PolyvinylButyral = new Material.Builder(1074, "polyvinyl_butyral")
+                .ingot().fluid()
+                .color(0x347D41)
+                .flags(GENERATE_PLATE, DISABLE_DECOMPOSITION)
+                .components(Butyraldehyde, 1, PolyvinylAcetate, 1)
+                .build();
     }
 }
