@@ -224,7 +224,7 @@ public class CleanroomLogic {
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         if (dataId == GregtechDataCodes.IS_WORKING) {
             setActive(buf.readBoolean());
-            metaTileEntity.getHolder().scheduleChunkForRenderUpdate();
+            metaTileEntity.scheduleRenderUpdate();
         }
     }
 

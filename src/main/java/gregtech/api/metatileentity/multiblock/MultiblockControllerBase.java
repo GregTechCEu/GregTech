@@ -11,9 +11,9 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.*;
+import gregtech.api.sound.GTSoundManager;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
-import gregtech.api.sound.GTSoundManager;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
@@ -143,12 +143,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public static TraceabilityPredicate metaTileEntities(MetaTileEntity... metaTileEntities) {
-        ResourceLocation[] ids = Arrays.stream(metaTileEntities).map(tile -> tile.metaTileEntityId).toArray(ResourceLocation[]::new);
+        ResourceLocation[] ids = Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> tile.metaTileEntityId).toArray(ResourceLocation[]::new);
         return tilePredicate((state, tile) -> ArrayUtils.contains(ids, tile.metaTileEntityId), getCandidates(metaTileEntities));
     }
 
-    private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities) {
-        return () -> Arrays.stream(metaTileEntities).map(tile -> {
+    private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities){
+        return ()->Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> {
             // TODO
             MetaTileEntityHolder holder = new MetaTileEntityHolder();
             holder.setMetaTileEntity(tile);
