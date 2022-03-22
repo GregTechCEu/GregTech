@@ -16,8 +16,8 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
@@ -611,8 +611,8 @@ public class GTUtility {
         for (EntityPlayerMP player : entities) {
             if (player.openContainer instanceof ModularUIContainer) {
                 ModularUI modularUI = ((ModularUIContainer) player.openContainer).getModularUI();
-                if (modularUI.holder instanceof MetaTileEntityHolder &&
-                        ((MetaTileEntityHolder) modularUI.holder).getMetaTileEntity() == metaTileEntity) {
+                if (modularUI.holder instanceof IGregTechTileEntity &&
+                        ((IGregTechTileEntity) modularUI.holder).getMetaTileEntity() == metaTileEntity) {
                     result.add(player);
                 }
             }

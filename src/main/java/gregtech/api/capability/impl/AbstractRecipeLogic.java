@@ -772,10 +772,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.isActive = buf.readBoolean();
-            getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
+            getMetaTileEntity().scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.workingEnabled = buf.readBoolean();
-            getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
+            getMetaTileEntity().scheduleRenderUpdate();
         }
     }
 
