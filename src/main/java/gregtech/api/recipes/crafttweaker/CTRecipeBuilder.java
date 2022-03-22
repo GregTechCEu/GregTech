@@ -172,7 +172,7 @@ public class CTRecipeBuilder {
 
     @ZenMethod
     public void buildAndRegister() {
-        this.backingBuilder.buildAndRegister();
+        this.backingBuilder.isCTRecipe().buildAndRegister();
     }
 
     @ZenMethod
