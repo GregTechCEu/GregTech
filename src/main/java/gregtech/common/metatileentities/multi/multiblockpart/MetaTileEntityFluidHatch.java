@@ -52,6 +52,12 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
+    protected void initializeInventory() {
+        super.initializeInventory();
+        this.fluidInventory = isExportHatch ? exportFluids : importFluids;
+    }
+
+    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setTag("ContainerInventory", containerInventory.serializeNBT());

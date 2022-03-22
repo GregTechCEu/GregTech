@@ -57,8 +57,8 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
             };
         }
         this.fluidTanks = new FluidTankList(false, fluidsHandlers);
-        this.fluidInventory = fluidTanks;
         super.initializeInventory();
+        this.fluidInventory = fluidTanks;
     }
 
     @Override

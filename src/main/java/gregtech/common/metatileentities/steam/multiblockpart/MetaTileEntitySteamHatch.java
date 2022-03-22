@@ -58,6 +58,12 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
     }
 
     @Override
+    protected void initializeInventory() {
+        super.initializeInventory();
+        this.fluidInventory = importFluids;
+    }
+
+    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setTag("ContainerInventory", containerInventory.serializeNBT());
