@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.state.IBlockState;
@@ -74,7 +75,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
             if (calculateChance())
                 GTUtility.addStackToItemStackList(recoveryItems.get(slot), items);
         });
-        addItemsToItemHandler(inventory, false, items);
+        GTTransferUtils.addItemsToItemHandler(inventory, false, items);
     }
 
     private boolean calculateChance() {

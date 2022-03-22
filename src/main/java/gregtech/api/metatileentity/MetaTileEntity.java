@@ -13,7 +13,6 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
@@ -23,7 +22,9 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.sound.GTSoundManager;
 import gregtech.api.recipes.FluidKey;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.util.*;
+import gregtech.api.sound.GTSoundManager;
+import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
@@ -47,21 +48,22 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.*;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
@@ -946,7 +948,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             if (fluidHandler == null || myFluidHandler == null) {
                 continue;
             }
-            GTFluidUtils.transferFluids(myFluidHandler, fluidHandler, Integer.MAX_VALUE);
+            GTTransferUtils.transferFluids(myFluidHandler, fluidHandler, Integer.MAX_VALUE);
         }
         blockPos.release();
     }
@@ -965,7 +967,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             if (fluidHandler == null || myFluidHandler == null) {
                 continue;
             }
-            GTFluidUtils.transferFluids(fluidHandler, myFluidHandler, Integer.MAX_VALUE);
+            GTTransferUtils.transferFluids(fluidHandler, myFluidHandler, Integer.MAX_VALUE);
         }
         blockPos.release();
     }
@@ -984,7 +986,7 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             if (itemHandler == null || myItemHandler == null) {
                 continue;
             }
-            moveInventoryItems(myItemHandler, itemHandler);
+            GTTransferUtils.moveInventoryItems(myItemHandler, itemHandler);
         }
         blockPos.release();
     }
@@ -1003,93 +1005,9 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
             if (itemHandler == null || myItemHandler == null) {
                 continue;
             }
-            moveInventoryItems(itemHandler, myItemHandler);
+            GTTransferUtils.moveInventoryItems(itemHandler, myItemHandler);
         }
         blockPos.release();
-    }
-
-    protected static void moveInventoryItems(IItemHandler sourceInventory, IItemHandler targetInventory) {
-        for (int srcIndex = 0; srcIndex < sourceInventory.getSlots(); srcIndex++) {
-            ItemStack sourceStack = sourceInventory.extractItem(srcIndex, Integer.MAX_VALUE, true);
-            if (sourceStack.isEmpty()) {
-                continue;
-            }
-            ItemStack remainder = ItemHandlerHelper.insertItemStacked(targetInventory, sourceStack, true);
-            int amountToInsert = sourceStack.getCount() - remainder.getCount();
-            if (amountToInsert > 0) {
-                sourceStack = sourceInventory.extractItem(srcIndex, amountToInsert, false);
-                ItemHandlerHelper.insertItemStacked(targetInventory, sourceStack, false);
-            }
-        }
-    }
-
-    /**
-     * Simulates the insertion of items into a target inventory, then optionally performs the insertion.
-     * <br /><br />
-     * Simulating will not modify any of the input parameters. Insertion will either succeed completely, or fail
-     * without modifying anything.
-     * This method should be called with {@code simulate} {@code true} first, then {@code simulate} {@code false},
-     * only if it returned {@code true}.
-     *
-     * @param handler  the target inventory
-     * @param simulate whether to simulate ({@code true}) or actually perform the insertion ({@code false})
-     * @param items    the items to insert into {@code handler}.
-     * @return {@code true} if the insertion succeeded, {@code false} otherwise.
-     */
-    public static boolean addItemsToItemHandler(final IItemHandler handler,
-                                                final boolean simulate,
-                                                final List<ItemStack> items) {
-        // determine if there is sufficient room to insert all items into the target inventory
-        if (simulate) {
-            OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(handler);
-            Map<ItemStackKey, Integer> stackKeyMap = GTHashMaps.fromItemStackCollection(items);
-
-            for (Map.Entry<ItemStackKey, Integer> entry : stackKeyMap.entrySet()) {
-                int amountToInsert = entry.getValue();
-                int amount = overlayedItemHandler.insertStackedItemStackKey(entry.getKey(), amountToInsert);
-                if (amount > 0) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        // perform the merge.
-        items.forEach(stack -> ItemHandlerHelper.insertItemStacked(handler, stack, false));
-        return true;
-    }
-
-    /**
-     * Simulates the insertion of fluid into a target fluid handler, then optionally performs the insertion.
-     * <br /><br />
-     * Simulating will not modify any of the input parameters. Insertion will either succeed completely, or fail
-     * without modifying anything.
-     * This method should be called with {@code simulate} {@code true} first, then {@code simulate} {@code false},
-     * only if it returned {@code true}.
-     *
-     * @param fluidHandler the target inventory
-     * @param simulate     whether to simulate ({@code true}) or actually perform the insertion ({@code false})
-     * @param fluidStacks  the items to insert into {@code fluidHandler}.
-     * @return {@code true} if the insertion succeeded, {@code false} otherwise.
-     */
-    public static boolean addFluidsToFluidHandler(IMultipleTankHandler fluidHandler,
-                                                  boolean simulate,
-                                                  List<FluidStack> fluidStacks) {
-        if (simulate) {
-            OverlayedFluidHandler overlayedFluidHandler = new OverlayedFluidHandler(fluidHandler);
-            Map<FluidKey, Integer> fluidKeyMap = GTHashMaps.fromFluidCollection(fluidStacks);
-            for (Map.Entry<FluidKey, Integer> entry : fluidKeyMap.entrySet()) {
-                int amountToInsert = entry.getValue();
-                int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), amountToInsert);
-                if (inserted != amountToInsert) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        fluidStacks.forEach(fluidStack -> fluidHandler.fill(fluidStack, true));
-        return true;
     }
 
     public final int getOutputRedstoneSignal(@Nullable EnumFacing side) {
@@ -1401,8 +1319,8 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     public RecipeMap<?> getRecipeMap() {
 
-        for(int i = 0; i < mteTraits.size(); i++) {
-            if(mteTraits.get(i).getName().equals("RecipeMapWorkable")) {
+        for (int i = 0; i < mteTraits.size(); i++) {
+            if (mteTraits.get(i).getName().equals("RecipeMapWorkable")) {
                 return ((AbstractRecipeLogic) mteTraits.get(i)).getRecipeMap();
             }
         }

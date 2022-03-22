@@ -17,7 +17,7 @@ import java.util.*;
  * <p>On the way it can collect information about the pipes and it's neighbours
  * <p>After creating a walker simply call {@link #traversePipeNet()} to start walking, then you can just collect the data
  * <p><b>Do not walk a walker more than once</b>
- * <p>For example implementations look at {@link ItemNetWalker} and {@link FluidNetWalker}
+ * <p>For example implementations look at {@link ItemNetWalker}
  */
 public abstract class PipeNetWalker {
 
