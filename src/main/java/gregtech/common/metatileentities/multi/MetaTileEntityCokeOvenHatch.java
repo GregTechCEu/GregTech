@@ -10,7 +10,6 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.util.GTFluidUtils;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -52,7 +51,7 @@ public class MetaTileEntityCokeOvenHatch extends MetaTileEntityMultiblockPart {
             }
             IItemHandler itemHandler = tileEntity == null ? null : tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getFrontFacing().getOpposite());
             if (itemHandler != null) {
-                moveInventoryItems(this.itemInventory, itemHandler);
+                GTTransferUtils.moveInventoryItems(this.itemInventory, itemHandler);
             }
         }
     }
