@@ -35,7 +35,13 @@ public class MachineItemBlock extends ItemBlock {
     }
 
     public static MetaTileEntity getMetaTileEntity(ItemStack itemStack) {
-        return GregTechAPI.MTE_REGISTRY.getObjectById(itemStack.getItemDamage());
+        MetaTileEntity mte = GregTechAPI.MTE_REGISTRY.getObjectById(itemStack.getItemDamage());
+        // Guard against passing random ItemStacks with damage into the method and getting an MTE out based on the item damage
+        if(mte == null || !(itemStack.getItem() instanceof MachineItemBlock)) {
+            return null;
+        }
+
+        return mte;
     }
 
     @Nonnull
