@@ -76,11 +76,11 @@ public class GTTransferUtils {
             if (sourceStack.isEmpty()) {
                 continue;
             }
-            ItemStack remainder = insertItem(targetInventory, sourceStack, true);
+            ItemStack remainder = ItemHandlerHelper.insertItemStacked(targetInventory, sourceStack, true);
             int amountToInsert = sourceStack.getCount() - remainder.getCount();
             if (amountToInsert > 0) {
                 sourceStack = sourceInventory.extractItem(srcIndex, amountToInsert, false);
-                insertItem(targetInventory, sourceStack, false);
+                ItemHandlerHelper.insertItemStacked(targetInventory, sourceStack, false);
             }
         }
     }
@@ -117,7 +117,7 @@ public class GTTransferUtils {
         }
 
         // perform the merge.
-        items.forEach(stack -> insertItem(handler, stack, false));
+        items.forEach(stack -> ItemHandlerHelper.insertItemStacked(handler, stack, false));
         return true;
     }
 
