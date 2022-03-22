@@ -8,8 +8,8 @@ import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.items.toolitem.ToolMetaItem.MetaToolValueItem;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.CTRecipeHelper;
 import gregtech.api.util.ClipboardUtil;
 import net.minecraft.command.CommandBase;
@@ -102,19 +102,20 @@ public class CommandHand extends CommandBase {
                         IToolStats toolStats = ((MetaToolValueItem) metaValueItem).getToolStats();
                         player.sendMessage(new TextComponentTranslation("gregtech.command.hand.tool_stats", toolStats.getClass().getName()));
                     }
-                    // material info
-                    Material material = CTRecipeHelper.getMaterial(stackInHand);
-                    if (material != null) {
-                        player.sendMessage(new TextComponentTranslation("gregtech.command.hand.material").appendSibling(new TextComponentString(" " + material.toString()).setStyle(new Style().setColor(TextFormatting.GREEN)))
-                                .setStyle(getCopyStyle("<material:" + material.toString() + ">", false)));
-                    }
-                    // ore prefix info
-                    OrePrefix orePrefix = CTRecipeHelper.getOrePrefix(stackInHand);
-                    if (orePrefix != null) {
-                        player.sendMessage(new TextComponentTranslation("gregtech.command.hand.ore_prefix").appendSibling(new TextComponentString(" " + orePrefix.name).setStyle(new Style().setColor(TextFormatting.GREEN)))
-                                .setStyle(getCopyStyle(orePrefix.name, false)));
-                    }
                 }
+            }
+
+            // material info
+            MaterialStack material = OreDictUnifier.getMaterial(stackInHand);
+            if (material != null) {
+                player.sendMessage(new TextComponentTranslation("gregtech.command.hand.material").appendSibling(new TextComponentString(" " + material.material).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                        .setStyle(getCopyStyle("<material:" + material.material + ">", false)));
+            }
+            // ore prefix info
+            OrePrefix orePrefix = OreDictUnifier.getPrefix(stackInHand);
+            if (orePrefix != null) {
+                player.sendMessage(new TextComponentTranslation("gregtech.command.hand.ore_prefix").appendSibling(new TextComponentString(" " + orePrefix.name).setStyle(new Style().setColor(TextFormatting.GREEN)))
+                        .setStyle(getCopyStyle(orePrefix.name, false)));
             }
 
             Set<String> oreDicts = OreDictUnifier.getOreDictionaryNames(stackInHand);
