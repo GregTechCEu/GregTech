@@ -32,7 +32,9 @@ public class CoverSolarPanel extends CoverBehavior implements ITickable {
 
     @Override
     public boolean canAttach() {
-        return attachedSide == EnumFacing.UP && coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null) != null;
+        if (attachedSide != EnumFacing.UP) return false;
+        IEnergyContainer container = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
+        return container != null && EUt <= container.getInputVoltage();
     }
 
     @Override
