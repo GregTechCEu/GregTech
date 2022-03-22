@@ -3,9 +3,9 @@ package gregtech.api.pattern;
 import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.BlockInfo;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 import gregtech.common.blocks.MetaBlocks;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -144,8 +144,8 @@ public class BlockPattern {
                         worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
                         TileEntity tileEntity = worldState.getTileEntity();
                         if (predicate != TraceabilityPredicate.ANY) {
-                            if (tileEntity instanceof MetaTileEntityHolder) {
-                                if (((MetaTileEntityHolder) tileEntity).isValid()) {
+                            if (tileEntity instanceof IGregTechTileEntity) {
+                                if (((IGregTechTileEntity) tileEntity).isValid()) {
                                     cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), tileEntity, predicate));
                                 } else {
                                     cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), null, predicate));
@@ -298,7 +298,7 @@ public class BlockPattern {
 
                             List<ItemStack> candidates = Arrays.stream(infos).filter(info -> info.getBlockState().getBlock() != Blocks.AIR).map(info -> {
                                 IBlockState blockState = info.getBlockState();
-                                MetaTileEntity metaTileEntity = info.getTileEntity() instanceof MetaTileEntityHolder ? ((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity() : null;
+                                MetaTileEntity metaTileEntity = info.getTileEntity() instanceof IGregTechTileEntity ? ((IGregTechTileEntity) info.getTileEntity()).getMetaTileEntity() : null;
                                 if (metaTileEntity != null) {
                                     return metaTileEntity.getStackForm();
                                 } else {
@@ -332,10 +332,10 @@ public class BlockPattern {
                             blocks.put(pos, state);
                             world.setBlockState(pos, state);
                             TileEntity holder = world.getTileEntity(pos);
-                            if (holder instanceof MetaTileEntityHolder) {
+                            if (holder instanceof IGregTechTileEntity) {
                                 MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY.getObjectById(found.getItemDamage());
                                 if (sampleMetaTileEntity != null) {
-                                    MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) holder).setMetaTileEntity(sampleMetaTileEntity);
+                                    MetaTileEntity metaTileEntity = ((IGregTechTileEntity) holder).setMetaTileEntity(sampleMetaTileEntity);
                                     blocks.put(pos, metaTileEntity);
                                     if (found.hasTagCompound()) {
                                         metaTileEntity.initFromItemStackData(found.getTagCompound());
@@ -515,6 +515,7 @@ public class BlockPattern {
                         }
                         BlockInfo info = infos == null || infos.length == 0 ? BlockInfo.EMPTY : infos[0];
                         BlockPos pos = setActualRelativeOffset(z, y, x, EnumFacing.NORTH);
+                        // TODO
                         if (info.getTileEntity() instanceof MetaTileEntityHolder) {
                             MetaTileEntityHolder holder = new MetaTileEntityHolder();
                             holder.setMetaTileEntity(((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity());

@@ -15,8 +15,8 @@ import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.Size;
@@ -72,8 +72,8 @@ public class MachineConsoleWidget extends WidgetGroup {
         if (pos != null && facing != null) {
             TileEntity te = gui.entityPlayer.world.getTileEntity(pos);
             clearAllWidgets();
-            if (te instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) te).isValid()) {
-                mte = ((MetaTileEntityHolder) te).getMetaTileEntity();
+            if (te instanceof IGregTechTileEntity && ((IGregTechTileEntity) te).isValid()) {
+                mte = ((IGregTechTileEntity) te).getMetaTileEntity();
                 initWidgets();
                 if (isRemote()) {
                     writeClientAction(5, buf->{

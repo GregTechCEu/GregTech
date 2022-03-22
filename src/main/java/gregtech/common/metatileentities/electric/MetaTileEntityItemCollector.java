@@ -12,8 +12,8 @@ import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.SimpleTextWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.ItemFilterContainer;
@@ -63,7 +63,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityItemCollector(metaTileEntityId, getTier(), maxItemSuckingRange);
     }
 
@@ -97,7 +97,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
         super.receiveCustomData(dataId, buf);
         if (dataId == IS_WORKING) {
             this.isWorking = buf.readBoolean();
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         }
     }
 

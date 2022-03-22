@@ -1,7 +1,7 @@
 package gregtech.client.renderer.handler;
 
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.util.BlockInfo;
@@ -43,7 +43,7 @@ public class MultiblockPreviewRenderer {
         if (mbpPos != null) {
             Minecraft mc = Minecraft.getMinecraft();
             long time = System.currentTimeMillis();
-            if (opList == -1 || time > mbpEndTime || !(mc.world.getTileEntity(mbpPos) instanceof MetaTileEntityHolder)) {
+            if (opList == -1 || time > mbpEndTime || !(mc.world.getTileEntity(mbpPos) instanceof IGregTechTileEntity)) {
                 resetMultiblockRender();
                 layer = 0;
                 return;
@@ -113,7 +113,7 @@ public class MultiblockPreviewRenderer {
                 BlockInfo[] column = aisle[y];
                 for (int z = 0; z < column.length; z++) {
                     blockMap.put(new BlockPos(x, y, z), column[z]);
-                    MetaTileEntity metaTE = column[z].getTileEntity() instanceof MetaTileEntityHolder ? ((MetaTileEntityHolder) column[z].getTileEntity()).getMetaTileEntity() : null;
+                    MetaTileEntity metaTE = column[z].getTileEntity() instanceof IGregTechTileEntity ? ((IGregTechTileEntity) column[z].getTileEntity()).getMetaTileEntity() : null;
                     if (metaTE instanceof MultiblockControllerBase && metaTE.metaTileEntityId.equals(controllerBase.metaTileEntityId)) {
                         controllerPos = new BlockPos(x, y, z);
                         previewFacing = metaTE.getFrontFacing();

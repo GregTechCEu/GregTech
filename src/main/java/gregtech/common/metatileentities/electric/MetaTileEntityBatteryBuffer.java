@@ -14,6 +14,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.*;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
@@ -53,7 +54,7 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityBatteryBuffer(metaTileEntityId, getTier(), inventorySize);
     }
 
@@ -89,7 +90,7 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
     @Override
     public void setWorkingEnabled(boolean isActivationAllowed) {
         this.allowEnergyOutput = isActivationAllowed;
-        getHolder().notifyBlockUpdate();
+        notifyBlockUpdate();
     }
 
     @Override
