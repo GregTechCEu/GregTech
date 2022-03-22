@@ -12,7 +12,6 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
@@ -109,8 +108,8 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart {
     @Override
     @Optional.Method(modid = GTValues.MODID_APPENG)
     public AENetworkProxy getProxy() {
-        if (gridProxy == null) {
-            gridProxy = new AENetworkProxy(getHolder(), "proxy", getStackForm(), true);
+        if (gridProxy == null && getHolder() instanceof MetaTileEntityHolder) {
+            gridProxy = new AENetworkProxy((MetaTileEntityHolder) getHolder(), "proxy", getStackForm(), true);
         }
         return gridProxy;
     }
