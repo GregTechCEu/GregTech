@@ -484,7 +484,7 @@ public class ParallelLogic {
             // Determine if there is a valid recipe for this item. If not, skip it.
             Recipe matchingRecipe = recipeMap.findRecipe(maxVoltage,
                     Collections.singletonList(currentInputItem),
-                    Collections.emptyList(), 0, MatchingMode.IGNORE_FLUIDS);
+                    Collections.emptyList(), 0);
 
             CountableIngredient inputIngredient;
             if (matchingRecipe != null) {
