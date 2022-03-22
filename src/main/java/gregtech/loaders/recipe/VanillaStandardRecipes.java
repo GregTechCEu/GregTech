@@ -397,6 +397,12 @@ public class VanillaStandardRecipes {
                 .duration(100).EUt(1).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
+                .input(dust, Charcoal)
+                .input(OrePrefix.stick, Materials.Wood, 1)
+                .outputs(new ItemStack(Blocks.TORCH, 4))
+                .duration(100).EUt(1).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
                 .input(gem, Coke)
                 .input(OrePrefix.stick, Materials.Wood, 1)
                 .outputs(new ItemStack(Blocks.TORCH, 8))
@@ -491,6 +497,7 @@ public class VanillaStandardRecipes {
         ModHandler.addShapedRecipe("torch_sulfur", new ItemStack(Blocks.TORCH, 2), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Sulfur), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_phosphorus", new ItemStack(Blocks.TORCH, 6), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Phosphorus), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_coal_dust", new ItemStack(Blocks.TORCH, 4), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Coal), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
+        ModHandler.addShapedRecipe("torch_charcoal_dust", new ItemStack(Blocks.TORCH, 4), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Charcoal), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_coke", new ItemStack(Blocks.TORCH, 8), "C", "S", 'C', new UnificationEntry(OrePrefix.gem, Materials.Coke), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_coke_dust", new ItemStack(Blocks.TORCH, 8), "C", "S", 'C', new UnificationEntry(OrePrefix.dust, Materials.Coke), 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         ModHandler.addShapedRecipe("torch_creosote", new ItemStack(Blocks.TORCH, 16), "WB", "S ", 'W', OreDictUnifier.get("wool"), 'S', new UnificationEntry(stick, Wood), 'B', FluidUtil.getFilledBucket(Creosote.getFluid(1000)));
