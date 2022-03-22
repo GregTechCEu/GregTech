@@ -1042,6 +1042,7 @@ metaarmor.hud.hover_mode=Hover Mode: %s
 mataarmor.hud.supply_mode=Supply Mode: %s
 metaarmor.hud.gravi_engine=GraviEngine: %s
 
+metaarmor.energy_share.error=Energy Supply: §cNot enough power for gadgets charging!
 metaarmor.energy_share.enable=Energy Supply: Gadgets charging enabled
 metaarmor.energy_share.disable=Energy Supply: Gadgets charging disabled
 metaarmor.energy_share.tooltip=Supply mode: %s
