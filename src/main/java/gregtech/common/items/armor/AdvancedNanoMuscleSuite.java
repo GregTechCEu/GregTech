@@ -59,13 +59,18 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite implements IJetpack
         if (toggleTimer == 0 && KeyBind.ARMOR_CHARGING.isKeyDown(player)) {
             canShare = !canShare;
             toggleTimer = 5;
-            data.setBoolean("canShare", canShare);
             if (!world.isRemote) {
-                if (canShare)
+                if (canShare && cont.getCharge() == 0)
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.nms.share.error"), true);
+                else if (canShare)
                     player.sendStatusMessage(new TextComponentTranslation("metaarmor.nms.share.enable"), true);
                 else
                     player.sendStatusMessage(new TextComponentTranslation("metaarmor.nms.share.disable"), true);
             }
+
+            // Only allow for charging to be enabled if charge is nonzero
+            canShare = canShare && (cont.getCharge() != 0);
+            data.setBoolean("canShare", canShare);
         }
 
         performFlying(player, hoverMode, item);
