@@ -66,6 +66,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static gregtech.api.util.GTUtility.getMetaTileEntity;
+
 @SuppressWarnings("deprecation")
 public class BlockMachine extends BlockCustomParticle implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
 
@@ -143,11 +145,6 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
         return false;
-    }
-
-    public static MetaTileEntity getMetaTileEntity(IBlockAccess blockAccess, BlockPos pos) {
-        TileEntity holder = blockAccess.getTileEntity(pos);
-        return holder instanceof IGregTechTileEntity ? ((IGregTechTileEntity) holder).getMetaTileEntity() : null;
     }
 
     @Override

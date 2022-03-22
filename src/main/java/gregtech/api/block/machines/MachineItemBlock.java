@@ -1,11 +1,11 @@
 package gregtech.api.block.machines;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.util.GTUtility;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -34,26 +34,16 @@ public class MachineItemBlock extends ItemBlock {
         setHasSubtypes(true);
     }
 
-    public static MetaTileEntity getMetaTileEntity(ItemStack itemStack) {
-        MetaTileEntity mte = GregTechAPI.MTE_REGISTRY.getObjectById(itemStack.getItemDamage());
-        // Guard against passing random ItemStacks with damage into the method and getting an MTE out based on the item damage
-        if(mte == null || !(itemStack.getItem() instanceof MachineItemBlock)) {
-            return null;
-        }
-
-        return mte;
-    }
-
     @Nonnull
     @Override
     public String getTranslationKey(@Nonnull ItemStack stack) {
-        MetaTileEntity metaTileEntity = getMetaTileEntity(stack);
+        MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         return metaTileEntity == null ? "unnamed" : metaTileEntity.getMetaName();
     }
 
     @Override
     public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState) {
-        MetaTileEntity metaTileEntity = getMetaTileEntity(stack);
+        MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         //prevent rendering glitch before meta tile entity sync to client, but after block placement
         //set opaque property on the placing on block, instead during set of meta tile entity
         boolean superVal = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ,
@@ -74,7 +64,7 @@ public class MachineItemBlock extends ItemBlock {
     @Nullable
     @Override
     public String getCreatorModId(@Nonnull ItemStack itemStack) {
-        MetaTileEntity metaTileEntity = getMetaTileEntity(itemStack);
+        MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(itemStack);
         if (metaTileEntity == null) {
             return GTValues.MODID;
         }
@@ -85,14 +75,14 @@ public class MachineItemBlock extends ItemBlock {
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt) {
-        MetaTileEntity metaTileEntity = getMetaTileEntity(stack);
+        MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         return metaTileEntity == null ? null : metaTileEntity.initItemStackCapabilities(stack);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
-        MetaTileEntity metaTileEntity = getMetaTileEntity(stack);
+        MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         if (metaTileEntity == null) return;
 
         //item specific tooltip like: gregtech.machine.lathe.lv.tooltip

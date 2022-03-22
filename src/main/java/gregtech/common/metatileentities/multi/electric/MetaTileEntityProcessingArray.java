@@ -1,7 +1,6 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
-import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.IMachineHatchMultiblock;
@@ -156,10 +155,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     @Override
     public int getItemOutputLimit() {
         ItemStack machineStack = ((ProcessingArrayWorkable) this.recipeMapWorkable).getMachineStack();
-
-        MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(machineStack);
-
-        return mte.getItemOutputLimit();
+        MetaTileEntity mte = GTUtility.getMetaTileEntity(machineStack);
+        return mte == null ? 0 : mte.getItemOutputLimit();
 
     }
 
@@ -235,7 +232,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             ItemStack machine = controller.getAbilities(MultiblockAbility.MACHINE_HATCH).get(0).getStackInSlot(0);
 
 
-            MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(machine);
+            MetaTileEntity mte = GTUtility.getMetaTileEntity(machine);
 
             if (mte == null)
                 this.activeRecipeMap = null;

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
@@ -49,6 +50,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeHooks;
@@ -943,7 +945,7 @@ public class GTUtility {
             return false;
         }
 
-        MetaTileEntity machine = MachineItemBlock.getMetaTileEntity(machineStack);
+        MetaTileEntity machine = getMetaTileEntity(machineStack);
         // Blacklist the Rock Breaker here instead of through the config option so we don't get people removing the config entry and then
         // complaining it does not work. Remove from here if we ever decide to implement PA Rock Breaker
         if (machine instanceof WorkableTieredMetaTileEntity && !(machine instanceof SimpleGeneratorMetaTileEntity || machine instanceof MetaTileEntityRockBreaker))
@@ -999,7 +1001,7 @@ public class GTUtility {
         return result.toString();
     }
 
-  public static String formatNumbers(long number) {
+    public static String formatNumbers(long number) {
         return NUMBER_FORMAT.format(number);
     }
 
@@ -1014,4 +1016,14 @@ public class GTUtility {
         return !world.getChunkProvider().provideChunk(pos.getX() >> 4, pos.getZ() >> 4).isEmpty();
     }
 
+    public static MetaTileEntity getMetaTileEntity(IBlockAccess world, BlockPos pos) {
+        if (world == null || pos == null) return null;
+        TileEntity te = world.getTileEntity(pos);
+        return te instanceof IGregTechTileEntity ? ((IGregTechTileEntity) te).getMetaTileEntity() : null;
+    }
+
+    public static MetaTileEntity getMetaTileEntity(ItemStack stack) {
+        if (!(stack.getItem() instanceof MachineItemBlock)) return null;
+        return GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
+    }
 }
