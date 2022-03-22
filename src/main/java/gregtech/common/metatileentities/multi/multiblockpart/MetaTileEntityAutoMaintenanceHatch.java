@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
+import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -106,6 +107,8 @@ public class MetaTileEntityAutoMaintenanceHatch extends MetaTileEntityMultiblock
     public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
         if (ConfigHolder.machines.enableMaintenance) {
             super.getSubItems(creativeTab, subItems);
+            // keeps things in order despite IDs being out of order, due to the Cleaning Hatch being added later
+            subItems.add(MetaTileEntities.CLEANING_MAINTENANCE_HATCH.getStackForm());
         }
     }
 }
