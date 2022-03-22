@@ -24,6 +24,11 @@ public class MinesweeperApp extends AbstractApplication {
     }
 
     @Override
+    public boolean canOpenMenuOnEdge() {
+        return false;
+    }
+
+    @Override
     public void updateScreen() {
         super.updateScreen();
         if(mineField.hasWon() || mineField.hasLost()) {

@@ -50,6 +50,11 @@ public class PongApp extends AbstractApplication {
     }
 
     @Override
+    public boolean canOpenMenuOnEdge() {
+        return false;
+    }
+
+    @Override
     public boolean isClientSideApp() {
         return true;
     }

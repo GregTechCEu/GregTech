@@ -16,13 +16,12 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.Position;
 import gregtech.client.utils.RenderUtil;
-import gregtech.common.ConfigHolder;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -178,8 +177,8 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     }
 
     public TileEntity getCoveredTE() {
-        if (this.coverHolder instanceof MetaTileEntity){
-            return ((MetaTileEntity) this.coverHolder).getHolder();
+        if (this.coverHolder instanceof MetaTileEntity) {
+            return (TileEntity) ((MetaTileEntity) this.coverHolder).getHolder();
         }
         return null;
     }
@@ -743,10 +742,10 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                         return 0;
                     }
                     public long getEnergyStored() {
-                        return (long) (fe.getEnergyStored() / ConfigHolder.compat.energy.rfRatio);
+                        return FeCompat.toEu(fe.getEnergyStored(), FeCompat.ratio(false));
                     }
                     public long getEnergyCapacity() {
-                        return (long) (fe.getMaxEnergyStored() / ConfigHolder.compat.energy.rfRatio);
+                        return FeCompat.toEu(fe.getMaxEnergyStored(), FeCompat.ratio(false));
                     }
                     public long getInputAmperage() {
                         return 0;
@@ -909,8 +908,8 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                 TileEntity te = getCoveredTE();
                 if (te != null) {
                     ItemStack itemStack;
-                    if (te instanceof MetaTileEntityHolder) {
-                        itemStack = ((MetaTileEntityHolder) te).getMetaTileEntity().getStackForm();
+                    if (te instanceof IGregTechTileEntity) {
+                        itemStack = ((IGregTechTileEntity) te).getMetaTileEntity().getStackForm();
                     } else {
                         BlockPos pos = te.getPos();
                         itemStack = te.getBlockType().getPickBlock(te.getWorld().getBlockState(pos), new RayTraceResult(new Vec3d(0.5, 0.5, 0.5), getCoveredFacing(), pos), te.getWorld(), pos, Minecraft.getMinecraft().player);

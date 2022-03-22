@@ -9,8 +9,10 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.*;
 import gregtech.api.sound.GTSoundManager;
+import gregtech.api.util.world.DummyWorld;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -75,7 +77,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             if (getOffsetTimer() % 20 == 0 || isFirstTick()) {
                 checkStructurePattern();
             }
-            if (isStructureFormed()) {
+            // DummyWorld is the world for the JEI preview. We do not want to update the Multi in this world,
+            // besides initially forming it in checkStructurePattern
+            if (isStructureFormed() && !(getWorld() instanceof DummyWorld)) {
                 updateFormedValid();
             }
         }
@@ -124,9 +128,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public static TraceabilityPredicate tilePredicate(@Nonnull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate, @Nullable Supplier<BlockInfo[]> candidates) {
         return new TraceabilityPredicate(blockWorldState -> {
             TileEntity tileEntity = blockWorldState.getTileEntity();
-            if (!(tileEntity instanceof MetaTileEntityHolder))
+            if (!(tileEntity instanceof IGregTechTileEntity))
                 return false;
-            MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+            MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
             if (predicate.apply(blockWorldState, metaTileEntity)) {
                 if (metaTileEntity instanceof IMultiblockPart) {
                     Set<IMultiblockPart> partsFound = blockWorldState.getMatchContext().getOrCreate("MultiblockParts", HashSet::new);
@@ -145,6 +149,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities){
         return ()->Arrays.stream(metaTileEntities).map(tile->{
+            // TODO
             MetaTileEntityHolder holder = new MetaTileEntityHolder();
             holder.setMetaTileEntity(tile);
             holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
@@ -323,6 +328,19 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public boolean isStructureFormed() {
         return structureFormed;
+    }
+
+    @Override
+    public void setFrontFacing(EnumFacing frontFacing) {
+        super.setFrontFacing(frontFacing);
+        if (getWorld() != null && !getWorld().isRemote && structurePattern != null) {
+            // clear cache since the cache has no concept of pre-existing facing
+            // for the controller block (or any block) in the structure
+            structurePattern.clearCache();
+            // recheck structure pattern immediately to avoid a slight "lag"
+            // on deforming when rotating a multiblock controller
+            checkStructurePattern();
+        }
     }
 
     @Override

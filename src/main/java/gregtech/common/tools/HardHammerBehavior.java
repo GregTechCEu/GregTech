@@ -3,7 +3,7 @@ package gregtech.common.tools;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,8 +33,8 @@ public class HardHammerBehavior implements IItemBehaviour {
         ItemStack stack = player.getHeldItem(hand);
 
         TileEntity tileEntity = world.getTileEntity(pos);
-        if (tileEntity instanceof MetaTileEntityHolder) {
-            MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+        if (tileEntity instanceof IGregTechTileEntity) {
+            MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
             player.sendMessage(metaTileEntity.isMuffled() ?
                     new TextComponentTranslation("gregtech.machine.muffle.off") :
                     new TextComponentTranslation("gregtech.machine.muffle.on"));

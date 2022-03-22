@@ -130,11 +130,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         }
 
         public int fill(FluidStack resource, boolean doFill) {
-            FluidFilterMode filterMode = getFilterMode();
-            if (filterMode == FluidFilterMode.FILTER_DRAIN) {
-                return 0;
-            }
-            if (!fluidFilter.testFluidStack(resource)) {
+            if (getFilterMode() == FluidFilterMode.FILTER_DRAIN || !fluidFilter.testFluidStack(resource)) {
                 return 0;
             }
             return super.fill(resource, doFill);
@@ -142,11 +138,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
 
         @Nullable
         public FluidStack drain(FluidStack resource, boolean doDrain) {
-            FluidFilterMode filterMode = getFilterMode();
-            if (filterMode == FluidFilterMode.FILTER_FILL) {
-                return null;
-            }
-            if (!fluidFilter.testFluidStack(resource)) {
+            if (getFilterMode() == FluidFilterMode.FILTER_FILL || !fluidFilter.testFluidStack(resource)) {
                 return null;
             }
             return super.drain(resource, doDrain);
@@ -154,24 +146,14 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
 
         @Nullable
         public FluidStack drain(int maxDrain, boolean doDrain) {
-            FluidFilterMode filterMode = getFilterMode();
-            if (filterMode == FluidFilterMode.FILTER_FILL) {
-                return null;
-            }
-            FluidStack fluidTank, fluidDrain, result;
-            for (IFluidTankProperties prop : this.delegate.getTankProperties()) {
-                fluidTank = prop.getContents();
-                if (fluidTank != null && fluidFilter.testFluidStack(fluidTank)) {
-                    int drainAmount = Math.min(fluidTank.amount, maxDrain);
-                    fluidDrain = new FluidStack(fluidTank.getFluid(), drainAmount, fluidTank.tag);
-                    result = super.drain(fluidDrain, doDrain);
-                    if (result != null) {
-                        return result;
-                    }
+            if (getFilterMode() != FluidFilterMode.FILTER_FILL) {
+                FluidStack result = super.drain(maxDrain, false);
+                if (result == null || result.amount <= 0 || !fluidFilter.testFluidStack(result)) {
+                    return null;
                 }
+                return doDrain ? super.drain(maxDrain, true) : result;
             }
-            return null;
+            return super.drain(maxDrain, doDrain);
         }
-
     }
 }

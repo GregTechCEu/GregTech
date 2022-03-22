@@ -7,7 +7,7 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Translation;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.MultiblockShapeInfo;
@@ -462,7 +462,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             TileEntity tileEntity = blockInfo.getTileEntity();
             if (tileEntity != null) {
                 this.isTile = true;
-                MetaTileEntity mte = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+                MetaTileEntity mte = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                 if (mte instanceof MultiblockControllerBase)
                     this.isController = true;
             }
@@ -511,8 +511,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             for (int y = 0; y < aisle.length; y++) {
                 BlockInfo[] column = aisle[y];
                 for (int z = 0; z < column.length; z++) {
-                    if (column[z].getTileEntity() instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) column[z].getTileEntity()).getMetaTileEntity() instanceof MultiblockControllerBase) {
-                        controllerBase = (MultiblockControllerBase) ((MetaTileEntityHolder) column[z].getTileEntity()).getMetaTileEntity();
+                    if (column[z].getTileEntity() instanceof IGregTechTileEntity && ((IGregTechTileEntity) column[z].getTileEntity()).getMetaTileEntity() instanceof MultiblockControllerBase) {
+                        controllerBase = (MultiblockControllerBase) ((IGregTechTileEntity) column[z].getTileEntity()).getMetaTileEntity();
                     }
                     blockMap.put(new BlockPos(x, y, z), column[z]);
                 }

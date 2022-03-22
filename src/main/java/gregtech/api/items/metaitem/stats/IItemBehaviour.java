@@ -4,6 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -23,6 +24,10 @@ public interface IItemBehaviour extends IItemComponent {
     }
 
     default boolean onLeftClickEntity(ItemStack itemStack, EntityPlayer player, Entity entity) {
+        return false;
+    }
+
+    default boolean itemInteractionForEntity(ItemStack itemStack, EntityPlayer player, EntityLivingBase target, EnumHand hand) {
         return false;
     }
 

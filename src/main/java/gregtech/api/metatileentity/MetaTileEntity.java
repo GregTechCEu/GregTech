@@ -13,23 +13,24 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.sound.GTSoundManager;
 import gregtech.api.recipes.FluidKey;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.util.*;
+import gregtech.api.sound.GTSoundManager;
+import gregtech.api.util.GTTransferUtils;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.client.audio.ISound;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,27 +48,27 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.*;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public abstract class MetaTileEntity implements ICoverable {
+public abstract class MetaTileEntity implements ICoverable, IVoidable {
 
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
@@ -75,7 +76,7 @@ public abstract class MetaTileEntity implements ICoverable {
     public static final String TAG_KEY_MUFFLED = "Muffled";
 
     public final ResourceLocation metaTileEntityId;
-    MetaTileEntityHolder holder;
+    IGregTechTileEntity holder;
 
     protected IItemHandlerModifiable importItems;
     protected IItemHandlerModifiable exportItems;
@@ -123,11 +124,11 @@ public abstract class MetaTileEntity implements ICoverable {
         this.fluidInventory = new FluidHandlerProxy(importFluids, exportFluids);
     }
 
-    public MetaTileEntityHolder getHolder() {
+    public IGregTechTileEntity getHolder() {
         return holder;
     }
 
-    public abstract MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder);
+    public abstract MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity);
 
     public World getWorld() {
         return holder == null ? null : holder.getWorld();
@@ -449,10 +450,8 @@ public abstract class MetaTileEntity implements ICoverable {
             buffer.writeVarInt(CoverDefinition.getNetworkIdForCover(coverDefinition));
             coverBehavior.writeInitialSyncData(buffer);
         });
-        if (getHolder() != null) {
-            getHolder().notifyBlockUpdate();
-            getHolder().markDirty();
-        }
+        notifyBlockUpdate();
+        markDirty();
         onCoverPlacementUpdate();
         GTTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
         return true;
@@ -471,10 +470,8 @@ public abstract class MetaTileEntity implements ICoverable {
             Block.spawnAsEntity(getWorld(), getPos(), dropStack);
         }
         writeCustomData(COVER_REMOVED_MTE, buffer -> buffer.writeByte(side.getIndex()));
-        if (getHolder() != null) {
-            getHolder().notifyBlockUpdate();
-            getHolder().markDirty();
-        }
+        notifyBlockUpdate();
+        markDirty();
         onCoverPlacementUpdate();
         return true;
     }
@@ -816,10 +813,10 @@ public abstract class MetaTileEntity implements ICoverable {
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         if (dataId == UPDATE_FRONT_FACING) {
             this.frontFacing = EnumFacing.VALUES[buf.readByte()];
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         } else if (dataId == UPDATE_PAINTING_COLOR) {
             this.paintingColor = buf.readInt();
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         } else if (dataId == SYNC_MTE_TRAITS) {
             int traitNetworkId = buf.readVarInt();
             MTETrait trait = mteTraits.stream().filter(otherTrait -> otherTrait.getNetworkID() == traitNetworkId).findAny().get();
@@ -834,13 +831,13 @@ public abstract class MetaTileEntity implements ICoverable {
             this.coverBehaviors[placementSide.getIndex()] = coverBehavior;
             coverBehavior.readInitialSyncData(buf);
             onCoverPlacementUpdate();
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         } else if (dataId == COVER_REMOVED_MTE) {
             //cover removed event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
             this.coverBehaviors[placementSide.getIndex()] = null;
             onCoverPlacementUpdate();
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         } else if (dataId == UPDATE_COVER_DATA_MTE) {
             //cover custom data received
             EnumFacing coverSide = EnumFacing.VALUES[buf.readByte()];
@@ -851,7 +848,7 @@ public abstract class MetaTileEntity implements ICoverable {
             }
         } else if (dataId == UPDATE_IS_FRAGILE) {
             this.isFragile = buf.readBoolean();
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         } else if (dataId == UPDATE_SOUND_MUFFLED) {
             this.muffled = buf.readBoolean();
             if (muffled) {
@@ -951,7 +948,7 @@ public abstract class MetaTileEntity implements ICoverable {
             if (fluidHandler == null || myFluidHandler == null) {
                 continue;
             }
-            GTFluidUtils.transferFluids(myFluidHandler, fluidHandler, Integer.MAX_VALUE);
+            GTTransferUtils.transferFluids(myFluidHandler, fluidHandler, Integer.MAX_VALUE);
         }
         blockPos.release();
     }
@@ -970,7 +967,7 @@ public abstract class MetaTileEntity implements ICoverable {
             if (fluidHandler == null || myFluidHandler == null) {
                 continue;
             }
-            GTFluidUtils.transferFluids(fluidHandler, myFluidHandler, Integer.MAX_VALUE);
+            GTTransferUtils.transferFluids(fluidHandler, myFluidHandler, Integer.MAX_VALUE);
         }
         blockPos.release();
     }
@@ -989,7 +986,7 @@ public abstract class MetaTileEntity implements ICoverable {
             if (itemHandler == null || myItemHandler == null) {
                 continue;
             }
-            moveInventoryItems(myItemHandler, itemHandler);
+            GTTransferUtils.moveInventoryItems(myItemHandler, itemHandler);
         }
         blockPos.release();
     }
@@ -1008,93 +1005,9 @@ public abstract class MetaTileEntity implements ICoverable {
             if (itemHandler == null || myItemHandler == null) {
                 continue;
             }
-            moveInventoryItems(itemHandler, myItemHandler);
+            GTTransferUtils.moveInventoryItems(itemHandler, myItemHandler);
         }
         blockPos.release();
-    }
-
-    protected static void moveInventoryItems(IItemHandler sourceInventory, IItemHandler targetInventory) {
-        for (int srcIndex = 0; srcIndex < sourceInventory.getSlots(); srcIndex++) {
-            ItemStack sourceStack = sourceInventory.extractItem(srcIndex, Integer.MAX_VALUE, true);
-            if (sourceStack.isEmpty()) {
-                continue;
-            }
-            ItemStack remainder = ItemHandlerHelper.insertItemStacked(targetInventory, sourceStack, true);
-            int amountToInsert = sourceStack.getCount() - remainder.getCount();
-            if (amountToInsert > 0) {
-                sourceStack = sourceInventory.extractItem(srcIndex, amountToInsert, false);
-                ItemHandlerHelper.insertItemStacked(targetInventory, sourceStack, false);
-            }
-        }
-    }
-
-    /**
-     * Simulates the insertion of items into a target inventory, then optionally performs the insertion.
-     * <br /><br />
-     * Simulating will not modify any of the input parameters. Insertion will either succeed completely, or fail
-     * without modifying anything.
-     * This method should be called with {@code simulate} {@code true} first, then {@code simulate} {@code false},
-     * only if it returned {@code true}.
-     *
-     * @param handler  the target inventory
-     * @param simulate whether to simulate ({@code true}) or actually perform the insertion ({@code false})
-     * @param items    the items to insert into {@code handler}.
-     * @return {@code true} if the insertion succeeded, {@code false} otherwise.
-     */
-    public static boolean addItemsToItemHandler(final IItemHandler handler,
-                                                final boolean simulate,
-                                                final List<ItemStack> items) {
-        // determine if there is sufficient room to insert all items into the target inventory
-        if (simulate) {
-            OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(handler);
-            HashMap<ItemStackKey, Integer> stackKeyMap = GTHashMaps.fromItemStackCollection(items);
-
-            for (Map.Entry<ItemStackKey, Integer> entry : stackKeyMap.entrySet()) {
-                int amountToInsert = entry.getValue();
-                int amount = overlayedItemHandler.insertStackedItemStackKey(entry.getKey(), amountToInsert);
-                if (amount > 0) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        // perform the merge.
-        items.forEach(stack -> ItemHandlerHelper.insertItemStacked(handler, stack, false));
-        return true;
-    }
-
-    /**
-     * Simulates the insertion of fluid into a target fluid handler, then optionally performs the insertion.
-     * <br /><br />
-     * Simulating will not modify any of the input parameters. Insertion will either succeed completely, or fail
-     * without modifying anything.
-     * This method should be called with {@code simulate} {@code true} first, then {@code simulate} {@code false},
-     * only if it returned {@code true}.
-     *
-     * @param fluidHandler the target inventory
-     * @param simulate     whether to simulate ({@code true}) or actually perform the insertion ({@code false})
-     * @param fluidStacks  the items to insert into {@code fluidHandler}.
-     * @return {@code true} if the insertion succeeded, {@code false} otherwise.
-     */
-    public static boolean addFluidsToFluidHandler(IMultipleTankHandler fluidHandler,
-                                                  boolean simulate,
-                                                  List<FluidStack> fluidStacks) {
-        if (simulate) {
-            OverlayedFluidHandler overlayedFluidHandler = new OverlayedFluidHandler(fluidHandler);
-            HashMap<FluidKey, Integer> fluidKeyMap = GTHashMaps.fromFluidCollection(fluidStacks);
-            for (Map.Entry<FluidKey, Integer> entry : fluidKeyMap.entrySet()) {
-                int amountToInsert = entry.getValue();
-                int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), amountToInsert);
-                if (inserted != amountToInsert) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        fluidStacks.forEach(fluidStack -> fluidHandler.fill(fluidStack, true));
-        return true;
     }
 
     public final int getOutputRedstoneSignal(@Nullable EnumFacing side) {
@@ -1128,19 +1041,19 @@ public abstract class MetaTileEntity implements ICoverable {
 
     @Override
     public void notifyBlockUpdate() {
-        getHolder().notifyBlockUpdate();
+        if (holder != null) holder.notifyBlockUpdate();
     }
 
     @Override
     public void scheduleRenderUpdate() {
-        getHolder().scheduleChunkForRenderUpdate();
+        if (holder != null) holder.scheduleRenderUpdate();
     }
 
     public void setFrontFacing(EnumFacing frontFacing) {
         Preconditions.checkNotNull(frontFacing, "frontFacing");
         this.frontFacing = frontFacing;
         if (getWorld() != null && !getWorld().isRemote) {
-            getHolder().notifyBlockUpdate();
+            notifyBlockUpdate();
             markDirty();
             writeCustomData(UPDATE_FRONT_FACING, buf -> buf.writeByte(frontFacing.getIndex()));
             mteTraits.forEach(trait -> trait.onFrontFacingSet(frontFacing));
@@ -1150,7 +1063,7 @@ public abstract class MetaTileEntity implements ICoverable {
     public void setPaintingColor(int paintingColor) {
         this.paintingColor = paintingColor;
         if (getWorld() != null && !getWorld().isRemote) {
-            getHolder().notifyBlockUpdate();
+            notifyBlockUpdate();
             markDirty();
             writeCustomData(UPDATE_PAINTING_COLOR, buf -> buf.writeInt(paintingColor));
         }
@@ -1163,7 +1076,7 @@ public abstract class MetaTileEntity implements ICoverable {
     public void setFragile(boolean fragile) {
         this.isFragile = fragile;
         if (getWorld() != null && !getWorld().isRemote) {
-            getHolder().notifyBlockUpdate();
+            notifyBlockUpdate();
             markDirty();
             writeCustomData(UPDATE_IS_FRAGILE, buf -> buf.writeBoolean(fragile));
         }
@@ -1406,8 +1319,8 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public RecipeMap<?> getRecipeMap() {
 
-        for(int i = 0; i < mteTraits.size(); i++) {
-            if(mteTraits.get(i).getName().equals("RecipeMapWorkable")) {
+        for (int i = 0; i < mteTraits.size(); i++) {
+            if (mteTraits.get(i).getName().equals("RecipeMapWorkable")) {
                 return ((AbstractRecipeLogic) mteTraits.get(i)).getRecipeMap();
             }
         }
@@ -1422,5 +1335,15 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public boolean doTickProfileMessage() {
         return true;
+    }
+
+    @Override
+    public boolean canVoidRecipeItemOutputs() {
+        return false;
+    }
+
+    @Override
+    public boolean canVoidRecipeFluidOutputs() {
+        return false;
     }
 }

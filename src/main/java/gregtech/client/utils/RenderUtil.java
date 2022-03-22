@@ -510,7 +510,7 @@ public class RenderUtil {
         widthT--;
         heightT--;
         Fluid fluid = contents.getFluid();
-        ResourceLocation fluidStill = fluid.getStill();
+        ResourceLocation fluidStill = fluid.getStill(contents);
         TextureAtlasSprite fluidStillSprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(fluidStill.toString());
         int fluidColor = fluid.getColor(contents);
         int scaledAmount = contents.amount * heightT / tankCapacity;

@@ -6,6 +6,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.fluids.MetaFluids;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
@@ -18,7 +19,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
-import gregtech.api.util.input.KeyBinds;
+import gregtech.api.util.input.KeyBind;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.api.worldgen.config.WorldGenRegistry;
@@ -26,7 +27,6 @@ import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaEntities;
-import gregtech.common.MetaFluids;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.command.GregTechCommand;
 import gregtech.common.covers.CoverBehaviors;
@@ -129,7 +129,7 @@ public class GregTechMod {
         MetaEntities.init();
 
         proxy.onPreLoad();
-        KeyBinds.register();
+        KeyBind.init();
     }
 
     @Mod.EventHandler

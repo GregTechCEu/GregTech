@@ -1,13 +1,9 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
-import gregtech.api.cover.ICoverable;
 import gregtech.api.metatileentity.IDataInfoProvider;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import gregtech.common.covers.CoverFluidFilter;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -23,8 +19,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.MutableTriple;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -96,7 +91,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
     private void distributeFluid(int channel, FluidTank tank, FluidStack fluid) {
         // Tank, From, Amount to receive
-        List<Pair<IFluidHandler, Integer>> tanks = new ArrayList<>();
+        List<MutableTriple<IFluidHandler, IFluidHandler, Integer>> tanks = new ArrayList<>();
         int amount = fluid.amount;
 
         FluidStack maxFluid = fluid.copy();
@@ -110,14 +105,25 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                 continue;
             EnumFacing oppositeSide = facing.getOpposite();
 
-            IFluidHandler fluidHandler = getFluidHandlerAt(fluid, facing, oppositeSide);
+            IFluidHandler fluidHandler = getFluidHandlerAt(facing, oppositeSide);
             if (fluidHandler == null)
                 continue;
 
-            int filled = fluidHandler.fill(maxFluid, false);
+            IFluidHandler pipeTank = tank;
+            CoverBehavior cover = getCoverableImplementation().getCoverAtSide(facing);
+            if (cover != null) {
+                pipeTank = cover.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, pipeTank);
+            }
+
+            FluidStack drainable = pipeTank.drain(maxFluid, false);
+            if (drainable == null || drainable.amount <= 0) {
+                continue;
+            }
+
+            int filled = Math.min(fluidHandler.fill(maxFluid, false), drainable.amount);
 
             if (filled > 0) {
-                tanks.add(MutablePair.of(fluidHandler, filled));
+                tanks.add(MutableTriple.of(fluidHandler, pipeTank, filled));
                 availableCapacity += filled;
             }
             maxFluid.amount = amount; // Because some mods do actually modify input fluid stack
@@ -130,70 +136,39 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         final double maxAmount = Math.min(getCapacityPerTank() / 2, fluid.amount);
 
         // Now distribute
-        for (Pair<IFluidHandler, Integer> pair : tanks) {
-            if (availableCapacity > maxAmount)
-                pair.setValue((int) Math.floor(pair.getValue() * maxAmount / availableCapacity)); // Distribue fluids based on percentage available space at destination
-            if (pair.getValue() == 0)
-                pair.setValue(1); // If the percent is not enough to give at least 1L, try to give 1L
-            else if (pair.getValue() < 0)
+        for (MutableTriple<IFluidHandler, IFluidHandler, Integer> triple : tanks) {
+            if (availableCapacity > maxAmount) {
+                triple.setRight((int) Math.floor(triple.getRight() * maxAmount / availableCapacity)); // Distribute fluids based on percentage available space at destination
+            }
+            if (triple.getRight() == 0) {
+                if (tank.getFluidAmount() <= 0) break; // If there is no more stored fluid, stop transferring to prevent dupes
+                triple.setRight(1); // If the percent is not enough to give at least 1L, try to give 1L
+            } else if (triple.getRight() < 0) {
                 continue;
+            }
 
             FluidStack toInsert = fluid.copy();
-            toInsert.amount = maxExtractable(tank, pair.getValue());
+            toInsert.amount = triple.getRight();
 
-            if (toInsert.amount == 0)
-                break;
-
-            int inserted = pair.getKey().fill(toInsert, true);
+            int inserted = triple.getLeft().fill(toInsert, true);
             if (inserted > 0) {
-                extract(tank, inserted);
+                triple.getMiddle().drain(inserted, true);
             }
         }
-
     }
 
-    private int maxExtractable(FluidTank tank, int toExtract) {
-        FluidStack fluid = tank.getFluid();
-        if (fluid == null || fluid.amount <= 0)
-            return 0;
-        return Math.min(toExtract, fluid.amount);
-    }
-
-    private int extract(FluidTank tank, int amount) {
-        FluidStack fluid = tank.getFluid();
-        if (fluid == null || fluid.amount <= 0)
-            return 0;
-        int extracted = Math.min(amount, fluid.amount);
-        fluid.amount -= extracted;
-        if (fluid.amount == 0) {
-            tank.setFluid(null);
-        }
-        return extracted;
-    }
-
-    private IFluidHandler getFluidHandlerAt(FluidStack fluid, EnumFacing facing, EnumFacing oppositeSide) {
+    private IFluidHandler getFluidHandlerAt(EnumFacing facing, EnumFacing oppositeSide) {
         TileEntity tile = world.getTileEntity(pos.offset(facing));
-        if (tile == null)
+        if (tile == null) {
             return null;
-        IFluidHandler fluidHandler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, oppositeSide);
-        if (fluidHandler == null)
-            return null;
-
-        CoverBehavior cover = getCoverableImplementation().getCoverAtSide(facing);
-        if (cover instanceof CoverFluidFilter && !((CoverFluidFilter) cover).testFluidStack(fluid))
-            return null;
-        ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, oppositeSide);
-        if (coverable == null)
-            return fluidHandler;
-        cover = coverable.getCoverAtSide(oppositeSide);
-        if (cover instanceof CoverFluidFilter && !((CoverFluidFilter) cover).testFluidStack(fluid))
-            return null;
-        return fluidHandler;
+        }
+        return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, oppositeSide);
     }
 
     public void receivedFrom(EnumFacing facing) {
-        if (facing != null)
+        if (facing != null) {
             mLastReceivedFrom |= (1 << facing.getIndex());
+        }
     }
 
     public FluidStack getContainedFluid(int channel) {

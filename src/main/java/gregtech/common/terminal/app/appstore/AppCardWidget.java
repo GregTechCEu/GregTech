@@ -121,7 +121,7 @@ public class AppCardWidget extends AnimaWidgetGroup {
         int height = getSize().height;
         if (isMouseOverElement(mouseX, mouseY) && store.getOs().desktop.widgets.stream().noneMatch(app->app instanceof  TerminalDialogWidget)) {
             int dur = 7;
-            int maxAlpha = 150; // 0-255!!!!!
+            int maxAlpha = 100; // 0-255!!!!!
             float partialTicks = Minecraft.getMinecraft().getRenderPartialTicks();
             if (alpha != maxAlpha && interpolator == null) {
                 interpolator = new Interpolator(0, maxAlpha, dur, Eases.EaseLinear,

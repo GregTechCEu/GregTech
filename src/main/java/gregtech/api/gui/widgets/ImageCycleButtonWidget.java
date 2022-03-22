@@ -27,8 +27,6 @@ public class ImageCycleButtonWidget extends Widget {
     private static final int RIGHT_MOUSE = 1;
     protected int currentOption;
     protected Function<Integer, String> tooltipHoverString;
-    protected long hoverStartTime = -1L;
-    protected boolean isMouseHovered;
 
     public ImageCycleButtonWidget(int xPosition, int yPosition, int width, int height, TextureArea buttonTexture, int optionCount, IntSupplier currentOptionSupplier, IntConsumer setOptionExecutor) {
         super(new Position(xPosition, yPosition), new Size(width, height));
@@ -78,20 +76,9 @@ public class ImageCycleButtonWidget extends Widget {
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
-        boolean isHovered = isMouseOverElement(mouseX, mouseY);
-        boolean wasHovered = isMouseHovered;
-        if (isHovered && !wasHovered) {
-            this.isMouseHovered = true;
-            this.hoverStartTime = System.currentTimeMillis();
-        } else if (!isHovered && wasHovered) {
-            this.isMouseHovered = false;
-            this.hoverStartTime = 0L;
-        } else if (isHovered) {
-            long timeSinceHover = System.currentTimeMillis() - hoverStartTime;
-            if (timeSinceHover > 1000L && tooltipHoverString != null) {
-                List<String> hoverList = Arrays.asList(I18n.format(tooltipHoverString.apply(currentOption)).split("/n"));
-                drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
-            }
+        if (isMouseOverElement(mouseX, mouseY) && tooltipHoverString != null) {
+            List<String> hoverList = Arrays.asList(I18n.format(tooltipHoverString.apply(currentOption)).split("/n"));
+            drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
         }
     }
 

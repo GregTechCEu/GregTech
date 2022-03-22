@@ -1,6 +1,6 @@
 package gregtech.api.net.packets;
 
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.net.IPacket;
 import gregtech.api.net.NetworkUtils;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
@@ -45,8 +45,8 @@ public class CPacketClipboardUIWidgetUpdate implements IPacket {
     @Override
     public void executeServer(NetHandlerPlayServer handler) {
         TileEntity te = NetworkUtils.getTileEntityServer(dimension, pos);
-        if (te instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) te).getMetaTileEntity() instanceof MetaTileEntityClipboard) {
-            ((MetaTileEntityClipboard) ((MetaTileEntityHolder) te).getMetaTileEntity()).readUIAction(handler.player, id, updateData);
+        if (te instanceof IGregTechTileEntity && ((IGregTechTileEntity) te).getMetaTileEntity() instanceof MetaTileEntityClipboard) {
+            ((MetaTileEntityClipboard) ((IGregTechTileEntity) te).getMetaTileEntity()).readUIAction(handler.player, id, updateData);
         }
     }
 }

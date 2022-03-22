@@ -12,13 +12,13 @@ A clear and concise description of what the bug is.
 
 **Versions**
 Forge: 
-GTCE: 
-_Modpack:_ if applicable add link to modpack (CurseForge preferred), version and any modification applied
+GTCEu: 
+_Modpack:_ if applicable add a link to modpack (CurseForge preferred), version, and any modification applied
 _Addons:_ if applicable add all addon names and corresponding versions
 
 **Setup**
-Playing Solo/Multiplayer/Both
-_New world generated_ if applicable
+_Does this issue happen on Singleplayer, a Server, or both_:
+_Does this issue happen on a newly generated world_:
 
 **Steps To Reproduce**
 1) I did X

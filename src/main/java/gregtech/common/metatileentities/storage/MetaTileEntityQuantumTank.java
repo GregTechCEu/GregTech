@@ -17,7 +17,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
 import gregtech.api.gui.widgets.PhantomTankWidget;
@@ -188,7 +188,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityQuantumTank(metaTileEntityId, tier, maxFluidCapacity);
     }
 
@@ -253,16 +253,20 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
                 .widget(new ToggleButtonWidget(7, 64, 18, 18,
                         GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
-                        .setTooltipText("gregtech.gui.fluid_auto_output.tooltip"))
+                        .setTooltipText("gregtech.gui.fluid_auto_output.tooltip")
+                        .shouldUseBaseBackground())
                 .widget(new ToggleButtonWidget(25, 64, 18, 18,
                         GuiTextures.BUTTON_LOCK, this::isLocked, this::setLocked)
-                        .setTooltipText("gregtech.gui.fluid_lock.tooltip"))
+                        .setTooltipText("gregtech.gui.fluid_lock.tooltip")
+                        .shouldUseBaseBackground())
                 .widget(new ToggleButtonWidget(43, 64, 18, 18,
                         GuiTextures.BUTTON_VOID_PARTIAL, this::isPartialVoid, this::setPartialVoid)
-                        .setTooltipText("gregtech.gui.fluid_voiding_partial.tooltip", VOID_PERCENT))
+                        .setTooltipText("gregtech.gui.fluid_voiding_partial.tooltip", VOID_PERCENT)
+                        .shouldUseBaseBackground())
                 .widget(new ToggleButtonWidget(61, 64, 18, 18,
                         GuiTextures.BUTTON_VOID, this::isVoiding, this::setVoiding)
-                        .setTooltipText("gregtech.gui.fluid_voiding_all.tooltip"))
+                        .setTooltipText("gregtech.gui.fluid_voiding_all.tooltip")
+                        .shouldUseBaseBackground())
                 .bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
     }
@@ -304,10 +308,10 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_OUTPUT_FACING) {
             this.outputFacing = EnumFacing.VALUES[buf.readByte()];
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         } else if (dataId == UPDATE_AUTO_OUTPUT_FLUIDS) {
             this.autoOutputFluids = buf.readBoolean();
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         }
     }
 
@@ -335,7 +339,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     public void setOutputFacing(EnumFacing outputFacing) {
         this.outputFacing = outputFacing;
         if (!getWorld().isRemote) {
-            getHolder().notifyBlockUpdate();
+            notifyBlockUpdate();
             writeCustomData(UPDATE_OUTPUT_FACING, buf -> buf.writeByte(outputFacing.getIndex()));
             markDirty();
         }

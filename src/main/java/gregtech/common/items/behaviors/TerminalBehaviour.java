@@ -110,6 +110,7 @@ public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubIte
     public ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
         return ModularUI.builder(IGuiTexture.EMPTY, 380, 256)
                 .widget(new TerminalOSWidget(12, 11, holder.getCurrentItem()))
+                .shouldColor(false)
                 .build(holder, entityPlayer);
     }
 

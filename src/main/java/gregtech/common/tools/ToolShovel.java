@@ -1,5 +1,7 @@
 package gregtech.common.tools;
 
+import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
+import gregtech.common.items.behaviors.ShovelBehavior;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
@@ -51,6 +53,11 @@ public class ToolShovel extends ToolBase {
                 block.getMaterial() == Material.GROUND ||
                 block.getMaterial() == Material.SNOW ||
                 block.getMaterial() == Material.CLAY;
+    }
+
+    @Override
+    public void onStatsAddedToTool(MetaValueItem item) {
+        item.addComponents(new ShovelBehavior(DamageValues.DAMAGE_FOR_SHOVEL));
     }
 
     @Override

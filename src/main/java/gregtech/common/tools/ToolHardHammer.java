@@ -3,7 +3,6 @@ package gregtech.common.tools;
 import com.google.common.collect.ImmutableSet;
 import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.RecipeMaps;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -81,7 +80,7 @@ public class ToolHardHammer extends ToolBase {
                 block.getMaterial() == Material.GLASS ||
                 block.getMaterial() == Material.ICE ||
                 block.getMaterial() == Material.PACKED_ICE ||
-                RecipeMaps.FORGE_HAMMER_RECIPES.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0, MatchingMode.DEFAULT) != null;
+                RecipeMaps.FORGE_HAMMER_RECIPES.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0) != null;
     }
 
     @Override

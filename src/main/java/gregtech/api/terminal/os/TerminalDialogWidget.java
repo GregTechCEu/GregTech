@@ -170,9 +170,10 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
      * Show Color Dialog
      * @return color (rgba)
      */
-    public static TerminalDialogWidget showColorDialog(TerminalOSWidget os, String title, Consumer<Integer> result) {
+    public static TerminalDialogWidget showColorDialog(TerminalOSWidget os, String title, Consumer<Integer> result, int startColor) {
         TerminalDialogWidget dialog = createEmptyTemplate(os).addTitle(title);
         ColorWidget colorWidget = new ColorWidget(WIDTH / 2 - 60, HEIGHT / 2 - 35, 80, 10);
+        colorWidget.setStartColor(startColor);
         dialog.addWidget(colorWidget);
         dialog.addConfirmButton(b -> {
             if (b) {

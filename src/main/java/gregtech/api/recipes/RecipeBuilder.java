@@ -1,5 +1,6 @@
 package gregtech.api.recipes;
 
+import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -24,6 +25,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -31,7 +33,7 @@ import java.util.stream.IntStream;
  */
 
 @SuppressWarnings("unchecked")
-public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
+public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected RecipeMap<R> recipeMap;
 
@@ -44,6 +46,8 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected int duration, EUt;
     protected boolean hidden = false;
+
+    protected boolean isCTRecipe = false;
 
     protected int parallel = 0;
 
@@ -60,7 +64,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.fluidOutputs = new ArrayList<>(0);
     }
 
-    protected RecipeBuilder(Recipe recipe, RecipeMap<R> recipeMap) {
+    public RecipeBuilder(Recipe recipe, RecipeMap<R> recipeMap) {
         this.recipeMap = recipeMap;
         this.inputs = NonNullList.create();
         this.inputs.addAll(recipe.getInputs());
@@ -407,27 +411,6 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     /**
-     * Copies the first chanced outputs of a Recipe numberOfOperations times, so every chanced output
-     * gets an individual roll, instead of an all or nothing situation
-     *
-     * @param chancedOutputsFrom The original recipe before any parallel multiplication
-     * @param numberOfOperations The number of parallel operations that have been performed
-     */
-
-    public void trimmedChancedOutputsMultiply(Recipe chancedOutputsFrom, int numberOfOperations) {
-        Recipe.ChanceEntry entry = chancedOutputsFrom.getChancedOutputs().get(0);
-
-        int chance = entry.getChance();
-        int boost = entry.getBoostPerTier();
-
-        // Add individual chanced outputs per number of parallel operations performed, to mimic regular recipes.
-        // This is done instead of simply batching the chanced outputs by the number of parallel operations performed
-        IntStream.range(0, numberOfOperations).forEach(value -> {
-            this.chancedOutput(entry.getItemStack(), chance, boost);
-        });
-    }
-
-    /**
      * Appends the passed {@link Recipe} onto the inputs and outputs, multiplied by the amount specified by multiplier
      * The duration of the multiplied {@link Recipe} is also added to the current duration
      *
@@ -437,7 +420,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
      * @return the builder holding the multiplied recipe
      */
 
-    public R append(Recipe recipe, int multiplier, boolean multiplyDuration, boolean trimOutputs) {
+    public R append(Recipe recipe, int multiplier, boolean multiplyDuration) {
         for (Map.Entry<RecipeProperty<?>, Object> property : recipe.getPropertyValues()) {
             this.applyProperty(property.getKey().getKey(), property.getValue());
         }
@@ -455,16 +438,8 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.inputsIngredients(newRecipeInputs);
         this.fluidInputs(newFluidInputs);
 
-        if (trimOutputs) {
-            if (!outputItems.isEmpty()) {
-                this.outputs(outputItems.subList(0, 1));
-            } else if (recipe.getChancedOutputs().size() > 0) {
-                trimmedChancedOutputsMultiply(recipe, multiplier);
-            }
-        } else {
-            this.outputs(outputItems);
-            chancedOutputsMultiply(recipe, multiplier);
-        }
+        this.outputs(outputItems);
+        chancedOutputsMultiply(recipe, multiplier);
 
         this.fluidOutputs(outputFluids);
 
@@ -542,26 +517,42 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R isCTRecipe() {
+        this.isCTRecipe = true;
+        return (R) this;
+    }
+
     public R setRecipeMap(RecipeMap<R> recipeMap) {
         this.recipeMap = recipeMap;
         return (R) this;
     }
 
-    public abstract R copy();
+    public R copy() {
+        return (R) new RecipeBuilder<>(this);
+    }
 
     protected EnumValidationResult finalizeAndValidate() {
         return validate();
     }
 
-    public abstract ValidationResult<Recipe> build();
+    public ValidationResult<Recipe> build() {
+        return ValidationResult.newResult(finalizeAndValidate(),
+                new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe));
+    }
 
     protected EnumValidationResult validate() {
         if (EUt == 0) {
             GTLog.logger.error("EU/t cannot be equal to 0", new IllegalArgumentException());
+            if(isCTRecipe) {
+                CraftTweakerAPI.logError("EU/t cannot be equal to 0", new IllegalArgumentException());
+            }
             recipeStatus = EnumValidationResult.INVALID;
         }
         if (duration <= 0) {
             GTLog.logger.error("Duration cannot be less or equal to 0", new IllegalArgumentException());
+            if(isCTRecipe) {
+                CraftTweakerAPI.logError("Duration cannot be less or equal to 0", new IllegalArgumentException());
+            }
             recipeStatus = EnumValidationResult.INVALID;
         }
         if (recipeStatus == EnumValidationResult.INVALID) {
@@ -601,6 +592,19 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public List<ChanceEntry> getChancedOutputs() {
         return chancedOutputs;
+    }
+
+    /**
+     * Similar to {@link Recipe#getAllItemOutputs()}, returns the recipe outputs and all chanced outputs
+     *
+     * @return A List of ItemStacks composed of the recipe outputs and chanced outputs
+     */
+    public List<ItemStack> getAllItemOutputs() {
+        List<ItemStack> stacks = new ArrayList<>(getOutputs());
+
+        stacks.addAll(getChancedOutputs().stream().map(ChanceEntry::getItemStack).collect(Collectors.toList()));
+
+        return stacks;
     }
 
     public List<FluidStack> getFluidInputs() {

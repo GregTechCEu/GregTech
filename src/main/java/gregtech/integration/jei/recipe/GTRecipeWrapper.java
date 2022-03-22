@@ -105,13 +105,10 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     public void addItemTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
         boolean notConsumed = input && isNotConsumedItem(slotIndex);
 
-        ChanceEntry entry;
-        if (input) {
-            entry = null;
-        } else if (recipe.getChancedOutputs().size() >= slotIndex) {
-            entry = recipe.getChancedOutputs().get(slotIndex - 1);
-        } else {
-            entry = null;
+        ChanceEntry entry = null;
+        int outputIndex = slotIndex - recipeMap.getMaxInputs();
+        if (!input && !recipe.getChancedOutputs().isEmpty() && outputIndex >= recipe.getOutputs().size()) {
+            entry = recipe.getChancedOutputs().get(outputIndex - recipe.getOutputs().size());
         }
 
         if (entry != null) {
@@ -169,7 +166,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     }
 
     public ChanceEntry getOutputChance(int slot) {
-        if (slot >= recipe.getChancedOutputs().size()) return null;
+        if (slot >= recipe.getChancedOutputs().size() || slot < 0) return null;
         return recipe.getChancedOutputs().get(slot);
     }
 

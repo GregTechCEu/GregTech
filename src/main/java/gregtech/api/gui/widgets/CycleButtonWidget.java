@@ -11,7 +11,6 @@ import gregtech.api.util.Size;
 import gregtech.api.util.function.BooleanConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -24,8 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.*;
 
-import static gregtech.api.gui.impl.ModularUIGui.*;
-
 public class CycleButtonWidget extends Widget {
 
     protected TextureArea buttonTexture = GuiTextures.VANILLA_BUTTON.getSubArea(0.0, 0.0, 1.0, 0.5);
@@ -36,8 +33,6 @@ public class CycleButtonWidget extends Widget {
     private final int RIGHT_MOUSE = 1;
     protected int currentOption;
     protected String tooltipHoverString;
-    protected long hoverStartTime = -1L;
-    protected boolean isMouseHovered;
 
     public CycleButtonWidget(int xPosition, int yPosition, int width, int height, String[] optionNames, IntSupplier currentOptionSupplier, IntConsumer setOptionExecutor) {
         super(new Position(xPosition, yPosition), new Size(width, height));
@@ -49,6 +44,7 @@ public class CycleButtonWidget extends Widget {
     public <T extends Enum<T> & IStringSerializable> CycleButtonWidget(int xPosition, int yPosition, int width, int height, Class<T> enumClass, Supplier<T> supplier, Consumer<T> updater) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         T[] enumConstantPool = enumClass.getEnumConstants();
+        //noinspection RedundantCast
         this.optionNames = GTUtility.mapToString(enumConstantPool, it -> ((IStringSerializable) it).getName());
         this.currentOptionSupplier = () -> supplier.get().ordinal();
         this.setOptionExecutor = (newIndex) -> updater.accept(enumConstantPool[newIndex]);
@@ -92,25 +88,13 @@ public class CycleButtonWidget extends Widget {
         fontRenderer.drawStringWithShadow(text,
                 pos.x + size.width / 2 - fontRenderer.getStringWidth(text) / 2,
                 pos.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2 + 1, textColor);
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
-        boolean isHovered = isMouseOverElement(mouseX, mouseY);
-        boolean wasHovered = isMouseHovered;
-        if (isHovered && !wasHovered) {
-            this.isMouseHovered = true;
-            this.hoverStartTime = System.currentTimeMillis();
-        } else if (!isHovered && wasHovered) {
-            this.isMouseHovered = false;
-            this.hoverStartTime = 0L;
-        } else if (isHovered) {
-            long timeSinceHover = System.currentTimeMillis() - hoverStartTime;
-            if (timeSinceHover > 1000L && tooltipHoverString != null) {
-                List<String> hoverList = Arrays.asList(I18n.format(tooltipHoverString).split("/n"));
-                drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
-            }
+        if (isMouseOverElement(mouseX, mouseY) && tooltipHoverString != null) {
+            List<String> hoverList = Arrays.asList(I18n.format(tooltipHoverString).split("/n"));
+            drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
         }
     }
 

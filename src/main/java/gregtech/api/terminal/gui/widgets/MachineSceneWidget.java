@@ -5,7 +5,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.PatternMatchContext;
@@ -173,8 +173,8 @@ public class MachineSceneWidget extends WidgetGroup {
         if (mte == null) {
             World world = this.gui.entityPlayer.world;
             TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).getMetaTileEntity() != null) {
-                mte = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+            if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() != null) {
+                mte = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                 updateScene();
             }
         } else if (!mte.isValid()) {

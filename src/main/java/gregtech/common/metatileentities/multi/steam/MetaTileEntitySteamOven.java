@@ -3,7 +3,7 @@ package gregtech.common.metatileentities.multi.steam;
 
 import gregtech.api.capability.impl.SteamMultiWorkable;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.pattern.BlockPattern;
@@ -35,7 +35,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntitySteamOven(metaTileEntityId);
     }
 
@@ -57,7 +57,8 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
                 .aisle("XXX", "C#C", "#C#")
                 .aisle("XXX", "CSC", "#C#")
                 .where('S', selfPredicate())
-                .where('X', states(getFireboxState()).or(autoAbilities(true, false, false, false, false)))
+                .where('X', states(getFireboxState())
+                        .or(autoAbilities(true, false, false, false, false).setMinGlobalLimited(1).setMaxGlobalLimited(3)))
                 .where('C', states(getCasingState()).setMinGlobalLimited(6)
                         .or(autoAbilities(false, false, true, true, false)))
                 .where('#', any())
@@ -167,5 +168,10 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     @Override
     public boolean hasMaintenanceMechanics() {
         return false;
+    }
+
+    @Override
+    public int getItemOutputLimit() {
+        return 1;
     }
 }

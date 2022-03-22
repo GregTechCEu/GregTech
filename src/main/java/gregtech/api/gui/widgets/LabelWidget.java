@@ -6,15 +6,12 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Collections;
 import java.util.List;
-
-import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class LabelWidget extends Widget {
 
@@ -103,8 +100,6 @@ public class LabelWidget extends Widget {
             float y = pos.y - (yCentered ? height / 2f : 0) + i * fontRenderer.FONT_HEIGHT;
             fontRenderer.drawString(resultText, x, y, color, dropShadow);
         }
-
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
 }

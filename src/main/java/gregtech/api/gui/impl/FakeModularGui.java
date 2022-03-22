@@ -61,6 +61,7 @@ public class FakeModularGui implements IRenderContext {
         int mouseY = (int) ((y / scale) + (halfH > halfW? 0: (halfH - halfW)));
         GlStateManager.translate(-scale * halfW, -scale * halfH, 0);
         GlStateManager.scale(scale, scale, 1);
+        GlStateManager.color(modularUI.getRColorForOverlay(), modularUI.getGColorForOverlay(), modularUI.getBColorForOverlay(), 1.0F);
         modularUI.backgroundPath.draw(0, 0, modularUI.getWidth(), modularUI.getHeight());
         GlStateManager.translate(0, 0, 0.001);
         GlStateManager.depthMask(false);
@@ -177,10 +178,10 @@ public class FakeModularGui implements IRenderContext {
     }
 
     public void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(modularUI.getRColorForOverlay(), modularUI.getGColorForOverlay(), modularUI.getBColorForOverlay(), 1.0F);
         for (Widget widget : modularUI.guiWidgets.values()) {
             GlStateManager.pushMatrix();
-            GlStateManager.color(1.0f, 1.0f, 1.0f);
+            GlStateManager.color(modularUI.getRColorForOverlay(), modularUI.getGColorForOverlay(), modularUI.getBColorForOverlay());
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             widget.drawInBackground(mouseX, mouseY, partialTicks, this);

@@ -214,12 +214,19 @@ public class ConfigHolder {
 
         public static class EnergyCompatOptions {
 
-            @Config.Comment({"Enable Native GTEU to Forge Energy (RF and alike) on GT Cables and Wires.", "Default: true"})
+            @Config.Comment({"Enable Native GTEU to Forge Energy (RF and alike) on GT Cables and Wires.", "This does not enable nor disable Converters.", "Default: true"})
             public boolean nativeEUToFE = true;
 
-            @Config.Comment({"GTEU to Forge Energy (RF and alike) ratio.", "Default: 4 FE to 1 EU"})
-            @Config.RangeDouble() // to ensure positive number
-            public double rfRatio = 4;
+            @Config.Comment({"Enable GTEU to FE (and vice versa) Converters.", "Default: false"})
+            public boolean enableFEConverters = false;
+
+            @Config.Comment({"Forge Energy to GTEU ratio for converting FE to EU.", "Only affects converters.", "Default: 4 FE == 1 EU"})
+            @Config.RangeInt(min = 1, max = 16)
+            public int feToEuRatio = 4;
+
+            @Config.Comment({"GTEU to Forge Energy ratio for converting EU to FE.", "Affects native conversion and Converters.", "Default: 4 FE == 1 EU"})
+            @Config.RangeInt(min = 1, max = 16)
+            public int euToFeRatio = 4;
         }
     }
 
@@ -294,6 +301,10 @@ public class ConfigHolder {
                 "13819135 (0xD2DCFF in decimal) is the classic blue from GT5 (default)."})
         public int defaultPaintingColor = 0xD2DCFF;
 
+        @Config.Comment({"The default color to overlay onto Machine (and other) UIs.", "16777215 (0xFFFFFF) is no coloring (like GTCE).",
+                "13819135 (0xD2DCFF in decimal) is the classic blue from GT5 (default)."})
+        public int defaultUIColor = 0xD2DCFF;
+
         public static class GuiConfig {
             @Config.Comment({"The scrolling speed of widgets", "Default: 13"})
             @Config.RangeInt(min = 1)
@@ -323,6 +334,10 @@ public class ConfigHolder {
             @Config.Comment("Bloom config options for the fusion reactor.")
             @Config.Name("Fusion Reactor")
             public FusionBloom fusionBloom = new FusionBloom();
+
+            @Config.Comment("Bloom config options for the heat effect (cable burning).")
+            @Config.Name("Heat Effect")
+            public HeatEffectBloom heatEffectBloom = new HeatEffectBloom();
 
             @Config.Comment({"Whether to use shader programs.", "Default: true"})
             public boolean useShader = true;
@@ -386,6 +401,34 @@ public class ConfigHolder {
                 "(e.g., night/caves).", "OUTPUT = BACKGROUND + BLOOM * strength * (base + {LT} + (1 - BACKGROUND_BRIGHTNESS)*(HT-{LT})))", "This value should be smaller than highBrightnessThreshold.", "Default: 0.2"})
         @Config.RangeDouble(min = 0)
         public double lowBrightnessThreshold = 0.3;
+
+        @Config.Comment({"The base brightness of the bloom.", "It is similar to strength", "This value should be smaller than highBrightnessThreshold.", "OUTPUT = BACKGROUND + BLOOM * strength * ({base} + LT + (1 - BACKGROUND_BRIGHTNESS)*(HT-LT)))", "Default: 0.1"})
+        @Config.RangeDouble(min = 0)
+        public double baseBrightness = 0;
+    }
+
+    public static class HeatEffectBloom {
+        @Config.Comment({"Whether to use shader programs.", "Default: true"})
+        public boolean useShader = true;
+
+        @Config.Comment({"Bloom Strength", "OUTPUT = BACKGROUND + BLOOM * {strength} * (base + LT + (1 - BACKGROUND_BRIGHTNESS)*(HT-LT)))", "Default: 2"})
+        @Config.RangeDouble(min = 0)
+        public double strength = 1.1;
+
+        @Config.Comment({"Bloom Algorithm", "0 - Simple Gaussian Blur Bloom (Fast)", "1 - Unity Bloom", "2 - Unreal Bloom", "Default: 2"})
+        @Config.RangeInt(min = 0, max = 2)
+        @Config.SlidingOption
+        public int bloomStyle = 2;
+
+        @Config.Comment({"The brightness after bloom should not exceed this value. It can be used to limit the brightness of highlights " +
+                "(e.g., daytime).", "OUTPUT = BACKGROUND + BLOOM * strength * (base + LT + (1 - BACKGROUND_BRIGHTNESS)*({HT}-LT)))", "This value should be greater than lowBrightnessThreshold.", "Default: 0.5"})
+        @Config.RangeDouble(min = 0)
+        public double highBrightnessThreshold = 1.4;
+
+        @Config.Comment({"The brightness after bloom should not smaller than this value. It can be used to limit the brightness of dusky parts " +
+                "(e.g., night/caves).", "OUTPUT = BACKGROUND + BLOOM * strength * (base + {LT} + (1 - BACKGROUND_BRIGHTNESS)*(HT-{LT})))", "This value should be smaller than highBrightnessThreshold.", "Default: 0.2"})
+        @Config.RangeDouble(min = 0)
+        public double lowBrightnessThreshold = 0.6;
 
         @Config.Comment({"The base brightness of the bloom.", "It is similar to strength", "This value should be smaller than highBrightnessThreshold.", "OUTPUT = BACKGROUND + BLOOM * strength * ({base} + LT + (1 - BACKGROUND_BRIGHTNESS)*(HT-LT)))", "Default: 0.1"})
         @Config.RangeDouble(min = 0)
