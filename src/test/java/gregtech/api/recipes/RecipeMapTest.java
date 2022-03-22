@@ -64,11 +64,11 @@ public class RecipeMapTest {
 
         assertEquals(3, map.getRecipeList().size());
 
-        Recipe r = map.findRecipe(1, Collections.singletonList(new ItemStack(Blocks.COBBLESTONE)), Collections.singletonList(null), 0, MatchingMode.DEFAULT);
+        Recipe r = map.findRecipe(1, Collections.singletonList(new ItemStack(Blocks.COBBLESTONE)), Collections.singletonList(null), 0);
         assertNotNull(r);
 
         // This test is failing for me locally -dan
-        Recipe r2 = map.findRecipe(1, Collections.singletonList(new ItemStack(Blocks.STONE)), Collections.singletonList(new FluidStack(FluidRegistry.WATER, 1)), 0, MatchingMode.DEFAULT);
+        Recipe r2 = map.findRecipe(1, Collections.singletonList(new ItemStack(Blocks.STONE)), Collections.singletonList(new FluidStack(FluidRegistry.WATER, 1)), 0);
         assertNotNull(r2);
     }
 
@@ -100,7 +100,7 @@ public class RecipeMapTest {
                         Epichlorohydrin.getFluid(144),
                         Naphtha.getFluid(3000),
                         NitrogenDioxide.getFluid(1000)),
-                64000, MatchingMode.DEFAULT);
+                64000);
         assertNotNull(r);
 
         map.recipeBuilder()
@@ -116,7 +116,7 @@ public class RecipeMapTest {
                         Epichlorohydrin.getFluid(144),
                         Naphtha.getFluid(3000),
                         NitrogenDioxide.getFluid(1000)),
-                64000, MatchingMode.DEFAULT);
+                64000);
         assertNotNull(r2);
     }
 
