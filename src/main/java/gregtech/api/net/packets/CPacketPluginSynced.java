@@ -1,7 +1,7 @@
 package gregtech.api.net.packets;
 
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.net.IPacket;
 import gregtech.api.net.NetworkUtils;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
@@ -46,8 +46,8 @@ public class CPacketPluginSynced implements IPacket {
     @Override
     public void executeServer(NetHandlerPlayServer handler) {
         TileEntity te = NetworkUtils.getTileEntityServer(dimension, pos);
-        if (te instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) te).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
-            MonitorPluginBaseBehavior plugin = ((MetaTileEntityMonitorScreen) ((MetaTileEntityHolder) te).getMetaTileEntity()).plugin;
+        if (te instanceof IGregTechTileEntity && ((IGregTechTileEntity) te).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
+            MonitorPluginBaseBehavior plugin = ((MetaTileEntityMonitorScreen) ((IGregTechTileEntity) te).getMetaTileEntity()).plugin;
             if (plugin != null) {
                 plugin.readPluginAction(handler.player, id, updateData);
             }

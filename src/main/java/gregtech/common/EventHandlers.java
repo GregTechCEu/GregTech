@@ -3,16 +3,11 @@ package gregtech.common;
 import gregtech.api.GTValues;
 import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.armor.ArmorMetaItem;
-import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.net.NetworkHandler;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.CapesRegistry;
-import gregtech.api.net.packets.CPacketKeysPressed;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.VirtualTankRegistry;
-import gregtech.api.util.input.Key;
-import gregtech.api.util.input.KeyBinds;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
@@ -47,7 +42,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -80,7 +74,7 @@ public class EventHandlers {
 
     @SubscribeEvent
     public static void onPlayerInteractionRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getWorld().getTileEntity(event.getPos()) instanceof MetaTileEntityHolder) {
+        if (event.getWorld().getTileEntity(event.getPos()) instanceof IGregTechTileEntity) {
             event.setUseBlock(Event.Result.ALLOW);
         }
         ItemStack stack = event.getItemStack();
@@ -101,8 +95,8 @@ public class EventHandlers {
     public static void onPlayerInteractionLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
         if (event.getEntityPlayer().isCreative()) {
             TileEntity holder = event.getWorld().getTileEntity(event.getPos());
-            if (holder instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) holder).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
-                ((MetaTileEntityCentralMonitor) ((MetaTileEntityHolder) holder).getMetaTileEntity()).invalidateStructure();
+            if (holder instanceof IGregTechTileEntity && ((IGregTechTileEntity) holder).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
+                ((MetaTileEntityCentralMonitor) ((IGregTechTileEntity) holder).getMetaTileEntity()).invalidateStructure();
             }
         }
     }
@@ -117,23 +111,6 @@ public class EventHandlers {
             }
         }
 
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOW)
-    public static void onKeyInput(InputEvent.KeyInputEvent event) {
-        if (ArmorUtils.SIDE.isClient()) {
-            boolean needNewPacket = false;
-            for (Key key : KeyBinds.REGISTRY) {
-                boolean keyState = key.getBind().isKeyDown();
-                if (key.state != keyState) {
-                    key.state = keyState;
-                    needNewPacket = true;
-                }
-            }
-            if (needNewPacket) {
-                NetworkHandler.channel.sendToServer(new CPacketKeysPressed(KeyBinds.REGISTRY).toFMLPacket());
-            }
-        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

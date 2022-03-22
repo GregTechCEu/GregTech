@@ -1,7 +1,8 @@
 package gregtech.common.items.armor;
 
 import gregtech.api.items.armor.ArmorUtils;
-import gregtech.api.util.input.EnumKey;
+import gregtech.api.util.GTLog;
+import gregtech.api.util.input.KeyBind;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumParticleTypes;
@@ -61,8 +62,8 @@ public interface IJetpack {
     default void performFlying(@Nonnull EntityPlayer player, boolean hover, ItemStack stack) {
         double currentAccel = getVerticalAcceleration() * (player.motionY < 0.3D ? 2.5D : 1.0D);
         double currentSpeedVertical = getVerticalSpeed() * (player.isInWater() ? 0.4D : 1.0D);
-        boolean flyKeyDown = ArmorUtils.isKeyDown(player, EnumKey.JUMP);
-        boolean descendKeyDown = ArmorUtils.isKeyDown(player, EnumKey.CROUCH);
+        boolean flyKeyDown = KeyBind.VANILLA_JUMP.isKeyDown(player);
+        boolean descendKeyDown = KeyBind.VANILLA_SNEAK.isKeyDown(player);
 
         if (!player.isInWater() && !player.isInLava() && canUseEnergy(stack, getEnergyPerUse())) {
             if (flyKeyDown || hover && !player.onGround) {
@@ -84,17 +85,18 @@ public interface IJetpack {
                     float speedSideways = (float) (player.isSneaking() ? getSidewaysSpeed() * 0.5f : getSidewaysSpeed());
                     float speedForward = (float) (player.isSprinting() ? speedSideways * getSprintSpeedModifier() : speedSideways);
 
-                    if (ArmorUtils.isKeyDown(player, EnumKey.FORWARD))
+                    if (KeyBind.VANILLA_FORWARD.isKeyDown(player))
                         player.moveRelative(0, 0, speedForward, speedForward);
-                    if (ArmorUtils.isKeyDown(player, EnumKey.BACKWARD))
+                    if (KeyBind.VANILLA_BACKWARD.isKeyDown(player))
                         player.moveRelative(0, 0, -speedSideways, speedSideways * 0.8f);
-                    if (ArmorUtils.isKeyDown(player, EnumKey.LEFT))
+                    if (KeyBind.VANILLA_LEFT.isKeyDown(player))
                         player.moveRelative(speedSideways, 0, 0, speedSideways);
-                    if (ArmorUtils.isKeyDown(player, EnumKey.RIGHT))
+                    if (KeyBind.VANILLA_RIGHT.isKeyDown(player))
                         player.moveRelative(-speedSideways, 0, 0, speedSideways);
                     if (!player.getEntityWorld().isRemote) {
                         player.fallDistance = 0;
                     }
+
                 }
                 ArmorUtils.spawnParticle(player.getEntityWorld(), player, getParticle(), -0.6D);
             }

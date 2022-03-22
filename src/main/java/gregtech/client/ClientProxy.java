@@ -12,7 +12,6 @@ import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.ModCompatibility;
-import gregtech.api.util.input.KeyBinds;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.FacadeRenderer;
@@ -120,7 +119,6 @@ public class ClientProxy extends CommonProxy {
             ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(CustomTextureModelHandler.INSTANCE);
         }
 
-        KeyBinds.initBinds();
         MetaTileEntityRenderer.preInit();
         CableRenderer.INSTANCE.preInit();
         FluidPipeRenderer.INSTANCE.preInit();
@@ -131,7 +129,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void onLoad() {
-        KeyBinds.registerClient();
         super.onLoad();
         registerColors();
     }

@@ -548,7 +548,7 @@ metaitem.board.epoxy.tooltip=An Advanced Board
 metaitem.board.fiber_reinforced.name=Fiber-Reinforced Circuit Board
 metaitem.board.fiber_reinforced.tooltip=An Extreme Board
 metaitem.board.multilayer.fiber_reinforced.name=Multi-layer Fiber-Reinforced Circuit Board
-metaitem.board.multiplayer.fiber_reinforced.name=An Elite Board
+metaitem.board.multilayer.fiber_reinforced.tooltip=An Elite Board
 metaitem.board.wetware.name=Wetware Lifesupport Circuit Board
 metaitem.board.wetware.tooltip=The Board that keeps life
 
@@ -1015,9 +1015,11 @@ metaarmor.jetpack.emergency_hover_mode=Emergency Hover Mode Enabled!
 
 metaarmor.nms.share.enable=NanoMuscle™ Suite: Charging Enabled
 metaarmor.nms.share.disable=NanoMuscle™ Suite: Charging Disabled
+metaarmor.nms.share.error=NanoMuscle™ Suite: §cNot enough power for charging!
 
 metaarmor.qts.share.enable=QuarkTech™ Suite: Charging Enabled
 metaarmor.qts.share.disable=QuarkTech™ Suite: Charging Disabled
+metaarmor.qts.share.error=QuarkTech™ Suite: §cNot enough power for charging!
 
 metaarmor.message.nightvision.enabled=§bNightVision: §aOn
 metaarmor.message.nightvision.disabled=§bNightVision: §cOff
@@ -1029,6 +1031,8 @@ metaarmor.tooltip.jump=Increases Jump Height and Distance
 metaarmor.tooltip.falldamage=Nullifies Fall Damage
 metaarmor.tooltip.potions=Nullifies Harmful Effects
 metaarmor.tooltip.burning=Nullifies Burning
+metaarmor.tooltip.breath=Replenishes Underwater Breath Bar
+metaarmor.tooltip.autoeat=Replenishes Food Bar by Using Food from Inventory
 
 metaarmor.hud.status.enabled=§aON
 metaarmor.hud.status.disabled=§cOFF
@@ -1085,9 +1089,6 @@ cover.smart_item_filter.filtering_mode.electrolyzer=Electrolyzer
 cover.smart_item_filter.filtering_mode.centrifuge=Centrifuge
 cover.smart_item_filter.filtering_mode.sifter=Sifter
 cover.smart_item_filter.filtering_mode.description=Select Machine this Smart Filter will use for filtering./nIt will automatically pick right portions of items for robotic arm.
-cover.smart_item_filter.matching_mode.default=Default
-cover.smart_item_filter.matching_mode.ignore_fluid=Ignore Fluids
-cover.smart_item_filter.matching_mode.description=§eDefault§r - Will match recipes on both items/fluids criteria assuming you aren't providing any fluid. /n§eIgnore Fluids§r - Will match recipes only on items criteria.
 
 cover.conveyor.title=Conveyor Cover Settings (%s)
 cover.conveyor.transfer_rate=§7items/sec
@@ -1650,6 +1651,9 @@ material.cyclohexane=Cyclohexane
 material.cyclohexanone_oxime=Cyclohexanone Oxime
 material.caprolactam=Caprolactam
 material.nitrosyl_chloride=Nitrosyl Chloride
+material.butyraldehyde=Butyraldehyde
+material.polyvinyl_butyral=Polyvinyl Butyral
+
 
 # Unknown Composition Materials
 material.wood_gas=Wood Gas
@@ -1879,6 +1883,7 @@ material.insane=Insane
 material.epic=Epic
 material.legendary=Legendary
 material.maximum=Maximum
+
 
 # Item Renaming
 item.nether_quartz.oreNetherrack=Nether Quartz Ore
@@ -2381,6 +2386,7 @@ tile.fusion_casing.fusion_casing_mk3.name=Fusion Machine Casing MK III
 # Transparent casing blocks
 tile.transparent_casing.tempered_glass.name=Tempered Glass
 tile.transparent_casing.fusion_glass.name=Fusion Glass
+tile.transparent_casing.laminated_glass.name=Laminated Glass
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
@@ -3756,7 +3762,7 @@ gregtech.machine.battery_buffer.uxv.16.name=Ultra Extreme Voltage 16x Battery Bu
 
 gregtech.machine.battery_buffer.opv.4.name=Overpowered Voltage 4x Battery Buffer
 gregtech.machine.battery_buffer.opv.8.name=Overpowered Voltage 8x Battery Buffer
-gregtech.machine.battery_buffer.opv.16.name=Ultra Immense Voltage 16x Battery Buffer
+gregtech.machine.battery_buffer.opv.16.name=Overpowered Voltage 16x Battery Buffer
 
 gregtech.machine.battery_buffer.max.4.name=Maximum Voltage 4x Battery Buffer
 gregtech.machine.battery_buffer.max.8.name=Maximum Voltage 8x Battery Buffer
@@ -3890,14 +3896,14 @@ gregtech.machine.energy_converter.uiv.1.name=UIV Energy Converter (1A)
 gregtech.machine.energy_converter.uiv.4.name=UIV Energy Converter (4A)
 gregtech.machine.energy_converter.uiv.8.name=UIV Energy Converter (8A)
 gregtech.machine.energy_converter.uiv.16.name=UIV Energy Converter (16A)
-gregtech.machine.energy_converter.umv.1.name=UMV Energy Converter (1A)
-gregtech.machine.energy_converter.umv.4.name=UMV Energy Converter (4A)
-gregtech.machine.energy_converter.umv.8.name=UMV Energy Converter (8A)
-gregtech.machine.energy_converter.umv.16.name=UMV Energy Converter (16A)
 gregtech.machine.energy_converter.uxv.1.name=UXV Energy Converter (1A)
 gregtech.machine.energy_converter.uxv.4.name=UXV Energy Converter (4A)
 gregtech.machine.energy_converter.uxv.8.name=UXV Energy Converter (8A)
 gregtech.machine.energy_converter.uxv.16.name=UXV Energy Converter (16A)
+gregtech.machine.energy_converter.opv.1.name=OpV Energy Converter (1A)
+gregtech.machine.energy_converter.opv.4.name=OpV Energy Converter (4A)
+gregtech.machine.energy_converter.opv.8.name=OpV Energy Converter (8A)
+gregtech.machine.energy_converter.opv.16.name=OpV Energy Converter (16A)
 gregtech.machine.energy_converter.max.1.name=MAX Energy Converter (1A)
 gregtech.machine.energy_converter.max.4.name=MAX Energy Converter (4A)
 gregtech.machine.energy_converter.max.8.name=MAX Energy Converter (8A)
@@ -4319,7 +4325,7 @@ gregtech.machine.coke_oven.name=Coke Oven
 gregtech.machine.processing_array.name=Processing Array
 gregtech.machine.advanced_processing_array.name=Advanced Processing Array
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
-gregtech.machine.coke_oven_hatch.tooltip=Allows automation access to coke oven.
+gregtech.machine.coke_oven_hatch.tooltip=Allows automation access for the Coke Oven.
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 
 
@@ -5057,3 +5063,9 @@ monitor.gui.title.config=Config
 
 fluid.tile.lava=Lava
 fluid.tile.water=Water
+
+# Keybindings
+gregtech.key.armor_mode_switch=Armor Mode Switch
+gregtech.key.armor_hover=Armor Hover Toggle
+gregtech.key.armor_charging=Armor Charging to Inventory Toggle
+gregtech.key.tool_aoe_change=Tool AoE Mode Switch

@@ -28,7 +28,7 @@ public class PrimitiveRecipeBuilder extends RecipeBuilder<PrimitiveRecipeBuilder
     @Override
     public ValidationResult<Recipe> build() {
         this.EUt(1); // secretly force to 1 to allow recipe matching to work properly
-        Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden);
+        Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe);
         if (!recipe.setProperty(PrimitiveProperty.getInstance(), true)) {
             return ValidationResult.newResult(EnumValidationResult.INVALID, recipe);
         }

@@ -119,7 +119,7 @@ public class MultiblockRecipeLogicTest {
             e.printStackTrace();
         }
 
-        mbt.getHolder().setWorld(world);
+        ((MetaTileEntityHolder) mbt.getHolder()).setWorld(world);
 
         //Controller and isAttachedToMultiBlock need the world so we fake it here.
         MetaTileEntityItemBus importItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, false) {
@@ -354,7 +354,7 @@ public class MultiblockRecipeLogicTest {
             e.printStackTrace();
         }
 
-        mbt.getHolder().setWorld(world);
+        ((MetaTileEntityHolder) mbt.getHolder()).setWorld(world);
 
         try {
             Field field = RecipeMapMultiblockController.class.getDeclaredField("isDistinct");

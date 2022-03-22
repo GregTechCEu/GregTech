@@ -16,13 +16,15 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
+import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
 import gregtech.common.items.behaviors.CrowbarBehaviour;
+import gregtech.common.metatileentities.electric.MetaTileEntityRockBreaker;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.properties.IProperty;
@@ -611,8 +613,8 @@ public class GTUtility {
         for (EntityPlayerMP player : entities) {
             if (player.openContainer instanceof ModularUIContainer) {
                 ModularUI modularUI = ((ModularUIContainer) player.openContainer).getModularUI();
-                if (modularUI.holder instanceof MetaTileEntityHolder &&
-                        ((MetaTileEntityHolder) modularUI.holder).getMetaTileEntity() == metaTileEntity) {
+                if (modularUI.holder instanceof IGregTechTileEntity &&
+                        ((IGregTechTileEntity) modularUI.holder).getMetaTileEntity() == metaTileEntity) {
                     result.add(player);
                 }
             }
@@ -647,7 +649,11 @@ public class GTUtility {
 
     public static NBTTagCompound getOrCreateNbtCompound(ItemStack stack) {
         NBTTagCompound compound = stack.getTagCompound();
-        return compound == null ? new NBTTagCompound() : compound;
+        if (compound == null) {
+            compound = new NBTTagCompound();
+            stack.setTagCompound(compound);
+        }
+        return compound;
     }
 
     public static NonNullList<ItemStack> copyStackList(List<ItemStack> itemStacks) {
@@ -938,7 +944,9 @@ public class GTUtility {
         }
 
         MetaTileEntity machine = MachineItemBlock.getMetaTileEntity(machineStack);
-        if (machine instanceof WorkableTieredMetaTileEntity)
+        // Blacklist the Rock Breaker here instead of through the config option so we don't get people removing the config entry and then
+        // complaining it does not work. Remove from here if we ever decide to implement PA Rock Breaker
+        if (machine instanceof WorkableTieredMetaTileEntity && !(machine instanceof SimpleGeneratorMetaTileEntity || machine instanceof MetaTileEntityRockBreaker))
             return !findMachineInBlacklist(machine.getRecipeMap().getUnlocalizedName(), recipeMapBlacklist);
 
         return false;

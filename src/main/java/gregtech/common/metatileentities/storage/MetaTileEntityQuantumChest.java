@@ -17,7 +17,7 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -78,7 +78,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityQuantumChest(metaTileEntityId, tier, maxStoredItems);
     }
 
@@ -197,7 +197,14 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new ItemStackHandler(1);
+        return new ItemStackHandler(1) {
+            @Override
+            public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+                NBTTagCompound compound = stack.getTagCompound();
+                if (compound == null) return true;
+                return !(compound.hasKey(NBT_ITEMSTACK, NBT.TAG_COMPOUND) || compound.hasKey("Fluid", NBT.TAG_COMPOUND)); //prevents inserting items with NBT to the Quantum Chest
+            }
+        };
     }
 
     @Override
@@ -248,7 +255,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         super.writeItemStackData(itemStack);
         if (!this.itemStack.isEmpty()) {
             itemStack.setTag(NBT_ITEMSTACK, this.itemStack.writeToNBT(new NBTTagCompound()));
-            itemStack.setLong(NBT_ITEMCOUNT, itemsStoredInside + this.itemStack.getMaxStackSize());
+            itemStack.setLong(NBT_ITEMCOUNT, itemsStoredInside + this.exportItems.getStackInSlot(0).getCount());
         } else {
             ItemStack partialStack = exportItems.extractItem(0, 64, false);
             if (!partialStack.isEmpty()) {
@@ -284,7 +291,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     public void setOutputFacing(EnumFacing outputFacing) {
         this.outputFacing = outputFacing;
         if (!getWorld().isRemote) {
-            getHolder().notifyBlockUpdate();
+            notifyBlockUpdate();
             writeCustomData(UPDATE_OUTPUT_FACING, buf -> buf.writeByte(outputFacing.getIndex()));
             markDirty();
         }
@@ -330,10 +337,10 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_OUTPUT_FACING) {
             this.outputFacing = EnumFacing.VALUES[buf.readByte()];
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         } else if (dataId == UPDATE_AUTO_OUTPUT_ITEMS) {
             this.autoOutputItems = buf.readBoolean();
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         }
     }
 
@@ -466,22 +473,51 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+
             if (stack.isEmpty()) {
                 return ItemStack.EMPTY;
             }
+
             if (itemsStoredInside > 0L &&
                     !itemStack.isEmpty() &&
                     !areItemStackIdentical(itemStack, stack)) {
                 return stack;
             }
-            long amountLeftInChest = itemStack.isEmpty() ? maxStoredItems : maxStoredItems - itemsStoredInside;
-            int insertedAmount = (int) Math.min(stack.getCount(), amountLeftInChest);
 
-            if (insertedAmount == 0) {
-                return stack;
+            // The Quantum Chest automatically populates the export slot, so we need to check what is contained in it
+            ItemStack exportItems = getExportItems().getStackInSlot(0);
+
+            // Check if the item being inserted matches the item in the export slot
+            boolean insertMatching = areItemStackIdentical(stack, exportItems);
+
+            // If the item being inserted does not match the item in the export slot, insert into the input slot and do not virtualize
+            if(!insertMatching) {
+                return MetaTileEntityQuantumChest.this.importItems.insertItem(0, stack, simulate);
             }
+
+            int insertedAmount;
+            int amountInsertedIntoExport;
+
+            int spaceInExport = Math.abs(exportItems.getCount() - exportItems.getMaxStackSize());
+
+            // Attempt to insert into the export slot first
+            amountInsertedIntoExport = Math.min(spaceInExport, stack.getCount());
+
+            // If we had more Items than would fit into the export slot, virtualize the remainder
+            if(amountInsertedIntoExport < stack.getCount()) {
+                long amountLeftInChest = itemStack.isEmpty() ? maxStoredItems : maxStoredItems - itemsStoredInside;
+                insertedAmount = (int) Math.min(stack.getCount() - amountInsertedIntoExport, amountLeftInChest);
+
+            }
+            // Return early, as we did not virtualize anything, as it all fit into the output slot
+            else {
+                return MetaTileEntityQuantumChest.this.exportItems.insertItem(0, stack, simulate);
+            }
+
             ItemStack remainingStack = ItemStack.EMPTY;
-            if (stack.getCount() > insertedAmount) {
+
+            // If we are at the maximum that the chest can hold
+            if (stack.getCount() - amountInsertedIntoExport > insertedAmount) {
                 remainingStack = stack.copy();
                 remainingStack.setCount(stack.getCount() - insertedAmount);
             }

@@ -101,7 +101,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
             this.needsVenting = buf.readBoolean();
         } else if (dataId == GregtechDataCodes.VENTING_SIDE) {
             this.ventingSide = EnumFacing.VALUES[buf.readByte()];
-            getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
+            getMetaTileEntity().scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.VENTING_STUCK) {
             this.ventingStuck = buf.readBoolean();
         }

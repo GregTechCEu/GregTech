@@ -61,6 +61,11 @@ public class Recipe {
      */
     private final boolean hidden;
 
+    /**
+     * If this Recipe is a Crafttweaker recipe. Used for logging purposes
+     */
+    private final boolean isCTRecipe;
+
     private final RecipePropertyStorage recipePropertyStorage;
 
     private static final ItemStackHashStrategy hashStrategy = ItemStackHashStrategy.comparingAll();
@@ -69,7 +74,7 @@ public class Recipe {
 
     public Recipe(List<CountableIngredient> inputs, List<ItemStack> outputs, List<ChanceEntry> chancedOutputs,
                   List<FluidStack> fluidInputs, List<FluidStack> fluidOutputs,
-                  int duration, int EUt, boolean hidden) {
+                  int duration, int EUt, boolean hidden, boolean isCTRecipe) {
         this.recipePropertyStorage = new RecipePropertyStorage();
         this.inputs = NonNullList.create();
         this.inputs.addAll(inputs);
@@ -81,6 +86,7 @@ public class Recipe {
         this.duration = duration;
         this.EUt = EUt;
         this.hidden = hidden;
+        this.isCTRecipe = isCTRecipe;
 
         //sort not consumables inputs to the end
         this.inputs.sort((ing1, ing2) -> Boolean.compare(ing1.isNonConsumable(), ing2.isNonConsumable()));
@@ -90,7 +96,7 @@ public class Recipe {
     public Recipe copy() {
 
         // Create a new Recipe object
-        Recipe newRecipe =  new Recipe(this.inputs, this.outputs, this.chancedOutputs, this.fluidInputs, this.fluidOutputs, this.duration, this.EUt, this.hidden);
+        Recipe newRecipe =  new Recipe(this.inputs, this.outputs, this.chancedOutputs, this.fluidInputs, this.fluidOutputs, this.duration, this.EUt, this.hidden, this.isCTRecipe);
 
         // Apply Properties from the original recipe onto the new one
         if(this.recipePropertyStorage.getSize() > 0) {
@@ -143,54 +149,34 @@ public class Recipe {
         return builder.build().getResult();
     }
 
-    public final boolean matches(boolean consumeIfSuccessful, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode matchingMode) {
-        return matches(consumeIfSuccessful, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs), matchingMode);
-    }
-
     public final boolean matches(boolean consumeIfSuccessful, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
-        return matches(consumeIfSuccessful, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs), MatchingMode.DEFAULT);
-    }
-
-    public boolean matches(boolean consumeIfSuccessful, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
-        return matches(consumeIfSuccessful, inputs, fluidInputs, MatchingMode.DEFAULT);
+        return matches(consumeIfSuccessful, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs));
     }
 
     /**
      * This methods aim to verify if the current recipe matches the given inputs according to matchingMode mode.
      *
-     * @param consumeIfSuccessful if true and matchingMode is equal to {@link MatchingMode#DEFAULT} will consume the inputs of the recipe.
+     * @param consumeIfSuccessful if true will consume the inputs of the recipe.
      * @param inputs              Items input or Collections.emptyList() if none.
      * @param fluidInputs         Fluids input or Collections.emptyList() if none.
-     * @param matchingMode        How this method should check if inputs matches according to {@link MatchingMode} description.
      * @return true if the recipe matches the given inputs false otherwise.
      */
-    public boolean matches(boolean consumeIfSuccessful, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
-        Pair<Boolean, Integer[]> fluids = null;
-        Pair<Boolean, Integer[]> items = null;
+    public boolean matches(boolean consumeIfSuccessful, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
+        Pair<Boolean, Integer[]> fluids;
+        Pair<Boolean, Integer[]> items;
 
-        if (matchingMode == MatchingMode.IGNORE_FLUIDS) {
-            if (getInputs().isEmpty()) {
-                return false;
-            }
-        } else {
-            fluids = matchesFluid(fluidInputs);
-            if (!fluids.getKey()) {
-                return false;
-            }
+
+        fluids = matchesFluid(fluidInputs);
+        if (!fluids.getKey()) {
+            return false;
         }
 
-        if (matchingMode == MatchingMode.IGNORE_ITEMS) {
-            if (getFluidInputs().isEmpty()) {
-                return false;
-            }
-        } else {
-            items = matchesItems(inputs);
-            if (!items.getKey()) {
-                return false;
-            }
+        items = matchesItems(inputs);
+        if (!items.getKey()) {
+            return false;
         }
 
-        if (consumeIfSuccessful && matchingMode == MatchingMode.DEFAULT) {
+        if (consumeIfSuccessful) {
             Integer[] fluidAmountInTank = fluids.getValue();
             Integer[] itemAmountInSlot = items.getValue();
             for (int i = 0; i < fluidAmountInTank.length; i++) {
@@ -411,6 +397,7 @@ public class Recipe {
                 .append("duration", duration)
                 .append("EUt", EUt)
                 .append("hidden", hidden)
+                .append("CTRecipe", isCTRecipe)
                 .toString();
     }
 
@@ -570,6 +557,10 @@ public class Recipe {
 
     public boolean isHidden() {
         return hidden;
+    }
+
+    public boolean getIsCTRecipe() {
+        return isCTRecipe;
     }
 
     public boolean hasValidInputsForDisplay() {
