@@ -55,7 +55,7 @@ public class PortalEntity extends Entity {
         List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox(), null);
         for(Entity entity : list){
             if (!(entity instanceof PortalEntity)) {
-                TeleportHandler.teleportEntityAndRiders(entity, TargetDim, TargetX + entity.getLookVec().x, TargetY, TargetZ + entity.getLookVec().z);
+                TeleportHandler.teleport(entity, TargetDim, TargetX + entity.getLookVec().x, TargetY, TargetZ + entity.getLookVec().z);
             }
         }
     }

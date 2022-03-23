@@ -10,6 +10,7 @@ import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.TeleportHandler;
 import gregtech.common.entities.PortalEntity;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.chunk.Chunk;
 
 public class TeleportApp extends AbstractApplication {
 
@@ -75,7 +76,9 @@ public class TeleportApp extends AbstractApplication {
         portal2.setTargetCoordinates(gui.entityPlayer.dimension, position.x, position.y, position.z);
 
         gui.entityPlayer.getEntityWorld().spawnEntity(portal1);
+        Chunk destination = TeleportHandler.getWorldByDimensionID(Dimension).getChunkProvider().provideChunk(CoordinateX >> 4, CoordinateZ >> 4);
         TeleportHandler.getWorldByDimensionID(Dimension).spawnEntity(portal2);
+        TeleportHandler.getWorldByDimensionID(Dimension).getChunkProvider().queueUnload(destination);
 
         SystemCall.SHUT_DOWN.call(getOs(), isClient);
 
