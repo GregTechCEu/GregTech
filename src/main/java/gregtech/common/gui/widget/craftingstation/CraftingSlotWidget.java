@@ -8,11 +8,11 @@ import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -49,24 +49,87 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
             recipeResolver.fillCraftingGrid(ingredients);
         }
         if (id == 2) {
-            if (recipeResolver.isRecipeValid() && recipeResolver.performRecipe(gui.entityPlayer)) {
-                recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
-                //send slot changes now, both of consumed items in inventory and result slot
-                ItemStack result = this.slotReference.getStack().copy();
-                if (gui.entityPlayer.inventory.getItemStack().isEmpty()) {
-                    gui.entityPlayer.inventory.setItemStack(result);
+            if (recipeResolver.isRecipeValid()) {
+                ClickData clickData = ClickData.readFromBuf(buffer);
+                boolean isShiftDown = clickData.isShiftClick;
+                boolean isLeftClick = clickData.button == 0;
+                boolean isRightClick = clickData.button == 1;
+                EntityPlayer player = gui.entityPlayer;
+                if (isShiftDown) {
+                    if (isLeftClick) {
+                        //limit shift click to one stack at a time
+                        int maxCrafts = this.slotReference.getStack().getMaxStackSize() / this.slotReference.getStack().getCount();
+                        for (int i = 0; i < maxCrafts; i++) {
+                            if (recipeResolver.performRecipe(gui.entityPlayer)) {
+                                recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
+                                ItemStack result = this.slotReference.getStack();
+                                if (!player.inventory.addItemStackToInventory(result)) {
+                                    player.dropItem(result, false);
+                                }
+                                this.recipeResolver.refreshOutputSlot();
+                            }
+                        }
+                    } else if (isRightClick) {
+                        while (recipeResolver.performRecipe(gui.entityPlayer)) {
+                            recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
+                            ItemStack result = this.slotReference.getStack();
+                            if (!player.inventory.addItemStackToInventory(result)) {
+                                player.dropItem(result, false);
+                            }
+                            this.recipeResolver.refreshOutputSlot();
+                        }
+                    }
                 } else {
-                    if (!gui.entityPlayer.addItemStackToInventory(result)) {
-                        gui.entityPlayer.dropItem(result, false);
+                    if (isLeftClick) {
+                        if (canMerge(player.inventory.getItemStack(), this.slotReference.getStack()) && recipeResolver.performRecipe(gui.entityPlayer)) {
+                            recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
+                            //send slot changes now, both of consumed items in inventory and result slot
+                            ItemStack result = this.slotReference.getStack();
+                            mergeToHand(result);
+                            this.recipeResolver.refreshOutputSlot();
+                        }
+                    } else if (isRightClick) {
+                        while (canMerge(player.inventory.getItemStack(), this.slotReference.getStack()) && recipeResolver.performRecipe(gui.entityPlayer)) {
+                            recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
+                            ItemStack result = this.slotReference.getStack();
+                            mergeToHand(result);
+                            this.recipeResolver.refreshOutputSlot();
+                        }
                     }
                 }
                 uiAccess.sendHeldItemUpdate();
-                this.recipeResolver.refreshOutputSlot();
+                //send slot changes now, both of consumed items in inventory and result slot
+                gui.entityPlayer.openContainer.detectAndSendChanges();
+                uiAccess.sendSlotUpdate(this);
             }
-            //send slot changes now, both of consumed items in inventory and result slot
-            gui.entityPlayer.openContainer.detectAndSendChanges();
-            uiAccess.sendSlotUpdate(this);
         }
+    }
+
+    private boolean canMerge(ItemStack stack, ItemStack stack1) {
+        if (stack.isEmpty()) return true;
+        if (ItemStack.areItemsEqual(stack, stack1) && ItemStack.areItemStackTagsEqual(stack, stack1)) {
+            return stack.getCount() + stack1.getCount() <= stack.getMaxStackSize();
+        }
+        return false;
+    }
+
+    private ItemStack mergeToHand(ItemStack toMerge) {
+        EntityPlayer player = gui.entityPlayer;
+        ItemStack itemInHand = gui.entityPlayer.inventory.getItemStack();
+        if (itemInHand.isEmpty()) {
+            itemInHand = toMerge;
+            player.inventory.setItemStack(itemInHand);
+        } else if (ItemStack.areItemsEqual(itemInHand, toMerge) && ItemStack.areItemStackTagsEqual(itemInHand, toMerge)) {
+            //if the hand is not empty, try to merge the result with the hand
+            if (itemInHand.getCount() + toMerge.getCount() <= itemInHand.getMaxStackSize()) {
+                //if the result of the merge is smaller than the max stack size, merge
+                itemInHand.grow(toMerge.getCount());
+                player.inventory.setItemStack(itemInHand);
+            }
+        } else {
+            return toMerge;
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -96,9 +159,12 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
     }
 
     @Override
-    public ItemStack slotClick(int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        writeClientAction(2, buf -> {});
-        return ItemStack.EMPTY;
+    public boolean mouseClicked(int mouseX, int mouseY, int button) {
+        if (isMouseOverElement(mouseX, mouseY) && gui != null) {
+            ClickData clickData = new ClickData(Mouse.getEventButton(), isShiftDown(), isCtrlDown());
+            writeClientAction(2, clickData::writeToBuf);
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
