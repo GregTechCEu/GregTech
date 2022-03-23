@@ -8,6 +8,8 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
+import static gregtech.api.metatileentity.IFastRenderMetaTileEntity.RENDER_PASS_TRANSLUCENT;
+
 public class PortalEntity extends Entity {
 
     private double TargetX = 0;
@@ -72,5 +74,10 @@ public class PortalEntity extends Entity {
         this.TargetX = x;
         this.TargetY = y;
         this.TargetZ = z;
+    }
+
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        return pass == RENDER_PASS_TRANSLUCENT;
     }
 }
