@@ -65,7 +65,7 @@ public class TeleportHandler {
             // We won't rewrite this method, instead call it since
             // Various Entity implementations can indeed override this
             teleporter.changeDimension(dimension, server.getWorld(dimension).getDefaultTeleporter());
-            // teleporter.setPositionAndUpdate(teleportToX, teleportToY, teleportToZ); // Change positions
+            teleporter.setPositionAndUpdate(teleportToX, teleportToY, teleportToZ); // Change positions
         }
     }
 
@@ -94,7 +94,7 @@ public class TeleportHandler {
             // We won't rewrite this method, instead call it since
             // Various Entity implementations can indeed override this
             teleporter.changeDimension(dimension, customTeleporter);
-            // teleporter.setPositionAndUpdate(teleportToX, teleportToY, teleportToZ); // Change positions
+            teleporter.setPositionAndUpdate(teleportToX, teleportToY, teleportToZ); // Change positions
         }
     }
 
