@@ -20,9 +20,7 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.sound.GTSoundManager;
-import gregtech.api.recipes.FluidKey;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.sound.GTSoundManager;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -131,16 +129,16 @@ public abstract class MetaTileEntity implements ICoverable, IVoidable {
     public abstract MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity);
 
     public World getWorld() {
-        return holder == null ? null : holder.getWorld();
+        return holder == null ? null : holder.world();
     }
 
     public BlockPos getPos() {
-        return holder == null ? null : holder.getPos();
+        return holder == null ? null : holder.pos();
     }
 
     public void markDirty() {
         if (holder != null) {
-            holder.markDirty();
+            holder.markAsDirty();
         }
     }
 
