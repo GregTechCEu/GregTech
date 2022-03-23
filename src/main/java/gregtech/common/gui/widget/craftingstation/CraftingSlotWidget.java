@@ -8,6 +8,7 @@ import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.item.ItemStack;
@@ -47,6 +48,25 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
             }
             recipeResolver.fillCraftingGrid(ingredients);
         }
+        if (id == 2) {
+            if (recipeResolver.isRecipeValid() && recipeResolver.performRecipe(gui.entityPlayer)) {
+                recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
+                //send slot changes now, both of consumed items in inventory and result slot
+                ItemStack result = this.slotReference.getStack().copy();
+                if (gui.entityPlayer.inventory.getItemStack().isEmpty()) {
+                    gui.entityPlayer.inventory.setItemStack(result);
+                } else {
+                    if (!gui.entityPlayer.addItemStackToInventory(result)) {
+                        gui.entityPlayer.dropItem(result, false);
+                    }
+                }
+                uiAccess.sendHeldItemUpdate();
+                this.recipeResolver.refreshOutputSlot();
+            }
+            //send slot changes now, both of consumed items in inventory and result slot
+            gui.entityPlayer.openContainer.detectAndSendChanges();
+            uiAccess.sendSlotUpdate(this);
+        }
     }
 
     @Override
@@ -76,33 +96,14 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
     }
 
     @Override
-    public boolean canTakeStack(EntityPlayer player) {
-        if (!super.canTakeStack(player)) {
-            return false;
-        }
-        if (recipeResolver == null) {
-            return canTakeStack;
-        }
-        return recipeResolver.isRecipeValid();
+    public ItemStack slotClick(int dragType, ClickType clickTypeIn, EntityPlayer player) {
+        writeClientAction(2, buf -> {});
+        return ItemStack.EMPTY;
     }
 
     @Override
-    public ItemStack onItemTake(EntityPlayer thePlayer, ItemStack stack, boolean simulate) {
-        if (recipeResolver == null) {
-            return ItemStack.EMPTY;
-        }
-        recipeResolver.handleItemCraft(stack, thePlayer, simulate);
-        if (simulate) {
-            return stack;
-        }
-        if (recipeResolver.performRecipe(thePlayer)) {
-            recipeResolver.refreshOutputSlot();
-            //send slot changes now, both of consumed items in inventory and result slot
-            gui.entityPlayer.openContainer.detectAndSendChanges();
-            uiAccess.sendSlotUpdate(this);
-            return stack;
-        }
-        return ItemStack.EMPTY;
+    public boolean canTakeStack(EntityPlayer player) {
+        return false;
     }
 
     @Override

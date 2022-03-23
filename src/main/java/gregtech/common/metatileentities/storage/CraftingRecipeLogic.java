@@ -133,21 +133,19 @@ public class CraftingRecipeLogic {
         return true;
     }
 
-    public void handleItemCraft(ItemStack itemStack, EntityPlayer player, boolean simulate) {
+    public void handleItemCraft(ItemStack itemStack, EntityPlayer player) {
         itemStack.onCrafting(world, player, 1);
         itemStack.getItem().onCreated(itemStack, world, player);
-        if (!simulate) {
-            //if we're not simulated, fire the event, unlock recipe and add crafted items, and play sounds
-            FMLCommonHandler.instance().firePlayerCraftingEvent(player, itemStack, inventoryCrafting);
+        //if we're not simulated, fire the event, unlock recipe and add crafted items, and play sounds
+        FMLCommonHandler.instance().firePlayerCraftingEvent(player, itemStack, inventoryCrafting);
 
-            if (cachedRecipe != null && !cachedRecipe.isDynamic()) {
-                player.unlockRecipes(Lists.newArrayList(cachedRecipe));
-            }
-            if (cachedRecipe != null) {
-                ItemStack resultStack = cachedRecipe.getCraftingResult(inventoryCrafting);
-                this.itemsCrafted += resultStack.getCount();
-                recipeMemory.notifyRecipePerformed(craftingGrid, resultStack);
-            }
+        if (cachedRecipe != null && !cachedRecipe.isDynamic()) {
+            player.unlockRecipes(Lists.newArrayList(cachedRecipe));
+        }
+        if (cachedRecipe != null) {
+            ItemStack resultStack = cachedRecipe.getCraftingResult(inventoryCrafting);
+            this.itemsCrafted += resultStack.getCount();
+            recipeMemory.notifyRecipePerformed(craftingGrid, resultStack);
         }
     }
 
