@@ -4,6 +4,9 @@ import com.google.common.base.Preconditions;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.gui.ingredient.IRecipeTransferHandlerWidget;
 import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.recipes.KeySharedStack;
+import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.OverlayedItemHandler;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -57,28 +60,31 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
                 boolean isRightClick = clickData.button == 1;
                 EntityPlayer player = gui.entityPlayer;
                 if (isShiftDown) {
+                    OverlayedItemHandler playerInventory = new OverlayedItemHandler(new PlayerMainInvWrapper(gui.entityPlayer.inventory));
+                    ItemStackKey toMerge = KeySharedStack.getRegisteredStack(slotReference.getStack());
+                    int crafts = this.slotReference.getStack().getCount();
                     if (isLeftClick) {
                         //limit shift click to one stack at a time
+                        int totalCrafts = 0;
                         int maxCrafts = this.slotReference.getStack().getMaxStackSize() / this.slotReference.getStack().getCount();
                         for (int i = 0; i < maxCrafts; i++) {
-                            if (canMergeToInv(this.slotReference.getStack()) && recipeResolver.performRecipe(gui.entityPlayer)) {
+                            if (canMergeToInv(playerInventory, toMerge, crafts) && recipeResolver.performRecipe(gui.entityPlayer)) {
                                 recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
-                                ItemStack result = this.slotReference.getStack();
-                                if (!player.inventory.addItemStackToInventory(result)) {
-                                    player.dropItem(result, false);
-                                }
-                                this.recipeResolver.refreshOutputSlot();
+                                totalCrafts += crafts;
                             }
                         }
+                        ItemStack toAdd = this.slotReference.getStack().copy();
+                        toAdd.setCount(totalCrafts);
+                        player.inventory.addItemStackToInventory(toAdd);
                     } else if (isRightClick) {
-                        while (canMergeToInv(this.slotReference.getStack()) && recipeResolver.performRecipe(gui.entityPlayer)) {
+                        int totalCrafts = 0;
+                        while (canMergeToInv(playerInventory, toMerge, crafts) && recipeResolver.performRecipe(gui.entityPlayer)) {
                             recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
-                            ItemStack result = this.slotReference.getStack();
-                            if (!player.inventory.addItemStackToInventory(result)) {
-                                player.dropItem(result, false);
-                            }
-                            this.recipeResolver.refreshOutputSlot();
+                            totalCrafts += crafts;
                         }
+                        ItemStack toAdd = this.slotReference.getStack().copy();
+                        toAdd.setCount(totalCrafts);
+                        player.inventory.addItemStackToInventory(toAdd);
                     }
                 } else {
                     if (isLeftClick) {
@@ -114,14 +120,8 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
         return false;
     }
 
-    private boolean canMergeToInv(ItemStack stack) {
-        PlayerMainInvWrapper playerInv = new PlayerMainInvWrapper(gui.entityPlayer.inventory);
-        for (int i = 0; i < playerInv.getSlots(); i++) {
-            if (playerInv.insertItem(i, stack, true).isEmpty()) {
-                return true;
-            }
-        }
-        return false;
+    private boolean canMergeToInv(OverlayedItemHandler inventory, ItemStackKey stack, int crafts) {
+        return inventory.insertStackedItemStackKey(stack, crafts) == 0;
     }
 
     private void mergeToHand(ItemStack toMerge) {
