@@ -35,10 +35,6 @@ public class EnergyNet extends PipeNet<WireProperties> {
         return data;
     }
 
-    public void onNeighbourStateChanged() {
-        NET_DATA.clear();
-    }
-
     public long getEnergyFluxPerSec() {
         World world = getWorldData();
         if (world != null && !world.isRemote && (world.getTotalWorldTime() - lastTime) >= 20) {
@@ -55,6 +51,11 @@ public class EnergyNet extends PipeNet<WireProperties> {
     public void clearCache() {
         lastEnergyFluxPerSec = energyFluxPerSec;
         energyFluxPerSec = 0;
+    }
+
+    @Override
+    public void onNeighbourUpdate(BlockPos fromPos) {
+        NET_DATA.clear();
     }
 
     @Override

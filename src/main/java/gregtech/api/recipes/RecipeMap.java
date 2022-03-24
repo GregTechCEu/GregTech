@@ -1,6 +1,7 @@
 package gregtech.api.recipes;
 
 import com.google.common.collect.ImmutableList;
+import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
@@ -17,7 +18,6 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
-import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
 import gregtech.api.unification.material.Material;
@@ -229,6 +229,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             }
         } else if (ConfigHolder.misc.debug) {
             GTLog.logger.warn("Recipe: {} for Recipe Map {} is a duplicate and was not added", recipe.toString(), this.unlocalizedName);
+            if(recipe.getIsCTRecipe()) {
+                CraftTweakerAPI.logError(String.format("Recipe: %s for Recipe Map %s is a duplicate and was not added", recipe.toString(), this.unlocalizedName));
+            }
         }
     }
 
@@ -251,30 +254,46 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         Recipe recipe = validationResult.getResult();
         if (!GTUtility.isBetweenInclusive(getMinInputs(), getMaxInputs(), recipe.getInputs().size())) {
             GTLog.logger.error("Invalid amount of recipe inputs. Actual: {}. Should be between {} and {} inclusive.", recipe.getInputs().size(), getMinInputs(), getMaxInputs());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+            if(recipe.getIsCTRecipe()) {
+                CraftTweakerAPI.logError(String.format("Invalid amount of recipe inputs. Actual: %s. Should be between %s and %s inclusive.", recipe.getInputs().size(), getMinInputs(), getMaxInputs()));
+                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+            }
             recipeStatus = EnumValidationResult.INVALID;
         }
         if (!GTUtility.isBetweenInclusive(getMinOutputs(), getMaxOutputs(), recipe.getOutputs().size() + recipe.getChancedOutputs().size())) {
             GTLog.logger.error("Invalid amount of recipe outputs. Actual: {}. Should be between {} and {} inclusive.", recipe.getOutputs().size() + recipe.getChancedOutputs().size(), getMinOutputs(), getMaxOutputs());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+            if(recipe.getIsCTRecipe()) {
+                CraftTweakerAPI.logError(String.format("Invalid amount of recipe outputs. Actual: %s. Should be between %s and %s inclusive.", recipe.getOutputs().size() + recipe.getChancedOutputs().size(), getMinOutputs(), getMaxOutputs()));
+                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+            }
             recipeStatus = EnumValidationResult.INVALID;
         }
         if (!GTUtility.isBetweenInclusive(getMinFluidInputs(), getMaxFluidInputs(), recipe.getFluidInputs().size())) {
             GTLog.logger.error("Invalid amount of recipe fluid inputs. Actual: {}. Should be between {} and {} inclusive.", recipe.getFluidInputs().size(), getMinFluidInputs(), getMaxFluidInputs());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Inputs"));
+            if(recipe.getIsCTRecipe()) {
+                CraftTweakerAPI.logError(String.format("Invalid amount of recipe fluid inputs. Actual: %s. Should be between %s and %s inclusive.", recipe.getFluidInputs().size(), getMinFluidInputs(), getMaxFluidInputs()));
+                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Inputs"));
+            }
             recipeStatus = EnumValidationResult.INVALID;
         }
         if (!GTUtility.isBetweenInclusive(getMinFluidOutputs(), getMaxFluidOutputs(), recipe.getFluidOutputs().size())) {
             GTLog.logger.error("Invalid amount of recipe fluid outputs. Actual: {}. Should be between {} and {} inclusive.", recipe.getFluidOutputs().size(), getMinFluidOutputs(), getMaxFluidOutputs());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Outputs"));
+            if(recipe.getIsCTRecipe()) {
+                CraftTweakerAPI.logError(String.format("Invalid amount of recipe fluid outputs. Actual: %s. Should be between %s and %s inclusive.", recipe.getFluidOutputs().size(), getMinFluidOutputs(), getMaxFluidOutputs()));
+                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Outputs"));
+            }
             recipeStatus = EnumValidationResult.INVALID;
         }
         return ValidationResult.newResult(recipeStatus, recipe);
     }
 
     @Nullable
-    public Recipe findRecipe(long voltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, int outputFluidTankCapacity, MatchingMode matchingMode) {
-        return this.findRecipe(voltage, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs), outputFluidTankCapacity, matchingMode);
+    public Recipe findRecipe(long voltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, int outputFluidTankCapacity) {
+        return this.findRecipe(voltage, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs), outputFluidTankCapacity);
     }
 
     /**
@@ -284,12 +303,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param inputs                  the Item Inputs
      * @param fluidInputs             the Fluid Inputs
      * @param outputFluidTankCapacity minimal capacity of output fluid tank, used for fluid canner recipes for example
-     * @param matchingMode            matching logic used for finding the recipe according to {@link MatchingMode}
      * @return the Recipe it has found or null for no matching Recipe
      */
     @Nullable
-    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, MatchingMode matchingMode) {
-        return findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, matchingMode, false);
+    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity) {
+        return findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, false);
     }
 
     /**
@@ -299,13 +317,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param inputs                  the Item Inputs
      * @param fluidInputs             the Fluid Inputs
      * @param outputFluidTankCapacity minimal capacity of output fluid tank, used for fluid canner recipes for example
-     * @param matchingMode            matching logic used for finding the recipe according to {@link MatchingMode}
      * @param exactVoltage            should require exact voltage matching on recipe. used by craftweaker
      * @return the Recipe it has found or null for no matching Recipe
      */
 
     @Nullable
-    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, MatchingMode matchingMode, boolean exactVoltage) {
+    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, boolean exactVoltage) {
         if (recipeSet.isEmpty())
             return null;
         if (minFluidInputs > 0 && GTUtility.amountOfNonNullElements(fluidInputs) < minFluidInputs) {
@@ -314,63 +331,60 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (minInputs > 0 && GTUtility.amountOfNonEmptyStacks(inputs) < minInputs) {
             return null;
         }
-        return findByInputsAndFluids(voltage, inputs, fluidInputs, matchingMode, exactVoltage);
+        return findByInputsAndFluids(voltage, inputs, fluidInputs,exactVoltage);
     }
 
     @Nullable
-    private Recipe findByInputsAndFluids(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode, boolean exactVoltage) {
+    private Recipe findByInputsAndFluids(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, boolean exactVoltage) {
         HashSet<Recipe> iteratedRecipes = new HashSet<>();
         HashSet<ItemStackKey> searchedItems = new HashSet<>();
         HashSet<FluidKey> searchedFluids = new HashSet<>();
         HashMap<Integer, LinkedList<Recipe>> priorityRecipeMap = new HashMap<>();
         HashMap<Recipe, Integer> promotedTimes = new HashMap<>();
 
-        if (matchingMode != MatchingMode.IGNORE_ITEMS) {
-            for (ItemStack stack : inputs) {
-                if (!stack.isEmpty()) {
-                    ItemStackKey itemStackKey = KeySharedStack.getRegisteredStack(stack);
-                    if (!searchedItems.contains(itemStackKey) && recipeItemMap.containsKey(itemStackKey)) {
-                        searchedItems.add(itemStackKey);
-                        for (Recipe tmpRecipe : recipeItemMap.get(itemStackKey)) {
-                            if (!exactVoltage && voltage < tmpRecipe.getEUt()) {
-                                continue;
-                            } else if (exactVoltage && voltage != tmpRecipe.getEUt()) {
-                                continue;
-                            }
-                            calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
+        for (ItemStack stack : inputs) {
+            if (!stack.isEmpty()) {
+                ItemStackKey itemStackKey = KeySharedStack.getRegisteredStack(stack);
+                if (!searchedItems.contains(itemStackKey) && recipeItemMap.containsKey(itemStackKey)) {
+                    searchedItems.add(itemStackKey);
+                    for (Recipe tmpRecipe : recipeItemMap.get(itemStackKey)) {
+                        if (!exactVoltage && voltage < tmpRecipe.getEUt()) {
+                            continue;
+                        } else if (exactVoltage && voltage != tmpRecipe.getEUt()) {
+                            continue;
                         }
+                        calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
                     }
                 }
             }
         }
 
-        if (matchingMode != MatchingMode.IGNORE_FLUIDS) {
-            for (FluidStack fluidStack : fluidInputs) {
-                if (fluidStack != null) {
-                    FluidKey fluidKey = new FluidKey(fluidStack);
-                    if (!searchedFluids.contains(fluidKey) && recipeFluidMap.containsKey(fluidKey)) {
-                        searchedFluids.add(fluidKey);
-                        for (Recipe tmpRecipe : recipeFluidMap.get(fluidKey)) {
-                            if (!exactVoltage && voltage < tmpRecipe.getEUt()) {
-                                continue;
-                            } else if (exactVoltage && voltage != tmpRecipe.getEUt()) {
-                                continue;
-                            }
-                            calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
+        for (FluidStack fluidStack : fluidInputs) {
+            if (fluidStack != null) {
+                FluidKey fluidKey = new FluidKey(fluidStack);
+                if (!searchedFluids.contains(fluidKey) && recipeFluidMap.containsKey(fluidKey)) {
+                    searchedFluids.add(fluidKey);
+                    for (Recipe tmpRecipe : recipeFluidMap.get(fluidKey)) {
+                        if (!exactVoltage && voltage < tmpRecipe.getEUt()) {
+                            continue;
+                        } else if (exactVoltage && voltage != tmpRecipe.getEUt()) {
+                            continue;
                         }
+                        calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
                     }
                 }
             }
         }
-        return prioritizedRecipe(priorityRecipeMap, iteratedRecipes, inputs, fluidInputs, matchingMode);
+
+        return prioritizedRecipe(priorityRecipeMap, iteratedRecipes, inputs, fluidInputs);
     }
 
-    private Recipe prioritizedRecipe(Map<Integer, LinkedList<Recipe>> priorityRecipeMap, HashSet<Recipe> iteratedRecipes, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
+    private Recipe prioritizedRecipe(Map<Integer, LinkedList<Recipe>> priorityRecipeMap, HashSet<Recipe> iteratedRecipes, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
         for (int i = priorityRecipeMap.size(); i >= 0; i--) {
             if (priorityRecipeMap.containsKey(i)) {
                 for (Recipe tmpRecipe : priorityRecipeMap.get(i)) {
                     if (iteratedRecipes.add(tmpRecipe)) {
-                        if (tmpRecipe.matches(false, inputs, fluidInputs, matchingMode)) {
+                        if (tmpRecipe.matches(false, inputs, fluidInputs)) {
                             return tmpRecipe;
                         }
                     }
@@ -546,7 +560,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 Arrays.stream(fluidInputs)
                         .map(CraftTweakerMC::getLiquidStack)
                         .collect(Collectors.toList());
-        Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, outputFluidTankCapacity, MatchingMode.DEFAULT, true);
+        Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, outputFluidTankCapacity, true);
         return backingRecipe == null ? null : new CTRecipe(this, backingRecipe);
     }
 

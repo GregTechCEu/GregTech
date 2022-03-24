@@ -8,11 +8,11 @@ import gregtech.api.capability.IWorkable;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
-import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
@@ -265,7 +265,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             currentRecipe = this.previousRecipe;
             // If there is no active recipe, then we need to find one.
         else {
-            currentRecipe = findRecipe(maxVoltage, importInventory, importFluids, MatchingMode.DEFAULT);
+            currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
         }
         // If a recipe was found, then inputs were valid. Cache found recipe.
         if (currentRecipe != null) {
@@ -361,13 +361,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return result;
     }
 
-    protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode mode) {
+    protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
 
         if(!isRecipeMapValid(getRecipeMap())) {
             return null;
         }
 
-        return getRecipeMap().findRecipe(maxVoltage, inputs, fluidInputs, getMinTankCapacity(getOutputTank()), mode);
+        return getRecipeMap().findRecipe(maxVoltage, inputs, fluidInputs, getMinTankCapacity(getOutputTank()));
     }
 
     public boolean isRecipeMapValid(RecipeMap<?> recipeMap) {
@@ -403,13 +403,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         // We have already trimmed outputs and chanced outputs at this time
         // Attempt to merge all outputs + chanced outputs into the output bus, to prevent voiding chanced outputs
-        if (!metaTileEntity.canVoidRecipeItemOutputs() && !MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs())) {
+        if (!metaTileEntity.canVoidRecipeItemOutputs() && !GTTransferUtils.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
 
         // We have already trimmed fluid outputs at this time
-        if(!metaTileEntity.canVoidRecipeFluidOutputs() && !MetaTileEntity.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
+        if(!metaTileEntity.canVoidRecipeFluidOutputs() && !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getFluidOutputs())) {
             this.isOutputsFull = true;
             return false;
         }
@@ -643,8 +643,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * completes the recipe which was being run, and performs actions done upon recipe completion
      */
     protected void completeRecipe() {
-        MetaTileEntity.addItemsToItemHandler(getOutputInventory(), false, itemOutputs);
-        MetaTileEntity.addFluidsToFluidHandler(getOutputTank(), false, fluidOutputs);
+        GTTransferUtils.addItemsToItemHandler(getOutputInventory(), false, itemOutputs);
+        GTTransferUtils.addFluidsToFluidHandler(getOutputTank(), false, fluidOutputs);
         this.progressTime = 0;
         setMaxProgress(0);
         this.recipeEUt = 0;
@@ -772,10 +772,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.isActive = buf.readBoolean();
-            getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
+            getMetaTileEntity().scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.workingEnabled = buf.readBoolean();
-            getMetaTileEntity().getHolder().scheduleChunkForRenderUpdate();
+            getMetaTileEntity().scheduleRenderUpdate();
         }
     }
 

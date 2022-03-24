@@ -43,6 +43,11 @@ public class EnchantmentHardHammer extends Enchantment {
 
     @Override
     public boolean canApply(ItemStack stack) {
+        return this.canApplyAtEnchantingTable(stack);
+    }
+
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack) {
         boolean isPick = false;
 
         if(stack.getItem() instanceof ItemPickaxe) {
@@ -50,13 +55,13 @@ public class EnchantmentHardHammer extends Enchantment {
         }
         else if(stack.getItem() instanceof ToolMetaItem) {
             ToolMetaItem<?> toolMetaItem = (ToolMetaItem<?>) stack.getItem();
-            ToolMetaItem.MetaToolValueItem toolValueItem = toolMetaItem.getItem(stack);
+            ToolMetaItem<?>.MetaToolValueItem toolValueItem = toolMetaItem.getItem(stack);
             if(toolValueItem.getToolStats() instanceof ToolPickaxe) {
                 isPick = true;
             }
         }
 
-        return isPick && super.canApply(stack);
+        return isPick && stack.getItem().canApplyAtEnchantingTable(stack, this);
     }
 
     @Override

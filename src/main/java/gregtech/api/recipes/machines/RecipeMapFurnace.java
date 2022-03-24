@@ -1,6 +1,5 @@
 package gregtech.api.recipes.machines;
 
-import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
@@ -20,8 +19,8 @@ public class RecipeMapFurnace extends RecipeMap<SimpleRecipeBuilder> {
 
     @Override
     @Nullable
-    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, MatchingMode mode, boolean exactVoltage) {
-        Recipe normalRecipe = super.findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, mode, exactVoltage);
+    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, boolean exactVoltage) {
+        Recipe normalRecipe = super.findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, exactVoltage);
         if (normalRecipe != null || inputs.size() == 0)
             return normalRecipe;
 

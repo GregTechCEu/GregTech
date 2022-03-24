@@ -8,6 +8,7 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTUtility;
@@ -90,8 +91,8 @@ public class TricorderBehavior implements IItemBehaviour {
         ));
 
         MetaTileEntity metaTileEntity;
-        if (tileEntity instanceof MetaTileEntityHolder) {
-            metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+        if (tileEntity instanceof IGregTechTileEntity) {
+            metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
             if (metaTileEntity == null)
                 return list;
 
@@ -272,7 +273,7 @@ public class TricorderBehavior implements IItemBehaviour {
 //                list.add(TextFormatting.GREEN + "No Pollution in Chunk! HAYO!" + TextFormatting.RESET);
 //            }
 
-        // debug
+        // debug TODO
         if (tileEntity instanceof MetaTileEntityHolder) {
             list.addAll(((MetaTileEntityHolder) tileEntity).getDebugInfo(player, debugLevel));
         }

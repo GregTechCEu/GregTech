@@ -14,12 +14,10 @@ import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.CableRenderer;
 import gregtech.common.advancement.GTTriggers;
-import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
 import gregtech.common.tools.DamageValues;
-import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -35,6 +33,7 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -114,12 +113,30 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public void observedNeighborChange(@Nonnull IBlockState observerState, @Nonnull World world, @Nonnull BlockPos observerPos, @Nonnull Block changedBlock, @Nonnull BlockPos changedBlockPos) {
-        super.observedNeighborChange(observerState, world, observerPos, changedBlock, changedBlockPos);
-        EnergyNet pipeNet = getWorldPipeNet(world).getNetFromPos(observerPos);
-        if (pipeNet != null) {
-            pipeNet.onNeighbourStateChanged();
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileEntityCable) {
+            TileEntityCable cable = (TileEntityCable) tile;
+            int temp = cable.getTemperature();
+            // max light at 5000 K
+            // min light at 500 K
+            if(temp >= 5000) {
+                return 15;
+            }
+            if (temp > 500) {
+                return (temp - 500) * 15 / (4500);
+            }
         }
+        return 0;
+    }
+
+    @Override
+    public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+        if (worldIn.isRemote) {
+            TileEntityCable cable = (TileEntityCable) getPipeTileEntity(worldIn, pos);
+            cable.killParticle();
+        }
+        super.breakBlock(worldIn, pos, state);
     }
 
     @Override

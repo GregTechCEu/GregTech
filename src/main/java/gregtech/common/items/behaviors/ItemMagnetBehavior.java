@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.util.GTTransferUtils;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -20,7 +21,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
@@ -76,7 +76,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
 
         EntityPlayer entityPlayer = (EntityPlayer) entity;
 
-        if(entityPlayer.isSpectator()) {
+        if (entityPlayer.isSpectator()) {
             return;
         }
 
@@ -107,7 +107,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
             } else if (!entityItem.cannotPickup()) {
                 ItemStack stack = entityItem.getItem();
 
-                ItemStack remainder = ItemHandlerHelper.insertItemStacked(new ItemStackHandler(entityPlayer.inventory.mainInventory), stack, false);
+                ItemStack remainder = GTTransferUtils.insertItem(new ItemStackHandler(entityPlayer.inventory.mainInventory), stack, false);
                 if (remainder.isEmpty()) {
                     entityItem.setDead();
                 } else if (stack.getCount() > remainder.getCount()) {

@@ -142,6 +142,13 @@ public class MixerRecipes {
                 .output(dust, RedAlloy)
                 .buildAndRegister();
 
+        MIXER_RECIPES.recipeBuilder().duration(100).EUt(VA[ULV])
+                .input(dust, Silver)
+                .input(dust, Electrotine, 4)
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, BlueAlloy)
+                .buildAndRegister();
+
         MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[ULV])
                 .input(dust, Redstone)
                 .input(dust, Electrum)

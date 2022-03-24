@@ -15,10 +15,10 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.FluidTankSwitchShim;
-import gregtech.api.util.GTFluidUtils;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.VirtualTankRegistry;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -112,9 +112,9 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     protected void transferFluids() {
         IFluidHandler fluidHandler = coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide);
         if (pumpMode == CoverPump.PumpMode.IMPORT) {
-            GTFluidUtils.transferFluids(fluidHandler, linkedTank, TRANSFER_RATE, fluidFilter::testFluidStack);
+            GTTransferUtils.transferFluids(fluidHandler, linkedTank, TRANSFER_RATE, fluidFilter::testFluidStack);
         } else if (pumpMode == CoverPump.PumpMode.EXPORT) {
-            GTFluidUtils.transferFluids(linkedTank, fluidHandler, TRANSFER_RATE, fluidFilter::testFluidStack);
+            GTTransferUtils.transferFluids(linkedTank, fluidHandler, TRANSFER_RATE, fluidFilter::testFluidStack);
         }
     }
 

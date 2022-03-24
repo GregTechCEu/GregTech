@@ -11,7 +11,7 @@ import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.input.EnumKey;
+import gregtech.api.util.input.KeyBind;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -71,7 +71,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IArmorLogic, IJetpa
         if (data.hasKey("toggleTimer")) toggleTimer = data.getByte("toggleTimer");
         if (data.hasKey("hover")) hover = data.getBoolean("hover");
 
-        if (toggleTimer == 0 && ArmorUtils.isKeyDown(player, EnumKey.HOVER_KEY)) {
+        if (toggleTimer == 0 && KeyBind.ARMOR_HOVER.isKeyDown(player)) {
             hover = !hover;
             toggleTimer = 5;
             data.setBoolean("hover", hover);

@@ -10,11 +10,13 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.BlockUtility;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GregFakePlayer;
+import gregtech.client.renderer.texture.Textures;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -33,7 +35,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
@@ -54,7 +55,7 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityBlockBreaker(metaTileEntityId, getTier());
     }
 
@@ -109,10 +110,10 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     private void addToInventoryOrDropItems(List<ItemStack> drops) {
         EnumFacing outputFacing = getOutputFacing();
         double itemSpawnX = getPos().getX() + 0.5 + outputFacing.getXOffset();
-        double itemSpawnY = getPos().getX() + 0.5 + outputFacing.getYOffset();
-        double itemSpawnZ = getPos().getX() + 0.5 + outputFacing.getZOffset();
+        double itemSpawnY = getPos().getY() + 0.5 + outputFacing.getYOffset();
+        double itemSpawnZ = getPos().getZ() + 0.5 + outputFacing.getZOffset();
         for (ItemStack itemStack : drops) {
-            ItemStack remainStack = ItemHandlerHelper.insertItemStacked(exportItems, itemStack, false);
+            ItemStack remainStack = GTTransferUtils.insertItem(exportItems, itemStack, false);
             if (!remainStack.isEmpty()) {
                 EntityItem entityitem = new EntityItem(getWorld(), itemSpawnX, itemSpawnY, itemSpawnZ, remainStack);
                 entityitem.setDefaultPickupDelay();
@@ -181,7 +182,7 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_OUTPUT_FACING) {
             this.outputFacing = EnumFacing.VALUES[buf.readByte()];
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         }
     }
 
@@ -199,7 +200,7 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     public void setOutputFacing(EnumFacing outputFacing) {
         this.outputFacing = outputFacing;
         if (!getWorld().isRemote) {
-            getHolder().notifyBlockUpdate();
+            notifyBlockUpdate();
             writeCustomData(UPDATE_OUTPUT_FACING, buf -> buf.writeByte(outputFacing.getIndex()));
             markDirty();
         }

@@ -5,10 +5,10 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
-import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
-import gregtech.client.renderer.texture.Textures;
-import gregtech.api.util.GTFluidUtils;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.TextFormattingUtil;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,7 +27,6 @@ import org.apache.logging.log4j.message.FormattedMessage;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 
 public class CoverFluidRegulator extends CoverPump {
@@ -60,7 +59,7 @@ public class CoverFluidRegulator extends CoverPump {
         }
         switch (transferMode) {
             case TRANSFER_ANY:
-                return GTFluidUtils.transferFluids(sourceHandler, destHandler, transferLimit, fluidFilter::testFluidStack);
+                return GTTransferUtils.transferFluids(sourceHandler, destHandler, transferLimit, fluidFilter::testFluidStack);
             case KEEP_EXACT:
                 return doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.transferAmount);
             case TRANSFER_EXACT:
@@ -77,7 +76,7 @@ public class CoverFluidRegulator extends CoverPump {
             FluidStack sourceFluid = tankProperties.getContents();
             if (sourceFluid == null || sourceFluid.amount == 0 || !fluidFilter.test(sourceFluid)) continue;
             sourceFluid.amount = supplyAmount;
-            if (GTFluidUtils.transferExactFluidStack(sourceHandler, destHandler, sourceFluid.copy())) {
+            if (GTTransferUtils.transferExactFluidStack(sourceHandler, destHandler, sourceFluid.copy())) {
                 fluidLeftToTransfer -= sourceFluid.amount;
             }
             if (fluidLeftToTransfer == 0) break;
@@ -87,11 +86,12 @@ public class CoverFluidRegulator extends CoverPump {
 
     /**
      * Performs one tick worth of Keep Exact behavior.
+     *
      * @param transferLimit the maximum amount in milliBuckets that may be transferred in one tick
      * @param sourceHandler source(s) to move fluids from
-     * @param destHandler destination(s) to move fluids to
-     * @param fluidFilter a predicate which determines what fluids may be moved
-     * @param keepAmount the desired amount in milliBuckets of a particular fluid in the destination
+     * @param destHandler   destination(s) to move fluids to
+     * @param fluidFilter   a predicate which determines what fluids may be moved
+     * @param keepAmount    the desired amount in milliBuckets of a particular fluid in the destination
      * @return the total amount in milliBuckets of all fluids transferred from source to dest by this method
      */
     protected int doKeepExact(final int transferLimit,
@@ -99,36 +99,36 @@ public class CoverFluidRegulator extends CoverPump {
                               final IFluidHandler destHandler,
                               final Predicate<FluidStack> fluidFilter,
                               final int keepAmount) {
-        if(sourceHandler == null || destHandler == null || fluidFilter == null || keepAmount <= 0)
+        if (sourceHandler == null || destHandler == null || fluidFilter == null || keepAmount <= 0)
             return 0;
 
         final Map<FluidStack, Integer> sourceFluids =
-            collectDistinctFluids(sourceHandler, IFluidTankProperties::canDrain, fluidFilter);
+                collectDistinctFluids(sourceHandler, IFluidTankProperties::canDrain, fluidFilter);
         final Map<FluidStack, Integer> destFluids =
-            collectDistinctFluids(destHandler, IFluidTankProperties::canFill, fluidFilter);
+                collectDistinctFluids(destHandler, IFluidTankProperties::canFill, fluidFilter);
 
         int transferred = 0;
-        for(FluidStack fluidStack : sourceFluids.keySet()) {
-            if(transferred >= transferLimit)
+        for (FluidStack fluidStack : sourceFluids.keySet()) {
+            if (transferred >= transferLimit)
                 break;
 
             // if fluid needs to be moved to meet the Keep Exact value
             int amountInDest;
-            if((amountInDest = destFluids.getOrDefault(fluidStack, 0)) < keepAmount) {
+            if ((amountInDest = destFluids.getOrDefault(fluidStack, 0)) < keepAmount) {
 
                 // move the lesser of the remaining transfer limit and the difference in actual vs keep exact amount
                 int amountToMove = Math.min(transferLimit - transferred,
-                                            keepAmount - amountInDest);
+                        keepAmount - amountInDest);
 
                 // Nothing to do here, try the next fluid.
-                if(amountToMove <= 0)
+                if (amountToMove <= 0)
                     continue;
 
                 // Simulate a drain of this fluid from the source tanks
                 FluidStack drainedResult = sourceHandler.drain(copyFluidStackWithAmount(fluidStack, amountToMove), false);
 
                 // Can't drain this fluid. Try the next one.
-                if(drainedResult == null || drainedResult.amount <= 0 || !fluidStack.equals(drainedResult))
+                if (drainedResult == null || drainedResult.amount <= 0 || !fluidStack.equals(drainedResult))
                     continue;
 
                 // account for the possibility that the drain might give us less than requested
@@ -138,7 +138,7 @@ public class CoverFluidRegulator extends CoverPump {
                 int fillResult = destHandler.fill(copyFluidStackWithAmount(fluidStack, drainable), false);
 
                 // Can't fill, try the next fluid.
-                if(fillResult <= 0)
+                if (fillResult <= 0)
                     continue;
 
                 // This Fluid can be drained and filled, so let's move the most that will actually work.
@@ -146,28 +146,28 @@ public class CoverFluidRegulator extends CoverPump {
                 FluidStack drainedActual = sourceHandler.drain(copyFluidStackWithAmount(fluidStack, fluidToMove), true);
 
                 // Account for potential error states from the drain
-                if(drainedActual == null)
+                if (drainedActual == null)
                     throw new RuntimeException("Misbehaving fluid container: drain produced null after simulation succeeded");
 
-                if(!fluidStack.equals(drainedActual))
+                if (!fluidStack.equals(drainedActual))
                     throw new RuntimeException("Misbehaving fluid container: drain produced a different fluid than the simulation");
 
-                if(drainedActual.amount != fluidToMove)
+                if (drainedActual.amount != fluidToMove)
                     throw new RuntimeException(new FormattedMessage(
-                        "Misbehaving fluid container: drain expected: {}, actual: {}",
-                        fluidToMove,
-                        drainedActual.amount).getFormattedMessage());
+                            "Misbehaving fluid container: drain expected: {}, actual: {}",
+                            fluidToMove,
+                            drainedActual.amount).getFormattedMessage());
 
 
                 // Perform Fill
                 int filledActual = destHandler.fill(copyFluidStackWithAmount(fluidStack, fluidToMove), true);
 
                 // Account for potential error states from the fill
-                if(filledActual != fluidToMove)
+                if (filledActual != fluidToMove)
                     throw new RuntimeException(new FormattedMessage(
-                        "Misbehaving fluid container: fill expected: {}, actual: {}",
-                        fluidToMove,
-                        filledActual).getFormattedMessage());
+                            "Misbehaving fluid container: fill expected: {}, actual: {}",
+                            fluidToMove,
+                            filledActual).getFormattedMessage());
 
                 // update the transferred amount
                 transferred += fluidToMove;
@@ -191,19 +191,19 @@ public class CoverFluidRegulator extends CoverPump {
     }
 
     private Map<FluidStack, Integer> collectDistinctFluids(IFluidHandler handler,
-                                                     Predicate<IFluidTankProperties> tankTypeFilter,
-                                                     Predicate<FluidStack> fluidTypeFilter) {
+                                                           Predicate<IFluidTankProperties> tankTypeFilter,
+                                                           Predicate<FluidStack> fluidTypeFilter) {
 
         final Map<FluidStack, Integer> summedFluids = new HashMap<>();
         Arrays.stream(handler.getTankProperties())
-              .filter(tankTypeFilter)
-              .map(IFluidTankProperties::getContents)
-              .filter(Objects::nonNull)
-              .filter(fluidTypeFilter)
-              .forEach(fs -> {
-                  summedFluids.putIfAbsent(fs, 0);
-                  summedFluids.computeIfPresent(fs, (k,v) -> v + fs.amount);
-              });
+                .filter(tankTypeFilter)
+                .map(IFluidTankProperties::getContents)
+                .filter(Objects::nonNull)
+                .filter(fluidTypeFilter)
+                .forEach(fs -> {
+                    summedFluids.putIfAbsent(fs, 0);
+                    summedFluids.computeIfPresent(fs, (k, v) -> v + fs.amount);
+                });
 
         return summedFluids;
     }
