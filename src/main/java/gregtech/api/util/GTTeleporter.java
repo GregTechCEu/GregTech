@@ -10,7 +10,7 @@ public class GTTeleporter extends Teleporter {
 
     private final double x, y, z;
 
-    public GTTeleporter(WorldServer world, double x, double y, double z){
+    public GTTeleporter(WorldServer world, double x, double y, double z) {
         super(world);
         this.worldServerInstance = world;
         this.x = x;

@@ -56,10 +56,10 @@ public class TeleportApp extends AbstractApplication {
         return this;
     }
 
+    /**
+     * Creates two portals, one 5 blocks in front of the player targeting the other portal, the other at the destination targeting the first portal
+     */
     public void SpawnPortals(){
-        /*
-        Creates two portals, one 5 blocks in front of the player targeting the other portal, the other at the destination targeting the first portal
-         */
         Vec3d position = new Vec3d(
                 gui.entityPlayer.getPosition().getX() + gui.entityPlayer.getLookVec().x * 5,
                 gui.entityPlayer.getPosition().getY(),

@@ -4868,6 +4868,8 @@ gregtech.terminal.app_name.world_prospector=World Prospector
 gregtech.terminal.app_name.vtank_viewer=Virtual Tank Viewer
 gregtech.terminal.app_name.cape_selector=Cape Selector
 
+gregtech.terminal.app_name.teleport=Teleporter
+
 
 terminal.app_name.description=No description.
 terminal.app_name.tier=Tier %d
