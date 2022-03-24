@@ -12,6 +12,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
     private boolean canTakeStack = false;
 
     public CraftingSlotWidget(CraftingRecipeLogic recipeResolver, int slotIndex, int xPosition, int yPosition) {
-        super(createInventory(recipeResolver), slotIndex, xPosition, yPosition, true, false);
+        super(createInventory(recipeResolver), slotIndex, xPosition, yPosition, false, false);
         this.recipeResolver = recipeResolver;
     }
 
@@ -60,7 +61,7 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
                         //limit shift click to one stack at a time
                         int maxCrafts = this.slotReference.getStack().getMaxStackSize() / this.slotReference.getStack().getCount();
                         for (int i = 0; i < maxCrafts; i++) {
-                            if (recipeResolver.performRecipe(gui.entityPlayer)) {
+                            if (canMergeToInv(this.slotReference.getStack()) && recipeResolver.performRecipe(gui.entityPlayer)) {
                                 recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
                                 ItemStack result = this.slotReference.getStack();
                                 if (!player.inventory.addItemStackToInventory(result)) {
@@ -70,7 +71,7 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
                             }
                         }
                     } else if (isRightClick) {
-                        while (recipeResolver.performRecipe(gui.entityPlayer)) {
+                        while (canMergeToInv(this.slotReference.getStack()) && recipeResolver.performRecipe(gui.entityPlayer)) {
                             recipeResolver.handleItemCraft(this.slotReference.getStack(), gui.entityPlayer);
                             ItemStack result = this.slotReference.getStack();
                             if (!player.inventory.addItemStackToInventory(result)) {
@@ -113,7 +114,17 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
         return false;
     }
 
-    private ItemStack mergeToHand(ItemStack toMerge) {
+    private boolean canMergeToInv(ItemStack stack) {
+        PlayerMainInvWrapper playerInv = new PlayerMainInvWrapper(gui.entityPlayer.inventory);
+        for (int i = 0; i < playerInv.getSlots(); i++) {
+            if (playerInv.insertItem(i, stack, true).isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void mergeToHand(ItemStack toMerge) {
         EntityPlayer player = gui.entityPlayer;
         ItemStack itemInHand = gui.entityPlayer.inventory.getItemStack();
         if (itemInHand.isEmpty()) {
@@ -126,10 +137,7 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
                 itemInHand.grow(toMerge.getCount());
                 player.inventory.setItemStack(itemInHand);
             }
-        } else {
-            return toMerge;
         }
-        return ItemStack.EMPTY;
     }
 
     @Override
@@ -165,11 +173,6 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
             writeClientAction(2, clickData::writeToBuf);
         }
         return super.mouseClicked(mouseX, mouseY, button);
-    }
-
-    @Override
-    public boolean canTakeStack(EntityPlayer player) {
-        return false;
     }
 
     @Override
