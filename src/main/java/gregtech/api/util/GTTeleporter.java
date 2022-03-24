@@ -8,7 +8,7 @@ import net.minecraft.world.WorldServer;
 public class GTTeleporter extends Teleporter {
     private final WorldServer worldServerInstance;
 
-    private double x, y, z;
+    private final double x, y, z;
 
     public GTTeleporter(WorldServer world, double x, double y, double z){
         super(world);

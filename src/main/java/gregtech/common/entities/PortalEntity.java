@@ -18,6 +18,8 @@ public class PortalEntity extends Entity {
 
     private int TargetDim = 0;
 
+    private int timeToDespawn = 200;
+
     public PortalEntity(World worldIn){
         super(worldIn);
         rideCooldown = -1;
@@ -50,6 +52,9 @@ public class PortalEntity extends Entity {
 
     @Override
     public void onUpdate() {
+        if(timeToDespawn <= 0){
+            this.setDead();
+        }
         if (!this.world.isRemote) {
             this.setFlag(6, this.isGlowing());
         }
@@ -62,6 +67,7 @@ public class PortalEntity extends Entity {
                 TeleportHandler.teleport(entity, TargetDim, teleporter,TargetX + entity.getLookVec().x, TargetY, TargetZ + entity.getLookVec().z);
             }
         }
+        --timeToDespawn;
     }
 
     @Override
