@@ -86,4 +86,16 @@ public class PortalEntity extends Entity {
     public boolean shouldRenderInPass(int pass) {
         return pass == RENDER_PASS_TRANSLUCENT;
     }
+
+    public boolean isOpening(){
+        return timeToDespawn >= 190;
+    }
+
+    public boolean isClosing(){
+        return timeToDespawn <= 10;
+    }
+
+    public int getTimeToDespawn() {
+        return timeToDespawn;
+    }
 }
