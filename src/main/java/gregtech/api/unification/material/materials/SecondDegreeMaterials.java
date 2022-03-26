@@ -372,7 +372,7 @@ public class SecondDegreeMaterials {
                 .fluid(FluidTypes.GAS)
                 .color(0xA9D0F5)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Nitrogen, 78, Oxygen, 21, Argon, 9)
+                .components(Nitrogen, 70, Oxygen, 22, CarbonDioxide, 5, Helium, 2, Argon, 1, Ice, 1)
                 .build();
 
         LiquidAir = new Material.Builder(2051, "liquid_air")
@@ -386,7 +386,7 @@ public class SecondDegreeMaterials {
                 .fluid(FluidTypes.GAS)
                 .color(0x4C3434)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(CarbonMonoxide, 78, HydrogenSulfide, 21, Neon, 9)
+                .components(CarbonMonoxide, 144, CoalGas, 20, HydrogenSulfide, 15, SulfurDioxide, 15, Helium3, 5, Neon, 1, Ash, 1)
                 .build();
 
         LiquidNetherAir = new Material.Builder(2053, "liquid_nether_air")
@@ -400,7 +400,7 @@ public class SecondDegreeMaterials {
                 .fluid(FluidTypes.GAS)
                 .color(0x283454)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(NitrogenDioxide, 78, Deuterium, 21, Xenon, 9)
+                .components(NitrogenDioxide, 122, Deuterium, 50, Helium, 15, Tritium, 10, Krypton, 1, Xenon, 1, Radon, 1, EnderPearl, 1)
                 .build();
 
         LiquidEnderAir = new Material.Builder(2055, "liquid_ender_air")
