@@ -303,6 +303,14 @@ public class Material implements Comparable<Material> {
         return new MaterialStack(this, amount);
     }
 
+    @ZenGetter("oreMultiplier")
+    public int getOreMultiplier() {
+        OreProperty prop = getProperty(PropertyKey.ORE);
+        if (prop == null)
+            throw new IllegalArgumentException("Material " + materialInfo.name + " does not have an ore!");
+        return prop.getOreMultiplier();
+    }
+
     @Nonnull
     public MaterialProperties getProperties() {
         return properties;
