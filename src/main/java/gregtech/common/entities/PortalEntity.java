@@ -1,5 +1,6 @@
 package gregtech.common.entities;
 
+import gregtech.api.sound.GTSounds;
 import gregtech.api.util.GTTeleporter;
 import gregtech.api.util.TeleportHandler;
 import net.minecraft.entity.Entity;
@@ -57,6 +58,12 @@ public class PortalEntity extends Entity {
         }
         if (!this.world.isRemote) {
             this.setFlag(6, this.isGlowing());
+        }
+
+        if(timeToDespawn == 200){
+            this.playSound(GTSounds.PORTAL_OPENING, 0.7F, 1.F);
+        }else if(timeToDespawn == 10){
+            this.playSound(GTSounds.PORTAL_CLOSING, 0.7F, 1.F);
         }
 
         this.onEntityUpdate();
