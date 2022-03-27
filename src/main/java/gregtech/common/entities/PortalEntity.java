@@ -6,6 +6,8 @@ import gregtech.api.util.TeleportHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
@@ -104,5 +106,11 @@ public class PortalEntity extends Entity {
 
     public int getTimeToDespawn() {
         return timeToDespawn;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public int getBrightnessForRender(){
+        return 15728880;
     }
 }
