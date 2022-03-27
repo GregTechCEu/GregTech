@@ -1,7 +1,10 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
+import com.cleanroommc.modularui.common.widget.MultiChildWidget;
+import com.cleanroommc.modularui.common.widget.Widget;
 import gregtech.api.guiOld.GuiTextures;
-import gregtech.api.guiOld.Widget;
 import gregtech.api.guiOld.widgets.ServerWidgetGroup;
 import gregtech.api.guiOld.widgets.ToggleButtonWidget;
 import gregtech.api.util.IDirtyNotifiable;
@@ -24,13 +27,24 @@ public class ItemFilterWrapper {
         this.dirtyNotifiable = dirtyNotifiable;
     }
 
-    public void initUI(int y, Consumer<Widget> widgetGroup) {
+    public void initUI(int y, Consumer<gregtech.api.guiOld.Widget> widgetGroup) {
         ServerWidgetGroup blacklistButton = new ServerWidgetGroup(() -> getItemFilter() != null);
         blacklistButton.addWidget(new ToggleButtonWidget(144, y, 20, 20, GuiTextures.BUTTON_BLACKLIST,
                 this::isBlacklistFilter, this::setBlacklistFilter).setTooltipText("cover.filter.blacklist"));
         widgetGroup.accept(blacklistButton);
         widgetGroup.accept(new WidgetGroupItemFilter(y, this::getItemFilter));
     }
+
+    public Widget createFilterUI(UIBuildContext buildContext) {
+        return new MultiChildWidget()
+                .addChild(new CycleButtonWidget()
+                        .setToggle(this::isBlacklistFilter, this::setBlacklistFilter)
+                        .setTexture(gregtech.api.gui.GuiTextures.BUTTON_BLACKLIST)
+                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON)
+                        .setSize(18, 18)
+                        .setPos(126, 0));
+    }
+
 
     public void setItemFilter(ItemFilter itemFilter) {
         this.currentItemFilter = itemFilter;

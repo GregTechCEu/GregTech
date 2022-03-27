@@ -1,7 +1,14 @@
 package gregtech.common.covers.filter;
 
+import com.cleanroommc.modularui.ModularUI;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Alignment;
+import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.ChangeableWidget;
+import com.cleanroommc.modularui.common.widget.MultiChildWidget;
+import com.cleanroommc.modularui.common.widget.TextWidget;
+import com.cleanroommc.modularui.common.widget.Widget;
 import gregtech.api.guiOld.GuiTextures;
-import gregtech.api.guiOld.Widget;
 import gregtech.api.guiOld.widgets.*;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.api.util.ItemStackKey;
@@ -45,7 +52,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
 
             @Override
             protected void onContentsChanged(int slot) {
-                onFilterSlotChange(true);
+                //onFilterSlotChange(true);
             }
         };
     }
@@ -78,7 +85,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         setTransferStackSize(transferStackSize + amount);
     }
 
-    public void initUI(int y, Consumer<Widget> widgetGroup) {
+    public void initUI(int y, Consumer<gregtech.api.guiOld.Widget> widgetGroup) {
         widgetGroup.accept(new LabelWidget(10, y, "cover.conveyor.item_filter.title"));
         widgetGroup.accept(new SlotWidget(filterInventory, 0, 10, y + 15)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));

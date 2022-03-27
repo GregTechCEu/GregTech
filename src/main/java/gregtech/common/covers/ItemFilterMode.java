@@ -1,6 +1,10 @@
 package gregtech.common.covers;
 
-public enum ItemFilterMode {
+import net.minecraft.util.IStringSerializable;
+
+import javax.annotation.Nonnull;
+
+public enum ItemFilterMode implements IStringSerializable {
 
     FILTER_INSERT("cover.filter.mode.filter_insert"),
     FILTER_EXTRACT("cover.filter.mode.filter_extract"),
@@ -10,5 +14,11 @@ public enum ItemFilterMode {
 
     ItemFilterMode(String localeName) {
         this.localeName = localeName;
+    }
+
+    @Nonnull
+    @Override
+    public String getName() {
+        return localeName;
     }
 }

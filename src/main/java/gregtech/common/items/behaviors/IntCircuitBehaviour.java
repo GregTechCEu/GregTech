@@ -65,7 +65,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
                 .widget(GuiTextures.BACKGROUND.asWidget().fillParent())
                 .widget(new TextWidget(new Text("metaitem.circuit.integrated.gui").localise())
                         .setPos(9, 8))
-                .widget(new TextWidget(Text.dynamic(() -> Integer.toString(IntCircuitIngredient.getCircuitConfiguration(buildContext.getPlayer()))).color(0x4D4040))
+                .widget(TextWidget.dynamicString(() -> Integer.toString(IntCircuitIngredient.getCircuitConfiguration(buildContext.getPlayer())))
                         .setPos(82, 30))
                 .widget(new ButtonWidget()
                         .setOnClick((clickData, widget) -> IntCircuitIngredient.adjustConfiguration(buildContext.getPlayer(), -5))

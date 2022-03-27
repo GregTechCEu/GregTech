@@ -1,6 +1,7 @@
 package gregtech.common.covers.filter;
 
-import gregtech.api.guiOld.Widget;
+import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.Widget;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.api.util.ItemStackKey;
 import net.minecraft.item.ItemStack;
@@ -34,7 +35,7 @@ public abstract class ItemFilter {
 
     public abstract int getTotalOccupiedHeight();
 
-    public abstract void initUI(Consumer<Widget> widgetGroup);
+    public abstract void initUIOld(Consumer<gregtech.api.guiOld.Widget> widgetGroup);
 
     public abstract void writeToNBT(NBTTagCompound tagCompound);
 

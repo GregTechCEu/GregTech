@@ -1,7 +1,11 @@
-package gregtech.common.covers.filter;
+package gregtech.common.covers.newFilter.item;
 
-import gregtech.api.guiOld.Widget;
-import gregtech.api.guiOld.widgets.CycleButtonWidget;
+import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
+import com.cleanroommc.modularui.common.widget.MultiChildWidget;
+import com.cleanroommc.modularui.common.widget.Widget;
+import gregtech.api.gui.GuiFunctions;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.recipes.*;
 import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.api.util.ItemStackKey;
@@ -14,9 +18,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
-public class SmartItemFilter extends ItemFilter {
+public class SmartFilter extends ItemFilter {
 
     private SmartFilteringMode filteringMode = SmartFilteringMode.ELECTROLYZER;
     private SmartMatchingMode matchingMode = SmartMatchingMode.DEFAULT;
@@ -42,8 +45,8 @@ public class SmartItemFilter extends ItemFilter {
 
     @Override
     public int getSlotTransferLimit(Object matchSlot, Set<ItemStackKey> matchedStacks, int globalTransferLimit) {
-        ItemAndMetadataAndStackSize itemAndMetadata = (ItemAndMetadataAndStackSize) matchSlot;
-        return itemAndMetadata.transferStackSize;
+        ItemStack itemStack = (ItemStack) matchSlot;
+        return itemStack.getCount();
     }
 
     @Override
@@ -69,22 +72,25 @@ public class SmartItemFilter extends ItemFilter {
         if (cachedTransferRateValue == 0) {
             return null;
         }
-        return new ItemAndMetadataAndStackSize(itemAndMetadata, cachedTransferRateValue);
+        return itemAndMetadata.toItemStack(cachedTransferRateValue);
     }
 
     @Override
-    public void initUIOld(Consumer<Widget> widgetGroup) {
-        widgetGroup.accept(new CycleButtonWidget(10, 0, 75, 20,
-                SmartFilteringMode.class, this::getFilteringMode, this::setFilteringMode)
-                .setTooltipHoverString("cover.smart_item_filter.filtering_mode.description"));
-        widgetGroup.accept(new CycleButtonWidget(10, 20, 75, 20,
-                SmartMatchingMode.class, this::getMatchingMode, this::setMatchingMode)
-                .setTooltipHoverString("cover.smart_item_filter.matching_mode.description"));
-    }
-
-    @Override
-    public int getTotalOccupiedHeight() {
-        return 20;
+    public Widget createFilterUI(UIBuildContext buildContext) {
+        return new MultiChildWidget()
+                .addChild(createBlacklistButton(buildContext))
+                .addChild(new CycleButtonWidget()
+                        .setForEnum(SmartFilteringMode.class, this::getFilteringMode, this::setFilteringMode)
+                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(SmartFilteringMode.class))
+                        .setBackground(GuiTextures.BASE_BUTTON)
+                        .setSize(75, 18)
+                        .setPos(0, 19))
+                .addChild(new CycleButtonWidget()
+                        .setForEnum(SmartMatchingMode.class, this::getMatchingMode, this::setMatchingMode)
+                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(SmartMatchingMode.class))
+                        .setBackground(GuiTextures.BASE_BUTTON)
+                        .setSize(75, 18)
+                        .setPos(87, 19));
     }
 
     @Override
@@ -103,29 +109,6 @@ public class SmartItemFilter extends ItemFilter {
         this.filteringMode = SmartFilteringMode.values()[tagCompound.getInteger("FilterMode")];
         if (tagCompound.hasKey("MatchingMode")) {
             this.matchingMode = SmartMatchingMode.values()[tagCompound.getInteger("MatchingMode")];
-        }
-    }
-
-    private static class ItemAndMetadataAndStackSize {
-        public final ItemAndMetadata itemAndMetadata;
-        public final int transferStackSize;
-
-        public ItemAndMetadataAndStackSize(ItemAndMetadata itemAndMetadata, int transferStackSize) {
-            this.itemAndMetadata = itemAndMetadata;
-            this.transferStackSize = transferStackSize;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof ItemAndMetadataAndStackSize)) return false;
-            ItemAndMetadataAndStackSize that = (ItemAndMetadataAndStackSize) o;
-            return itemAndMetadata.equals(that.itemAndMetadata);
-        }
-
-        @Override
-        public int hashCode() {
-            return itemAndMetadata.hashCode();
         }
     }
 
@@ -170,5 +153,4 @@ public class SmartItemFilter extends ItemFilter {
         }
 
     }
-
 }

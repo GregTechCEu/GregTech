@@ -40,7 +40,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     @Override
-    public void initUI(Consumer<Widget> widgetGroup) {
+    public void initUIOld(Consumer<Widget> widgetGroup) {
         widgetGroup.accept(new ImageWidget(12, 0, 20, 20, GuiTextures.INFO_ICON)
                 .setTooltip("cover.ore_dictionary_filter.info"));
         widgetGroup.accept(new ImageWidget(10, 25, 156, 14, GuiTextures.DISPLAY));

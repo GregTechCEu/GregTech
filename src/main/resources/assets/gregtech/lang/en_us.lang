@@ -1080,7 +1080,7 @@ cover.filter.blacklist.disabled=Whitelist
 cover.filter.blacklist.enabled=Blacklist
 
 cover.ore_dictionary_filter.title=Ore Dictionary Filter
-cover.ore_dictionary_filter.info=§bAccepts complex expressions/n& = AND/n| = OR/n^ = XOR/n! = NOT/n( ) for priority/n* for wildcard/n§bExample:/n§6dust*Gold | (plate* & !*Double*)/nWill match all gold dusts of all sizes or all plates, but not double plates
+cover.ore_dictionary_filter.info=§bAccepts complex expressions\n& = AND\n| = OR\n^ = XOR/n! = NOT\n( ) for priority\n* for wildcard/n§bExample:\n§6dust*Gold | (plate* & !*Double*)\nWill match all gold dusts of all sizes or all plates, but not double plates
 cover.ore_dictionary_filter.test_slot.info=Insert a item to test if it matches the filter expression
 cover.ore_dictionary_filter.matches=Item matches
 cover.ore_dictionary_filter.matches_not=Item does not match
@@ -1110,16 +1110,17 @@ cover.smart_item_filter.matching_mode.description=§eDefault§r - Will match rec
 
 cover.conveyor.title=Conveyor Cover Settings (%s)
 cover.conveyor.transfer_rate=§7items/sec
-cover.conveyor.mode.export=Mode: Export
-cover.conveyor.mode.import=Mode: Import
-cover.conveyor.distribution.round_robin_enhanced=Distribution Mode/n§bEnhanced Round Robin§r/n§7Splits items equally to all inventories
-cover.conveyor.distribution.round_robin=Distribution Mode/n§bRound Robin§r with Priority/n§7Tries to split items equally to inventories
-cover.conveyor.distribution.first_insert=Distribution Mode/n§bFirst Insert§r/n§7Will insert into the first inventory it finds
+cover.conveyor.mode.export=Export
+cover.conveyor.mode.import=Import
+cover.conveyor.distribution.description=§eEnhanced Round Robin§r splits items equally to all inventories\n§eRound Robin§r with Priority tries to split items equally to inventories\n§eFirst Insert§r will insert into the first inventory it finds
+cover.conveyor.distribution.round_robin_enhanced=Enhanced Round Robin
+cover.conveyor.distribution.round_robin=Round Robin
+cover.conveyor.distribution.first_insert=First Insert
 cover.conveyor.blocks_input.enabled=If enabled, items will not be inserted when cover is set to pull items from the inventory into pipe./n§aEnabled
 cover.conveyor.blocks_input.disabled=If enabled, items will not be inserted when cover is set to pull items from the inventory into pipe./n§cDisabled
-cover.universal.manual_import_export.mode.disabled=Manual I/O: Disabled
-cover.universal.manual_import_export.mode.filtered=Manual I/O: Filtered
-cover.universal.manual_import_export.mode.unfiltered=Manual I/O: Unfiltered
+cover.universal.manual_import_export.mode.disabled=Disabled
+cover.universal.manual_import_export.mode.filtered=Filtered
+cover.universal.manual_import_export.mode.unfiltered=Unfiltered
 cover.universal.manual_import_export.mode.description=§eDisabled§r - Items/fluids will only move as specified by the cover and its filter. \n§eAllow Filtered§r - Items/fluids can be extracted and inserted independently of the cover mode, as long as its filter matches (if any). \n§eAllow Unfiltered§r - Items/fluids can be moved independently of the cover mode. Filter applies to the items inserted or extracted by this cover
 cover.conveyor.item_filter.title=Item Filter
 cover.conveyor.ore_dictionary.title=Ore Dictionary Name

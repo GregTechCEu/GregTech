@@ -31,7 +31,7 @@ public class CoverRoboticArm extends CoverConveyor {
     public CoverRoboticArm(ICoverable coverable, EnumFacing attachedSide, int tier, int itemsPerSecond) {
         super(coverable, attachedSide, tier, itemsPerSecond);
         this.transferMode = TransferMode.TRANSFER_ANY;
-        this.itemFilterContainer.setMaxStackSize(1);
+        this.filterHolder.setMaxStackSize(1);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class CoverRoboticArm extends CoverConveyor {
             TypeItemInfo sourceInfo = sourceItemAmount.get(key);
             int itemAmount = sourceInfo.totalCount;
             Set<ItemStackKey> matchedItems = Collections.singleton(key);
-            int itemToMoveAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot, matchedItems);
+            int itemToMoveAmount = filterHolder.getSlotTransferLimit(sourceInfo.filterSlot, matchedItems);
             if (itemAmount >= itemToMoveAmount) {
                 sourceInfo.totalCount = itemToMoveAmount;
             } else {
@@ -108,7 +108,7 @@ public class CoverRoboticArm extends CoverConveyor {
         while (iterator.hasNext()) {
             Object filterSlotIndex = iterator.next();
             GroupItemInfo sourceInfo = sourceItemAmounts.get(filterSlotIndex);
-            int itemToKeepAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot, sourceInfo.itemStackTypes);
+            int itemToKeepAmount = filterHolder.getSlotTransferLimit(sourceInfo.filterSlot, sourceInfo.itemStackTypes);
             int itemAmount = 0;
             if (currentItemAmount.containsKey(filterSlotIndex)) {
                 GroupItemInfo destItemInfo = currentItemAmount.get(filterSlotIndex);
@@ -138,7 +138,7 @@ public class CoverRoboticArm extends CoverConveyor {
     public void setTransferMode(TransferMode transferMode) {
         this.transferMode = transferMode;
         this.coverHolder.markDirty();
-        this.itemFilterContainer.setMaxStackSize(transferMode.maxStackSize);
+        this.filterHolder.setMaxStackSize(transferMode.maxStackSize);
     }
 
     public TransferMode getTransferMode() {

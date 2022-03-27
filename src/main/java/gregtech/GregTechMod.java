@@ -32,6 +32,7 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.command.GregTechCommand;
 import gregtech.common.covers.CoverBehaviors;
 import gregtech.common.covers.filter.FilterTypeRegistry;
+import gregtech.common.covers.newFilter.FilterRegistry;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.worldgen.LootTableHelper;
@@ -162,6 +163,7 @@ public class GregTechMod {
 
         LootTableHelper.initialize();
         FilterTypeRegistry.init();
+        FilterRegistry.init();
 
         /* Start Cover Definition Registration */
         COVER_REGISTRY.unfreeze();

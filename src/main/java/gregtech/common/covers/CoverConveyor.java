@@ -8,14 +8,11 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Pos2d;
-import com.cleanroommc.modularui.api.math.Size;
 import com.cleanroommc.modularui.common.internal.ModularWindow;
 import com.cleanroommc.modularui.common.internal.UIBuildContext;
-import com.cleanroommc.modularui.common.widget.ButtonWidget;
 import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
-import com.cleanroommc.modularui.common.widget.DrawableWidget;
 import com.cleanroommc.modularui.common.widget.TextFieldWidget;
-import com.cleanroommc.modularui.common.widget.TextWidget;
+import com.cleanroommc.modularui.common.widget.*;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import gregtech.api.GTValues;
@@ -30,11 +27,11 @@ import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.widgets.*;
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
-import gregtech.common.covers.filter.ItemFilterContainer;
+import gregtech.common.covers.newFilter.item.ItemFilter;
+import gregtech.common.covers.newFilter.item.ItemFilterHolder;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -53,6 +50,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
@@ -63,7 +61,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     protected ConveyorMode conveyorMode;
     protected DistributionMode distributionMode;
     protected ManualImportExportMode manualImportExportMode = ManualImportExportMode.DISABLED;
-    protected final ItemFilterContainer itemFilterContainer;
+    protected final ItemFilterHolder filterHolder;
     protected int itemsLeftToTransferLastSecond;
     private CoverableItemHandlerWrapper itemHandlerWrapper;
     protected boolean isWorkingAllowed = true;
@@ -76,7 +74,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         this.itemsLeftToTransferLastSecond = transferRate;
         this.conveyorMode = ConveyorMode.EXPORT;
         this.distributionMode = DistributionMode.INSERT_FIRST;
-        this.itemFilterContainer = new ItemFilterContainer(this);
+        this.filterHolder = new ItemFilterHolder(this);
     }
 
     protected void setTransferRate(int transferRate) {
@@ -129,8 +127,13 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         coverHolder.markDirty();
     }
 
-    public ItemFilterContainer getItemFilterContainer() {
-        return itemFilterContainer;
+    public ItemFilterHolder getFilterHolder() {
+        return filterHolder;
+    }
+
+    @Nullable
+    public ItemFilter getFilter() {
+        return filterHolder.getCurrentFilter();
     }
 
     @Override
@@ -262,7 +265,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (itemStack.isEmpty()) {
                 continue;
             }
-            Object matchSlotIndex = itemFilterContainer.matchItemStack(itemStack);
+            Object matchSlotIndex = filterHolder.matchItemStack(itemStack);
             if (matchSlotIndex == null || !itemInfos.containsKey(matchSlotIndex)) {
                 continue;
             }
@@ -305,7 +308,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (sourceStack.isEmpty()) {
                 continue;
             }
-            if (!itemFilterContainer.testItemStack(sourceStack)) {
+            if (!filterHolder.test(sourceStack)) {
                 continue;
             }
             ItemStack remainder = ItemHandlerHelper.insertItemStacked(targetInventory, sourceStack, true);
@@ -359,7 +362,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (itemStack.isEmpty()) {
                 continue;
             }
-            Object transferSlotIndex = itemFilterContainer.matchItemStack(itemStack);
+            Object transferSlotIndex = filterHolder.matchItemStack(itemStack);
             if (transferSlotIndex == null) {
                 continue;
             }
@@ -385,7 +388,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (itemStack.isEmpty()) {
                 continue;
             }
-            Object transferSlotIndex = itemFilterContainer.matchItemStack(itemStack);
+            Object transferSlotIndex = filterHolder.matchItemStack(itemStack);
             if (transferSlotIndex == null) {
                 continue;
             }
@@ -417,7 +420,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     @Override
     public void onRemoved() {
         NonNullList<ItemStack> drops = NonNullList.create();
-        MetaTileEntity.clearInventory(drops, itemFilterContainer.getFilterInventory());
+        //MetaTileEntity.clearInventory(drops, filterHolder.getFilterInventory());
         for (ItemStack itemStack : drops) {
             Block.spawnAsEntity(coverHolder.getWorld(), coverHolder.getPos(), itemStack);
         }
@@ -501,7 +504,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             primaryGroup.addWidget(distributionModeButton);
         }
 
-        this.itemFilterContainer.initUI(70, primaryGroup::addWidget);
+        //this.itemFilterContainer.initUI(70, primaryGroup::addWidget);
 
         ModularUI.Builder builder = ModularUI.builder(gregtech.api.guiOld.GuiTextures.BACKGROUND, 176, 190 + 82)
                 .widget(primaryGroup)
@@ -511,55 +514,70 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
-        ModularWindow.Builder builder = ModularWindow.builder(new Size(176, 272));
+        ModularWindow.Builder builder = ModularWindow.builder(176, 212);
         //builder.addFromJson(GTValues.MODID, "cover/conveyor", buildContext);
-        builder.bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 190))
-                .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier])))
-                .widget(new DrawableWidget()
-                        .setDrawable(GuiTextures.BACKGROUND)
-                        .fillParent())
-                .widget(new ButtonWidget()
-                        .setOnClick(GuiFunctions.getIncrementer(1, 8, 64, 512, this::adjustTransferRate))
-                        .setSynced(true, false)
-                        .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFFFF))
-                        .setSize(30, 20)
-                        .setPos(136, 20))
-                .widget(new ButtonWidget()
-                        .setOnClick(GuiFunctions.getIncrementer(-1, -8, -64, 512, this::adjustTransferRate))
-                        .setSynced(true, false)
-                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
-                        .setSize(30, 20)
-                        .setPos(10, 20))
-                .widget(new TextFieldWidget()
-                        .setMaxLines(1)
-                        .setGetterInt(() -> transferRate)
-                        .setSetterInt(this::setTransferRate)
-                        .setNumbers(1, maxItemTransferRate)
-                        .setTextAlignment(Alignment.Center)
-                        .setTextColor(0xFFFFFF)
-                        .setBackground(GuiTextures.DISPLAY)
-                        .setPos(40, 20)
-                        .setSize(96, 20))
-                .widget(new CycleButtonWidget()
-                        .setForEnum(ConveyorMode.class, this::getConveyorMode, this::setConveyorMode)
-                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(ConveyorMode.class))
-                        .setBackground(GuiTextures.BASE_BUTTON)
-                        .setPos(10, 45)
-                        .setSize(75, 20))
-                .widget(new CycleButtonWidget()
-                        .setForEnum(ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
-                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(ManualImportExportMode.class))
-                        .addTooltip(new Text("cover.universal.manual_import_export.mode.description").localise())
-                        .setBackground(GuiTextures.BASE_BUTTON)
-                        .setPos(7, 166)
-                        .setSize(116, 20))
-                .widget(new CycleButtonWidget()
-                        .setForEnum(DistributionMode.class, this::getDistributionMode, this::setDistributionMode)
-                        .setTexture(GuiTextures.DISTRIBUTION_MODE) // TODO remove background of texture and use line below
-                        //.setBackground(GuiTextures.BASE_BUTTON)
-                        .setBackground()
-                        .setPos(149, 166)
-                        .setSize(20, 20));
+        builder.setBackground(GuiTextures.BACKGROUND)
+                .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier]))
+                        .setPos(7, 6))
+                .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 129))
+                .widget(new TextWidget(new Text("container.inventory").localise())
+                        .setPos(8, 119))
+                .widget(new Column()
+                        .widget(new TextWidget("Transfer rate:")
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget("Mode:")
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget("Manual IO Mode:")
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget("Distribution Mode:")
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setScale(0.9f)
+                                .setSize(80, 20))
+                        .setPos(7, 18)
+                        .setSize(80, 56))
+                .widget(new Column()
+                        .widget(new Row()
+                                .widget(new ButtonWidget()
+                                        .setOnClick(GuiFunctions.getIncrementer(1, 8, 64, 512, this::adjustTransferRate))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                        .setSize(12, 12))
+                                .widget(new TextFieldWidget()
+                                        .setMaxLines(1)
+                                        .setGetterInt(() -> transferRate)
+                                        .setSetterInt(this::setTransferRate)
+                                        .setNumbers(1, maxItemTransferRate)
+                                        .setTextAlignment(Alignment.Center)
+                                        .setTextColor(0xFFFFFF)
+                                        .setBackground(GuiTextures.DISPLAY_SMALL_BORDER)
+                                        .setSize(56, 12))
+                                .widget(new ButtonWidget()
+                                        .setOnClick(GuiFunctions.getIncrementer(-1, -8, -64, 512, this::adjustTransferRate))
+                                        .setBackground(GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                        .setSize(12, 12)))
+                        .widget(new CycleButtonWidget()
+                                .setForEnum(ConveyorMode.class, this::getConveyorMode, this::setConveyorMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(ConveyorMode.class))
+                                .setBackground(GuiTextures.BASE_BUTTON)
+                                .setSize(80, 12))
+                        .widget(new CycleButtonWidget()
+                                .setForEnum(ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(ManualImportExportMode.class))
+                                .addTooltip(new Text("cover.universal.manual_import_export.mode.description").localise())
+                                .setBackground(GuiTextures.BASE_BUTTON)
+                                .setSize(80, 12))
+                        .widget(new CycleButtonWidget()
+                                .setForEnum(DistributionMode.class, this::getDistributionMode, this::setDistributionMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(DistributionMode.class))
+                                .setBackground(GuiTextures.BASE_BUTTON)
+                                .addTooltip(new Text("cover.conveyor.distribution.description").localise())
+                                .setSize(80, 20))
+                        .setPos(89, 18)
+                        .setSize(80, 56))
+                .widget(filterHolder.createFilterUI(buildContext)
+                        .setPos(7, 78));
         return builder.build();
     }
 
@@ -609,7 +627,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         tagCompound.setInteger("DistributionMode", distributionMode.ordinal());
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
         tagCompound.setInteger("ManualImportExportMode", manualImportExportMode.ordinal());
-        tagCompound.setTag("Filter", this.itemFilterContainer.serializeNBT());
+        tagCompound.setTag("Filter", this.filterHolder.serializeNBT());
     }
 
     @Override
@@ -620,7 +638,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         this.distributionMode = DistributionMode.values()[tagCompound.getInteger("DistributionMode")];
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
         this.manualImportExportMode = ManualImportExportMode.values()[tagCompound.getInteger("ManualImportExportMode")];
-        this.itemFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
+        this.filterHolder.deserializeNBT(tagCompound.getCompoundTag("Filter"));
     }
 
     @Override
@@ -658,7 +676,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (conveyorMode == ConveyorMode.EXPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
                 return stack;
             }
-            if (manualImportExportMode == ManualImportExportMode.FILTERED && !itemFilterContainer.testItemStack(stack)) {
+            if (manualImportExportMode == ManualImportExportMode.FILTERED && !filterHolder.test(stack)) {
                 return stack;
             }
             return super.insertItem(slot, stack, simulate);
@@ -672,7 +690,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             }
             if (manualImportExportMode == ManualImportExportMode.FILTERED) {
                 ItemStack result = super.extractItem(slot, amount, true);
-                if (result.isEmpty() || !itemFilterContainer.testItemStack(result)) {
+                if (result.isEmpty() || !filterHolder.test(result)) {
                     return ItemStack.EMPTY;
                 }
                 return simulate ? result : super.extractItem(slot, amount, false);

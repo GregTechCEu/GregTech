@@ -25,7 +25,7 @@ public class WidgetGroupItemFilter extends AbstractWidgetGroup {
             clearAllWidgets();
             this.itemFilter = newItemFilter;
             if (itemFilter != null) {
-                this.itemFilter.initUI(this::addWidget);
+                this.itemFilter.initUIOld(this::addWidget);
             }
             writeUpdateInfo(2, buffer -> {
                 if (itemFilter != null) {
@@ -52,7 +52,7 @@ public class WidgetGroupItemFilter extends AbstractWidgetGroup {
             if (buffer.readBoolean()) {
                 int filterId = buffer.readVarInt();
                 this.itemFilter = FilterTypeRegistry.createItemFilterById(filterId);
-                this.itemFilter.initUI(this::addWidget);
+                this.itemFilter.initUIOld(this::addWidget);
                 this.itemFilter.setMaxStackSize(maxStackSize);
             }
         } else if (id == 3) {
