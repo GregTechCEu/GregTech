@@ -15,7 +15,7 @@ import net.minecraft.world.chunk.Chunk;
 public class TeleportApp extends AbstractApplication {
 
     private int CoordinateX = 0;
-    private int CoordinateY = 0;
+    private int CoordinateY = 1;
     private int CoordinateZ = 0;
 
     private int Dimension = 0;
@@ -44,7 +44,7 @@ public class TeleportApp extends AbstractApplication {
             if (!value.isEmpty()) {
                 CoordinateY = Integer.parseInt(value);
             }
-        }).setMaxLength(9).setNumbersOnly(0, 255));
+        }).setMaxLength(9).setNumbersOnly(1, 255));
         this.addWidget(new TextFieldWidget2(10, 20, 75, 16, () -> String.valueOf(CoordinateX), value -> {
             if (!value.isEmpty()) {
                 CoordinateX = Integer.parseInt(value);
