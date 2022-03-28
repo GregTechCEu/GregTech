@@ -553,7 +553,7 @@ metaitem.board.epoxy.tooltip=発展型基板
 metaitem.board.fiber_reinforced.name=繊維強化回路基板
 metaitem.board.fiber_reinforced.tooltip=素晴らしい基板
 metaitem.board.multilayer.fiber_reinforced.name=複層繊維強化回路基板
-metaitem.board.multiplayer.fiber_reinforced.name=精鋭基板
+metaitem.board.multilayer.fiber_reinforced.tooltip=精鋭基板
 metaitem.board.wetware.name=ウェットウェアライフサポート回路基板
 metaitem.board.wetware.tooltip=生命を維持する基板
 
@@ -1020,9 +1020,11 @@ metaarmor.jetpack.emergency_hover_mode=緊急ホバーモードを有効化!
 
 metaarmor.nms.share.enable=NanoMuscle™ Suite: 電力供給を有効化
 metaarmor.nms.share.disable=NanoMuscle™ Suite: 電力供給を無効化
+metaarmor.nms.share.error=NanoMuscle™ Suite: §cエネルギー不足!
 
 metaarmor.qts.share.enable=QuarkTech™ Suite: 電力供給を有効化
 metaarmor.qts.share.disable=QuarkTech™ Suite: 電力供給を無効化
+metaarmor.qts.share.error=QuarkTech™ Suite: §cエネルギー不足!
 
 metaarmor.message.nightvision.enabled=§b暗視: §aOn
 metaarmor.message.nightvision.disabled=§b暗視: §cOff
@@ -1034,6 +1036,8 @@ metaarmor.tooltip.jump=ジャンプ力とジャンプ距離が上昇
 metaarmor.tooltip.falldamage=落下ダメージ無効
 metaarmor.tooltip.potions=デバフ無効
 metaarmor.tooltip.burning=炎上無効
+metaarmor.tooltip.breath=水中呼吸
+metaarmor.tooltip.autoeat=満腹度回復 (インベントリに食料があるとき)
 
 metaarmor.hud.status.enabled=§aON
 metaarmor.hud.status.disabled=§cOFF
@@ -1043,6 +1047,7 @@ metaarmor.hud.hover_mode=ホバー: %s
 mataarmor.hud.supply_mode=電力供給: %s
 metaarmor.hud.gravi_engine=重力エンジン: %s
 
+metaarmor.energy_share.error=電力供給: §c電力不足!
 metaarmor.energy_share.enable=電力供給: 装備への電力供給を有効化
 metaarmor.energy_share.disable=電力供給: 装備への電力供給を無効化
 metaarmor.energy_share.tooltip=供給モード: %s
@@ -1090,9 +1095,6 @@ cover.smart_item_filter.filtering_mode.electrolyzer=電解槽
 cover.smart_item_filter.filtering_mode.centrifuge=遠心分離機
 cover.smart_item_filter.filtering_mode.sifter=選別機
 cover.smart_item_filter.filtering_mode.description=このスマートフィルターがフィルタに使用する機械を選択します. /nロボットアームが適切な数のアイテムを自動的に選択するようになります.
-cover.smart_item_filter.matching_mode.default=デフォルト
-cover.smart_item_filter.matching_mode.ignore_fluid=液体を無視
-cover.smart_item_filter.matching_mode.description=§eデフォルト§r - 液体を他の面から搬入されていない前提で, アイテム/液体の両方を基準にレシピごとに選別します. /n§e液体を無視§r - アイテムのみを基準にレシピごとに選別します.
 
 cover.conveyor.title=コンベアーモジュール (%s)
 cover.conveyor.transfer_rate=§7個/秒
@@ -1383,6 +1385,7 @@ material.almandine=鉄礬柘榴石
 material.andradite=灰鉄柘榴石
 material.annealed_copper=なまし銅
 material.asbestos=石綿
+material.ash=灰
 material.banded_iron=縞状鉄鉱
 material.battery_alloy=バッテリー用合金
 material.blue_topaz=ブルートパーズ
@@ -1555,7 +1558,7 @@ material.uranium_triplatinum=三白金ウラン
 material.samarium_iron_arsenic_oxide=サマリウム-鉄-ヒ素酸化物
 material.indium_tin_barium_titanium_cuprate=インジウム錫バリウムチタンキュプライト
 material.uranium_rhodium_dinaquadide=ウラン-ロジウム 二ナクアダ物
-material.enriched_naquadah_trinium_europium_duranide=濃縮ナクアダ-トリニウム-ユーロピウム ドゥラニウム化物
+material.enriched_naquadah_trinium_europium_duranide=濃縮ナクアダ-トリニウム-ユーロピウム デュラニウム化物
 material.ruthenium_trinium_americium_neutronate=ルテニウム-トリニウム-アメリシウム ニュートロニウム化物
 material.platinum_raw=粗白金
 material.inert_metal_mixture=不活性金属混合物
@@ -1653,6 +1656,9 @@ material.cyclohexane=シクロヘキサン
 material.cyclohexanone_oxime=シクロヘキサノンオキシム
 material.caprolactam=カプロラクタム
 material.nitrosyl_chloride=塩化ニトロシル
+material.butyraldehyde=ブチルアルデヒド
+material.polyvinyl_butyral=ポリビニルブチラール
+
 
 # Unknown Composition Materials
 material.wood_gas=木質ガス
@@ -2384,6 +2390,7 @@ tile.fusion_casing.fusion_casing_mk3.name=核融合炉マシン外装 MK III
 # Transparent casing blocks
 tile.transparent_casing.tempered_glass.name=強化ガラス
 tile.transparent_casing.fusion_glass.name=核融合炉ガラス
+tile.transparent_casing.laminated_glass.name=合わせガラス
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
@@ -3145,31 +3152,31 @@ gregtech.machine.extractor.opv.name=伝説の抽出機
 gregtech.machine.extractor.opv.tooltip=液化吸着装置
 
 # Extruder
-gregtech.machine.extruder.lv.name=基本型抽出機
+gregtech.machine.extruder.lv.name=基本型押出機
 gregtech.machine.extruder.lv.tooltip=金属加工の万能機械
-gregtech.machine.extruder.mv.name=発展型抽出機
+gregtech.machine.extruder.mv.name=発展型押出機
 gregtech.machine.extruder.mv.tooltip=金属加工の万能機械
-gregtech.machine.extruder.hv.name=発展型抽出機 II
+gregtech.machine.extruder.hv.name=発展型押出機 II
 gregtech.machine.extruder.hv.tooltip=金属加工の万能機械
-gregtech.machine.extruder.ev.name=発展型抽出機 III
+gregtech.machine.extruder.ev.name=発展型押出機 III
 gregtech.machine.extruder.ev.tooltip=金属加工の万能機械
-gregtech.machine.extruder.iv.name=精鋭型抽出機
+gregtech.machine.extruder.iv.name=精鋭型押出機
 gregtech.machine.extruder.iv.tooltip=材料変形装置
-gregtech.machine.extruder.luv.name=精鋭型抽出機 II
+gregtech.machine.extruder.luv.name=精鋭型押出機 II
 gregtech.machine.extruder.luv.tooltip=材料変形装置
-gregtech.machine.extruder.zpm.name=精鋭型抽出機 III
+gregtech.machine.extruder.zpm.name=精鋭型押出機 III
 gregtech.machine.extruder.zpm.tooltip=材料変形装置
-gregtech.machine.extruder.uv.name=究極型抽出機
+gregtech.machine.extruder.uv.name=究極型押出機
 gregtech.machine.extruder.uv.tooltip=形状変更装置
-gregtech.machine.extruder.uhv.name=史上最高の抽出機
+gregtech.machine.extruder.uhv.name=史上最高の押出機
 gregtech.machine.extruder.uhv.tooltip=形状変更装置
-gregtech.machine.extruder.uev.name=史上最高の抽出機 II
+gregtech.machine.extruder.uev.name=史上最高の押出機 II
 gregtech.machine.extruder.uev.tooltip=形状変更装置
-gregtech.machine.extruder.uiv.name=史上最高の抽出機 III
+gregtech.machine.extruder.uiv.name=史上最高の押出機 III
 gregtech.machine.extruder.uiv.tooltip=形状変更装置
-gregtech.machine.extruder.uxv.name=史上最高の抽出機 IV
+gregtech.machine.extruder.uxv.name=史上最高の押出機 IV
 gregtech.machine.extruder.uxv.tooltip=形状変更装置
-gregtech.machine.extruder.opv.name=伝説の抽出機
+gregtech.machine.extruder.opv.name=伝説の押出機
 gregtech.machine.extruder.opv.tooltip=形状変更装置
 
 # Fermenter TODO
@@ -3677,11 +3684,11 @@ gregtech.machine.scanner.opv.name=伝説のスキャナー
 gregtech.machine.scanner.opv.tooltip=電子顕微鏡
 
 gregtech.machine.infinite_energy.name=Infinite GT Energy Unit Emitter
-gregtech.machine.infinite_energy.tooltip=扱うには§o§5ク§dリ§4エ§cイ§eテ§aィ§bブ§3モー§7ド§r§8が必要です.
+gregtech.machine.infinite_energy.tooltip=§8扱うには§o§5ク§dリ§4エ§cイ§eテ§aィ§bブ§3モ§9ー§1ド§r§8が必要です.
 gregtech.machine.creative_chest.name=クリエイティブ量子チェスト
-gregtech.machine.creative_chest.tooltip=扱うには§o§5ク§dリ§4エ§cイ§eテ§aィ§bブ§3モー§7ド§r§8が必要です.
+gregtech.machine.creative_chest.tooltip=§8扱うには§o§5ク§dリ§4エ§cイ§eテ§aィ§bブ§3モ§9ー§1ド§r§8が必要です.
 gregtech.machine.creative_tank.name=クリエイティブ量子タンク
-gregtech.machine.creative_tank.tooltip=扱うには§o§5ク§dリ§4エ§cイ§eテ§aィ§bブ§3モー§7ド§r§8が必要です.
+gregtech.machine.creative_tank.tooltip=§8扱うには§o§5ク§dリ§4エ§cイ§eテ§aィ§bブ§3モ§9ー§1ド§r§8が必要です.
 
 
 # Machine hulls
@@ -4644,7 +4651,7 @@ gregtech.gui.overclock.description=この機械はこの電圧までオーバー
 gregtech.gui.overclock.off=X
 gregtech.gui.sort=ソート
 gregtech.gui.fluid_auto_output.tooltip.enabled=液体自動搬出が有効
-gregtech.gui.fluid_auto_output.tooltip.disabled=液体自動搬出がが無効
+gregtech.gui.fluid_auto_output.tooltip.disabled=液体自動搬出が無効
 gregtech.gui.item_auto_output.tooltip.enabled=アイテム自動搬出が有効
 gregtech.gui.item_auto_output.tooltip.disabled=アイテム自動搬出が無効
 gregtech.gui.charger_slot.tooltip=§f充電スロット§r/n%s§7バッテリーからエネルギーを吸い取る.§r/n%s§7の電動ツールとバッテリーを充電できる.
@@ -4749,7 +4756,7 @@ gregtech.multiblock.pattern.single=§6このブロックのみ使用可§r
 gregtech.multiblock.pattern.location_end=§c最後尾§r
 gregtech.multiblock.pattern.replaceable_air=空気で置換可能
 
-gregtech.multiblock.blast_furnace.max_temperature=最大温度: %sK
+gregtech.multiblock.blast_furnace.max_temperature=最大温度: %s
 gregtech.multiblock.multi_furnace.heating_coil_level=コイルレベル: %s
 gregtech.multiblock.multi_furnace.heating_coil_discount=コイルのEUブースト: %sx
 gregtech.multiblock.distillation_tower.distilling_fluid=%sを蒸留中
@@ -5061,3 +5068,9 @@ monitor.gui.title.config=設定
 
 fluid.tile.lava=溶岩
 fluid.tile.water=水
+
+# Keybindings
+gregtech.key.armor_mode_switch=装備のモード切替
+gregtech.key.armor_hover=装備のホバーモードの切替
+gregtech.key.armor_charging=装備のインベントリ充電機能の切替
+gregtech.key.tool_aoe_change=採掘範囲の切替
