@@ -73,7 +73,11 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new TutorialGuideApp()).defaultApp().build();
         AppRegistryBuilder.create(new GuideEditorApp()).defaultApp().build();
         AppRegistryBuilder.create(new SettingsApp()).defaultApp().build();
-        AppRegistryBuilder.create(new TeleportApp()).defaultApp().build();
+
+        AppRegistryBuilder.create(new TeleportApp())
+                .battery(GTValues.ZPM, 10000)
+                .device(DeviceHardware.DEVICE.FIELD_GENERATOR_UV)
+                .build();
 
         AppRegistryBuilder.create(new PongApp())
                 .battery(GTValues.LV, 75)
