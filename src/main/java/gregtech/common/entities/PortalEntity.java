@@ -15,11 +15,11 @@ import static gregtech.api.metatileentity.IFastRenderMetaTileEntity.RENDER_PASS_
 
 public class PortalEntity extends Entity {
 
-    private double TargetX = 0;
-    private double TargetY = 0;
-    private double TargetZ = 0;
+    private double targetX = 0;
+    private double targetY = 0;
+    private double targetZ = 0;
 
-    private int TargetDim = 0;
+    private int targetDim = 0;
 
     private int timeToDespawn = 200;
 
@@ -39,18 +39,18 @@ public class PortalEntity extends Entity {
 
     @Override
     public void readEntityFromNBT(NBTTagCompound nbtTagCompound){
-        this.TargetX = nbtTagCompound.getDouble("TargetX");
-        this.TargetY = nbtTagCompound.getDouble("TargetY");
-        this.TargetZ = nbtTagCompound.getDouble("TargetZ");
-        this.TargetDim = nbtTagCompound.getInteger("TargetDim");
+        this.targetX = nbtTagCompound.getDouble("targetX");
+        this.targetY = nbtTagCompound.getDouble("targetY");
+        this.targetZ = nbtTagCompound.getDouble("targetZ");
+        this.targetDim = nbtTagCompound.getInteger("targetDim");
     }
 
     @Override
     public void writeEntityToNBT(NBTTagCompound nbtTagCompound){
-        nbtTagCompound.setDouble("TargetX", this.TargetX);
-        nbtTagCompound.setDouble("TargetY", this.TargetY);
-        nbtTagCompound.setDouble("TargetZ", this.TargetZ);
-        nbtTagCompound.setInteger("TargetDim", this.TargetDim);
+        nbtTagCompound.setDouble("targetX", this.targetX);
+        nbtTagCompound.setDouble("targetY", this.targetY);
+        nbtTagCompound.setDouble("targetZ", this.targetZ);
+        nbtTagCompound.setInteger("targetDim", this.targetDim);
     }
 
     @Override
@@ -72,8 +72,8 @@ public class PortalEntity extends Entity {
         List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox(), null);
         for(Entity entity : list){
             if (!(entity instanceof PortalEntity)) {
-                GTTeleporter teleporter = new GTTeleporter(TeleportHandler.getWorldByDimensionID(TargetDim), TargetX, TargetY, TargetZ);
-                TeleportHandler.teleport(entity, TargetDim, teleporter,TargetX + entity.getLookVec().x, TargetY, TargetZ + entity.getLookVec().z);
+                GTTeleporter teleporter = new GTTeleporter(TeleportHandler.getWorldByDimensionID(targetDim), targetX, targetY, targetZ);
+                TeleportHandler.teleport(entity, targetDim, teleporter, targetX + entity.getLookVec().x, targetY, targetZ + entity.getLookVec().z);
             }
         }
         --timeToDespawn;
@@ -85,10 +85,10 @@ public class PortalEntity extends Entity {
     }
 
     public void setTargetCoordinates(int dimension, double x, double y, double z) {
-        this.TargetDim = dimension;
-        this.TargetX = x;
-        this.TargetY = y;
-        this.TargetZ = z;
+        this.targetDim = dimension;
+        this.targetX = x;
+        this.targetY = y;
+        this.targetZ = z;
     }
 
     @Override

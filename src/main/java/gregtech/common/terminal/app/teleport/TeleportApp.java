@@ -14,11 +14,11 @@ import net.minecraft.world.chunk.Chunk;
 
 public class TeleportApp extends AbstractApplication {
 
-    private int CoordinateX = 0;
-    private int CoordinateY = 1;
-    private int CoordinateZ = 0;
+    private int coordinateX = 0;
+    private int coordinateY = 1;
+    private int coordinateZ = 0;
 
-    private int Dimension = 0;
+    private int dimension = 0;
 
     public TeleportApp(){
         super("teleport");
@@ -30,24 +30,24 @@ public class TeleportApp extends AbstractApplication {
         this.addWidget(new ImageWidget(10, 60, 75, 8, new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor())));
         this.addWidget(new ImageWidget(10, 40, 75, 8, new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor())));
         this.addWidget(new ImageWidget(10, 20, 75, 8, new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor())));
-        this.addWidget(new TextFieldWidget2(10, 100, 75, 16, () -> String.valueOf(Dimension), value -> {
+        this.addWidget(new TextFieldWidget2(10, 100, 75, 16, () -> String.valueOf(dimension), value -> {
             if (!value.isEmpty()) {
-                Dimension = Integer.parseInt(value);
+                dimension = Integer.parseInt(value);
             }
         }).setMaxLength(9).setNumbersOnly(-30000000, 30000000));
-        this.addWidget(new TextFieldWidget2(10, 60, 75, 16, () -> String.valueOf(CoordinateZ), value -> {
+        this.addWidget(new TextFieldWidget2(10, 60, 75, 16, () -> String.valueOf(coordinateZ), value -> {
             if (!value.isEmpty()) {
-                CoordinateZ = Integer.parseInt(value);
+                coordinateZ = Integer.parseInt(value);
             }
         }).setMaxLength(9).setNumbersOnly(-30000000, 30000000));
-        this.addWidget(new TextFieldWidget2(10, 40, 75, 16, () -> String.valueOf(CoordinateY), value -> {
+        this.addWidget(new TextFieldWidget2(10, 40, 75, 16, () -> String.valueOf(coordinateY), value -> {
             if (!value.isEmpty()) {
-                CoordinateY = Integer.parseInt(value);
+                coordinateY = Integer.parseInt(value);
             }
         }).setMaxLength(9).setNumbersOnly(1, 255));
-        this.addWidget(new TextFieldWidget2(10, 20, 75, 16, () -> String.valueOf(CoordinateX), value -> {
+        this.addWidget(new TextFieldWidget2(10, 20, 75, 16, () -> String.valueOf(coordinateX), value -> {
             if (!value.isEmpty()) {
-                CoordinateX = Integer.parseInt(value);
+                coordinateX = Integer.parseInt(value);
             }
         }).setMaxLength(9).setNumbersOnly(-30000000, 30000000));
 
@@ -69,16 +69,16 @@ public class TeleportApp extends AbstractApplication {
         PortalEntity portal1 = new PortalEntity(gui.entityPlayer.getEntityWorld(), position.x, position.y, position.z);
         portal1.setRotation(gui.entityPlayer.rotationYaw, 0.F);
 
-        PortalEntity portal2 = new PortalEntity(gui.entityPlayer.getEntityWorld(), CoordinateX, CoordinateY, CoordinateZ);
+        PortalEntity portal2 = new PortalEntity(gui.entityPlayer.getEntityWorld(), coordinateX, coordinateY, coordinateZ);
         portal2.setRotation(gui.entityPlayer.rotationYaw, 0.F);
 
-        portal1.setTargetCoordinates(Dimension, CoordinateX, CoordinateY, CoordinateZ);
+        portal1.setTargetCoordinates(dimension, coordinateX, coordinateY, coordinateZ);
         portal2.setTargetCoordinates(gui.entityPlayer.dimension, position.x, position.y, position.z);
 
         gui.entityPlayer.getEntityWorld().spawnEntity(portal1);
-        Chunk destination = TeleportHandler.getWorldByDimensionID(Dimension).getChunkProvider().provideChunk(CoordinateX >> 4, CoordinateZ >> 4);
-        TeleportHandler.getWorldByDimensionID(Dimension).spawnEntity(portal2);
-        TeleportHandler.getWorldByDimensionID(Dimension).getChunkProvider().queueUnload(destination);
+        Chunk destination = TeleportHandler.getWorldByDimensionID(dimension).getChunkProvider().provideChunk(coordinateX >> 4, coordinateZ >> 4);
+        TeleportHandler.getWorldByDimensionID(dimension).spawnEntity(portal2);
+        TeleportHandler.getWorldByDimensionID(dimension).getChunkProvider().queueUnload(destination);
 
         SystemCall.SHUT_DOWN.call(getOs(), isClient);
 
