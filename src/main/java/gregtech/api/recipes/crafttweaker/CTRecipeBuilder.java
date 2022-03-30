@@ -69,7 +69,9 @@ public class CTRecipeBuilder {
 
     @ZenMethod
     public CTRecipeBuilder circuit(int num) {
-        this.backingBuilder.notConsumable(CraftTweakerIngredientWrapper.fromStacks(IntCircuitIngredient.getIntegratedCircuit(num)));
+        if (num < 0 || num > IntCircuitIngredient.CIRCUIT_MAX)
+            throw new IllegalArgumentException("Given configuration number is out of range!");
+        this.backingBuilder.notConsumable(new IntCircuitIngredient(num));
         return this;
     }
 
