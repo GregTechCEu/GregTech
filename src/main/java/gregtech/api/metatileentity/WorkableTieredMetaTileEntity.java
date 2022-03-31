@@ -26,10 +26,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity implements IDataInfoProvider {
@@ -127,28 +124,19 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
 
     protected boolean canInputFluid(FluidStack inputFluid) {
         RecipeMap<?> recipeMap = workable.getRecipeMap();
-        if (recipeMap.canInputFluidForce(inputFluid.getFluid()))
-            return true; //if recipe map forces input of given fluid, return true
-        Set<Recipe> matchingRecipes = null;
+        if (recipeMap.canInputFluidForce(inputFluid.getFluid())) {
+            return true; // RecipeMap forces input
+        }
         for (IFluidTank fluidTank : importFluids) {
             FluidStack fluidInTank = fluidTank.getFluid();
             if (fluidInTank != null) {
-                if (matchingRecipes == null) {
-                    //if we didn't have a list of recipes with any fluids, obtain it from first tank with fluid
-                    matchingRecipes = new HashSet<>(recipeMap.getRecipesForFluid(fluidInTank));
-                } else {
-                    //retain recipes which use the fluid in this tank
-                    matchingRecipes.retainAll(recipeMap.getRecipesForFluid(fluidInTank));
+                // Check if both fluids are equal, short-circuit and inform that the fluid can be inputted
+                if (inputFluid.isFluidEqual(fluidInTank)) {
+                    return true;
                 }
             }
         }
-        if (matchingRecipes == null) {
-            //if all tanks are empty, generally fluid can be inserted if there are recipes for it
-            return !recipeMap.getRecipesForFluid(inputFluid).isEmpty();
-        } else {
-            matchingRecipes.retainAll(recipeMap.getRecipesForFluid(inputFluid));
-            return !matchingRecipes.isEmpty();
-        }
+        return !recipeMap.getRecipesForFluid(inputFluid).isEmpty();
     }
 
     @Override
