@@ -27,6 +27,9 @@ gregtech.top.energy_stored=Energy:
 gregtech.top.progress=Progress:
 gregtech.top.working_disabled=Working Disabled
 
+gregtech.top.energy_consumption=Consumption:
+gregtech.top.energy_production=Production:
+
 gregtech.top.transform_up=§cStep Up§r
 gregtech.top.transform_down=§aStep Down§r
 gregtech.top.transform_input=§6Input:§r
@@ -46,6 +49,8 @@ gregtech.top.valid_structure=§aStructure Formed
 gregtech.top.obstructed_structure=§cStructure Obstructed
 gregtech.top.maintenance_fixed=§aMaintenance Fine
 gregtech.top.maintenance_broken=§cNeeds Maintenance
+
+gregtech.top.primitive_pump_production=Production:
 
 gregtech.multiblock.title=Multiblock Pattern
 gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.

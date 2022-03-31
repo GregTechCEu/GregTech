@@ -7,14 +7,15 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
+import gregtech.api.metatileentity.multiblock.IPrimitivePump;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.unification.material.Materials;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.api.unification.material.Materials;
 import gregtech.common.blocks.BlockSteamCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -32,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
+public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase implements IPrimitivePump {
 
     private IFluidTank waterTank;
     private int biomeModifier = 0;
@@ -55,7 +56,7 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
             if (biomeModifier == 0) {
                 biomeModifier = getAmount();
             } else if (biomeModifier > 0) {
-                waterTank.fill(Materials.Water.getFluid(biomeModifier * hatchModifier), true);
+                waterTank.fill(Materials.Water.getFluid(getFluidProduction()), true);
             }
         }
     }
@@ -168,5 +169,10 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
                 I18n.format("gregtech.multiblock.primitive_water_pump.extra1").split("/n"),
                 I18n.format("gregtech.multiblock.primitive_water_pump.extra2").split("/n")
         ).flatMap(Stream::of).toArray(String[]::new);
+    }
+
+    @Override
+    public int getFluidProduction() {
+        return biomeModifier * hatchModifier;
     }
 }
