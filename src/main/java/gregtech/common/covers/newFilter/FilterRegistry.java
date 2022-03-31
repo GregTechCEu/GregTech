@@ -2,6 +2,7 @@ package gregtech.common.covers.newFilter;
 
 import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.api.util.GTLog;
+import gregtech.common.covers.newFilter.fluid.SimpleFluidFilter;
 import gregtech.common.covers.newFilter.item.OreDictFilter;
 import gregtech.common.covers.newFilter.item.SimpleItemFilter;
 import gregtech.common.covers.newFilter.item.SmartFilter;
@@ -22,6 +23,7 @@ public class FilterRegistry {
         register(MetaItems.ITEM_FILTER.getStackForm(), SimpleItemFilter::new);
         register(MetaItems.ORE_DICTIONARY_FILTER.getStackForm(), OreDictFilter::new);
         register(MetaItems.SMART_FILTER.getStackForm(), SmartFilter::new);
+        register(MetaItems.FLUID_FILTER.getStackForm(), SimpleFluidFilter::new);
     }
 
     private static final Map<ItemKey, Supplier<Filter<?>>> REGISTRY = new HashMap<>();

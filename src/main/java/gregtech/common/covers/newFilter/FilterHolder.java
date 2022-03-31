@@ -37,9 +37,8 @@ public class FilterHolder<T, F extends Filter<T>> implements INBTSerializable<NB
 
     public Widget createFilterUI(UIBuildContext buildContext) {
         MultiChildWidget widget = new MultiChildWidget();
-        SlotWidget filterSlot = new SlotWidget(filterInventory, filterSlotIndex);
         ChangeableWidget filterWidget = new ChangeableWidget(() -> currentFilter == null ? null : currentFilter.createFilterUI(buildContext).setDebugLabel("Filter"));
-        modifyFilterSlotWidget(filterSlot);
+        SlotWidget filterSlot = new SlotWidget(filterInventory, filterSlotIndex);
         filterSlot.setFilter(item -> getFilterOf(item) != null);
         filterSlot.setChangeListener(() -> {
             ModularUI.LOGGER.info("On slot changed {}", filterSlot.getMcSlot().getStack());
@@ -47,17 +46,13 @@ public class FilterHolder<T, F extends Filter<T>> implements INBTSerializable<NB
             filterWidget.notifyChangeServer();
         });
 
-        return widget.addChild(filterSlot)
+        return widget.addChild(filterSlot.setPos(144, 0))
                 .addChild(filterWidget)
                 .addChild(new TextWidget(new Text("Filter"))
                         .setTextAlignment(Alignment.CenterLeft)
                         .setPos(1, 0)
                         .setSize(36, 20))
                 .setDebugLabel("FilterHolder");
-    }
-
-    public void modifyFilterSlotWidget(SlotWidget slotWidget) {
-        slotWidget.setPos(144, 0);
     }
 
     @Nullable

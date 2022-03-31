@@ -10,7 +10,7 @@ public class GuiTextures {
 
     public static final AdaptableUITexture BACKGROUND = AdaptableUITexture.of(GTValues.MODID, "gui/base/background", 176, 166, 3);
     public static final AdaptableUITexture DISPLAY = AdaptableUITexture.of(GTValues.MODID, "gui/base/display", 143, 75, 2);
-    public static final AdaptableUITexture DISPLAY_SMALL_BORDER = new AdaptableUITexture(new ResourceLocation(GTValues.MODID, "gui/base/display"), 1 / 143f, 1 / 75f, 1 - 1 / 143f, 1 - 1 / 75f, 141, 73, 1, 1);
+    public static final AdaptableUITexture DISPLAY_SMALL = AdaptableUITexture.of(GTValues.MODID, "gui/base/display_small", 40, 40, 1);
     public static final AdaptableUITexture BASE_BUTTON = AdaptableUITexture.of(GTValues.MODID, "gui/widget/button_overclock", 18, 18, 1);
     public static final AdaptableUITexture BORDERED_BACKGROUND = AdaptableUITexture.of(GTValues.MODID, "textures/gui/base/bordered_background.png", 195, 136, 4);
     public static final AdaptableUITexture BOXED_BACKGROUND = AdaptableUITexture.of(GTValues.MODID, "textures/gui/base/boxed_background.png", 256, 174, 11);

@@ -51,7 +51,7 @@ public class OreDictFilter extends ItemFilter {
                         .setPos(39, 0))
                 .addChild(createBlacklistButton(buildContext))
                 .addChild(SlotWidget.phantom(testSlot, 0)
-                        //.setChangeListener(this::updateTestMsg)
+                        .setChangeListener(this::updateTestMsg)
                         .setPos(58, 0))
                 .addChild(TextWidget.dynamicText(() -> {
                     if (testMsg.isEmpty()) {
@@ -63,7 +63,7 @@ public class OreDictFilter extends ItemFilter {
                 }).setPos(78, 0).setSize(53, 18))
                 .addChild(new TextFieldWidget()
                         .setSetter(val -> {
-                            oreDictFilterExpression = val;
+                            setOreDictFilterExpression(val);
                             updateTestMsg();
                         })
                         .setGetter(() -> oreDictFilterExpression)

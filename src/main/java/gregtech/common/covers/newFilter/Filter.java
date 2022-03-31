@@ -25,12 +25,12 @@ public abstract class Filter<T> {
                 .setPos(126, 0);
     }
 
-    public void writeToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setBoolean("Inverted", this.inverted);
+    public void writeToNBT(NBTTagCompound nbt) {
+        nbt.setBoolean("Inverted", this.inverted);
     }
 
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        this.inverted = tagCompound.getBoolean("Inverted");
+    public void readFromNBT(NBTTagCompound nbt) {
+        this.inverted = nbt.getBoolean("Inverted");
     }
 
     public boolean isInverted() {

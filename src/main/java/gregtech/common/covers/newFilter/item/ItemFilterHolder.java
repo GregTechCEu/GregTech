@@ -48,11 +48,13 @@ public class ItemFilterHolder extends FilterHolder<ItemStack, ItemFilter> {
 
     public void setMaxStackSize(int maxStackSizeLimit) {
         this.maxStackSizeLimit = maxStackSizeLimit;
-        setTransferStackSize(transferStackSize);
+        this.transferStackSize = MathHelper.clamp(transferStackSize, 1, getMaxStackSize());
+        //this.maxStackSizeLimit = getTransferStackSize();
+        this.dirtyNotifiable.markAsDirty();
     }
 
     public boolean showGlobalTransferLimitSlider() {
-        return getMaxStackSize() > 1 && getCurrentFilter() != null && getCurrentFilter().showGlobalTransferLimitSlider();
+        return getMaxStackSize() > 1 && (getCurrentFilter() == null || getCurrentFilter().showGlobalTransferLimitSlider());
     }
 
     public int getSlotTransferLimit(Object slotIndex, Set<ItemStackKey> matchedStacks) {

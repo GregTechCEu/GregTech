@@ -1,10 +1,20 @@
 package gregtech.common.covers;
 
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Alignment;
+import com.cleanroommc.modularui.api.math.Pos2d;
+import com.cleanroommc.modularui.common.internal.ModularWindow;
+import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.*;
+import com.cleanroommc.modularui.common.widget.TextFieldWidget;
 import com.google.common.math.IntMath;
+import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.gui.GuiFunctions;
 import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.widgets.*;
+import gregtech.api.guiOld.widgets.CycleButtonWidget;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTFluidUtils;
@@ -59,11 +69,11 @@ public class CoverFluidRegulator extends CoverPump {
         }
         switch (transferMode) {
             case TRANSFER_ANY:
-                return GTFluidUtils.transferFluids(sourceHandler, destHandler, transferLimit, fluidFilter::testFluidStack);
+                return GTFluidUtils.transferFluids(sourceHandler, destHandler, transferLimit, filterHolder::test);
             case KEEP_EXACT:
-                return doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.transferAmount);
+                return doKeepExact(transferLimit, sourceHandler, destHandler, filterHolder::test, this.transferAmount);
             case TRANSFER_EXACT:
-                return doTransferExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.transferAmount);
+                return doTransferExact(transferLimit, sourceHandler, destHandler, filterHolder::test, this.transferAmount);
         }
         return 0;
     }
@@ -310,6 +320,111 @@ public class CoverFluidRegulator extends CoverPump {
         return super.buildUI(builder.widget(filterGroup).widget(stackSizeGroup), player);
     }
 
+    @Override
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        ModularWindow.Builder builder = ModularWindow.builder(176, 228);
+        builder.setBackground(gregtech.api.gui.GuiTextures.BACKGROUND)
+                .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier]))
+                        .setPos(7, 6))
+                .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 145))
+                .widget(new TextWidget(new Text("container.inventory").localise())
+                        .setPos(8, 135))
+                .widget(new Column()
+                        .widget(new TextWidget("Transfer rate:")
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget("Mode:")
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget("Manual IO Mode:")
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget("Bucket Mode:")
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget("Transfer Mode:")
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setSize(80, 12))
+                        .widget(new TextWidget("Transfer Amount:")
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .setTicker(this::showTransferAmountField)
+                                .setSize(80, 12))
+                        .setPos(7, 18)
+                        .setSize(80, 72))
+                .widget(new Column()
+                        .widget(new Row()
+                                .widget(new ButtonWidget()
+                                        .setOnClick(GuiFunctions.getIncrementer(1, 8, 64, 512, this::adjustTransferRate))
+                                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                        .setSize(12, 12))
+                                .widget(new com.cleanroommc.modularui.common.widget.TextFieldWidget()
+                                        .setMaxLines(1)
+                                        .setGetterInt(() -> transferRate)
+                                        .setSetterInt(this::setTransferRate)
+                                        .setNumbers(() -> 1, () -> bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate)
+                                        .setTextAlignment(Alignment.Center)
+                                        .setTextColor(0xFFFFFF)
+                                        .setBackground(gregtech.api.gui.GuiTextures.DISPLAY_SMALL)
+                                        .setSize(56, 12))
+                                .widget(new ButtonWidget()
+                                        .setOnClick(GuiFunctions.getIncrementer(-1, -8, -64, 512, this::adjustTransferRate))
+                                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                        .setSize(12, 12)))
+                        .widget(new com.cleanroommc.modularui.common.widget.CycleButtonWidget()
+                                .setForEnum(PumpMode.class, this::getPumpMode, this::setPumpMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(PumpMode.class))
+                                .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON)
+                                .setSize(80, 12))
+                        .widget(new com.cleanroommc.modularui.common.widget.CycleButtonWidget()
+                                .setForEnum(ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(ManualImportExportMode.class))
+                                .addTooltip(new Text("cover.universal.manual_import_export.mode.description").localise())
+                                .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON)
+                                .setSize(80, 12))
+                        .widget(new com.cleanroommc.modularui.common.widget.CycleButtonWidget()
+                                .setForEnum(BucketMode.class, this::getBucketMode, this::setBucketMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(BucketMode.class))
+                                .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON)
+                                .addTooltip(new Text("cover.conveyor.distribution.description").localise())
+                                .setSize(80, 12))
+                        .widget(new com.cleanroommc.modularui.common.widget.CycleButtonWidget()
+                                .setForEnum(TransferMode.class, this::getTransferMode, this::setTransferMode)
+                                .setTextureGetter(GuiFunctions.enumStringTextureGetter(TransferMode.class))
+                                .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON)
+                                .addTooltip(new Text("cover.robotic_arm.transfer_mode.description").localise())
+                                .setSize(80, 12))
+                        .widget(new Row()
+                                .widget(new ButtonWidget()
+                                        .setOnClick(GuiFunctions.getIncrementer(1, 8, 64, 512, this::adjustTransferSize))
+                                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                        .setSize(12, 12))
+                                .widget(new TextFieldWidget()
+                                        .setMaxLines(1)
+                                        .setGetterInt(this::getTransferAmount)
+                                        .setSetterInt(this::setTransferAmount)
+                                        .setNumbers(() -> 1, () -> transferMode == TransferMode.TRANSFER_EXACT ? maxFluidTransferRate : Integer.MAX_VALUE)
+                                        .setTextAlignment(Alignment.Center)
+                                        .setTextColor(0xFFFFFF)
+                                        .setBackground(gregtech.api.gui.GuiTextures.DISPLAY_SMALL)
+                                        .setSize(56, 12))
+                                .widget(new ButtonWidget()
+                                        .setOnClick(GuiFunctions.getIncrementer(-1, -8, -64, 512, this::adjustTransferSize))
+                                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                        .setSize(12, 12))
+                                .setTicker(this::showTransferAmountField))
+                        .setPos(89, 18)
+                        .setSize(80, 72))
+                .widget(filterHolder.createFilterUI(buildContext)
+                        .setPos(7, 94));
+        return builder.build();
+    }
+
+    private void showTransferAmountField(Widget widget) {
+        boolean show = checkTransferMode();
+        if (widget.isEnabled() != show) {
+            widget.setEnabled(show);
+        }
+    }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {

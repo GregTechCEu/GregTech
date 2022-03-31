@@ -77,6 +77,10 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         this.filterHolder = new ItemFilterHolder(this);
     }
 
+    public int getTransferRate() {
+        return transferRate;
+    }
+
     protected void setTransferRate(int transferRate) {
         this.transferRate = transferRate;
         coverHolder.markDirty();
@@ -515,7 +519,6 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     @Override
     public ModularWindow createWindow(UIBuildContext buildContext) {
         ModularWindow.Builder builder = ModularWindow.builder(176, 212);
-        //builder.addFromJson(GTValues.MODID, "cover/conveyor", buildContext);
         builder.setBackground(GuiTextures.BACKGROUND)
                 .widget(new TextWidget(new Text(getUITitle()).localise(GTValues.VN[tier]))
                         .setPos(7, 6))
@@ -551,7 +554,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                                         .setNumbers(1, maxItemTransferRate)
                                         .setTextAlignment(Alignment.Center)
                                         .setTextColor(0xFFFFFF)
-                                        .setBackground(GuiTextures.DISPLAY_SMALL_BORDER)
+                                        .setBackground(GuiTextures.DISPLAY_SMALL)
                                         .setSize(56, 12))
                                 .widget(new ButtonWidget()
                                         .setOnClick(GuiFunctions.getIncrementer(-1, -8, -64, 512, this::adjustTransferRate))

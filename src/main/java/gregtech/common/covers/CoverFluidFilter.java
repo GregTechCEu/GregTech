@@ -5,21 +5,26 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Pos2d;
+import com.cleanroommc.modularui.common.internal.ModularWindow;
+import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
+import com.cleanroommc.modularui.common.widget.TextWidget;
 import gregtech.api.capability.impl.FluidHandlerDelegate;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.guiOld.GuiTextures;
+import gregtech.api.gui.GregTechUI;
+import gregtech.api.gui.GuiFunctions;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
-import gregtech.api.guiOld.widgets.CycleButtonWidget;
 import gregtech.api.guiOld.widgets.LabelWidget;
 import gregtech.api.guiOld.widgets.WidgetGroup;
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.api.util.GTUtility;
-import gregtech.common.covers.filter.FluidFilter;
-import gregtech.common.covers.filter.FluidFilterWrapper;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.common.covers.newFilter.Filter;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
@@ -36,17 +41,19 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
 
     protected final String titleLocale;
     protected final SimpleOverlayRenderer texture;
-    protected final FluidFilterWrapper fluidFilter;
+    //protected final FluidFilterWrapper fluidFilter;
+    protected Filter<FluidStack> fluidFilter;
     protected FluidFilterMode filterMode;
     protected FluidHandlerFiltered fluidHandler;
 
-    public CoverFluidFilter(ICoverable coverHolder, EnumFacing attachedSide, String titleLocale, SimpleOverlayRenderer texture, FluidFilter fluidFilter) {
+    public CoverFluidFilter(ICoverable coverHolder, EnumFacing attachedSide, String titleLocale, SimpleOverlayRenderer texture, Filter<FluidStack> fluidFilter) {
         super(coverHolder, attachedSide);
         this.filterMode = FluidFilterMode.FILTER_FILL;
         this.titleLocale = titleLocale;
         this.texture = texture;
-        this.fluidFilter = new FluidFilterWrapper(this);
-        this.fluidFilter.setFluidFilter(fluidFilter);
+        this.fluidFilter = fluidFilter;
+        //this.fluidFilter = new FluidFilterWrapper(this);
+        //this.fluidFilter.setFluidFilter(fluidFilter);
     }
 
     protected void setFilterMode(FluidFilterMode filterMode) {
@@ -59,7 +66,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
     }
 
     public boolean testFluidStack(FluidStack stack) {
-        return fluidFilter.testFluidStack(stack);
+        return fluidFilter.matches(stack);
     }
 
     public boolean canAttach() {
@@ -73,7 +80,8 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
 
     public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         if (!playerIn.world.isRemote) {
-            this.openUI((EntityPlayerMP) playerIn);
+            //this.openUI((EntityPlayerMP) playerIn);
+            GregTechUI.getCoverUi(attachedSide).open(playerIn, coverHolder.getWorld(), coverHolder.getPos());
         }
         return EnumActionResult.SUCCESS;
     }
@@ -81,14 +89,34 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
     public ModularUI createUI(EntityPlayer player) {
         WidgetGroup fluidFilterGroup = new WidgetGroup();
         fluidFilterGroup.addWidget(new LabelWidget(10, 5, "cover.fluid_filter.title"));
-        fluidFilterGroup.addWidget(new CycleButtonWidget(10, 20, 110, 20,
+        fluidFilterGroup.addWidget(new gregtech.api.guiOld.widgets.CycleButtonWidget(10, 20, 110, 20,
                 GTUtility.mapToString(FluidFilterMode.values(), (it) -> it.localeName), () -> this.filterMode.ordinal(),
                 (newMode) -> this.setFilterMode(FluidFilterMode.values()[newMode])));
-        this.fluidFilter.initUI(45, fluidFilterGroup::addWidget);
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 105 + 82)
+        //this.fluidFilter.initUI(45, fluidFilterGroup::addWidget);
+        return ModularUI.builder(gregtech.api.guiOld.GuiTextures.BACKGROUND, 176, 105 + 82)
                 .widget(fluidFilterGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 105)
+                .bindPlayerInventory(player.inventory, gregtech.api.guiOld.GuiTextures.SLOT, 7, 105)
                 .build(this, player);
+    }
+
+    @Override
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        return ModularWindow.builder(176, 166)
+                .setBackground(GuiTextures.BACKGROUND)
+                .bindPlayerInventory(buildContext.getPlayer(), new Pos2d(7, 83))
+                .widget(new TextWidget(new Text(titleLocale).localise())
+                        .setPos(10, 5))
+                .widget(new CycleButtonWidget()
+                        .setForEnum(FluidFilterMode.class, this::getFilterMode, this::setFilterMode)
+                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(ItemFilterMode.class))
+                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON)
+                        .setPos(10, 14)
+                        .setSize(110, 20))
+                .widget(fluidFilter.createBlacklistButton(buildContext)
+                        .setPos(133, 40))
+                .widget(fluidFilter.createFilterUI(buildContext)
+                        .setPos(7, 40))
+                .build();
     }
 
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
@@ -109,17 +137,18 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("FilterMode", this.filterMode.ordinal());
-        tagCompound.setBoolean("IsBlacklist", this.fluidFilter.isBlacklistFilter());
         NBTTagCompound filterComponent = new NBTTagCompound();
-        this.fluidFilter.getFluidFilter().writeToNBT(filterComponent);
+        this.fluidFilter.writeToNBT(filterComponent);
         tagCompound.setTag("Filter", filterComponent);
     }
 
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.filterMode = FluidFilterMode.values()[tagCompound.getInteger("FilterMode")];
-        this.fluidFilter.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
-        this.fluidFilter.getFluidFilter().readFromNBT(tagCompound.getCompoundTag("Filter"));
+        this.fluidFilter.readFromNBT(tagCompound.getCompoundTag("Filter"));
+        if (tagCompound.hasKey("IsBlacklist")) {
+            this.fluidFilter.setInverted(tagCompound.getBoolean("IsBlacklist"));
+        }
     }
 
     private class FluidHandlerFiltered extends FluidHandlerDelegate {
@@ -129,7 +158,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         }
 
         public int fill(FluidStack resource, boolean doFill) {
-            if (getFilterMode() == FluidFilterMode.FILTER_DRAIN || !fluidFilter.testFluidStack(resource)) {
+            if (getFilterMode() == FluidFilterMode.FILTER_DRAIN || !fluidFilter.matches(resource)) {
                 return 0;
             }
             return super.fill(resource, doFill);
@@ -137,7 +166,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
 
         @Nullable
         public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (getFilterMode() == FluidFilterMode.FILTER_FILL || !fluidFilter.testFluidStack(resource)) {
+            if (getFilterMode() == FluidFilterMode.FILTER_FILL || !fluidFilter.matches(resource)) {
                 return null;
             }
             return super.drain(resource, doDrain);
@@ -147,7 +176,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         public FluidStack drain(int maxDrain, boolean doDrain) {
             if (getFilterMode() != FluidFilterMode.FILTER_FILL) {
                 FluidStack result = super.drain(maxDrain, false);
-                if (result == null || result.amount <= 0 || !fluidFilter.testFluidStack(result)) {
+                if (result == null || result.amount <= 0 || !fluidFilter.matches(result)) {
                     return null;
                 }
                 return doDrain ? super.drain(maxDrain, true) : result;
