@@ -187,6 +187,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return recipeFluidMap.getOrDefault(new FluidKey(fluid), Collections.emptySet());
     }
 
+    public Collection<Recipe> getRecipesForFluid(FluidKey fluidKey) {
+        return recipeFluidMap.getOrDefault(fluidKey, Collections.emptySet());
+    }
+
     private static boolean foundInvalidRecipe = false;
 
     //internal usage only, use buildAndRegister()
