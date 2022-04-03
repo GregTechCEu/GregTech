@@ -27,8 +27,8 @@ gregtech.top.energy_stored=Energy:
 gregtech.top.progress=Progress:
 gregtech.top.working_disabled=Working Disabled
 
-gregtech.top.energy_consumption=Consumption:
-gregtech.top.energy_production=Production:
+gregtech.top.energy_consumption=Usage:
+gregtech.top.energy_production=Output:
 
 gregtech.top.transform_up=§cStep Up§r
 gregtech.top.transform_down=§aStep Down§r

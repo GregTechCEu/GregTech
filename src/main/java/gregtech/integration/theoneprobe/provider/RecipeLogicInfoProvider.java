@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.PrimitiveRecipeLogic;
+import gregtech.integration.jei.utils.JEIHelpers;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
 import net.minecraft.tileentity.TileEntity;
@@ -31,9 +32,9 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
             if (!(capability instanceof PrimitiveRecipeLogic)) {
                 int EUt = capability.getRecipeEUt();
                 if (EUt > 0) {
-                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_consumption*} §c" + EUt + "§r EU/t");
+                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_consumption*} §c" + EUt + "§r EU/t (" + GTValues.VNF[JEIHelpers.getMinTierForVoltage(EUt)] + "§r)");
                 } else if (EUt < 0) {
-                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_production*} §c" + (EUt * -1) + "§r EU/t");
+                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_production*} §c" + (EUt * -1) + "§r EU/t (" + GTValues.VNF[JEIHelpers.getMinTierForVoltage(EUt)] + "§r)");
                 }
             }
         }
