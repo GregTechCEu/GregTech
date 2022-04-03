@@ -109,12 +109,24 @@ public class VanillaStandardRecipes {
 
     /**
      * + Adds new glass related recipes
+     * + Adds steam age manual glass recipes
      * - Removes some glass related recipes based on configs
      */
     private static void glassRecipes() {
         ModHandler.addShapedRecipe("glass_dust_hammer", OreDictUnifier.get(dust, Materials.Glass), "hG", 'G', new ItemStack(Blocks.GLASS, 1, GTValues.W));
 
         ModHandler.addShapelessRecipe("glass_dust_handcrafting", OreDictUnifier.get(dust, Glass), "dustSand", "dustFlint");
+
+        ModHandler.addShapedRecipe("quartz_sand", OreDictUnifier.get(OrePrefix.dust, Materials.QuartzSand), "S", "m", 'S', new ItemStack(Blocks.SAND));
+
+        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.SAND))
+                .output(OrePrefix.dust, Materials.QuartzSand)
+                .duration(30).buildAndRegister();
+
+        ModHandler.addShapelessRecipe("glass_dust_flint", OreDictUnifier.get(OrePrefix.dust, Materials.Glass),
+                new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
+                new UnificationEntry(OrePrefix.dustTiny, Materials.Flint));
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(160).EUt(VA[ULV])
                 .input(dustSmall, Materials.Flint)
