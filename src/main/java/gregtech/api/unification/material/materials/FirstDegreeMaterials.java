@@ -1255,7 +1255,7 @@ public class FirstDegreeMaterials {
                 .color(0xE1B454).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Manganese, 1, Phosphorus, 1)
-                .cableProperties(GTValues.V[GTValues.LV], 2, 0, true)
+                .cableProperties(GTValues.V[GTValues.LV], 2, 0, true, 78)
                 .blastTemp(1200, GasTier.LOW)
                 .fluidTemp(1368)
                 .build();
@@ -1265,7 +1265,7 @@ public class FirstDegreeMaterials {
                 .color(0x331900).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Magnesium, 1, Boron, 2)
-                .cableProperties(GTValues.V[GTValues.MV], 4, 0, true)
+                .cableProperties(GTValues.V[GTValues.MV], 4, 0, true, 78)
                 .blastTemp(2500, GasTier.LOW, VA[HV], 1000)
                 .fluidTemp(1103)
                 .build();
@@ -1275,7 +1275,7 @@ public class FirstDegreeMaterials {
                 .color(0x555555).iconSet(SHINY)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Mercury, 1, Barium, 2, Calcium, 2, Copper, 3, Oxygen, 8)
-                .cableProperties(GTValues.V[GTValues.HV], 4, 0, true)
+                .cableProperties(GTValues.V[GTValues.HV], 4, 0, true, 78)
                 .blastTemp(3300, GasTier.LOW, VA[HV], 1500)
                 .fluidTemp(1075)
                 .build();
@@ -1285,7 +1285,7 @@ public class FirstDegreeMaterials {
                 .color(0x008700).iconSet(SHINY)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Uranium238, 1, Platinum, 3)
-                .cableProperties(GTValues.V[GTValues.EV], 6, 0, true)
+                .cableProperties(GTValues.V[GTValues.EV], 6, 0, true, 30)
                 .blastTemp(4400, GasTier.MID, VA[EV], 1000)
                 .fluidTemp(1882)
                 .build()
@@ -1296,7 +1296,7 @@ public class FirstDegreeMaterials {
                 .color(0x330033).iconSet(SHINY)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Samarium, 1, Iron, 1, Arsenic, 1, Oxygen, 1)
-                .cableProperties(GTValues.V[GTValues.IV], 6, 0, true)
+                .cableProperties(GTValues.V[GTValues.IV], 6, 0, true, 30)
                 .blastTemp(5200, GasTier.MID, VA[EV], 1500)
                 .fluidTemp(1347)
                 .build();
@@ -1306,7 +1306,7 @@ public class FirstDegreeMaterials {
                 .color(0x994C00).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING, GENERATE_FINE_WIRE)
                 .components(Indium, 4, Tin, 2, Barium, 2, Titanium, 1, Copper, 7, Oxygen, 14)
-                .cableProperties(GTValues.V[GTValues.LuV], 8, 0, true)
+                .cableProperties(GTValues.V[GTValues.LuV], 8, 0, true, 5)
                 .blastTemp(6000, GasTier.HIGH, VA[IV], 1000)
                 .fluidTemp(1012)
                 .build();
@@ -1316,7 +1316,7 @@ public class FirstDegreeMaterials {
                 .color(0x0A0A0A)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING, GENERATE_FINE_WIRE)
                 .components(Uranium238, 1, Rhodium, 1, Naquadah, 2)
-                .cableProperties(GTValues.V[GTValues.ZPM], 8, 0, true)
+                .cableProperties(GTValues.V[GTValues.ZPM], 8, 0, true, 5)
                 .blastTemp(9000, GasTier.HIGH, VA[IV], 1500)
                 .fluidTemp(3410)
                 .build()
@@ -1327,7 +1327,7 @@ public class FirstDegreeMaterials {
                 .color(0x7D9673).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING, GENERATE_FINE_WIRE)
                 .components(NaquadahEnriched, 4, Trinium, 3, Europium, 2, Duranium, 1)
-                .cableProperties(GTValues.V[GTValues.UV], 16, 0, true)
+                .cableProperties(GTValues.V[GTValues.UV], 16, 0, true, 3)
                 .blastTemp(9900, GasTier.HIGH, VA[LuV], 1000)
                 .fluidTemp(5930)
                 .build();
@@ -1337,7 +1337,7 @@ public class FirstDegreeMaterials {
                 .color(0xFFFFFF).iconSet(BRIGHT)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Ruthenium, 1, Trinium, 2, Americium, 1, Neutronium, 2, Oxygen, 8)
-                .cableProperties(GTValues.V[GTValues.UHV], 24, 0, true)
+                .cableProperties(GTValues.V[GTValues.UHV], 24, 0, true, 3)
                 .blastTemp(10800, GasTier.HIGHER)
                 .fluidTemp(23691)
                 .build();
