@@ -10,7 +10,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.util.GTFluidUtils;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,7 +45,7 @@ public class CoverFluidVoiding extends CoverPump {
         if (myFluidHandler == null) {
             return;
         }
-        GTFluidUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, fluidFilter::testFluidStack);
+        GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, fluidFilter::testFluidStack);
     }
 
     @Override

@@ -8,7 +8,7 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.util.GTFluidUtils;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -45,7 +45,7 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         }
         switch (voidingMode) {
             case VOID_ANY:
-                GTFluidUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, fluidFilter::testFluidStack);
+                GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, fluidFilter::testFluidStack);
                 break;
             case VOID_OVERFLOW:
                 voidOverflow(myFluidHandler, fluidFilter::testFluidStack, this.transferAmount);

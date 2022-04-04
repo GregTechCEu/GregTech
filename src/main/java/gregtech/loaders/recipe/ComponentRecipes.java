@@ -405,7 +405,7 @@ public class ComponentRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(COVER_ITEM_VOIDING)
-                .input(circuit, Tier.Good, 1)
+                .input(circuit, Tier.MV, 1)
                 .outputs(COVER_ITEM_VOIDING_ADVANCED.getStackForm())
                 .duration(100).EUt(VA[LV]).buildAndRegister();
 
@@ -421,7 +421,7 @@ public class ComponentRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(COVER_FLUID_VOIDING)
-                .input(circuit, Tier.Good, 1)
+                .input(circuit, Tier.MV, 1)
                 .outputs(COVER_FLUID_VOIDING_ADVANCED.getStackForm())
                 .duration(100).EUt(VA[LV]).buildAndRegister();
 
