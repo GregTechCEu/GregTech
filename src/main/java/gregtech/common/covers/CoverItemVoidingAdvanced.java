@@ -9,6 +9,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
+import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -18,7 +19,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -49,28 +49,33 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
     }
 
     protected void voidOverflow(IItemHandler myItemHandler) {
-        Map<Object, GroupItemInfo> sourceItemAmounts = countInventoryItemsByMatchSlot(myItemHandler);
-        Iterator<Object> iterator = sourceItemAmounts.keySet().iterator();
-        while (iterator.hasNext()) {
-            Object filterSlotIndex = iterator.next();
-            GroupItemInfo sourceInfo = sourceItemAmounts.get(filterSlotIndex);
-            int itemToKeepAmount = itemFilterContainer.getSlotTransferLimit(sourceInfo.filterSlot, sourceInfo.itemStackTypes);
+        Map<ItemStackKey, TypeItemInfo> itemTypeCount = countInventoryItemsByType(myItemHandler);
+        for (TypeItemInfo typeItemInfo : itemTypeCount.values()) {
 
-            if (sourceInfo.totalCount <= itemToKeepAmount) {
-                iterator.remove();
+            int itemToVoidAmount = 0;
+            if (getItemFilterContainer().getFilterWrapper().getItemFilter() == null) {
+                itemToVoidAmount = typeItemInfo.totalCount - itemFilterContainer.getTransferStackSize();
             } else {
-                int itemToVoidAmount = sourceInfo.totalCount - itemToKeepAmount;
-                for (int srcIndex = 0; srcIndex < myItemHandler.getSlots(); srcIndex++) {
-                    ItemStack is = myItemHandler.getStackInSlot(srcIndex);
-                    if (!is.isEmpty() && itemFilterContainer.testItemStack(is, true)) {
-                        ItemStack extracted = myItemHandler.extractItem(srcIndex, itemToVoidAmount, false);
-                        if (!extracted.isEmpty()) {
-                            itemToVoidAmount -= extracted.getCount();
-                        }
+                if (itemFilterContainer.testItemStack(typeItemInfo.itemStack)) {
+                    Object matchedSlot = itemFilterContainer.matchItemStack(typeItemInfo.itemStack);
+                    itemToVoidAmount = typeItemInfo.totalCount - itemFilterContainer.getSlotTransferLimit(matchedSlot);
+                }
+            }
+
+            if (itemToVoidAmount <= 0) {
+                continue;
+            }
+
+            for (int srcIndex = 0; srcIndex < myItemHandler.getSlots(); srcIndex++) {
+                ItemStack is = myItemHandler.getStackInSlot(srcIndex);
+                if (!is.isEmpty() && ItemStack.areItemsEqual(is, typeItemInfo.itemStack) && ItemStack.areItemStackTagsEqual(is, typeItemInfo.itemStack)) {
+                    ItemStack extracted = myItemHandler.extractItem(srcIndex, itemToVoidAmount, false);
+                    if (!extracted.isEmpty()) {
+                        itemToVoidAmount -= extracted.getCount();
                     }
-                    if (itemToVoidAmount == 0) {
-                        break;
-                    }
+                }
+                if (itemToVoidAmount == 0) {
+                    break;
                 }
             }
         }
