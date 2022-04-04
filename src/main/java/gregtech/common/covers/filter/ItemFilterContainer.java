@@ -5,7 +5,6 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.util.IDirtyNotifiable;
-import gregtech.api.util.ItemStackKey;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
@@ -13,7 +12,6 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
-import java.util.Set;
 import java.util.function.Consumer;
 
 public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
@@ -116,8 +114,8 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         return getMaxStackSize() > 1 && filterWrapper.showGlobalTransferLimitSlider();
     }
 
-    public int getSlotTransferLimit(Object slotIndex, Set<ItemStackKey> matchedStacks) {
-        return filterWrapper.getSlotTransferLimit(slotIndex, matchedStacks, getTransferStackSize());
+    public int getSlotTransferLimit(Object slotIndex) {
+        return filterWrapper.getSlotTransferLimit(slotIndex, getTransferStackSize());
     }
 
     public Object matchItemStack(ItemStack itemStack) {

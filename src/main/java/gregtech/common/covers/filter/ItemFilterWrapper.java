@@ -5,10 +5,8 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.ServerWidgetGroup;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.util.IDirtyNotifiable;
-import gregtech.api.util.ItemStackKey;
 import net.minecraft.item.ItemStack;
 
-import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
@@ -93,11 +91,11 @@ public class ItemFilterWrapper {
         return isBlacklistFilter() || currentItemFilter == null || currentItemFilter.showGlobalTransferLimitSlider();
     }
 
-    public int getSlotTransferLimit(Object matchSlot, Set<ItemStackKey> matchedStacks, int globalTransferLimit) {
+    public int getSlotTransferLimit(Object matchSlot, int globalTransferLimit) {
         if (isBlacklistFilter() || currentItemFilter == null) {
             return globalTransferLimit;
         }
-        return currentItemFilter.getSlotTransferLimit(matchSlot, matchedStacks, globalTransferLimit);
+        return currentItemFilter.getSlotTransferLimit(matchSlot, globalTransferLimit);
     }
 
     public Object matchItemStack(ItemStack itemStack) {
