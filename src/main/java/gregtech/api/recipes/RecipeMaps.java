@@ -515,7 +515,7 @@ public class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> FORGE_HAMMER_RECIPES = new RecipeMap<>("forge_hammer", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.HAMMER_OVERLAY)
             .setSpecialTexture(78, 42, 20, 6, GuiTextures.PROGRESS_BAR_HAMMER_BASE)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_HAMMER, MoveType.VERTICAL)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_HAMMER, MoveType.VERTICAL_DOWNWARDS)
             .setSound(GTSounds.FORGE_HAMMER);
 
 
@@ -773,7 +773,7 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> SIFTER_RECIPES = new RecipeMap<>("sifter", 1, 1, 0, 6, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_SIFT, MoveType.VERTICAL_INVERTED)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_SIFT, MoveType.VERTICAL_DOWNWARDS)
             .setSound(SoundEvents.BLOCK_SAND_PLACE);
 
 
