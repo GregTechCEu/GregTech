@@ -64,7 +64,6 @@ dependencies {
     "deobfCompile"("curse.maven:codechicken-lib-1-8-242818:2779848")
 
     "deobfCompile"("curse.maven:ae2-extended-life-570458:3649419")
-    "deobfCompile"("baubles:Baubles:1.12:1.5.2")
 
     "compile"(files("etc/CraftTweaker2-1.12-4.1.20.670.jar"))
     "compile"(files("etc/jei_1.12.2-4.16.1.301.jar"))
