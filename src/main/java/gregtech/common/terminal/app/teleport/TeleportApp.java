@@ -48,7 +48,7 @@ public class TeleportApp extends AbstractApplication {
         this.addWidget(new LabelWidget(10, 15, "X: ", 0xFFFFFF));
         this.addWidget(new LabelWidget(10, 35, "Y: ", 0xFFFFFF));
         this.addWidget(new LabelWidget(10, 55, "Z: ", 0xFFFFFF));
-        this.addWidget(new SimpleTextWidget(10, 90, "terminal.teleporter.dimension", 0xFFFFFF, () -> "").setCenter(false));
+        this.addWidget(new SimpleTextWidget(10, 95, "terminal.teleporter.dimension", 0xFFFFFF, () -> "").setCenter(false));
 
         this.addWidget(new TextFieldWidget2(10, 105, 75, 16, () -> String.valueOf(dimension), value -> {
             if (!value.isEmpty()) {
