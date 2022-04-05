@@ -6,16 +6,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 
-public class ItemContainerSwitchShim implements IItemHandler, IInventory{
+public class ItemContainerSwitchShim implements IItemHandlerModifiable, IInventory{
 
-    IInventory container;
+    // private static final IInventory container;
+    // protected ItemStack[] items;
+    protected VirtualContainerRegistry.VirtualContainer container;
+    private boolean isDirty = false;
 
-    public ItemContainerSwitchShim(IInventory container) {changeInventory(container)}
+    public ItemContainerSwitchShim(VirtualContainerRegistry.VirtualContainer container) {
+        changeInventory(container);
+    }
 
-    public void changeInventory(IInventory container)
+    public void changeInventory(VirtualContainerRegistry.VirtualContainer container)
     {
         if (!(container instanceof IItemHandler)) {
             throw new IllegalArgumentException("Shim container must be both IInventory and IItemHandler!");
@@ -24,45 +30,50 @@ public class ItemContainerSwitchShim implements IItemHandler, IInventory{
     }
 
     @Override
-    public int getSlots() { return container.getSizeInventory(); }
+    public int getSlots() {
+        return container.getSlots();
+    }
+
 
     @Override
     public int getSizeInventory() {
-        return 0;
+        return container.getSizeInventory();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return container.isEmpty();
     }
 
     @Nonnull
     @Override
-    public ItemStack getStackInSlot(int i) { return container.getStackInSlot((i)); }
-
-    @Override
-    public ItemStack decrStackSize(int i, int i1) {
-        return null;
+    public ItemStack getStackInSlot(int slot) {
+        return container.getStackInSlot((slot));
     }
 
     @Override
-    public ItemStack removeStackFromSlot(int i) {
-        return null;
+    public ItemStack decrStackSize(int slot, int amt) {
+        return container.decrStackSize(slot, amt);
     }
 
     @Override
-    public void setInventorySlotContents(int i, ItemStack itemStack) {
+    public ItemStack removeStackFromSlot(int slot) {
+        return container.removeStackFromSlot(slot);
+    }
 
+    @Override
+    public void setInventorySlotContents(int slot, ItemStack itemStack) {
+        container.setInventorySlotContents(slot, itemStack);
     }
 
     @Override
     public int getInventoryStackLimit() {
-        return 0;
+        return container.getInventoryStackLimit();
     }
 
     @Override
     public void markDirty() {
-
+        isDirty = true;
     }
 
     @Override
@@ -81,65 +92,64 @@ public class ItemContainerSwitchShim implements IItemHandler, IInventory{
     }
 
     @Override
-    public boolean isItemValidForSlot(int i, ItemStack itemStack) {
-        return false;
+    public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
+        return container.isItemValidForSlot(slot, itemStack);
     }
 
     @Override
-    public int getField(int i) {
-        return 0;
+    public int getField(int slot) {
+        return container.getField(slot);
     }
 
     @Override
-    public void setField(int i, int i1) {
-
+    public void setField(int slot, int value) {
+        container.setField(slot, value);
     }
 
     @Override
     public int getFieldCount() {
-        return 0;
+        return container.getFieldCount();
     }
 
     @Override
     public void clear() {
-
+        container.clear();
     }
 
     @Nonnull
     @Override
-    public ItemStack insertItem(int slot, @Nonnull ItemStack itemStack, boolean simulate) {
-        ItemStack itemReturnable = itemStack.copy();
-        itemReturnable.setCount(InventoryUtils.insertItem(container, itemStack, simulate));
-        return itemReturnable;
+    public ItemStack insertItem(int slot, @Nonnull ItemStack itemStack, boolean doInsert) {
+        return container.insertItem(slot, itemStack, doInsert);
     }
 
     @Nonnull
     @Override
-    public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        IInventory containerCopy = container;
-        if (simulate)
-            return InventoryUtils.decrStackSize(containerCopy, slot, amount);
-        else
-            return InventoryUtils.decrStackSize(container, slot, amount);
+    public ItemStack extractItem(int slot, int amount, boolean doExtract) {
+        return container.extractItem(slot, amount, doExtract);
     }
 
     @Override
-    public int getSlotLimit(int i) {
-        return 64;
+    public int getSlotLimit(int slot) {
+        return container.getSlotLimit(slot);
     }
 
     @Override
     public String getName() {
-        return null;
+        return container.getName();
     }
 
     @Override
     public boolean hasCustomName() {
-        return false;
+        return container.hasCustomName();
     }
 
     @Override
     public ITextComponent getDisplayName() {
-        return null;
+        return container.getDisplayName();
+    }
+
+    @Override
+    public void setStackInSlot(int slot, @Nonnull ItemStack itemStack) {
+        container.setStackInSlot(slot, itemStack);
     }
 }
