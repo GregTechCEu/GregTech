@@ -235,4 +235,17 @@ public class MaterialExpansion {
         } else logError(m, "get blast temperature", "Blast");
         return 0;
     }
+
+    ////////////////////////////////////
+    //          Ore Property          //
+    ////////////////////////////////////
+
+    @ZenGetter
+    public static int oreMultiplier(Material m) {
+        OreProperty prop = m.getProperty(PropertyKey.ORE);
+        if (prop != null) {
+            return prop.getOreMultiplier();
+        } else logError(m, "get ore multiplier", "Ore");
+        return 0;
+    }
 }
