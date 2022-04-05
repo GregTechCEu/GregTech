@@ -2,7 +2,7 @@ package gregtech.integration.theoneprobe.provider;
 
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.common.metatileentities.electric.MetaTileEntityDiode;
 import mcjty.theoneprobe.api.ElementAlignment;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -19,8 +19,8 @@ public class DiodeInfoProvider extends ElectricContainerInfoProvider {
 
     @Override
     protected void addProbeInfo(IEnergyContainer capability, IProbeInfo probeInfo, TileEntity tileEntity, EnumFacing sideHit) {
-        if (tileEntity instanceof MetaTileEntityHolder) {
-            MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+        if (tileEntity instanceof IGregTechTileEntity) {
+            MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
             if (metaTileEntity instanceof MetaTileEntityDiode) {
                 long inputAmperage = capability.getInputAmperage();
                 long outputAmperage = capability.getOutputAmperage();

@@ -1,6 +1,5 @@
 package gregtech.common.terminal.app.recipechart.widget;
 
-import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
@@ -34,12 +33,10 @@ import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -395,7 +392,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
                 int tierRequire = GTUtility.getTierByVoltage(recipe.getEUt());
                 for (Object o : catalysts) {
                     if (o instanceof ItemStack) {
-                        MetaTileEntity mte = MachineItemBlock.getMetaTileEntity((ItemStack) o);
+                        MetaTileEntity mte = GTUtility.getMetaTileEntity((ItemStack) o);
                         if (mte instanceof SimpleMachineMetaTileEntity) {
                             if (tierRequire < ((SimpleMachineMetaTileEntity) mte).getTier()) {
                                 catalyst = (ItemStack) o;

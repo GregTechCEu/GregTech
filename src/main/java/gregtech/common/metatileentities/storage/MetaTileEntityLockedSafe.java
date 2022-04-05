@@ -17,7 +17,7 @@ import gregtech.api.gui.widgets.ServerWidgetGroup;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.ModHandler;
 import gregtech.client.renderer.texture.Textures;
@@ -103,7 +103,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityLockedSafe(metaTileEntityId);
     }
 
@@ -272,7 +272,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
         this.isSafeUnlocked = safeUnlocked;
         if (getWorld() != null && !getWorld().isRemote) {
             writeCustomData(UPDATE_LOCKED_STATE, buf -> buf.writeBoolean(safeUnlocked));
-            getHolder().notifyBlockUpdate();
+            notifyBlockUpdate();
             markDirty();
         }
     }

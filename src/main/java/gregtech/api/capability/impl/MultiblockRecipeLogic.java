@@ -8,7 +8,6 @@ import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.common.ConfigHolder;
@@ -175,7 +174,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 invalidatedInputList.remove(bus);
             }
             // Look for a new recipe after a cache miss
-            currentRecipe = findRecipe(maxVoltage, bus, importFluids, MatchingMode.DEFAULT);
+            currentRecipe = findRecipe(maxVoltage, bus, importFluids);
             // Cache the current recipe, if one is found
             if (currentRecipe != null && checkRecipe(currentRecipe)) {
                 this.previousRecipe = currentRecipe;

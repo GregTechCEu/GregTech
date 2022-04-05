@@ -4,7 +4,7 @@ import appeng.api.util.AEColor;
 import appeng.tile.networking.TileCableBus;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.sound.GTSounds;
 import net.minecraft.block.Block;
@@ -112,8 +112,8 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
 
         // MTE special case
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof MetaTileEntityHolder) {
-            MetaTileEntity mte = ((MetaTileEntityHolder) te).getMetaTileEntity();
+        if (te instanceof IGregTechTileEntity) {
+            MetaTileEntity mte = ((IGregTechTileEntity) te).getMetaTileEntity();
             if (mte != null) {
                 if (mte.isPainted()) {
                     mte.setPaintingColor(-1);

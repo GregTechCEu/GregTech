@@ -3,7 +3,7 @@ package gregtech.common;
 import gregtech.api.GTValues;
 import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.armor.ArmorMetaItem;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.CapesRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
@@ -74,7 +74,7 @@ public class EventHandlers {
 
     @SubscribeEvent
     public static void onPlayerInteractionRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getWorld().getTileEntity(event.getPos()) instanceof MetaTileEntityHolder) {
+        if (event.getWorld().getTileEntity(event.getPos()) instanceof IGregTechTileEntity) {
             event.setUseBlock(Event.Result.ALLOW);
         }
         ItemStack stack = event.getItemStack();
@@ -95,8 +95,8 @@ public class EventHandlers {
     public static void onPlayerInteractionLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
         if (event.getEntityPlayer().isCreative()) {
             TileEntity holder = event.getWorld().getTileEntity(event.getPos());
-            if (holder instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) holder).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
-                ((MetaTileEntityCentralMonitor) ((MetaTileEntityHolder) holder).getMetaTileEntity()).invalidateStructure();
+            if (holder instanceof IGregTechTileEntity && ((IGregTechTileEntity) holder).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
+                ((MetaTileEntityCentralMonitor) ((IGregTechTileEntity) holder).getMetaTileEntity()).invalidateStructure();
             }
         }
     }

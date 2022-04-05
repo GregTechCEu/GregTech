@@ -4,7 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.converter.ConverterTrait;
 import mcjty.theoneprobe.api.ElementAlignment;
@@ -39,7 +39,7 @@ public class ConverterInfoProvider extends CapabilityInfoProvider<ConverterTrait
 
         // Info on the current side of the converter
         pane = probeInfo.vertical(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
-        MetaTileEntity mte = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+        MetaTileEntity mte = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
         String voltageN = GTValues.VNF[GTUtility.getTierByVoltage(capability.getVoltage())];
         long amperage = capability.getBaseAmps();
         if (capability.isFeToEu()) {

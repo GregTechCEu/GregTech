@@ -38,6 +38,7 @@ public class GregtechDataCodes {
     public static final int UPDATE_UI = 0;
     public static final int CREATE_FAKE_UI = 1;
     public static final int MOUSE_POSITION = 2;
+    public static final int INIT_CLIPBOARD_NBT = 3;
 
     // Pump
     public static final int PUMP_HEAD_LEVEL = 200;
@@ -58,6 +59,7 @@ public class GregtechDataCodes {
     public static final int UPDATE_COVER_DATA_PIPE = 0;
     public static final int COVER_ATTACHED_PIPE = 1;
     public static final int COVER_REMOVED_PIPE = 2;
+    public static final int CABLE_UPDATE_TEMP = 3;
 
     // Multiblock implementation update codes
     public static final int SYNC_CONTROLLER = 100;

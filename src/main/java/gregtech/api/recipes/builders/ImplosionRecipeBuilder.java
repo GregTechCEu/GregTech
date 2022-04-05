@@ -92,7 +92,7 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
 
 
         Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs,
-                duration, EUt, hidden);
+                duration, EUt, hidden, isCTRecipe);
 
         if (!recipe.setProperty(ImplosionExplosiveProperty.getInstance(), explosivesType)) {
             return ValidationResult.newResult(EnumValidationResult.INVALID, recipe);

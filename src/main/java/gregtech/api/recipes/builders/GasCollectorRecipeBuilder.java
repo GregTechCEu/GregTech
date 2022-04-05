@@ -35,10 +35,10 @@ public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeB
     @Override
     public boolean applyProperty(String key, Object value) {
         if (key.equals(GasCollectorDimensionProperty.KEY)) {
-            this.dimension(((Number) value).intValue());
+            this.dimension(((List<Integer>) value).get(0));
             return true;
         }
-        return true;
+        return false;
     }
 
     public GasCollectorRecipeBuilder dimension(int dimensionID) {
@@ -50,7 +50,7 @@ public class GasCollectorRecipeBuilder extends RecipeBuilder<GasCollectorRecipeB
 
     public ValidationResult<Recipe> build() {
         Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs,
-                duration, EUt, hidden);
+                duration, EUt, hidden, isCTRecipe);
         if (!recipe.setProperty(GasCollectorDimensionProperty.getInstance(), dimensionIDs)) {
             return ValidationResult.newResult(EnumValidationResult.INVALID, recipe);
         }

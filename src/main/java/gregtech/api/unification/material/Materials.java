@@ -544,6 +544,8 @@ public class Materials {
     public static Material AmmoniumChloride;
     public static Material AcidicOsmiumSolution;
     public static Material RhodiumPlatedPalladium;
+    public static Material Butyraldehyde;
+    public static Material PolyvinylButyral;
 
     /**
      * Not possible to determine exact Components

@@ -8,16 +8,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.Set;
-
 public class RoutePath {
     private final BlockPos destPipePos;
     private final EnumFacing destFacing;
     private final int distance;
-    private final Set<TileEntityCable> path;
+    private final TileEntityCable[] path;
     private final long maxLoss;
 
-    public RoutePath(BlockPos destPipePos, EnumFacing destFacing, Set<TileEntityCable> path, int distance, long maxLoss) {
+    public RoutePath(BlockPos destPipePos, EnumFacing destFacing, TileEntityCable[] path, int distance, long maxLoss) {
         this.destPipePos = destPipePos;
         this.destFacing = destFacing;
         this.path = path;
@@ -33,7 +31,7 @@ public class RoutePath {
         return maxLoss;
     }
 
-    public Set<TileEntityCable> getPath() {
+    public TileEntityCable[] getPath() {
         return path;
     }
 
@@ -51,7 +49,7 @@ public class RoutePath {
 
     public IEnergyContainer getHandler(World world) {
         TileEntity tile = world.getTileEntity(getHandlerPos());
-        if(tile != null) {
+        if (tile != null) {
             return tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, destFacing.getOpposite());
         }
         return null;

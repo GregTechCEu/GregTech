@@ -27,6 +27,9 @@ gregtech.top.energy_stored=Energy:
 gregtech.top.progress=Progress:
 gregtech.top.working_disabled=Working Disabled
 
+gregtech.top.energy_consumption=Usage:
+gregtech.top.energy_production=Output:
+
 gregtech.top.transform_up=§cStep Up§r
 gregtech.top.transform_down=§aStep Down§r
 gregtech.top.transform_input=§6Input:§r
@@ -46,6 +49,8 @@ gregtech.top.valid_structure=§aStructure Formed
 gregtech.top.obstructed_structure=§cStructure Obstructed
 gregtech.top.maintenance_fixed=§aMaintenance Fine
 gregtech.top.maintenance_broken=§cNeeds Maintenance
+
+gregtech.top.primitive_pump_production=Production:
 
 gregtech.multiblock.title=Multiblock Pattern
 gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
@@ -1015,9 +1020,11 @@ metaarmor.jetpack.emergency_hover_mode=Emergency Hover Mode Enabled!
 
 metaarmor.nms.share.enable=NanoMuscle™ Suite: Charging Enabled
 metaarmor.nms.share.disable=NanoMuscle™ Suite: Charging Disabled
+metaarmor.nms.share.error=NanoMuscle™ Suite: §cNot enough power for charging!
 
 metaarmor.qts.share.enable=QuarkTech™ Suite: Charging Enabled
 metaarmor.qts.share.disable=QuarkTech™ Suite: Charging Disabled
+metaarmor.qts.share.error=QuarkTech™ Suite: §cNot enough power for charging!
 
 metaarmor.message.nightvision.enabled=§bNightVision: §aOn
 metaarmor.message.nightvision.disabled=§bNightVision: §cOff
@@ -1040,6 +1047,7 @@ metaarmor.hud.hover_mode=Hover Mode: %s
 mataarmor.hud.supply_mode=Supply Mode: %s
 metaarmor.hud.gravi_engine=GraviEngine: %s
 
+metaarmor.energy_share.error=Energy Supply: §cNot enough power for gadgets charging!
 metaarmor.energy_share.enable=Energy Supply: Gadgets charging enabled
 metaarmor.energy_share.disable=Energy Supply: Gadgets charging disabled
 metaarmor.energy_share.tooltip=Supply mode: %s
@@ -1087,9 +1095,6 @@ cover.smart_item_filter.filtering_mode.electrolyzer=Electrolyzer
 cover.smart_item_filter.filtering_mode.centrifuge=Centrifuge
 cover.smart_item_filter.filtering_mode.sifter=Sifter
 cover.smart_item_filter.filtering_mode.description=Select Machine this Smart Filter will use for filtering./nIt will automatically pick right portions of items for robotic arm.
-cover.smart_item_filter.matching_mode.default=Default
-cover.smart_item_filter.matching_mode.ignore_fluid=Ignore Fluids
-cover.smart_item_filter.matching_mode.description=§eDefault§r - Will match recipes on both items/fluids criteria assuming you aren't providing any fluid. /n§eIgnore Fluids§r - Will match recipes only on items criteria.
 
 cover.conveyor.title=Conveyor Cover Settings (%s)
 cover.conveyor.transfer_rate=§7items/sec
@@ -1652,6 +1657,9 @@ material.cyclohexane=Cyclohexane
 material.cyclohexanone_oxime=Cyclohexanone Oxime
 material.caprolactam=Caprolactam
 material.nitrosyl_chloride=Nitrosyl Chloride
+material.butyraldehyde=Butyraldehyde
+material.polyvinyl_butyral=Polyvinyl Butyral
+
 
 # Unknown Composition Materials
 material.wood_gas=Wood Gas
@@ -1881,6 +1889,7 @@ material.insane=Insane
 material.epic=Epic
 material.legendary=Legendary
 material.maximum=Maximum
+
 
 # Item Renaming
 item.nether_quartz.oreNetherrack=Nether Quartz Ore
@@ -2383,6 +2392,7 @@ tile.fusion_casing.fusion_casing_mk3.name=Fusion Machine Casing MK III
 # Transparent casing blocks
 tile.transparent_casing.tempered_glass.name=Tempered Glass
 tile.transparent_casing.fusion_glass.name=Fusion Glass
+tile.transparent_casing.laminated_glass.name=Laminated Glass
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
@@ -4321,7 +4331,7 @@ gregtech.machine.coke_oven.name=Coke Oven
 gregtech.machine.processing_array.name=Processing Array
 gregtech.machine.advanced_processing_array.name=Advanced Processing Array
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
-gregtech.machine.coke_oven_hatch.tooltip=Allows automation access to coke oven.
+gregtech.machine.coke_oven_hatch.tooltip=Allows automation access for the Coke Oven.
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 
 

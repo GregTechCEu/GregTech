@@ -12,7 +12,7 @@ import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.client.renderer.scene.FBOWorldSceneRenderer;
@@ -349,8 +349,8 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
         if (id == GregtechDataCodes.ACTION_PLUGIN_CONFIG) { //open GUI
             BlockPos pos = buf.readBlockPos();
             TileEntity tileEntity = this.screen.getWorld().getTileEntity(pos);
-            if (tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).isValid()) {
-                ((MetaTileEntityHolder) tileEntity).getMetaTileEntity().onRightClick(player, EnumHand.MAIN_HAND, ((MetaTileEntityHolder) tileEntity).getMetaTileEntity().getFrontFacing(), null);
+            if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).isValid()) {
+                ((IGregTechTileEntity) tileEntity).getMetaTileEntity().onRightClick(player, EnumHand.MAIN_HAND, ((IGregTechTileEntity) tileEntity).getMetaTileEntity().getFrontFacing(), null);
             }
         }
     }
@@ -369,7 +369,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
     }
 
     @Override
-    protected void onHolderChanged(MetaTileEntityHolder lastHolder) {
+    protected void onHolderChanged(IGregTechTileEntity lastHolder) {
         if (!this.screen.getWorld().isRemote) {
             validPos = null;
             isValid = false;
