@@ -1,6 +1,8 @@
 package gregtech.api.util;
 
 import gregtech.api.GTValues;
+import gregtech.api.util.GTUtility;
+import gregtech.common.covers.CoverConveyor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemCarrotOnAStick;
@@ -21,10 +23,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class VirtualContainerRegistry extends WorldSavedData{
     private static final int DEFAULT_SIZE = 27; // 27 slots
@@ -195,14 +194,13 @@ public class VirtualContainerRegistry extends WorldSavedData{
 
     protected static class VirtualContainer implements  IInventory, IItemHandlerModifiable {
         @Nullable
-        protected ItemStack[] items;
+        protected List<ItemStack> items;
         protected int size;
         protected boolean isDirty;
 
 
         public VirtualContainer(int size){
             this.size = size;
-            items = new ItemStack[this.size];
         }
 
         @Override
@@ -222,7 +220,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
 
         @Override
         public ItemStack getStackInSlot(int i) {
-            return items.length > 0 ? items[i] : null;
+            return items.size() > 0 ? items.get(i) : null;
         }
 
         /**
@@ -235,8 +233,33 @@ public class VirtualContainerRegistry extends WorldSavedData{
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack itemStack, boolean doInsert) {
-            int amt = items[slot].getMaxStackSize() - items[slot].getCount();
-            int remainder = Math.min(amt, itemStack.getCount());;
+            if (doInsert){
+                items.add(slot, itemStack);
+            }
+
+            for (int srcIndex = 0; srcIndex < items.size(); srcIndex++) {
+                if (itemStack.isEmpty()) {
+                    continue;
+                }
+
+                // int amt = items.get(srcIndex).getMaxStackSize() - items.get(srcIndex).getCount();
+                ItemStack remainder = GTTransferUtils.insertItem(this, itemStack, true);
+                int amountToInsert = itemStack.getCount() - remainder.getCount();
+
+                if (amountToInsert > 0) {
+                    itemStack = this.extractItem(srcIndex, amountToInsert, false);
+                    if (!sourceStack.isEmpty()) {
+                        GTTransferUtils.insertItem(targetInventory, sourceStack, false);
+                        itemsLeftToTransfer -= sourceStack.getCount();
+
+                        if (itemsLeftToTransfer == 0) {
+                            break;
+                        }
+                    }
+                }
+            }
+            return maxTransferAmount - itemsLeftToTransfer;
+            /*
             ItemStack itemCopy;
 
             if (doInsert && (items[slot].isItemEqual(itemStack) || items[slot] == ItemStack.EMPTY)) {
@@ -253,12 +276,14 @@ public class VirtualContainerRegistry extends WorldSavedData{
             itemCopy = itemStack;
             itemCopy.setCount(remainder);
             return itemCopy;
+
+             */
         }
 
         @Nonnull
         @Override
         public ItemStack extractItem(int slot, int amtToExtract, boolean doExtract) {
-            // case 1: 64 items in slot, amtToExtract is 64, return item stack and set item at slot to empty item stack
+            /*// case 1: 64 items in slot, amtToExtract is 64, return item stack and set item at slot to empty item stack
             // case 2: 64 items in slot, amtToExtract is 32, return item stack with 32 and set item count at slot to 32
             // case 3: 64 items in slot, amtToExtract is 0, return an empty item stack and item at slot is unchanged
             int amtExtractable = Math.min(items[slot].getCount(), amtToExtract);
@@ -269,7 +294,8 @@ public class VirtualContainerRegistry extends WorldSavedData{
                 items[slot].setCount(remainder);
             }
             itemCopy.setCount(amtToExtract);
-            return itemCopy;
+            return itemCopy;*/
+            return items[slot];
         }
 
         @Override
