@@ -15,7 +15,7 @@ import gregtech.api.guiOld.widgets.AdvancedTextWidget;
 import gregtech.api.guiOld.widgets.WidgetGroup;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
@@ -147,8 +147,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
             for (EnumFacing facing : EnumFacing.VALUES) {
                 if (((TileEntityPipeBase<?,?>) tileEntityCable).isConnected(facing)) {
                     TileEntity tileEntity = world.getTileEntity(pos.offset(facing));
-                    if (tileEntity instanceof MetaTileEntityHolder) {
-                        MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+                    if (tileEntity instanceof IGregTechTileEntity) {
+                        MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                         if (metaTileEntity != null) {
                             CoverBehavior cover = metaTileEntity.getCoverAtSide(facing.getOpposite());
                             if (cover instanceof CoverDigitalInterface && ((CoverDigitalInterface) cover).isProxy()) {
@@ -163,8 +163,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         while (iterator.hasNext()) {
             BlockPosFace blockPosFace = iterator.next();
             TileEntity tileEntity = world.getTileEntity(blockPosFace.pos);
-            if (tileEntity instanceof MetaTileEntityHolder) {
-                MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+            if (tileEntity instanceof IGregTechTileEntity) {
+                MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                 if (metaTileEntity != null) {
                     CoverBehavior cover = metaTileEntity.getCoverAtSide(blockPosFace.facing);
                     if (cover instanceof CoverDigitalInterface && ((CoverDigitalInterface) cover).isProxy()) {
@@ -356,7 +356,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity metaTileEntityHolder) {
         return new MetaTileEntityCentralMonitor(metaTileEntityId);
     }
 
@@ -407,8 +407,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                 .aisle(slice.toString()).setRepeatable(3, MAX_WIDTH)
                 .aisle(end.toString())
                 .where('S', selfPredicate())
-                .where('A', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID)).setMinGlobalLimited(2)
-                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setPreviewCount(1)))
+                .where('A', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID))
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3).setPreviewCount(1)))
                 .where('B', metaTileEntities(MetaTileEntities.MONITOR_SCREEN))
                 .build();
     }
@@ -521,8 +521,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                     clearScreens();
                     for (BlockPos pos : parts) {
                         TileEntity tileEntity = getWorld().getTileEntity(pos);
-                        if(tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
-                            MetaTileEntityMonitorScreen screen = (MetaTileEntityMonitorScreen) ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+                        if(tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
+                            MetaTileEntityMonitorScreen screen = (MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                             screen.addToMultiBlock(this);
                             int sx = screen.getX(), sy = screen.getY();
                             if (sx < 0 || sx >= width || sy < 0 || sy >= height) {
@@ -575,8 +575,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
             } else {
                 parts.forEach(partPos->{
                     TileEntity tileEntity = this.getWorld().getTileEntity(partPos);
-                    if (tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
-                        MetaTileEntityMonitorScreen part = (MetaTileEntityMonitorScreen) ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+                    if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
+                        MetaTileEntityMonitorScreen part = (MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                         int x = part.getX();
                         int y = part.getY();
                         screenGrids[x][y].setScreen(part);

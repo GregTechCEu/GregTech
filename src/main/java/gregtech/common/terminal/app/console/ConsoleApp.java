@@ -3,7 +3,7 @@ package gregtech.common.terminal.app.console;
 import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.guiOld.widgets.ImageWidget;
 import gregtech.api.guiOld.widgets.WidgetGroup;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.MachineSceneWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
@@ -15,11 +15,11 @@ public class ConsoleApp extends AbstractApplication {
         super("console");
     }
 
-    private MetaTileEntityHolder getMTE() {
+    private IGregTechTileEntity getMTE() {
         if (os.clickPos != null) {
             TileEntity te = os.getModularUI().entityPlayer.world.getTileEntity(os.clickPos);
-            if (te instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) te).isValid()) {
-                return (MetaTileEntityHolder) te;
+            if (te instanceof IGregTechTileEntity && ((IGregTechTileEntity) te).isValid()) {
+                return (IGregTechTileEntity) te;
             }
         }
         return null;

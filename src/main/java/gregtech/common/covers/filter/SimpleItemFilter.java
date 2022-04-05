@@ -4,14 +4,12 @@ import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.guiOld.Widget;
 import gregtech.api.guiOld.widgets.PhantomSlotWidget;
 import gregtech.api.guiOld.widgets.ToggleButtonWidget;
-import gregtech.api.util.ItemStackKey;
 import gregtech.api.util.LargeStackSizeItemStackHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-import java.util.Set;
 import java.util.function.Consumer;
 
 public class SimpleItemFilter extends ItemFilter {
@@ -70,7 +68,7 @@ public class SimpleItemFilter extends ItemFilter {
     }
 
     @Override
-    public int getSlotTransferLimit(Object matchSlot, Set<ItemStackKey> matchedStacks, int globalTransferLimit) {
+    public int getSlotTransferLimit(Object matchSlot, int globalTransferLimit) {
         Integer matchSlotIndex = (Integer) matchSlot;
         ItemStack stackInFilterSlot = itemFilterSlots.getStackInSlot(matchSlotIndex);
         return Math.min(stackInFilterSlot.getCount(), globalTransferLimit);

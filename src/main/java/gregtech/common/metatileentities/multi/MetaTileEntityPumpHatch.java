@@ -11,7 +11,7 @@ import gregtech.api.guiOld.widgets.ImageWidget;
 import gregtech.api.guiOld.widgets.SlotWidget;
 import gregtech.api.guiOld.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.ICubeRenderer;
@@ -46,7 +46,7 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart implem
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityPumpHatch(metaTileEntityId);
     }
 

@@ -8,10 +8,9 @@ import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.guiOld.widgets.ServerWidgetGroup;
 import gregtech.api.guiOld.widgets.ToggleButtonWidget;
 import gregtech.api.util.IDirtyNotifiable;
-import gregtech.api.util.ItemStackKey;
 import net.minecraft.item.ItemStack;
 
-import java.util.Set;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public class ItemFilterWrapper {
@@ -28,11 +27,14 @@ public class ItemFilterWrapper {
     }
 
     public void initUI(int y, Consumer<gregtech.api.guiOld.Widget> widgetGroup) {
+        widgetGroup.accept(new WidgetGroupItemFilter(y, this::getItemFilter));
+    }
+
+    public void blacklistUI(int y, Consumer<gregtech.api.guiOld.Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
         ServerWidgetGroup blacklistButton = new ServerWidgetGroup(() -> getItemFilter() != null);
         blacklistButton.addWidget(new ToggleButtonWidget(144, y, 20, 20, GuiTextures.BUTTON_BLACKLIST,
-                this::isBlacklistFilter, this::setBlacklistFilter).setTooltipText("cover.filter.blacklist"));
+                this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton).setTooltipText("cover.filter.blacklist"));
         widgetGroup.accept(blacklistButton);
-        widgetGroup.accept(new WidgetGroupItemFilter(y, this::getItemFilter));
     }
 
     public Widget createFilterUI(UIBuildContext buildContext) {
@@ -103,11 +105,11 @@ public class ItemFilterWrapper {
         return isBlacklistFilter() || currentItemFilter == null || currentItemFilter.showGlobalTransferLimitSlider();
     }
 
-    public int getSlotTransferLimit(Object matchSlot, Set<ItemStackKey> matchedStacks, int globalTransferLimit) {
+    public int getSlotTransferLimit(Object matchSlot, int globalTransferLimit) {
         if (isBlacklistFilter() || currentItemFilter == null) {
             return globalTransferLimit;
         }
-        return currentItemFilter.getSlotTransferLimit(matchSlot, matchedStacks, globalTransferLimit);
+        return currentItemFilter.getSlotTransferLimit(matchSlot, globalTransferLimit);
     }
 
     public Object matchItemStack(ItemStack itemStack) {
@@ -118,6 +120,19 @@ public class ItemFilterWrapper {
             originalResult = currentItemFilter.matchItemStack(itemStack);
         }
         if (isBlacklistFilter()) {
+            originalResult = originalResult == null ? MATCH_RESULT_TRUE : null;
+        }
+        return originalResult;
+    }
+
+    public Object matchItemStack(ItemStack itemStack, boolean whitelist) {
+        Object originalResult;
+        if (currentItemFilter == null) {
+            originalResult = MATCH_RESULT_TRUE;
+        } else {
+            originalResult = currentItemFilter.matchItemStack(itemStack);
+        }
+        if (!whitelist) {
             originalResult = originalResult == null ? MATCH_RESULT_TRUE : null;
         }
         return originalResult;

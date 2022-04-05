@@ -16,7 +16,7 @@ import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.widgets.*;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.client.renderer.texture.Textures;
@@ -177,8 +177,8 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     }
 
     public TileEntity getCoveredTE() {
-        if (this.coverHolder instanceof MetaTileEntity){
-            return ((MetaTileEntity) this.coverHolder).getHolder();
+        if (this.coverHolder instanceof MetaTileEntity) {
+            return (TileEntity) ((MetaTileEntity) this.coverHolder).getHolder();
         }
         return null;
     }
@@ -908,8 +908,8 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                 TileEntity te = getCoveredTE();
                 if (te != null) {
                     ItemStack itemStack;
-                    if (te instanceof MetaTileEntityHolder) {
-                        itemStack = ((MetaTileEntityHolder) te).getMetaTileEntity().getStackForm();
+                    if (te instanceof IGregTechTileEntity) {
+                        itemStack = ((IGregTechTileEntity) te).getMetaTileEntity().getStackForm();
                     } else {
                         BlockPos pos = te.getPos();
                         itemStack = te.getBlockType().getPickBlock(te.getWorld().getBlockState(pos), new RayTraceResult(new Vec3d(0.5, 0.5, 0.5), getCoveredFacing(), pos), te.getWorld(), pos, Minecraft.getMinecraft().player);

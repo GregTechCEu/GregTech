@@ -12,10 +12,12 @@ import gregtech.api.guiOld.widgets.ImageWidget;
 import gregtech.api.guiOld.widgets.SimpleTextWidget;
 import gregtech.api.guiOld.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
+import gregtech.api.util.GTTransferUtils;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.item.EntityItem;
@@ -33,7 +35,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
@@ -63,7 +64,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityItemCollector(metaTileEntityId, getTier(), maxItemSuckingRange);
     }
 
@@ -97,7 +98,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
         super.receiveCustomData(dataId, buf);
         if (dataId == IS_WORKING) {
             this.isWorking = buf.readBoolean();
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         }
     }
 
@@ -154,7 +155,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
                 }
             } else {
                 ItemStack itemStack = entityItem.getItem();
-                ItemStack remainder = ItemHandlerHelper.insertItemStacked(exportItems, itemStack, false);
+                ItemStack remainder = GTTransferUtils.insertItem(exportItems, itemStack, false);
                 if (remainder.isEmpty()) {
                     entityItem.setDead();
                 } else if (itemStack.getCount() > remainder.getCount()) {

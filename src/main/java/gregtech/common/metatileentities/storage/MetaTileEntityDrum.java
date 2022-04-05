@@ -10,7 +10,7 @@ import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.ThermalFluidHandlerItemStack;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
@@ -60,7 +60,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityDrum(metaTileEntityId, material, tankSize);
     }
 
@@ -159,7 +159,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_AUTO_OUTPUT) {
             this.isAutoOutput = buf.readBoolean();
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         }
     }
 
@@ -195,7 +195,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     private void toggleOutput() {
         isAutoOutput = !isAutoOutput;
         if (!getWorld().isRemote) {
-            getHolder().notifyBlockUpdate();
+            notifyBlockUpdate();
             writeCustomData(UPDATE_AUTO_OUTPUT, buf -> buf.writeBoolean(isAutoOutput));
             markDirty();
         }

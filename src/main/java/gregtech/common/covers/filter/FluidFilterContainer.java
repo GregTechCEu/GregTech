@@ -13,14 +13,15 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
 
     private final ItemStackHandler filterInventory;
     private final FluidFilterWrapper filterWrapper;
 
-    public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable) {
-        this.filterWrapper = new FluidFilterWrapper(dirtyNotifiable);
+    public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable, int capacity) {
+        this.filterWrapper = new FluidFilterWrapper(dirtyNotifiable, capacity);
         this.filterInventory = new ItemStackHandler(1) {
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
@@ -44,15 +45,36 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
         };
     }
 
+    public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable, Supplier<Boolean> showTip, int maxSize) {
+        this(dirtyNotifiable, maxSize);
+        filterWrapper.setTipSupplier(showTip);
+    }
+
+    public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable, Supplier<Boolean> showTip) {
+        this(dirtyNotifiable, 1000);
+        filterWrapper.setTipSupplier(showTip);
+    }
+
+    public FluidFilterContainer(IDirtyNotifiable dirtyNotifiable) {
+        this(dirtyNotifiable, 1000);
+        filterWrapper.setTipSupplier(() -> false);
+    }
+
     public ItemStackHandler getFilterInventory() {
         return filterInventory;
+    }
+
+    public FluidFilterWrapper getFilterWrapper() {
+        return filterWrapper;
     }
 
     public void initUI(int y, Consumer<Widget> widgetGroup) {
         widgetGroup.accept(new LabelWidget(10, y, "cover.pump.fluid_filter.title"));
         widgetGroup.accept(new SlotWidget(filterInventory, 0, 10, y + 15)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
+
         this.filterWrapper.initUI(y + 15, widgetGroup);
+        this.filterWrapper.blacklistUI(y + 15, widgetGroup, ()-> true);
     }
 
     protected void onFilterSlotChange(boolean notify) {
@@ -73,6 +95,10 @@ public class FluidFilterContainer implements INBTSerializable<NBTTagCompound> {
 
     public boolean testFluidStack(FluidStack fluidStack) {
         return filterWrapper.testFluidStack(fluidStack);
+    }
+
+    public boolean testFluidStack(FluidStack fluidStack, Boolean whitelist) {
+        return filterWrapper.testFluidStack(fluidStack, whitelist);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package gregtech.integration.theoneprobe.provider;
 
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -31,8 +31,8 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
         if (mode == ProbeMode.DEBUG && ConfigHolder.misc.debug) {
             TileEntity tileEntity = world.getTileEntity(data.getPos());
-            if (tileEntity instanceof MetaTileEntityHolder) {
-                MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+            if (tileEntity instanceof IGregTechTileEntity) {
+                MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                 if (metaTileEntity != null) {
                     ArrayList<String> arrayList = new ArrayList<>();
                     arrayList.add("MetaTileEntity Id: " + metaTileEntity.metaTileEntityId);

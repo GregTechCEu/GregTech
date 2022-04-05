@@ -1,6 +1,6 @@
 package gregtech.api.items.behavior;
 
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class ProxyHolderPluginBehavior extends MonitorPluginBaseBehavior {
-    protected MetaTileEntityHolder holder;
+    protected IGregTechTileEntity holder;
     private BlockPos pos;
 
     @Override
@@ -31,14 +31,14 @@ public abstract class ProxyHolderPluginBehavior extends MonitorPluginBaseBehavio
     public void onHolderPosUpdated(BlockPos pos) {
         if (Objects.equals(this.pos, pos)) return;
         this.pos = pos;
-        MetaTileEntityHolder lastHolder = holder;
+        IGregTechTileEntity lastHolder = holder;
         holder = this.screen.getHolderFromPos(pos);
         if (!Objects.equals(lastHolder, holder)) onHolderChanged(lastHolder);
     }
 
-    protected abstract void onHolderChanged(MetaTileEntityHolder lastHolder);
+    protected abstract void onHolderChanged(IGregTechTileEntity lastHolder);
 
-    public MetaTileEntityHolder getHolder() {
+    public IGregTechTileEntity getHolder() {
         return holder;
     }
 }

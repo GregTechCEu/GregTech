@@ -17,7 +17,7 @@ import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.widgets.*;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.GTUtility;
 import gregtech.api.guiOld.widgets.PhantomTankWidget;
@@ -188,7 +188,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityQuantumTank(metaTileEntityId, tier, maxFluidCapacity);
     }
 
@@ -308,10 +308,10 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_OUTPUT_FACING) {
             this.outputFacing = EnumFacing.VALUES[buf.readByte()];
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         } else if (dataId == UPDATE_AUTO_OUTPUT_FLUIDS) {
             this.autoOutputFluids = buf.readBoolean();
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         }
     }
 
@@ -339,7 +339,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     public void setOutputFacing(EnumFacing outputFacing) {
         this.outputFacing = outputFacing;
         if (!getWorld().isRemote) {
-            getHolder().notifyBlockUpdate();
+            notifyBlockUpdate();
             writeCustomData(UPDATE_OUTPUT_FACING, buf -> buf.writeByte(outputFacing.getIndex()));
             markDirty();
         }

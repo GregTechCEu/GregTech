@@ -11,8 +11,8 @@ import gregtech.api.guiOld.widgets.*;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.BlockPosFace;
@@ -115,7 +115,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     public CoverDigitalInterface getCoverFromPosSide(BlockPosFace posFacing) {
         if (posFacing == null) return null;
         ICoverable mte = null;
-        MetaTileEntityHolder holder = getHolderFromPos(posFacing.pos);
+        IGregTechTileEntity holder = getHolderFromPos(posFacing.pos);
         if (holder == null) {
             TileEntity te = this.getWorld() == null ? null : this.getWorld().getTileEntity(posFacing.pos);
             if (te instanceof TileEntityPipeBase) {
@@ -133,10 +133,10 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         return null;
     }
 
-    public MetaTileEntityHolder getHolderFromPos(BlockPos pos) {
+    public IGregTechTileEntity getHolderFromPos(BlockPos pos) {
         TileEntity te = this.getWorld() == null || pos == null ? null : this.getWorld().getTileEntity(pos);
-        if (te instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) te).isValid()) {
-            return (MetaTileEntityHolder) te;
+        if (te instanceof IGregTechTileEntity && ((IGregTechTileEntity) te).isValid()) {
+            return (IGregTechTileEntity) te;
         }
         return null;
     }
@@ -231,7 +231,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     private void loadPlugin(MonitorPluginBaseBehavior plugin) {
-        if (this.plugin == null) {
+        if (plugin !=null && this.plugin != plugin) {
             this.plugin = plugin.createPlugin();
             this.plugin.readFromNBT(this.itemInventory.getStackInSlot(0).getOrCreateSubCompound("monitor_plugin"));
             this.plugin.onMonitorValid(this, true);
@@ -279,8 +279,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                 TileEntity te = coverTMP.getCoveredTE();
                 if (te != null) {
                     ItemStack itemStack;
-                    if (te instanceof MetaTileEntityHolder) {
-                        itemStack = ((MetaTileEntityHolder) te).getMetaTileEntity().getStackForm();
+                    if (te instanceof IGregTechTileEntity) {
+                        itemStack = ((IGregTechTileEntity) te).getMetaTileEntity().getStackForm();
                     } else {
                         BlockPos pos = te.getPos();
                         itemStack = te.getBlockType().getPickBlock(te.getWorld().getBlockState(pos), new RayTraceResult(new Vec3d(0.5, 0.5, 0.5), coverTMP.getCoveredFacing(), pos), te.getWorld(), pos, Minecraft.getMinecraft().player);
@@ -458,7 +458,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity metaTileEntityHolder) {
         return new MetaTileEntityMonitorScreen(this.metaTileEntityId);
     }
 
@@ -680,11 +680,11 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
             if (rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && controller != null && rayTraceResult.sideHit == controller.getFrontFacing()) {
                 int i, j;
                 TileEntity tileEntity = this.getWorld().getTileEntity(rayTraceResult.getBlockPos());
-                if (tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
-                    MetaTileEntityMonitorScreen screenHit = (MetaTileEntityMonitorScreen) ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+                if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
+                    MetaTileEntityMonitorScreen screenHit = (MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                     if (controller == screenHit.getController()) {
-                        i = ((MetaTileEntityMonitorScreen) ((MetaTileEntityHolder) tileEntity).getMetaTileEntity()).getX() - this.getX();
-                        j = ((MetaTileEntityMonitorScreen) ((MetaTileEntityHolder) tileEntity).getMetaTileEntity()).getY() - this.getY();
+                        i = ((MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity).getMetaTileEntity()).getX() - this.getX();
+                        j = ((MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity).getMetaTileEntity()).getY() - this.getY();
                         double[] pos = handleRayTraceResult(rayTraceResult);
                         if ((i >= 0 && j >= 0)) {
                             pos[0] = (pos[0] + i) / this.scale;

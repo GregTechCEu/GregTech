@@ -151,7 +151,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
         super.receiveCustomData(dataId, buf);
         if (dataId == IS_WORKING) {
             this.isBurning = buf.readBoolean();
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         }
     }
 

@@ -10,7 +10,7 @@ import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -41,7 +41,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity metaTileEntityHolder) {
         return new MetaTileEntityMultiFluidHatch(metaTileEntityId, this.getTier(), this.isExportHatch);
     }
 

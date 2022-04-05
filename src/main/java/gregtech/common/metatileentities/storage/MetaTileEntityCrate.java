@@ -12,7 +12,7 @@ import com.cleanroommc.modularui.common.widget.SlotGroup;
 import com.cleanroommc.modularui.common.widget.TextWidget;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
@@ -48,7 +48,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityCrate(metaTileEntityId, material, inventorySize, slotsPerRow);
     }
 

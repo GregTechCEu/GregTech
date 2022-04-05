@@ -16,8 +16,8 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
@@ -117,7 +117,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityClipboard(metaTileEntityId);
     }
 
@@ -130,7 +130,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
                 return null;
             if (clipboardBehaviour.get() instanceof ClipboardBehavior) {
                 PlayerInventoryHolder holder = new PlayerInventoryHolder(new GregFakePlayer(entityPlayer.world), EnumHand.MAIN_HAND); // We can't have this actually set the player's hand
-                holder.setCurrentItem(this.getClipboard());
+                holder.setCustomValidityCheck(this::isValid).setCurrentItem(this.getClipboard());
                 if (entityPlayer instanceof GregFakePlayer) { // This is how to tell if this is being called in-world or not
                     return ((ClipboardBehavior) clipboardBehaviour.get()).createMTEUI(holder, entityPlayer);
                 } else {
@@ -180,6 +180,13 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
             ((InaccessibleItemStackHandler) this.itemInventory).setStackInSlot(0, CLIPBOARD.getStackForm());
         }
         return this.itemInventory.getStackInSlot(0);
+    }
+
+    public void initializeClipboard(ItemStack stack) {
+        ((InaccessibleItemStackHandler) this.itemInventory).setStackInSlot(0, stack.copy());
+        writeCustomData(INIT_CLIPBOARD_NBT, buf -> {
+            buf.writeCompoundTag(stack.getTagCompound());
+        });
     }
 
     public void setClipboard(ItemStack stack) {
@@ -273,7 +280,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
             CuboidRayTraceResult rayTraceResult = rayTrace(this.getPos(), new Vector3(startVec), new Vector3(endVec), getPageCuboid());
             if (rayTraceResult != null && rayTraceResult.sideHit == this.getFrontFacing().getOpposite()) {
                 TileEntity tileEntity = this.getWorld().getTileEntity(rayTraceResult.getBlockPos());
-                if (tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MetaTileEntityClipboard) {
+                if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MetaTileEntityClipboard) {
                     double[] pos = handleRayTraceResult(rayTraceResult, this.getFrontFacing().getOpposite());
                     if (pos[0] >= 0 && pos[0] <= 1 && pos[1] >= 0 && pos[1] <= 1)
                         return Pair.of(pos[0], pos[1]);
@@ -385,6 +392,17 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
             }
             this.scheduleRenderUpdate();
             this.markDirty();
+        } else if (dataId == INIT_CLIPBOARD_NBT) {
+            try {
+                NBTTagCompound clipboardNBT = buf.readCompoundTag();
+                if (clipboardNBT != NO_CLIPBOARD_SIG) {
+                    ItemStack clipboard = this.getClipboard();
+                    clipboard.setTagCompound(clipboardNBT);
+                    this.setClipboard(clipboard);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

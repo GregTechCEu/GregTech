@@ -22,6 +22,8 @@ import java.util.function.BooleanSupplier;
 
 public class ToggleButtonWidget extends Widget {
 
+    private BooleanSupplier predicate;
+    private boolean isVisible = true;
     protected TextureArea buttonTexture;
     private final BooleanSupplier isPressedCondition;
     private final BooleanConsumer setPressedExecutor;
@@ -56,6 +58,12 @@ public class ToggleButtonWidget extends Widget {
         return this;
     }
 
+    public ToggleButtonWidget setPredicate(BooleanSupplier predicate) {
+        this.predicate = predicate;
+        this.isVisible = false;
+        return this;
+    }
+
     public ToggleButtonWidget shouldUseBaseBackground() {
         this.shouldUseBaseBackground = true;
         return this;
@@ -64,6 +72,7 @@ public class ToggleButtonWidget extends Widget {
     @Override
     @SideOnly(Side.CLIENT)
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        if (!isVisible) return;
         Position pos = getPosition();
         Size size = getSize();
         if (shouldUseBaseBackground) {
@@ -81,6 +90,7 @@ public class ToggleButtonWidget extends Widget {
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
+        if (!isVisible) return;
         if (isMouseOverElement(mouseX, mouseY) && tooltipText != null) {
             String postfix = isPressed ? ".enabled" : ".disabled";
             String tooltipHoverString = tooltipText + postfix;
@@ -96,6 +106,10 @@ public class ToggleButtonWidget extends Widget {
             this.isPressed = isPressedCondition.getAsBoolean();
             writeUpdateInfo(1, buf -> buf.writeBoolean(isPressed));
         }
+        if (predicate != null && predicate.getAsBoolean() != isVisible) {
+            this.isVisible = predicate.getAsBoolean();
+            writeUpdateInfo(2, buf -> buf.writeBoolean(isVisible));
+        }
     }
 
     @Override
@@ -103,6 +117,8 @@ public class ToggleButtonWidget extends Widget {
         super.readUpdateInfo(id, buffer);
         if (id == 1) {
             this.isPressed = buffer.readBoolean();
+        } else if (id == 2) {
+            this.isVisible = buffer.readBoolean();
         }
     }
 
@@ -110,7 +126,7 @@ public class ToggleButtonWidget extends Widget {
     @SideOnly(Side.CLIENT)
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         super.mouseClicked(mouseX, mouseY, button);
-        if (isMouseOverElement(mouseX, mouseY)) {
+        if (isVisible && isMouseOverElement(mouseX, mouseY)) {
             this.isPressed = !this.isPressed;
             writeClientAction(1, buf -> buf.writeBoolean(isPressed));
             playButtonClickSound();

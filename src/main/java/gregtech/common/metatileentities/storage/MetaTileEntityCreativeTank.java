@@ -11,7 +11,7 @@ import gregtech.api.guiOld.widgets.ImageWidget;
 import gregtech.api.guiOld.widgets.PhantomFluidWidget;
 import gregtech.api.guiOld.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -52,7 +52,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityCreativeTank(this.metaTileEntityId);
     }
 

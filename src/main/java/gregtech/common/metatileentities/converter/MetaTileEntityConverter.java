@@ -11,8 +11,8 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
@@ -98,7 +98,7 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
         converterTrait.setFeToEu(feToEu);
         if (!getWorld().isRemote) {
             writeCustomData(SYNC_TILE_MODE, b -> b.writeBoolean(converterTrait.isFeToEu()));
-            getHolder().notifyBlockUpdate();
+            notifyBlockUpdate();
             markDirty();
         }
     }
@@ -111,13 +111,13 @@ public class MetaTileEntityConverter extends TieredMetaTileEntity {
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         if (dataId == SYNC_TILE_MODE) {
             converterTrait.setFeToEu(buf.readBoolean());
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         }
         super.receiveCustomData(dataId, buf);
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityConverter(metaTileEntityId, getTier(), amps);
     }
 

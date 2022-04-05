@@ -62,23 +62,23 @@ public class CircuitRecipes {
         CUTTER_RECIPES.recipeBuilder()
                 .input(SILICON_BOULE)
                 .output(SILICON_WAFER, 16)
-                .duration(400).EUt(16).buildAndRegister();
+                .duration(400).EUt(64).buildAndRegister();
 
         CUTTER_RECIPES.recipeBuilder()
                 .input(GLOWSTONE_BOULE)
                 .output(GLOWSTONE_WAFER, 32)
-                .duration(800).EUt(VA[MV]).buildAndRegister();
+                .duration(800).EUt(VA[HV]).buildAndRegister();
 
         CUTTER_RECIPES.recipeBuilder()
                 .input(NAQUADAH_BOULE)
                 .output(NAQUADAH_WAFER, 64)
-                .duration(1600).EUt(VA[HV]).buildAndRegister();
+                .duration(1600).EUt(VA[EV]).buildAndRegister();
 
         CUTTER_RECIPES.recipeBuilder()
                 .input(NEUTRONIUM_BOULE)
                 .output(NEUTRONIUM_WAFER, 64)
                 .output(NEUTRONIUM_WAFER, 32)
-                .duration(2400).EUt(VA[EV]).buildAndRegister();
+                .duration(2400).EUt(VA[IV]).buildAndRegister();
 
         // Wafer engraving
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[MV]).input(SILICON_WAFER).notConsumable(craftingLens, Color.Red).output(INTEGRATED_LOGIC_CIRCUIT_WAFER).buildAndRegister();
@@ -397,28 +397,28 @@ public class CircuitRecipes {
                 .input(wireFine, Copper, 2)
                 .fluidInputs(Polyethylene.getFluid(L / 4))
                 .output(INDUCTOR, 2)
-                .duration(320).EUt(30).buildAndRegister();
+                .duration(320).EUt(VA[MV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ring, Steel)
                 .input(wireFine, AnnealedCopper, 2)
                 .fluidInputs(Polyethylene.getFluid(L / 4))
                 .output(INDUCTOR, 4)
-                .duration(320).EUt(30).buildAndRegister();
+                .duration(320).EUt(VA[MV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ring, NickelZincFerrite)
                 .input(wireFine, Copper, 2)
                 .fluidInputs(Polyethylene.getFluid(L / 4))
                 .output(INDUCTOR, 4)
-                .duration(320).EUt(30).buildAndRegister();
+                .duration(320).EUt(VA[MV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ring, NickelZincFerrite)
                 .input(wireFine, AnnealedCopper, 2)
                 .fluidInputs(Polyethylene.getFluid(L / 4))
                 .output(INDUCTOR, 8)
-                .duration(320).EUt(30).buildAndRegister();
+                .duration(320).EUt(VA[MV]).buildAndRegister();
 
         // SMD Resistor
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -615,13 +615,13 @@ public class CircuitRecipes {
                 .input(gem, EnderEye)
                 .fluidInputs(Radon.getFluid(250))
                 .output(QUANTUM_EYE)
-                .duration(480).EUt(384).buildAndRegister();
+                .duration(480).EUt(VA[HV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(gem, NetherStar)
                 .fluidInputs(Radon.getFluid(1250))
                 .output(QUANTUM_STAR)
-                .duration(1920).EUt(384).buildAndRegister();
+                .duration(1920).EUt(VA[HV]).buildAndRegister();
 
         AUTOCLAVE_RECIPES.recipeBuilder()
                 .input(QUANTUM_STAR)
@@ -861,9 +861,9 @@ public class CircuitRecipes {
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(VA[LuV])
                 .input(MULTILAYER_FIBER_BOARD, 16)
                 .input(PETRI_DISH)
-                .input(ELECTRIC_PUMP_LUV)
+                .input(ELECTRIC_PUMP_LuV)
                 .input(SENSOR_IV)
-                .input(circuit, Tier.Elite)
+                .input(circuit, Tier.IV)
                 .input(foil, NiobiumTitanium, 16)
                 .fluidInputs(SterileGrowthMedium.getFluid(4000))
                 .output(WETWARE_BOARD, 16)
@@ -901,7 +901,7 @@ public class CircuitRecipes {
                 .input(BASIC_CIRCUIT_BOARD)
                 .input(component, Component.Resistor, 2)
                 .input(wireGtSingle, RedAlloy, 2)
-                .input(circuit, Tier.Primitive, 2)
+                .input(circuit, Tier.ULV, 2)
                 .output(ELECTRONIC_CIRCUIT_LV, 2)
                 .buildAndRegister();
 
@@ -916,7 +916,7 @@ public class CircuitRecipes {
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).duration(300)
                 .input(GOOD_CIRCUIT_BOARD)
-                .input(circuit, Tier.Basic, 2)
+                .input(circuit, Tier.LV, 2)
                 .input(component, Component.Diode, 2)
                 .input(wireGtSingle, Copper, 2)
                 .output(ELECTRONIC_CIRCUIT_MV, 2)
@@ -1422,7 +1422,7 @@ public class CircuitRecipes {
         // Data Orb
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder()
                 .input(ADVANCED_CIRCUIT_BOARD)
-                .input(circuit, Tier.Advanced, 2)
+                .input(circuit, Tier.HV, 2)
                 .input(RANDOM_ACCESS_MEMORY, 4)
                 .input(NOR_MEMORY_CHIP, 32)
                 .input(NAND_MEMORY_CHIP, 64)

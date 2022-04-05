@@ -11,7 +11,7 @@ import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
@@ -57,7 +57,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityRotorHolder(metaTileEntityId, getTier());
     }
 
@@ -321,7 +321,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         this.isRotorSpinning = buf.readBoolean();
         this.rotorColor = buf.readInt();
         this.frontFaceFree = buf.readBoolean();
-        getHolder().scheduleChunkForRenderUpdate();
+        scheduleRenderUpdate();
     }
 
     @Override

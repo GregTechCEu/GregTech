@@ -8,6 +8,7 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -139,7 +140,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
         IElectricItem electricItem = stackInSlot.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem != null) {
             return handleElectricItem(electricItem);
-        } else {
+        } else if (ConfigHolder.compat.energy.nativeEUToFE) {
             IEnergyStorage energyStorage = stackInSlot.getCapability(CapabilityEnergy.ENERGY, null);
             if (energyStorage != null) {
                 return handleForgeEnergyItem(energyStorage);

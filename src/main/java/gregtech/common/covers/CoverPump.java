@@ -27,6 +27,8 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.widgets.*;
 import gregtech.api.util.GTFluidUtils;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.newFilter.fluid.FluidFilterHolder;
@@ -78,6 +80,10 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         this.bucketMode = BucketMode.MILLI_BUCKET;
         //this.fluidFilter = new FluidFilterContainer(this);
         this.filterHolder = new FluidFilterHolder(this);
+    }
+
+    protected boolean shouldShowTip() {
+        return false;
     }
 
     protected void setTransferRate(int transferRate) {
@@ -150,9 +156,9 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
 
     protected int doTransferFluidsInternal(IFluidHandler myFluidHandler, IFluidHandler fluidHandler, int transferLimit) {
         if (pumpMode == PumpMode.IMPORT) {
-            return GTFluidUtils.transferFluids(fluidHandler, myFluidHandler, transferLimit, filterHolder::test);
+            return GTTransferUtils.transferFluids(fluidHandler, myFluidHandler, transferLimit, filterHolder::test);
         } else if (pumpMode == PumpMode.EXPORT) {
-            return GTFluidUtils.transferFluids(myFluidHandler, fluidHandler, transferLimit, filterHolder::test);
+            return GTTransferUtils.transferFluids(myFluidHandler, fluidHandler, transferLimit, filterHolder::test);
         }
         return 0;
     }
@@ -194,9 +200,8 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
             }
         })
                 .setCentered(true)
-                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
-                .setMaxLength(8)
-                .setValidator(getTextFieldValidator(() -> bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate));
+                .setNumbersOnly(1, bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate)
+                .setMaxLength(8);
         primaryGroup.addWidget(textField);
 
         primaryGroup.addWidget(new gregtech.api.guiOld.widgets.CycleButtonWidget(106, 20, 30, 20,

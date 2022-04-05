@@ -114,7 +114,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
             e.printStackTrace();
         }
 
-        mbt.getHolder().setWorld(world);
+        ((MetaTileEntityHolder) mbt.getHolder()).setWorld(world);
 
         //Controller and isAttachedToMultiBlock need the world so we fake it here.
         importItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, false) {

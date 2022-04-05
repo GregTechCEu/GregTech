@@ -24,12 +24,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 public class CoverRoboticArm extends CoverConveyor {
 
@@ -78,8 +77,7 @@ public class CoverRoboticArm extends CoverConveyor {
             ItemStackKey key = iterator.next();
             TypeItemInfo sourceInfo = sourceItemAmount.get(key);
             int itemAmount = sourceInfo.totalCount;
-            Set<ItemStackKey> matchedItems = Collections.singleton(key);
-            int itemToMoveAmount = filterHolder.getSlotTransferLimit(sourceInfo.filterSlot, matchedItems);
+            int itemToMoveAmount = filterHolder.getSlotTransferLimit(sourceInfo.filterSlot);
             if (itemAmount >= itemToMoveAmount) {
                 sourceInfo.totalCount = itemToMoveAmount;
             } else {
@@ -116,7 +114,7 @@ public class CoverRoboticArm extends CoverConveyor {
         while (iterator.hasNext()) {
             Object filterSlotIndex = iterator.next();
             GroupItemInfo sourceInfo = sourceItemAmounts.get(filterSlotIndex);
-            int itemToKeepAmount = filterHolder.getSlotTransferLimit(sourceInfo.filterSlot, sourceInfo.itemStackTypes);
+            int itemToKeepAmount = filterHolder.getSlotTransferLimit(sourceInfo.filterSlot);
             int itemAmount = 0;
             if (currentItemAmount.containsKey(filterSlotIndex)) {
                 GroupItemInfo destItemInfo = currentItemAmount.get(filterSlotIndex);
@@ -160,12 +158,35 @@ public class CoverRoboticArm extends CoverConveyor {
 
     @Override
     protected ModularUI buildUI(Builder builder, EntityPlayer player) {
-        WidgetGroup filterGroup = new WidgetGroup();
-        filterGroup.addWidget(new gregtech.api.guiOld.widgets.CycleButtonWidget(91, 45, 75, 20,
+        WidgetGroup primaryGroup = new WidgetGroup();
+        primaryGroup.addWidget(new gregtech.api.guiOld.widgets.CycleButtonWidget(91, 45, 75, 20,
                 TransferMode.class, this::getTransferMode, this::setTransferMode)
                 .setTooltipHoverString("cover.robotic_arm.transfer_mode.description"));
 
-        return super.buildUI(builder.widget(filterGroup), player);
+        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(() -> itemFilterContainer.getFilterWrapper().getItemFilter() == null && transferMode != TransferMode.TRANSFER_ANY);
+        stackSizeGroup.addWidget(new ImageWidget(111, 70, 35, 20, GuiTextures.DISPLAY));
+
+        stackSizeGroup.addWidget(new IncrementButtonWidget(146, 70, 20, 20, 1, 8, 64, 512, itemFilterContainer::adjustTransferStackSize)
+                .setDefaultTooltip()
+                .setTextScale(0.7f)
+                .setShouldClientCallback(false));
+        stackSizeGroup.addWidget(new IncrementButtonWidget(91, 70, 20, 20, -1, -8, -64, -512, itemFilterContainer::adjustTransferStackSize)
+                .setDefaultTooltip()
+                .setTextScale(0.7f)
+                .setShouldClientCallback(false));
+
+        stackSizeGroup.addWidget(new TextFieldWidget2(113, 77, 31, 20, () -> String.valueOf(itemFilterContainer.getTransferStackSize()), val -> {
+                    if (val != null && !val.isEmpty())
+                        itemFilterContainer.setTransferStackSize(MathHelper.clamp(Integer.parseInt(val), 1, transferMode.maxStackSize));
+                })
+                        .setNumbersOnly(1, transferMode.maxStackSize)
+                        .setMaxLength(4)
+                        .setScale(0.9f)
+        );
+
+        primaryGroup.addWidget(stackSizeGroup);
+
+        return super.buildUI(builder.widget(primaryGroup), player);
     }
 
     @Override

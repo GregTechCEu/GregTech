@@ -373,8 +373,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
         this.getNotifiedItemInputList().addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
 
-
-        this.getHolder().markDirty();
+        markDirty();
     }
 
     private String getVoidingModeTooltip(int mode) {

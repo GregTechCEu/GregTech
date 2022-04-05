@@ -7,7 +7,7 @@ import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockController;
 import gregtech.api.pattern.BlockPattern;
@@ -31,7 +31,7 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityCokeOven(metaTileEntityId);
     }
 

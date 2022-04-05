@@ -16,6 +16,7 @@ import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.Widget;
 import gregtech.api.guiOld.resources.TextureArea;
 import gregtech.api.guiOld.widgets.*;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.util.GTUtility;
@@ -79,7 +80,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     }
 
     @Override
-    public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
+    public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new SimpleMachineMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(), hasFrontFacing, getTankScalingFunction());
     }
 
@@ -262,13 +263,13 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         if (dataId == UPDATE_OUTPUT_FACING) {
             this.outputFacingItems = EnumFacing.VALUES[buf.readByte()];
             this.outputFacingFluids = EnumFacing.VALUES[buf.readByte()];
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         } else if (dataId == UPDATE_AUTO_OUTPUT_ITEMS) {
             this.autoOutputItems = buf.readBoolean();
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         } else if (dataId == UPDATE_AUTO_OUTPUT_FLUIDS) {
             this.autoOutputFluids = buf.readBoolean();
-            getHolder().scheduleChunkForRenderUpdate();
+            scheduleRenderUpdate();
         }
     }
 
@@ -284,7 +285,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         this.outputFacingItems = outputFacing;
         this.outputFacingFluids = outputFacing;
         if (!getWorld().isRemote) {
-            getHolder().notifyBlockUpdate();
+            notifyBlockUpdate();
             writeCustomData(UPDATE_OUTPUT_FACING, buf -> {
                 buf.writeByte(outputFacingItems.getIndex());
                 buf.writeByte(outputFacingFluids.getIndex());
@@ -296,7 +297,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void setOutputFacingItems(EnumFacing outputFacing) {
         this.outputFacingItems = outputFacing;
         if (!getWorld().isRemote) {
-            getHolder().notifyBlockUpdate();
+            notifyBlockUpdate();
             writeCustomData(UPDATE_OUTPUT_FACING, buf -> {
                 buf.writeByte(outputFacingItems.getIndex());
                 buf.writeByte(outputFacingFluids.getIndex());
@@ -308,7 +309,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void setOutputFacingFluids(EnumFacing outputFacing) {
         this.outputFacingFluids = outputFacing;
         if (!getWorld().isRemote) {
-            getHolder().notifyBlockUpdate();
+            notifyBlockUpdate();
             writeCustomData(UPDATE_OUTPUT_FACING, buf -> {
                 buf.writeByte(outputFacingItems.getIndex());
                 buf.writeByte(outputFacingFluids.getIndex());
@@ -487,6 +488,9 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         String key = this.metaTileEntityId.getPath().split("\\.")[0];
-        tooltip.add(1, I18n.format(String.format("gregtech.machine.%s.tooltip", key)));
+        String mainKey = String.format("gregtech.machine.%s.tooltip", key);
+        if (I18n.hasKey(mainKey)) {
+            tooltip.add(1, mainKey);
+        }
     }
 }

@@ -370,6 +370,17 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return returnValue;
     }
 
+    @Override
+    public boolean itemInteractionForEntity(@Nonnull ItemStack stack, @Nonnull EntityPlayer playerIn, @Nonnull EntityLivingBase target, @Nonnull EnumHand hand) {
+        boolean returnValue = false;
+        for (IItemBehaviour behaviour : getBehaviours(stack)) {
+            if (behaviour.itemInteractionForEntity(stack, playerIn, target, hand)) {
+                returnValue = true;
+            }
+        }
+        return returnValue;
+    }
+
     @Nonnull
     @Override
     public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, EntityPlayer player, @Nonnull EnumHand hand) {

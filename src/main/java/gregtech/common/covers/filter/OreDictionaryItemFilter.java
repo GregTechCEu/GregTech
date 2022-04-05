@@ -6,14 +6,16 @@ import gregtech.api.guiOld.widgets.DrawableWidget;
 import gregtech.api.guiOld.widgets.ImageWidget;
 import gregtech.api.guiOld.widgets.OreDictFilterTestSlot;
 import gregtech.api.guiOld.widgets.TextFieldWidget2;
-import gregtech.api.util.ItemStackKey;
 import gregtech.api.util.OreDictExprFilter;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -164,7 +166,7 @@ public class OreDictionaryItemFilter extends ItemFilter {
     }
 
     @Override
-    public int getSlotTransferLimit(Object matchSlot, Set<ItemStackKey> matchedStacks, int globalTransferLimit) {
+    public int getSlotTransferLimit(Object matchSlot, int globalTransferLimit) {
         return globalTransferLimit;
     }
 

@@ -38,6 +38,7 @@ public abstract class GuideApp<T> extends AbstractApplication implements
     private Map<T, JsonObject> jsonObjectMap;
     private final IGuiTexture icon;
     private float scale = 1;
+
     public GuideApp(String name, IGuiTexture icon) {
         super(name);
         this.icon = icon;
@@ -145,8 +146,10 @@ public abstract class GuideApp<T> extends AbstractApplication implements
     @Override
     public void search(String word, Consumer<Stack<TreeNode<String, T>>> find) {
         Stack<TreeNode<String, T>> stack = new Stack<>();
-        stack.push(getTree());
-        dfsSearch(Thread.currentThread(), stack, word.toLowerCase(), find);
+        if(getTree() != null) {
+            stack.push(getTree());
+            dfsSearch(Thread.currentThread(), stack, word.toLowerCase(), find);
+        }
     }
 
     private boolean dfsSearch(Thread thread, Stack<TreeNode<String, T>> stack, String regex, Consumer<Stack<TreeNode<String, T>>> find) {

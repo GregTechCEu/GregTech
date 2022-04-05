@@ -51,7 +51,7 @@ public class BlastRecipeBuilder extends RecipeBuilder<BlastRecipeBuilder> {
 
     public ValidationResult<Recipe> build() {
         Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs,
-                duration, EUt, hidden);
+                duration, EUt, hidden, isCTRecipe);
         if (!recipe.setProperty(TemperatureProperty.getInstance(), blastFurnaceTemp)) {
             return ValidationResult.newResult(EnumValidationResult.INVALID, recipe);
         }

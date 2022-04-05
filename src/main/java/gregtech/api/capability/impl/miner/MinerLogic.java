@@ -6,9 +6,9 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IMiner;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.api.unification.OreDictUnifier;
@@ -239,8 +239,8 @@ public class MinerLogic {
         // If the block's drops can fit in the inventory, move the previously mined position to the block
         // replace the ore block with cobblestone instead of breaking it to prevent mob spawning
         // remove the ore block's position from the mining queue
-        if (MetaTileEntity.addItemsToItemHandler(metaTileEntity.getExportItems(), true, blockDrops)) {
-            MetaTileEntity.addItemsToItemHandler(metaTileEntity.getExportItems(), false, blockDrops);
+        if (GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), true, blockDrops)) {
+            GTTransferUtils.addItemsToItemHandler(metaTileEntity.getExportItems(), false, blockDrops);
             world.setBlockState(blocksToMine.getFirst(), Blocks.COBBLESTONE.getDefaultState());
             mineX.set(blocksToMine.getFirst().getX());
             mineZ.set(blocksToMine.getFirst().getZ());
@@ -361,7 +361,7 @@ public class MinerLogic {
      */
     protected static void applyTieredHammerNoRandomDrops(@Nonnull IBlockState blockState, List<ItemStack> drops, int fortuneLevel, @Nonnull RecipeMap<?> map, int tier) {
         ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
-        Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0, MatchingMode.IGNORE_FLUIDS);
+        Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0);
         if (recipe != null && !recipe.getOutputs().isEmpty()) {
             drops.clear();
             for (ItemStack outputStack : recipe.getResultItemOutputs(tier, map)) {

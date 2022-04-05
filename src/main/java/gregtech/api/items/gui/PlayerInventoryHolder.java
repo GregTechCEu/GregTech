@@ -9,31 +9,43 @@ import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.function.BooleanSupplier;
+
 public class PlayerInventoryHolder implements IUIHolder {
-
-    public final EntityPlayer player;
-    /*package-local*/ final EnumHand hand;
-    /*package-local*/ ItemStack sampleItem;
-
-    @SideOnly(Side.CLIENT)
-    /*package-local*/ public PlayerInventoryHolder(EntityPlayer player, EnumHand hand, ItemStack sampleItem) {
-        this.player = player;
-        this.hand = hand;
-        this.sampleItem = sampleItem;
-    }
-
-    public PlayerInventoryHolder(EntityPlayer entityPlayer, EnumHand hand) {
-        this.player = entityPlayer;
-        this.hand = hand;
-        this.sampleItem = player.getHeldItem(hand);
-    }
 
     public static void openHandItemUI(EntityPlayer player, EnumHand hand) {
         PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
         holder.openUI();
     }
 
-    /*package-local*/ ModularUI createUI(EntityPlayer entityPlayer) {
+    public final EntityPlayer player;
+
+    final EnumHand hand;
+
+    ItemStack sampleItem;
+    BooleanSupplier validityCheck;
+
+    @SideOnly(Side.CLIENT)
+    public PlayerInventoryHolder(EntityPlayer player, EnumHand hand, ItemStack sampleItem) {
+        this.player = player;
+        this.hand = hand;
+        this.sampleItem = sampleItem;
+        this.validityCheck = () -> ItemStack.areItemsEqual(sampleItem, player.getHeldItem(hand));
+    }
+
+    public PlayerInventoryHolder(EntityPlayer entityPlayer, EnumHand hand) {
+        this.player = entityPlayer;
+        this.hand = hand;
+        this.sampleItem = player.getHeldItem(hand);
+        this.validityCheck = () -> ItemStack.areItemsEqual(sampleItem, player.getHeldItem(hand));
+    }
+
+    public PlayerInventoryHolder setCustomValidityCheck(BooleanSupplier validityCheck) {
+        this.validityCheck = validityCheck;
+        return this;
+    }
+
+    ModularUI createUI(EntityPlayer entityPlayer) {
         ItemUIFactory uiFactory = (ItemUIFactory) sampleItem.getItem();
         return uiFactory.createUI(this, entityPlayer);
     }
@@ -44,8 +56,7 @@ public class PlayerInventoryHolder implements IUIHolder {
 
     @Override
     public boolean isValid() {
-        ItemStack itemStack = player.getHeldItem(hand);
-        return ItemStack.areItemsEqual(sampleItem, itemStack);
+        return validityCheck.getAsBoolean();
     }
 
     @Override

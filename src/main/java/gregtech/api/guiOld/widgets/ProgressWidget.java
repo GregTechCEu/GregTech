@@ -15,7 +15,8 @@ public class ProgressWidget extends Widget {
         VERTICAL,
         HORIZONTAL,
         VERTICAL_INVERTED,
-        CIRCULAR
+        CIRCULAR,
+        VERTICAL_DOWNWARDS
     }
 
     public final DoubleSupplier progressSupplier;
@@ -130,6 +131,9 @@ public class ProgressWidget extends Widget {
                         1.0 - progressScaled / (halfWidth * 1.0), 0.0,
                         progressScaled / (halfWidth * 1.0), 1.0
                 ); // BR, draw LEFT
+            } else if (moveType == MoveType.VERTICAL_DOWNWARDS) {
+                filledBarArea[0].drawSubArea(pos.x, pos.y, size.width, (int) (size.height * lastProgressValue),
+                        0.0, 0.0, 1.0, ((int) (size.height * lastProgressValue)) / (size.height * 1.0));
             }
         }
     }

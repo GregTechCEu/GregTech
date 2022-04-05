@@ -11,7 +11,6 @@ import com.cleanroommc.modularui.common.widget.Widget;
 import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.guiOld.widgets.*;
 import gregtech.api.util.IDirtyNotifiable;
-import gregtech.api.util.ItemStackKey;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
@@ -19,10 +18,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
-import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntSupplier;
 
 public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
 
@@ -61,6 +57,10 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         return filterInventory;
     }
 
+    public ItemFilterWrapper getFilterWrapper() {
+        return filterWrapper;
+    }
+
     private void onFilterInstanceChange() {
         this.filterWrapper.setMaxStackSize(getTransferStackSize());
     }
@@ -90,32 +90,8 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         widgetGroup.accept(new SlotWidget(filterInventory, 0, 10, y + 15)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
 
-        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::showGlobalTransferLimitSlider);
-        stackSizeGroup.addWidget(new ImageWidget(111, 70, 35, 20, GuiTextures.DISPLAY));
-
-        stackSizeGroup.addWidget(new IncrementButtonWidget(146, 70, 20, 20, 1, 8, 64, 512, this::adjustTransferStackSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
-        stackSizeGroup.addWidget(new IncrementButtonWidget(91, 70, 20, 20, -1, -8, -64, -512, this::adjustTransferStackSize)
-                .setDefaultTooltip()
-                .setTextScale(0.7f)
-                .setShouldClientCallback(false));
-
-        stackSizeGroup.addWidget(new TextFieldWidget2(113, 75, 31, 20, () -> String.valueOf(transferStackSize), val -> {
-                    if (val != null && !val.isEmpty())
-                        setTransferStackSize(Integer.parseInt(val));
-                })
-                        .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
-                        .setMaxLength(4)
-                        .setValidator(getTextFieldValidator(() -> Integer.MAX_VALUE))
-                        .setScale(0.9f)
-        );
-
-
-        widgetGroup.accept(stackSizeGroup);
-
         this.filterWrapper.initUI(y + 38, widgetGroup);
+        this.filterWrapper.blacklistUI(y + 38, widgetGroup, () -> true);
     }
 
     protected void onFilterSlotChange(boolean notify) {
@@ -144,16 +120,24 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         return getMaxStackSize() > 1 && filterWrapper.showGlobalTransferLimitSlider();
     }
 
-    public int getSlotTransferLimit(Object slotIndex, Set<ItemStackKey> matchedStacks) {
-        return filterWrapper.getSlotTransferLimit(slotIndex, matchedStacks, getTransferStackSize());
+    public int getSlotTransferLimit(Object slotIndex) {
+        return filterWrapper.getSlotTransferLimit(slotIndex, getTransferStackSize());
     }
 
     public Object matchItemStack(ItemStack itemStack) {
         return filterWrapper.matchItemStack(itemStack);
     }
 
+    public Object matchItemStack(ItemStack itemStack, boolean whitelist) {
+        return filterWrapper.matchItemStack(itemStack, whitelist);
+    }
+
     public boolean testItemStack(ItemStack itemStack) {
         return matchItemStack(itemStack) != null;
+    }
+
+    public boolean testItemStack(ItemStack itemStack, boolean whitelist) {
+        return matchItemStack(itemStack, whitelist) != null;
     }
 
     @Override
@@ -182,26 +166,4 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
         }
     }
 
-    public Function<String, String> getTextFieldValidator(IntSupplier maxSupplier) {
-        int min = 1;
-        return val -> {
-            if (val.isEmpty()) {
-                return String.valueOf(min);
-            }
-            int max = maxSupplier.getAsInt();
-            int num;
-            try {
-                num = Integer.parseInt(val);
-            } catch (NumberFormatException ignored) {
-                return String.valueOf(max);
-            }
-            if (num < min) {
-                return String.valueOf(min);
-            }
-            if (num > max) {
-                return String.valueOf(max);
-            }
-            return val;
-        };
-    }
 }

@@ -1,6 +1,5 @@
 package gregtech.common.terminal.app.recipechart.widget;
 
-import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.guiOld.IRenderContext;
 import gregtech.api.guiOld.Widget;
@@ -393,7 +392,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
                 int tierRequire = GTUtility.getTierByVoltage(recipe.getEUt());
                 for (Object o : catalysts) {
                     if (o instanceof ItemStack) {
-                        MetaTileEntity mte = MachineItemBlock.getMetaTileEntity((ItemStack) o);
+                        MetaTileEntity mte = GTUtility.getMetaTileEntity((ItemStack) o);
                         if (mte instanceof SimpleMachineMetaTileEntity) {
                             if (tierRequire < ((SimpleMachineMetaTileEntity) mte).getTier()) {
                                 catalyst = (ItemStack) o;
