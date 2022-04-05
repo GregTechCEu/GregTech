@@ -35,7 +35,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -467,7 +466,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         primaryGroup.addWidget(new ImageWidget(40, 20, 96, 20, GuiTextures.DISPLAY));
         primaryGroup.addWidget(new TextFieldWidget2(42, 26, 92, 20, () -> String.valueOf(transferRate), val -> {
                     if (val != null && !val.isEmpty())
-                        setTransferRate(Integer.parseInt(val));
+                        setTransferRate(MathHelper.clamp(Integer.parseInt(val), 1, maxItemTransferRate));
                 })
                         .setNumbersOnly(1, maxItemTransferRate)
                         .setMaxLength(4)

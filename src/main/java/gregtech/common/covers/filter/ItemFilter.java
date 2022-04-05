@@ -28,7 +28,7 @@ public abstract class ItemFilter {
 
     public abstract boolean showGlobalTransferLimitSlider();
 
-    public abstract int getSlotTransferLimit(Object matchSlot, Set<ItemStackKey> matchedStacks, int globalTransferLimit);
+    public abstract int getSlotTransferLimit(Object matchSlot, int globalTransferLimit);
 
     public abstract Object matchItemStack(ItemStack itemStack);
 

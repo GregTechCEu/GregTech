@@ -48,7 +48,7 @@ public class MetaItem1 extends StandardMetaItem {
         CREDIT_PLATINUM = addItem(4, "credit.platinum").setRarity(EnumRarity.RARE);
         CREDIT_OSMIUM = addItem(5, "credit.osmium").setRarity(EnumRarity.RARE);
         CREDIT_NAQUADAH = addItem(6, "credit.naquadah").setRarity(EnumRarity.EPIC);
-        CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium") .setRarity(EnumRarity.EPIC);
+        CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium").setRarity(EnumRarity.EPIC);
 
         COIN_GOLD_ANCIENT = addItem(8, "coin.gold.ancient")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, M / 4))).setRarity(EnumRarity.RARE);
@@ -336,6 +336,10 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_ENDER_FLUID_LINK = addItem(311, "cover.ender_fluid_link");
         COVER_DIGITAL_INTERFACE = addItem(312, "cover.digital");
         COVER_DIGITAL_INTERFACE_WIRELESS = addItem(313, "cover.digital.wireless");
+        COVER_FLUID_VOIDING = addItem(314, "cover.fluid.voiding");
+        COVER_FLUID_VOIDING_ADVANCED = addItem(315, "cover.fluid.voiding.advanced");
+        COVER_ITEM_VOIDING = addItem(316, "cover.item.voiding");
+        COVER_ITEM_VOIDING_ADVANCED = addItem(317, "cover.item.voiding.advanced");
 
         COVER_FACADE = addItem(330, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 

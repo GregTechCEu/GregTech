@@ -55,7 +55,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     protected int fluidLeftToTransferLastSecond;
     private CoverableFluidHandlerWrapper fluidHandlerWrapper;
     protected boolean isWorkingAllowed = true;
-    protected final FluidFilterContainer fluidFilter;
+    protected FluidFilterContainer fluidFilter;
     protected BucketMode bucketMode;
 
     public CoverPump(ICoverable coverHolder, EnumFacing attachedSide, int tier, int mbPerTick) {
@@ -67,7 +67,11 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         this.pumpMode = PumpMode.EXPORT;
         this.distributionMode = DistributionMode.INSERT_FIRST;
         this.bucketMode = BucketMode.MILLI_BUCKET;
-        this.fluidFilter = new FluidFilterContainer(this);
+        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip);
+    }
+
+    protected boolean shouldShowTip() {
+        return false;
     }
 
     protected void setTransferRate(int transferRate) {
@@ -184,9 +188,8 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
             }
         })
                 .setCentered(true)
-                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
-                .setMaxLength(8)
-                .setValidator(getTextFieldValidator(() -> bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate));
+                .setNumbersOnly(1, bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate)
+                .setMaxLength(8);
         primaryGroup.addWidget(textField);
 
         primaryGroup.addWidget(new CycleButtonWidget(106, 20, 30, 20,

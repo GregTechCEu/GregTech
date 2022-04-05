@@ -4,15 +4,14 @@ import net.minecraft.util.IStringSerializable;
 
 import javax.annotation.Nonnull;
 
-public enum TransferMode implements IStringSerializable {
-    TRANSFER_ANY("cover.robotic_arm.transfer_mode.transfer_any", 1),
-    TRANSFER_EXACT("cover.robotic_arm.transfer_mode.transfer_exact", 64),
-    KEEP_EXACT("cover.robotic_arm.transfer_mode.keep_exact", 1024);
+public enum VoidingMode implements IStringSerializable {
+    VOID_ANY("cover.voiding.voiding_mode.void_any", 1),
+    VOID_OVERFLOW("cover.voiding.voiding_mode.void_overflow", 1024);
 
     public final String localeName;
     public final int maxStackSize;
 
-    TransferMode(String localeName, int maxStackSize) {
+    VoidingMode(String localeName, int maxStackSize) {
         this.localeName = localeName;
         this.maxStackSize = maxStackSize;
     }
@@ -24,4 +23,3 @@ public enum TransferMode implements IStringSerializable {
         return localeName;
     }
 }
-
