@@ -10,8 +10,10 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 //Uses code from:
 //github.com/CleanroomMC/Airlock/blob/master/src/main/java/com/cleanroommc/airlock/common/util/TeleportUtil.java
-
 public class TeleportHandler {
+
+    private TeleportHandler() {
+    }
 
     public static WorldServer getWorldByDimensionID(int id) {
         WorldServer world = DimensionManager.getWorld(id);
@@ -23,6 +25,7 @@ public class TeleportHandler {
 
     /**
      * Teleport an entity to another entity with a suitable +0.5 offset in positioning
+     *
      * @param teleporter entity that is teleporting
      * @param teleportTo entity that is being teleported to
      */
@@ -32,6 +35,7 @@ public class TeleportHandler {
 
     /**
      * Teleport an entity to a dimension with provided position
+     *
      * @param teleporter entity that is teleporting
      * @param dimension  dimension that the entity is teleporting to
      * @param teleportTo position that the entity is teleporting to
@@ -42,6 +46,7 @@ public class TeleportHandler {
 
     /**
      * Teleport an entity to a dimension with provided position
+     *
      * @param teleporter  entity that is teleporting
      * @param dimension   dimension that the entity is teleporting to
      * @param teleportToX x position that the entity is teleporting to
@@ -58,19 +63,21 @@ public class TeleportHandler {
         if (teleporter.isRiding()) {
             teleporter.dismountRidingEntity();
         }
-        if (teleporter.dimension == dimension) {
-            teleporter.setPositionAndUpdate(teleportToX, teleportToY, teleportToZ);
-        } else {
+
+        if (teleporter.dimension != dimension) {
+            // Change dimension
             MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
             // We won't rewrite this method, instead call it since
             // Various Entity implementations can indeed override this
             teleporter.changeDimension(dimension, server.getWorld(dimension).getDefaultTeleporter());
-            teleporter.setPositionAndUpdate(teleportToX, teleportToY, teleportToZ); // Change positions
         }
+        // Change positions
+        teleporter.setPositionAndUpdate(teleportToX, teleportToY, teleportToZ);
     }
 
     /**
      * Teleport an entity to a dimension with provided position
+     *
      * @param teleporter       entity that is teleporting
      * @param dimension        dimension that the entity is teleporting to
      * @param customTeleporter custom teleporter implementation to use instead of dimension's own default one
@@ -88,16 +95,14 @@ public class TeleportHandler {
         if (teleporter.isRiding()) {
             teleporter.dismountRidingEntity();
         }
-        if (teleporter.dimension == dimension) {
-            teleporter.setPositionAndUpdate(teleportToX, teleportToY, teleportToZ);
-        } else {
+
+        if (teleporter.dimension != dimension) {
+            // Change dimension
             // We won't rewrite this method, instead call it since
             // Various Entity implementations can indeed override this
             teleporter.changeDimension(dimension, customTeleporter);
-            teleporter.setPositionAndUpdate(teleportToX, teleportToY, teleportToZ); // Change positions
         }
+        // Change positions
+        teleporter.setPositionAndUpdate(teleportToX, teleportToY, teleportToZ);
     }
-
-    private TeleportHandler() { }
-
 }

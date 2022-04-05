@@ -5045,6 +5045,9 @@ terminal.vtank_viewer.description=Never lose any fluids to changing ender link f
 terminal.vtank_viewer.title=Virtual Tank Viewer
 terminal.vtank_viewer.refresh=Refresh tank index
 
+terminal.teleporter.dimension=Dimension:
+terminal.teleporter.spawn_portal=Engage
+
 metaitem.cover.digital.title.mode=Mode:
 metaitem.cover.digital.title.spin=Spin:
 metaitem.cover.digital.wireless.tooltip.1=§eRight click on the central monitor to bind remotely to it.
