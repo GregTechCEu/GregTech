@@ -93,7 +93,9 @@ public class MetaTileEntities {
     //public static final SimpleMachineMetaTileEntity[] MASS_FABRICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     //public static final SimpleMachineMetaTileEntity[] REPLICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     // TODO Assembly Line Research system
-    //public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final MetaTileEntityDataHatch[] DATA_HATCH = new MetaTileEntityDataHatch[2];
+    public static MetaTileEntityCreativeDataHatch CREATIVE_DATA_HATCH;
     public static final SimpleMachineMetaTileEntity[] GAS_COLLECTOR = new MetaTileEntityGasCollector[GTValues.V.length - 1];
     public static final MetaTileEntityRockBreaker[] ROCK_BREAKER = new MetaTileEntityRockBreaker[GTValues.V.length - 1];
     public static final MetaTileEntityMiner[] MINER = new MetaTileEntityMiner[GTValues.V.length - 1];
@@ -355,10 +357,9 @@ public class MetaTileEntities {
         // Lathe, IDs 440-454
         registerSimpleMetaTileEntity(LATHE, 440, "lathe", RecipeMaps.LATHE_RECIPES, Textures.LATHE_OVERLAY, true);
 
-        // TODO Assembly Line Research system
         // TODO Should anonymously override SimpleMachineMetaTileEntity#getCircuitSlotOverlay() to display the data stick overlay
         // Scanner, IDs 455-469
-        //registerSimpleMetaTileEntity(SCANNER, 455, "scanner", RecipeMaps.SCANNER_RECIPES, Textures.SCANNER_OVERLAY, true);
+        registerSimpleMetaTileEntity(SCANNER, 455, "scanner", RecipeMaps.SCANNER_RECIPES, Textures.SCANNER_OVERLAY, true);
 
         // Mixer, IDs 470-484
         registerSimpleMetaTileEntity(MIXER, 470, "mixer", RecipeMaps.MIXER_RECIPES, Textures.MIXER_OVERLAY, false, GTUtility.hvCappedTankSizeFunction);
@@ -729,6 +730,13 @@ public class MetaTileEntities {
                 ENERGY_CONVERTER[j][i] = registerMetaTileEntity(1670 + j + i * 4, converter);
             }
         }
+        // Data Access hatches, IDs 1730-1732
+        DATA_HATCH[0] = registerMetaTileEntity(1730, new MetaTileEntityDataHatch(gregtechId("data_hatch.ev"), GTValues.EV, 4));
+        DATA_HATCH[1] = registerMetaTileEntity(1731, new MetaTileEntityDataHatch(gregtechId("data_hatch.luv"), GTValues.LuV, 8));
+
+        CREATIVE_DATA_HATCH = registerMetaTileEntity(1732, new MetaTileEntityCreativeDataHatch(gregtechId("creative_data_hatch")));
+
+
 
         /*
          * FOR ADDON DEVELOPERS:

@@ -1324,6 +1324,7 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_CAPACITOR, 16)
                 .input(ADVANCED_SMD_DIODE, 8)
                 .fluidInputs(SolderingAlloy.getFluid(L * 10))
+                .researchItem(CRYSTAL_COMPUTER_ZPM)
                 .output(CRYSTAL_MAINFRAME_UV)
                 .buildAndRegister();
 
@@ -1384,6 +1385,7 @@ public class CircuitRecipes {
                 .input(foil, Polybenzimidazole, 32)
                 .input(plate, Europium, 4)
                 .fluidInputs(SolderingAlloy.getFluid(1152))
+                .researchItem(WETWARE_PROCESSOR_ASSEMBLY_ZPM)
                 .output(WETWARE_SUPER_COMPUTER_UV)
                 .buildAndRegister();
 
@@ -1402,6 +1404,7 @@ public class CircuitRecipes {
                 .input(plate, Europium, 8)
                 .fluidInputs(SolderingAlloy.getFluid(L * 20))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 8))
+                .researchItem(WETWARE_SUPER_COMPUTER_UV)
                 .output(WETWARE_MAINFRAME_UHV)
                 .EUt(300000).duration(2000).buildAndRegister();
 

@@ -82,6 +82,7 @@ public class GTJeiPlugin implements IModPlugin {
                 registry.addRecipeCategories(new RecipeMapCategory(recipeMap, registry.getJeiHelpers().getGuiHelper()));
             }
         }
+        registry.addRecipeCategories(new RecipeMapCategory(RecipeMaps.SCANNER_RECIPES, registry.getJeiHelpers().getGuiHelper())); // Really jank solution to put scanner jei after assline
         registry.addRecipeCategories(new OreByProductCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new GTOreCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new MaterialTreeCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -123,6 +124,7 @@ public class GTJeiPlugin implements IModPlugin {
                 );
             }
         }
+        registerScannerRecipes(registry); // less jank way of registering the scanner recipe map, still jank tho
 
         for (ResourceLocation metaTileEntityId : GregTechAPI.MTE_REGISTRY.getKeys()) {
             MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
@@ -247,5 +249,20 @@ public class GTJeiPlugin implements IModPlugin {
         if (category != null && !(metaTileEntity instanceof SteamMetaTileEntity)) {
             category.setIcon(metaTileEntity.getStackForm());
         }
+    }
+
+    private void registerScannerRecipes(IModRegistry registry) {
+        Stream<Recipe> recipeStream = RecipeMaps.SCANNER_RECIPES.getRecipeList().stream()
+                .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay());
+
+        if (RecipeMaps.SCANNER_RECIPES.getSmallRecipeMap() != null) {
+            Collection<Recipe> smallRecipes = RecipeMaps.SCANNER_RECIPES.getSmallRecipeMap().getRecipeList();
+            recipeStream = recipeStream.filter(recipe -> !smallRecipes.contains(recipe));
+        }
+
+        registry.addRecipes(
+                recipeStream.map(r -> new GTRecipeWrapper(RecipeMaps.SCANNER_RECIPES, r)).collect(Collectors.toList()),
+                GTValues.MODID + ":" + RecipeMaps.SCANNER_RECIPES.unlocalizedName
+        );
     }
 }

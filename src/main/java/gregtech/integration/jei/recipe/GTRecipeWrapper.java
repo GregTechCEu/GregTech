@@ -7,6 +7,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
@@ -21,6 +22,7 @@ import mezz.jei.api.ingredients.VanillaTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
@@ -86,6 +88,16 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             List<ItemStack> recipeOutputs = recipe.getOutputs()
                     .stream().map(ItemStack::copy).collect(Collectors.toList());
 
+            // Scanner Output replacing
+            if (recipe.getOutputs().size() > 0 && recipe.getOutputs().get(0).getSubCompound(AssemblyLineRecipeBuilder.RESEARCH_NBT_TAG_NAME) != null) {
+                ItemStack dataStick = recipe.getOutputs().get(0);
+                NBTTagCompound researchItemNBT = dataStick.getSubCompound(AssemblyLineRecipeBuilder.RESEARCH_NBT_TAG_NAME);
+                ItemStack researchItem = new ItemStack(researchItemNBT);
+                if (!researchItem.isEmpty() && researchItemNBT != null) {
+                    recipeOutputs = Collections.singletonList(researchItem);
+                }
+            }
+
             List<ChanceEntry> chancedOutputs = recipe.getChancedOutputs();
             chancedOutputs.sort(Comparator.comparingInt(entry -> entry == null ? 0 : entry.getChance()));
             for (ChanceEntry chancedEntry : chancedOutputs) {
@@ -117,6 +129,8 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             tooltip.add(I18n.format("gregtech.recipe.chance", chance, boost));
         } else if (notConsumed) {
             tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
+        } else if (recipe.getOutputs().get(0).hasTagCompound() && ((ItemStack) ingredient).isItemEqual(new ItemStack(recipe.getOutputs().get(0).getSubCompound("asslineOutput")))) {
+            tooltip.add(I18n.format("gregtech.recipe.assline_scanner"));
         }
     }
 
@@ -126,6 +140,11 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (notConsumed) {
             tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
         }
+    }
+
+    private List<ItemStack> getOutputListFromRecipe(Recipe recipe) {
+        return recipe.getOutputs()
+                .stream().map(ItemStack::copy).collect(Collectors.toList());
     }
 
     @Override

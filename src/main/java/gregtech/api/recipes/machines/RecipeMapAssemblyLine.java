@@ -7,16 +7,17 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 
-public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap<R> {
+public class RecipeMapAssemblyLine extends RecipeMap<AssemblyLineRecipeBuilder> {
 
     public RecipeMapAssemblyLine(String unlocalizedName,
                                  int minInputs, int maxInputs, int minOutputs, int maxOutputs,
                                  int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs,
-                                 R defaultRecipe, boolean isHidden) {
+                                 AssemblyLineRecipeBuilder defaultRecipe, boolean isHidden) {
         super(unlocalizedName, minInputs, maxInputs, minOutputs, maxOutputs, minFluidInputs, maxFluidInputs, minFluidOutputs, maxFluidOutputs, defaultRecipe, isHidden);
     }
 

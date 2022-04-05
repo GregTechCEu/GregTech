@@ -7,7 +7,11 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
+import gregtech.api.recipes.recipeproperties.ResearchItemProperty;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockGlassCasing;
@@ -15,13 +19,18 @@ import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCreativeDataHatch;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.items.IItemHandlerModifiable;
+
+import java.util.List;
 
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
-
     public MetaTileEntityAssemblyLine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.ASSEMBLY_LINE_RECIPES);
     }
@@ -44,7 +53,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 .where('O', abilities(MultiblockAbility.EXPORT_ITEMS).addTooltips("gregtech.multiblock.pattern.location_end"))
                 .where('Y', states(getCasingState()).or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3)))
                 .where('I', metaTileEntities(MetaTileEntities.ITEM_IMPORT_BUS[0]))
-                .where('G', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.GRATE_CASING)))
+                .where('G', abilities(MultiblockAbility.RESEARCH_DATA).or(states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.GRATE_CASING))))
                 .where('A', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_CONTROL)))
                 .where('R', states(MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.LAMINATED_GLASS)))
                 .where('T', states(MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_LINE_CASING)))
@@ -59,5 +68,28 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
     protected IBlockState getCasingState() {
         return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID);
+    }
+
+    @Override
+    public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
+        if (recipe.hasProperty(ResearchItemProperty.getInstance())) {
+            List<IItemHandlerModifiable> dataStickHandler = this.getAbilities(MultiblockAbility.RESEARCH_DATA);
+            List<IMultiblockPart> dataHatches = this.getMultiblockParts();
+            for (IMultiblockPart hatch: dataHatches) {
+                if (hatch instanceof MetaTileEntityCreativeDataHatch) {
+                    return true;
+                }
+            }
+            if (!dataStickHandler.isEmpty()) {
+                List<ItemStack> hatchDataList = GTUtility.itemHandlerToList(dataStickHandler.get(0));
+                for (ItemStack stack : hatchDataList) {
+                    NBTTagCompound researchItemNBT = stack.getSubCompound(AssemblyLineRecipeBuilder.RESEARCH_NBT_TAG_NAME);
+                    if (researchItemNBT != null && new ItemStack(researchItemNBT).isItemEqual(recipe.getOutputs().get(0))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
