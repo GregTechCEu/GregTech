@@ -10,24 +10,28 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class VirtualContainerRegistry extends WorldSavedData{
     private static final int DEFAULT_SIZE = 27; // 27 slots
     private static final String DATA_ID = GTValues.MODID + ".vcontainer_data";
+    // private static final IItemHandlerModifiable modifiable;
 
-    protected static Map<UUID, Map<String, IInventory>> containerMap = new HashMap<>();
+    protected static Map<UUID, Map<String, VirtualContainer>> containerMap = new HashMap<>();
 
     public VirtualContainerRegistry(){
         super(DATA_ID);
@@ -43,7 +47,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
      * @param uuid The uuid of the player the container is private to, or null if the container is public
      * @return The container object
      */
-    public static IInventory getContainer(String key, UUID uuid) {
+    public static VirtualContainer getContainer(String key, UUID uuid) {
         return containerMap.get(uuid).get(key);
     }
 
@@ -51,7 +55,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
      * @return the internal Map of containers.
      * Do not use to modify the map!
      */
-    public static Map<UUID, Map<String, IInventory>> getContainerMap() {
+    public static Map<UUID, Map<String, VirtualContainer>> getContainerMap() {
         return containerMap;
     }
 
@@ -62,9 +66,16 @@ public class VirtualContainerRegistry extends WorldSavedData{
      * @param size The initial size of the container
      * @return The container object
      */
-    public static IInventory getContainerCreate(String key, UUID uuid, int size) {
+    public static VirtualContainer getContainerCreate(String key, UUID uuid, int size) {
         if (!containerMap.containsKey(uuid) || !containerMap.get(uuid).containsKey(key)) {
             addContainer(key, uuid, size);
+        }
+        return getContainer(key, uuid);
+    }
+
+    public static VirtualContainer getContainerCreate(String key, UUID uuid) {
+        if (!containerMap.containsKey(uuid) || !containerMap.get(uuid).containsKey(key)) {
+            addContainer(key, uuid, DEFAULT_SIZE);
         }
         return getContainer(key, uuid);
     }
@@ -119,9 +130,8 @@ public class VirtualContainerRegistry extends WorldSavedData{
             for (String key : publicContainers.getKeySet()) {
                 NBTTagCompound containerCompound = publicContainers.getCompoundTag(key);
                 VirtualContainerRegistry.addContainer(key, null, containerCompound.getInteger("Size"));
-                if (!containerCompound.hasKey("Empty")) {
-                    // VirtualContainerRegistry.getContainer(key, null).fill(FluidStack.loadFluidStackFromNBT(tankCompound), true);
-                }
+
+                GTUtility.readItems(VirtualContainerRegistry.getContainer(key, null), key, containerCompound);
             }
         }
         if (nbt.hasKey("Private")) {
@@ -131,10 +141,8 @@ public class VirtualContainerRegistry extends WorldSavedData{
                 NBTTagCompound privateContainers = privateContainerUUIDs.getCompoundTag(uuidStr);
                 for (String key : privateContainers.getKeySet()) {
                     NBTTagCompound containerCompound = privateContainers.getCompoundTag(key);
-                    VirtualContainerRegistry.addContainer(key, uuid, containerCompound.getInteger("Size"));
-                    if (!containerCompound.hasKey("Empty")) {
-                        // VirtualContainerRegistry.getContainer(key, uuid);
-                    }
+
+                    GTUtility.readItems(VirtualContainerRegistry.getContainerCreate(key, uuid, containerCompound.getInteger("Size")), key, containerCompound);
                 }
             }
         }
@@ -147,14 +155,11 @@ public class VirtualContainerRegistry extends WorldSavedData{
         containerMap.forEach( (uuid, map) -> {
             NBTTagCompound mapCompound = new NBTTagCompound();
             map.forEach( (key, container) -> {
-                if (container.getSizeInventory() > 0 || container != null) {
+                if (container.getSizeInventory() > 0) {
                     NBTTagCompound containerCompound = new NBTTagCompound();
-                    containerCompound.setInteger("Capacity", container.getSizeInventory());
-                    if (true) {
-                        // container.getFluid().writeToNBT(containerCompound);
-                    } else {
-                        containerCompound.setString("Empty", "");
-                    }
+                    containerCompound.setInteger("Size", container.getSizeInventory());
+
+                    GTUtility.writeItems(container, key, containerCompound);
                     mapCompound.setTag(key, containerCompound);
                 }
             });
@@ -188,7 +193,7 @@ public class VirtualContainerRegistry extends WorldSavedData{
         }
     }
 
-    private static class VirtualContainer implements  IInventory, IItemHandler {
+    protected static class VirtualContainer implements  IInventory, IItemHandlerModifiable {
         @Nullable
         protected ItemStack[] items;
         protected int size;
@@ -224,23 +229,27 @@ public class VirtualContainerRegistry extends WorldSavedData{
          *
          * @param slot index of the array to insert the ItemStack into.
          * @param itemStack ItemStack to insert into the array
-         * @param simulate Simulates item input, but does not actually insert the item
+         * @param doInsert Should the array be modified with the insert?
          * @return a copy of the ItemStack with the adjusted amount
          */
         @Nonnull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack itemStack, boolean simulate) {
+        public ItemStack insertItem(int slot, @Nonnull ItemStack itemStack, boolean doInsert) {
             int amt = items[slot].getMaxStackSize() - items[slot].getCount();
             int remainder = Math.min(amt, itemStack.getCount());;
             ItemStack itemCopy;
 
-            if (!simulate && (items[slot].isItemEqual(itemStack) || items[slot] == null)) {
+            if (doInsert && (items[slot].isItemEqual(itemStack) || items[slot] == ItemStack.EMPTY)) {
                 // case 1: 64 items in slot, amt should be 0 and incoming item stack is returned unchanged
                 // case 2: 32 items in slot, amt should be 32 and incoming item stack is returned with 0 or self - 32
                 // case 3: no item in slot, amt should be item stack count and an empty item stack is returned
 
                 items[slot].setCount(items[slot].getCount() + remainder);
             }
+
+            if (remainder == 0)
+                return ItemStack.EMPTY;
+
             itemCopy = itemStack;
             itemCopy.setCount(remainder);
             return itemCopy;
@@ -248,8 +257,19 @@ public class VirtualContainerRegistry extends WorldSavedData{
 
         @Nonnull
         @Override
-        public ItemStack extractItem(int slot, int amt, boolean simulate) {
-            return null;
+        public ItemStack extractItem(int slot, int amtToExtract, boolean doExtract) {
+            // case 1: 64 items in slot, amtToExtract is 64, return item stack and set item at slot to empty item stack
+            // case 2: 64 items in slot, amtToExtract is 32, return item stack with 32 and set item count at slot to 32
+            // case 3: 64 items in slot, amtToExtract is 0, return an empty item stack and item at slot is unchanged
+            int amtExtractable = Math.min(items[slot].getCount(), amtToExtract);
+            int remainder = Math.max(0, items[slot].getCount() - amtToExtract);
+            ItemStack itemCopy = items[slot];
+
+            if (doExtract && (items[slot].getCount() > 0 || items[slot] != ItemStack.EMPTY)) {
+                items[slot].setCount(remainder);
+            }
+            itemCopy.setCount(amtToExtract);
+            return itemCopy;
         }
 
         @Override
@@ -259,7 +279,8 @@ public class VirtualContainerRegistry extends WorldSavedData{
 
         @Override
         public ItemStack decrStackSize(int slot, int amt) {
-            return null;
+            items[slot].setCount(items[slot].getCount() - amt);
+            return items[slot];
         }
 
         @Override
@@ -300,8 +321,11 @@ public class VirtualContainerRegistry extends WorldSavedData{
         }
 
         @Override
-        public boolean isItemValidForSlot(int i, ItemStack itemStack) {
-            return false;
+        public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
+            return
+                    items[slot].isItemEqual(itemStack) ||
+                    items[slot] == ItemStack.EMPTY ||
+                    items[slot].getCount() < itemStack.getCount();
         }
 
         @Override
@@ -337,6 +361,11 @@ public class VirtualContainerRegistry extends WorldSavedData{
         @Override
         public ITextComponent getDisplayName() {
             return null;
+        }
+
+        @Override
+        public void setStackInSlot(int slot, @Nonnull ItemStack itemStack) {
+            setInventorySlotContents(slot, itemStack);
         }
     }
 }

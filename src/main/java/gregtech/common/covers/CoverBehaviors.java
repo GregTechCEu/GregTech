@@ -72,6 +72,7 @@ public class CoverBehaviors {
         registerBehavior(55, new ResourceLocation(GTValues.MODID, "crafting_table"), MetaItems.COVER_CRAFTING, CoverCraftingTable::new);
         registerBehavior(56, new ResourceLocation(GTValues.MODID, "infinite_water"), MetaItems.COVER_INFINITE_WATER, CoverInfiniteWater::new);
         registerBehavior(57, new ResourceLocation(GTValues.MODID, "ender_fluid_link"), MetaItems.COVER_ENDER_FLUID_LINK, CoverEnderFluidLink::new);
+        registerBehavior(57, new ResourceLocation(GTValues.MODID, "ender_item_link"), MetaItems.COVER_ENDER_ITEM_LINK, CoverEnderItemLink::new);
         registerBehavior(58, new ResourceLocation(GTValues.MODID, "cover.digital"), MetaItems.COVER_DIGITAL_INTERFACE, CoverDigitalInterface::new);
 
         // Custom cover behaviour
