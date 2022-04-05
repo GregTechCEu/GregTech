@@ -855,6 +855,8 @@ metaitem.cover.infinite_water.name=Infinite Water Cover
 metaitem.cover.infinite_water.tooltip.1=Fills attached containers with §9Water§7 as §fCover§7.
 metaitem.cover.ender_fluid_link.name=Ender Fluid Link Cover
 metaitem.cover.ender_fluid_link.tooltip=Transports §fFluids§7 with a §fWireless §dEnder§f Connection§7 as §fCover§7.
+metaitem.cover.ender_item_link.name=Ender Item Link Cover
+metaitem.cover.ender_item_link.tooltip=Link your item containers to the Ender! (as Cover)
 
 metaitem.gelled_toluene.name=Gelled Toluene
 metaitem.gelled_toluene.tooltip=Raw Explosive
@@ -1270,6 +1272,13 @@ cover.advanced_item_detector.max=Maximum Items:
 cover.advanced_item_detector.min=Minimum Items:
 
 cover.storage.title=Storage Cover
+
+cover.ender_item_link.title=Ender Fluid Link
+cover.ender_item_link.iomode.enabled=I/O Enabled
+cover.ender_item_link.iomode.disabled=I/O Disabled
+cover.ender_item_link.private.tooltip.disabled=Switch to private tank mode/nPrivate mode uses the player who originally placed the cover
+cover.ender_item_link.private.tooltip.enabled=Switch to public tank mode
+cover.ender_item_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore

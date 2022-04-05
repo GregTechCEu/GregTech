@@ -152,4 +152,8 @@ public class ItemContainerSwitchShim implements IItemHandlerModifiable, IInvento
     public void setStackInSlot(int slot, @Nonnull ItemStack itemStack) {
         container.setStackInSlot(slot, itemStack);
     }
+
+    public VirtualContainerRegistry.VirtualContainer getContainer(){
+        return container;
+    }
 }

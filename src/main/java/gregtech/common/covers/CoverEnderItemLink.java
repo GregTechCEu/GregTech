@@ -31,6 +31,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -40,6 +41,7 @@ import java.util.function.Predicate;
 public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, ITickable, IControllable{
 
     private final int TRANSFER_RATE = 64;
+
     protected CoverConveyor.ConveyorMode conveyorMode;
     private int color;
     private UUID playerUUID;
@@ -50,6 +52,7 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
     private boolean isColorTemp;
     private final ItemContainerSwitchShim linkedContainer;
     protected final ItemFilterContainer itemFilter;
+    protected int itemsLeftToTransferLastSecond;
 
     public CoverEnderItemLink(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
@@ -77,7 +80,8 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.ENDER_ITEM_LINK.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        // TODO update to ender item link
+        Textures.ENDER_FLUID_LINK.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
 
     @Override
@@ -107,33 +111,83 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
 
     @Override
     public void update() {
-        if (workingEnabled && ioEnabled) {
-            transferContainerItems();
+        long timer = coverHolder.getOffsetTimer();
+        IItemHandler targetInventory = coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide);
+        if (workingEnabled && ioEnabled && itemsLeftToTransferLastSecond > 0 && timer % 5 == 0) {
+            int totalTransferred = doTransferItems(linkedContainer, targetInventory, itemsLeftToTransferLastSecond);
+            this.itemsLeftToTransferLastSecond -= totalTransferred;
+        }
+
+        if (timer % 20 == 0){
+            this.itemsLeftToTransferLastSecond = TRANSFER_RATE;
         }
     }
 
-    protected void transferContainerItems() {
+    protected int doTransferItems(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
+        return doTransferItemsAny(itemHandler, myItemHandler, maxTransferAmount);
+    }
+
+    protected int doTransferItemsAny(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
+        if (conveyorMode == CoverConveyor.ConveyorMode.IMPORT) {
+            return moveInventoryItems(itemHandler, myItemHandler, maxTransferAmount);
+        } else if (conveyorMode == CoverConveyor.ConveyorMode.EXPORT) {
+            return moveInventoryItems(myItemHandler, itemHandler, maxTransferAmount);
+        }
+        return 0;
+    }
+
+    protected int moveInventoryItems(IItemHandler sourceInventory, IItemHandler targetInventory, int maxTransferAmount) {
+        int itemsLeftToTransfer = maxTransferAmount;
+        for (int srcIndex = 0; srcIndex < sourceInventory.getSlots(); srcIndex++) {
+            ItemStack sourceStack = sourceInventory.extractItem(srcIndex, itemsLeftToTransfer, true);
+            if (sourceStack.isEmpty()) {
+                continue;
+            }
+            if (!itemFilter.testItemStack(sourceStack)) {
+                continue;
+            }
+            ItemStack remainder = GTTransferUtils.insertItem(targetInventory, sourceStack, true);
+            int amountToInsert = sourceStack.getCount() - remainder.getCount();
+
+            if (amountToInsert > 0) {
+                sourceStack = sourceInventory.extractItem(srcIndex, amountToInsert, false);
+                if (!sourceStack.isEmpty()) {
+                    GTTransferUtils.insertItem(targetInventory, sourceStack, false);
+                    itemsLeftToTransfer -= sourceStack.getCount();
+
+                    if (itemsLeftToTransfer == 0) {
+                        break;
+                    }
+                }
+            }
+        }
+        return maxTransferAmount - itemsLeftToTransfer;
+    }
+
+/*
+    protected int transferContainerItems(int itemsLeftToTransferLastSecond) {
         IItemHandler itemHandler = coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide);
         if (conveyorMode == CoverConveyor.ConveyorMode.IMPORT) {
-            moveInventoryItems(itemHandler, linkedContainer, TRANSFER_RATE, itemFilter::testItemStack);
+            return moveInventoryItems(itemHandler, linkedContainer, itemsLeftToTransferLastSecond, itemFilter::testItemStack);
         } else if (conveyorMode == CoverConveyor.ConveyorMode.EXPORT) {
-            moveInventoryItems(linkedContainer, itemHandler, TRANSFER_RATE, itemFilter::testItemStack);
+            return 0; // moveInventoryItems(linkedContainer, itemHandler, itemsLeftToTransferLastSecond, itemFilter::testItemStack);
         }
+        return 0;
     }
 
     protected int moveInventoryItems(IItemHandler sourceInventory, IItemHandler targetInventory, int maxTransferAmount, @Nonnull Predicate<ItemStack> itemFilter) {
         int itemsLeftToTransfer = maxTransferAmount;
         for (int i = 0; i < sourceInventory.getSlots(); i++) {
             ItemStack itemStack = sourceInventory.getStackInSlot(i);
-            if (itemStack.isEmpty()) {
+
+            if (!itemStack.isEmpty()) {
                 continue;
             }
-
             if (!itemFilter.test(itemStack)) {
                 continue;
             }
 
-            ItemStack remainder = GTTransferUtils.insertItem(targetInventory, itemStack, true);
+            ItemStack remainder = GTTransferUtils.insertItem(targetInventory, itemStack, false);
             int amountToInsert = itemStack.getCount() - remainder.getCount();
 
             if (amountToInsert > 0) {
@@ -150,6 +204,7 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
         }
         return maxTransferAmount - itemsLeftToTransfer;
     }
+    */
 
     public void setConveyorMode(CoverConveyor.ConveyorMode mode) {
         conveyorMode = mode;
@@ -181,7 +236,6 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
         widgetGroup.addWidget(new TextFieldWidget(58, 13, 58, 18, true,
                 this::getColorStr, this::updateColor, 8)
                 .setValidator(str -> str.matches("[0-9a-fA-F]*")));
-        this.itemFilter.initUI(70, widgetGroup::addWidget);
         widgetGroup.addWidget(new ImageWidget(147, 19, 16, 16)
                 .setImage(GuiTextures.INFO_ICON)
                 .setPredicate(() -> isColorTemp)
@@ -192,13 +246,21 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
         widgetGroup.addWidget(new CycleButtonWidget(92, 42, 75, 18,
                 this::isIoEnabled, this::setIoEnabled, "cover.ender_item_link.iomode.disabled", "cover.ender_item_link.iomode.enabled"));
         this.itemFilter.initUI(65, widgetGroup::addWidget);
+        // widgetGroup.addWidget(new SlotWidget((IItemHandlerModifiable) VirtualContainerRegistry.getContainer(makeContainerName(), getContainerUUID()), 0, 183, 42);
+        /*
         int factor = linkedContainer.getSizeInventory() / 9 > 8 ? 18 : 9;
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176 + (factor == 18 ? 176 : 0), 8 + linkedContainer.getSizeInventory() / factor * 18 + 104).label(5, 5, makeContainerName());
+
         for (int i = 0; i < linkedContainer.getSizeInventory(); i++) {
             builder.slot(linkedContainer, i, 7 * (factor == 18 ? 2 : 1) + i % factor * 18, 18 + i / factor * 18, GuiTextures.SLOT);
         }
         builder.widget(widgetGroup).bindPlayerInventory(player.inventory, 139);
         return builder.build(this, player);
+        */
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176 + (16 * 9), 221)
+                .widget(widgetGroup)
+                .bindPlayerInventory(player.inventory, 139)
+                .build(this, player);
     }
 
     private void updateColor(String str) {

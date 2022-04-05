@@ -29,8 +29,10 @@ public class ItemFilterWrapper {
 
     public void blacklistUI(int y, Consumer<Widget> widgetGroup, BooleanSupplier showBlacklistButton) {
         ServerWidgetGroup blacklistButton = new ServerWidgetGroup(() -> getItemFilter() != null);
+
         blacklistButton.addWidget(new ToggleButtonWidget(144, y, 20, 20, GuiTextures.BUTTON_BLACKLIST,
                 this::isBlacklistFilter, this::setBlacklistFilter).setPredicate(showBlacklistButton).setTooltipText("cover.filter.blacklist"));
+
         widgetGroup.accept(blacklistButton);
     }
 
