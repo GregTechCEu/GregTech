@@ -4,41 +4,56 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityPipelineEndpoint;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.LongDistanceItemPipelineBlock;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class MetaTileEntityLongDistanceItemPipeline extends MetaTileEntityPipelineEndpoint {
+public class MetaTileEntityPipelineItem extends MetaTileEntityPipelineEndpoint {
 
-    public MetaTileEntityLongDistanceItemPipeline(ResourceLocation metaTileEntityId) {
+    public MetaTileEntityPipelineItem(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityLongDistanceItemPipeline(metaTileEntityId);
+        return new MetaTileEntityPipelineItem(metaTileEntityId);
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new ItemStackHandler(4);
+        return new NotifiableItemStackHandler(16, this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(4);
+        return new NotifiableItemStackHandler(16, this, true);
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if (getWorld().isRemote) return;
+        if (getOffsetTimer() % 20 == 0) {
+            pullItemsFromNearbyHandlers(getFrontFacing());
+            pushItemsIntoNearbyHandlers(getFrontFacing().getOpposite());
+
+            // todo implement notifiable logic
+            if (checkTargetValid()) GTTransferUtils.moveInventoryItems(getImportItems(), target.getExportItems());
+        }
     }
 
     @Override
     protected int getMinimumEndpointDistance() {
+//        return 64; //TODO when done with testing
         return 0;
     }
 
@@ -49,7 +64,7 @@ public class MetaTileEntityLongDistanceItemPipeline extends MetaTileEntityPipeli
 
     @Override
     protected boolean isSameConnector(MetaTileEntity metaTileEntity) {
-        return metaTileEntity instanceof MetaTileEntityLongDistanceItemPipeline;
+        return metaTileEntity instanceof MetaTileEntityPipelineItem;
     }
 
     @Override

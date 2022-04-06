@@ -4110,7 +4110,9 @@ gregtech.machine.world_accelerator.mode_tile=Tile Entity Mode
 gregtech.machine.world_accelerator.mode_entity=Entity Mode
 
 # Long Distance Pipelines
-gregtech.machine.long_distance_pipeline.tooltip.1=Hit with §6Soft Mallet§7 to check for connections.
+gregtech.machine.long_distance_pipeline.tooltip.1=Long Distance Transport
+gregtech.machine.long_distance_pipeline.tooltip.2=Minimum Endpoint Distance: §a%s§7 Blocks
+gregtech.machine.long_distance_pipeline.tooltip.3=Hit with §6Soft Mallet§7 to check for connections
 
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side

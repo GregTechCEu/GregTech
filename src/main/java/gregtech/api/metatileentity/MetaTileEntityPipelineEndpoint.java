@@ -42,12 +42,8 @@ public abstract class MetaTileEntityPipelineEndpoint extends MetaTileEntity impl
     }
 
     protected int getDistanceToPosition(@Nonnull BlockPos pos) {
-        return Math.abs(getPos().getX() - pos.getX()) +
-                Math.abs(getPos().getY() - pos.getY()) +
-                Math.abs(getPos().getZ() - pos.getZ());
+        return (int) Math.ceil(getPos().getDistance(pos.getX(), pos.getY(), pos.getZ()));
     }
-
-    protected abstract int getMinimumEndpointDistance();
 
     protected void scanPipes() {
         if (source != null && source.isValid() && source.target == this) return;
@@ -79,9 +75,11 @@ public abstract class MetaTileEntityPipelineEndpoint extends MetaTileEntity impl
                         MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                         if (metaTileEntity != this && metaTileEntity instanceof MetaTileEntityPipelineEndpoint) {
                             if (pipes.contains(metaTileEntity.getPos().offset(metaTileEntity.getFrontFacing()))) {
-                                target = (MetaTileEntityPipelineEndpoint) metaTileEntity;
-                                targetPos = target.getPos();
-                                return;
+                                if (getDistanceToPosition(pos) >= getMinimumEndpointDistance()) {
+                                    target = (MetaTileEntityPipelineEndpoint) metaTileEntity;
+                                    targetPos = target.getPos();
+                                    return;
+                                }
                             }
                         }
                         oldChecks.remove(pos);
@@ -95,7 +93,8 @@ public abstract class MetaTileEntityPipelineEndpoint extends MetaTileEntity impl
     }
 
     public boolean checkTargetValid() {
-        if (getWorld() == null || getWorld().isRemote) return false;
+        if (getWorld() == null || getWorld().isRemote)
+            return false;
 
         if (targetPos == null) {
             // no target position, so scan for one
@@ -126,9 +125,25 @@ public abstract class MetaTileEntityPipelineEndpoint extends MetaTileEntity impl
         return target.source == this;
     }
 
+    /**
+     *
+     * @param block the block to check
+     * @return {@code true} if the pipe block is valid for this pipeline, else {@code false}
+     */
     protected abstract boolean isPipeBlockValid(Block block);
 
+    /**
+     *
+     * @param metaTileEntity the metaTileEntity to check
+     * @return {@code true} if the metaTileEntity is the same type of pipeline connector, else {@code false}
+     */
     protected abstract boolean isSameConnector(MetaTileEntity metaTileEntity);
+
+    /**
+     *
+     * @return the minimum distance in blocks between pipeline endpoints for a valid pipeline connection
+     */
+    protected abstract int getMinimumEndpointDistance();
 
     @Override
     protected boolean openGUIOnRightClick() {
@@ -184,6 +199,8 @@ public abstract class MetaTileEntityPipelineEndpoint extends MetaTileEntity impl
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.long_distance_pipeline.tooltip.1"));
+        tooltip.add(I18n.format("gregtech.machine.long_distance_pipeline.tooltip.2", getMinimumEndpointDistance()));
+        tooltip.add(I18n.format("gregtech.machine.long_distance_pipeline.tooltip.3"));
     }
 
     @Nonnull
