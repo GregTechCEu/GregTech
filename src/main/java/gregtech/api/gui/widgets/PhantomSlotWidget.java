@@ -2,10 +2,8 @@ package gregtech.api.gui.widgets;
 
 import com.google.common.collect.Lists;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.SlotUtil;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
@@ -43,6 +41,24 @@ public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTar
             } else {
                 gui.getModularUIGui().superMouseClicked(mouseX, mouseY, button);
             }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
+        if (isMouseOverElement(mouseX, mouseY) && gui != null) {
+            ItemStack is = gui.entityPlayer.inventory.getItemStack().copy();
+            is.setCount(1);
+            slotReference.putStack(is);
+            writeClientAction(1, buffer -> {
+                buffer.writeItemStack(slotReference.getStack());
+                int mouseButton = Mouse.getEventButton();
+                boolean shiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+                buffer.writeVarInt(mouseButton);
+                buffer.writeBoolean(shiftDown);
+            });
             return true;
         }
         return false;

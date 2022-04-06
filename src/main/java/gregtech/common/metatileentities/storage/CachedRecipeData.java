@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.api.recipes.KeySharedStack;
 import gregtech.api.util.ItemStackKey;
+import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.itemsource.ItemSources;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -38,16 +39,29 @@ public class CachedRecipeData {
     }
 
     protected boolean consumeRecipeItems() {
+        boolean gathered = true;
+        HashMap<ItemStackKey, Integer> gatheredItems = new HashMap<>();
         if (requiredItems.isEmpty()) {
             return false;
         }
         for (Entry<ItemStackKey, Integer> entry : requiredItems.entrySet()) {
             ItemStackKey itemStackKey = entry.getKey();
-            if (itemSources.extractItem(itemStackKey, entry.getValue(), false) != entry.getValue()) {
-                return false;
+            int requestedAmount = entry.getValue();
+            int extractedAmount = itemSources.extractItem(itemStackKey, requestedAmount, false);
+            if (extractedAmount != requestedAmount) {
+                gatheredItems.put(itemStackKey, extractedAmount);
+                gathered = false;
+                break;
+            } else {
+                gatheredItems.put(itemStackKey, requestedAmount);
             }
         }
-        return true;
+        if (!gathered) {
+            for (Entry<ItemStackKey, Integer> entry : gatheredItems.entrySet()) {
+                itemSources.insertItem(entry.getKey(), entry.getValue(), false, IItemList.InsertMode.HIGHEST_PRIORITY);
+            }
+        }
+        return gathered;
     }
 
     public boolean getIngredientEquivalent(int slot) {
