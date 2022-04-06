@@ -36,6 +36,7 @@ import gregtech.common.metatileentities.steam.boiler.SteamSolarBoiler;
 import gregtech.common.metatileentities.steam.multiblockpart.MetaTileEntitySteamHatch;
 import gregtech.common.metatileentities.steam.multiblockpart.MetaTileEntitySteamItemBus;
 import gregtech.common.metatileentities.storage.*;
+import gregtech.common.metatileentities.transport.MetaTileEntityLongDistanceItemPipeline;
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
@@ -218,6 +219,7 @@ public class MetaTileEntities {
     public static MetaTileEntityClipboard CLIPBOARD_TILE;
     public static MetaTileEntityMonitorScreen MONITOR_SCREEN;
     public static MetaTileEntityCentralMonitor CENTRAL_MONITOR;
+    public static MetaTileEntityLongDistanceItemPipeline LONG_DISTANCE_ITEM_PIPELINE;
 
     public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[4][GTValues.V.length];
 
@@ -505,6 +507,8 @@ public class MetaTileEntities {
         BASIC_FLUID_DRILLING_RIG = registerMetaTileEntity(1032, new MetaTileEntityFluidDrill(gregtechId("fluid_drilling_rig.mv"), 2));
         FLUID_DRILLING_RIG = registerMetaTileEntity(1033, new MetaTileEntityFluidDrill(gregtechId("fluid_drilling_rig.hv"), 3));
         ADVANCED_FLUID_DRILLING_RIG = registerMetaTileEntity(1034, new MetaTileEntityFluidDrill(gregtechId("fluid_drilling_rig.ev"), 4));
+
+        LONG_DISTANCE_ITEM_PIPELINE = registerMetaTileEntity(1035, new MetaTileEntityLongDistanceItemPipeline(gregtechId("long_distance_item_pipeline")));
 
         // MISC MTE's START: IDs 1150-2000
 

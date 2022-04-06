@@ -2261,6 +2261,11 @@ behavior.tricorder.debug_machine_invalid= invalid!
 behavior.tricorder.debug_machine_invalid_null=invalid! MetaTileEntity == null!
 behavior.tricorder.debug_cpu_load=Average CPU load of ~%sns over %s ticks with worst time of %sns.
 behavior.tricorder.debug_lag_count=Caused %s Lag Spike Warnings (anything taking longer than %sms) on the Server.
+behavior.tricorder.long_distance_pipeline.is_target=Is the Target
+behavior.tricorder.long_distance_pipeline.source_pos=Source is at X: %s Y: %s Z: %s
+behavior.tricorder.long_distance_pipeline.has_target=Has Target
+behavior.tricorder.long_distance_pipeline.no_target=Has no loaded Target
+behavior.tricorder.long_distance_pipeline.target_pos=Target is at X: %s Y: %s Z: %s
 
 metaitem.item_magnet.lv.name=Low Voltage Item Magnet
 metaitem.item_magnet.hv.name=High Voltage Item Magnet
@@ -2412,6 +2417,10 @@ tile.fusion_casing.fusion_casing_mk3.name=Fusion Machine Casing MK III
 tile.transparent_casing.tempered_glass.name=Tempered Glass
 tile.transparent_casing.fusion_glass.name=Fusion Glass
 tile.transparent_casing.laminated_glass.name=Laminated Glass
+
+# Long Distance Pipeline Blocks
+tile.long_distance_item_pipeline.name=Long Distance Item Pipe
+tile.long_distance_fluid_pipeline.name=Long Distance Fluid Pipe
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
@@ -4100,6 +4109,9 @@ gregtech.machine.world_accelerator.area=On Tile Entity mode, only adjacent block
 gregtech.machine.world_accelerator.mode_tile=Tile Entity Mode
 gregtech.machine.world_accelerator.mode_entity=Entity Mode
 
+# Long Distance Pipelines
+gregtech.machine.long_distance_pipeline.tooltip.1=Hit with §6Soft Mallet§7 to check for connections.
+
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side
 gregtech.machine.basic.input_from_output_side.disallow=Disallow Input from Output Side
@@ -4622,6 +4634,9 @@ gregtech.machine.fluid_tank.fluid=Contains %s L of %s
 
 gregtech.machine.item_controller.tooltip.redstone=Requires Redstone Input To Work
 gregtech.machine.item_controller.tooltip.consumption=While working, constantly consumes %,d EU/t
+
+gregtech.machine.long_distance_item_pipeline.name=Long Distance Item Pipeline Endpoint
+gregtech.machine.long_distance_fluid_pipeline.name=Long Distance Fluid Pipeline Endpoint
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=Voltage IN: §a%,d (§r%s§a)

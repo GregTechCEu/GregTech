@@ -80,6 +80,8 @@ public class MetaBlocks {
     public static final BlockFluidPipe[] FLUID_PIPES = new BlockFluidPipe[7];
     public static final BlockItemPipe[] ITEM_PIPES = new BlockItemPipe[8];
 
+    public static LongDistanceItemPipelineBlock LONG_DISTANCE_ITEM_PIPELINE;
+
     public static BlockBoilerCasing BOILER_CASING;
     public static BlockFireboxCasing BOILER_FIREBOX_CASING;
     public static BlockMetalCasing METAL_CASING;
@@ -167,6 +169,9 @@ public class MetaBlocks {
         WARNING_SIGN.setRegistryName("warning_sign");
         HERMETIC_CASING = new BlockHermeticCasing();
         HERMETIC_CASING.setRegistryName("hermetic_casing");
+
+        LONG_DISTANCE_ITEM_PIPELINE = new LongDistanceItemPipelineBlock();
+        LONG_DISTANCE_ITEM_PIPELINE.setRegistryName("long_distance_item_pipeline");
 
         ASPHALT = new BlockAsphalt();
         ASPHALT.setRegistryName("asphalt");
@@ -343,6 +348,7 @@ public class MetaBlocks {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RUBBER_SAPLING), 0,
                 new ModelResourceLocation(RUBBER_SAPLING.getRegistryName(), "inventory"));
         registerItemModel(PLANKS);
+        registerItemModel(LONG_DISTANCE_ITEM_PIPELINE);
 
         COMPRESSED.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
         FRAMES.values().stream().distinct().forEach(IModelSupplier::onModelRegister);

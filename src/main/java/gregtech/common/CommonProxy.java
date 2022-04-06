@@ -117,6 +117,8 @@ public class CommonProxy {
         for (BlockFluidPipe pipe : FLUID_PIPES) registry.register(pipe);
         for (BlockItemPipe pipe : ITEM_PIPES) registry.register(pipe);
 
+        registry.register(LONG_DISTANCE_ITEM_PIPELINE);
+
         registry.register(HERMETIC_CASING);
         registry.register(FOAM);
         registry.register(REINFORCED_FOAM);
@@ -210,6 +212,8 @@ public class CommonProxy {
         for (BlockCable cable : CABLES) registry.register(createItemBlock(cable, ItemBlockCable::new));
         for (BlockFluidPipe pipe : FLUID_PIPES) registry.register(createItemBlock(pipe, ItemBlockFluidPipe::new));
         for (BlockItemPipe pipe : ITEM_PIPES) registry.register(createItemBlock(pipe, ItemBlockItemPipe::new));
+
+        registry.register(createItemBlock(LONG_DISTANCE_ITEM_PIPELINE, ItemBlock::new));
 
         registry.register(createItemBlock(HERMETIC_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(BOILER_CASING, VariantItemBlock::new));
