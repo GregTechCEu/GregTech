@@ -112,7 +112,9 @@ public class MaterialPropertyExpansion {
             m.getProperty(PropertyKey.FLUID_PIPE).setAcidProof(acidProof);
             m.getProperty(PropertyKey.FLUID_PIPE).setCryoProof(cryoProof);
             m.getProperty(PropertyKey.FLUID_PIPE).setPlasmaProof(plasmaProof);
-        } else m.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxFluidTemperature, throughput, gasProof, acidProof, cryoProof, plasmaProof));
+        } else {
+            m.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxFluidTemperature, throughput, gasProof, acidProof, cryoProof, plasmaProof));
+        }
     }
 
     @ZenMethod

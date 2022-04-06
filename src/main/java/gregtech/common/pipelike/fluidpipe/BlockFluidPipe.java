@@ -119,11 +119,16 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
                 return;
 
             // apply temperature damage for each pipe
+            int temperature = 0;
+            int nonEmptyTanks = 0;
             for (FluidTank tank : ((TileEntityFluidPipeTickable) pipe).getFluidTanks()) {
                 if (tank.getFluid() != null && tank.getFluid().amount > 0) {
-                    int temperature = tank.getFluid().getFluid().getTemperature(tank.getFluid());
-                    EntityDamageUtil.applyTemperatureDamage(entityLiving, temperature, 1.0F, 5);
+                    temperature += tank.getFluid().getFluid().getTemperature(tank.getFluid());
+                    nonEmptyTanks++;
                 }
+            }
+            if (nonEmptyTanks != 0) {
+                EntityDamageUtil.applyTemperatureDamage(entityLiving, temperature / nonEmptyTanks, 1.0F, 5);
             }
         }
     }

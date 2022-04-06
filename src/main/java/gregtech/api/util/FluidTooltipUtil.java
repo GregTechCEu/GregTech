@@ -116,8 +116,10 @@ public class FluidTooltipUtil {
             tooltip.add(LocalizationUtils.format(material.getProperty(PropertyKey.FLUID).getFluidType().getUnlocalizedTooltip()));
         }
         tooltip.addAll(material.getProperty(PropertyKey.FLUID).getFluidType().getAdditionalTooltips());
-        if (temperature < 120) // fluids colder than 120K are cryogenic
+        if (temperature < 120) {
+            // fluids colder than 120K are cryogenic
             tooltip.add(LocalizationUtils.format("gregtech.fluid.temperature.cryogenic"));
+        }
         return tooltip;
     }
 }

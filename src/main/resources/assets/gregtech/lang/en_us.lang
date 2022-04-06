@@ -84,6 +84,7 @@ item.invalid.name=Invalid item
 fluid.empty=Empty
 
 gregtech.tooltip.hold_shift=Hold §aShift§7 for more info
+gregtech.tooltip.fluid_pipe_hold_shift=Hold §aShift§7 for fluid containment info
 
 metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.electric_item.tooltip=%,d/%,d EU - Tier %s

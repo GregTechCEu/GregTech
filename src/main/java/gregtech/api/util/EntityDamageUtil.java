@@ -27,11 +27,15 @@ public class EntityDamageUtil {
     public static void applyTemperatureDamage(@Nonnull EntityLivingBase entity, int temperature, float multiplier, int maximum) {
         if (temperature > 320) {
             int damage = (int) ((multiplier * (temperature - 300)) / 50.0F);
-            if (maximum > 0) damage = Math.min(maximum, damage);
+            if (maximum > 0) {
+                damage = Math.min(maximum, damage);
+            }
             applyHeatDamage(entity, damage);
         } else if (temperature < 260) {
             int damage = (int) ((multiplier * (273 - temperature)) / 25.0F);
-            if (maximum > 0) damage = Math.min(maximum, damage);
+            if (maximum > 0) {
+                damage = Math.min(maximum, damage);
+            }
             applyFrostDamage(entity, damage);
         }
     }
@@ -51,7 +55,8 @@ public class EntityDamageUtil {
         if (entity.getActivePotionEffect(MobEffects.FIRE_RESISTANCE) != null) return;
 
         entity.attackEntityFrom(DamageSources.getHeatDamage(), damage);
-        if (entity instanceof EntityPlayerMP) GTTriggers.HEAT_DEATH.trigger((EntityPlayerMP) entity);
+        if (entity instanceof EntityPlayerMP)
+            GTTriggers.HEAT_DEATH.trigger((EntityPlayerMP) entity);
     }
 
     /**
@@ -79,7 +84,8 @@ public class EntityDamageUtil {
         }
 
         entity.attackEntityFrom(DamageSources.getFrostDamage(), damage);
-        if (entity instanceof EntityPlayerMP) GTTriggers.COLD_DEATH.trigger((EntityPlayerMP) entity);
+        if (entity instanceof EntityPlayerMP)
+            GTTriggers.COLD_DEATH.trigger((EntityPlayerMP) entity);
     }
 
     /**

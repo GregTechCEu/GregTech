@@ -210,7 +210,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             }
 
             // chance to do a small explosion
-            if (world.rand.nextInt(isBurning ? 3 : 7) == 0) {
+            if (GTValues.RNG.nextInt(isBurning ? 3 : 7) == 0) {
                 this.doExplosion(1.0f + GTValues.RNG.nextFloat());
             }
         }
