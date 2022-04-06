@@ -2,6 +2,7 @@ package gregtech.common.covers.filter;
 
 import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.guiOld.Widget;
+import gregtech.api.guiOld.widgets.ServerWidgetGroup;
 import gregtech.api.guiOld.widgets.ToggleButtonWidget;
 import gregtech.api.util.IDirtyNotifiable;
 import net.minecraftforge.fluids.FluidStack;

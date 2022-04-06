@@ -1,15 +1,8 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.ModularUI;
-import com.cleanroommc.modularui.api.drawable.Text;
-import com.cleanroommc.modularui.api.math.Alignment;
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
-import com.cleanroommc.modularui.common.widget.ChangeableWidget;
-import com.cleanroommc.modularui.common.widget.MultiChildWidget;
-import com.cleanroommc.modularui.common.widget.TextWidget;
-import com.cleanroommc.modularui.common.widget.Widget;
 import gregtech.api.guiOld.GuiTextures;
-import gregtech.api.guiOld.widgets.*;
+import gregtech.api.guiOld.widgets.LabelWidget;
+import gregtech.api.guiOld.widgets.SlotWidget;
 import gregtech.api.util.IDirtyNotifiable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

@@ -7,14 +7,11 @@ import com.cleanroommc.modularui.common.widget.MultiChildWidget;
 import com.cleanroommc.modularui.common.widget.SlotWidget;
 import com.cleanroommc.modularui.common.widget.Widget;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.util.ItemStackKey;
 import gregtech.api.util.LargeStackSizeItemStackHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-
-import java.util.Set;
 
 public class SimpleItemFilter extends ItemFilter {
     private static final int MAX_MATCH_SLOTS = 9;
@@ -65,16 +62,17 @@ public class SimpleItemFilter extends ItemFilter {
     }
 
     @Override
-    public Integer matchItemStack(ItemStack itemStack) {
+    public Object matchItemStack(ItemStack itemStack) {
         int itemFilterMatchIndex = itemFilterMatch(getItemFilterSlots(), isIgnoreDamage(), isIgnoreNBT(), itemStack);
         return itemFilterMatchIndex == -1 ? null : itemFilterMatchIndex;
     }
 
     @Override
-    public int getSlotTransferLimit(Object matchSlot, Set<ItemStackKey> matchedStacks, int globalTransferLimit) {
-        Integer matchSlotIndex = (Integer) matchSlot;
-        ItemStack stackInFilterSlot = itemFilterSlots.getStackInSlot(matchSlotIndex);
-        return Math.min(stackInFilterSlot.getCount(), globalTransferLimit);
+    public int getTransferLimit(Object obj, int globalTransferLimit) {
+        if (obj instanceof Integer) {
+            return (int) obj;
+        }
+        return 0;
     }
 
     @Override

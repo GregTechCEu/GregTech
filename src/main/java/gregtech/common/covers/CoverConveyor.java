@@ -27,13 +27,12 @@ import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.widgets.*;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.newFilter.item.ItemFilter;
 import gregtech.common.covers.newFilter.item.ItemFilterHolder;
-import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.util.GTTransferUtils;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -52,7 +51,9 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
@@ -350,12 +351,10 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     protected static class GroupItemInfo {
         public final Object filterSlot;
-        public final Set<ItemStackKey> itemStackTypes;
         public int totalCount;
 
-        public GroupItemInfo(Object filterSlot, Set<ItemStackKey> itemStackTypes, int totalCount) {
+        public GroupItemInfo(Object filterSlot, int totalCount) {
             this.filterSlot = filterSlot;
-            this.itemStackTypes = itemStackTypes;
             this.totalCount = totalCount;
         }
     }
@@ -372,16 +371,9 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                 continue;
             }
             ItemStackKey itemStackKey = new ItemStackKey(itemStack);
-            if (!result.containsKey(itemStackKey)) {
-                TypeItemInfo itemInfo = new TypeItemInfo(itemStack.copy(), transferSlotIndex, new TIntArrayList(), 0);
-                itemInfo.totalCount += itemStack.getCount();
-                itemInfo.slots.add(srcIndex);
-                result.put(itemStackKey, itemInfo);
-            } else {
-                TypeItemInfo itemInfo = result.get(itemStackKey);
-                itemInfo.totalCount += itemStack.getCount();
-                itemInfo.slots.add(srcIndex);
-            }
+            TypeItemInfo itemInfo = result.computeIfAbsent(itemStackKey, key -> new TypeItemInfo(itemStack.copy(), transferSlotIndex, new TIntArrayList(), 0));
+            itemInfo.slots.add(srcIndex);
+            itemInfo.totalCount += itemStack.getCount();
         }
         return result;
     }
@@ -397,17 +389,8 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             if (transferSlotIndex == null) {
                 continue;
             }
-            ItemStackKey itemStackKey = new ItemStackKey(itemStack);
-            if (!result.containsKey(transferSlotIndex)) {
-                GroupItemInfo itemInfo = new GroupItemInfo(transferSlotIndex, new HashSet<>(), 0);
-                itemInfo.itemStackTypes.add(itemStackKey);
-                itemInfo.totalCount += itemStack.getCount();
-                result.put(transferSlotIndex, itemInfo);
-            } else {
-                GroupItemInfo itemInfo = result.get(transferSlotIndex);
-                itemInfo.itemStackTypes.add(itemStackKey);
-                itemInfo.totalCount += itemStack.getCount();
-            }
+            GroupItemInfo itemInfo = result.computeIfAbsent(transferSlotIndex, key -> new GroupItemInfo(transferSlotIndex, 0));
+            itemInfo.totalCount += itemStack.getCount();
         }
         return result;
     }

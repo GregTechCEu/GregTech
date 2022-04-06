@@ -1,14 +1,11 @@
 package gregtech.common.covers.newFilter.item;
 
 import gregtech.api.util.IDirtyNotifiable;
-import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.newFilter.FilterHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.IItemHandlerModifiable;
-
-import java.util.Set;
 
 public class ItemFilterHolder extends FilterHolder<ItemStack, ItemFilter> {
 
@@ -54,19 +51,26 @@ public class ItemFilterHolder extends FilterHolder<ItemStack, ItemFilter> {
     }
 
     public boolean showGlobalTransferLimitSlider() {
-        return getMaxStackSize() > 1 && (getCurrentFilter() == null || getCurrentFilter().showGlobalTransferLimitSlider());
+        return getCurrentFilter() == null || getCurrentFilter().showGlobalTransferLimitSlider();
     }
 
-    public int getSlotTransferLimit(Object slotIndex, Set<ItemStackKey> matchedStacks) {
+    public int getSlotTransferLimit(Object slotIndex) {
         int globalTransferLimit = getTransferStackSize();
         if (getCurrentFilter() == null || getCurrentFilter().isInverted()) {
             return globalTransferLimit;
         }
-        return getCurrentFilter().getSlotTransferLimit(slotIndex, matchedStacks, globalTransferLimit);
+        return getCurrentFilter().getTransferLimit(slotIndex, globalTransferLimit);
     }
 
     public Object matchItemStack(ItemStack itemStack) {
-        return getCurrentFilter() == null ? MATCH_RESULT_TRUE : getCurrentFilter().matchItemStack(itemStack);
+        if (getCurrentFilter() == null) {
+            return null;
+        }
+        Object result = getCurrentFilter().matchItemStack(itemStack);
+        if (result instanceof ItemStack) {
+            throw new IllegalStateException("Item Filter should not return a ItemStack as match result, since they can't be used properly in maps!");
+        }
+        return result;
     }
 
     @Override

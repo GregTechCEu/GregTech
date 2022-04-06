@@ -35,6 +35,26 @@ public class SimpleFluidFilter extends Filter<FluidStack> {
     }
 
     @Override
+    public int getTransferLimit(Object object, int globalTransferLimit) {
+        if (object instanceof FluidStack) {
+            for (FluidTank fluidTank : tanks) {
+                if (fluidTank.getFluid() != null && fluidTank.getFluid().isFluidEqual((FluidStack) object)) {
+                    return fluidTank.getFluid().amount;
+                }
+            }
+        }
+        return 0;
+    }
+
+    public void configureFilterTanks(int amount) {
+        for (FluidTank fluidTank : tanks) {
+            if (fluidTank.getFluid() != null)
+                fluidTank.getFluid().amount = amount;
+        }
+        this.markDirty();
+    }
+
+    @Override
     public Widget createFilterUI(UIBuildContext buildContext) {
         MultiChildWidget widget = new MultiChildWidget()
                 .addChild(createBlacklistButton(buildContext));
@@ -62,7 +82,7 @@ public class SimpleFluidFilter extends Filter<FluidStack> {
             for (int i = 0; i < list.tagCount(); i++) {
                 tanks[i].readFromNBT(list.getCompoundTagAt(i));
             }
-        } else if(nbt.hasKey("FluidFilter")) {
+        } else if (nbt.hasKey("FluidFilter")) {
             // legacy
             NBTTagList list = nbt.getTagList("FilterSlots", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.tagCount(); i++) {

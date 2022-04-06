@@ -9,6 +9,8 @@ import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Pos2d;
 import com.cleanroommc.modularui.common.internal.ModularWindow;
 import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
+import com.cleanroommc.modularui.common.widget.TextFieldWidget;
 import com.cleanroommc.modularui.common.widget.*;
 import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
@@ -16,9 +18,9 @@ import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.ModularUI.Builder;
-import gregtech.api.guiOld.widgets.WidgetGroup;
-import gregtech.client.renderer.texture.Textures;
+import gregtech.api.guiOld.widgets.*;
 import gregtech.api.util.ItemStackKey;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -163,21 +165,21 @@ public class CoverRoboticArm extends CoverConveyor {
                 TransferMode.class, this::getTransferMode, this::setTransferMode)
                 .setTooltipHoverString("cover.robotic_arm.transfer_mode.description"));
 
-        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(() -> itemFilterContainer.getFilterWrapper().getItemFilter() == null && transferMode != TransferMode.TRANSFER_ANY);
-        stackSizeGroup.addWidget(new ImageWidget(111, 70, 35, 20, GuiTextures.DISPLAY));
+        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(() -> !filterHolder.hasFilter() && transferMode != TransferMode.TRANSFER_ANY);
+        stackSizeGroup.addWidget(new ImageWidget(111, 70, 35, 20, gregtech.api.guiOld.GuiTextures.DISPLAY));
 
-        stackSizeGroup.addWidget(new IncrementButtonWidget(146, 70, 20, 20, 1, 8, 64, 512, itemFilterContainer::adjustTransferStackSize)
+        stackSizeGroup.addWidget(new IncrementButtonWidget(146, 70, 20, 20, 1, 8, 64, 512, filterHolder::adjustTransferStackSize)
                 .setDefaultTooltip()
                 .setTextScale(0.7f)
                 .setShouldClientCallback(false));
-        stackSizeGroup.addWidget(new IncrementButtonWidget(91, 70, 20, 20, -1, -8, -64, -512, itemFilterContainer::adjustTransferStackSize)
+        stackSizeGroup.addWidget(new IncrementButtonWidget(91, 70, 20, 20, -1, -8, -64, -512, filterHolder::adjustTransferStackSize)
                 .setDefaultTooltip()
                 .setTextScale(0.7f)
                 .setShouldClientCallback(false));
 
-        stackSizeGroup.addWidget(new TextFieldWidget2(113, 77, 31, 20, () -> String.valueOf(itemFilterContainer.getTransferStackSize()), val -> {
+        stackSizeGroup.addWidget(new TextFieldWidget2(113, 77, 31, 20, () -> String.valueOf(filterHolder.getTransferStackSize()), val -> {
                     if (val != null && !val.isEmpty())
-                        itemFilterContainer.setTransferStackSize(MathHelper.clamp(Integer.parseInt(val), 1, transferMode.maxStackSize));
+                        filterHolder.setTransferStackSize(MathHelper.clamp(Integer.parseInt(val), 1, transferMode.maxStackSize));
                 })
                         .setNumbersOnly(1, transferMode.maxStackSize)
                         .setMaxLength(4)

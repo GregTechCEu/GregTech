@@ -5,13 +5,15 @@ import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.common.internal.UIBuildContext;
 import com.cleanroommc.modularui.common.widget.*;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.util.ItemStackKey;
 import gregtech.api.util.OreDictExprFilter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.ItemStackHandler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class OreDictFilter extends ItemFilter {
@@ -95,19 +97,14 @@ public class OreDictFilter extends ItemFilter {
     public Object matchItemStack(ItemStack itemStack) {
         Boolean b = recentlyChecked.get(itemStack);
         if (b != null) {
-            return b ? true : null;
+            return b ? Boolean.TRUE : null;
         }
         if (OreDictExprFilter.matchesOreDict(matchRules, itemStack)) {
             recentlyChecked.put(itemStack, true);
-            return true;
+            return Boolean.TRUE;
         }
         recentlyChecked.put(itemStack, false);
         return null;
-    }
-
-    @Override
-    public int getSlotTransferLimit(Object matchSlot, Set<ItemStackKey> matchedStacks, int globalTransferLimit) {
-        return globalTransferLimit;
     }
 
     @Override

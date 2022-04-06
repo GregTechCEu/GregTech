@@ -5,22 +5,22 @@ import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Pos2d;
 import com.cleanroommc.modularui.common.internal.ModularWindow;
 import com.cleanroommc.modularui.common.internal.UIBuildContext;
-import com.cleanroommc.modularui.common.widget.*;
 import com.cleanroommc.modularui.common.widget.TextFieldWidget;
+import com.cleanroommc.modularui.common.widget.*;
 import com.google.common.math.IntMath;
 import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiFunctions;
 import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
-import gregtech.api.guiOld.widgets.*;
 import gregtech.api.guiOld.widgets.CycleButtonWidget;
+import gregtech.api.guiOld.widgets.*;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
-import gregtech.common.covers.filter.FluidFilter;
-import gregtech.common.covers.filter.FluidFilterContainer;
+import gregtech.common.covers.newFilter.Filter;
+import gregtech.common.covers.newFilter.fluid.SimpleFluidFilter;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -89,8 +89,8 @@ public class CoverFluidRegulator extends CoverPump {
         int fluidLeftToTransfer = transferLimit;
         for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
             FluidStack sourceFluid = tankProperties.getContents();
-            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null && transferMode != TransferMode.TRANSFER_ANY) {
-                supplyAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(sourceFluid);
+            if (this.filterHolder.getCurrentFilter() != null && transferMode != TransferMode.TRANSFER_ANY) {
+                supplyAmount = this.filterHolder.getCurrentFilter().getTransferLimit(sourceFluid, transferRate);
             }
             if (fluidLeftToTransfer < supplyAmount)
                 break;
@@ -133,8 +133,8 @@ public class CoverFluidRegulator extends CoverPump {
             if (transferred >= transferLimit)
                 break;
 
-            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null && transferMode != TransferMode.TRANSFER_ANY) {
-                keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(fluidStack);
+            if (this.filterHolder.getCurrentFilter() != null && transferMode != TransferMode.TRANSFER_ANY) {
+                keepAmount = this.filterHolder.getCurrentFilter().getTransferLimit(fluidStack, transferRate);
             }
 
             // if fluid needs to be moved to meet the Keep Exact value
@@ -243,10 +243,7 @@ public class CoverFluidRegulator extends CoverPump {
     }
 
     private boolean shouldDisplayAmountSlider() {
-        if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null) {
-            return false;
-        }
-        return this.transferMode == TransferMode.TRANSFER_EXACT || this.transferMode == TransferMode.KEEP_EXACT;
+        return !this.filterHolder.hasFilter() && this.transferMode != TransferMode.TRANSFER_ANY;
     }
 
     public String getTransferAmountString() {
@@ -438,7 +435,7 @@ public class CoverFluidRegulator extends CoverPump {
     }
 
     private void showTransferAmountField(Widget widget) {
-        boolean show = checkTransferMode();
+        boolean show = shouldDisplayAmountSlider();
         if (widget.isEnabled() != show) {
             widget.setEnabled(show);
         }
@@ -458,9 +455,9 @@ public class CoverFluidRegulator extends CoverPump {
         this.transferMode = TransferMode.values()[tagCompound.getInteger("TransferMode")];
         //legacy NBT tag
         if (!tagCompound.hasKey("filterv2") && tagCompound.hasKey("TransferAmount")) {
-            FluidFilter filter = getFluidFilterContainer().getFilterWrapper().getFluidFilter();
-            if (filter != null) {
-                filter.configureFilterTanks(tagCompound.getInteger("TransferAmount"));
+            Filter<FluidStack> filter = this.filterHolder.getCurrentFilter();
+            if (filter instanceof SimpleFluidFilter) {
+                ((SimpleFluidFilter) filter).configureFilterTanks(tagCompound.getInteger("TransferAmount"));
             }
         }
         this.transferAmount = tagCompound.getInteger("TransferAmount");

@@ -18,6 +18,15 @@ public abstract class Filter<T> {
         return matches(t, false);
     }
 
+    /**
+     * Determines how much can transferred based on t.
+     *
+     * @param object              by default an instance of T, but can be different fe. in {@link gregtech.common.covers.newFilter.item.ItemFilter}
+     * @param globalTransferLimit transferLimit of the holder
+     * @return transfer limit
+     */
+    public abstract int getTransferLimit(Object object, int globalTransferLimit);
+
     public abstract Widget createFilterUI(UIBuildContext buildContext);
 
     public Widget createBlacklistButton(UIBuildContext buildContext) {

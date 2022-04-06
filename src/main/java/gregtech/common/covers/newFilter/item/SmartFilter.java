@@ -6,9 +6,11 @@ import com.cleanroommc.modularui.common.widget.MultiChildWidget;
 import com.cleanroommc.modularui.common.widget.Widget;
 import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.recipes.*;
+import gregtech.api.recipes.CountableIngredient;
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.stack.ItemAndMetadata;
-import gregtech.api.util.ItemStackKey;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
@@ -17,7 +19,6 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class SmartFilter extends ItemFilter {
 
@@ -33,9 +34,11 @@ public class SmartFilter extends ItemFilter {
     }
 
     @Override
-    public int getSlotTransferLimit(Object matchSlot, Set<ItemStackKey> matchedStacks, int globalTransferLimit) {
-        ItemStack itemStack = (ItemStack) matchSlot;
-        return itemStack.getCount();
+    public int getTransferLimit(Object obj, int globalTransferLimit) {
+        if (obj instanceof Integer) {
+            return (int) obj;
+        }
+        return 0;
     }
 
     @Override
@@ -61,7 +64,7 @@ public class SmartFilter extends ItemFilter {
         if (cachedTransferRateValue == 0) {
             return null;
         }
-        return itemAndMetadata.toItemStack(cachedTransferRateValue);
+        return cachedTransferRateValue;
     }
 
     @Override
