@@ -83,7 +83,7 @@ public class OreDictFilter extends ItemFilter {
             return;
         }
 
-        testResult = matchesItemStack(testStack);
+        testResult = matches(testStack);
         if (testResult) {
             testMsg = "cover.ore_dictionary_filter.matches";
         } else {
@@ -93,19 +93,16 @@ public class OreDictFilter extends ItemFilter {
 
     @Override
     public Object matchItemStack(ItemStack itemStack) {
-        return matchesItemStack(itemStack) ? "wtf is this system?? i can put any non null object here and it i will work??? $arch" : null;
-    }
-
-    public boolean matchesItemStack(ItemStack itemStack) {
         Boolean b = recentlyChecked.get(itemStack);
-        if (b != null)
-            return b;
+        if (b != null) {
+            return b ? true : null;
+        }
         if (OreDictExprFilter.matchesOreDict(matchRules, itemStack)) {
             recentlyChecked.put(itemStack, true);
             return true;
         }
         recentlyChecked.put(itemStack, false);
-        return false;
+        return null;
     }
 
     @Override

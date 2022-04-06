@@ -29,7 +29,7 @@ public abstract class ItemFilter extends Filter<ItemStack> {
     public abstract Object matchItemStack(ItemStack itemStack);
 
     @Override
-    public boolean matches(ItemStack stack) {
-        return matchItemStack(stack) == null == isInverted();
+    public boolean matches(ItemStack stack, boolean ignoreInverted) {
+        return matchItemStack(stack) == null == (!ignoreInverted && isInverted());
     }
 }

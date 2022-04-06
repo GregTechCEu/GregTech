@@ -22,7 +22,6 @@ import java.util.Set;
 public class SmartFilter extends ItemFilter {
 
     private SmartFilteringMode filteringMode = SmartFilteringMode.ELECTROLYZER;
-    private SmartMatchingMode matchingMode = SmartMatchingMode.DEFAULT;
 
     public SmartFilteringMode getFilteringMode() {
         return filteringMode;
@@ -30,16 +29,6 @@ public class SmartFilter extends ItemFilter {
 
     public void setFilteringMode(SmartFilteringMode filteringMode) {
         this.filteringMode = filteringMode;
-        markDirty();
-    }
-
-    public SmartMatchingMode getMatchingMode() {
-        return matchingMode;
-    }
-
-    public void setMatchingMode(SmartMatchingMode matchingMode) {
-        filteringMode.transferStackSizesCache.clear();
-        this.matchingMode = matchingMode;
         markDirty();
     }
 
@@ -58,7 +47,7 @@ public class SmartFilter extends ItemFilter {
             ItemStack infinitelyBigStack = itemStack.copy();
             infinitelyBigStack.setCount(Integer.MAX_VALUE);
 
-            Recipe recipe = filteringMode.recipeMap.findRecipe(Long.MAX_VALUE, Collections.singletonList(infinitelyBigStack), Collections.emptyList(), Integer.MAX_VALUE, matchingMode.matchingMode);
+            Recipe recipe = filteringMode.recipeMap.findRecipe(Long.MAX_VALUE, Collections.singletonList(infinitelyBigStack), Collections.emptyList(), Integer.MAX_VALUE);
             if (recipe == null) {
                 filteringMode.transferStackSizesCache.put(itemAndMetadata, 0);
                 cachedTransferRateValue = 0;
@@ -84,13 +73,7 @@ public class SmartFilter extends ItemFilter {
                         .setTextureGetter(GuiFunctions.enumStringTextureGetter(SmartFilteringMode.class))
                         .setBackground(GuiTextures.BASE_BUTTON)
                         .setSize(75, 18)
-                        .setPos(0, 19))
-                .addChild(new CycleButtonWidget()
-                        .setForEnum(SmartMatchingMode.class, this::getMatchingMode, this::setMatchingMode)
-                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(SmartMatchingMode.class))
-                        .setBackground(GuiTextures.BASE_BUTTON)
-                        .setSize(75, 18)
-                        .setPos(87, 19));
+                        .setPos(0, 19));
     }
 
     @Override
@@ -101,15 +84,11 @@ public class SmartFilter extends ItemFilter {
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         tagCompound.setInteger("FilterMode", filteringMode.ordinal());
-        tagCompound.setInteger("MatchingMode", matchingMode.ordinal());
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         this.filteringMode = SmartFilteringMode.values()[tagCompound.getInteger("FilterMode")];
-        if (tagCompound.hasKey("MatchingMode")) {
-            this.matchingMode = SmartMatchingMode.values()[tagCompound.getInteger("MatchingMode")];
-        }
     }
 
     public enum SmartFilteringMode implements IStringSerializable {
@@ -131,26 +110,5 @@ public class SmartFilter extends ItemFilter {
         public String getName() {
             return localeName;
         }
-    }
-
-    public enum SmartMatchingMode implements IStringSerializable {
-
-        DEFAULT("cover.smart_item_filter.matching_mode.default", MatchingMode.DEFAULT),
-        IGNORE_FLUID("cover.smart_item_filter.matching_mode.ignore_fluid", MatchingMode.IGNORE_FLUIDS);
-
-        public final String localeName;
-        public final MatchingMode matchingMode;
-
-        SmartMatchingMode(String localeName, MatchingMode matchingMode) {
-            this.localeName = localeName;
-            this.matchingMode = matchingMode;
-        }
-
-        @Nonnull
-        @Override
-        public String getName() {
-            return localeName;
-        }
-
     }
 }

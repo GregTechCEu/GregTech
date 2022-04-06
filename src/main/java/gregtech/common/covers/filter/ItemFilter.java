@@ -1,13 +1,9 @@
 package gregtech.common.covers.filter;
 
-import com.cleanroommc.modularui.common.internal.UIBuildContext;
-import com.cleanroommc.modularui.common.widget.Widget;
 import gregtech.api.util.IDirtyNotifiable;
-import gregtech.api.util.ItemStackKey;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.Set;
 import java.util.function.Consumer;
 
 public abstract class ItemFilter {

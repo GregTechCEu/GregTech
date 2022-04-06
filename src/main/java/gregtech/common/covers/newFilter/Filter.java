@@ -12,7 +12,11 @@ public abstract class Filter<T> {
     private IDirtyNotifiable dirtyNotifiable;
     private boolean inverted = false;
 
-    public abstract boolean matches(T t);
+    public abstract boolean matches(T t, boolean ignoreInverted);
+
+    public boolean matches(T t) {
+        return matches(t, false);
+    }
 
     public abstract Widget createFilterUI(UIBuildContext buildContext);
 

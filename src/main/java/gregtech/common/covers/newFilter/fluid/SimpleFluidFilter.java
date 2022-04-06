@@ -22,16 +22,16 @@ public class SimpleFluidFilter extends Filter<FluidStack> {
     }
 
     @Override
-    public boolean matches(FluidStack fluidStack) {
+    public boolean matches(FluidStack fluidStack, boolean ignoreInverted) {
         if (fluidStack == null) {
             return true;
         }
         for (FluidTank tank : tanks) {
             if (fluidStack.isFluidEqual(tank.getFluid())) {
-                return !isInverted();
+                return ignoreInverted || !isInverted();
             }
         }
-        return isInverted();
+        return !ignoreInverted && isInverted();
     }
 
     @Override
