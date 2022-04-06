@@ -4824,24 +4824,31 @@ gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
 
-gregtech.command.usage=Usage: /gregtech <worldgen/util>
+gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload
 gregtech.command.worldgen.reload.success=Worldgen successfully reloaded from config.
 gregtech.command.worldgen.reload.failed=Worldgen reload failed. Check console for errors.
-gregtech.command.util.usage=Usage: /gregtech util <hand>
-gregtech.command.util.hand.usage=Usage: /gregtech util hand
-gregtech.command.util.hand.item_id=Item: %s (Metadata: %d)
-gregtech.command.util.hand.electric=Electric Info: %d / %d EU - Tier: %d; Is Battery: %s
-gregtech.command.util.hand.fluid=Fluid Info: %s %d / %d L; Can Fill: %s; Can Drain: %s
-gregtech.command.util.hand.material_meta_item=Ore Prefix: %s; Material: %s
-gregtech.command.util.hand.tool_stats=Tool Stats Class: %s
-gregtech.command.util.hand.not_a_player=This command is only usable by a player.
-gregtech.command.util.hand.no_item=You must hold something in mainhand before executing this command.
-gregtech.command.util.recipecheck.usage=Usage: /gregtech recipecheck
-gregtech.command.util.recipecheck.begin=Starting recipe conflict check...
-gregtech.command.util.recipecheck.end=Recipe conflict check found %d possible conflicts. Check the server log for more info
-gregtech.command.util.recipecheck.end_no_conflicts=No recipe conflicts found!
+gregtech.command.hand.usage=Usage: /gregtech hand
+gregtech.command.hand.item_id=Item: %s (Metadata: %d)
+gregtech.command.hand.electric=Electric Info: %d / %d EU - Tier: %d; Is Battery: %s
+gregtech.command.hand.fluid=Fluid Info: %d / %d L; Can Fill: %s; Can Drain: %s
+gregtech.command.hand.fluid2=Fluid Id:
+gregtech.command.hand.material=Material Id:
+gregtech.command.hand.ore_prefix=Ore prefix:
+gregtech.command.hand.meta_item=MetaItem Id:
+gregtech.command.hand.ore_dict_entries=§3Ore dictionary entries:
+gregtech.command.hand.tool_stats=Tool Stats Class: %s
+gregtech.command.hand.not_a_player=This command is only usable by a player.
+gregtech.command.hand.no_item=You must hold something in main hand or off hand before executing this command.
+gregtech.command.recipecheck.usage=Usage: /gregtech recipecheck
+gregtech.command.recipecheck.begin=Starting recipe conflict check...
+gregtech.command.recipecheck.end=Recipe conflict check found %d possible conflicts. Check the server log for more info
+gregtech.command.recipecheck.end_no_conflicts=No recipe conflicts found!
+gregtech.command.copy.copied_and_click=copied to clipboard. Click to copy again
+gregtech.command.copy.click_to_copy=Click to copy
+gregtech.command.copy.copied_start=Copied [
+gregtech.command.copy.copied_end=] to the clipboard
 
 gregtech.chat.cape=§5Congrats: you just unlocked a new cape! See the Cape Selector terminal app to use it.§r
 

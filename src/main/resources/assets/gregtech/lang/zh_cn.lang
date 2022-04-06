@@ -4848,24 +4848,31 @@ gregtech.multiblock.pyrolyse_oven.speed=处理速度: %s%%
 
 gregtech.multiblock.cracking_unit.energy=能量消耗: %s%%
 
-gregtech.command.usage=用法: /gregtech <worldgen/util>
+gregtech.command.usage=用法: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=用法: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=用法: /gregtech worldgen reload
 gregtech.command.worldgen.reload.success=世界生成成功从配置中重新加载。
-gregtech.command.worldgen.reload.failed=世界生成重新加载失败。检查控制台是否有错误。
-gregtech.command.util.usage=用法: /gregtech util <hand>
-gregtech.command.util.hand.usage=用法: /gregtech util hand
-gregtech.command.util.hand.item_id=物品: %s (元数据: %d)
-gregtech.command.util.hand.electric=电力信息: %d / %d EU - 等级: %d; 是电池: %s
-gregtech.command.util.hand.fluid=流体信息: %s %d / %d L; 可输入: %s; 可输出: %s
-gregtech.command.util.hand.material_meta_item=矿物前缀: %s; 材质: %s
-gregtech.command.util.hand.tool_stats=工具状态类: %s
-gregtech.command.util.hand.not_a_player=此命令仅供玩家使用。
-gregtech.command.util.hand.no_item=在执行此命令之前，您必须在主手上持有一些东西。
-gregtech.command.util.recipecheck.usage=用法:/gregtech recipecheck
-gregtech.command.util.recipecheck.begin=开始配方冲突检查…
-gregtech.command.util.recipecheck.end=配方冲突检查发现可能存在 %d 个冲突，查看服务器日志以了解更多信息
-gregtech.command.util.recipecheck.end_no_conflicts=没有发现配方冲突!
+gregtech.command.worldgen.reload.failed=W世界生成重新加载失败。检查控制台是否有错误。
+gregtech.command.hand.usage=用法: /gregtech hand
+gregtech.command.hand.item_id=物品: %s (元数据: %d)
+gregtech.command.hand.electric=电力信息: %d / %d EU - 等级: %d; 是电池: %s
+gregtech.command.hand.fluid=流体信息: %d / %d L; 可输入: %s; 可输出: %s
+gregtech.command.hand.fluid2=Fluid Id:
+gregtech.command.hand.material=Material Id:
+gregtech.command.hand.ore_prefix=Ore prefix:
+gregtech.command.hand.meta_item=MetaItem Id:
+gregtech.command.hand.ore_dict_entries=§3Ore dictionary entries:
+gregtech.command.hand.tool_stats=工具状态类: %s
+gregtech.command.hand.not_a_player=此命令仅供玩家使用。
+gregtech.command.hand.no_item=在执行此命令之前，您必须在主手上持有一些东西。
+gregtech.command.recipecheck.usage=用法: /gregtech recipecheck
+gregtech.command.recipecheck.begin=开始配方冲突检查…
+gregtech.command.recipecheck.end=配方冲突检查发现可能存在 %d 个冲突，查看服务器日志以了解更多信息
+gregtech.command.recipecheck.end_no_conflicts=没有发现配方冲突!
+gregtech.command.copy.copied_and_click=copied to clipboard. Click to copy again
+gregtech.command.copy.click_to_copy=Click to copy
+gregtech.command.copy.copied_start=Copied [
+gregtech.command.copy.copied_end=] to the clipboard
 
 gregtech.chat.cape=§5恭喜你:你刚刚解锁了一件新披风!查看终端应用程序"披风选择器"来使用它.§r
 

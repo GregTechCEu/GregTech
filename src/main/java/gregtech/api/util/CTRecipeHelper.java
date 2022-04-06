@@ -43,7 +43,6 @@ public class CTRecipeHelper {
                 return ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>) block).getItemMaterial(item).toCamelCaseString();
             }
         }
-
         return null;
     }
 
