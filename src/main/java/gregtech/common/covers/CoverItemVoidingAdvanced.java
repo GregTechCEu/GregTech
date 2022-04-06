@@ -4,11 +4,16 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Alignment;
+import com.cleanroommc.modularui.common.internal.ModularWindow;
+import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.*;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.guiOld.ModularUI;
+import gregtech.api.guiOld.Widget;
 import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,7 +34,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
     public CoverItemVoidingAdvanced(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
         this.voidingMode = VoidingMode.VOID_ANY;
-        this.itemFilterContainer.setMaxStackSize(1);
+        this.filterHolder.setMaxStackSize(1);
     }
 
     @Override
@@ -53,12 +58,12 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         for (TypeItemInfo typeItemInfo : itemTypeCount.values()) {
 
             int itemToVoidAmount = 0;
-            if (getItemFilterContainer().getFilterWrapper().getItemFilter() == null) {
-                itemToVoidAmount = typeItemInfo.totalCount - itemFilterContainer.getTransferStackSize();
+            if (getFilter() == null) {
+                itemToVoidAmount = typeItemInfo.totalCount - filterHolder.getTransferStackSize();
             } else {
-                if (itemFilterContainer.testItemStack(typeItemInfo.itemStack)) {
-                    Object matchedSlot = itemFilterContainer.matchItemStack(typeItemInfo.itemStack);
-                    itemToVoidAmount = typeItemInfo.totalCount - itemFilterContainer.getSlotTransferLimit(matchedSlot);
+                if (filterHolder.test(typeItemInfo.itemStack)) {
+                    Object matchedSlot = filterHolder.matchItemStack(typeItemInfo.itemStack);
+                    itemToVoidAmount = typeItemInfo.totalCount - filterHolder.getSlotTransferLimit(matchedSlot);
                 }
             }
 
@@ -88,44 +93,44 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 
     @Override
     public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
+        gregtech.api.guiOld.widgets.WidgetGroup primaryGroup = new gregtech.api.guiOld.widgets.WidgetGroup();
+        primaryGroup.addWidget(new gregtech.api.guiOld.widgets.LabelWidget(10, 5, getUITitle()));
 
         this.initFilterUI(20, primaryGroup::addWidget);
 
-        WidgetGroup filterGroup = new WidgetGroup();
-        filterGroup.addWidget(new CycleButtonWidget(91, 14, 75, 20,
+        gregtech.api.guiOld.widgets.WidgetGroup filterGroup = new gregtech.api.guiOld.widgets.WidgetGroup();
+        filterGroup.addWidget(new gregtech.api.guiOld.widgets.CycleButtonWidget(91, 14, 75, 20,
                 VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
                 .setTooltipHoverString("cover.voiding.voiding_mode.description"));
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 125 + 82)
+        ModularUI.Builder builder = ModularUI.builder(gregtech.api.guiOld.GuiTextures.BACKGROUND, 176, 125 + 82)
                 .widget(primaryGroup)
                 .widget(filterGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 125);
+                .bindPlayerInventory(player.inventory, gregtech.api.guiOld.GuiTextures.SLOT, 7, 125);
         return buildUI(builder, player);
     }
 
     //Basically the item filter container GUI code, with different Y widget positioning
     public void initFilterUI(int y, Consumer<Widget> widgetGroup) {
-        widgetGroup.accept(new LabelWidget(10, y, "cover.conveyor.item_filter.title"));
-        widgetGroup.accept(new SlotWidget(itemFilterContainer.getFilterInventory(), 0, 10, y + 15)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
+        widgetGroup.accept(new gregtech.api.guiOld.widgets.LabelWidget(10, y, "cover.conveyor.item_filter.title"));
+        widgetGroup.accept(new gregtech.api.guiOld.widgets.SlotWidget(filterHolder.getFilterInventory(), 0, 10, y + 15)
+                .setBackgroundTexture(gregtech.api.guiOld.GuiTextures.SLOT, gregtech.api.guiOld.GuiTextures.FILTER_SLOT_OVERLAY));
 
-        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(() -> itemFilterContainer.getFilterWrapper().getItemFilter() == null && voidingMode == VoidingMode.VOID_OVERFLOW);
-        stackSizeGroup.addWidget(new ImageWidget(111, 34, 35, 20, GuiTextures.DISPLAY));
+        gregtech.api.guiOld.widgets.ServerWidgetGroup stackSizeGroup = new gregtech.api.guiOld.widgets.ServerWidgetGroup(() -> getFilter() == null && voidingMode == VoidingMode.VOID_OVERFLOW);
+        stackSizeGroup.addWidget(new gregtech.api.guiOld.widgets.ImageWidget(111, 34, 35, 20, gregtech.api.guiOld.GuiTextures.DISPLAY));
 
-        stackSizeGroup.addWidget(new IncrementButtonWidget(146, 34, 20, 20, 1, 8, 64, 512, itemFilterContainer::adjustTransferStackSize)
+        stackSizeGroup.addWidget(new gregtech.api.guiOld.widgets.IncrementButtonWidget(146, 34, 20, 20, 1, 8, 64, 512, filterHolder::adjustTransferStackSize)
                 .setDefaultTooltip()
                 .setTextScale(0.7f)
                 .setShouldClientCallback(false));
-        stackSizeGroup.addWidget(new IncrementButtonWidget(91, 34, 20, 20, -1, -8, -64, -512, itemFilterContainer::adjustTransferStackSize)
+        stackSizeGroup.addWidget(new gregtech.api.guiOld.widgets.IncrementButtonWidget(91, 34, 20, 20, -1, -8, -64, -512, filterHolder::adjustTransferStackSize)
                 .setDefaultTooltip()
                 .setTextScale(0.7f)
                 .setShouldClientCallback(false));
 
-        stackSizeGroup.addWidget(new TextFieldWidget2(113, 41, 31, 20, () -> String.valueOf(itemFilterContainer.getTransferStackSize()), val -> {
+        stackSizeGroup.addWidget(new gregtech.api.guiOld.widgets.TextFieldWidget2(113, 41, 31, 20, () -> String.valueOf(filterHolder.getTransferStackSize()), val -> {
                     if (val != null && !val.isEmpty())
-                        itemFilterContainer.setTransferStackSize(MathHelper.clamp(Integer.parseInt(val), 1, voidingMode.maxStackSize));
+                        filterHolder.setTransferStackSize(MathHelper.clamp(Integer.parseInt(val), 1, voidingMode.maxStackSize));
                 })
                         .setCentered(true)
                         .setNumbersOnly(1, Integer.MAX_VALUE)
@@ -135,9 +140,53 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 
         widgetGroup.accept(stackSizeGroup);
 
-        this.itemFilterContainer.getFilterWrapper().initUI(y + 38, widgetGroup);
+        //this.itemFilterContainer.getFilterWrapper().initUI(y + 38, widgetGroup);
 
-        this.itemFilterContainer.getFilterWrapper().blacklistUI(y + 38, widgetGroup, () -> voidingMode != VoidingMode.VOID_OVERFLOW);
+        //this.itemFilterContainer.getFilterWrapper().blacklistUI(y + 38, widgetGroup, () -> voidingMode != VoidingMode.VOID_OVERFLOW);
+    }
+
+    @Override
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        return ModularWindow.builder(176, 166)
+                .bindPlayerInventory(buildContext.getPlayer())
+                .setBackground(GuiTextures.BACKGROUND)
+                .widget(new TextWidget(Text.localised(getUITitle()))
+                        .setPos(10, 5))
+                .widget(new CycleButtonWidget()
+                        .setForEnum(VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
+                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(VoidingMode.class))
+                        .setBackground(GuiTextures.BASE_BUTTON)
+                        .setPos(91, 20)
+                        .setSize(75, 20))
+                .widget(new Row()
+                        .widget(new ButtonWidget()
+                                .setOnClick(GuiFunctions.getIncrementer(1, 8, 64, 512, filterHolder::adjustTransferStackSize))
+                                .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                .setSize(12, 12))
+                        .widget(new TextFieldWidget()
+                                .setMaxLines(1)
+                                .setGetterInt(filterHolder::getTransferStackSize)
+                                .setSetterInt(val -> filterHolder.setTransferStackSize(MathHelper.clamp(val, 1, voidingMode.maxStackSize)))
+                                .setNumbers(1, Integer.MAX_VALUE)
+                                .setTextAlignment(Alignment.Center)
+                                .setTextColor(0xFFFFFF)
+                                .setBackground(gregtech.api.gui.GuiTextures.DISPLAY_SMALL)
+                                .setSize(56, 12))
+                        .widget(new ButtonWidget()
+                                .setOnClick(GuiFunctions.getIncrementer(-1, -8, -64, 512, filterHolder::adjustTransferStackSize))
+                                .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                .setSize(12, 12))
+                        .setTicker(this::checkShowLimitSlider))
+                .widget(filterHolder.createFilterUI(buildContext)
+                        .setPos(7, 134))
+                .build();
+    }
+
+    private void checkShowLimitSlider(com.cleanroommc.modularui.common.widget.Widget widget) {
+        boolean show = getFilter() == null && voidingMode == VoidingMode.VOID_OVERFLOW;
+        if (show != widget.isEnabled()) {
+            widget.setEnabled(show);
+        }
     }
 
     @Override
@@ -147,7 +196,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
 
     public void setVoidingMode(VoidingMode voidingMode) {
         this.voidingMode = voidingMode;
-        this.itemFilterContainer.setMaxStackSize(voidingMode.maxStackSize);
+        this.filterHolder.setMaxStackSize(voidingMode.maxStackSize);
         this.coverHolder.markDirty();
     }
 

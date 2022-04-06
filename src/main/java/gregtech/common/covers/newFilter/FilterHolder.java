@@ -108,6 +108,9 @@ public class FilterHolder<T, F extends Filter<T>> implements INBTSerializable<NB
         return mode;
     }
 
+    public IItemHandlerModifiable getFilterInventory() {
+        return filterInventory;
+    }
 
     public boolean test(T t) {
         return currentFilter == null || currentFilter.matches(t);

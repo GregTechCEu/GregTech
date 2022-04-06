@@ -27,6 +27,7 @@ import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.widgets.*;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
@@ -408,7 +409,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     @Override
     public void onRemoved() {
         NonNullList<ItemStack> drops = NonNullList.create();
-        //MetaTileEntity.clearInventory(drops, filterHolder.getFilterInventory());
+        MetaTileEntity.clearInventory(drops, filterHolder.getFilterInventory());
         for (ItemStack itemStack : drops) {
             Block.spawnAsEntity(coverHolder.getWorld(), coverHolder.getPos(), itemStack);
         }
