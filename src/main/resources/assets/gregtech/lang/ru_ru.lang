@@ -1505,51 +1505,51 @@ fluid.distilled_water=Дистиллированная вода
 # Проволочные блоки
 tile.wire_coil.tooltip_ebf=Когда используется в §aэлектрической доменной печи§7:
 tile.wire_coil.tooltip_heat=Базовая тепловая мощность: §e%dK
-tile.wire_coil.tooltip_smelter=Когда используется в §aмульти плавильном заводе§7:
+tile.wire_coil.tooltip_smelter=§aМультиплавильня§7:
 tile.wire_coil.tooltip_level=Уровень: §e%d
 tile.wire_coil.tooltip_discount=Снижение энергозатрат: §a%dx
 tile.wire_coil.cupronickel.name=Купроникелевая катушка
 tile.wire_coil.kanthal.name=Канталовая катушка
 tile.wire_coil.nichrome.name=Нихромовая катушка
 tile.wire_coil.tungstensteel.name=Вольфрамовая катушка
-tile.wire_coil.hss_g.name=Катушка HSS-G стали
+tile.wire_coil.hss_g.name=Катушка из HSS-G стали
 tile.wire_coil.naquadah.name=Катушка из наквада
 tile.wire_coil.naquadah_alloy.name=Катушка из сплава наквада
 
 # Блоки предупреждающих знаков
-tile.warning_sign.yellow_stripes.name=Блок желтых полос
-tile.warning_sign.small_yellow_stripes.name=Блок желтых полос
-tile.warning_sign.radioactive_hazard.name=Знак радиоактивной опасности
-tile.warning_sign.bio_hazard.name=Знак био опасности
-tile.warning_sign.explosion_hazard.name=Знак опасности взрыва
-tile.warning_sign.fire_hazard.name=Знак пожарной опасности
-tile.warning_sign.acid_hazard.name=Кислотный знак опасности
-tile.warning_sign.magic_hazard.name=Знак опасности магии
-tile.warning_sign.frost_hazard.name=Знак опасности низких температур
-tile.warning_sign.noise_hazard.name=Блок знака шумовой опасности
+tile.warning_sign.yellow_stripes.name=Желтый полосатый блок
+tile.warning_sign.small_yellow_stripes.name=Желтый полосатый блок
+tile.warning_sign.radioactive_hazard.name=Блок со знаком радиоактивной опасности
+tile.warning_sign.bio_hazard.name=Блок со знаком биологической опасности
+tile.warning_sign.explosion_hazard.name=Блок со знаком взрывоопасности
+tile.warning_sign.fire_hazard.name=Блок со знаком пожароопасности
+tile.warning_sign.acid_hazard.name=Блок со знаком кислотной опасности
+tile.warning_sign.magic_hazard.name=Блок со знаком магической опасности
+tile.warning_sign.frost_hazard.name=Блок со знаком опасности низких температур
+tile.warning_sign.noise_hazard.name=Блок со знаком шумовой опасности
 
 # Блоки корпуса котла
-tile.boiler_casing.bronze_pipe.name=Бронзовый кожух трубы
-tile.boiler_casing.steel_pipe.name=Стальной кожух трубы
-tile.boiler_casing.titanium_pipe.name=Титановый кожух трубы
-tile.boiler_casing.tungstensteel_pipe.name=Вольфрамовый кожух трубы
+tile.boiler_casing.bronze_pipe.name=Корпус бронзовой трубы
+tile.boiler_casing.steel_pipe.name=Корпус стальной трубы
+tile.boiler_casing.titanium_pipe.name=Корпус титановой трубы
+tile.boiler_casing.tungstensteel_pipe.name=Корпус вольфрамовой трубы
 
 # Блоки кожуха топки
 tile.boiler_casing.bronze_firebox.name=Бронзовый корпус топки
 tile.boiler_casing.steel_firebox.name=Стальной корпус топки
 tile.boiler_casing.titanium_firebox.name=Титановый корпус топки
-tile.boiler_casing.tungstensteel_firebox.name=Вольфрамовый корпус топки
+tile.boiler_casing.tungstensteel_firebox.name=Вольфрамо-стальной корпус топки
 
 # Металлические корпусные блоки
-tile.metal_casing.primitive_bricks.name=Примитивные кирпич
-tile.metal_casing.coke_bricks.name=Кирпич коксовой печи
-tile.metal_casing.bronze_bricks.name=Бронзовый корпус машины
-tile.metal_casing.invar_heatproof.name=Теплостойкий корпус машины
-tile.metal_casing.aluminium_frostproof.name=Морозостойкий корпус машины
-tile.metal_casing.steel_solid.name=Цельный стальной корпус машины
-tile.metal_casing.stainless_clean.name=Чистый корпус из нержавейки
-tile.metal_casing.titanium_stable.name=Стабильный титановый корпус машины
-tile.metal_casing.tungstensteel_robust.name=Крепкий вольфрамовый корпус машины
+tile.metal_casing.primitive_bricks.name=Огнеупорные кирпичи
+tile.metal_casing.coke_bricks.name=Кирпичи коксовой печи
+tile.metal_casing.bronze_bricks.name=Бронзовый корпус
+tile.metal_casing.invar_heatproof.name=Жаропрочный инваровый корпус
+tile.metal_casing.aluminium_frostproof.name=Морозостойкий алюминиевый корпус
+tile.metal_casing.steel_solid.name=Корпус из прочной стали
+tile.metal_casing.stainless_clean.name=Очищенный корпус из нержавеющей стали
+tile.metal_casing.titanium_stable.name=Стабильный титановый корпус
+tile.metal_casing.tungstensteel_robust.name=Крепкий вольфрамо-стальной корпус
 
 # Блоки корпуса машины
 tile.machine_casing.ultra_low_voltage.name=Корпус машины (ULV)
@@ -1561,15 +1561,15 @@ tile.machine_casing.insane_voltage.name=Корпус машины (IV)
 tile.machine_casing.ludicrous_voltage.name=Корпус машины (LuV)
 tile.machine_casing.zpm_voltage.name=Корпус машины (ZPM)
 tile.machine_casing.ultimate_voltage.name=Корпус машины (UV)
-tile.machine_casing.maximum_voltage.name=Корпус машины (Макс.)
+tile.machine_casing.maximum_voltage.name=Корпус машины (MAX)
 tile.steam_casing.bronze_hull.name=Бронзовый корпус
-tile.steam_casing.bronze_bricks_hull.name=Кирпичный бронзовый корпус
+tile.steam_casing.bronze_bricks_hull.name=Бронзовый кирпичный корпус
 tile.steam_casing.steel_hull.name=Стальной корпус
-tile.steam_casing.steel_bricks_hull.name=Кирпичный стальной корпус
+tile.steam_casing.steel_bricks_hull.name=Кирпичный корпус из кованого железа
 
 # Блоки турбинных корпусов
-tile.turbine_casing.bronze_gearbox.name=Бронзовый корпус редуктора
-tile.turbine_casing.steel_gearbox.name=Стальной корпус редуктора
+tile.turbine_casing.bronze_gearbox.name=Бронзовый корпус коробки передач
+tile.turbine_casing.steel_gearbox.name=Стальной корпус коробки передач
 tile.turbine_casing.titanium_gearbox.name=Титановый корпус редуктора
 tile.turbine_casing.steel_turbine_casing.name=Стальной корпус турбины
 tile.turbine_casing.titanium_turbine_casing.name=Титановый корпус турбины
@@ -1578,7 +1578,7 @@ tile.turbine_casing.tungstensteel_turbine_casing.name=Вольфрамовый �
 
 # Многоблочные корпусные блоки
 tile.multiblock_casing.engine_intake.name=Воздухозаборник двигателя
-tile.multiblock_casing.grate.name=Колосниковая решетка машины
+tile.multiblock_casing.grate.name=Вентиляционный корпус
 tile.multiblock_casing.assembler.name=Сборочный корпус машины
 tile.multiblock_casing.fusion.name=Корпус термоядерного агрегата
 tile.multiblock_casing.fusion_mk2.name=Корпус термоядерного агрегата MK II
@@ -2411,10 +2411,10 @@ tile.wire_coil.fluxed_electrum.name=Fluxed Electrum Coil Block
 tile.wire_coil.diamericium_titanium.name=Diamericium Titanium Coil Block
 tile.fusion_coil.superconductor.name=Superconducting Coil Block
 tile.fusion_coil.fusion_coil.name=Fusion Coil Block
-tile.machine_casing.tooltip1=Мобы не могут появиться на этом блоке
+tile.machine_casing.tooltip1=Монстры не могут появиться на этом блоке
 tile.machine_casing.tooltip2=Это НЕ TileEntity!
-tile.boiler_casing.polytetrafluoroethylene_pipe.name=Политетрафторэтиленовый кожух трубы
-tile.metal_casing.ptfe_inert.name=Химически инертный политетрафторэтиленовый корпус машины
+tile.boiler_casing.polytetrafluoroethylene_pipe.name=Корпус ПТФЭ трубы
+tile.metal_casing.ptfe_inert.name=Корпус из химически-инертного ПТФЭ
 tile.machine_casing.highly_ultimate_voltage.name=UHV Machine Casing
 tile.machine_casing.extremely_ultimate_voltage.name=UEV Machine Casing
 tile.machine_casing.insanely_ultimate_voltage.name=UIV Machine Casing
@@ -3700,22 +3700,22 @@ metaitem.cover.digital.name=Цифровой интерфейс (улучшен�
 metaitem.cover.digital.wireless.name=Беспроводной цифровой интерфейс(улучшение)
 metaitem.coloured.leds.name=Цветные светодиоды
 metaitem.display.name=Дисплей
-tile.wire_coil.tooltip_parallel_smelter=Макс. параллель: §e%s§7
+tile.wire_coil.tooltip_parallel_smelter=Макс. параллелей: §e%s§7
 tile.wire_coil.tooltip_energy_smelter=Энергопотребление: §e%s EU/т на рецепт§7
 tile.wire_coil.tooltip_pyro=§aПиролизная печь§7:
 tile.wire_coil.tooltip_speed_pyro=Скорость обработки: §e%s%%§7
 tile.wire_coil.tooltip_cracking=§aКрекинг§7:
 tile.wire_coil.tooltip_energy_cracking=Энергопотребление: §e%s%%§7
-tile.wire_coil.trinium.name=Триниумовая катушка
+tile.wire_coil.trinium.name=Триниумная катушка
 tile.wire_coil.tritanium.name=Тританиумовая катушка
-tile.metal_casing.hsse_sturdy.name=Прочный HSS-E корпус машины
+tile.metal_casing.hsse_sturdy.name=Корпус из прочной HSS-E стали
 tile.machine_casing.ultra_high_voltage.name=Корпус машины (UHV)
 tile.machine_casing.ultra_excessive_voltage.name=Корпус машины (UEV)
 tile.machine_casing.ultra_immense_voltage.name=Корпус машины (UIV)
-tile.machine_casing.Ultra Корпус машины (OpV)
+tile.machine_casing.Ultra Immense_voltage.name=Корпус машины (OpV)
 tile.steam_casing.wood_wall.name=Деревянная стена
-tile.turbine_casing.tungstensteel_gearbox.name=Вольфрамовый корпус редуктора
-tile.turbine_casing.stainless_steel_gearbox.name=Нержавеющий корпус редуктора
+tile.turbine_casing.tungstensteel_gearbox.name=Вольфрамо-стальной корпус коробки передач
+tile.turbine_casing.stainless_steel_gearbox.name=Нержавеющий корпус коробки передач
 tile.multiblock_casing.extreme_engine_intake.name=Корпус воздухозаборника улучшенного двигателя
 tile.multiblock_casing.assembly_control.name=Корпус управления сборкой
 
