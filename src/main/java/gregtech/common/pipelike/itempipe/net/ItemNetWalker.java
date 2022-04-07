@@ -81,13 +81,14 @@ public class ItemNetWalker extends PipeNetWalker {
         }
         CoverBehavior thisCover = currentPipe.getCoverableImplementation().getCoverAtSide(faceToNeighbour);
         CoverBehavior neighbourCover = neighbourPipe.getCoverableImplementation().getCoverAtSide(faceToNeighbour.getOpposite());
-        if (thisCover instanceof CoverShutter || neighbourCover instanceof CoverShutter) {
-            return false;
-        }
-        if (thisCover instanceof CoverItemFilter && ((CoverItemFilter) thisCover).getFilterMode() != ItemFilterMode.FILTER_INSERT) {
+        if (thisCover instanceof CoverShutter) {
+            filters.add(stack -> !thisCover.isValid() || !((CoverShutter) thisCover).isWorkingEnabled());
+        } else if (thisCover instanceof CoverItemFilter && ((CoverItemFilter) thisCover).getFilterMode() != ItemFilterMode.FILTER_INSERT) {
             filters.add(((CoverItemFilter) thisCover)::testItemStack);
         }
-        if (neighbourCover instanceof CoverItemFilter && ((CoverItemFilter) neighbourCover).getFilterMode() != ItemFilterMode.FILTER_EXTRACT) {
+        if (neighbourCover instanceof CoverShutter) {
+            filters.add(stack -> !neighbourCover.isValid() || !((CoverShutter) neighbourCover).isWorkingEnabled());
+        } else if (neighbourCover instanceof CoverItemFilter && ((CoverItemFilter) neighbourCover).getFilterMode() != ItemFilterMode.FILTER_EXTRACT) {
             filters.add(((CoverItemFilter) neighbourCover)::testItemStack);
         }
         return true;
