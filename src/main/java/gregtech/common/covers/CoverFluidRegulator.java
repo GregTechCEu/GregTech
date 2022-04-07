@@ -5,10 +5,12 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
-import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
-import gregtech.client.renderer.texture.Textures;
-import gregtech.api.util.GTFluidUtils;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.TextFormattingUtil;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.common.covers.filter.FluidFilter;
+import gregtech.common.covers.filter.FluidFilterContainer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,7 +29,6 @@ import org.apache.logging.log4j.message.FormattedMessage;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 
 public class CoverFluidRegulator extends CoverPump {
@@ -38,6 +39,12 @@ public class CoverFluidRegulator extends CoverPump {
     public CoverFluidRegulator(ICoverable coverHolder, EnumFacing attachedSide, int tier, int mbPerTick) {
         super(coverHolder, attachedSide, tier, mbPerTick);
         this.transferMode = TransferMode.TRANSFER_ANY;
+        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip, maxFluidTransferRate * 100);
+    }
+
+    @Override
+    protected boolean shouldShowTip() {
+        return transferMode != TransferMode.TRANSFER_ANY;
     }
 
     public int getTransferAmount() {
@@ -60,7 +67,7 @@ public class CoverFluidRegulator extends CoverPump {
         }
         switch (transferMode) {
             case TRANSFER_ANY:
-                return GTFluidUtils.transferFluids(sourceHandler, destHandler, transferLimit, fluidFilter::testFluidStack);
+                return GTTransferUtils.transferFluids(sourceHandler, destHandler, transferLimit, fluidFilter::testFluidStack);
             case KEEP_EXACT:
                 return doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.transferAmount);
             case TRANSFER_EXACT:
@@ -72,12 +79,15 @@ public class CoverFluidRegulator extends CoverPump {
     protected int doTransferExact(int transferLimit, IFluidHandler sourceHandler, IFluidHandler destHandler, Predicate<FluidStack> fluidFilter, int supplyAmount) {
         int fluidLeftToTransfer = transferLimit;
         for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
+            FluidStack sourceFluid = tankProperties.getContents();
+            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null && transferMode != TransferMode.TRANSFER_ANY) {
+                supplyAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(sourceFluid);
+            }
             if (fluidLeftToTransfer < supplyAmount)
                 break;
-            FluidStack sourceFluid = tankProperties.getContents();
             if (sourceFluid == null || sourceFluid.amount == 0 || !fluidFilter.test(sourceFluid)) continue;
             sourceFluid.amount = supplyAmount;
-            if (GTFluidUtils.transferExactFluidStack(sourceHandler, destHandler, sourceFluid.copy())) {
+            if (GTTransferUtils.transferExactFluidStack(sourceHandler, destHandler, sourceFluid.copy())) {
                 fluidLeftToTransfer -= sourceFluid.amount;
             }
             if (fluidLeftToTransfer == 0) break;
@@ -87,48 +97,54 @@ public class CoverFluidRegulator extends CoverPump {
 
     /**
      * Performs one tick worth of Keep Exact behavior.
+     *
      * @param transferLimit the maximum amount in milliBuckets that may be transferred in one tick
      * @param sourceHandler source(s) to move fluids from
-     * @param destHandler destination(s) to move fluids to
-     * @param fluidFilter a predicate which determines what fluids may be moved
-     * @param keepAmount the desired amount in milliBuckets of a particular fluid in the destination
+     * @param destHandler   destination(s) to move fluids to
+     * @param fluidFilter   a predicate which determines what fluids may be moved
+     * @param keepAmount    the desired amount in milliBuckets of a particular fluid in the destination
      * @return the total amount in milliBuckets of all fluids transferred from source to dest by this method
      */
     protected int doKeepExact(final int transferLimit,
                               final IFluidHandler sourceHandler,
                               final IFluidHandler destHandler,
                               final Predicate<FluidStack> fluidFilter,
-                              final int keepAmount) {
-        if(sourceHandler == null || destHandler == null || fluidFilter == null || keepAmount <= 0)
+                              int keepAmount) {
+
+        if (sourceHandler == null || destHandler == null || fluidFilter == null)
             return 0;
 
         final Map<FluidStack, Integer> sourceFluids =
-            collectDistinctFluids(sourceHandler, IFluidTankProperties::canDrain, fluidFilter);
+                collectDistinctFluids(sourceHandler, IFluidTankProperties::canDrain, fluidFilter);
         final Map<FluidStack, Integer> destFluids =
-            collectDistinctFluids(destHandler, IFluidTankProperties::canFill, fluidFilter);
+                collectDistinctFluids(destHandler, IFluidTankProperties::canFill, fluidFilter);
 
         int transferred = 0;
-        for(FluidStack fluidStack : sourceFluids.keySet()) {
-            if(transferred >= transferLimit)
+        for (FluidStack fluidStack : sourceFluids.keySet()) {
+            if (transferred >= transferLimit)
                 break;
+
+            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null && transferMode != TransferMode.TRANSFER_ANY) {
+                keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(fluidStack);
+            }
 
             // if fluid needs to be moved to meet the Keep Exact value
             int amountInDest;
-            if((amountInDest = destFluids.getOrDefault(fluidStack, 0)) < keepAmount) {
+            if ((amountInDest = destFluids.getOrDefault(fluidStack, 0)) < keepAmount) {
 
                 // move the lesser of the remaining transfer limit and the difference in actual vs keep exact amount
                 int amountToMove = Math.min(transferLimit - transferred,
-                                            keepAmount - amountInDest);
+                        keepAmount - amountInDest);
 
                 // Nothing to do here, try the next fluid.
-                if(amountToMove <= 0)
+                if (amountToMove <= 0)
                     continue;
 
                 // Simulate a drain of this fluid from the source tanks
                 FluidStack drainedResult = sourceHandler.drain(copyFluidStackWithAmount(fluidStack, amountToMove), false);
 
                 // Can't drain this fluid. Try the next one.
-                if(drainedResult == null || drainedResult.amount <= 0 || !fluidStack.equals(drainedResult))
+                if (drainedResult == null || drainedResult.amount <= 0 || !fluidStack.equals(drainedResult))
                     continue;
 
                 // account for the possibility that the drain might give us less than requested
@@ -138,7 +154,7 @@ public class CoverFluidRegulator extends CoverPump {
                 int fillResult = destHandler.fill(copyFluidStackWithAmount(fluidStack, drainable), false);
 
                 // Can't fill, try the next fluid.
-                if(fillResult <= 0)
+                if (fillResult <= 0)
                     continue;
 
                 // This Fluid can be drained and filled, so let's move the most that will actually work.
@@ -146,28 +162,28 @@ public class CoverFluidRegulator extends CoverPump {
                 FluidStack drainedActual = sourceHandler.drain(copyFluidStackWithAmount(fluidStack, fluidToMove), true);
 
                 // Account for potential error states from the drain
-                if(drainedActual == null)
+                if (drainedActual == null)
                     throw new RuntimeException("Misbehaving fluid container: drain produced null after simulation succeeded");
 
-                if(!fluidStack.equals(drainedActual))
+                if (!fluidStack.equals(drainedActual))
                     throw new RuntimeException("Misbehaving fluid container: drain produced a different fluid than the simulation");
 
-                if(drainedActual.amount != fluidToMove)
+                if (drainedActual.amount != fluidToMove)
                     throw new RuntimeException(new FormattedMessage(
-                        "Misbehaving fluid container: drain expected: {}, actual: {}",
-                        fluidToMove,
-                        drainedActual.amount).getFormattedMessage());
+                            "Misbehaving fluid container: drain expected: {}, actual: {}",
+                            fluidToMove,
+                            drainedActual.amount).getFormattedMessage());
 
 
                 // Perform Fill
                 int filledActual = destHandler.fill(copyFluidStackWithAmount(fluidStack, fluidToMove), true);
 
                 // Account for potential error states from the fill
-                if(filledActual != fluidToMove)
+                if (filledActual != fluidToMove)
                     throw new RuntimeException(new FormattedMessage(
-                        "Misbehaving fluid container: fill expected: {}, actual: {}",
-                        fluidToMove,
-                        filledActual).getFormattedMessage());
+                            "Misbehaving fluid container: fill expected: {}, actual: {}",
+                            fluidToMove,
+                            filledActual).getFormattedMessage());
 
                 // update the transferred amount
                 transferred += fluidToMove;
@@ -191,19 +207,19 @@ public class CoverFluidRegulator extends CoverPump {
     }
 
     private Map<FluidStack, Integer> collectDistinctFluids(IFluidHandler handler,
-                                                     Predicate<IFluidTankProperties> tankTypeFilter,
-                                                     Predicate<FluidStack> fluidTypeFilter) {
+                                                           Predicate<IFluidTankProperties> tankTypeFilter,
+                                                           Predicate<FluidStack> fluidTypeFilter) {
 
         final Map<FluidStack, Integer> summedFluids = new HashMap<>();
         Arrays.stream(handler.getTankProperties())
-              .filter(tankTypeFilter)
-              .map(IFluidTankProperties::getContents)
-              .filter(Objects::nonNull)
-              .filter(fluidTypeFilter)
-              .forEach(fs -> {
-                  summedFluids.putIfAbsent(fs, 0);
-                  summedFluids.computeIfPresent(fs, (k,v) -> v + fs.amount);
-              });
+                .filter(tankTypeFilter)
+                .map(IFluidTankProperties::getContents)
+                .filter(Objects::nonNull)
+                .filter(fluidTypeFilter)
+                .forEach(fs -> {
+                    summedFluids.putIfAbsent(fs, 0);
+                    summedFluids.computeIfPresent(fs, (k, v) -> v + fs.amount);
+                });
 
         return summedFluids;
     }
@@ -217,7 +233,10 @@ public class CoverFluidRegulator extends CoverPump {
         return transferMode;
     }
 
-    private boolean checkTransferMode() {
+    private boolean shouldDisplayAmountSlider() {
+        if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null) {
+            return false;
+        }
         return this.transferMode == TransferMode.TRANSFER_EXACT || this.transferMode == TransferMode.KEEP_EXACT;
     }
 
@@ -279,7 +298,7 @@ public class CoverFluidRegulator extends CoverPump {
                 TransferMode.class, this::getTransferMode, this::setTransferMode)
                 .setTooltipHoverString("cover.fluid_regulator.transfer_mode.description"));
 
-        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::checkTransferMode);
+        ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
         stackSizeGroup.addWidget(new ImageWidget(110, 64, 38, 18, GuiTextures.DISPLAY));
 
         stackSizeGroup.addWidget(new IncrementButtonWidget(148, 64, 18, 18, 1, 10, 100, 1000, this::adjustTransferSize)
@@ -301,12 +320,11 @@ public class CoverFluidRegulator extends CoverPump {
             }
         })
                 .setCentered(true)
-                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
+                .setNumbersOnly(1, transferMode == TransferMode.TRANSFER_EXACT ? maxFluidTransferRate : Integer.MAX_VALUE)
                 .setMaxLength(10)
-                .setValidator(getTextFieldValidator(() -> transferMode == TransferMode.TRANSFER_EXACT ? maxFluidTransferRate : Integer.MAX_VALUE))
                 .setScale(0.6f));
 
-        stackSizeGroup.addWidget(new SimpleTextWidget(129, 78, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.5f));
+        stackSizeGroup.addWidget(new SimpleTextWidget(129, 78, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
 
         return super.buildUI(builder.widget(filterGroup).widget(stackSizeGroup), player);
     }
@@ -317,12 +335,20 @@ public class CoverFluidRegulator extends CoverPump {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferMode", transferMode.ordinal());
         tagCompound.setInteger("TransferAmount", transferAmount);
+        tagCompound.setTag("filterv2", new NBTTagCompound());
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.transferMode = TransferMode.values()[tagCompound.getInteger("TransferMode")];
+        //legacy NBT tag
+        if (!tagCompound.hasKey("filterv2") && tagCompound.hasKey("TransferAmount")) {
+            FluidFilter filter = getFluidFilterContainer().getFilterWrapper().getFluidFilter();
+            if (filter != null) {
+                filter.configureFilterTanks(tagCompound.getInteger("TransferAmount"));
+            }
+        }
         this.transferAmount = tagCompound.getInteger("TransferAmount");
     }
 

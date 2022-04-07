@@ -17,7 +17,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.util.GTFluidUtils;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -55,7 +55,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     protected int fluidLeftToTransferLastSecond;
     private CoverableFluidHandlerWrapper fluidHandlerWrapper;
     protected boolean isWorkingAllowed = true;
-    protected final FluidFilterContainer fluidFilter;
+    protected FluidFilterContainer fluidFilter;
     protected BucketMode bucketMode;
 
     public CoverPump(ICoverable coverHolder, EnumFacing attachedSide, int tier, int mbPerTick) {
@@ -67,7 +67,11 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         this.pumpMode = PumpMode.EXPORT;
         this.distributionMode = DistributionMode.INSERT_FIRST;
         this.bucketMode = BucketMode.MILLI_BUCKET;
-        this.fluidFilter = new FluidFilterContainer(this);
+        this.fluidFilter = new FluidFilterContainer(this, this::shouldShowTip);
+    }
+
+    protected boolean shouldShowTip() {
+        return false;
     }
 
     protected void setTransferRate(int transferRate) {
@@ -140,9 +144,9 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
 
     protected int doTransferFluidsInternal(IFluidHandler myFluidHandler, IFluidHandler fluidHandler, int transferLimit) {
         if (pumpMode == PumpMode.IMPORT) {
-            return GTFluidUtils.transferFluids(fluidHandler, myFluidHandler, transferLimit, fluidFilter::testFluidStack);
+            return GTTransferUtils.transferFluids(fluidHandler, myFluidHandler, transferLimit, fluidFilter::testFluidStack);
         } else if (pumpMode == PumpMode.EXPORT) {
-            return GTFluidUtils.transferFluids(myFluidHandler, fluidHandler, transferLimit, fluidFilter::testFluidStack);
+            return GTTransferUtils.transferFluids(myFluidHandler, fluidHandler, transferLimit, fluidFilter::testFluidStack);
         }
         return 0;
     }
@@ -184,9 +188,8 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
             }
         })
                 .setCentered(true)
-                .setAllowedChars(TextFieldWidget2.NATURAL_NUMS)
-                .setMaxLength(8)
-                .setValidator(getTextFieldValidator(() -> bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate));
+                .setNumbersOnly(1, bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate)
+                .setMaxLength(8);
         primaryGroup.addWidget(textField);
 
         primaryGroup.addWidget(new CycleButtonWidget(106, 20, 30, 20,

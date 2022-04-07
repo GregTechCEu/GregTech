@@ -61,13 +61,18 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
         if (toggleTimer == 0 && KeyBind.ARMOR_CHARGING.isKeyDown(player)) {
             canShare = !canShare;
             toggleTimer = 5;
-            data.setBoolean("canShare", canShare);
             if (!world.isRemote) {
-                if (canShare)
+                if (canShare && cont.getCharge() == 0)
+                    player.sendStatusMessage(new TextComponentTranslation("metaarmor.qts.share.error"), true);
+                else if (canShare)
                     player.sendStatusMessage(new TextComponentTranslation("metaarmor.qts.share.enable"), true);
                 else
                     player.sendStatusMessage(new TextComponentTranslation("metaarmor.qts.share.disable"), true);
             }
+
+            // Only allow for charging to be enabled if charge is nonzero
+            canShare = canShare && (cont.getCharge() != 0);
+            data.setBoolean("canShare", canShare);
         }
 
         performFlying(player, hoverMode, item);
@@ -153,12 +158,25 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     public ActionResult<ItemStack> onRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (player.getHeldItem(hand).getItem() instanceof ArmorMetaItem<?> && player.isSneaking()) {
             NBTTagCompound data = GTUtility.getOrCreateNbtCompound(player.getHeldItem(hand));
-            boolean canShareEnergy = data.hasKey("canShare") && data.getBoolean("canShare");
+            boolean canShare = data.hasKey("canShare") && data.getBoolean("canShare");
+            IElectricItem cont = player.getHeldItem(hand).getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+            if (cont == null) {
+                return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
+            }
 
-            canShareEnergy = !canShareEnergy;
-            String locale = "metaarmor.energy_share." + (canShareEnergy ? "enable" : "disable");
-            if (!world.isRemote) player.sendMessage(new TextComponentTranslation(locale));
-            data.setBoolean("canShare", canShareEnergy);
+            canShare = !canShare;
+            if (!world.isRemote) {
+                if (canShare && cont.getCharge() == 0) {
+                    player.sendMessage(new TextComponentTranslation("metaarmor.energy_share.error"));
+                } else if (canShare) {
+                    player.sendMessage(new TextComponentTranslation("metaarmor.energy_share.enable"));
+                } else {
+                    player.sendMessage(new TextComponentTranslation("metaarmor.energy_share.disable"));
+                }
+            }
+
+            canShare = canShare && (cont.getCharge() != 0);
+            data.setBoolean("canShare", canShare);
             return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
         } else {
             return super.onRightClick(world, player, hand);

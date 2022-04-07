@@ -28,7 +28,7 @@ public class CTRecipeHelper {
         if (item.getItem() instanceof ItemBlock) {
             Block block = ((ItemBlock) item.getItem()).getBlock();
             if (item.getItem() instanceof MachineItemBlock) {
-                MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(item);
+                MetaTileEntity mte = GTUtility.getMetaTileEntity(item);
                 if (mte != null) {
                     return (mte.metaTileEntityId.getNamespace().equals("gregtech") ? mte.metaTileEntityId.getPath() : mte.metaTileEntityId.toString());
                 }
@@ -43,7 +43,6 @@ public class CTRecipeHelper {
                 return ((BlockMaterialPipe<?, ?, ?>) block).getPrefix().name + ((BlockMaterialPipe<?, ?, ?>) block).getItemMaterial(item).toCamelCaseString();
             }
         }
-
         return null;
     }
 

@@ -13,6 +13,18 @@
         "all": "gregtech:blocks/casings/transparent/tempered_glass"
       }
     },
+    "active=false,variant=laminated_glass": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/transparent/laminated_glass"
+      }
+    },
+    "active=true,variant=laminated_glass": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/transparent/laminated_glass"
+      }
+    },
     "active=false,variant=fusion_glass": {
       "model": "minecraft:cube_all",
       "textures": {

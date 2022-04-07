@@ -7,13 +7,13 @@ import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.CountableIngredient;
-import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.items.MetaItems;
@@ -135,7 +135,7 @@ public class CommandRecipeCheck extends CommandBase {
                         }
                         return null;
                     }).filter(Objects::nonNull).collect(Collectors.toList()),
-                    fluidInputs, Integer.MAX_VALUE, MatchingMode.DEFAULT);
+                    fluidInputs, Integer.MAX_VALUE);
             // checks whether the same object is returned
             if (foundRecipe != recipe) {
                 return new MismatchEntry(recipe, foundRecipe, recipeMap);
@@ -253,7 +253,7 @@ public class CommandRecipeCheck extends CommandBase {
                 return "(MetaItem) " + metaValueItem.unlocalizedName + " * " + stack.getCount();
             }
         } else if (stack.getItem() instanceof MachineItemBlock) {
-                MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(stack);
+                MetaTileEntity mte = GTUtility.getMetaTileEntity(stack);
                 if (mte != null) {
                     String id = mte.metaTileEntityId.toString();
                     if (mte.metaTileEntityId.getNamespace().equals("gregtech"))

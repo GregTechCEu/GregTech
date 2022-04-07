@@ -1,7 +1,7 @@
 package gregtech.api.pattern;
 
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.BlockInfo;
 import gregtech.common.blocks.BlockWireCoil;
@@ -324,7 +324,7 @@ public class TraceabilityPredicate {
         public List<ItemStack> getCandidates() {
             return candidates == null ? Collections.emptyList() : Arrays.stream(this.candidates.get()).filter(info -> info.getBlockState().getBlock() != Blocks.AIR).map(info -> {
                 IBlockState blockState = info.getBlockState();
-                MetaTileEntity metaTileEntity = info.getTileEntity() instanceof MetaTileEntityHolder ? ((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity() : null;
+                MetaTileEntity metaTileEntity = info.getTileEntity() instanceof IGregTechTileEntity ? ((IGregTechTileEntity) info.getTileEntity()).getMetaTileEntity() : null;
                 if (metaTileEntity != null) {
                     return metaTileEntity.getStackForm();
                 } else {

@@ -27,6 +27,9 @@ gregtech.top.energy_stored=Energy:
 gregtech.top.progress=Progress:
 gregtech.top.working_disabled=Working Disabled
 
+gregtech.top.energy_consumption=Usage:
+gregtech.top.energy_production=Output:
+
 gregtech.top.transform_up=§cStep Up§r
 gregtech.top.transform_down=§aStep Down§r
 gregtech.top.transform_input=§6Input:§r
@@ -46,6 +49,8 @@ gregtech.top.valid_structure=§aStructure Formed
 gregtech.top.obstructed_structure=§cStructure Obstructed
 gregtech.top.maintenance_fixed=§aMaintenance Fine
 gregtech.top.maintenance_broken=§cNeeds Maintenance
+
+gregtech.top.primitive_pump_production=Production:
 
 gregtech.multiblock.title=Multiblock Pattern
 gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
@@ -798,6 +803,15 @@ metaitem.cover.energy.detector.name=Energy Detector
 metaitem.cover.energy.detector.tooltip=Gives out Energy Amount as Redstone (as Cover)
 metaitem.cover.player.detector.name=Player Detector
 metaitem.cover.player.detector.tooltip=Gives out close Players as Redstone (as Cover)
+metaitem.cover.drain.name=Drain Cover
+metaitem.cover.fluid.voiding.name=Fluid Voiding Cover
+metaitem.cover.fluid.voiding.tooltip=Voids Fluids (as Cover)./nNeeds to be activated with Soft Hammer after placement
+metaitem.cover.fluid.voiding.advanced.name=Advanced Fluid Voiding Cover
+metaitem.cover.fluid.voiding.advanced.tooltip=Voids Fluids (as Cover) with amount control./nNeeds to be activated with Soft Hammer after placement
+metaitem.cover.item.voiding.name=Item Voiding Cover
+metaitem.cover.item.voiding.tooltip=Voids Items (as Cover)./nNeeds to be activated with Soft Hammer after placement
+metaitem.cover.item.voiding.advanced.name=Advanced Item Voiding Cover
+metaitem.cover.item.voiding.advanced.tooltip=Voids Items (as Cover) with amount control./nNeeds to be activated with Soft Hammer after placement
 
 metaitem.cover.facade.name=%s Facade
 metaitem.cover.facade.tooltip=Decorative outfit
@@ -1015,9 +1029,11 @@ metaarmor.jetpack.emergency_hover_mode=Emergency Hover Mode Enabled!
 
 metaarmor.nms.share.enable=NanoMuscle™ Suite: Charging Enabled
 metaarmor.nms.share.disable=NanoMuscle™ Suite: Charging Disabled
+metaarmor.nms.share.error=NanoMuscle™ Suite: §cNot enough power for charging!
 
 metaarmor.qts.share.enable=QuarkTech™ Suite: Charging Enabled
 metaarmor.qts.share.disable=QuarkTech™ Suite: Charging Disabled
+metaarmor.qts.share.error=QuarkTech™ Suite: §cNot enough power for charging!
 
 metaarmor.message.nightvision.enabled=§bNightVision: §aOn
 metaarmor.message.nightvision.disabled=§bNightVision: §cOff
@@ -1040,6 +1056,7 @@ metaarmor.hud.hover_mode=Hover Mode: %s
 mataarmor.hud.supply_mode=Supply Mode: %s
 metaarmor.hud.gravi_engine=GraviEngine: %s
 
+metaarmor.energy_share.error=Energy Supply: §cNot enough power for gadgets charging!
 metaarmor.energy_share.enable=Energy Supply: Gadgets charging enabled
 metaarmor.energy_share.disable=Energy Supply: Gadgets charging disabled
 metaarmor.energy_share.tooltip=Supply mode: %s
@@ -1069,6 +1086,7 @@ cover.ore_dictionary_filter.matches=Item matches
 cover.ore_dictionary_filter.matches_not=Item does not match
 
 cover.fluid_filter.title=Fluid Filter
+cover.fluid_filter.config_amount=Scroll wheel up increases amount, down decreases./nShift[§6x10§r],Ctrl[§ex100§r],Shift+Ctrl[§ax1000§r]/nRight click increases amount, left click decreases./nHold shift to double/halve./nMiddle click to clear
 cover.fluid_filter.mode.filter_fill=Filter Fill
 cover.fluid_filter.mode.filter_drain=Filter Drain
 cover.fluid_filter.mode.filter_both=Filter Fill & Drain
@@ -1082,14 +1100,19 @@ cover.item_filter.ignore_damage.disabled=Respect Damage
 cover.item_filter.ignore_nbt.enabled=Ignore NBT
 cover.item_filter.ignore_nbt.disabled=Respect NBT
 
+cover.voiding.voiding_mode.void_any=Void Matching
+cover.voiding.voiding_mode.void_overflow=Void Overflow
+cover.voiding.voiding_mode.description=§eVoid Matching§r will void anything matching the filter. /n§eVoid Overflow§r will void anything matching the filter, up to the specified amount.
+cover.fluid.voiding.title=Fluid Voiding Settings
+cover.fluid.voiding.advanced.title=Advanced Fluid Voiding Settings
+cover.item.voiding.title=Item Voiding Settings
+cover.item.voiding.advanced.title=Advanced Item Voiding Settings
+
 cover.smart_item_filter.title=Smart Item Filter
 cover.smart_item_filter.filtering_mode.electrolyzer=Electrolyzer
 cover.smart_item_filter.filtering_mode.centrifuge=Centrifuge
 cover.smart_item_filter.filtering_mode.sifter=Sifter
 cover.smart_item_filter.filtering_mode.description=Select Machine this Smart Filter will use for filtering./nIt will automatically pick right portions of items for robotic arm.
-cover.smart_item_filter.matching_mode.default=Default
-cover.smart_item_filter.matching_mode.ignore_fluid=Ignore Fluids
-cover.smart_item_filter.matching_mode.description=§eDefault§r - Will match recipes on both items/fluids criteria assuming you aren't providing any fluid. /n§eIgnore Fluids§r - Will match recipes only on items criteria.
 
 cover.conveyor.title=Conveyor Cover Settings (%s)
 cover.conveyor.transfer_rate=§7items/sec
@@ -1652,6 +1675,9 @@ material.cyclohexane=Cyclohexane
 material.cyclohexanone_oxime=Cyclohexanone Oxime
 material.caprolactam=Caprolactam
 material.nitrosyl_chloride=Nitrosyl Chloride
+material.butyraldehyde=Butyraldehyde
+material.polyvinyl_butyral=Polyvinyl Butyral
+
 
 # Unknown Composition Materials
 material.wood_gas=Wood Gas
@@ -1881,6 +1907,7 @@ material.insane=Insane
 material.epic=Epic
 material.legendary=Legendary
 material.maximum=Maximum
+
 
 # Item Renaming
 item.nether_quartz.oreNetherrack=Nether Quartz Ore
@@ -2167,6 +2194,7 @@ behaviour.soft_hammer=Activates and Deactivates Machines
 behaviour.soft_hammer.enabled=Working Enabled
 behaviour.soft_hammer.disabled=Working Disabled
 behaviour.lighter.tooltip=Can light things on fire
+behaviour.lighter.fluid.tooltip=Can light things on fire with Butane or Propane
 behaviour.lighter.uses=Remaining uses: %,d
 behavior.plunger.description=Use to clear 1000 L out of a machine's output tank./nUse while sneaking to clear 1000 L out of a machine's input tank./nInput tank clearing works only on GT machines!
 behavior.toggle_energy_consumer.tooltip=Use to toggle mode
@@ -2383,6 +2411,7 @@ tile.fusion_casing.fusion_casing_mk3.name=Fusion Machine Casing MK III
 # Transparent casing blocks
 tile.transparent_casing.tempered_glass.name=Tempered Glass
 tile.transparent_casing.fusion_glass.name=Fusion Glass
+tile.transparent_casing.laminated_glass.name=Laminated Glass
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
@@ -4316,12 +4345,12 @@ gregtech.machine.pyrolyse_oven.tooltip.1=§aCupronickel Coils§7 are §a25%%§7 
 gregtech.machine.distillation_tower.name=Distillation Tower
 gregtech.machine.multi_furnace.name=Multi Smelter
 gregtech.machine.cracker.name=Oil Cracking Unit
-gregtech.machine.cracker.tooltip.1=Every coil after §aCupronickel§7 reduces energy usage by §a5%%§7.
+gregtech.machine.cracker.tooltip.1=Every coil after §aCupronickel§7 reduces energy usage by §a10%%§7.
 gregtech.machine.coke_oven.name=Coke Oven
 gregtech.machine.processing_array.name=Processing Array
 gregtech.machine.advanced_processing_array.name=Advanced Processing Array
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
-gregtech.machine.coke_oven_hatch.tooltip=Allows automation access to coke oven.
+gregtech.machine.coke_oven_hatch.tooltip=Allows automation access for the Coke Oven.
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 
 
@@ -4795,24 +4824,31 @@ gregtech.multiblock.pyrolyse_oven.speed=Processing Speed: %s%%
 
 gregtech.multiblock.cracking_unit.energy=Energy Usage: %s%%
 
-gregtech.command.usage=Usage: /gregtech <worldgen/util>
+gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload
 gregtech.command.worldgen.reload.success=Worldgen successfully reloaded from config.
 gregtech.command.worldgen.reload.failed=Worldgen reload failed. Check console for errors.
-gregtech.command.util.usage=Usage: /gregtech util <hand>
-gregtech.command.util.hand.usage=Usage: /gregtech util hand
-gregtech.command.util.hand.item_id=Item: %s (Metadata: %d)
-gregtech.command.util.hand.electric=Electric Info: %d / %d EU - Tier: %d; Is Battery: %s
-gregtech.command.util.hand.fluid=Fluid Info: %s %d / %d L; Can Fill: %s; Can Drain: %s
-gregtech.command.util.hand.material_meta_item=Ore Prefix: %s; Material: %s
-gregtech.command.util.hand.tool_stats=Tool Stats Class: %s
-gregtech.command.util.hand.not_a_player=This command is only usable by a player.
-gregtech.command.util.hand.no_item=You must hold something in mainhand before executing this command.
-gregtech.command.util.recipecheck.usage=Usage: /gregtech recipecheck
-gregtech.command.util.recipecheck.begin=Starting recipe conflict check...
-gregtech.command.util.recipecheck.end=Recipe conflict check found %d possible conflicts. Check the server log for more info
-gregtech.command.util.recipecheck.end_no_conflicts=No recipe conflicts found!
+gregtech.command.hand.usage=Usage: /gregtech hand
+gregtech.command.hand.item_id=Item: %s (Metadata: %d)
+gregtech.command.hand.electric=Electric Info: %d / %d EU - Tier: %d; Is Battery: %s
+gregtech.command.hand.fluid=Fluid Info: %d / %d L; Can Fill: %s; Can Drain: %s
+gregtech.command.hand.fluid2=Fluid Id:
+gregtech.command.hand.material=Material Id:
+gregtech.command.hand.ore_prefix=Ore prefix:
+gregtech.command.hand.meta_item=MetaItem Id:
+gregtech.command.hand.ore_dict_entries=§3Ore dictionary entries:
+gregtech.command.hand.tool_stats=Tool Stats Class: %s
+gregtech.command.hand.not_a_player=This command is only usable by a player.
+gregtech.command.hand.no_item=You must hold something in main hand or off hand before executing this command.
+gregtech.command.recipecheck.usage=Usage: /gregtech recipecheck
+gregtech.command.recipecheck.begin=Starting recipe conflict check...
+gregtech.command.recipecheck.end=Recipe conflict check found %d possible conflicts. Check the server log for more info
+gregtech.command.recipecheck.end_no_conflicts=No recipe conflicts found!
+gregtech.command.copy.copied_and_click=copied to clipboard. Click to copy again
+gregtech.command.copy.click_to_copy=Click to copy
+gregtech.command.copy.copied_start=Copied [
+gregtech.command.copy.copied_end=] to the clipboard
 
 gregtech.chat.cape=§5Congrats: you just unlocked a new cape! See the Cape Selector terminal app to use it.§r
 

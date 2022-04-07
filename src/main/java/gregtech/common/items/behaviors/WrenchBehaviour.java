@@ -2,7 +2,7 @@ package gregtech.common.items.behaviors;
 
 import com.google.common.collect.UnmodifiableIterator;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
@@ -38,7 +38,7 @@ public class WrenchBehaviour implements IItemBehaviour {
 
             TileEntity tileEntity = world.getTileEntity(pos);
 
-            if (tileEntity instanceof MetaTileEntityHolder) {
+            if (tileEntity instanceof IGregTechTileEntity) {
                 //machines handle wrench click manually
                 return EnumActionResult.PASS;
             }

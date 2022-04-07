@@ -333,7 +333,7 @@ public class MaterialFlagAddition {
         oreProp.setSeparatedInto(Gold);
 
         oreProp = Pollucite.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(Caesium, Aluminium, Rubidium);
+        oreProp.setOreByProducts(Caesium, Aluminium, Potassium);
 
         oreProp = Bentonite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Aluminium, Calcium, Magnesium);

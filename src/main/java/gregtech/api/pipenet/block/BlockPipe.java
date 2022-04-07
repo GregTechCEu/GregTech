@@ -196,9 +196,14 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                 pipeTile.getCoverableImplementation().updateInputRedstoneSignals();
             }
         }
-        PipeNet<NodeDataType> net = getWorldPipeNet(worldIn).getNetFromPos(pos);
+
+    }
+
+    @Override
+    public void observedNeighborChange(@Nonnull IBlockState observerState, @Nonnull World world, @Nonnull BlockPos observerPos, @Nonnull Block changedBlock, @Nonnull BlockPos changedBlockPos) {
+        PipeNet<NodeDataType> net = getWorldPipeNet(world).getNetFromPos(observerPos);
         if (net != null) {
-            net.onNeighbourUpdate(fromPos);
+            net.onNeighbourUpdate(changedBlockPos);
         }
     }
 

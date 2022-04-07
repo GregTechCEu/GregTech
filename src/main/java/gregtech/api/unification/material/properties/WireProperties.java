@@ -12,6 +12,7 @@ public class WireProperties implements IMaterialProperty<WireProperties> {
     private int voltage;
     private int amperage;
     private int lossPerBlock;
+    private int superconductorCriticalTemperature;
     private boolean isSuperconductor;
 
     public WireProperties(int voltage, int baseAmperage, int lossPerBlock) {
@@ -19,9 +20,14 @@ public class WireProperties implements IMaterialProperty<WireProperties> {
     }
 
     public WireProperties(int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon) {
+        this(voltage, baseAmperage, lossPerBlock, false, 0);
+    }
+
+    public WireProperties(int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon, int criticalTemperature) {
         this.voltage = voltage;
         this.amperage = baseAmperage;
         this.lossPerBlock = isSuperCon ? 0 : lossPerBlock;
+        this.superconductorCriticalTemperature = isSuperCon ? criticalTemperature : 0;
         this.isSuperconductor = isSuperCon;
     }
 
@@ -104,6 +110,24 @@ public class WireProperties implements IMaterialProperty<WireProperties> {
         this.isSuperconductor = isSuperconductor;
     }
 
+    /**
+     * Retrieves the critical temperature of the superconductor (the temperature at which the superconductive phase transition happens)
+     *
+     * @return Critical temperature of the material
+     */
+    public int getSuperconductorCriticalTemperature(){
+        return superconductorCriticalTemperature;
+    }
+
+    /**
+     * Sets the material's critical temperature
+     *
+     * @param criticalTemperature The new critical temperature
+     */
+    public void setSuperconductorCriticalTemperature(int criticalTemperature){
+        this.superconductorCriticalTemperature = this.isSuperconductor ? criticalTemperature : 0;
+    }
+
     @Override
     public void verifyProperty(MaterialProperties properties) {
         properties.ensureSet(PropertyKey.DUST, true);
@@ -124,6 +148,7 @@ public class WireProperties implements IMaterialProperty<WireProperties> {
         return voltage == that.voltage &&
                 amperage == that.amperage &&
                 lossPerBlock == that.lossPerBlock &&
+                superconductorCriticalTemperature == that.superconductorCriticalTemperature &&
                 isSuperconductor == that.isSuperconductor;
     }
 

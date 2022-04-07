@@ -17,6 +17,7 @@ import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.common.ConfigHolder;
@@ -33,16 +34,13 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityWitherSkull;
-import net.minecraft.init.Enchantments;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -53,7 +51,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.IWorldNameable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -68,6 +65,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static gregtech.api.util.GTUtility.getMetaTileEntity;
 
 @SuppressWarnings("deprecation")
 public class BlockMachine extends BlockCustomParticle implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
@@ -146,11 +145,6 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
         return false;
-    }
-
-    public static MetaTileEntity getMetaTileEntity(IBlockAccess blockAccess, BlockPos pos) {
-        TileEntity holder = blockAccess.getTileEntity(pos);
-        return holder instanceof MetaTileEntityHolder ? ((MetaTileEntityHolder) holder).getMetaTileEntity() : null;
     }
 
     @Override
@@ -240,11 +234,12 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Override
     public void onBlockPlacedBy(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityLivingBase placer, ItemStack stack) {
-        MetaTileEntityHolder holder = (MetaTileEntityHolder) worldIn.getTileEntity(pos);
+        IGregTechTileEntity holder = (IGregTechTileEntity) worldIn.getTileEntity(pos);
         MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
         if (holder != null && sampleMetaTileEntity != null) {
-            if (stack.hasDisplayName()) {
-                holder.setCustomName(stack.getDisplayName());
+            // TODO Fix this
+            if (stack.hasDisplayName() && holder instanceof MetaTileEntityHolder) {
+                ((MetaTileEntityHolder) holder).setCustomName(stack.getDisplayName());
             }
             MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity);
             if (stack.hasTagCompound()) {
@@ -290,8 +285,12 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         //only set item tag if it's not empty, so newly created items will stack with dismantled
         if (!tagCompound.isEmpty())
             itemStack.setTagCompound(tagCompound);
-        if (metaTileEntity.getHolder().hasCustomName()) {
-            itemStack.setStackDisplayName(metaTileEntity.getHolder().getName());
+        // TODO Clean this up
+        if (metaTileEntity.getHolder() instanceof MetaTileEntityHolder) {
+            MetaTileEntityHolder holder = (MetaTileEntityHolder) metaTileEntity.getHolder();
+            if (holder.hasCustomName()) {
+                itemStack.setStackDisplayName(holder.getName());
+            }
         }
         drops.add(itemStack);
         metaTileEntity.getDrops(drops, harvesters.get());
@@ -383,7 +382,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Override
     public void harvestBlock(@Nonnull World worldIn, @Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nullable TileEntity te, @Nonnull ItemStack stack) {
-        tileEntities.set(te == null ? tileEntities.get() : ((MetaTileEntityHolder) te).getMetaTileEntity());
+        tileEntities.set(te == null ? tileEntities.get() : ((IGregTechTileEntity) te).getMetaTileEntity());
         super.harvestBlock(worldIn, player, pos, state, te, stack);
         tileEntities.set(null);
     }
@@ -395,7 +394,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Nullable
     @Override
-    public MetaTileEntityHolder createNewTileEntity(@Nullable World worldIn, int meta) {
+    public TileEntity createNewTileEntity(@Nullable World worldIn, int meta) {
         return new MetaTileEntityHolder();
     }
 

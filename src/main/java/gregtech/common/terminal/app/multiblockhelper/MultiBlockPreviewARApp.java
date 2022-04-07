@@ -8,7 +8,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.terminal.app.ARApplication;
@@ -121,8 +121,8 @@ public class MultiBlockPreviewARApp extends ARApplication {
     private MultiblockControllerBase getController() {
         if (os.clickPos != null) {
             TileEntity te = gui.entityPlayer.world.getTileEntity(os.clickPos);
-            if (te instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) te).getMetaTileEntity() instanceof MultiblockControllerBase) {
-                return (MultiblockControllerBase) ((MetaTileEntityHolder) te).getMetaTileEntity();
+            if (te instanceof IGregTechTileEntity && ((IGregTechTileEntity) te).getMetaTileEntity() instanceof MultiblockControllerBase) {
+                return (MultiblockControllerBase) ((IGregTechTileEntity) te).getMetaTileEntity();
             }
         }
         return null;
@@ -225,9 +225,9 @@ public class MultiBlockPreviewARApp extends ARApplication {
             int y = (i / 30) % 30 - 15;
             int z = (i / 900) - 15;
             TileEntity tileEntity = world.getTileEntity(lastPos.add(x, y, z));
-            if (tileEntity instanceof MetaTileEntityHolder) {
-                if (((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MultiblockControllerBase) {
-                    found.add((MultiblockControllerBase) ((MetaTileEntityHolder) tileEntity).getMetaTileEntity());
+            if (tileEntity instanceof IGregTechTileEntity) {
+                if (((IGregTechTileEntity) tileEntity).getMetaTileEntity() instanceof MultiblockControllerBase) {
+                    found.add((MultiblockControllerBase) ((IGregTechTileEntity) tileEntity).getMetaTileEntity());
                 }
             }
         }

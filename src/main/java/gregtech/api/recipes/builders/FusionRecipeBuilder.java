@@ -50,7 +50,7 @@ public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
 
     public ValidationResult<Recipe> build() {
         Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs,
-                duration, EUt, hidden);
+                duration, EUt, hidden, isCTRecipe);
         if (!recipe.setProperty(FusionEUToStartProperty.getInstance(), EUToStart)) {
             return ValidationResult.newResult(EnumValidationResult.INVALID, recipe);
         }

@@ -1,5 +1,6 @@
 package gregtech.api.recipes.crafttweaker;
 
+import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
@@ -69,7 +70,9 @@ public class CTRecipeBuilder {
 
     @ZenMethod
     public CTRecipeBuilder circuit(int num) {
-        this.backingBuilder.notConsumable(CraftTweakerIngredientWrapper.fromStacks(IntCircuitIngredient.getIntegratedCircuit(num)));
+        if (num < 0 || num > IntCircuitIngredient.CIRCUIT_MAX)
+            CraftTweakerAPI.logError("Given configuration number is out of range!", new IllegalArgumentException());
+        this.backingBuilder.notConsumable(new IntCircuitIngredient(num));
         return this;
     }
 
@@ -172,7 +175,7 @@ public class CTRecipeBuilder {
 
     @ZenMethod
     public void buildAndRegister() {
-        this.backingBuilder.buildAndRegister();
+        this.backingBuilder.isCTRecipe().buildAndRegister();
     }
 
     @ZenMethod
