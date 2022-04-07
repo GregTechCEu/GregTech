@@ -18,6 +18,7 @@ import gregtech.api.util.ItemStackKey;
 import gregtech.client.renderer.texture.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
@@ -156,7 +157,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                         .setForEnum(VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
                         .setTextureGetter(GuiFunctions.enumStringTextureGetter(VoidingMode.class))
                         .setBackground(GuiTextures.BASE_BUTTON)
-                        .setPos(91, 20)
+                        .setPos(91, 16)
                         .setSize(75, 20))
                 .widget(new Row()
                         .widget(new ButtonWidget()
@@ -176,9 +177,10 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                                 .setOnClick(GuiFunctions.getIncrementer(-1, -8, -64, 512, filterHolder::adjustTransferStackSize))
                                 .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
                                 .setSize(12, 12))
-                        .setTicker(this::checkShowLimitSlider))
+                        .setTicker(this::checkShowLimitSlider)
+                        .setPos(7, 20))
                 .widget(filterHolder.createFilterUI(buildContext)
-                        .setPos(7, 134))
+                        .setPos(7, 42))
                 .build();
     }
 
@@ -204,4 +206,15 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         return voidingMode;
     }
 
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+        this.voidingMode = VoidingMode.values()[tagCompound.getByte("VoidingMode")];
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+        tagCompound.setByte("VoidingMode", (byte) voidingMode.ordinal());
+    }
 }

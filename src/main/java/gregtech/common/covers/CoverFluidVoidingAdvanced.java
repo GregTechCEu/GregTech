@@ -4,7 +4,15 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Alignment;
+import com.cleanroommc.modularui.common.internal.ModularWindow;
+import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.ButtonWidget;
+import com.cleanroommc.modularui.common.widget.Row;
+import com.cleanroommc.modularui.common.widget.TextWidget;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.gui.GuiFunctions;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.widgets.*;
@@ -45,10 +53,10 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         }
         switch (voidingMode) {
             case VOID_ANY:
-                GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, fluidFilter::testFluidStack);
+                GTTransferUtils.transferFluids(myFluidHandler, nullFluidTank, Integer.MAX_VALUE, filterHolder::test);
                 break;
             case VOID_OVERFLOW:
-                voidOverflow(myFluidHandler, fluidFilter::testFluidStack, this.transferAmount);
+                voidOverflow(myFluidHandler, filterHolder::test, this.transferAmount);
         }
     }
 
@@ -67,10 +75,10 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
         for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
             FluidStack sourceFluid = tankProperties.getContents();
-            if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null && voidingMode == VoidingMode.VOID_OVERFLOW) {
-                keepAmount = this.fluidFilter.getFilterWrapper().getFluidFilter().getFluidTransferLimit(sourceFluid);
+            if (this.filterHolder.getCurrentFilter() != null && voidingMode == VoidingMode.VOID_OVERFLOW) {
+                keepAmount = this.filterHolder.getCurrentFilter().getTransferLimit(sourceFluid, transferRate);
             }
-            if (sourceFluid == null || sourceFluid.amount == 0 || !getFluidFilterContainer().testFluidStack(sourceFluid, true)) continue;
+            if (sourceFluid == null || sourceFluid.amount == 0 || !filterHolder.test(sourceFluid, true)) continue;
             sourceFluid.amount = sourceFluid.amount - keepAmount;
             sourceHandler.drain(sourceFluid, true);
         }
@@ -107,11 +115,15 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
     }
 
     private boolean shouldDisplayAmountSlider() {
-        if (this.fluidFilter.getFilterWrapper().getFluidFilter() != null) {
+        if (this.filterHolder.hasFilter()) {
             return false;
         }
 
         return this.voidingMode == VoidingMode.VOID_OVERFLOW;
+    }
+
+    public int getTransferAmount() {
+        return transferAmount;
     }
 
     public String getTransferAmountString() {
@@ -128,17 +140,17 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
         WidgetGroup primaryGroup = new WidgetGroup();
         primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
 
-        primaryGroup.addWidget(new SlotWidget(fluidFilter.getFilterInventory(), 0, 10, 15)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FILTER_SLOT_OVERLAY));
-        this.fluidFilter.getFilterWrapper().initUI(20, primaryGroup::addWidget);
-        this.fluidFilter.getFilterWrapper().blacklistUI(32, primaryGroup::addWidget, () -> voidingMode != VoidingMode.VOID_OVERFLOW);
+        primaryGroup.addWidget(new SlotWidget(filterHolder.getFilterInventory(), 0, 10, 15)
+                .setBackgroundTexture(gregtech.api.guiOld.GuiTextures.SLOT, gregtech.api.guiOld.GuiTextures.FILTER_SLOT_OVERLAY));
+        //this.fluidFilter.getFilterWrapper().initUI(20, primaryGroup::addWidget);
+        //this.fluidFilter.getFilterWrapper().blacklistUI(32, primaryGroup::addWidget, () -> voidingMode != VoidingMode.VOID_OVERFLOW);
 
         primaryGroup.addWidget(new CycleButtonWidget(92, 14, 75, 18,
                 VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
                 .setTooltipHoverString("cover.voiding.voiding_mode.description"));
 
         ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::shouldDisplayAmountSlider);
-        stackSizeGroup.addWidget(new ImageWidget(110, 72, 38, 18, GuiTextures.DISPLAY));
+        stackSizeGroup.addWidget(new ImageWidget(110, 72, 38, 18, gregtech.api.guiOld.GuiTextures.DISPLAY));
 
         stackSizeGroup.addWidget(new IncrementButtonWidget(148, 72, 18, 18, 1, 10, 100, 1000, this::adjustTransferSize)
                 .setDefaultTooltip()
@@ -172,11 +184,56 @@ public class CoverFluidVoidingAdvanced extends CoverFluidVoiding {
 
         stackSizeGroup.addWidget(new SimpleTextWidget(129, 86, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.6f));
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 100 + 82)
+        ModularUI.Builder builder = ModularUI.builder(gregtech.api.guiOld.GuiTextures.BACKGROUND, 176, 100 + 82)
                 .widget(primaryGroup)
                 .widget(stackSizeGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 100);
+                .bindPlayerInventory(player.inventory, gregtech.api.guiOld.GuiTextures.SLOT, 7, 100);
         return buildUI(builder, player);
+    }
+
+    @Override
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        return ModularWindow.builder(176, 166)
+                .bindPlayerInventory(buildContext.getPlayer())
+                .setBackground(GuiTextures.BACKGROUND)
+                .widget(new TextWidget(Text.localised(getUITitle()))
+                        .setPos(10, 5))
+                .widget(new com.cleanroommc.modularui.common.widget.CycleButtonWidget()
+                        .setForEnum(VoidingMode.class, this::getVoidingMode, this::setVoidingMode)
+                        .setTextureGetter(GuiFunctions.enumStringTextureGetter(VoidingMode.class))
+                        .setBackground(GuiTextures.BASE_BUTTON)
+                        .setPos(91, 16)
+                        .setSize(75, 20))
+                .widget(new Row()
+                        .widget(new ButtonWidget()
+                                .setOnClick(GuiFunctions.getIncrementer(1, 10, 100, 1000, this::adjustTransferSize))
+                                .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
+                                .setSize(12, 12))
+                        .widget(new com.cleanroommc.modularui.common.widget.TextFieldWidget()
+                                .setMaxLines(1)
+                                .setGetterInt(() -> this.bucketMode == BucketMode.BUCKET ? transferAmount / 1000 : transferAmount)
+                                .setSetterInt(val -> setTransferAmount(this.bucketMode == BucketMode.BUCKET ? val * 1000 : val))
+                                .setNumbers(1, Integer.MAX_VALUE)
+                                .setTextAlignment(Alignment.Center)
+                                .setTextColor(0xFFFFFF)
+                                .setBackground(gregtech.api.gui.GuiTextures.DISPLAY_SMALL)
+                                .setSize(56, 12))
+                        .widget(new ButtonWidget()
+                                .setOnClick(GuiFunctions.getIncrementer(-1, -10, -100, -1000, this::adjustTransferSize))
+                                .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
+                                .setSize(12, 12))
+                        .setTicker(this::checkShowLimitSlider)
+                        .setPos(7, 20))
+                .widget(filterHolder.createFilterUI(buildContext, this::checkControlsAmount)
+                        .setPos(7, 42))
+                .build();
+    }
+
+    private void checkShowLimitSlider(com.cleanroommc.modularui.common.widget.Widget widget) {
+        boolean show = !filterHolder.hasFilter() && voidingMode == VoidingMode.VOID_OVERFLOW;
+        if (show != widget.isEnabled()) {
+            widget.setEnabled(show);
+        }
     }
 
     @Override

@@ -4,20 +4,21 @@ import com.cleanroommc.modularui.common.internal.UIBuildContext;
 import com.cleanroommc.modularui.common.widget.FluidSlotWidget;
 import com.cleanroommc.modularui.common.widget.MultiChildWidget;
 import com.cleanroommc.modularui.common.widget.Widget;
-import gregtech.common.covers.newFilter.Filter;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
-public class SimpleFluidFilter extends Filter<FluidStack> {
+import java.util.function.Consumer;
+
+public class SimpleFluidFilter extends FluidFilter {
 
     private final FluidTank[] tanks = new FluidTank[9];
 
     public SimpleFluidFilter() {
         for (int i = 0; i < 9; i++) {
-            tanks[i] = new FluidTank(1);
+            tanks[i] = new FluidTank(Integer.MAX_VALUE);
         }
     }
 
@@ -55,11 +56,13 @@ public class SimpleFluidFilter extends Filter<FluidStack> {
     }
 
     @Override
-    public Widget createFilterUI(UIBuildContext buildContext) {
+    public Widget createFilterUI(UIBuildContext buildContext, Consumer<Widget> controlsAmountHandler) {
         MultiChildWidget widget = new MultiChildWidget()
                 .addChild(createBlacklistButton(buildContext));
         for (int i = 0; i < 9; i++) {
-            widget.addChild(FluidSlotWidget.phantom(tanks[i], true).setPos(i * 18, 19));
+            widget.addChild(FluidSlotWidget.phantom(tanks[i], true)
+                    .setTicker(controlsAmountHandler)
+                    .setPos(i * 18, 19));
         }
         return widget;
     }

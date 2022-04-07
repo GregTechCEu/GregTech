@@ -1,6 +1,6 @@
 package gregtech.api.metatileentity.interfaces;
 
-import gregtech.api.gui.IUIHolder;
+import gregtech.api.guiOld.IUIHolder;
 import gregtech.api.metatileentity.MetaTileEntity;
 import net.minecraft.network.PacketBuffer;
 

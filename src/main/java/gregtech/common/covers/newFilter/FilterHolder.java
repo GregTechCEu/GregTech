@@ -1,6 +1,5 @@
 package gregtech.common.covers.newFilter;
 
-import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.common.internal.UIBuildContext;
@@ -14,14 +13,14 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 
-public class FilterHolder<T, F extends Filter<T>> implements INBTSerializable<NBTTagCompound> {
+public abstract class FilterHolder<T, F extends Filter<T>> implements INBTSerializable<NBTTagCompound> {
 
     @Nullable
     private F currentFilter;
     protected final IDirtyNotifiable dirtyNotifiable;
     private FilterMode mode = FilterMode.BOTH;
-    private final IItemHandlerModifiable filterInventory;
-    private final int filterSlotIndex;
+    protected final IItemHandlerModifiable filterInventory;
+    protected final int filterSlotIndex;
     private boolean saveFilterInventory = false;
 
     protected FilterHolder(IDirtyNotifiable dirtyNotifiable) {
@@ -41,7 +40,6 @@ public class FilterHolder<T, F extends Filter<T>> implements INBTSerializable<NB
         SlotWidget filterSlot = new SlotWidget(filterInventory, filterSlotIndex);
         filterSlot.setFilter(item -> getFilterOf(item) != null);
         filterSlot.setChangeListener(() -> {
-            ModularUI.LOGGER.info("On slot changed {}", filterSlot.getMcSlot().getStack());
             checkFilter(filterSlot.getMcSlot().getStack());
             filterWidget.notifyChangeServer();
         });
@@ -64,12 +62,13 @@ public class FilterHolder<T, F extends Filter<T>> implements INBTSerializable<NB
         if (filter == null) {
             return null;
         }
-        try {
+        if (getFilterClass().isAssignableFrom(filter.getClass())) {
             return (F) filter;
-        } catch (ClassCastException ignored) {
-            return null;
         }
+        return null;
     }
+
+    public abstract Class<F> getFilterClass();
 
     public void checkFilter(ItemStack itemStack) {
         F filter = getFilterOf(itemStack);
@@ -110,6 +109,10 @@ public class FilterHolder<T, F extends Filter<T>> implements INBTSerializable<NB
 
     public IItemHandlerModifiable getFilterInventory() {
         return filterInventory;
+    }
+
+    public boolean test(T t, boolean ignoresInverted) {
+        return currentFilter == null || currentFilter.matches(t, ignoresInverted);
     }
 
     public boolean test(T t) {

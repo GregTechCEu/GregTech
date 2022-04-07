@@ -22,6 +22,11 @@ public class ItemFilterHolder extends FilterHolder<ItemStack, ItemFilter> {
         super(filterInventory, filterSlotIndex, dirtyNotifiable);
     }
 
+    @Override
+    public Class<ItemFilter> getFilterClass() {
+        return ItemFilter.class;
+    }
+
     public int getMaxStackSize() {
         return maxStackSizeLimit;
     }
@@ -35,7 +40,6 @@ public class ItemFilterHolder extends FilterHolder<ItemStack, ItemFilter> {
 
     public void setTransferStackSize(int transferStackSize) {
         this.transferStackSize = MathHelper.clamp(transferStackSize, 1, getMaxStackSize());
-        this.maxStackSizeLimit = getTransferStackSize();
         this.dirtyNotifiable.markAsDirty();
     }
 
@@ -46,7 +50,6 @@ public class ItemFilterHolder extends FilterHolder<ItemStack, ItemFilter> {
     public void setMaxStackSize(int maxStackSizeLimit) {
         this.maxStackSizeLimit = maxStackSizeLimit;
         this.transferStackSize = MathHelper.clamp(transferStackSize, 1, getMaxStackSize());
-        //this.maxStackSizeLimit = getTransferStackSize();
         this.dirtyNotifiable.markAsDirty();
     }
 

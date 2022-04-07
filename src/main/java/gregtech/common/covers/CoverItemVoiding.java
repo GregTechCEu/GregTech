@@ -89,7 +89,7 @@ public class CoverItemVoiding extends CoverConveyor {
                 .widget(new TextWidget(Text.localised(getUITitle()))
                         .setPos(10, 5))
                 .widget(filterHolder.createFilterUI(buildContext)
-                        .setPos(7, 134))
+                        .setPos(7, 42))
                 .build();
     }
 

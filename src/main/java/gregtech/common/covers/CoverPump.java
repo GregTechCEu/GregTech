@@ -50,8 +50,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.Function;
-import java.util.function.IntSupplier;
 
 public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
@@ -251,7 +249,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
                 .widget(new Column()
                         .widget(new Row()
                                 .widget(new ButtonWidget()
-                                        .setOnClick(GuiFunctions.getIncrementer(1, 8, 64, 512, this::adjustTransferRate))
+                                        .setOnClick(GuiFunctions.getIncrementer(1, 10, 100, 1000, this::adjustTransferRate))
                                         .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("+").color(0xFFFFFF))
                                         .setSize(12, 12))
                                 .widget(new TextFieldWidget()
@@ -264,7 +262,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
                                         .setBackground(gregtech.api.gui.GuiTextures.DISPLAY_SMALL)
                                         .setSize(56, 12))
                                 .widget(new ButtonWidget()
-                                        .setOnClick(GuiFunctions.getIncrementer(-1, -8, -64, 512, this::adjustTransferRate))
+                                        .setOnClick(GuiFunctions.getIncrementer(-1, -10, -100, -1000, this::adjustTransferRate))
                                         .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("-").color(0xFFFFFF))
                                         .setSize(12, 12)))
                         .widget(new CycleButtonWidget()
@@ -286,32 +284,18 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
                                 .setSize(80, 12))
                         .setPos(89, 18)
                         .setSize(80, 48))
-                .widget(filterHolder.createFilterUI(buildContext)
+                .widget(filterHolder.createFilterUI(buildContext, this::checkControlsAmount)
                         .setPos(7, 70));
         return builder.build();
     }
 
-    public Function<String, String> getTextFieldValidator(IntSupplier maxSupplier) {
-        int min = 1;
-        return val -> {
-            if (val.isEmpty()) {
-                return String.valueOf(min);
+    protected void checkControlsAmount(Widget widget) {
+        if (widget instanceof FluidSlotWidget && ((FluidSlotWidget) widget).isPhantom()) {
+            boolean show = shouldShowTip();
+            if (((FluidSlotWidget) widget).controlsAmount() != show) {
+                ((FluidSlotWidget) widget).setControlsAmount(show, true);
             }
-            int max = maxSupplier.getAsInt();
-            int num;
-            try {
-                num = Integer.parseInt(val);
-            } catch (NumberFormatException ignored) {
-                return String.valueOf(max);
-            }
-            if (num < min) {
-                return String.valueOf(min);
-            }
-            if (num > max) {
-                return String.valueOf(max);
-            }
-            return val;
-        };
+        }
     }
 
     @Override
