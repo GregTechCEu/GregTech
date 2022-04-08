@@ -170,7 +170,7 @@ public class MetaTileEntities {
     public static MetaTileEntityPyrolyseOven PYROLYSE_OVEN;
     public static MetaTileEntityDistillationTower DISTILLATION_TOWER;
     public static MetaTileEntityCrackingUnit CRACKER;
-    public static MetaTileEntityMultiSmelter MULTI_FURNACE;
+    public static MetaTileEntityMultiFurnace MULTI_FURNACE;
     public static MetaTileEntityLargeCombustionEngine LARGE_COMBUSTION_ENGINE;
     public static MetaTileEntityLargeCombustionEngine EXTREME_COMBUSTION_ENGINE;
     public static MetaTileEntityLargeTurbine LARGE_STEAM_TURBINE;
@@ -466,7 +466,7 @@ public class MetaTileEntities {
         IMPLOSION_COMPRESSOR = registerMetaTileEntity(1003, new MetaTileEntityImplosionCompressor(gregtechId("implosion_compressor")));
         PYROLYSE_OVEN = registerMetaTileEntity(1004, new MetaTileEntityPyrolyseOven(gregtechId("pyrolyse_oven")));
         DISTILLATION_TOWER = registerMetaTileEntity(1005, new MetaTileEntityDistillationTower(gregtechId("distillation_tower")));
-        MULTI_FURNACE = registerMetaTileEntity(1006, new MetaTileEntityMultiSmelter(gregtechId("multi_furnace")));
+        MULTI_FURNACE = registerMetaTileEntity(1006, new MetaTileEntityMultiFurnace(gregtechId("multi_furnace")));
         LARGE_COMBUSTION_ENGINE = registerMetaTileEntity(1007, new MetaTileEntityLargeCombustionEngine(gregtechId("large_combustion_engine"), GTValues.EV));
         EXTREME_COMBUSTION_ENGINE = registerMetaTileEntity(1008, new MetaTileEntityLargeCombustionEngine(gregtechId("extreme_combustion_engine"), GTValues.IV));
         CRACKER = registerMetaTileEntity(1009, new MetaTileEntityCrackingUnit(gregtechId("cracker")));

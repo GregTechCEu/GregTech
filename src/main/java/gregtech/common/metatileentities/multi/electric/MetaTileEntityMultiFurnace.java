@@ -25,19 +25,19 @@ import net.minecraft.util.text.TextComponentTranslation;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
+public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
 
     protected int heatingCoilLevel;
     protected int heatingCoilDiscount;
 
-    public MetaTileEntityMultiSmelter(ResourceLocation metaTileEntityId) {
+    public MetaTileEntityMultiFurnace(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.FURNACE_RECIPES);
-        this.recipeMapWorkable = new MultiSmelterWorkable(this);
+        this.recipeMapWorkable = new MultiFurnaceWorkable(this);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityMultiSmelter(metaTileEntityId);
+        return new MetaTileEntityMultiFurnace(metaTileEntityId);
     }
 
     @Override
@@ -103,9 +103,9 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         return true;
     }
 
-    protected class MultiSmelterWorkable extends MultiblockRecipeLogic {
+    protected class MultiFurnaceWorkable extends MultiblockRecipeLogic {
 
-        public MultiSmelterWorkable(RecipeMapMultiblockController tileEntity) {
+        public MultiFurnaceWorkable(RecipeMapMultiblockController tileEntity) {
             super(tileEntity);
         }
 
