@@ -34,7 +34,7 @@ public class EnergyNetWalker extends PipeNetWalker {
     }
 
     @Override
-    protected PipeNetWalker createSubWalker(World world, BlockPos nextPos, int walkedBlocks) {
+    protected PipeNetWalker createSubWalker(World world, EnumFacing facingToNextPos, BlockPos nextPos, int walkedBlocks) {
         EnergyNetWalker walker = new EnergyNetWalker(world, nextPos, walkedBlocks, routes);
         walker.loss = loss;
         walker.pipes = pipes;

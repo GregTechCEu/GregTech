@@ -47,7 +47,7 @@ public abstract class PipeNetWalker {
      * @param walkedBlocks distance from source in blocks
      * @return new sub walker
      */
-    protected abstract PipeNetWalker createSubWalker(World world, BlockPos nextPos, int walkedBlocks);
+    protected abstract PipeNetWalker createSubWalker(World world, EnumFacing facingToNextPos, BlockPos nextPos, int walkedBlocks);
 
     /**
      * You can increase walking stats here. for example
@@ -122,7 +122,7 @@ public abstract class PipeNetWalker {
 
             walkers = new ArrayList<>();
             for (EnumFacing side : pipes) {
-                PipeNetWalker walker = Objects.requireNonNull(createSubWalker(world, currentPos.offset(side), walkedBlocks + 1), "Walker can't be null");
+                PipeNetWalker walker = Objects.requireNonNull(createSubWalker(world, side, currentPos.offset(side), walkedBlocks + 1), "Walker can't be null");
                 walker.root = root;
                 walkers.add(walker);
             }
