@@ -6,11 +6,20 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
+import com.cleanroommc.modularui.api.drawable.Text;
+import com.cleanroommc.modularui.api.math.Alignment;
+import com.cleanroommc.modularui.common.internal.ModularWindow;
+import com.cleanroommc.modularui.common.internal.UIBuildContext;
+import com.cleanroommc.modularui.common.widget.CycleButtonWidget;
+import com.cleanroommc.modularui.common.widget.TextFieldWidget;
+import com.cleanroommc.modularui.common.widget.*;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.gui.GregTechUI;
+import gregtech.api.gui.GuiFunctions;
 import gregtech.api.guiOld.GuiTextures;
 import gregtech.api.guiOld.ModularUI;
 import gregtech.api.guiOld.widgets.*;
@@ -19,8 +28,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.api.util.Position;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import net.minecraft.client.Minecraft;
@@ -28,7 +37,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -279,7 +287,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
 
     @Override
     public void update() {
-        if (!isRemote() && coverHolder.getOffsetTimer() % 2 ==0) {
+        if (!isRemote() && coverHolder.getOffsetTimer() % 2 == 0) {
             syncAllInfo();
         }
     }
@@ -287,7 +295,8 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     @Override
     public EnumActionResult onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult hitResult) {
         if (!this.coverHolder.getWorld().isRemote) {
-            this.openUI((EntityPlayerMP) playerIn);
+            //this.openUI((EntityPlayerMP) playerIn);
+            GregTechUI.getCoverUi(attachedSide).open(playerIn, coverHolder.getWorld(), coverHolder.getPos());
         }
         return EnumActionResult.SUCCESS;
     }
@@ -466,6 +475,83 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         return builder.build(this, player);
     }
 
+    @Override
+    public ModularWindow createWindow(UIBuildContext buildContext) {
+        ModularWindow.Builder builder = ModularWindow.builder(176, 178)
+                .setBackground(gregtech.api.gui.GuiTextures.BACKGROUND)
+                .bindPlayerInventory(buildContext.getPlayer())
+                .widget(new TextWidget(Text.localised("metaitem.cover.digital.name"))
+                        .setPos(10, 5))
+                .widget(new TextWidget(Text.localised("metaitem.cover.digital.title.mode"))
+                        .setPos(10, 25))
+                .widget(new Row()
+                        .widget(new CycleButtonWidget()
+                                .setToggle(() -> this.mode == MODE.FLUID, val -> {
+                                    if (val) setMode(MODE.FLUID);
+                                })
+                                .setTexture(gregtech.api.gui.GuiTextures.BUTTON_FLUID)
+                                .addTooltip(Text.localised("metaitem.cover.digital.mode.fluid")))
+                        .widget(new CycleButtonWidget()
+                                .setToggle(() -> this.mode == MODE.ITEM, val -> {
+                                    if (val) setMode(MODE.ITEM);
+                                })
+                                .setTexture(gregtech.api.gui.GuiTextures.BUTTON_ITEM)
+                                .addTooltip(Text.localised("metaitem.cover.digital.mode.item")))
+                        .widget(new CycleButtonWidget()
+                                .setToggle(() -> this.mode == MODE.ENERGY, val -> {
+                                    if (val) setMode(MODE.ENERGY);
+                                })
+                                .setTexture(gregtech.api.gui.GuiTextures.BUTTON_ENERGY)
+                                .addTooltip(Text.localised("metaitem.cover.digital.mode.energy")))
+                        .widget(new CycleButtonWidget()
+                                .setToggle(() -> this.mode == MODE.MACHINE, val -> {
+                                    if (val) setMode(MODE.MACHINE);
+                                })
+                                .setTexture(gregtech.api.gui.GuiTextures.BUTTON_MACHINE)
+                                .addTooltip(Text.localised("metaitem.cover.digital.mode.machine")))
+                        .widget(new CycleButtonWidget()
+                                .setToggle(() -> this.mode == MODE.PROXY, val -> {
+                                    if (val) setMode(MODE.PROXY);
+                                })
+                                .setTexture(gregtech.api.gui.GuiTextures.BUTTON_INTERFACE)
+                                .addTooltip(Text.localised("metaitem.cover.digital.mode.proxy")))
+                        .setPos(40, 20))
+                .widget(new TextWidget(Text.localised("monitor.gui.title.slot")).setPos(10, 50))
+                .widget(new ButtonWidget()
+                        .setOnClick(GuiFunctions.getIncrementer(-1, -10, -1, -10, value -> setMode(slot + value)))
+                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("-1").color(0xFFFFFF))
+                        .setPos(40, 45))
+                .widget(new ButtonWidget()
+                        .setOnClick(GuiFunctions.getIncrementer(1, 10, 1, 10, value -> setMode(slot + value)))
+                        .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("1").color(0xFFFFFF))
+                        .setPos(140, 45))
+                .widget(new TextFieldWidget()
+                        .setGetterInt(() -> this.slot)
+                        .setSetterInt(val -> this.slot = val)
+                        .setNumbers(0, 9999)
+                        .setMaxLines(1)
+                        .setTextAlignment(Alignment.Center)
+                        .setTextColor(0xFFFFFF)
+                        .setBackground(gregtech.api.gui.GuiTextures.DISPLAY)
+                        .setPos(60, 45)
+                        .setSize(80, 20));
+        if (this.attachedSide.getAxis() == EnumFacing.Axis.Y) {
+            builder.widget(new TextWidget(Text.localised("metaitem.cover.digital.title.spin"))
+                    .setPos(10, 75))
+                    .widget(new ButtonWidget()
+                            .setOnClick((clickData, widget) -> setMode(this.spin.rotateY()))
+                            .setBackground(gregtech.api.gui.GuiTextures.BASE_BUTTON, new Text("R").color(0xFFFFFF))
+                            .setPos(40, 70))
+                    .widget(TextWidget.dynamicString(() -> this.spin.toString())
+                            .setDefaultColor(0xFFFFFF)
+                            .setTextAlignment(Alignment.Center)
+                            .setBackground(gregtech.api.gui.GuiTextures.DISPLAY)
+                            .setPos(60, 70)
+                            .setSize(80, 20));
+        }
+        return builder.build();
+    }
+
     private void syncAllInfo() {
         if (mode == MODE.FLUID || (mode == MODE.PROXY && proxyMode[0] > 0)) {
             boolean syncFlag = false;
@@ -486,13 +572,13 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                         syncFlag = true;
                         fluids[i] = new FluidTankProperties(content, fluidTankProperties[i].getCapacity(), fluidTankProperties[i].canFill(), fluidTankProperties[i].canDrain());
                         toUpdate.add(i);
-                    } else if(content != null && (content.amount != fluids[i].getContents().amount || !content.isFluidEqual(fluids[i].getContents()))) {
+                    } else if (content != null && (content.amount != fluids[i].getContents().amount || !content.isFluidEqual(fluids[i].getContents()))) {
                         syncFlag = true;
                         fluids[i] = new FluidTankProperties(content, fluidTankProperties[i].getCapacity(), fluidTankProperties[i].canFill(), fluidTankProperties[i].canDrain());
                         toUpdate.add(i);
                     }
                 }
-                if (syncFlag) writeUpdateData(GregtechDataCodes.UPDATE_FLUID, packetBuffer->{
+                if (syncFlag) writeUpdateData(GregtechDataCodes.UPDATE_FLUID, packetBuffer -> {
                     packetBuffer.writeVarInt(fluids.length);
                     packetBuffer.writeVarInt(toUpdate.size());
                     for (Integer index : toUpdate) {
@@ -504,7 +590,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         if (mode == MODE.ITEM || (mode == MODE.PROXY && proxyMode[1] > 0)) {
             boolean syncFlag = false;
             IItemHandler itemHandler = this.getItemCapability();
-            if(itemHandler != null) {
+            if (itemHandler != null) {
                 int size = itemHandler.getSlots();
                 if (this.slot < size) {
                     int maxStoredItems = itemHandler.getSlotLimit(this.slot);
@@ -652,7 +738,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     private void readItems(PacketBuffer packetBuffer) {
         maxItemCapability = packetBuffer.readVarInt();
         int size = packetBuffer.readVarInt();
-        if(items == null || items.length != size) {
+        if (items == null || items.length != size) {
             items = new ItemStack[size];
         }
         size = packetBuffer.readVarInt();
@@ -664,7 +750,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                     items[index] = new ItemStack(nbt);
                     items[index].setCount(nbt.getInteger("count"));
                 } else {
-                    items [index] = ItemStack.EMPTY;
+                    items[index] = ItemStack.EMPTY;
                 }
             }
         } catch (IOException e) {
@@ -730,26 +816,32 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
             capability = new EnergyContainerList(list);
         } else if (capability == null && te != null) {
             IEnergyStorage fe = te.getCapability(CapabilityEnergy.ENERGY, getCoveredFacing());
-            if(fe != null) {
+            if (fe != null) {
                 return new IEnergyContainer() {
                     public long acceptEnergyFromNetwork(EnumFacing enumFacing, long l, long l1) {
                         return 0;
                     }
+
                     public boolean inputsEnergy(EnumFacing enumFacing) {
                         return false;
                     }
+
                     public long changeEnergy(long l) {
                         return 0;
                     }
+
                     public long getEnergyStored() {
                         return FeCompat.toEu(fe.getEnergyStored(), FeCompat.ratio(false));
                     }
+
                     public long getEnergyCapacity() {
                         return FeCompat.toEu(fe.getMaxEnergyStored(), FeCompat.ratio(false));
                     }
+
                     public long getInputAmperage() {
                         return 0;
                     }
+
                     public long getInputVoltage() {
                         return 0;
                     }
@@ -805,7 +897,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     }
 
     public boolean canCapabilityAttach() {
-        return  getFluidCapability() != null ||
+        return getFluidCapability() != null ||
                 getItemCapability() != null ||
                 getEnergyCapability() != null ||
                 getMachineCapability() != null;
