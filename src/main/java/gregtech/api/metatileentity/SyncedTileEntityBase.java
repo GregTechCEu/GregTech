@@ -3,18 +3,19 @@ package gregtech.api.metatileentity;
 import gregtech.api.block.BlockStateTileEntity;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
@@ -25,23 +26,13 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
 
     public abstract void receiveCustomData(int discriminator, PacketBuffer buf);
 
-    private static class UpdateEntry {
-        private final int discriminator;
-        private final byte[] updateData;
-
-        public UpdateEntry(int discriminator, byte[] updateData) {
-            this.discriminator = discriminator;
-            this.updateData = updateData;
-        }
-    }
-
-    protected final List<UpdateEntry> updateEntries = new ArrayList<>();
+    protected final Int2ObjectMap<byte[]> updates = new Int2ObjectArrayMap<>(5);
 
     public void writeCustomData(int discriminator, Consumer<PacketBuffer> dataWriter) {
         ByteBuf backedBuffer = Unpooled.buffer();
         dataWriter.accept(new PacketBuffer(backedBuffer));
         byte[] updateData = Arrays.copyOfRange(backedBuffer.array(), 0, backedBuffer.writerIndex());
-        updateEntries.add(new UpdateEntry(discriminator, updateData));
+        updates.put(discriminator, updateData);
         @SuppressWarnings("deprecation")
         IBlockState blockState = getBlockType().getStateFromMeta(getBlockMetadata());
         world.notifyBlockUpdate(getPos(), blockState, blockState, 0);
@@ -49,29 +40,31 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
-        NBTTagCompound updateTag = new NBTTagCompound();
-        NBTTagList tagList = new NBTTagList();
-        for (UpdateEntry updateEntry : updateEntries) {
-            NBTTagCompound entryTag = new NBTTagCompound();
-            entryTag.setInteger("i", updateEntry.discriminator);
-            entryTag.setByteArray("d", updateEntry.updateData);
-            tagList.appendTag(entryTag);
+        if (this.updates.isEmpty()) {
+            return null;
         }
-        this.updateEntries.clear();
-        updateTag.setTag("d", tagList);
+        NBTTagCompound updateTag = new NBTTagCompound();
+        NBTTagList listTag = new NBTTagList();
+        for (Int2ObjectMap.Entry<byte[]> entry : updates.int2ObjectEntrySet()) {
+            NBTTagCompound entryTag = new NBTTagCompound();
+            entryTag.setByteArray(Integer.toString(entry.getIntKey()), entry.getValue());
+            listTag.appendTag(entryTag);
+        }
+        updateTag.setTag("d", listTag);
+        this.updates.clear();
         return new SPacketUpdateTileEntity(getPos(), 0, updateTag);
     }
 
     @Override
     public void onDataPacket(@Nonnull NetworkManager net, SPacketUpdateTileEntity pkt) {
         NBTTagCompound updateTag = pkt.getNbtCompound();
-        NBTTagList tagList = updateTag.getTagList("d", NBT.TAG_COMPOUND);
-        for (int i = 0; i < tagList.tagCount(); i++) {
-            NBTTagCompound entryTag = tagList.getCompoundTagAt(i);
-            int discriminator = entryTag.getInteger("i");
-            byte[] updateData = entryTag.getByteArray("d");
-            ByteBuf backedBuffer = Unpooled.copiedBuffer(updateData);
-            receiveCustomData(discriminator, new PacketBuffer(backedBuffer));
+        NBTTagList listTag = updateTag.getTagList("d", Constants.NBT.TAG_COMPOUND);
+        for (NBTBase entryBase : listTag) {
+            NBTTagCompound entryTag = (NBTTagCompound) entryBase;
+            for (String discriminatorKey : entryTag.getKeySet()) {
+                ByteBuf backedBuffer = Unpooled.copiedBuffer(updateTag.getByteArray(discriminatorKey));
+                receiveCustomData(Integer.parseInt(discriminatorKey), new PacketBuffer(backedBuffer));
+            }
         }
     }
 
