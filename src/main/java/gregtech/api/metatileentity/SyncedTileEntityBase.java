@@ -62,7 +62,7 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
         for (NBTBase entryBase : listTag) {
             NBTTagCompound entryTag = (NBTTagCompound) entryBase;
             for (String discriminatorKey : entryTag.getKeySet()) {
-                ByteBuf backedBuffer = Unpooled.copiedBuffer(updateTag.getByteArray(discriminatorKey));
+                ByteBuf backedBuffer = Unpooled.copiedBuffer(entryTag.getByteArray(discriminatorKey));
                 receiveCustomData(Integer.parseInt(discriminatorKey), new PacketBuffer(backedBuffer));
             }
         }
