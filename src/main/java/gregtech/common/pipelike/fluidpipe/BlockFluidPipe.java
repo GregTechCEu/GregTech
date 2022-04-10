@@ -115,7 +115,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         if (entityIn instanceof EntityLivingBase && entityIn.world.getTotalWorldTime() % 20 == 0L) {
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
             TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
-            if(!(pipe instanceof TileEntityFluidPipeTickable))
+            if(!(pipe instanceof TileEntityFluidPipeTickable) || pipe.getFrameMaterial() != null)
                 return;
             List<Integer> temps = new ArrayList<>();
             for (FluidTank tank : ((TileEntityFluidPipeTickable) pipe).getFluidTanks()) {
