@@ -13,7 +13,7 @@ public class WidgetGroupItemFilter extends AbstractWidgetGroup {
     private int maxStackSize = 1;
 
     public WidgetGroupItemFilter(int yPosition, Supplier<ItemFilter> itemFilterSupplier) {
-        super(new Position(0, yPosition));
+        super(new Position(18 + 5, yPosition));
         this.itemFilterSupplier = itemFilterSupplier;
     }
 

@@ -21,6 +21,7 @@ import gregtech.api.util.*;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -114,7 +115,7 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
         long timer = coverHolder.getOffsetTimer();
         IItemHandler targetInventory = coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide);
         if (workingEnabled && ioEnabled && itemsLeftToTransferLastSecond > 0 && timer % 5 == 0) {
-            int totalTransferred = doTransferItems(linkedContainer, targetInventory, itemsLeftToTransferLastSecond);
+            int totalTransferred = doTransferItemsAny(targetInventory, linkedContainer, itemsLeftToTransferLastSecond);
             this.itemsLeftToTransferLastSecond -= totalTransferred;
         }
 
@@ -123,15 +124,11 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
         }
     }
 
-    protected int doTransferItems(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
-        return doTransferItemsAny(itemHandler, myItemHandler, maxTransferAmount);
-    }
-
-    protected int doTransferItemsAny(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
+    protected int doTransferItemsAny(IItemHandler otherHandler, IItemHandler enderHandler, int maxTransferAmount) {
         if (conveyorMode == CoverConveyor.ConveyorMode.IMPORT) {
-            return moveInventoryItems(itemHandler, myItemHandler, maxTransferAmount);
+            return moveInventoryItems(otherHandler, enderHandler, maxTransferAmount);
         } else if (conveyorMode == CoverConveyor.ConveyorMode.EXPORT) {
-            return moveInventoryItems(myItemHandler, itemHandler, maxTransferAmount);
+            return moveInventoryItems(enderHandler, otherHandler, maxTransferAmount);
         }
         return 0;
     }
@@ -164,48 +161,6 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
         return maxTransferAmount - itemsLeftToTransfer;
     }
 
-/*
-    protected int transferContainerItems(int itemsLeftToTransferLastSecond) {
-        IItemHandler itemHandler = coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide);
-        if (conveyorMode == CoverConveyor.ConveyorMode.IMPORT) {
-            return moveInventoryItems(itemHandler, linkedContainer, itemsLeftToTransferLastSecond, itemFilter::testItemStack);
-        } else if (conveyorMode == CoverConveyor.ConveyorMode.EXPORT) {
-            return 0; // moveInventoryItems(linkedContainer, itemHandler, itemsLeftToTransferLastSecond, itemFilter::testItemStack);
-        }
-        return 0;
-    }
-
-    protected int moveInventoryItems(IItemHandler sourceInventory, IItemHandler targetInventory, int maxTransferAmount, @Nonnull Predicate<ItemStack> itemFilter) {
-        int itemsLeftToTransfer = maxTransferAmount;
-        for (int i = 0; i < sourceInventory.getSlots(); i++) {
-            ItemStack itemStack = sourceInventory.getStackInSlot(i);
-
-            if (!itemStack.isEmpty()) {
-                continue;
-            }
-            if (!itemFilter.test(itemStack)) {
-                continue;
-            }
-
-            ItemStack remainder = GTTransferUtils.insertItem(targetInventory, itemStack, false);
-            int amountToInsert = itemStack.getCount() - remainder.getCount();
-
-            if (amountToInsert > 0) {
-                itemStack = sourceInventory.extractItem(i, amountToInsert, false);
-                if (!itemStack.isEmpty()) {
-                    GTTransferUtils.insertItem(targetInventory, itemStack, false);
-                    itemsLeftToTransfer -= itemStack.getCount();
-
-                    if (itemsLeftToTransfer == 0) {
-                        break;
-                    }
-                }
-            }
-        }
-        return maxTransferAmount - itemsLeftToTransfer;
-    }
-    */
-
     public void setConveyorMode(CoverConveyor.ConveyorMode mode) {
         conveyorMode = mode;
         coverHolder.markDirty();
@@ -217,6 +172,7 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
 
     @Override
     public void openUI(EntityPlayerMP player) {
+        updateContainerLink();
         CoverBehaviorUIFactory.INSTANCE.openUI(this, player);
         isColorTemp = false;
     }
@@ -246,19 +202,17 @@ public class CoverEnderItemLink extends CoverBehavior implements CoverWithUI, IT
         widgetGroup.addWidget(new CycleButtonWidget(92, 42, 75, 18,
                 this::isIoEnabled, this::setIoEnabled, "cover.ender_item_link.iomode.disabled", "cover.ender_item_link.iomode.enabled"));
         this.itemFilter.initUI(65, widgetGroup::addWidget);
-        // widgetGroup.addWidget(new SlotWidget((IItemHandlerModifiable) VirtualContainerRegistry.getContainer(makeContainerName(), getContainerUUID()), 0, 183, 42);
-        /*
-        int factor = linkedContainer.getSizeInventory() / 9 > 8 ? 18 : 9;
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176 + (factor == 18 ? 176 : 0), 8 + linkedContainer.getSizeInventory() / factor * 18 + 104).label(5, 5, makeContainerName());
 
-        for (int i = 0; i < linkedContainer.getSizeInventory(); i++) {
-            builder.slot(linkedContainer, i, 7 * (factor == 18 ? 2 : 1) + i % factor * 18, 18 + i / factor * 18, GuiTextures.SLOT);
+        AbstractWidgetGroup containerGroup = new AbstractWidgetGroup(new Position(widgetGroup.getPosition().getX() + 18 + 5, widgetGroup.getPosition().getY()));
+        int slot = 0;
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 3; col++) {
+                containerGroup.widgets.add(new SlotWidget(this.linkedContainer, slot++, 154 + (col * 18), 10 + (row * 18), false, false).setBackgroundTexture(GuiTextures.SLOT_DARKENED));
+            }
         }
-        builder.widget(widgetGroup).bindPlayerInventory(player.inventory, 139);
-        return builder.build(this, player);
-        */
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176 + (16 * 9), 221)
+        return ModularUI.builder(GuiTextures.BACKGROUND, 100 + (16 * 9), 221)
                 .widget(widgetGroup)
+                .widget(containerGroup)
                 .bindPlayerInventory(player.inventory, 139)
                 .build(this, player);
     }
